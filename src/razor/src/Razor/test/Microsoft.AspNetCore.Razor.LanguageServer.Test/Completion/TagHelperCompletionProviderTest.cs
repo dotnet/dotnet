@@ -39,7 +39,7 @@ public class TagHelperCompletionProviderTest : TagHelperServiceTestBase
                 """,
             isRazorFile: false);
         var element = context.Owner.FirstAncestorOrSelf<MarkupElementSyntax>();
-        var service = new DefaultTagHelperFactsService();
+        var service = new TagHelperFactsService();
 
         // Act
         var (ancestorName, ancestorIsTagHelper) = service.GetNearestAncestorTagInfo(element.Ancestors());
@@ -61,7 +61,7 @@ public class TagHelperCompletionProviderTest : TagHelperServiceTestBase
             isRazorFile: false,
             tagHelpers: DefaultTagHelpers);
         var element = context.Owner.FirstAncestorOrSelf<MarkupTagHelperElementSyntax>();
-        var service = new DefaultTagHelperFactsService();
+        var service = new TagHelperFactsService();
 
         // Act
         var (ancestorName, ancestorIsTagHelper) = service.GetNearestAncestorTagInfo(element.Ancestors());
@@ -112,6 +112,95 @@ public class TagHelperCompletionProviderTest : TagHelperServiceTestBase
 
         // Assert
         Assert.Empty(completions);
+    }
+
+    [Fact]
+    public void GetCompletionAt_OutsideOfTagName_InsideCSharp_DoesNotReturnCompletions()
+    {
+        // Arrange
+        var service = new TagHelperCompletionProvider(RazorTagHelperCompletionService, HtmlFactsService, TagHelperFactsService, TestRazorLSPOptionsMonitor.Create());
+        var context = CreateRazorCompletionContext(
+            """
+                @addTagHelper *, TestAssembly
+
+                @if (true)
+                {
+                    <br $$/>
+                }
+                """,
+            isRazorFile: false,
+            tagHelpers: DefaultTagHelpers);
+
+        // Act
+        var completions = service.GetCompletionItems(context);
+
+        // Assert
+        Assert.Empty(completions);
+    }
+
+    [Fact]
+    public void GetCompletionAt_SelfClosingTag_NotAtEndOfName_DoesNotReturnCompletions()
+    {
+        // Arrange
+        var service = new TagHelperCompletionProvider(RazorTagHelperCompletionService, HtmlFactsService, TagHelperFactsService, TestRazorLSPOptionsMonitor.Create());
+        var context = CreateRazorCompletionContext(
+            """
+                @addTagHelper *, TestAssembly
+                <c $$ />
+                """,
+            isRazorFile: false,
+            tagHelpers: DefaultTagHelpers);
+
+        // Act
+        var completions = service.GetCompletionItems(context);
+
+        // Assert
+        Assert.Empty(completions);
+    }
+
+
+    [Fact]
+    public void GetCompletionAt_SelfClosingTag_ReturnsCompletions()
+    {
+        // Arrange
+        var service = new TagHelperCompletionProvider(RazorTagHelperCompletionService, HtmlFactsService, TagHelperFactsService, TestRazorLSPOptionsMonitor.Create());
+        var context = CreateRazorCompletionContext(
+            """
+                @addTagHelper *, TestAssembly
+                <c$$ />
+                """,
+            isRazorFile: false,
+            tagHelpers: DefaultTagHelpers);
+
+        // Act
+        var completions = service.GetCompletionItems(context);
+
+        // Assert
+        AssertTest1Test2Completions(completions);
+    }
+
+    [Fact]
+    public void GetCompletionAt_SelfClosingTag_InsideCSharp_ReturnsCompletions()
+    {
+        // Arrange
+        var service = new TagHelperCompletionProvider(RazorTagHelperCompletionService, HtmlFactsService, TagHelperFactsService, TestRazorLSPOptionsMonitor.Create());
+        var context = CreateRazorCompletionContext(
+            """
+                @addTagHelper *, TestAssembly
+
+                @if (true)
+                {
+                    <c$$ />
+                }
+                """,
+            isRazorFile: false,
+            tagHelpers: DefaultTagHelpers);
+
+        // Act
+        var completions = service.GetCompletionItems(context);
+
+        // Assert
+        AssertTest1Test2Completions(completions);
     }
 
     [Fact]

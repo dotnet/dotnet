@@ -1,0 +1,14 @@
+﻿Source Location: (55:1,11 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+|T|
+Generated Location: (565:20,0 [1] )
+|T|
+
+Source Location: (270:4,7 [52] x:\dir\subdir\Test\TestComponent.cshtml)
+|
+    [Parameter] public T Parameter { get; set; }
+|
+Generated Location: (2575:77,7 [52] )
+|
+    [Parameter] public T Parameter { get; set; }
+|
+

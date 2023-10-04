@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
@@ -7,6 +7,9 @@ using System;
 using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Components;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Test.Utilities;
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -21,6 +24,10 @@ public abstract class ComponentCodeGenerationTestBase : RazorBaselineIntegration
     internal override bool UseTwoPhaseCompilation => true;
 
     internal override RazorConfiguration Configuration => _configuration ?? base.Configuration;
+
+    internal string ComponentName = "TestComponent";
+
+    internal override string DefaultFileName => ComponentName + ".cshtml";
 
     protected ComponentCodeGenerationTestBase()
         : base(generateBaselines: null)
@@ -1633,6 +1640,35 @@ namespace Test
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://dev.azure.com/devdiv/DevDiv/_workitems/edit/1869483")]
+    public void AddComponentParameter()
+    {
+        var generated = CompileToCSharp("""
+            @typeparam T
+
+            <TestComponent Param="42" />
+            
+            @code {
+                [Parameter]
+                public T Param { get; set; }
+            }
+            """);
+
+        CompileToAssembly(generated);
+
+        if (DesignTime)
+        {
+            // In design-time, AddComponentParameter shouldn't be used.
+            Assert.Contains("AddAttribute", generated.Code);
+            Assert.DoesNotContain("AddComponentParameter", generated.Code);
+        }
+        else
+        {
+            Assert.DoesNotContain("AddAttribute", generated.Code);
+            Assert.Contains("AddComponentParameter", generated.Code);
+        }
     }
 
     #endregion
@@ -5350,10 +5386,12 @@ namespace Test
 
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
-        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument, verifyLinePragmas: DesignTime);
         var result = CompileToAssembly(generated, throwOnFailure: false);
-
-        Assert.Collection(result.Diagnostics, d => { Assert.Equal("CS0411", d.Id); });
+        result.Diagnostics.Verify(
+            // x:\dir\subdir\Test\TestComponent.cshtml(4,17): warning CS0169: The field 'TestComponent.counter' is never used
+            //     private int counter;
+            Diagnostic(ErrorCode.WRN_UnreferencedField, "counter").WithArguments("Test.TestComponent.counter").WithLocation(4, 17));
     }
 
     [Fact]
@@ -5391,10 +5429,42 @@ namespace Test
 
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
-        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument, verifyLinePragmas: DesignTime);
         var result = CompileToAssembly(generated, throwOnFailure: false);
+        result.Diagnostics.Verify(
+            // x:\dir\subdir\Test\TestComponent.cshtml(4,17): warning CS0169: The field 'TestComponent.counter' is never used
+            //     private int counter;
+            Diagnostic(ErrorCode.WRN_UnreferencedField, "counter").WithArguments("Test.TestComponent.counter").WithLocation(4, 17));
+    }
 
-        Assert.Collection(result.Diagnostics, d => { Assert.Equal("CS0411", d.Id); });
+    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/issues/48526")]
+    public void EventCallbackOfT_Array()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components.Forms;
+
+            namespace Test;
+
+            public class MyComponent<TItem> : InputBase<TItem[]>
+            {
+                protected override bool TryParseValueFromString(string value, out TItem[] result, out string validationErrorMessage) => throw null;
+            }
+            """));
+
+        // Act
+        var generated = CompileToCSharp("""
+            <MyComponent @bind-Value="Selected" />
+
+            @code {
+                string[] Selected { get; set; } = Array.Empty<string>();
+            }
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
     }
 
     #endregion
@@ -9986,6 +10056,731 @@ Time: @DateTime.Now
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         CompileToAssembly(generated, throwOnFailure: false);
+    }
+
+    #endregion
+
+    #region RenderMode
+
+    [Fact]
+    public void RenderMode_Directive_FullyQualified()
+    {
+        var generated = CompileToCSharp("""
+                @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                """, throwOnFailure: true);    
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: true);
+    }
+
+    [Fact]
+    public void RenderMode_Directive_SimpleExpression()
+    {
+        var generated = CompileToCSharp("""
+                @rendermode @(Microsoft.AspNetCore.Components.Web.RenderMode.Server)
+                """, throwOnFailure: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: true);
+    }
+
+    [Fact]
+    public void RenderMode_Directive_SimpleExpression_With_Code()
+    {
+        var generated = CompileToCSharp("""
+                @rendermode @(Microsoft.AspNetCore.Components.Web.RenderMode.Server)
+
+                @code
+                {
+                    [Parameter]
+                    public int Count { get; set; }
+                }
+                """, throwOnFailure: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: true);
+    }
+
+    [Fact]
+    public void RenderMode_Directive_SimpleExpression_NotFirst()
+    {
+        var generated = CompileToCSharp("""
+                @code
+                {
+                    [Parameter]
+                    public int Count { get; set; }
+                }
+                @rendermode @(Microsoft.AspNetCore.Components.Web.RenderMode.Server)
+                """, throwOnFailure: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: true);
+    }
+
+    [Fact]
+    public void RenderMode_Directive_NewExpression()
+    {
+        var generated = CompileToCSharp("""
+                    @rendermode @(new TestComponent.MyRenderMode("This is some text"))
+
+                    @code
+                    {
+                    #pragma warning disable CS9113
+                        public class MyRenderMode(string Text) : Microsoft.AspNetCore.Components.IComponentRenderMode { }
+                    }
+                    """, throwOnFailure: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: true);
+    }
+
+    [Fact]
+    public void RenderMode_Directive_WithNamespaces()
+    {
+        var generated = CompileToCSharp("""
+                @namespace Custom.Namespace
+
+                @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.Server
+                """, throwOnFailure: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: true);
+    }
+
+    [Fact]
+    public void RenderMode_Attribute_With_SimpleIdentifier()
+    {
+        var generated = CompileToCSharp($"""
+                <{ComponentName} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" /> 
+                """, throwOnFailure: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: true);
+    }
+
+    [Fact]
+    public void RenderMode_Attribute_With_Expression()
+    {
+        var generated = CompileToCSharp($$"""
+                <{{ComponentName}} @rendermode="@(new MyRenderMode() { Extra = "Hello" })" />
+                @code
+                {
+                    class MyRenderMode : Microsoft.AspNetCore.Components.IComponentRenderMode
+                    {
+                        public string Extra {get;set;}
+                    }
+                } 
+                """, throwOnFailure: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: true);
+    }
+
+    [Fact]
+    public void RenderMode_Attribute_With_Existing_Attributes()
+    {
+        var generated = CompileToCSharp($$"""
+                <{{ComponentName}} P2="abc" @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" P1="def" />
+
+                @code
+                {
+                    [Parameter]public string P1 {get; set;}
+
+                    [Parameter]public string P2 {get; set;}
+                } 
+                """, throwOnFailure: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: true);
+    }
+
+    [Fact]
+    public void Duplicate_RenderMode()
+    {
+        var generated = CompileToCSharp($$"""
+                <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server"
+                                   @rendermode="Value2" />
+                """, throwOnFailure: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: true);
+    }
+
+    [Fact]
+    public void RenderMode_Multiple_Components()
+    {
+        var generated = CompileToCSharp($$"""
+                <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
+                <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
+                """, throwOnFailure: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: true);
+    }
+
+    [Fact]
+    public void RenderMode_Child_Components()
+    {
+        var generated = CompileToCSharp($$"""
+                <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server">
+                    <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server">
+                        <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
+                    </{{ComponentName}}>
+                 <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server">
+                        <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
+                        <{{ComponentName}} @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
+                    </{{ComponentName}}>
+                </{{ComponentName}}>
+
+                @code
+                {
+                    [Parameter]
+                    public RenderFragment ChildContent { get; set; }
+                }
+                """, throwOnFailure: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: true);
+    }
+
+    [Fact]
+    public void RenderMode_With_TypeInference()
+    {
+        var generated = CompileToCSharp($$"""
+                @typeparam TRenderMode where TRenderMode : Microsoft.AspNetCore.Components.IComponentRenderMode
+
+                <{{ComponentName}} @rendermode="RenderModeParam" RenderModeParam="Microsoft.AspNetCore.Components.Web.RenderMode.Server" />
+
+                @code
+                {
+                    [Parameter] public TRenderMode RenderModeParam { get; set;}
+                }
+                """, throwOnFailure: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: true);
+    }
+
+    [Fact]
+    public void RenderMode_With_Ternary()
+    {
+        var generated = CompileToCSharp($$"""
+                <{{ComponentName}} @rendermode="@(true ? Microsoft.AspNetCore.Components.Web.RenderMode.Server : null)" />
+                """, throwOnFailure: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated, throwOnFailure: true);
+    }
+
+    #endregion
+
+    #region FormName
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_HtmlValue()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @onsubmit="() => { }" @formname="named-form-handler"></form>
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_CSharpValue()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @onsubmit="() => { }" @formname="@("named-form-handler")"></form>
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_CSharpValue_Integer()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @onsubmit="() => { }" @formname="@x"></form>
+            @code {
+                int x = 1;
+            }
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        var result = CompileToAssembly(generated, throwOnFailure: false);
+        result.Diagnostics.Verify(
+            // x:\dir\subdir\Test\TestComponent.cshtml(2,55): error CS1503: Argument 1: cannot convert from 'int' to 'string'
+            //                                                       x
+            Diagnostic(ErrorCode.ERR_BadArgType, "x").WithArguments("1", "int", "string").WithLocation(2, 55));
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_MixedValue()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @onsubmit="() => { }" @formname="start @("literal") @x end"></form>
+            @code {
+                int x = 1;
+            }
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument, verifyLinePragmas: false);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_Nullability()
+    {
+        // This could report a nullability warning, but that's not currently supported in other places, either.
+        // Tracked by https://github.com/dotnet/razor/issues/7398.
+
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @onsubmit="() => { }" @formname="@null"></form>
+            """,
+            nullableEnable: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_CSharpError()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @onsubmit="() => { }" @formname="@x"></form>
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        var result = CompileToAssembly(generated, throwOnFailure: false);
+        result.Diagnostics.Verify(
+            // x:\dir\subdir\Test\TestComponent.cshtml(2,55): error CS0103: The name 'x' does not exist in the current context
+            //                                                       x
+            Diagnostic(ErrorCode.ERR_NameNotInContext, "x").WithArguments("x").WithLocation(2, 55));
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_RazorError()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @onsubmit="() => { }" @formname="@{ }"></form>
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_NotAForm()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <div method="post" @onsubmit="() => { }" @formname="named-form-handler"></div>
+            <div method="post" @onsubmit="() => { }" @formname="@("named-form-handler")"></div>
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_MissingUsing()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            <form method="post" @onsubmit="() => { }" @formname="named-form-handler"></form>
+            <form method="post" @onsubmit="() => { }" @formname="@("named-form-handler")"></form>
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_NotAForm_RazorLangVersion7()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <div method="post" @onsubmit="() => { }" @formname="named-form-handler"></div>
+            <div method="post" @onsubmit="() => { }" @formname="@("named-form-handler")"></div>
+            """,
+            configuration: Configuration.WithVersion(RazorLanguageVersion.Version_7_0));
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_MissingSubmit()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @formname="named-form-handler"></form>
+            <form method="post" @formname="@("named-form-handler")"></form>
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_FakeSubmit()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" onsubmit="" @formname="named-form-handler"></form>
+            <form method="post" onsubmit="" @formname="@("named-form-handler")"></form>
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_Component()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <TestComponent method="post" @onsubmit="() => { }" @formname="named-form-handler" />
+            <TestComponent method="post" @onsubmit="() => { }" @formname="@("named-form-handler")" />
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_Component_RazorLangVersion7()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <TestComponent method="post" @onsubmit="() => { }" @formname="named-form-handler" />
+            <TestComponent method="post" @onsubmit="() => { }" @formname="@("named-form-handler")" />
+            """,
+            configuration: Configuration.WithVersion(RazorLanguageVersion.Version_7_0));
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_Component_Generic()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            @typeparam T
+            <TestComponent method="post" @onsubmit="() => { }" @formname="named-form-handler" Parameter="1" />
+            <TestComponent method="post" @onsubmit="() => { }" @formname="@("named-form-handler")" Parameter="2" />
+            @code {
+                [Parameter] public T Parameter { get; set; }
+            }
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_Component_Generic_RazorLangVersion7()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            @typeparam T
+            <TestComponent method="post" @onsubmit="() => { }" @formname="named-form-handler" Parameter="1" />
+            <TestComponent method="post" @onsubmit="() => { }" @formname="@("named-form-handler")" Parameter="2" />
+            @code {
+                [Parameter] public T Parameter { get; set; }
+            }
+            """,
+            configuration: Configuration.WithVersion(RazorLanguageVersion.Version_7_0));
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_Duplicate_HtmlValue()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @onsubmit="() => { }" @formname="x" @formname="y"></form>
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_Duplicate_CSharpValue()
+    {
+        // This emits invalid code and no warnings, but that's a pre-existing bug,
+        // happens with the following Razor code, too.
+        // <input @ref="@a" @ref="@b" />
+        // @code {
+        //     ElementReference a;
+        //     ElementReference b;
+        // }
+
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @onsubmit="() => { }" @formname="@x" @formname="@y"></form>
+            @code {
+                string x = "a";
+                string y = "b";
+            }
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_MoreElements_HtmlValue()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @onsubmit="() => { }" @formname="x"></form>
+            <form method="post" @onsubmit="() => { }" @formname="y"></form>
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_MoreElements_CSharpValue()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @onsubmit="() => { }" @formname="@x"></form>
+            <form method="post" @onsubmit="() => { }" @formname="@y"></form>
+            @code {
+                string x = "a";
+                string y = "b";
+            }
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_Nested()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @onsubmit="() => { }" @formname="1"></form>
+            <TestComponent>
+                <form method="post" @onsubmit="() => { }" @formname="2"></form>
+                <TestComponent>
+                    <form method="post" @onsubmit="() => { }" @formname="3"></form>
+                </TestComponent>
+                <form method="post" @onsubmit="() => { }" @formname="4"></form>
+            </TestComponent>
+            @code {
+                [Parameter] public RenderFragment ChildContent { get; set; }
+            }
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9323")]
+    public void FormName_ChildContent()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form @formname="myform" class="nice">
+                <p>@DateTime.Now</p>
+            </form>
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_NoAddNamedEventMethod()
+    {
+        // Arrange
+        var componentShim = BaseCompilation.References.Single(r => r.Display.EndsWith("Microsoft.AspNetCore.Razor.Test.ComponentShim.Compiler.dll", StringComparison.Ordinal));
+        var minimalShim = """
+            namespace Microsoft.AspNetCore.Components
+            {
+                public abstract class ComponentBase
+                {
+                    protected abstract void BuildRenderTree(Rendering.RenderTreeBuilder __builder);
+                }
+                namespace Rendering
+                {
+                    public sealed class RenderTreeBuilder
+                    {
+                        public void AddMarkupContent(int sequence, string markupContent) { }
+                        public void OpenElement(int sequence, string elementName) { }
+                        public void AddAttribute(int sequence, string name, string value) { }
+                        public void AddAttribute<TArgument>(int sequence, string name, EventCallback<TArgument> value) { }
+                        public void CloseElement() { }
+                    }
+                }
+                namespace CompilerServices
+                {
+                    public static class RuntimeHelpers
+                    {
+                        public static T TypeCheck<T>(T value) => throw null;
+                    }
+                }
+                namespace Web
+                {
+                    [EventHandler("onsubmit", typeof(System.EventArgs), true, true)]
+                    public static class EventHandlers
+                    {
+                    }
+                }
+                [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+                public sealed class EventHandlerAttribute : System.Attribute
+                {
+                    public EventHandlerAttribute(string attributeName, System.Type eventArgsType, bool enableStopPropagation, bool enablePreventDefault) { }
+                }
+                public readonly struct EventCallback
+                {
+                    public static readonly EventCallbackFactory Factory;
+                }
+                public readonly struct EventCallback<TValue> { }
+                public sealed class EventCallbackFactory
+                {
+                    public EventCallback<TValue> Create<TValue>(object receiver, System.Action callback) => throw null;
+                }
+            }
+            """;
+        var minimalShimRef = CSharpCompilation.Create(
+                assemblyName: "Microsoft.AspNetCore.Components",
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
+            .AddSyntaxTrees(Parse(minimalShim))
+            .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
+            .EmitToImageReference();
+        var baseCompilation = BaseCompilation.ReplaceReference(componentShim, minimalShimRef);
+
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @onsubmit="() => { }" @formname="named-form-handler"></form>
+            """,
+            baseCompilation: baseCompilation);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    public void FormName_RazorLangVersion7()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using Microsoft.AspNetCore.Components.Web
+            <form method="post" @onsubmit="() => { }" @formname="named-form-handler"></form>
+            """,
+            configuration: Configuration.WithVersion(RazorLanguageVersion.Version_7_0));
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
     }
 
     #endregion

@@ -190,4 +190,14 @@ public abstract class IntermediateNodeVisitor
     {
         VisitDefault(node);
     }
+
+    public virtual void VisitRenderMode(RenderModeIntermediateNode node)
+    {
+        VisitDefault(node);
+    }
+
+    public virtual void VisitFormName(FormNameIntermediateNode node)
+    {
+        VisitDefault(node);
+    }
 }

@@ -35,7 +35,7 @@ public class ProjectConfigurationFileChangeDetectorTest : LanguageServerTestBase
         var listener2 = new Mock<IProjectConfigurationFileChangeListener>(MockBehavior.Strict);
         listener2.Setup(l => l.ProjectConfigurationFileChanged(It.IsAny<ProjectConfigurationFileChangeEventArgs>()))
             .Callback<ProjectConfigurationFileChangeEventArgs>(args => eventArgs2.Add(args));
-        var existingConfigurationFiles = new[] { "c:/path/to/project.razor.json", "c:/other/path/project.razor.json" };
+        var existingConfigurationFiles = new[] { "c:/path/to/project.razor.json", "c:/other/path/project.razor.bin" };
         var cts = new CancellationTokenSource();
         var detector = new TestProjectConfigurationFileChangeDetector(
             cts,

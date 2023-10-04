@@ -40,12 +40,12 @@ internal class ComponentMarkupEncodingPass : ComponentIntermediateNodePassBase, 
         // AddMarkupContent - renders the content directly as markup (high perf impact)
         // Because of this, we want to use AddContent as much as possible.
         //
-        // We want to use AddMarkupContent to avoid aggresive encoding during prerendering.
+        // We want to use AddMarkupContent to avoid aggressive encoding during prerendering.
         // Specifically, when one of the following characters are in the content,
-        // 1. New lines (\r, \n), tabs(\t) - so they get rendered as actual new lines, tabs instead of &#xA;
+        // 1. New lines (\r, \n), tabs (\t), angle brackets (<, >) - so they get rendered as actual new lines, tabs, brackets instead of &#xA;
         // 2. Any character outside the ASCII range
 
-        private static readonly char[] EncodedCharacters = new[] { '\r', '\n', '\t' };
+        private static readonly char[] EncodedCharacters = new[] { '\r', '\n', '\t', '<', '>' };
 
         private readonly Dictionary<string, string> _seenEntities = new Dictionary<string, string>(StringComparer.Ordinal);
 

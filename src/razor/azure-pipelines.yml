@@ -12,6 +12,10 @@ variables:
   value: true
 - name: Codeql.Enabled
   value: true
+- name: LogLevel
+  value: 'Verbose'
+- name: RAZOR_TRACE
+  value: 'Verbose'
 - ${{ if ne(variables['System.TeamProject'], 'public') }}:
   - group: DotNetBuilds storage account read tokens
   - name: _InternalRuntimeDownloadArgs
@@ -267,11 +271,6 @@ stages:
         - publish: artifacts\VSSetup\$(_BuildConfig)
           artifact: VSSetup
           displayName: Publish VSSetup
-          condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
-
-        - publish: artifacts\MPack\$(_BuildConfig)
-          artifact: MPack_$(Agent.Os)_$(_BuildConfig)
-          displayName: Publish VS for Mac Artifacts
           condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
 
         - publish: artifacts\packages\$(_BuildConfig)

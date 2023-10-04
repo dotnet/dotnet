@@ -160,7 +160,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
             return (null, null);
         }
 
-        var node = owner.Parent?.FirstAncestorOrSelf<SyntaxNode>(n =>
+        var node = owner.FirstAncestorOrSelf<SyntaxNode>(n =>
             n.Kind == SyntaxKind.MarkupTagHelperStartTag ||
             n.Kind == SyntaxKind.MarkupTagHelperEndTag);
         if (node is null)
@@ -178,16 +178,21 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
 
         string? propertyName = null;
 
-        if (!ignoreAttributes)
+        if (!ignoreAttributes && node is MarkupTagHelperStartTagSyntax startTag)
         {
+            // Include attributes where the end index also matches, since GetSyntaxNodeAsync will consider that the start tag but we behave
+            // as if the user wants to go to the attribute definitiion.
+            // ie: <Componet attribute$$></Component>
+            var selectedAttribute = startTag.Attributes.FirstOrDefault(a => a.Span.Contains(absoluteIndex) || a.Span.End == absoluteIndex);
+
             // If we're on an attribute then just validate against the attribute name
-            if (owner.Parent is MarkupTagHelperAttributeSyntax attribute)
+            if (selectedAttribute is MarkupTagHelperAttributeSyntax attribute)
             {
                 // Normal attribute, ie <Component attribute=value />
                 name = attribute.Name;
                 propertyName = attribute.TagHelperAttributeInfo.Name;
             }
-            else if (owner.Parent is MarkupMinimizedTagHelperAttributeSyntax minimizedAttribute)
+            else if (selectedAttribute is MarkupMinimizedTagHelperAttributeSyntax minimizedAttribute)
             {
                 // Minimized attribute, ie <Component attribute />
                 name = minimizedAttribute.Name;
@@ -290,7 +295,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
                 return null;
             }
 
-            var range = property.Identifier.Span.AsRange(csharpText);
+            var range = property.Identifier.Span.ToRange(csharpText);
             if (documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), range, out var originalRange))
             {
                 return originalRange;

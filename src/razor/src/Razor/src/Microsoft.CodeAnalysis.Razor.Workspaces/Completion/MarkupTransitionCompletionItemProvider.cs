@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
@@ -11,7 +12,7 @@ using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-internal class MarkupTransitionCompletionItemProvider : RazorCompletionItemProvider
+internal class MarkupTransitionCompletionItemProvider : IRazorCompletionItemProvider
 {
     private static readonly IReadOnlyList<RazorCommitCharacter> s_elementCommitCharacters = RazorCommitCharacter.FromArray(new[] { ">" });
 
@@ -40,15 +41,10 @@ internal class MarkupTransitionCompletionItemProvider : RazorCompletionItemProvi
 
     public MarkupTransitionCompletionItemProvider(HtmlFactsService htmlFactsService)
     {
-        if (htmlFactsService is null)
-        {
-            throw new ArgumentNullException(nameof(htmlFactsService));
-        }
-
-        _htmlFactsService = htmlFactsService;
+        _htmlFactsService = htmlFactsService ?? throw new ArgumentNullException(nameof(htmlFactsService));
     }
 
-    public override IReadOnlyList<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
+    public ImmutableArray<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
     {
         if (context is null)
         {
@@ -59,12 +55,12 @@ internal class MarkupTransitionCompletionItemProvider : RazorCompletionItemProvi
         if (owner is null)
         {
             Debug.Fail("Owner should never be null.");
-            return Array.Empty<RazorCompletionItem>();
+            return ImmutableArray<RazorCompletionItem>.Empty;
         }
 
         if (!AtMarkupTransitionCompletionPoint(owner))
         {
-            return Array.Empty<RazorCompletionItem>();
+            return ImmutableArray<RazorCompletionItem>.Empty;
         }
 
         var parent = owner.Parent;
@@ -74,11 +70,10 @@ internal class MarkupTransitionCompletionItemProvider : RazorCompletionItemProvi
         if (!_htmlFactsService.TryGetElementInfo(parent, out var containingTagNameToken, out _) ||
             !containingTagNameToken.Span.IntersectsWith(context.AbsoluteIndex))
         {
-            return Array.Empty<RazorCompletionItem>();
+            return ImmutableArray<RazorCompletionItem>.Empty;
         }
 
-        var completions = new List<RazorCompletionItem>() { MarkupTransitionCompletionItem };
-        return completions;
+        return ImmutableArray.Create(MarkupTransitionCompletionItem);
     }
 
     private static bool AtMarkupTransitionCompletionPoint(RazorSyntaxNode owner)

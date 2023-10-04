@@ -13,13 +13,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public class DefaultTextBufferCodeDocumentProviderTest : TestBase
+public class DefaultTextBufferCodeDocumentProviderTest(ITestOutputHelper testOutput) : TestBase(testOutput)
 {
-    public DefaultTextBufferCodeDocumentProviderTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void TryGetFromBuffer_SucceedsIfParserHasCodeDocument()
     {

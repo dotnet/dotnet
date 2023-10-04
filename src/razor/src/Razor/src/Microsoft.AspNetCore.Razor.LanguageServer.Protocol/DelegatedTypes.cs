@@ -59,7 +59,7 @@ internal record DelegatedCompletionItemResolveParams(
     RazorLanguageKind OriginatingKind);
 
 internal record DelegatedProjectContextsParams(
-    TextDocumentIdentifierAndVersion Identifier);
+    Uri Uri);
 
 internal record DelegatedDocumentSymbolParams(
     TextDocumentIdentifierAndVersion Identifier);

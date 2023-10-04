@@ -539,7 +539,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 {
                     _builder.Push(new HtmlAttributeIntermediateNode()
                     {
-                        AttributeName = node.Name.GetContent(),
+                        AttributeName = name,
                         Prefix = prefix.GetContent(),
                         Suffix = node.ValueSuffix?.GetContent() ?? string.Empty,
                         Source = BuildSourceSpanFromNode(node),
@@ -1319,7 +1319,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var name = node.Name.GetContent();
             _builder.Push(new HtmlAttributeIntermediateNode()
             {
-                AttributeName = node.Name.GetContent(),
+                AttributeName = name,
                 Prefix = prefix.GetContent(),
                 Suffix = node.ValueSuffix?.GetContent() ?? string.Empty,
                 Source = BuildSourceSpanFromNode(node),
@@ -1338,7 +1338,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var name = node.Name.GetContent();
             _builder.Add(new HtmlAttributeIntermediateNode()
             {
-                AttributeName = node.Name.GetContent(),
+                AttributeName = name,
                 Prefix = prefix.GetContent(),
                 Suffix = null,
                 Source = BuildSourceSpanFromNode(node),

@@ -21,7 +21,7 @@ public class RazorDirectiveCompletionSourceProviderTest : ProjectSnapshotManager
 {
     private readonly IContentType _razorContentType;
     private readonly IContentType _nonRazorContentType;
-    private readonly RazorCompletionFactsService _completionFactsService;
+    private readonly IRazorCompletionFactsService _completionFactsService;
 
     public RazorDirectiveCompletionSourceProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -34,7 +34,7 @@ public class RazorDirectiveCompletionSourceProviderTest : ProjectSnapshotManager
             c => c.IsOfType(It.IsAny<string>()) == false,
             MockBehavior.Strict);
 
-        _completionFactsService = Mock.Of<RazorCompletionFactsService>(MockBehavior.Strict);
+        _completionFactsService = Mock.Of<IRazorCompletionFactsService>(MockBehavior.Strict);
     }
 
     [Fact]

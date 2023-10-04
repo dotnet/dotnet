@@ -41,7 +41,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
             __tagHelperExecutionContext.Add(__InputTagHelper);
             BeginWriteTagHelperAttribute();
 #nullable restore
-#line (4,24)-(4,29) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithPrefix.cshtml"
+#line (4,23)-(4,28) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithPrefix.cshtml"
 WriteLiteral(Hello);
 
 #line default

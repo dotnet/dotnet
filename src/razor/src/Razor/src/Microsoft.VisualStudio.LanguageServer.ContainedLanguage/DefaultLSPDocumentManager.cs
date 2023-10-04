@@ -58,6 +58,22 @@ internal class DefaultLSPDocumentManager : TrackingLSPDocumentManager
         _documents = new ConcurrentDictionary<Uri, LSPDocument>();
     }
 
+    public override void RefreshVirtualDocuments()
+    {
+        var documents = _documents.Values.ToArray();
+
+        foreach (var document in documents)
+        {
+            var oldSnapshot = document.CurrentSnapshot;
+            if (_documentFactory.TryRefreshVirtualDocuments(document))
+            {
+                var newSnapshot = document.CurrentSnapshot;
+                NotifyDocumentManagerChangeListeners(old: oldSnapshot, @new: null, virtualOld: null, virtualNew: null, LSPDocumentChangeKind.Removed);
+                NotifyDocumentManagerChangeListeners(old: null, @new: newSnapshot, virtualOld: null, virtualNew: null, LSPDocumentChangeKind.Added);
+            }
+        }
+    }
+
     public override void TrackDocument(ITextBuffer buffer)
     {
         if (buffer is null)

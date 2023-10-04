@@ -55,7 +55,7 @@ public class FindAllReferencesEndpointTest : SingleServerDelegatingEndpointTestB
         await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var endpoint = new FindAllReferencesEndpoint(
-            LanguageServerFeatureOptions, DocumentMappingService, LanguageServer, LoggerFactory, LanguageServerFeatureOptions);
+            LanguageServerFeatureOptions, DocumentMappingService, LanguageServer, LoggerFactory, FilePathService);
 
         var sourceText = codeDocument.GetSourceText();
         sourceText.GetLineAndOffset(cursorPosition, out var line, out var offset);
@@ -96,7 +96,7 @@ public class FindAllReferencesEndpointTest : SingleServerDelegatingEndpointTestB
         {
             Assert.Equal(new Uri(razorFilePath), referenceItem.Location.Uri);
 
-            var expectedRange = expectedSpans[i].AsRange(codeDocument.GetSourceText());
+            var expectedRange = expectedSpans[i].ToRange(codeDocument.GetSourceText());
             Assert.Equal(expectedRange, referenceItem.Location.Range);
 
             i++;

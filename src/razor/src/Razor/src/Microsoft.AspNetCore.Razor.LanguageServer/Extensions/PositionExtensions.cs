@@ -10,6 +10,9 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 
 internal static class PositionExtensions
 {
+    public static LinePosition ToLinePosition(this Position position)
+        => new LinePosition(position.Line, position.Character);
+
     public static bool TryGetAbsoluteIndex(this Position position, SourceText sourceText, ILogger logger, out int absoluteIndex)
     {
         if (position is null)
@@ -22,7 +25,7 @@ internal static class PositionExtensions
             throw new ArgumentNullException(nameof(sourceText));
         }
 
-        return TryGetAbsoluteIndex(position.Character, position.Line, sourceText, logger, out absoluteIndex);
+        return sourceText.TryGetAbsoluteIndex(position.Line, position.Character, logger, out absoluteIndex);
     }
 
     public static int GetRequiredAbsoluteIndex(this Position position, SourceText sourceText, ILogger logger)
@@ -63,27 +66,6 @@ internal static class PositionExtensions
             throw new ArgumentNullException(nameof(sourceText));
         }
 
-        return position.Line >= 0 &&
-            position.Character >= 0 &&
-            position.Line < sourceText.Lines.Count &&
-            sourceText.Lines[position.Line].Start + position.Character <= sourceText.Length;
-    }
-
-    private static bool TryGetAbsoluteIndex(int character, int line, SourceText sourceText, ILogger logger, out int absoluteIndex)
-    {
-        var linePosition = new LinePosition(line, character);
-        if (linePosition.Line >= sourceText.Lines.Count)
-        {
-#pragma warning disable CA2254 // Template should be a static expression.
-// This is actually static, the compiler just doesn't know it.
-            logger?.LogError(SR.FormatPositionIndex_Outside_Range(line, nameof(sourceText), sourceText.Lines.Count));
-#pragma warning restore CA2254 // Template should be a static expression
-            absoluteIndex = -1;
-            return false;
-        }
-
-        var index = sourceText.Lines.GetPosition(linePosition);
-        absoluteIndex = index;
-        return true;
+        return sourceText.TryGetAbsoluteIndex(position.Line, position.Character, out _);
     }
 }

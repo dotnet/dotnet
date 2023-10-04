@@ -17,19 +17,33 @@ namespace Microsoft.AspNetCore.Razor.Language.Components;
 internal class ScopeStack
 {
     private readonly Stack<ScopeEntry> _stack = new Stack<ScopeEntry>();
-    private int _builderVarNumber = 1;
 
-    public string BuilderVarName { get; private set; } = ComponentsApi.RenderTreeBuilder.BuilderParameter;
+    public string BuilderVarName =>
+        Current.BuilderVarNumber == 1
+            ? ComponentsApi.RenderTreeBuilder.BuilderParameter
+            : $"{ComponentsApi.RenderTreeBuilder.BuilderParameter}{Current.BuilderVarNumber}";
 
-    public int Depth => _stack.Count;
+    public string RenderModeVarName =>
+       Current.BuilderVarNumber == 1 && Current.RenderModeCount == 0
+            ? ComponentsApi.RenderTreeBuilder.RenderModeVariableName
+            : $"{ComponentsApi.RenderTreeBuilder.RenderModeVariableName}{Current.BuilderVarNumber}_{Current.RenderModeCount}";
+   
+    public string FormNameVarName =>
+       Current.BuilderVarNumber == 1 && Current.FormNameCount == 0
+            ? ComponentsApi.RenderTreeBuilder.FormNameVariableName
+            : $"{ComponentsApi.RenderTreeBuilder.FormNameVariableName}{Current.BuilderVarNumber}_{Current.FormNameCount}";
+
+    public int Depth => _stack.Count - 1;
+
+    private ScopeEntry Current => _stack.Peek();
+
+    public ScopeStack()
+    {
+        _stack.Push(new ScopeEntry() { BuilderVarNumber = 1 });
+    }
 
     public void OpenComponentScope(CodeRenderingContext context, string name, string parameterName)
     {
-        var scope = new ScopeEntry(name, ScopeKind.Component);
-        _stack.Push(scope);
-
-        OffsetBuilderVarNumber(1);
-
         // Writes code that looks like:
         //
         // ((__builder) => { ... })
@@ -40,55 +54,39 @@ internal class ScopeStack
         {
             context.CodeWriter.Write($"({parameterName}) => ");
         }
-
-        scope.LambdaScope = context.CodeWriter.BuildLambda(BuilderVarName);
+        OpenScope(context);
     }
 
-    public void OpenTemplateScope(CodeRenderingContext context)
-    {
-        var currentScope = new ScopeEntry("__template", ScopeKind.Template);
-        _stack.Push(currentScope);
+    public void OpenTemplateScope(CodeRenderingContext context) => OpenScope(context);
 
-        // Templates always get a lambda scope, because they are defined as a lambda.
-        OffsetBuilderVarNumber(1);
-        currentScope.LambdaScope = context.CodeWriter.BuildLambda(BuilderVarName);
+    private void OpenScope(CodeRenderingContext context)
+    {
+        var scope = new ScopeEntry() { BuilderVarNumber = Current.BuilderVarNumber + 1 };
+        _stack.Push(scope);
+        scope.LambdaScope = context.CodeWriter.BuildLambda(BuilderVarName);
     }
 
     public void CloseScope(CodeRenderingContext context)
     {
         var currentScope = _stack.Pop();
         currentScope.LambdaScope.Dispose();
-        OffsetBuilderVarNumber(-1);
     }
 
-    private void OffsetBuilderVarNumber(int delta)
+    public void IncrementRenderMode()
     {
-        _builderVarNumber += delta;
-        BuilderVarName = _builderVarNumber == 1
-            ? ComponentsApi.RenderTreeBuilder.BuilderParameter
-            : $"{ComponentsApi.RenderTreeBuilder.BuilderParameter}{_builderVarNumber}";
+        Current.RenderModeCount++;
+    }
+
+    public void IncrementFormName()
+    { 
+        Current.FormNameCount++;
     }
 
     private class ScopeEntry
     {
-        public readonly string Name;
-        public ScopeKind Kind;
-        public int ChildCount;
+        public int RenderModeCount;
+        public int FormNameCount;
+        public int BuilderVarNumber;
         public IDisposable LambdaScope;
-
-        public ScopeEntry(string name, ScopeKind kind)
-        {
-            Name = name;
-            Kind = kind;
-            ChildCount = 0;
-        }
-
-        public override string ToString() => $"<{Name}> ({Kind})";
-    }
-
-    private enum ScopeKind
-    {
-        Component,
-        Template,
     }
 }

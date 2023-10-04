@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -121,18 +122,16 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
         return true;
     }
 
-    private static bool TryClassifyElement(
-        AggregateBoundElementDescription elementDescriptionInfo,
-        [NotNullWhen(true)] out IReadOnlyList<DescriptionClassification>? descriptionClassifications)
+    private static bool TryClassifyElement(AggregateBoundElementDescription elementInfo, out ImmutableArray<DescriptionClassification> classifications)
     {
-        var associatedTagHelperInfos = elementDescriptionInfo.AssociatedTagHelperDescriptions;
-        if (associatedTagHelperInfos.Count == 0)
+        var associatedTagHelperInfos = elementInfo.DescriptionInfos;
+        if (associatedTagHelperInfos.Length == 0)
         {
-            descriptionClassifications = null;
+            classifications = default;
             return false;
         }
 
-        var descriptions = new List<DescriptionClassification>();
+        using var descriptions = new PooledArrayBuilder<DescriptionClassification>();
 
         // Generates a ClassifiedTextElement that looks something like:
         //     Namespace.TypeName
@@ -143,7 +142,6 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
         {
             // 1. Classify type name
             var typeRuns = new List<ClassifiedTextRun>();
-
             ClassifyTypeName(typeRuns, descriptionInfo.TagHelperTypeName);
 
             // 2. Classify summary
@@ -154,22 +152,20 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
             descriptions.Add(new DescriptionClassification(typeRuns, documentationRuns));
         }
 
-        descriptionClassifications = descriptions;
+        classifications = descriptions.DrainToImmutable();
         return true;
     }
 
-    private static bool TryClassifyAttribute(
-        AggregateBoundAttributeDescription attributeDescriptionInfo,
-        [NotNullWhen(true)] out List<DescriptionClassification>? descriptionClassifications)
+    private static bool TryClassifyAttribute(AggregateBoundAttributeDescription attributeInfo, out ImmutableArray<DescriptionClassification> classifications)
     {
-        var associatedAttributeInfos = attributeDescriptionInfo.DescriptionInfos;
-        if (associatedAttributeInfos.Count == 0)
+        var associatedAttributeInfos = attributeInfo.DescriptionInfos;
+        if (associatedAttributeInfos.Length == 0)
         {
-            descriptionClassifications = null;
+            classifications = default;
             return false;
         }
 
-        var descriptions = new List<DescriptionClassification>();
+        using var descriptions = new PooledArrayBuilder<DescriptionClassification>();
 
         // Generates a ClassifiedTextElement that looks something like:
         //     ReturnType Namespace.TypeName.Property
@@ -201,7 +197,7 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
             descriptions.Add(new DescriptionClassification(typeRuns, documentationRuns));
         }
 
-        descriptionClassifications = descriptions;
+        classifications = descriptions.DrainToImmutable();
         return true;
     }
 
@@ -253,7 +249,7 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
             // There are certain characters that should be classified as plain text. For example,
             // in 'TypeName<T, T2>', the characters '<', ',' and '>' should be classified as plain
             // text while the rest should be classified as a keyword or type.
-            if (ch == '<' || ch == '>' || ch == '[' || ch == ']' || ch == ',')
+            if (ch is '<' or '>' or '[' or ']' or ',')
             {
                 if (currentTextRun.Length != 0)
                 {
@@ -261,7 +257,7 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
 
                     // The type we're working with could contain a nested type, in which case we may
                     // also need to reduce the inner type name(s), e.g. 'List<NamespaceName.TypeName>'
-                    if ((ch == '<' || ch == '>' || ch == '[' || ch == ']') && currentRunTextStr.Contains("."))
+                    if (ch is '<' or '>' or '[' or ']' && currentRunTextStr.Contains('.'))
                     {
                         var reducedName = ReduceTypeName(currentRunTextStr);
                         ClassifyShortName(runs, reducedName);
@@ -443,9 +439,10 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
         return new ContainerElement(ContainerElementStyle.Stacked, classifiedElementContainer);
     }
 
-    private static ClassifiedTextElement GenerateClassifiedTextElement(IReadOnlyList<DescriptionClassification> descriptionClassifications)
+    private static ClassifiedTextElement GenerateClassifiedTextElement(ImmutableArray<DescriptionClassification> descriptionClassifications)
     {
         var runs = new List<ClassifiedTextRun>();
+
         foreach (var classification in descriptionClassifications)
         {
             if (runs.Count > 0)

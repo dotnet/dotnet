@@ -251,6 +251,9 @@ namespace Microsoft.AspNetCore.Components
         void Attach(Microsoft.AspNetCore.Components.RenderHandle renderHandle);
         System.Threading.Tasks.Task SetParametersAsync(Microsoft.AspNetCore.Components.ParameterView parameters);
     }
+    public partial interface IComponentRenderMode
+    {
+    }
     public partial interface IHandleAfterRender
     {
         System.Threading.Tasks.Task OnAfterRenderAsync();
@@ -379,6 +382,11 @@ namespace Microsoft.AspNetCore.Components
         public bool IsInitialized { get { throw null; } }
         public void Render(Microsoft.AspNetCore.Components.RenderFragment renderFragment) { }
     }
+    [AttributeUsage(AttributeTargets.Class)]
+    public abstract class RenderModeAttribute : Attribute
+    {
+        public abstract IComponentRenderMode Mode { get; }
+    }
     [System.AttributeUsageAttribute(System.AttributeTargets.Class, AllowMultiple=true, Inherited=false)]
     public sealed partial class RouteAttribute : System.Attribute
     {
@@ -446,6 +454,7 @@ namespace Microsoft.AspNetCore.Components.Rendering
         public void AddElementReferenceCapture(int sequence, System.Action<Microsoft.AspNetCore.Components.ElementReference> elementReferenceCaptureAction) { }
         public void AddMarkupContent(int sequence, string markupContent) { }
         public void AddMultipleAttributes(int sequence, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, object>> attributes) { }
+        public void AddNamedEvent(string eventType, string assignedName) { }
         public void Clear() { }
         public void CloseComponent() { }
         public void CloseElement() { }
@@ -456,6 +465,7 @@ namespace Microsoft.AspNetCore.Components.Rendering
         public void OpenElement(int sequence, string elementName) { }
         public void OpenRegion(int sequence) { }
         public void SetKey(object value) { }
+        public void AddComponentRenderMode(IComponentRenderMode renderMode) { }
         public void SetUpdatesAttributeName(string updatesAttributeName) { }
         void System.IDisposable.Dispose() { }
     }

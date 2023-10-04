@@ -48,20 +48,7 @@ internal static class RangeExtensions
             throw new ArgumentNullException(nameof(other));
         }
 
-        var overlapStart = range.Start;
-        if (range.Start.CompareTo(other.Start) < 0)
-        {
-            overlapStart = other.Start;
-        }
-
-        var overlapEnd = range.End;
-        if (range.End.CompareTo(other.End) > 0)
-        {
-            overlapEnd = other.End;
-        }
-
-        // Empty ranges do not overlap with any range.
-        return overlapStart.CompareTo(overlapEnd) < 0;
+        return range.ToLinePositionSpan().OverlapsWith(other.ToLinePositionSpan());
     }
 
     public static bool LineOverlapsWith(this Range range, Range other)
@@ -116,73 +103,17 @@ internal static class RangeExtensions
         return range.Start.Line != range.End.Line;
     }
 
-    public static TextSpan AsTextSpan(this Range range, SourceText sourceText)
+    public static TextSpan ToTextSpan(this Range range, SourceText sourceText)
+        => sourceText.GetTextSpan(range.Start.Line, range.Start.Character, range.End.Line, range.End.Character);
+
+    public static Language.Syntax.TextSpan ToRazorTextSpan(this Range range, SourceText sourceText)
     {
-        if (range is null)
-        {
-            throw new ArgumentNullException(nameof(range));
-        }
-
-        if (sourceText is null)
-        {
-            throw new ArgumentNullException(nameof(sourceText));
-        }
-
-        if (range.Start.Line >= sourceText.Lines.Count)
-        {
-            throw new ArgumentOutOfRangeException($"Range start line {range.Start.Line} matches or exceeds SourceText boundary {sourceText.Lines.Count}.");
-        }
-
-        if (range.End.Line >= sourceText.Lines.Count)
-        {
-            throw new ArgumentOutOfRangeException($"Range end line {range.End.Line} matches or exceeds SourceText boundary {sourceText.Lines.Count}.");
-        }
-
-        var start = sourceText.Lines[range.Start.Line].Start + range.Start.Character;
-        var end = sourceText.Lines[range.End.Line].Start + range.End.Character;
-
-        var length = end - start;
-        if (length < 0)
-        {
-            throw new ArgumentOutOfRangeException($"{range} resolved to zero or negative length.");
-        }
-
-        return new TextSpan(start, length);
+        var span = range.ToTextSpan(sourceText);
+        return new Language.Syntax.TextSpan(span.Start, span.Length);
     }
 
-    public static Language.Syntax.TextSpan AsRazorTextSpan(this Range range, SourceText sourceText)
-    {
-        if (range is null)
-        {
-            throw new ArgumentNullException(nameof(range));
-        }
-
-        if (sourceText is null)
-        {
-            throw new ArgumentNullException(nameof(sourceText));
-        }
-
-        if (range.Start.Line >= sourceText.Lines.Count)
-        {
-            throw new ArgumentOutOfRangeException($"Range start line {range.Start.Line} matches or exceeds SourceText boundary {sourceText.Lines.Count}.");
-        }
-
-        if (range.End.Line >= sourceText.Lines.Count)
-        {
-            throw new ArgumentOutOfRangeException($"Range end line {range.End.Line} matches or exceeds SourceText boundary {sourceText.Lines.Count}.");
-        }
-
-        var start = sourceText.Lines[range.Start.Line].Start + range.Start.Character;
-        var end = sourceText.Lines[range.End.Line].Start + range.End.Character;
-
-        var length = end - start;
-        if (length < 0)
-        {
-            throw new ArgumentOutOfRangeException($"{range} resolved to zero or negative length.");
-        }
-
-        return new Language.Syntax.TextSpan(start, length);
-    }
+    public static LinePositionSpan ToLinePositionSpan(this Range range)
+        => new LinePositionSpan(range.Start.ToLinePosition(), range.End.ToLinePosition());
 
     public static bool IsUndefined(this Range range)
     {
@@ -192,5 +123,17 @@ internal static class RangeExtensions
         }
 
         return range == UndefinedRange;
+    }
+
+    public static int CompareTo(this Range range1, Range range2)
+    {
+        var result = range1.Start.CompareTo(range2.Start);
+
+        if (result == 0)
+        {
+            result = range1.End.CompareTo(range2.End);
+        }
+
+        return result;
     }
 }

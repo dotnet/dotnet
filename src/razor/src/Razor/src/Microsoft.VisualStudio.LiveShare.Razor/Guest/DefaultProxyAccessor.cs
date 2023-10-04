@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 
 [System.Composition.Shared]
 [Export(typeof(ProxyAccessor))]
-public class DefaultProxyAccessor : ProxyAccessor
+internal class DefaultProxyAccessor : ProxyAccessor
 {
     private readonly LiveShareSessionAccessor _liveShareSessionAccessor;
     private readonly JoinableTaskFactory _joinableTaskFactory;

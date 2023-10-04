@@ -24,7 +24,6 @@ namespace Test
 #nullable disable
             ));
             __builder.AddAttribute(2, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
-                global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_0(__builder2, 3);
             }
             ));
             __builder.CloseComponent();

@@ -160,10 +160,4 @@ internal partial class EditorInProcess
             TimeSpan.FromMilliseconds(50),
             cancellationToken);
     }
-
-    public async Task WaitForProjectReadyAsync(CancellationToken cancellationToken)
-    {
-        await TestServices.Workspace.WaitForAsyncOperationsAsync(FeatureAttribute.LanguageServer, cancellationToken);
-        await TestServices.Workspace.WaitForAsyncOperationsAsync(FeatureAttribute.Workspace, cancellationToken);
-    }
 }

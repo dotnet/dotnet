@@ -50,7 +50,7 @@ internal class CSharpFormattingPass : CSharpFormattingPassBase
         var changedContext = context;
         if (result.Edits.Length > 0)
         {
-            var changes = result.Edits.Select(e => e.AsTextChange(originalText)).ToArray();
+            var changes = result.Edits.Select(e => e.ToTextChange(originalText)).ToArray();
             changedText = changedText.WithChanges(changes);
             changedContext = await context.WithTextAsync(changedText).ConfigureAwait(false);
         }
@@ -61,7 +61,7 @@ internal class CSharpFormattingPass : CSharpFormattingPassBase
         var csharpEdits = await FormatCSharpAsync(changedContext, cancellationToken).ConfigureAwait(false);
         if (csharpEdits.Count > 0)
         {
-            var csharpChanges = csharpEdits.Select(c => c.AsTextChange(changedText));
+            var csharpChanges = csharpEdits.Select(c => c.ToTextChange(changedText));
             changedText = changedText.WithChanges(csharpChanges);
             changedContext = await changedContext.WithTextAsync(changedText).ConfigureAwait(false);
 
@@ -82,7 +82,7 @@ internal class CSharpFormattingPass : CSharpFormattingPassBase
         _logger.LogTestOnly("Generated C#:\r\n{context.CSharpSourceText}", context.CSharpSourceText);
 
         var finalChanges = changedText.GetTextChanges(originalText);
-        var finalEdits = finalChanges.Select(f => f.AsTextEdit(originalText)).ToArray();
+        var finalEdits = finalChanges.Select(f => f.ToTextEdit(originalText)).ToArray();
 
         return new FormattingResult(finalEdits);
     }
@@ -101,7 +101,7 @@ internal class CSharpFormattingPass : CSharpFormattingPassBase
             }
 
             // These should already be remapped.
-            var range = span.AsRange(sourceText);
+            var range = span.ToRange(sourceText);
             var edits = await CSharpFormatter.FormatAsync(context, range, cancellationToken).ConfigureAwait(false);
             csharpEdits.AddRange(edits.Where(e => range.Contains(e.Range)));
         }

@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Razor.Editor;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public interface IClientSettingsManager
+internal interface IClientSettingsManager
 {
     event EventHandler<ClientSettingsChangedEventArgs>? ClientSettingsChanged;
 
@@ -17,19 +17,14 @@ public interface IClientSettingsManager
     ClientSettings GetClientSettings();
 }
 
-public interface IAdvancedSettingsStorage
+internal interface IAdvancedSettingsStorage
 {
     ClientAdvancedSettings GetAdvancedSettings();
 
     event EventHandler<ClientAdvancedSettingsChangedEventArgs>? Changed;
 }
 
-public class ClientAdvancedSettingsChangedEventArgs : EventArgs
+internal class ClientAdvancedSettingsChangedEventArgs(ClientAdvancedSettings advancedSettings) : EventArgs
 {
-    public ClientAdvancedSettingsChangedEventArgs(ClientAdvancedSettings advancedSettings)
-    {
-        Settings = advancedSettings;
-    }
-
-    public ClientAdvancedSettings Settings { get; }
+    public ClientAdvancedSettings Settings { get; } = advancedSettings;
 }

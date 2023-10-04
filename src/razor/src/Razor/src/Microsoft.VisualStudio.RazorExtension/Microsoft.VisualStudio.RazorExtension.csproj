@@ -93,6 +93,8 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
 
+    <AdditionalFiles Include="PublicAPI\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI\PublicAPI.Unshipped.txt" />
 
     <Resource Include="SyntaxTree.bmp" />
 
@@ -297,6 +299,7 @@
     <ItemGroup>
       <BindingRedirectAssemblies Include="@(ProjectReference)" AssemblyName="%(Filename)" />
       <BindingRedirectAssemblies Remove="@(ProjectReference)" Condition="%(ProjectReference.Name) == 'Microsoft.CodeAnalysis.Remote.Razor.CoreComponents'" />
+      <BindingRedirectAssemblies Remove="@(ProjectReference)" Condition="%(ProjectReference.ReferenceOutputAssembly) == 'false'" />
       <BindingRedirectAssemblies Include="$(AssemblyName)" AssemblyName="$(AssemblyName)" />
     </ItemGroup>
     <PropertyGroup>

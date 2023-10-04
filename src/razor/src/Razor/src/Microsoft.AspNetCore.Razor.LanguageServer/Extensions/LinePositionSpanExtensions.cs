@@ -2,20 +2,36 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 
 internal static class LinePositionSpanExtensions
 {
-    public static Range AsRange(this LinePositionSpan linePositionSpan)
-    {
-        var range = new Range
+    public static Range ToRange(this LinePositionSpan linePositionSpan)
+        => new Range
         {
-            Start = new Position { Line = linePositionSpan.Start.Line, Character = linePositionSpan.Start.Character },
-            End = new Position { Line = linePositionSpan.End.Line, Character = linePositionSpan.End.Character }
+            Start = linePositionSpan.Start.ToPosition(),
+            End = linePositionSpan.End.ToPosition()
         };
 
-        return range;
+    public static TextSpan ToTextSpan(this LinePositionSpan linePositionSpan, SourceText sourceText)
+        => sourceText.GetTextSpan(linePositionSpan.Start.Line, linePositionSpan.Start.Character, linePositionSpan.End.Line, linePositionSpan.End.Character);
+
+    public static bool OverlapsWith(this LinePositionSpan range, LinePositionSpan other)
+    {
+        var overlapStart = range.Start;
+        if (range.Start.CompareTo(other.Start) < 0)
+        {
+            overlapStart = other.Start;
+        }
+
+        var overlapEnd = range.End;
+        if (range.End.CompareTo(other.End) > 0)
+        {
+            overlapEnd = other.End;
+        }
+
+        // Empty ranges do not overlap with any range.
+        return overlapStart.CompareTo(overlapEnd) < 0;
     }
 }

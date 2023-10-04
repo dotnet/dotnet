@@ -5,6 +5,7 @@
 
 using System.Globalization;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
@@ -72,6 +73,7 @@ public class RazorDiagnosticConverterTest
         var range = RazorDiagnosticConverter.ConvertSpanToRange(sourceSpan, sourceText);
 
         // Assert
+        Assert.Equal("lo W", sourceText.GetSubTextString(range.ToTextSpan(sourceText)));
         Assert.Equal(expectedRange, range);
     }
 
@@ -91,6 +93,7 @@ public class RazorDiagnosticConverterTest
         var range = RazorDiagnosticConverter.ConvertSpanToRange(sourceSpan, sourceText);
 
         // Assert
+        Assert.Equal("", sourceText.GetSubTextString(range.ToTextSpan(sourceText)));
         Assert.Equal(expectedRange, range);
     }
 
@@ -102,14 +105,15 @@ public class RazorDiagnosticConverterTest
         var sourceSpan = new SourceSpan(sourceText.Length + 5, 0, sourceText.Length + 5, 4);
         var expectedRange = new Range
         {
-            Start = new Position(0, 10),
-            End = new Position(0, 10)
+            Start = new Position(0, 11),
+            End = new Position(0, 11)
         };
 
         // Act
         var range = RazorDiagnosticConverter.ConvertSpanToRange(sourceSpan, sourceText);
 
         // Assert
+        Assert.Equal("", sourceText.GetSubTextString(range.ToTextSpan(sourceText)));
         Assert.Equal(expectedRange, range);
     }
 
@@ -122,13 +126,14 @@ public class RazorDiagnosticConverterTest
         var expectedRange = new Range
         {
             Start = new Position(0, 6),
-            End = new Position(0, 10)
+            End = new Position(0, 11)
         };
 
         // Act
         var range = RazorDiagnosticConverter.ConvertSpanToRange(sourceSpan, sourceText);
 
         // Assert
+        Assert.Equal("World", sourceText.GetSubTextString(range.ToTextSpan(sourceText)));
         Assert.Equal(expectedRange, range);
     }
 

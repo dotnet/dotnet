@@ -8,12 +8,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
-public class FormatDocumentTests : AbstractRazorEditorTest
+public class FormatDocumentTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
-    private static readonly string s_projectPath = TestProject.GetProjectDirectory(typeof(FormatDocumentTests), useCurrentDirectory: true);
+    private static string? s_projectPath;
 
     // To add new formatting tests create a sample file of the "before" state
     // and place it in the TestFiles\Input folder.
@@ -78,6 +79,7 @@ public class FormatDocumentTests : AbstractRazorEditorTest
         {
             // If there was no expected results file, we generate one, but still fail
             // the test so that its impossible to forget to commit the results.
+            s_projectPath ??= TestProject.GetProjectDirectory(typeof(FormatDocumentTests), useCurrentDirectory: true);
             var path = Path.Combine(s_projectPath, "Formatting", "TestFiles", "Expected");
             var fileName = expectedResourceName.Split(new[] { '.' }, 8).Last();
 

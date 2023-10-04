@@ -82,8 +82,8 @@ namespace __Blazor.MyApp.Components.TestComponent
         public static global::MyApp.Components.ParentComponent<T> CreateParentComponent_0<T>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, global::MyApp.MyClass<T> __arg0, int __seq1, Microsoft.AspNetCore.Components.RenderFragment __arg1)
         {
         __builder.OpenComponent<global::MyApp.Components.ParentComponent<T>>(seq);
-        __builder.AddComponentParameter(__seq0, "Parameter", __arg0);
-        __builder.AddComponentParameter(__seq1, "ChildContent", __arg1);
+        __builder.AddAttribute(__seq0, "Parameter", (object)__arg0);
+        __builder.AddAttribute(__seq1, "ChildContent", (object)__arg1);
         __builder.CloseComponent();
         return default;
         }

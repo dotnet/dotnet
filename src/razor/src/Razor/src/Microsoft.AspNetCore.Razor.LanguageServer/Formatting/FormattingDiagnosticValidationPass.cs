@@ -53,7 +53,7 @@ internal class FormattingDiagnosticValidationPass : FormattingPassBase
 
         var text = context.SourceText;
         var edits = result.Edits;
-        var changes = edits.Select(e => e.AsTextChange(text));
+        var changes = edits.Select(e => e.ToTextChange(text));
         var changedText = text.WithChanges(changes);
         var changedContext = await context.WithTextAsync(changedText).ConfigureAwait(false);
         var changedDiagnostics = changedContext.CodeDocument.GetSyntaxTree().Diagnostics;

@@ -74,7 +74,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
             __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
                 WriteLiteral("\r\n        <label class=\"col-md-2 control-label\">");
 #nullable restore
-#line (25,48)-(25,52) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithoutModel.cshtml"
+#line (25,47)-(25,51) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithoutModel.cshtml"
 Write(Name);
 
 #line default

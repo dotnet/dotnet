@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common;
@@ -11,13 +12,14 @@ public sealed class ThrowingTraceListener : TraceListener
     private static bool s_throwingTraceListenerAdded;
     private static readonly object s_gate = new();
 
-    public static void AddToListeners()
+    public static ThrowingTraceListener? AddToListeners()
     {
+        ThrowingTraceListener? result = null;
         lock (s_gate)
         {
             if (s_throwingTraceListenerAdded)
             {
-                return;
+                return result;
             }
 
             var sawThrowingTraceListener = false;
@@ -40,18 +42,29 @@ public sealed class ThrowingTraceListener : TraceListener
             {
                 // Add an instance of the ThrowingTraceListener so that Debug.Assert and Debug.Fail
                 // throw exceptions during test runs.
-                listeners.Add(new ThrowingTraceListener());
+                result = new ThrowingTraceListener();
+                listeners.Add(result);
             }
 
             s_throwingTraceListenerAdded = true;
         }
+
+        return result;
     }
+
+    private readonly List<string> _fails = new();
+
+    public string[] Fails => _fails.ToArray();
 
     public override void Fail(string? message, string? detailMessage)
     {
-        throw new InvalidOperationException(
-            (string.IsNullOrEmpty(message) ? "Assertion failed" : message) +
-            (string.IsNullOrEmpty(detailMessage) ? "" : Environment.NewLine + detailMessage));
+        var stackTrace = new StackTrace(fNeedFileInfo: true);
+        var logMessage = (string.IsNullOrEmpty(message) ? "Assertion failed" : message) +
+            (string.IsNullOrEmpty(detailMessage) ? "" : Environment.NewLine + detailMessage);
+
+        _fails.Add($"{logMessage}{Environment.NewLine}{stackTrace}");
+
+        throw new InvalidOperationException(logMessage);
     }
 
     public override void Write(object? o)

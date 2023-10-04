@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -177,6 +177,9 @@
   <data name="EventHandlerTagHelper_StopPropagation_Documentation" xml:space="preserve">
     <value>Specifies whether to prevent further propagation of the '{0}' event in the capturing and bubbling phases.</value>
   </data>
+  <data name="FormNameTagHelper_Documentation" xml:space="preserve">
+    <value>Name used to match the form handler on the server.</value>
+  </data>
   <data name="ImplementsDirective_Description" xml:space="preserve">
     <value>Declares an interface implementation for the current class.</value>
   </data>
@@ -221,6 +224,18 @@
   </data>
   <data name="RefTagHelper_Documentation" xml:space="preserve">
     <value>Populates the specified field or property with a reference to the element or component.</value>
+  </data>
+  <data name="RenderModeDirective_Documentation" xml:space="preserve">
+    <value>Specifies the render mode for this component.</value>
+  </data>
+  <data name="RenderModeDirective_Token_Description" xml:space="preserve">
+    <value>An identifier or explicit razor expression that resolves to a render mode that should be applied to this component.</value>
+  </data>
+  <data name="RenderModeDirective_Token_Name" xml:space="preserve">
+    <value>Render mode</value>
+  </data>
+  <data name="RenderModeTagHelper_Documentation" xml:space="preserve">
+    <value>Specifies the render mode for a component.</value>
   </data>
   <data name="SplatTagHelper_Documentation" xml:space="preserve">
     <value>Merges a collection of attributes into the current element or component.</value>

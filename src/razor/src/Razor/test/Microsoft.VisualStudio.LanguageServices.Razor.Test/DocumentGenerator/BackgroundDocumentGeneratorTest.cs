@@ -50,7 +50,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public async Task ProcessDocument_LongDocumentParse_DoesNotUpdateAfterSuppress()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(Workspace);
+        var projectManager = new TestProjectSnapshotManager(Workspace, Dispatcher);
         projectManager.ProjectAdded(_hostProject1);
 
         // We utilize a task completion source here so we can "fake" a document parse taking a significant amount of time
@@ -96,7 +96,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public async Task ProcessDocument_SwallowsIOExceptions()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(Workspace);
+        var projectManager = new TestProjectSnapshotManager(Workspace, Dispatcher);
         projectManager.ProjectAdded(_hostProject1);
 
         var textLoader = new Mock<TextLoader>(MockBehavior.Strict);
@@ -127,7 +127,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public async Task ProcessDocument_SwallowsUnauthorizedAccessExceptions()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(Workspace);
+        var projectManager = new TestProjectSnapshotManager(Workspace, Dispatcher);
         projectManager.ProjectAdded(_hostProject1);
 
         var textLoader = new Mock<TextLoader>(MockBehavior.Strict);
@@ -158,7 +158,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public async Task Queue_ProcessesNotifications_AndGoesBackToSleep()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(Workspace);
+        var projectManager = new TestProjectSnapshotManager(Workspace, Dispatcher);
         projectManager.ProjectAdded(_hostProject1);
         projectManager.ProjectAdded(_hostProject2);
         projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
@@ -197,7 +197,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public async Task Queue_ProcessesNotifications_AndRestarts()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(Workspace);
+        var projectManager = new TestProjectSnapshotManager(Workspace, Dispatcher);
         projectManager.ProjectAdded(_hostProject1);
         projectManager.ProjectAdded(_hostProject2);
         projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
@@ -260,7 +260,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public async Task DocumentChanged_ReparsesRelatedFiles()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(Workspace)
+        var projectManager = new TestProjectSnapshotManager(Workspace, Dispatcher)
         {
             AllowNotifyListeners = true,
         };
@@ -323,7 +323,7 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public async Task DocumentRemoved_ReparsesRelatedFiles()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(Workspace)
+        var projectManager = new TestProjectSnapshotManager(Workspace, Dispatcher)
         {
             AllowNotifyListeners = true,
         };

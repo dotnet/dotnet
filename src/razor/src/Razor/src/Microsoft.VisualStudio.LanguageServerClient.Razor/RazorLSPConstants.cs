@@ -22,4 +22,8 @@ internal static class RazorLSPConstants
     public const string HtmlLSPDelegationContentTypeName = "html-delegation";
 
     public const string RoslynSimplifyMethodEndpointName = "roslyn/simplifyMethod";
+
+    public const string RoslynFormatNewFileEndpointName = "roslyn/formatNewFile";
+
+    public const string RoslynSemanticTokenRangesEndpointName = "roslyn/semanticTokenRanges";
 }

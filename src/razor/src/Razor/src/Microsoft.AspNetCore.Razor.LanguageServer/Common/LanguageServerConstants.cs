@@ -3,11 +3,11 @@
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
-public static class LanguageServerConstants
+internal static class LanguageServerConstants
 {
     public const int VSCompletionItemKindOffset = 118115;
 
-    public const string DefaultProjectConfigurationFile = "project.razor.json";
+    public const string DefaultProjectConfigurationFile = "project.razor.bin";
 
     public const string RazorSemanticTokensLegendEndpoint = "_vs_/textDocument/semanticTokensLegend";
 

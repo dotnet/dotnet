@@ -21,9 +21,9 @@ internal partial class RazorCustomMessageTarget
         var identifier = request.Identifier.TextDocumentIdentifier;
         if (request.RequiresVirtualDocument)
         {
-            var (synchronized, virtualDocument) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
+            var (synchronized, virtualDocument) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
                 request.Identifier.Version,
-                request.Identifier.TextDocumentIdentifier.Uri,
+                request.Identifier.TextDocumentIdentifier,
                 cancellationToken).ConfigureAwait(false);
             if (!synchronized)
             {

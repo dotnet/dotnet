@@ -76,6 +76,16 @@ public abstract class IntermediateNodeWriter
         throw new NotSupportedException("This writer does not support components.");
     }
 
+    public virtual void WriteRenderMode(CodeRenderingContext context, RenderModeIntermediateNode node)
+    {
+        throw new NotSupportedException("This writer does not support components.");
+    }
+
+    public virtual void WriteFormName(CodeRenderingContext context, FormNameIntermediateNode node)
+    {
+        throw new NotSupportedException("This writer does not support components.");
+    }
+
     public abstract void BeginWriterScope(CodeRenderingContext context, string writer);
 
     public abstract void EndWriterScope(CodeRenderingContext context);

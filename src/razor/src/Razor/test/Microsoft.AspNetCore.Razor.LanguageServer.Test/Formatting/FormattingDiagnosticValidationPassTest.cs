@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -132,7 +131,7 @@ public class Foo { }
 
     private FormattingDiagnosticValidationPass GetPass()
     {
-        var mappingService = new RazorDocumentMappingService(TestLanguageServerFeatureOptions.Instance, new TestDocumentContextFactory(), LoggerFactory);
+        var mappingService = new RazorDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory);
 
         var client = Mock.Of<ClientNotifierServiceBase>(MockBehavior.Strict);
         var pass = new FormattingDiagnosticValidationPass(mappingService, client, LoggerFactory)

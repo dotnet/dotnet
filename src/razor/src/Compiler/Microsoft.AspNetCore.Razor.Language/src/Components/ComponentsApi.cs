@@ -50,6 +50,16 @@ internal static class ComponentsApi
         public const string MetadataName = "System.Collection.IDictionary`2";
     }
 
+    public static class IComponentRenderMode
+    {
+        public const string FullTypeName = "Microsoft.AspNetCore.Components.IComponentRenderMode";
+    }
+
+    public static class RenderModeAttribute
+    {
+        public const string FullTypeName = "Microsoft.AspNetCore.Components.RenderModeAttribute";
+    }
+
     public static class RenderFragment
     {
         public const string Namespace = "Microsoft.AspNetCore.Components";
@@ -71,6 +81,8 @@ internal static class ComponentsApi
 
         public const string BuilderParameter = "__builder";
 
+        public const string FormNameVariableName = "__formName";
+
         public const string OpenElement = nameof(OpenElement);
 
         public const string CloseElement = nameof(CloseElement);
@@ -86,7 +98,10 @@ internal static class ComponentsApi
         public const string AddAttribute = nameof(AddAttribute);
 
         public const string AddMultipleAttributes = nameof(AddMultipleAttributes);
+
         public const string AddComponentParameter = nameof(AddComponentParameter);
+
+        public const string AddNamedEvent = nameof(AddNamedEvent);
 
         public const string AddElementReferenceCapture = nameof(AddElementReferenceCapture);
 
@@ -105,6 +120,10 @@ internal static class ComponentsApi
         public const string AddEventPreventDefaultAttribute = nameof(AddEventPreventDefaultAttribute);
 
         public const string AddEventStopPropagationAttribute = nameof(AddEventStopPropagationAttribute);
+
+        public const string AddComponentRenderMode = nameof(AddComponentRenderMode);
+
+        public const string RenderModeVariableName = "__renderMode";
     }
 
     public static class RuntimeHelpers

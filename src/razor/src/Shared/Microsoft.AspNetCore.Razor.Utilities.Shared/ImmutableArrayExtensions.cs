@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace System.Collections.Immutable;
@@ -73,15 +74,30 @@ internal static class ImmutableArrayExtensions
 
         static ImmutableArray<TResult> BuildResult(ImmutableArray<T> items, Func<T, TResult> selector)
         {
-            using var _ = ArrayBuilderPool<TResult>.GetPooledObject(out var result);
-            result.SetCapacityIfLarger(items.Length);
+            using var results = new PooledArrayBuilder<TResult>(capacity: items.Length);
 
             foreach (var item in items)
             {
-                result.Add(selector(item));
+                results.Add(selector(item));
             }
 
-            return result.DrainToImmutable();
+            return results.DrainToImmutable();
         }
+    }
+
+    public static ImmutableArray<TResult> SelectManyAsArray<TSource, TResult>(this IReadOnlyCollection<TSource>? source, Func<TSource, ImmutableArray<TResult>> selector)
+    {
+        if (source is null || source.Count == 0)
+        {
+            return ImmutableArray<TResult>.Empty;
+        }
+
+        using var builder = new PooledArrayBuilder<TResult>(capacity: source.Count);
+        foreach (var item in source)
+        {
+            builder.AddRange(selector(item));
+        }
+
+        return builder.DrainToImmutable();
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public sealed class AttributeCompletionResult
+internal sealed class AttributeCompletionResult
 {
     public IReadOnlyDictionary<string, IEnumerable<BoundAttributeDescriptor>> Completions { get; }
 

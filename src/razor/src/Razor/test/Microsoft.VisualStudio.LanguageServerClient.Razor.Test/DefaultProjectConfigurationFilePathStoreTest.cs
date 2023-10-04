@@ -27,13 +27,13 @@ public class DefaultProjectConfigurationFilePathStoreTest : TestBase
         var store = new DefaultProjectConfigurationFilePathStore();
         var projectFilePath = @"C:\project.csproj";
         var hostProject = new HostProject(projectFilePath, @"C:\project\obj", RazorConfiguration.Default, null);
-        var configurationFilePath = @"C:\project\subpath\..\obj\project.razor.json";
+        var configurationFilePath = @"C:\project\subpath\..\obj\project.razor.bin";
         var called = false;
         store.Changed += (sender, args) =>
         {
             called = true;
             Assert.Equal(hostProject.Key, args.ProjectKey);
-            Assert.Equal(@"C:\project\obj\project.razor.json", args.ConfigurationFilePath);
+            Assert.Equal(@"C:\project\obj\project.razor.bin", args.ConfigurationFilePath);
         };
 
         // Act
@@ -50,7 +50,7 @@ public class DefaultProjectConfigurationFilePathStoreTest : TestBase
         var store = new DefaultProjectConfigurationFilePathStore();
         var projectFilePath = @"C:\project.csproj";
         var hostProject = new HostProject(projectFilePath, @"C:\project\obj", RazorConfiguration.Default, null);
-        var configurationFilePath = @"C:\project\obj\project.razor.json";
+        var configurationFilePath = @"C:\project\obj\project.razor.bin";
         var called = false;
         store.Changed += (sender, args) =>
         {
@@ -73,7 +73,7 @@ public class DefaultProjectConfigurationFilePathStoreTest : TestBase
         var store = new DefaultProjectConfigurationFilePathStore();
         var projectFilePath = @"C:\project.csproj";
         var hostProject = new HostProject(projectFilePath, @"C:\project\obj", RazorConfiguration.Default, null);
-        var configurationFilePath = @"C:\project\obj\project.razor.json";
+        var configurationFilePath = @"C:\project\obj\project.razor.bin";
         store.Set(hostProject.Key, configurationFilePath);
         var called = false;
         store.Changed += (sender, args) => called = true;
@@ -92,7 +92,7 @@ public class DefaultProjectConfigurationFilePathStoreTest : TestBase
         var store = new DefaultProjectConfigurationFilePathStore();
         var projectFilePath = @"C:\project.csproj";
         var hostProject = new HostProject(projectFilePath, @"C:\project\obj", RazorConfiguration.Default, null);
-        var expectedConfigurationFilePath = @"C:\project\obj\project.razor.json";
+        var expectedConfigurationFilePath = @"C:\project\obj\project.razor.bin";
         store.Set(hostProject.Key, expectedConfigurationFilePath);
 
         // Act
@@ -110,10 +110,10 @@ public class DefaultProjectConfigurationFilePathStoreTest : TestBase
         var store = new DefaultProjectConfigurationFilePathStore();
         var projectFilePath = @"C:\project.csproj";
         var hostProject = new HostProject(projectFilePath, @"C:\project\obj", RazorConfiguration.Default, null);
-        var expectedConfigurationFilePath = @"C:\project\obj\project.razor.json";
+        var expectedConfigurationFilePath = @"C:\project\obj\project.razor.bin";
 
         // Act
-        store.Set(hostProject.Key, @"C:\other\obj\project.razor.json");
+        store.Set(hostProject.Key, @"C:\other\obj\project.razor.bin");
         store.Set(hostProject.Key, expectedConfigurationFilePath);
 
         // Assert
@@ -131,7 +131,7 @@ public class DefaultProjectConfigurationFilePathStoreTest : TestBase
         // Act
         var mappings = store.GetMappings();
         var hostProject = new HostProject(@"C:\project.csproj", @"C:\project\obj", RazorConfiguration.Default, null);
-        store.Set(hostProject.Key, @"C:\project\obj\project.razor.json");
+        store.Set(hostProject.Key, @"C:\project\obj\project.razor.bin");
 
         // Assert
         Assert.Empty(mappings);
@@ -144,8 +144,7 @@ public class DefaultProjectConfigurationFilePathStoreTest : TestBase
         var store = new DefaultProjectConfigurationFilePathStore();
         var expectedMappings = new Dictionary<ProjectKey, string>()
         {
-            [TestProjectKey.Create(@"C:\project1\obj")] = @"C:\project1\obj\project.razor.json",
-            [TestProjectKey.Create(@"C:\project2\obj")] = @"C:\project2\obj\project.razor.json"
+            [TestProjectKey.Create(@"C:\project1\obj")] = @"C:\project1\obj\project.razor.bin"
         };
         foreach (var mapping in expectedMappings)
         {
@@ -166,7 +165,7 @@ public class DefaultProjectConfigurationFilePathStoreTest : TestBase
         var store = new DefaultProjectConfigurationFilePathStore();
         var projectFilePath = @"C:\project.csproj";
         var hostProject = new HostProject(projectFilePath, @"C:\project\obj", RazorConfiguration.Default, null);
-        store.Set(hostProject.Key, @"C:\project\obj\project.razor.json");
+        store.Set(hostProject.Key, @"C:\project\obj\project.razor.bin");
         var called = false;
         store.Changed += (sender, args) =>
         {
@@ -204,7 +203,7 @@ public class DefaultProjectConfigurationFilePathStoreTest : TestBase
         var store = new DefaultProjectConfigurationFilePathStore();
         var projectFilePath = @"C:\project.csproj";
         var hostProject = new HostProject(projectFilePath, @"C:\project\obj", RazorConfiguration.Default, null);
-        store.Set(hostProject.Key, @"C:\project\obj\project.razor.json");
+        store.Set(hostProject.Key, @"C:\project\obj\project.razor.bin");
 
         // Act
         store.Remove(hostProject.Key);

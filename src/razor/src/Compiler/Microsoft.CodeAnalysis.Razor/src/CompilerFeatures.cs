@@ -35,5 +35,11 @@ public static class CompilerFeatures
 
             builder.Features.Add(new DefaultTypeNameFeature());
         }
+
+        if (builder.Configuration.LanguageVersion.CompareTo(RazorLanguageVersion.Version_8_0) >= 0)
+        {
+            builder.Features.Add(new RenderModeTagHelperDescriptorProvider());
+            builder.Features.Add(new FormNameTagHelperDescriptorProvider());
+        }
     }
 }

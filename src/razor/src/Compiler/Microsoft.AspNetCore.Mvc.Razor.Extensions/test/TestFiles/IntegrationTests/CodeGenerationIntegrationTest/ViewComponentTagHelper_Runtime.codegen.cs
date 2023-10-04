@@ -63,7 +63,7 @@ namespace AspNetCore
             __tagHelperExecutionContext.Add(__TestViewComponentTagHelper);
             BeginWriteTagHelperAttribute();
 #nullable restore
-#line (6,23)-(6,26) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelper.cshtml"
+#line (6,22)-(6,25) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelper.cshtml"
 WriteLiteral(foo);
 
 #line default

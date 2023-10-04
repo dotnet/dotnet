@@ -20,12 +20,12 @@ public sealed class MarkupElementIntermediateNode : IntermediateNode
 
     public IEnumerable<IntermediateNode> Body => Children.Where(c =>
     {
-        return
-            c as ComponentAttributeIntermediateNode == null &&
-            c as HtmlAttributeIntermediateNode == null &&
-            c as SplatIntermediateNode == null &&
-            c as SetKeyIntermediateNode == null &&
-            c as ReferenceCaptureIntermediateNode == null;
+        return c is not (ComponentAttributeIntermediateNode or
+            HtmlAttributeIntermediateNode or
+            SplatIntermediateNode or
+            SetKeyIntermediateNode or
+            ReferenceCaptureIntermediateNode or
+            FormNameIntermediateNode);
     });
 
     public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();

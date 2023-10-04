@@ -833,7 +833,7 @@ namespace MyApp.Pages
             __builder.OpenElement(1, ""h3"");
             __builder.AddContent(2, ""Current count: "");
 #nullable restore
-#line (3,21)-(3,26) 24 ""Pages/Counter.razor""
+#line (3,20)-(3,25) 24 ""Pages/Counter.razor""
 __builder.AddContent(3, count);
 
 #line default
@@ -993,7 +993,7 @@ namespace MyApp.Pages
             __builder.OpenElement(1, ""h3"");
             __builder.AddContent(2, ""Current count: "");
 #nullable restore
-#line (3,21)-(3,26) 24 ""Pages/Counter.razor""
+#line (3,20)-(3,25) 24 ""Pages/Counter.razor""
 __builder.AddContent(3, count);
 
 #line default
@@ -2619,14 +2619,48 @@ namespace MyApp.Pages
             driver = driver.WithUpdatedAnalyzerConfigOptions(suppressedOptions);
 
             // results should be empty
+            using var eventListener = new RazorEventListener();
             var emptyResult = RunGenerator(compilation!, ref driver)
                     .VerifyPageOutput();
+
+            // Check that none of the steps actually ran
+            Assert.Empty(eventListener.Events);
 
             // now unsuppress and re-run
             driver = driver.WithUpdatedAnalyzerConfigOptions(optionsProvider);
 
             result = RunGenerator(compilation!, ref driver)
                 .VerifyOutputsMatch(result);
+
+            Assert.Collection(eventListener.Events,
+                e => Assert.Equal("ComputeRazorSourceGeneratorOptions", e.EventName),
+                e => e.AssertSingleItem("ParseRazorDocumentStart", "Pages/Index.razor"),
+                e => e.AssertSingleItem("ParseRazorDocumentStop", "Pages/Index.razor"),
+                e => e.AssertSingleItem("ParseRazorDocumentStart", "Pages/Counter.razor"),
+                e => e.AssertSingleItem("ParseRazorDocumentStop", "Pages/Counter.razor"),
+                e => e.AssertSingleItem("GenerateDeclarationCodeStart", "/Pages/Index.razor"),
+                e => e.AssertSingleItem("GenerateDeclarationCodeStop", "/Pages/Index.razor"),
+                e => e.AssertSingleItem("GenerateDeclarationCodeStart", "/Pages/Counter.razor"),
+                e => e.AssertSingleItem("GenerateDeclarationCodeStop", "/Pages/Counter.razor"),
+                e => Assert.Equal("DiscoverTagHelpersFromCompilationStart", e.EventName),
+                e => Assert.Equal("DiscoverTagHelpersFromCompilationStop", e.EventName),
+                e => Assert.Equal("DiscoverTagHelpersFromReferencesStart", e.EventName),
+                e => Assert.Equal("DiscoverTagHelpersFromReferencesStop", e.EventName),
+                e => e.AssertSingleItem("RewriteTagHelpersStart", "Pages/Index.razor"),
+                e => e.AssertSingleItem("RewriteTagHelpersStop", "Pages/Index.razor"),
+                e => e.AssertSingleItem("RewriteTagHelpersStart", "Pages/Counter.razor"),
+                e => e.AssertSingleItem("RewriteTagHelpersStop", "Pages/Counter.razor"),
+                e => e.AssertSingleItem("CheckAndRewriteTagHelpersStart", "Pages/Index.razor"),
+                e => e.AssertSingleItem("CheckAndRewriteTagHelpersStop", "Pages/Index.razor"),
+                e => e.AssertSingleItem("CheckAndRewriteTagHelpersStart", "Pages/Counter.razor"),
+                e => e.AssertSingleItem("CheckAndRewriteTagHelpersStop", "Pages/Counter.razor"),
+                e => e.AssertPair("RazorCodeGenerateStart", "Pages/Index.razor", "Runtime"),
+                e => e.AssertPair("RazorCodeGenerateStop", "Pages/Index.razor", "Runtime"),
+                e => e.AssertPair("RazorCodeGenerateStart", "Pages/Counter.razor", "Runtime"),
+                e => e.AssertPair("RazorCodeGenerateStop", "Pages/Counter.razor", "Runtime"),
+                e => e.AssertSingleItem("AddSyntaxTrees", "Pages_Index_razor.g.cs"),
+                e => e.AssertSingleItem("AddSyntaxTrees", "Pages_Counter_razor.g.cs")
+                );
         }
 
         [Fact, WorkItem("https://github.com/dotnet/razor/issues/7914")]

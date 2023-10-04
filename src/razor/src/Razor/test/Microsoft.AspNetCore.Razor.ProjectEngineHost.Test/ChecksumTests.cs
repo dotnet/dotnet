@@ -3,8 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Xunit;
@@ -124,14 +122,7 @@ public class ChecksumTests(ITestOutputHelper testOutput) : TestBase(testOutput)
     [Fact]
     public void TestTagHelperEquality()
     {
-        var bytes = RazorTestResources.GetResourceBytes(RazorTestResources.BlazorServerAppTagHelpersJson);
-
-        using var stream = new MemoryStream(bytes);
-        using var reader = new StreamReader(stream);
-
-        var tagHelpers = JsonDataConvert.DeserializeData(reader,
-            static r => r.ReadImmutableArray(
-                static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
+        var tagHelpers = RazorTestResources.BlazorServerAppTagHelpers;
 
         for (var i = 0; i < tagHelpers.Length; i++)
         {

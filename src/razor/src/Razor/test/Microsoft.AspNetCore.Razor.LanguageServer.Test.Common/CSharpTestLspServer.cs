@@ -74,7 +74,7 @@ public sealed class CSharpTestLspServer : IAsyncDisposable
             ExportProvider exportProvider,
             VSInternalServerCapabilities serverCapabilities)
         {
-            var capabilitiesProvider = new RazorCapabilitiesProvider(serverCapabilities);
+            var capabilitiesProvider = new RazorTestCapabilitiesProvider(serverCapabilities);
 
             var registrationService = exportProvider.GetExportedValue<RazorTestWorkspaceRegistrationService>();
             registrationService.Register(workspace);
@@ -188,16 +188,20 @@ public sealed class CSharpTestLspServer : IAsyncDisposable
 
     #endregion
 
-    private class RazorCapabilitiesProvider : IRazorTestCapabilitiesProvider
+    private class RazorTestCapabilitiesProvider : IRazorTestCapabilitiesProvider
     {
-        private readonly string _serverCapabilities;
+        private readonly VSInternalServerCapabilities _serverCapabilities;
 
-        public RazorCapabilitiesProvider(VSInternalServerCapabilities serverCapabilities)
+        public RazorTestCapabilitiesProvider(VSInternalServerCapabilities serverCapabilities)
         {
-            _serverCapabilities = JsonConvert.SerializeObject(serverCapabilities);
+            _serverCapabilities = serverCapabilities;
         }
 
         public string GetServerCapabilitiesJson(string clientCapabilitiesJson)
-            => _serverCapabilities;
+        {
+            // To avoid exposing types from VS.LSP.Protocol across the Razor <-> Roslyn API boundary, and therefore
+            // requiring us to agree on dependency versions, we use JSON as a transport mechanism.
+            return JsonConvert.SerializeObject(_serverCapabilities);
+        }
     }
 }

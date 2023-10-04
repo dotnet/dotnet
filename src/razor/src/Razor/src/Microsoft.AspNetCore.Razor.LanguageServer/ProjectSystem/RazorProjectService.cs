@@ -24,8 +24,6 @@ internal abstract class RazorProjectService
 
     public abstract ProjectKey AddProject(string filePath, string intermediateOutputPath, RazorConfiguration? configuration, string? rootNamespace);
 
-    public abstract void RemoveProject(string filePath);
-
     public abstract void UpdateProject(
         ProjectKey projectKey,
         RazorConfiguration? configuration,

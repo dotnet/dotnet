@@ -44,6 +44,11 @@
     <Using Include="$(ProjectName).Resources" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AdditionalFiles Include="PublicAPI\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
   <!--
     The ProjectSystem.SDK tasks that handle XamlPropertyRule don't work on the dotnet core version
     of MSBuild. The workaround here is to only hardcode the generated code location such that it gets

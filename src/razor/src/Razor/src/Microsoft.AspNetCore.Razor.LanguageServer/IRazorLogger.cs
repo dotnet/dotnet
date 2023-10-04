@@ -6,6 +6,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public interface IRazorLogger : ILogger, ILspLogger
+internal interface IRazorLogger : ILogger, ILspLogger
 {
 }

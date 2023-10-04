@@ -6,39 +6,33 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.VisualStudio.Razor.IntegrationTests.InProcess;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
-[IntializeTestFile]
-public class RazorSemanticTokensTests : AbstractRazorEditorTest
+public class RazorSemanticTokensTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
     private static readonly AsyncLocal<string?> s_fileName = new();
 
-    private static readonly string s_projectPath = TestProject.GetProjectDirectory(typeof(RazorSemanticTokensTests), useCurrentDirectory: true);
+    private static string? s_projectPath;
 
     // WARNING: If you leave this as "true" it will cause the semantic tokens tests to change their expected values.
     // Do NOT check in set to true.
     protected bool GenerateBaselines { get; set; } = false;
 
-    // Used by the test framework to set the 'base' name for test files.
-    public static string? FileName
+    [IdeFact]
+    public void GenerateBaselines_MustBeFalse()
     {
-        get { return s_fileName.Value; }
-        set { s_fileName.Value = value; }
-    }
-
-    public override async Task InitializeAsync()
-    {
-        await base.InitializeAsync();
-        await TestServices.Workspace.WaitForAsyncOperationsAsync(FeatureAttribute.Classification, ControlledHangMitigatingCancellationToken);
+        Assert.False(GenerateBaselines, "Don't forget to set this back to false before you open a PR :)");
     }
 
     [IdeFact]
@@ -56,7 +50,7 @@ public class RazorSemanticTokensTests : AbstractRazorEditorTest
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken, count: 1);
 
         // Assert
-        var expectedClassifications = await GetExpectedClassificationSpansAsync(nameof(GenericTypeParameters_Work), ControlledHangMitigatingCancellationToken);
+        var expectedClassifications = await GetExpectedClassificationSpansAsync(ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.VerifyGetClassificationsAsync(expectedClassifications, ControlledHangMitigatingCancellationToken);
     }
 
@@ -71,7 +65,7 @@ public class RazorSemanticTokensTests : AbstractRazorEditorTest
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken, count: 3);
 
         // Assert
-        var expectedClassifications = await GetExpectedClassificationSpansAsync(nameof(Components_AreColored), ControlledHangMitigatingCancellationToken);
+        var expectedClassifications = await GetExpectedClassificationSpansAsync(ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.VerifyGetClassificationsAsync(expectedClassifications, ControlledHangMitigatingCancellationToken);
     }
 
@@ -89,7 +83,7 @@ public class RazorSemanticTokensTests : AbstractRazorEditorTest
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken, count: 3);
 
         // Assert
-        var expectedClassifications = await GetExpectedClassificationSpansAsync(nameof(Edits_UpdateColors), ControlledHangMitigatingCancellationToken);
+        var expectedClassifications = await GetExpectedClassificationSpansAsync(ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.VerifyGetClassificationsAsync(expectedClassifications, ControlledHangMitigatingCancellationToken);
     }
 
@@ -101,28 +95,28 @@ public class RazorSemanticTokensTests : AbstractRazorEditorTest
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
 
         // Act and Assert
-        var expectedClassifications = await GetExpectedClassificationSpansAsync(nameof(Directives_AreColored), ControlledHangMitigatingCancellationToken);
+        var expectedClassifications = await GetExpectedClassificationSpansAsync(ControlledHangMitigatingCancellationToken);
         await TestServices.Editor.VerifyGetClassificationsAsync(expectedClassifications, ControlledHangMitigatingCancellationToken);
     }
 
-    private async Task<IEnumerable<ClassificationSpan>> GetExpectedClassificationSpansAsync(string testName, CancellationToken cancellationToken)
+    private async Task<IEnumerable<ClassificationSpan>> GetExpectedClassificationSpansAsync(CancellationToken cancellationToken, [CallerMemberName] string? testName = null)
     {
         var snapshot = await TestServices.Editor.GetActiveSnapshotAsync(ControlledHangMitigatingCancellationToken);
 
         if (GenerateBaselines)
         {
             var actual = await TestServices.Editor.GetClassificationsAsync(cancellationToken);
-            GenerateSemanticBaseline(actual, testName);
+            GenerateSemanticBaseline(actual, testName.AssumeNotNull());
         }
 
-        var expectedClassifications = await ReadSemanticBaselineAsync(snapshot, cancellationToken);
+        var expectedClassifications = await ReadSemanticBaselineAsync(snapshot, testName.AssumeNotNull(), cancellationToken);
 
         return expectedClassifications;
     }
 
-    private async Task<IEnumerable<ClassificationSpan>> ReadSemanticBaselineAsync(ITextSnapshot snapshot, CancellationToken cancellationToken)
+    private async Task<IEnumerable<ClassificationSpan>> ReadSemanticBaselineAsync(ITextSnapshot snapshot, string testName, CancellationToken cancellationToken)
     {
-        var baselinePath = Path.ChangeExtension(FileName, ".txt");
+        var baselinePath = $"Semantic/TestFiles/{nameof(RazorSemanticTokensTests)}/{testName}.txt";
         var assembly = GetType().GetTypeInfo().Assembly;
         var semanticFile = TestFile.Create(baselinePath, assembly);
 
@@ -203,6 +197,7 @@ public class RazorSemanticTokensTests : AbstractRazorEditorTest
 
     private static string GetBaselineFileName(string testName)
     {
+        s_projectPath ??= TestProject.GetProjectDirectory(typeof(RazorSemanticTokensTests), useCurrentDirectory: true);
         var semanticBaselinePath = Path.Combine(s_projectPath, "Semantic", "TestFiles", nameof(RazorSemanticTokensTests), testName + ".txt");
         return semanticBaselinePath;
     }
@@ -275,7 +270,7 @@ public class RazorSemanticTokensTests : AbstractRazorEditorTest
 
         public bool IsOfType(string type)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

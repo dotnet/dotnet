@@ -27,6 +27,9 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
     {
     }
 
+    // Avoid using `AddComponentParameter` in design time where we currently don't detect its availability.
+    protected override bool CanUseAddComponentParameter(CodeRenderingContext context) => false;
+
     public override void WriteMarkupBlock(CodeRenderingContext context, MarkupBlockIntermediateNode node)
     {
         if (context == null)
@@ -368,13 +371,17 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         CodeWriterExtensions.CSharpCodeWritingScope? typeInferenceCaptureScope = null;
         string typeInferenceLocalName = null;
 
-        if (node.TypeInferenceNode == null)
+        var suppressTypeInference = ShouldSuppressTypeInferenceCall(node);
+        if (suppressTypeInference)
+        {
+        }
+        else if (node.TypeInferenceNode == null)
         {
             // Writes something like:
             //
             // __builder.OpenComponent<MyComponent>(0);
-            // __builder.AddComponentParameter(1, "Foo", ...);
-            // __builder.AddComponentParameter(2, "ChildContent", ...);
+            // __builder.AddAttribute(1, "Foo", ...);
+            // __builder.AddAttribute(2, "ChildContent", ...);
             // __builder.SetKey(someValue);
             // __builder.AddElementCapture(3, (__value) => _field = __value);
             // __builder.CloseComponent();
@@ -384,7 +391,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                 context.RenderNode(typeArgument);
             }
 
-            // We need to preserve order for attibutes and attribute splats since the ordering
+            // We need to preserve order for attributes and attribute splats since the ordering
             // has a semantic effect.
 
             foreach (var child in node.Children)
@@ -396,6 +403,10 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                 else if (child is SplatIntermediateNode splat)
                 {
                     context.RenderNode(splat);
+                }
+                else if (child is RenderModeIntermediateNode renderMode)
+                {
+                    context.RenderNode(renderMode);
                 }
             }
 
@@ -520,24 +531,27 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         // parameter is explicitly set, but that's exactly what we will be doing in order to represent the attribute
         // being set.
 
-        var wrotePragmaDisable = false;
-        foreach (var child in node.Children)
+        if (!suppressTypeInference)
         {
-            if (child is ComponentAttributeIntermediateNode attribute)
+            var wrotePragmaDisable = false;
+            foreach (var child in node.Children)
             {
-                WritePropertyAccess(context, attribute, node, typeInferenceLocalName, shouldWriteBL0005Disable: !wrotePragmaDisable, out var wrotePropertyAccess);
-
-                if (wrotePropertyAccess)
+                if (child is ComponentAttributeIntermediateNode attribute)
                 {
-                    wrotePragmaDisable = true;
+                    WritePropertyAccess(context, attribute, node, typeInferenceLocalName, shouldWriteBL0005Disable: !wrotePragmaDisable, out var wrotePropertyAccess);
+
+                    if (wrotePropertyAccess)
+                    {
+                        wrotePragmaDisable = true;
+                    }
                 }
             }
-        }
 
-        if (wrotePragmaDisable)
-        {
-            // Restore the warning in case the user has written other code that explicitly sets a property
-            context.CodeWriter.WriteLine("#pragma warning restore BL0005");
+            if (wrotePragmaDisable)
+            {
+                // Restore the warning in case the user has written other code that explicitly sets a property
+                context.CodeWriter.WriteLine("#pragma warning restore BL0005");
+            }
         }
 
         typeInferenceCaptureScope?.Dispose();
@@ -621,6 +635,9 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                 break;
             case TypeInferenceCapturedVariable capturedVariable:
                 context.CodeWriter.Write(capturedVariable.VariableName);
+                break;
+            case RenderModeIntermediateNode renderMode:
+                WriteCSharpCode(context, new CSharpCodeIntermediateNode() { Source = renderMode.Source, Children = { renderMode.Children[0] } });
                 break;
             default:
                 throw new InvalidOperationException($"Not implemented: type inference method parameter from source {parameter.Source}");
@@ -979,9 +996,9 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
         // Writes something like:
         //
-        // __builder.AddComponentParameter(1, "ChildContent", (RenderFragment)((__builder73) => { ... }));
+        // __builder.AddAttribute(1, "ChildContent", (RenderFragment)((__builder73) => { ... }));
         // OR
-        // __builder.AddComponentParameter(1, "ChildContent", (RenderFragment<Person>)((person) => (__builder73) => { ... }));
+        // __builder.AddAttribute(1, "ChildContent", (RenderFragment<Person>)((person) => (__builder73) => { ... }));
         BeginWriteAttribute(context, node.AttributeName);
         context.CodeWriter.WriteParameterSeparator();
         context.CodeWriter.Write("(");
@@ -1151,6 +1168,32 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         }
     }
 
+    public sealed override void WriteFormName(CodeRenderingContext context, FormNameIntermediateNode node)
+    {
+        var tokens = node.FindDescendantNodes<IntermediateToken>();
+        if (tokens.Count == 0)
+        {
+            return;
+        }
+
+        // Either all tokens should be C# or none of them.
+        if (tokens[0].IsCSharp)
+        {
+            context.CodeWriter.Write(ComponentsApi.RuntimeHelpers.TypeCheck);
+            context.CodeWriter.Write("<string>(");
+            foreach (var token in tokens)
+            {
+                Debug.Assert(token.IsCSharp);
+                WriteCSharpToken(context, token);
+            }
+            context.CodeWriter.Write(");");
+        }
+        else
+        {
+            Debug.Assert(!tokens.Any(t => t.IsCSharp));
+        }
+    }
+
     public override void WriteReferenceCapture(CodeRenderingContext context, ReferenceCaptureIntermediateNode node)
     {
         if (context == null)
@@ -1221,6 +1264,30 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                 });
             }
         }
+    }
+
+    public override void WriteRenderMode(CodeRenderingContext context, RenderModeIntermediateNode node)
+    {
+        // Looks like:
+        // __o = (global::Microsoft.AspNetCore.Components.IComponentRenderMode)(expression);
+        WriteCSharpCode(context, new CSharpCodeIntermediateNode
+        {
+            Source = node.Source,
+            Children =
+            {
+                new IntermediateToken
+                {
+                    Kind = TokenKind.CSharp,
+                    Content = $"{DesignTimeVariable} = (global::{ComponentsApi.IComponentRenderMode.FullTypeName})(" 
+                },
+                node.Children[0],
+                new IntermediateToken
+                {
+                    Kind = TokenKind.CSharp,
+                    Content = ");"
+                }
+            }
+        });
     }
 
     private void WriteCSharpToken(CodeRenderingContext context, IntermediateToken token)

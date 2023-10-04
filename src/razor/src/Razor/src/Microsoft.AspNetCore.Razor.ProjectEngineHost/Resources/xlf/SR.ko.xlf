@@ -32,9 +32,19 @@
         <target state="translated">JSON 토큰 '{0}'이(가) 필요하지만 '{1}'입니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unsupported_project_razor_json_version_encountered">
-        <source>Unsupported project.razor.json version encounted.</source>
-        <target state="translated">지원되지 않는 project.razor.json 버전이 있음.</target>
+      <trans-unit id="Unsupported_argument_kind">
+        <source>Unsupported argument kind: '{0}'.</source>
+        <target state="translated">지원되지 않는 인수 종류: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_argument_type">
+        <source>Unsupported argument type: '{0}'.</source>
+        <target state="translated">지원되지 않는 인수 유형: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_razor_project_info_version_encountered">
+        <source>Unsupported razor project info version encounted.</source>
+        <target state="translated">지원되지 않는 Razor 프로젝트 정보 버전이 발견되었습니다.</target>
         <note />
       </trans-unit>
     </body>

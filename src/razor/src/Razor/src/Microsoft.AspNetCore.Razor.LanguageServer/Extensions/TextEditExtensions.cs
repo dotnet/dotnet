@@ -9,7 +9,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 
 internal static class TextEditExtensions
 {
-    public static TextChange AsTextChange(this TextEdit textEdit, SourceText sourceText)
+    public static TextChange ToTextChange(this TextEdit textEdit, SourceText sourceText)
     {
         if (textEdit is null)
         {
@@ -21,7 +21,7 @@ internal static class TextEditExtensions
             throw new ArgumentNullException(nameof(sourceText));
         }
 
-        var span = textEdit.Range.AsTextSpan(sourceText);
+        var span = textEdit.Range.ToTextSpan(sourceText);
         return new TextChange(span, textEdit.NewText);
     }
 }

@@ -4,12 +4,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
-public class CSharpCodeActionsTests : AbstractRazorEditorTest
+public class CSharpCodeActionsTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
-    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8409")]
+    [IdeFact]
     public async Task CSharpCodeActionsTests_MakeExpressionBodiedMethod()
     {
         // Open the file
@@ -87,7 +88,7 @@ public class CSharpCodeActionsTests : AbstractRazorEditorTest
         await TestServices.Editor.InvokeCodeActionAsync(codeAction, ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.WaitForTextChangeAsync("""
-            @using System.Data;
+            @using System.Data
 
             @{
                 var x = ConflictOption.CompareAllSearchableValues;
@@ -123,7 +124,7 @@ public class CSharpCodeActionsTests : AbstractRazorEditorTest
         await TestServices.Editor.InvokeCodeActionAsync(codeAction, ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.WaitForTextChangeAsync("""
-            @using System.Data;
+            @using System.Data
 
             @{
                 var x = ConflictOption.CompareAllSearchableValues;
