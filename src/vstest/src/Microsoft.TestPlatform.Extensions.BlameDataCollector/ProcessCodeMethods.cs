@@ -68,7 +68,7 @@ internal static class ProcessCodeMethods
         var limit = 10;
         ResolveChildren(process, acc, level, limit);
 
-        return new List<ProcessTreeNode> { new ProcessTreeNode { Process = process, Level = 0 } }.Concat(acc.Where(a => a.Level > 0)).ToList();
+        return new List<ProcessTreeNode> { new() { Process = process, Level = 0 } }.Concat(acc.Where(a => a.Level > 0)).ToList();
     }
 
     /// <summary>

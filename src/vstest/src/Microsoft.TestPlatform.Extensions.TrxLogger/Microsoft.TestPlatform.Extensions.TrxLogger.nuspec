@@ -5,11 +5,11 @@
 
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="Newtonsoft.Json" version="$JsonNetVersion$"/>
+        <dependency id="Newtonsoft.Json" version="$NewtonsoftJsonVersion$"/>
         <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="Newtonsoft.Json" version="$JsonNetVersion$"/>
+        <dependency id="Newtonsoft.Json" version="$NewtonsoftJsonVersion$"/>
         <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
       </group>
     </dependencies>

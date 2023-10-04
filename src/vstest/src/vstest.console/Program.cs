@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Text;
+using System;
+
 using Microsoft.VisualStudio.TestPlatform.Execution;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 
@@ -20,6 +23,10 @@ public static class Program
 
     internal static int Run(string[]? args, UiLanguageOverride uiLanguageOverride)
     {
+        if (!FeatureFlag.Instance.IsSet(FeatureFlag.DISABLE_UTF8_CONSOLE_ENCODING))
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+        }
         uiLanguageOverride.SetCultureSpecifiedByUser();
         return new Executor(ConsoleOutput.Instance).Execute(args);
     }

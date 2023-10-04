@@ -42,6 +42,7 @@ public class Build : IntegrationTestBase
 #pragma warning disable RS0030 // Do not used banned APIs
         Environment.SetEnvironmentVariable("DOTNET_MULTILEVEL_LOOKUP", "0");
         Environment.SetEnvironmentVariable("DOTNET_ROOT", DotnetDir);
+        Environment.SetEnvironmentVariable("DOTNET_ROOT(x86)", Path.Combine(DotnetDir, "dotnet-sdk-x86"));
         Environment.SetEnvironmentVariable("PATH", $"{DotnetDir};{Environment.GetEnvironmentVariable("PATH")}");
 #pragma warning restore RS0030 // Do not used banned APIs
     }

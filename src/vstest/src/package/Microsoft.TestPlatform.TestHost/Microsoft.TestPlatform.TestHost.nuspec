@@ -6,7 +6,7 @@
     <dependencies>
       <group targetFramework="netcoreapp3.1">
         <dependency id="Microsoft.TestPlatform.ObjectModel" version="$Version$"/>
-        <dependency id="Newtonsoft.Json" version="$JsonNetVersion$"/>
+        <dependency id="Newtonsoft.Json" version="$NewtonsoftJsonVersion$"/>
       </group>
 
       <group targetFramework="net462"></group>
