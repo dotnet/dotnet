@@ -183,7 +183,7 @@ namespace NuGet.PackageManagement.Test.Telemetry
             var evtActions = new VSActionsTelemetryEvent(
                 operationId: It.IsAny<string>(),
                 projectIds: new[] { Guid.NewGuid().ToString() },
-                operationType: NuGetOperationType.Install,
+                operationType: NuGetProjectActionType.Install,
                 source: OperationSource.PMC,
                 startTime: DateTimeOffset.Now.AddSeconds(-1),
                 status: NuGetOperationStatus.NoOp,

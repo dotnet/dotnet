@@ -101,7 +101,7 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Sets the connection to be used for dispatching messages.
         /// </summary>
-        /// <param name="connection">A connection instance.  Can be <c>null</c>.</param>
+        /// <param name="connection">A connection instance.  Can be <see langword="null" />.</param>
         void SetConnection(IConnection connection);
     }
 }

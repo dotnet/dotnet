@@ -832,8 +832,10 @@ namespace NuGet.Protocol.Tests
             }
         }
 
-        [Fact]
-        public async Task Push_WithAnHttpSource_NupkgOnly_Warns()
+        [Theory]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        public async Task Push_WithAnHttpSourceAndAllowInsecureConnections_NupkgOnly_Warns(bool allowInsecureConnections, bool isHttpWarningExpected)
         {
             // Arrange
             using var workingDir = TestDirectory.Create();
@@ -866,17 +868,27 @@ namespace NuGet.Protocol.Tests
                 noServiceEndpoint: false,
                 skipDuplicate: false,
                 symbolPackageUpdateResource: null,
+                allowInsecureConnections: allowInsecureConnections,
                 log: logger);
 
             // Assert
             Assert.NotNull(sourceRequest);
-            Assert.Equal(1, logger.WarningMessages.Count);
-            Assert.Contains("You are running the 'push' operation with an 'HTTP' source", logger.WarningMessages.First());
+            if (isHttpWarningExpected)
+            {
+                Assert.Equal(1, logger.WarningMessages.Count);
+                Assert.Contains("You are running the 'push' operation with an 'HTTP' source", logger.WarningMessages.Single());
+            }
+            else
+            {
+                Assert.Equal(0, logger.WarningMessages.Count);
+            }
 
         }
 
-        [Fact]
-        public async Task Push_WhenPushingToAnHttpSymbolSource_Warns()
+        [Theory]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        public async Task Push_WhenPushingToAnHttpSymbolSourceAndAllowInsecureConnections_Warns(bool allowInsecureConnections, bool isHttpWarningExpected)
         {
             // Arrange
             using var workingDir = TestDirectory.Create();
@@ -924,17 +936,27 @@ namespace NuGet.Protocol.Tests
                 noServiceEndpoint: false,
                 skipDuplicate: false,
                 symbolPackageUpdateResource: null,
+                allowInsecureConnections: allowInsecureConnections,
                 log: logger);
 
             // Assert
             Assert.NotNull(sourceRequest);
             Assert.NotNull(symbolRequest);
-            Assert.Equal(1, logger.WarningMessages.Count);
-            Assert.Contains("You are running the 'push' operation with an 'HTTP' source", logger.WarningMessages.First());
+            if (isHttpWarningExpected)
+            {
+                Assert.Equal(1, logger.WarningMessages.Count);
+                Assert.Contains("You are running the 'push' operation with an 'HTTP' source", logger.WarningMessages.Single());
+            }
+            else
+            {
+                Assert.Equal(0, logger.WarningMessages.Count);
+            }
         }
 
-        [Fact]
-        public async Task Push_WhenPushingToAnHttpSourceAndSymbolSource_WarnsForBoth()
+        [Theory]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        public async Task Push_WhenPushingToAnHttpSourceAndSymbolSourceWithAllowInsecureConnections_WarnsForBoth(bool allowInsecureConnections, bool isHttpWarningExpected)
         {
             // Arrange
             using var workingDir = TestDirectory.Create();
@@ -982,14 +1004,22 @@ namespace NuGet.Protocol.Tests
                 noServiceEndpoint: false,
                 skipDuplicate: false,
                 symbolPackageUpdateResource: null,
+                allowInsecureConnections: allowInsecureConnections,
                 log: logger);
 
             // Assert
             Assert.NotNull(sourceRequest);
             Assert.NotNull(symbolRequest);
-            Assert.Equal(2, logger.WarningMessages.Count);
-            Assert.Contains("You are running the 'push' operation with an 'HTTP' source, 'http://www.nuget.org/api/v2/'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.", logger.WarningMessages.First());
-            Assert.Contains("You are running the 'push' operation with an 'HTTP' source, 'http://other.smbsrc.net/api/v2/package/'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.", logger.WarningMessages.Last());
+            if (isHttpWarningExpected)
+            {
+                Assert.Equal(2, logger.WarningMessages.Count);
+                Assert.Contains("You are running the 'push' operation with an 'HTTP' source, 'http://www.nuget.org/api/v2/'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.", logger.WarningMessages.First());
+                Assert.Contains("You are running the 'push' operation with an 'HTTP' source, 'http://other.smbsrc.net/api/v2/package/'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.", logger.WarningMessages.Last());
+            }
+            else
+            {
+                Assert.Equal(0, logger.WarningMessages.Count);
+            }
         }
 
         [Fact]

@@ -232,83 +232,78 @@ namespace NuGet.Test
                 ));
         }
 
-
-        // Install and uninstall a package while calling get installed on another thread
         [Fact]
-        public async Task TestPacManInstallAndRequestInstalledPackages()
+        public async Task InstallAndUninstallPackages_RunningOnMultipleThreads_CompletesWithoutThrowingException()
         {
-            using (var packageSource = TestDirectory.Create())
-            {
-                // Arrange
-                var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(
-                    new List<Configuration.PackageSource>()
-                    {
-                        new Configuration.PackageSource(packageSource.Path)
-                    });
-
-                using (var testSolutionManager = new TestSolutionManager())
+            using var packageSource = TestDirectory.Create();
+            // Arrange
+            var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(
+                new List<PackageSource>()
                 {
-                    var testSettings = NullSettings.Instance;
-                    var token = CancellationToken.None;
-                    var resolutionContext = new ResolutionContext();
-                    var testNuGetProjectContext = new TestNuGetProjectContext();
-                    var deleteOnRestartManager = new TestDeleteOnRestartManager();
-                    var nuGetPackageManager = new NuGetPackageManager(
-                        sourceRepositoryProvider,
-                        testSettings,
-                        testSolutionManager,
-                        deleteOnRestartManager);
-                    var packagesFolderPath = PackagesFolderPathUtility.GetPackagesFolderPath(testSolutionManager, testSettings);
-                    var packagePathResolver = new PackagePathResolver(packagesFolderPath);
-                    var projectA = testSolutionManager.AddNewMSBuildProject();
+                    new PackageSource(packageSource.Path)
+                });
 
-                    var packageContext = new SimpleTestPackageContext("packageA");
-                    packageContext.AddFile("lib/net45/a.dll");
-                    SimpleTestPackageUtility.CreateOPCPackage(packageContext, packageSource);
+            using var testSolutionManager = new TestSolutionManager();
 
-                    var run = true;
+            var testSettings = NullSettings.Instance;
+            var token = CancellationToken.None;
+            var resolutionContext = new ResolutionContext();
+            var testNuGetProjectContext = new TestNuGetProjectContext();
+            var deleteOnRestartManager = new TestDeleteOnRestartManager();
+            var nuGetPackageManager = new NuGetPackageManager(
+                sourceRepositoryProvider,
+                testSettings,
+                testSolutionManager,
+                deleteOnRestartManager);
+            var packagesFolderPath = PackagesFolderPathUtility.GetPackagesFolderPath(testSolutionManager, testSettings);
+            var packagePathResolver = new PackagePathResolver(packagesFolderPath);
+            var projectA = testSolutionManager.AddNewMSBuildProject();
 
-                    var getInstalledTask = Task.Run(async () =>
-                    {
-                        // Get the list of installed packages
-                        while (run)
-                        {
-                            var projectAInstalled = (await projectA.GetInstalledPackagesAsync(token)).ToList();
-                        }
-                    });
+            var packageContext = new SimpleTestPackageContext("packageA");
+            packageContext.AddFile("lib/net45/a.dll");
+            SimpleTestPackageUtility.CreateOPCPackage(packageContext, packageSource);
 
-                    // Act
-                    // Install and Uninstall 50 times while polling for installed packages
-                    for (var i = 0; i < 50; i++)
-                    {
-                        // Install
-                        await nuGetPackageManager.InstallPackageAsync(projectA, "packageA",
-                            resolutionContext, testNuGetProjectContext, sourceRepositoryProvider.GetRepositories().First(), null, token);
+            var run = true;
 
-                        // Uninstall
-                        await nuGetPackageManager.UninstallPackageAsync(
-                            projectA,
-                            "packageA",
-                            new UninstallationContext(removeDependencies: false, forceRemove: true),
-                            testNuGetProjectContext,
-                            token);
-                    }
-
-                    // Check for exceptions thrown by the get installed task
-                    run = false;
-                    await getInstalledTask;
-
-                    var installed = (await projectA.GetInstalledPackagesAsync(token)).ToList();
-
-                    // Assert
-                    // Verify no exceptions and that the final package was removed
-                    Assert.Equal(0, installed.Count);
+            var getInstalledTask = Task.Run(async () =>
+            {
+                // Get the list of installed packages
+                while (run)
+                {
+                    var projectAInstalled = (await projectA.GetInstalledPackagesAsync(token)).ToList();
                 }
+            });
+
+            // Act
+            // Install and Uninstall 50 times while polling for installed packages
+            for (var i = 0; i < 50; i++)
+            {
+                // Install
+                await nuGetPackageManager.InstallPackageAsync(projectA, "packageA",
+                    resolutionContext, testNuGetProjectContext, sourceRepositoryProvider.GetRepositories().First(), null, token);
+
+                // Uninstall
+                await nuGetPackageManager.UninstallPackageAsync(
+                    projectA,
+                    "packageA",
+                    new UninstallationContext(removeDependencies: false, forceRemove: true),
+                    testNuGetProjectContext,
+                    token);
             }
+
+            // Check for exceptions thrown by the get installed task
+            run = false;
+            await getInstalledTask;
+
+            var installed = (await projectA.GetInstalledPackagesAsync(token)).ToList();
+
+            // Assert
+            // Verify no exceptions and that the final package was removed
+            Assert.Equal(0, installed.Count);
         }
 
         [Fact]
-        public async Task TestPacManInstallPackage()
+        public async Task InstallPackage()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -411,7 +406,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackageAlreadyInstalledException()
+        public async Task InstallPackageAlreadyInstalledException()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -472,7 +467,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallDifferentPackageAfterInstall()
+        public async Task InstallDifferentPackageAfterInstall()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -523,7 +518,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallSamePackageAfterInstall()
+        public async Task InstallSamePackageAfterInstall()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -572,7 +567,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackageWithDependents()
+        public async Task InstallPackageWithDependents()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -619,7 +614,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewInstallOrderOfDependencies()
+        public async Task PreviewInstallOrderOfDependencies()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV2OnlySourceRepositoryProvider();
@@ -670,7 +665,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewInstallMvcPackageWithPrereleaseFlagFalse()
+        public async Task PreviewInstallMvcPackageWithPrereleaseFlagFalse()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -715,7 +710,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManUninstallPackage()
+        public async Task UninstallPackage()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -776,7 +771,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManUninstallDependencyPackage()
+        public async Task UninstallDependencyPackage()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -847,7 +842,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUninstallDependencyPackage()
+        public async Task PreviewUninstallDependencyPackage()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -918,7 +913,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManUninstallPackageOnMultipleProjects()
+        public async Task UninstallPackageOnMultipleProjects()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -968,7 +963,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallHigherSpecificVersion()
+        public async Task InstallHigherSpecificVersion()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1016,7 +1011,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallLowerSpecificVersion()
+        public async Task InstallLowerSpecificVersion()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1064,7 +1059,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallLatestVersion()
+        public async Task InstallLatestVersion()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1121,7 +1116,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallLatestVersionForPackageReference()
+        public async Task InstallLatestVersionForPackageReference()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1146,7 +1141,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallLatestVersionOfDependencyPackage()
+        public async Task InstallLatestVersionOfDependencyPackage()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1208,7 +1203,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallHigherSpecificVersionOfDependencyPackage()
+        public async Task InstallHigherSpecificVersionOfDependencyPackage()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1261,7 +1256,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallLowerSpecificVersionOfDependencyPackage()
+        public async Task InstallLowerSpecificVersionOfDependencyPackage()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1323,7 +1318,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackageWhichUpdatesParent()
+        public async Task InstallPackageWhichUpdatesParent()
         {
             // https://github.com/NuGet/Home/issues/127
             // Repro step:
@@ -1376,7 +1371,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackageWhichUpdatesDependency()
+        public async Task InstallPackageWhichUpdatesDependency()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1431,7 +1426,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUpdatePackageFollowingForceUninstall()
+        public async Task PreviewUpdatePackageFollowingForceUninstall()
         {
             // Arrange
 
@@ -1513,7 +1508,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackageWhichUsesExistingDependency()
+        public async Task InstallPackageWhichUsesExistingDependency()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1568,7 +1563,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackageWhichUpdatesExistingDependencyDueToDependencyBehavior()
+        public async Task InstallPackageWhichUpdatesExistingDependencyDueToDependencyBehavior()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1632,7 +1627,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUninstallWithRemoveDependencies()
+        public async Task PreviewUninstallWithRemoveDependencies()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1685,7 +1680,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManUninstallWithRemoveDependenciesWithVDependency()
+        public async Task UninstallWithRemoveDependenciesWithVDependency()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1762,7 +1757,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManUninstallWithForceRemove()
+        public async Task UninstallWithForceRemove()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1826,7 +1821,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallWithIgnoreDependencies()
+        public async Task InstallWithIgnoreDependencies()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1871,7 +1866,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManThrowsPackageNotFound()
+        public async Task ThrowsPackageNotFound()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1919,7 +1914,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManThrowsLatestVersionNotFound()
+        public async Task ThrowsLatestVersionNotFound()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -1967,7 +1962,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackageWithDeepDependency()
+        public async Task InstallPackageWithDeepDependency()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -2018,7 +2013,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackageBindingRedirectsWithDeepDependency()
+        public async Task InstallPackageBindingRedirectsWithDeepDependency()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -2062,7 +2057,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackageBindingRedirectsDisabledWithDeepDependency()
+        public async Task InstallPackageBindingRedirectsDisabledWithDeepDependency()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -2106,18 +2101,18 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public Task TestPacManGetInstalledPackagesByDependencyOrder()
+        public Task GetInstalledPackagesByDependencyOrder()
         {
-            return TestPacManGetInstalledPackagesByDependencyOrderInternal(deletePackages: false);
+            return GetInstalledPackagesByDependencyOrderInternal(deletePackages: false);
         }
 
         [Fact]
-        public Task TestPacManGetUnrestoredPackagesByDependencyOrderDeleteTrue()
+        public Task GetUnrestoredPackagesByDependencyOrderDeleteTrue()
         {
-            return TestPacManGetInstalledPackagesByDependencyOrderInternal(deletePackages: true);
+            return GetInstalledPackagesByDependencyOrderInternal(deletePackages: true);
         }
 
-        private async Task TestPacManGetInstalledPackagesByDependencyOrderInternal(bool deletePackages)
+        private async Task GetInstalledPackagesByDependencyOrderInternal(bool deletePackages)
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -2187,7 +2182,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewInstallPackageWithDeepDependency()
+        public async Task PreviewInstallPackageWithDeepDependency()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -2234,7 +2229,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUninstallPackageWithDeepDependency()
+        public async Task PreviewUninstallPackageWithDeepDependency()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -2299,7 +2294,7 @@ namespace NuGet.Test
         }
 
         //[Fact]
-        public async Task TestPacManInstallPackageTargetingASPNetCore50()
+        public async Task InstallPackageTargetingASPNetCore50()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -2345,7 +2340,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallMvcTargetingNet45()
+        public async Task InstallMvcTargetingNet45()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -2390,7 +2385,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUpdatePackagesSimple()
+        public async Task PreviewUpdatePackagesSimple()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV2OnlySourceRepositoryProvider();
@@ -2464,7 +2459,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUpdatePackageWithTargetPrereleaseInProject()
+        public async Task PreviewUpdatePackageWithTargetPrereleaseInProject()
         {
             // Arrange
 
@@ -2522,7 +2517,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUpdatePackageNotExistsInProject()
+        public async Task PreviewUpdatePackageNotExistsInProject()
         {
             // Arrange
 
@@ -2581,7 +2576,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUpdatePackageALLPrereleaseInProject()
+        public async Task PreviewUpdatePackageALLPrereleaseInProject()
         {
             // Arrange
 
@@ -2638,7 +2633,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUpdatePrereleasePackageNoPreFlagSpecified()
+        public async Task PreviewUpdatePrereleasePackageNoPreFlagSpecified()
         {
             // Arrange
 
@@ -2694,7 +2689,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUpdateMulti()
+        public async Task PreviewUpdateMulti()
         {
             // Arrange
 
@@ -2779,7 +2774,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_PreviewUpdatePackagesAsync_MultiProjects()
+        public async Task PreviewUpdatePackagesAsync_MultiProjects()
         {
             // Arrange
 
@@ -2851,7 +2846,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_PreviewUpdatePackagesAsync_MultiProjects_MultiDependencies()
+        public async Task PreviewUpdatePackagesAsync_MultiProjects_MultiDependencies()
         {
             // Arrange
 
@@ -2929,7 +2924,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewInstallPackageFollowingForceUninstall()
+        public async Task PreviewInstallPackageFollowingForceUninstall()
         {
             // Arrange
 
@@ -3006,7 +3001,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewInstallPackageWithNonTargetDependency()
+        public async Task PreviewInstallPackageWithNonTargetDependency()
         {
             // Arrange
 
@@ -3083,7 +3078,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUpdateMultiWithConflict()
+        public async Task PreviewUpdateMultiWithConflict()
         {
             // Arrange
 
@@ -3153,7 +3148,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUpdateMultiWithDowngradeConflict()
+        public async Task PreviewUpdateMultiWithDowngradeConflict()
         {
             // Arrange
 
@@ -3224,7 +3219,7 @@ namespace NuGet.Test
 
         // [Fact] -- This test performs update but verifies for a specific version
         //           This is not going to work as newer versions are uploaded
-        public async Task TestPacManPreviewUpdatePackages()
+        public async Task PreviewUpdatePackages()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV2OnlySourceRepositoryProvider();
@@ -3297,7 +3292,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewReinstallPackages()
+        public async Task PreviewReinstallPackages()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV2OnlySourceRepositoryProvider();
@@ -3382,7 +3377,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManReinstallPackages()
+        public async Task ReinstallPackages()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV2OnlySourceRepositoryProvider();
@@ -3488,7 +3483,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManReinstallSpecificPackage()
+        public async Task ReinstallSpecificPackage()
         {
             // Arrange
 
@@ -3592,7 +3587,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManOpenReadmeFile()
+        public async Task OpenReadmeFile()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -3644,7 +3639,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewInstallPackageIdUnexpectedDowngrade()
+        public async Task PreviewInstallPackageIdUnexpectedDowngrade()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV2OnlySourceRepositoryProvider();
@@ -3712,7 +3707,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewInstallPackageThrowsDependencyDowngrade()
+        public async Task PreviewInstallPackageThrowsDependencyDowngrade()
         {
             // Arrange
             var packageIdentityA = new PackageIdentity("DotNetOpenAuth.OAuth.Core", new NuGetVersion("4.3.2.13293"));
@@ -3781,7 +3776,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewInstallDependencyVersionHighestAndPrerelease()
+        public async Task PreviewInstallDependencyVersionHighestAndPrerelease()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -3829,7 +3824,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManUpdateDependencyToPrereleaseVersion()
+        public async Task UpdateDependencyToPrereleaseVersion()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -3882,7 +3877,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewInstallWithAllowedVersionsConstraint()
+        public async Task PreviewInstallWithAllowedVersionsConstraint()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV2OnlySourceRepositoryProvider();
@@ -3960,7 +3955,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUpdateWithAllowedVersionsConstraintAsync()
+        public async Task PreviewUpdateWithAllowedVersionsConstraintAsync()
         {
             // Arrange
             using var localPackageSourceDir = TestDirectory.Create();
@@ -4045,7 +4040,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUpdate_AllowedVersionsConstraint_RestrictHighestVersionAsync()
+        public async Task PreviewUpdate_AllowedVersionsConstraint_RestrictHighestVersionAsync()
         {
             // Arrange
             using var localPackageSourceDir = TestDirectory.Create();
@@ -4133,7 +4128,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreviewUpdateWithNoSource()
+        public async Task PreviewUpdateWithNoSource()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new List<NuGet.Configuration.PackageSource>());
@@ -4176,7 +4171,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallAspNetRazorJa()
+        public async Task InstallAspNetRazorJa()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -4221,7 +4216,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallMicrosoftWebInfrastructure1000FromV2()
+        public async Task InstallMicrosoftWebInfrastructure1000FromV2()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV2OnlySourceRepositoryProvider();
@@ -4270,7 +4265,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallMicrosoftWebInfrastructure1000FromV3()
+        public async Task InstallMicrosoftWebInfrastructure1000FromV3()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -4319,7 +4314,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallElmah11FromV2()
+        public async Task InstallElmah11FromV2()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV2OnlySourceRepositoryProvider();
@@ -4368,7 +4363,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallElmah11FromV3()
+        public async Task InstallElmah11FromV3()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -4417,7 +4412,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstall_SharpDX_DXGI_v263_WithNonReferencesInLibFolder()
+        public async Task Install_SharpDX_DXGI_v263_WithNonReferencesInLibFolder()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -4462,7 +4457,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackageUnlistedFromV3()
+        public async Task InstallPackageUnlistedFromV3()
         {
             // Arrange
             var packages = new List<SourcePackageDependencyInfo>
@@ -4527,7 +4522,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackageListedFromV3()
+        public async Task InstallPackageListedFromV3()
         {
             // Arrange
             var packages = new List<SourcePackageDependencyInfo>
@@ -4585,7 +4580,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackage571FromV3()
+        public async Task InstallPackage571FromV3()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -4626,7 +4621,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackageEFFromV3()
+        public async Task InstallPackageEFFromV3()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new[]
@@ -4675,7 +4670,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackagePrereleaseDependenciesFromV2()
+        public async Task InstallPackagePrereleaseDependenciesFromV2()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV2OnlySourceRepositoryProvider();
@@ -4723,7 +4718,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackagePrereleaseDependenciesFromV2IncludePrerelease()
+        public async Task InstallPackagePrereleaseDependenciesFromV2IncludePrerelease()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV2OnlySourceRepositoryProvider();
@@ -4771,7 +4766,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackagePrerelease()
+        public async Task InstallPackagePrerelease()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV2OnlySourceRepositoryProvider();
@@ -4822,7 +4817,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManInstallPackageOverExisting()
+        public async Task InstallPackageOverExisting()
         {
             // Arrange
             var fwk46 = NuGetFramework.Parse("net46");
@@ -4912,7 +4907,7 @@ namespace NuGet.Test
         }
 
         [Fact(Skip = "Test was skipped as part of 475ad399 and is currently broken.")]
-        public async Task TestPacManInstallPackageDowngrade()
+        public async Task InstallPackageDowngrade()
         {
             // Arrange
             var fwk46 = NuGetFramework.Parse("net46");
@@ -4956,7 +4951,7 @@ namespace NuGet.Test
         }
 
         // [Fact]
-        public async Task TestPacManUpdatePackagePreservePackagesConfigAttributes()
+        public async Task UpdatePackagePreservePackagesConfigAttributes()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -5036,7 +5031,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManUpdatePackagePreservePackagesConfigAttributesMultiplePackages()
+        public async Task UpdatePackagePreservePackagesConfigAttributesMultiplePackages()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -5130,7 +5125,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManGetLatestVersion_GatherCache()
+        public async Task GetLatestVersion_GatherCache()
         {
             // Arrange
             var packageIdentity = new PackageIdentity("a", new NuGetVersion(1, 0, 0));
@@ -5237,7 +5232,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_InstallPackage_BatchEvent_Raised()
+        public async Task InstallPackage_BatchEvent_Raised()
         {
             using (var packageSource = TestDirectory.Create())
             {
@@ -5305,7 +5300,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_UpdatePackage_BatchEvent_Raised()
+        public async Task UpdatePackage_BatchEvent_Raised()
         {
             // Arrange
             using (var packageSource = TestDirectory.Create())
@@ -5391,7 +5386,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_UninstallPackage_BatchEvent_Raised()
+        public async Task UninstallPackage_BatchEvent_Raised()
         {
             // Arrange
             using (var packageSource = TestDirectory.Create())
@@ -5457,7 +5452,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_ExecuteMultipleNugetActions_BatchEvent_Raised()
+        public async Task ExecuteMultipleNugetActions_BatchEvent_Raised()
         {
             // Arrange
             using (var packageSource = TestDirectory.Create())
@@ -5532,7 +5527,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_InstallPackagesInMultipleProjects_BatchEvent_Raised()
+        public async Task InstallPackagesInMultipleProjects_BatchEvent_Raised()
         {
             // Arrange
             using (var packageSource = TestDirectory.Create())
@@ -5613,7 +5608,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_ExecuteNugetActions_NoOP_BatchEvent()
+        public async Task ExecuteNugetActions_NoOP_BatchEvent()
         {
             // Arrange
             using (var packageSource = TestDirectory.Create())
@@ -5673,7 +5668,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_InstallPackage_Fail_BatchEvent_Raised()
+        public async Task InstallPackage_Fail_BatchEvent_Raised()
         {
             // Arrange
             using (var packageSource = TestDirectory.Create())
@@ -5742,7 +5737,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_DownloadPackageTask_Fail_BatchEvent_NotRaised()
+        public async Task DownloadPackageTask_Fail_BatchEvent_NotRaised()
         {
             // Arrange
             using (var packageSource = TestDirectory.Create())
@@ -5813,7 +5808,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_DownloadPackageResult_Fail_BatchEvent_Raised()
+        public async Task DownloadPackageResult_Fail_BatchEvent_Raised()
         {
             // Arrange
             using (var packageSource = TestDirectory.Create())
@@ -5883,7 +5878,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_InstallPackage_BuildIntegratedProject_BatchEvent_NotRaised()
+        public async Task InstallPackage_BuildIntegratedProject_BatchEvent_NotRaised()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -5938,7 +5933,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_PreviewUpdatePackage_DeepDependencies()
+        public async Task PreviewUpdatePackage_DeepDependencies()
         {
             // Arrange
 
@@ -6033,7 +6028,7 @@ namespace NuGet.Test
             }
         }
 
-        public async Task TestPacMan_ExecuteNuGetProjectActionsAsync_MultipleBuildIntegratedProjects()
+        public async Task ExecuteNuGetProjectActionsAsync_MultipleBuildIntegratedProjects()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -6088,7 +6083,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_ExecuteNuGetProjectActionsAsync_MixedProjects()
+        public async Task ExecuteNuGetProjectActionsAsync_MixedProjects()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -6154,7 +6149,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_PreviewUpdatePackage_IgnoreDependency()
+        public async Task PreviewUpdatePackage_IgnoreDependency()
         {
             // Arrange
 
@@ -6214,7 +6209,7 @@ namespace NuGet.Test
 
 #if IS_DESKTOP
         [Fact]
-        public async Task TestPacMan_PreviewInstallPackage_PackagesConfig_RaiseTelemetryEvents()
+        public async Task PreviewInstallPackage_PackagesConfig_RaiseTelemetryEvents()
         {
             // Arrange
 
@@ -6269,7 +6264,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_PreviewInstallPackage_BuildIntegrated_RaiseTelemetryEvents()
+        public async Task PreviewInstallPackage_BuildIntegrated_RaiseTelemetryEvents()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -6313,9 +6308,9 @@ namespace NuGet.Test
                 // Assert
                 Assert.Equal(3, telemetryEvents.Count);
                 Assert.Equal(2, telemetryEvents.Where(p => p.Name == "ProjectRestoreInformation").Count());
-                Assert.Equal(1, telemetryEvents.Where(p => p.Name == "NugetActionSteps").Count());
+                Assert.Equal(1, telemetryEvents.Where(p => p.Name == ActionTelemetryStepEvent.NugetActionStepsEventName).Count());
 
-                Assert.True(telemetryEvents.Where(p => p.Name == "NugetActionSteps").
+                Assert.True(telemetryEvents.Where(p => p.Name == ActionTelemetryStepEvent.NugetActionStepsEventName).
                     Any(p => (string)p["SubStepName"] == TelemetryConstants.PreviewBuildIntegratedStepName));
 
                 var projectFilePaths = telemetryEvents.Where(p => p.Name == "ProjectRestoreInformation").SelectMany(x => x.GetPiiData()).Where(x => x.Key == "ProjectFilePath");
@@ -6324,10 +6319,11 @@ namespace NuGet.Test
             }
         }
 
-        [Fact]
-        public async Task TestPacMan_PreviewInstallPackage_BuildIntegrated_RaiseTelemetryEventsWithErrorCode()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task PreviewInstallPackage_VersionNotInRange_RaiseTelemetryEventsWithErrorCodeNU1102(bool errorCodeExistsInJson)
         {
-
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
 
@@ -6344,130 +6340,68 @@ namespace NuGet.Test
             TelemetryActivity.NuGetTelemetryService = telemetryService;
 
             // Create Package Manager
-            using (var solutionManager = new TestSolutionManager())
+            using var solutionManager = new TestSolutionManager();
+            var nuGetPackageManager = new NuGetPackageManager(
+                sourceRepositoryProvider,
+                Settings.LoadSpecificSettings(solutionManager.SolutionDirectory, "NuGet.Config"),
+                solutionManager,
+                new TestDeleteOnRestartManager());
+
+            JObject dependenciesJObject = null;
+            if (errorCodeExistsInJson)
             {
-                var nuGetPackageManager = new NuGetPackageManager(
-                    sourceRepositoryProvider,
-                    Settings.LoadSpecificSettings(solutionManager.SolutionDirectory, "NuGet.Config"),
-                    solutionManager,
-                    new TestDeleteOnRestartManager());
-
-                var json = new JObject
+                dependenciesJObject = new JObject()
                 {
-                    ["dependencies"] = new JObject(),
-                    ["frameworks"] = new JObject
-                    {
-                        ["net46"] = new JObject()
-                    }
+                    new JProperty("NuGet.Frameworks", "99.0.0")
                 };
-
-                var buildIntegratedProject = solutionManager.AddBuildIntegratedProject(json: json);
-
-                // Act
-                var target = new PackageIdentity("NuGet.Versioning", new NuGetVersion("99.9.9"));
-
-                await nuGetPackageManager.PreviewInstallPackageAsync(
-                    buildIntegratedProject,
-                    target,
-                    new ResolutionContext(),
-                    nugetProjectContext,
-                    sourceRepositoryProvider.GetRepositories(),
-                    sourceRepositoryProvider.GetRepositories(),
-                    CancellationToken.None);
-
-                // Assert
-                Assert.Equal(3, telemetryEvents.Count);
-                Assert.Equal(2, telemetryEvents.Where(p => p.Name == "ProjectRestoreInformation").Count());
-                Assert.Equal(1, telemetryEvents.Where(p => p.Name == "NugetActionSteps").Count());
-
-                Assert.True(telemetryEvents.Where(p => p.Name == "NugetActionSteps").
-                    Any(p => (string)p["SubStepName"] == TelemetryConstants.PreviewBuildIntegratedStepName));
-
-                Assert.True((string)telemetryEvents
-                    .Where(p => p.Name == "ProjectRestoreInformation").
-                    Last()["ErrorCodes"] == NuGetLogCode.NU1102.ToString());
-
-                var projectFilePaths = telemetryEvents.Where(p => p.Name == "ProjectRestoreInformation").SelectMany(x => x.GetPiiData()).Where(x => x.Key == "ProjectFilePath");
-                Assert.Equal(2, projectFilePaths.Count());
-                Assert.True(projectFilePaths.All(p => p.Value is string y && File.Exists(y) && (y.EndsWith(".csproj") || y.EndsWith("project.json") || y.EndsWith("proj"))));
             }
-        }
-
-        [Fact]
-        public async Task TestPacMan_PreviewInstallPackage_BuildIntegrated_RaiseTelemetryEventsWithDupedErrorCodes()
-        {
-
-            // Arrange
-            var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
-
-            // set up telemetry service
-            var telemetrySession = new Mock<ITelemetrySession>();
-
-            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
-            telemetrySession
-                .Setup(x => x.PostEvent(It.IsAny<TelemetryEvent>()))
-                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
-
-            var nugetProjectContext = new TestNuGetProjectContext();
-            var telemetryService = new NuGetVSTelemetryService(telemetrySession.Object);
-            TelemetryActivity.NuGetTelemetryService = telemetryService;
-
-            // Create Package Manager
-            using (var solutionManager = new TestSolutionManager())
+            else
             {
-                var nuGetPackageManager = new NuGetPackageManager(
-                    sourceRepositoryProvider,
-                    Settings.LoadSpecificSettings(solutionManager.SolutionDirectory, "NuGet.Config"),
-                    solutionManager,
-                    new TestDeleteOnRestartManager());
-
-                var json = new JObject
-                {
-                    ["dependencies"] = new JObject()
-                    {
-                        new JProperty("NuGet.Frameworks", "99.0.0")
-                    },
-                    ["frameworks"] = new JObject
-                    {
-                        ["net46"] = new JObject()
-                    }
-                };
-
-                var buildIntegratedProject = solutionManager.AddBuildIntegratedProject(json: json);
-
-                // Act
-                var target = new PackageIdentity("NuGet.Versioning", new NuGetVersion("99.9.9"));
-
-                await nuGetPackageManager.PreviewInstallPackageAsync(
-                    buildIntegratedProject,
-                    target,
-                    new ResolutionContext(),
-                    nugetProjectContext,
-                    sourceRepositoryProvider.GetRepositories(),
-                    sourceRepositoryProvider.GetRepositories(),
-                    CancellationToken.None);
-
-                // Assert
-                Assert.Equal(3, telemetryEvents.Count);
-                Assert.Equal(2, telemetryEvents.Where(p => p.Name == "ProjectRestoreInformation").Count());
-                Assert.Equal(1, telemetryEvents.Where(p => p.Name == "NugetActionSteps").Count());
-
-                Assert.True(telemetryEvents.Where(p => p.Name == "NugetActionSteps").
-                    Any(p => (string)p["SubStepName"] == TelemetryConstants.PreviewBuildIntegratedStepName));
-
-                Assert.True((string)telemetryEvents
-                    .Where(p => p.Name == "ProjectRestoreInformation").
-                    Last()["ErrorCodes"] == NuGetLogCode.NU1102.ToString());
-
-                var projectFilePaths = telemetryEvents.Where(p => p.Name == "ProjectRestoreInformation").SelectMany(x => x.GetPiiData()).Where(x => x.Key == "ProjectFilePath");
-                Assert.Equal(2, projectFilePaths.Count());
-                Assert.True(projectFilePaths.All(p => p.Value is string y && File.Exists(y) && (y.EndsWith(".csproj") || y.EndsWith("project.json") || y.EndsWith("proj"))));
+                dependenciesJObject = new JObject();
             }
-        }
 
+            var json = new JObject
+            {
+                ["dependencies"] = dependenciesJObject,
+                ["frameworks"] = new JObject
+                {
+                    ["net46"] = new JObject()
+                }
+            };
+
+            var buildIntegratedProject = solutionManager.AddBuildIntegratedProject(json: json);
+
+            // Act
+            var target = new PackageIdentity("NuGet.Versioning", new NuGetVersion("99.9.9"));
+
+            await nuGetPackageManager.PreviewInstallPackageAsync(
+                buildIntegratedProject,
+                target,
+                new ResolutionContext(),
+                nugetProjectContext,
+                sourceRepositoryProvider.GetRepositories(),
+                sourceRepositoryProvider.GetRepositories(),
+                CancellationToken.None);
+
+            // Assert
+            Assert.Equal(3, telemetryEvents.Count);
+            Assert.Equal(2, telemetryEvents.Where(p => p.Name == "ProjectRestoreInformation").Count());
+            Assert.Equal(1, telemetryEvents.Where(p => p.Name == ActionTelemetryStepEvent.NugetActionStepsEventName).Count());
+
+            Assert.True(telemetryEvents.Where(p => p.Name == ActionTelemetryStepEvent.NugetActionStepsEventName).
+                Any(p => (string)p["SubStepName"] == TelemetryConstants.PreviewBuildIntegratedStepName));
+
+            Assert.True((string)telemetryEvents
+                .Where(p => p.Name == "ProjectRestoreInformation").
+                Last()["ErrorCodes"] == NuGetLogCode.NU1102.ToString());
+
+            var projectFilePaths = telemetryEvents.Where(p => p.Name == "ProjectRestoreInformation").SelectMany(x => x.GetPiiData()).Where(x => x.Key == "ProjectFilePath");
+            Assert.Equal(2, projectFilePaths.Count());
+            Assert.True(projectFilePaths.All(p => p.Value is string y && File.Exists(y) && (y.EndsWith(".csproj") || y.EndsWith("project.json") || y.EndsWith("proj"))));
+        }
 
         [Fact(Skip = "https://github.com/NuGet/Home/issues/10093")]
-        public async Task TestPacMan_PreviewInstallPackage_BuildIntegrated_RaiseTelemetryEventsWithWarningCode()
+        public async Task PreviewInstallPackage_BuildIntegrated_RaiseTelemetryEventsWithWarningCode()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -6549,14 +6483,12 @@ namespace NuGet.Test
                 var projectFilePaths = telemetryEvents.Where(p => p.Name == "ProjectRestoreInformation").SelectMany(x => x.GetPiiData()).Where(x => x.Key == "ProjectFilePath");
                 Assert.Equal(2, projectFilePaths.Count());
                 Assert.True(projectFilePaths.All(p => p.Value is string y && File.Exists(y) && (y.EndsWith(".csproj") || y.EndsWith("project.json") || y.EndsWith("proj"))));
-
             }
         }
 
         [Fact]
-        public async Task TestPacMan_PreviewInstallPackage_BuildIntegrated_RaiseTelemetryEventsWithDupedWarningCodes()
+        public async Task PreviewInstallPackage_BuildIntegrated_RaiseTelemetryEventsWithDupedWarningCodes()
         {
-
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
 
@@ -6610,9 +6542,9 @@ namespace NuGet.Test
                 // Assert
                 Assert.Equal(7, telemetryEvents.Count);
                 Assert.Equal(2, telemetryEvents.Where(p => p.Name == "ProjectRestoreInformation").Count());
-                Assert.Equal(1, telemetryEvents.Where(p => p.Name == "NugetActionSteps").Count());
+                Assert.Equal(1, telemetryEvents.Where(p => p.Name == ActionTelemetryStepEvent.NugetActionStepsEventName).Count());
 
-                Assert.True(telemetryEvents.Where(p => p.Name == "NugetActionSteps").
+                Assert.True(telemetryEvents.Where(p => p.Name == ActionTelemetryStepEvent.NugetActionStepsEventName).
                     Any(p => (string)p["SubStepName"] == TelemetryConstants.PreviewBuildIntegratedStepName));
 
                 Assert.True((string)telemetryEvents
@@ -6626,7 +6558,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_PreviewUpdatePackage_PackagesConfig_RaiseTelemetryEvents()
+        public async Task PreviewUpdatePackage_PackagesConfig_RaiseTelemetryEvents()
         {
             // Set up Package Source
             var packages = new List<SourcePackageDependencyInfo>
@@ -6693,7 +6625,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_ExecuteNuGetProjectActions_PackagesConfig_RaiseTelemetryEvents()
+        public async Task ExecuteNuGetProjectActions_PackagesConfig_RaiseTelemetryEvents()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -6741,14 +6673,14 @@ namespace NuGet.Test
                 Assert.Equal(5, telemetryEvents.Count);
                 Assert.Equal(1, telemetryEvents.Where(p => p.Name == "PackagePreFetcherInformation").Count());
                 Assert.Equal(2, telemetryEvents.Where(p => p.Name == "PackageExtractionInformation").Count());
-                Assert.Equal(1, telemetryEvents.Where(p => p.Name == "NugetActionSteps").Count());
-                Assert.True(telemetryEvents.Where(p => p.Name == "NugetActionSteps").
+                Assert.Equal(1, telemetryEvents.Where(p => p.Name == ActionTelemetryStepEvent.NugetActionStepsEventName).Count());
+                Assert.True(telemetryEvents.Where(p => p.Name == ActionTelemetryStepEvent.NugetActionStepsEventName).
                      Any(p => (string)p["SubStepName"] == TelemetryConstants.ExecuteActionStepName));
             }
         }
 
         [Fact]
-        public async Task TestPacMan_ExecuteNuGetProjectActions_BuildIntegrated_RaiseTelemetryEvents()
+        public async Task ExecuteNuGetProjectActions_BuildIntegrated_RaiseTelemetryEvents()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -6808,11 +6740,11 @@ namespace NuGet.Test
                 Assert.Equal(24, telemetryEvents.Count);
 
                 Assert.Equal(2, telemetryEvents.Where(p => p.Name == "ProjectRestoreInformation").Count());
-                Assert.Equal(2, telemetryEvents.Where(p => p.Name == "NugetActionSteps").Count());
+                Assert.Equal(2, telemetryEvents.Where(p => p.Name == ActionTelemetryStepEvent.NugetActionStepsEventName).Count());
 
-                Assert.True(telemetryEvents.Where(p => p.Name == "NugetActionSteps").
+                Assert.True(telemetryEvents.Where(p => p.Name == ActionTelemetryStepEvent.NugetActionStepsEventName).
                     Any(p => (string)p["SubStepName"] == TelemetryConstants.PreviewBuildIntegratedStepName));
-                Assert.True(telemetryEvents.Where(p => p.Name == "NugetActionSteps").
+                Assert.True(telemetryEvents.Where(p => p.Name == ActionTelemetryStepEvent.NugetActionStepsEventName).
                     Any(p => (string)p["SubStepName"] == TelemetryConstants.ExecuteActionStepName));
 
                 var projectFilePaths = telemetryEvents.Where(p => p.Name == "ProjectRestoreInformation").SelectMany(x => x.GetPiiData()).Where(x => x.Key == "ProjectFilePath");
@@ -6823,7 +6755,7 @@ namespace NuGet.Test
 #endif
 
         [Fact]
-        public async Task TestPacManPreviewInstallPackage_WithGlobalPackageFolder()
+        public async Task PreviewInstallPackage_WithGlobalPackageFolder()
         {
             using (
                 var packageSource1 = TestDirectory.Create())
@@ -6887,7 +6819,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_PreviewUpdatePackage_UnlistedPackage()
+        public async Task PreviewUpdatePackage_UnlistedPackage()
         {
             // Arrange
 
@@ -6939,7 +6871,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_BuildIntegratedProject_PreviewUpdatePackage()
+        public async Task BuildIntegratedProject_PreviewUpdatePackage()
         {
             // Arrange
 
@@ -6995,7 +6927,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_MultipleBuildIntegratedProjects_PreviewUpdatePackage()
+        public async Task MultipleBuildIntegratedProjects_PreviewUpdatePackage()
         {
             // This test was created after a multithreading bug was found. Like most multithreading bugs, it depends
             // very much on timing of exactly when different threads the relevant parts of the code, so it's difficult
@@ -7064,7 +6996,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacMan_PreviewInstallPackage_BuildIntegrated_MissingPath_Throws()
+        public async Task PreviewInstallPackage_BuildIntegrated_MissingPath_Throws()
         {
             // Arrange
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateV3OnlySourceRepositoryProvider();
@@ -7124,7 +7056,7 @@ namespace NuGet.Test
         [InlineData(false, true)]
         [InlineData(true, false)]
         [InlineData(true, true)]
-        public async Task TestPacMan_PreviewInstallPackage_NewSourceMapping_AffectsRestoreSummaryRequest(bool isValidNewMappingSource, bool isValidNewMappingID)
+        public async Task PreviewInstallPackage_NewSourceMapping_AffectsRestoreSummaryRequest(bool isValidNewMappingSource, bool isValidNewMappingID)
         {
             // Arrange
             var package = _packageWithDependents[0];
@@ -7205,7 +7137,7 @@ namespace NuGet.Test
         /// </summary>
         /// <returns></returns>
         [Fact]
-        public async Task TestPacMan_PreviewInstallPackage_BuildIntegrated_NullVersion_Throws()
+        public async Task PreviewInstallPackage_BuildIntegrated_NullVersion_Throws()
         {
             // Arrange
 
@@ -7267,7 +7199,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreview_InstallForPC_PackageSourceMapping_WithSingleFeed_Succeeds()
+        public async Task Preview_InstallForPC_PackageSourceMapping_WithSingleFeed_Succeeds()
         {
             // Arrange
             using (var testSolutionManager = new TestSolutionManager())
@@ -7346,7 +7278,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreview_InstallForPC_PackageSourceMapping_WithMultipleFeedsWithIdenticalPackages_RestoresCorrectPackage()
+        public async Task Preview_InstallForPC_PackageSourceMapping_WithMultipleFeedsWithIdenticalPackages_RestoresCorrectPackage()
         {
             // This test same as having multiple source repositories and `All` option is selected in PMUI.
             // Arrange
@@ -7447,7 +7379,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreview_InstallForPC_PackageSourceMapping_WithMultipleFeeds_SecondarySourcesNotConsidered()
+        public async Task Preview_InstallForPC_PackageSourceMapping_WithMultipleFeeds_SecondarySourcesNotConsidered()
         {
             // This test same as having multiple source repositories but only 1 sourcerepository is selected in PMUI.
             // Direct package dependencies doesn't consider secondary sources(not selected sources on UI).
@@ -7553,7 +7485,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreview_InstallForPC_PackageSourceMapping_WithMultipleFeeds_ForTransitiveDepency_SecondarySourcesConsidered()
+        public async Task Preview_InstallForPC_PackageSourceMapping_WithMultipleFeeds_ForTransitiveDepency_SecondarySourcesConsidered()
         {
             // This test same as having multiple source repositories but only 1 sourcerepository is selected in PMUI.
             // Even though direct package dependencies doesn't consider secondary sources(not selected sources on UI), but transitive dependencies do consider it.
@@ -7676,7 +7608,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreview_UpdateForPC_PackageSourceMapping_WithMultipleFeeds_SecondarySourcesNotConsidered()
+        public async Task Preview_UpdateForPC_PackageSourceMapping_WithMultipleFeeds_SecondarySourcesNotConsidered()
         {
             // This test same as having multiple source repositories but only 1 sourcerepository is selected in PMUI.
             // Arrange
@@ -7839,7 +7771,7 @@ namespace NuGet.Test
         }
 
         [Fact]
-        public async Task TestPacManPreview_UpdateForPC_PackageSourceMapping_WithMultipleFeeds_Fails()
+        public async Task Preview_UpdateForPC_PackageSourceMapping_WithMultipleFeeds_Fails()
         {
             // Arrange
             using (var testSolutionManager = new TestSolutionManager())

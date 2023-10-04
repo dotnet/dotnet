@@ -200,8 +200,8 @@ NuGet.Frameworks.NuGetFramework.IsUnsupported.get -> bool
 NuGet.Frameworks.NuGetFramework.NuGetFramework(NuGet.Frameworks.NuGetFramework! framework) -> void
 NuGet.Frameworks.NuGetFramework.NuGetFramework(string! framework) -> void
 NuGet.Frameworks.NuGetFramework.NuGetFramework(string! framework, System.Version! version) -> void
-NuGet.Frameworks.NuGetFramework.NuGetFramework(string! frameworkIdentifier, System.Version! frameworkVersion, string? frameworkProfile) -> void
 NuGet.Frameworks.NuGetFramework.NuGetFramework(string! frameworkIdentifier, System.Version! frameworkVersion, string! platform, System.Version! platformVersion) -> void
+NuGet.Frameworks.NuGetFramework.NuGetFramework(string! frameworkIdentifier, System.Version! frameworkVersion, string? frameworkProfile) -> void
 NuGet.Frameworks.NuGetFramework.Platform.get -> string!
 NuGet.Frameworks.NuGetFramework.PlatformVersion.get -> System.Version!
 NuGet.Frameworks.NuGetFramework.Profile.get -> string!
@@ -300,10 +300,10 @@ static NuGet.Frameworks.NuGetFramework.operator !=(NuGet.Frameworks.NuGetFramewo
 static NuGet.Frameworks.NuGetFramework.operator ==(NuGet.Frameworks.NuGetFramework? left, NuGet.Frameworks.NuGetFramework? right) -> bool
 static NuGet.Frameworks.NuGetFrameworkExtensions.GetNearest<T>(this System.Collections.Generic.IEnumerable<T!>! items, NuGet.Frameworks.NuGetFramework! projectFramework) -> T?
 static NuGet.Frameworks.NuGetFrameworkExtensions.IsDesktop(this NuGet.Frameworks.NuGetFramework! framework) -> bool
-static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T>! items, NuGet.Frameworks.NuGetFramework! framework) -> T?
-static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T>! items, NuGet.Frameworks.NuGetFramework! framework, NuGet.Frameworks.IFrameworkNameProvider! frameworkMappings, NuGet.Frameworks.IFrameworkCompatibilityProvider! compatibilityProvider) -> T?
 static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T!>! items, NuGet.Frameworks.NuGetFramework! framework, NuGet.Frameworks.IFrameworkNameProvider! frameworkMappings, NuGet.Frameworks.IFrameworkCompatibilityProvider! compatibilityProvider, System.Func<T!, NuGet.Frameworks.NuGetFramework!>! selector) -> T?
 static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T!>! items, NuGet.Frameworks.NuGetFramework! framework, System.Func<T!, NuGet.Frameworks.NuGetFramework!>! selector) -> T?
+static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T>! items, NuGet.Frameworks.NuGetFramework! framework) -> T?
+static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T>! items, NuGet.Frameworks.NuGetFramework! framework, NuGet.Frameworks.IFrameworkNameProvider! frameworkMappings, NuGet.Frameworks.IFrameworkCompatibilityProvider! compatibilityProvider) -> T?
 static NuGet.Frameworks.NuGetFrameworkUtility.IsCompatibleWithFallbackCheck(NuGet.Frameworks.NuGetFramework! projectFramework, NuGet.Frameworks.NuGetFramework! candidate) -> bool
 static NuGet.Frameworks.NuGetFrameworkUtility.IsNetCore50AndUp(NuGet.Frameworks.NuGetFramework! framework) -> bool
 static NuGet.Frameworks.OneWayCompatibilityMappingEntry.Comparer.get -> NuGet.Frameworks.CompatibilityMappingComparer!

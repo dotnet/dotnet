@@ -152,6 +152,16 @@ namespace NuGet.PackageManagement.UI.Options
                 // Always enable addButton for PackageSourceListBox
                 addButton.Enabled = true;
             }
+
+            // Show HttpWarning for the selected source if needed
+            if (selectedSource != null)
+            {
+                SetHttpWarningVisibilityForSelectSource(selectedSource);
+            }
+            else if (selectedMachineSource != null)
+            {
+                SetHttpWarningVisibilityForSelectSource(selectedMachineSource);
+            }
         }
 
         internal async Task InitializeOnActivatedAsync(CancellationToken cancellationToken)
@@ -477,6 +487,8 @@ namespace NuGet.PackageManagement.UI.Options
             selectedPackageSource.Source = source;
             _packageSources.ResetCurrentItem();
 
+            SetHttpWarningVisibilityForSelectSource(selectedPackageSource);
+
             return TryUpdateSourceResults.Successful;
         }
 
@@ -703,12 +715,13 @@ namespace NuGet.PackageManagement.UI.Options
             return path.IndexOfAny(Path.GetInvalidPathChars()) == -1 && Path.IsPathRooted(path);
         }
 
-        private void NewPackageSource_TextChanged(object sender, EventArgs e)
+        private void SetHttpWarningVisibilityForSelectSource(PackageSourceContextInfo selectedSource)
         {
-            var source = new PackageSource(NewPackageSource.Text.Trim(), NewPackageName.Text.Trim());
+            var source = new PackageSource(selectedSource.Source, selectedSource.Name);
+            source.AllowInsecureConnections = selectedSource.AllowInsecureConnections;
 
-            // Warn if the source is http, support for this will be removed
-            if (source.IsHttp && !source.IsHttps)
+            // Warn if the selected source is http, and the AllowInsecureConnections for this source is set to false. 
+            if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
             {
                 HttpWarning.Visible = true;
                 HttpWarningIcon.Visible = true;

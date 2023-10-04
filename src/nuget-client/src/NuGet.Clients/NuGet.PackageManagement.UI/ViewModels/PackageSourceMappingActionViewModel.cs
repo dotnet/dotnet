@@ -59,6 +59,20 @@ namespace NuGet.PackageManagement.UI.ViewModels
             }
         }
 
+        public bool CanAutomaticallyCreateSourceMapping
+        {
+            get
+            {
+                return IsPackageSourceMappingEnabled
+                    && !IsPackageMapped
+                    && ProjectsSupportAutomaticSourceMapping
+                    && UIController.ActivePackageSourceMoniker != null
+                    && !UIController.ActivePackageSourceMoniker.IsAggregateSource;
+            }
+        }
+
+        internal bool ProjectsSupportAutomaticSourceMapping => !UIController.UIContext.Projects.Any(project => project.ProjectStyle != ProjectModel.ProjectStyle.PackageReference);
+
         public string MappingStatus
         {
             get
@@ -71,10 +85,13 @@ namespace NuGet.PackageManagement.UI.ViewModels
                 {
                     return Resources.Text_PackageMappingsFound;
                 }
-                else
+
+                if (CanAutomaticallyCreateSourceMapping)
                 {
-                    return Resources.Text_PackageMappingsNotFound;
+                    return Resources.Text_PackageMappingsAutoCreate;
                 }
+
+                return Resources.Text_PackageMappingsNotFound;
             }
         }
 
@@ -90,10 +107,12 @@ namespace NuGet.PackageManagement.UI.ViewModels
                 {
                     return KnownMonikers.StatusOK;
                 }
-                else
+                if (CanAutomaticallyCreateSourceMapping)
                 {
-                    return KnownMonikers.StatusError;
+                    return KnownMonikers.StatusInformation;
                 }
+
+                return KnownMonikers.StatusError;
             }
         }
 
@@ -103,6 +122,7 @@ namespace NuGet.PackageManagement.UI.ViewModels
             RaisePropertyChanged(nameof(IsPackageMapped));
             RaisePropertyChanged(nameof(MappingStatus));
             RaisePropertyChanged(nameof(MappingStatusIcon));
+            RaisePropertyChanged(nameof(CanAutomaticallyCreateSourceMapping));
         }
 
         public static PackageSourceMappingActionViewModel Create(INuGetUI uiController)

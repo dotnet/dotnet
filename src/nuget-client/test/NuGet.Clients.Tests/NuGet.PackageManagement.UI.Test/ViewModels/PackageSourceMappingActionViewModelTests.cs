@@ -8,6 +8,8 @@ using Microsoft.VisualStudio.Imaging;
 using Moq;
 using NuGet.Configuration;
 using NuGet.PackageManagement.UI.ViewModels;
+using NuGet.PackageManagement.VisualStudio;
+using NuGet.VisualStudio.Internal.Contracts;
 using Xunit;
 
 namespace NuGet.PackageManagement.UI.Test.ViewModels
@@ -31,6 +33,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
 
             Assert.Equal(mockUiController.Object, target.UIController);
             Assert.Equal(false, target.IsPackageSourceMappingEnabled);
+            Assert.Equal(false, target.CanAutomaticallyCreateSourceMapping);
             Assert.Equal(false, target.IsPackageMapped);
             Assert.Equal(Resources.Text_PackageMappingsDisabled, target.MappingStatus);
             Assert.Equal(KnownMonikers.StatusInformation, target.MappingStatusIcon);
@@ -42,6 +45,8 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         {
             // Arrange
             var mockUiController = new Mock<INuGetUI>();
+            string packageId = "b";
+
             // Enable Package Source Mapping by creating at least 1 source and pattern.
             var dictionary = new Dictionary<string, IReadOnlyList<string>>
             {
@@ -51,19 +56,23 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             var mockPackageSourceMapping = new Mock<PackageSourceMapping>(patterns);
 
             var mockUIContext = new Mock<INuGetUIContext>();
-            mockUIContext.Setup(_ => _.PackageSourceMapping).Returns(mockPackageSourceMapping.Object);
-            mockUiController.Setup(_ => _.UIContext).Returns(mockUIContext.Object);
+            mockUIContext.Setup(uiContext => uiContext.PackageSourceMapping).Returns(mockPackageSourceMapping.Object);
+            mockUiController.Setup(uiController => uiController.UIContext).Returns(mockUIContext.Object);
 
             // Act
             var target = PackageSourceMappingActionViewModel.Create(mockUiController.Object);
+            string targetPackageIdBeforeSelecting = target.PackageId;
+            target.PackageId = packageId;
 
             // Assert
             Assert.Equal(mockUiController.Object, target.UIController);
             Assert.Equal(true, target.IsPackageSourceMappingEnabled);
+            Assert.False(target.CanAutomaticallyCreateSourceMapping, "Expected default value since Selected package source is null.");
             Assert.Equal(false, target.IsPackageMapped);
             Assert.Equal(Resources.Text_PackageMappingsNotFound, target.MappingStatus);
             Assert.Equal(KnownMonikers.StatusError, target.MappingStatusIcon);
-            Assert.Null(target.PackageId);
+            Assert.Null(targetPackageIdBeforeSelecting);
+            Assert.Equal(packageId, target.PackageId);
         }
 
         [Fact]
@@ -80,8 +89,8 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             var mockPackageSourceMapping = new Mock<PackageSourceMapping>(patterns);
 
             var mockUIContext = new Mock<INuGetUIContext>();
-            mockUIContext.Setup(_ => _.PackageSourceMapping).Returns(mockPackageSourceMapping.Object);
-            mockUiController.Setup(_ => _.UIContext).Returns(mockUIContext.Object);
+            mockUIContext.Setup(uiContext => uiContext.PackageSourceMapping).Returns(mockPackageSourceMapping.Object);
+            mockUiController.Setup(uiController => uiController.UIContext).Returns(mockUIContext.Object);
 
             // Act
             var target = PackageSourceMappingActionViewModel.Create(mockUiController.Object);
@@ -90,9 +99,134 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             // Assert
             Assert.Equal(mockUiController.Object, target.UIController);
             Assert.Equal(true, target.IsPackageSourceMappingEnabled);
+            Assert.Equal(false, target.CanAutomaticallyCreateSourceMapping);
             Assert.Equal(true, target.IsPackageMapped);
             Assert.Equal(Resources.Text_PackageMappingsFound, target.MappingStatus);
             Assert.Equal(KnownMonikers.StatusOK, target.MappingStatusIcon);
+            Assert.Equal(packageId, target.PackageId);
+        }
+
+        [Fact]
+        public void PackageSourceMappingIsRequired_AggregateSource_CanNotAutomaticallyCreateMapping()
+        {
+            // Arrange
+            var mockUiController = new Mock<INuGetUI>();
+            string packageId = "b";
+            PackageSourceMoniker singlePackageSourceMoniker = new("sourceName", new List<PackageSourceContextInfo>() { new PackageSourceContextInfo("sourceName") }, priorityOrder: 0);
+            PackageSourceMoniker aggregatePackageSourceMoniker = new("sourceName",
+                new List<PackageSourceContextInfo>() { new PackageSourceContextInfo("sourceName"), new PackageSourceContextInfo("sourceName2") },
+                priorityOrder: 0);
+
+            var dictionary = new Dictionary<string, IReadOnlyList<string>>
+            {
+                { "sourceA", new List<string>() { "a" } }
+            };
+            var patterns = new ReadOnlyDictionary<string, IReadOnlyList<string>>(dictionary);
+            var mockPackageSourceMapping = new Mock<PackageSourceMapping>(patterns);
+
+            var mockUIContext = new Mock<INuGetUIContext>();
+            mockUIContext.Setup(uiContext => uiContext.PackageSourceMapping).Returns(mockPackageSourceMapping.Object);
+            mockUiController.Setup(uiController => uiController.UIContext).Returns(mockUIContext.Object);
+            mockUiController.Setup(uiController => uiController.ActivePackageSourceMoniker).Returns(aggregatePackageSourceMoniker);
+
+            // Act
+            var target = PackageSourceMappingActionViewModel.Create(mockUiController.Object);
+            target.PackageId = packageId;
+
+            // Assert
+            Assert.Equal(false, target.CanAutomaticallyCreateSourceMapping);
+            Assert.Equal(Resources.Text_PackageMappingsNotFound, target.MappingStatus);
+            Assert.Equal(KnownMonikers.StatusError, target.MappingStatusIcon);
+
+            Assert.Equal(mockUiController.Object, target.UIController);
+            Assert.Equal(true, target.IsPackageSourceMappingEnabled);
+            Assert.Equal(false, target.IsPackageMapped);
+            Assert.Equal(packageId, target.PackageId);
+        }
+
+        [Fact]
+        public void PackageSourceMappingIsRequired_SingleSource_CanAutomaticallyCreateMapping()
+        {
+            // Arrange
+            var mockUiController = new Mock<INuGetUI>();
+            string packageId = "b";
+            PackageSourceMoniker singlePackageSourceMoniker = new("sourceName", new List<PackageSourceContextInfo>() { new PackageSourceContextInfo("sourceName") }, priorityOrder: 0);
+
+            var dictionary = new Dictionary<string, IReadOnlyList<string>>
+            {
+                { "sourceA", new List<string>() { "a" } }
+            };
+            var patterns = new ReadOnlyDictionary<string, IReadOnlyList<string>>(dictionary);
+            var mockPackageSourceMapping = new Mock<PackageSourceMapping>(patterns);
+
+            var mockUIContext = new Mock<INuGetUIContext>();
+            mockUIContext.Setup(uiContext => uiContext.PackageSourceMapping).Returns(mockPackageSourceMapping.Object);
+            mockUiController.Setup(uiController => uiController.UIContext).Returns(mockUIContext.Object);
+            mockUiController.Setup(uiController => uiController.ActivePackageSourceMoniker).Returns(singlePackageSourceMoniker);
+
+            // Act
+            var target = PackageSourceMappingActionViewModel.Create(mockUiController.Object);
+            target.PackageId = packageId;
+
+            // Assert
+            Assert.Equal(true, target.CanAutomaticallyCreateSourceMapping);
+            Assert.Equal(Resources.Text_PackageMappingsAutoCreate, target.MappingStatus);
+            Assert.Equal(KnownMonikers.StatusInformation, target.MappingStatusIcon);
+
+            Assert.Equal(mockUiController.Object, target.UIController);
+            Assert.Equal(true, target.IsPackageSourceMappingEnabled);
+            Assert.Equal(false, target.IsPackageMapped);
+            Assert.Equal(packageId, target.PackageId);
+        }
+
+        [Fact]
+        public void PackageSourceMappingIsRequired_ProjectNotPackageReference_CanNotAutomaticallyCreateMapping()
+        {
+            // Arrange
+            var mockUiController = new Mock<INuGetUI>();
+            string packageId = "b";
+            PackageSourceMoniker singlePackageSourceMoniker = new("sourceName", new List<PackageSourceContextInfo>() { new PackageSourceContextInfo("sourceName") }, priorityOrder: 0);
+            Mock<INuGetProjectManagerService> projectManagerService = new Mock<INuGetProjectManagerService>();
+            Mock<IProjectContextInfo> project = new Mock<IProjectContextInfo>();
+            project.SetupGet(p => p.ProjectStyle).Returns(ProjectModel.ProjectStyle.PackageReference);
+            project.SetupGet(p => p.ProjectId).Returns("ProjectId1");
+
+            Mock<IProjectContextInfo> project2 = new Mock<IProjectContextInfo>();
+            project2.SetupGet(p => p.ProjectStyle).Returns(ProjectModel.ProjectStyle.PackagesConfig);
+            project2.SetupGet(p => p.ProjectId).Returns("ProjectId2");
+
+            ReadOnlyCollection<IProjectContextInfo> listMockProjects = new ReadOnlyCollection<IProjectContextInfo>(
+                new List<IProjectContextInfo>()
+                {
+                        project.Object,
+                        project2.Object
+                });
+
+            var dictionary = new Dictionary<string, IReadOnlyList<string>>
+            {
+                { "sourceA", new List<string>() { "a" } }
+            };
+            var patterns = new ReadOnlyDictionary<string, IReadOnlyList<string>>(dictionary);
+            var mockPackageSourceMapping = new Mock<PackageSourceMapping>(patterns);
+
+            var mockUIContext = new Mock<INuGetUIContext>();
+            mockUIContext.Setup(uiContext => uiContext.PackageSourceMapping).Returns(mockPackageSourceMapping.Object);
+            mockUIContext.Setup(uiContext => uiContext.Projects).Returns(listMockProjects);
+            mockUiController.Setup(uiController => uiController.UIContext).Returns(mockUIContext.Object);
+            mockUiController.Setup(uiController => uiController.ActivePackageSourceMoniker).Returns(singlePackageSourceMoniker);
+
+            // Act
+            var target = PackageSourceMappingActionViewModel.Create(mockUiController.Object);
+            target.PackageId = packageId;
+
+            // Assert
+            Assert.False(target.CanAutomaticallyCreateSourceMapping, "At least one project is not PackageReference");
+            Assert.Equal(Resources.Text_PackageMappingsNotFound, target.MappingStatus);
+            Assert.Equal(KnownMonikers.StatusError, target.MappingStatusIcon);
+
+            Assert.Equal(mockUiController.Object, target.UIController);
+            Assert.Equal(true, target.IsPackageSourceMappingEnabled);
+            Assert.Equal(false, target.IsPackageMapped);
             Assert.Equal(packageId, target.PackageId);
         }
     }

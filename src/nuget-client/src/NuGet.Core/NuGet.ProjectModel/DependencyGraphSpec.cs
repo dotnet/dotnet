@@ -113,8 +113,8 @@ namespace NuGet.ProjectModel
         /// <param name="closure">The project's closure</param>
         /// <returns>A <see cref="DependencyGraphSpec" />.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="projectUniqueName" />
-        /// is <c>null</c> or an empty string.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="closure" /> is <c>null</c>.</exception>
+        /// is <see langword="null" /> or an empty string.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="closure" /> is <see langword="null" />.</exception>
         public DependencyGraphSpec CreateFromClosure(string projectUniqueName, IReadOnlyList<PackageSpec> closure)
         {
             if (string.IsNullOrEmpty(projectUniqueName))

@@ -43,6 +43,10 @@ namespace NuGet.CommandLine.XPlat
                         "--valid-authentication-types",
                         Strings.SourcesCommandValidAuthenticationTypesDescription,
                         CommandOptionType.SingleValue);
+                    CommandOption protocolVersion = SourceCmd.Option(
+                        "--protocol-version",
+                        Strings.SourcesCommandProtocolVersionDescription,
+                        CommandOptionType.SingleValue);
                     CommandOption configfile = SourceCmd.Option(
                         "--configfile",
                         Strings.Option_ConfigFile,
@@ -59,6 +63,7 @@ namespace NuGet.CommandLine.XPlat
                             Password = password.Value(),
                             StorePasswordInClearText = storePasswordInClearText.HasValue(),
                             ValidAuthenticationTypes = validAuthenticationTypes.Value(),
+                            ProtocolVersion = protocolVersion.Value(),
                             Configfile = configfile.Value(),
                         };
 
@@ -377,6 +382,10 @@ namespace NuGet.CommandLine.XPlat
                         "--valid-authentication-types",
                         Strings.SourcesCommandValidAuthenticationTypesDescription,
                         CommandOptionType.SingleValue);
+                    CommandOption protocolVersion = SourceCmd.Option(
+                        "--protocol-version",
+                        Strings.SourcesCommandProtocolVersionDescription,
+                        CommandOptionType.SingleValue);
                     CommandOption configfile = SourceCmd.Option(
                         "--configfile",
                         Strings.Option_ConfigFile,
@@ -393,6 +402,7 @@ namespace NuGet.CommandLine.XPlat
                             Password = password.Value(),
                             StorePasswordInClearText = storePasswordInClearText.HasValue(),
                             ValidAuthenticationTypes = validAuthenticationTypes.Value(),
+                            ProtocolVersion = protocolVersion.Value(),
                             Configfile = configfile.Value(),
                         };
 

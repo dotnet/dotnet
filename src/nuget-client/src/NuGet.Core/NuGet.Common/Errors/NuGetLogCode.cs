@@ -122,7 +122,7 @@ namespace NuGet.Common
         NU1013 = 1013,
 
         /// <summary>
-        /// NuGetAuditLevel input errors
+        /// NuGetAudit* MSBuild property input errors
         /// </summary>
         NU1014 = 1014,
 
@@ -365,11 +365,6 @@ namespace NuGet.Common
         /// Package with known critical severity vulnerability
         /// </summary>
         NU1904 = 1904,
-
-        /// <summary>
-        /// NuGetAudit enabled, but no vulnerability data found
-        /// </summary>
-        NU1905 = 1905,
 
         /// <summary>
         /// Undefined signature error

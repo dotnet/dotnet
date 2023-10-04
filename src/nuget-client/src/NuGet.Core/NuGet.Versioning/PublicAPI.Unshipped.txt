@@ -1,12 +1,3 @@
 #nullable enable
-NuGet.Versioning.FloatRange.IncludePrerelease.get -> bool
-NuGet.Versioning.FloatRange.ToString(System.Text.StringBuilder! sb) -> void
-NuGet.Versioning.VersionRange.HasLowerAndUpperBounds.get -> bool
-NuGet.Versioning.VersionRange.HasLowerBound.get -> bool
-NuGet.Versioning.VersionRange.HasUpperBound.get -> bool
-NuGet.Versioning.VersionRange.IsMaxInclusive.get -> bool
-NuGet.Versioning.VersionRange.IsMinInclusive.get -> bool
-NuGet.Versioning.VersionRange.MaxVersion.get -> NuGet.Versioning.NuGetVersion?
-NuGet.Versioning.VersionRange.MinVersion.get -> NuGet.Versioning.NuGetVersion?
 static NuGet.Versioning.VersionComparer.Get(NuGet.Versioning.VersionComparison versionComparison) -> NuGet.Versioning.IVersionComparer!
 static NuGet.Versioning.VersionRangeComparer.Get(NuGet.Versioning.VersionComparison versionComparison) -> NuGet.Versioning.IVersionRangeComparer!

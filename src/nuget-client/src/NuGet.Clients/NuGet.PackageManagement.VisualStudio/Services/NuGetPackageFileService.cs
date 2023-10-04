@@ -213,7 +213,7 @@ namespace NuGet.PackageManagement.VisualStudio
         /// NuGet Embedded Uri verification
         /// </summary>
         /// <param name="uri">An URI to test</param>
-        /// <returns><c>true</c> if <c>uri</c> is an URI to an embedded file in a NuGet package</returns>
+        /// <returns><see langword="true" /> if <c>uri</c> is an URI to an embedded file in a NuGet package</returns>
         public static bool IsEmbeddedUri(Uri uri)
         {
             return uri != null

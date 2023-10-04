@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using FluentAssertions;
 using NuGet.Test.Utility;
 using Xunit;
@@ -54,14 +55,20 @@ namespace NuGet.Configuration.Test
 <configuration>
     <packageSources>
         <add key='nugetorg' value='http://serviceIndexorg.test/api/index.json' />
-        <add key='nuget2' value='http://serviceIndex.test/api/index.json' protocolVersion='3' />
+        <add key='nuget2' value='http://serviceIndex.test2/api/index.json' protocolVersion='3' />
+        <add key='nuget3' value='http://serviceIndex.test3/api/index.json' protocolVersion='3' ALLOWInsecureConnections='true' />
+        <add key='nuget4' value='http://serviceIndex.test4/api/index.json' allowInsecureConnections='true' />
+        <add key='nuget5' value='http://serviceIndex.test5/api/index.json' allowInsecureConnections='false' protocolVersion='2' />
     </packageSources>
 </configuration>";
 
             var expectedValues = new List<SourceItem>()
             {
                 new SourceItem("nugetorg","http://serviceIndexorg.test/api/index.json"),
-                new SourceItem("nuget2","http://serviceIndex.test/api/index.json", "3" ),
+                new SourceItem("nuget2","http://serviceIndex.test2/api/index.json", "3" ),
+                new SourceItem("nuget3","http://serviceIndex.test3/api/index.json", protocolVersion: "3", allowInsecureConnections: "true" ),
+                new SourceItem("nuget4","http://serviceIndex.test4/api/index.json", protocolVersion: null, allowInsecureConnections: "true"  ),
+                new SourceItem("nuget5","http://serviceIndex.test5/api/index.json", protocolVersion: "2", allowInsecureConnections: "false"),
             };
 
             var nugetConfigPath = "NuGet.Config";
@@ -76,16 +83,56 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("packageSources");
                 section.Should().NotBeNull();
 
-                var children = section.Items.ToList();
+                var children = section.Items.Cast<SourceItem>().ToList();
 
                 children.Should().NotBeEmpty();
-                children.Count.Should().Be(2);
+                children.Count.Should().Be(5);
 
                 for (var i = 0; i < children.Count; i++)
                 {
                     SettingsTestUtils.DeepEquals(children[i], expectedValues[i]).Should().BeTrue();
+                    children[i].Key.Should().Be(expectedValues[i].Key, because: $"SourceItem[{i}].Key is {children[i].Key}, but it's expected to be {expectedValues[i].Key}");
+                    children[i].Value.Should().Be(expectedValues[i].Value, because: $"SourceItem[{i}].Value is {children[i].Value}, but it's expected to be {expectedValues[i].Value}");
+                    children[i].ProtocolVersion.Should().Be(expectedValues[i].ProtocolVersion, because: $"SourceItem[{i}].ProtocolVersion is {children[i].ProtocolVersion}, but it's expected to be {expectedValues[i].ProtocolVersion}");
+                    children[i].AllowInsecureConnections.Should().Be(expectedValues[i].AllowInsecureConnections, because: $"SourceItem[{i}].AllowInsecureConnections is {children[i].AllowInsecureConnections}, but it's expected to be {expectedValues[i].AllowInsecureConnections}");
                 }
             }
+        }
+
+        [Fact]
+        public void SourceItem_AsXNode_ReturnsExpectedXNode()
+        {
+            var configuration = new NuGetConfiguration(
+                new VirtualSettingSection("packageSources",
+                    new SourceItem("nuget1", "http://serviceIndex.test1/api/index.json", protocolVersion: "3", allowInsecureConnections: "true"),
+                    new SourceItem("nuget2", "http://serviceIndex.test2/api/index.json", protocolVersion: "2", allowInsecureConnections: "false"),
+                    new SourceItem("nuget3", "http://serviceIndex.test3/api/index.json", protocolVersion: null, allowInsecureConnections: "true"),
+                    new SourceItem("nuget4", "http://serviceIndex.test4/api/index.json", protocolVersion: "3")));
+            var resultXml = SettingsTestUtils.RemoveWhitespace(configuration.AsXNode().ToString());
+
+            var expectedXNode = new XElement("configuration",
+                new XElement("packageSources",
+                    new XElement("add",
+                        new XAttribute("key", "nuget1"),
+                        new XAttribute("value", "http://serviceIndex.test1/api/index.json"),
+                        new XAttribute("protocolVersion", "3"),
+                        new XAttribute("allowInsecureConnections", "true")),
+                    new XElement("add",
+                        new XAttribute("key", "nuget2"),
+                        new XAttribute("value", "http://serviceIndex.test2/api/index.json"),
+                        new XAttribute("protocolVersion", "2"),
+                        new XAttribute("allowInsecureConnections", "false")),
+                    new XElement("add",
+                        new XAttribute("key", "nuget3"),
+                        new XAttribute("value", "http://serviceIndex.test3/api/index.json"),
+                        new XAttribute("allowInsecureConnections", "true")),
+                    new XElement("add",
+                        new XAttribute("key", "nuget4"),
+                        new XAttribute("value", "http://serviceIndex.test4/api/index.json"),
+                        new XAttribute("protocolVersion", "3"))));
+            var expectedXml = SettingsTestUtils.RemoveWhitespace(expectedXNode.ToString());
+
+            resultXml.Should().Be(expectedXml, because: resultXml);
         }
 
         [Fact]

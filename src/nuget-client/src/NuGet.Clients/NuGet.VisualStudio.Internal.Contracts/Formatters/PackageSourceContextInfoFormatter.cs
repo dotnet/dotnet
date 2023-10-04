@@ -13,6 +13,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
         private const string SourcePropertyName = "source";
         private const string IsEnabledPropertyName = "isenabled";
         private const string ProtocolVersionPropertyName = "protocolversion";
+        private const string AllowInsecureConnectionsPropertyName = "allowInsecureConnections";
         private const string IsMachineWidePropertyName = "ismachinewide";
         private const string NamePropertyName = "name";
         private const string DescriptionPropertyName = "description";
@@ -33,6 +34,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             string? description = null;
             int originalHashCode = 0;
             int protocolVersion = PackageSource.DefaultProtocolVersion;
+            bool allowInsecureConnections = false;
 
             int propertyCount = reader.ReadMapHeader();
             for (int propertyIndex = 0; propertyIndex < propertyCount; propertyIndex++)
@@ -60,6 +62,9 @@ namespace NuGet.VisualStudio.Internal.Contracts
                     case ProtocolVersionPropertyName:
                         protocolVersion = reader.ReadInt32();
                         break;
+                    case AllowInsecureConnectionsPropertyName:
+                        allowInsecureConnections = reader.ReadBoolean();
+                        break;
                     default:
                         reader.Skip();
                         break;
@@ -69,7 +74,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             Assumes.NotNullOrEmpty(source);
             Assumes.NotNullOrEmpty(name);
 
-            return new PackageSourceContextInfo(source, name, isEnabled, protocolVersion)
+            return new PackageSourceContextInfo(source, name, isEnabled, protocolVersion, allowInsecureConnections)
             {
                 IsMachineWide = isMachineWide,
                 Description = description,
@@ -79,11 +84,13 @@ namespace NuGet.VisualStudio.Internal.Contracts
 
         protected override void SerializeCore(ref MessagePackWriter writer, PackageSourceContextInfo value, MessagePackSerializerOptions options)
         {
-            writer.WriteMapHeader(count: 7);
+            writer.WriteMapHeader(count: 8);
             writer.Write(SourcePropertyName);
             writer.Write(value.Source);
             writer.Write(ProtocolVersionPropertyName);
             writer.Write(value.ProtocolVersion);
+            writer.Write(AllowInsecureConnectionsPropertyName);
+            writer.Write(value.AllowInsecureConnections);
             writer.Write(IsEnabledPropertyName);
             writer.Write(value.IsEnabled);
             writer.Write(IsMachineWidePropertyName);

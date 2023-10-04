@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,12 +26,14 @@ namespace NuGet.SolutionRestoreManager
         /// There is not functional impact here, rather it's about telemetry reporting.</param>
         /// <param name="logger">Logger.</param>
         /// <param name="token">Cancellation token.</param>
+        /// <param name="vulnerabilitiesFoundService">InfoBar service.</param>
         /// <returns>Result of restore operation. True if it succeeded.</returns>
         Task<bool> ExecuteAsync(
             SolutionRestoreRequest request,
             SolutionRestoreJobContext jobContext,
             RestoreOperationLogger logger,
             Dictionary<string, object> restoreStartTrackingData,
+            Lazy<IVulnerabilitiesNotificationService> vulnerabilitiesFoundService,
             CancellationToken token);
     }
 }

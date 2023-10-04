@@ -52,15 +52,15 @@ namespace NuGet.Protocol.Plugins
         /// <param name="filesInPackage">The files in the package to be copied.</param>
         /// <param name="destinationFolderPath">The destination folder path.</param>
         /// <exception cref="ArgumentException">Thrown if <paramref name="packageSourceRepository" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="packageId" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="packageVersion" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="filesInPackage" />
-        /// is either <c>null</c> or empty.</exception>
+        /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentException">Thrown if <paramref name="destinationFolderPath" />
-        /// is either <c>null</c> or an empty string.</exception>
+        /// is either <see langword="null" /> or an empty string.</exception>
         [JsonConstructor]
         public CopyFilesInPackageRequest(
             string packageSourceRepository,

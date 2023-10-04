@@ -35,9 +35,9 @@ namespace NuGet.Protocol.Plugins
         /// <param name="requestHandlers">Request handlers.</param>
         /// <param name="idGenerator">A unique identifier generator.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="requestHandlers" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="idGenerator" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public MessageDispatcher(IRequestHandlers requestHandlers, IIdGenerator idGenerator)
             : this(requestHandlers, idGenerator, new InboundRequestProcessingHandler(), PluginLogger.DefaultInstance)
         {
@@ -49,13 +49,13 @@ namespace NuGet.Protocol.Plugins
         /// <param name="requestHandlers">Request handlers.</param>
         /// <param name="idGenerator">A unique identifier generator.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="requestHandlers" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="idGenerator" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="inboundRequestProcessingHandler" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         internal MessageDispatcher(IRequestHandlers requestHandlers, IIdGenerator idGenerator, InboundRequestProcessingHandler inboundRequestProcessingHandler, IPluginLogger logger)
         {
             if (requestHandlers == null)
@@ -152,7 +152,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="method">The message method.</param>
         /// <param name="payload">The message payload.</param>
         /// <returns>A message.</returns>
-        /// <exception cref="ArgumentNullException">Throws if <paramref name="payload" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Throws if <paramref name="payload" /> is <see langword="null" />.</exception>
         public Message CreateMessage<TPayload>(MessageType type, MessageMethod method, TPayload payload)
             where TPayload : class
         {
@@ -172,7 +172,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="request">The request.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" /> is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public Task DispatchCancelAsync(Message request, CancellationToken cancellationToken)
@@ -202,7 +202,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="fault">The fault payload.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="fault" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="fault" /> is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public Task DispatchFaultAsync(Message request, Fault fault, CancellationToken cancellationToken)
@@ -232,8 +232,8 @@ namespace NuGet.Protocol.Plugins
         /// <param name="progress">The progress payload.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="progress" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="progress" /> is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public Task DispatchProgressAsync(Message request, Progress progress, CancellationToken cancellationToken)
@@ -307,8 +307,8 @@ namespace NuGet.Protocol.Plugins
         /// <param name="responsePayload">The response payload.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" /> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="responsePayload" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="responsePayload" /> is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public Task DispatchResponseAsync<TOutbound>(
@@ -343,7 +343,7 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Sets the connection to be used for dispatching messages.
         /// </summary>
-        /// <param name="connection">A connection instance.  Can be <c>null</c>.</param>
+        /// <param name="connection">A connection instance.  Can be <see langword="null" />.</param>
         public void SetConnection(IConnection connection)
         {
             if (_connection == connection)

@@ -27,7 +27,8 @@ Param (
     [Alias('f')]
     [switch]$Force,
     [switch]$RunTest,
-    [switch]$SkipDotnetInfo
+    [switch]$SkipDotnetInfo,
+    [switch]$ProcDump
 )
 
 $ErrorActionPreference = 'Stop'
@@ -37,6 +38,14 @@ $ErrorActionPreference = 'Stop'
 Trace-Log "Configuring NuGet.Client build environment"
 
 $BuildErrors = @()
+
+if ($ProcDump -eq $true -Or $env:CI -eq "true")
+{
+    Invoke-BuildStep 'Configuring Process Dump Collection' {
+    
+        Install-ProcDump
+    } -ev +BuildErrors
+}
 
 Invoke-BuildStep 'Configuring git repo' {
     Update-SubModules -Force:$Force

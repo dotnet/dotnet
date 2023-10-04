@@ -24,7 +24,7 @@ namespace NuGet.SolutionRestoreManager
         /// </summary>
         /// <param name="index">Reference name or index.</param>
         /// <returns>Reference item matching index.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="index" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="index" /> is <see langword="null" />.</exception>
         IVsTargetFrameworkInfo2 Item(object index);
     }
 }

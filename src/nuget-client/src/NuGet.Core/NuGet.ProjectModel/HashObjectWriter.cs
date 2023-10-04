@@ -31,7 +31,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// Creates a new instance with the provide hash function.
         /// </summary>
-        /// <param name="hashFunc">An <see cref="IHashFunction"/> instance.  Throws if <c>null</c>.</param>
+        /// <param name="hashFunc">An <see cref="IHashFunction"/> instance.  Throws if <see langword="null" />.</param>
         public HashObjectWriter(IHashFunction hashFunc)
         {
             if (hashFunc == null)

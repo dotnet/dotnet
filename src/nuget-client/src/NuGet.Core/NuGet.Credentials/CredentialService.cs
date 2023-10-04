@@ -148,15 +148,15 @@ namespace NuGet.Credentials
         /// Attempts to retrieve last known good credentials for a URI from a credentials cache.
         /// </summary>
         /// <remarks>
-        /// When the return value is <c>true</c>, <paramref name="credentials" /> will have last known
+        /// When the return value is <see langword="true" />, <paramref name="credentials" /> will have last known
         /// good credentials from the credentials cache.  These credentials may have become invalid
         /// since their last use, so there is no guarantee that the credentials are currently valid.
         /// </remarks>
         /// <param name="uri">The URI for which cached credentials should be retrieved.</param>
-        /// <param name="isProxy"><c>true</c> for proxy credentials; otherwise, <c>false</c>.</param>
-        /// <param name="credentials">Cached credentials or <c>null</c>.</param>
-        /// <returns><c>true</c> if a result is returned from the cache; otherwise, false.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="uri" /> is <c>null</c>.</exception>
+        /// <param name="isProxy"><see langword="true" /> for proxy credentials; otherwise, <see langword="false" />.</param>
+        /// <param name="credentials">Cached credentials or <see langword="null" />.</param>
+        /// <returns><see langword="true" /> if a result is returned from the cache; otherwise, false.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="uri" /> is <see langword="null" />.</exception>
         public bool TryGetLastKnownGoodCredentialsFromCache(
             Uri uri,
             bool isProxy,

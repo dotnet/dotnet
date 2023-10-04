@@ -1009,6 +1009,10 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
     <value>_OK</value>
     <comment>Button_Cancel and Button_OK must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</comment>
   </data>
+  <data name="Label_CreatingSourceMappings" xml:space="preserve">
+    <value>Creating source mappings to '{0}':</value>
+    <comment>{0} - The Name of a user-configured NuGet Package Source</comment>
+  </data>
   <data name="Label_NetworkError" xml:space="preserve">
     <value>An error occurred while fetching additional information about the package. Refresh to try again.</value>
   </data>
@@ -1021,5 +1025,11 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   <data name="Error_MetadataNotFound" xml:space="preserve">
     <value>Unable to find metadata of {0}</value>
     <comment>{0} is the package ID</comment>
+  </data>
+  <data name="Label_Solution" xml:space="preserve">
+    <value>Solution</value>
+  </data>
+  <data name="Text_PackageMappingsAutoCreate" xml:space="preserve">
+    <value>A package source mapping will be created.</value>
   </data>
 </root>

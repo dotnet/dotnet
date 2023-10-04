@@ -19,7 +19,7 @@ namespace NuGet.VisualStudio
         /// <summary>
         /// Selects the framework from <paramref name="frameworks"/> that is nearest
         /// to the <paramref name="targetFramework"/>, according to NuGet's framework
-        /// compatibility rules. <c>null</c> is returned of none of the frameworks
+        /// compatibility rules. <see langword="null" /> is returned of none of the frameworks
         /// are compatible.
         /// </summary>
         /// <remarks>This API is <a href="https://github.com/microsoft/vs-threading/blob/main/doc/cookbook_vs.md#how-do-i-effectively-verify-that-my-code-is-fully-free-threaded">free-threaded.</a></remarks>
@@ -29,7 +29,7 @@ namespace NuGet.VisualStudio
         /// These fallback frameworks are attempted in sequence after <paramref name="targetFramework"/>.
         /// </param>
         /// <param name="frameworks">The list of frameworks to choose from.</param>
-        /// <exception cref="ArgumentException">If any of the arguments are <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">If any of the arguments are <see langword="null" />.</exception>
         /// <returns>The nearest framework.</returns>
         [Obsolete("This API does not support .NET 5 and higher target frameworks with platforms. Use IVsFrameworkCompatibility3 instead.")]
         FrameworkName GetNearest(

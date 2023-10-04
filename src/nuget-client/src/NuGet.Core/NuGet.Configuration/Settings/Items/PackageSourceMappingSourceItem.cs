@@ -157,7 +157,7 @@ namespace NuGet.Configuration
 
             base.Update(other);
 
-            Dictionary<PackagePatternItem, PackagePatternItem> otherPatterns = packageSourceMappingSourceItem.Patterns.ToDictionary(c => c, c => c);
+            Dictionary<PackagePatternItem, PackagePatternItem> otherPatterns = packageSourceMappingSourceItem.Patterns.GroupBy(item => item).ToDictionary(c => c.Key, c => c.Key);
             var clonedPatterns = new List<PackagePatternItem>(Patterns);
             foreach (PackagePatternItem packagePatternItem in clonedPatterns)
             {

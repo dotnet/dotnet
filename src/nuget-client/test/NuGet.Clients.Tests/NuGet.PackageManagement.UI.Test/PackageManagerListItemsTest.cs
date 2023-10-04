@@ -27,7 +27,7 @@ namespace NuGet.PackageManagement.UI.Test
         {
             var solutionManager = Mock.Of<INuGetSolutionManagerService>();
             var uiContext = new Mock<INuGetUIContext>();
-            var searchService = Mock.Of<IReconnectingNuGetSearchService>();
+            var searchService = Mock.Of<INuGetSearchService>();
             var packageFileService = Mock.Of<INuGetPackageFileService>();
 
             uiContext.Setup(x => x.SolutionManagerService)
@@ -89,7 +89,7 @@ namespace NuGet.PackageManagement.UI.Test
         {
             var solutionManager = Mock.Of<INuGetSolutionManagerService>();
             var uiContext = new Mock<INuGetUIContext>();
-            var searchService = Mock.Of<IReconnectingNuGetSearchService>();
+            var searchService = Mock.Of<INuGetSearchService>();
             var packageFileService = Mock.Of<INuGetPackageFileService>();
 
             uiContext.Setup(x => x.SolutionManagerService)

@@ -63,7 +63,7 @@ namespace NuGet.Commands
 
             var newPackageSource = new Configuration.PackageSource(args.Source, args.Name);
 
-            if (newPackageSource.IsHttp && !newPackageSource.IsHttps)
+            if (newPackageSource.IsHttp && !newPackageSource.IsHttps && !newPackageSource.AllowInsecureConnections)
             {
                 getLogger().LogWarning(
                     string.Format(CultureInfo.CurrentCulture,
@@ -81,6 +81,11 @@ namespace NuGet.Commands
                     args.StorePasswordInClearText,
                     args.ValidAuthenticationTypes);
                 newPackageSource.Credentials = credentials;
+            }
+
+            if (!newPackageSource.IsLocal && !string.IsNullOrEmpty(args.ProtocolVersion))
+            {
+                newPackageSource.ProtocolVersion = RunnerHelper.ParseProtocolVersion(args.ProtocolVersion);
             }
 
             sourceProvider.AddPackageSource(newPackageSource);
@@ -197,7 +202,7 @@ namespace NuGet.Commands
             List<PackageSource> httpPackageSources = null;
             foreach (PackageSource packageSource in sources)
             {
-                if (packageSource.IsHttp && !packageSource.IsHttps)
+                if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
                 {
                     if (httpPackageSources == null)
                     {
@@ -279,7 +284,7 @@ namespace NuGet.Commands
                 existingSource = new Configuration.PackageSource(args.Source, existingSource.Name);
 
                 // If the existing source is not http, warn the user
-                if (existingSource.IsHttp && !existingSource.IsHttps)
+                if (existingSource.IsHttp && !existingSource.IsHttps && !existingSource.AllowInsecureConnections)
                 {
                     getLogger().LogWarning(string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "update source", args.Source));
                 }
@@ -303,6 +308,11 @@ namespace NuGet.Commands
                     args.StorePasswordInClearText,
                     args.ValidAuthenticationTypes);
                 existingSource.Credentials = credentials;
+            }
+
+            if (!existingSource.IsLocal && !string.IsNullOrEmpty(args.ProtocolVersion))
+            {
+                existingSource.ProtocolVersion = RunnerHelper.ParseProtocolVersion(args.ProtocolVersion);
             }
 
             sourceProvider.UpdatePackageSource(existingSource, updateCredentials: existingSource.Credentials != null, updateEnabled: false);
@@ -368,7 +378,7 @@ namespace NuGet.Commands
             {
                 getLogger().LogMinimal(string.Format(CultureInfo.CurrentCulture,
                     Strings.SourcesCommandSourceEnabledSuccessfully, name));
-                if (packageSource.IsHttp && !packageSource.IsHttps)
+                if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
                 {
                     getLogger().LogWarning(string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "enable source", packageSource.Source));
                 }
@@ -397,6 +407,23 @@ namespace NuGet.Commands
                 // can't specify auth types without credentials
                 throw new CommandException(Strings.SourcesCommandCredentialsRequiredWithAuthTypes);
             }
+        }
+
+        public static int ParseProtocolVersion(string protocolVersionString)
+        {
+            var minSupportedProtocolVersion = PackageSource.DefaultProtocolVersion;
+            var maxSupportedProtocolVersion = PackageSource.MaxProtocolVersion;
+
+            if (int.TryParse(protocolVersionString, out var protocolVersion))
+            {
+                if (protocolVersion >= minSupportedProtocolVersion && protocolVersion <= maxSupportedProtocolVersion)
+                {
+                    return protocolVersion;
+                }
+            }
+
+            // specified protocol version is invalid
+            throw new CommandException(string.Format(Strings.SourcesCommandValidProtocolVersion, minSupportedProtocolVersion, maxSupportedProtocolVersion));
         }
     }
 }

@@ -309,11 +309,11 @@ namespace NuGet.ProjectManagement
         /// </summary>
         /// <param name="path">The path to a file.</param>
         /// <param name="streamFactory">A stream task factory.</param>
-        /// <returns><c>true</c> if contents are equal; otherwise, <c>false</c>.</returns>
+        /// <returns><see langword="true" /> if contents are equal; otherwise, <see langword="false" />.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="path" /> is either
-        /// <c>null</c> or an empty string.</exception>
+        /// <see langword="null" /> or an empty string.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="streamFactory" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public static bool ContentEquals(string path, Func<Stream> streamFactory)
         {
             if (string.IsNullOrEmpty(path))
@@ -340,11 +340,11 @@ namespace NuGet.ProjectManagement
         /// <param name="streamTaskFactory">A stream task factory.</param>
         /// <returns>A task that represents the asynchronous operation.
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="bool" />
-        /// which is <c>true</c> if contents are equal; otherwise, <c>false</c>.</returns>
+        /// which is <see langword="true" /> if contents are equal; otherwise, <see langword="false" />.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="path" /> is either
-        /// <c>null</c> or an empty string.</exception>
+        /// <see langword="null" /> or an empty string.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="streamTaskFactory" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public static async Task<bool> ContentEqualsAsync(string path, Func<Task<Stream>> streamTaskFactory)
         {
             if (string.IsNullOrEmpty(path))

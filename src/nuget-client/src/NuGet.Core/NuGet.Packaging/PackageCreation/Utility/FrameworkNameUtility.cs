@@ -48,7 +48,7 @@ namespace NuGet.Packaging
         /// Parses the specified string into FrameworkName object.
         /// </summary>
         /// <param name="path">The string to be parse.</param>
-        /// <param name="strictParsing">if set to <c>true</c>, parse the first folder of path even if it is unrecognized framework.</param>
+        /// <param name="strictParsing">if set to <see langword="true" />, parse the first folder of path even if it is unrecognized framework.</param>
         /// <param name="effectivePath">returns the path after the parsed target framework</param>
         /// <returns></returns>
         public static FrameworkName ParseFrameworkFolderName(string path, bool strictParsing, out string effectivePath)
@@ -118,7 +118,7 @@ namespace NuGet.Packaging
         /// Parses the specified string into FrameworkName object.
         /// </summary>
         /// <param name="path">The string to be parse.</param>
-        /// <param name="strictParsing">if set to <c>true</c>, parse the first folder of path even if it is unrecognized framework.</param>
+        /// <param name="strictParsing">if set to <see langword="true" />, parse the first folder of path even if it is unrecognized framework.</param>
         /// <param name="effectivePath">returns the path after the parsed target framework</param>
         /// <returns></returns>
         public static NuGetFramework ParseNuGetFrameworkFolderName(string path, bool strictParsing, out string effectivePath)

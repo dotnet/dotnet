@@ -94,7 +94,7 @@ namespace NuGet.Configuration.Test
         }
 
         /// <summary>
-        /// Verifies that <see cref="SettingsLoadingContext.GetOrCreateSettingsFile(string, bool, bool)" /> throws an <see cref="ArgumentNullException"/> when passed a <c>null</c> value for the file path.
+        /// Verifies that <see cref="SettingsLoadingContext.GetOrCreateSettingsFile(string, bool, bool)" /> throws an <see cref="ArgumentNullException"/> when passed a <see langword="null" /> value for the file path.
         /// </summary>
         [Fact]
         public void GetOrCreateSettingsFile_ThrowsArgumentNullException_WhenFilePathIsNull()

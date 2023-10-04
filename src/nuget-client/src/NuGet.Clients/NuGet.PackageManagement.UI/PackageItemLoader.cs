@@ -13,7 +13,6 @@ using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using NuGet.Common;
-using NuGet.PackageManagement.UI.Utility;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
@@ -34,11 +33,12 @@ namespace NuGet.PackageManagement.UI
         private readonly IReadOnlyCollection<PackageSourceContextInfo> _packageSources;
         private readonly ContractItemFilter _itemFilter;
         private readonly bool _useRecommender;
+        private readonly IPackageVulnerabilityService _packageVulnerabilityService;
         private PackageCollection _installedPackages;
         private IEnumerable<IPackageReferenceContextInfo> _packageReferences;
         private PackageFeedSearchState _state = new PackageFeedSearchState();
         private SearchFilter _searchFilter;
-        private IReconnectingNuGetSearchService _searchService;
+        private INuGetSearchService _searchService;
         public IItemLoaderState State => _state;
         private IServiceBroker _serviceBroker;
         private INuGetPackageFileService _packageFileService;
@@ -47,13 +47,14 @@ namespace NuGet.PackageManagement.UI
 
         private PackageItemLoader(
             IServiceBroker serviceBroker,
-            IReconnectingNuGetSearchService searchService,
+            INuGetSearchService searchService,
             PackageLoadContext context,
             IReadOnlyCollection<PackageSourceContextInfo> packageSources,
             ContractItemFilter itemFilter,
             string searchText,
             bool includePrerelease,
-            bool useRecommender)
+            bool useRecommender,
+            IPackageVulnerabilityService vulnerabilityService = default)
         {
             Assumes.NotNull(serviceBroker);
             Assumes.NotNull(context);
@@ -67,17 +68,19 @@ namespace NuGet.PackageManagement.UI
             _packageSources = packageSources;
             _itemFilter = itemFilter;
             _useRecommender = useRecommender;
+            _packageVulnerabilityService = vulnerabilityService;
         }
 
         public static async ValueTask<PackageItemLoader> CreateAsync(
             IServiceBroker serviceBroker,
-            IReconnectingNuGetSearchService searchService,
+            INuGetSearchService searchService,
             PackageLoadContext context,
             IReadOnlyCollection<PackageSourceContextInfo> packageSources,
             ContractItemFilter itemFilter,
             string searchText = null,
             bool includePrerelease = true,
-            bool useRecommender = false)
+            bool useRecommender = false,
+            IPackageVulnerabilityService vulnerabilityService = default)
         {
             var itemLoader = new PackageItemLoader(
                 serviceBroker,
@@ -87,7 +90,8 @@ namespace NuGet.PackageManagement.UI
                 itemFilter,
                 searchText,
                 includePrerelease,
-                useRecommender);
+                useRecommender,
+                vulnerabilityService);
 
             await itemLoader.InitializeAsync();
 
@@ -100,11 +104,12 @@ namespace NuGet.PackageManagement.UI
             PackageLoadContext context,
             IReadOnlyCollection<PackageSourceContextInfo> packageSources,
             ContractItemFilter itemFilter,
-            IReconnectingNuGetSearchService searchService,
+            INuGetSearchService searchService,
             INuGetPackageFileService packageFileService,
             string searchText = null,
             bool includePrerelease = true,
-            bool useRecommender = false)
+            bool useRecommender = false,
+            IPackageVulnerabilityService vulnerabilityService = default)
         {
             var itemLoader = new PackageItemLoader(
                 serviceBroker,
@@ -114,7 +119,8 @@ namespace NuGet.PackageManagement.UI
                 itemFilter,
                 searchText,
                 includePrerelease,
-                useRecommender);
+                useRecommender,
+                vulnerabilityService);
 
             await itemLoader.InitializeAsync(packageFileService);
 
@@ -289,7 +295,7 @@ namespace NuGet.PackageManagement.UI
                     transitiveToolTipMessage = string.Format(CultureInfo.CurrentCulture, Resources.PackageVersionWithTransitiveOrigins, metadata.Identity.Version, string.Join(", ", metadata.TransitiveOrigins));
                 }
 
-                var listItem = new PackageItemViewModel(_searchService)
+                var listItem = new PackageItemViewModel(_searchService, _packageVulnerabilityService)
                 {
                     Id = metadata.Identity.Id,
                     Version = metadata.Identity.Version,

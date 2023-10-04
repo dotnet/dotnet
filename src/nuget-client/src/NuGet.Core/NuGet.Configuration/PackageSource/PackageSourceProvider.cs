@@ -199,6 +199,7 @@ namespace NuGet.Configuration
             }
 
             packageSource.ProtocolVersion = ReadProtocolVersion(setting);
+            packageSource.AllowInsecureConnections = ReadAllowInsecureConnections(setting);
 
             return packageSource;
         }
@@ -211,6 +212,16 @@ namespace NuGet.Configuration
             }
 
             return PackageSource.DefaultProtocolVersion;
+        }
+
+        private static bool ReadAllowInsecureConnections(SourceItem setting)
+        {
+            if (bool.TryParse(setting.AllowInsecureConnections, out var allowInsecureConnections))
+            {
+                return allowInsecureConnections;
+            }
+
+            return PackageSource.DefaultAllowInsecureConnections;
         }
 
         private static int AddOrUpdateIndexedSource(

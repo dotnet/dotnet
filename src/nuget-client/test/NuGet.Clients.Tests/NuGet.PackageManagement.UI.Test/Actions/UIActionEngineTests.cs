@@ -16,7 +16,6 @@ using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.PackageManagement.Telemetry;
-using NuGet.PackageManagement.UI.Utility;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
@@ -78,9 +77,17 @@ namespace NuGet.PackageManagement.UI.Test
                         packageIdentityB2,
                         NuGetProjectActionType.Install)
                 });
+
+            var mockUIController = new Mock<INuGetUI>();
+            var mockUIContext = new Mock<INuGetUIContext>();
+            mockUIContext.Setup(uiContext => uiContext.PackageSourceMapping).Returns((PackageSourceMapping)null);
+            mockUIController.Setup(uiController => uiController.UIContext).Returns(mockUIContext.Object);
+
             IReadOnlyList<PreviewResult> previewResults = await UIActionEngine.GetPreviewResultsAsync(
                 Mock.Of<INuGetProjectManagerService>(),
-                new[] { uninstallAction, installAction },
+                projectActions: new[] { uninstallAction, installAction },
+                userAction: null,
+                mockUIController.Object,
                 CancellationToken.None);
 
             Assert.Equal(1, previewResults.Count);
@@ -128,9 +135,17 @@ namespace NuGet.PackageManagement.UI.Test
                         packageIdentityC,
                         NuGetProjectActionType.Install)
                 });
+
+            var mockUIController = new Mock<INuGetUI>();
+            var mockUIContext = new Mock<INuGetUIContext>();
+            mockUIContext.Setup(uiContext => uiContext.PackageSourceMapping).Returns((PackageSourceMapping)null);
+            mockUIController.Setup(uiController => uiController.UIContext).Returns(mockUIContext.Object);
+
             IReadOnlyList<PreviewResult> previewResults = await UIActionEngine.GetPreviewResultsAsync(
                 Mock.Of<INuGetProjectManagerService>(),
-                new[] { installAction },
+                projectActions: new[] { installAction },
+                userAction: null,
+                mockUIController.Object,
                 CancellationToken.None);
 
             Assert.Equal(1, previewResults.Count);
@@ -210,7 +225,7 @@ namespace NuGet.PackageManagement.UI.Test
             Assert.NotNull(lastTelemetryEvent);
             // expect cancelled action because we mocked just enough objects to emit telemetry
             Assert.Equal(NuGetOperationStatus.Cancelled, lastTelemetryEvent[nameof(ActionEventBase.Status)]);
-            Assert.Equal(NuGetOperationType.Install, lastTelemetryEvent[nameof(ActionsTelemetryEvent.OperationType)]);
+            Assert.Equal(NuGetProjectActionType.Install, lastTelemetryEvent[nameof(ActionsTelemetryEvent.OperationType)]);
             Assert.Equal(isSolutionLevel, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.IsSolutionLevel)]);
             Assert.Equal(activeTab, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.Tab)]);
             Assert.Equal(expectedPackageWasTransitive, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.PackageToInstallWasTransitive)]);
@@ -233,7 +248,7 @@ namespace NuGet.PackageManagement.UI.Test
             var actionTelemetryData = new VSActionsTelemetryEvent(
                 operationId,
                 projectIds: new[] { Guid.NewGuid().ToString() },
-                operationType: NuGetOperationType.Install,
+                operationType: NuGetProjectActionType.Install,
                 source: OperationSource.PMC,
                 startTime: DateTimeOffset.Now.AddSeconds(-1),
                 status: NuGetOperationStatus.NoOp,
@@ -253,12 +268,16 @@ namespace NuGet.PackageManagement.UI.Test
                 recommenderVersion: null,
                 topLevelVulnerablePackagesCount: 3,
                 topLevelVulnerablePackagesMaxSeverities: new List<int> { 1, 1, 3 }, // each package has its own max severity
+                transitiveVulnerablePackagesCount: 2,
+                transitiveVulnerablePackagesMaxSeverities: new List<int> { 2, 3 }, // each package has its own max severity
                 existingPackages: null,
                 addedPackages: null,
                 removedPackages: null,
                 updatedPackagesOld: null,
                 updatedPackagesNew: null,
-                targetFrameworks: null);
+                targetFrameworks: null,
+                countCreatedTopLevelSourceMappings: null,
+                countCreatedTransitiveSourceMappings: null);
 
             // Act
             var service = new NuGetVSTelemetryService(telemetrySession.Object);
@@ -267,13 +286,81 @@ namespace NuGet.PackageManagement.UI.Test
             // Assert
             Assert.NotNull(lastTelemetryEvent);
             Assert.NotNull(lastTelemetryEvent.ComplexData["TopLevelVulnerablePackagesMaxSeverities"] as List<int>);
-            var pkgSeverities = lastTelemetryEvent.ComplexData["TopLevelVulnerablePackagesMaxSeverities"] as List<int>;
-            Assert.Equal(lastTelemetryEvent["TopLevelVulnerablePackagesCount"], pkgSeverities.Count());
-            Assert.Collection(pkgSeverities,
+            var topLevelPkgSeverities = lastTelemetryEvent.ComplexData["TopLevelVulnerablePackagesMaxSeverities"] as List<int>;
+            Assert.Equal(lastTelemetryEvent["TopLevelVulnerablePackagesCount"], topLevelPkgSeverities.Count());
+            Assert.Collection(topLevelPkgSeverities,
                 item => Assert.Equal(1, item),
                 item => Assert.Equal(1, item),
                 item => Assert.Equal(3, item));
-            Assert.Equal(3, pkgSeverities.Count());
+            Assert.Equal(3, topLevelPkgSeverities.Count());
+
+            var transitivePkgSeverities = lastTelemetryEvent.ComplexData["TransitiveVulnerablePackagesMaxSeverities"] as List<int>;
+            Assert.Equal(lastTelemetryEvent["TransitiveVulnerablePackagesCount"], transitivePkgSeverities.Count());
+            Assert.Equal(lastTelemetryEvent["TransitiveVulnerablePackagesCount"], transitivePkgSeverities.Count());
+            Assert.Collection(transitivePkgSeverities,
+                item => Assert.Equal(2, item),
+                item => Assert.Equal(3, item));
+            Assert.Equal(2, transitivePkgSeverities.Count());
+
+            Assert.Null(lastTelemetryEvent["CreatedTopLevelSourceMappingsCount"]);
+            Assert.Null(lastTelemetryEvent["CreatedTransitiveSourceMappingsCount"]);
+        }
+
+        [Fact]
+        public void ActionCreatingSourceMappings_TopLevelCountAndTransitiveCount_AddsValue()
+        {
+            // Arrange
+            int expectedCountCreatedTopLevelSourceMappings = 42;
+            int expectedCountCreatedTransitiveSourceMappings = 24;
+            var telemetrySession = new Mock<ITelemetrySession>();
+            TelemetryEvent lastTelemetryEvent = null;
+            telemetrySession
+                .Setup(x => x.PostEvent(It.IsAny<TelemetryEvent>()))
+                .Callback<TelemetryEvent>(x => lastTelemetryEvent = x);
+
+            var operationId = Guid.NewGuid().ToString();
+
+            var actionTelemetryData = new VSActionsTelemetryEvent(
+                operationId,
+                projectIds: new[] { Guid.NewGuid().ToString() },
+                operationType: NuGetProjectActionType.Install,
+                source: OperationSource.PMC,
+                startTime: DateTimeOffset.Now.AddSeconds(-1),
+                status: NuGetOperationStatus.NoOp,
+                packageCount: 1,
+                endTime: DateTimeOffset.Now,
+                duration: .40,
+                isPackageSourceMappingEnabled: false);
+
+            UIActionEngine.AddUiActionEngineTelemetryProperties(
+                actionTelemetryEvent: actionTelemetryData,
+                continueAfterPreview: true,
+                acceptedLicense: true,
+                userAction: null,
+                selectedIndex: 0,
+                recommendedCount: 0,
+                recommendPackages: false,
+                recommenderVersion: null,
+                topLevelVulnerablePackagesCount: 3,
+                topLevelVulnerablePackagesMaxSeverities: new List<int> { 1, 1, 3 }, // each package has its own max severity
+                transitiveVulnerablePackagesCount: 2,
+                transitiveVulnerablePackagesMaxSeverities: new List<int> { 2, 3 }, // each package has its own max severity
+                existingPackages: null,
+                addedPackages: null,
+                removedPackages: null,
+                updatedPackagesOld: null,
+                updatedPackagesNew: null,
+                targetFrameworks: null,
+                countCreatedTopLevelSourceMappings: expectedCountCreatedTopLevelSourceMappings,
+                countCreatedTransitiveSourceMappings: expectedCountCreatedTransitiveSourceMappings);
+
+            // Act
+            var service = new NuGetVSTelemetryService(telemetrySession.Object);
+            service.EmitTelemetryEvent(actionTelemetryData);
+
+            // Assert
+            Assert.Equal(expectedCountCreatedTopLevelSourceMappings, (int)lastTelemetryEvent["CreatedTopLevelSourceMappingsCount"]);
+            Assert.Equal(expectedCountCreatedTransitiveSourceMappings, (int)lastTelemetryEvent["CreatedTransitiveSourceMappingsCount"]);
         }
 
         [Theory]
@@ -396,7 +483,7 @@ namespace NuGet.PackageManagement.UI.Test
             Assert.NotNull(lastTelemetryEvent);
             // expect cancelled action because we mocked just enough objects to emit telemetry
             Assert.Equal(NuGetOperationStatus.Cancelled, lastTelemetryEvent[nameof(ActionEventBase.Status)]);
-            Assert.Equal(NuGetOperationType.Install, lastTelemetryEvent[nameof(ActionsTelemetryEvent.OperationType)]);
+            Assert.Equal(NuGetProjectActionType.Install, lastTelemetryEvent[nameof(ActionsTelemetryEvent.OperationType)]);
             Assert.Equal(isSolutionLevel, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.IsSolutionLevel)]);
             Assert.Equal(activeTab, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.Tab)]);
             Assert.Equal(expectedPackageWasTransitive, lastTelemetryEvent[nameof(VSActionsTelemetryEvent.PackageToInstallWasTransitive)]);
@@ -440,7 +527,7 @@ namespace NuGet.PackageManagement.UI.Test
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => uiActionEngine.PerformInstallOrUninstallAsync(mockUIService.Object, action, CancellationToken.None));
 
             // Assert
-            mockNuGetUIContext.Verify(_ => _.PackageSourceMapping, timesSourceMappingCalled);
+            mockNuGetUIContext.Verify(uiContext => uiContext.PackageSourceMapping, timesSourceMappingCalled);
             Assert.Contains("Unable to find metadata of transitiveA.1.0.0", ex.Message);
         }
 
@@ -488,7 +575,7 @@ namespace NuGet.PackageManagement.UI.Test
             await uiActionEngine.PerformInstallOrUninstallAsync(mockUIService.Object, action, CancellationToken.None);
 
             // Assert
-            mockNuGetUIContext.Verify(_ => _.PackageSourceMapping, timesSourceMappingCalled);
+            mockNuGetUIContext.Verify(uiContext => uiContext.PackageSourceMapping, timesSourceMappingCalled);
         }
 
         [Theory]
@@ -533,7 +620,7 @@ namespace NuGet.PackageManagement.UI.Test
             await uiActionEngine.PerformInstallOrUninstallAsync(mockUIService.Object, action, CancellationToken.None);
 
             // Assert
-            mockNuGetUIContext.Verify(_ => _.PackageSourceMapping, timesSourceMappingCalled);
+            mockNuGetUIContext.Verify(uiContext => uiContext.PackageSourceMapping, timesSourceMappingCalled);
         }
 
         private void SetupUIServiceWithPackageSearchMetadata(
@@ -602,7 +689,7 @@ namespace NuGet.PackageManagement.UI.Test
 
         private static void SetupUIContext(SourceRepository localSourceRepository, Mock<INuGetUIContext> uiContext, Mock<IServiceBroker> serviceBroker)
         {
-            Mock<IReconnectingNuGetSearchService> reconnectingNuGetSearchService = new Mock<IReconnectingNuGetSearchService>();
+            Mock<INuGetSearchService> reconnectingNuGetSearchService = new Mock<INuGetSearchService>();
 
             IReadOnlyList<SourceRepository> list = System.Collections.Immutable.ImmutableArray<SourceRepository>.Empty;
             if (localSourceRepository != null)
@@ -613,7 +700,7 @@ namespace NuGet.PackageManagement.UI.Test
             reconnectingNuGetSearchService.Setup(svc => svc.GetAllPackageFoldersAsync(It.IsAny<IReadOnlyCollection<IProjectContextInfo>>(), It.IsAny<CancellationToken>()))
                 .Returns(new ValueTask<IReadOnlyList<SourceRepository>>(list).AsTask());
 
-            uiContext.Setup(ctx => ctx.ReconnectingSearchService).Returns(reconnectingNuGetSearchService.Object);
+            uiContext.Setup(ctx => ctx.NuGetSearchService).Returns(reconnectingNuGetSearchService.Object);
             uiContext.Setup(ctx => ctx.ServiceBroker).Returns(serviceBroker.Object);
         }
 
@@ -802,7 +889,7 @@ namespace NuGet.PackageManagement.UI.Test
             }
 
             var mockPackageSourceMapping = new Mock<PackageSourceMapping>(packageSourceMappingPatterns);
-            mockNuGetUIContext.Setup(_ => _.PackageSourceMapping).Returns(mockPackageSourceMapping.Object);
+            mockNuGetUIContext.Setup(uiContext => uiContext.PackageSourceMapping).Returns(mockPackageSourceMapping.Object);
         }
 
         private sealed class PackageIdentitySubclass : PackageIdentity

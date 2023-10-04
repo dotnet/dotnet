@@ -25,7 +25,7 @@ namespace NuGet.ProjectManagement
         /// </summary>
         /// <param name="nodeActions">A dictionary of XML node names to node actions.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="nodeActions" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         public XmlTransformer(IDictionary<XName, Action<XElement, XElement>> nodeActions)
         {
             if (nodeActions == null)
@@ -45,9 +45,9 @@ namespace NuGet.ProjectManagement
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="streamTaskFactory" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="projectSystem" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public async Task TransformFileAsync(
@@ -89,9 +89,9 @@ namespace NuGet.ProjectManagement
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="streamTaskFactory" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="projectSystem" />
-        /// is <c>null</c>.</exception>
+        /// is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         public async Task RevertFileAsync(

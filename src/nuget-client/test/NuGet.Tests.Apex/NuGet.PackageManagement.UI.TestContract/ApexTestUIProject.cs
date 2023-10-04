@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
@@ -49,6 +50,14 @@ namespace NuGet.PackageManagement.UI.TestContract
             }
         }
 
+        public PackageSourceMoniker SelectedSource
+        {
+            get
+            {
+                return UIInvoke(() => _packageManagerControl.SelectedSource);
+            }
+        }
+
         public bool IsSolution { get => _packageManagerControl._detailModel.IsSolution; }
 
         public void Search(string searchText)
@@ -78,6 +87,12 @@ namespace NuGet.PackageManagement.UI.TestContract
         {
             var result = UIInvoke(() => _packageManagerControl.PackageList.PackageItems.FirstOrDefault());
             return result?.IsPackageVulnerable == true;
+        }
+
+        public bool VerifyDeprecatedPackageOnTopOfInstalledTab()
+        {
+            var result = UIInvoke(() => _packageManagerControl.PackageList.PackageItems.FirstOrDefault());
+            return result?.IsPackageDeprecated == true;
         }
 
         public void InstallPackage(string packageId, string version)
@@ -155,6 +170,15 @@ namespace NuGet.PackageManagement.UI.TestContract
         {
             // First one is always 'All' option
             _packageManagerControl.SelectedSource = _packageManagerControl.PackageSources.First();
+        });
+
+        /// <summary>
+        /// Used for package source mapping Apex tests which require a specific package source to be selected.
+        /// </summary>
+        public void SetPackageSourceOptionToSource(string sourceName) => UIInvoke(() =>
+        {
+            _packageManagerControl.SelectedSource = _packageManagerControl.PackageSources.Single(
+                p => StringComparer.OrdinalIgnoreCase.Equals(p.SourceName, sourceName));
         });
 
         private void UIInvoke(Action action)

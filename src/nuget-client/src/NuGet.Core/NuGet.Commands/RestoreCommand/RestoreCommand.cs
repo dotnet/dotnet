@@ -239,11 +239,12 @@ namespace NuGet.Commands
                     _success = false;
                 }
 
-                if (_request.Project?.RestoreMetadata != null)
+                if (_request.DependencyProviders.RemoteProviders != null)
                 {
-                    foreach (var source in _request.Project.RestoreMetadata.Sources)
+                    foreach (var remoteProvider in _request.DependencyProviders.RemoteProviders)
                     {
-                        if (source.IsHttp && !source.IsHttps)
+                        var source = remoteProvider.Source;
+                        if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
                         {
                             await _logger.LogAsync(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1803,
                                 string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "restore", source.Source)));
@@ -303,9 +304,12 @@ namespace NuGet.Commands
                     });
                 }
 
-                AuditUtility.EnabledValue enableAudit = AuditUtility.ParseEnableValue(_request.Project.RestoreMetadata?.RestoreAuditProperties?.EnableAudit);
+                AuditUtility.EnabledValue enableAudit = AuditUtility.ParseEnableValue(
+                    _request.Project.RestoreMetadata?.RestoreAuditProperties?.EnableAudit,
+                    _request.Project.FilePath,
+                    _logger);
                 telemetry.TelemetryEvent[AuditEnabled] = AuditUtility.GetString(enableAudit);
-                if (enableAudit == AuditUtility.EnabledValue.ImplicitOptIn || enableAudit == AuditUtility.EnabledValue.ExplicitOptIn)
+                if (enableAudit != AuditUtility.EnabledValue.ExplicitOptOut)
                 {
                     await PerformAuditAsync(enableAudit, graphs, telemetry, token);
                 }
@@ -1062,8 +1066,6 @@ namespace NuGet.Commands
                     // Don't do compat checks for the ridless graph of DotnetTooReference restore. Everything relevant will be caught in the graph with the rid
                     if (!(ProjectStyle.DotnetToolReference == project.RestoreMetadata?.ProjectStyle && string.IsNullOrEmpty(graph.RuntimeIdentifier)))
                     {
-                        await logger.LogAsync(LogLevel.Verbose, string.Format(CultureInfo.CurrentCulture, Strings.Log_CheckingCompatibility, graph.Name));
-
                         var includeFlags = IncludeFlagUtils.FlattenDependencyTypes(includeFlagGraphs, project, graph);
 
                         var res = await checker.CheckAsync(graph, includeFlags, project);

@@ -35,7 +35,7 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
         private readonly INuGetPackageFileService _packageFileService;
         private Mock<IServiceBroker> _serviceBroker = new Mock<IServiceBroker>();
         private Mock<INuGetTelemetryProvider> _telemetryProvider = new Mock<INuGetTelemetryProvider>(MockBehavior.Strict);
-        private Mock<IReconnectingNuGetSearchService> _searchService = new Mock<IReconnectingNuGetSearchService>();
+        private Mock<INuGetSearchService> _searchService = new Mock<INuGetSearchService>();
 
         public PackageItemViewModelTests(
             GlobalServiceProvider globalServiceProvider,

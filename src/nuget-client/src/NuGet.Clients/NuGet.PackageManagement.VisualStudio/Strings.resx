@@ -285,4 +285,8 @@
   <data name="Exception_InvalidContinuationToken" xml:space="preserve">
     <value>Invalid token</value>
   </data>
+  <data name="Error_VulnerabilityDataFetch" xml:space="preserve">
+    <value>Error occurred while getting package vulnerability data: {0}</value>
+    <comment>{0} is an error message</comment>
+  </data>
 </root>

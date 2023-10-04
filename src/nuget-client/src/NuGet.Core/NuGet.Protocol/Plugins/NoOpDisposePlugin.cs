@@ -66,7 +66,7 @@ namespace NuGet.Protocol.Plugins
         /// Instantiates a new <see cref="NoOpDisposePlugin" /> class.
         /// </summary>
         /// <param name="plugin">A plugin</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="plugin" /> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="plugin" /> is <see langword="null" />.</exception>
         public NoOpDisposePlugin(IPlugin plugin)
         {
             if (plugin == null)

@@ -31,7 +31,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
             sp.Reset();
             _testData = testData;
             var testVersion = new NuGetVersion(0, 0, 1);
-            var searchService = new Mock<IReconnectingNuGetSearchService>();
+            var searchService = new Mock<INuGetSearchService>();
             _testViewModel = new PackageItemViewModel(searchService.Object)
             {
                 Id = "package",
@@ -130,7 +130,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
 
             NuGetVersion installedVersion = NuGetVersion.Parse("1.0.0");
 
-            var searchService = new Mock<IReconnectingNuGetSearchService>();
+            var searchService = new Mock<INuGetSearchService>();
 
             await model.SetCurrentPackageAsync(
                 new PackageItemViewModel(searchService.Object)
@@ -162,7 +162,7 @@ namespace NuGet.PackageManagement.UI.Test.Models
 
             NuGetVersion installedVersion = NuGetVersion.Parse("1.0.0");
 
-            var searchService = new Mock<IReconnectingNuGetSearchService>();
+            var searchService = new Mock<INuGetSearchService>();
 
             await model.SetCurrentPackageAsync(
                 new PackageItemViewModel(searchService.Object)

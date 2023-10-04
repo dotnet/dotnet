@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Log_CheckingCompatibility" xml:space="preserve">
-    <value>Checking compatibility of packages on {0}.</value>
-  </data>
-  <data name="Log_CheckingPackageCompatibility" xml:space="preserve">
-    <value>Checking compatibility for {0} {1} with {2}.</value>
-  </data>
   <data name="Log_GeneratingMsBuildFile" xml:space="preserve">
     <value>Generating MSBuild file {0}.</value>
   </data>
@@ -775,8 +769,12 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <comment>{0} is the path to the project file. {1} is the restore duration.</comment>
   </data>
   <data name="Error_PackageDownload_OnlyExactVersionsAreAllowed" xml:space="preserve">
-    <value>'{0}' is not an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</value>
-    <comment>0 - the version string that's not exact</comment>
+    <value>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</value>
+    <comment>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</comment>
+  </data>
+  <data name="Error_PackageDownload_NoVersion" xml:space="preserve">
+    <value>Package '{0}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</value>
+    <comment>0 - The package that does not have an exact version. Do not translate 'PackageDownload'.</comment>
   </data>
   <data name="Error_IncompatiblePackageType" xml:space="preserve">
     <value>The package {0} {1} has a package type {2} that is incompatible with this project.</value>
@@ -1069,7 +1067,7 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
 {3} - URL for more info on the known vulnerability</comment>
   </data>
   <data name="Error_InvalidNuGetAuditLevelValue" xml:space="preserve">
-    <value>Invalid NuGetAuditLevel value '{0}'. Expected values: {1}</value>
+    <value>Invalid NuGetAuditLevel value '{0}'. Valid values: {1}</value>
     <comment>Don't translate 'NuGetAuditLevel'
 {0} - is the value from the customer's project file
 {1} is the list of valid values "low, moderate, high, critical" (these should not be translated either)</comment>
@@ -1083,7 +1081,7 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
     <comment>{0} is the value supplied </comment>
   </data>
   <data name="Error_InvalidNuGetAuditModeValue" xml:space="preserve">
-    <value>Invalid NuGetAuditMode value '{0}'. Expected values: {1}</value>
+    <value>Invalid NuGetAuditMode value '{0}'. Valid values: {1}</value>
     <comment>Don't translate 'NuGetAuditMode'
 {0} - is the value from the customer's project file
 {1} is the list of valid values "direct, all"</comment>
@@ -1091,5 +1089,14 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
   <data name="Warning_NoVulnerabilityData" xml:space="preserve">
     <value>NuGetAudit is enabled, but no package sources contain known vulnerability data.</value>
     <comment>Do not translate NuGetAudit</comment>
+  </data>
+  <data name="Error_InvalidNuGetAuditValue" xml:space="preserve">
+    <value>Invalid NuGetAudit value '{0}'. Valid values: {1}</value>
+    <comment>Don't translate 'NuGetAudit'
+{0} - is the value from the customer's project file
+{1} is the list of valid values "true, false"</comment>
+  </data>
+  <data name="SourcesCommandValidProtocolVersion" xml:space="preserve">
+    <value>The protocol version specified is invalid. Valid protocol versions are from {0} to {1}.</value>
   </data>
 </root>

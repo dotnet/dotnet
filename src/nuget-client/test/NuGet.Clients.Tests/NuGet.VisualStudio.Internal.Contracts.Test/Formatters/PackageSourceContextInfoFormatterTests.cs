@@ -14,11 +14,12 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
             PackageSourceContextInfo? actualResult = SerializeThenDeserialize(PackageSourceContextInfoFormatter.Instance, expectedResult);
 
             Assert.NotNull(actualResult);
-            Assert.Equal(expectedResult, actualResult);
+            Assert.Equal(expectedResult.GetHashCode(), actualResult.GetHashCode());
         }
 
         public static TheoryData TestData => new TheoryData<PackageSourceContextInfo>
             {
+                { new PackageSourceContextInfo("source", "name", isEnabled: true, protocolVersion: 3, allowInsecureConnections: true) },
                 { new PackageSourceContextInfo("source", "name", isEnabled: true, protocolVersion: 3) },
                 { new PackageSourceContextInfo("source", "name", isEnabled: true) },
                 { new PackageSourceContextInfo("source", "name") },
