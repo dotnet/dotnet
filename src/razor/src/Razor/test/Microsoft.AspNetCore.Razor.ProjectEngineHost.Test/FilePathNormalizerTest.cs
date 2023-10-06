@@ -62,6 +62,19 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : TestBase(tes
         Assert.Equal("C:/path/to/directory/", normalized);
     }
 
+    [OSSkipConditionFact(new[] { "OSX", "Linux" })]
+    public void NormalizeDirectory_Windows_HandlesSingleSlashDirectory()
+    {
+        // Arrange
+        var directory = @"\";
+
+        // Act
+        var normalized = FilePathNormalizer.NormalizeDirectory(directory);
+
+        // Assert
+        Assert.Equal("/", normalized);
+    }
+
     [Fact]
     public void FilePathsEquivalent_NotEqualPaths_ReturnsFalse()
     {
