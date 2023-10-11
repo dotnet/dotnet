@@ -75,7 +75,7 @@ where TItem3 : Image, new()
 #nullable disable
             __builder.OpenElement(1, "p");
 #nullable restore
-#line (10,5)-(10,24) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (10,6)-(10,25) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(2, ChildContent(item2));
 
 #line default

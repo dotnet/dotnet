@@ -38,7 +38,7 @@ TParam
 #nullable disable
             , 2, (context) => (__builder2) => {
 #nullable restore
-#line (14,9)-(14,29) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (14,10)-(14,30) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(3, context.I1.MyClassId);
 
 #line default
@@ -46,7 +46,7 @@ __builder2.AddContent(3, context.I1.MyClassId);
 #nullable disable
                 __builder2.AddContent(4, " - ");
 #nullable restore
-#line (14,33)-(14,54) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (14,34)-(14,55) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(5, context.I2.MyStructId);
 
 #line default
