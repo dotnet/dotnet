@@ -10058,6 +10058,21 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: false);
     }
 
+    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9359")]
+    public void LinePragma_Multiline()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @("text"
+            )
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
     #endregion
 
     #region RenderMode

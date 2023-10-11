@@ -33,7 +33,7 @@ using Microsoft.AspNetCore.Components.RenderTree;
             __builder.OpenElement(0, "p");
             __builder.AddContent(1, "Output: ");
 #nullable restore
-#line (7,16)-(7,22) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (7,17)-(7,23) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(2, output);
 
 #line default

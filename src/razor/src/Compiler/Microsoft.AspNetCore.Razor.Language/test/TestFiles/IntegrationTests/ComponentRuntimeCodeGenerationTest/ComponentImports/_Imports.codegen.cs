@@ -29,7 +29,7 @@ using System.Reflection;
         protected void Execute()
         {
 #nullable restore
-#line (5,1)-(5,4) 24 "x:\dir\subdir\Test\_Imports.razor"
+#line (5,2)-(5,5) 24 "x:\dir\subdir\Test\_Imports.razor"
 __builder.AddContent(0, Foo);
 
 #line default

@@ -24,7 +24,7 @@ namespace Test
             (__builder2) => {
                 __builder2.OpenElement(0, "div");
 #nullable restore
-#line (2,50)-(2,61) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (2,51)-(2,62) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(1, person.Name);
 
 #line default

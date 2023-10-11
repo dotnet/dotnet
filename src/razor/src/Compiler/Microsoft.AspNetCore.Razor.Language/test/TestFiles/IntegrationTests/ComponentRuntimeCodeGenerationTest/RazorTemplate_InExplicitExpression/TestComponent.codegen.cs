@@ -14,11 +14,11 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
 #nullable restore
-#line (1,2)-(1,27) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,3)-(1,28) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(0, RenderPerson((person) => (__builder2) => {
     __builder2.OpenElement(1, "div");
 #nullable restore
-#line (1,34)-(1,45) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,35)-(1,46) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(2, person.Name);
 
 #line default

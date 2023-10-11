@@ -14,7 +14,7 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
 #nullable restore
-#line (1,1)-(1,14) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,2)-(1,15) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(0, RenderPerson((__builder2) => {
     __builder2.AddMarkupContent(1, "<div>HI</div>");
 }
