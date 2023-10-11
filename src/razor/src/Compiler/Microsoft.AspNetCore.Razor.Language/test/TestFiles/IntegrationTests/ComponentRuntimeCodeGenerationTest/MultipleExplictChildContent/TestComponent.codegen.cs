@@ -20,7 +20,7 @@ namespace Test
             ));
             __builder.AddAttribute(3, "Footer", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
 #nullable restore
-#line (3,14)-(3,20) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (3,15)-(3,21) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(4, "bye!");
 
 #line default
