@@ -41,7 +41,7 @@ using Microsoft.AspNetCore.Components.Web;
 #nullable disable
             );
 #nullable restore
-#line (2,69)-(2,70) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (2,70)-(2,71) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(3, y);
 
 #line default

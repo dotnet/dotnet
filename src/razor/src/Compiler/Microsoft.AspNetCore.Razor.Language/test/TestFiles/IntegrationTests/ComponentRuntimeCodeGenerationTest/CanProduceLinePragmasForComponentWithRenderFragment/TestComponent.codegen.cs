@@ -20,7 +20,7 @@ namespace Test
             __builder.AddAttribute(4, "@onclick", "Toggle");
             __builder.AddAttribute(5, "class", "col-12");
 #nullable restore
-#line (2,46)-(2,56) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (2,47)-(2,57) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(6, ActionText);
 
 #line default
@@ -38,7 +38,7 @@ __builder.AddContent(6, ActionText);
             __builder.OpenElement(7, "div");
             __builder.AddAttribute(8, "class", "col-12 card card-body");
 #nullable restore
-#line (6,7)-(6,19) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (6,8)-(6,20) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(9, ChildContent);
 
 #line default
@@ -66,7 +66,7 @@ __builder.AddContent(9, ChildContent);
 #nullable disable
         __builder.OpenElement(10, "p");
 #nullable restore
-#line (13,70)-(13,77) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (13,71)-(13,78) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(11, context);
 
 #line default
