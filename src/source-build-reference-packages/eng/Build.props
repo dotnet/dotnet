@@ -24,11 +24,6 @@
       Format:
       <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Options.5.0.0.csproj" />
     -->
-    <DependencyPackageProjects Include="$(RepoRoot)src\textOnlyPackages\src\microsoft.private.intellisense\8.0.0-preview-20230918.1\Microsoft.Private.Intellisense.8.0.0-preview-20230918.1.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\targetPacks\ILsrc\**\Microsoft.NETCore.App.Ref.6.0.2.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\targetPacks\ILsrc\**\Microsoft.AspNetCore.App.Ref.6.0.2.csproj" />
-
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Frameworks.6.7.0.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Common.6.7.0.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Versioning.6.7.0.csproj" />
