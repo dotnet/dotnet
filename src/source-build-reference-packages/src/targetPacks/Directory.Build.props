@@ -1,6 +1,11 @@
 <Project>
   <Import Project="..\..\Directory.Build.props" />
 
+  <ItemGroup>
+    <!-- Attributes for all Target Packages -->
+    <Compile Include="$(RepoRoot)src\SourceBuildAssemblyMetdata.cs" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
