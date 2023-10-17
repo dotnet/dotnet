@@ -10,6 +10,8 @@
   <Import Project="Version.targets"/>
   <Import Project="Tests.targets" Condition="'$(DisableArcadeTestFramework)' != 'true'" />
 
+  <Import Project="Pack.targets" Condition="'$(__ImportPackTargets)' == 'true'" />
+
   <Import Project="Performance.targets" Condition="'$(DisableArcadeTestFramework)' != 'true'" />
   <Import Project="Localization.targets" />
   <Import Project="VisualStudio.targets" Condition="'$(UsingToolVSSDK)' == 'true' and ('$(IsVsixProject)' == 'true' or '$(IsSwixProject)' == 'true' or '$(GeneratePkgDefFile)' == 'true') and '$(MSBuildRuntimeType)' != 'Core'"/>

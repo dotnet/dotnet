@@ -1,5 +1,5 @@
 # Contributor Guidance for Arcade
-Over and above the [.NET Core contributor guidelines](https://github.com/dotnet/coreclr/blob/master/Documentation/project-docs/contributing.md) (which are important), there are some principles and guidelines that are specific to Arcade as well.
+Over and above the [.NET Core contributor guidelines](https://github.com/dotnet/runtime/blob/main/CONTRIBUTING.md) (which are important), there are some principles and guidelines that are specific to Arcade as well.
 
 For the most part, contributions to Arcade are straightforward and relatively smooth.  However, from time to time, getting changes in can be challenging, and even frustrating.  The very nature of Arcade is that it's shared across multiple teams.  This document attempts to clarify some of the expectations as well as provide some 'advice' for success when contributing to Arcade.
 
@@ -20,8 +20,6 @@ For the most part, contributions to Arcade are straightforward and relatively sm
 
 ### Ownership
 The current owner for dotnet/arcade is Mark Wilkie <mawilkie@microsoft.com>.  The current point persons are:
-- Alex Perovich @alexperovich / <Alex.Perovich@microsoft.com>
-- Jon Fortescue @jonfortescue  / <Jonathan.Fortescue@microsoft.com>
 - Michael Stuckey @garath / <Michael.Stuckey@microsoft.com>
 - Ricardo Arenas @riarenas / <riarenas@microsoft.com>
 
