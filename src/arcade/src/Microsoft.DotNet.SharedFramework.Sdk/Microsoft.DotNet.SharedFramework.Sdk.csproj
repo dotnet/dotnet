@@ -12,6 +12,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelVersion)" />
+    <!-- Pinning transitive version -->
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
     <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
   </ItemGroup>
 

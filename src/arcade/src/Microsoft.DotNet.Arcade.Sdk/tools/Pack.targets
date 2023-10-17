@@ -1,0 +1,16 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <PropertyGroup>
+    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn); _ValidationSymbolPackageFormat</GenerateNuspecDependsOn>
+  </PropertyGroup>
+
+  <Target
+      Name="_ValidationSymbolPackageFormat"
+      Condition="'$(IsPackable)' == 'true' AND '$(SuppressSymbolPackageFormatValidation)' != 'true'">
+
+    <Error Text="&lt;SymbolPackageFormat&gt;snupkg&lt;/SymbolPackageFormat&gt; is not supported by the Arcade SDK."
+           Condition="'$(SymbolPackageFormat)' == 'snupkg'" /> 
+  </Target>
+
+</Project>

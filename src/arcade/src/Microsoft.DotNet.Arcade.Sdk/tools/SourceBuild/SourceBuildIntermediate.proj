@@ -80,8 +80,14 @@
     </ItemGroup>
   </Target>
 
-  <!-- Create symbols archive and include it in the "main" intermediate nupkg. -->
-  <Target Name="GetSymbolsArchive" Condition="'$(SupplementalIntermediateNupkgCategory)' == ''">
+  <!--
+    Create symbols archive and include it in the main intermediate nupkg, by default.
+
+    Repos can select a different intermediate nupkg by defining 'SymbolsIntermediateNupkgCategory'
+    property in eng/SourceBuild.props.
+  -->
+  <Target Name="GetSymbolsArchive"
+    Condition="'$(SupplementalIntermediateNupkgCategory)' == '$(SymbolsIntermediateNupkgCategory)'">
     <PropertyGroup>
       <SymbolsRoot>$(CurrentRepoSourceBuildArtifactsDir)</SymbolsRoot>
       <!-- Fall back to repo root for source-build-externals or repos that don't have the regular SymbolsRoot as defined above -->

@@ -175,6 +175,7 @@
     <ItemGroup>
       <_SolutionBuildProps Include="@(_CommonProps)"/>
       <_SolutionBuildProps Include="__DeployProjectOutput=$(Deploy)" Condition="'$(Deploy)' != ''"/>
+      <_SolutionBuildProps Include="__ImportPackTargets=true" Condition="'$(Pack)' == 'true'" />
     </ItemGroup>
 
     <!--
