@@ -17,6 +17,12 @@ references:
       subscription: 11c6037b-227b-4d63-bee1-18c7b68c3a40
       name: dotnetstagekeys
 
+  EngKeyVault:
+    type: azure-key-vault
+    parameters:
+      subscription: a4fc5514-21a9-4296-bfaf-5c7ee7fa35d1
+      name: EngKeyVault
+
   helixkv:
     type: azure-key-vault
     parameters:
@@ -60,3 +66,13 @@ secrets:
       domainAccountSecret:
         name: dn-dependabot-account-redmond
         location: helixkv
+
+  BotAccount-dotnet-bot-content-rw-grained-pat:
+    type: github-access-token
+    parameters:
+      gitHubBotAccountSecret:
+        name: BotAccount-dotnet-bot
+        location: EngKeyVault
+      gitHubBotAccountName: BotAccount-dotnet-build-bot
+      requiredScopes: content
+      description: "This pat is under the beta fine-grained tokens using dotnet as owner and repository specific for vscode-csharp and roslyn. The permissions are: Content - Read and write."
