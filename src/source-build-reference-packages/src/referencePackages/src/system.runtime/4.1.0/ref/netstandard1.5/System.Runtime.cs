@@ -21,9 +21,7 @@ using System.Security;
 [assembly: AssemblyProduct("Microsoft® .NET Framework")]
 [assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
 [assembly: AssemblyFileVersion("1.0.24212.01")]
-[assembly: AssemblyInformationalVersion("1.0.24212.01 built by: SOURCEBUILD")]
 [assembly: CLSCompliant(true)]
-[assembly: AssemblyMetadata("", "")]
 [assembly: AssemblyVersion("4.1.0.0")]
 
 
