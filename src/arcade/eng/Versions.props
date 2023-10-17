@@ -8,12 +8,12 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- arcade -->
-    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23425.2</MicrosoftDotNetBuildTasksFeedVersion>
-    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23425.2</MicrosoftDotNetSignToolVersion>
-    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23425.2</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
+    <MicrosoftDotNetBuildTasksFeedVersion>8.0.0-beta.23463.1</MicrosoftDotNetBuildTasksFeedVersion>
+    <MicrosoftDotNetSignToolVersion>8.0.0-beta.23463.1</MicrosoftDotNetSignToolVersion>
+    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>8.0.0-beta.23463.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- arcade-services -->
-    <MicrosoftDotNetMaestroClientVersion>1.1.0-beta.23428.1</MicrosoftDotNetMaestroClientVersion>
-    <MicrosoftDotNetMaestroTasksVersion>1.1.0-beta.23428.1</MicrosoftDotNetMaestroTasksVersion>
+    <MicrosoftDotNetMaestroClientVersion>1.1.0-beta.23477.2</MicrosoftDotNetMaestroClientVersion>
+    <MicrosoftDotNetMaestroTasksVersion>1.1.0-beta.23477.2</MicrosoftDotNetMaestroTasksVersion>
     <!-- corefx -->
     <MicrosoftBclHashCodeVersion>1.1.1</MicrosoftBclHashCodeVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
@@ -21,8 +21,8 @@
     <!-- deployment-tools -->
     <MicrosoftDeploymentDotNetReleasesVersion>1.0.0-preview6.1.23159.4</MicrosoftDeploymentDotNetReleasesVersion>
     <!-- dotnet-symuploader -->
-    <MicrosoftSymbolUploaderBuildTaskVersion>2.0.0-preview.1.21526.15</MicrosoftSymbolUploaderBuildTaskVersion>
-    <MicrosoftSymbolUploaderVersion>2.0.0-preview.1.21526.15</MicrosoftSymbolUploaderVersion>
+    <MicrosoftSymbolUploaderBuildTaskVersion>2.0.0-preview.1.23470.14</MicrosoftSymbolUploaderBuildTaskVersion>
+    <MicrosoftSymbolUploaderVersion>2.0.0-preview.1.23470.14</MicrosoftSymbolUploaderVersion>
     <!-- linker -->
     <MicrosoftNETILLinkTasksVersion>6.0.100-1.22103.2</MicrosoftNETILLinkTasksVersion>
     <!-- msbuild -->
@@ -67,15 +67,15 @@
     <!-- symreader-converter -->
     <MicrosoftDiaSymReaderPdb2PdbVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbVersion>
     <!-- templating -->
-    <MicrosoftTemplateEngineAuthoringTasksVersion>8.0.100-rc.2.23424.1</MicrosoftTemplateEngineAuthoringTasksVersion>
+    <MicrosoftTemplateEngineAuthoringTasksVersion>8.0.100-rtm.23479.1</MicrosoftTemplateEngineAuthoringTasksVersion>
     <!-- vstest -->
     <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
     <!-- xharness -->
-    <MicrosoftDotNetXHarnessCLIVersion>8.0.0-prerelease.23421.1</MicrosoftDotNetXHarnessCLIVersion>
+    <MicrosoftDotNetXHarnessCLIVersion>8.0.0-prerelease.23477.1</MicrosoftDotNetXHarnessCLIVersion>
     <!-- xliff-tasks -->
-    <MicrosoftDotNetXliffTasksVersion>1.0.0-beta.23426.1</MicrosoftDotNetXliffTasksVersion>
+    <MicrosoftDotNetXliffTasksVersion>1.0.0-beta.23475.1</MicrosoftDotNetXliffTasksVersion>
     <!-- external -->
-    <AzureCoreVersion>1.31.0</AzureCoreVersion>
+    <AzureCoreVersion>1.34.0</AzureCoreVersion>
     <AzureStorageBlobsVersion>12.16.0</AzureStorageBlobsVersion>
     <CommandLineParserVersion>2.5.0</CommandLineParserVersion>
     <CoverletCollectorVersion>1.0.1</CoverletCollectorVersion>
@@ -98,7 +98,7 @@
     <MicrosoftVisualStudioOLEInteropVersion>7.10.6071</MicrosoftVisualStudioOLEInteropVersion>
     <MonoOptionsVersion>5.3.0.1</MonoOptionsVersion>
     <MoqVersion>4.18.4</MoqVersion>
-    <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
+    <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
     <OctokitVersion>0.41.0</OctokitVersion>
     <XUnitAbstractionsVersion>2.0.3</XUnitAbstractionsVersion>
     <XUnitVersion>2.4.2</XUnitVersion>
