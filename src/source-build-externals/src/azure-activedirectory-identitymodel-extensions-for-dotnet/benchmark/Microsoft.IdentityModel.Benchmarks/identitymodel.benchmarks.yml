@@ -13,14 +13,47 @@ jobs:
     arguments: --job {{jobArg}} --filter {{filterArg}} --memory
     options:
       benchmarkDotNet: true
+
+profiles:
+  windows:
+    description: INTEL/Windows 28 Cores
+    arguments: --profile aspnet-citrine-win    
     
 scenarios:
 
-  ValidateToken:
+  CreateJWE:
     application:
-      job: "*ValidateTokenAsyncTests*"
+      job: benchmarks
+      variables:
+        filterArg: "*CreateJWETests*"
+
+  CreateSHR:
+    application:
+      job: benchmarks
+      variables:
+        filterArg: "*CreateSignedHttpRequestTests*"
 
   CreateToken:
     application:
-      job: "*CreateTokenTests*"
+      job: benchmarks
+      variables:
+        filterArg: "*CreateTokenTests*"
+
+  ValidateJWE:
+    application:
+      job: benchmarks
+      variables:
+        filterArg: "*ValidateJWEAsyncTests*"
+
+  ValidateSHR:
+    application:
+      job: benchmarks
+      variables:
+        filterArg: "*ValidateSignedHttpRequestAsyncTests*"
+
+  ValidateToken:
+    application:
+      job: benchmarks
+      variables:
+        filterArg: "*ValidateTokenAsyncTests*"
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Xml;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.IdentityModel.TestUtils
@@ -65,6 +66,11 @@ namespace Microsoft.IdentityModel.TestUtils
         public static ExpectedException IOException(string substringExpected = null, Type inner = null, string contains = null)
         {
             return new ExpectedException(typeof(IOException), substringExpected, inner);
+        }
+
+        public static ExpectedException XmlException(string substringExpected = null, Type inner = null, string contains = null)
+        {
+            return new ExpectedException(typeof(XmlException), substringExpected, inner);
         }
 
         public static ExpectedException NoExceptionExpected 

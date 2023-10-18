@@ -103,10 +103,10 @@
       "commitSha": "4cb5b13bae612cb1beae7e734c7cf4d34e436278"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23502.1",
+      "packageVersion": "8.0.0-alpha.1.23518.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "ed17956dbc31097b7ba6a66be086f4a70a97d84f"
+      "commitSha": "3dc05150cf234f76f6936dcb2853d31a0da1f60e"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23516.4",
@@ -186,7 +186,7 @@
     {
       "path": "source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
       "remoteUri": "https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git",
-      "commitSha": "bf4cb251a85f1b27bbb208c703f6f3105bdb24ca"
+      "commitSha": "bb354ceabed19189245e075abb864f327b6c14ad"
     },
     {
       "path": "source-build-externals/src/cssparser",

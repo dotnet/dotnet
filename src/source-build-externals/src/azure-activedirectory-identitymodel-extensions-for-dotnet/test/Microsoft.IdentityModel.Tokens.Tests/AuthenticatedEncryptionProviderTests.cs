@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Microsoft.IdentityModel.TestUtils;
 using Xunit;
 #pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
@@ -63,38 +64,35 @@ namespace Microsoft.IdentityModel.Tokens.Tests
     /// </summary>
     public class AuthenticatedEncryptionProviderTests
     {
-#if NET_CORE
-        [PlatformSpecific(TestPlatforms.Linux | TestPlatforms.OSX)]
-        [Fact(Skip = "Adjustment needed")]
-        public void AesGcmEncryptionOnLinuxAndMac()
-        {
-            Assert.Throws<PlatformNotSupportedException>(() => new AuthenticatedEncryptionProvider(Default.SymmetricEncryptionKey256, SecurityAlgorithms.Aes256Gcm));
-        }
-#endif
-
-#if NET_CORE
-        [PlatformSpecific(TestPlatforms.Windows)]
-#endif
         [Fact]
         public void AesGcmEncryptionOnWindows()
         {
-            var context = new CompareContext();
-            try
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                var provider = new AuthenticatedEncryptionProvider(Default.SymmetricEncryptionKey256, SecurityAlgorithms.Aes256Gcm);
+                Assert.Throws<PlatformNotSupportedException>(() => new AuthenticatedEncryptionProvider(Default.SymmetricEncryptionKey256, SecurityAlgorithms.Aes256Gcm));
             }
-            catch (Exception ex)
-            {
-                context.AddDiff($"AuthenticatedEncryptionProvider is not supposed to throw an exception, Exception:{ ex.ToString()}");
+            else
+            { 
+                var context = new CompareContext();
+                try
+                {
+                    var provider = new AuthenticatedEncryptionProvider(Default.SymmetricEncryptionKey256, SecurityAlgorithms.Aes256Gcm);
+                }
+                catch (Exception ex)
+                {
+                    context.AddDiff($"AuthenticatedEncryptionProvider is not supposed to throw an exception, Exception:{ex.ToString()}");
+                }
+                TestUtilities.AssertFailIfErrors(context);
             }
-            TestUtilities.AssertFailIfErrors(context);
         }
 
 #if NET_CORE
-        [PlatformSpecific(TestPlatforms.Windows)]
         [Fact]
         public void AesGcm_Dispose()
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                Assert.Throws<PlatformNotSupportedException>(() => new AuthenticatedEncryptionProvider(Default.SymmetricEncryptionKey256, SecurityAlgorithms.Aes256Gcm));
+
             AuthenticatedEncryptionProvider encryptionProvider = new AuthenticatedEncryptionProvider(Default.SymmetricEncryptionKey256, SecurityAlgorithms.Aes256Gcm);
             encryptionProvider.Dispose();
             var expectedException = ExpectedException.ObjectDisposedException;

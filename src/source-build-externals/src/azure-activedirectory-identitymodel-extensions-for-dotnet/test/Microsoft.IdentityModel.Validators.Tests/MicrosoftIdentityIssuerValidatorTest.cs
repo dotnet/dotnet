@@ -407,6 +407,28 @@ namespace Microsoft.IdentityModel.Validators.Tests
         }
 
         [Fact]
+        public void Validate_FromB2CAuthority_WithTokenValidateParametersValidIssuersUnspecified_ValidateSuccessfully()
+        {
+            var context = new CompareContext();
+            var issClaim = new Claim(ValidatorConstants.ClaimNameIss, ValidatorConstants.B2CIssuer);
+            var tfpClaim = new Claim(ValidatorConstants.ClaimNameTfp, ValidatorConstants.B2CSignUpSignInUserFlow);
+            var jwtSecurityToken = new JwtSecurityToken(issuer: ValidatorConstants.B2CIssuer, claims: new[] { issClaim, tfpClaim });
+
+            var validator = new AadIssuerValidator(null, ValidatorConstants.B2CAuthority);
+
+            var tokenValidationParams = new TokenValidationParameters()
+            {
+                ConfigurationManager = new MockConfigurationManager<OpenIdConnectConfiguration>(new OpenIdConnectConfiguration()
+                {
+                    Issuer = ValidatorConstants.B2CIssuer
+                })
+            };
+
+            IdentityComparer.AreEqual(ValidatorConstants.B2CIssuer, validator.Validate(ValidatorConstants.B2CIssuer, jwtSecurityToken, tokenValidationParams), context);
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        [Fact]
         public void Validate_FromB2CAuthority_WithTidClaim_ValidateSuccessfully()
         {
             var context = new CompareContext();

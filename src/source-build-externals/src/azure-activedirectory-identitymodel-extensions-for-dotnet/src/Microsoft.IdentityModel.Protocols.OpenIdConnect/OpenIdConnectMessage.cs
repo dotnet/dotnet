@@ -40,7 +40,6 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
             {
                 throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX21106, json)));
             }
-
         }
 
         /// <summary>
@@ -114,12 +113,23 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
 
             while (reader.Read())
             {
+                // propertyValue is set to match 6.x
                 if (reader.TokenType == JsonTokenType.PropertyName)
                 {
                     string propertyName = JsonPrimitives.ReadPropertyName(ref reader, ClassName, true);
                     string propertyValue = null;
                     if (reader.TokenType == JsonTokenType.String)
                         propertyValue = JsonPrimitives.ReadString(ref reader, propertyName, ClassName);
+                    else if (reader.TokenType == JsonTokenType.Number)
+                        propertyValue = (JsonPrimitives.ReadNumber(ref reader)).ToString();
+                    else if ((reader.TokenType == JsonTokenType.True) || (reader.TokenType == JsonTokenType.False))
+                        propertyValue = JsonPrimitives.ReadBoolean(ref reader, propertyName, ClassName, false).ToString();
+                    else if (reader.TokenType == JsonTokenType.Null)
+                        propertyValue = "";
+                    else if (reader.TokenType == JsonTokenType.StartArray)
+                        propertyValue = JsonPrimitives.ReadJsonElement(ref reader).GetRawText();
+                    else if (reader.TokenType == JsonTokenType.StartObject)
+                        propertyValue = JsonPrimitives.ReadJsonElement(ref reader).GetRawText();
 
                     SetParameter(propertyName, propertyValue);
                 }
