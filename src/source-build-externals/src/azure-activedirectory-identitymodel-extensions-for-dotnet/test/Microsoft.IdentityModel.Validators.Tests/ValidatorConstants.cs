@@ -42,11 +42,11 @@ namespace Microsoft.IdentityModel.Validators.Tests
         public const string B2CTenant = "fabrikamb2c.onmicrosoft.com";
         public const string Tfp = "tfp";
         public const string B2CCustomDomainUserFlow = "B2C_1_signupsignin_userflow";
-        public const string B2CCustomDomainIssuer = B2CCustomDomainInstance + "/" + B2CCustomDomainTenant + "/v2.0";
+        public const string B2CCustomDomainIssuer = B2CCustomDomainInstance + "/" + B2CCustomDomainTenant + "/v2.0/";
         public const string B2CCustomDomainAuthority = B2CCustomDomainInstance + "/" + B2CCustomDomainTenant + "/" + B2CCustomDomainUserFlow;
         public const string B2CCustomDomainAuthorityWithV2 = B2CCustomDomainAuthority + "/v2.0";
-        public const string B2CIssuer = B2CInstance + "/" + B2CTenantAsGuid + "/v2.0";
-        public const string B2CIssuer2 = B2CInstance2 + "/" + B2CTenantAsGuid + "/v2.0";
+        public const string B2CIssuer = B2CInstance + "/" + B2CTenantAsGuid + "/v2.0/";
+        public const string B2CIssuer2 = B2CInstance2 + "/" + B2CTenantAsGuid + "/v2.0/";
         public const string B2CAuthority = B2CInstance + "/" + B2CTenant + "/" + B2CSignUpSignInUserFlow;
         public const string B2CAuthorityWithV2 = B2CAuthority + "/v2.0";
         public const string B2CIssuerTfp = B2CInstance + "/" + Tfp + "/" + B2CTenantAsGuid + "/" + B2CSignUpSignInUserFlow + "/v2.0";

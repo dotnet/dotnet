@@ -170,6 +170,16 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
 
         public static string CreateUnsignedToken(string key, object value)
         {
+            return EmptyHeader + "." + CreateEncodedJson(key, value) + ".";
+        }
+
+        public static string CreateUnsignedToken(string headerKey, object headerValue, string payloadKey, object payloadValue)
+        {
+            return CreateEncodedJson(headerKey, headerValue) + "." + CreateEncodedJson(payloadKey, payloadValue) + ".";
+        }
+
+        public static string CreateEncodedJson(string key, object value)
+        {
             Utf8JsonWriter writer = null;
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -183,7 +193,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                     writer.WriteEndObject();
                     writer.Flush();
 
-                    return EmptyHeader + "." + Base64UrlEncoder.Encode(memoryStream.GetBuffer(), 0, (int)memoryStream.Length) + ".";
+                    return Base64UrlEncoder.Encode(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
                 }
                 finally
                 {

@@ -161,13 +161,13 @@ namespace Microsoft.IdentityModel.Xml
         {
             using (var stream = new MemoryStream())
             {
-                using (var writer = XmlDictionaryWriter.CreateTextWriter(Stream.Null))
+                using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { CloseOutput = false }))
+                using (var dictionaryWriter = XmlDictionaryWriter.CreateDictionaryWriter(writer))
                 {
-                    tokenStream.WriteTo(writer);
-                    writer.Flush();
+                    tokenStream.WriteTo(dictionaryWriter);
+                    dictionaryWriter.Flush();
                 }
 
-                stream.Flush();
                 stream.Position = 0;
                 return hash.ComputeHash(stream);
             }
@@ -199,15 +199,17 @@ namespace Microsoft.IdentityModel.Xml
 
             try
             {
-                // apply identity transform, just get the hash without any transforms
-                if (Transforms.Count == 0)
-                    return ProcessAndDigest(TokenStream, hashAlg);
-
                 // specification requires last transform to be a canonicalizing transform
                 // see: https://www.w3.org/TR/2001/PR-xmldsig-core-20010820/#sec-ReferenceProcessingModel
+                // - If the data object is a node-set and the next transform requires octets, the signature application 
+                //   MUST attempt to convert the node-set to an octet stream using the specified canonicalization algorithm.
                 for (int i = 0;  i < Transforms.Count; i++)
                     TokenStream = Transforms[i].Process(TokenStream);
+                
+                if (CanonicalizingTransfrom == null) 
+                    return ProcessAndDigest(TokenStream, hashAlg);
 
+                // only run canonicalizing transform if it was specified
                 return CanonicalizingTransfrom.ProcessAndDigest(TokenStream, hashAlg);
             }
             finally

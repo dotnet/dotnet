@@ -111,6 +111,27 @@ return</saml:AttributeValue></saml:Attribute></saml:AttributeStatement><saml:Aut
                 {
                     new ReferenceTheoryData
                     {
+                        ExpectedException = ExpectedException.NoExceptionExpected,
+                        ProviderFactory = CryptoProviderFactory.Default,
+                        Reference = Default.Reference,
+                        TestId = "Successful verification"
+                    },
+                    new ReferenceTheoryData
+                    {
+                        ExpectedException = ExpectedException.NoExceptionExpected,
+                        ProviderFactory = CryptoProviderFactory.Default,
+                        Reference = Default.ReferenceWithOnlyCanonicalizingTransform,
+                        TestId = "Successful verification with only canonicalizing transform"
+                    },
+                    new ReferenceTheoryData
+                    {
+                        ExpectedException = ExpectedException.NoExceptionExpected,
+                        ProviderFactory = CryptoProviderFactory.Default,
+                        Reference = Default.ReferenceWithoutTransform,
+                        TestId = "Successful verification without transforms"
+                    },
+                    new ReferenceTheoryData
+                    {
                         ExpectedException = ExpectedException.ArgumentNullException(),
                         TestId = "CryptoProviderFactory == null"
                     },

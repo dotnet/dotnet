@@ -69,7 +69,11 @@ namespace Microsoft.IdentityModel.Tokens
             if (validationParameters.AudienceValidator != null)
             {
                 if (!validationParameters.AudienceValidator(audiences, securityToken, validationParameters))
-                    throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidAudienceException(LogHelper.FormatInvariant(LogMessages.IDX10231, securityToken))
+                    throw LogHelper.LogExceptionMessage(
+                        new SecurityTokenInvalidAudienceException(
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10231,
+                                LogHelper.MarkAsUnsafeSecurityArtifact(securityToken, t => t.ToString())))
                     {
                         InvalidAudience = Utility.SerializeAsSingleCommaDelimitedString(audiences)
                     });
@@ -493,7 +497,10 @@ namespace Microsoft.IdentityModel.Tokens
             if (validationParameters.TokenReplayValidator != null)
             {
                 if (!validationParameters.TokenReplayValidator(expirationTime, securityToken, validationParameters))
-                    throw LogHelper.LogExceptionMessage(new SecurityTokenReplayDetectedException(LogHelper.FormatInvariant(LogMessages.IDX10228, securityToken)));
+                    throw LogHelper.LogExceptionMessage(new SecurityTokenReplayDetectedException(
+                        LogHelper.FormatInvariant(
+                            LogMessages.IDX10228,
+                            LogHelper.MarkAsUnsafeSecurityArtifact(securityToken, t => t.ToString()))));
                 return;
             }
 
