@@ -675,7 +675,11 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
                 throw LogHelper.LogExceptionMessage(new SignedHttpRequestInvalidSignatureException(LogHelper.FormatInvariant(LogMessages.IDX23009, ex.ToString()), ex));
             }
 
-            throw LogHelper.LogExceptionMessage(new SignedHttpRequestInvalidSignatureException(LogHelper.FormatInvariant(LogMessages.IDX23034, signedHttpRequest.EncodedToken)));
+            throw LogHelper.LogExceptionMessage(
+                new SignedHttpRequestInvalidSignatureException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX23034,
+                        LogHelper.MarkAsUnsafeSecurityArtifact(signedHttpRequest.EncodedToken, t => t.ToString()))));
         }
 
         /// <summary>

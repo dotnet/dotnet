@@ -257,6 +257,15 @@ namespace Microsoft.IdentityModel.Xml
         }
 
         /// <summary>
+        /// Closes the reader and changes the System.Xml.XmlReader.ReadState
+        /// to Closed.
+        /// </summary>
+        public override void Close()
+        {
+            UseInnerReader.Close();
+        }
+
+        /// <summary>
         /// Gets the value of the InnerReader's attribute at the given index.
         /// </summary>
         /// <param name="i">The index of the attribute. The index is 0 based index.</param>
@@ -417,6 +426,14 @@ namespace Microsoft.IdentityModel.Xml
         public override int ReadContentAsBinHex(byte[] buffer, int index, int count)
         {
             return UseInnerReader.ReadContentAsBinHex(buffer, index, count);
+        }
+
+        /// <summary>
+        /// Reads the content and returns the contained string.
+        /// </summary>
+        public override UniqueId ReadContentAsUniqueId()
+        {
+            return UseInnerReader.ReadContentAsUniqueId();
         }
 
         /// <summary>

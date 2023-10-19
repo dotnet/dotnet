@@ -256,8 +256,8 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                     new List<Claim>
                     {
                         new Claim("ClaimValueTypes.String", "ClaimValueTypes.String.Value", ClaimValueTypes.String),
-                        new Claim("ClaimValueTypes.Boolean.true", "True", ClaimValueTypes.Boolean),
-                        new Claim("ClaimValueTypes.Boolean.false", "False", ClaimValueTypes.Boolean),
+                        new Claim("ClaimValueTypes.Boolean.true", "true", ClaimValueTypes.Boolean),
+                        new Claim("ClaimValueTypes.Boolean.false", "false", ClaimValueTypes.Boolean),
                         new Claim("ClaimValueTypes.Double", "123.4", ClaimValueTypes.Double),
                         new Claim("ClaimValueTypes.int.MaxValue", intMaxValue, ClaimValueTypes.Integer32),
                         new Claim("ClaimValueTypes.int.MinValue", intMinValue, ClaimValueTypes.Integer32),
@@ -300,8 +300,8 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                         new Claim("ClaimValueTypes", longValue, ClaimValueTypes.Integer64),
                         new Claim("ClaimValueTypes", "132.64", ClaimValueTypes.Double),
                         new Claim("ClaimValueTypes", "-132.64", ClaimValueTypes.Double),
-                        new Claim("ClaimValueTypes", "True", ClaimValueTypes.Boolean),
-                        new Claim("ClaimValueTypes", "False", ClaimValueTypes.Boolean),
+                        new Claim("ClaimValueTypes", "true", ClaimValueTypes.Boolean),
+                        new Claim("ClaimValueTypes", "false", ClaimValueTypes.Boolean),
                         new Claim("ClaimValueTypes", "2019-11-15T14:31:21.6101326Z", ClaimValueTypes.DateTime),
                         new Claim("ClaimValueTypes", "2019-11-15", ClaimValueTypes.String),
                         new Claim("ClaimValueTypes", @"{""name3.1"":""value3.1""}", JsonClaimValueTypes.Json),

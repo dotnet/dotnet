@@ -11,15 +11,15 @@ dateTimeStamp=$(echo $((10#${date:0:2}-19)))${date:2}
 
 commitSha=$(git rev-parse HEAD)
 
-assemblyVersion=$(sed -n 's/.*<assemblyVersion>\([^<]*\)<.*/\1/p' $PWD/buildConfiguration.xml)
-assemblyFileVersion="$assemblyVersion.${dateTimeStamp::-6}" # Trim minutes/seconds
+assemblyVersion=$(sed -n 's/.*<assemblyVersion>\([^<]*\)<.*/\1/p' ${scriptroot}/buildConfiguration.xml)
+assemblyFileVersion="$assemblyVersion.${dateTimeStamp::$((${#dateTimeStamp} - 6))}" # Trim minutes/seconds
 assemblyInformationalVersion="$assemblyVersion.$dateTimeStamp.$commitSha"
 
 echo "assemblyVersion: $assemblyVersion"
 echo "assemblyFileVersion: $assemblyFileVersion"
 echo "assemblyInformationalVersion: $assemblyInformationalVersion"
 
-nugetSuffix=$(sed -n 's/.*<nugetSuffix>\([^<]*\)<.*/\1/p' $PWD/buildConfiguration.xml)
+nugetSuffix=$(sed -n 's/.*<nugetSuffix>\([^<]*\)<.*/\1/p' ${scriptroot}/buildConfiguration.xml)
 if [ "$packageType" = "release" ]
 then
     versionSuffix=""
@@ -29,17 +29,17 @@ fi
 
 echo "nugetSuffix: $nugetSuffix"
 
-versionPath="$PWD/build/version.props"
+versionPath="${scriptroot}/build/version.props"
 version=$(cat $versionPath)
 version=$(echo "$version" | sed "s|<VersionPrefix>.*</VersionPrefix>|<VersionPrefix>$assemblyVersion</VersionPrefix>|")
 version=$(echo "$version" | sed "s|<VersionSuffix>.*</VersionSuffix>|<VersionSuffix>$versionSuffix</VersionSuffix>|")
 echo "$version" > $versionPath
 
-projects=$(sed -n '/<src>/,/<\/src>/p' $PWD/buildConfiguration.xml | sed -n 's/.*name="\([^"]*\)".*/\1/p')
+projects=$(sed -n '/<src>/,/<\/src>/p' ${scriptroot}/buildConfiguration.xml | sed -n 's/.*name="\([^"]*\)".*/\1/p')
 
 for project in $projects; do
     name="$project"
-    assemblyInfoPath="$PWD/src/$name/Properties/AssemblyInfo.cs"
+    assemblyInfoPath="${scriptroot}/src/$name/Properties/AssemblyInfo.cs"
     echo "assemblyInfoPath: $assemblyInfoPath"
 
     assemblyInfo=$(cat $assemblyInfoPath)

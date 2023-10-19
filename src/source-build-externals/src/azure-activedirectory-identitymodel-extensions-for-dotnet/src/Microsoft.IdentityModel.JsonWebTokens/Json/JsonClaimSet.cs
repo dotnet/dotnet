@@ -61,7 +61,13 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             else if (value is long l)
                 claims.Add(new Claim(claimType, l.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Integer64, issuer, issuer));
             else if (value is bool b)
-                claims.Add(new Claim(claimType, b.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Boolean, issuer, issuer));
+            {
+                // Can't just use ToString or bools will get encoded as True/False instead of true/false.
+                if (b)
+                    claims.Add(new Claim(claimType, "true", ClaimValueTypes.Boolean, issuer, issuer));
+                else
+                    claims.Add(new Claim(claimType, "false", ClaimValueTypes.Boolean, issuer, issuer));
+            }
             else if (value is double d)
                 claims.Add(new Claim(claimType, d.ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Double, issuer, issuer));
             else if (value is DateTime dt)
@@ -108,9 +114,9 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             else if (jsonElement.ValueKind == JsonValueKind.Object)
                 return new Claim(claimType, jsonElement.ToString(), JsonClaimValueTypes.Json, issuer, issuer);
             else if (jsonElement.ValueKind == JsonValueKind.False)
-                return new Claim(claimType, "False", ClaimValueTypes.Boolean, issuer, issuer);
+                return new Claim(claimType, "false", ClaimValueTypes.Boolean, issuer, issuer);
             else if (jsonElement.ValueKind == JsonValueKind.True)
-                return new Claim(claimType, "True", ClaimValueTypes.Boolean, issuer, issuer);
+                return new Claim(claimType, "true", ClaimValueTypes.Boolean, issuer, issuer);
             else if (jsonElement.ValueKind == JsonValueKind.Number)
             {
                 if (jsonElement.TryGetInt32(out int i))
@@ -154,7 +160,12 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         internal string GetStringValue(string key)
         {
             if (_jsonClaims.TryGetValue(key, out object obj))
+            {
+                if (obj == null)
+                    return null;
+
                 return obj.ToString();
+            }
 
             return string.Empty;
         }

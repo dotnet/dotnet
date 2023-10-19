@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.33711.374
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "benchmark", "benchmark", "{2F79F3C4-F4E3-46DD-8B34-8EF403A6F7F5}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BD2706C5-6C57-484D-89C8-A0CF5F8E3D19}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8905D2E3-4499-4A86-BF3E-F098F228DD59}"
@@ -100,6 +102,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.AotCompatibility.TestApp", "test\Microsoft.IdentityModel.AotCompatibility.TestApp\Microsoft.IdentityModel.AotCompatibility.TestApp.csproj", "{8105289F-3D54-4054-9738-5985F3B6CF2C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.AotCompatibility.Tests", "test\Microsoft.IdentityModel.AotCompatibility.Tests\Microsoft.IdentityModel.AotCompatibility.Tests.csproj", "{CD0EEF56-7221-4420-8181-48EE82E91306}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.IdentityModel.Benchmarks", "benchmark\Microsoft.IdentityModel.Benchmarks\Microsoft.IdentityModel.Benchmarks.csproj", "{F1BB31E4-8865-4425-8BD4-94F1815C16E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -243,6 +247,10 @@ Global
 		{CD0EEF56-7221-4420-8181-48EE82E91306}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD0EEF56-7221-4420-8181-48EE82E91306}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD0EEF56-7221-4420-8181-48EE82E91306}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1BB31E4-8865-4425-8BD4-94F1815C16E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1BB31E4-8865-4425-8BD4-94F1815C16E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1BB31E4-8865-4425-8BD4-94F1815C16E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1BB31E4-8865-4425-8BD4-94F1815C16E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -284,6 +292,7 @@ Global
 		{EF9A4431-6D2C-4DD1-BF6B-6F2CC619DEE1} = {8905D2E3-4499-4A86-BF3E-F098F228DD59}
 		{8105289F-3D54-4054-9738-5985F3B6CF2C} = {8905D2E3-4499-4A86-BF3E-F098F228DD59}
 		{CD0EEF56-7221-4420-8181-48EE82E91306} = {8905D2E3-4499-4A86-BF3E-F098F228DD59}
+		{F1BB31E4-8865-4425-8BD4-94F1815C16E0} = {2F79F3C4-F4E3-46DD-8B34-8EF403A6F7F5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2F681326-7ED4-45F6-BD1D-1119EA388F42}
