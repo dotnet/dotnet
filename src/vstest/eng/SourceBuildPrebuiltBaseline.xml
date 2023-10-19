@@ -6,7 +6,6 @@
     <!-- Caused by dependency on System.ComponentModel.Composition.4.5.0. This version is overridden in full source-build. -->
     <UsagePattern IdentityGlob="Microsoft.NETCore.Platforms/2.0.0" />
     <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*/*" />
-    <UsagePattern IdentityGlob="NuGet.Frameworks/6.5.0" />
     <!-- This version is overridden in full source-build. -->
     <UsagePattern IdentityGlob="System.ComponentModel.Composition/4.5.0" />
     <!-- Caused by dependency on System.ComponentModel.Composition.4.5.0. This version is overridden in full source-build. -->

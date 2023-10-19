@@ -20,8 +20,6 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
-using NuGet.Frameworks;
-
 using ObjectModelConstants = Microsoft.VisualStudio.TestPlatform.ObjectModel.Constants;
 using TrxLoggerConstants = Microsoft.TestPlatform.Extensions.TrxLogger.Utility.Constants;
 using TrxLoggerObjectModel = Microsoft.TestPlatform.Extensions.TrxLogger.ObjectModel;
@@ -489,7 +487,7 @@ public class TrxLogger : ITestLoggerWithParameters
             {
                 if (_parametersDictionary.TryGetValue(DefaultLoggerParameterNames.TargetFramework, out var framework) && framework != null)
                 {
-                    framework = NuGetFramework.Parse(framework).GetShortFolderName();
+                    framework = Framework.FromString(framework)?.ShortName ?? framework;
                     logFilePrefixValue = logFilePrefixValue + "_" + framework;
                 }
 

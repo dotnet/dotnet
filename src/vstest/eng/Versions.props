@@ -8,8 +8,8 @@
         is trying to parse that version and will consider any version with more than 4 `.` in it as invalid. 
     -->
     <SemanticVersioningV1>true</SemanticVersioningV1>
-    <VersionPrefix>17.8.0</VersionPrefix>
-    <PreReleaseVersionLabel>release</PreReleaseVersionLabel>
+    <VersionPrefix>17.9.0</VersionPrefix>
+    <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
   </PropertyGroup>
   <PropertyGroup Label="Arcade settings">
     <!-- Ensure we use xliff task tool - true is the default but we make it explicit here -->
@@ -30,7 +30,7 @@
     <MicrosoftExtensionsDependencyModelPackageVersion>3.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftFakesVersion>17.4.0-beta.22478.3</MicrosoftFakesVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.8.6</MicrosoftInternalCodeCoverageVersion>
+    <MicrosoftInternalCodeCoverageVersion>17.9.0-beta.23505.1</MicrosoftInternalCodeCoverageVersion>
     <MicrosoftNetCompilersToolsetVersion>4.7.0-3.23315.4</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.6.33910.51</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
@@ -90,10 +90,6 @@
     <VSTestConsoleMostDownloadedVersion>[16.6.1]</VSTestConsoleMostDownloadedVersion>
     <VSTestConsolePreviousStableVersion>[16.11.0]</VSTestConsolePreviousStableVersion>
     <VSTestConsoleLegacyStableVersion>[15.9.2]</VSTestConsoleLegacyStableVersion>
-    <!-- This version also needs to be updated in src\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.nuspec -->
-    <!-- This version needs to be the same or lower than <NuGetFrameworksPackageVersion> https://github.com/dotnet/sdk/blob/release/main/eng/Versions.props
-    (or the respective branch. It also needs to be on nuget.org. -->
-    <NuGetFrameworksVersion>6.5.0</NuGetFrameworksVersion>
     <ILAsmPackageVersion>5.0.0</ILAsmPackageVersion>
   </PropertyGroup>
 </Project>
