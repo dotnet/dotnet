@@ -157,10 +157,10 @@
       "commitSha": "9a1c3e1b7f0c8763d4c96e593961a61a72679a7b"
     },
     {
-      "packageVersion": "1.0.0-beta.23509.1",
+      "packageVersion": "1.0.0-beta.23516.1",
       "path": "xliff-tasks",
       "remoteUri": "https://github.com/dotnet/xliff-tasks",
-      "commitSha": "4f761bf529f4be49842b13d7efcef9af87f0a973"
+      "commitSha": "d66a09c8b11e1235273c8e6cd946e5c8e247f189"
     }
   ],
   "submodules": [
