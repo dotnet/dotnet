@@ -13,16 +13,15 @@
     <NETFXTargetFramework>net472</NETFXTargetFramework>
     <NETCoreTargetFramework>netcoreapp3.1</NETCoreTargetFramework>
     <NETCoreTargetFramework Condition="'$(DotNetBuildFromSource)' == 'true'">net8.0</NETCoreTargetFramework>
-    <NETCoreTestTargetFrameworks>net7.0</NETCoreTestTargetFrameworks>
-    <NETCoreTestTargetFrameworks Condition=" ('$(CI)' == 'true' AND '$(BUILD_NET8)' != 'false') OR '$(BUILD_NET8)' == 'true' ">net7.0;net8.0</NETCoreTestTargetFrameworks>
+    <NETCoreTestTargetFrameworks>net8.0</NETCoreTestTargetFrameworks>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <TargetFrameworksExe>$(NETFXTargetFramework);$(NETCoreTargetFramework)</TargetFrameworksExe>
     <TargetFrameworksExe Condition="'$(IsXPlat)' == 'true'">$(NETCoreTargetFramework)</TargetFrameworksExe>
     <TargetFrameworksExeForSigning>$(TargetFrameworksExe);netcoreapp5.0</TargetFrameworksExeForSigning>
     <TargetFrameworksExeForSigning Condition=" '$(IsXPlat)' == 'true' ">$(NETCoreTargetFramework);netcoreapp5.0</TargetFrameworksExeForSigning>
     <TargetFrameworksExeForSigning Condition="'$(DotNetBuildFromSource)' == 'true'">$(TargetFrameworksExe)</TargetFrameworksExeForSigning>
-    <MinimalTargetFrameworksExeSigning>$(NETFXTargetFramework);netcoreapp5.0</MinimalTargetFrameworksExeSigning>
-    <MinimalTargetFrameworksExeSigning Condition=" '$(IsXPlat)' == 'true' ">netcoreapp5.0</MinimalTargetFrameworksExeSigning>
+    <MinimalTargetFrameworksExeSigning>$(NETFXTargetFramework);net7.0</MinimalTargetFrameworksExeSigning>
+    <MinimalTargetFrameworksExeSigning Condition=" '$(IsXPlat)' == 'true' ">net7.0</MinimalTargetFrameworksExeSigning>
     <MinimalTargetFrameworksExeSigning Condition="'$(DotNetBuildFromSource)' == 'true'">$(NETCoreTargetFramework)</MinimalTargetFrameworksExeSigning>
     <TargetFrameworksLibrary>$(NETFXTargetFramework);$(NetStandardVersion)</TargetFrameworksLibrary>
     <TargetFrameworksLibrary Condition="'$(DotNetBuildFromSource)' == 'true'">$(NETCoreTargetFramework);$(NetStandardVersion)</TargetFrameworksLibrary>

@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Storage.Blobs" Version="$(AzureStorageBlobsVersion)" /> 
-    <PackageReference Include="Microsoft.Data.OData" Version="$(MicrosoftDataODataVersion)" />
+    <PackageReference Include="Azure.Storage.Blobs" /> 
+    <PackageReference Include="Microsoft.Data.OData" />
   </ItemGroup>
 
   <ItemGroup>

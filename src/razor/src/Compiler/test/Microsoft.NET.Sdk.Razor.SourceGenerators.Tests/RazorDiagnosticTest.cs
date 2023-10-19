@@ -13,7 +13,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         public void AsDiagnostic_WithUndefinedSpanWorks()
         {
             // Arrange
-            var diagnostics = RazorDiagnostic.Create(new RazorDiagnosticDescriptor("RZC1001", () => "Some message", RazorDiagnosticSeverity.Error), SourceSpan.Undefined);
+            var diagnostics = RazorDiagnostic.Create(new RazorDiagnosticDescriptor("RZC1001", "Some message", RazorDiagnosticSeverity.Error));
 
             // Act
             var csharpDiagnostic = diagnostics.AsDiagnostic();
@@ -30,7 +30,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         {
             // Arrange
             var span = new SourceSpan("some-file", 100, 1, 5, 10);
-            var diagnostics = RazorDiagnostic.Create(new RazorDiagnosticDescriptor("RZC1001", () => "Some message", RazorDiagnosticSeverity.Error), span);
+            var diagnostics = RazorDiagnostic.Create(new RazorDiagnosticDescriptor("RZC1001", "Some message", RazorDiagnosticSeverity.Error), span);
 
             // Act
             var csharpDiagnostic = diagnostics.AsDiagnostic();

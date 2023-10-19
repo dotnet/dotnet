@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Telemetry;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 
@@ -42,7 +41,7 @@ internal class CompilationTagHelperResolver(ITelemetryReporter? telemetryReporte
             return ImmutableArray<TagHelperDescriptor>.Empty;
         }
 
-        var results = new HashSet<TagHelperDescriptor>(TagHelperChecksumComparer.Instance);
+        using var _ = HashSetPool<TagHelperDescriptor>.GetPooledObject(out var results);
         var context = TagHelperDescriptorProviderContext.Create(results);
         context.ExcludeHidden = true;
         context.IncludeDocumentation = true;

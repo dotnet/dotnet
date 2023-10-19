@@ -139,6 +139,23 @@ public class TestHostProviderManagerTests
       <RunConfiguration>
         <MaxCpuCount>0</MaxCpuCount>
         <TargetPlatform>x64</TargetPlatform>
+        <TargetFrameworkVersion>.NETPortable,Version=v4.5,Profile=Profile44</TargetFrameworkVersion>
+      </RunConfiguration>
+    </RunSettings> ";
+
+        var manager = TestRuntimeProviderManager.Instance;
+        Assert.IsNull(manager.GetTestHostManagerByRunConfiguration(runSettingsXml, null));
+    }
+
+    [TestMethod]
+    public void TestHostProviderManagerShouldReturnNullIfTargetFrameworkIsInvalidFramework()
+    {
+        // Portable 4.5 is not valid when it does not mention which profile it is.
+        string runSettingsXml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+    <RunSettings>
+      <RunConfiguration>
+        <MaxCpuCount>0</MaxCpuCount>
+        <TargetPlatform>x64</TargetPlatform>
         <TargetFrameworkVersion>.NETPortable,Version=v4.5</TargetFrameworkVersion>
       </RunConfiguration>
     </RunSettings> ";

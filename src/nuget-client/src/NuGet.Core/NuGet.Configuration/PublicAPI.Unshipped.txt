@@ -1,9 +1,1 @@
 #nullable enable
-const NuGet.Configuration.PackageSource.MaxProtocolVersion = 3 -> int
-NuGet.Configuration.PackageSource.AllowInsecureConnections.get -> bool
-NuGet.Configuration.PackageSource.AllowInsecureConnections.set -> void
-~NuGet.Configuration.SourceItem.AllowInsecureConnections.get -> string
-~NuGet.Configuration.SourceItem.AllowInsecureConnections.set -> void
-~NuGet.Configuration.SourceItem.SourceItem(string key, string value) -> void
-~NuGet.Configuration.SourceItem.SourceItem(string key, string value, string protocolVersion, string allowInsecureConnections) -> void
-~static readonly NuGet.Configuration.ConfigurationConstants.AllowInsecureConnections -> string

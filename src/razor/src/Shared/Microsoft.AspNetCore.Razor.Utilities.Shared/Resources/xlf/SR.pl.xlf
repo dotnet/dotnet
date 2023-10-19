@@ -12,6 +12,11 @@
         <target state="translated">Nie można przydzielić buforu o rozmiarze {0}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Destination_is_too_short">
+        <source>Destination is too short.</source>
+        <target state="translated">Miejsce docelowe jest zbyt krótkie.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Non_negative_number_required">
         <source>Non-negative number required.</source>
         <target state="translated">Wymagana jest liczba nieujemna.</target>
@@ -20,6 +25,11 @@
       <trans-unit id="This_program_location_is_thought_to_be_unreachable_File_0_Line_1">
         <source>This program location is thought to be unreachable. File='{0}', Line={1}</source>
         <target state="translated">Ta lokalizacja programu jest uważana za nieosiągalną. Plik=„{0}”, Linia={1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_type_0">
+        <source>Unsupported type: '{0}'.</source>
+        <target state="new">Unsupported type: '{0}'.</target>
         <note />
       </trans-unit>
     </body>

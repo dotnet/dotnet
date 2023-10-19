@@ -721,7 +721,6 @@ namespace NuGet.PackageManagement
                     nugetActions.AddRange(actions);
                 }
 
-                // project.json based projects are handled here
                 tasks.Add(Task.Run(async ()
                     => await PreviewUpdatePackagesForBuildIntegratedAsync(
                             packageId,
@@ -3036,7 +3035,7 @@ namespace NuGet.PackageManagement
                         if (updatedPackageSpec.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference)
                         {
                             var packageDependency = new PackageDependency(action.PackageIdentity.Id, action.VersionRange ?? new VersionRange(action.PackageIdentity.Version));
-                            PackageSpecOperations.AddOrUpdateDependency(updatedPackageSpec, packageDependency, updatedPackageSpec.TargetFrameworks.Select(e => e.FrameworkName));
+                            PackageSpecOperations.AddOrUpdateDependency(updatedPackageSpec, packageDependency);
                         }
                         else
                         {

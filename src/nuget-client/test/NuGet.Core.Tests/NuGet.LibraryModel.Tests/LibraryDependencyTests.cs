@@ -47,8 +47,8 @@ namespace NuGet.LibraryModel.Tests
             Dictionary<string, CentralPackageVersion> centralPackageVersions = new Dictionary<string, CentralPackageVersion>();
 
             // Act + Assert
-            Assert.Throws<ArgumentNullException>(() => LibraryDependency.ApplyCentralVersionInformation(null, centralPackageVersions));
-            Assert.Throws<ArgumentNullException>(() => LibraryDependency.ApplyCentralVersionInformation(packageReferences, null));
+            Assert.Throws<ArgumentNullException>(() => LibraryDependency.ApplyCentralVersionInformation(null!, centralPackageVersions));
+            Assert.Throws<ArgumentNullException>(() => LibraryDependency.ApplyCentralVersionInformation(packageReferences, null!));
         }
 
         [Fact]
@@ -83,8 +83,8 @@ namespace NuGet.LibraryModel.Tests
             Assert.False(dep2.VersionCentrallyManaged);
             Assert.False(dep3.VersionCentrallyManaged);
 
-            Assert.Equal("[2.0.0, )", dep1.LibraryRange.VersionRange.ToNormalizedString());
-            Assert.Equal("[1.0.0, )", dep2.LibraryRange.VersionRange.ToNormalizedString());
+            Assert.Equal("[2.0.0, )", dep1.LibraryRange.VersionRange!.ToNormalizedString());
+            Assert.Equal("[1.0.0, )", dep2.LibraryRange.VersionRange!.ToNormalizedString());
             Assert.Null(dep3.LibraryRange.VersionRange);
         }
 

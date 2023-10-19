@@ -706,6 +706,25 @@ namespace NuGet.ProjectModel.Test
             VerifyJsonPackageSpecRoundTrip(json);
         }
 
+        [Fact]
+        public void Write_RestoreAuditProperties_RoundTrips()
+        {
+            // Arrange
+            var json = @"{
+                  ""restore"": {
+                    ""projectUniqueName"": ""projectUniqueName"",
+                    ""restoreAuditProperties"": {
+                        ""enableAudit"": ""true"",
+                        ""auditLevel"": ""moderate"",
+                        ""auditMode"": ""all""
+                    }
+                  }
+                }";
+
+            // Act & Assert
+            VerifyJsonPackageSpecRoundTrip(json);
+        }
+
         private static string GetJsonString(PackageSpec packageSpec)
         {
             JObject jObject = packageSpec.ToJObject();

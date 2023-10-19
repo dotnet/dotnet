@@ -25,6 +25,7 @@ internal class TagHelperCompletionProvider : IRazorCompletionItemProvider
     internal static readonly IReadOnlyList<RazorCommitCharacter> AttributeSnippetCommitCharacters = RazorCommitCharacter.FromArray(new[] { "=" }, insert: false);
 
     private static readonly IReadOnlyList<RazorCommitCharacter> s_elementCommitCharacters = RazorCommitCharacter.FromArray(new[] { " ", ">" });
+    private static readonly IReadOnlyList<RazorCommitCharacter> s_elementCommitCharacters_WithoutSpace = RazorCommitCharacter.FromArray(new[] { ">" });
     private static readonly IReadOnlyList<RazorCommitCharacter> s_noCommitCharacters = Array.Empty<RazorCommitCharacter>();
     private readonly HtmlFactsService _htmlFactsService;
     private readonly TagHelperCompletionService _tagHelperCompletionService;
@@ -110,7 +111,7 @@ internal class TagHelperCompletionProvider : IRazorCompletionItemProvider
             var stringifiedAttributes = _tagHelperFactsService.StringifyAttributes(attributes);
 
             return GetAttributeCompletions(parent, containingTagNameToken.Content, selectedAttributeName, stringifiedAttributes, context.TagHelperDocumentContext, context.Options);
-            
+
             static bool InOrAtEndOfAttribute(SyntaxNode attributeSyntax, int absoluteIndex)
             {
                 // When we are in the middle of writing an attribute it is treated as a minimilized one, e.g.:
@@ -137,7 +138,7 @@ internal class TagHelperCompletionProvider : IRazorCompletionItemProvider
         RazorCompletionOptions options)
     {
         var ancestors = containingAttribute.Parent.Ancestors();
-        var nonDirectiveAttributeTagHelpers = tagHelperDocumentContext.TagHelpers.Where(tagHelper => !tagHelper.BoundAttributes.Any(static attribute => attribute.IsDirectiveAttribute()));
+        var nonDirectiveAttributeTagHelpers = tagHelperDocumentContext.TagHelpers.Where(tagHelper => !tagHelper.BoundAttributes.Any(static attribute => attribute.IsDirectiveAttribute));
         var filteredContext = TagHelperDocumentContext.Create(tagHelperDocumentContext.Prefix, nonDirectiveAttributeTagHelpers);
         var (ancestorTagName, ancestorIsTagHelper) = _tagHelperFactsService.GetNearestAncestorTagInfo(ancestors);
         var attributeCompletionContext = new AttributeCompletionContext(
@@ -248,13 +249,17 @@ internal class TagHelperCompletionProvider : IRazorCompletionItemProvider
         var completionResult = _tagHelperCompletionService.GetElementCompletions(elementCompletionContext);
         using var completionItems = new PooledArrayBuilder<RazorCompletionItem>();
 
+        var commitChars = _optionsMonitor.CurrentValue.CommitElementsWithSpace
+            ? s_elementCommitCharacters
+            : s_elementCommitCharacters_WithoutSpace;
+
         foreach (var (displayText, tagHelpers) in completionResult.Completions)
         {
             var razorCompletionItem = new RazorCompletionItem(
                 displayText: displayText,
                 insertText: displayText,
                 kind: RazorCompletionItemKind.TagHelperElement,
-                commitCharacters: s_elementCommitCharacters);
+                commitCharacters: commitChars);
 
             var tagHelperDescriptions = tagHelpers.SelectAsArray(BoundElementDescriptionInfo.From);
             var elementDescription = new AggregateBoundElementDescription(tagHelperDescriptions);

@@ -265,7 +265,7 @@ namespace NuGet.CommandLine.Test
             }
         }
 
-        [PlatformFact(Platform.Windows, Platform.Linux, SkipMono = true)]
+        [PlatformFact(Platform.Windows, Platform.Linux, SkipMono = true, Skip = "https://github.com/NuGet/Home/issues/9684")]
         public void ClientCertAddCommand_Success_StoreCertificate()
         {
             // Arrange

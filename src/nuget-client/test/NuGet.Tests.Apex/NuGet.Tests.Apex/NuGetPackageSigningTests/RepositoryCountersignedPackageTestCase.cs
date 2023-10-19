@@ -8,34 +8,34 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Test.Apex.VisualStudio.Solution;
-using NuGet.StaFact;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NuGet.Test.Utility;
 using Test.Utility.Signing;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace NuGet.Tests.Apex
 {
-    public class RepositoryCountersignedPackageTestCase : SharedVisualStudioHostTestClass, IClassFixture<SignedPackagesTestsApexFixture>
+    [TestClass]
+    public class RepositoryCountersignedPackageTestCase : SharedVisualStudioHostTestClass
     {
-        private SignedPackagesTestsApexFixture _fixture;
+        private static SignedPackagesTestsApexFixture Fixture;
 
-        public RepositoryCountersignedPackageTestCase(SignedPackagesTestsApexFixture apexSigningFixture, ITestOutputHelper output)
-            : base(apexSigningFixture, output)
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext testContext)
         {
-            _fixture = apexSigningFixture;
+            Fixture = new SignedPackagesTestsApexFixture();
         }
 
-        [CIOnlyNuGetWpfTheory]
-        [MemberData(nameof(GetPackagesConfigTemplates))]
+        [DataTestMethod]
+        [DynamicData(nameof(GetPackagesConfigTemplates), DynamicDataSourceType.Method)]
+        [Timeout(DefaultTimeout)]
         public async Task InstallFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
             // Arrange
             EnsureVisualStudioHost();
 
-            var signedPackage = _fixture.RepositoryCountersignedTestPackage;
+            var signedPackage = Fixture.RepositoryCountersignedTestPackage;
 
-            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, XunitLogger))
+            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
             {
                 await SimpleTestPackageUtility.CreatePackagesAsync(testContext.PackageSource, signedPackage);
 
@@ -43,20 +43,21 @@ namespace NuGet.Tests.Apex
 
                 nugetConsole.InstallPackageFromPMC(signedPackage.Id, signedPackage.Version);
 
-                CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, signedPackage.Id, signedPackage.Version, XunitLogger);
+                CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, signedPackage.Id, signedPackage.Version, Logger);
             }
         }
 
-        [CIOnlyNuGetWpfTheory]
-        [MemberData(nameof(GetPackagesConfigTemplates))]
+        [DataTestMethod]
+        [DynamicData(nameof(GetPackagesConfigTemplates), DynamicDataSourceType.Method)]
+        [Timeout(DefaultTimeout)]
         public async Task UninstallFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
             // Arrange
             EnsureVisualStudioHost();
 
-            var signedPackage = _fixture.RepositoryCountersignedTestPackage;
+            var signedPackage = Fixture.RepositoryCountersignedTestPackage;
 
-            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, XunitLogger))
+            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
             {
                 await SimpleTestPackageUtility.CreatePackagesAsync(testContext.PackageSource, signedPackage);
 
@@ -65,21 +66,22 @@ namespace NuGet.Tests.Apex
                 nugetConsole.InstallPackageFromPMC(signedPackage.Id, signedPackage.Version);
                 nugetConsole.UninstallPackageFromPMC(signedPackage.Id);
 
-                CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, testContext.Project, signedPackage.Id, signedPackage.Version, XunitLogger);
+                CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, testContext.Project, signedPackage.Id, signedPackage.Version, Logger);
             }
         }
 
-        [CIOnlyNuGetWpfTheory]
-        [MemberData(nameof(GetPackagesConfigTemplates))]
+        [DataTestMethod]
+        [DynamicData(nameof(GetPackagesConfigTemplates), DynamicDataSourceType.Method)]
+        [Timeout(DefaultTimeout)]
         public async Task UpdateUnsignedToSignedVersionFromPMCForPC_SucceedAsync(ProjectTemplate projectTemplate)
         {
             // Arrange
             EnsureVisualStudioHost();
 
             var packageVersion09 = "0.9.0";
-            var signedPackage = _fixture.RepositoryCountersignedTestPackage;
+            var signedPackage = Fixture.RepositoryCountersignedTestPackage;
 
-            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, XunitLogger))
+            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
             {
                 await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, signedPackage.Id, packageVersion09);
                 await SimpleTestPackageUtility.CreatePackagesAsync(testContext.PackageSource, signedPackage);
@@ -89,35 +91,36 @@ namespace NuGet.Tests.Apex
                 nugetConsole.InstallPackageFromPMC(signedPackage.Id, packageVersion09);
                 nugetConsole.UpdatePackageFromPMC(signedPackage.Id, signedPackage.Version);
 
-                CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, signedPackage.Id, signedPackage.Version, XunitLogger);
+                CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, signedPackage.Id, signedPackage.Version, Logger);
             }
         }
 
-        [CIOnlyNuGetWpfTheory]
-        [MemberData(nameof(GetPackagesConfigTemplates))]
+        [DataTestMethod]
+        [DynamicData(nameof(GetPackagesConfigTemplates), DynamicDataSourceType.Method)]
+        [Timeout(DefaultTimeout)]
         public async Task WithExpiredAuthorCertificateAtCountersigning_InstallFromPMCForPC_WarnAsync(ProjectTemplate projectTemplate)
         {
             // Arrange
             EnsureVisualStudioHost();
 
-            var timestampService = await _fixture.GetDefaultTrustedTimestampServiceAsync();
+            var timestampService = await Fixture.GetDefaultTrustedTimestampServiceAsync();
 
-            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, XunitLogger))
-            using (var trustedCert = _fixture.TrustedRepositoryTestCertificate)
+            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
+            using (var trustedCert = Fixture.TrustedRepositoryTestCertificate)
             using (var trustedExpiringTestCert = SigningUtility.GenerateTrustedTestCertificateThatWillExpireSoon())
             {
-                XunitLogger.LogInformation("Creating package");
+                Logger.WriteMessage("Creating package");
                 var package = CommonUtility.CreatePackage("ExpiredTestPackage", "1.0.0");
 
-                XunitLogger.LogInformation("Signing package");
+                Logger.WriteMessage("Signing package");
                 var expiredTestPackage = CommonUtility.AuthorSignPackage(package, trustedExpiringTestCert.Source.Cert);
                 await SimpleTestPackageUtility.CreatePackagesAsync(testContext.PackageSource, expiredTestPackage);
                 var packageFullName = Path.Combine(testContext.PackageSource, expiredTestPackage.PackageName);
 
-                XunitLogger.LogInformation("Waiting for package to expire");
+                Logger.WriteMessage("Waiting for package to expire");
                 SigningUtility.WaitForCertificateToExpire(trustedExpiringTestCert.Source.Cert);
 
-                XunitLogger.LogInformation("Countersigning package");
+                Logger.WriteMessage("Countersigning package");
                 var countersignedPackage = await SignedArchiveTestUtility.RepositorySignPackageAsync(
                     new X509Certificate2(trustedCert.Source.Cert),
                     packageFullName,
@@ -133,20 +136,21 @@ namespace NuGet.Tests.Apex
 
                 // TODO: Fix bug where no warnings are shown when package is untrusted but still installed
                 //nugetConsole.IsMessageFoundInPMC("expired certificate").Should().BeTrue("expired certificate warning");
-                CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, expiredTestPackage.Id, expiredTestPackage.Version, XunitLogger);
+                CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, expiredTestPackage.Id, expiredTestPackage.Version, Logger);
             }
         }
 
-        [CIOnlyNuGetWpfTheory]
-        [MemberData(nameof(GetPackagesConfigTemplates))]
+        [DataTestMethod]
+        [DynamicData(nameof(GetPackagesConfigTemplates), DynamicDataSourceType.Method)]
+        [Timeout(DefaultTimeout)]
         public async Task Tampered_InstallFromPMCForPC_FailAsync(ProjectTemplate projectTemplate)
         {
             // Arrange
             EnsureVisualStudioHost();
 
-            var signedPackage = _fixture.RepositoryCountersignedTestPackage;
+            var signedPackage = Fixture.RepositoryCountersignedTestPackage;
 
-            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, XunitLogger))
+            using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
             {
                 await SimpleTestPackageUtility.CreatePackagesAsync(testContext.PackageSource, signedPackage);
                 SignedArchiveTestUtility.TamperWithPackage(Path.Combine(testContext.PackageSource, signedPackage.PackageName));
@@ -156,7 +160,7 @@ namespace NuGet.Tests.Apex
                 nugetConsole.InstallPackageFromPMC(signedPackage.Id, signedPackage.Version);
                 nugetConsole.IsMessageFoundInPMC("package integrity check failed").Should().BeTrue("Integrity failed message shown.");
 
-                CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, testContext.Project, signedPackage.Id, signedPackage.Version, XunitLogger);
+                CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, testContext.Project, signedPackage.Id, signedPackage.Version, Logger);
             }
         }
 

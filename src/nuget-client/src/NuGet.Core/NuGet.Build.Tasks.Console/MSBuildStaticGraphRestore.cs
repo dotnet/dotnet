@@ -97,7 +97,9 @@ namespace NuGet.Build.Tasks.Console
         [MethodImpl(MethodImplOptions.NoInlining)]
         public async Task<bool> RestoreAsync(string entryProjectFilePath, IDictionary<string, string> globalProperties, IReadOnlyDictionary<string, string> options)
         {
-            var dependencyGraphSpec = GetDependencyGraphSpec(entryProjectFilePath, globalProperties);
+            bool interactive = IsOptionTrue(nameof(RestoreTaskEx.Interactive), options);
+
+            var dependencyGraphSpec = GetDependencyGraphSpec(entryProjectFilePath, globalProperties, interactive);
 
             // If the dependency graph spec is null, something went wrong evaluating the projects, so return false
             if (dependencyGraphSpec == null)
@@ -116,9 +118,9 @@ namespace NuGet.Build.Tasks.Console
             {
                 bool result = await BuildTasksUtility.RestoreAsync(
                     dependencyGraphSpec: dependencyGraphSpec,
-                    interactive: IsOptionTrue(nameof(RestoreTaskEx.Interactive), options),
+                    interactive,
                     recursive: IsOptionTrue(nameof(RestoreTaskEx.Recursive), options),
-                    noCache: IsOptionTrue(nameof(RestoreTaskEx.NoCache), options),
+                    noCache: IsOptionTrue(nameof(RestoreTaskEx.NoCache), options) || IsOptionTrue(nameof(RestoreTaskEx.NoHttpCache), options),
                     ignoreFailedSources: IsOptionTrue(nameof(RestoreTaskEx.IgnoreFailedSources), options),
                     disableParallel: IsOptionTrue(nameof(RestoreTaskEx.DisableParallel), options),
                     force: IsOptionTrue(nameof(RestoreTaskEx.Force), options),
@@ -150,7 +152,9 @@ namespace NuGet.Build.Tasks.Console
         /// <returns><code>true</code> if the dependency graph spec was generated and written, otherwise <code>false</code>.</returns>
         public bool WriteDependencyGraphSpec(string entryProjectFilePath, IDictionary<string, string> globalProperties, IReadOnlyDictionary<string, string> options)
         {
-            var dependencyGraphSpec = GetDependencyGraphSpec(entryProjectFilePath, globalProperties);
+            bool interactive = IsOptionTrue(nameof(RestoreTaskEx.Interactive), options);
+
+            var dependencyGraphSpec = GetDependencyGraphSpec(entryProjectFilePath, globalProperties, interactive);
 
             try
             {
@@ -645,8 +649,9 @@ namespace NuGet.Build.Tasks.Console
         /// </summary>
         /// <param name="entryProjectPath">The full path to a project or Visual Studio Solution File.</param>
         /// <param name="globalProperties">An <see cref="IDictionary{String,String}" /> containing the global properties to use when evaluation MSBuild projects.</param>
+        /// <param name="interactive"><see langword="true" /> if the build is allowed to interact with the user, otherwise <see langword="false" />.</param>
         /// <returns>A <see cref="DependencyGraphSpec" /> for the specified project if they could be loaded, otherwise <code>null</code>.</returns>
-        private DependencyGraphSpec GetDependencyGraphSpec(string entryProjectPath, IDictionary<string, string> globalProperties)
+        private DependencyGraphSpec GetDependencyGraphSpec(string entryProjectPath, IDictionary<string, string> globalProperties, bool interactive)
         {
             try
             {
@@ -655,7 +660,7 @@ namespace NuGet.Build.Tasks.Console
                 var entryProjects = GetProjectGraphEntryPoints(entryProjectPath, globalProperties);
 
                 // Load the projects via MSBuild and create an array of them since Parallel.ForEach is optimized for arrays
-                var projects = LoadProjects(entryProjects)?.ToArray();
+                var projects = LoadProjects(entryProjects, interactive)?.ToArray();
 
                 // If no projects were loaded, return an empty DependencyGraphSpec
                 if (projects == null || projects.Length == 0)
@@ -880,8 +885,9 @@ namespace NuGet.Build.Tasks.Console
         /// Recursively loads and evaluates MSBuild projects.
         /// </summary>
         /// <param name="entryProjects">An <see cref="IEnumerable{ProjectGraphEntryPoint}" /> containing the entry projects to load.</param>
+        /// <param name="interactive"><see langword="true" /> if the build is allowed to interact with the user, otherwise <see langword="false" />.</param>
         /// <returns>An <see cref="ICollection{ProjectWithInnerNodes}" /> object containing projects and their inner nodes if they are targeting multiple frameworks.</returns>
-        private ICollection<ProjectWithInnerNodes> LoadProjects(IEnumerable<ProjectGraphEntryPoint> entryProjects)
+        private ICollection<ProjectWithInnerNodes> LoadProjects(IEnumerable<ProjectGraphEntryPoint> entryProjects, bool interactive)
         {
             try
             {
@@ -930,6 +936,7 @@ namespace NuGet.Build.Tasks.Console
                     {
                         EvaluationContext = evaluationContext,
                         GlobalProperties = properties,
+                        Interactive = interactive,
                         // Ignore bad imports to maximize the chances of being able to load the project and restore
                         LoadSettings = ProjectLoadSettings.IgnoreEmptyImports | ProjectLoadSettings.IgnoreInvalidImports | ProjectLoadSettings.IgnoreMissingImports | ProjectLoadSettings.DoNotEvaluateElementsWithFalseCondition,
                         ProjectCollection = collection

@@ -3,10 +3,10 @@
 
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Serialization;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Remote.Razor.Test;
 using Xunit;
 using Xunit.Abstractions;
-using Checksum = Microsoft.AspNetCore.Razor.Utilities.Checksum;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 

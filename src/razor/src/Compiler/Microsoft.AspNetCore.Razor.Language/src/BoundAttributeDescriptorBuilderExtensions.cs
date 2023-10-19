@@ -87,17 +87,6 @@ public static class BoundAttributeDescriptorBuilderExtensions
         builder.IndexerValueTypeName = valueTypeName;
     }
 
-    public static bool IsDirectiveAttribute(this BoundAttributeDescriptorBuilder builder)
-    {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        return builder.TryGetMetadataValue(ComponentMetadata.Common.DirectiveAttribute, out var value) &&
-               value == bool.TrueString;
-    }
-
     internal static void SetMetadata(this BoundAttributeParameterDescriptorBuilder builder, KeyValuePair<string, string> pair)
     {
         builder.SetMetadata(MetadataCollection.Create(pair));

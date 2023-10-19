@@ -13,7 +13,7 @@ public class DefaultAllowedChildTagDescriptorBuilderTest
     public void Build_DisplayNameIsName()
     {
         // Arrange
-        var builder = new DefaultAllowedChildTagDescriptorBuilder(null);
+        var builder = new AllowedChildTagDescriptorBuilder(null);
         builder.Name = "foo";
 
         // Act

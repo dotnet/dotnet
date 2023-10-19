@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Xunit;
 using Xunit.Sdk;
 
@@ -353,7 +352,7 @@ public static class IntermediateNodeAssert
             Assert.Equal(tagName, tagHelperNode.TagName);
             Assert.Equal(tagMode, tagHelperNode.TagMode);
 
-            Assert.Equal(tagHelpers, tagHelperNode.TagHelpers, TagHelperDescriptorComparer.Default);
+            Assert.Equal(tagHelpers, tagHelperNode.TagHelpers);
         }
         catch (XunitException e)
         {

@@ -20,7 +20,7 @@ namespace NuGet.LibraryModel
         {
         }
 
-        public bool Equals(CentralPackageVersion x, CentralPackageVersion y)
+        public bool Equals(CentralPackageVersion? x, CentralPackageVersion? y)
         {
             return string.Equals(x?.Name, y?.Name, StringComparison.OrdinalIgnoreCase);
         }

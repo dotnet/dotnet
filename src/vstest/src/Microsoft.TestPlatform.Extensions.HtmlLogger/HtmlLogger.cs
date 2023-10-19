@@ -18,8 +18,6 @@ using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
-using NuGet.Frameworks;
-
 using HtmlLoggerConstants = Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Constants;
 using HtmlResource = Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Resources.Resources;
 
@@ -285,7 +283,7 @@ public class HtmlLogger : ITestLoggerWithParameters
             var framework = _parametersDictionary[DefaultLoggerParameterNames.TargetFramework];
             if (framework != null)
             {
-                framework = NuGetFramework.Parse(framework).GetShortFolderName();
+                framework = Framework.FromString(framework)?.ShortName ?? framework;
                 logFilePrefixValue = logFilePrefixValue + "_" + framework;
             }
 

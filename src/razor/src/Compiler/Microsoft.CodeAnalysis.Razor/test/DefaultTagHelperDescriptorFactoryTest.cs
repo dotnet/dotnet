@@ -204,13 +204,13 @@ public class DefaultTagHelperDescriptorFactoryTest
         IEnumerable<Action<RequiredAttributeDescriptorBuilder>> configureBuilders)
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var ruleBuilder = new DefaultTagMatchingRuleDescriptorBuilder(tagHelperBuilder);
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var ruleBuilder = new TagMatchingRuleDescriptorBuilder(tagHelperBuilder);
 
         var expectedRules = new List<RequiredAttributeDescriptor>();
         foreach (var configureBuilder in configureBuilders)
         {
-            var builder = new DefaultRequiredAttributeDescriptorBuilder(ruleBuilder);
+            var builder = new RequiredAttributeDescriptorBuilder(ruleBuilder);
             configureBuilder(builder);
 
             expectedRules.Add(builder.Build());
@@ -221,7 +221,7 @@ public class DefaultTagHelperDescriptorFactoryTest
 
         // Assert
         var descriptors = ruleBuilder.Build().Attributes;
-        Assert.Equal(expectedRules, descriptors, RequiredAttributeDescriptorComparer.Default);
+        Assert.Equal(expectedRules, descriptors);
     }
 
     public static TheoryData RequiredAttributeParserData
@@ -299,13 +299,13 @@ public class DefaultTagHelperDescriptorFactoryTest
         IEnumerable<Action<RequiredAttributeDescriptorBuilder>> configureBuilders)
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var ruleBuilder = new DefaultTagMatchingRuleDescriptorBuilder(tagHelperBuilder);
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var ruleBuilder = new TagMatchingRuleDescriptorBuilder(tagHelperBuilder);
 
         var expectedRules = new List<RequiredAttributeDescriptor>();
         foreach (var configureBuilder in configureBuilders)
         {
-            var builder = new DefaultRequiredAttributeDescriptorBuilder(ruleBuilder);
+            var builder = new RequiredAttributeDescriptorBuilder(ruleBuilder);
             configureBuilder(builder);
 
             expectedRules.Add(builder.Build());
@@ -316,7 +316,7 @@ public class DefaultTagHelperDescriptorFactoryTest
 
         // Assert
         var descriptors = ruleBuilder.Build().Attributes;
-        Assert.Equal(expectedRules, descriptors, RequiredAttributeDescriptorComparer.Default);
+        Assert.Equal(expectedRules, descriptors);
     }
 
     public static TheoryData IsEnumData
@@ -405,7 +405,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     public static TheoryData RequiredParentData
@@ -456,7 +456,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     private static KeyValuePair<string, string>[] GetMetadata<T>()
@@ -526,7 +526,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     public static TheoryData TagStructureData
@@ -586,7 +586,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     public static TheoryData EditorBrowsableData
@@ -781,7 +781,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     public static TheoryData AttributeTargetData
@@ -1002,7 +1002,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     public static TheoryData HtmlCaseData
@@ -1011,16 +1011,16 @@ public class DefaultTagHelperDescriptorFactoryTest
         {
             // tagHelperType, expectedTagName, expectedAttributeName
             return new TheoryData<Type, string, string>
-                {
-                    { typeof(SingleAttributeTagHelper), "single-attribute", "int-attribute" },
-                    { typeof(ALLCAPSTAGHELPER), "allcaps", "allcapsattribute" },
-                    { typeof(CAPSOnOUTSIDETagHelper), "caps-on-outside", "caps-on-outsideattribute" },
-                    { typeof(capsONInsideTagHelper), "caps-on-inside", "caps-on-insideattribute" },
-                    { typeof(One1Two2Three3TagHelper), "one1-two2-three3", "one1-two2-three3-attribute" },
-                    { typeof(ONE1TWO2THREE3TagHelper), "one1two2three3", "one1two2three3-attribute" },
-                    { typeof(First_Second_ThirdHiTagHelper), "first_second_third-hi", "first_second_third-attribute" },
-                    { typeof(UNSuffixedCLASS), "un-suffixed-class", "un-suffixed-attribute" },
-                };
+            {
+                { typeof(SingleAttributeTagHelper), "single-attribute", "int-attribute" },
+                { typeof(ALLCAPSTAGHELPER), "allcaps", "allcapsattribute" },
+                { typeof(CAPSOnOUTSIDETagHelper), "caps-on-outside", "caps-on-outsideattribute" },
+                { typeof(capsONInsideTagHelper), "caps-on-inside", "caps-on-insideattribute" },
+                { typeof(One1Two2Three3TagHelper), "one1-two2-three3", "one1-two2-three3-attribute" },
+                { typeof(ONE1TWO2THREE3TagHelper), "one1two2three3", "one1two2three3-attribute" },
+                { typeof(First_Second_ThirdHiTagHelper), "first_second_third-hi", "first_second_third-attribute" },
+                { typeof(UNSuffixedCLASS), "un-suffixed-class", "un-suffixed-attribute" },
+            };
         }
     }
 
@@ -1078,7 +1078,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -1114,7 +1114,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -1150,7 +1150,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -1177,7 +1177,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -1205,7 +1205,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -1234,7 +1234,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -1263,7 +1263,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -1290,7 +1290,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -1323,7 +1323,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -1351,7 +1351,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -1377,7 +1377,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -1398,7 +1398,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     // name, expectedErrorMessages
@@ -1476,7 +1476,7 @@ public class DefaultTagHelperDescriptorFactoryTest
     {
         get
         {
-            var invalidBoundAttributeBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, nameof(InvalidBoundAttribute), "Test");
+            var invalidBoundAttributeBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, nameof(InvalidBoundAttribute), "Test");
             invalidBoundAttributeBuilder.Metadata(TypeName(typeof(InvalidBoundAttribute).FullName));
 
             // type, expectedAttributeDescriptors
@@ -1572,10 +1572,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(
-            expectedAttributeDescriptors,
-            descriptor.BoundAttributes,
-            BoundAttributeDescriptorComparer.Default);
+        Assert.Equal(expectedAttributeDescriptors, descriptor.BoundAttributes);
 
         var id = AspNetCore.Razor.Language.RazorDiagnosticFactory.TagHelper_InvalidBoundAttributeNameStartsWith.Id;
         foreach (var attribute in descriptor.BoundAttributes.Where(a => a.Name.StartsWith("data-", StringComparison.OrdinalIgnoreCase)))
@@ -1856,7 +1853,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     public static TheoryData TagHelperWithPrefixData
@@ -2110,10 +2107,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(
-            expectedAttributeDescriptors,
-            descriptor.BoundAttributes,
-            BoundAttributeDescriptorComparer.Default);
+        Assert.Equal(expectedAttributeDescriptors, descriptor.BoundAttributes);
         Assert.Equal(expectedDiagnostics, descriptor.GetAllDiagnostics());
     }
 
@@ -2174,7 +2168,7 @@ public class DefaultTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(typeSymbol);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -2457,10 +2451,10 @@ public class DefaultTagHelperDescriptorFactoryTest
 
     private static BoundAttributeDescriptor CreateAttributeFor(Type tagHelperType, Action<BoundAttributeDescriptorBuilder> configure)
     {
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, tagHelperType.Name, "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, tagHelperType.Name, "Test");
         tagHelperBuilder.Metadata(TypeName(tagHelperType.FullName));
 
-        var attributeBuilder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var attributeBuilder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         configure(attributeBuilder);
         return attributeBuilder.Build();
     }

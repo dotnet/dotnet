@@ -19,7 +19,7 @@ namespace NuGet.Signing.CrossFramework.Test
         //In net472 code path, the SDK version and TFM could not be detected automatically, so we manually specified according to the sdk version we're testing against.
         //https://github.com/NuGet/Home/issues/12187
         private const string SdkVersion = "7";
-        private const string SdkTfm = "net5.0";
+        private const string SdkTfm = "net7.0";
         internal string _dotnetExePath;
 #else
         private const string NuGetExe = "NuGet.exe";

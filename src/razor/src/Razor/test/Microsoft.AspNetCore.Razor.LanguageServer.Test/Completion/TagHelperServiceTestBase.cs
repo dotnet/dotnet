@@ -59,6 +59,12 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
             rule.ParentTag = "test1";
         });
         builder1WithRequiredParent.SetMetadata(TypeName("Test1TagHelper.SomeChild"));
+        builder1WithRequiredParent.BindAttribute(attribute =>
+        {
+            attribute.Name = "attribute";
+            attribute.SetMetadata(PropertyName("Attribute"));
+            attribute.TypeName = typeof(string).FullName;
+        });
 
         var builder2 = TagHelperDescriptorBuilder.Create("Test2TagHelper", "TestAssembly");
         builder2.TagMatchingRule(rule => rule.TagName = "test2");

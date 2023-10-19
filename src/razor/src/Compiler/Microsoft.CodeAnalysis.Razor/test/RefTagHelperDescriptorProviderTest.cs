@@ -37,7 +37,7 @@ public class RefTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
         Assert.Equal(ComponentMetadata.Ref.RuntimeName, item.Metadata[TagHelperMetadata.Runtime.Name]);
         Assert.False(item.IsDefaultKind());
         Assert.False(item.KindUsesDefaultTagHelperRuntime());
-        Assert.False(item.IsComponentOrChildContentTagHelper());
+        Assert.False(item.IsComponentOrChildContentTagHelper);
         Assert.True(item.CaseSensitive);
 
         Assert.Equal(

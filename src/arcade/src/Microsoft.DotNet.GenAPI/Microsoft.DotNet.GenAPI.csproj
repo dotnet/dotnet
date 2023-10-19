@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" />
 
     <!-- Manually reference Microsoft.Cci.dll via a PackageDownload+Reference item instead of
          using a PackageReference to avoid bringing in the old dependency graph. -->

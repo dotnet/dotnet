@@ -12,9 +12,9 @@ public class DefaultRequiredAttributeDescriptorBuilderTest
     public void Build_DisplayNameIsName_NameComparisonFullMatch()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var tagMatchingRuleBuilder = new DefaultTagMatchingRuleDescriptorBuilder(tagHelperBuilder);
-        var builder = new DefaultRequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagMatchingRuleBuilder = new TagMatchingRuleDescriptorBuilder(tagHelperBuilder);
+        var builder = new RequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
 
         builder
             .Name("asp-action")
@@ -31,9 +31,9 @@ public class DefaultRequiredAttributeDescriptorBuilderTest
     public void Build_DisplayNameIsNameWithDots_NameComparisonPrefixMatch()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var tagMatchingRuleBuilder = new DefaultTagMatchingRuleDescriptorBuilder(tagHelperBuilder);
-        var builder = new DefaultRequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagMatchingRuleBuilder = new TagMatchingRuleDescriptorBuilder(tagHelperBuilder);
+        var builder = new RequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
 
         builder
             .Name("asp-route-")
@@ -53,13 +53,13 @@ public class DefaultRequiredAttributeDescriptorBuilderTest
         // they should share the instance.
 
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var tagMatchingRuleBuilder = new DefaultTagMatchingRuleDescriptorBuilder(tagHelperBuilder);
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagMatchingRuleBuilder = new TagMatchingRuleDescriptorBuilder(tagHelperBuilder);
 
         var metadata = MetadataCollection.Create(PropertyName("SomeProperty"));
 
-        var builder1 = new DefaultRequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
-        var builder2 = new DefaultRequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
+        var builder1 = new RequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
+        var builder2 = new RequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
 
         builder1.SetMetadata(metadata);
         builder2.SetMetadata(metadata);
@@ -79,11 +79,11 @@ public class DefaultRequiredAttributeDescriptorBuilderTest
         // they do not share the instance.
 
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var tagMatchingRuleBuilder = new DefaultTagMatchingRuleDescriptorBuilder(tagHelperBuilder);
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagMatchingRuleBuilder = new TagMatchingRuleDescriptorBuilder(tagHelperBuilder);
 
-        var builder1 = new DefaultRequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
-        var builder2 = new DefaultRequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
+        var builder1 = new RequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
+        var builder2 = new RequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
 
         builder1.Metadata.Add(PropertyName("SomeProperty"));
         builder2.Metadata.Add(PropertyName("SomeProperty"));

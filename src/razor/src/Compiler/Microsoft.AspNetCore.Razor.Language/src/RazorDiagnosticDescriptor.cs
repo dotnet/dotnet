@@ -1,75 +1,36 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-[DebuggerDisplay("{" + nameof(DebuggerToString) + "(),nq}")]
-public sealed class RazorDiagnosticDescriptor : IEquatable<RazorDiagnosticDescriptor>
+[DebuggerDisplay($"{{{nameof(DebuggerToString)}(),nq}}")]
+public sealed record RazorDiagnosticDescriptor
 {
-    private readonly Func<string> _messageFormat;
+    public string Id { get; }
+    public string MessageFormat { get; }
+    public RazorDiagnosticSeverity Severity { get; }
 
-    public RazorDiagnosticDescriptor(
-        string id,
-        Func<string> messageFormat,
-        RazorDiagnosticSeverity severity)
+    public RazorDiagnosticDescriptor(string id, string messageFormat, RazorDiagnosticSeverity severity)
     {
         if (string.IsNullOrEmpty(id))
         {
-            throw new ArgumentException(Resources.ArgumentCannotBeNullOrEmpty, nameof(id));
+            throw new ArgumentNullException(nameof(id), Resources.ArgumentCannotBeNullOrEmpty);
         }
 
-        if (messageFormat == null)
+        if (string.IsNullOrEmpty(messageFormat))
         {
-            throw new ArgumentNullException(nameof(messageFormat));
+            throw new ArgumentNullException(nameof(messageFormat), Resources.ArgumentCannotBeNullOrEmpty);
         }
 
         Id = id;
-        _messageFormat = messageFormat;
+        MessageFormat = messageFormat;
         Severity = severity;
     }
 
-    public string Id { get; }
-
-    public RazorDiagnosticSeverity Severity { get; }
-
-    public string GetMessageFormat()
-    {
-        var message = _messageFormat();
-        if (string.IsNullOrEmpty(message))
-        {
-            return Resources.FormatRazorDiagnosticDescriptor_DefaultError(Id);
-        }
-
-        return message;
-    }
-
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as RazorDiagnosticDescriptor);
-    }
-
-    public bool Equals(RazorDiagnosticDescriptor other)
-    {
-        if (other == null)
-        {
-            return false;
-        }
-
-        return string.Equals(Id, other.Id, StringComparison.Ordinal);
-    }
-
-    public override int GetHashCode()
-    {
-        return StringComparer.Ordinal.GetHashCode(Id);
-    }
-
-    private string DebuggerToString()
-    {
-        return $@"Error ""{Id}"": ""{GetMessageFormat()}""";
-    }
+    private string DebuggerToString() => $"""
+        Error "{Id}": "{MessageFormat}"
+        """;
 }

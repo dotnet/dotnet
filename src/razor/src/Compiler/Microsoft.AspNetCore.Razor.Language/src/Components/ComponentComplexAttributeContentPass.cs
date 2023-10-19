@@ -38,7 +38,7 @@ internal class ComponentComplexAttributeContentPass : ComponentIntermediateNodeP
         {
             if (node.Children[i] is TagHelperPropertyIntermediateNode propertyNode)
             {
-                if (!TrySimplifyContent(propertyNode) && node.TagHelpers.Any(t => t.IsComponentTagHelper()))
+                if (!TrySimplifyContent(propertyNode) && node.TagHelpers.Any(t => t.IsComponentTagHelper))
                 {
                     node.Diagnostics.Add(ComponentDiagnosticFactory.Create_UnsupportedComplexContent(
                         propertyNode,
@@ -49,7 +49,7 @@ internal class ComponentComplexAttributeContentPass : ComponentIntermediateNodeP
             }
             else if (node.Children[i] is TagHelperHtmlAttributeIntermediateNode htmlNode)
             {
-                if (!TrySimplifyContent(htmlNode) && node.TagHelpers.Any(t => t.IsComponentTagHelper()))
+                if (!TrySimplifyContent(htmlNode) && node.TagHelpers.Any(t => t.IsComponentTagHelper))
                 {
                     node.Diagnostics.Add(ComponentDiagnosticFactory.Create_UnsupportedComplexContent(
                         htmlNode,

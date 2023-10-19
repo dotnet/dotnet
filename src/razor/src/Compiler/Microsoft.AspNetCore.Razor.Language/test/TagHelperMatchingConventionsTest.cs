@@ -143,9 +143,9 @@ public class TagHelperMatchingConventionsTest
         bool expectedResult)
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var tagMatchingRuleBuilder = new DefaultTagMatchingRuleDescriptorBuilder(tagHelperBuilder);
-        var builder = new DefaultRequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagMatchingRuleBuilder = new TagMatchingRuleDescriptorBuilder(tagHelperBuilder);
+        var builder = new RequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
 
         configure(builder);
 
@@ -162,8 +162,8 @@ public class TagHelperMatchingConventionsTest
     public void CanSatisfyBoundAttribute_IndexerAttribute_ReturnsFalseIsNotMatching()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder.AsDictionary("asp-", typeof(Dictionary<string, string>).FullName);
 
         var boundAttribute = builder.Build();
@@ -179,8 +179,8 @@ public class TagHelperMatchingConventionsTest
     public void CanSatisfyBoundAttribute_IndexerAttribute_ReturnsTrueIfMatching()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder.AsDictionary("asp-", typeof(Dictionary<string, string>).FullName);
 
         var boundAttribute = builder.Build();

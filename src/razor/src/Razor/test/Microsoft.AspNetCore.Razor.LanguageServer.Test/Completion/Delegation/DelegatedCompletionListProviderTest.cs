@@ -132,6 +132,29 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
     }
 
     [Fact]
+    public async Task Delegation_NullResult_ToIncompleteResult()
+    {
+        // Arrange
+        var completionContext = new VSInternalCompletionContext()
+        {
+            InvokeKind = VSInternalCompletionInvokeKind.Typing,
+            TriggerKind = CompletionTriggerKind.TriggerCharacter,
+            TriggerCharacter = "<",
+        };
+        var codeDocument = CreateCodeDocument("<");
+        var documentContext = TestDocumentContext.From("C:/path/to/file.cshtml", codeDocument, hostDocumentVersion: 1337);
+        var provider = TestDelegatedCompletionListProvider.CreateWithNullResponse(LoggerFactory);
+
+        // Act
+        var delegatedCompletionList = await provider.GetCompletionListAsync(
+            absoluteIndex: 1, completionContext, documentContext, _clientCapabilities, correlationId: Guid.Empty, cancellationToken: DisposalToken);
+
+        // Assert
+        Assert.NotNull(delegatedCompletionList);
+        Assert.True(delegatedCompletionList.IsIncomplete);
+    }
+
+    [Fact]
     public async Task CSharp_Invoked()
     {
         // Arrange & Act
@@ -268,7 +291,7 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
         var codeDocument = CreateCodeDocument(output);
         var csharpSourceText = codeDocument.GetCSharpSourceText();
         var csharpDocumentUri = new Uri("C:/path/to/file.razor__virtual.g.cs");
-        var serverCapabilities =  new VSInternalServerCapabilities()
+        var serverCapabilities = new VSInternalServerCapabilities()
         {
             CompletionProvider = new CompletionOptions
             {

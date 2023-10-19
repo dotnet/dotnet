@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.Test.Apex.VisualStudio;
-using NuGet.VisualStudio;
 
 namespace NuGet.Tests.Apex
 {

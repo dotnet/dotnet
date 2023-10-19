@@ -80,7 +80,7 @@ public class DirectiveRemovalOptimizationPassTest
     {
         // Arrange
         var content = "@custom \"Hello\"";
-        var expectedDiagnostic = RazorDiagnostic.Create(new RazorDiagnosticDescriptor("RZ9999", () => "Some diagnostic message.", RazorDiagnosticSeverity.Error), SourceSpan.Undefined);
+        var expectedDiagnostic = RazorDiagnostic.Create(new RazorDiagnosticDescriptor("RZ9999", "Some diagnostic message.", RazorDiagnosticSeverity.Error));
         var sourceDocument = TestRazorSourceDocument.Create(content);
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
         var defaultEngine = RazorProjectEngine.Create(b =>

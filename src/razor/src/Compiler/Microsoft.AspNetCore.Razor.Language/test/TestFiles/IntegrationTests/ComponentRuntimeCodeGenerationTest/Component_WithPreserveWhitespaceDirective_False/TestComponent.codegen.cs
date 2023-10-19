@@ -24,7 +24,7 @@ namespace Test
 #nullable disable
             __builder.OpenElement(1, "li");
 #nullable restore
-#line (7,13)-(7,17) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (7,14)-(7,18) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(2, item);
 
 #line default

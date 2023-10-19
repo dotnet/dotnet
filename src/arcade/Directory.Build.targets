@@ -3,11 +3,12 @@
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <ItemGroup>
-    <!-- Upgrade the NETStandard.Library transitive dependency to avoid transitive 1.x NS dependencies. -->
+    <!-- Upgrade xunit's transitive NETStandard.Library dependency to avoid .NET Standard 1.x dependencies. -->
     <PackageReference Include="NETStandard.Library"
-                      Version="$(NETStandardLibraryVersion)"
+                      IsImplicitlyDefined="false"
                       PrivateAssets="all"
                       ExcludeAssets="runtime"
+                      VersionOverride="2.0.3"
                       Condition="'$(TargetFrameworkIdentifier)' != '.NETStandard' and
                                  $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0'))" />
   </ItemGroup>

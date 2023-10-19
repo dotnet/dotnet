@@ -27,7 +27,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Test.Apex.VisualStudio" ExcludeAssets="Compile" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
-    <PackageReference Include="Xunit.StaFact" />
+    <PackageReference Include="MSTest.TestAdapter" />
+    <PackageReference Include="MSTest.TestFramework" />
   </ItemGroup>
   <ItemGroup>
     <!-- Manually consuming compile-time assets from Microsoft.Test.Apex.VisualStudio and excluding ones that cause compile warnings -->
@@ -44,18 +45,12 @@
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio\NuGet.VisualStudio.csproj" />
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio.Contracts\NuGet.VisualStudio.Contracts.csproj" />
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
-    <ProjectReference Include="..\..\TestExtensions\NuGet.StaFact\NuGet.StaFact.csproj" />
     <ProjectReference Include="..\NuGet.Console.TestContract\NuGet.Console.TestContract.csproj" />
     <ProjectReference Include="..\NuGet.PackageManagement.UI.TestContract\NuGet.PackageManagement.UI.TestContract.csproj" />
   </ItemGroup>
   <ItemGroup>
     <!-- Make sure VSIX is deployed to experimental instance -->
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio.Client\NuGet.VisualStudio.Client.csproj" ReferenceOutputAssembly="false" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="xunit.runner.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <PropertyGroup>

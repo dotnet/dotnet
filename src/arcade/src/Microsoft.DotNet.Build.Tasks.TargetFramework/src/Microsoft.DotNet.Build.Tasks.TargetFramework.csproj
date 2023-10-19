@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
-    <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" />
+    <PackageReference Include="NuGet.Packaging" />
   </ItemGroup>
 
   <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />

@@ -8,9 +8,9 @@ and the licenses under which Microsoft received such components are set forth be
 informational purposes only. Microsoft reserves all rights not expressly granted herein, whether by 
 implication, estoppel or otherwise.
 
-1.	Newtonsoft version 13.0.1 (https://github.com/JamesNK/Newtonsoft.Json)
-2.	Mono.Cecil version 0.11.3 (https://github.com/jbevain/cecil)
-
+1. Newtonsoft version 13.0.1 (https://github.com/JamesNK/Newtonsoft.Json)
+2. Mono.Cecil version 0.11.3 (https://github.com/jbevain/cecil)
+3. Nuget.Client version 6.8.0.117 \(https://github.com/NuGet/NuGet.Client)
 
 
 %% Newtonsoft NOTICES AND INFORMATION BEGIN HERE
@@ -62,3 +62,24 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 =========================================
 END OF Mono.Cecil NOTICES AND INFORMATION
+
+
+%% NuGet.Client NOTICES AND INFORMATION BEGIN HERE
+==================================================
+Copyright (c) .NET Foundation and Contributors.
+
+All rights reserved.
+
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+these files except in compliance with the License. You may obtain a copy of the
+License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+=========================================
+END OF NuGet.Client NOTICES AND INFORMATION

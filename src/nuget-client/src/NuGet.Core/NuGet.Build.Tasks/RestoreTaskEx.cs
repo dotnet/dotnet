@@ -58,6 +58,11 @@ namespace NuGet.Build.Tasks
         public bool NoCache { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether or not to avoid using http caching.
+        /// </summary>
+        public bool NoHttpCache { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether or not to restore projects using packages.config.
         /// </summary>
         public bool RestorePackagesConfig { get; set; }
@@ -76,6 +81,7 @@ namespace NuGet.Build.Tasks
             options[nameof(IgnoreFailedSources)] = IgnoreFailedSources.ToString();
             options[nameof(Interactive)] = Interactive.ToString();
             options[nameof(NoCache)] = NoCache.ToString();
+            options[nameof(NoHttpCache)] = NoHttpCache.ToString();
             options[nameof(RestorePackagesConfig)] = RestorePackagesConfig.ToString();
 
             return options;

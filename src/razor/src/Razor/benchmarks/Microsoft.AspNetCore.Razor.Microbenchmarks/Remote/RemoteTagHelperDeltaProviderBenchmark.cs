@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Remote.Razor;
-using Checksum = Microsoft.AspNetCore.Razor.Utilities.Checksum;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks;
 
@@ -21,7 +20,7 @@ public class RemoteTagHelperDeltaProviderBenchmark
 
         Added50PercentMoreDefaultTagHelpers = DefaultTagHelperSet
             .Take(DefaultTagHelperSet.Length / 2)
-            .Select(th => new RenamedTagHelperDescriptor(th.Name + "Added", th))
+            .Select(th => th.WithName(th.Name + "Added"))
             .Concat(DefaultTagHelperSet)
             .ToHashSet()
             .ToImmutableArray();
@@ -33,17 +32,17 @@ public class RemoteTagHelperDeltaProviderBenchmark
 
         var tagHelpersToMutate = DefaultTagHelperSet
             .Take(2)
-            .Select(th => new RenamedTagHelperDescriptor(th.Name + "Mutated", th));
+            .Select(th => th.WithName(th.Name + "Mutated"));
         MutatedTwoDefaultTagHelpers = DefaultTagHelperSet
             .Skip(2)
             .Concat(tagHelpersToMutate)
             .ToHashSet()
             .ToImmutableArray();
 
-        DefaultTagHelperChecksumsSet = DefaultTagHelperSet.SelectAsArray(t => t.GetChecksum());
-        Added50PercentMoreDefaultTagHelpersChecksums = Added50PercentMoreDefaultTagHelpers.SelectAsArray(t => t.GetChecksum());
-        RemovedHalfOfDefaultTagHelpersChecksums = RemovedHalfOfDefaultTagHelpers.SelectAsArray(t => t.GetChecksum());
-        MutatedTwoDefaultTagHelpersChecksums = MutatedTwoDefaultTagHelpers.SelectAsArray(t => t.GetChecksum());
+        DefaultTagHelperChecksumsSet = DefaultTagHelperSet.SelectAsArray(t => t.Checksum);
+        Added50PercentMoreDefaultTagHelpersChecksums = Added50PercentMoreDefaultTagHelpers.SelectAsArray(t => t.Checksum);
+        RemovedHalfOfDefaultTagHelpersChecksums = RemovedHalfOfDefaultTagHelpers.SelectAsArray(t => t.Checksum);
+        MutatedTwoDefaultTagHelpersChecksums = MutatedTwoDefaultTagHelpers.SelectAsArray(t => t.Checksum);
 
         ProjectId = ProjectId.CreateNewId();
     }
@@ -106,24 +105,5 @@ public class RemoteTagHelperDeltaProviderBenchmark
     public void TagHelper_GetTagHelpersDelta_NoChange()
     {
         _ = Provider.GetTagHelpersDelta(ProjectId, LastResultId, DefaultTagHelperChecksumsSet);
-    }
-
-    internal class RenamedTagHelperDescriptor : DefaultTagHelperDescriptor
-    {
-        public RenamedTagHelperDescriptor(string newName, TagHelperDescriptor origin)
-            : base(origin.Kind,
-                 newName,
-                 origin.AssemblyName,
-                 origin.DisplayName,
-                 origin.Documentation,
-                 origin.TagOutputHint,
-                 origin.CaseSensitive,
-                 origin.TagMatchingRules.ToArray(),
-                 origin.BoundAttributes.ToArray(),
-                 origin.AllowedChildTags.ToArray(),
-                 MetadataCollection.Create(origin.Metadata),
-                 origin.Diagnostics.ToArray())
-        {
-        }
     }
 }

@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.ObjectPool;
 
@@ -58,6 +59,18 @@ internal static partial class Extensions
     {
         var pooledObject = pool.GetPooledObject();
         set = pooledObject.Object;
+        return pooledObject;
+    }
+
+    public static PooledObject<IncrementalHash> GetPooledObject<T>(this ObjectPool<IncrementalHash> pool)
+        => new(pool);
+
+    public static PooledObject<IncrementalHash> GetPooledObject<T>(
+        this ObjectPool<IncrementalHash> pool,
+        out IncrementalHash hash)
+    {
+        var pooledObject = pool.GetPooledObject();
+        hash = pooledObject.Object;
         return pooledObject;
     }
 

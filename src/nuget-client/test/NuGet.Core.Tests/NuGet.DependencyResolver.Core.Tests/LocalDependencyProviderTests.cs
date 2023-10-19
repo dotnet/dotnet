@@ -111,7 +111,9 @@ namespace NuGet.DependencyResolver.Tests
         {
             var library = new Library()
             {
-                Identity = new LibraryIdentity()
+                Identity = new LibraryIdentity("a", new NuGetVersion(1, 0, 0), LibraryType.Package),
+                LibraryRange = new LibraryRange(name: "a"),
+                Dependencies = Array.Empty<LibraryDependency>()
             };
             var dependencyProvider = new Mock<IDependencyProvider>();
 
@@ -184,8 +186,9 @@ namespace NuGet.DependencyResolver.Tests
                     type: LibraryType.Package),
                 Dependencies = new List<LibraryDependency>()
                     {
-                        new LibraryDependency()
-                    }
+                        new LibraryDependency(new LibraryRange("b"))
+                    },
+                LibraryRange = new LibraryRange("a")
             };
             var dependencyProvider = new Mock<IDependencyProvider>();
 

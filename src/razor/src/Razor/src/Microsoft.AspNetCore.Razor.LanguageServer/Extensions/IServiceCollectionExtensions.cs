@@ -89,6 +89,7 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<RazorCompletionListProvider>();
         services.AddSingleton<DelegatedCompletionResponseRewriter, TextEditResponseRewriter>();
         services.AddSingleton<DelegatedCompletionResponseRewriter, DesignTimeHelperResponseRewriter>();
+        services.AddSingleton<DelegatedCompletionResponseRewriter, HtmlCommitCharacterResponseRewriter>();
 
         services.AddSingleton<AggregateCompletionItemResolver>();
         services.AddSingleton<CompletionItemResolver, RazorCompletionItemResolver>();

@@ -88,7 +88,6 @@
     <file src="net472\vstest.console.exe.config"	target="tools\net462\vstest.console.exe.config" />
     <file src="net472\vstest.console.arm64.exe"	target="tools\net462\vstest.console.arm64.exe" />
     <file src="net472\vstest.console.arm64.exe.config"	target="tools\net462\vstest.console.arm64.exe.config" />
-    <file src="net472\NuGet.Frameworks.dll"	target="tools\net462\NuGet.Frameworks.dll" />
 
     <file src="net472\cs\Microsoft.TestPlatform.CommunicationUtilities.resources.dll"	target="tools\net462\cs\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
     <file src="net472\cs\Microsoft.TestPlatform.CoreUtilities.resources.dll"	target="tools\net462\cs\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
@@ -329,7 +328,6 @@
     <file src="netcoreapp3.1\vstest.console.dll"	target="tools\netcoreapp3.1\vstest.console.dll" />
     <file src="netcoreapp3.1\vstest.console.dll.config"	target="tools\netcoreapp3.1\vstest.console.dll.config" />
     <file src="netcoreapp3.1\vstest.console.runtimeconfig.json"	target="tools\netcoreapp3.1\vstest.console.runtimeconfig.json" />
-    <file src="netstandard2.0\NuGet.Frameworks.dll"	target="tools\netcoreapp3.1\NuGet.Frameworks.dll" />
 
     <file src="netcoreapp3.1\cs\Microsoft.TestPlatform.CommunicationUtilities.resources.dll"	target="tools\netcoreapp3.1\cs\Microsoft.TestPlatform.CommunicationUtilities.resources.dll" />
     <file src="netcoreapp3.1\cs\Microsoft.TestPlatform.CoreUtilities.resources.dll"	target="tools\netcoreapp3.1\cs\Microsoft.TestPlatform.CoreUtilities.resources.dll" />
@@ -478,7 +476,6 @@
     <file src="netcoreapp3.1\Microsoft.TestPlatform.Utilities.dll"	target="tools\netcoreapp3.1\TestHostNetFramework\Microsoft.TestPlatform.Utilities.dll" />
     <file src="netcoreapp3.1\Microsoft.VisualStudio.TestPlatform.Common.dll"	target="tools\netcoreapp3.1\TestHostNetFramework\Microsoft.VisualStudio.TestPlatform.Common.dll" />
     <file src="netcoreapp3.1\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll"	target="tools\netcoreapp3.1\TestHostNetFramework\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" />
-    <file src="netstandard2.0\NuGet.Frameworks.dll"	target="tools\netcoreapp3.1\TestHostNetFramework\NuGet.Frameworks.dll" />
     <file src="netstandard2.0\Newtonsoft.Json.dll"	target="tools\netcoreapp3.1\TestHostNetFramework\Newtonsoft.Json.dll" />
     <file src="netstandard2.0\System.Collections.Immutable.dll"	target="tools\netcoreapp3.1\TestHostNetFramework\System.Collections.Immutable.dll" />
     <file src="netstandard2.0\System.Reflection.Metadata.dll"	target="tools\netcoreapp3.1\TestHostNetFramework\System.Reflection.Metadata.dll" />

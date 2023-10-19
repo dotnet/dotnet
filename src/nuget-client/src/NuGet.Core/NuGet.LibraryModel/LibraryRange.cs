@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using NuGet.Shared;
 using NuGet.Versioning;
@@ -14,21 +15,28 @@ namespace NuGet.LibraryModel
         {
         }
 
+        [SetsRequiredMembers]
+        public LibraryRange(string name) : this(name, null, LibraryDependencyTarget.All)
+        {
+        }
+
+        [SetsRequiredMembers]
         public LibraryRange(string name, LibraryDependencyTarget typeConstraint) : this(name, null, typeConstraint)
         {
         }
 
-        public LibraryRange(string name, VersionRange versionRange, LibraryDependencyTarget typeConstraint)
+        [SetsRequiredMembers]
+        public LibraryRange(string name, VersionRange? versionRange, LibraryDependencyTarget typeConstraint)
         {
             Name = name;
             VersionRange = versionRange;
             TypeConstraint = typeConstraint;
         }
 
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         // Null is used for all, CLI still has code expecting this
-        public VersionRange VersionRange { get; set; }
+        public VersionRange? VersionRange { get; set; }
 
         public LibraryDependencyTarget TypeConstraint { get; set; } = LibraryDependencyTarget.All;
 
@@ -65,7 +73,7 @@ namespace NuGet.LibraryModel
             return output;
         }
 
-        public string ToLockFileDependencyGroupString()
+        public string? ToLockFileDependencyGroupString()
         {
             if (VersionRange is null)
             {
@@ -122,7 +130,7 @@ namespace NuGet.LibraryModel
             return (TypeConstraint & flag) != LibraryDependencyTarget.None;
         }
 
-        public bool Equals(LibraryRange other)
+        public bool Equals(LibraryRange? other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -139,7 +147,7 @@ namespace NuGet.LibraryModel
                 && Equals(VersionRange, other.VersionRange);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as LibraryRange);
         }
@@ -155,12 +163,12 @@ namespace NuGet.LibraryModel
             return combiner.CombinedHash;
         }
 
-        public static bool operator ==(LibraryRange left, LibraryRange right)
+        public static bool operator ==(LibraryRange? left, LibraryRange? right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(LibraryRange left, LibraryRange right)
+        public static bool operator !=(LibraryRange? left, LibraryRange? right)
         {
             return !Equals(left, right);
         }

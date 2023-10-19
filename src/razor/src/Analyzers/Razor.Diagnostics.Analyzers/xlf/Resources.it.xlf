@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="PooledArrayBuilderAsRefDescription">
         <source>Instance of PooledArrayBuilder&lt;T&gt;.AsRef() must be a 'using' variable.</source>
-        <target state="new">Instance of PooledArrayBuilder&lt;T&gt;.AsRef() must be a 'using' variable.</target>
+        <target state="translated">L'istanza di PooledArrayBuilder&lt;T&gt;.AsRef() deve essere una variabile 'using'.</target>
         <note>An optional longer localizable description of the diagnostic.</note>
       </trans-unit>
       <trans-unit id="PooledArrayBuilderAsRefMessage">
         <source>Instance of PooledArrayBuilder&lt;T&gt;.AsRef() must be a 'using' variable</source>
-        <target state="new">Instance of PooledArrayBuilder&lt;T&gt;.AsRef() must be a 'using' variable</target>
+        <target state="translated">L'istanza di PooledArrayBuilder&lt;T&gt;.AsRef() deve essere una variabile 'using'</target>
         <note>The format-able message the diagnostic displays.</note>
       </trans-unit>
       <trans-unit id="PooledArrayBuilderAsRefTitle">
         <source>Instance of PooledArrayBuilder&lt;T&gt;.AsRef() must be a 'using' variable</source>
-        <target state="new">Instance of PooledArrayBuilder&lt;T&gt;.AsRef() must be a 'using' variable</target>
+        <target state="translated">L'istanza di PooledArrayBuilder&lt;T&gt;.AsRef() deve essere una variabile 'using'</target>
         <note>The title of the diagnostic.</note>
       </trans-unit>
     </body>

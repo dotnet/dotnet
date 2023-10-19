@@ -541,7 +541,7 @@ internal class ComponentTagHelperDescriptorProvider : RazorEngineFeatureBase, IT
             CreateContextParameter(builder, attribute.Name);
         }
 
-        if (component.IsComponentFullyQualifiedNameMatch())
+        if (component.IsComponentFullyQualifiedNameMatch)
         {
             metadata.Add(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch);
         }

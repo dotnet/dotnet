@@ -75,7 +75,7 @@ namespace NuGet.LibraryModel
             return string.Equals(other.Value, Value, StringComparison.OrdinalIgnoreCase);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is LibraryType && Equals((LibraryType)obj);
         }

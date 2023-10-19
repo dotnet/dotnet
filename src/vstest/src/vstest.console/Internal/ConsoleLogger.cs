@@ -16,8 +16,6 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 
-using NuGet.Frameworks;
-
 using CommandLineResources = Microsoft.VisualStudio.TestPlatform.CommandLine.Resources.Resources;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Internal;
@@ -224,7 +222,7 @@ internal class ConsoleLogger : ITestLoggerWithParameters
         }
 
         parameters.TryGetValue(DefaultLoggerParameterNames.TargetFramework, out _targetFramework);
-        _targetFramework = !_targetFramework.IsNullOrEmpty() ? NuGetFramework.Parse(_targetFramework).GetShortFolderName() : _targetFramework;
+        _targetFramework = Framework.FromString(_targetFramework)?.ShortName ?? _targetFramework;
 
         Initialize(events, string.Empty);
     }

@@ -1,24 +1,24 @@
 #nullable enable
 NuGet.LibraryModel.CentralPackageVersion
-~NuGet.LibraryModel.CentralPackageVersion.CentralPackageVersion(string name, NuGet.Versioning.VersionRange versionRange) -> void
-~NuGet.LibraryModel.CentralPackageVersion.Equals(NuGet.LibraryModel.CentralPackageVersion other) -> bool
-~NuGet.LibraryModel.CentralPackageVersion.Name.get -> string
-~NuGet.LibraryModel.CentralPackageVersion.VersionRange.get -> NuGet.Versioning.VersionRange
+NuGet.LibraryModel.CentralPackageVersion.CentralPackageVersion(string! name, NuGet.Versioning.VersionRange! versionRange) -> void
+NuGet.LibraryModel.CentralPackageVersion.Equals(NuGet.LibraryModel.CentralPackageVersion? other) -> bool
+NuGet.LibraryModel.CentralPackageVersion.Name.get -> string!
+NuGet.LibraryModel.CentralPackageVersion.VersionRange.get -> NuGet.Versioning.VersionRange!
 NuGet.LibraryModel.CentralPackageVersionNameComparer
-~NuGet.LibraryModel.CentralPackageVersionNameComparer.Equals(NuGet.LibraryModel.CentralPackageVersion x, NuGet.LibraryModel.CentralPackageVersion y) -> bool
-~NuGet.LibraryModel.CentralPackageVersionNameComparer.GetHashCode(NuGet.LibraryModel.CentralPackageVersion obj) -> int
+NuGet.LibraryModel.CentralPackageVersionNameComparer.Equals(NuGet.LibraryModel.CentralPackageVersion? x, NuGet.LibraryModel.CentralPackageVersion? y) -> bool
+NuGet.LibraryModel.CentralPackageVersionNameComparer.GetHashCode(NuGet.LibraryModel.CentralPackageVersion! obj) -> int
 NuGet.LibraryModel.DownloadDependency
-~NuGet.LibraryModel.DownloadDependency.Clone() -> NuGet.LibraryModel.DownloadDependency
-~NuGet.LibraryModel.DownloadDependency.CompareTo(NuGet.LibraryModel.DownloadDependency other) -> int
-~NuGet.LibraryModel.DownloadDependency.DownloadDependency(string name, NuGet.Versioning.VersionRange versionRange) -> void
-~NuGet.LibraryModel.DownloadDependency.Equals(NuGet.LibraryModel.DownloadDependency other) -> bool
-~NuGet.LibraryModel.DownloadDependency.Name.get -> string
-~NuGet.LibraryModel.DownloadDependency.VersionRange.get -> NuGet.Versioning.VersionRange
+NuGet.LibraryModel.DownloadDependency.Clone() -> NuGet.LibraryModel.DownloadDependency!
+NuGet.LibraryModel.DownloadDependency.CompareTo(NuGet.LibraryModel.DownloadDependency? other) -> int
+NuGet.LibraryModel.DownloadDependency.DownloadDependency(string! name, NuGet.Versioning.VersionRange! versionRange) -> void
+NuGet.LibraryModel.DownloadDependency.Equals(NuGet.LibraryModel.DownloadDependency? other) -> bool
+NuGet.LibraryModel.DownloadDependency.Name.get -> string!
+NuGet.LibraryModel.DownloadDependency.VersionRange.get -> NuGet.Versioning.VersionRange!
 NuGet.LibraryModel.FrameworkDependency
-~NuGet.LibraryModel.FrameworkDependency.CompareTo(NuGet.LibraryModel.FrameworkDependency other) -> int
-~NuGet.LibraryModel.FrameworkDependency.Equals(NuGet.LibraryModel.FrameworkDependency other) -> bool
-~NuGet.LibraryModel.FrameworkDependency.FrameworkDependency(string name, NuGet.LibraryModel.FrameworkDependencyFlags privateAssets) -> void
-~NuGet.LibraryModel.FrameworkDependency.Name.get -> string
+NuGet.LibraryModel.FrameworkDependency.CompareTo(NuGet.LibraryModel.FrameworkDependency? other) -> int
+NuGet.LibraryModel.FrameworkDependency.Equals(NuGet.LibraryModel.FrameworkDependency? other) -> bool
+NuGet.LibraryModel.FrameworkDependency.FrameworkDependency(string! name, NuGet.LibraryModel.FrameworkDependencyFlags privateAssets) -> void
+NuGet.LibraryModel.FrameworkDependency.Name.get -> string!
 NuGet.LibraryModel.FrameworkDependency.PrivateAssets.get -> NuGet.LibraryModel.FrameworkDependencyFlags
 NuGet.LibraryModel.FrameworkDependencyFlags
 NuGet.LibraryModel.FrameworkDependencyFlags.All = 65535 -> NuGet.LibraryModel.FrameworkDependencyFlags
@@ -26,51 +26,51 @@ NuGet.LibraryModel.FrameworkDependencyFlags.None = 0 -> NuGet.LibraryModel.Frame
 NuGet.LibraryModel.FrameworkDependencyFlagsUtils
 NuGet.LibraryModel.KnownLibraryProperties
 NuGet.LibraryModel.Library
-~NuGet.LibraryModel.Library.Dependencies.get -> System.Collections.Generic.IEnumerable<NuGet.LibraryModel.LibraryDependency>
-~NuGet.LibraryModel.Library.Dependencies.set -> void
-~NuGet.LibraryModel.Library.Identity.get -> NuGet.LibraryModel.LibraryIdentity
-~NuGet.LibraryModel.Library.Identity.set -> void
-~NuGet.LibraryModel.Library.Items.get -> System.Collections.Generic.IDictionary<string, object>
-~NuGet.LibraryModel.Library.Items.set -> void
+NuGet.LibraryModel.Library.Dependencies.get -> System.Collections.Generic.IEnumerable<NuGet.LibraryModel.LibraryDependency!>!
+NuGet.LibraryModel.Library.Dependencies.set -> void
+NuGet.LibraryModel.Library.Identity.get -> NuGet.LibraryModel.LibraryIdentity!
+NuGet.LibraryModel.Library.Identity.set -> void
+NuGet.LibraryModel.Library.Items.get -> System.Collections.Generic.IDictionary<string!, object!>!
+NuGet.LibraryModel.Library.Items.set -> void
 NuGet.LibraryModel.Library.Library() -> void
-~NuGet.LibraryModel.Library.LibraryRange.get -> NuGet.LibraryModel.LibraryRange
-~NuGet.LibraryModel.Library.LibraryRange.set -> void
-~NuGet.LibraryModel.Library.Path.get -> string
-~NuGet.LibraryModel.Library.Path.set -> void
+NuGet.LibraryModel.Library.LibraryRange.get -> NuGet.LibraryModel.LibraryRange!
+NuGet.LibraryModel.Library.LibraryRange.set -> void
+NuGet.LibraryModel.Library.Path.get -> string?
+NuGet.LibraryModel.Library.Path.set -> void
 NuGet.LibraryModel.Library.Resolved.get -> bool
 NuGet.LibraryModel.Library.Resolved.set -> void
-~NuGet.LibraryModel.Library.this[string key].get -> object
-~NuGet.LibraryModel.Library.this[string key].set -> void
+NuGet.LibraryModel.Library.this[string! key].get -> object!
+NuGet.LibraryModel.Library.this[string! key].set -> void
 NuGet.LibraryModel.LibraryDependency
-~NuGet.LibraryModel.LibraryDependency.Aliases.get -> string
-~NuGet.LibraryModel.LibraryDependency.Aliases.set -> void
+NuGet.LibraryModel.LibraryDependency.Aliases.get -> string?
+NuGet.LibraryModel.LibraryDependency.Aliases.set -> void
 NuGet.LibraryModel.LibraryDependency.AutoReferenced.get -> bool
 NuGet.LibraryModel.LibraryDependency.AutoReferenced.set -> void
-~NuGet.LibraryModel.LibraryDependency.Clone() -> NuGet.LibraryModel.LibraryDependency
-~NuGet.LibraryModel.LibraryDependency.Equals(NuGet.LibraryModel.LibraryDependency other) -> bool
+NuGet.LibraryModel.LibraryDependency.Clone() -> NuGet.LibraryModel.LibraryDependency!
+NuGet.LibraryModel.LibraryDependency.Equals(NuGet.LibraryModel.LibraryDependency? other) -> bool
 NuGet.LibraryModel.LibraryDependency.GeneratePathProperty.get -> bool
 NuGet.LibraryModel.LibraryDependency.GeneratePathProperty.set -> void
 NuGet.LibraryModel.LibraryDependency.IncludeType.get -> NuGet.LibraryModel.LibraryIncludeFlags
 NuGet.LibraryModel.LibraryDependency.IncludeType.set -> void
 NuGet.LibraryModel.LibraryDependency.LibraryDependency() -> void
-~NuGet.LibraryModel.LibraryDependency.LibraryRange.get -> NuGet.LibraryModel.LibraryRange
-~NuGet.LibraryModel.LibraryDependency.LibraryRange.set -> void
-~NuGet.LibraryModel.LibraryDependency.Name.get -> string
-~NuGet.LibraryModel.LibraryDependency.NoWarn.get -> System.Collections.Generic.IList<NuGet.Common.NuGetLogCode>
-~NuGet.LibraryModel.LibraryDependency.NoWarn.set -> void
+NuGet.LibraryModel.LibraryDependency.LibraryRange.get -> NuGet.LibraryModel.LibraryRange!
+NuGet.LibraryModel.LibraryDependency.LibraryRange.set -> void
+NuGet.LibraryModel.LibraryDependency.Name.get -> string!
+NuGet.LibraryModel.LibraryDependency.NoWarn.get -> System.Collections.Generic.IList<NuGet.Common.NuGetLogCode>!
+NuGet.LibraryModel.LibraryDependency.NoWarn.set -> void
 NuGet.LibraryModel.LibraryDependency.ReferenceType.get -> NuGet.LibraryModel.LibraryDependencyReferenceType
 NuGet.LibraryModel.LibraryDependency.ReferenceType.set -> void
 NuGet.LibraryModel.LibraryDependency.SuppressParent.get -> NuGet.LibraryModel.LibraryIncludeFlags
 NuGet.LibraryModel.LibraryDependency.SuppressParent.set -> void
 NuGet.LibraryModel.LibraryDependency.VersionCentrallyManaged.get -> bool
 NuGet.LibraryModel.LibraryDependency.VersionCentrallyManaged.set -> void
-~NuGet.LibraryModel.LibraryDependency.VersionOverride.get -> NuGet.Versioning.VersionRange
-~NuGet.LibraryModel.LibraryDependency.VersionOverride.set -> void
+NuGet.LibraryModel.LibraryDependency.VersionOverride.get -> NuGet.Versioning.VersionRange?
+NuGet.LibraryModel.LibraryDependency.VersionOverride.set -> void
 NuGet.LibraryModel.LibraryDependencyInfo
-~NuGet.LibraryModel.LibraryDependencyInfo.Dependencies.get -> System.Collections.Generic.IEnumerable<NuGet.LibraryModel.LibraryDependency>
-~NuGet.LibraryModel.LibraryDependencyInfo.Framework.get -> NuGet.Frameworks.NuGetFramework
-~NuGet.LibraryModel.LibraryDependencyInfo.Library.get -> NuGet.LibraryModel.LibraryIdentity
-~NuGet.LibraryModel.LibraryDependencyInfo.LibraryDependencyInfo(NuGet.LibraryModel.LibraryIdentity library, bool resolved, NuGet.Frameworks.NuGetFramework framework, System.Collections.Generic.IEnumerable<NuGet.LibraryModel.LibraryDependency> dependencies) -> void
+NuGet.LibraryModel.LibraryDependencyInfo.Dependencies.get -> System.Collections.Generic.IEnumerable<NuGet.LibraryModel.LibraryDependency!>!
+NuGet.LibraryModel.LibraryDependencyInfo.Framework.get -> NuGet.Frameworks.NuGetFramework!
+NuGet.LibraryModel.LibraryDependencyInfo.Library.get -> NuGet.LibraryModel.LibraryIdentity!
+NuGet.LibraryModel.LibraryDependencyInfo.LibraryDependencyInfo(NuGet.LibraryModel.LibraryIdentity! library, bool resolved, NuGet.Frameworks.NuGetFramework! framework, System.Collections.Generic.IEnumerable<NuGet.LibraryModel.LibraryDependency!>! dependencies) -> void
 NuGet.LibraryModel.LibraryDependencyInfo.Resolved.get -> bool
 NuGet.LibraryModel.LibraryDependencyReferenceType
 NuGet.LibraryModel.LibraryDependencyReferenceType.Direct = 2 -> NuGet.LibraryModel.LibraryDependencyReferenceType
@@ -89,16 +89,16 @@ NuGet.LibraryModel.LibraryDependencyTarget.WinMD = 32 -> NuGet.LibraryModel.Libr
 NuGet.LibraryModel.LibraryDependencyTargetUtils
 NuGet.LibraryModel.LibraryExtensions
 NuGet.LibraryModel.LibraryIdentity
-~NuGet.LibraryModel.LibraryIdentity.CompareTo(NuGet.LibraryModel.LibraryIdentity other) -> int
-~NuGet.LibraryModel.LibraryIdentity.Equals(NuGet.LibraryModel.LibraryIdentity other) -> bool
+NuGet.LibraryModel.LibraryIdentity.CompareTo(NuGet.LibraryModel.LibraryIdentity? other) -> int
+NuGet.LibraryModel.LibraryIdentity.Equals(NuGet.LibraryModel.LibraryIdentity? other) -> bool
 NuGet.LibraryModel.LibraryIdentity.LibraryIdentity() -> void
-~NuGet.LibraryModel.LibraryIdentity.LibraryIdentity(string name, NuGet.Versioning.NuGetVersion version, NuGet.LibraryModel.LibraryType type) -> void
-~NuGet.LibraryModel.LibraryIdentity.Name.get -> string
-~NuGet.LibraryModel.LibraryIdentity.Name.set -> void
+NuGet.LibraryModel.LibraryIdentity.LibraryIdentity(string! name, NuGet.Versioning.NuGetVersion! version, NuGet.LibraryModel.LibraryType type) -> void
+NuGet.LibraryModel.LibraryIdentity.Name.get -> string!
+NuGet.LibraryModel.LibraryIdentity.Name.set -> void
 NuGet.LibraryModel.LibraryIdentity.Type.get -> NuGet.LibraryModel.LibraryType
 NuGet.LibraryModel.LibraryIdentity.Type.set -> void
-~NuGet.LibraryModel.LibraryIdentity.Version.get -> NuGet.Versioning.NuGetVersion
-~NuGet.LibraryModel.LibraryIdentity.Version.set -> void
+NuGet.LibraryModel.LibraryIdentity.Version.get -> NuGet.Versioning.NuGetVersion!
+NuGet.LibraryModel.LibraryIdentity.Version.set -> void
 NuGet.LibraryModel.LibraryIncludeFlagUtils
 NuGet.LibraryModel.LibraryIncludeFlags
 NuGet.LibraryModel.LibraryIncludeFlags.All = NuGet.LibraryModel.LibraryIncludeFlags.Runtime | NuGet.LibraryModel.LibraryIncludeFlags.Compile | NuGet.LibraryModel.LibraryIncludeFlags.Build | NuGet.LibraryModel.LibraryIncludeFlags.Native | NuGet.LibraryModel.LibraryIncludeFlags.ContentFiles | NuGet.LibraryModel.LibraryIncludeFlags.Analyzers | NuGet.LibraryModel.LibraryIncludeFlags.BuildTransitive -> NuGet.LibraryModel.LibraryIncludeFlags
@@ -111,84 +111,84 @@ NuGet.LibraryModel.LibraryIncludeFlags.Native = 8 -> NuGet.LibraryModel.LibraryI
 NuGet.LibraryModel.LibraryIncludeFlags.None = 0 -> NuGet.LibraryModel.LibraryIncludeFlags
 NuGet.LibraryModel.LibraryIncludeFlags.Runtime = 1 -> NuGet.LibraryModel.LibraryIncludeFlags
 NuGet.LibraryModel.LibraryRange
-~NuGet.LibraryModel.LibraryRange.Equals(NuGet.LibraryModel.LibraryRange other) -> bool
+NuGet.LibraryModel.LibraryRange.Equals(NuGet.LibraryModel.LibraryRange? other) -> bool
 NuGet.LibraryModel.LibraryRange.LibraryRange() -> void
-~NuGet.LibraryModel.LibraryRange.LibraryRange(string name, NuGet.LibraryModel.LibraryDependencyTarget typeConstraint) -> void
-~NuGet.LibraryModel.LibraryRange.LibraryRange(string name, NuGet.Versioning.VersionRange versionRange, NuGet.LibraryModel.LibraryDependencyTarget typeConstraint) -> void
-~NuGet.LibraryModel.LibraryRange.Name.get -> string
-~NuGet.LibraryModel.LibraryRange.Name.set -> void
-~NuGet.LibraryModel.LibraryRange.ToLockFileDependencyGroupString() -> string
+NuGet.LibraryModel.LibraryRange.LibraryRange(string! name, NuGet.LibraryModel.LibraryDependencyTarget typeConstraint) -> void
+NuGet.LibraryModel.LibraryRange.LibraryRange(string! name, NuGet.Versioning.VersionRange? versionRange, NuGet.LibraryModel.LibraryDependencyTarget typeConstraint) -> void
+NuGet.LibraryModel.LibraryRange.Name.get -> string!
+NuGet.LibraryModel.LibraryRange.Name.set -> void
+NuGet.LibraryModel.LibraryRange.ToLockFileDependencyGroupString() -> string?
 NuGet.LibraryModel.LibraryRange.TypeConstraint.get -> NuGet.LibraryModel.LibraryDependencyTarget
 NuGet.LibraryModel.LibraryRange.TypeConstraint.set -> void
 NuGet.LibraryModel.LibraryRange.TypeConstraintAllows(NuGet.LibraryModel.LibraryDependencyTarget flag) -> bool
 NuGet.LibraryModel.LibraryRange.TypeConstraintAllowsAnyOf(NuGet.LibraryModel.LibraryDependencyTarget flag) -> bool
-~NuGet.LibraryModel.LibraryRange.VersionRange.get -> NuGet.Versioning.VersionRange
-~NuGet.LibraryModel.LibraryRange.VersionRange.set -> void
+NuGet.LibraryModel.LibraryRange.VersionRange.get -> NuGet.Versioning.VersionRange?
+NuGet.LibraryModel.LibraryRange.VersionRange.set -> void
 NuGet.LibraryModel.LibraryType
 NuGet.LibraryModel.LibraryType.Equals(NuGet.LibraryModel.LibraryType other) -> bool
 NuGet.LibraryModel.LibraryType.IsKnown.get -> bool
 NuGet.LibraryModel.LibraryType.LibraryType() -> void
-~NuGet.LibraryModel.LibraryType.Value.get -> string
-~override NuGet.LibraryModel.CentralPackageVersion.Equals(object obj) -> bool
+NuGet.LibraryModel.LibraryType.Value.get -> string!
+override NuGet.LibraryModel.CentralPackageVersion.Equals(object? obj) -> bool
 override NuGet.LibraryModel.CentralPackageVersion.GetHashCode() -> int
-~override NuGet.LibraryModel.CentralPackageVersion.ToString() -> string
-~override NuGet.LibraryModel.DownloadDependency.Equals(object obj) -> bool
+override NuGet.LibraryModel.CentralPackageVersion.ToString() -> string!
+override NuGet.LibraryModel.DownloadDependency.Equals(object? obj) -> bool
 override NuGet.LibraryModel.DownloadDependency.GetHashCode() -> int
-~override NuGet.LibraryModel.DownloadDependency.ToString() -> string
+override NuGet.LibraryModel.DownloadDependency.ToString() -> string!
 override NuGet.LibraryModel.FrameworkDependency.GetHashCode() -> int
-~override NuGet.LibraryModel.Library.ToString() -> string
-~override NuGet.LibraryModel.LibraryDependency.Equals(object obj) -> bool
+override NuGet.LibraryModel.Library.ToString() -> string!
+override NuGet.LibraryModel.LibraryDependency.Equals(object? obj) -> bool
 override NuGet.LibraryModel.LibraryDependency.GetHashCode() -> int
-~override NuGet.LibraryModel.LibraryDependency.ToString() -> string
-~override NuGet.LibraryModel.LibraryIdentity.Equals(object obj) -> bool
+override NuGet.LibraryModel.LibraryDependency.ToString() -> string!
+override NuGet.LibraryModel.LibraryIdentity.Equals(object? obj) -> bool
 override NuGet.LibraryModel.LibraryIdentity.GetHashCode() -> int
-~override NuGet.LibraryModel.LibraryIdentity.ToString() -> string
-~override NuGet.LibraryModel.LibraryRange.Equals(object obj) -> bool
+override NuGet.LibraryModel.LibraryIdentity.ToString() -> string!
+override NuGet.LibraryModel.LibraryRange.Equals(object? obj) -> bool
 override NuGet.LibraryModel.LibraryRange.GetHashCode() -> int
-~override NuGet.LibraryModel.LibraryRange.ToString() -> string
-~override NuGet.LibraryModel.LibraryType.Equals(object obj) -> bool
+override NuGet.LibraryModel.LibraryRange.ToString() -> string!
+override NuGet.LibraryModel.LibraryType.Equals(object? obj) -> bool
 override NuGet.LibraryModel.LibraryType.GetHashCode() -> int
-~override NuGet.LibraryModel.LibraryType.ToString() -> string
-~static NuGet.LibraryModel.CentralPackageVersionNameComparer.Default.get -> NuGet.LibraryModel.CentralPackageVersionNameComparer
-~static NuGet.LibraryModel.DownloadDependency.implicit operator NuGet.LibraryModel.LibraryRange(NuGet.LibraryModel.DownloadDependency library) -> NuGet.LibraryModel.LibraryRange
-~static NuGet.LibraryModel.FrameworkDependencyFlagsUtils.GetFlagString(NuGet.LibraryModel.FrameworkDependencyFlags flags) -> string
-~static NuGet.LibraryModel.FrameworkDependencyFlagsUtils.GetFlags(System.Collections.Generic.IEnumerable<string> values) -> NuGet.LibraryModel.FrameworkDependencyFlags
-~static NuGet.LibraryModel.FrameworkDependencyFlagsUtils.GetFlags(string flags) -> NuGet.LibraryModel.FrameworkDependencyFlags
-~static NuGet.LibraryModel.LibraryDependency.ApplyCentralVersionInformation(System.Collections.Generic.IList<NuGet.LibraryModel.LibraryDependency> packageReferences, System.Collections.Generic.IDictionary<string, NuGet.LibraryModel.CentralPackageVersion> centralPackageVersions) -> void
-~static NuGet.LibraryModel.LibraryDependencyInfo.Create(NuGet.LibraryModel.LibraryIdentity library, NuGet.Frameworks.NuGetFramework framework, System.Collections.Generic.IEnumerable<NuGet.LibraryModel.LibraryDependency> dependencies) -> NuGet.LibraryModel.LibraryDependencyInfo
-~static NuGet.LibraryModel.LibraryDependencyInfo.CreateUnresolved(NuGet.LibraryModel.LibraryIdentity library, NuGet.Frameworks.NuGetFramework framework) -> NuGet.LibraryModel.LibraryDependencyInfo
-~static NuGet.LibraryModel.LibraryDependencyTargetUtils.AsString(this NuGet.LibraryModel.LibraryDependencyTarget includeFlags) -> string
-~static NuGet.LibraryModel.LibraryDependencyTargetUtils.GetFlagString(NuGet.LibraryModel.LibraryDependencyTarget flags) -> string
-~static NuGet.LibraryModel.LibraryDependencyTargetUtils.Parse(string flag) -> NuGet.LibraryModel.LibraryDependencyTarget
-~static NuGet.LibraryModel.LibraryExtensions.GetItem<T>(this NuGet.LibraryModel.Library library, string key) -> T
-~static NuGet.LibraryModel.LibraryExtensions.GetRequiredItem<T>(this NuGet.LibraryModel.Library library, string key) -> T
-~static NuGet.LibraryModel.LibraryExtensions.IsEclipsedBy(this NuGet.LibraryModel.LibraryRange library, NuGet.LibraryModel.LibraryRange other) -> bool
-~static NuGet.LibraryModel.LibraryIdentity.implicit operator NuGet.LibraryModel.LibraryRange(NuGet.LibraryModel.LibraryIdentity library) -> NuGet.LibraryModel.LibraryRange
-~static NuGet.LibraryModel.LibraryIdentity.operator !=(NuGet.LibraryModel.LibraryIdentity left, NuGet.LibraryModel.LibraryIdentity right) -> bool
-~static NuGet.LibraryModel.LibraryIdentity.operator ==(NuGet.LibraryModel.LibraryIdentity left, NuGet.LibraryModel.LibraryIdentity right) -> bool
-~static NuGet.LibraryModel.LibraryIncludeFlagUtils.AsString(this NuGet.LibraryModel.LibraryIncludeFlags includeFlags) -> string
-~static NuGet.LibraryModel.LibraryIncludeFlagUtils.GetFlagString(NuGet.LibraryModel.LibraryIncludeFlags flags) -> string
-~static NuGet.LibraryModel.LibraryIncludeFlagUtils.GetFlags(System.Collections.Generic.IEnumerable<string> flags) -> NuGet.LibraryModel.LibraryIncludeFlags
-~static NuGet.LibraryModel.LibraryIncludeFlagUtils.GetFlags(string flags, NuGet.LibraryModel.LibraryIncludeFlags defaultFlags) -> NuGet.LibraryModel.LibraryIncludeFlags
-~static NuGet.LibraryModel.LibraryRange.operator !=(NuGet.LibraryModel.LibraryRange left, NuGet.LibraryModel.LibraryRange right) -> bool
-~static NuGet.LibraryModel.LibraryRange.operator ==(NuGet.LibraryModel.LibraryRange left, NuGet.LibraryModel.LibraryRange right) -> bool
-~static NuGet.LibraryModel.LibraryType.Parse(string value) -> NuGet.LibraryModel.LibraryType
-~static NuGet.LibraryModel.LibraryType.implicit operator string(NuGet.LibraryModel.LibraryType libraryType) -> string
+override NuGet.LibraryModel.LibraryType.ToString() -> string!
+static NuGet.LibraryModel.CentralPackageVersionNameComparer.Default.get -> NuGet.LibraryModel.CentralPackageVersionNameComparer!
+static NuGet.LibraryModel.DownloadDependency.implicit operator NuGet.LibraryModel.LibraryRange!(NuGet.LibraryModel.DownloadDependency! library) -> NuGet.LibraryModel.LibraryRange!
+static NuGet.LibraryModel.FrameworkDependencyFlagsUtils.GetFlagString(NuGet.LibraryModel.FrameworkDependencyFlags flags) -> string!
+static NuGet.LibraryModel.FrameworkDependencyFlagsUtils.GetFlags(System.Collections.Generic.IEnumerable<string!>? values) -> NuGet.LibraryModel.FrameworkDependencyFlags
+static NuGet.LibraryModel.FrameworkDependencyFlagsUtils.GetFlags(string? flags) -> NuGet.LibraryModel.FrameworkDependencyFlags
+static NuGet.LibraryModel.LibraryDependency.ApplyCentralVersionInformation(System.Collections.Generic.IList<NuGet.LibraryModel.LibraryDependency!>! packageReferences, System.Collections.Generic.IDictionary<string!, NuGet.LibraryModel.CentralPackageVersion!>! centralPackageVersions) -> void
+static NuGet.LibraryModel.LibraryDependencyInfo.Create(NuGet.LibraryModel.LibraryIdentity! library, NuGet.Frameworks.NuGetFramework! framework, System.Collections.Generic.IEnumerable<NuGet.LibraryModel.LibraryDependency!>! dependencies) -> NuGet.LibraryModel.LibraryDependencyInfo!
+static NuGet.LibraryModel.LibraryDependencyInfo.CreateUnresolved(NuGet.LibraryModel.LibraryIdentity! library, NuGet.Frameworks.NuGetFramework! framework) -> NuGet.LibraryModel.LibraryDependencyInfo!
+static NuGet.LibraryModel.LibraryDependencyTargetUtils.AsString(this NuGet.LibraryModel.LibraryDependencyTarget includeFlags) -> string!
+static NuGet.LibraryModel.LibraryDependencyTargetUtils.GetFlagString(NuGet.LibraryModel.LibraryDependencyTarget flags) -> string!
+static NuGet.LibraryModel.LibraryDependencyTargetUtils.Parse(string? flag) -> NuGet.LibraryModel.LibraryDependencyTarget
+static NuGet.LibraryModel.LibraryExtensions.GetItem<T>(this NuGet.LibraryModel.Library! library, string! key) -> T?
+static NuGet.LibraryModel.LibraryExtensions.GetRequiredItem<T>(this NuGet.LibraryModel.Library! library, string! key) -> T
+static NuGet.LibraryModel.LibraryExtensions.IsEclipsedBy(this NuGet.LibraryModel.LibraryRange! library, NuGet.LibraryModel.LibraryRange! other) -> bool
+static NuGet.LibraryModel.LibraryIdentity.implicit operator NuGet.LibraryModel.LibraryRange!(NuGet.LibraryModel.LibraryIdentity! library) -> NuGet.LibraryModel.LibraryRange!
+static NuGet.LibraryModel.LibraryIdentity.operator !=(NuGet.LibraryModel.LibraryIdentity? left, NuGet.LibraryModel.LibraryIdentity? right) -> bool
+static NuGet.LibraryModel.LibraryIdentity.operator ==(NuGet.LibraryModel.LibraryIdentity? left, NuGet.LibraryModel.LibraryIdentity? right) -> bool
+static NuGet.LibraryModel.LibraryIncludeFlagUtils.AsString(this NuGet.LibraryModel.LibraryIncludeFlags includeFlags) -> string!
+static NuGet.LibraryModel.LibraryIncludeFlagUtils.GetFlagString(NuGet.LibraryModel.LibraryIncludeFlags flags) -> string!
+static NuGet.LibraryModel.LibraryIncludeFlagUtils.GetFlags(System.Collections.Generic.IEnumerable<string!>! flags) -> NuGet.LibraryModel.LibraryIncludeFlags
+static NuGet.LibraryModel.LibraryIncludeFlagUtils.GetFlags(string! flags, NuGet.LibraryModel.LibraryIncludeFlags defaultFlags) -> NuGet.LibraryModel.LibraryIncludeFlags
+static NuGet.LibraryModel.LibraryRange.operator !=(NuGet.LibraryModel.LibraryRange? left, NuGet.LibraryModel.LibraryRange? right) -> bool
+static NuGet.LibraryModel.LibraryRange.operator ==(NuGet.LibraryModel.LibraryRange? left, NuGet.LibraryModel.LibraryRange? right) -> bool
+static NuGet.LibraryModel.LibraryType.Parse(string! value) -> NuGet.LibraryModel.LibraryType
+static NuGet.LibraryModel.LibraryType.implicit operator string!(NuGet.LibraryModel.LibraryType libraryType) -> string!
 static NuGet.LibraryModel.LibraryType.operator !=(NuGet.LibraryModel.LibraryType left, NuGet.LibraryModel.LibraryType right) -> bool
 static NuGet.LibraryModel.LibraryType.operator ==(NuGet.LibraryModel.LibraryType left, NuGet.LibraryModel.LibraryType right) -> bool
 static readonly NuGet.LibraryModel.FrameworkDependencyFlagsUtils.Default -> NuGet.LibraryModel.FrameworkDependencyFlags
-~static readonly NuGet.LibraryModel.KnownLibraryProperties.AssemblyPath -> string
-~static readonly NuGet.LibraryModel.KnownLibraryProperties.FrameworkAssemblies -> string
-~static readonly NuGet.LibraryModel.KnownLibraryProperties.FrameworkReferences -> string
-~static readonly NuGet.LibraryModel.KnownLibraryProperties.LockFileLibrary -> string
-~static readonly NuGet.LibraryModel.KnownLibraryProperties.LockFileTargetLibrary -> string
-~static readonly NuGet.LibraryModel.KnownLibraryProperties.MSBuildProjectPath -> string
-~static readonly NuGet.LibraryModel.KnownLibraryProperties.PackageSpec -> string
-~static readonly NuGet.LibraryModel.KnownLibraryProperties.ProjectFrameworks -> string
-~static readonly NuGet.LibraryModel.KnownLibraryProperties.ProjectRestoreMetadataFiles -> string
-~static readonly NuGet.LibraryModel.KnownLibraryProperties.ProjectStyle -> string
-~static readonly NuGet.LibraryModel.KnownLibraryProperties.TargetFrameworkInformation -> string
-~static readonly NuGet.LibraryModel.Library.IdentityComparer -> System.Collections.Generic.IEqualityComparer<NuGet.LibraryModel.Library>
+static readonly NuGet.LibraryModel.KnownLibraryProperties.AssemblyPath -> string!
+static readonly NuGet.LibraryModel.KnownLibraryProperties.FrameworkAssemblies -> string!
+static readonly NuGet.LibraryModel.KnownLibraryProperties.FrameworkReferences -> string!
+static readonly NuGet.LibraryModel.KnownLibraryProperties.LockFileLibrary -> string!
+static readonly NuGet.LibraryModel.KnownLibraryProperties.LockFileTargetLibrary -> string!
+static readonly NuGet.LibraryModel.KnownLibraryProperties.MSBuildProjectPath -> string!
+static readonly NuGet.LibraryModel.KnownLibraryProperties.PackageSpec -> string!
+static readonly NuGet.LibraryModel.KnownLibraryProperties.ProjectFrameworks -> string!
+static readonly NuGet.LibraryModel.KnownLibraryProperties.ProjectRestoreMetadataFiles -> string!
+static readonly NuGet.LibraryModel.KnownLibraryProperties.ProjectStyle -> string!
+static readonly NuGet.LibraryModel.KnownLibraryProperties.TargetFrameworkInformation -> string!
+static readonly NuGet.LibraryModel.Library.IdentityComparer -> System.Collections.Generic.IEqualityComparer<NuGet.LibraryModel.Library!>!
 static readonly NuGet.LibraryModel.LibraryIncludeFlagUtils.DefaultSuppressParent -> NuGet.LibraryModel.LibraryIncludeFlags
 static readonly NuGet.LibraryModel.LibraryIncludeFlagUtils.NoContent -> NuGet.LibraryModel.LibraryIncludeFlags
 static readonly NuGet.LibraryModel.LibraryType.Assembly -> NuGet.LibraryModel.LibraryType

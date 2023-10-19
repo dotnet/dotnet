@@ -10,13 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X\src\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\..\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X\src\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\..\Microsoft.AspNetCore.Mvc.Razor.Extensions\src\Microsoft.AspNetCore.Mvc.Razor.Extensions.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X\src\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version1_X.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X\src\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version2_X.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\Microsoft.AspNetCore.Mvc.Razor.Extensions\src\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.csproj" ReferenceOutputAssembly="false" />
 
-    <Content Include="$(ArtifactsDir)bin\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X\$(Configuration)\netstandard2.0\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X.dll" PackagePath="lib\$(TargetFramework)" />
-    <Content Include="$(ArtifactsDir)bin\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X\$(Configuration)\netstandard2.0\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X.dll" PackagePath="lib\$(TargetFramework)" />
-    <Content Include="$(ArtifactsDir)bin\Microsoft.AspNetCore.Mvc.Razor.Extensions\$(Configuration)\netstandard2.0\Microsoft.AspNetCore.Mvc.Razor.Extensions.dll" PackagePath="lib\$(TargetFramework)" />
+    <Content Include="$(ArtifactsDir)bin\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version1_X\$(Configuration)\netstandard2.0\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version1_X.dll" PackagePath="lib\$(TargetFramework)" />
+    <Content Include="$(ArtifactsDir)bin\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version2_X\$(Configuration)\netstandard2.0\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version2_X.dll" PackagePath="lib\$(TargetFramework)" />
+    <Content Include="$(ArtifactsDir)bin\Microsoft.CodeAnalysis.Razor.Compiler.Mvc\$(Configuration)\netstandard2.0\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.dll" PackagePath="lib\$(TargetFramework)" />
   </ItemGroup>
 
 </Project>

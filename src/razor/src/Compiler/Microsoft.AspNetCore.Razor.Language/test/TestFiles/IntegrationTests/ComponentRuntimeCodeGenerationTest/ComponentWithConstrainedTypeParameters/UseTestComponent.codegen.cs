@@ -47,7 +47,7 @@ using Test;
             , 4, (context) => (__builder2) => {
                 __builder2.OpenElement(5, "p");
 #nullable restore
-#line (3,8)-(3,15) 25 "x:\dir\subdir\Test\UseTestComponent.cshtml"
+#line (3,9)-(3,16) 25 "x:\dir\subdir\Test\UseTestComponent.cshtml"
 __builder2.AddContent(6, context);
 
 #line default

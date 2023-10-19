@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 

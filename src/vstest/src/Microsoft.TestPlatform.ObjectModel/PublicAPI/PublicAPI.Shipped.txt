@@ -968,3 +968,5 @@ virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.TestObject.ProtectedSetP
 ~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.SourceIncompatible.get -> string
 Microsoft.VisualStudio.TestPlatform.ObjectModel.DirectoryBasedTestDiscovererAttribute
 Microsoft.VisualStudio.TestPlatform.ObjectModel.DirectoryBasedTestDiscovererAttribute.DirectoryBasedTestDiscovererAttribute() -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Framework.FrameworkName.get -> string!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Framework.ShortName.get -> string?

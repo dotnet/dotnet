@@ -592,6 +592,15 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show only vulnerable.
+        /// </summary>
+        public static string Checkbox_Show_Vulnerable_Only {
+            get {
+                return ResourceManager.GetString("Checkbox_Show_Vulnerable_Only", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show preview window.
         /// </summary>
         public static string Checkbox_ShowPreviewWindow {
@@ -2534,6 +2543,15 @@ namespace NuGet.PackageManagement.UI {
         public static string VSOptions_Watermark_AddPackageNamespace {
             get {
                 return ResourceManager.GetString("VSOptions_Watermark_AddPackageNamespace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading vulnerable packages....
+        /// </summary>
+        public static string Vulnerabilities_Loading {
+            get {
+                return ResourceManager.GetString("Vulnerabilities_Loading", resourceCulture);
             }
         }
         

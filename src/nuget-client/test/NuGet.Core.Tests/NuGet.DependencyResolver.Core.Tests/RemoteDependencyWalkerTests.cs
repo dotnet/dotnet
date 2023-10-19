@@ -387,7 +387,8 @@ namespace NuGet.DependencyResolver.Tests
             cNode.Item = new GraphItem<RemoteResolveResult>(new LibraryIdentity
             {
                 Name = "C",
-                Version = new NuGetVersion("2.0")
+                Version = new NuGetVersion("2.0"),
+                Type = LibraryType.Package
             });
 
             var result = node.Analyze();

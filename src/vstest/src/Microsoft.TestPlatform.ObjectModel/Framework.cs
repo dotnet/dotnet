@@ -5,9 +5,8 @@ using Microsoft.VisualStudio.TestPlatform.CoreUtilities;
 
 using System.Globalization;
 
-using NuGet.Frameworks;
-
-using static NuGet.Frameworks.FrameworkConstants;
+using NuGetClone.Frameworks;
+using System;
 
 namespace Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
@@ -37,6 +36,16 @@ public class Framework
     public string Name { get; private set; }
 
     /// <summary>
+    /// Gets the framework name such as .NETCoreApp.
+    /// </summary>
+    public string FrameworkName { get; private set; }
+
+    /// <summary>
+    /// Common short name, as well as directory name, such as net5.0. Is null when the framework is not correct.
+    /// </summary>
+    public string? ShortName { get; private set; }
+
+    /// <summary>
     /// Gets the framework version.
     /// </summary>
     public string Version { get; private set; }
@@ -53,56 +62,71 @@ public class Framework
             return null;
         }
 
-        string name, version;
+        string name, frameworkName, version;
+        string? shortName = null;
         try
         {
             // IDE always sends framework in form of ENUM, which always throws exception
             // This throws up in first chance exception, refer Bug https://devdiv.visualstudio.com/DefaultCollection/DevDiv/_workitems/edit/591142
             var formattedFrameworkString = frameworkString.Trim().ToLower(CultureInfo.InvariantCulture);
+            string? mappedShortName = null;
             switch (formattedFrameworkString)
             {
                 case "framework35":
-                    name = CommonFrameworks.Net35.DotNetFrameworkName;
-                    version = CommonFrameworks.Net35.Version.ToString();
+                    mappedShortName = "net3.5";
                     break;
 
                 case "framework40":
-                    name = CommonFrameworks.Net4.DotNetFrameworkName;
-                    version = CommonFrameworks.Net4.Version.ToString();
+                    mappedShortName = "net4.0";
                     break;
 
                 case "framework45":
-                    name = CommonFrameworks.Net45.DotNetFrameworkName;
-                    version = CommonFrameworks.Net45.Version.ToString();
+                    mappedShortName = "net4.5";
                     break;
 
                 case "frameworkcore10":
-                    name = CommonFrameworks.NetCoreApp10.DotNetFrameworkName;
-                    version = CommonFrameworks.NetCoreApp10.Version.ToString();
+                    mappedShortName = "netcoreapp1.0";
                     break;
 
                 case "frameworkuap10":
-                    name = CommonFrameworks.UAP10.DotNetFrameworkName;
-                    version = CommonFrameworks.UAP10.Version.ToString();
-                    break;
-
-                default:
-                    var nugetFramework = NuGetFramework.Parse(frameworkString);
-                    if (nugetFramework.IsUnsupported)
-                        return null;
-
-                    name = nugetFramework.DotNetFrameworkName;
-                    version = nugetFramework.Version.ToString();
-
+                    mappedShortName = "uap10.0";
                     break;
             }
+
+            if (mappedShortName != null)
+            {
+                frameworkString = mappedShortName;
+            }
+
+            var nugetFramework = NuGetFramework.Parse(frameworkString);
+            if (nugetFramework.IsUnsupported)
+                return null;
+
+            // e.g. .NETFramework,Version=v3.5
+            name = nugetFramework.DotNetFrameworkName;
+            // e.g. net35
+            try
+            {
+                // .NETPortable4.5 for example, is not a valid framework
+                // and this will throw.
+                shortName = nugetFramework.GetShortFolderName();
+            }
+            catch (Exception ex)
+            {
+                EqtTrace.Error(ex);
+            }
+            // e.g. .NETFramework
+            frameworkName = nugetFramework.Framework;
+            // e.g. 3.5.0.0
+            version = nugetFramework.Version.ToString();
+
         }
         catch
         {
             return null;
         }
 
-        return new Framework() { Name = name, Version = version };
+        return new Framework() { Name = name, ShortName = shortName, FrameworkName = frameworkName, Version = version };
     }
 
     /// <summary>

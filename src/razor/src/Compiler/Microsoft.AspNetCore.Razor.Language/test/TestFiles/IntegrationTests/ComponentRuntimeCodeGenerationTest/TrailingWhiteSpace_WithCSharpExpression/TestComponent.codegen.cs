@@ -15,7 +15,7 @@ namespace Test
         {
             __builder.AddMarkupContent(0, "<h1>Hello</h1>\r\n\r\n");
 #nullable restore
-#line (3,2)-(3,12) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (3,3)-(3,13) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(1, "My value");
 
 #line default

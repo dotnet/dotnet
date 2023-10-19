@@ -69,7 +69,7 @@ public class SerializerValidationTest(ITestOutputHelper testOutput) : TestBase(t
         var actualTagHelpers = MessagePackConvert.Deserialize<ImmutableArray<TagHelperDescriptor>>(bytes, options);
 
         // Assert
-        Assert.Equal(originalTagHelpers, actualTagHelpers, TagHelperChecksumComparer.Instance);
+        Assert.Equal<TagHelperDescriptor>(originalTagHelpers, actualTagHelpers);
     }
 
     [Theory]
@@ -125,7 +125,7 @@ public class SerializerValidationTest(ITestOutputHelper testOutput) : TestBase(t
                 static r => ObjectReaders.ReadTagHelper(r, useCache: false)));
 
         // Assert
-        Assert.Equal(originalTagHelpers, actualTagHelpers, TagHelperChecksumComparer.Instance);
+        Assert.Equal<TagHelperDescriptor>(originalTagHelpers, actualTagHelpers);
     }
 
     private static RazorProjectInfo DeserializeProjectInfoFromJsonBytes(byte[] resourceBytes)

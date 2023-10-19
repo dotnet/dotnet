@@ -23,7 +23,7 @@ namespace Test
             (__builder2) => {
                 __builder2.OpenElement(0, "div");
 #nullable restore
-#line (1,56)-(1,67) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,57)-(1,68) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(1, person.Name);
 
 #line default

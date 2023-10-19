@@ -110,20 +110,19 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
         {
             foreach (var attributeDescriptor in descriptor.BoundAttributes)
             {
-                if (!attributeDescriptor.IsDirectiveAttribute())
+                if (!attributeDescriptor.IsDirectiveAttribute)
                 {
                     // We don't care about non-directive attributes
                     continue;
                 }
 
-                if (!TryAddCompletion(attributeDescriptor.Name, attributeDescriptor, descriptor) && attributeDescriptor.BoundAttributeParameters.Count > 0)
+                if (!TryAddCompletion(attributeDescriptor.Name, attributeDescriptor, descriptor) && attributeDescriptor.Parameters.Length > 0)
                 {
                     // This attribute has parameters and the base attribute name (@bind) is already satisfied. We need to check if there are any valid
                     // parameters left to be provided, if so, we need to still represent the base attribute name in the completion list.
 
-                    for (var j = 0; j < attributeDescriptor.BoundAttributeParameters.Count; j++)
+                    foreach (var parameterDescriptor in attributeDescriptor.Parameters)
                     {
-                        var parameterDescriptor = attributeDescriptor.BoundAttributeParameters[j];
                         if (!attributes.Any(name => TagHelperMatchingConventions.SatisfiesBoundAttributeWithParameter(name, attributeDescriptor, parameterDescriptor)))
                         {
                             // This bound attribute parameter has not had a completion entry added for it, re-represent the base attribute name in the completion list
@@ -217,7 +216,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
                 commitCharacters.Add(" ");
             }
 
-            if (tagHelperDescriptor.BoundAttributes.Any(b => b.BoundAttributeParameters.Count > 0))
+            if (tagHelperDescriptor.BoundAttributes.Any(b => b.Parameters.Length > 0))
             {
                 commitCharacters.Add(":");
             }

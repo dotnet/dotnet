@@ -9,7 +9,6 @@ using System.Globalization;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
-using Checksum = Microsoft.AspNetCore.Razor.Utilities.Checksum;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.Json;
 
@@ -90,7 +89,7 @@ internal static class ObjectWriters
 
     public static void WriteProperties(JsonDataWriter writer, TagHelperDescriptor value)
     {
-        writer.WriteObject(WellKnownPropertyNames.Checksum, value.GetChecksum(), WriteProperties);
+        writer.WriteObject(WellKnownPropertyNames.Checksum, value.Checksum, WriteProperties);
         writer.Write(nameof(value.Kind), value.Kind);
         writer.Write(nameof(value.Name), value.Name);
         writer.Write(nameof(value.AssemblyName), value.AssemblyName);
@@ -101,7 +100,7 @@ internal static class ObjectWriters
         writer.WriteArrayIfNotNullOrEmpty(nameof(value.TagMatchingRules), value.TagMatchingRules, WriteTagMatchingRule);
         writer.WriteArrayIfNotNullOrEmpty(nameof(value.BoundAttributes), value.BoundAttributes, WriteBoundAttribute);
         writer.WriteArrayIfNotNullOrEmpty(nameof(value.AllowedChildTags), value.AllowedChildTags, WriteAllowedChildTag);
-        WriteMetadata(writer, nameof(value.Metadata), (MetadataCollection)value.Metadata);
+        WriteMetadata(writer, nameof(value.Metadata), value.Metadata);
         writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
 
         static void WriteDocumentationObject(JsonDataWriter writer, string propertyName, DocumentationObject documentationObject)
@@ -158,7 +157,7 @@ internal static class ObjectWriters
                 writer.WriteIfNotZero(nameof(value.ValueComparison), (int)value.ValueComparison);
                 writer.WriteIfNotNull(nameof(value.DisplayName), value.DisplayName);
 
-                WriteMetadata(writer, nameof(value.Metadata), (MetadataCollection)value.Metadata);
+                WriteMetadata(writer, nameof(value.Metadata), value.Metadata);
                 writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
         }
@@ -178,9 +177,9 @@ internal static class ObjectWriters
                 WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
                 writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
                 writer.WriteIfNotFalse(nameof(value.IsEditorRequired), value.IsEditorRequired);
-                writer.WriteArrayIfNotNullOrEmpty(nameof(value.BoundAttributeParameters), value.BoundAttributeParameters, WriteBoundAttributeParameter);
+                writer.WriteArrayIfNotNullOrEmpty("BoundAttributeParameters", value.Parameters, WriteBoundAttributeParameter);
 
-                WriteMetadata(writer, nameof(value.Metadata), (MetadataCollection)value.Metadata);
+                WriteMetadata(writer, nameof(value.Metadata), value.Metadata);
                 writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
         }
@@ -197,7 +196,7 @@ internal static class ObjectWriters
                 WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
                 writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
 
-                WriteMetadata(writer, nameof(value.Metadata), (MetadataCollection)value.Metadata);
+                WriteMetadata(writer, nameof(value.Metadata), value.Metadata);
                 writer.WriteArrayIfNotNullOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
         }

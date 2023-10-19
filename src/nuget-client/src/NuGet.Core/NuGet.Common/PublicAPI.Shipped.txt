@@ -151,6 +151,8 @@ NuGet.Common.MSBuildStringUtility
 NuGet.Common.Migrations.MigrationRunner
 NuGet.Common.NetworkProtocolUtility
 NuGet.Common.NuGetEnvironment
+NuGet.Common.NuGetEventSource
+NuGet.Common.NuGetEventSource.Keywords
 NuGet.Common.NuGetFolderPath
 NuGet.Common.NuGetFolderPath.DefaultMsBuildPath = 5 -> NuGet.Common.NuGetFolderPath
 NuGet.Common.NuGetFolderPath.HttpCacheDirectory = 3 -> NuGet.Common.NuGetFolderPath
@@ -497,6 +499,11 @@ const NuGet.Common.LogMessageProperties.START_COLUMN_NUMBER = "startColumnNumber
 const NuGet.Common.LogMessageProperties.START_LINE_NUMBER = "startLineNumber" -> string!
 const NuGet.Common.LogMessageProperties.TARGET_GRAPHS = "targetGraphs" -> string!
 const NuGet.Common.LogMessageProperties.WARNING_LEVEL = "warningLevel" -> string!
+const NuGet.Common.NuGetEventSource.Keywords.Common = (System.Diagnostics.Tracing.EventKeywords)1 -> System.Diagnostics.Tracing.EventKeywords
+const NuGet.Common.NuGetEventSource.Keywords.Configuration = (System.Diagnostics.Tracing.EventKeywords)2 -> System.Diagnostics.Tracing.EventKeywords
+const NuGet.Common.NuGetEventSource.Keywords.Logging = (System.Diagnostics.Tracing.EventKeywords)4 -> System.Diagnostics.Tracing.EventKeywords
+const NuGet.Common.NuGetEventSource.Keywords.Performance = (System.Diagnostics.Tracing.EventKeywords)8 -> System.Diagnostics.Tracing.EventKeywords
+const NuGet.Common.NuGetEventSource.Keywords.SdkResolver = (System.Diagnostics.Tracing.EventKeywords)16 -> System.Diagnostics.Tracing.EventKeywords
 override NuGet.Common.LogMessage.ToString() -> string!
 override NuGet.Common.NullLogger.Log(NuGet.Common.ILogMessage! message) -> void
 override NuGet.Common.NullLogger.Log(NuGet.Common.LogLevel level, string! data) -> void
@@ -570,6 +577,8 @@ static NuGet.Common.Migrations.MigrationRunner.Run() -> void
 static NuGet.Common.NetworkProtocolUtility.SetConnectionLimit() -> void
 ~static NuGet.Common.NuGetEnvironment.GetDotNetLocation() -> string
 ~static NuGet.Common.NuGetEnvironment.GetFolderPath(NuGet.Common.NuGetFolderPath folder) -> string
+static NuGet.Common.NuGetEventSource.Instance.get -> System.Diagnostics.Tracing.EventSource!
+static NuGet.Common.NuGetEventSource.IsEnabled.get -> bool
 static NuGet.Common.NullLogger.Instance.get -> NuGet.Common.ILogger!
 static NuGet.Common.PackagingLogMessage.CreateError(string! message, NuGet.Common.NuGetLogCode code) -> NuGet.Common.PackagingLogMessage!
 static NuGet.Common.PackagingLogMessage.CreateMessage(string! message, NuGet.Common.LogLevel logLevel) -> NuGet.Common.PackagingLogMessage!

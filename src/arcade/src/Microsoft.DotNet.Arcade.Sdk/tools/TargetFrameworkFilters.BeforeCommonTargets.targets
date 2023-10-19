@@ -66,6 +66,9 @@
         System.Threading.Timer;
         System.Xml.ReaderWriter;
         System.Xml.XDocument" />
+      <!-- That package doesn't bring any dependencies in on .NET Framework and is fine to use. -->
+      <NetStandard1xPackage Remove="System.Runtime.InteropServices.RuntimeInformation"
+                            Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
     </ItemGroup>
 
     <ItemGroup>

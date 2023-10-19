@@ -418,4 +418,17 @@
              Importance="High"
              Condition=" '$(SkipCoreAssemblies)' != 'true' AND '$(VSTestErrorCode)' == '0' " />
   </Target>
+
+      <!--
+    ============================================================
+    GetTargetFrameworks
+    ============================================================
+  -->
+  <Target Name="GetAllTargetFrameworks">
+      <MsBuild
+        Projects="@(AllRepoProjects)"
+        Targets="GetAllTargetFrameworks">
+    </MsBuild>
+  </Target>
+
 </Project>

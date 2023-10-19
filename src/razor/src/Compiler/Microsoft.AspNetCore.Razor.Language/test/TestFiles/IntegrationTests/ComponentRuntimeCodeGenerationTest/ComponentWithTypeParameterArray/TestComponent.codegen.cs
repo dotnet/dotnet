@@ -30,7 +30,7 @@ TItem
             __builder.AddMarkupContent(0, "<h1>Item</h1>\r\n\r\n");
             __builder.OpenElement(1, "p");
 #nullable restore
-#line (6,4)-(6,24) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (6,5)-(6,25) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(2, ChildContent(Items1));
 
 #line default
@@ -47,7 +47,7 @@ __builder.AddContent(2, ChildContent(Items1));
 #nullable disable
             __builder.OpenElement(3, "p");
 #nullable restore
-#line (10,8)-(10,26) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (10,9)-(10,27) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(4, ChildContent(item));
 
 #line default
@@ -63,7 +63,7 @@ __builder.AddContent(4, ChildContent(item));
 #nullable disable
             __builder.OpenElement(5, "p");
 #nullable restore
-#line (13,4)-(13,26) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (13,5)-(13,27) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder.AddContent(6, ChildContent(Items3()));
 
 #line default

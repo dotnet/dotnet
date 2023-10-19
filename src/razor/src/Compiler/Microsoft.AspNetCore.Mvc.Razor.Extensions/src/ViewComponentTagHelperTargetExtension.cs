@@ -182,10 +182,10 @@ internal class ViewComponentTagHelperTargetExtension : IViewComponentTagHelperTa
                 .WriteStartNewObject(methodReturnType)
                 .WriteEndMethodInvocation();
 
-            for (var i = 0; i < tagHelper.BoundAttributes.Count; i++)
+            foreach (var attribute in tagHelper.BoundAttributes)
             {
-                var attributeName = tagHelper.BoundAttributes[i].Name;
-                var parameterName = tagHelper.BoundAttributes[i].GetPropertyName();
+                var attributeName = attribute.Name;
+                var parameterName = attribute.GetPropertyName();
                 writer.WriteLine($"if (__context.AllAttributes.ContainsName(\"{attributeName}\"))");
                 writer.WriteLine("{");
                 writer.CurrentIndent += writer.TabSize;
@@ -206,7 +206,7 @@ internal class ViewComponentTagHelperTargetExtension : IViewComponentTagHelperTa
 
     private void WriteTargetElementString(CodeWriter writer, TagHelperDescriptor tagHelper)
     {
-        Debug.Assert(tagHelper.TagMatchingRules.Count == 1);
+        Debug.Assert(tagHelper.TagMatchingRules.Length == 1);
 
         var rule = tagHelper.TagMatchingRules[0];
 

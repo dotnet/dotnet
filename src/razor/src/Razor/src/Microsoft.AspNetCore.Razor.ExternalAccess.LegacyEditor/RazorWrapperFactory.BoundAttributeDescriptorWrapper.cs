@@ -19,6 +19,6 @@ internal static partial class RazorWrapperFactory
         public string? IndexerNamePrefix => Object.IndexerNamePrefix;
 
         public ImmutableArray<IRazorBoundAttributeParameterDescriptor> BoundAttributeParameters
-            => InitializeArrayWithWrappedItems(ref _boundAttributeParameters, Object.BoundAttributeParameters, Wrap);
+            => InitializeArrayWithWrappedItems(ref _boundAttributeParameters, Object.Parameters, Wrap);
     }
 }

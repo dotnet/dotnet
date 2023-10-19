@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Immutable;
 using MessagePack;
 using Microsoft.AspNetCore.Razor.Language;
 using static Microsoft.AspNetCore.Razor.Language.RequiredAttributeDescriptor;
@@ -24,16 +25,16 @@ internal sealed class RequiredAttributeFormatter : ValueFormatter<RequiredAttrib
         var caseSensitive = reader.ReadBoolean();
         var value = CachedStringFormatter.Instance.Deserialize(ref reader, options);
         var valueComparison = (ValueComparisonMode)reader.ReadInt32();
-        var displayName = CachedStringFormatter.Instance.Deserialize(ref reader, options);
+        var displayName = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
 
         var metadata = reader.Deserialize<MetadataCollection>(options);
-        var diagnostics = reader.Deserialize<RazorDiagnostic[]>(options);
+        var diagnostics = reader.Deserialize<ImmutableArray<RazorDiagnostic>>(options);
 
-        return new DefaultRequiredAttributeDescriptor(
-            name, nameComparison,
+        return new RequiredAttributeDescriptor(
+            name!, nameComparison,
             caseSensitive,
             value, valueComparison,
-            displayName!, diagnostics, metadata);
+            displayName, diagnostics, metadata);
     }
 
     public override void Serialize(ref MessagePackWriter writer, RequiredAttributeDescriptor value, SerializerCachingOptions options)
@@ -47,8 +48,8 @@ internal sealed class RequiredAttributeFormatter : ValueFormatter<RequiredAttrib
         writer.Write((int)value.ValueComparison);
         CachedStringFormatter.Instance.Serialize(ref writer, value.DisplayName, options);
 
-        writer.Serialize((MetadataCollection)value.Metadata, options);
-        writer.Serialize((RazorDiagnostic[])value.Diagnostics, options);
+        writer.Serialize(value.Metadata, options);
+        writer.Serialize(value.Diagnostics, options);
     }
 
     public override void Skim(ref MessagePackReader reader, SerializerCachingOptions options)

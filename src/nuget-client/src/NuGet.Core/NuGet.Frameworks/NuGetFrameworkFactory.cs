@@ -650,6 +650,12 @@ namespace NuGet.Frameworks
                 case "net70":
                     framework = FrameworkConstants.CommonFrameworks.Net70;
                     break;
+                case "netcoreapp8.0":
+                case "netcoreapp80":
+                case "net8.0":
+                case "net80":
+                    framework = FrameworkConstants.CommonFrameworks.Net80;
+                    break;
             }
 
             return framework != null;

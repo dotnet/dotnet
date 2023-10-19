@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Linq;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
 
@@ -33,6 +34,13 @@ internal static class VSInternalCompletionListExtensions
 
             var mergedData = CompletionListMerger.MergeData(data, completionList.Data);
             completionList.Data = mergedData;
+
+            // Merge data for items that won't inherit the default
+            foreach (var completionItem in completionList.Items.Where(c => c.Data is not null))
+            {
+                mergedData = CompletionListMerger.MergeData(data, completionItem.Data);
+                completionItem.Data = mergedData;
+            }
         }
         else
         {

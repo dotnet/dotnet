@@ -75,7 +75,7 @@ which Arcade can be branched for major release 'N' of .NET Core.  Examples are g
 
 1. Create a new branch named `release/<N>` off of the `main` branch of `dotnet/arcade`, and push it to the public repository. Ensure the pool provider names in all yaml of this branch are updated to their "-Svc" versions.
 2. Create a new branch named `release/<N>` off of the `main` branch of `dotnet/arcade-validation`, and push it to the public repository. Ensure the pool provider names in all yaml of this branch are updated to their "-Svc" versions.
-3. Create and merge a pull request to update the package version numbers in the main branch to match the next major version of .NET (N+1). ([example](https://github.com/dotnet/arcade/pull/10666/files))
+3. Create and merge a pull request to update the package version numbers in the main branch to match the next major version of .NET (N+1). ([example](https://github.com/dotnet/arcade/pull/7829/files))
 4. [Add new channels](https://github.com/dotnet/arcade/blob/main/Documentation/Darc.md#add-channel)
    for the new branches, classified (`-c`) as `tools`.  Make a note of these channel ids, as they will be used later in updating the publishing constants used by Arcade for these channels.
     - `.NET <N or next version> Eng`
@@ -109,13 +109,7 @@ Merge Policies:
 Pull Request Failure Notification Tags: ''
 ```
 7. Modify the new release branch  `release/<N>` of arcade-validation to promote builds
-   to `.NET <N> Eng`. ([example of below changes](https://github.com/dotnet/arcade-validation/commit/f47dd86319803143a410b7deeb802ad93a8f2480#diff-7915b9b726a397ae7ba6af7b9703633d21c031ebf21682f3ee7e6a4ec52837a5))
-
-   In the update-channel.ps1 remove calls to:
-   - Get-AzDO-Build 
-   - Get-AzDOHeaders 
-   - Get-LatestBuildResult
-   - Remove the reference to bellweather repos runtime, aspnetcore, installer, and the for loop in the same file.
+   to `.NET <N> Eng`. ([example of below changes](https://github.com/dotnet/arcade-validation/pull/3960/files))
 
    In azure-pipelines.yml 
    - Include the new release branch under trigger `release/<N.x>`.

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Xunit;
@@ -135,6 +136,92 @@ public class MetadataCollectionTests
         Assert.Throws<ArgumentException>(() => MetadataCollection.Create(new[] { one, one, three, two }));
         Assert.Throws<ArgumentException>(() => MetadataCollection.Create(one, two, three, three));
         Assert.Throws<ArgumentException>(() => MetadataCollection.Create(new[] { one, one, three, three }));
+    }
+
+    private static TheoryData<ImmutableArray<KeyValuePair<string, string?>>, ImmutableArray<KeyValuePair<string, string?>>> GetPairPermutations(int count)
+    {
+        var pairs = new KeyValuePair<string, string?>[count];
+
+        for (var i = 0; i < count; i++)
+        {
+            pairs[i] = new($"Key{i}", $"Value{i}");
+        }
+
+        var list = new List<ImmutableArray<KeyValuePair<string, string?>>>();
+        CollectPermutations(pairs, 0, count - 1, list);
+
+        var data = new TheoryData<ImmutableArray<KeyValuePair<string, string?>>, ImmutableArray<KeyValuePair<string, string?>>>();
+
+        for (var i = 0; i < list.Count; i++)
+        {
+            for (var j = 0; j < list.Count; j++)
+            {
+                data.Add(list[i], list[j]);
+            }
+        }
+
+        return data;
+
+        static void CollectPermutations(KeyValuePair<string, string?>[] pairs, int start, int end, List<ImmutableArray<KeyValuePair<string, string?>>> list)
+        {
+            if (start == end)
+            {
+                list.Add(pairs.ToImmutableArray());
+            }
+            else
+            {
+                for (var i = start; i <= end; i++)
+                {
+                    Swap(ref pairs[start], ref pairs[i]);
+                    CollectPermutations(pairs, start + 1, end, list);
+                    Swap(ref pairs[start], ref pairs[i]);
+                }
+            }
+
+            static void Swap(ref KeyValuePair<string, string?> pair1, ref KeyValuePair<string, string?> pair2)
+            {
+                var temp = pair1;
+                pair1 = pair2;
+                pair2 = temp;
+            }
+        }
+    }
+
+    public static readonly TheoryData TwoPairs = GetPairPermutations(2);
+    public static readonly TheoryData ThreePairs = GetPairPermutations(3);
+    public static readonly TheoryData FourPairs = GetPairPermutations(4);
+
+    [Theory]
+    [MemberData(nameof(TwoPairs))]
+    public void TestEquality_TwoItems(ImmutableArray<KeyValuePair<string, string?>> pairs1, ImmutableArray<KeyValuePair<string, string?>> pairs2)
+    {
+        var collection1 = MetadataCollection.Create(pairs1);
+        var collection2 = MetadataCollection.Create(pairs2);
+
+        Assert.Equal(collection1, collection2);
+        Assert.Equal(collection1.GetHashCode(), collection2.GetHashCode());
+    }
+
+    [Theory]
+    [MemberData(nameof(ThreePairs))]
+    public void TestEquality_ThreeItems(ImmutableArray<KeyValuePair<string, string?>> pairs1, ImmutableArray<KeyValuePair<string, string?>> pairs2)
+    {
+        var collection1 = MetadataCollection.Create(pairs1);
+        var collection2 = MetadataCollection.Create(pairs2);
+
+        Assert.Equal(collection1, collection2);
+        Assert.Equal(collection1.GetHashCode(), collection2.GetHashCode());
+    }
+
+    [Theory]
+    [MemberData(nameof(FourPairs))]
+    public void TestEquality_FourItems(ImmutableArray<KeyValuePair<string, string?>> pairs1, ImmutableArray<KeyValuePair<string, string?>> pairs2)
+    {
+        var collection1 = MetadataCollection.Create(pairs1);
+        var collection2 = MetadataCollection.Create(pairs2);
+
+        Assert.Equal(collection1, collection2);
+        Assert.Equal(collection1.GetHashCode(), collection2.GetHashCode());
     }
 
     [Fact]

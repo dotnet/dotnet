@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Internal.Log;
 using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Serialization;
+using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Remote
 {
@@ -33,10 +34,15 @@ namespace Microsoft.CodeAnalysis.Remote
             _serializerService = serializerService;
         }
 
+        public T GetRequiredAsset<T>(Checksum checksum)
+        {
+            Contract.ThrowIfFalse(_assetCache.TryGetAsset<T>(checksum, out var asset));
+            return asset;
+        }
+
         public override async ValueTask<T> GetAssetAsync<T>(Checksum checksum, CancellationToken cancellationToken)
         {
-            Debug.Assert(checksum != Checksum.Null);
-
+            Contract.ThrowIfTrue(checksum == Checksum.Null);
             if (_assetCache.TryGetAsset<T>(checksum, out var asset))
             {
                 return asset;
@@ -111,50 +117,43 @@ namespace Microsoft.CodeAnalysis.Remote
             }
         }
 
-        public bool EnsureCacheEntryIfExists(Checksum checksum)
+        public async ValueTask SynchronizeAssetsAsync(HashSet<Checksum> checksums, CancellationToken cancellationToken)
         {
-            // this will check whether checksum exists in the cache and if it does,
-            // it will touch the entry so that it doesn't expire right after we checked it.
-            //
-            // even if it got expired after this for whatever reason, functionality wise everything will still work, 
-            // just perf will be impacted since we will fetch it from data source (VS)
-            return _assetCache.TryGetAsset<object>(checksum, out _);
-        }
-
-        public async ValueTask SynchronizeAssetsAsync(ISet<Checksum> checksums, CancellationToken cancellationToken)
-        {
-            Debug.Assert(!checksums.Contains(Checksum.Null));
+            Contract.ThrowIfTrue(checksums.Contains(Checksum.Null));
             if (checksums.Count == 0)
                 return;
 
             using (Logger.LogBlock(FunctionId.AssetService_SynchronizeAssetsAsync, Checksum.GetChecksumsLogInfo, checksums, cancellationToken))
             {
-                var assets = await RequestAssetsAsync(checksums, cancellationToken).ConfigureAwait(false);
+                using var _1 = ArrayBuilder<Checksum>.GetInstance(checksums.Count, out var missingChecksums);
+                foreach (var checksum in checksums)
+                {
+                    if (!_assetCache.TryGetAsset<object>(checksum, out _))
+                        missingChecksums.Add(checksum);
+                }
 
-                foreach (var (checksum, value) in assets)
-                    _assetCache.GetOrAdd(checksum, value);
+                var checksumsArray = missingChecksums.ToImmutableAndClear();
+                var assets = await RequestAssetsAsync(checksumsArray, cancellationToken).ConfigureAwait(false);
+
+                Contract.ThrowIfTrue(checksumsArray.Length != assets.Length);
+
+                for (int i = 0, n = assets.Length; i < n; i++)
+                    _assetCache.GetOrAdd(checksumsArray[i], assets[i]);
             }
         }
 
-        private async Task<object> RequestAssetAsync(Checksum checksum, CancellationToken cancellationToken)
+        private async ValueTask<object> RequestAssetAsync(Checksum checksum, CancellationToken cancellationToken)
         {
-            Debug.Assert(checksum != Checksum.Null);
-
-            using var _ = PooledHashSet<Checksum>.GetInstance(out var checksums);
-            checksums.Add(checksum);
-
-            var assets = await RequestAssetsAsync(checksums, cancellationToken).ConfigureAwait(false);
-            return assets.Single().value;
+            Contract.ThrowIfTrue(checksum == Checksum.Null);
+            var assets = await RequestAssetsAsync(ImmutableArray.Create(checksum), cancellationToken).ConfigureAwait(false);
+            return assets.Single();
         }
 
-        private async Task<ImmutableArray<(Checksum checksum, object value)>> RequestAssetsAsync(ISet<Checksum> checksums, CancellationToken cancellationToken)
+        private async ValueTask<ImmutableArray<object>> RequestAssetsAsync(ImmutableArray<Checksum> checksums, CancellationToken cancellationToken)
         {
-            Debug.Assert(!checksums.Contains(Checksum.Null));
-
-            if (checksums.Count == 0)
-            {
-                return ImmutableArray<(Checksum, object)>.Empty;
-            }
+            Contract.ThrowIfTrue(checksums.Contains(Checksum.Null));
+            if (checksums.Length == 0)
+                return ImmutableArray<object>.Empty;
 
             return await _assetSource.GetAssetsAsync(_solutionChecksum, checksums, _serializerService, cancellationToken).ConfigureAwait(false);
         }

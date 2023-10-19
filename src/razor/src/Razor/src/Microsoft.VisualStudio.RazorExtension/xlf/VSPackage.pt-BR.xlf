@@ -67,6 +67,16 @@
         <target state="translated">Plano de fundo para o código C#</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_CommitElementsWithSpaceDescription">
+        <source>If true, pressing space will commit suggestions for Html elements and components</source>
+        <target state="translated">Se for verdadeiro, clicar no espaço confirmará as sugestões dos elementos e componentes Html</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
+        <source>Commit Elements with Space</source>
+        <target state="translated">Confirmar Elementos com o Espaço</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
         <source>If true, formatting will be enabled while typing</source>
         <target state="translated">Se verdadeiro, a formatação será habilitada durante a digitação</target>

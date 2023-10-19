@@ -192,6 +192,12 @@
         <Deployment PackageName="Microsoft.DevDiv.TestExtensions.FailedPerformanceTest.TestLogger" />
       </Configuration>
     </Logger>
+    <Logger Condition="'$(RunName)' == 'NuGet.Tests.Apex'" Include="logger:console">
+      <FriendlyName>console</FriendlyName>
+      <Configuration>
+        <Verbosity>Normal</Verbosity>
+      </Configuration>
+    </Logger>
     <Logger Condition="'$(TRXLogger)' == 'enabled'" Include="logger://Microsoft/TestPlatform/TrxLogger/v1">
       <FriendlyName>TRX</FriendlyName>
     </Logger>
@@ -213,6 +219,7 @@
     <AdditionalSettings Include="MSTest">
       <Settings>
         <MapInconclusiveToFailed>True</MapInconclusiveToFailed>
+        <CaptureTraceOutput>True</CaptureTraceOutput>
       </Settings>
     </AdditionalSettings>
   </ItemGroup>

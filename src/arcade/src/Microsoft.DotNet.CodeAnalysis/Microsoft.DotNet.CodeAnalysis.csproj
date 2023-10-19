@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="$(MicrosoftCodeAnalysisCSharpVersion)" ExcludeAssets="analyzers" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" ExcludeAssets="analyzers" />
   </ItemGroup>
 
   <ItemGroup>

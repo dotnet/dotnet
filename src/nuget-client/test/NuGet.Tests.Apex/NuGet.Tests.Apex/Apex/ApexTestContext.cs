@@ -3,7 +3,7 @@
 
 using System;
 using System.Threading;
-using Microsoft.Build.Utilities;
+using Microsoft.Test.Apex.Services;
 using Microsoft.Test.Apex.VisualStudio;
 using Microsoft.Test.Apex.VisualStudio.Solution;
 using NuGet.Common;
@@ -15,18 +15,19 @@ namespace NuGet.Tests.Apex
     {
 
         private VisualStudioHost _visualStudio;
-        private readonly ILogger _logger;
+        private readonly ITestLogger _logger;
         private SimpleTestPathContext _pathContext;
 
         public SolutionService SolutionService { get; }
         public ProjectTestExtension Project { get; }
         public string PackageSource => _pathContext.PackageSource;
+        public string SolutionRoot => _pathContext.SolutionRoot;
 
         public NuGetApexTestService NuGetApexTestService { get; }
 
-        public ApexTestContext(VisualStudioHost visualStudio, ProjectTemplate projectTemplate, ILogger logger, bool noAutoRestore = false, bool addNetStandardFeeds = false, SimpleTestPathContext simpleTestPathContext = null)
+        public ApexTestContext(VisualStudioHost visualStudio, ProjectTemplate projectTemplate, ITestLogger logger, bool noAutoRestore = false, bool addNetStandardFeeds = false, SimpleTestPathContext simpleTestPathContext = null)
         {
-            logger.LogInformation("Creating test context");
+            logger.WriteMessage("Creating test context");
             _pathContext = simpleTestPathContext ?? new SimpleTestPathContext();
 
             if (noAutoRestore)
@@ -53,7 +54,7 @@ namespace NuGet.Tests.Apex
 
         public void Dispose()
         {
-            _logger.LogInformation("Test complete, closing solution.");
+            _logger.WriteMessage("Test complete, closing solution.");
             for (int attempt = 1; attempt <= 3; attempt++)
             {
                 try
@@ -63,9 +64,11 @@ namespace NuGet.Tests.Apex
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogInformation($"Failed to close VS on dispose. Attempt #{attempt}");
+                    _logger.WriteMessage($"Failed to close VS on dispose. Attempt #{attempt}");
                     Thread.Sleep(TimeSpan.FromSeconds(3));
-                    ExceptionUtilities.LogException(ex, _logger);
+                    // Unwrap aggregate exceptions.
+                    var unwrappedException = ExceptionUtilities.Unwrap(ex);
+                    _logger.WriteWarning($"{unwrappedException.Message}");
                 }
             }
             _pathContext.Dispose();

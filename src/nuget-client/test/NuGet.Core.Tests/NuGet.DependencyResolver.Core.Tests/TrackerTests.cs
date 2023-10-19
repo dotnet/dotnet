@@ -180,7 +180,8 @@ public class TrackerTests
         var key = new LibraryModel.LibraryIdentity()
         {
             Name = name,
-            Version = new Versioning.NuGetVersion(version, 0, 0)
+            Version = new Versioning.NuGetVersion(version, 0, 0),
+            Type = LibraryModel.LibraryType.Package
         };
 
         return new GraphItem<string>(key);

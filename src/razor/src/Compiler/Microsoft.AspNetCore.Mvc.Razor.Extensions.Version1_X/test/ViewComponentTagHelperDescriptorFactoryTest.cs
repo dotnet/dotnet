@@ -56,7 +56,7 @@ public class ViewComponentTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(viewComponent);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class ViewComponentTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(viewComponent);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -148,7 +148,7 @@ public class ViewComponentTagHelperDescriptorFactoryTest
         var descriptor = factory.CreateDescriptor(viewComponent);
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
@@ -113,6 +114,31 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
             Start = new Position(2, 5),
             End = new Position(2, 14),
         };
+        Assert.Equal(expectedRange, hover.Range);
+    }
+
+    [Fact]
+    public void GetHoverInfo_TagHelper_Attribute_WithParent()
+    {
+        // Arrange
+        var txt = """
+                @addTagHelper *, TestAssembly
+                <test1>
+                    <SomeChild [|att$$ribute|]="test"></SomeChild>
+                </test1>
+                """;
+        TestFileMarkupParser.GetPositionAndSpan(txt, out txt, out var cursorPosition, out var span);
+
+        var codeDocument = CreateCodeDocument(txt, isRazorFile: false, DefaultTagHelpers);
+        var service = GetHoverInfoService();
+        var location = new SourceLocation(cursorPosition, -1, -1);
+
+        // Act
+        var hover = service.GetHoverInfo(codeDocument, location, CreateMarkDownCapabilities());
+
+        // Assert
+        Assert.Contains("**Attribute**", ((MarkupContent)hover.Contents).Value, StringComparison.Ordinal);
+        var expectedRange = span.ToRange(codeDocument.GetSourceText());
         Assert.Equal(expectedRange, hover.Range);
     }
 

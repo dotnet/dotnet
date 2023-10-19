@@ -22,9 +22,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet.Core.FuncTests", "NuG
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{DE23D071-162F-47A3-BC68-42E4A354835C}"
 	ProjectSection(SolutionItems) = preProject
+		build\Shared\DeconstructionExtensions.cs = build\Shared\DeconstructionExtensions.cs
 		build\Shared\EncodingUtility.cs = build\Shared\EncodingUtility.cs
 		build\Shared\EqualityUtility.cs = build\Shared\EqualityUtility.cs
 		build\Shared\HashCodeCombiner.cs = build\Shared\HashCodeCombiner.cs
+		build\Shared\IsExternalInit.cs = build\Shared\IsExternalInit.cs
+		build\Shared\NoAllocEnumerateExtensions.cs = build\Shared\NoAllocEnumerateExtensions.cs
+		build\Shared\NullableAttributes.cs = build\Shared\NullableAttributes.cs
+		build\Shared\RequiredModifierAttributes.cs = build\Shared\RequiredModifierAttributes.cs
+		build\Shared\SharedExtensions.cs = build\Shared\SharedExtensions.cs
+		build\Shared\SimplePool.cs = build\Shared\SimplePool.cs
+		build\Shared\StringBuilderPool.cs = build\Shared\StringBuilderPool.cs
+		build\Shared\TaskResult.cs = build\Shared\TaskResult.cs
 		build\Shared\TypeExtensions.cs = build\Shared\TypeExtensions.cs
 		build\Shared\TypeInfo.cs = build\Shared\TypeInfo.cs
 		build\Shared\vs-threading.MainThreadAssertingMethods.txt = build\Shared\vs-threading.MainThreadAssertingMethods.txt
@@ -204,8 +213,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Packaging.FuncTest", "test\NuGet.Core.FuncTests\NuGet.Packaging.FuncTest\NuGet.Packaging.FuncTest.csproj", "{6666CC37-75E0-451E-A24A-C51AF71B0C8E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.MSSigning.Extensions", "src\NuGet.Clients\NuGet.MSSigning.Extensions\NuGet.MSSigning.Extensions.csproj", "{32D8179F-2E22-441C-9DEE-6EB4AB8A5800}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.StaFact", "test\TestExtensions\NuGet.StaFact\NuGet.StaFact.csproj", "{5704AFAE-94ED-4AC9-979F-28A6DF8DF4DF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Shared.Tests", "test\NuGet.Core.Tests\NuGet.Shared.Tests\NuGet.Shared.Tests.csproj", "{21522CF8-12F2-4A30-94D5-6C794D4B043F}"
 EndProject
@@ -596,10 +603,6 @@ Global
 		{32D8179F-2E22-441C-9DEE-6EB4AB8A5800}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32D8179F-2E22-441C-9DEE-6EB4AB8A5800}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32D8179F-2E22-441C-9DEE-6EB4AB8A5800}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5704AFAE-94ED-4AC9-979F-28A6DF8DF4DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5704AFAE-94ED-4AC9-979F-28A6DF8DF4DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5704AFAE-94ED-4AC9-979F-28A6DF8DF4DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5704AFAE-94ED-4AC9-979F-28A6DF8DF4DF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{21522CF8-12F2-4A30-94D5-6C794D4B043F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{21522CF8-12F2-4A30-94D5-6C794D4B043F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21522CF8-12F2-4A30-94D5-6C794D4B043F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -785,7 +788,6 @@ Global
 		{8882D8C0-A77E-4B3D-9FC6-E9BF965031AB} = {7323F93B-D141-4001-BB9E-7AF14031143E}
 		{6666CC37-75E0-451E-A24A-C51AF71B0C8E} = {BB63CACA-866F-454F-BA4C-78B788D032BB}
 		{32D8179F-2E22-441C-9DEE-6EB4AB8A5800} = {08F523EC-3C2A-4A00-A54C-2E54C5AC856B}
-		{5704AFAE-94ED-4AC9-979F-28A6DF8DF4DF} = {23CEFC88-9365-4464-A517-700224ECA033}
 		{21522CF8-12F2-4A30-94D5-6C794D4B043F} = {7323F93B-D141-4001-BB9E-7AF14031143E}
 		{BA7F681E-FDC7-42B6-8BF1-74DA6421BA1A} = {00CE0FBE-DA5A-4AD8-B0D6-04ECE6B04F0D}
 		{2A604A43-C72A-4A03-B68B-66AF4B6F430E} = {00CE0FBE-DA5A-4AD8-B0D6-04ECE6B04F0D}

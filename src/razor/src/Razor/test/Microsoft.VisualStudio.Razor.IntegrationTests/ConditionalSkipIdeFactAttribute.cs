@@ -9,7 +9,7 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
 public class ConditionalSkipIdeFactAttribute : IdeFactAttribute
 {
-    private readonly Lazy<bool> _runFlakyTests = new(() => Environment.GetEnvironmentVariable("RAZOR_RUN_ALL_TESTS")?.ToLower() == "true");
+    private readonly Lazy<bool> _runFlakyTests = new(() => Environment.GetEnvironmentVariable("RAZOR_RUN_CONDITIONAL_IDE_TESTS")?.ToLower() == "true");
 
     public ConditionalSkipIdeFactAttribute()
     {

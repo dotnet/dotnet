@@ -144,6 +144,12 @@ namespace NuGet.CommandLine
 
                 foreach (KeyValuePair<OptionAttribute, PropertyInfo> o in options)
                 {
+                    if (o.Key.IsHidden)
+                    {
+                        // If the option is supposed to be hidden, skip it
+                        continue;
+                    }
+
                     if (TypeHelper.IsMultiValuedProperty(o.Value))
                     {
                         Console.Write(string.Format(CultureInfo.CurrentCulture, $"-{{0, -{maxOptionWidth + 2}}} +", o.Value.Name));

@@ -229,7 +229,7 @@ internal class DefaultTagHelperOptimizationPass : IntermediateNodePassBase, IRaz
         {
             Class = @class;
 
-            _tagHelpers = new Dictionary<TagHelperDescriptor, string>(TagHelperDescriptorComparer.Default);
+            _tagHelpers = new Dictionary<TagHelperDescriptor, string>();
         }
 
         public ClassDeclarationIntermediateNode Class { get; }

@@ -87,7 +87,7 @@ public class ClientSettingsManagerTest : ProjectSnapshotManagerDispatcherTestBas
         var manager = new ClientSettingsManager(_editorSettingsChangeTriggers);
         var called = false;
         manager.Changed += (caller, args) => called = true;
-        var settings = new ClientAdvancedSettings(FormatOnType: false, AutoClosingTags: true, AutoInsertAttributeQuotes: true, ColorBackground: true);
+        var settings = new ClientAdvancedSettings(FormatOnType: false, AutoClosingTags: true, AutoInsertAttributeQuotes: true, ColorBackground: true, CommitElementsWithSpace: false);
 
         // Act
         manager.Update(settings);

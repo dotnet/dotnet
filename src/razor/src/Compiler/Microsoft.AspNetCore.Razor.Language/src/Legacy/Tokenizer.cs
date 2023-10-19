@@ -206,7 +206,7 @@ internal abstract class Tokenizer : ITokenizer
         if (HaveContent)
         {
             // Perf: Don't allocate a new errors array unless necessary.
-            var errors = CurrentErrors.Count == 0 ? RazorDiagnostic.EmptyArray : new RazorDiagnostic[CurrentErrors.Count];
+            var errors = CurrentErrors.Count == 0 ? Array.Empty<RazorDiagnostic>() : new RazorDiagnostic[CurrentErrors.Count];
             for (var i = 0; i < CurrentErrors.Count; i++)
             {
                 errors[i] = CurrentErrors[i];

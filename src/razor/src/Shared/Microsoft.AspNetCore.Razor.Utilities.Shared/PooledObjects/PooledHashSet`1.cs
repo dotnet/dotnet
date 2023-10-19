@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.PooledObjects;
@@ -15,16 +16,28 @@ namespace Microsoft.AspNetCore.Razor.PooledObjects;
 internal ref struct PooledHashSet<T>
 {
     private readonly ObjectPool<HashSet<T>> _pool;
+    private readonly int? _capacity;
     private HashSet<T>? _set;
 
     public PooledHashSet()
-        : this(HashSetPool<T>.Default)
+        : this(pool: null, capacity: null)
     {
     }
 
     public PooledHashSet(ObjectPool<HashSet<T>> pool)
+        : this(pool, capacity: null)
     {
-        _pool = pool;
+    }
+
+    public PooledHashSet(int capacity)
+        : this(pool: null, capacity)
+    {
+    }
+
+    public PooledHashSet(ObjectPool<HashSet<T>>? pool, int? capacity)
+    {
+        _pool = pool ?? HashSetPool<T>.Default;
+        _capacity = capacity;
     }
 
     public void Dispose()
@@ -32,12 +45,12 @@ internal ref struct PooledHashSet<T>
         ClearAndFree();
     }
 
-    public int Count
+    public readonly int Count
         => _set?.Count ?? 0;
 
     public bool Add(T item)
     {
-        _set ??= _pool.Get();
+        _set ??= GetHashSet();
         return _set.Add(item);
     }
 
@@ -56,12 +69,29 @@ internal ref struct PooledHashSet<T>
     public readonly T[] ToArray()
         => _set?.ToArray() ?? Array.Empty<T>();
 
+    public readonly ImmutableArray<T> ToImmutableArray()
+        => _set?.ToImmutableArray() ?? ImmutableArray<T>.Empty;
+
     public void UnionWith(IList<T>? other)
     {
         if (other?.Count > 0)
         {
-            _set ??= _pool.Get();
+            _set ??= GetHashSet();
             _set.UnionWith(other);
         }
+    }
+
+    private readonly HashSet<T> GetHashSet()
+    {
+        var result = _pool.Get();
+
+#if NET
+        if (_capacity is int capacity)
+        {
+            result.EnsureCapacity(capacity);
+        }
+#endif
+
+        return result;
     }
 }

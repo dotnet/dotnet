@@ -161,7 +161,7 @@ namespace Microsoft.DotNet.Tools.Tests.Utilities
 
             if (normalizedExpected != normalizedActual)
             {
-                Assert.True(false, GetAssertMessage(expected, actual, escapeQuotes, expectedValueSourcePath, expectedValueSourceLine));
+                Assert.Fail(GetAssertMessage(expected, actual, escapeQuotes, expectedValueSourcePath, expectedValueSourceLine));
             }
         }
 
@@ -219,7 +219,7 @@ namespace Microsoft.DotNet.Tools.Tests.Utilities
                     assertMessage = message + "\r\n" + assertMessage;
                 }
 
-                Assert.True(false, assertMessage);
+                Assert.Fail(assertMessage);
             }
         }
 
@@ -322,12 +322,12 @@ namespace Microsoft.DotNet.Tools.Tests.Utilities
 
         public static void Fail(string message)
         {
-            Assert.False(true, message);
+            Assert.Fail(message);
         }
 
         public static void Fail(string format, params object[] args)
         {
-            Assert.False(true, string.Format(format, args));
+            Assert.Fail(string.Format(format, args));
         }
 
         public static void Null<T>(T @object, string message = null)

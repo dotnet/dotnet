@@ -3580,6 +3580,21 @@ namespace NuGet.ProjectModel.Test
             assetTargetFallbackFramework.Fallback.Last().Should().Be(FrameworkConstants.CommonFrameworks.Net471);
         }
 
+        [Fact]
+        public void GetPackageSpec_WithRestoreAuditProperties_ReturnsRestoreAuditProperties()
+        {
+            // Arrange
+            var json = $"{{\"restore\":{{\"restoreAuditProperties\":{{\"enableAudit\": \"a\", \"auditLevel\": \"b\", \"auditMode\": \"c\"}}}}}}";
+
+            // Act
+            PackageSpec packageSpec = GetPackageSpec(json);
+
+            // Assert
+            packageSpec.RestoreMetadata.RestoreAuditProperties.EnableAudit.Should().Be("a");
+            packageSpec.RestoreMetadata.RestoreAuditProperties.AuditLevel.Should().Be("b");
+            packageSpec.RestoreMetadata.RestoreAuditProperties.AuditMode.Should().Be("c");
+        }
+
         private static PackageSpec GetPackageSpec(string json)
         {
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(json)))

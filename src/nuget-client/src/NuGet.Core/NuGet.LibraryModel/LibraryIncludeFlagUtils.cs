@@ -129,7 +129,7 @@ namespace NuGet.LibraryModel
         /// <returns>The <see cref="string"/> representation of <paramref name="includeFlags"/>.</returns>
         public static string AsString(this LibraryIncludeFlags includeFlags)
         {
-            if (!LibraryIncludeFlagsCache.TryGetValue(includeFlags, out string enumAsString))
+            if (!LibraryIncludeFlagsCache.TryGetValue(includeFlags, out string? enumAsString))
             {
                 enumAsString = includeFlags.ToString();
                 LibraryIncludeFlagsCache.TryAdd(includeFlags, enumAsString);

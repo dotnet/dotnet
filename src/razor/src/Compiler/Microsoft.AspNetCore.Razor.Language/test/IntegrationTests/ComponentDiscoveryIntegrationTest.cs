@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using Microsoft.AspNetCore.Razor.Language.Components;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
@@ -61,13 +60,13 @@ namespace Test.AnotherNamespace
         Assert.Contains(bindings.TagHelpers, t =>
         {
             return t.Name == "Test.AnotherNamespace.MyComponent" &&
-                t.IsComponentFullyQualifiedNameMatch();
+                t.IsComponentFullyQualifiedNameMatch;
         });
 
         Assert.DoesNotContain(bindings.TagHelpers, t =>
         {
             return t.Name == "Test.AnotherNamespace.MyComponent" &&
-                !t.IsComponentFullyQualifiedNameMatch();
+                !t.IsComponentFullyQualifiedNameMatch;
         });
     }
 

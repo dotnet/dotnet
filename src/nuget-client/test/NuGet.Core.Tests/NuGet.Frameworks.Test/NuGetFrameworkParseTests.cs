@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using NuGet.Frameworks;
 using Xunit;
@@ -420,6 +419,17 @@ namespace NuGet.Test
         [InlineData("netcoreapp31", "netcoreapp31")]
         [InlineData("net5.0", "net5.0")]
         [InlineData("net50", "net5.0")]
+        [InlineData("net5.0", "netcoreapp5.0")]
+        [InlineData("net5.0", "netcoreapp50")]
+        [InlineData("net6.0", "net60")]
+        [InlineData("net6.0", "netcoreapp6.0")]
+        [InlineData("net6.0", "netcoreapp60")]
+        [InlineData("net7.0", "net70")]
+        [InlineData("net7.0", "netcoreapp7.0")]
+        [InlineData("net7.0", "netcoreapp70")]
+        [InlineData("net8.0", "net80")]
+        [InlineData("net8.0", "netcoreapp8.0")]
+        [InlineData("net8.0", "netcoreapp80")]
         public void NuGetFramework_TryParseCommonFramework_ParsesCommonFrameworks(string frameworkString1, string frameworkString2)
         {
             var framework1 = NuGetFramework.Parse(frameworkString1);
@@ -434,7 +444,8 @@ namespace NuGet.Test
             yield return new object[] { "net472", FrameworkConstants.CommonFrameworks.Net472 };
             yield return new object[] { "net5.0", FrameworkConstants.CommonFrameworks.Net50 };
             yield return new object[] { "net6.0", FrameworkConstants.CommonFrameworks.Net60 };
-
+            yield return new object[] { "net7.0", FrameworkConstants.CommonFrameworks.Net70 };
+            yield return new object[] { "net8.0", FrameworkConstants.CommonFrameworks.Net80 };
         }
 
         [Theory]

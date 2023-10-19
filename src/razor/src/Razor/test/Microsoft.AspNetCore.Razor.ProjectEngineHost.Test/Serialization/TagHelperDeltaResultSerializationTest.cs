@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
@@ -30,7 +29,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var tagHelpers = RazorTestResources.BlazorServerAppTagHelpers;
-        var checksums = tagHelpers.SelectAsArray(t => t.GetChecksum());
+        var checksums = tagHelpers.SelectAsArray(t => t.Checksum);
 
         var expectedResult = new TagHelperDeltaResult(
             IsDelta: true,
@@ -90,8 +89,8 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
         var expectedResult = new TagHelperDeltaResult(
             IsDelta: true,
             ResultId: 1,
-            Added: ImmutableArray.Create(descriptor.GetChecksum()),
-            Removed: ImmutableArray.Create(descriptor.GetChecksum()));
+            Added: ImmutableArray.Create(descriptor.Checksum),
+            Removed: ImmutableArray.Create(descriptor.Checksum));
 
         // Act
         var bytes = MessagePackConvert.Serialize(expectedResult, s_options);
@@ -140,8 +139,8 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
         var expectedResult = new TagHelperDeltaResult(
             IsDelta: true,
             ResultId: 1,
-            Added: ImmutableArray.Create(descriptor.GetChecksum()),
-            Removed: ImmutableArray.Create(descriptor.GetChecksum()));
+            Added: ImmutableArray.Create(descriptor.Checksum),
+            Removed: ImmutableArray.Create(descriptor.Checksum));
 
         // Act
         var bytes = MessagePackConvert.Serialize(expectedResult, s_options);
@@ -183,13 +182,13 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             configureAction: builder => builder.AllowChildTag("allowed-child-one")
                 .Metadata("foo", "bar")
                 .AddDiagnostic(RazorDiagnostic.Create(
-                    new RazorDiagnosticDescriptor("id", () => "Test Message", RazorDiagnosticSeverity.Error), new SourceSpan(null, 10, 20, 30, 40))));
+                    new RazorDiagnosticDescriptor("id", "Test Message", RazorDiagnosticSeverity.Error), new SourceSpan(null, 10, 20, 30, 40))));
 
         var expectedResult = new TagHelperDeltaResult(
             IsDelta: true,
             ResultId: 1,
-            Added: ImmutableArray.Create(descriptor.GetChecksum()),
-            Removed: ImmutableArray.Create(descriptor.GetChecksum()));
+            Added: ImmutableArray.Create(descriptor.Checksum),
+            Removed: ImmutableArray.Create(descriptor.Checksum));
 
         // Act
         var bytes = MessagePackConvert.Serialize(expectedResult, s_options);
@@ -236,8 +235,8 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
         var expectedResult = new TagHelperDeltaResult(
             IsDelta: true,
             ResultId: 1,
-            Added: ImmutableArray.Create(descriptor.GetChecksum()),
-            Removed: ImmutableArray.Create(descriptor.GetChecksum()));
+            Added: ImmutableArray.Create(descriptor.Checksum),
+            Removed: ImmutableArray.Create(descriptor.Checksum));
 
         // Act
         var bytes = MessagePackConvert.Serialize(expectedResult, s_options);

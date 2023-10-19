@@ -8,9 +8,7 @@ using System.Composition;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
@@ -75,7 +73,7 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
             completionContext.CurrentParentTagName,
             completionContext.CurrentParentIsTagHelper);
 
-        var applicableDescriptors = new HashSet<TagHelperDescriptor>(TagHelperChecksumComparer.Instance);
+        using var _ = HashSetPool<TagHelperDescriptor>.GetPooledObject(out var applicableDescriptors);
 
         if (applicableTagHelperBinding is { Descriptors: var descriptors })
         {
@@ -97,7 +95,7 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
             {
                 foreach (var attributeDescriptor in descriptor.BoundAttributes)
                 {
-                    if (attributeDescriptor.Name != null)
+                    if (!attributeDescriptor.Name.IsNullOrEmpty())
                     {
                         UpdateCompletions(attributeDescriptor.Name, attributeDescriptor);
                     }
@@ -118,7 +116,7 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
                         htmlNameToBoundAttribute[attributeDescriptor.Name] = attributeDescriptor;
                     }
 
-                    if (!string.IsNullOrEmpty(attributeDescriptor.IndexerNamePrefix))
+                    if (!attributeDescriptor.IndexerNamePrefix.IsNullOrEmpty())
                     {
                         htmlNameToBoundAttribute[attributeDescriptor.IndexerNamePrefix] = attributeDescriptor;
                     }
@@ -157,7 +155,7 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
 
             if (!attributeCompletions.TryGetValue(attributeName, out var rules))
             {
-                rules = new HashSet<BoundAttributeDescriptor>(BoundAttributeChecksumComparer.Instance);
+                rules = new HashSet<BoundAttributeDescriptor>();
                 attributeCompletions[attributeName] = rules;
             }
 
@@ -260,7 +258,7 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
 
         void UpdateCompletions(string tagName, TagHelperDescriptor possibleDescriptor)
         {
-            if (possibleDescriptor.BoundAttributes.Any(boundAttribute => boundAttribute.IsDirectiveAttribute()))
+            if (possibleDescriptor.BoundAttributes.Any(static boundAttribute => boundAttribute.IsDirectiveAttribute))
             {
                 // This is a TagHelper that ultimately represents a DirectiveAttribute. In classic Razor TagHelper land TagHelpers with bound attribute descriptors
                 // are valuable to show in the completion list to understand what was possible for a certain tag; however, with Blazor directive attributes stand
@@ -325,7 +323,7 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
 
                 if (!elementCompletions.TryGetValue(prefixedName, out var existingRuleDescriptors))
                 {
-                    existingRuleDescriptors = new HashSet<TagHelperDescriptor>(TagHelperChecksumComparer.Instance);
+                    existingRuleDescriptors = new HashSet<TagHelperDescriptor>();
                     elementCompletions[prefixedName] = existingRuleDescriptors;
                 }
 
@@ -342,7 +340,7 @@ internal class LegacyTagHelperCompletionService : TagHelperCompletionService
 
         foreach (var descriptor in possibleChildDescriptors)
         {
-            if (descriptor.IsComponentFullyQualifiedNameMatch())
+            if (descriptor.IsComponentFullyQualifiedNameMatch)
             {
                 fullyQualifiedTagHelpers.Add(descriptor);
             }

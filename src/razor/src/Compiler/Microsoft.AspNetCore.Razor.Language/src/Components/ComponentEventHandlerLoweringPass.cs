@@ -105,7 +105,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
                 {
                     if (parent.Children[j] is ComponentAttributeIntermediateNode componentAttribute &&
                         componentAttribute.TagHelper != null &&
-                        componentAttribute.TagHelper.IsComponentTagHelper() &&
+                        componentAttribute.TagHelper.IsComponentTagHelper &&
                         componentAttribute.AttributeName == eventHandler.AttributeName)
                     {
                         // Found a duplicate - remove the 'fallback' in favor of the component's own handling.
