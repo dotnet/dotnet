@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.Configuration.CommandLine</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationProvider">
+      <summary>A command line based <see cref="T:Microsoft.Extensions.Configuration.ConfigurationProvider" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationProvider.#ctor(System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IDictionary{System.String,System.String})">
+      <summary>Initializes a new instance.</summary>
+      <param name="args">The command line args.</param>
+      <param name="switchMappings">The switch mappings.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationProvider.Load">
+      <summary>Loads the configuration data from the command line args.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationProvider.Args">
+      <summary>The command line arguments.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationSource">
+      <summary>Represents command line arguments as an <see cref="T:Microsoft.Extensions.Configuration.IConfigurationSource" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationSource.#ctor">
+      <summary>Initializes a new instance of <see cref="T:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationSource" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationSource.Build(Microsoft.Extensions.Configuration.IConfigurationBuilder)">
+      <summary>Builds the <see cref="T:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationProvider" /> for this source.</summary>
+      <param name="builder">The <see cref="T:Microsoft.Extensions.Configuration.IConfigurationBuilder" />.</param>
+      <returns>A <see cref="T:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationProvider" />.</returns>
+    </member>
+    <member name="P:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationSource.Args">
+      <summary>Gets or sets the command line args.</summary>
+    </member>
+    <member name="P:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationSource.SwitchMappings">
+      <summary>Gets or sets the switch mappings.</summary>
+    </member>
+    <member name="T:Microsoft.Extensions.Configuration.CommandLineConfigurationExtensions">
+      <summary>Extension methods for registering <see cref="T:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationProvider" /> with <see cref="T:Microsoft.Extensions.Configuration.IConfigurationBuilder" />.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.Configuration.CommandLineConfigurationExtensions.AddCommandLine(Microsoft.Extensions.Configuration.IConfigurationBuilder,System.Action{Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationSource})">
+      <summary>Adds an <see cref="T:Microsoft.Extensions.Configuration.IConfigurationProvider" /> that reads configuration values from the command line.</summary>
+      <param name="builder">The <see cref="T:Microsoft.Extensions.Configuration.IConfigurationBuilder" /> to add to.</param>
+      <param name="configureSource">Configures the source.</param>
+      <returns>The <see cref="T:Microsoft.Extensions.Configuration.IConfigurationBuilder" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Configuration.CommandLineConfigurationExtensions.AddCommandLine(Microsoft.Extensions.Configuration.IConfigurationBuilder,System.String[])">
+      <summary>
+              Adds a <see cref="T:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationProvider" /> 
+              that reads configuration values from the command line.</summary>
+      <param name="configurationBuilder">The <see cref="T:Microsoft.Extensions.Configuration.IConfigurationBuilder" /> to add to.</param>
+      <param name="args">The command line args.</param>
+      <returns>The <see cref="T:Microsoft.Extensions.Configuration.IConfigurationBuilder" />.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.Configuration.CommandLineConfigurationExtensions.AddCommandLine(Microsoft.Extensions.Configuration.IConfigurationBuilder,System.String[],System.Collections.Generic.IDictionary{System.String,System.String})">
+      <summary>
+              Adds a <see cref="T:Microsoft.Extensions.Configuration.CommandLine.CommandLineConfigurationProvider" /> that reads
+              configuration values from the command line using the specified switch mappings.</summary>
+      <param name="configurationBuilder">The <see cref="T:Microsoft.Extensions.Configuration.IConfigurationBuilder" /> to add to.</param>
+      <param name="args">The command line args.</param>
+      <param name="switchMappings">
+              The switch mappings. A dictionary of short (with prefix "-") and 
+              alias keys (with prefix "--"), mapped to the configuration key (no prefix).</param>
+      <returns>The <see cref="T:Microsoft.Extensions.Configuration.IConfigurationBuilder" />.</returns>
+    </member>
+  </members>
+</doc>
