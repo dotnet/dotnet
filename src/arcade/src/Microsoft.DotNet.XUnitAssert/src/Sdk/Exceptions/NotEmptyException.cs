@@ -5,20 +5,24 @@
 namespace Xunit.Sdk
 {
 	/// <summary>
-	/// Exception thrown when a collection is unexpectedly empty.
+	/// Exception thrown when Assert.NotEmpty fails.
 	/// </summary>
 #if XUNIT_VISIBILITY_INTERNAL
 	internal
 #else
 	public
 #endif
-	class NotEmptyException : XunitException
+	partial class NotEmptyException : XunitException
 	{
-		/// <summary>
-		/// Creates a new instance of the <see cref="NotEmptyException"/> class.
-		/// </summary>
-		public NotEmptyException() :
-			base("Assert.NotEmpty() Failure")
+		NotEmptyException(string message) :
+			base(message)
 		{ }
+
+		/// <summary>
+		/// Creates a new instance of the <see cref="NotEmptyException"/> class to be thrown
+		/// when a collection was unexpectedly empty.
+		/// </summary>
+		public static NotEmptyException ForNonEmptyCollection() =>
+			new NotEmptyException("Assert.NotEmpty() Failure: Collection was empty");
 	}
 }

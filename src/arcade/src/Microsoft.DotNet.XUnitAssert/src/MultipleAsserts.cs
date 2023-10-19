@@ -43,7 +43,7 @@ namespace Xunit
 			if (exceptions.Count == 1)
 				ExceptionDispatchInfo.Capture(exceptions[0]).Throw();
 
-			throw new MultipleException(exceptions);
+			throw MultipleException.ForFailures(exceptions);
 		}
 	}
 }

@@ -1,5 +1,8 @@
 #if XUNIT_NULLABLE
 #nullable enable
+#else
+// In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
+#pragma warning disable CS8625
 #endif
 
 using System;
@@ -7,72 +10,73 @@ using System;
 namespace Xunit.Sdk
 {
 	/// <summary>
-	/// Exception thrown when code unexpectedly fails to throw an exception.
+	/// Exception thrown when Assert.Throws fails.
 	/// </summary>
 #if XUNIT_VISIBILITY_INTERNAL
 	internal
 #else
 	public
 #endif
-	class ThrowsException : AssertActualExpectedException
+	partial class ThrowsException : XunitException
 	{
+		ThrowsException(
+			string message,
 #if XUNIT_NULLABLE
-		readonly string? stackTrace = null;
+			Exception? innerException = null) :
 #else
-		readonly string stackTrace = null;
+			Exception innerException = null) :
 #endif
-
-		/// <summary>
-		/// Creates a new instance of the <see cref="ThrowsException"/> class. Call this constructor
-		/// when no exception was thrown.
-		/// </summary>
-		/// <param name="expectedType">The type of the exception that was expected</param>
-		public ThrowsException(Type expectedType)
-			: this(expectedType, "(No exception was thrown)", null, null, null)
+				base(message, innerException)
 		{ }
 
 		/// <summary>
-		/// Creates a new instance of the <see cref="ThrowsException"/> class. Call this constructor
-		/// when an exception of the wrong type was thrown.
+		/// Creates a new instance of the <see cref="ThrowsException"/> class to be thrown when
+		/// an exception of the wrong type was thrown by Assert.Throws.
 		/// </summary>
-		/// <param name="expectedType">The type of the exception that was expected</param>
-		/// <param name="actual">The actual exception that was thrown</param>
-		public ThrowsException(Type expectedType, Exception actual)
-#if XUNIT_NULLABLE
-			: this(expectedType, ArgumentFormatter.Format(actual.GetType())!, actual.Message, actual.StackTrace, actual)
-#else
-			: this(expectedType, ArgumentFormatter.Format(actual.GetType()), actual.Message, actual.StackTrace, actual)
-#endif
-		{ }
+		/// <param name="expected">The expected exception type</param>
+		/// <param name="actual">The actual exception</param>
+		public static ThrowsException ForIncorrectExceptionType(
+			Type expected,
+			Exception actual) =>
+				new ThrowsException(
+					"Assert.Throws() Failure: Exception type was not an exact match" + Environment.NewLine +
+					"Expected: " + ArgumentFormatter.Format(expected) + Environment.NewLine +
+					"Actual:   " + ArgumentFormatter.Format(actual.GetType()),
+					actual
+				);
 
 		/// <summary>
-		/// THIS CONSTRUCTOR IS FOR UNIT TESTING PURPOSES ONLY.
+		/// Creates a new instance of the <see cref="ThrowsException"/> class to be thrown when
+		/// an <see cref="ArgumentException"/> is thrown with the wrong parameter name.
 		/// </summary>
+		/// <param name="expected">The exception type</param>
+		/// <param name="expectedParamName">The expected parameter name</param>
+		/// <param name="actualParamName">The actual parameter name</param>
+		public static ThrowsException ForIncorrectParameterName(
+			Type expected,
 #if XUNIT_NULLABLE
-		protected ThrowsException(Type expected, string actual, string? actualMessage, string? stackTrace, Exception? innerException)
+			string? expectedParamName,
+			string? actualParamName) =>
 #else
-		protected ThrowsException(Type expected, string actual, string actualMessage, string stackTrace, Exception innerException)
+			string expectedParamName,
+			string actualParamName) =>
 #endif
-			: base(
-				expected,
-				actual + (actualMessage == null ? "" : ": " + actualMessage),
-				"Assert.Throws() Failure",
-				null,
-				null,
-				innerException
-			)
-		{
-			this.stackTrace = stackTrace;
-		}
+				new ThrowsException(
+					"Assert.Throws() Failure: Incorrect parameter name" + Environment.NewLine +
+					"Exception: " + ArgumentFormatter.Format(expected) + Environment.NewLine +
+					"Expected:  " + ArgumentFormatter.Format(expectedParamName) + Environment.NewLine +
+					"Actual:    " + ArgumentFormatter.Format(actualParamName)
+				);
 
 		/// <summary>
-		/// Gets a string representation of the frames on the call stack at the time the current exception was thrown.
+		/// Creates a new instance of the <see cref="ThrowsException"/> class to be thrown when
+		/// an exception wasn't thrown by Assert.Throws.
 		/// </summary>
-		/// <returns>A string that describes the contents of the call stack, with the most recent method call appearing first.</returns>
-#if XUNIT_NULLABLE
-		public override string? StackTrace => stackTrace ?? base.StackTrace;
-#else
-		public override string StackTrace => stackTrace ?? base.StackTrace;
-#endif
+		/// <param name="expected">The expected exception type</param>
+		public static ThrowsException ForNoException(Type expected) =>
+			new ThrowsException(
+				"Assert.Throws() Failure: No exception was thrown" + Environment.NewLine +
+				"Expected: " + ArgumentFormatter.Format(expected)
+			);
 	}
 }

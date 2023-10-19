@@ -1,5 +1,8 @@
 #if XUNIT_NULLABLE
 #nullable enable
+#else
+// In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
+#pragma warning disable CS8604
 #endif
 
 using System;
@@ -45,10 +48,13 @@ namespace Xunit
 			T high,
 			IComparer<T> comparer)
 		{
+			GuardArgumentNotNull(nameof(actual), actual);
+			GuardArgumentNotNull(nameof(low), low);
+			GuardArgumentNotNull(nameof(high), high);
 			GuardArgumentNotNull(nameof(comparer), comparer);
 
 			if (comparer.Compare(low, actual) > 0 || comparer.Compare(actual, high) > 0)
-				throw new InRangeException(actual, low, high);
+				throw InRangeException.ForValueNotInRange(actual, low, high);
 		}
 
 		/// <summary>
@@ -81,10 +87,13 @@ namespace Xunit
 			T high,
 			IComparer<T> comparer)
 		{
+			GuardArgumentNotNull(nameof(actual), actual);
+			GuardArgumentNotNull(nameof(low), low);
+			GuardArgumentNotNull(nameof(high), high);
 			GuardArgumentNotNull(nameof(comparer), comparer);
 
 			if (comparer.Compare(low, actual) <= 0 && comparer.Compare(actual, high) <= 0)
-				throw new NotInRangeException(actual, low, high);
+				throw NotInRangeException.ForValueInRange(actual, low, high);
 		}
 	}
 }

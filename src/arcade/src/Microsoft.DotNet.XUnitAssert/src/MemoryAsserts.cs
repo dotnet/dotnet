@@ -16,15 +16,12 @@ namespace Xunit
 #endif
 	partial class Assert
 	{
-		// NOTE: there is an implicit conversion operator on Memory<T> to ReadOnlyMemory<T> - however, I have found that the compiler sometimes struggles
-		// with identifying the proper methods to use, thus I have overloaded quite a few of the assertions in terms of supplying both
-		// Memory and ReadOnlyMemory based methods
+		// While there is an implicit conversion operator from Memory<T> to ReadOnlyMemory<T>, the
+		// compiler still stumbles to do this automatically, which means we end up with lots of overloads
+		// with various arrangements of Memory<T> and ReadOnlyMemory<T>.
 
-		// NOTE: we could consider StartsWith<T> and EndsWith<T> with both arguments as ReadOnlyMemory<T>, and use the Memory extension methods on Span to check difference
-		// BUT: the current Exceptions for startswith and endswith are only built for string types, so those would need a change (or new non-string versions created).
-
-		// NOTE: Memory and ReadonlyMemory, even when null, are coerced into empty arrays of the specified type when a value is grabbed. Thus some of the code below
-		// for null scenarios looks odd, but is safe and correct.
+		// Also note that these classes will convert nulls into empty arrays automatically, since there
+		// is no way to represent a null readonly struct.
 
 		/// <summary>
 		/// Verifies that a Memory contains a given sub-Memory, using the default <see cref="StringComparison.CurrentCulture"/> comparison type.
@@ -176,7 +173,10 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(expectedSubMemory), expectedSubMemory);
 
 			if (actualMemory.Span.IndexOf(expectedSubMemory.Span) < 0)
-				throw new ContainsException(expectedSubMemory, actualMemory);
+				throw ContainsException.ForSubMemoryNotFound(
+					CollectionTracker<T>.FormatStart(expectedSubMemory.Span),
+					CollectionTracker<T>.FormatStart(actualMemory.Span)
+				);
 		}
 
 		/// <summary>
@@ -328,108 +328,18 @@ namespace Xunit
 		{
 			GuardArgumentNotNull(nameof(expectedSubMemory), expectedSubMemory);
 
-			if (actualMemory.Span.IndexOf(expectedSubMemory.Span) > -1)
-				throw new DoesNotContainException(expectedSubMemory, actualMemory);
-		}
+			var expectedSpan = expectedSubMemory.Span;
+			var actualSpan = actualMemory.Span;
+			var idx = actualSpan.IndexOf(expectedSpan);
 
-		/// <summary>
-		/// Verifies that a Memory starts with a given sub-Memory, using the default <see cref="StringComparison.CurrentCulture"/> comparison type.
-		/// </summary>
-		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
-		/// <param name="actualMemory">The Memory to be inspected</param>
-		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
-		public static void StartsWith(
-			Memory<char> expectedStartMemory,
-			Memory<char> actualMemory) =>
-				StartsWith((ReadOnlyMemory<char>)expectedStartMemory, (ReadOnlyMemory<char>)actualMemory, StringComparison.CurrentCulture);
+			if (idx > -1)
+			{
+				int? failurePointerIndent;
+				var formattedExpected = CollectionTracker<T>.FormatStart(expectedSpan);
+				var formattedActual = CollectionTracker<T>.FormatIndexedMismatch(actualSpan, idx, out failurePointerIndent);
 
-		/// <summary>
-		/// Verifies that a Memory starts with a given sub-Memory, using the default <see cref="StringComparison.CurrentCulture"/> comparison type.
-		/// </summary>
-		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
-		/// <param name="actualMemory">The Memory to be inspected</param>
-		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
-		public static void StartsWith(
-			Memory<char> expectedStartMemory,
-			ReadOnlyMemory<char> actualMemory) =>
-				StartsWith((ReadOnlyMemory<char>)expectedStartMemory, actualMemory, StringComparison.CurrentCulture);
-
-		/// <summary>
-		/// Verifies that a Memory starts with a given sub-Memory, using the default <see cref="StringComparison.CurrentCulture"/> comparison type.
-		/// </summary>
-		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
-		/// <param name="actualMemory">The Memory to be inspected</param>
-		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
-		public static void StartsWith(
-			ReadOnlyMemory<char> expectedStartMemory,
-			Memory<char> actualMemory) =>
-				StartsWith(expectedStartMemory, (ReadOnlyMemory<char>)actualMemory, StringComparison.CurrentCulture);
-
-		/// <summary>
-		/// Verifies that a Memory starts with a given sub-Memory, using the default StringComparison.CurrentCulture comparison type.
-		/// </summary>
-		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
-		/// <param name="actualMemory">The Memory to be inspected</param>
-		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
-		public static void StartsWith(
-			ReadOnlyMemory<char> expectedStartMemory,
-			ReadOnlyMemory<char> actualMemory) =>
-				StartsWith(expectedStartMemory, actualMemory, StringComparison.CurrentCulture);
-
-		/// <summary>
-		/// Verifies that a Memory starts with a given sub-Memory, using the given comparison type.
-		/// </summary>
-		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
-		/// <param name="actualMemory">The Memory to be inspected</param>
-		/// <param name="comparisonType">The type of string comparison to perform</param>
-		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
-		public static void StartsWith(
-			Memory<char> expectedStartMemory,
-			Memory<char> actualMemory,
-			StringComparison comparisonType = StringComparison.CurrentCulture) =>
-				StartsWith((ReadOnlyMemory<char>)expectedStartMemory, (ReadOnlyMemory<char>)actualMemory, comparisonType);
-
-		/// <summary>
-		/// Verifies that a Memory starts with a given sub-Memory, using the given comparison type.
-		/// </summary>
-		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
-		/// <param name="actualMemory">The Memory to be inspected</param>
-		/// <param name="comparisonType">The type of string comparison to perform</param>
-		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
-		public static void StartsWith(
-			Memory<char> expectedStartMemory,
-			ReadOnlyMemory<char> actualMemory,
-			StringComparison comparisonType = StringComparison.CurrentCulture) =>
-				StartsWith((ReadOnlyMemory<char>)expectedStartMemory, actualMemory, comparisonType);
-
-		/// <summary>
-		/// Verifies that a Memory starts with a given sub-Memory, using the given comparison type.
-		/// </summary>
-		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
-		/// <param name="actualMemory">The Memory to be inspected</param>
-		/// <param name="comparisonType">The type of string comparison to perform</param>
-		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
-		public static void StartsWith(
-			ReadOnlyMemory<char> expectedStartMemory,
-			Memory<char> actualMemory,
-			StringComparison comparisonType = StringComparison.CurrentCulture) =>
-				StartsWith(expectedStartMemory, (ReadOnlyMemory<char>)actualMemory, comparisonType);
-
-		/// <summary>
-		/// Verifies that a Memory starts with a given sub-Memory, using the given comparison type.
-		/// </summary>
-		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
-		/// <param name="actualMemory">The Memory to be inspected</param>
-		/// <param name="comparisonType">The type of string comparison to perform</param>
-		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
-		public static void StartsWith(
-			ReadOnlyMemory<char> expectedStartMemory,
-			ReadOnlyMemory<char> actualMemory,
-			StringComparison comparisonType = StringComparison.CurrentCulture)
-		{
-			GuardArgumentNotNull(nameof(expectedStartMemory), expectedStartMemory);
-
-			StartsWith(expectedStartMemory.Span, actualMemory.Span, comparisonType);
+				throw DoesNotContainException.ForSubMemoryFound(formattedExpected, idx, failurePointerIndent, formattedActual);
+			}
 		}
 
 		/// <summary>
@@ -584,14 +494,16 @@ namespace Xunit
 		/// <param name="ignoreCase">If set to <c>true</c>, ignores cases differences. The invariant culture is used.</param>
 		/// <param name="ignoreLineEndingDifferences">If set to <c>true</c>, treats \r\n, \r, and \n as equivalent.</param>
 		/// <param name="ignoreWhiteSpaceDifferences">If set to <c>true</c>, treats spaces and tabs (in any non-zero quantity) as equivalent.</param>
+		/// <param name="ignoreAllWhiteSpace">If set to <c>true</c>, ignores all white space differences during comparison.</param>
 		/// <exception cref="EqualException">Thrown when the Memory values are not equivalent.</exception>
 		public static void Equal(
 			Memory<char> expectedMemory,
 			Memory<char> actualMemory,
 			bool ignoreCase = false,
 			bool ignoreLineEndingDifferences = false,
-			bool ignoreWhiteSpaceDifferences = false) =>
-				Equal((ReadOnlyMemory<char>)expectedMemory, (ReadOnlyMemory<char>)actualMemory, ignoreCase, ignoreLineEndingDifferences, ignoreWhiteSpaceDifferences);
+			bool ignoreWhiteSpaceDifferences = false,
+			bool ignoreAllWhiteSpace = false) =>
+				Equal((ReadOnlyMemory<char>)expectedMemory, (ReadOnlyMemory<char>)actualMemory, ignoreCase, ignoreLineEndingDifferences, ignoreWhiteSpaceDifferences, ignoreAllWhiteSpace);
 
 		/// <summary>
 		/// Verifies that two Memory values are equivalent.
@@ -601,14 +513,16 @@ namespace Xunit
 		/// <param name="ignoreCase">If set to <c>true</c>, ignores cases differences. The invariant culture is used.</param>
 		/// <param name="ignoreLineEndingDifferences">If set to <c>true</c>, treats \r\n, \r, and \n as equivalent.</param>
 		/// <param name="ignoreWhiteSpaceDifferences">If set to <c>true</c>, treats spaces and tabs (in any non-zero quantity) as equivalent.</param>
+		/// <param name="ignoreAllWhiteSpace">If set to <c>true</c>, ignores all white space differences during comparison.</param>
 		/// <exception cref="EqualException">Thrown when the Memory values are not equivalent.</exception>
 		public static void Equal(
 			Memory<char> expectedMemory,
 			ReadOnlyMemory<char> actualMemory,
 			bool ignoreCase = false,
 			bool ignoreLineEndingDifferences = false,
-			bool ignoreWhiteSpaceDifferences = false) =>
-				Equal((ReadOnlyMemory<char>)expectedMemory, actualMemory, ignoreCase, ignoreLineEndingDifferences, ignoreWhiteSpaceDifferences);
+			bool ignoreWhiteSpaceDifferences = false,
+			bool ignoreAllWhiteSpace = false) =>
+				Equal((ReadOnlyMemory<char>)expectedMemory, actualMemory, ignoreCase, ignoreLineEndingDifferences, ignoreWhiteSpaceDifferences, ignoreAllWhiteSpace);
 
 		/// <summary>
 		/// Verifies that two Memory values are equivalent.
@@ -618,14 +532,16 @@ namespace Xunit
 		/// <param name="ignoreCase">If set to <c>true</c>, ignores cases differences. The invariant culture is used.</param>
 		/// <param name="ignoreLineEndingDifferences">If set to <c>true</c>, treats \r\n, \r, and \n as equivalent.</param>
 		/// <param name="ignoreWhiteSpaceDifferences">If set to <c>true</c>, treats spaces and tabs (in any non-zero quantity) as equivalent.</param>
+		/// <param name="ignoreAllWhiteSpace">If set to <c>true</c>, ignores all white space differences during comparison.</param>
 		/// <exception cref="EqualException">Thrown when the Memory values are not equivalent.</exception>
 		public static void Equal(
 			ReadOnlyMemory<char> expectedMemory,
 			Memory<char> actualMemory,
 			bool ignoreCase = false,
 			bool ignoreLineEndingDifferences = false,
-			bool ignoreWhiteSpaceDifferences = false) =>
-				Equal(expectedMemory, (ReadOnlyMemory<char>)actualMemory, ignoreCase, ignoreLineEndingDifferences, ignoreWhiteSpaceDifferences);
+			bool ignoreWhiteSpaceDifferences = false,
+			bool ignoreAllWhiteSpace = false) =>
+				Equal(expectedMemory, (ReadOnlyMemory<char>)actualMemory, ignoreCase, ignoreLineEndingDifferences, ignoreWhiteSpaceDifferences, ignoreAllWhiteSpace);
 
 		/// <summary>
 		/// Verifies that two Memory values are equivalent.
@@ -635,13 +551,15 @@ namespace Xunit
 		/// <param name="ignoreCase">If set to <c>true</c>, ignores cases differences. The invariant culture is used.</param>
 		/// <param name="ignoreLineEndingDifferences">If set to <c>true</c>, treats \r\n, \r, and \n as equivalent.</param>
 		/// <param name="ignoreWhiteSpaceDifferences">If set to <c>true</c>, treats spaces and tabs (in any non-zero quantity) as equivalent.</param>
+		/// <param name="ignoreAllWhiteSpace">If set to <c>true</c>, ignores all white space differences during comparison.</param>
 		/// <exception cref="EqualException">Thrown when the Memory values are not equivalent.</exception>
 		public static void Equal(
 			ReadOnlyMemory<char> expectedMemory,
 			ReadOnlyMemory<char> actualMemory,
 			bool ignoreCase = false,
 			bool ignoreLineEndingDifferences = false,
-			bool ignoreWhiteSpaceDifferences = false)
+			bool ignoreWhiteSpaceDifferences = false,
+			bool ignoreAllWhiteSpace = false)
 		{
 			GuardArgumentNotNull(nameof(expectedMemory), expectedMemory);
 
@@ -650,7 +568,8 @@ namespace Xunit
 				actualMemory.Span,
 				ignoreCase,
 				ignoreLineEndingDifferences,
-				ignoreWhiteSpaceDifferences
+				ignoreWhiteSpaceDifferences,
+				ignoreAllWhiteSpace
 			);
 		}
 
@@ -705,6 +624,106 @@ namespace Xunit
 
 			if (!expectedMemory.Span.SequenceEqual(actualMemory.Span))
 				Equal<object>(expectedMemory.Span.ToArray(), actualMemory.Span.ToArray());
+		}
+
+		/// <summary>
+		/// Verifies that a Memory starts with a given sub-Memory, using the default <see cref="StringComparison.CurrentCulture"/> comparison type.
+		/// </summary>
+		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
+		/// <param name="actualMemory">The Memory to be inspected</param>
+		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
+		public static void StartsWith(
+			Memory<char> expectedStartMemory,
+			Memory<char> actualMemory) =>
+				StartsWith((ReadOnlyMemory<char>)expectedStartMemory, (ReadOnlyMemory<char>)actualMemory, StringComparison.CurrentCulture);
+
+		/// <summary>
+		/// Verifies that a Memory starts with a given sub-Memory, using the default <see cref="StringComparison.CurrentCulture"/> comparison type.
+		/// </summary>
+		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
+		/// <param name="actualMemory">The Memory to be inspected</param>
+		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
+		public static void StartsWith(
+			Memory<char> expectedStartMemory,
+			ReadOnlyMemory<char> actualMemory) =>
+				StartsWith((ReadOnlyMemory<char>)expectedStartMemory, actualMemory, StringComparison.CurrentCulture);
+
+		/// <summary>
+		/// Verifies that a Memory starts with a given sub-Memory, using the default <see cref="StringComparison.CurrentCulture"/> comparison type.
+		/// </summary>
+		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
+		/// <param name="actualMemory">The Memory to be inspected</param>
+		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
+		public static void StartsWith(
+			ReadOnlyMemory<char> expectedStartMemory,
+			Memory<char> actualMemory) =>
+				StartsWith(expectedStartMemory, (ReadOnlyMemory<char>)actualMemory, StringComparison.CurrentCulture);
+
+		/// <summary>
+		/// Verifies that a Memory starts with a given sub-Memory, using the default StringComparison.CurrentCulture comparison type.
+		/// </summary>
+		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
+		/// <param name="actualMemory">The Memory to be inspected</param>
+		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
+		public static void StartsWith(
+			ReadOnlyMemory<char> expectedStartMemory,
+			ReadOnlyMemory<char> actualMemory) =>
+				StartsWith(expectedStartMemory, actualMemory, StringComparison.CurrentCulture);
+
+		/// <summary>
+		/// Verifies that a Memory starts with a given sub-Memory, using the given comparison type.
+		/// </summary>
+		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
+		/// <param name="actualMemory">The Memory to be inspected</param>
+		/// <param name="comparisonType">The type of string comparison to perform</param>
+		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
+		public static void StartsWith(
+			Memory<char> expectedStartMemory,
+			Memory<char> actualMemory,
+			StringComparison comparisonType = StringComparison.CurrentCulture) =>
+				StartsWith((ReadOnlyMemory<char>)expectedStartMemory, (ReadOnlyMemory<char>)actualMemory, comparisonType);
+
+		/// <summary>
+		/// Verifies that a Memory starts with a given sub-Memory, using the given comparison type.
+		/// </summary>
+		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
+		/// <param name="actualMemory">The Memory to be inspected</param>
+		/// <param name="comparisonType">The type of string comparison to perform</param>
+		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
+		public static void StartsWith(
+			Memory<char> expectedStartMemory,
+			ReadOnlyMemory<char> actualMemory,
+			StringComparison comparisonType = StringComparison.CurrentCulture) =>
+				StartsWith((ReadOnlyMemory<char>)expectedStartMemory, actualMemory, comparisonType);
+
+		/// <summary>
+		/// Verifies that a Memory starts with a given sub-Memory, using the given comparison type.
+		/// </summary>
+		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
+		/// <param name="actualMemory">The Memory to be inspected</param>
+		/// <param name="comparisonType">The type of string comparison to perform</param>
+		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
+		public static void StartsWith(
+			ReadOnlyMemory<char> expectedStartMemory,
+			Memory<char> actualMemory,
+			StringComparison comparisonType = StringComparison.CurrentCulture) =>
+				StartsWith(expectedStartMemory, (ReadOnlyMemory<char>)actualMemory, comparisonType);
+
+		/// <summary>
+		/// Verifies that a Memory starts with a given sub-Memory, using the given comparison type.
+		/// </summary>
+		/// <param name="expectedStartMemory">The sub-Memory expected to be at the start of the Memory</param>
+		/// <param name="actualMemory">The Memory to be inspected</param>
+		/// <param name="comparisonType">The type of string comparison to perform</param>
+		/// <exception cref="StartsWithException">Thrown when the Memory does not start with the expected subMemory</exception>
+		public static void StartsWith(
+			ReadOnlyMemory<char> expectedStartMemory,
+			ReadOnlyMemory<char> actualMemory,
+			StringComparison comparisonType = StringComparison.CurrentCulture)
+		{
+			GuardArgumentNotNull(nameof(expectedStartMemory), expectedStartMemory);
+
+			StartsWith(expectedStartMemory.Span, actualMemory.Span, comparisonType);
 		}
 	}
 }

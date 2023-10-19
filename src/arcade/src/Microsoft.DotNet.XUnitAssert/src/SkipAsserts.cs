@@ -31,7 +31,7 @@ namespace Xunit
 		{
 			GuardArgumentNotNull(nameof(reason), reason);
 
-			throw new SkipException(reason);
+			throw SkipException.ForSkip(reason);
 		}
 
 		/// <summary>
@@ -51,7 +51,7 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(reason), reason);
 
 			if (!condition)
-				throw new SkipException(reason);
+				throw SkipException.ForSkip(reason);
 		}
 
 		/// <summary>
@@ -71,7 +71,7 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(reason), reason);
 
 			if (condition)
-				throw new SkipException(reason);
+				throw SkipException.ForSkip(reason);
 		}
 	}
 }

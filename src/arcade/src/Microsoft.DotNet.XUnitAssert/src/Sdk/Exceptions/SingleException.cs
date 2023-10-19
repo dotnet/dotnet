@@ -3,42 +3,77 @@
 #endif
 
 using System;
+using System.Collections.Generic;
 
 namespace Xunit.Sdk
 {
 	/// <summary>
-	/// Exception thrown when the collection did not contain exactly one element.
+	/// Exception thrown when Assert.Single fails.
 	/// </summary>
 #if XUNIT_VISIBILITY_INTERNAL
 	internal
 #else
 	public
 #endif
-	class SingleException : XunitException
+	partial class SingleException : XunitException
 	{
 		SingleException(string errorMessage)
 			: base(errorMessage)
 		{ }
 
 		/// <summary>
-		/// Creates an instance of <see cref="SingleException"/> for when the collection didn't contain any of the expected value.
+		/// Creates an new instance of the <see cref="SingleException"/> class to be thrown when
+		/// the collection didn't contain any values (or didn't contain the expected value).
 		/// </summary>
+		/// <param name="expected">The expected value (set to <c>null</c> for no expected value)</param>
+		/// <param name="collection">The collection</param>
+		public static SingleException Empty(
 #if XUNIT_NULLABLE
-		public static Exception Empty(string? expected) =>
+			string? expected,
 #else
-		public static Exception Empty(string expected) =>
+			string expected,
 #endif
-			new SingleException($"The collection was expected to contain a single element{(expected == null ? "" : " matching " + expected)}, but it {(expected == null ? "was empty." : "contained no matching elements.")}");
+			string collection)
+		{
+			if (expected == null)
+				return new SingleException("Assert.Single() Failure: The collection was empty");
+
+			return new SingleException(
+				"Assert.Single() Failure: The collection did not contain any matching items" + Environment.NewLine +
+				"Expected:   " + expected + Environment.NewLine +
+				"Collection: " + collection
+			);
+		}
 
 		/// <summary>
-		/// Creates an instance of <see cref="SingleException"/> for when the collection had too many of the expected items.
+		/// Creates an new instance of the <see cref="SingleException"/> class to be thrown when
+		/// the collection more than one value (or contained more than one of the expected value).
 		/// </summary>
-		/// <returns></returns>
+		/// <param name="count">The number of items, or the number of matching items</param>
+		/// <param name="expected">The expected value (set to <c>null</c> for no expected value)</param>
+		/// <param name="collection">The collection</param>
+		/// <param name="matchIndices">The list of indices where matches occurred</param>
+		public static SingleException MoreThanOne(
+			int count,
 #if XUNIT_NULLABLE
-		public static Exception MoreThanOne(int count, string? expected) =>
+			string? expected,
 #else
-		public static Exception MoreThanOne(int count, string expected) =>
+			string expected,
 #endif
-			new SingleException($"The collection was expected to contain a single element{(expected == null ? "" : " matching " + expected)}, but it contained {count}{(expected == null ? "" : " matching")} elements.");
+			string collection,
+			List<int> matchIndices)
+		{
+			var message = $"Assert.Single() Failure: The collection contained {count} {(expected == null ? "" : "matching ")}items";
+
+			if (expected == null)
+				message += Environment.NewLine + "Collection: " + collection;
+			else
+				message +=
+					Environment.NewLine + "Expected:      " + expected +
+					Environment.NewLine + "Collection:    " + collection +
+					Environment.NewLine + "Match indices: " + string.Join(", ", matchIndices);
+
+			return new SingleException(message);
+		}
 	}
 }

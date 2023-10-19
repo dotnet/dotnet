@@ -1,5 +1,9 @@
 #if XUNIT_NULLABLE
 #nullable enable
+#else
+// In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
+#pragma warning disable CS8604
+#pragma warning disable CS8625
 #endif
 
 using System;
@@ -32,7 +36,9 @@ namespace Xunit
 		public static T IsAssignableFrom<T>(object @object)
 #endif
 		{
+#pragma warning disable xUnit2007
 			IsAssignableFrom(typeof(T), @object);
+#pragma warning restore xUnit2007
 			return (T)@object;
 		}
 
@@ -53,7 +59,41 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(expectedType), expectedType);
 
 			if (@object == null || !expectedType.GetTypeInfo().IsAssignableFrom(@object.GetType().GetTypeInfo()))
-				throw new IsAssignableFromException(expectedType, @object);
+				throw IsAssignableFromException.ForIncompatibleType(expectedType, @object);
+		}
+
+		/// <summary>
+		/// Verifies that an object is not of the given type or a derived type.
+		/// </summary>
+		/// <typeparam name="T">The type the object should not be</typeparam>
+		/// <param name="object">The object to be evaluated</param>
+		/// <returns>The object, casted to type T when successful</returns>
+		/// <exception cref="IsNotAssignableFromException">Thrown when the object is of the given type</exception>
+#if XUNIT_NULLABLE
+		public static void IsNotAssignableFrom<T>(object? @object) =>
+#else
+		public static void IsNotAssignableFrom<T>(object @object) =>
+#endif
+			IsNotAssignableFrom(typeof(T), @object);
+
+		/// <summary>
+		/// Verifies that an object is not of the given type or a derived type.
+		/// </summary>
+		/// <param name="expectedType">The type the object should not be</param>
+		/// <param name="object">The object to be evaluated</param>
+		/// <exception cref="IsNotAssignableFromException">Thrown when the object is of the given type</exception>
+		public static void IsNotAssignableFrom(
+			Type expectedType,
+#if XUNIT_NULLABLE
+			object? @object)
+#else
+			object @object)
+#endif
+		{
+			GuardArgumentNotNull(nameof(expectedType), expectedType);
+
+			if (@object != null && expectedType.GetTypeInfo().IsAssignableFrom(@object.GetType().GetTypeInfo()))
+				throw IsNotAssignableFromException.ForCompatibleType(expectedType, @object);
 		}
 
 		/// <summary>
@@ -67,7 +107,9 @@ namespace Xunit
 #else
 		public static void IsNotType<T>(object @object) =>
 #endif
+#pragma warning disable xUnit2007
 			IsNotType(typeof(T), @object);
+#pragma warning restore xUnit2007
 
 		/// <summary>
 		/// Verifies that an object is not exactly the given type.
@@ -86,7 +128,7 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(expectedType), expectedType);
 
 			if (@object != null && expectedType.Equals(@object.GetType()))
-				throw new IsNotTypeException(expectedType, @object);
+				throw IsNotTypeException.ForExactType(expectedType);
 		}
 
 		/// <summary>
@@ -102,7 +144,9 @@ namespace Xunit
 		public static T IsType<T>(object @object)
 #endif
 		{
+#pragma warning disable xUnit2007
 			IsType(typeof(T), @object);
+#pragma warning restore xUnit2007
 			return (T)@object;
 		}
 
@@ -123,21 +167,21 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(expectedType), expectedType);
 
 			if (@object == null)
-				throw new IsTypeException(expectedType.FullName, null);
+				throw IsTypeException.ForMismatchedType(ArgumentFormatter.Format(expectedType), null);
 
 			var actualType = @object.GetType();
 			if (expectedType != actualType)
 			{
-				var expectedTypeName = expectedType.FullName;
-				var actualTypeName = actualType.FullName;
+				var expectedTypeName = ArgumentFormatter.Format(expectedType);
+				var actualTypeName = ArgumentFormatter.Format(actualType);
 
 				if (expectedTypeName == actualTypeName)
 				{
-					expectedTypeName += $" ({expectedType.GetTypeInfo().Assembly.GetName().FullName})";
-					actualTypeName += $" ({actualType.GetTypeInfo().Assembly.GetName().FullName})";
+					expectedTypeName += $" (from {expectedType.GetTypeInfo().Assembly.GetName().FullName})";
+					actualTypeName += $" (from {actualType.GetTypeInfo().Assembly.GetName().FullName})";
 				}
 
-				throw new IsTypeException(expectedTypeName, actualTypeName);
+				throw IsTypeException.ForMismatchedType(expectedTypeName, actualTypeName);
 			}
 		}
 	}

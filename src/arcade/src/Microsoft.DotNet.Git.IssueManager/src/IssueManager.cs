@@ -68,5 +68,24 @@ namespace Microsoft.DotNet.Git.IssueManager
                 labels,
                 assignees);
         }
+
+        /// <summary>
+        /// Creates a new comment on a GitHub issue.
+        /// </summary>
+        /// <param name="repositoryUrl">Repository URL where to create the issue.</param>
+        /// <param name="issueTitle">Title of the issue.</param>
+        /// <param name="issueDescription">Description of the issue.</param>
+        /// <returns></returns>
+        public async Task<string> CreateNewIssueCommentAsync(
+            string repositoryUrl,
+            int issueNumber,
+            string comment)
+        {
+            return await RepositoryHelper.CreateNewIssueCommentAsync(
+                repositoryUrl,
+                issueNumber,
+                comment,
+                GitHubPersonalAccessToken);
+        }
     }
 }

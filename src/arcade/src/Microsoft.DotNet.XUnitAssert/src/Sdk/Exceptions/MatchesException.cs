@@ -7,29 +7,36 @@ using System;
 namespace Xunit.Sdk
 {
 	/// <summary>
-	/// Exception thrown when a string does not match a regular expression.
+	/// Exception thrown when Assert.Matches fails.
 	/// </summary>
 #if XUNIT_VISIBILITY_INTERNAL
 	internal
 #else
 	public
 #endif
-	class MatchesException : XunitException
+	partial class MatchesException : XunitException
 	{
+		MatchesException(string message) :
+			base(message)
+		{ }
+
 		/// <summary>
-		/// Creates a new instance of the <see cref="MatchesException"/> class.
+		/// Creates a new instance of the <see cref="MatchesException"/> class to be thrown when
+		/// the regular expression pattern isn't found within the value.
 		/// </summary>
 		/// <param name="expectedRegexPattern">The expected regular expression pattern</param>
 		/// <param name="actual">The actual value</param>
-		public MatchesException(
-#if XUNIT_NULLABLE
-			string? expectedRegexPattern,
-			object? actual) :
-#else
+		public static MatchesException ForMatchNotFound(
 			string expectedRegexPattern,
-			object actual) :
+#if XUNIT_NULLABLE
+			string? actual) =>
+#else
+			string actual) =>
 #endif
-				base($"Assert.Matches() Failure:{Environment.NewLine}Regex: {expectedRegexPattern}{Environment.NewLine}Value: {actual}")
-		{ }
+				new MatchesException(
+					"Assert.Matches() Failure: Pattern not found in value" + Environment.NewLine +
+					"Regex: " + ArgumentFormatter.Format(expectedRegexPattern) + Environment.NewLine +
+					"Value: " + ArgumentFormatter.Format(actual)
+				);
 	}
 }

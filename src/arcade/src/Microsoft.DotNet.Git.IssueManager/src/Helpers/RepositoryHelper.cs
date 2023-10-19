@@ -72,5 +72,33 @@ namespace Microsoft.DotNet.Git.IssueManager.Helpers
 
             throw new InvalidCastException($"'{parsedUri}' is not a valid URI");
         }
+
+        public static async Task<string> CreateNewIssueCommentAsync(
+            string repositoryUrl,
+            int issueNumber,
+            string comment,
+            string gitHubPersonalAccessToken)
+        {
+            if (Uri.TryCreate(repositoryUrl, UriKind.Absolute, out Uri parsedUri))
+            {
+                if (parsedUri.Host == "github.com")
+                {
+                    if (string.IsNullOrEmpty(gitHubPersonalAccessToken))
+                    {
+                        throw new ArgumentException("A GitHub personal access token is needed for this operation.");
+                    }
+
+                    return await GitHubClient.CreateNewIssueCommentAsync(
+                        repositoryUrl,
+                        issueNumber,
+                        comment,
+                        gitHubPersonalAccessToken);
+                }
+
+                throw new NotImplementedException("Creating comments is not currently supported for an Azure DevOps repo.");
+            }
+
+            throw new InvalidCastException($"'{parsedUri}' is not a valid URI");
+        }
     }
 }

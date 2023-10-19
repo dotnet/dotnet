@@ -1,5 +1,8 @@
 #if XUNIT_NULLABLE
 #nullable enable
+#else
+// In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
+#pragma warning disable CS8767
 #endif
 
 using System;
@@ -9,10 +12,10 @@ using System.Collections.Generic;
 namespace Xunit.Sdk
 {
 	/// <summary>
-	/// A class that wraps <see cref="IEqualityComparer{T}"/> to create <see cref="IEqualityComparer"/>.
+	/// A class that wraps <see cref="IEqualityComparer{T}"/> to add <see cref="IEqualityComparer"/>.
 	/// </summary>
 	/// <typeparam name="T">The type that is being compared.</typeparam>
-	class AssertEqualityComparerAdapter<T> : IEqualityComparer
+	class AssertEqualityComparerAdapter<T> : IEqualityComparer, IEqualityComparer<T>
 	{
 		readonly IEqualityComparer<T> innerComparer;
 
@@ -41,9 +44,28 @@ namespace Xunit.Sdk
 #endif
 
 		/// <inheritdoc/>
-		public int GetHashCode(object obj)
-		{
-			throw new NotImplementedException();
-		}
+		public bool Equals(
+#if XUNIT_NULLABLE
+			T? x,
+			T? y) =>
+#else
+			T x,
+			T y) =>
+#endif
+				innerComparer.Equals(x, y);
+
+
+		/// <inheritdoc/>
+		public int GetHashCode(object obj) =>
+			innerComparer.GetHashCode((T)obj);
+
+		// This warning disable is here because sometimes IEqualityComparer<T>.GetHashCode marks the obj parameter
+		// with [DisallowNull] and sometimes it doesn't, and we need to be able to support both scenarios when
+		// someone brings in the assertion library via source.
+#pragma warning disable CS8607
+		/// <inheritdoc/>
+		public int GetHashCode(T obj) =>
+			innerComparer.GetHashCode(obj);
+#pragma warning restore CS8607
 	}
 }
