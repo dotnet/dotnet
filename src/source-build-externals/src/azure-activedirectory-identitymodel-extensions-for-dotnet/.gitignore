@@ -210,3 +210,5 @@ backup/*
 /.vs/
 test/ApiChangeTest/Resource/devAssemblies
 test/ApiChangeTest/Resource/reports
+/benchmark/Microsoft.IdentityModel.Benchmarks/BenchmarkDotNet.Artifacts/results
+/benchmark/Microsoft.IdentityModel.Benchmarks/.vs

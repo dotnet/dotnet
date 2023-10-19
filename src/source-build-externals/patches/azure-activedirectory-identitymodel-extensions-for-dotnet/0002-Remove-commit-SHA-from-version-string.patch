@@ -18,8 +18,8 @@ index abbcfac6..2c6a119e 100755
  
 -commitSha=$(git rev-parse HEAD)
 -
- assemblyVersion=$(sed -n 's/.*<assemblyVersion>\([^<]*\)<.*/\1/p' $PWD/buildConfiguration.xml)
- assemblyFileVersion="$assemblyVersion.${dateTimeStamp::-6}" # Trim minutes/seconds
+ assemblyVersion=$(sed -n 's/.*<assemblyVersion>\([^<]*\)<.*/\1/p' ${scriptroot}/buildConfiguration.xml)
+ assemblyFileVersion="$assemblyVersion.${dateTimeStamp::$((${#dateTimeStamp} - 6))}" # Trim minutes/seconds
 -assemblyInformationalVersion="$assemblyVersion.$dateTimeStamp.$commitSha"
 +assemblyInformationalVersion="$assemblyVersion.$dateTimeStamp"
  

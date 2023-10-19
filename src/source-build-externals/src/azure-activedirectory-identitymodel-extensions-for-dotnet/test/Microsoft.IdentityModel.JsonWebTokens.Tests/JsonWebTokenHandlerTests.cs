@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IdentityModel.Tokens.Jwt.Tests;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -402,9 +403,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             };
         }
 
-#if NET_CORE
-        [PlatformSpecific(TestPlatforms.Windows)]
-#endif
         /// <summary>
         /// Verify the results from ValidateToken() and ValidateTokenAsync() should match.
         /// </summary>
@@ -412,25 +410,32 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         [Theory, MemberData(nameof(CreateJWEWithAesGcmTheoryData))]
         public void TokenValidationResultsShouldMatch(CreateTokenTheoryData theoryData)
         {
-            var context = TestUtilities.WriteHeader($"{this}.TokenValidationResultCompare", theoryData);
-            try
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                string jweFromJwtHandler = theoryData.JwtSecurityTokenHandler.CreateEncodedJwt(theoryData.TokenDescriptor);
-
-                theoryData.ValidationParameters.ValidateLifetime = false;
-                var claimsPrincipal = theoryData.JwtSecurityTokenHandler.ValidateToken(jweFromJwtHandler, theoryData.ValidationParameters, out SecurityToken validatedTokenFromJwtHandler);
-                var validationResult = theoryData.JwtSecurityTokenHandler.ValidateTokenAsync(jweFromJwtHandler, theoryData.ValidationParameters).Result;
-
-                // verify the results from asynchronous and synchronous are the same
-                IdentityComparer.AreClaimsIdentitiesEqual(claimsPrincipal.Identity as ClaimsIdentity, validationResult.ClaimsIdentity, context);
-                theoryData.ExpectedException.ProcessNoException(context);
+                Assert.Throws<PlatformNotSupportedException>(() => new AuthenticatedEncryptionProvider(Default.SymmetricEncryptionKey256, theoryData.EncryptingCredentials.Enc));
             }
-            catch (Exception ex)
+            else
             {
-                theoryData.ExpectedException.ProcessException(ex, context);
-            }
+                var context = TestUtilities.WriteHeader($"{this}.TokenValidationResultCompare", theoryData);
+                try
+                {
+                    string jweFromJwtHandler = theoryData.JwtSecurityTokenHandler.CreateEncodedJwt(theoryData.TokenDescriptor);
 
-            TestUtilities.AssertFailIfErrors(context);
+                    theoryData.ValidationParameters.ValidateLifetime = false;
+                    var claimsPrincipal = theoryData.JwtSecurityTokenHandler.ValidateToken(jweFromJwtHandler, theoryData.ValidationParameters, out SecurityToken validatedTokenFromJwtHandler);
+                    var validationResult = theoryData.JwtSecurityTokenHandler.ValidateTokenAsync(jweFromJwtHandler, theoryData.ValidationParameters).Result;
+
+                    // verify the results from asynchronous and synchronous are the same
+                    IdentityComparer.AreClaimsIdentitiesEqual(claimsPrincipal.Identity as ClaimsIdentity, validationResult.ClaimsIdentity, context);
+                    theoryData.ExpectedException.ProcessNoException(context);
+                }
+                catch (Exception ex)
+                {
+                    theoryData.ExpectedException.ProcessException(ex, context);
+                }
+
+                TestUtilities.AssertFailIfErrors(context);
+            }
         }
 
         [Theory, MemberData(nameof(CreateJWEWithAesGcmTheoryData))]

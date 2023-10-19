@@ -43,7 +43,7 @@ Write-Host "assemblyInformationalVersion: "  $assemblyInformationalVersion
 $nugetSuffix = [string]$buildConfiguration.SelectSingleNode("root/nugetSuffix").InnerText
 if ( $packageType -eq "release")
 {
-    $versionSuffix = $nugetSuffix
+    $versionSuffix = ""
 }
 else
 {
@@ -73,5 +73,3 @@ foreach($project in $buildConfiguration.SelectNodes("root/projects/src/project")
 }
 
 WriteSectionFooter("updateAssemblyInfo.ps1")
-
-return "$assemblyVersion-$versionSuffix"

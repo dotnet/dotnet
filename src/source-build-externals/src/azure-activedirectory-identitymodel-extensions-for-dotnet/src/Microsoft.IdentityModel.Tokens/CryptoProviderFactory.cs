@@ -566,9 +566,6 @@ namespace Microsoft.IdentityModel.Tokens
             if (typeofSignatureProvider == null)
                 throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10621, LogHelper.MarkAsNonPII(typeof(SymmetricSignatureProvider)), LogHelper.MarkAsNonPII(typeof(SecurityKey)), LogHelper.MarkAsNonPII(typeof(AsymmetricSecurityKey)), LogHelper.MarkAsNonPII(typeof(SymmetricSecurityKey)), LogHelper.MarkAsNonPII(key.GetType()))));
 
-            if (!IsSupportedAlgorithm(algorithm, key))
-                throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10634, LogHelper.MarkAsNonPII(algorithm), key)));
-
             if (CacheSignatureProviders && cacheProvider)
             {
                 if (CryptoProviderCache.TryGetSignatureProvider(key, algorithm, typeofSignatureProvider, willCreateSignatures, out signatureProvider))
@@ -585,6 +582,9 @@ namespace Microsoft.IdentityModel.Tokens
                         return signatureProvider;
                     }
 
+                    if (!IsSupportedAlgorithm(algorithm, key))
+                        throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10634, LogHelper.MarkAsNonPII(algorithm), key)));
+
                     if (createAsymmetric)
                         signatureProvider = new AsymmetricSignatureProvider(key, algorithm, willCreateSignatures, this);
                     else
@@ -594,13 +594,19 @@ namespace Microsoft.IdentityModel.Tokens
                         CryptoProviderCache.TryAdd(signatureProvider);
                 }
             }
-            else if (createAsymmetric)
-            {
-                signatureProvider = new AsymmetricSignatureProvider(key, algorithm, willCreateSignatures);
-            }
             else
-            { 
-                signatureProvider = new SymmetricSignatureProvider(key, algorithm, willCreateSignatures);
+            {
+                if (!IsSupportedAlgorithm(algorithm, key))
+                    throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10634, LogHelper.MarkAsNonPII(algorithm), key)));
+
+                if (createAsymmetric)
+                {
+                    signatureProvider = new AsymmetricSignatureProvider(key, algorithm, willCreateSignatures);
+                }
+                else
+                {
+                    signatureProvider = new SymmetricSignatureProvider(key, algorithm, willCreateSignatures);
+                }
             }
 
             return signatureProvider;

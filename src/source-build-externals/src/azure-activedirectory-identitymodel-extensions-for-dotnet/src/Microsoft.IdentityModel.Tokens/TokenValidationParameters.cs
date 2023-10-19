@@ -855,7 +855,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <summary>
         /// Gets or sets a boolean that controls the validation order of the payload and signature during token validation.
         /// </summary>
-        /// <remarks>If <see cref= "ValidateSignatureLast" /> is set to ture, it will validate payload ahead of signature .
+        /// <remarks>If <see cref= "ValidateSignatureLast" /> is set to true, it will validate payload ahead of signature.
         /// The default is <c>false</c>.
         /// </remarks>
         [DefaultValue(false)]

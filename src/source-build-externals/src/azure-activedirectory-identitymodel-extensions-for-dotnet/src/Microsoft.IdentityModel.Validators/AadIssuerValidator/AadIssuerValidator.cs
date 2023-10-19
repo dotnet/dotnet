@@ -24,6 +24,7 @@ namespace Microsoft.IdentityModel.Validators
         private static readonly TimeSpan LastKnownGoodConfigurationLifetime = new TimeSpan(0, 24, 0, 0);
 
         internal const string V2EndpointSuffix = "/v2.0";
+        internal const string V2EndpointSuffixWithTrailingSlash = $"{V2EndpointSuffix}/";
         internal const string TenantIdTemplate = "{tenantid}";
 
         internal AadIssuerValidator(
@@ -307,7 +308,9 @@ namespace Microsoft.IdentityModel.Validators
 
         private BaseConfigurationManager GetEffectiveConfigurationManager(SecurityToken securityToken)
         {
-            return (securityToken.Issuer.EndsWith(V2EndpointSuffix, StringComparison.OrdinalIgnoreCase)) ? ConfigurationManagerV2 : ConfigurationManagerV1;
+            var isV2 = securityToken.Issuer.EndsWith(V2EndpointSuffixWithTrailingSlash, StringComparison.OrdinalIgnoreCase) ||
+                securityToken.Issuer.EndsWith(V2EndpointSuffix, StringComparison.OrdinalIgnoreCase);
+            return isV2 ? ConfigurationManagerV2 : ConfigurationManagerV1;
         }
 
         /// <summary>Gets the tenant ID from a token.</summary>

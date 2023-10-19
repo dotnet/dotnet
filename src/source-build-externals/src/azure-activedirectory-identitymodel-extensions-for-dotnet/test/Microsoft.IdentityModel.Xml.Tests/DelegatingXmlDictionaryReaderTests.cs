@@ -20,6 +20,47 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
             try
             {
                 var depth = theoryData.DelegatingReader.Depth;
+
+                if (!theoryData.First)
+                {
+                    Assert.Equal(theoryData.DelegatingReader.InnerReaderPublic.Depth, theoryData.DelegatingReader.Depth);
+                    Assert.Equal(theoryData.DelegatingReader.InnerReaderPublic.Value, theoryData.DelegatingReader.Value);
+                    Assert.Equal(theoryData.DelegatingReader.InnerReaderPublic.Name, theoryData.DelegatingReader.Name);
+                    Assert.Equal(theoryData.DelegatingReader.InnerReaderPublic.NamespaceURI, theoryData.DelegatingReader.NamespaceURI);
+                    Assert.Equal(theoryData.DelegatingReader.InnerReaderPublic.AttributeCount, theoryData.DelegatingReader.AttributeCount);
+                }
+
+                theoryData.ExpectedException.ProcessNoException(context);
+            }
+            catch (Exception ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex, context);
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        [Theory, MemberData(nameof(ReadPartialXmlWithUniqueIdTheoryData))]
+        public void ReadPartialXml(DelegatingXmlDictionaryReaderTheoryData theoryData)
+        {
+            var context = TestUtilities.WriteHeader($"{this}.ReadXml", theoryData);
+            try
+            {
+                Assert.Equal(theoryData.DelegatingReader.InnerReaderPublic.Depth, theoryData.DelegatingReader.Depth);
+                Assert.Equal(theoryData.DelegatingReader.InnerReaderPublic.Value, theoryData.DelegatingReader.Value);
+                Assert.Equal(theoryData.DelegatingReader.InnerReaderPublic.Name, theoryData.DelegatingReader.Name);
+                Assert.Equal(theoryData.DelegatingReader.InnerReaderPublic.NamespaceURI, theoryData.DelegatingReader.NamespaceURI);
+                Assert.Equal(theoryData.DelegatingReader.InnerReaderPublic.AttributeCount, theoryData.DelegatingReader.AttributeCount);
+
+                theoryData.DelegatingReader.InnerReaderPublic.MoveToContent();
+                theoryData.DelegatingReader.MoveToContent();
+
+                theoryData.DelegatingReader.InnerReaderPublic.MoveToAttribute("URI");
+                theoryData.DelegatingReader.MoveToAttribute("URI");
+
+                Assert.Equal(theoryData.DelegatingReader.InnerReaderPublic.ReadContentAsUniqueId(),
+                    theoryData.DelegatingReader.ReadContentAsUniqueId());
+
                 theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception ex)
@@ -50,6 +91,34 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
                             InnerReaderPublic = XmlUtilities.CreateDictionaryReader(Default.OuterXml)
                         },
                         TestId = "InnerReader-Set"
+                    }
+                };
+            }
+        }
+
+        public static TheoryData<DelegatingXmlDictionaryReaderTheoryData> ReadPartialXmlWithUniqueIdTheoryData
+        {
+            get
+            {
+                return new TheoryData<DelegatingXmlDictionaryReaderTheoryData>
+                {
+                    new DelegatingXmlDictionaryReaderTheoryData
+                    {
+                        DelegatingReader = new DelegatingXmlDictionaryReaderPublic
+                        {
+                            InnerReaderPublic = XmlUtilities.CreateDictionaryReader(Default.OuterXml)
+                        },
+                        First = true,
+                        ExpectedException = ExpectedException.XmlException(inner: typeof(FormatException)),
+                        TestId = "InnerReader-FullXml"
+                    },
+                    new DelegatingXmlDictionaryReaderTheoryData
+                    {
+                        DelegatingReader = new DelegatingXmlDictionaryReaderPublic
+                        {
+                            InnerReaderPublic = XmlUtilities.CreateDictionaryReader("<Elemnt URI=\"uuid-88d1a312-e27e-4bb8-a69f-e4fd295daf04\" />")
+                        },
+                        TestId = "InnerReader-PartialXmlWithUri"
                     }
                 };
             }
