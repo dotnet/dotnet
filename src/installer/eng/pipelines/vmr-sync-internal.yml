@@ -5,6 +5,10 @@ trigger:
   branches:
     include:
     - internal/release/*
+    exclude:
+    - internal/release/*.0.2xx
+    - internal/release/*.0.3xx
+    - internal/release/*.0.4xx
 
 resources:
   repositories:
