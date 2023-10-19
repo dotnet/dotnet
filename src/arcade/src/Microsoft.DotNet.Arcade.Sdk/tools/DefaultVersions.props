@@ -50,7 +50,7 @@
     <UsingToolXUnit Condition="'$(UsingToolXUnit)' == ''">true</UsingToolXUnit>
 
     <!--
-      Use compilers from the Microsoft.Net.Compilers/Microsoft.NETCore.Compilers package.
+      Use compilers from the Microsoft.Net.Compilers.Toolset package.
       Repo can set this property to true if it needs to use a different version of the compiler than the one in the dotnet SDK.
     -->
     <UsingToolMicrosoftNetCompilers Condition="'$(UsingToolMicrosoftNetCompilers)' == ''">false</UsingToolMicrosoftNetCompilers>

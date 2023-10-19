@@ -1,5 +1,8 @@
 #if XUNIT_NULLABLE
 #nullable enable
+#else
+// In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
+#pragma warning disable CS8603
 #endif
 
 using System;
@@ -44,27 +47,37 @@ namespace Xunit
 		/// a return value. Generally used for testing property accessors.
 		/// </summary>
 		/// <param name="testCode">The code which may thrown an exception.</param>
+		/// <param name="asyncMethodName">The name of the async method the user should've called if they accidentally
+		/// passed in an async function</param>
 		/// <returns>Returns the exception that was thrown by the code; null, otherwise.</returns>
 #if XUNIT_NULLABLE
-		protected static Exception? RecordException(Func<object?> testCode)
+		protected static Exception? RecordException(
+			Func<object?> testCode,
 #else
-		protected static Exception RecordException(Func<object> testCode)
+		protected static Exception RecordException(
+			Func<object> testCode,
 #endif
+			string asyncMethodName)
 		{
 			GuardArgumentNotNull(nameof(testCode), testCode);
-			var task = default(Task);
+
+			var result = default(object);
 
 			try
 			{
-				task = testCode() as Task;
+				result = testCode();
 			}
 			catch (Exception ex)
 			{
 				return ex;
 			}
 
-			if (task != null)
-				throw new InvalidOperationException("You must call Assert.ThrowsAsync, Assert.DoesNotThrowAsync, or Record.ExceptionAsync when testing async code.");
+#if XUNIT_VALUETASK
+			if (result is Task || result is ValueTask)
+#else
+			if (result is Task)
+#endif
+				throw new InvalidOperationException($"You must call Assert.{asyncMethodName} when testing async code");
 
 			return null;
 		}

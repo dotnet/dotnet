@@ -2,32 +2,41 @@
 #nullable enable
 #endif
 
+using System;
+
 namespace Xunit.Sdk
 {
 	/// <summary>
-	/// Exception thrown when the value is unexpectedly not of the exact given type.
+	/// Exception thrown when Assert.IsType fails.
 	/// </summary>
 #if XUNIT_VISIBILITY_INTERNAL
 	internal
 #else
 	public
 #endif
-	class IsTypeException : AssertActualExpectedException
+	partial class IsTypeException : XunitException
 	{
+		IsTypeException(string message) :
+			base(message)
+		{ }
+
 		/// <summary>
-		/// Creates a new instance of the <see cref="IsTypeException"/> class.
+		/// Creates a new instance of the <see cref="IsTypeException"/> class to be thrown
+		/// when an object did not exactly match the given type
 		/// </summary>
 		/// <param name="expectedTypeName">The expected type name</param>
 		/// <param name="actualTypeName">The actual type name</param>
-		public IsTypeException(
-#if XUNIT_NULLABLE
-			string? expectedTypeName,
-			string? actualTypeName) :
-#else
+		public static IsTypeException ForMismatchedType(
 			string expectedTypeName,
-			string actualTypeName) :
+#if XUNIT_NULLABLE
+			string? actualTypeName) =>
+#else
+			string actualTypeName) =>
 #endif
-				base(expectedTypeName, actualTypeName, "Assert.IsType() Failure")
-		{ }
+				new IsTypeException(
+					"Assert.IsType() Failure: Value is " + (actualTypeName == null ? "null" : "not the exact type") + Environment.NewLine +
+					"Expected: " + expectedTypeName + Environment.NewLine +
+					"Actual:   " + (actualTypeName ?? "null")
+				);
 	}
 }

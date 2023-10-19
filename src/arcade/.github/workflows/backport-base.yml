@@ -14,10 +14,15 @@ on:
           Backport of #%source_pr_number% to %target_branch%
 
           /cc %cc_users%
+      repository_owners:
+        description: 'A comma-separated list of repository owners where the workflow will run. Defaults to "dotnet,microsoft".'
+        required: false
+        type: string
+        default: 'dotnet,microsoft'
 
 jobs:
   cleanup:
-    if: ${{ (github.repository_owner == 'dotnet' || github.repository_owner == 'microsoft') && github.event_name == 'schedule' }}
+    if: ${{ contains(format('{0},', inputs.repository_owners), format('{0},', github.repository_owner)) && github.event_name == 'schedule' }}
     runs-on: ubuntu-latest
     permissions:
       actions: write
@@ -57,7 +62,7 @@ jobs:
           }
 
   run_backport:
-    if: ${{ (github.repository_owner == 'dotnet' || github.repository_owner == 'microsoft') && github.event.issue.pull_request != '' && contains(github.event.comment.body, '/backport to') }}
+    if: ${{ contains(format('{0},', inputs.repository_owners), format('{0},', github.repository_owner)) && github.event.issue.pull_request != '' && contains(github.event.comment.body, '/backport to') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write

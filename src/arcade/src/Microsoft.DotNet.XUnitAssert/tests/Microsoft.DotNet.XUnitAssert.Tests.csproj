@@ -12,4 +12,8 @@
     <ProjectReference Include="..\src\Microsoft.DotNet.XUnitAssert.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="nsubstitute" />
+  </ItemGroup>
+
 </Project>

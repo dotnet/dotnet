@@ -72,6 +72,23 @@ namespace Microsoft.DotNet.Git.IssueManager.Clients
             return createdIssue.Number;
         }
 
+        public static async Task<string> CreateNewIssueCommentAsync(
+            string repositoryUrl,
+            int issueNumber,
+            string comment,
+            string personalAccessToken)
+        {
+            (string owner, string repoName) = ParseRepoUri(repositoryUrl);
+
+            Octokit.GitHubClient client = new Octokit.GitHubClient(new ProductHeaderValue("assets-publisher"));
+            Credentials tokenAuth = new Credentials(personalAccessToken);
+            client.Credentials = tokenAuth;
+
+            IssueComment createdComment = await client.Issue.Comment.Create(owner, repoName, issueNumber, comment);
+
+            return createdComment.HtmlUrl;
+        }
+
         /// <summary>
         /// Extracts the owner and repository name from <paramref name="repositoryUri"/>. 
         /// </summary>

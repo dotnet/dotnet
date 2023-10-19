@@ -1,114 +1,276 @@
-﻿using System;
+using System;
 using Xunit;
 using Xunit.Sdk;
+
+#if NETFRAMEWORK && XUNIT_VALUETASK
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Xml;
+#endif
 
 public class TypeAssertsTests
 {
 	public class IsAssignableFrom_Generic
 	{
 		[Fact]
-		public void NullObjectThrows()
+		public void NullObject()
 		{
-			Assert.Throws<IsAssignableFromException>(() => Assert.IsAssignableFrom<object>(null));
+			var result = Record.Exception(() => Assert.IsAssignableFrom<object>(null));
+
+			Assert.IsType<IsAssignableFromException>(result);
+			Assert.Equal(
+				"Assert.IsAssignableFrom() Failure: Value is null" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				"Actual:   null",
+				result.Message
+			);
 		}
 
 		[Fact]
 		public void SameType()
 		{
-			var expected = new InvalidCastException();
+			var ex = new InvalidCastException();
 
-			Assert.IsAssignableFrom<InvalidCastException>(expected);
+			Assert.IsAssignableFrom<InvalidCastException>(ex);
 		}
 
 		[Fact]
 		public void BaseType()
 		{
-			var expected = new InvalidCastException();
+			var ex = new InvalidCastException();
 
-			Assert.IsAssignableFrom<Exception>(expected);
+			Assert.IsAssignableFrom<Exception>(ex);
 		}
 
 		[Fact]
 		public void Interface()
 		{
-			var expected = new DisposableClass();
+			var ex = new DisposableClass();
 
-			Assert.IsAssignableFrom<IDisposable>(expected);
+			Assert.IsAssignableFrom<IDisposable>(ex);
 		}
 
 		[Fact]
 		public void ReturnsCastObject()
 		{
-			var expected = new InvalidCastException();
+			var ex = new InvalidCastException();
 
-			var actual = Assert.IsAssignableFrom<InvalidCastException>(expected);
+			var result = Assert.IsAssignableFrom<InvalidCastException>(ex);
 
-			Assert.Same(expected, actual);
+			Assert.Same(ex, result);
 		}
 
 		[Fact]
-		public void IncompatibleTypeThrows()
+		public void IncompatibleType()
 		{
-			var exception =
-				Assert.Throws<IsAssignableFromException>(
+			var result =
+				Record.Exception(
 					() => Assert.IsAssignableFrom<InvalidCastException>(new InvalidOperationException())
 				);
 
-			Assert.Equal("Assert.IsAssignableFrom() Failure", exception.UserMessage);
+			Assert.IsType<IsAssignableFromException>(result);
+			Assert.Equal(
+				"Assert.IsAssignableFrom() Failure: Value is an incompatible type" + Environment.NewLine +
+				"Expected: typeof(System.InvalidCastException)" + Environment.NewLine +
+				"Actual:   typeof(System.InvalidOperationException)",
+				result.Message
+			);
 		}
 	}
 
 	public class IsAssignableFrom_NonGeneric
 	{
 		[Fact]
-		public void NullObjectThrows()
+		public void NullObject()
 		{
-			Assert.Throws<IsAssignableFromException>(() => Assert.IsAssignableFrom(typeof(object), null));
+			var result = Record.Exception(() => Assert.IsAssignableFrom(typeof(object), null));
+
+			Assert.IsType<IsAssignableFromException>(result);
+			Assert.Equal(
+				"Assert.IsAssignableFrom() Failure: Value is null" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				"Actual:   null",
+				result.Message
+			);
 		}
 
 		[Fact]
 		public void SameType()
 		{
-			var expected = new InvalidCastException();
+			var ex = new InvalidCastException();
 
-			Assert.IsAssignableFrom(typeof(InvalidCastException), expected);
+			Assert.IsAssignableFrom(typeof(InvalidCastException), ex);
 		}
 
 		[Fact]
 		public void BaseType()
 		{
-			var expected = new InvalidCastException();
+			var ex = new InvalidCastException();
 
-			Assert.IsAssignableFrom(typeof(Exception), expected);
+			Assert.IsAssignableFrom(typeof(Exception), ex);
 		}
 
 		[Fact]
 		public void Interface()
 		{
-			var expected = new DisposableClass();
+			var ex = new DisposableClass();
 
-			Assert.IsAssignableFrom(typeof(IDisposable), expected);
+			Assert.IsAssignableFrom(typeof(IDisposable), ex);
 		}
 
 		[Fact]
 		public void ReturnsCastObject()
 		{
-			var expected = new InvalidCastException();
+			var ex = new InvalidCastException();
 
-			var actual = Assert.IsAssignableFrom<InvalidCastException>(expected);
+			var result = Assert.IsAssignableFrom<InvalidCastException>(ex);
 
-			Assert.Same(expected, actual);
+			Assert.Same(ex, result);
 		}
 
 		[Fact]
-		public void IncompatibleTypeThrows()
+		public void IncompatibleType()
 		{
-			var exception =
-				Assert.Throws<IsAssignableFromException>(
+			var result =
+				Record.Exception(
 					() => Assert.IsAssignableFrom(typeof(InvalidCastException), new InvalidOperationException())
 				);
 
-			Assert.Equal("Assert.IsAssignableFrom() Failure", exception.UserMessage);
+			Assert.IsType<IsAssignableFromException>(result);
+			Assert.Equal(
+				"Assert.IsAssignableFrom() Failure: Value is an incompatible type" + Environment.NewLine +
+				"Expected: typeof(System.InvalidCastException)" + Environment.NewLine +
+				"Actual:   typeof(System.InvalidOperationException)",
+				result.Message
+			);
+		}
+	}
+
+	public class IsNotAssignableFrom_Generic
+	{
+		[Fact]
+		public void NullObject()
+		{
+			Assert.IsNotAssignableFrom<object>(null);
+		}
+
+		[Fact]
+		public void SameType()
+		{
+			var ex = new InvalidCastException();
+
+			var result = Record.Exception(() => Assert.IsNotAssignableFrom<InvalidCastException>(ex));
+
+			Assert.IsType<IsNotAssignableFromException>(result);
+			Assert.Equal(
+				"Assert.IsNotAssignableFrom() Failure: Value is a compatible type" + Environment.NewLine +
+				"Expected: typeof(System.InvalidCastException)" + Environment.NewLine +
+				"Actual:   typeof(System.InvalidCastException)",
+				result.Message
+			);
+		}
+
+		[Fact]
+		public void BaseType()
+		{
+			var ex = new InvalidCastException();
+
+			var result = Record.Exception(() => Assert.IsNotAssignableFrom<Exception>(ex));
+
+			Assert.IsType<IsNotAssignableFromException>(result);
+			Assert.Equal(
+				"Assert.IsNotAssignableFrom() Failure: Value is a compatible type" + Environment.NewLine +
+				"Expected: typeof(System.Exception)" + Environment.NewLine +
+				"Actual:   typeof(System.InvalidCastException)",
+				result.Message
+			);
+		}
+
+		[Fact]
+		public void Interface()
+		{
+			var ex = new DisposableClass();
+
+			var result = Record.Exception(() => Assert.IsNotAssignableFrom<IDisposable>(ex));
+
+			Assert.IsType<IsNotAssignableFromException>(result);
+			Assert.Equal(
+				"Assert.IsNotAssignableFrom() Failure: Value is a compatible type" + Environment.NewLine +
+				"Expected: typeof(System.IDisposable)" + Environment.NewLine +
+				"Actual:   typeof(TypeAssertsTests+DisposableClass)",
+				result.Message
+			);
+		}
+
+		[Fact]
+		public void IncompatibleType()
+		{
+			Assert.IsNotAssignableFrom<InvalidCastException>(new InvalidOperationException());
+		}
+	}
+
+	public class IsNotAssignableFrom_NonGeneric
+	{
+		[Fact]
+		public void NullObject()
+		{
+			Assert.IsNotAssignableFrom(typeof(object), null);
+		}
+
+		[Fact]
+		public void SameType()
+		{
+			var ex = new InvalidCastException();
+
+			var result = Record.Exception(() => Assert.IsNotAssignableFrom(typeof(InvalidCastException), ex));
+
+			Assert.IsType<IsNotAssignableFromException>(result);
+			Assert.Equal(
+				"Assert.IsNotAssignableFrom() Failure: Value is a compatible type" + Environment.NewLine +
+				"Expected: typeof(System.InvalidCastException)" + Environment.NewLine +
+				"Actual:   typeof(System.InvalidCastException)",
+				result.Message
+			);
+		}
+
+		[Fact]
+		public void BaseType()
+		{
+			var ex = new InvalidCastException();
+
+			var result = Record.Exception(() => Assert.IsNotAssignableFrom(typeof(Exception), ex));
+
+			Assert.IsType<IsNotAssignableFromException>(result);
+			Assert.Equal(
+				"Assert.IsNotAssignableFrom() Failure: Value is a compatible type" + Environment.NewLine +
+				"Expected: typeof(System.Exception)" + Environment.NewLine +
+				"Actual:   typeof(System.InvalidCastException)",
+				result.Message
+			);
+		}
+
+		[Fact]
+		public void Interface()
+		{
+			var ex = new DisposableClass();
+
+			var result = Record.Exception(() => Assert.IsNotAssignableFrom(typeof(IDisposable), ex));
+
+			Assert.IsType<IsNotAssignableFromException>(result);
+			Assert.Equal(
+				"Assert.IsNotAssignableFrom() Failure: Value is a compatible type" + Environment.NewLine +
+				"Expected: typeof(System.IDisposable)" + Environment.NewLine +
+				"Actual:   typeof(TypeAssertsTests+DisposableClass)",
+				result.Message
+			);
+		}
+
+		[Fact]
+		public void IncompatibleType()
+		{
+			Assert.IsNotAssignableFrom(typeof(InvalidCastException), new InvalidOperationException());
 		}
 	}
 
@@ -117,23 +279,27 @@ public class TypeAssertsTests
 		[Fact]
 		public void UnmatchedType()
 		{
-			var expected = new InvalidCastException();
+			var ex = new InvalidCastException();
 
-			Assert.IsNotType<Exception>(expected);
+			Assert.IsNotType<Exception>(ex);
 		}
 
 		[Fact]
-		public void MatchedTypeThrows()
+		public void MatchedType()
 		{
-			XunitException exception =
-				Assert.Throws<IsNotTypeException>(
-					() => Assert.IsNotType<InvalidCastException>(new InvalidCastException()));
+			var result = Record.Exception(() => Assert.IsNotType<InvalidCastException>(new InvalidCastException()));
 
-			Assert.Equal("Assert.IsNotType() Failure", exception.UserMessage);
+			Assert.IsType<IsNotTypeException>(result);
+			Assert.Equal(
+				"Assert.IsNotType() Failure: Value is the exact type" + Environment.NewLine +
+				"Expected: typeof(System.InvalidCastException)" + Environment.NewLine +
+				"Actual:   typeof(System.InvalidCastException)",
+				result.Message
+			);
 		}
 
 		[Fact]
-		public void NullObjectDoesNotThrow()
+		public void NullObject()
 		{
 			Assert.IsNotType<object>(null);
 		}
@@ -144,89 +310,161 @@ public class TypeAssertsTests
 		[Fact]
 		public void UnmatchedType()
 		{
-			var expected = new InvalidCastException();
+			var ex = new InvalidCastException();
 
-			Assert.IsNotType(typeof(Exception), expected);
+			Assert.IsNotType(typeof(Exception), ex);
 		}
 
 		[Fact]
-		public void MatchedTypeThrows()
+		public void MatchedType()
 		{
-			XunitException exception =
-				Assert.Throws<IsNotTypeException>(
-					() => Assert.IsNotType(typeof(InvalidCastException), new InvalidCastException()));
+			var result = Record.Exception(() => Assert.IsNotType(typeof(InvalidCastException), new InvalidCastException()));
 
-			Assert.Equal("Assert.IsNotType() Failure", exception.UserMessage);
+			Assert.IsType<IsNotTypeException>(result);
+			Assert.Equal(
+				"Assert.IsNotType() Failure: Value is the exact type" + Environment.NewLine +
+				"Expected: typeof(System.InvalidCastException)" + Environment.NewLine +
+				"Actual:   typeof(System.InvalidCastException)",
+				result.Message
+			);
 		}
 
 		[Fact]
-		public void NullObjectDoesNotThrow()
+		public void NullObject()
 		{
 			Assert.IsNotType(typeof(object), null);
 		}
 	}
 
-	public class IsType_Generic
+	public class IsType_Generic : TypeAssertsTests
 	{
 		[Fact]
 		public void MatchingType()
 		{
-			var expected = new InvalidCastException();
+			var ex = new InvalidCastException();
 
-			Assert.IsType<InvalidCastException>(expected);
+			Assert.IsType<InvalidCastException>(ex);
 		}
 
 		[Fact]
 		public void ReturnsCastObject()
 		{
-			var expected = new InvalidCastException();
+			var ex = new InvalidCastException();
 
-			var actual = Assert.IsType<InvalidCastException>(expected);
+			var result = Assert.IsType<InvalidCastException>(ex);
 
-			Assert.Same(expected, actual);
+			Assert.Same(ex, result);
 		}
 
 		[Fact]
-		public void UnmatchedTypeThrows()
+		public void UnmatchedType()
 		{
-			XunitException exception =
-				Assert.Throws<IsTypeException>(
-					() => Assert.IsType<InvalidCastException>(new InvalidOperationException()));
+			var result = Record.Exception(() => Assert.IsType<InvalidCastException>(new InvalidOperationException()));
 
-			Assert.Equal("Assert.IsType() Failure", exception.UserMessage);
+			Assert.IsType<IsTypeException>(result);
+			Assert.Equal(
+				"Assert.IsType() Failure: Value is not the exact type" + Environment.NewLine +
+				"Expected: typeof(System.InvalidCastException)" + Environment.NewLine +
+				"Actual:   typeof(System.InvalidOperationException)",
+				result.Message
+			);
 		}
 
+#if NETFRAMEWORK && XUNIT_VALUETASK
 		[Fact]
-		public void NullObjectThrows()
+		public async ValueTask UnmatchedTypesWithIdenticalNamesShowAssemblies()
 		{
-			Assert.Throws<IsTypeException>(() => Assert.IsType<object>(null));
+			var dynamicAssembly = await CSharpDynamicAssembly.Create("namespace System.Xml { public class XmlException: Exception { } }");
+			var assembly = Assembly.LoadFile(dynamicAssembly.FileName);
+			var dynamicXmlExceptionType = assembly.GetType("System.Xml.XmlException");
+			Assert.NotNull(dynamicXmlExceptionType);
+			var ex = Activator.CreateInstance(dynamicXmlExceptionType);
+
+			var result = Record.Exception(() => Assert.IsType<XmlException>(ex));
+
+			Assert.IsType<IsTypeException>(result);
+			Assert.Equal(
+				"Assert.IsType() Failure: Value is not the exact type" + Environment.NewLine +
+				"Expected: typeof(System.Xml.XmlException) (from " + typeof(XmlException).Assembly.FullName + ")" + Environment.NewLine +
+				"Actual:   typeof(System.Xml.XmlException) (from " + assembly.FullName + ")",
+				result.Message
+			);
+		}
+#endif
+
+		[Fact]
+		public void NullObject()
+		{
+			var result = Record.Exception(() => Assert.IsType<object>(null));
+
+			Assert.IsType<IsTypeException>(result);
+			Assert.Equal(
+				"Assert.IsType() Failure: Value is null" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				"Actual:   null",
+				result.Message
+			);
 		}
 	}
 
-	public class IsType_NonGeneric
+	public class IsType_NonGeneric : TypeAssertsTests
 	{
 		[Fact]
 		public void MatchingType()
 		{
-			var expected = new InvalidCastException();
+			var ex = new InvalidCastException();
 
-			Assert.IsType(typeof(InvalidCastException), expected);
+			Assert.IsType(typeof(InvalidCastException), ex);
 		}
 
 		[Fact]
 		public void UnmatchedTypeThrows()
 		{
-			XunitException exception =
-				Assert.Throws<IsTypeException>(
-					() => Assert.IsType(typeof(InvalidCastException), new InvalidOperationException()));
+			var result = Record.Exception(() => Assert.IsType(typeof(InvalidCastException), new InvalidOperationException()));
 
-			Assert.Equal("Assert.IsType() Failure", exception.UserMessage);
+			Assert.IsType<IsTypeException>(result);
+			Assert.Equal(
+				"Assert.IsType() Failure: Value is not the exact type" + Environment.NewLine +
+				"Expected: typeof(System.InvalidCastException)" + Environment.NewLine +
+				"Actual:   typeof(System.InvalidOperationException)",
+				result.Message
+			);
 		}
+
+#if NETFRAMEWORK && XUNIT_VALUETASK
+		[Fact]
+		public async ValueTask UnmatchedTypesWithIdenticalNamesShowAssemblies()
+		{
+			var dynamicAssembly = await CSharpDynamicAssembly.Create("namespace System.Xml { public class XmlException: Exception { } }");
+			var assembly = Assembly.LoadFile(dynamicAssembly.FileName);
+			var dynamicXmlExceptionType = assembly.GetType("System.Xml.XmlException");
+			Assert.NotNull(dynamicXmlExceptionType);
+			var ex = Activator.CreateInstance(dynamicXmlExceptionType);
+
+			var result = Record.Exception(() => Assert.IsType(typeof(XmlException), ex));
+
+			Assert.IsType<IsTypeException>(result);
+			Assert.Equal(
+				"Assert.IsType() Failure: Value is not the exact type" + Environment.NewLine +
+				"Expected: typeof(System.Xml.XmlException) (from " + typeof(XmlException).Assembly.FullName + ")" + Environment.NewLine +
+				"Actual:   typeof(System.Xml.XmlException) (from " + assembly.FullName + ")",
+				result.Message
+			);
+		}
+#endif
 
 		[Fact]
 		public void NullObjectThrows()
 		{
-			Assert.Throws<IsTypeException>(() => Assert.IsType(typeof(object), null));
+			var result = Record.Exception(() => Assert.IsType(typeof(object), null));
+
+			Assert.IsType<IsTypeException>(result);
+			Assert.Equal(
+				"Assert.IsType() Failure: Value is null" + Environment.NewLine +
+				"Expected: typeof(object)" + Environment.NewLine +
+				"Actual:   null",
+				result.Message
+			);
 		}
 	}
 
@@ -235,4 +473,23 @@ public class TypeAssertsTests
 		public void Dispose()
 		{ }
 	}
+
+#if NETFRAMEWORK && XUNIT_VALUETASK
+	class CSharpDynamicAssembly : CSharpAcceptanceTestAssembly
+	{
+		public CSharpDynamicAssembly() :
+			base(Path.GetTempPath())
+		{ }
+
+		protected override IEnumerable<string> GetStandardReferences() =>
+			new[] { "mscorlib.dll" };
+
+		public static async ValueTask<CSharpDynamicAssembly> Create(string code)
+		{
+			var assembly = new CSharpDynamicAssembly();
+			await assembly.Compile(new[] { code }, Array.Empty<string>());
+			return assembly;
+		}
+	}
+#endif
 }

@@ -29,7 +29,7 @@ namespace Xunit
 #endif
 		{
 			if (object.ReferenceEquals(expected, actual))
-				throw new NotSameException();
+				throw NotSameException.ForSameValues();
 		}
 
 		/// <summary>
@@ -48,7 +48,10 @@ namespace Xunit
 #endif
 		{
 			if (!object.ReferenceEquals(expected, actual))
-				throw new SameException(expected, actual);
+				throw SameException.ForFailure(
+					ArgumentFormatter.Format(expected),
+					ArgumentFormatter.Format(actual)
+				);
 		}
 	}
 }

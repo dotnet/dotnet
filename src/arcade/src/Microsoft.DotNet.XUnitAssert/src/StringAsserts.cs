@@ -1,9 +1,13 @@
 #if XUNIT_NULLABLE
 #nullable enable
+#else
+// In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
+#pragma warning disable CS8604
 #endif
 
 using System;
 using System.Text.RegularExpressions;
+using Xunit.Internal;
 using Xunit.Sdk;
 
 namespace Xunit
@@ -49,7 +53,7 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(expectedSubstring), expectedSubstring);
 
 			if (actualString == null || actualString.IndexOf(expectedSubstring, comparisonType) < 0)
-				throw new ContainsException(expectedSubstring, actualString);
+				throw ContainsException.ForSubStringNotFound(expectedSubstring, actualString);
 		}
 
 		/// <summary>
@@ -85,45 +89,86 @@ namespace Xunit
 		{
 			GuardArgumentNotNull(nameof(expectedSubstring), expectedSubstring);
 
-			if (actualString != null && actualString.IndexOf(expectedSubstring, comparisonType) >= 0)
-				throw new DoesNotContainException(expectedSubstring, actualString);
+			if (actualString != null)
+			{
+				var idx = actualString.IndexOf(expectedSubstring, comparisonType);
+				if (idx >= 0)
+					throw DoesNotContainException.ForSubStringFound(expectedSubstring, idx, actualString);
+			}
 		}
 
 		/// <summary>
-		/// Verifies that a string starts with a given string, using the current culture.
+		/// Verifies that a string does not match a regular expression.
 		/// </summary>
-		/// <param name="expectedStartString">The string expected to be at the start of the string</param>
+		/// <param name="expectedRegexPattern">The regex pattern expected not to match</param>
 		/// <param name="actualString">The string to be inspected</param>
-		/// <exception cref="ContainsException">Thrown when the string does not start with the expected string</exception>
-		public static void StartsWith(
+		/// <exception cref="DoesNotMatchException">Thrown when the string matches the regex pattern</exception>
+		public static void DoesNotMatch(
+			string expectedRegexPattern,
 #if XUNIT_NULLABLE
-			string? expectedStartString,
-			string? actualString) =>
+			string? actualString)
 #else
-			string expectedStartString,
-			string actualString) =>
+			string actualString)
 #endif
-				StartsWith(expectedStartString, actualString, StringComparison.CurrentCulture);
+		{
+			GuardArgumentNotNull(nameof(expectedRegexPattern), expectedRegexPattern);
+
+			if (actualString != null)
+			{
+				var match = Regex.Match(actualString, expectedRegexPattern);
+				if (match.Success)
+				{
+					int pointerIndent;
+					var formattedExpected = AssertHelper.ShortenAndEncodeString(expectedRegexPattern);
+					var formattedActual = AssertHelper.ShortenAndEncodeString(actualString, match.Index, out pointerIndent);
+
+					throw DoesNotMatchException.ForMatch(formattedExpected, match.Index, pointerIndent, formattedActual);
+				}
+			}
+		}
 
 		/// <summary>
-		/// Verifies that a string starts with a given string, using the given comparison type.
+		/// Verifies that a string does not match a regular expression.
 		/// </summary>
-		/// <param name="expectedStartString">The string expected to be at the start of the string</param>
+		/// <param name="expectedRegex">The regex expected not to match</param>
 		/// <param name="actualString">The string to be inspected</param>
-		/// <param name="comparisonType">The type of string comparison to perform</param>
-		/// <exception cref="ContainsException">Thrown when the string does not start with the expected string</exception>
-		public static void StartsWith(
+		/// <exception cref="DoesNotMatchException">Thrown when the string matches the regex</exception>
+		public static void DoesNotMatch(
+			Regex expectedRegex,
 #if XUNIT_NULLABLE
-			string? expectedStartString,
-			string? actualString,
+			string? actualString)
 #else
-			string expectedStartString,
-			string actualString,
+			string actualString)
 #endif
-			StringComparison comparisonType)
 		{
-			if (expectedStartString == null || actualString == null || !actualString.StartsWith(expectedStartString, comparisonType))
-				throw new StartsWithException(expectedStartString, actualString);
+			GuardArgumentNotNull(nameof(expectedRegex), expectedRegex);
+
+			if (actualString != null)
+			{
+				var match = expectedRegex.Match(actualString);
+				if (match.Success)
+				{
+					int pointerIndent;
+					var formattedExpected = AssertHelper.ShortenAndEncodeString(expectedRegex.ToString());
+					var formattedActual = AssertHelper.ShortenAndEncodeString(actualString, match.Index, out pointerIndent);
+
+					throw DoesNotMatchException.ForMatch(formattedExpected, match.Index, pointerIndent, formattedActual);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Verifies that a string is empty.
+		/// </summary>
+		/// <param name="value">The string value to be inspected</param>
+		/// <exception cref="ArgumentNullException">Thrown when the string is null</exception>
+		/// <exception cref="EmptyException">Thrown when the string is not empty</exception>
+		public static void Empty(string value)
+		{
+			GuardArgumentNotNull(nameof(value), value);
+
+			if (value.Length != 0)
+				throw EmptyException.ForNonEmptyString(value);
 		}
 
 		/// <summary>
@@ -160,7 +205,44 @@ namespace Xunit
 			StringComparison comparisonType)
 		{
 			if (expectedEndString == null || actualString == null || !actualString.EndsWith(expectedEndString, comparisonType))
-				throw new EndsWithException(expectedEndString, actualString);
+				throw EndsWithException.ForStringNotFound(expectedEndString, actualString);
+		}
+
+		/// <summary>
+		/// Verifies that a string starts with a given string, using the current culture.
+		/// </summary>
+		/// <param name="expectedStartString">The string expected to be at the start of the string</param>
+		/// <param name="actualString">The string to be inspected</param>
+		/// <exception cref="ContainsException">Thrown when the string does not start with the expected string</exception>
+		public static void StartsWith(
+#if XUNIT_NULLABLE
+			string? expectedStartString,
+			string? actualString) =>
+#else
+			string expectedStartString,
+			string actualString) =>
+#endif
+				StartsWith(expectedStartString, actualString, StringComparison.CurrentCulture);
+
+		/// <summary>
+		/// Verifies that a string starts with a given string, using the given comparison type.
+		/// </summary>
+		/// <param name="expectedStartString">The string expected to be at the start of the string</param>
+		/// <param name="actualString">The string to be inspected</param>
+		/// <param name="comparisonType">The type of string comparison to perform</param>
+		/// <exception cref="ContainsException">Thrown when the string does not start with the expected string</exception>
+		public static void StartsWith(
+#if XUNIT_NULLABLE
+			string? expectedStartString,
+			string? actualString,
+#else
+			string expectedStartString,
+			string actualString,
+#endif
+			StringComparison comparisonType)
+		{
+			if (expectedStartString == null || actualString == null || !actualString.StartsWith(expectedStartString, comparisonType))
+				throw StartsWithException.ForStringNotFound(expectedStartString, actualString);
 		}
 
 		/// <summary>
@@ -180,7 +262,7 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(expectedRegexPattern), expectedRegexPattern);
 
 			if (actualString == null || !Regex.IsMatch(actualString, expectedRegexPattern))
-				throw new MatchesException(expectedRegexPattern, actualString);
+				throw MatchesException.ForMatchNotFound(expectedRegexPattern, actualString);
 		}
 
 		/// <summary>
@@ -200,47 +282,7 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(expectedRegex), expectedRegex);
 
 			if (actualString == null || !expectedRegex.IsMatch(actualString))
-				throw new MatchesException(expectedRegex.ToString(), actualString);
-		}
-
-		/// <summary>
-		/// Verifies that a string does not match a regular expression.
-		/// </summary>
-		/// <param name="expectedRegexPattern">The regex pattern expected not to match</param>
-		/// <param name="actualString">The string to be inspected</param>
-		/// <exception cref="DoesNotMatchException">Thrown when the string matches the regex pattern</exception>
-		public static void DoesNotMatch(
-			string expectedRegexPattern,
-#if XUNIT_NULLABLE
-			string? actualString)
-#else
-			string actualString)
-#endif
-		{
-			GuardArgumentNotNull(nameof(expectedRegexPattern), expectedRegexPattern);
-
-			if (actualString != null && Regex.IsMatch(actualString, expectedRegexPattern))
-				throw new DoesNotMatchException(expectedRegexPattern, actualString);
-		}
-
-		/// <summary>
-		/// Verifies that a string does not match a regular expression.
-		/// </summary>
-		/// <param name="expectedRegex">The regex expected not to match</param>
-		/// <param name="actualString">The string to be inspected</param>
-		/// <exception cref="DoesNotMatchException">Thrown when the string matches the regex</exception>
-		public static void DoesNotMatch(
-			Regex expectedRegex,
-#if XUNIT_NULLABLE
-			string? actualString)
-#else
-			string actualString)
-#endif
-		{
-			GuardArgumentNotNull(nameof(expectedRegex), expectedRegex);
-
-			if (actualString != null && expectedRegex.IsMatch(actualString))
-				throw new DoesNotMatchException(expectedRegex.ToString(), actualString);
+				throw MatchesException.ForMatchNotFound(expectedRegex.ToString(), actualString);
 		}
 
 		/// <summary>
@@ -286,7 +328,7 @@ namespace Xunit
 			if (expected == null && actual == null)
 				return;
 			if (expected == null || actual == null)
-				throw new EqualException(expected, actual, -1, -1);
+				throw EqualException.ForMismatchedStrings(expected, actual, -1, -1);
 
 			Equal(expected.AsSpan(), actual.AsSpan(), ignoreCase, ignoreLineEndingDifferences, ignoreWhiteSpaceDifferences, ignoreAllWhiteSpace);
 #else
@@ -357,7 +399,7 @@ namespace Xunit
 			}
 
 			if (expectedIndex < expectedLength || actualIndex < actualLength)
-				throw new EqualException(expected, actual, expectedIndex, actualIndex);
+				throw EqualException.ForMismatchedStrings(expected, actual, expectedIndex, actualIndex);
 #endif
 		}
 
