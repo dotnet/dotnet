@@ -1,0 +1,94 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    <!-- Arcade uses mutliple feeds, so we need to supress this warning. -->
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
+
+  <!-- Version properties used outside of PackageReference items -->
+  <PropertyGroup>
+    <MicrosoftCciVersion>4.0.0-rc3-24214-00</MicrosoftCciVersion>
+    <!-- Keep Microsoft.Data.Services.Client package version in sync with Microsoft.Data.OData -->
+    <MicrosoftDataServicesClientVersion>5.8.4</MicrosoftDataServicesClientVersion>
+    <MicrosoftSignedWixVersion>1.0.0-v3.14.0.5722</MicrosoftSignedWixVersion>
+    <XUnitVersion>2.5.1</XUnitVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- arcade -->
+    <PackageVersion Include="Microsoft.DotNet.SwaggerGenerator.MSBuild" Version="$(MicrosoftDotNetSwaggerGeneratorMSBuildVersion)" />
+    <!-- arcade-services -->
+    <PackageVersion Include="Microsoft.DotNet.Maestro.Client" Version="$(MicrosoftDotNetMaestroClientVersion)" />
+    <!-- corefx -->
+    <PackageVersion Include="Microsoft.Bcl.HashCode" Version="$(MicrosoftBclHashCodeVersion)" />
+    <PackageVersion Include="System.Memory" Version="$(SystemMemoryVersion)" />
+    <PackageVersion Include="System.Runtime.InteropServices.RuntimeInformation" Version="$(SystemRuntimeInteropServicesRuntimeInformation)" />
+    <!-- deployment-tools -->
+    <PackageVersion Include="Microsoft.Deployment.DotNet.Releases" Version="$(MicrosoftDeploymentDotNetReleasesVersion)" />
+    <!-- dotnet-symuploader -->
+    <PackageVersion Include="Microsoft.SymbolUploader" Version="$(MicrosoftSymbolUploaderVersion)" />
+    <!-- msbuild -->
+    <PackageVersion Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkVersion)" />
+    <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+    <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
+    <PackageVersion Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
+    <!-- nuget -->
+    <PackageVersion Include="NuGet.Commands" Version="$(NuGetCommandsVersion)" />
+    <PackageVersion Include="NuGet.Frameworks" Version="$(NuGetFrameworksVersion)" />
+    <PackageVersion Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
+    <PackageVersion Include="NuGet.ProjectModel" Version="$(NuGetProjectModelVersion)" />
+    <PackageVersion Include="NuGet.Versioning" Version="$(NuGetVersioningVersion)" />
+    <!-- roslyn -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="$(MicrosoftCodeAnalysisCSharpVersion)" />
+    <!-- runtime -->
+    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="$(MicrosoftBclAsyncInterfacesVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="$(MicrosoftExtensionsDependencyInjectionVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MicrosoftExtensionsDependencyInjectionAbstractionsVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="$(MicrosoftExtensionsLoggingConsoleVersion)" />
+    <PackageVersion Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" />
+    <PackageVersion Include="System.Composition" Version="$(SystemCompositionVersion)" />
+    <PackageVersion Include="System.IO.Packaging" Version="$(SystemIOPackagingVersion)" />
+    <PackageVersion Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
+    <PackageVersion Include="System.Text.Encodings.Web" Version="$(SystemTextEncodingsWebVersion)" />
+    <PackageVersion Include="System.Text.Json" Version="$(SystemTextJsonVersion)" />
+    <!-- sdk -->
+    <PackageVersion Include="Microsoft.NET.Sdk.WorkloadManifestReader" Version="$(MicrosoftNetSdkWorkloadManifestReaderVersion)" />
+    <!-- xliff-tasks -->
+    <PackageVersion Include="Microsoft.DotNet.XliffTasks" Version="$(MicrosoftDotNetXliffTasksVersion)" />
+  </ItemGroup>
+
+  <!-- external -->
+  <ItemGroup>
+    <PackageVersion Include="Azure.Core" Version="1.35.0" />
+    <PackageVersion Include="Azure.Storage.Blobs" Version="12.18.0" />
+    <PackageVersion Include="CommandLineParser" Version="2.5.0" />
+    <PackageVersion Include="coverlet.collector" Version="1.0.1" />
+    <PackageVersion Include="FluentAssertions" Version="5.10.3" />
+    <PackageVersion Include="Handlebars.Net" Version="1.11.5" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2018.2.1" />
+    <PackageVersion Include="LZMA-SDK" Version="19.0.0" />
+    <PackageVersion Include="McMaster.Extensions.CommandLineUtils" Version="2.3.0" />
+    <PackageVersion Include="Microsoft.ApplicationInsights" Version="2.21.0" />
+    <PackageVersion Include="Microsoft.Data.OData" Version="5.8.4" />
+    <PackageVersion Include="Microsoft.DataServices.Client" Version="$(MicrosoftDataServicesClientVersion)" />
+    <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="1.0.5" />
+    <PackageVersion Include="Microsoft.Identity.Client" Version="4.53.0" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="1.3.2" />
+    <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.3.2" />
+    <PackageVersion Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" />
+    <PackageVersion Include="Microsoft.VisualStudio.OLE.Interop" Version="7.10.6071" />
+    <PackageVersion Include="Mono.Options" Version="5.3.0.1" />
+    <PackageVersion Include="Moq" Version="4.18.4" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="Octokit" Version="0.41.0" />
+    <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.23307.1" />
+    <PackageVersion Include="xunit" Version="$(XUnitVersion)" />
+    <PackageVersion Include="xunit.abstractions" Version="2.0.3" />
+    <PackageVersion Include="xunit.extensibility.core" Version="$(XUnitVersion)" />
+    <PackageVersion Include="xunit.extensibility.execution" Version="$(XUnitVersion)" />
+  </ItemGroup>
+
+</Project>

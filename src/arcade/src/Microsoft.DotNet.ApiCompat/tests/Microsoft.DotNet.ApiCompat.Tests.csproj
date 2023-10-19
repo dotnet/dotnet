@@ -9,7 +9,7 @@
     <ProjectReference Include="..\src\Microsoft.DotNet.ApiCompat.csproj" />
 
     <!-- Required for running the tests -->
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" />
 
     <_testProjectHelper Include="TestProjects\**\*.csproj" />
     <_testProjectHelper Update="@(_testProjectHelper)">

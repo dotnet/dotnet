@@ -23,19 +23,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
-    <PackageReference Include="Microsoft.Deployment.DotNet.Releases" Version="$(MicrosoftDeploymentDotNetReleasesVersion)" />
-    <PackageReference Include="Microsoft.NET.Sdk.WorkloadManifestReader" Version="$(MicrosoftNetSdkWorkloadManifestReaderVersion)" />
-    <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" />
+    <PackageReference Include="Microsoft.Deployment.DotNet.Releases" />
+    <PackageReference Include="Microsoft.NET.Sdk.WorkloadManifestReader" />
+    <PackageReference Include="NuGet.Packaging" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <PackageReference Include="System.Text.Json" Version="$(SystemTextJsonVersion)" />
+    <PackageReference Include="System.Text.Json" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(IncludeWiX)' == 'true'">
-    <PackageReference Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" />
+    <PackageReference Include="Microsoft.Signed.Wix" />
 
     <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Resources.dll" />
     <Reference Include="$(WixInstallPath)\Microsoft.Deployment.Compression.dll" />

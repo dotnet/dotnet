@@ -16,12 +16,12 @@
          using a PackageReference to avoid bringing in the old dependency graph. -->
     <PackageDownload Include="Microsoft.Cci" Version="[$(MicrosoftCciVersion)]" />
     <Reference Include="$(NuGetPackageRoot)microsoft.cci\$(MicrosoftCciVersion)\lib\netstandard1.3\Microsoft.Cci.dll" />
-    <PackageReference Include="System.Composition" Version="$(SystemCompositionVersion)" />
+    <PackageReference Include="System.Composition" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard'">
-    <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
-    <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" />
+    <PackageReference Include="System.Memory" />
+    <PackageReference Include="System.Reflection.Metadata" />
   </ItemGroup>
 
 </Project>

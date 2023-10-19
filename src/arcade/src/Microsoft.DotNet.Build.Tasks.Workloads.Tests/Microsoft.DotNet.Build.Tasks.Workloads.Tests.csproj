@@ -9,16 +9,16 @@
     <ProjectReference Include="..\Microsoft.DotNet.Build.Tasks.Workloads\src\Microsoft.DotNet.Build.Tasks.Workloads.csproj" />
     <ProjectReference Include="..\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
 
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
-    <PackageReference Include="Microsoft.Deployment.DotNet.Releases" Version="$(MicrosoftDeploymentDotNetReleasesVersion)" />
-    <PackageReference Include="Microsoft.NET.Sdk.WorkloadManifestReader" Version="$(MicrosoftNetSdkWorkloadManifestReaderVersion)" />
-    <PackageReference Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" />
-    <PackageReference Include="FluentAssertions" Version="$(FluentAssertionsVersion)" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" />
+    <PackageReference Include="Microsoft.Deployment.DotNet.Releases" />
+    <PackageReference Include="Microsoft.NET.Sdk.WorkloadManifestReader" />
+    <PackageReference Include="Microsoft.Signed.Wix" />
+    <PackageReference Include="FluentAssertions" />
   </ItemGroup>
 
   <!-- The tests reference the MSBuild task assembly directly and therefore we need to add references that would normally be provided by MSBuild. -->
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
-    <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
+    <PackageReference Include="NuGet.Packaging" />
   </ItemGroup>
 
   <!-- Sample packages -->
@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <PackageReference Include="System.Text.Json" Version="$(SystemTextJsonVersion)"  />
+    <PackageReference Include="System.Text.Json"  />
   </ItemGroup>
 
   <ItemGroup>

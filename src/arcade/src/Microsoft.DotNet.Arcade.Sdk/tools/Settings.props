@@ -22,7 +22,6 @@
   <Import Project="TargetFrameworkDefaults.props"/>
 
   <Import Project="Compiler.props" Condition="'$(UsingToolMicrosoftNetCompilers)' == 'true'" />
-  <Import Project="Linker.props" Condition="'$(UsingToolMicrosoftNetILLinkTasks)' == 'true'" />
   <Import Project="VisualStudio.props" Condition="'$(UsingToolVSSDK)' == 'true' and '$(MSBuildRuntimeType)' != 'Core'"/>
 
 </Project>

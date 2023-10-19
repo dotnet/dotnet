@@ -18,8 +18,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="$(CommandLineParserVersion)" Publish="true" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
+    <PackageReference Include="CommandLineParser" Publish="true" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" />
     <ProjectReference Include="..\Microsoft.SignCheck\Microsoft.DotNet.SignCheckLibrary.csproj" Publish="true" />
   </ItemGroup>
 
