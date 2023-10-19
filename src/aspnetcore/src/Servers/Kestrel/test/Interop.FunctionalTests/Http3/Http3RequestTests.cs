@@ -3,10 +3,8 @@
 
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
-using System.Globalization;
 using System.Net;
 using System.Net.Http;
-using System.Net.Quic;
 using System.Net.Security;
 using System.Text;
 using Microsoft.AspNetCore.Connections;
@@ -395,6 +393,7 @@ public class Http3RequestTests : LoggedTest
 
     [ConditionalFact]
     [MsQuicSupported]
+    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/50833")]
     public async Task POST_ServerCompletesWithoutReadingRequestBody_ClientGetsResponse()
     {
         // Arrange
@@ -430,6 +429,8 @@ public class Http3RequestTests : LoggedTest
             await requestStream.WriteAsync(TestData).DefaultTimeout();
 
             var response = await responseTask.DefaultTimeout();
+
+            requestContent.CompleteStream();
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -699,6 +700,7 @@ public class Http3RequestTests : LoggedTest
 
     [ConditionalFact]
     [MsQuicSupported]
+    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/50833")]
     public async Task POST_Expect100Continue_Get100Continue()
     {
         // Arrange
@@ -726,7 +728,7 @@ public class Http3RequestTests : LoggedTest
 
             // Act
             using var cts = new CancellationTokenSource();
-            cts.CancelAfter(TimeSpan.FromSeconds(1));
+            cts.CancelAfter(TimeSpan.FromSeconds(30));
             var responseTask = client.SendAsync(request, cts.Token);
 
             var response = await responseTask.DefaultTimeout();
@@ -1059,6 +1061,7 @@ public class Http3RequestTests : LoggedTest
     // Verify HTTP/2 and HTTP/3 match behavior
     [ConditionalTheory]
     [MsQuicSupported]
+    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/50833")]
     [InlineData(HttpProtocols.Http3)]
     [InlineData(HttpProtocols.Http2)]
     public async Task POST_Bidirectional_LargeData_Cancellation_Error(HttpProtocols protocol)
