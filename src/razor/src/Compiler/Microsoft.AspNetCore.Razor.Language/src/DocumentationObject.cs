@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -22,6 +23,50 @@ internal readonly record struct DocumentationObject
         }
 
         Object = obj;
+    }
+
+    public void AppendToChecksum(in Checksum.Builder builder)
+    {
+        switch (Object)
+        {
+            case DocumentationDescriptor descriptor:
+                builder.AppendData((int)descriptor.Id);
+
+                foreach (var arg in descriptor.Args)
+                {
+                    switch (arg)
+                    {
+                        case string s:
+                            builder.AppendData(s);
+                            break;
+
+                        case int i:
+                            builder.AppendData(i);
+                            break;
+
+                        case bool b:
+                            builder.AppendData(b);
+                            break;
+
+                        case null:
+                            builder.AppendNull();
+                            break;
+
+                        default:
+                            throw new NotSupportedException();
+                    }
+                }
+
+                break;
+
+            case string s:
+                builder.AppendData(s);
+                break;
+
+            case null:
+                builder.AppendNull();
+                break;
+        }
     }
 
     public readonly string? GetText()

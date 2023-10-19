@@ -91,13 +91,13 @@ internal sealed class HoverInfoService : IHoverInfoService
         // belongs to, or in other words, the exact same tag! To work around this we just make sure we
         // only check nodes that are at a different location in the file.
         var ownerStart = owner.SpanStart;
-        var ancestors = owner.Ancestors().Where(n => n.SpanStart != ownerStart);
-        var (parentTag, parentIsTagHelper) = _tagHelperFactsService.GetNearestAncestorTagInfo(ancestors);
 
         if (_htmlFactsService.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes) &&
             containingTagNameToken.Span.IntersectsWith(location.AbsoluteIndex))
         {
             // Hovering over HTML tag name
+            var ancestors = owner.Ancestors().Where(n => n.SpanStart != ownerStart);
+            var (parentTag, parentIsTagHelper) = _tagHelperFactsService.GetNearestAncestorTagInfo(ancestors);
             var stringifiedAttributes = _tagHelperFactsService.StringifyAttributes(attributes);
             var binding = _tagHelperFactsService.GetTagHelperBinding(
                 tagHelperDocumentContext,
@@ -125,6 +125,12 @@ internal sealed class HoverInfoService : IHoverInfoService
         if (_htmlFactsService.TryGetAttributeInfo(owner, out containingTagNameToken, out _, out var selectedAttributeName, out var selectedAttributeNameLocation, out attributes) &&
             selectedAttributeNameLocation?.IntersectsWith(location.AbsoluteIndex) == true)
         {
+            // When finding parents for attributes, we make sure to find the parent of the containing tag, otherwise these methods
+            // would return the parent of the attribute, which is not helpful, as its just going to be the containing element
+            var containingTag = containingTagNameToken.Parent;
+            var ancestors = containingTag.Ancestors().Where<SyntaxNode>(n => n.SpanStart != containingTag.SpanStart);
+            var (parentTag, parentIsTagHelper) = _tagHelperFactsService.GetNearestAncestorTagInfo(ancestors);
+
             // Hovering over HTML attribute name
             var stringifiedAttributes = _tagHelperFactsService.StringifyAttributes(attributes);
 
@@ -178,7 +184,7 @@ internal sealed class HoverInfoService : IHoverInfoService
                         attributeName = "@" + attributeName;
                         break;
                     case SyntaxKind.MarkupMinimizedTagHelperDirectiveAttribute:
-                        var minimizedAttribute = (MarkupMinimizedTagHelperDirectiveAttributeSyntax)containingTagNameToken.Parent;
+                        var minimizedAttribute = (MarkupMinimizedTagHelperDirectiveAttributeSyntax)containingTag;
                         range.Start.Character -= minimizedAttribute.Transition.FullWidth;
                         attributeName = "@" + attributeName;
                         break;

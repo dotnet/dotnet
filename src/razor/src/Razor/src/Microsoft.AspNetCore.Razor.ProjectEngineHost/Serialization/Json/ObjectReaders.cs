@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using static Microsoft.AspNetCore.Razor.Language.RequiredAttributeDescriptor;
-using Checksum = Microsoft.AspNetCore.Razor.Utilities.Checksum;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.Json;
 
@@ -70,15 +69,10 @@ internal static partial class ObjectReaders
         var characterIndex = reader.ReadInt32OrZero(nameof(SourceSpan.CharacterIndex));
         var length = reader.ReadInt32OrZero(nameof(SourceSpan.Length));
 
-        var descriptor = new RazorDiagnosticDescriptor(id, MessageFormat(message), severity);
+        var descriptor = new RazorDiagnosticDescriptor(id, message, severity);
         var span = new SourceSpan(filePath, absoluteIndex, lineIndex, characterIndex, length);
 
         return RazorDiagnostic.Create(descriptor, span);
-
-        static Func<string> MessageFormat(string message)
-        {
-            return () => message;
-        }
     }
 
     public static ProjectSnapshotHandle ReadProjectSnapshotHandleFromProperties(JsonDataReader reader)
@@ -139,14 +133,14 @@ internal static partial class ObjectReaders
         var tagOutputHint = reader.ReadStringOrNull(nameof(TagHelperDescriptor.TagOutputHint));
         var caseSensitive = reader.ReadBooleanOrTrue(nameof(TagHelperDescriptor.CaseSensitive));
 
-        var tagMatchingRules = reader.ReadArrayOrEmpty(nameof(TagHelperDescriptor.TagMatchingRules), ReadTagMatchingRule);
-        var boundAttributes = reader.ReadArrayOrEmpty(nameof(TagHelperDescriptor.BoundAttributes), ReadBoundAttribute);
-        var allowedChildTags = reader.ReadArrayOrEmpty(nameof(TagHelperDescriptor.AllowedChildTags), ReadAllowedChildTag);
+        var tagMatchingRules = reader.ReadImmutableArrayOrEmpty(nameof(TagHelperDescriptor.TagMatchingRules), ReadTagMatchingRule);
+        var boundAttributes = reader.ReadImmutableArrayOrEmpty(nameof(TagHelperDescriptor.BoundAttributes), ReadBoundAttribute);
+        var allowedChildTags = reader.ReadImmutableArrayOrEmpty(nameof(TagHelperDescriptor.AllowedChildTags), ReadAllowedChildTag);
 
         var metadata = ReadMetadata(reader, nameof(TagHelperDescriptor.Metadata));
-        var diagnostics = reader.ReadArrayOrEmpty(nameof(TagHelperDescriptor.Diagnostics), ReadDiagnostic);
+        var diagnostics = reader.ReadImmutableArrayOrEmpty(nameof(TagHelperDescriptor.Diagnostics), ReadDiagnostic);
 
-        tagHelper = new DefaultTagHelperDescriptor(
+        tagHelper = new TagHelperDescriptor(
             Cached(kind), Cached(name), Cached(assemblyName),
             Cached(displayName)!, documentationObject,
             Cached(tagOutputHint), caseSensitive,
@@ -155,7 +149,7 @@ internal static partial class ObjectReaders
 
         if (useCache && checksumWasRead)
         {
-            TagHelperCache.Default.TryAdd(tagHelper.GetChecksum(), tagHelper);
+            TagHelperCache.Default.TryAdd(tagHelper.Checksum, tagHelper);
         }
 
         return tagHelper;
@@ -170,11 +164,11 @@ internal static partial class ObjectReaders
                 var parentTag = reader.ReadStringOrNull(nameof(TagMatchingRuleDescriptor.ParentTag));
                 var tagStructure = (TagStructure)reader.ReadInt32OrZero(nameof(TagMatchingRuleDescriptor.TagStructure));
                 var caseSensitive = reader.ReadBooleanOrTrue(nameof(TagMatchingRuleDescriptor.CaseSensitive));
-                var attributes = reader.ReadArrayOrEmpty(nameof(TagMatchingRuleDescriptor.Attributes), ReadRequiredAttribute);
+                var attributes = reader.ReadImmutableArrayOrEmpty(nameof(TagMatchingRuleDescriptor.Attributes), ReadRequiredAttribute);
 
-                var diagnostics = reader.ReadArrayOrEmpty(nameof(TagMatchingRuleDescriptor.Diagnostics), ReadDiagnostic);
+                var diagnostics = reader.ReadImmutableArrayOrEmpty(nameof(TagMatchingRuleDescriptor.Diagnostics), ReadDiagnostic);
 
-                return new DefaultTagMatchingRuleDescriptor(
+                return new TagMatchingRuleDescriptor(
                     Cached(tagName), Cached(parentTag),
                     tagStructure, caseSensitive,
                     attributes, diagnostics);
@@ -192,16 +186,16 @@ internal static partial class ObjectReaders
                 var caseSensitive = reader.ReadBooleanOrTrue(nameof(RequiredAttributeDescriptor.CaseSensitive));
                 var value = reader.ReadStringOrNull(nameof(RequiredAttributeDescriptor.Value));
                 var valueComparison = (ValueComparisonMode)reader.ReadInt32OrZero(nameof(RequiredAttributeDescriptor.ValueComparison));
-                var displayName = reader.ReadStringOrNull(nameof(RequiredAttributeDescriptor.DisplayName));
+                var displayName = reader.ReadNonNullString(nameof(RequiredAttributeDescriptor.DisplayName));
 
                 var metadata = ReadMetadata(reader, nameof(RequiredAttributeDescriptor.Metadata));
-                var diagnostics = reader.ReadArrayOrEmpty(nameof(RequiredAttributeDescriptor.Diagnostics), ReadDiagnostic);
+                var diagnostics = reader.ReadImmutableArrayOrEmpty(nameof(RequiredAttributeDescriptor.Diagnostics), ReadDiagnostic);
 
-                return new DefaultRequiredAttributeDescriptor(
-                    Cached(name), nameComparison,
+                return new RequiredAttributeDescriptor(
+                    Cached(name)!, nameComparison,
                     caseSensitive,
                     Cached(value), valueComparison,
-                    Cached(displayName)!, diagnostics, metadata);
+                    Cached(displayName), diagnostics, metadata);
             }
         }
 
@@ -213,22 +207,22 @@ internal static partial class ObjectReaders
             {
                 var kind = reader.ReadNonNullString(nameof(BoundAttributeDescriptor.Kind));
                 var name = reader.ReadString(nameof(BoundAttributeDescriptor.Name));
-                var typeName = reader.ReadString(nameof(BoundAttributeDescriptor.TypeName));
+                var typeName = reader.ReadNonNullString(nameof(BoundAttributeDescriptor.TypeName));
                 var isEnum = reader.ReadBooleanOrFalse(nameof(BoundAttributeDescriptor.IsEnum));
                 var hasIndexer = reader.ReadBooleanOrFalse(nameof(BoundAttributeDescriptor.HasIndexer));
                 var indexerNamePrefix = reader.ReadStringOrNull(nameof(BoundAttributeDescriptor.IndexerNamePrefix));
                 var indexerTypeName = reader.ReadStringOrNull(nameof(BoundAttributeDescriptor.IndexerTypeName));
-                var displayName = reader.ReadStringOrNull(nameof(BoundAttributeDescriptor.DisplayName));
+                var displayName = reader.ReadNonNullString(nameof(BoundAttributeDescriptor.DisplayName));
                 var documentationObject = ReadDocumentationObject(reader, nameof(BoundAttributeDescriptor.Documentation));
                 var caseSensitive = reader.ReadBooleanOrTrue(nameof(BoundAttributeDescriptor.CaseSensitive));
                 var isEditorRequired = reader.ReadBooleanOrFalse(nameof(BoundAttributeDescriptor.IsEditorRequired));
-                var parameters = reader.ReadArrayOrEmpty(nameof(BoundAttributeDescriptor.BoundAttributeParameters), ReadBoundAttributeParameter);
+                var parameters = reader.ReadImmutableArrayOrEmpty("BoundAttributeParameters", ReadBoundAttributeParameter);
 
                 var metadata = ReadMetadata(reader, nameof(BoundAttributeDescriptor.Metadata));
-                var diagnostics = reader.ReadArrayOrEmpty(nameof(BoundAttributeDescriptor.Diagnostics), ReadDiagnostic);
+                var diagnostics = reader.ReadImmutableArrayOrEmpty(nameof(BoundAttributeDescriptor.Diagnostics), ReadDiagnostic);
 
-                return new DefaultBoundAttributeDescriptor(
-                    Cached(kind), Cached(name), Cached(typeName), isEnum,
+                return new BoundAttributeDescriptor(
+                    Cached(kind), Cached(name)!, Cached(typeName), isEnum,
                     hasIndexer, Cached(indexerNamePrefix), Cached(indexerTypeName),
                     documentationObject, Cached(displayName), caseSensitive, isEditorRequired,
                     parameters, metadata, diagnostics);
@@ -243,17 +237,17 @@ internal static partial class ObjectReaders
             {
                 var kind = reader.ReadNonNullString(nameof(BoundAttributeParameterDescriptor.Kind));
                 var name = reader.ReadString(nameof(BoundAttributeParameterDescriptor.Name));
-                var typeName = reader.ReadString(nameof(BoundAttributeParameterDescriptor.TypeName));
+                var typeName = reader.ReadNonNullString(nameof(BoundAttributeParameterDescriptor.TypeName));
                 var isEnum = reader.ReadBooleanOrFalse(nameof(BoundAttributeParameterDescriptor.IsEnum));
-                var displayName = reader.ReadStringOrNull(nameof(BoundAttributeParameterDescriptor.DisplayName));
+                var displayName = reader.ReadNonNullString(nameof(BoundAttributeParameterDescriptor.DisplayName));
                 var documentationObject = ReadDocumentationObject(reader, nameof(BoundAttributeParameterDescriptor.Documentation));
                 var caseSensitive = reader.ReadBooleanOrTrue(nameof(BoundAttributeParameterDescriptor.CaseSensitive));
 
                 var metadata = ReadMetadata(reader, nameof(RequiredAttributeDescriptor.Metadata));
-                var diagnostics = reader.ReadArrayOrEmpty(nameof(BoundAttributeParameterDescriptor.Diagnostics), ReadDiagnostic);
+                var diagnostics = reader.ReadImmutableArrayOrEmpty(nameof(BoundAttributeParameterDescriptor.Diagnostics), ReadDiagnostic);
 
-                return new DefaultBoundAttributeParameterDescriptor(
-                    Cached(kind), Cached(name), Cached(typeName),
+                return new BoundAttributeParameterDescriptor(
+                    Cached(kind), Cached(name)!, Cached(typeName),
                     isEnum, documentationObject, Cached(displayName), caseSensitive,
                     metadata, diagnostics);
             }
@@ -265,11 +259,11 @@ internal static partial class ObjectReaders
 
             static AllowedChildTagDescriptor ReadFromProperties(JsonDataReader reader)
             {
-                var name = reader.ReadString(nameof(AllowedChildTagDescriptor.Name));
-                var displayName = reader.ReadString(nameof(AllowedChildTagDescriptor.DisplayName));
-                var diagnostics = reader.ReadArrayOrEmpty(nameof(AllowedChildTagDescriptor.Diagnostics), ReadDiagnostic);
+                var name = reader.ReadNonNullString(nameof(AllowedChildTagDescriptor.Name));
+                var displayName = reader.ReadNonNullString(nameof(AllowedChildTagDescriptor.DisplayName));
+                var diagnostics = reader.ReadImmutableArrayOrEmpty(nameof(AllowedChildTagDescriptor.Diagnostics), ReadDiagnostic);
 
-                return new DefaultAllowedChildTagDescriptor(Cached(name), Cached(displayName), diagnostics);
+                return new AllowedChildTagDescriptor(Cached(name), Cached(displayName), diagnostics);
             }
         }
 

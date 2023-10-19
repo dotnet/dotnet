@@ -81,7 +81,7 @@ internal class MetadataAttributeTargetExtension : IMetadataAttributeTargetExtens
         context.CodeWriter.Write("(@\"");
         context.CodeWriter.Write(node.ChecksumAlgorithm);
         context.CodeWriter.Write("\", @\"");
-        context.CodeWriter.Write(Checksum.BytesToString(node.Checksum));
+        context.CodeWriter.Write(ChecksumUtilities.BytesToString(node.Checksum));
         context.CodeWriter.Write("\", @\"");
         context.CodeWriter.Write(node.Identifier);
         context.CodeWriter.WriteLine("\")]");

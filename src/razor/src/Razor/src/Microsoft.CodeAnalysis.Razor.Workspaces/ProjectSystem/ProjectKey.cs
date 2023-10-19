@@ -3,7 +3,6 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Utilities;
 
@@ -14,7 +13,7 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 /// identifier for a project.
 /// </summary>
 [DebuggerDisplay("id: {Id}")]
-internal readonly record struct ProjectKey : IEquatable<ProjectKey>
+internal readonly record struct ProjectKey
 {
     // ProjectKey represents the path of the intermediate output path, which is where the project.razor.bin file will
     // end up. All creation logic is here in one place to ensure this is consistent.
@@ -22,8 +21,8 @@ internal readonly record struct ProjectKey : IEquatable<ProjectKey>
     public static ProjectKey From(IProjectSnapshot project) => new(project.IntermediateOutputPath);
     public static ProjectKey? From(Project project)
     {
-        var intermediateOutputPath = Path.GetDirectoryName(project.CompilationOutputInfo.AssemblyPath);
-        return intermediateOutputPath is null ? null : new(intermediateOutputPath);
+        var intermediateOutputPath = FilePathNormalizer.GetNormalizedDirectoryName(project.CompilationOutputInfo.AssemblyPath);
+        return new(intermediateOutputPath);
     }
 
     internal static ProjectKey FromString(string projectKeyId) => new(projectKeyId);

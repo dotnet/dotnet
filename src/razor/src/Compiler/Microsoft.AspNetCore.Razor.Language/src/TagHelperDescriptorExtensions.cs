@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using Microsoft.AspNetCore.Razor.Language.Components;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -62,25 +61,5 @@ public static class TagHelperDescriptorExtensions
 
         tagHelper.Metadata.TryGetValue(TagHelperMetadata.Runtime.Name, out var value);
         return string.Equals(TagHelperConventions.DefaultKind, value, StringComparison.Ordinal);
-    }
-
-    public static bool IsComponentOrChildContentTagHelper(this TagHelperDescriptor tagHelper)
-    {
-        if (tagHelper == null)
-        {
-            throw new ArgumentNullException(nameof(tagHelper));
-        }
-
-        if (tagHelper.IsComponentTagHelper())
-        {
-            return true;
-        }
-
-        if (tagHelper.IsChildContentTagHelper())
-        {
-            return true;
-        }
-
-        return false;
     }
 }

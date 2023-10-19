@@ -68,7 +68,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
             // If we can't compute a nice namespace (no relative path) then just generate something
             // mangled.
             computedNamespace = FallbackRootNamespace;
-            var checksum = Checksum.BytesToString(codeDocument.Source.GetChecksum());
+            var checksum = ChecksumUtilities.BytesToString(codeDocument.Source.GetChecksum());
             computedClass = $"AspNetCore_{checksum}";
         }
 

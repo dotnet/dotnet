@@ -1,78 +1,51 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public abstract class RequiredAttributeDescriptor : IEquatable<RequiredAttributeDescriptor>
+public sealed class RequiredAttributeDescriptor : TagHelperObject<RequiredAttributeDescriptor>
 {
-    private const int ContainsDiagnosticsBit = 0x01;
-    private const int CaseSensitiveBit = 0x02;
+    public string Name { get; }
+    public NameComparisonMode NameComparison { get; }
+    public string? Value { get; }
+    public ValueComparisonMode ValueComparison { get; }
+    public string DisplayName { get; }
+    public bool CaseSensitive { get; }
 
-    private int _flags;
+    public MetadataCollection Metadata { get; }
 
-    private bool HasFlag(int flag) => (_flags & flag) != 0;
-    private void SetFlag(int toSet) => ThreadSafeFlagOperations.Set(ref _flags, toSet);
-    private void ClearFlag(int toClear) => ThreadSafeFlagOperations.Clear(ref _flags, toClear);
-    private void SetOrClearFlag(int toChange, bool value) => ThreadSafeFlagOperations.SetOrClear(ref _flags, toChange, value);
-
-    public string Name { get; protected set; }
-
-    public NameComparisonMode NameComparison { get; protected set; }
-
-    public bool CaseSensitive
+    internal RequiredAttributeDescriptor(
+        string name,
+        NameComparisonMode nameComparison,
+        bool caseSensitive,
+        string? value,
+        ValueComparisonMode valueComparison,
+        string displayName,
+        ImmutableArray<RazorDiagnostic> diagnostics,
+        MetadataCollection metadata)
+        : base(diagnostics)
     {
-        get => HasFlag(CaseSensitiveBit);
-        protected set => SetOrClearFlag(CaseSensitiveBit, value);
+        Name = name;
+        NameComparison = nameComparison;
+        CaseSensitive = caseSensitive;
+        Value = value;
+        ValueComparison = valueComparison;
+        DisplayName = displayName;
+        Metadata = metadata ?? MetadataCollection.Empty;
     }
 
-    public string Value { get; protected set; }
-
-    public ValueComparisonMode ValueComparison { get; protected set; }
-
-    public string DisplayName { get; protected set; }
-
-    public IReadOnlyList<RazorDiagnostic> Diagnostics
+    private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        get => HasFlag(ContainsDiagnosticsBit)
-            ? TagHelperDiagnostics.GetDiagnostics(this)
-            : Array.Empty<RazorDiagnostic>();
-
-        protected set
-        {
-            if (value?.Count > 0)
-            {
-                TagHelperDiagnostics.AddDiagnostics(this, value);
-                SetFlag(ContainsDiagnosticsBit);
-            }
-            else if (HasFlag(ContainsDiagnosticsBit))
-            {
-                TagHelperDiagnostics.RemoveDiagnostics(this);
-                ClearFlag(ContainsDiagnosticsBit);
-            }
-        }
-    }
-
-    public IReadOnlyDictionary<string, string> Metadata { get; protected set; }
-
-    public bool HasErrors
-    {
-        get
-        {
-            if (!HasFlag(ContainsDiagnosticsBit))
-            {
-                return false;
-            }
-
-            var errors = Diagnostics.Any(diagnostic => diagnostic.Severity == RazorDiagnosticSeverity.Error);
-
-            return errors;
-        }
+        builder.AppendData(Name);
+        builder.AppendData((int)NameComparison);
+        builder.AppendData(Value);
+        builder.AppendData((int)ValueComparison);
+        builder.AppendData(DisplayName);
+        builder.AppendData(CaseSensitive);
+        builder.AppendData(Metadata.Checksum);
     }
 
     public override string ToString()
@@ -80,59 +53,44 @@ public abstract class RequiredAttributeDescriptor : IEquatable<RequiredAttribute
         return DisplayName ?? base.ToString();
     }
 
-    public bool Equals(RequiredAttributeDescriptor other)
-    {
-        return RequiredAttributeDescriptorComparer.Default.Equals(this, other);
-    }
-
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as RequiredAttributeDescriptor);
-    }
-
-    public override int GetHashCode()
-    {
-        return RequiredAttributeDescriptorComparer.Default.GetHashCode(this);
-    }
-
     /// <summary>
-    /// Acceptable <see cref="RequiredAttributeDescriptor.Name"/> comparison modes.
+    /// Acceptable <see cref="Name"/> comparison modes.
     /// </summary>
     public enum NameComparisonMode
     {
         /// <summary>
-        /// HTML attribute name case insensitively matches <see cref="RequiredAttributeDescriptor.Name"/>.
+        /// HTML attribute name case insensitively matches <see cref="Name"/>.
         /// </summary>
         FullMatch,
 
         /// <summary>
-        /// HTML attribute name case insensitively starts with <see cref="RequiredAttributeDescriptor.Name"/>.
+        /// HTML attribute name case insensitively starts with <see cref="Name"/>.
         /// </summary>
         PrefixMatch,
     }
 
     /// <summary>
-    /// Acceptable <see cref="RequiredAttributeDescriptor.Value"/> comparison modes.
+    /// Acceptable <see cref="Value"/> comparison modes.
     /// </summary>
     public enum ValueComparisonMode
     {
         /// <summary>
-        /// HTML attribute value always matches <see cref="RequiredAttributeDescriptor.Value"/>.
+        /// HTML attribute value always matches <see cref="Value"/>.
         /// </summary>
         None,
 
         /// <summary>
-        /// HTML attribute value case sensitively matches <see cref="RequiredAttributeDescriptor.Value"/>.
+        /// HTML attribute value case sensitively matches <see cref="Value"/>.
         /// </summary>
         FullMatch,
 
         /// <summary>
-        /// HTML attribute value case sensitively starts with <see cref="RequiredAttributeDescriptor.Value"/>.
+        /// HTML attribute value case sensitively starts with <see cref="Value"/>.
         /// </summary>
         PrefixMatch,
 
         /// <summary>
-        /// HTML attribute value case sensitively ends with <see cref="RequiredAttributeDescriptor.Value"/>.
+        /// HTML attribute value case sensitively ends with <see cref="Value"/>.
         /// </summary>
         SuffixMatch,
     }

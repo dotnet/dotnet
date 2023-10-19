@@ -67,6 +67,16 @@
         <target state="translated">Hintergrund für C#-Code</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_CommitElementsWithSpaceDescription">
+        <source>If true, pressing space will commit suggestions for Html elements and components</source>
+        <target state="translated">Wenn TRUE, werden beim Drücken der LEERTASTE Vorschläge für HTML-Elemente und -Komponenten committet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
+        <source>Commit Elements with Space</source>
+        <target state="translated">Elemente durch Drücken der LEERTASTE committen</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
         <source>If true, formatting will be enabled while typing</source>
         <target state="translated">Bei "true" wird die Formatierung während der Eingabe aktiviert.</target>

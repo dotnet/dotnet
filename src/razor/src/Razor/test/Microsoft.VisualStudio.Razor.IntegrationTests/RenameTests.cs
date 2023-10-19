@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
 public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
-    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8121")]
+    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8121")]
     public async Task Rename_ComponentAttribute_FromRazor()
     {
         // Open the file
@@ -36,7 +36,7 @@ public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdit
         await TestServices.Editor.VerifyTextContainsAsync("<SurveyPrompt ZooperDooper=", ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8121")]
+    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8121")]
     public async Task Rename_ComponentAttribute_FromCSharpInRazor()
     {
         // Open the file
@@ -61,7 +61,7 @@ public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdit
         await TestServices.Editor.VerifyTextContainsAsync("@ZooperDooper", ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8121")]
+    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8121")]
     public async Task Rename_ComponentAttribute_FromCSharpInCSharp()
     {
         // Create the file
@@ -123,7 +123,7 @@ public class RenameTests(ITestOutputHelper testOutputHelper) : AbstractRazorEdit
         await TestServices.Editor.VerifyTextContainsAsync("@ZooperDooper", ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8121")]
+    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8121")]
     public async Task Rename_ComponentAttribute_BoundAttribute()
     {
         // Create the files

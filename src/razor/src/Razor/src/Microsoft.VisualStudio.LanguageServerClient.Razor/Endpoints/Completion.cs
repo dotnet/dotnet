@@ -3,15 +3,17 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.VisualStudio.Editor.Razor.Snippets;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
-using Newtonsoft.Json.Linq;
 using StreamJsonRpc;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
@@ -58,9 +60,8 @@ internal partial class RazorCustomMessageTarget
         return request?.Response;
     }
 
-    // JToken returning because there's no value in converting the type into its final type because this method serves entirely as a delegation point (immediately re-serializes).
     [JsonRpcMethod(LanguageServerConstants.RazorCompletionEndpointName, UseSingleObjectParameterDeserialization = true)]
-    public async Task<JToken?> ProvideCompletionsAsync(
+    public async Task<VSInternalCompletionList?> ProvideCompletionsAsync(
         DelegatedCompletionParams request,
         CancellationToken cancellationToken)
     {
@@ -122,16 +123,36 @@ internal partial class RazorCustomMessageTarget
 
         try
         {
+            using var builder = new PooledArrayBuilder<CompletionItem>();
+
+            // Make sure to call our addition to completion before tracking telemetry requests
+            AddSnippetCompletions(request.ProjectedKind, ref builder.AsRef());
+
             var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
             var lspMethodName = Methods.TextDocumentCompletion.Name;
             using var _ = _telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, request.CorrelationId);
-            var response = await _requestInvoker.ReinvokeRequestOnServerAsync<CompletionParams, JToken?>(
+            var response = await _requestInvoker.ReinvokeRequestOnServerAsync<CompletionParams, VSInternalCompletionList?>(
                 textBuffer,
                 lspMethodName,
                 languageServerName,
                 completionParams,
                 cancellationToken).ConfigureAwait(continueOnCapturedContext);
-            return response?.Response;
+
+            var completionList = response?.Response;
+            if (completionList is not null)
+            {
+                builder.AddRange(completionList.Items);
+                completionList.Items = builder.ToArray();
+            }
+            else
+            {
+                completionList = new VSInternalCompletionList()
+                {
+                    Items = builder.ToArray(),
+                };
+            }
+            
+            return completionList;
         }
         finally
         {
@@ -208,8 +229,15 @@ internal partial class RazorCustomMessageTarget
     }
 
     [JsonRpcMethod(LanguageServerConstants.RazorCompletionResolveEndpointName, UseSingleObjectParameterDeserialization = true)]
-    public async Task<JToken?> ProvideResolvedCompletionItemAsync(DelegatedCompletionItemResolveParams request, CancellationToken cancellationToken)
+    public async Task<CompletionItem?> ProvideResolvedCompletionItemAsync(DelegatedCompletionItemResolveParams request, CancellationToken cancellationToken)
     {
+        // Check if we're completing a snippet item that we provided
+        if (SnippetCompletionData.TryParse(request.CompletionItem.Data, out var snippetCompletionData))
+        {
+            request.CompletionItem.InsertText = _snippetCache.TryResolveSnippetString(snippetCompletionData);
+            return request.CompletionItem;
+        }
+
         string languageServerName;
         bool synchronized;
         VirtualDocumentSnapshot virtualDocumentSnapshot;
@@ -256,7 +284,7 @@ internal partial class RazorCustomMessageTarget
         var completionResolveParams = request.CompletionItem;
 
         var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
-        var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalCompletionItem, JToken?>(
+        var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalCompletionItem, CompletionItem?>(
             textBuffer,
             Methods.TextDocumentCompletionResolve.Name,
             languageServerName,
@@ -271,4 +299,33 @@ internal partial class RazorCustomMessageTarget
         var formattingOptions = _formattingOptionsProvider.GetOptions(document.TextDocumentIdentifier.Uri);
         return Task.FromResult(formattingOptions);
     }
+
+    private void AddSnippetCompletions(RazorLanguageKind languageKind, ref PooledArrayBuilder<CompletionItem> builder)
+    {
+        var snippets = _snippetCache.GetSnippets(ConvertLanguageKind(languageKind));
+        if (snippets.IsDefaultOrEmpty)
+        {
+            return;
+        }
+
+        builder.AddRange(snippets
+            .Select(s => new CompletionItem()
+            {
+                Label = s.Shortcut,
+                Detail = s.Description,
+                InsertTextFormat = InsertTextFormat.Snippet,
+                InsertText = s.Shortcut,
+                Data = s.CompletionData,
+                Kind = CompletionItemKind.Snippet
+            }));
+    }
+
+    private static SnippetLanguage ConvertLanguageKind(RazorLanguageKind languageKind)
+        => languageKind switch
+        {
+            RazorLanguageKind.CSharp => SnippetLanguage.CSharp,
+            RazorLanguageKind.Html => SnippetLanguage.Html,
+            RazorLanguageKind.Razor => SnippetLanguage.Razor,
+            _ => throw new InvalidOperationException($"Unexpected value {languageKind}")
+        };
 }

@@ -662,7 +662,7 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
             """;
 
         var diagnostics = new[] { new Diagnostic() { Code = "CS0103", Message = "The name 'DoesNotExist' does not exist in the current context" } };
-        var razorLSPOptions = new RazorLSPOptions(Trace: default, EnableFormatting: true, AutoClosingTags: true, insertSpaces, tabSize, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false);
+        var razorLSPOptions = new RazorLSPOptions(Trace: default, EnableFormatting: true, AutoClosingTags: true, insertSpaces, tabSize, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CommitElementsWithSpace: true);
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         await optionsMonitor.UpdateAsync(razorLSPOptions, CancellationToken.None);
         await ValidateCodeActionAsync(input,

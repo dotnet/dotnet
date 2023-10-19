@@ -132,7 +132,7 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
         await TestServices.Editor.WaitForCurrentLineTextAsync("public bool MyProperty { get; set; }", ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8036")]
+    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8036")]
     public async Task GoToDefinition_ComponentAttribute_InCSharpFile()
     {
         // Create the files
@@ -176,7 +176,7 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
         await TestServices.Editor.WaitForCurrentLineTextAsync("[Parameter] public string? MyProperty { get; set; }", ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8408")]
+    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8408")]
     public async Task GoToDefinition_ComponentAttribute_InReferencedAssembly()
     {
         // Open the file
@@ -191,7 +191,7 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
         await TestServices.Editor.WaitForActiveWindowByFileAsync("NavLink.cs", ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact(Skip = "Blocked by https://github.com/dotnet/razor/issues/7966")]
+    [ConditionalSkipIdeFact(Issue = "Blocked by https://github.com/dotnet/razor/issues/7966")]
     public async Task GoToDefinition_ComponentAttribute_GenericComponent()
     {
         // Create the files
@@ -230,7 +230,7 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
         await TestServices.Editor.WaitForCurrentLineTextAsync("[Parameter] public TItem Item { get; set; }", ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact(Skip = "Blocked by https://github.com/dotnet/razor/issues/7966")]
+    [ConditionalSkipIdeFact(Issue = "Blocked by https://github.com/dotnet/razor/issues/7966")]
     public async Task GoToDefinition_ComponentAttribute_CascadingGenericComponentWithConstraints()
     {
         // Create the files
@@ -292,7 +292,7 @@ public class GoToDefinitionTests(ITestOutputHelper testOutputHelper) : AbstractR
         await TestServices.Editor.WaitForCurrentLineTextAsync("public string FieldName { get; set; }", ControlledHangMitigatingCancellationToken);
     }
 
-    [IdeFact(Skip = "Flaky after multitarget work")]
+    [ConditionalSkipIdeFact(Issue = "Flaky after multitarget work")]
     public async Task GoToDefinition_ComponentAttribute_BoundAttribute()
     {
         // Create the files

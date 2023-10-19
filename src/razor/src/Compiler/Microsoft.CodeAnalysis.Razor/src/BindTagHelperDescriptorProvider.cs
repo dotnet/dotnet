@@ -580,7 +580,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
 
         foreach (var tagHelper in tagHelpers)
         {
-            if (!tagHelper.IsComponentTagHelper())
+            if (!tagHelper.IsComponentTagHelper)
             {
                 continue;
             }
@@ -592,9 +592,8 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             // try to find a matching "Foo".
             //
             // We also look for a corresponding FooExpression attribute, though its presence is optional.
-            for (var i = 0; i < tagHelper.BoundAttributes.Count; i++)
+            foreach (var changeAttribute in tagHelper.BoundAttributes)
             {
-                var changeAttribute = tagHelper.BoundAttributes[i];
                 if (!changeAttribute.Name.EndsWith("Changed", StringComparison.Ordinal) ||
 
                     // Allow the ValueChanged attribute to be a delegate or EventCallback<>.
@@ -610,16 +609,16 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 BoundAttributeDescriptor expressionAttribute = null;
                 var valueAttributeName = changeAttribute.Name[..^"Changed".Length];
                 var expressionAttributeName = valueAttributeName + "Expression";
-                for (var j = 0; j < tagHelper.BoundAttributes.Count; j++)
+                foreach (var attribute in tagHelper.BoundAttributes)
                 {
-                    if (tagHelper.BoundAttributes[j].Name == valueAttributeName)
+                    if (attribute.Name == valueAttributeName)
                     {
-                        valueAttribute = tagHelper.BoundAttributes[j];
+                        valueAttribute = attribute;
                     }
 
-                    if (tagHelper.BoundAttributes[j].Name == expressionAttributeName)
+                    if (attribute.Name == expressionAttributeName)
                     {
-                        expressionAttribute = tagHelper.BoundAttributes[j];
+                        expressionAttribute = attribute;
                     }
 
                     if (valueAttribute != null && expressionAttribute != null)
@@ -735,7 +734,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                     });
                 });
 
-                if (tagHelper.IsComponentFullyQualifiedNameMatch())
+                if (tagHelper.IsComponentFullyQualifiedNameMatch)
                 {
                     metadata.Add(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch);
                 }

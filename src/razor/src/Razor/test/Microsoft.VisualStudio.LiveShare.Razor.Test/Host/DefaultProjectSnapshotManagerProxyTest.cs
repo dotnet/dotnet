@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -71,12 +70,12 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
             handle =>
             {
                 Assert.Equal("vsls:/path/to/project1.csproj", handle.FilePath.ToString());
-                Assert.Equal(_projectSnapshot1.TagHelpers, handle.ProjectWorkspaceState.TagHelpers, TagHelperDescriptorComparer.Default);
+                Assert.Equal<TagHelperDescriptor>(_projectSnapshot1.TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
             },
             handle =>
             {
                 Assert.Equal("vsls:/path/to/project2.csproj", handle.FilePath.ToString());
-                Assert.Equal(_projectSnapshot2.TagHelpers, handle.ProjectWorkspaceState.TagHelpers, TagHelperDescriptorComparer.Default);
+                Assert.Equal<TagHelperDescriptor>(_projectSnapshot2.TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
             });
     }
 
@@ -168,12 +167,12 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
             handle =>
             {
                 Assert.Equal("vsls:/path/to/project1.csproj", handle.FilePath.ToString());
-                Assert.Equal(_projectSnapshot1.TagHelpers, handle.ProjectWorkspaceState.TagHelpers, TagHelperDescriptorComparer.Default);
+                Assert.Equal<TagHelperDescriptor>(_projectSnapshot1.TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
             },
             handle =>
             {
                 Assert.Equal("vsls:/path/to/project2.csproj", handle.FilePath.ToString());
-                Assert.Equal(_projectSnapshot2.TagHelpers, handle.ProjectWorkspaceState.TagHelpers, TagHelperDescriptorComparer.Default);
+                Assert.Equal<TagHelperDescriptor>(_projectSnapshot2.TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
             });
     }
 

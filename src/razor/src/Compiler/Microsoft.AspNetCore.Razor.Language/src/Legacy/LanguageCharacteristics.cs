@@ -87,7 +87,7 @@ internal abstract class LanguageCharacteristics<TTokenizer>
 
     public virtual (SyntaxToken left, SyntaxToken right) SplitToken(SyntaxToken token, int splitAt, SyntaxKind leftType)
     {
-        var left = CreateToken(token.Content.Substring(0, splitAt), leftType, RazorDiagnostic.EmptyArray);
+        var left = CreateToken(token.Content.Substring(0, splitAt), leftType, Array.Empty<RazorDiagnostic>());
 
         SyntaxToken right = null;
         if (splitAt < token.Content.Length)

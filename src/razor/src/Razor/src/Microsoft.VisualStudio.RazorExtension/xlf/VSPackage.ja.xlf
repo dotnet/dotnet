@@ -67,6 +67,16 @@
         <target state="translated">C# コードの背景</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_CommitElementsWithSpaceDescription">
+        <source>If true, pressing space will commit suggestions for Html elements and components</source>
+        <target state="translated">true の場合、スペースを押すと HTML 要素とコンポーネントの候補がコミットされます</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
+        <source>Commit Elements with Space</source>
+        <target state="translated">スペースを含む要素のコミット</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">
         <source>If true, formatting will be enabled while typing</source>
         <target state="translated">true の場合、入力中に書式設定が有効になります</target>

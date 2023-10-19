@@ -19,7 +19,14 @@ public class RazorPageDocumentClassifierPassTest : RazorProjectEngineTestBase
     public void RazorPageDocumentClassifierPass_LogsErrorForImportedPageDirectives()
     {
         // Arrange
-        var sourceSpan = new SourceSpan("import.cshtml", 0, 0, 0, 5);
+        var sourceSpan = new SourceSpan(
+            filePath: "import.cshtml",
+            absoluteIndex: 0,
+            lineIndex: 0,
+            characterIndex: 0,
+            length: 5,
+            lineCount: 0,
+            endCharacterIndex: 5);
         var expectedDiagnostic = RazorExtensionsDiagnosticFactory.CreatePageDirective_CannotBeImported(sourceSpan);
         var importDocument = RazorSourceDocument.Create("@page", "import.cshtml");
         var sourceDocument = RazorSourceDocument.Create("<p>Hello World</p>", "main.cshtml");
@@ -50,7 +57,9 @@ public class RazorPageDocumentClassifierPassTest : RazorProjectEngineTestBase
             absoluteIndex: 14 + Environment.NewLine.Length * 2,
             lineIndex: 2,
             characterIndex: 0,
-            length: 5 + Environment.NewLine.Length);
+            length: 5 + Environment.NewLine.Length,
+            lineCount: 1,
+            endCharacterIndex: 0);
 
         var expectedDiagnostic = RazorExtensionsDiagnosticFactory.CreatePageDirective_MustExistAtTheTopOfFile(sourceSpan);
         var content = Environment.NewLine +

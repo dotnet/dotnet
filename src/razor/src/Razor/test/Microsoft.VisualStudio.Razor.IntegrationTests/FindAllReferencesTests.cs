@@ -90,7 +90,7 @@ public class FindAllReferencesTests(ITestOutputHelper testOutputHelper) : Abstra
         );
     }
 
-    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8036")]
+    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8036")]
     public async Task FindAllReferences_ComponentAttribute_FromCSharpInRazor()
     {
         // Open the file
@@ -129,7 +129,7 @@ public class FindAllReferencesTests(ITestOutputHelper testOutputHelper) : Abstra
         );
     }
 
-    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8036")]
+    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8036")]
     public async Task FindAllReferences_ComponentAttribute_FromCSharpInCSharp()
     {
         // Create the file

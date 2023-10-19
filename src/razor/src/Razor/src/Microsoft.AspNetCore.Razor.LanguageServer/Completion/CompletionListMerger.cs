@@ -98,6 +98,15 @@ internal static class CompletionListMerger
 
     private static void Split(object data, List<JObject> collector)
     {
+        if (data is MergedCompletionListData mergedData)
+        {
+            // Merged data adds an extra object wrapper around the original data, so remove
+            // that to restore to the original form.
+            Split(mergedData.Data1, collector);
+            Split(mergedData.Data2, collector);
+            return;
+        }
+
         if (data is not JObject jobject)
         {
             return;

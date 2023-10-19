@@ -1,98 +1,68 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-public abstract class TagMatchingRuleDescriptor : IEquatable<TagMatchingRuleDescriptor>
+public sealed class TagMatchingRuleDescriptor : TagHelperObject<TagMatchingRuleDescriptor>
 {
-    private bool _containsDiagnostics;
-    private int? _hashCode;
-    private IEnumerable<RazorDiagnostic> _allDiagnostics;
+    public string TagName { get; }
+    public string? ParentTag { get; }
+    public TagStructure TagStructure { get; }
+    public bool CaseSensitive { get; }
+    public ImmutableArray<RequiredAttributeDescriptor> Attributes { get; }
 
-    public string TagName { get; protected set; }
-
-    public IReadOnlyList<RequiredAttributeDescriptor> Attributes { get; protected set; }
-
-    public string ParentTag { get; protected set; }
-
-    public TagStructure TagStructure { get; protected set; }
-
-    public bool CaseSensitive { get; protected set; }
-
-    public IReadOnlyList<RazorDiagnostic> Diagnostics
+    internal TagMatchingRuleDescriptor(
+        string tagName,
+        string? parentTag,
+        TagStructure tagStructure,
+        bool caseSensitive,
+        ImmutableArray<RequiredAttributeDescriptor> attributes,
+        ImmutableArray<RazorDiagnostic> diagnostics)
+        : base(diagnostics)
     {
-        get => _containsDiagnostics
-            ? TagHelperDiagnostics.GetDiagnostics(this)
-            : Array.Empty<RazorDiagnostic>();
+        TagName = tagName;
+        ParentTag = parentTag;
+        TagStructure = tagStructure;
+        CaseSensitive = caseSensitive;
+        Attributes = attributes.NullToEmpty();
+    }
 
-        protected set
+    private protected override void BuildChecksum(in Checksum.Builder builder)
+    {
+        builder.AppendData(TagName);
+        builder.AppendData(ParentTag);
+        builder.AppendData((int)TagStructure);
+
+        builder.AppendData(CaseSensitive);
+
+        foreach (var descriptor in Attributes)
         {
-            if (value?.Count > 0)
-            {
-                TagHelperDiagnostics.AddDiagnostics(this, value);
-                _containsDiagnostics = true;
-            }
-            else if (_containsDiagnostics)
-            {
-                TagHelperDiagnostics.RemoveDiagnostics(this);
-                _containsDiagnostics = false;
-            }
+            builder.AppendData(descriptor.Checksum);
         }
     }
 
-    public bool HasErrors
+    public IEnumerable<RazorDiagnostic> GetAllDiagnostics()
     {
-        get
+        foreach (var attribute in Attributes)
         {
-            var allDiagnostics = GetAllDiagnostics();
-            var errors = allDiagnostics.Any(diagnostic => diagnostic.Severity == RazorDiagnosticSeverity.Error);
-
-            return errors;
-        }
-    }
-
-    public virtual IEnumerable<RazorDiagnostic> GetAllDiagnostics()
-    {
-        if (_allDiagnostics == null)
-        {
-            using var diagnostics = new PooledList<RazorDiagnostic>();
-
-            foreach (var attribute in Attributes)
+            foreach (var diagnostic in attribute.Diagnostics)
             {
-                diagnostics.AddRange(attribute.Diagnostics);
+                yield return diagnostic;
             }
-
-            diagnostics.AddRange(Diagnostics);
-
-            _allDiagnostics = diagnostics.ToArray();
         }
 
-        return _allDiagnostics;
-    }
-
-    public bool Equals(TagMatchingRuleDescriptor other)
-    {
-        return TagMatchingRuleDescriptorComparer.Default.Equals(this, other);
-    }
-
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as TagMatchingRuleDescriptor);
-    }
-
-    public override int GetHashCode()
-    {
-        _hashCode ??= TagMatchingRuleDescriptorComparer.Default.GetHashCode(this);
-        return _hashCode.GetValueOrDefault();
+        foreach (var diagnostic in Diagnostics)
+        {
+            yield return diagnostic;
+        }
     }
 
     internal string GetDebuggerDisplay()

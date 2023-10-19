@@ -67,6 +67,6 @@ public class ViewComponentTagHelperDescriptorProviderTest
         provider.Execute(context);
 
         // Assert
-        Assert.Single(context.Results, d => TagHelperDescriptorComparer.Default.Equals(d, expectedDescriptor));
+        Assert.Single(context.Results, d => d.Equals(expectedDescriptor));
     }
 }

@@ -16,10 +16,10 @@ public class BoundAttributeDescriptorExtensionsTest
         // Arrange
         var expectedPropertyName = "IntProperty";
 
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("TestTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .Name("test")
             .Metadata(PropertyName(expectedPropertyName))
@@ -38,10 +38,10 @@ public class BoundAttributeDescriptorExtensionsTest
     public void GetPropertyName_ReturnsNullIfNoPropertyName()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("TestTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .Name("test")
             .TypeName(typeof(int).FullName);
@@ -59,10 +59,10 @@ public class BoundAttributeDescriptorExtensionsTest
     public void IsDefaultKind_ReturnsTrue_IfKindIsDefault()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("TestTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .Name("test")
             .Metadata(PropertyName("IntProperty"))
@@ -81,10 +81,10 @@ public class BoundAttributeDescriptorExtensionsTest
     public void IsDefaultKind_ReturnsFalse_IfKindIsNotDefault()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder("other-kind", "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder("other-kind", "TestTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("TestTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, "other-kind");
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, "other-kind");
         builder
             .Name("test")
             .Metadata(PropertyName("IntProperty"))
@@ -103,10 +103,10 @@ public class BoundAttributeDescriptorExtensionsTest
     public void ExpectsStringValue_ReturnsTrue_ForStringProperty()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("TestTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .Name("test")
             .Metadata(PropertyName("BoundProp"))
@@ -125,10 +125,10 @@ public class BoundAttributeDescriptorExtensionsTest
     public void ExpectsStringValue_ReturnsFalse_ForNonStringProperty()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("TestTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .Name("test")
             .Metadata(PropertyName("BoundProp"))
@@ -147,10 +147,10 @@ public class BoundAttributeDescriptorExtensionsTest
     public void ExpectsStringValue_ReturnsTrue_StringIndexerAndNameMatch()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("TestTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .Name("test")
             .Metadata(PropertyName("BoundProp"))
@@ -170,10 +170,10 @@ public class BoundAttributeDescriptorExtensionsTest
     public void ExpectsStringValue_ReturnsFalse_StringIndexerAndNameMismatch()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("TestTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .Name("test")
             .Metadata(PropertyName("BoundProp"))
@@ -193,10 +193,10 @@ public class BoundAttributeDescriptorExtensionsTest
     public void ExpectsBooleanValue_ReturnsTrue_ForBooleanProperty()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("TestTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .Name("test")
             .Metadata(PropertyName("BoundProp"))
@@ -215,10 +215,10 @@ public class BoundAttributeDescriptorExtensionsTest
     public void ExpectsBooleanValue_ReturnsFalse_ForNonBooleanProperty()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("TestTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .Name("test")
             .Metadata(PropertyName("BoundProp"))
@@ -237,10 +237,10 @@ public class BoundAttributeDescriptorExtensionsTest
     public void ExpectsBooleanValue_ReturnsTrue_BooleanIndexerAndNameMatch()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("TestTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .Name("test")
             .Metadata(PropertyName("BoundProp"))
@@ -260,10 +260,10 @@ public class BoundAttributeDescriptorExtensionsTest
     public void ExpectsBooleanValue_ReturnsFalse_BooleanIndexerAndNameMismatch()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("TestTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .Name("test")
             .Metadata(PropertyName("BoundProp"))

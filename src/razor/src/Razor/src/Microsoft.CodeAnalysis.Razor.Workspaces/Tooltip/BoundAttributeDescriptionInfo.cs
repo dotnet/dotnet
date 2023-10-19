@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.CodeAnalysis.Razor.Tooltip;
@@ -39,7 +40,7 @@ internal record BoundAttributeDescriptionInfo(string ReturnTypeName, string Type
             throw new ArgumentNullException(nameof(boundAttribute));
         }
 
-        var returnTypeName = isIndexer ? boundAttribute.IndexerTypeName : boundAttribute.TypeName;
+        var returnTypeName = isIndexer ? boundAttribute.IndexerTypeName.AssumeNotNull() : boundAttribute.TypeName;
         var propertyName = boundAttribute.GetPropertyName();
 
         // The BoundAttributeDescriptor does not directly have the TagHelperTypeName information available.
@@ -54,7 +55,7 @@ internal record BoundAttributeDescriptionInfo(string ReturnTypeName, string Type
     }
 
     // Internal for testing
-    internal static string ResolveTagHelperTypeName(string propertyName, string displayName)
+    internal static string ResolveTagHelperTypeName(string propertyName, string? displayName)
     {
         // A BoundAttributeDescriptor does not have a direct reference to its parent TagHelper.
         // However, when it was constructed the parent TagHelper's type name was embedded into

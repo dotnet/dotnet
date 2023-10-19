@@ -12,7 +12,7 @@ namespace Microsoft.CodeAnalysis.Razor.Serialization;
 
 internal class TagHelperDescriptorJsonConverter : JsonConverter
 {
-    public static readonly TagHelperDescriptorJsonConverter Instance = new TagHelperDescriptorJsonConverter();
+    public static readonly TagHelperDescriptorJsonConverter Instance = new();
 
     public override bool CanConvert(Type objectType)
     {
@@ -116,7 +116,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
         }
         writer.WriteEndArray();
 
-        if (tagHelper.BoundAttributes != null && tagHelper.BoundAttributes.Count > 0)
+        if (tagHelper.BoundAttributes != null && tagHelper.BoundAttributes.Length > 0)
         {
             writer.WritePropertyName(nameof(TagHelperDescriptor.BoundAttributes));
             writer.WriteStartArray();
@@ -127,7 +127,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
             writer.WriteEndArray();
         }
 
-        if (tagHelper.AllowedChildTags != null && tagHelper.AllowedChildTags.Count > 0)
+        if (tagHelper.AllowedChildTags != null && tagHelper.AllowedChildTags.Length > 0)
         {
             writer.WritePropertyName(nameof(TagHelperDescriptor.AllowedChildTags));
             writer.WriteStartArray();
@@ -138,7 +138,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
             writer.WriteEndArray();
         }
 
-        if (tagHelper.Diagnostics != null && tagHelper.Diagnostics.Count > 0)
+        if (tagHelper.Diagnostics != null && tagHelper.Diagnostics.Length > 0)
         {
             writer.WritePropertyName(nameof(TagHelperDescriptor.Diagnostics));
             serializer.Serialize(writer, tagHelper.Diagnostics);
@@ -209,7 +209,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
             writer.WriteValue(boundAttribute.Documentation);
         }
 
-        if (boundAttribute.Diagnostics != null && boundAttribute.Diagnostics.Count > 0)
+        if (boundAttribute.Diagnostics != null && boundAttribute.Diagnostics.Length > 0)
         {
             writer.WritePropertyName(nameof(BoundAttributeDescriptor.Diagnostics));
             serializer.Serialize(writer, boundAttribute.Diagnostics);
@@ -218,11 +218,11 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
         writer.WritePropertyName(nameof(BoundAttributeDescriptor.Metadata));
         WriteMetadata(writer, boundAttribute.Metadata);
 
-        if (boundAttribute.BoundAttributeParameters != null && boundAttribute.BoundAttributeParameters.Count > 0)
+        if (boundAttribute.Parameters != null && boundAttribute.Parameters.Length > 0)
         {
-            writer.WritePropertyName(nameof(BoundAttributeDescriptor.BoundAttributeParameters));
+            writer.WritePropertyName(nameof(BoundAttributeDescriptor.Parameters));
             writer.WriteStartArray();
-            foreach (var boundAttributeParameter in boundAttribute.BoundAttributeParameters)
+            foreach (var boundAttributeParameter in boundAttribute.Parameters)
             {
                 WriteBoundAttributeParameter(writer, boundAttributeParameter, serializer);
             }
@@ -254,7 +254,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
             writer.WriteValue(boundAttributeParameter.Documentation);
         }
 
-        if (boundAttributeParameter.Diagnostics != null && boundAttributeParameter.Diagnostics.Count > 0)
+        if (boundAttributeParameter.Diagnostics != null && boundAttributeParameter.Diagnostics.Length > 0)
         {
             writer.WritePropertyName(nameof(BoundAttributeParameterDescriptor.Diagnostics));
             serializer.Serialize(writer, boundAttributeParameter.Diagnostics);
@@ -266,7 +266,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
         writer.WriteEndObject();
     }
 
-    private static void WriteMetadata(JsonWriter writer, IReadOnlyDictionary<string, string> metadata)
+    private static void WriteMetadata(JsonWriter writer, MetadataCollection metadata)
     {
         writer.WriteStartObject();
         foreach (var kvp in metadata)
@@ -296,7 +296,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
             writer.WriteValue(ruleDescriptor.TagStructure);
         }
 
-        if (ruleDescriptor.Attributes != null && ruleDescriptor.Attributes.Count > 0)
+        if (ruleDescriptor.Attributes != null && ruleDescriptor.Attributes.Length > 0)
         {
             writer.WritePropertyName(nameof(TagMatchingRuleDescriptor.Attributes));
             writer.WriteStartArray();
@@ -307,7 +307,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
             writer.WriteEndArray();
         }
 
-        if (ruleDescriptor.Diagnostics != null && ruleDescriptor.Diagnostics.Count > 0)
+        if (ruleDescriptor.Diagnostics != null && ruleDescriptor.Diagnostics.Length > 0)
         {
             writer.WritePropertyName(nameof(TagMatchingRuleDescriptor.Diagnostics));
             serializer.Serialize(writer, ruleDescriptor.Diagnostics);
@@ -341,7 +341,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
             writer.WriteValue(requiredAttribute.ValueComparison);
         }
 
-        if (requiredAttribute.Diagnostics != null && requiredAttribute.Diagnostics.Count > 0)
+        if (requiredAttribute.Diagnostics != null && requiredAttribute.Diagnostics.Length > 0)
         {
             writer.WritePropertyName(nameof(RequiredAttributeDescriptor.Diagnostics));
             serializer.Serialize(writer, requiredAttribute.Diagnostics);
@@ -449,7 +449,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
                             attribute.IsEditorRequired = value;
                         }
                         break;
-                    case nameof(BoundAttributeDescriptor.BoundAttributeParameters):
+                    case nameof(BoundAttributeDescriptor.Parameters):
                         ReadBoundAttributeParameters(reader, attribute);
                         break;
                     case nameof(BoundAttributeDescriptor.Diagnostics):
@@ -751,7 +751,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
         });
     }
 
-    private static void ReadDiagnostics(JsonReader reader, RazorDiagnosticCollection diagnostics)
+    private static void ReadDiagnostics(JsonReader reader, IList<RazorDiagnostic> diagnostics)
     {
         if (!reader.Read())
         {
@@ -766,10 +766,11 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
         do
         {
             ReadDiagnostic(reader, diagnostics);
-        } while (reader.TokenType != JsonToken.EndArray);
+        }
+        while (reader.TokenType != JsonToken.EndArray);
     }
 
-    private static void ReadDiagnostic(JsonReader reader, RazorDiagnosticCollection diagnostics)
+    private static void ReadDiagnostic(JsonReader reader, IList<RazorDiagnostic> diagnostics)
     {
         if (!reader.Read())
         {
@@ -811,7 +812,7 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
             }
         });
 
-        var descriptor = new RazorDiagnosticDescriptor(id, () => message, (RazorDiagnosticSeverity)severity);
+        var descriptor = new RazorDiagnosticDescriptor(id, message, (RazorDiagnosticSeverity)severity);
 
         var diagnostic = RazorDiagnostic.Create(descriptor, sourceSpan);
         diagnostics.Add(diagnostic);

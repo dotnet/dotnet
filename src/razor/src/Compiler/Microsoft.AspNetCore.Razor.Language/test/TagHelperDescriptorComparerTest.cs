@@ -48,44 +48,6 @@ public class TagHelperDescriptorComparerTest
     }
 
     [Fact]
-    public void GetHashCode_FQNAndNameTagHelperDescriptors_HashCodeMatches()
-    {
-        // Arrange
-        var descriptorName = CreateTagHelperDescriptor(
-            tagName: "input",
-            typeName: "InputTagHelper",
-            assemblyName: "TestAssembly",
-            tagMatchingRuleName: "Input",
-            attributes: new Action<BoundAttributeDescriptorBuilder>[]
-            {
-                builder => builder
-                    .Name("value")
-                    .Metadata(PropertyName("FooProp"))
-                    .TypeName("System.String"),
-            });
-
-        var descriptorFQN = CreateTagHelperDescriptor(
-            tagName: "input",
-            typeName: "InputTagHelper",
-            assemblyName: "TestAssembly",
-            tagMatchingRuleName: "Microsoft.AspNetCore.Components.Forms.Input",
-            attributes: new Action<BoundAttributeDescriptorBuilder>[]
-            {
-                builder => builder
-                    .Name("value")
-                    .Metadata(PropertyName("FooProp"))
-                    .TypeName("System.String"),
-            });
-
-        // Act
-        var hashCodeName = descriptorName.GetHashCode();
-        var hashCodeFQN = descriptorFQN.GetHashCode();
-
-        // Assert
-        Assert.Equal(hashCodeName, hashCodeFQN);
-    }
-
-    [Fact]
     public void GetHashCode_DifferentTagHelperDescriptors_HashCodeDoesNotMatch()
     {
         // Arrange
@@ -130,7 +92,7 @@ public class TagHelperDescriptorComparerTest
         string tagMatchingRuleName = null,
         IEnumerable<Action<BoundAttributeDescriptorBuilder>> attributes = null)
     {
-        var builder = TagHelperDescriptorBuilder.Create(typeName, assemblyName) as DefaultTagHelperDescriptorBuilder;
+        var builder = TagHelperDescriptorBuilder.Create(typeName, assemblyName);
         builder.Metadata(TypeName(typeName));
 
         if (attributes != null)

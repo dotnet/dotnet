@@ -40,7 +40,7 @@ internal class RazorDiagnosticJsonConverter : JsonConverter
         var characterIndex = span[nameof(SourceSpan.CharacterIndex)].Value<int>();
         var length = span[nameof(SourceSpan.Length)].Value<int>();
 
-        var descriptor = new RazorDiagnosticDescriptor(id, () => message, (RazorDiagnosticSeverity)severity);
+        var descriptor = new RazorDiagnosticDescriptor(id, message, (RazorDiagnosticSeverity)severity);
         var sourceSpan = new SourceSpan(filePath, absoluteIndex, lineIndex, characterIndex, length);
 
         return RazorDiagnostic.Create(descriptor, sourceSpan);

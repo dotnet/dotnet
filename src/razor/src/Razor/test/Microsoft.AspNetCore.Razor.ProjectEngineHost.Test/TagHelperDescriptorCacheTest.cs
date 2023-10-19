@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
-using Checksum = Microsoft.AspNetCore.Razor.Utilities.Checksum;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test;
 
@@ -23,7 +22,7 @@ public class TagHelperDescriptorCacheTest(ITestOutputHelper testOutput) : TestBa
         // Arrange
         var expectedPropertyName = "PropertyName";
 
-        var intTagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var intTagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
         _ = intTagHelperBuilder.Metadata(TypeName("TestTagHelper"));
         intTagHelperBuilder.BoundAttributeDescriptor(intBuilder =>
             intBuilder
@@ -33,7 +32,7 @@ public class TagHelperDescriptorCacheTest(ITestOutputHelper testOutput) : TestBa
         );
         var intTagHelper = intTagHelperBuilder.Build();
 
-        var stringTagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var stringTagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
         _ = stringTagHelperBuilder.Metadata(TypeName("TestTagHelper"));
         stringTagHelperBuilder.BoundAttributeDescriptor(stringBuilder =>
             stringBuilder
@@ -44,10 +43,10 @@ public class TagHelperDescriptorCacheTest(ITestOutputHelper testOutput) : TestBa
         var stringTagHelper = stringTagHelperBuilder.Build();
 
         // Act
-        _tagHelperCache.TryAdd(intTagHelper.GetChecksum(), intTagHelper);
+        _tagHelperCache.TryAdd(intTagHelper.Checksum, intTagHelper);
 
         // Assert
-        Assert.False(_tagHelperCache.TryGet(stringTagHelper.GetChecksum(), out _));
+        Assert.False(_tagHelperCache.TryGet(stringTagHelper.Checksum, out _));
     }
 
     [Fact]
@@ -66,7 +65,7 @@ public class TagHelperDescriptorCacheTest(ITestOutputHelper testOutput) : TestBa
         }
 
         // Act
-        var hashes = new HashSet<Checksum>(tagHelpers.Select(t => t.GetChecksum()));
+        var hashes = new HashSet<Checksum>(tagHelpers.Select(t => t.Checksum));
 
         // Assert
         // Only 1 batch of taghelpers should remain after we filter by cache id
@@ -80,7 +79,7 @@ public class TagHelperDescriptorCacheTest(ITestOutputHelper testOutput) : TestBa
         var tagHelpers = RazorTestResources.BlazorServerAppTagHelpers;
 
         // Act
-        var hashes = new HashSet<Checksum>(tagHelpers.Select(t => t.GetChecksum()));
+        var hashes = new HashSet<Checksum>(tagHelpers.Select(t => t.Checksum));
 
         // Assert
         Assert.Equal(hashes.Count, tagHelpers.Length);

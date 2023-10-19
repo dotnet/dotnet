@@ -97,21 +97,19 @@ internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttr
 
         foreach (var descriptor in descriptorsForTag)
         {
-            for (var i = 0; i < descriptor.BoundAttributes.Count; i++)
+            for (var i = 0; i < descriptor.BoundAttributes.Length; i++)
             {
                 var attributeDescriptor = descriptor.BoundAttributes[i];
-                var boundAttributeParameters = attributeDescriptor.BoundAttributeParameters;
-                if (boundAttributeParameters.Count == 0)
+                var boundAttributeParameters = attributeDescriptor.Parameters;
+                if (boundAttributeParameters.Length == 0)
                 {
                     continue;
                 }
 
                 if (TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor))
                 {
-                    for (var j = 0; j < boundAttributeParameters.Count; j++)
+                    foreach (var parameterDescriptor in boundAttributeParameters)
                     {
-                        var parameterDescriptor = boundAttributeParameters[j];
-
                         if (attributes.Any(name => TagHelperMatchingConventions.SatisfiesBoundAttributeWithParameter(name, attributeDescriptor, parameterDescriptor)))
                         {
                             // There's already an existing attribute that satisfies this parameter, don't show it in the completion list.

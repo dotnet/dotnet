@@ -9,7 +9,7 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
 public class OnTypeFormattingTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
-    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/8625")]
+    [ConditionalSkipIdeFact(Issue = "https://github.com/dotnet/razor/issues/8625")]
     public async Task TypeScript_Semicolon()
     {
         // Open the file

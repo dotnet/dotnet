@@ -109,7 +109,7 @@ internal class DefaultDocumentWriter : DocumentWriter
 
                 var sourceDocument = Context.SourceDocument;
 
-                var checksum = Checksum.BytesToString(sourceDocument.GetChecksum());
+                var checksum = ChecksumUtilities.BytesToString(sourceDocument.GetChecksum());
                 if (!string.IsNullOrEmpty(checksum))
                 {
                     Context.CodeWriter

@@ -1664,6 +1664,50 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
+    [WorkItem("https://github.com/dotnet/razor/issues/9337")]
+    public async Task FormatMinimizedTagHelperAttributes()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    @using Microsoft.AspNetCore.Components.Forms;
+
+                    @code {
+                        private bool _id {get;set;}
+                    }
+
+                    <div>
+                        @if (true)
+                        {
+                            <div>
+                                <InputCheckbox CssClass="goo"
+                                   Value
+                                   accesskey="F" />
+                            </div>
+                        }
+                    </div>
+                    """,
+            expected: """
+                    @using Microsoft.AspNetCore.Components.Forms;
+
+                    @code {
+                        private bool _id { get; set; }
+                    }
+
+                    <div>
+                        @if (true)
+                        {
+                            <div>
+                                <InputCheckbox CssClass="goo"
+                                               Value
+                                               accesskey="F" />
+                            </div>
+                        }
+                    </div>
+                    """,
+            fileKind: FileKinds.Component);
+    }
+
+    [Fact]
     [WorkItem("https://github.com/dotnet/razor/issues/6211")]
     public async Task FormatCascadingValueWithCascadingTypeParameter()
     {

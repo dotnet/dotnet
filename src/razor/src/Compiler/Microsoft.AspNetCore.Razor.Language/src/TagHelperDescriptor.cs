@@ -1,219 +1,207 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-public abstract class TagHelperDescriptor : IEquatable<TagHelperDescriptor>
+public sealed class TagHelperDescriptor : TagHelperObject<TagHelperDescriptor>
 {
-    private const int ContainsDiagnosticsBit = 1 << 0;
-    private const int IsComponentFullyQualifiedNameMatchCacheSetBit = 1 << 1;
-    private const int IsComponentFullyQualifiedNameMatchCacheBit = 1 << 2;
-    private const int IsChildContentTagHelperCacheSetBit = 1 << 3;
-    private const int IsChildContentTagHelperCacheBit = 1 << 4;
-    private const int CaseSensitiveBit = 1 << 5;
-
-    private int _flags;
-    private int? _hashCode;
-    private DocumentationObject _documentationObject;
-
-    private IEnumerable<RazorDiagnostic> _allDiagnostics;
-    private BoundAttributeDescriptor[] _editorRequiredAttributes;
-
-    protected TagHelperDescriptor(string kind)
+    [Flags]
+    private enum TagHelperFlags
     {
-        Kind = kind;
+        CaseSensitive = 1 << 0,
+        IsComponent = 1 << 1,
+        IsComponentFullyQualifiedNameMatch = 1 << 2,
+        IsChildContent = 1 << 3
     }
 
-    private bool HasFlag(int flag) => (_flags & flag) != 0;
-    private void SetFlag(int toSet) => ThreadSafeFlagOperations.Set(ref _flags, toSet);
-    private void ClearFlag(int toClear) => ThreadSafeFlagOperations.Clear(ref _flags, toClear);
-    private void SetOrClearFlag(int toChange, bool value) => ThreadSafeFlagOperations.SetOrClear(ref _flags, toChange, value);
+    private readonly TagHelperFlags _flags;
+    private readonly DocumentationObject _documentationObject;
+
+    private ImmutableArray<BoundAttributeDescriptor> _editorRequiredAttributes;
 
     public string Kind { get; }
+    public string Name { get; }
+    public string AssemblyName { get; }
 
-    public string Name { get; protected set; }
+    public string? Documentation => _documentationObject.GetText();
+    internal DocumentationObject DocumentationObject => _documentationObject;
 
-    public IReadOnlyList<TagMatchingRuleDescriptor> TagMatchingRules { get; protected set; }
+    public string DisplayName { get; }
+    public string? TagOutputHint { get; }
 
-    public string AssemblyName { get; protected set; }
+    public bool CaseSensitive => (_flags & TagHelperFlags.CaseSensitive) != 0;
 
-    public IReadOnlyList<BoundAttributeDescriptor> BoundAttributes { get; protected set; }
+    public ImmutableArray<AllowedChildTagDescriptor> AllowedChildTags { get; }
+    public ImmutableArray<BoundAttributeDescriptor> BoundAttributes { get; }
+    public ImmutableArray<TagMatchingRuleDescriptor> TagMatchingRules { get; }
 
-    public IReadOnlyList<AllowedChildTagDescriptor> AllowedChildTags { get; protected set; }
+    public MetadataCollection Metadata { get; }
 
-    public string Documentation
+    internal bool IsComponentTagHelper => (_flags & TagHelperFlags.IsComponent) != 0;
+
+    /// <summary>
+    /// Gets whether the component matches a tag with a fully qualified name.
+    /// </summary>
+    internal bool IsComponentFullyQualifiedNameMatch => (_flags & TagHelperFlags.IsComponentFullyQualifiedNameMatch) != 0;
+    internal bool IsChildContentTagHelper => (_flags & TagHelperFlags.IsChildContent) != 0;
+    internal bool IsComponentOrChildContentTagHelper => IsComponentTagHelper || IsChildContentTagHelper;
+
+    internal TagHelperDescriptor(
+        string kind,
+        string name,
+        string assemblyName,
+        string displayName,
+        DocumentationObject documentationObject,
+        string? tagOutputHint,
+        bool caseSensitive,
+        ImmutableArray<TagMatchingRuleDescriptor> tagMatchingRules,
+        ImmutableArray<BoundAttributeDescriptor> attributeDescriptors,
+        ImmutableArray<AllowedChildTagDescriptor> allowedChildTags,
+        MetadataCollection metadata,
+        ImmutableArray<RazorDiagnostic> diagnostics)
+        : base(diagnostics)
     {
-        get => _documentationObject.GetText();
-        protected set => _documentationObject = new(value);
-    }
+        Kind = kind;
+        Name = name;
+        AssemblyName = assemblyName;
+        DisplayName = displayName;
+        _documentationObject = documentationObject;
+        TagOutputHint = tagOutputHint;
+        TagMatchingRules = tagMatchingRules.NullToEmpty();
+        BoundAttributes = attributeDescriptors.NullToEmpty();
+        AllowedChildTags = allowedChildTags.NullToEmpty();
+        Metadata = metadata ?? MetadataCollection.Empty;
 
-    internal DocumentationObject DocumentationObject
-    {
-        get => _documentationObject;
-        set => _documentationObject = value;
-    }
+        TagHelperFlags flags = 0;
 
-    public string DisplayName { get; protected set; }
-
-    public string TagOutputHint { get; protected set; }
-
-    public bool CaseSensitive
-    {
-        get => HasFlag(CaseSensitiveBit);
-        protected set => SetOrClearFlag(CaseSensitiveBit, value);
-    }
-
-    public IReadOnlyList<RazorDiagnostic> Diagnostics
-    {
-        get => HasFlag(ContainsDiagnosticsBit)
-            ? TagHelperDiagnostics.GetDiagnostics(this)
-            : Array.Empty<RazorDiagnostic>();
-
-        protected set
+        if (caseSensitive)
         {
-            if (value?.Count > 0)
-            {
-                TagHelperDiagnostics.AddDiagnostics(this, value);
-                SetFlag(ContainsDiagnosticsBit);
-            }
-            else if (HasFlag(ContainsDiagnosticsBit))
-            {
-                TagHelperDiagnostics.RemoveDiagnostics(this);
-                ClearFlag(ContainsDiagnosticsBit);
-            }
-        }
-    }
-
-    public IReadOnlyDictionary<string, string> Metadata { get; protected set; }
-
-    internal bool? IsComponentFullyQualifiedNameMatchCache
-    {
-        get => GetTriStateFlags(isSetFlag: IsComponentFullyQualifiedNameMatchCacheSetBit, isOnFlag: IsComponentFullyQualifiedNameMatchCacheBit);
-        set => UpdateTriStateFlags(value, isSetFlag: IsComponentFullyQualifiedNameMatchCacheSetBit, isOnFlag: IsComponentFullyQualifiedNameMatchCacheBit);
-    }
-
-    internal bool? IsChildContentTagHelperCache
-    {
-        get => GetTriStateFlags(isSetFlag: IsChildContentTagHelperCacheSetBit, isOnFlag: IsChildContentTagHelperCacheBit);
-        set => UpdateTriStateFlags(value, isSetFlag: IsChildContentTagHelperCacheSetBit, isOnFlag: IsChildContentTagHelperCacheBit);
-    }
-
-    private bool? GetTriStateFlags(int isSetFlag, int isOnFlag)
-    {
-        var flags = _flags;
-
-        if ((flags & isSetFlag) == 0)
-        {
-            return null;
+            flags |= TagHelperFlags.CaseSensitive;
         }
 
-        return (flags & isOnFlag) != 0;
-    }
-
-    private void UpdateTriStateFlags(bool? value, int isSetFlag, int isOnFlag)
-    {
-        switch (value)
+        if (kind == ComponentMetadata.Component.TagHelperKind &&
+            !Metadata.ContainsKey(ComponentMetadata.SpecialKindKey))
         {
-            case true:
-                SetFlag(isSetFlag | isOnFlag);
-                break;
-
-            case false:
-                ClearFlag(isOnFlag);
-                SetFlag(isSetFlag);
-                break;
-
-            case null:
-                ClearFlag(isSetFlag);
-                break;
+            flags |= TagHelperFlags.IsComponent;
         }
+
+        if (Metadata.Contains(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch))
+        {
+            flags |= TagHelperFlags.IsComponentFullyQualifiedNameMatch;
+        }
+
+        if (Metadata.Contains(ComponentMetadata.SpecialKindKey, ComponentMetadata.ChildContent.TagHelperKind))
+        {
+            flags |= TagHelperFlags.IsChildContent;
+        }
+
+        _flags = flags;
     }
 
-    internal BoundAttributeDescriptor[] EditorRequiredAttributes
+    private protected override void BuildChecksum(in Checksum.Builder builder)
+    {
+        builder.AppendData(Kind);
+        builder.AppendData(Name);
+        builder.AppendData(AssemblyName);
+        builder.AppendData(DisplayName);
+        builder.AppendData(TagOutputHint);
+
+        DocumentationObject.AppendToChecksum(in builder);
+
+        builder.AppendData(CaseSensitive);
+
+        foreach (var descriptor in AllowedChildTags)
+        {
+            builder.AppendData(descriptor.Checksum);
+        }
+
+        foreach (var descriptor in BoundAttributes)
+        {
+            builder.AppendData(descriptor.Checksum);
+        }
+
+        foreach (var descriptor in TagMatchingRules)
+        {
+            builder.AppendData(descriptor.Checksum);
+        }
+
+        builder.AppendData(Metadata.Checksum);
+    }
+
+    internal ImmutableArray<BoundAttributeDescriptor> EditorRequiredAttributes
     {
         get
         {
-            _editorRequiredAttributes ??= GetEditorRequiredAttributes(BoundAttributes);
+            if (_editorRequiredAttributes.IsDefault)
+            {
+                ImmutableInterlocked.InterlockedInitialize(ref _editorRequiredAttributes, GetEditorRequiredAttributes(BoundAttributes));
+            }
+
             return _editorRequiredAttributes;
 
-            static BoundAttributeDescriptor[] GetEditorRequiredAttributes(IReadOnlyList<BoundAttributeDescriptor> attributes)
+            static ImmutableArray<BoundAttributeDescriptor> GetEditorRequiredAttributes(ImmutableArray<BoundAttributeDescriptor> attributes)
             {
-                var count = attributes.Count;
-
-                if (count == 0)
+                if (attributes.Length == 0)
                 {
-                    return Array.Empty<BoundAttributeDescriptor>();
+                    return ImmutableArray<BoundAttributeDescriptor>.Empty;
                 }
 
-                using var results = new PooledList<BoundAttributeDescriptor>();
+                using var results = new PooledArrayBuilder<BoundAttributeDescriptor>(capacity: attributes.Length);
 
-                for (var i = 0; i < count; i++)
+                foreach (var attribute in attributes)
                 {
-                    if (attributes[i] is { IsEditorRequired: true } editorRequiredAttribute)
+                    if (attribute is { IsEditorRequired: true } editorRequiredAttribute)
                     {
                         results.Add(editorRequiredAttribute);
                     }
                 }
 
-                return results.ToArray();
+                return results.DrainToImmutable();
             }
         }
     }
 
-    public bool HasErrors
+    public IEnumerable<RazorDiagnostic> GetAllDiagnostics()
     {
-        get
+        foreach (var allowedChildTag in AllowedChildTags)
         {
-            if (!HasFlag(ContainsDiagnosticsBit))
+            foreach (var diagnostic in allowedChildTag.Diagnostics)
             {
-                return false;
+                yield return diagnostic;
             }
-
-            var errors = Diagnostics.Any(diagnostic => diagnostic.Severity == RazorDiagnosticSeverity.Error);
-
-            return errors;
-        }
-    }
-
-    public virtual IEnumerable<RazorDiagnostic> GetAllDiagnostics()
-    {
-        if (_allDiagnostics == null)
-        {
-            using var diagnostics = new PooledList<RazorDiagnostic>();
-
-            foreach (var allowedChildTag in AllowedChildTags)
-            {
-                diagnostics.AddRange(allowedChildTag.Diagnostics);
-            }
-
-            foreach (var attribute in BoundAttributes)
-            {
-                diagnostics.AddRange(attribute.Diagnostics);
-            }
-
-            // BUG?: Diagnostics on BoundAttributeParameterDescriptors are not collected here.
-            // https://github.com/dotnet/razor/issues/8544
-
-            foreach (var rule in TagMatchingRules)
-            {
-                diagnostics.AddRange(rule.GetAllDiagnostics());
-            }
-
-            diagnostics.AddRange(Diagnostics);
-
-            _allDiagnostics = diagnostics.ToArray();
         }
 
-        return _allDiagnostics;
+        foreach (var boundAttribute in BoundAttributes)
+        {
+            foreach (var diagnostic in boundAttribute.Diagnostics)
+            {
+                yield return diagnostic;
+            }
+        }
+
+        foreach (var tagMatchingRule in TagMatchingRules)
+        {
+            foreach (var diagnostic in tagMatchingRule.Diagnostics)
+            {
+                yield return diagnostic;
+            }
+        }
+
+        foreach (var diagnostic in Diagnostics)
+        {
+            yield return diagnostic;
+        }
     }
 
     public override string ToString()
@@ -221,24 +209,17 @@ public abstract class TagHelperDescriptor : IEquatable<TagHelperDescriptor>
         return DisplayName ?? base.ToString();
     }
 
-    public bool Equals(TagHelperDescriptor other)
-    {
-        return TagHelperDescriptorComparer.Default.Equals(this, other);
-    }
-
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as TagHelperDescriptor);
-    }
-
-    public override int GetHashCode()
-    {
-        // TagHelperDescriptors are immutable instances and it should be safe to cache it's hashes once.
-        return _hashCode ??= TagHelperDescriptorComparer.Default.GetHashCode(this);
-    }
-
     private string GetDebuggerDisplay()
     {
         return $"{DisplayName} - {string.Join(" | ", TagMatchingRules.Select(r => r.GetDebuggerDisplay()))}";
+    }
+
+    internal TagHelperDescriptor WithName(string name)
+    {
+        return new(
+            Kind, name, AssemblyName, DisplayName,
+            DocumentationObject, TagOutputHint, CaseSensitive,
+            TagMatchingRules, BoundAttributes, AllowedChildTags,
+            Metadata, Diagnostics);
     }
 }

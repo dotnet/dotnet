@@ -24,12 +24,12 @@ public abstract class ResponseRewriterTestBase : LanguageServerTestBase
         Rewriter = rewriter;
     }
 
-    protected async Task<VSInternalCompletionList> GetRewrittenCompletionListAsync(int absoluteIndex, string documentContent, VSInternalCompletionList initialCompletionList)
+    private protected async Task<VSInternalCompletionList> GetRewrittenCompletionListAsync(int absoluteIndex, string documentContent, VSInternalCompletionList initialCompletionList, DelegatedCompletionResponseRewriter rewriter = null)
     {
         var completionContext = new VSInternalCompletionContext();
         var codeDocument = CreateCodeDocument(documentContent);
         var documentContext = TestDocumentContext.From("C:/path/to/file.cshtml", codeDocument, hostDocumentVersion: 0);
-        var provider = TestDelegatedCompletionListProvider.Create(initialCompletionList, LoggerFactory, Rewriter);
+        var provider = TestDelegatedCompletionListProvider.Create(initialCompletionList, LoggerFactory, rewriter ?? Rewriter);
         var clientCapabilities = new VSInternalClientCapabilities();
         var completionList = await provider.GetCompletionListAsync(absoluteIndex, completionContext, documentContext, clientCapabilities, correlationId: Guid.Empty, cancellationToken: DisposalToken);
 

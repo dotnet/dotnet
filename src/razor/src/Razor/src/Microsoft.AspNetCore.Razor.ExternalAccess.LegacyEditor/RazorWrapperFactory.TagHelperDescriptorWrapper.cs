@@ -36,6 +36,6 @@ internal static partial class RazorWrapperFactory
             => Object.GetHashCode();
 
         public bool IsComponentOrChildContentTagHelper()
-            => Object.IsComponentOrChildContentTagHelper();
+            => Object.IsComponentOrChildContentTagHelper;
     }
 }

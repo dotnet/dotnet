@@ -94,8 +94,8 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         }
         else
         {
-            ExtractVSCodeOptions(result, out var trace, out var enableFormatting, out var autoClosingTags);
-            return new RazorLSPOptions(trace, enableFormatting, autoClosingTags, ClientSettings.Default);
+            ExtractVSCodeOptions(result, out var trace, out var enableFormatting, out var autoClosingTags, out var commitElementsWithSpace);
+            return new RazorLSPOptions(trace, enableFormatting, autoClosingTags, commitElementsWithSpace, ClientSettings.Default);
         }
     }
 
@@ -103,7 +103,8 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         JObject[] result,
         out Trace trace,
         out bool enableFormatting,
-        out bool autoClosingTags)
+        out bool autoClosingTags,
+        out bool commitElementsWithSpace)
     {
         var razor = result[0];
         var html = result[1];
@@ -111,6 +112,9 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         trace = RazorLSPOptions.Default.Trace;
         enableFormatting = RazorLSPOptions.Default.EnableFormatting;
         autoClosingTags = RazorLSPOptions.Default.AutoClosingTags;
+        // Deliberately not using the "default" here because we want a different default for VS Code, as
+        // this matches VS Code's html servers commit behaviour
+        commitElementsWithSpace = false;
 
         if (razor != null)
         {
@@ -125,6 +129,15 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
                     jObject.TryGetValue("enable", out var parsedEnableFormatting))
                 {
                     enableFormatting = GetObjectOrDefault(parsedEnableFormatting, enableFormatting);
+                }
+            }
+
+            if (razor.TryGetValue("completion", out var parsedCompletion))
+            {
+                if (parsedCompletion is JObject jObject &&
+                    jObject.TryGetValue("commitElementsWithSpace", out var parsedCommitElementsWithSpace))
+                {
+                    commitElementsWithSpace = GetObjectOrDefault(parsedCommitElementsWithSpace, commitElementsWithSpace);
                 }
             }
         }

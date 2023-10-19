@@ -67,6 +67,15 @@ internal class TestDelegatedCompletionListProvider : DelegatedCompletionListProv
         return provider;
     }
 
+    public static TestDelegatedCompletionListProvider CreateWithNullResponse(
+        ILoggerFactory loggerFactory,
+        params DelegatedCompletionResponseRewriter[] responseRewriters)
+    {
+        var requestResponseFactory = new StaticCompletionRequestResponseFactory(null);
+        var provider = new TestDelegatedCompletionListProvider(responseRewriters, requestResponseFactory, loggerFactory);
+        return provider;
+    }
+
     public DelegatedCompletionParams DelegatedParams => _completionFactory.DelegatedParams;
 
     private class StaticCompletionRequestResponseFactory : CompletionRequestResponseFactory

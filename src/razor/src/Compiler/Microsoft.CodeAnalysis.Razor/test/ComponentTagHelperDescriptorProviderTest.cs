@@ -66,7 +66,7 @@ namespace Test
         Assert.Equal(ComponentMetadata.Component.TagHelperKind, component.Kind);
         Assert.False(component.IsDefaultKind());
         Assert.False(component.KindUsesDefaultTagHelperRuntime());
-        Assert.True(component.IsComponentOrChildContentTagHelper());
+        Assert.True(component.IsComponentOrChildContentTagHelper);
         Assert.True(component.CaseSensitive);
 
         // No documentation in this test
@@ -932,7 +932,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 2);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper());
+        var component = Assert.Single(components, c => c.IsComponentTagHelper);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent", component.Name);
@@ -949,7 +949,7 @@ namespace Test
         Assert.True(attribute.IsChildContentProperty());
         Assert.False(attribute.IsParameterizedChildContentProperty());
 
-        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper());
+        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper);
 
         Assert.Equal("TestAssembly", childContent.AssemblyName);
         Assert.Equal("Test.MyComponent.ChildContent2", childContent.Name);
@@ -989,7 +989,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 2);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper());
+        var component = Assert.Single(components, c => c.IsComponentTagHelper);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent", component.Name);
@@ -1016,7 +1016,7 @@ namespace Test
                 Assert.True(a.IsChildContentParameterNameProperty());
             });
 
-        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper());
+        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper);
 
         Assert.Equal("TestAssembly", childContent.AssemblyName);
         Assert.Equal("Test.MyComponent.ChildContent2", childContent.Name);
@@ -1064,7 +1064,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 2);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper());
+        var component = Assert.Single(components, c => c.IsComponentTagHelper);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent", component.Name);
@@ -1091,7 +1091,7 @@ namespace Test
                 Assert.False(a.IsChildContentParameterNameProperty());
             });
 
-        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper());
+        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper);
 
         Assert.Equal("TestAssembly", childContent.AssemblyName);
         Assert.Equal("Test.MyComponent.ChildContent2", childContent.Name);
@@ -1136,7 +1136,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 2);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper());
+        var component = Assert.Single(components, c => c.IsComponentTagHelper);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent<T>", component.Name);
@@ -1172,7 +1172,7 @@ namespace Test
                 Assert.True(a.IsTypeParameterProperty());
             });
 
-        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper());
+        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper);
 
         Assert.Equal("TestAssembly", childContent.AssemblyName);
         Assert.Equal("Test.MyComponent<T>.ChildContent2", childContent.Name);
@@ -1218,7 +1218,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 2);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper());
+        var component = Assert.Single(components, c => c.IsComponentTagHelper);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent<T>", component.Name);
@@ -1254,7 +1254,7 @@ namespace Test
                 Assert.True(a.IsTypeParameterProperty());
             });
 
-        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper());
+        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper);
 
         Assert.Equal("TestAssembly", childContent.AssemblyName);
         Assert.Equal("Test.MyComponent<T>.ChildContent2", childContent.Name);
@@ -1300,7 +1300,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 2);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper());
+        var component = Assert.Single(components, c => c.IsComponentTagHelper);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent<T>", component.Name);
@@ -1336,7 +1336,7 @@ namespace Test
                 Assert.True(a.IsTypeParameterProperty());
             });
 
-        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper());
+        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper);
 
         Assert.Equal("TestAssembly", childContent.AssemblyName);
         Assert.Equal("Test.MyComponent<T>.ChildContent2", childContent.Name);
@@ -1386,7 +1386,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 2);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper());
+        var component = Assert.Single(components, c => c.IsComponentTagHelper);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent<T>", component.Name);
@@ -1422,7 +1422,7 @@ namespace Test
                 Assert.True(a.IsTypeParameterProperty());
             });
 
-        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper());
+        var childContent = Assert.Single(components, c => c.IsChildContentTagHelper);
 
         Assert.Equal("TestAssembly", childContent.AssemblyName);
         Assert.Equal("Test.MyComponent<T>.ChildContent2", childContent.Name);
@@ -1472,7 +1472,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 4);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper());
+        var component = Assert.Single(components, c => c.IsComponentTagHelper);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyComponent", component.Name);
@@ -1504,7 +1504,7 @@ namespace Test
             });
 
 
-        var childContents = components.Where(c => c.IsChildContentTagHelper()).OrderBy(c => c.Name);
+        var childContents = components.Where(c => c.IsChildContentTagHelper).OrderBy(c => c.Name);
         Assert.Collection(
             childContents,
             c => Assert.Equal("Test.MyComponent.ChildContent", c.Name),
@@ -1620,7 +1620,7 @@ namespace Test
         // Assert
         var components = ExcludeBuiltInComponents(context);
         components = AssertAndExcludeFullyQualifiedNameMatchComponents(components, expectedCount: 1);
-        var component = Assert.Single(components, c => c.IsComponentTagHelper());
+        var component = Assert.Single(components, c => c.IsComponentTagHelper);
 
         Assert.Equal("TestAssembly", component.AssemblyName);
         Assert.Equal("Test.MyDerivedComponent2", component.Name);

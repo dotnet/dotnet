@@ -15,7 +15,6 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Checksum = Microsoft.AspNetCore.Razor.Utilities.Checksum;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -167,8 +166,8 @@ internal class OOPTagHelperResolver : ITagHelperResolver
             var fetchedTagHelpers = fetchResult.Value.TagHelpers;
             if (fetchedTagHelpers.IsEmpty)
             {
-                // If we didn't receive any tag helpers, somthing catastrophic happened in the Roslyn OOP
-                // when calling FetchTaghelpersAsync(...).
+                // If we didn't receive any tag helpers, something catastrophic happened in the Roslyn OOP
+                // when calling FetchTagHelpersAsync(...).
                 throw new InvalidOperationException("Tag helpers could not be fetched from the Roslyn OOP.");
             }
 
@@ -177,7 +176,7 @@ internal class OOPTagHelperResolver : ITagHelperResolver
             foreach (var tagHelper in fetchedTagHelpers)
             {
                 tagHelpers.Add(tagHelper);
-                cache.TryAdd(tagHelper.GetChecksum(), tagHelper);
+                cache.TryAdd(tagHelper.Checksum, tagHelper);
             }
         }
 

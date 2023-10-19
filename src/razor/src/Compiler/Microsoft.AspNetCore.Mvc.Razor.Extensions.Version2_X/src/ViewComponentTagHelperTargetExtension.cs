@@ -173,7 +173,7 @@ internal class ViewComponentTagHelperTargetExtension : IViewComponentTagHelperTa
 
     private void WriteTargetElementString(CodeWriter writer, TagHelperDescriptor tagHelper)
     {
-        Debug.Assert(tagHelper.TagMatchingRules.Count == 1);
+        Debug.Assert(tagHelper.TagMatchingRules.Length == 1);
 
         var rule = tagHelper.TagMatchingRules[0];
 

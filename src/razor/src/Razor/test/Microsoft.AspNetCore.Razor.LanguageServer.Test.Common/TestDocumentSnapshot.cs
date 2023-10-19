@@ -50,7 +50,7 @@ internal class TestDocumentSnapshot : DocumentSnapshot
         version ??= VersionStamp.Default;
 
         var targetPath = FilePathNormalizer.Normalize(filePath);
-        var projectDirectory = FilePathNormalizer.GetDirectory(projectSnapshot.FilePath);
+        var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(projectSnapshot.FilePath);
         if (targetPath.StartsWith(projectDirectory))
         {
             targetPath = targetPath[projectDirectory.Length..];

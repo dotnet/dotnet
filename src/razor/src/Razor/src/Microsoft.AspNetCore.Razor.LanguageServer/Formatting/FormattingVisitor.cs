@@ -226,7 +226,7 @@ internal class FormattingVisitor : SyntaxWalker
                 return false;
             }
 
-            return descriptors.Any(d => d.IsComponentOrChildContentTagHelper());
+            return descriptors.Any(d => d.IsComponentOrChildContentTagHelper);
         }
 
         static bool ParentHasProperty(MarkupTagHelperElementSyntax parentComponent, string? propertyName)

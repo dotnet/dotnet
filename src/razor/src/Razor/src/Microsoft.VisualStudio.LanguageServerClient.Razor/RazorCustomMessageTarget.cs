@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.VisualStudio.Editor.Razor.Snippets;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text;
@@ -31,6 +32,7 @@ internal partial class RazorCustomMessageTarget
     private readonly ITelemetryReporter _telemetryReporter;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
+    private readonly SnippetCache _snippetCache;
     private readonly FormattingOptionsProvider _formattingOptionsProvider;
     private readonly IClientSettingsManager _editorSettingsManager;
     private readonly LSPDocumentSynchronizer _documentSynchronizer;
@@ -48,7 +50,8 @@ internal partial class RazorCustomMessageTarget
         CSharpVirtualDocumentAddListener csharpVirtualDocumentAddListener,
         ITelemetryReporter telemetryReporter,
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor)
+        ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+        SnippetCache snippetCache)
     {
         if (documentManager is null)
         {
@@ -107,6 +110,11 @@ internal partial class RazorCustomMessageTarget
             throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
         }
 
+        if (snippetCache is null)
+        {
+            throw new ArgumentNullException(nameof(snippetCache));
+        }
+
         _joinableTaskFactory = joinableTaskContext.Factory;
 
         _requestInvoker = requestInvoker;
@@ -117,6 +125,7 @@ internal partial class RazorCustomMessageTarget
         _telemetryReporter = telemetryReporter;
         _languageServerFeatureOptions = languageServerFeatureOptions;
         _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
+        _snippetCache = snippetCache;
     }
 
     internal void SetLogger(ILogger? logger)

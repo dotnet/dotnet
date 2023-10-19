@@ -576,13 +576,13 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
         }
         else if (node is CSharpCodeIntermediateNode)
         {
-            var diagnostic = RazorDiagnosticFactory.CreateTagHelper_CodeBlocksNotSupportedInAttributes(span ?? SourceSpan.Undefined);
+            var diagnostic = RazorDiagnosticFactory.CreateTagHelper_CodeBlocksNotSupportedInAttributes(span);
             context.Diagnostics.Add(diagnostic);
         }
         else if (node is TemplateIntermediateNode)
         {
             var expectedTypeName = property.IsIndexerNameMatch ? property.BoundAttribute.IndexerTypeName : property.BoundAttribute.TypeName;
-            var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InlineMarkupBlocksNotSupportedInAttributes(span ?? SourceSpan.Undefined, expectedTypeName);
+            var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InlineMarkupBlocksNotSupportedInAttributes(span, expectedTypeName);
             context.Diagnostics.Add(diagnostic);
         }
     }
@@ -644,7 +644,7 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
     internal static string GetDeterministicId(CodeRenderingContext context)
     {
         // Use the file checksum along with the absolute position in the generated code to create a unique id for each tag helper call site.
-        var checksum = Checksum.BytesToString(context.SourceDocument.GetChecksum());
+        var checksum = ChecksumUtilities.BytesToString(context.SourceDocument.GetChecksum());
         var uniqueId = checksum + context.CodeWriter.Location.AbsoluteIndex;
 
         return uniqueId;

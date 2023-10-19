@@ -63,16 +63,6 @@ public static class BoundAttributeDescriptorExtensions
         return isIndexerNameMatch && attribute.IsIndexerBooleanProperty;
     }
 
-    public static bool IsDirectiveAttribute(this BoundAttributeDescriptor attribute)
-    {
-        if (attribute is null)
-        {
-            throw new ArgumentNullException(nameof(attribute));
-        }
-
-        return attribute.IsDirectiveAttribute;
-    }
-
     public static bool IsDefaultKind(this BoundAttributeParameterDescriptor parameter)
     {
         if (parameter == null)

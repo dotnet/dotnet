@@ -7,14 +7,14 @@ using System;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public abstract partial class TagHelperDescriptorBuilder
+public partial class TagHelperDescriptorBuilder
 {
     public struct PooledBuilder : IDisposable
     {
-        private readonly DefaultTagHelperDescriptorBuilder _builder;
+        private readonly TagHelperDescriptorBuilder _builder;
         private bool _disposed;
 
-        internal PooledBuilder(DefaultTagHelperDescriptorBuilder builder)
+        internal PooledBuilder(TagHelperDescriptorBuilder builder)
         {
             _builder = builder;
         }
@@ -23,7 +23,7 @@ public abstract partial class TagHelperDescriptorBuilder
         {
             if (!_disposed)
             {
-                DefaultTagHelperDescriptorBuilder.ReturnInstance(_builder);
+                s_pool.Return(_builder);
                 _disposed = true;
             }
         }

@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 using Microsoft.ServiceHub.Framework;
-using Checksum = Microsoft.AspNetCore.Razor.Utilities.Checksum;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -51,7 +50,7 @@ internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemote
         {
             // If one or more of the tag helpers aren't in the cache, we'll need to re-compute them from the project.
             // In practice, this shouldn't happen because FetchTagHelpersAsync(...) is normally called immediately after
-            // calling GetTagHeleprsDeltaAsync(...), which caches the tag helpers it computes.
+            // calling GetTagHelpersDeltaAsync(...), which caches the tag helpers it computes.
 
             if (solution.GetProject(projectHandle.ProjectId) is not Project workspaceProject)
             {
@@ -69,7 +68,7 @@ internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemote
 
             foreach (var tagHelper in latestTagHelpers)
             {
-                cache.TryAdd(tagHelper.GetChecksum(), tagHelper);
+                cache.TryAdd(tagHelper.Checksum, tagHelper);
             }
 
             // Finally, try to retrieve our cached tag helpers
@@ -148,7 +147,7 @@ internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemote
 
             foreach (var tagHelper in tagHelpers)
             {
-                var checksum = tagHelper.GetChecksum();
+                var checksum = tagHelper.Checksum;
                 builder.Add(checksum);
                 cache.TryAdd(checksum, tagHelper);
             }

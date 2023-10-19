@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Globalization;
 using MessagePack;
 using Microsoft.AspNetCore.Razor.Language;
@@ -30,15 +29,10 @@ internal sealed class RazorDiagnosticFormatter : ValueFormatter<RazorDiagnostic>
         var characterIndex = reader.ReadInt32();
         var length = reader.ReadInt32();
 
-        var descriptor = new RazorDiagnosticDescriptor(id, MessageFormat(message), severity);
+        var descriptor = new RazorDiagnosticDescriptor(id, message, severity);
         var span = new SourceSpan(filePath, absoluteIndex, lineIndex, characterIndex, length);
 
         return RazorDiagnostic.Create(descriptor, span);
-
-        static Func<string> MessageFormat(string message)
-        {
-            return () => message;
-        }
     }
 
     public override void Serialize(ref MessagePackWriter writer, RazorDiagnostic value, SerializerCachingOptions options)

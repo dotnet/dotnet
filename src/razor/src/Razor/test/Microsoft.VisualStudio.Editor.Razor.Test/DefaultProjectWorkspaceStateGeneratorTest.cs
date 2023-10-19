@@ -149,7 +149,7 @@ public class DefaultProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerD
 
             // Assert
             var newProjectSnapshot = projectManager.GetLoadedProject(_projectSnapshot.Key);
-            Assert.Equal(_resolvableTagHelpers, newProjectSnapshot.TagHelpers, TagHelperDescriptorComparer.Default);
+            Assert.Equal<TagHelperDescriptor>(_resolvableTagHelpers, newProjectSnapshot.TagHelpers);
         }
     }
 }

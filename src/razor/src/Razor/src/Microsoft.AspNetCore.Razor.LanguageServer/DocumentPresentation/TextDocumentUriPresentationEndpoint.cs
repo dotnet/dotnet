@@ -164,7 +164,7 @@ internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresent
             sb.Append("=\"\"");
         }
 
-        if (descriptor.AllowedChildTags.Count > 0)
+        if (descriptor.AllowedChildTags.Length > 0)
         {
             sb.Append("></");
             sb.Append(typeName);

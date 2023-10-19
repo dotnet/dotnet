@@ -45,7 +45,7 @@ public class RemoteTagHelperDeltaProviderTest(ITestOutputHelper testOutput) : Ta
     public void GetTagHelpersDelta_TagHelperRemovedFromProjectOne_InvalidResultId()
     {
         // Arrange
-        var tagHelpersWithOneRemoved = ImmutableArray.Create(TagHelper1_Project1.GetChecksum());
+        var tagHelpersWithOneRemoved = ImmutableArray.Create(TagHelper1_Project1.Checksum);
         _provider.GetTagHelpersDelta(Project1Id, lastResultId: -1, Project1TagHelperChecksums);
         _provider.GetTagHelpersDelta(Project2Id, lastResultId: -1, Project2TagHelperChecksums);
 
@@ -62,7 +62,7 @@ public class RemoteTagHelperDeltaProviderTest(ITestOutputHelper testOutput) : Ta
     public void GetTagHelpersDelta_TagHelperRemovedFromProjectOne()
     {
         // Arrange
-        var tagHelpersWithOneRemoved = ImmutableArray.Create(TagHelper1_Project1.GetChecksum());
+        var tagHelpersWithOneRemoved = ImmutableArray.Create(TagHelper1_Project1.Checksum);
         var initialDelta = _provider.GetTagHelpersDelta(Project1Id, lastResultId: -1, Project1TagHelperChecksums);
         _provider.GetTagHelpersDelta(Project2Id, lastResultId: -1, Project2TagHelperChecksums);
 
@@ -73,7 +73,7 @@ public class RemoteTagHelperDeltaProviderTest(ITestOutputHelper testOutput) : Ta
         Assert.True(delta.IsDelta);
         Assert.Empty(delta.Added);
         var checksum = Assert.Single(delta.Removed);
-        Assert.Equal(TagHelper2_Project1.GetChecksum(), checksum);
+        Assert.Equal(TagHelper2_Project1.Checksum, checksum);
     }
 
     [Fact]
@@ -138,8 +138,8 @@ public class RemoteTagHelperDeltaProviderTest(ITestOutputHelper testOutput) : Ta
     public void GetTagHelpersDelta_EndToEnd()
     {
         // Arrange
-        var mixedTagHelpers1 = ImmutableArray.Create(TagHelper1_Project1.GetChecksum(), TagHelper1_Project2.GetChecksum());
-        var mixedTagHelpers2 = ImmutableArray.Create(TagHelper2_Project1.GetChecksum(), TagHelper2_Project2.GetChecksum());
+        var mixedTagHelpers1 = ImmutableArray.Create(TagHelper1_Project1.Checksum, TagHelper1_Project2.Checksum);
+        var mixedTagHelpers2 = ImmutableArray.Create(TagHelper2_Project1.Checksum, TagHelper2_Project2.Checksum);
 
         var initialDelta1 = _provider.GetTagHelpersDelta(Project1Id, lastResultId: -1, Project1TagHelperChecksums);
         var initialDelta2 = _provider.GetTagHelpersDelta(Project2Id, lastResultId: -1, Project2TagHelperChecksums);
@@ -150,11 +150,11 @@ public class RemoteTagHelperDeltaProviderTest(ITestOutputHelper testOutput) : Ta
 
         // Assert - 1
         Assert.True(delta1.IsDelta);
-        Assert.Equal(new[] { TagHelper1_Project2.GetChecksum() }, delta1.Added);
-        Assert.Equal(new[] { TagHelper2_Project1.GetChecksum() }, delta1.Removed);
+        Assert.Equal(new[] { TagHelper1_Project2.Checksum }, delta1.Added);
+        Assert.Equal(new[] { TagHelper2_Project1.Checksum }, delta1.Removed);
         Assert.True(delta2.IsDelta);
-        Assert.Equal(new[] { TagHelper2_Project1.GetChecksum() }, delta2.Added);
-        Assert.Equal(new[] { TagHelper1_Project2.GetChecksum() }, delta2.Removed);
+        Assert.Equal(new[] { TagHelper2_Project1.Checksum }, delta2.Added);
+        Assert.Equal(new[] { TagHelper1_Project2.Checksum }, delta2.Removed);
 
         // Act - 2 (restore to original state)
         delta1 = _provider.GetTagHelpersDelta(Project1Id, delta1.ResultId, Project1TagHelperChecksums);
@@ -162,11 +162,11 @@ public class RemoteTagHelperDeltaProviderTest(ITestOutputHelper testOutput) : Ta
 
         // Assert - 2
         Assert.True(delta1.IsDelta);
-        Assert.Equal(new[] { TagHelper2_Project1.GetChecksum() }, delta1.Added);
-        Assert.Equal(new[] { TagHelper1_Project2.GetChecksum() }, delta1.Removed);
+        Assert.Equal(new[] { TagHelper2_Project1.Checksum }, delta1.Added);
+        Assert.Equal(new[] { TagHelper1_Project2.Checksum }, delta1.Removed);
         Assert.True(delta2.IsDelta);
-        Assert.Equal(new[] { TagHelper1_Project2.GetChecksum() }, delta2.Added);
-        Assert.Equal(new[] { TagHelper2_Project1.GetChecksum() }, delta2.Removed);
+        Assert.Equal(new[] { TagHelper1_Project2.Checksum }, delta2.Added);
+        Assert.Equal(new[] { TagHelper2_Project1.Checksum }, delta2.Removed);
 
         // Act - 3 (No-op)
         delta1 = _provider.GetTagHelpersDelta(Project1Id, delta1.ResultId, Project1TagHelperChecksums);

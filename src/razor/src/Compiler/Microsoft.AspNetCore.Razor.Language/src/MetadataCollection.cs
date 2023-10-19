@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.Extensions.Internal;
+using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -21,10 +21,15 @@ public abstract partial class MetadataCollection : IReadOnlyDictionary<string, s
 {
     public static readonly MetadataCollection Empty = NoItems.Instance;
 
-    private int? _hashCode;
+    private Checksum? _checksum;
 
     protected MetadataCollection()
     {
+    }
+
+    private protected MetadataCollection(Checksum? checksum)
+    {
+        _checksum = checksum;
     }
 
     public abstract string? this[string key] { get; }
@@ -36,6 +41,8 @@ public abstract partial class MetadataCollection : IReadOnlyDictionary<string, s
     public abstract bool ContainsKey(string key);
     public abstract bool TryGetValue(string key, out string? value);
 
+    public bool Contains(string key, string? value) => TryGetValue(key, out var v) && v == value;
+
     protected abstract KeyValuePair<string, string?> GetEntry(int index);
 
     public Enumerator GetEnumerator() => new(this);
@@ -43,14 +50,32 @@ public abstract partial class MetadataCollection : IReadOnlyDictionary<string, s
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     IEnumerator<KeyValuePair<string, string?>> IEnumerable<KeyValuePair<string, string?>>.GetEnumerator() => GetEnumerator();
 
-    public sealed override bool Equals(object obj)
-        => obj is MetadataCollection other && Equals(other);
+    internal Checksum Checksum
+        => _checksum ?? InterlockedOperations.Initialize(ref _checksum, ComputeChecksum());
 
-    public abstract bool Equals(MetadataCollection other);
+    private Checksum ComputeChecksum()
+    {
+        var builder = new Checksum.Builder();
 
-    protected abstract int ComputeHashCode();
+        foreach (var (key, value) in this)
+        {
+            builder.AppendData(key);
+            builder.AppendData(value);
+        }
 
-    public sealed override int GetHashCode() => _hashCode ??= ComputeHashCode();
+        return builder.FreeAndGetChecksum();
+    }
+
+    public sealed override bool Equals(object? obj)
+        => obj is MetadataCollection other &&
+           Equals(other);
+
+    public bool Equals(MetadataCollection? other)
+        => other is not null &&
+           Checksum.Equals(other.Checksum);
+
+    public sealed override int GetHashCode()
+        => Checksum.GetHashCode();
 
     public static MetadataCollection Create(KeyValuePair<string, string?> pair)
         => new OneToThreeItems(pair.Key, pair.Value);
@@ -181,6 +206,7 @@ public abstract partial class MetadataCollection : IReadOnlyDictionary<string, s
         public static readonly NoItems Instance = new();
 
         private NoItems()
+            : base(Checksum.Null)
         {
         }
 
@@ -200,9 +226,6 @@ public abstract partial class MetadataCollection : IReadOnlyDictionary<string, s
             value = null!;
             return false;
         }
-
-        protected override int ComputeHashCode() => 0;
-        public override bool Equals(MetadataCollection other) => ReferenceEquals(this, other);
     }
 
     /// <summary>
@@ -229,29 +252,119 @@ public abstract partial class MetadataCollection : IReadOnlyDictionary<string, s
 
         public OneToThreeItems(string key1, string? value1, string key2, string? value2, string key3, string? value3)
         {
-            _key1 = key1 ?? throw new ArgumentNullException(nameof(key1));
-            _value1 = value1;
-            _key2 = key2 ?? throw new ArgumentNullException(nameof(key2));
-            _value2 = value2;
-            _key3 = key3 ?? throw new ArgumentNullException(nameof(key3));
-            _value3 = value3;
+            if (key1 is null)
+            {
+                throw new ArgumentNullException(nameof(key1));
+            }
 
-            if (key1 == key2)
+            if (key2 is null)
+            {
+                throw new ArgumentNullException(nameof(key2));
+            }
+
+            if (key3 is null)
+            {
+                throw new ArgumentNullException(nameof(key3));
+            }
+
+            var compareKeys_1_2 = string.CompareOrdinal(key1, key2);
+
+            if (compareKeys_1_2 == 0)
             {
                 throw new ArgumentException(
                     Resources.FormatAn_item_with_the_same_key_has_already_been_added_Key_0(key2), nameof(key2));
             }
 
-            if (key1 == key3)
+            var compareKeys_1_3 = string.CompareOrdinal(key1, key3);
+
+            if (compareKeys_1_3 == 0)
             {
                 throw new ArgumentException(
                     Resources.FormatAn_item_with_the_same_key_has_already_been_added_Key_0(key3), nameof(key3));
             }
 
-            if (key2 == key3)
+            var compareKeys_2_3 = string.CompareOrdinal(key2, key3);
+
+            if (compareKeys_2_3 == 0)
             {
                 throw new ArgumentException(
                     Resources.FormatAn_item_with_the_same_key_has_already_been_added_Key_0(key3), nameof(key3));
+            }
+
+            // We ensure that the key/value pairs are assigned to their fields in sorted order to ensure
+            // that MetadataCollections created with the same data in a different order are equal.
+
+            var pair1 = (key1, value1);
+            var pair2 = (key2, value2);
+            var pair3 = (key3, value3);
+
+            if (compareKeys_1_2 < 0)
+            {
+                if (compareKeys_1_3 < 0)
+                {
+                    // If key1 is less than both key2 and key3, it must go first.
+                    // - slot 1: pair 1
+                    (_key1, _value1) = pair1;
+
+                    // Now that key1 is handled, we can determine the other two slots by comparing key2 and key3.
+                    if (compareKeys_2_3 < 0)
+                    {
+                        // - slot 2: pair 2
+                        // - slot 3: pair 3
+                        (_key2, _value2) = pair2;
+                        (_key3, _value3) = pair3;
+                    }
+                    else
+                    {
+                        // - slot 2: pair 3
+                        // - slot 3: pair 2
+                        (_key2, _value2) = pair3;
+                        (_key3, _value3) = pair2;
+                    }
+                }
+                else
+                {
+                    // If key1 is less than key2 but not key3, it must go in the middle.
+                    // - slot 1: pair 3
+                    // - slot 2: pair 1
+                    // - slot 3: pair 2
+                    (_key1, _value1) = pair3;
+                    (_key2, _value2) = pair1;
+                    (_key3, _value3) = pair2;
+                }
+            }
+            else if (compareKeys_1_3 < 0)
+            {
+                // If key1 is less than key3 but not key2, it must go in the middle with
+                // key2 in the first slot
+                // - slot 1: pair 2
+                // - slot 2: pair 1
+                // - slot 3: pair 3
+                (_key1, _value1) = pair2;
+                (_key2, _value2) = pair1;
+                (_key3, _value3) = pair3;
+            }
+            else
+            {
+                // Finally, key1 isn't less than key2 or key3, so it must go last.
+                // - slot 3: pair 1
+                (_key3, _value3) = pair1;
+
+                // With key1 in slot 3, we can determine the other two slots by comparing key2 and key3. 
+                if (compareKeys_2_3 < 0)
+                {
+                    // - slot 1: pair 2
+                    // - slot 2: pair 3
+                    (_key1, _value1) = pair2;
+                    (_key2, _value2) = pair3;
+                }
+                else
+                {
+                    // - slot 1: pair 3
+                    // - slot 2: pair 2
+                    (_key1, _value1) = pair3;
+                    (_key2, _value2) = pair2;
+                }
             }
 
             _count = 3;
@@ -259,15 +372,43 @@ public abstract partial class MetadataCollection : IReadOnlyDictionary<string, s
 
         public OneToThreeItems(string key1, string? value1, string key2, string? value2)
         {
-            _key1 = key1 ?? throw new ArgumentNullException(nameof(key1));
-            _value1 = value1;
-            _key2 = key2 ?? throw new ArgumentNullException(nameof(key2));
-            _value2 = value2;
+            if (key1 is null)
+            {
+                throw new ArgumentNullException(nameof(key1));
+            }
 
-            if (key1 == key2)
+            if (key2 is null)
+            {
+                throw new ArgumentNullException(nameof(key2));
+            }
+
+            var compareKeys = string.CompareOrdinal(key1, key2);
+
+            if (compareKeys == 0)
             {
                 throw new ArgumentException(
                     Resources.FormatAn_item_with_the_same_key_has_already_been_added_Key_0(key2), nameof(key2));
+            }
+
+            // We ensure that the key/value pairs are assigned to their fields in sorted order to ensure
+            // that MetadataCollections created with the same data in a different order are equal.
+
+            var pair1 = (key1, value1);
+            var pair2 = (key2, value2);
+
+            if (compareKeys < 0)
+            {
+                // - slot 1: pair 1
+                // - slot 2: pair 2
+                (_key1, _value1) = pair1;
+                (_key2, _value2) = pair2;
+            }
+            else
+            {
+                // - slot 1: pair 2
+                // - slot 2: pair 1
+                (_key1, _value1) = pair2;
+                (_key2, _value2) = pair1;
             }
 
             _count = 2;
@@ -379,178 +520,6 @@ public abstract partial class MetadataCollection : IReadOnlyDictionary<string, s
             value = null;
             return false;
         }
-
-        public override bool Equals(MetadataCollection other)
-        {
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            if (other is not OneToThreeItems otherCollection)
-            {
-                return false;
-            }
-
-            var count = _count;
-
-            if (count != otherCollection._count)
-            {
-                return false;
-            }
-
-            switch (count)
-            {
-                case 1:
-                    return _key1 == otherCollection._key1 && _value1 == otherCollection._value1;
-
-                case 2:
-                    if (_key1 == otherCollection._key1)
-                    {
-                        return _value1 == otherCollection._value1 &&
-                               _key2 == otherCollection._key2 &&
-                               _value2 == otherCollection._value2;
-                    }
-
-                    return _key1 == otherCollection._key2 &&
-                           _value1 == otherCollection._value2 &&
-                           _key2 == otherCollection._key1 &&
-                           _value2 == otherCollection._value1;
-
-                case 3:
-                    return otherCollection.TryGetValue(_key1, out var otherValue1) &&
-                           _value1 == otherValue1 &&
-                           otherCollection.TryGetValue(_key2, out var otherValue2) &&
-                           _value2 == otherValue2 &&
-                           otherCollection.TryGetValue(_key3, out var otherValue3) &&
-                           _value3 == otherValue3;
-            }
-
-            return false;
-        }
-
-        protected override int ComputeHashCode()
-        {
-            return _count switch
-            {
-                1 => ComputeHashCodeForOneItem(_key1, _value1),
-                2 => ComputeHashCodeForTwoItems(_key1, _value1, _key2, _value2),
-                _ => ComputeHashCodeForThreeItems(_key1, _value1, _key2, _value2, _key3, _value3)
-            };
-
-            static int ComputeHashCodeForOneItem(string key1, string? value1)
-            {
-                var hash = HashCodeCombiner.Start();
-
-                hash.Add(key1, StringComparer.Ordinal);
-                hash.Add(value1, StringComparer.Ordinal);
-
-                return hash.CombinedHash;
-            }
-
-            static int ComputeHashCodeForTwoItems(string key1, string? value1, string key2, string? value2)
-            {
-                var hash = HashCodeCombiner.Start();
-
-                if (string.CompareOrdinal(key1, key2) < 0)
-                {
-                    hash.Add(key1, StringComparer.Ordinal);
-                    hash.Add(value1, StringComparer.Ordinal);
-                    hash.Add(key2, StringComparer.Ordinal);
-                    hash.Add(value2, StringComparer.Ordinal);
-                }
-                else
-                {
-                    hash.Add(key2, StringComparer.Ordinal);
-                    hash.Add(value2, StringComparer.Ordinal);
-                    hash.Add(key1, StringComparer.Ordinal);
-                    hash.Add(value1, StringComparer.Ordinal);
-                }
-
-                return hash.CombinedHash;
-            }
-
-            static int ComputeHashCodeForThreeItems(string key1, string? value1, string key2, string? value2, string key3, string? value3)
-            {
-                var hash = HashCodeCombiner.Start();
-
-                // Note: Because we've already eliminated duplicate strings, all of the
-                // CompareOrdinal calls below should be either less than zero or greater
-                // than zero.
-                var key1LessThanKey2 = string.CompareOrdinal(key1, key2) < 0;
-                var key1LessThanKey3 = string.CompareOrdinal(key1, key3) < 0;
-                var key2LessThanKey3 = string.CompareOrdinal(key2, key3) < 0;
-
-                var key1Added = false;
-                var key2Added = false;
-
-                // Add the first item
-                if (key1LessThanKey2 && key1LessThanKey3)
-                {
-                    // If key1 is less than key2 and key3, it must go first.
-                    hash.Add(key1, StringComparer.Ordinal);
-                    hash.Add(value1, StringComparer.Ordinal);
-                    key1Added = true;
-                }
-                else if (!key1LessThanKey2 && key2LessThanKey3)
-                {
-                    // Since key1 isn't first, add key2 if it is less than key1 and key3
-                    hash.Add(key2, StringComparer.Ordinal);
-                    hash.Add(value2, StringComparer.Ordinal);
-                    key2Added = true;
-                }
-                else
-                {
-                    // Otherwise, key3 must go first.
-                    hash.Add(key3, StringComparer.Ordinal);
-                    hash.Add(value3, StringComparer.Ordinal);
-                }
-
-                // Add the second item
-                if (!key1Added && (key1LessThanKey2 || key1LessThanKey3))
-                {
-                    // If we haven't added key1 and it is less than key2 or key3, it must be second.
-                    hash.Add(key1, StringComparer.Ordinal);
-                    hash.Add(value1, StringComparer.Ordinal);
-                    key1Added = true;
-                }
-                else if (!key2Added && (!key1LessThanKey2 || key2LessThanKey3))
-                {
-                    // If we haven't added key2 and it is less than key1 or key3, it must be second.
-                    hash.Add(key2, StringComparer.Ordinal);
-                    hash.Add(value2, StringComparer.Ordinal);
-                    key2Added = true;
-                }
-                else
-                {
-                    // Otherwise, key3 must be go first.
-                    hash.Add(key3, StringComparer.Ordinal);
-                    hash.Add(value3, StringComparer.Ordinal);
-                }
-
-                // Add the final item
-                if (!key1Added)
-                {
-                    // If we haven't added key, it must go last.
-                    hash.Add(key1, StringComparer.Ordinal);
-                    hash.Add(value1, StringComparer.Ordinal);
-                }
-                else if (!key2Added)
-                {
-                    // If we haven't added key2, it must go last.
-                    hash.Add(key2, StringComparer.Ordinal);
-                    hash.Add(value2, StringComparer.Ordinal);
-                }
-                else
-                {
-                    // Otherwise, key3 must go last.
-                    hash.Add(key3, StringComparer.Ordinal);
-                    hash.Add(value3, StringComparer.Ordinal);
-                }
-
-                return hash.CombinedHash;
-            }
-        }
     }
 
     /// <summary>
@@ -652,64 +621,6 @@ public abstract partial class MetadataCollection : IReadOnlyDictionary<string, s
 
             value = null;
             return false;
-        }
-
-        public override bool Equals(MetadataCollection other)
-        {
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            if (other is not FourOrMoreItems otherCollection)
-            {
-                return false;
-            }
-
-            if (_count != otherCollection.Count)
-            {
-                return false;
-            }
-
-            var keys = _keys;
-            var values = _values;
-            var otherKeys = otherCollection._keys;
-            var otherValues = otherCollection._values;
-            var count = keys.Length;
-
-            // The keys are pre-sorted by the constructor, so keys/values should be in
-            // the same order event if they were added in a different order.
-
-            for (var i = 0; i < count; i++)
-            {
-                if (keys[i] != otherKeys[i] ||
-                    values[i] != otherValues[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        protected override int ComputeHashCode()
-        {
-            var hash = HashCodeCombiner.Start();
-
-            var keys = _keys;
-            var values = _values;
-            var count = keys.Length;
-
-            // The keys are pre-sorted by the constructor, so keys/values should be in
-            // the same order event if they were added in a different order.
-
-            for (var i = 0; i < count; i++)
-            {
-                hash.Add(keys[i], StringComparer.Ordinal);
-                hash.Add(values[i], StringComparer.Ordinal);
-            }
-
-            return hash.CombinedHash;
         }
     }
 }

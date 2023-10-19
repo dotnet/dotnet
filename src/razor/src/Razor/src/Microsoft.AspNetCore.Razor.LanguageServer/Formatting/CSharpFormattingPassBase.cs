@@ -436,7 +436,9 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             return owner is MarkupTextLiteralSyntax
             {
                 Parent: MarkupTagHelperAttributeSyntax { TagHelperAttributeInfo: { Bound: true } } or
-                        MarkupTagHelperDirectiveAttributeSyntax { TagHelperAttributeInfo: { Bound: true } }
+                        MarkupTagHelperDirectiveAttributeSyntax { TagHelperAttributeInfo: { Bound: true } } or
+                        MarkupMinimizedTagHelperAttributeSyntax { TagHelperAttributeInfo: { Bound: true } } or
+                        MarkupMinimizedTagHelperDirectiveAttributeSyntax { TagHelperAttributeInfo: { Bound: true } }
             } && !isLineRequest;
         }
 

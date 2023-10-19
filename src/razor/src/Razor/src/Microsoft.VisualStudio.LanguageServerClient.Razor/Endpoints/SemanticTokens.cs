@@ -87,10 +87,10 @@ internal partial class RazorCustomMessageTarget
         cancellationToken.ThrowIfCancellationRequested();
         var languageServerName = RazorLSPConstants.RazorCSharpLanguageServerName;
 
-        VSSemanticTokensResponse? response;
+        SemanticTokens? response;
         using (var disposable = _telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, semanticTokensParams.CorrelationId))
         {
-            var result = await _requestInvoker.ReinvokeRequestOnServerAsync<SemanticTokensParams, VSSemanticTokensResponse?>(
+            var result = await _requestInvoker.ReinvokeRequestOnServerAsync<SemanticTokensParams, SemanticTokens?>(
                 textBuffer,
                 lspMethodName,
                 languageServerName,

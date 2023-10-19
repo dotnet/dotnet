@@ -5,7 +5,6 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -451,7 +450,7 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
     {
         if (node is MarkupTagHelperElementSyntax element)
         {
-            var componentDescriptor = element.TagHelperInfo.BindingResult.Descriptors.FirstOrDefault(d => d.IsComponentTagHelper());
+            var componentDescriptor = element.TagHelperInfo.BindingResult.Descriptors.FirstOrDefault(d => d.IsComponentTagHelper);
             return componentDescriptor is not null;
         }
         else if (node is MarkupTagHelperStartTagSyntax startTag)

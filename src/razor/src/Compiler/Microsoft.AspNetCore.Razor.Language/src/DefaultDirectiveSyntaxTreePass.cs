@@ -55,7 +55,7 @@ internal class DefaultDirectiveSyntaxTreePass : RazorEngineFeatureBase, IRazorSy
             {
                 // We're very close to reaching the stack limit. Let's not go any deeper.
                 // It's okay to not show nested section errors in deeply nested cases instead of crashing.
-                _diagnostics.Add(RazorDiagnosticFactory.CreateRewriter_InsufficientStack(SourceSpan.Undefined));
+                _diagnostics.Add(RazorDiagnosticFactory.CreateRewriter_InsufficientStack());
 
                 return node;
             }

@@ -62,6 +62,19 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : TestBase(tes
         Assert.Equal("C:/path/to/directory/", normalized);
     }
 
+    [OSSkipConditionFact(new[] { "OSX", "Linux" })]
+    public void NormalizeDirectory_Windows_HandlesSingleSlashDirectory()
+    {
+        // Arrange
+        var directory = @"\";
+
+        // Act
+        var normalized = FilePathNormalizer.NormalizeDirectory(directory);
+
+        // Assert
+        Assert.Equal("/", normalized);
+    }
+
     [Fact]
     public void FilePathsEquivalent_NotEqualPaths_ReturnsFalse()
     {
@@ -97,7 +110,7 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : TestBase(tes
         var filePath = "C:/path/to/document.cshtml";
 
         // Act
-        var normalized = FilePathNormalizer.GetDirectory(filePath);
+        var normalized = FilePathNormalizer.GetNormalizedDirectoryName(filePath);
 
         // Assert
         Assert.Equal("C:/path/to/", normalized);
@@ -110,7 +123,7 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : TestBase(tes
         var filePath = "C:/document.cshtml";
 
         // Act
-        var normalized = FilePathNormalizer.GetDirectory(filePath);
+        var normalized = FilePathNormalizer.GetNormalizedDirectoryName(filePath);
 
         // Assert
         Assert.Equal("C:/", normalized);

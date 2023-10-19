@@ -720,10 +720,8 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             expressionAttributeName = valueAttributeName + "Expression";
         }
 
-        for (var i = 0; i < componentTagHelper.BoundAttributes.Count; i++)
+        foreach (var attribute in componentTagHelper.BoundAttributes)
         {
-            var attribute = componentTagHelper.BoundAttributes[i];
-
             if (string.Equals(valueAttributeName, attribute.Name))
             {
                 valueAttribute = attribute;

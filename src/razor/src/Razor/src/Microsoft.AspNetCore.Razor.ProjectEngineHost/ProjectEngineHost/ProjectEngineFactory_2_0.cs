@@ -5,5 +5,5 @@ namespace Microsoft.AspNetCore.Razor.ProjectEngineHost;
 
 internal class ProjectEngineFactory_2_0 : ProjectEngineFactory
 {
-    protected override string AssemblyName { get; } = "Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X";
+    protected override string AssemblyName { get; } = "Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version2_X";
 }

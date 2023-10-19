@@ -23,7 +23,7 @@ namespace Test
 #nullable disable
             , 2, (context) => (__builder2) => {
 #nullable restore
-#line (2,20)-(2,37) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (2,21)-(2,38) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(3, context.ToLower());
 
 #line default
@@ -32,7 +32,7 @@ __builder2.AddContent(3, context.ToLower());
             }
             , 4, (context) => (__builder2) => {
 #nullable restore
-#line (3,16)-(3,23) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (3,17)-(3,24) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(5, context);
 
 #line default

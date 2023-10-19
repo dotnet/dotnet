@@ -42,7 +42,7 @@ internal static class TagHelperBlockRewriter
             // <input @onclick="..."> vs <input onclick="..." />
             //
             // We don't want this to become an error just because you added a directive attribute.
-            if (descriptor.IsAnyComponentDocumentTagHelper() && !descriptor.IsComponentOrChildContentTagHelper())
+            if (descriptor.IsAnyComponentDocumentTagHelper() && !descriptor.IsComponentOrChildContentTagHelper)
             {
                 hasDirectiveAttribute = true;
             }
@@ -487,7 +487,7 @@ internal static class TagHelperBlockRewriter
                         name.Length == firstBoundAttribute.IndexerNamePrefix.Length;
                 }
 
-                isDirectiveAttribute = firstBoundAttribute.IsDirectiveAttribute();
+                isDirectiveAttribute = firstBoundAttribute.IsDirectiveAttribute;
 
                 break;
             }

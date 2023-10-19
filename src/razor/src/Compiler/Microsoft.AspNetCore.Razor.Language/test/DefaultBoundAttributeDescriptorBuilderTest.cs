@@ -14,9 +14,9 @@ public class DefaultBoundAttributeDescriptorBuilderTest
         // Arrange
         var expectedDisplayName = "ExpectedDisplayName";
 
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder.DisplayName(expectedDisplayName);
 
         // Act
@@ -30,10 +30,10 @@ public class DefaultBoundAttributeDescriptorBuilderTest
     public void DisplayName_DefaultsToPropertyLookingDisplayName()
     {
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("TestTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .TypeName(typeof(int).FullName)
             .Metadata(PropertyName("SomeProperty"));
@@ -52,16 +52,16 @@ public class DefaultBoundAttributeDescriptorBuilderTest
         // they should share the instance.
 
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
 
         var metadata = MetadataCollection.Create(PropertyName("SomeProperty"));
 
-        var builder1 = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind)
+        var builder1 = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind)
         {
             TypeName = typeof(int).FullName
         };
 
-        var builder2 = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind)
+        var builder2 = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind)
         {
             TypeName = typeof(int).FullName
         };
@@ -84,14 +84,14 @@ public class DefaultBoundAttributeDescriptorBuilderTest
         // they do not share the instance.
 
         // Arrange
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
 
-        var builder1 = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind)
+        var builder1 = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind)
         {
             TypeName = typeof(int).FullName
         };
 
-        var builder2 = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind)
+        var builder2 = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind)
         {
             TypeName = typeof(int).FullName
         };

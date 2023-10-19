@@ -52,7 +52,7 @@ public class TagHelperDescriptorSerializationTest : TestBase
         }
 
         // Assert
-        Assert.Equal(expectedTagHelpers, actualTagHelpers, TagHelperDescriptorComparer.Default);
+        Assert.Equal<TagHelperDescriptor>(expectedTagHelpers, actualTagHelpers);
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public class TagHelperDescriptorSerializationTest : TestBase
         var descriptor = JsonDataConvert.DeserializeObject(json, static r => ObjectReaders.ReadTagHelperFromProperties(r, useCache: false));
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -140,7 +140,7 @@ public class TagHelperDescriptorSerializationTest : TestBase
         var descriptor = JsonDataConvert.DeserializeObject(json, static r => ObjectReaders.ReadTagHelperFromProperties(r, useCache: false));
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -175,14 +175,14 @@ public class TagHelperDescriptorSerializationTest : TestBase
             configureAction: builder => builder.AllowChildTag("allowed-child-one")
                     .Metadata("foo", "bar")
                     .AddDiagnostic(RazorDiagnostic.Create(
-                        new RazorDiagnosticDescriptor("id", () => "Test Message", RazorDiagnosticSeverity.Error), new SourceSpan(null, 10, 20, 30, 40))));
+                        new RazorDiagnosticDescriptor("id", "Test Message", RazorDiagnosticSeverity.Error), new SourceSpan(null, 10, 20, 30, 40))));
 
         // Act
         var json = JsonDataConvert.SerializeObject(expectedDescriptor, ObjectWriters.WriteProperties);
         var descriptor = JsonDataConvert.DeserializeObject(json, static r => ObjectReaders.ReadTagHelperFromProperties(r, useCache: false));
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -225,7 +225,7 @@ public class TagHelperDescriptorSerializationTest : TestBase
         var descriptor = JsonDataConvert.DeserializeObject(json, static r => ObjectReaders.ReadTagHelperFromProperties(r, useCache: false));
 
         // Assert
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
     }
 
     [Fact]
@@ -254,7 +254,7 @@ public class TagHelperDescriptorSerializationTest : TestBase
 
         // Assert
         Assert.NotNull(descriptor);
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
 
         var boundAttribute = Assert.Single(descriptor.BoundAttributes);
         Assert.False(boundAttribute.IsEditorRequired);
@@ -288,7 +288,7 @@ public class TagHelperDescriptorSerializationTest : TestBase
 
         // Assert
         Assert.NotNull(descriptor);
-        Assert.Equal(expectedDescriptor, descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptor, descriptor);
 
         var boundAttribute = Assert.Single(descriptor.BoundAttributes);
         Assert.True(boundAttribute.IsEditorRequired);

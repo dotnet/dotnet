@@ -1,75 +1,29 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public abstract class AllowedChildTagDescriptor : IEquatable<AllowedChildTagDescriptor>
+public sealed class AllowedChildTagDescriptor : TagHelperObject<AllowedChildTagDescriptor>
 {
-    private bool _containsDiagnostics;
+    public string Name { get; }
+    public string DisplayName { get; }
 
-    public string Name { get; protected set; }
-
-    public string DisplayName { get; protected set; }
-
-    public IReadOnlyList<RazorDiagnostic> Diagnostics
+    internal AllowedChildTagDescriptor(string name, string displayName, ImmutableArray<RazorDiagnostic> diagnostics)
+        : base(diagnostics)
     {
-        get => _containsDiagnostics
-            ? TagHelperDiagnostics.GetDiagnostics(this)
-            : Array.Empty<RazorDiagnostic>();
-
-        protected set
-        {
-            if (value?.Count > 0)
-            {
-                TagHelperDiagnostics.AddDiagnostics(this, value);
-                _containsDiagnostics = true;
-            }
-            else if (_containsDiagnostics)
-            {
-                TagHelperDiagnostics.RemoveDiagnostics(this);
-                _containsDiagnostics = false;
-            }
-        }
+        Name = name;
+        DisplayName = displayName;
     }
 
-    public bool HasErrors
+    private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        get
-        {
-            if (!_containsDiagnostics)
-            {
-                return false;
-            }
-
-            var errors = Diagnostics.Any(diagnostic => diagnostic.Severity == RazorDiagnosticSeverity.Error);
-
-            return errors;
-        }
+        builder.AppendData(Name);
+        builder.AppendData(DisplayName);
     }
 
     public override string ToString()
-    {
-        return DisplayName ?? base.ToString();
-    }
-
-    public bool Equals(AllowedChildTagDescriptor other)
-    {
-        return AllowedChildTagDescriptorComparer.Default.Equals(this, other);
-    }
-
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as AllowedChildTagDescriptor);
-    }
-
-    public override int GetHashCode()
-    {
-        return AllowedChildTagDescriptorComparer.Default.GetHashCode(this);
-    }
+        => DisplayName ?? base.ToString();
 }

@@ -39,8 +39,8 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
         // Arrange
         var serializationSuccessful = false;
         var tagHelpers = ImmutableArray.Create<TagHelperDescriptor>(
-            new DefaultTagHelperDescriptor(FileKinds.Component, "Namespace.FileNameOther", "Assembly", "FileName", "FileName document", "FileName hint",
-                caseSensitive: false, tagMatchingRules: null, attributeDescriptors: null, allowedChildTags: null, metadata: null, diagnostics: null));
+            new TagHelperDescriptor(FileKinds.Component, "Namespace.FileNameOther", "Assembly", "FileName", "FileName document", "FileName hint",
+                caseSensitive: false, tagMatchingRules: default, attributeDescriptors: default, allowedChildTags: default, metadata: null, diagnostics: default));
 
         var initialProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.Preview));
         var expectedProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, CodeAnalysis.CSharp.LanguageVersion.Preview));
@@ -342,8 +342,8 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
         var serializationSuccessful = false;
         var firstSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj");
         var tagHelpers = ImmutableArray.Create<TagHelperDescriptor>(
-            new DefaultTagHelperDescriptor(FileKinds.Component, "Namespace.FileNameOther", "Assembly", "FileName", "FileName document", "FileName hint",
-                caseSensitive: false, tagMatchingRules: null, attributeDescriptors: null, allowedChildTags: null, metadata: null, diagnostics: null));
+            new TagHelperDescriptor(FileKinds.Component, "Namespace.FileNameOther", "Assembly", "FileName", "FileName document", "FileName hint",
+                caseSensitive: false, tagMatchingRules: default, attributeDescriptors: default, allowedChildTags: default, metadata: null, diagnostics: default));
 
         var secondSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.CSharp8), new string[]{
             "FileName.razor"

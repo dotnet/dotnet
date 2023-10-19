@@ -78,9 +78,9 @@ public class DefaultTagHelperFactsServiceTest(ITestOutputHelper testOutput) : Te
 
         // Assert
         var descriptor = Assert.Single(binding.Descriptors);
-        Assert.Equal(documentDescriptors[0], descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(documentDescriptors[0], descriptor);
         var boundRule = Assert.Single(binding.Mappings[descriptor]);
-        Assert.Equal(documentDescriptors[0].TagMatchingRules.First(), boundRule, TagMatchingRuleDescriptorComparer.Default);
+        Assert.Equal(documentDescriptors[0].TagMatchingRules.First(), boundRule);
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public class DefaultTagHelperFactsServiceTest(ITestOutputHelper testOutput) : Te
         var tagHelperAttributes = service.GetBoundTagHelperAttributes(documentContext, "asp-route-something", binding);
 
         // Assert
-        Assert.Equal(expectedAttributeDescriptors, tagHelperAttributes, BoundAttributeDescriptorComparer.Default);
+        Assert.Equal(expectedAttributeDescriptors, tagHelperAttributes);
     }
 
     [Fact]
@@ -151,7 +151,7 @@ public class DefaultTagHelperFactsServiceTest(ITestOutputHelper testOutput) : Te
         var tagHelperAttributes = service.GetBoundTagHelperAttributes(documentContext, "asp-for", binding);
 
         // Assert
-        Assert.Equal(expectedAttributeDescriptors, tagHelperAttributes, BoundAttributeDescriptorComparer.Default);
+        Assert.Equal(expectedAttributeDescriptors, tagHelperAttributes);
     }
 
     [Fact]
@@ -191,7 +191,7 @@ public class DefaultTagHelperFactsServiceTest(ITestOutputHelper testOutput) : Te
         var descriptors = service.GetTagHelpersGivenTag(documentContext, "strong", "p");
 
         // Assert
-        Assert.Equal(documentDescriptors, descriptors, TagHelperDescriptorComparer.Default);
+        Assert.Equal(documentDescriptors, descriptors);
     }
 
     [Fact]
@@ -224,7 +224,7 @@ public class DefaultTagHelperFactsServiceTest(ITestOutputHelper testOutput) : Te
         var descriptors = service.GetTagHelpersGivenTag(documentContext, "a", "div");
 
         // Assert
-        Assert.Equal(expectedDescriptors, descriptors, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptors, descriptors);
     }
 
     [Fact]
@@ -251,7 +251,7 @@ public class DefaultTagHelperFactsServiceTest(ITestOutputHelper testOutput) : Te
         var descriptors = service.GetTagHelpersGivenTag(documentContext, "thstrong", "div");
 
         // Assert
-        Assert.Equal(expectedDescriptors, descriptors, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptors, descriptors);
     }
 
     [Fact]
@@ -284,7 +284,7 @@ public class DefaultTagHelperFactsServiceTest(ITestOutputHelper testOutput) : Te
         var descriptors = service.GetTagHelpersGivenTag(documentContext, "strong", "div");
 
         // Assert
-        Assert.Equal(expectedDescriptors, descriptors, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptors, descriptors);
     }
 
     [Fact]
@@ -304,7 +304,7 @@ public class DefaultTagHelperFactsServiceTest(ITestOutputHelper testOutput) : Te
         var descriptors = service.GetTagHelpersGivenParent(documentContext, parentTag: null /* root */);
 
         // Assert
-        Assert.Equal(documentDescriptors, descriptors, TagHelperDescriptorComparer.Default);
+        Assert.Equal(documentDescriptors, descriptors);
     }
 
     [Fact]
@@ -330,7 +330,7 @@ public class DefaultTagHelperFactsServiceTest(ITestOutputHelper testOutput) : Te
 
         // Assert
         var descriptor = Assert.Single(descriptors);
-        Assert.Equal(documentDescriptors[0], descriptor, TagHelperDescriptorComparer.Default);
+        Assert.Equal(documentDescriptors[0], descriptor);
     }
 
     [Fact]
@@ -350,7 +350,7 @@ public class DefaultTagHelperFactsServiceTest(ITestOutputHelper testOutput) : Te
         var descriptors = service.GetTagHelpersGivenParent(documentContext, "p");
 
         // Assert
-        Assert.Equal(documentDescriptors, descriptors, TagHelperDescriptorComparer.Default);
+        Assert.Equal(documentDescriptors, descriptors);
     }
 
     [Fact]
@@ -383,6 +383,6 @@ public class DefaultTagHelperFactsServiceTest(ITestOutputHelper testOutput) : Te
         var descriptors = service.GetTagHelpersGivenParent(documentContext, "div");
 
         // Assert
-        Assert.Equal(expectedDescriptors, descriptors, TagHelperDescriptorComparer.Default);
+        Assert.Equal(expectedDescriptors, descriptors);
     }
 }

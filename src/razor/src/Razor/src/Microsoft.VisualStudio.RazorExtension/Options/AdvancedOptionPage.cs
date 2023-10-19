@@ -19,6 +19,7 @@ internal class AdvancedOptionPage : DialogPage
     private bool? _autoClosingTags;
     private bool? _autoInsertAttributeQuotes;
     private bool? _colorBackground;
+    private bool? _commitElementsWithSpace;
 
     public AdvancedOptionPage()
     {
@@ -58,6 +59,15 @@ internal class AdvancedOptionPage : DialogPage
         set => _autoInsertAttributeQuotes = value;
     }
 
+    [LocCategory(nameof(VSPackage.Completion))]
+    [LocDescription(nameof(VSPackage.Setting_CommitElementsWithSpaceDescription))]
+    [LocDisplayName(nameof(VSPackage.Setting_CommitElementsWithSpaceDisplayName))]
+    public bool CommitElementsWithSpace
+    {
+        get => _commitElementsWithSpace ?? _optionsStorage.Value.CommitElementsWithSpace;
+        set => _commitElementsWithSpace = value;
+    }
+
     [LocCategory(nameof(VSPackage.Formatting))]
     [LocDescription(nameof(VSPackage.Setting_ColorBackgroundDescription))]
     [LocDisplayName(nameof(VSPackage.Setting_ColorBackgroundDisplayName))]
@@ -88,6 +98,11 @@ internal class AdvancedOptionPage : DialogPage
         {
             _optionsStorage.Value.ColorBackground = _colorBackground.Value;
         }
+
+        if (_commitElementsWithSpace is not null)
+        {
+            _optionsStorage.Value.CommitElementsWithSpace = _commitElementsWithSpace.Value;
+        }
     }
 
     protected override void OnClosed(EventArgs e)
@@ -96,5 +111,6 @@ internal class AdvancedOptionPage : DialogPage
         _autoClosingTags = null;
         _autoInsertAttributeQuotes = null;
         _colorBackground = null;
+        _commitElementsWithSpace = null;
     }
 }

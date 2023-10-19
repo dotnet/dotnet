@@ -364,7 +364,7 @@ public static class IntermediateNodeAssert
             Assert.Equal(tagName, tagHelperNode.TagName);
             Assert.Equal(tagMode, tagHelperNode.TagMode);
 
-            Assert.Equal(tagHelpers, tagHelperNode.TagHelpers, TagHelperDescriptorComparer.Default);
+            Assert.Equal(tagHelpers, tagHelperNode.TagHelpers);
         }
         catch (XunitException e)
         {

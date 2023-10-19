@@ -127,10 +127,10 @@ public class PreallocatedAttributeTargetExtensionTest
         var extension = new PreallocatedAttributeTargetExtension();
         var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "FooTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "FooTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("FooTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .Name("Foo")
             .TypeName("System.String")
@@ -170,10 +170,10 @@ __tagHelperExecutionContext.AddTagHelperAttribute(_tagHelper1);
         var extension = new PreallocatedAttributeTargetExtension();
         var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "FooTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "FooTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("FooTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .Name("Foo")
             .TypeName("System.Collections.Generic.Dictionary<System.String, System.String>")
@@ -220,10 +220,10 @@ __tagHelperExecutionContext.AddTagHelperAttribute(_tagHelper1);
         var extension = new PreallocatedAttributeTargetExtension();
         var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperBuilder = new DefaultTagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "FooTagHelper", "Test");
+        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "FooTagHelper", "Test");
         tagHelperBuilder.Metadata(TypeName("FooTagHelper"));
 
-        var builder = new DefaultBoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
         builder
             .Name("Foo")
             .TypeName("System.Collections.Generic.Dictionary<System.String, System.String>")

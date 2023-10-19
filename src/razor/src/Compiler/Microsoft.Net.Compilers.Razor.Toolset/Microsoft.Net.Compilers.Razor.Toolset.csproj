@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.NET.Sdk.Razor.SourceGenerators\Microsoft.NET.Sdk.Razor.SourceGenerators.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\Microsoft.NET.Sdk.Razor.SourceGenerators\Microsoft.CodeAnalysis.Razor.Compiler.SourceGenerators.csproj" PrivateAssets="all" />
     <ProjectReference Include="..\tools\Microsoft.CodeAnalysis.Razor.Tooling.Internal\Microsoft.CodeAnalysis.Razor.Tooling.Internal.csproj" PrivateAssets="all"/>
   </ItemGroup>
 
@@ -39,7 +39,7 @@
   <Target Name="PackLayout" BeforeTargets="$(GenerateNuspecDependsOn)">
     <ItemGroup>
       <Content Include="$(PkgMicrosoft_CodeAnalysis_ExternalAccess_RazorCompiler)\lib\netstandard2.0\*.dll" PackagePath="\source-generators" />
-      <Content Include="$(ArtifactsBinDir)Microsoft.NET.Sdk.Razor.SourceGenerators\$(Configuration)\$(TargetFramework)\*.dll" PackagePath="\source-generators" />
+      <Content Include="$(ArtifactsBinDir)Microsoft.CodeAnalysis.Razor.Compiler.SourceGenerators\$(Configuration)\$(TargetFramework)\*.dll" PackagePath="\source-generators" />
       <Content Include="$(ArtifactsBinDir)Microsoft.CodeAnalysis.Razor.Tooling.Internal\$(Configuration)\$(TargetFramework)\Microsoft.Extensions.ObjectPool.dll" PackagePath="\source-generators" />
       <Content Include="$(ArtifactsBinDir)Microsoft.CodeAnalysis.Razor.Tooling.Internal\$(Configuration)\$(TargetFramework)\System.Collections.Immutable.dll" PackagePath="\source-generators" />
     </ItemGroup>

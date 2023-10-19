@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Immutable;
 using MessagePack;
 using Microsoft.AspNetCore.Razor.Language;
 
@@ -20,22 +21,22 @@ internal sealed class BoundAttributeFormatter : ValueFormatter<BoundAttributeDes
 
         var kind = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
         var name = CachedStringFormatter.Instance.Deserialize(ref reader, options);
-        var typeName = CachedStringFormatter.Instance.Deserialize(ref reader, options);
+        var typeName = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
         var isEnum = reader.ReadBoolean();
         var hasIndexer = reader.ReadBoolean();
         var indexerNamePrefix = CachedStringFormatter.Instance.Deserialize(ref reader, options);
         var indexerTypeName = CachedStringFormatter.Instance.Deserialize(ref reader, options);
-        var displayName = CachedStringFormatter.Instance.Deserialize(ref reader, options);
+        var displayName = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
         var documentationObject = reader.Deserialize<DocumentationObject>(options);
         var caseSensitive = reader.ReadBoolean();
         var isEditorRequired = reader.ReadBoolean();
-        var parameters = reader.Deserialize<BoundAttributeParameterDescriptor[]>(options);
+        var parameters = reader.Deserialize<ImmutableArray<BoundAttributeParameterDescriptor>>(options);
 
         var metadata = reader.Deserialize<MetadataCollection>(options);
-        var diagnostics = reader.Deserialize<RazorDiagnostic[]>(options);
+        var diagnostics = reader.Deserialize<ImmutableArray<RazorDiagnostic>>(options);
 
-        return new DefaultBoundAttributeDescriptor(
-            kind, name, typeName, isEnum,
+        return new BoundAttributeDescriptor(
+            kind, name!, typeName, isEnum,
             hasIndexer, indexerNamePrefix, indexerTypeName,
             documentationObject, displayName, caseSensitive, isEditorRequired,
             parameters, metadata, diagnostics);
@@ -56,10 +57,10 @@ internal sealed class BoundAttributeFormatter : ValueFormatter<BoundAttributeDes
         writer.Serialize(value.DocumentationObject, options);
         writer.Write(value.CaseSensitive);
         writer.Write(value.IsEditorRequired);
-        writer.Serialize(value.BoundAttributeParameters, options);
+        writer.Serialize(value.Parameters, options);
 
-        writer.Serialize((MetadataCollection)value.Metadata, options);
-        writer.Serialize((RazorDiagnostic[])value.Diagnostics, options);
+        writer.Serialize(value.Metadata, options);
+        writer.Serialize(value.Diagnostics, options);
     }
 
     public override void Skim(ref MessagePackReader reader, SerializerCachingOptions options)

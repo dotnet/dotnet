@@ -32,7 +32,7 @@ namespace Test
             , 3, (context) => (__builder2) => {
                 __builder2.OpenElement(4, "div");
 #nullable restore
-#line (2,22)-(2,39) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (2,23)-(2,40) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(5, context.ToLower());
 
 #line default
@@ -42,7 +42,7 @@ __builder2.AddContent(5, context.ToLower());
             }
             , 6, (item) => (__builder2) => {
 #nullable restore
-#line (4,3)-(4,32) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (4,4)-(4,33) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
 __builder2.AddContent(7, System.Math.Max(0, item.Item));
 
 #line default
