@@ -41,12 +41,12 @@ namespace NuGet.LibraryModel
             return hashCode.CombinedHash;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as CentralPackageVersion);
         }
 
-        public bool Equals(CentralPackageVersion other)
+        public bool Equals(CentralPackageVersion? other)
         {
             if (other == null)
             {

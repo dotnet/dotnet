@@ -204,4 +204,8 @@
     <comment>0 - the path to the EXE being launched
 1 - The command-line arguments</comment>
   </data>
+  <data name="Log_RestoreNoCacheInformation" xml:space="preserve">
+    <value>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Please use RestoreNoHttpCache instead.</value>
+    <comment>Do not translate RestoreNoCache and RestoreNoHttpCache</comment>
+  </data>
 </root>

@@ -296,6 +296,15 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disable using the Http cache and contact all configured package sources for live information..
+        /// </summary>
+        internal static string CommandNoHttpCache {
+            get {
+                return ResourceManager.GetString("CommandNoHttpCache", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Does not append &quot;api/v2/packages&quot; to the source URL..
         /// </summary>
         internal static string CommandNoServiceEndpointDescription {
@@ -873,6 +882,15 @@ namespace NuGet.CommandLine {
         internal static string LocalsCommandSummary {
             get {
                 return ResourceManager.GetString("LocalsCommandSummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NoCache is deprecated in favor of the appropriately named NoHttpCache..
+        /// </summary>
+        internal static string Log_RestoreNoCacheInformation {
+            get {
+                return ResourceManager.GetString("Log_RestoreNoCacheInformation", resourceCulture);
             }
         }
         

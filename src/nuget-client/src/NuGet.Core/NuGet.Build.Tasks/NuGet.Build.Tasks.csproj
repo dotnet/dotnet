@@ -48,9 +48,6 @@
   <ItemGroup Condition=" '$(IsCore)' == 'true' ">
     <PackageReference Include="Microsoft.Build.Tasks.Core" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" />
-    <!-- System.Security.Cryptography.Xml is a dependency of Microsoft.Build.Tasks.Core. Therefore, we have assigned the same ExcludeAssets value. -->
-    <PackageReference Include="System.Security.Cryptography.Xml" ExcludeAssets="runtime" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" ExcludeAssets="compile" />
   </ItemGroup>
 
   <ItemGroup>

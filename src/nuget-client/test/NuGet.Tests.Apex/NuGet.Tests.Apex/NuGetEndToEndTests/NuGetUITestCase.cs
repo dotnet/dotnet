@@ -4,14 +4,13 @@
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Test.Apex.VisualStudio.Solution;
-using NuGet.StaFact;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NuGet.Test.Utility;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace NuGet.Tests.Apex
 {
-    public class NuGetUITestCase : SharedVisualStudioHostTestClass, IClassFixture<VisualStudioHostFixtureFactory>
+    [TestClass]
+    public class NuGetUITestCase : SharedVisualStudioHostTestClass
     {
         private const string TestPackageName = "Contoso.A";
         private const string TestPackageVersionV1 = "1.0.0";
@@ -21,12 +20,13 @@ namespace NuGet.Tests.Apex
 
         private readonly SimpleTestPathContext _pathContext = new SimpleTestPathContext();
 
-        public NuGetUITestCase(VisualStudioHostFixtureFactory visualStudioHostFixtureFactory, ITestOutputHelper output)
-            : base(visualStudioHostFixtureFactory, output)
+        public NuGetUITestCase()
+            : base()
         {
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task SearchPackageFromUI()
         {
             // Arrange
@@ -41,7 +41,7 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
 
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.SwitchTabToBrowse();
@@ -51,7 +51,8 @@ namespace NuGet.Tests.Apex
             VisualStudio.AssertNoErrors();
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task InstallPackageFromUI()
         {
             // Arrange
@@ -66,16 +67,17 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
 
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV1, XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV1, Logger);
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task InstallPackageToProjectsFromUI()
         {
             // Arrange
@@ -90,24 +92,25 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
 
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(nuProject);
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             VisualStudio.SelectProjectInSolutionExplorer(project.Name);
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
 
             VisualStudio.ClearOutputWindow();
             NuGetUIProjectTestExtension uiwindow2 = nugetTestService.GetUIWindowfromProject(project);
             uiwindow2.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV1, XunitLogger);
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, nuProject, TestPackageName, TestPackageVersionV1, XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV1, Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, nuProject, TestPackageName, TestPackageVersionV1, Logger);
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task UninstallPackageFromUI()
         {
             // Arrange
@@ -121,7 +124,7 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             FileInfo packagesConfigFile = GetPackagesConfigFile(project);
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
 
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
@@ -136,10 +139,11 @@ namespace NuGet.Tests.Apex
             CommonUtility.WaitForFileNotExists(packagesConfigFile);
 
             // Assert
-            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, project, TestPackageName, XunitLogger);
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, project, TestPackageName, Logger);
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task UpdatePackageFromUI()
         {
             // Arrange
@@ -155,7 +159,7 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
 
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
@@ -165,10 +169,11 @@ namespace NuGet.Tests.Apex
             uiwindow.UpdatePackageFromUI(TestPackageName, TestPackageVersionV2);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV2, XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV2, Logger);
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task InstallPackageFromUI_PC_PackageSourceMapping_WithSingleFeed_Match_Succeeds()
         {
             // Arrange
@@ -186,16 +191,17 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
 
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV1, XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV1, Logger);
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task InstallPackageToProjectsFromUI_PC_PackageSourceMapping_WithSingleFeed_Match_Succeeds()
         {
             // Arrange
@@ -213,22 +219,23 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(nuProject);
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
             VisualStudio.SelectProjectInSolutionExplorer(project.Name);
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
 
             VisualStudio.ClearOutputWindow();
             NuGetUIProjectTestExtension uiwindow2 = nugetTestService.GetUIWindowfromProject(project);
             uiwindow2.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV1, XunitLogger);
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, nuProject, TestPackageName, TestPackageVersionV1, XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV1, Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, nuProject, TestPackageName, TestPackageVersionV1, Logger);
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task InstallPackageFromUI_PC_PackageSourceMapping_WithMultiFeed_Succeed()
         {
             // Arrange
@@ -251,7 +258,7 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
 
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
 
@@ -260,10 +267,11 @@ namespace NuGet.Tests.Apex
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "contoso.a", XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "contoso.a", Logger);
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task InstallPackageFromUI_PC_PackageSourceMapping_WithMultiFeed_Fails()
         {
             // Arrange
@@ -285,17 +293,18 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
 
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
             // Assert
-            // Even though Contoso.a exist in ExternalRepository, but packageSourceMapping filter doesn't let restore from it.
-            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, project, "contoso.a", XunitLogger);
+            // Even though Contoso.a exist in ExternalRepository, but PackageNamespaces filter doesn't let restore from it.
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, project, "contoso.a", Logger);
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task UpdatePackageFromUI_PC_PackageSourceMapping_WithSingleFeed_Succeeds()
         {
             // Arrange
@@ -314,7 +323,7 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
 
@@ -323,11 +332,12 @@ namespace NuGet.Tests.Apex
             uiwindow.UpdatePackageFromUI(TestPackageName, TestPackageVersionV2);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV2, XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV2, Logger);
         }
 
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task UpdatePackageFromUI_PC_PackageSourceMapping_WithMultiFeed_Succeed()
         {
             // Arrange
@@ -351,7 +361,7 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
 
             // Set option to package source option to All
@@ -362,7 +372,7 @@ namespace NuGet.Tests.Apex
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV2);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV2, XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV2, Logger);
         }
 
         public override void Dispose()
@@ -379,8 +389,8 @@ namespace NuGet.Tests.Apex
             return new FileInfo(Path.Combine(projectFile.DirectoryName, "packages.config"));
         }
 
-
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public void InstallPackageToWebSiteProjectFromUI()
         {
             // Arrange
@@ -393,16 +403,17 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
             var nugetTestService = GetNuGetTestService();
             var uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI("log4net", "2.0.12");
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "log4net", "2.0.12", XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "log4net", "2.0.12", Logger);
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public void UpdateWebSitePackageFromUI()
         {
             // Arrange
@@ -415,7 +426,7 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
             var nugetTestService = GetNuGetTestService();
             var uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI("log4net", "2.0.13");
@@ -423,10 +434,11 @@ namespace NuGet.Tests.Apex
             uiwindow.UpdatePackageFromUI("log4net", "2.0.15");
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "log4net", "2.0.15", XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, "log4net", "2.0.15", Logger);
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public void UninstallWebSitePackageFromUI()
         {
             // Arrange
@@ -439,7 +451,7 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
             var nugetTestService = GetNuGetTestService();
             var uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI("log4net", "2.0.15");
@@ -447,10 +459,11 @@ namespace NuGet.Tests.Apex
             uiwindow.UninstallPackageFromUI("log4net");
 
             // Assert
-            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, project, "log4net", XunitLogger);
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, project, "log4net", Logger);
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task SearchPackageInBrowseTabFromUI()
         {
             // Arrange
@@ -466,7 +479,7 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
 
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.SwitchTabToBrowse();
@@ -477,7 +490,8 @@ namespace NuGet.Tests.Apex
             uiwindow.AssertSearchedPackageItem(tabName, TestPackageName);
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task SearchPackageInInstalledTabFromUI()
         {
             // Arrange
@@ -496,7 +510,7 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
 
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
@@ -508,7 +522,8 @@ namespace NuGet.Tests.Apex
             uiwindow.AssertSearchedPackageItem(tabName, TestPackageName, TestPackageVersionV1);
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task SearchPackageInUpdatesTabFromUI()
         {
             //Arrange
@@ -525,7 +540,7 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
 
             NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
@@ -537,9 +552,10 @@ namespace NuGet.Tests.Apex
             uiwindow.AssertSearchedPackageItem(tabName, TestPackageName, TestPackageVersionV2);
         }
 
-        [NuGetWpfTheory]
-        [InlineData(ProjectTemplate.ClassLibrary, "Newtonsoft.Json", "12.0.2")]
-        [InlineData(ProjectTemplate.NetCoreClassLib, "Newtonsoft.Json", "12.0.2")]
+        [DataTestMethod]
+        [DataRow(ProjectTemplate.ClassLibrary, "Newtonsoft.Json", "12.0.2")]
+        [DataRow(ProjectTemplate.NetCoreClassLib, "Newtonsoft.Json", "12.0.2")]
+        [Timeout(DefaultTimeout)]
         public void InstallVulnerablePackageFromUI(ProjectTemplate projectTemplate, string packageName, string packageVersion)
         {
             // Arrange
@@ -551,20 +567,21 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
             var nugetTestService = GetNuGetTestService();
             var uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(packageName, packageVersion);
             solutionService.Build();
 
             // Assert
-            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion, XunitLogger);
+            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion, Logger);
             uiwindow.AssertInstalledPackageVulnerable();
         }
 
-        [NuGetWpfTheory]
-        [InlineData(ProjectTemplate.ClassLibrary, "Newtonsoft.Json", "12.0.2", "13.0.1")]
-        [InlineData(ProjectTemplate.NetCoreClassLib, "Newtonsoft.Json", "12.0.2", "13.0.2")]
+        [DataTestMethod]
+        [DataRow(ProjectTemplate.ClassLibrary, "Newtonsoft.Json", "12.0.2", "13.0.1")]
+        [DataRow(ProjectTemplate.NetCoreClassLib, "Newtonsoft.Json", "12.0.2", "13.0.2")]
+        [Timeout(DefaultTimeout)]
         public void UpdateVulnerablePackageFromUI(ProjectTemplate projectTemplate, string packageName, string packageVersion1, string packageVersion2)
         {
             // Arrange
@@ -576,27 +593,28 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
             var nugetTestService = GetNuGetTestService();
             var uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(packageName, packageVersion1);
             solutionService.Build();
 
             // Assert
-            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion1, XunitLogger);
+            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion1, Logger);
             uiwindow.AssertInstalledPackageVulnerable();
 
             // Act
             uiwindow.UpdatePackageFromUI(packageName, packageVersion2);
 
             // Assert
-            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion2, XunitLogger);
+            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion2, Logger);
             uiwindow.AssertInstalledPackageNotVulnerable();
         }
 
-        [NuGetWpfTheory]
-        [InlineData(ProjectTemplate.ClassLibrary, "Newtonsoft.Json", "12.0.3")]
-        [InlineData(ProjectTemplate.NetCoreClassLib, "Newtonsoft.Json", "12.0.3")]
+        [DataTestMethod]
+        [DataRow(ProjectTemplate.ClassLibrary, "Newtonsoft.Json", "12.0.3")]
+        [DataRow(ProjectTemplate.NetCoreClassLib, "Newtonsoft.Json", "12.0.3")]
+        [Timeout(DefaultTimeout)]
         public void UninstallVulnerablePackageFromUI(ProjectTemplate projectTemplate, string packageName, string packageVersion)
         {
             // Arrange
@@ -608,14 +626,14 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
             var nugetTestService = GetNuGetTestService();
             var uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(packageName, packageVersion);
             solutionService.Build();
 
             // Assert
-            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion, XunitLogger);
+            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion, Logger);
             uiwindow.AssertInstalledPackageVulnerable();
 
             // Act
@@ -623,12 +641,13 @@ namespace NuGet.Tests.Apex
             uiwindow.UninstallPackageFromUI(packageName);
 
             // Assert
-            CommonUtility.AssertUninstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, XunitLogger);
+            CommonUtility.AssertUninstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, Logger);
         }
 
-        [NuGetWpfTheory]
-        [InlineData(ProjectTemplate.ClassLibrary, "jquery", "3.5.0")]
-        [InlineData(ProjectTemplate.NetCoreClassLib, "jquery", "3.5.0")]
+        [DataTestMethod]
+        [DataRow(ProjectTemplate.ClassLibrary, "jquery", "3.5.0")]
+        [DataRow(ProjectTemplate.NetCoreClassLib, "jquery", "3.5.0")]
+        [Timeout(DefaultTimeout)]
         public void InstallDeprecatedPackageFromUI(ProjectTemplate projectTemplate, string packageName, string packageVersion)
         {
             // Arrange
@@ -640,20 +659,21 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
             var nugetTestService = GetNuGetTestService();
             var uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(packageName, packageVersion);
             solutionService.Build();
 
             // Assert
-            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion, XunitLogger);
+            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion, Logger);
             uiwindow.AssertInstalledPackageDeprecated();
         }
 
-        [NuGetWpfTheory]
-        [InlineData(ProjectTemplate.ClassLibrary, "jQuery", "3.5.0", "3.6.0")]
-        [InlineData(ProjectTemplate.NetCoreClassLib, "jQuery", "3.5.0", "3.6.3")]
+        [DataTestMethod]
+        [DataRow(ProjectTemplate.ClassLibrary, "jQuery", "3.5.0", "3.6.0")]
+        [DataRow(ProjectTemplate.NetCoreClassLib, "jQuery", "3.5.0", "3.6.3")]
+        [Timeout(DefaultTimeout)]
         public void UpdateDeprecatedPackageFromUI(ProjectTemplate projectTemplate, string packageName, string packageVersion1, string packageVersion2)
         {
             // Arrange
@@ -665,27 +685,28 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
             var nugetTestService = GetNuGetTestService();
             var uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(packageName, packageVersion1);
             solutionService.Build();
 
             // Assert
-            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion1, XunitLogger);
+            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion1, Logger);
             uiwindow.AssertInstalledPackageDeprecated();
 
             // Act
             uiwindow.UpdatePackageFromUI(packageName, packageVersion2);
 
             // Assert
-            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion2, XunitLogger);
+            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion2, Logger);
             uiwindow.AssertInstalledPackageNotDeprecated();
         }
 
-        [NuGetWpfTheory]
-        [InlineData(ProjectTemplate.ClassLibrary, "jQuery", "3.5.0")]
-        [InlineData(ProjectTemplate.NetCoreClassLib, "jQuery", "3.5.0")]
+        [DataTestMethod]
+        [DataRow(ProjectTemplate.ClassLibrary, "jQuery", "3.5.0")]
+        [DataRow(ProjectTemplate.NetCoreClassLib, "jQuery", "3.5.0")]
+        [Timeout(DefaultTimeout)]
         public void UninstallDeprecatedPackageFromUI(ProjectTemplate projectTemplate, string packageName, string packageVersion)
         {
             // Arrange
@@ -697,14 +718,14 @@ namespace NuGet.Tests.Apex
             solutionService.SaveAll();
 
             // Act
-            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, XunitLogger);
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
             var nugetTestService = GetNuGetTestService();
             var uiwindow = nugetTestService.GetUIWindowfromProject(project);
             uiwindow.InstallPackageFromUI(packageName, packageVersion);
             solutionService.Build();
 
             // Assert
-            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion, XunitLogger);
+            CommonUtility.AssertInstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, packageVersion, Logger);
             uiwindow.AssertInstalledPackageDeprecated();
 
             // Act
@@ -712,7 +733,7 @@ namespace NuGet.Tests.Apex
             uiwindow.UninstallPackageFromUI(packageName);
 
             // Assert
-            CommonUtility.AssertUninstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, XunitLogger);
+            CommonUtility.AssertUninstalledPackageByProjectType(VisualStudio, projectTemplate, project, packageName, Logger);
         }
     }
 }

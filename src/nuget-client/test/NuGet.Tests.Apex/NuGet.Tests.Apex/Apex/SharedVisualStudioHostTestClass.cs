@@ -3,42 +3,24 @@
 
 using System;
 using FluentAssertions;
-using Microsoft.Test.Apex;
 using Microsoft.Test.Apex.VisualStudio;
 using Microsoft.Test.Apex.VisualStudio.Solution;
-using Test.Utility;
-using Xunit;
-using Xunit.Abstractions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace NuGet.Tests.Apex
 {
-    [CollectionDefinition("SharedVSHost")]
-    public sealed class SharedVisualStudioHostTestCollectionDefinition : ICollectionFixture<VisualStudioHostFixtureFactory>
-    {
-        private SharedVisualStudioHostTestCollectionDefinition()
-        {
-            throw new InvalidOperationException("SharedVisualStudioHostTestCollectionDefinition only exists for metadata, it should never be constructed.");
-        }
-    }
-
-    [Collection("SharedVSHost")]
+    [TestClass]
     public abstract class SharedVisualStudioHostTestClass : ApexBaseTestClass
     {
-        private readonly IVisualStudioHostFixtureFactory _contextFixtureFactory;
+        private static readonly IVisualStudioHostFixtureFactory _contextFixtureFactory = new VisualStudioHostFixtureFactory();
         private readonly Lazy<VisualStudioHostFixture> _hostFixture;
         private NuGetConsoleTestExtension _console;
         private string _packageManagerOutputWindowText;
 
-        /// <summary>
-        /// ITestOutputHelper wrapper
-        /// </summary>
-        public XunitLogger XunitLogger { get; }
+        internal const int DefaultTimeout = 5 * 60 * 1000; // 5 minutes
 
-        protected SharedVisualStudioHostTestClass(IVisualStudioHostFixtureFactory contextFixtureFactory, ITestOutputHelper output)
+        protected SharedVisualStudioHostTestClass()
         {
-            XunitLogger = new XunitLogger(output);
-            _contextFixtureFactory = contextFixtureFactory;
-
             _hostFixture = new Lazy<VisualStudioHostFixture>(() =>
             {
                 return _contextFixtureFactory.GetVisualStudioHostFixture();
@@ -66,14 +48,14 @@ namespace NuGet.Tests.Apex
 
         protected NuGetConsoleTestExtension GetConsole(ProjectTestExtension project)
         {
-            XunitLogger.LogInformation("GetConsole");
+            Logger.WriteMessage("GetConsole");
             VisualStudio.ClearWindows();
             NuGetApexTestService nugetTestService = GetNuGetTestService();
 
-            XunitLogger.LogInformation("EnsurePackageManagerConsoleIsOpen");
+            Logger.WriteMessage("EnsurePackageManagerConsoleIsOpen");
             nugetTestService.EnsurePackageManagerConsoleIsOpen().Should().BeTrue("Console was opened");
 
-            XunitLogger.LogInformation("GetPackageManagerConsole");
+            Logger.WriteMessage("GetPackageManagerConsole");
             _console = nugetTestService.GetPackageManagerConsole(project.Name);
 
             // This is not a magic number.
@@ -83,12 +65,11 @@ namespace NuGet.Tests.Apex
 
             nugetTestService.WaitForAutoRestore();
 
-            XunitLogger.LogInformation("GetConsole complete");
+            Logger.WriteMessage("GetConsole complete");
+
 
             return _console;
         }
-
-        public IOperations Operations => _hostFixture.Value.Operations;
 
         public override void Dispose()
         {
@@ -96,12 +77,12 @@ namespace NuGet.Tests.Apex
             {
                 string text = _console.GetText();
 
-                XunitLogger.LogInformation($"Package Manager Console contents:  {text}");
+                Logger.WriteMessage($"Package Manager Console contents:  {text}");
             }
 
             _packageManagerOutputWindowText = _packageManagerOutputWindowText ?? GetPackageManagerOutputWindowPaneText();
 
-            XunitLogger.LogInformation($"Package Manager Output Window Pane contents:  {_packageManagerOutputWindowText}");
+            Logger.WriteMessage($"Package Manager Output Window Pane contents:  {_packageManagerOutputWindowText}");
 
             base.Dispose();
         }

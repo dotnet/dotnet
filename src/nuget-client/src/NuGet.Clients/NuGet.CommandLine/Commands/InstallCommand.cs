@@ -213,7 +213,7 @@ namespace NuGet.CommandLine
             }
             using (var cacheContext = new SourceCacheContext())
             {
-                cacheContext.NoCache = NoCache;
+                cacheContext.NoCache = NoCache || NoHttpCache;
                 cacheContext.DirectDownload = DirectDownload;
 
                 var clientPolicyContext = ClientPolicyContext.GetClientPolicy(Settings, Console);
@@ -378,7 +378,7 @@ namespace NuGet.CommandLine
                             Console)
                     };
 
-                    resolutionContext.SourceCacheContext.NoCache = NoCache;
+                    resolutionContext.SourceCacheContext.NoCache = NoCache || NoHttpCache;
                     resolutionContext.SourceCacheContext.DirectDownload = DirectDownload;
 
                     var packageSourceMapping = PackageSourceMapping.GetPackageSourceMapping(Settings);

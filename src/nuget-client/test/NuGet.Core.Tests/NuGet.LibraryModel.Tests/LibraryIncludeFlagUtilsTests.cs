@@ -13,7 +13,7 @@ namespace NuGet.LibraryModel.Tests
         public void GetFlags_WhenFlagsIsNull_Throws()
         {
             ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
-                () => LibraryIncludeFlagUtils.GetFlags(flags: null));
+                () => LibraryIncludeFlagUtils.GetFlags(flags: null!));
 
             Assert.Equal("flags", exception.ParamName);
         }

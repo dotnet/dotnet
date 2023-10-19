@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using EnvDTE;
 using FluentAssertions;
+using Microsoft.Test.Apex.Services;
 using Microsoft.Test.Apex.VisualStudio;
 using Microsoft.Test.Apex.VisualStudio.Solution;
 using NuGet.Common;
@@ -165,43 +166,43 @@ namespace NuGet.Tests.Apex
             return package;
         }
 
-        public static void AssertPackageReferenceExists(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, string packageVersion, ILogger logger)
+        public static void AssertPackageReferenceExists(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, string packageVersion, ITestLogger logger)
         {
-            logger.LogInformation($"Checking for PackageReference {packageName} {packageVersion}");
+            logger.WriteMessage($"Checking for PackageReference {packageName} {packageVersion}");
 
             var matches = GetPackageReferences(project)
                 .Where(e => e.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase)
                         && e.LibraryRange.VersionRange.MinVersion.Equals(NuGetVersion.Parse(packageVersion)))
                 .ToList();
 
-            logger.LogInformation($"Matches: {matches.Count}");
+            logger.WriteMessage($"Matches: {matches.Count}");
 
             matches.Any().Should().BeTrue($"A PackageReference with {packageName}/{packageVersion} was not found in {project.FullPath}");
         }
 
-        public static void AssertPackageReferenceDoesNotExist(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, string packageVersion, ILogger logger)
+        public static void AssertPackageReferenceDoesNotExist(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, string packageVersion, ITestLogger logger)
         {
-            logger.LogInformation($"Checking for PackageReference {packageName} {packageVersion}");
+            logger.WriteMessage($"Checking for PackageReference {packageName} {packageVersion}");
 
             var matches = GetPackageReferences(project)
                 .Where(e => e.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase)
                         && e.LibraryRange.VersionRange.MinVersion.Equals(NuGetVersion.Parse(packageVersion)))
                 .ToList();
 
-            logger.LogInformation($"Matches: {matches.Count}");
+            logger.WriteMessage($"Matches: {matches.Count}");
 
             matches.Any().Should().BeFalse($"A PackageReference with {packageName}/{packageVersion} was found in {project.FullPath}");
         }
 
-        public static void AssertPackageReferenceDoesNotExist(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, ILogger logger)
+        public static void AssertPackageReferenceDoesNotExist(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, ITestLogger logger)
         {
-            logger.LogInformation($"Checking for PackageReference {packageName}");
+            logger.WriteMessage($"Checking for PackageReference {packageName}");
 
             var matches = GetPackageReferences(project)
                 .Where(e => e.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
-            logger.LogInformation($"Matches: {matches.Count}");
+            logger.WriteMessage($"Matches: {matches.Count}");
 
             matches.Any().Should().BeFalse($"A PackageReference for {packageName} was found in {project.FullPath}");
         }
@@ -226,9 +227,9 @@ namespace NuGet.Tests.Apex
 
         }
 
-        public static void AssertPackageInAssetsFile(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, string packageVersion, ILogger logger)
+        public static void AssertPackageInAssetsFile(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, string packageVersion, ITestLogger logger)
         {
-            logger.LogInformation($"Checking assets file for {packageName}");
+            logger.WriteMessage($"Checking assets file for {packageName}");
 
             var testService = visualStudio.Get<NuGetApexTestService>();
             testService.WaitForAutoRestore();
@@ -238,39 +239,39 @@ namespace NuGet.Tests.Apex
             // Project has an assets file, let's look there to assert
             var inAssetsFile = IsPackageInstalledInAssetsFile(assetsFilePath, packageName, packageVersion, true);
 
-            logger.LogInformation($"Exists: {inAssetsFile}");
+            logger.WriteMessage($"Exists: {inAssetsFile}");
 
             inAssetsFile.Should().BeTrue(AppendErrors($"{packageName}/{packageVersion} should be installed in {project.Name}", visualStudio));
         }
 
-        public static void AssertPackageInPackagesConfig(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, string packageVersion, ILogger logger)
+        public static void AssertPackageInPackagesConfig(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, string packageVersion, ITestLogger logger)
         {
-            logger.LogInformation($"Checking project {packageName}");
+            logger.WriteMessage($"Checking project {packageName}");
             var testService = visualStudio.Get<NuGetApexTestService>();
 
             // Check using the IVs APIs
             var exists = testService.IsPackageInstalled(project.UniqueName, packageName, packageVersion);
 
-            logger.LogInformation($"Exists: {exists}");
+            logger.WriteMessage($"Exists: {exists}");
 
             exists.Should().BeTrue(AppendErrors($"{packageName}/{packageVersion} should be installed in {project.Name}", visualStudio));
         }
 
-        public static void AssertPackageInPackagesConfig(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, ILogger logger)
+        public static void AssertPackageInPackagesConfig(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, ITestLogger logger)
         {
-            logger.LogInformation($"Checking project {packageName}");
+            logger.WriteMessage($"Checking project {packageName}");
             var testService = visualStudio.Get<NuGetApexTestService>();
 
             // Check using the IVs APIs
             var exists = testService.IsPackageInstalled(project.UniqueName, packageName);
-            logger.LogInformation($"Exists: {exists}");
+            logger.WriteMessage($"Exists: {exists}");
 
             exists.Should().BeTrue(AppendErrors($"{packageName} should be installed in {project.Name}", visualStudio));
         }
 
-        public static void AssertPackageNotInAssetsFile(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, string packageVersion, ILogger logger)
+        public static void AssertPackageNotInAssetsFile(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, string packageVersion, ITestLogger logger)
         {
-            logger.LogInformation($"Checking assets file for {packageName}");
+            logger.WriteMessage($"Checking assets file for {packageName}");
             var testService = visualStudio.Get<NuGetApexTestService>();
             testService.WaitForAutoRestore();
 
@@ -278,31 +279,31 @@ namespace NuGet.Tests.Apex
 
             // Project has an assets file, let's look there to assert
             var inAssetsFile = IsPackageInstalledInAssetsFile(assetsFilePath, packageName, packageVersion, false);
-            logger.LogInformation($"Exists: {inAssetsFile}");
+            logger.WriteMessage($"Exists: {inAssetsFile}");
 
             inAssetsFile.Should().BeFalse(AppendErrors($"{packageName}/{packageVersion} should not be installed in {project.Name}", visualStudio));
         }
 
-        public static void AssertPackageNotInPackagesConfig(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, string packageVersion, ILogger logger)
+        public static void AssertPackageNotInPackagesConfig(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, string packageVersion, ITestLogger logger)
         {
-            logger.LogInformation($"Checking project for {packageName}");
+            logger.WriteMessage($"Checking project for {packageName}");
             var testService = visualStudio.Get<NuGetApexTestService>();
 
             // Check using the IVs APIs
             var exists = testService.IsPackageInstalled(project.UniqueName, packageName, packageVersion);
-            logger.LogInformation($"Exists: {exists}");
+            logger.WriteMessage($"Exists: {exists}");
 
             exists.Should().BeFalse(AppendErrors($"{packageName}/{packageVersion} should NOT be in {project.Name}", visualStudio));
         }
 
-        public static void AssertPackageNotInPackagesConfig(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, ILogger logger)
+        public static void AssertPackageNotInPackagesConfig(VisualStudioHost visualStudio, ProjectTestExtension project, string packageName, ITestLogger logger)
         {
-            logger.LogInformation($"Checking project for {packageName}");
+            logger.WriteMessage($"Checking project for {packageName}");
             var testService = visualStudio.Get<NuGetApexTestService>();
 
             // Check using the IVs APIs
             var exists = testService.IsPackageInstalled(project.UniqueName, packageName);
-            logger.LogInformation($"Exists: {exists}");
+            logger.WriteMessage($"Exists: {exists}");
 
             exists.Should().BeFalse(AppendErrors($"{packageName} should NOT be in {project.Name}", visualStudio));
         }
@@ -316,19 +317,19 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        internal static void OpenNuGetPackageManagerWithDte(VisualStudioHost visualStudio, ILogger logger)
+        internal static void OpenNuGetPackageManagerWithDte(VisualStudioHost visualStudio, ITestLogger logger)
         {
             visualStudio.ObjectModel.Solution.WaitForOperationsInProgress(TimeSpan.FromMinutes(3));
             WaitForCommandAvailable(visualStudio, "Project.ManageNuGetPackages", TimeSpan.FromMinutes(1), logger);
             visualStudio.Dte.ExecuteCommand("Project.ManageNuGetPackages");
         }
 
-        private static void WaitForCommandAvailable(VisualStudioHost visualStudio, string commandName, TimeSpan timeout, ILogger logger)
+        private static void WaitForCommandAvailable(VisualStudioHost visualStudio, string commandName, TimeSpan timeout, ITestLogger logger)
         {
             WaitForCommandAvailable(visualStudio.Dte.Commands.Item(commandName), timeout, logger);
         }
 
-        private static void WaitForCommandAvailable(Command cmd, TimeSpan timeout, ILogger logger)
+        private static void WaitForCommandAvailable(Command cmd, TimeSpan timeout, ITestLogger logger)
         {
             var stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -341,7 +342,7 @@ namespace NuGet.Tests.Apex
                 Thread.Sleep(250);
             }
 
-            logger.LogWarning($"Timed out waiting for {cmd.Name} to be available");
+            logger.WriteWarning($"Timed out waiting for {cmd.Name} to be available");
         }
 
         private static bool IsPackageInstalledInAssetsFile(string assetsFilePath, string packageName, string packageVersion, bool expected)
@@ -461,18 +462,18 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        internal static ProjectTestExtension CreateAndInitProject(ProjectTemplate projectTemplate, SimpleTestPathContext pathContext, SolutionService solutionService, ILogger logger)
+        internal static ProjectTestExtension CreateAndInitProject(ProjectTemplate projectTemplate, SimpleTestPathContext pathContext, SolutionService solutionService, ITestLogger logger)
         {
-            logger.LogInformation("Creating solution");
+            logger.WriteMessage("Creating solution");
             solutionService.CreateEmptySolution("TestSolution", pathContext.SolutionRoot);
 
-            logger.LogInformation("Adding project");
+            logger.WriteMessage("Adding project");
             var project = solutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, ProjectTargetFramework.V46, "TestProject");
 
-            logger.LogInformation("Saving solution");
+            logger.WriteMessage("Saving solution");
             solutionService.Save();
 
-            logger.LogInformation("Building solution");
+            logger.WriteMessage("Building solution");
             project.Build();
 
             return project;
@@ -490,7 +491,7 @@ namespace NuGet.Tests.Apex
             return s;
         }
 
-        public static void AssertInstalledPackageByProjectType(VisualStudioHost visualStudio, ProjectTemplate projectTemplate, ProjectTestExtension project, string packageName, string packageVersion, ILogger logger)
+        public static void AssertInstalledPackageByProjectType(VisualStudioHost visualStudio, ProjectTemplate projectTemplate, ProjectTestExtension project, string packageName, string packageVersion, ITestLogger logger)
         {
             if (projectTemplate.Equals(ProjectTemplate.ClassLibrary))
             {
@@ -502,7 +503,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        public static void AssertUninstalledPackageByProjectType(VisualStudioHost visualStudio, ProjectTemplate projectTemplate, ProjectTestExtension project, string packageName, ILogger logger)
+        public static void AssertUninstalledPackageByProjectType(VisualStudioHost visualStudio, ProjectTemplate projectTemplate, ProjectTestExtension project, string packageName, ITestLogger logger)
         {
             if (projectTemplate.Equals(ProjectTemplate.ClassLibrary))
             {

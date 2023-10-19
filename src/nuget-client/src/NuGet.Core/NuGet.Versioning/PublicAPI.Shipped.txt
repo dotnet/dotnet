@@ -158,6 +158,7 @@ static NuGet.Versioning.SemanticVersion.operator ==(NuGet.Versioning.SemanticVer
 static NuGet.Versioning.SemanticVersion.operator >(NuGet.Versioning.SemanticVersion! version1, NuGet.Versioning.SemanticVersion! version2) -> bool
 static NuGet.Versioning.SemanticVersion.operator >=(NuGet.Versioning.SemanticVersion! version1, NuGet.Versioning.SemanticVersion! version2) -> bool
 static NuGet.Versioning.VersionComparer.Compare(NuGet.Versioning.SemanticVersion? version1, NuGet.Versioning.SemanticVersion? version2, NuGet.Versioning.VersionComparison versionComparison) -> int
+static NuGet.Versioning.VersionComparer.Get(NuGet.Versioning.VersionComparison versionComparison) -> NuGet.Versioning.IVersionComparer!
 static NuGet.Versioning.VersionExtensions.FindBestMatch(this System.Collections.Generic.IEnumerable<NuGet.Versioning.INuGetVersionable!>! items, NuGet.Versioning.VersionRange! ideal) -> NuGet.Versioning.INuGetVersionable?
 static NuGet.Versioning.VersionExtensions.FindBestMatch<T>(this System.Collections.Generic.IEnumerable<T!>! items, NuGet.Versioning.VersionRange? ideal, System.Func<T!, NuGet.Versioning.NuGetVersion!>! selector) -> T?
 static NuGet.Versioning.VersionRange.Combine(System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion!>! versions) -> NuGet.Versioning.VersionRange!
@@ -171,6 +172,7 @@ static NuGet.Versioning.VersionRange.Parse(string! value, bool allowFloating) ->
 static NuGet.Versioning.VersionRange.TryParse(string! value, bool allowFloating, out NuGet.Versioning.VersionRange? versionRange) -> bool
 static NuGet.Versioning.VersionRange.TryParse(string! value, out NuGet.Versioning.VersionRange? versionRange) -> bool
 static NuGet.Versioning.VersionRangeComparer.Default.get -> NuGet.Versioning.IVersionRangeComparer!
+static NuGet.Versioning.VersionRangeComparer.Get(NuGet.Versioning.VersionComparison versionComparison) -> NuGet.Versioning.IVersionRangeComparer!
 static NuGet.Versioning.VersionRangeComparer.VersionRelease.get -> NuGet.Versioning.IVersionRangeComparer!
 static readonly NuGet.Versioning.VersionComparer.Default -> NuGet.Versioning.IVersionComparer!
 static readonly NuGet.Versioning.VersionComparer.Version -> NuGet.Versioning.IVersionComparer!

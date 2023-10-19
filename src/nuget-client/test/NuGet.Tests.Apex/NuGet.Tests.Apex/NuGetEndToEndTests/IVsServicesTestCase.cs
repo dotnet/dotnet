@@ -1,18 +1,17 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Test.Apex.VisualStudio.Solution;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NuGet.Test.Utility;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace NuGet.Tests.Apex
 {
-    public class IVsServicesTestCase : SharedVisualStudioHostTestClass, IClassFixture<VisualStudioHostFixtureFactory>
+    [TestClass]
+    public class IVsServicesTestCase : SharedVisualStudioHostTestClass
     {
         private const string TestPackageName = "Contoso.A";
         private const string TestPackageVersionV1 = "1.0.0";
@@ -20,14 +19,12 @@ namespace NuGet.Tests.Apex
         private const string PrimarySourceName = "source";
         private const string SecondarySourceName = "SecondarySource";
 
+        internal const int LongerTimeout = 10 * 60 * 1000; // 10 minutes
+
         private readonly SimpleTestPathContext _pathContext = new SimpleTestPathContext();
 
-        public IVsServicesTestCase(VisualStudioHostFixtureFactory visualStudioHostFixtureFactory, ITestOutputHelper output)
-            : base(visualStudioHostFixtureFactory, output)
-        {
-        }
-
-        [StaFact]
+        [TestMethod]
+        [Timeout(LongerTimeout)]
         public void SimpleInstallFromIVsInstaller()
         {
             // Arrange
@@ -42,10 +39,11 @@ namespace NuGet.Tests.Apex
             nugetTestService.InstallPackage(project.UniqueName, "newtonsoft.json");
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, "newtonsoft.json", XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, "newtonsoft.json", Logger);
         }
 
-        [StaFact(Skip = "https://github.com/NuGet/Home/issues/11308")]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public void SimpleUninstallFromIVsInstaller()
         {
             // Arrange
@@ -61,11 +59,12 @@ namespace NuGet.Tests.Apex
             nugetTestService.UninstallPackage(projectUniqueName, "newtonsoft.json");
 
             // Assert
-            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, projExt, "newtonsoft.json", XunitLogger);
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, projExt, "newtonsoft.json", Logger);
         }
 
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public void IVSPathContextProvider2_WithEmptySolution_WhenTryCreateUserWideContextIsCalled_SolutionWideConfigurationIsNotIncluded()
         {
             // Arrange
@@ -82,7 +81,8 @@ namespace NuGet.Tests.Apex
             userPackagesFolder.Should().NotBe(_pathContext.UserPackagesFolder);
         }
 
-        [StaFact(Skip = "https://github.com/NuGet/Home/issues/11308")]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task SimpleInstallFromIVsInstaller_PackageSourceMapping_WithSingleFeed()
         {
             // Arrange
@@ -101,10 +101,11 @@ namespace NuGet.Tests.Apex
             nugetTestService.InstallPackage(project.UniqueName, TestPackageName);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, TestPackageName, XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, TestPackageName, Logger);
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task SimpleUpdateFromIVsInstaller_PackageSourceMapping_WithSingleFeed()
         {
             // Arrange
@@ -125,15 +126,16 @@ namespace NuGet.Tests.Apex
             nugetTestService.InstallPackage(project.UniqueName, TestPackageName, TestPackageVersionV2);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, TestPackageName, XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, TestPackageName, Logger);
 
             string uniqueContentFile = Path.Combine(_pathContext.PackagesV2, TestPackageName + '.' + TestPackageVersionV2, "lib", "net45", "Thisisfromprivaterepo2.txt");
 
             // Make sure version 2 is restored.
-            File.Exists(uniqueContentFile).Should().BeTrue($"'{uniqueContentFile}' should exist");
+            Assert.IsTrue(File.Exists(uniqueContentFile), $"'{uniqueContentFile}' should exist");
         }
 
-        [StaFact(Skip = "https://github.com/NuGet/Home/issues/11308")]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task SimpleInstallFromIVsInstaller_PackageSourceMapping_WithMultipleFeedsWithIdenticalPackages_InstallsCorrectPackage()
         {
             // Arrange
@@ -158,15 +160,16 @@ namespace NuGet.Tests.Apex
             nugetTestService.InstallPackage(project.UniqueName, TestPackageName, TestPackageVersionV1);
 
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, TestPackageName, XunitLogger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, TestPackageName, Logger);
 
             string uniqueContentFile = Path.Combine(_pathContext.PackagesV2, TestPackageName + '.' + TestPackageVersionV1, "lib", "net45", "Thisisfromprivaterepo1.txt");
 
             // Make sure name squatting package not restored from secondary repository.
-            File.Exists(uniqueContentFile).Should().BeTrue($"'{uniqueContentFile}' should exist");
+            Assert.IsTrue(File.Exists(uniqueContentFile), $"'{uniqueContentFile}' should exist");
         }
 
-        [StaFact]
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task SimpleUpdateFromIVsInstaller_PackageSourceMapping_WithMultipleFeedsWithIdenticalPackages_UpdatesCorrectPackage()
         {
             // Arrange
@@ -190,14 +193,12 @@ namespace NuGet.Tests.Apex
             // Act
             nugetTestService.InstallPackage(project.UniqueName, TestPackageName, TestPackageVersionV1);
             nugetTestService.InstallPackage(project.UniqueName, TestPackageName, TestPackageVersionV2);
-
             // Assert
-            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, TestPackageName, XunitLogger);
-
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, projExt, TestPackageName, Logger);
             string uniqueContentFile = Path.Combine(_pathContext.PackagesV2, TestPackageName + '.' + TestPackageVersionV2, "lib", "net45", "Thisisfromprivaterepo2.txt");
 
             // Make sure name squatting package not restored from secondary repository.
-            File.Exists(uniqueContentFile).Should().BeTrue($"'{uniqueContentFile}' should exist");
+            Assert.IsTrue(File.Exists(uniqueContentFile), $"'{uniqueContentFile}' should exist");
         }
 
         public override void Dispose()

@@ -5,11 +5,12 @@ using System;
 using Microsoft.Test.Apex;
 using Microsoft.Test.Apex.Services;
 using Microsoft.Test.Apex.VisualStudio;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace NuGet.Tests.Apex
 {
-    public abstract class ApexBaseTestClass : IClassFixture<ApexTestRequirementsFixture>, IDisposable
+    [TestClass]
+    public abstract class ApexBaseTestClass : ApexTest, IDisposable
     {
         private readonly Lazy<IVerifier> _lazyVerifier;
         private readonly Lazy<NuGetApexTestService> _nuGetPackageManagerTestService;
@@ -21,11 +22,6 @@ namespace NuGet.Tests.Apex
         }
 
         public abstract VisualStudioHost VisualStudio { get; }
-
-        public IVerifier Verify
-        {
-            get { return _lazyVerifier.Value; }
-        }
 
         public abstract TService GetApexService<TService>() where TService : class;
 

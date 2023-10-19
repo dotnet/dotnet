@@ -297,17 +297,17 @@ namespace NuGet.Packaging.Test
 
                 Hash = Common.HashAlgorithmName.SHA256.ComputeHash(data);
                 SerialNumber = GetRandomInteger().ToByteArray();
-                GenTime = DateTime.UtcNow;
+                var now = DateTime.UtcNow;
 
                 // Round to milliseconds
                 GenTime = new DateTime(
-                    GenTime.Year,
-                    GenTime.Month,
-                    GenTime.Day,
-                    GenTime.Hour,
-                    GenTime.Minute,
-                    GenTime.Second,
-                    GenTime.Millisecond,
+                    now.Year,
+                    now.Month,
+                    now.Day,
+                    now.Hour,
+                    now.Minute,
+                    now.Second,
+                    now.Millisecond,
                     DateTimeKind.Utc);
             }
 

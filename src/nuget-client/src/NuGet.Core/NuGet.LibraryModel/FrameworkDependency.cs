@@ -22,7 +22,7 @@ namespace NuGet.LibraryModel
             PrivateAssets = privateAssets;
         }
 
-        public int CompareTo(FrameworkDependency other)
+        public int CompareTo(FrameworkDependency? other)
         {
             if (ReferenceEquals(other, null))
             {
@@ -39,7 +39,7 @@ namespace NuGet.LibraryModel
             return compare;
         }
 
-        public bool Equals(FrameworkDependency other)
+        public bool Equals(FrameworkDependency? other)
         {
             if (other == null)
             {

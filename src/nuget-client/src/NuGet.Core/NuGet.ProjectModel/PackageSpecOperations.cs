@@ -13,8 +13,21 @@ namespace NuGet.ProjectModel
 {
     public static class PackageSpecOperations
     {
+        /// <summary>
+        /// Add or Update the dependencies in the spec. If the package exists in any of the dependencies list, only those will be updated.
+        /// If the package does not exist in any of dependencies lists,
+        /// if the <see cref="PackageSpec.RestoreMetadata.ProjectStyle" /> is <see cref="ProjectStyle.PackageReference"/>
+        /// then the <see cref="TargetFrameworkInformation"/> will be updated,
+        /// otherwise, the generic dependencies will be updated.
+        /// </summary>
+        /// <param name="spec">PackageSpec to update. Cannot be <see langword="null"/></param>
+        /// <param name="dependency">Dependency to add. Cannot be <see langword="null"/> </param>
+        /// <exception cref="ArgumentNullException"> If <paramref name="spec"/> or <paramref name="dependency"/> is <see langword="null"/> </exception>
         public static void AddOrUpdateDependency(PackageSpec spec, PackageDependency dependency)
         {
+            if (spec == null) throw new ArgumentNullException(nameof(spec));
+            if (dependency == null) throw new ArgumentNullException(nameof(dependency));
+
             var existing = GetExistingDependencies(spec, dependency.Id);
 
             var range = dependency.VersionRange;
@@ -26,12 +39,35 @@ namespace NuGet.ProjectModel
 
             if (!existing.Any())
             {
-                AddDependency(spec.Dependencies, dependency.Id, range, spec.RestoreMetadata?.CentralPackageVersionsEnabled ?? false);
+                if (spec.RestoreMetadata?.ProjectStyle == ProjectStyle.PackageReference) // PackageReference does not use the `Dependencies` list in the PackageSpec.
+                {
+                    foreach (var dependenciesList in spec.TargetFrameworks.Select(e => e.Dependencies))
+                    {
+                        AddDependency(dependenciesList, dependency.Id, range, spec.RestoreMetadata?.CentralPackageVersionsEnabled ?? false);
+                    }
+                }
+                else
+                {
+                    AddDependency(spec.Dependencies, dependency.Id, range, spec.RestoreMetadata?.CentralPackageVersionsEnabled ?? false);
+                }
             }
         }
 
+        /// <summary>
+        /// Add or Update the dependencies in the spec. If the package exists in any of the dependencies list, only those will be updated.
+        /// If the package does not exist in any of dependencies lists,
+        /// if the <see cref="PackageSpec.RestoreMetadata.ProjectStyle" /> is <see cref="ProjectStyle.PackageReference"/>
+        /// then the <see cref="TargetFrameworkInformation"/> will be updated,
+        /// otherwise, the generic dependencies will be updated.
+        /// </summary>
+        /// <param name="spec">PackageSpec to update. Cannot be <see langword="null"/></param>
+        /// <param name="identity">Dependency to add. Cannot be <see langword="null"/> </param>
+        /// <exception cref="ArgumentNullException"> If <paramref name="spec"/> or <paramref name="identity"/> is <see langword="null"/> </exception>
         public static void AddOrUpdateDependency(PackageSpec spec, PackageIdentity identity)
         {
+            if (spec == null) throw new ArgumentNullException(nameof(spec));
+            if (identity == null) throw new ArgumentNullException(nameof(identity));
+
             AddOrUpdateDependency(spec, new PackageDependency(identity.Id, new VersionRange(identity.Version)));
         }
 
@@ -40,11 +76,21 @@ namespace NuGet.ProjectModel
             return GetExistingDependencies(spec, packageId).Any();
         }
 
+        /// <summary>
+        /// Add or Update the dependencies in the spec. Only the frameworks specified will be considered. 
+        /// </summary>
+        /// <param name="spec">PackageSpec to update. Cannot be <see langword="null"/></param>
+        /// <param name="dependency">Dependency to add. Cannot be <see langword="null"/> </param>
+        /// <param name="frameworksToAdd">The frameworks to be considered. If <see langword="null"/>, then all frameworks will be considered. </param>
+        /// <exception cref="ArgumentNullException"> If <paramref name="spec"/> or <paramref name="dependency"/> is <see langword="null"/> </exception>
         public static void AddOrUpdateDependency(
             PackageSpec spec,
             PackageDependency dependency,
             IEnumerable<NuGetFramework> frameworksToAdd)
         {
+            if (spec == null) throw new ArgumentNullException(nameof(spec));
+            if (dependency == null) throw new ArgumentNullException(nameof(dependency));
+
             var lists = GetDependencyLists(
                 spec,
                 includeGenericDependencies: false,
@@ -61,11 +107,21 @@ namespace NuGet.ProjectModel
             }
         }
 
+        /// <summary>
+        /// Add or Update the dependencies in the spec. Only the frameworks specified will be considered. 
+        /// </summary>
+        /// <param name="spec">PackageSpec to update. Cannot be <see langword="null"/></param>
+        /// <param name="identity">Dependency to add. Cannot be <see langword="null"/> </param>
+        /// <param name="frameworksToAdd">The frameworks to be considered. If <see langword="null"/>, then all frameworks will be considered. </param>
+        /// <exception cref="ArgumentNullException"> If <paramref name="spec"/> or <paramref name="identity"/> is <see langword="null"/> </exception>
         public static void AddOrUpdateDependency(
             PackageSpec spec,
             PackageIdentity identity,
             IEnumerable<NuGetFramework> frameworksToAdd)
         {
+            if (spec == null) throw new ArgumentNullException(nameof(spec));
+            if (identity == null) throw new ArgumentNullException(nameof(identity));
+
             AddOrUpdateDependency(spec, new PackageDependency(identity.Id, new VersionRange(identity.Version)), frameworksToAdd);
         }
 
@@ -73,6 +129,9 @@ namespace NuGet.ProjectModel
             PackageSpec spec,
             string packageId)
         {
+            if (spec == null) throw new ArgumentNullException(nameof(spec));
+            if (packageId == null) throw new ArgumentNullException(nameof(packageId));
+
             var lists = GetDependencyLists(
                 spec,
                 includeGenericDependencies: true,

@@ -13,6 +13,10 @@ using NuGet.PackageManagement;
 using NuGet.ProjectManagement;
 using NuGet.ProjectManagement.Projects;
 using NuGet.Test.Utility;
+#if NETFRAMEWORK
+using NuGet.ProjectModel;
+using NuGet.VisualStudio;
+#endif
 
 namespace Test.Utility
 {
@@ -54,6 +58,15 @@ namespace Test.Utility
 
             // create nuget config in solution root
             File.WriteAllText(NuGetConfigPath, string.Format(CultureInfo.CurrentCulture, _configContent, GlobalPackagesFolder));
+        }
+
+        public TestSolutionManager(SimpleTestPathContext pathContext)
+        {
+            TestDirectory = pathContext.WorkingDirectory;
+            SolutionDirectory = pathContext.SolutionRoot;
+            NuGetConfigPath = pathContext.NuGetConfig;
+            PackagesFolder = pathContext.PackagesV2;
+            GlobalPackagesFolder = pathContext.UserPackagesFolder;
         }
 
         public TestSolutionManager(string solutionDirectory)
@@ -114,6 +127,18 @@ namespace Test.Utility
 
             return nuGetProject;
         }
+#if IS_DESKTOP
+        public NuGetProject AddCPSPackageReferenceBasedProject(IProjectSystemCache projectSystemCache, PackageSpec packageSpec)
+        {
+            if (packageSpec == null) throw new ArgumentNullException(nameof(packageSpec));
+
+            var cpsPackageReferenceProject = TestCpsPackageReferenceProject.CreateTestCpsPackageReferenceProject(
+            packageSpec.Name, packageSpec.FilePath, projectSystemCache, assetsFilePath: packageSpec.RestoreMetadata.OutputPath, packageSpec: packageSpec);
+            Directory.CreateDirectory(packageSpec.FilePath);
+            NuGetProjects.Add(cpsPackageReferenceProject);
+            return cpsPackageReferenceProject;
+        }
+#endif
 
         private static void CreateConfigJson(string path, string config)
         {

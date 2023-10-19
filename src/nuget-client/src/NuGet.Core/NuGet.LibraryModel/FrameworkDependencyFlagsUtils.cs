@@ -15,7 +15,7 @@ namespace NuGet.LibraryModel
         /// Convert set of flag strings into a FrameworkDependencyFlags.
         /// </summary>
         /// <param name="values">A list of values to generate the flags out of</param>
-        public static FrameworkDependencyFlags GetFlags(IEnumerable<string> values)
+        public static FrameworkDependencyFlags GetFlags(IEnumerable<string>? values)
         {
             var result = FrameworkDependencyFlags.None;
 
@@ -52,13 +52,13 @@ namespace NuGet.LibraryModel
         /// Convert set of flag strings into a LibraryIncludeFlags.
         /// If the <paramref name="flags"/> is null, it returns the default value of <see cref="FrameworkDependencyFlags.None"/>
         /// </summary>
-        public static FrameworkDependencyFlags GetFlags(string flags)
+        public static FrameworkDependencyFlags GetFlags(string? flags)
         {
             var result = FrameworkDependencyFlags.None;
 
             if (!string.IsNullOrEmpty(flags))
             {
-                var splitFlags = flags.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                var splitFlags = flags!.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(s => s.Trim())
                     .Where(s => !string.IsNullOrEmpty(s))
                     .ToArray();

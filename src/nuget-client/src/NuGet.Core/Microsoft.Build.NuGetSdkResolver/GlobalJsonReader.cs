@@ -4,11 +4,13 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Microsoft.Build.Framework;
 using Newtonsoft.Json;
+using NuGet.Common;
 
 namespace Microsoft.Build.NuGetSdkResolver
 {
@@ -238,38 +240,79 @@ namespace Microsoft.Build.NuGetSdkResolver
             // Load the file as a string and check if it has an msbuild-sdks section.  Parsing the contents requires Newtonsoft.Json.dll to be loaded which can be expensive
             string json;
 
-            try
-            {
-                json = File.ReadAllText(globalJsonPath);
-            }
-            catch (Exception e)
-            {
-                // Failed to read file "{0}". {1}
-                sdkResolverContext.Logger.LogMessage(string.Format(CultureInfo.CurrentCulture, Strings.FailedToReadGlobalJson, globalJsonPath, e.Message));
-
-                return null;
-            }
-
-            OnFileRead(globalJsonPath);
-
-            // Look ahead in the contents to see if there is an msbuild-sdks section.  Deserializing the file requires us to load
-            // Newtonsoft.Json which is 500 KB while a global.json is usually ~100 bytes of text.
-            if (json.IndexOf(MSBuildSdksPropertyName, StringComparison.Ordinal) == -1)
-            {
-                return null;
-            }
+            if (NuGetEventSource.IsEnabled) TraceEvents.GlobalJsonReadStart(globalJsonPath, sdkResolverContext);
 
             try
             {
-                return ParseMSBuildSdkVersionsFromJson(json);
-            }
-            catch (Exception e)
-            {
-                // Failed to parse "{0}". {1}
-                sdkResolverContext.Logger.LogMessage(string.Format(CultureInfo.CurrentCulture, Strings.FailedToParseGlobalJson, globalJsonPath, e.Message));
+                try
+                {
+                    json = File.ReadAllText(globalJsonPath);
+                }
+                catch (Exception e)
+                {
+                    // Failed to read file "{0}". {1}
+                    sdkResolverContext.Logger.LogMessage(string.Format(CultureInfo.CurrentCulture, Strings.FailedToReadGlobalJson, globalJsonPath, e.Message));
 
-                return null;
+                    return null;
+                }
+
+                OnFileRead(globalJsonPath);
+
+                // Look ahead in the contents to see if there is an msbuild-sdks section.  Deserializing the file requires us to load
+                // Newtonsoft.Json which is 500 KB while a global.json is usually ~100 bytes of text.
+                if (json.IndexOf(MSBuildSdksPropertyName, StringComparison.Ordinal) == -1)
+                {
+                    return null;
+                }
+
+                try
+                {
+                    return ParseMSBuildSdkVersionsFromJson(json);
+                }
+                catch (Exception e)
+                {
+                    // Failed to parse "{0}". {1}
+                    sdkResolverContext.Logger.LogMessage(string.Format(CultureInfo.CurrentCulture, Strings.FailedToParseGlobalJson, globalJsonPath, e.Message));
+
+                    return null;
+                }
             }
+            finally
+            {
+                if (NuGetEventSource.IsEnabled) TraceEvents.GlobalJsonReadStop(globalJsonPath, sdkResolverContext);
+            }
+        }
+
+        private static class TraceEvents
+        {
+            private const string EventNameGlobalJsonRead = "SdkResolver/GlobalJsonRead";
+
+            public static void GlobalJsonReadStart(string globalJsonPath, SdkResolverContext sdkResolverContext)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    ActivityOptions = EventActivityOptions.Detachable,
+                    Keywords = NuGetEventSource.Keywords.SdkResolver | NuGetEventSource.Keywords.Performance,
+                    Opcode = EventOpcode.Start
+                };
+
+                NuGetEventSource.Instance.Write(EventNameGlobalJsonRead, eventOptions, new GlobalJsonReadEventData(globalJsonPath, sdkResolverContext.ProjectFilePath, sdkResolverContext.SolutionFilePath));
+            }
+
+            public static void GlobalJsonReadStop(string globalJsonPath, SdkResolverContext sdkResolverContext)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    ActivityOptions = EventActivityOptions.Detachable,
+                    Keywords = NuGetEventSource.Keywords.SdkResolver | NuGetEventSource.Keywords.Performance,
+                    Opcode = EventOpcode.Stop
+                };
+
+                NuGetEventSource.Instance.Write(EventNameGlobalJsonRead, eventOptions, new GlobalJsonReadEventData(globalJsonPath, sdkResolverContext.ProjectFilePath, sdkResolverContext.SolutionFilePath));
+            }
+
+            [EventData]
+            private record struct GlobalJsonReadEventData(string Path, string ProjectFullPath, string SolutionFullPath);
         }
     }
 }

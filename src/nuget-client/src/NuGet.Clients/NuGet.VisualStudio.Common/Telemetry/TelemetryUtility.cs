@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -211,7 +212,7 @@ namespace NuGet.VisualStudio.Telemetry
             sb.Append("[");
             foreach (var item in sourceTimings)
             {
-                sb.Append(item.TotalSeconds);
+                sb.Append(item.TotalSeconds.ToString(CultureInfo.InvariantCulture));
                 sb.Append(",");
             }
             if (sb[sb.Length - 1] == ',')

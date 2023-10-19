@@ -8,6 +8,7 @@
     <IncludeInVSIX>true</IncludeInVSIX>
     <XPLATProject>true</XPLATProject>
     <Description>NuGet's types and interfaces for understanding dependencies.</Description>
+    <nullable>enable</nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(IsVsixBuild)' == 'true' ">

@@ -2,9 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NuGet.Frameworks;
 using NuGet.Test.Utility;
 using Xunit;
 
@@ -76,24 +76,42 @@ namespace NuGet.XPlat.FuncTest
 #else
                 "Release";
 #endif
+                var configurationDirectory = Path.Combine(dir.FullName, "artifacts", "NuGet.CommandLine.XPlat", "bin", configuration);
+                var referenceTfm = new NuGetFramework(FrameworkConstants.FrameworkIdentifiers.NetCoreApp, new Version(int.MaxValue, 0, 0));
+                var bestTfm = GetTfmToCopy(configurationDirectory, referenceTfm);
+                var filePath = Path.Combine(configurationDirectory, bestTfm, XPlatDll);
 
-                var relativePaths = new string[]
+                if (File.Exists(filePath))
                 {
-                    Path.Combine("artifacts", "NuGet.CommandLine.XPlat", "bin", configuration, "netcoreapp5.0", XPlatDll)
-                };
-
-                foreach (var relativePath in relativePaths)
-                {
-                    var filePath = Path.Combine(dir.FullName, relativePath);
-
-                    if (File.Exists(filePath))
-                    {
-                        return filePath;
-                    }
+                    return filePath;
                 }
             }
 
             return null;
+        }
+
+        private static string GetTfmToCopy(string projectArtifactsBinFolder, NuGetFramework referenceTfm)
+        {
+            var compiledTfms =
+                Directory.EnumerateDirectories(projectArtifactsBinFolder) // get all directories in bin folder
+                .Select(Path.GetFileName) // just the folder name (tfm)
+                .ToDictionary(folder => NuGetFramework.Parse(folder));
+
+            var reducer = new FrameworkReducer();
+            var selectedTfm = reducer.GetNearest(referenceTfm, compiledTfms.Keys);
+
+            if (selectedTfm == null)
+            {
+                var message = $@"Could not find suitable assets to copy in {projectArtifactsBinFolder}
+TFM being tested: {referenceTfm}
+project TFMs found: {string.Join(", ", compiledTfms.Keys.Select(k => k.ToString()))}";
+
+                throw new Exception(message);
+            }
+
+            var selectedVersion = compiledTfms[selectedTfm];
+
+            return selectedVersion;
         }
 
 

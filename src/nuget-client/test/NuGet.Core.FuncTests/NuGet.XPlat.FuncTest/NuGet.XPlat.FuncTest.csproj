@@ -10,8 +10,6 @@
     <PackageReference Include="Microsoft.Build.Runtime" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <PackageReference Include="Microsoft.Net.Compilers.Toolset" IncludeAssets="None" PrivateAssets="All" GeneratePathProperty="true" />
-    <!-- System.Security.Cryptography.Xml is a transitive dependency of Microsoft.Build.Runtime. -->
-    <PackageReference Include="System.Security.Cryptography.Xml" />
   </ItemGroup>
 
   <ItemGroup>

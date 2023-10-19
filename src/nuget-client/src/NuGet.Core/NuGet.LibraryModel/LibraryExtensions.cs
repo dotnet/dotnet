@@ -16,9 +16,9 @@ namespace NuGet.LibraryModel
                 && string.Equals(library.Name, other.Name, StringComparison.OrdinalIgnoreCase);
         }
 
-        public static T GetItem<T>(this Library library, string key)
+        public static T? GetItem<T>(this Library library, string key)
         {
-            object value;
+            object? value;
             if (library.Items.TryGetValue(key, out value))
             {
                 return (T)value;
@@ -28,7 +28,7 @@ namespace NuGet.LibraryModel
 
         public static T GetRequiredItem<T>(this Library library, string key)
         {
-            object value;
+            object? value;
             if (library.Items.TryGetValue(key, out value))
             {
                 return (T)value;

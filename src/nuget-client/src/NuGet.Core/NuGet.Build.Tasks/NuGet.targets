@@ -157,6 +157,7 @@ Copyright (c) .NET Foundation. All rights reserved.
       RestoreGraphItems="@(_RestoreGraphEntryFiltered)"
       RestoreDisableParallel="$(RestoreDisableParallel)"
       RestoreNoCache="$(RestoreNoCache)"
+      RestoreNoHttpCache="$(RestoreNoHttpCache)"
       RestoreIgnoreFailedSources="$(RestoreIgnoreFailedSources)"
       RestoreRecursive="$(RestoreRecursive)"
       RestoreForce="$(RestoreForce)"

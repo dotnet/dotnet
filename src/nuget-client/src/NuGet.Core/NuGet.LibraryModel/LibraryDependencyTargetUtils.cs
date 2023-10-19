@@ -16,7 +16,7 @@ namespace NuGet.LibraryModel
         /// <summary>
         /// Convert flag string into a LibraryTypeFlag.
         /// </summary>
-        public static LibraryDependencyTarget Parse(string flag)
+        public static LibraryDependencyTarget Parse(string? flag)
         {
             // If the LibraryDependency does not have a flag value it is considered all
             if (string.IsNullOrEmpty(flag))
@@ -24,7 +24,7 @@ namespace NuGet.LibraryModel
                 return LibraryDependencyTarget.All;
             }
 
-            var flagEnd = flag.IndexOf(',');
+            var flagEnd = flag!.IndexOf(',');
             if (flagEnd == -1)
             {
                 var segment = StringSegment.CreateTrimmed(flag, 0, flag.Length - 1);
@@ -145,7 +145,7 @@ namespace NuGet.LibraryModel
         /// <returns>The <see cref="string"/> representation of <paramref name="includeFlags"/>.</returns>
         public static string AsString(this LibraryDependencyTarget includeFlags)
         {
-            if (!LibraryDependencyTargetCache.TryGetValue(includeFlags, out string enumAsString))
+            if (!LibraryDependencyTargetCache.TryGetValue(includeFlags, out string? enumAsString))
             {
                 enumAsString = includeFlags.ToString();
                 LibraryDependencyTargetCache.TryAdd(includeFlags, enumAsString);

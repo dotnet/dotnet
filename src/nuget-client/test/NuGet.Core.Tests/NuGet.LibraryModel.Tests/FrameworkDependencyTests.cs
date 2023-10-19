@@ -13,7 +13,7 @@ namespace NuGet.LibraryModel
         [Fact]
         public void FrameworkDependency_ConstructorWithNullName_Throws()
         {
-            Assert.Throws<ArgumentNullException>(() => new FrameworkDependency(null, FrameworkDependencyFlags.All));
+            Assert.Throws<ArgumentNullException>(() => new FrameworkDependency(null!, FrameworkDependencyFlags.All));
         }
 
         [Fact]

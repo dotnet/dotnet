@@ -123,6 +123,8 @@ NuGet.Configuration.PackagePatternItem
 ~NuGet.Configuration.PackagePatternItem.PackagePatternItem(string pattern) -> void
 ~NuGet.Configuration.PackagePatternItem.Pattern.get -> string
 NuGet.Configuration.PackageSource
+NuGet.Configuration.PackageSource.AllowInsecureConnections.get -> bool
+NuGet.Configuration.PackageSource.AllowInsecureConnections.set -> void
 NuGet.Configuration.PackageSource.AsSourceItem() -> NuGet.Configuration.SourceItem!
 NuGet.Configuration.PackageSource.ClientCertificates.get -> System.Collections.Generic.IReadOnlyList<System.Security.Cryptography.X509Certificates.X509Certificate!>?
 NuGet.Configuration.PackageSource.ClientCertificates.set -> void
@@ -282,9 +284,13 @@ NuGet.Configuration.SettingsLoadingContext.Dispose() -> void
 NuGet.Configuration.SettingsLoadingContext.SettingsLoadingContext() -> void
 NuGet.Configuration.SettingsUtility
 NuGet.Configuration.SourceItem
+~NuGet.Configuration.SourceItem.AllowInsecureConnections.get -> string
+~NuGet.Configuration.SourceItem.AllowInsecureConnections.set -> void
 ~NuGet.Configuration.SourceItem.ProtocolVersion.get -> string
 ~NuGet.Configuration.SourceItem.ProtocolVersion.set -> void
+~NuGet.Configuration.SourceItem.SourceItem(string key, string value) -> void
 ~NuGet.Configuration.SourceItem.SourceItem(string key, string value, string protocolVersion) -> void
+~NuGet.Configuration.SourceItem.SourceItem(string key, string value, string protocolVersion, string allowInsecureConnections) -> void
 NuGet.Configuration.StoreClientCertItem
 NuGet.Configuration.StoreClientCertItem.FindType.get -> System.Security.Cryptography.X509Certificates.X509FindType
 ~NuGet.Configuration.StoreClientCertItem.FindValue.get -> string
@@ -320,11 +326,10 @@ abstract NuGet.Configuration.SettingBase.IsEmpty() -> bool
 ~const NuGet.Configuration.NuGetConstants.V2FeedUrl = "https://www.nuget.org/api/v2/" -> string
 ~const NuGet.Configuration.NuGetConstants.V3FeedUrl = "https://api.nuget.org/v3/index.json" -> string
 const NuGet.Configuration.PackageSource.DefaultProtocolVersion = 2 -> int
+const NuGet.Configuration.PackageSource.MaxProtocolVersion = 3 -> int
 ~override NuGet.Configuration.AddItem.Clone() -> NuGet.Configuration.SettingBase
 ~override NuGet.Configuration.AddItem.DisallowedValues.get -> System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IReadOnlyCollection<string>>
 ~override NuGet.Configuration.AddItem.ElementName.get -> string
-~override sealed NuGet.Configuration.AddItem.Equals(object other) -> bool
-override sealed NuGet.Configuration.AddItem.GetHashCode() -> int
 ~override NuGet.Configuration.AddItem.RequiredAttributes.get -> System.Collections.Generic.IReadOnlyCollection<string>
 ~override NuGet.Configuration.AuthorItem.Clone() -> NuGet.Configuration.SettingBase
 ~override NuGet.Configuration.AuthorItem.ElementName.get -> string
@@ -394,6 +399,8 @@ override NuGet.Configuration.TrustedSignerItem.CanHaveChildren.get -> bool
 override NuGet.Configuration.UnknownItem.GetHashCode() -> int
 override NuGet.Configuration.UnknownItem.IsEmpty() -> bool
 ~override NuGet.Configuration.VirtualSettingSection.Clone() -> NuGet.Configuration.SettingBase
+~override sealed NuGet.Configuration.AddItem.Equals(object other) -> bool
+override sealed NuGet.Configuration.AddItem.GetHashCode() -> int
 ~static NuGet.Configuration.ConfigurationDefaults.Instance.get -> NuGet.Configuration.ConfigurationDefaults
 ~static NuGet.Configuration.EncryptionUtility.DecryptString(string encryptedString) -> string
 ~static NuGet.Configuration.EncryptionUtility.EncryptString(string value) -> string
@@ -436,6 +443,7 @@ static NuGet.Configuration.PackageSourceMapping.GetPackageSourceMapping(NuGet.Co
 ~static NuGet.Configuration.StoreClientCertItem.GetString(System.Security.Cryptography.X509Certificates.X509FindType type) -> string
 ~static readonly NuGet.Configuration.ConfigurationConstants.ActivePackageSourceSectionName -> string
 ~static readonly NuGet.Configuration.ConfigurationConstants.Add -> string
+~static readonly NuGet.Configuration.ConfigurationConstants.AllowInsecureConnections -> string
 ~static readonly NuGet.Configuration.ConfigurationConstants.AllowUntrustedRoot -> string
 ~static readonly NuGet.Configuration.ConfigurationConstants.ApiKeys -> string
 ~static readonly NuGet.Configuration.ConfigurationConstants.Author -> string

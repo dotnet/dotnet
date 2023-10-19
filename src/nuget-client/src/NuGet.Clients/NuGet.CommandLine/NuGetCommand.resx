@@ -191,6 +191,9 @@ nuget push -?</value>
   <data name="CommandNoCache" xml:space="preserve">
     <value>Disable using the machine cache as the first package source.</value>
   </data>
+  <data name="CommandNoHttpCache" xml:space="preserve">
+    <value>Disable the use of the HTTP cache and contact all configured package sources for live information.</value>
+  </data>
   <data name="InstallCommandOutputDirDescription" xml:space="preserve">
     <value>Specifies the directory in which packages will be installed. If none specified, uses the current directory.</value>
   </data>
@@ -249,6 +252,10 @@ nuget list -verbose -allversions</value>
   </data>
   <data name="ListCommandVerboseListDescription" xml:space="preserve">
     <value>Displays a detailed list of information for each package.</value>
+  </data>
+  <data name="Log_RestoreNoCacheInformation" xml:space="preserve">
+    <value>NoCache is deprecated and has been renamed to NoHttpCache. Please use NoHttpCache instead.</value>
+    <comment>Do not translate NoCache and NoHttpCache</comment>
   </data>
   <data name="Option_NonInteractive" xml:space="preserve">
     <value>Do not prompt for user input or confirmations.</value>

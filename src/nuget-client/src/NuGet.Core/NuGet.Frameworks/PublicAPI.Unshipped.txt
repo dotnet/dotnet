@@ -1,6 +1,3 @@
 #nullable enable
-static NuGet.Frameworks.CompatibilityMappingComparer.Instance.get -> NuGet.Frameworks.CompatibilityMappingComparer!
-static NuGet.Frameworks.FrameworkRangeComparer.Instance.get -> NuGet.Frameworks.FrameworkRangeComparer!
-static NuGet.Frameworks.NuGetFrameworkFullComparer.Instance.get -> NuGet.Frameworks.NuGetFrameworkFullComparer!
-static NuGet.Frameworks.NuGetFrameworkNameComparer.Instance.get -> NuGet.Frameworks.NuGetFrameworkNameComparer!
-static NuGet.Frameworks.NuGetFrameworkSorter.Instance.get -> NuGet.Frameworks.NuGetFrameworkSorter!
+static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net80 -> NuGet.Frameworks.NuGetFramework!
+static readonly NuGet.Frameworks.FrameworkConstants.Version8 -> System.Version!

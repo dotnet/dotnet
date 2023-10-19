@@ -4,8 +4,8 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Test.Utility.Signing;
-using Xunit;
 
 namespace NuGet.Tests.Apex
 {
@@ -30,7 +30,7 @@ namespace NuGet.Tests.Apex
                 Thread.Sleep(100);
             }
 
-            Assert.True(SigningUtility.IsCertificateExpired(certificate));
+            Assert.IsTrue(SigningUtility.IsCertificateExpired(certificate));
         }
 
     }

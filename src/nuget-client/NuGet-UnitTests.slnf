@@ -67,7 +67,6 @@
       "test\\NuGet.Core.Tests\\NuGet.Shared.Tests\\NuGet.Shared.Tests.csproj",
       "test\\NuGet.Core.Tests\\NuGet.Versioning.Test\\NuGet.Versioning.Test.csproj",
       "test\\TestExtensions\\API.Test\\API.Test.csproj",
-      "test\\TestExtensions\\NuGet.StaFact\\NuGet.StaFact.csproj",
       "test\\TestExtensions\\SampleCommandLineExtensions\\SampleCommandLineExtensions.csproj",
       "test\\TestExtensions\\TestablePluginCredentialProvider\\TestableCredentialProvider.csproj",
       "test\\TestExtensions\\TestablePlugin\\TestablePlugin.csproj",

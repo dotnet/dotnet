@@ -393,4 +393,14 @@ Condition=" ('%(Extension)' == '.dll' OR '%(Filename)' == 'NuGet.CommandLine.XPl
       Text="Newtonsoft.Json must be version $(NewtonsoftJsonPackageVersion) but resolved %(Reference.NuGetPackageVersion)"
       Condition=" %(Reference.NuGetPackageId) == 'Newtonsoft.Json' AND %(Reference.NuGetPackageVersion) != '$(NewtonsoftJsonPackageVersion)' " />
   </Target>
+
+  <Target Name="GetAllTargetFrameworks">
+  <PropertyGroup>
+      <EffectiveFramework Condition=" '$(TargetFrameworks)' != '' ">$(TargetFrameworks)</EffectiveFramework>
+      <EffectiveFramework Condition=" '$(EffectiveFramework)' == '' ">$(TargetFramework)</EffectiveFramework>
+    </PropertyGroup>
+    <Message
+      Text="$(MSBuildProjectFile) = $(EffectiveFramework)" Importance="High" />
+  </Target>
+
 </Project>

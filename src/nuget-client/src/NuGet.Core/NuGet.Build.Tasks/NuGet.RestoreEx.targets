@@ -26,6 +26,7 @@ Copyright (c) .NET Foundation. All rights reserved.
         Interactive="$([MSBuild]::ValueOrDefault('$(NuGetInteractive)', '$(MSBuildInteractive)'))"
         MSBuildBinPath="$(MSBuildBinPath)"
         NoCache="$(RestoreNoCache)"
+        NoHttpCache="$(RestoreNoHttpCache)"
         ProjectFullPath="$(MSBuildProjectFullPath)"
         Recursive="$([MSBuild]::ValueOrDefault('$(RestoreRecursive)', 'true'))"
         RestorePackagesConfig="$(RestorePackagesConfig)"

@@ -129,6 +129,11 @@ namespace NuGet.CommandLine
                 // Parse the command
                 var command = parser.ParseCommandLine(args) ?? p.HelpCommand;
                 command.CurrentDirectory = workingDirectory;
+                if (command is DownloadCommandBase downloadCommandBase && downloadCommandBase.NoCache)
+                {
+                    // NoCache option is deprecated. Users should use NoHttpCache instead.
+                    console.LogInformation(NuGetCommand.Log_RestoreNoCacheInformation);
+                }
 
                 if (command is Command commandImpl)
                 {

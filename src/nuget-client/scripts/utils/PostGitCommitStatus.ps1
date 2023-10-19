@@ -14,7 +14,7 @@ Function Update-GitCommitStatus {
         [Parameter(Mandatory = $True)]
         [string]$PersonalAccessToken,
         [Parameter(Mandatory = $True)]
-        [ValidateSet( "Build_and_UnitTest_NonRTM", "Build_and_UnitTest_RTM", "Unit Tests On Mac", "Functional Tests On Mac", "Mono Tests On Mac", "Unit Tests On Linux", "Functional Tests On Linux", "Windows FunctionalTests IsDesktop", "Windows FunctionalTests IsCore", "Windows CrossFrameworkTests", "End_To_End_Tests_On_Windows Part1", "End_To_End_Tests_On_Windows Part2", "Apex Tests On Windows", "Static Analysis")]
+        [ValidateSet( "Build_and_UnitTest_NonRTM", "Build_and_UnitTest_RTM", "Unit Tests On Mac", "Functional Tests On Mac", "Mono Tests On Mac", "Unit Tests On Linux", "Functional Tests On Linux", "Windows FunctionalTests IsDesktop", "Windows FunctionalTests IsCore", "Windows CrossFrameworkTests", "End_To_End_Tests_On_Windows Part1", "End_To_End_Tests_On_Windows Part2", "Apex Tests On Windows", "Static Analysis", "Source Build")]
         [string]$TestName,
         [Parameter(Mandatory = $True)]
         [ValidateSet( "pending", "success", "error", "failure")]
@@ -75,6 +75,7 @@ Function InitializeAllTestsToPending {
     Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Build_and_UnitTest_NonRTM" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
     Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Build_and_UnitTest_RTM" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
     Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Static Analysis" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
+    Update-GitCommitStatus -PersonalAccessToken $PersonalAccessToken -TestName "Source Build" -Status "pending" -CommitSha $CommitSha -TargetUrl $env:BUILDURL -Description "in progress"
     if($env:RunFunctionalTestsOnWindows -eq "true")
     {
         # Setup individual states for the matrixing of jobs in "Functional Tests On Windows".
