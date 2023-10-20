@@ -29,8 +29,8 @@
     <razorOutputPackageVersion>7.0.0-preview.23511.3</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>4ff28092cdb2006c30869fb35b2fd6b7b11382b1</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.23516.2</roslynanalyzersOutputPackageVersion>
-    <roslynGitCommitHash>d49b29ecbf9bd72fe6023ad1b8aad9a8db7e7c3a</roslynGitCommitHash>
-    <roslynOutputPackageVersion>4.8.0-3.23510.8</roslynOutputPackageVersion>
+    <roslynGitCommitHash>12b11685a551e0a6a203dcecb584f610f4df1157</roslynGitCommitHash>
+    <roslynOutputPackageVersion>4.8.0-3.23518.7</roslynOutputPackageVersion>
     <runtimeGitCommitHash>c6e7ebdcb1b99c72990ae9f5ff95a75d5bb0f3ce</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>8.0.0-rtm.23518.26</runtimeOutputPackageVersion>
     <sdkGitCommitHash>4cb5b13bae612cb1beae7e734c7cf4d34e436278</sdkGitCommitHash>
