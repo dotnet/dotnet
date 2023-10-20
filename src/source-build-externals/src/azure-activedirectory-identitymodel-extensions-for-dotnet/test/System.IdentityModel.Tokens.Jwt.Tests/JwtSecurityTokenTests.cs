@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Logging;
@@ -13,6 +14,30 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 {
     public class JwtSecurityTokenTests
     {
+        [Fact]
+        public void BoolClaimsEncodedAsExpected()
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(new string('a', 128)));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[] { new Claim("testClaim", "true", ClaimValueTypes.Boolean), new Claim("testClaim2", "True", ClaimValueTypes.Boolean) };
+            var token = new JwtSecurityToken(
+                issuer: "issuer.contoso.com",
+                audience: "audience.contoso.com",
+                claims: claims,
+                expires: (new DateTime(2038, 1, 20)).ToUniversalTime(),
+                signingCredentials: creds);
+
+            var claimSet = token.Claims;
+
+            // Will throw if can't find.
+            var testClaim = claimSet.First(c => c.Type == "testClaim");
+            Assert.Equal("true", testClaim.Value);
+
+            var testClaim2 = claimSet.First(c => c.Type == "testClaim2");
+            Assert.Equal("true", testClaim2.Value);
+        }
+
         [Fact]
         public void DateTime2038Issue()
         {

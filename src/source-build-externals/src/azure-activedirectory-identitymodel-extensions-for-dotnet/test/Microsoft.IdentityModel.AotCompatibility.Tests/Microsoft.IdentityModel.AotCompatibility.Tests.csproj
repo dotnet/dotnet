@@ -6,6 +6,7 @@
     <!-- This test only needs to run on .NET -->
     <TargetFramework Condition="'$(TargetNet8)' == 'True'">net8.0</TargetFramework>
     <TargetFramework Condition="'$(TargetNet8)' != 'True'">net6.0</TargetFramework>
+    <langversion>10</langversion>
   </PropertyGroup>
 
   <ItemGroup>

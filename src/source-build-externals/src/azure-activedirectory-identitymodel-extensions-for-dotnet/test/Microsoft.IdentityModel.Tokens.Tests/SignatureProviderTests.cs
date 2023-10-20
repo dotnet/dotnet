@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -939,42 +940,39 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
             return theoryData;
         }
-#if NET_CORE
-        // Excluding OSX as SignatureTampering test is slow on OSX (~6 minutes)
-        // especially tests with IDs RS256 and ES256
-        [PlatformSpecific(TestPlatforms.Windows | TestPlatforms.Linux)]
-#endif
+
         [Theory, MemberData(nameof(SignatureTheoryData))]
         public void SignatureTampering(SignatureProviderTheoryData theoryData)
         {
-            TestUtilities.WriteHeader($"{this}.SignatureTampering", theoryData);
-            var copiedSignature = theoryData.Signature.CloneByteArray();
-            for (int i = 0; i < theoryData.Signature.Length; i++)
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                var originalB = theoryData.Signature[i];
-                for (byte b = 0; b < byte.MaxValue; b++)
-                {
-                    // skip here as this will succeed
-                    if (b == theoryData.Signature[i])
-                        continue;
-
-                    copiedSignature[i] = b;
-                    Assert.False(theoryData.VerifySignatureProvider.Verify(theoryData.RawBytes, copiedSignature), $"signature should not have verified: {theoryData.TestId} : {i} : {b} : {copiedSignature[i]}");
-
-                    // reset so we move to next byte
-                    copiedSignature[i] = originalB;
-                }
+                Console.WriteLine("OSX is excluded as the SignatureTampering test is slow (~6 minutes).") ;
             }
+            else
+            { 
+                TestUtilities.WriteHeader($"{this}.SignatureTampering", theoryData);
+                var copiedSignature = theoryData.Signature.CloneByteArray();
+                for (int i = 0; i < theoryData.Signature.Length; i++)
+                {
+                    var originalB = theoryData.Signature[i];
+                    for (byte b = 0; b < byte.MaxValue; b++)
+                    {
+                        // skip here as this will succeed
+                        if (b == theoryData.Signature[i])
+                            continue;
 
-            Assert.True(theoryData.VerifySignatureProvider.Verify(theoryData.RawBytes, copiedSignature), "Final check should have verified");
+                        copiedSignature[i] = b;
+                        Assert.False(theoryData.VerifySignatureProvider.Verify(theoryData.RawBytes, copiedSignature), $"signature should not have verified: {theoryData.TestId} : {i} : {b} : {copiedSignature[i]}");
+
+                        // reset so we move to next byte
+                        copiedSignature[i] = originalB;
+                    }
+                }
+
+                Assert.True(theoryData.VerifySignatureProvider.Verify(theoryData.RawBytes, copiedSignature), "Final check should have verified");
+            }
         }
 
-#if NET_CORE
-        // Excluding OSX as SignatureTruncation test throws an exception only on OSX
-        // This behavior should be fixed with netcore3.0
-        // Exceptions is thrown somewhere in System/Security/Cryptography/DerEncoder.cs class which is removed in netcore3.0
-        [PlatformSpecific(TestPlatforms.Windows | TestPlatforms.Linux)]
-#endif
         [Theory, MemberData(nameof(SignatureTheoryData))]
         public void SignatureTruncation(SignatureProviderTheoryData theoryData)
         {

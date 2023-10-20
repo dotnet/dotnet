@@ -44,9 +44,14 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                         else
                         {
                             if (reader.TokenType != JsonTokenType.Null)
+                            {
                                 _audiences.Add(JsonSerializerPrimitives.ReadString(ref reader, JwtRegisteredClaimNames.Aud, ClassName));
-
-                            claims[JwtRegisteredClaimNames.Aud] = _audiences;
+                                claims[JwtRegisteredClaimNames.Aud] = _audiences[0];
+                            }
+                            else
+                            {
+                                claims[JwtRegisteredClaimNames.Aud] = _audiences;
+                            }
                         }
                     }
                     else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Azp))

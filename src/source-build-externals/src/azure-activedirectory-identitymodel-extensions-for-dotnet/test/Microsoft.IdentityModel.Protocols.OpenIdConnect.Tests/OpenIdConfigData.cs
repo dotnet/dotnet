@@ -33,6 +33,9 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         public static OpenIdConnectConfiguration PingLabs = new OpenIdConnectConfiguration();
         public static OpenIdConnectConfiguration SingleX509Data = new OpenIdConnectConfiguration();
         public static string AADCommonUrl = "https://login.windows.net/common/.well-known/openid-configuration";
+        public static string AADCommonUrlV1 = "https://login.microsoftonline.com/common/.well-known/openid-configuration";
+        public static string AADCommonUrlV2 = "https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration";
+        public static string AccountsGoogle = "https://accounts.google.com/.well-known/openid-configuration";
         public static string BadUri = "_____NoSuchfile____";
         public static string HttpsBadUri = "https://_____NoSuchfile____";
         public static string OpenIdConnectMetadataPingString = @"{""authorization_endpoint"":""https:\/\/connect-interop.pinglabs.org:9031\/as\/authorization.oauth2"",

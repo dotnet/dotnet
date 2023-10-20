@@ -68,6 +68,18 @@ namespace Microsoft.IdentityModel.TestUtils
             }
         }
 
+        public static byte[] CreateNonTransformedDigestBytes(string xml)
+        {
+            using (var stream = new MemoryStream())
+            using (var writer = XmlWriter.Create(stream))
+            using (var dictionaryWriter = XmlDictionaryWriter.CreateDictionaryWriter(writer))
+            {
+                CreateXmlTokenStream(xml).WriteTo(dictionaryWriter);
+                dictionaryWriter.Flush();
+                return Default.HashAlgorithm.ComputeHash(stream.ToArray());
+            }
+        }
+
         public static byte[] GenerateSignatureBytes(SignedInfo signedInfo, SecurityKey key)
         {
             using (var stream = new MemoryStream())

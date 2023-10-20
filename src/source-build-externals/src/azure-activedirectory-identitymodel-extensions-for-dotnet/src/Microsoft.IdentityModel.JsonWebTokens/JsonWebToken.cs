@@ -382,7 +382,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 }
                 catch (Exception ex)
                 {
-                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX14102, encodedJson.Substring(0, Dot1)), ex));
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(
+                        LogMessages.IDX14102,
+                        LogHelper.MarkAsUnsafeSecurityArtifact(encodedJson.Substring(0, Dot1), t => t.ToString())),
+                        ex));
                 }
 
                 try
@@ -391,7 +394,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 }
                 catch (Exception ex)
                 {
-                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX14101, encodedJson.Substring(Dot2, Dot2 - Dot1)), ex));
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(
+                        LogMessages.IDX14101,
+                        LogHelper.MarkAsUnsafeSecurityArtifact(encodedJson.Substring(Dot1 + 1, Dot2 - Dot1 - 1), t => t.ToString())),
+                        ex));
                 }
             }
             else
@@ -446,7 +452,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 }
                 catch (Exception ex)
                 {
-                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX14102, encodedJson.Substring(0, Dot1)), ex));
+                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(
+                        LogMessages.IDX14102,
+                        LogHelper.MarkAsUnsafeSecurityArtifact(encodedJson.Substring(0, Dot1), t => t.ToString())),
+                        ex));
                 }
 
                 // dir does not have any key bytes

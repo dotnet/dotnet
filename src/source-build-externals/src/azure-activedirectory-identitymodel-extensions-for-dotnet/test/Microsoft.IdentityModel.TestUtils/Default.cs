@@ -621,6 +621,31 @@ namespace Microsoft.IdentityModel.TestUtils
             };
         }
 
+        public static Reference ReferenceWithoutTransform
+        {
+            get => new Reference()
+            {
+                DigestMethod = ReferenceDigestMethod,
+                DigestValue = Convert.ToBase64String(XmlUtilities.CreateNonTransformedDigestBytes(OuterXml)),
+                TokenStream = XmlUtilities.CreateXmlTokenStream(OuterXml),
+                Type = ReferenceType,
+                Uri = ReferenceUriWithOutPrefix
+            };
+        }
+
+        public static Reference ReferenceWithOnlyCanonicalizingTransform
+        {
+            get => new Reference()
+            {
+                CanonicalizingTransfrom = new ExclusiveCanonicalizationTransform(),
+                DigestMethod = ReferenceDigestMethod,
+                DigestValue = _referenceDigestValue,
+                TokenStream = XmlUtilities.CreateXmlTokenStream(OuterXml),
+                Type = ReferenceType,
+                Uri = ReferenceUriWithOutPrefix
+            };
+        }
+
         public static Reference ReferenceWithoutPrefix
         {
             get => new Reference(new EnvelopedSignatureTransform(), new ExclusiveCanonicalizationTransform())

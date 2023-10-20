@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -54,20 +55,24 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         }
 #endif
 
-#if NET_CORE
-        [PlatformSpecific(TestPlatforms.Windows)]
-#endif
         [Fact]
         public void AesGcmReferenceTest()
         {
-            var context = new CompareContext();
-            var providerForDecryption = CryptoProviderFactory.Default.CreateAuthenticatedEncryptionProvider(new SymmetricSecurityKey(RSAES_OAEP_KeyWrap.CEK), AES_256_GCM.Algorithm);
-            var plaintext = providerForDecryption.Decrypt(AES_256_GCM.E, AES_256_GCM.A, AES_256_GCM.IV, AES_256_GCM.T);
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Assert.Throws<PlatformNotSupportedException>(() => new AuthenticatedEncryptionProvider(Default.SymmetricEncryptionKey256, SecurityAlgorithms.Aes256Gcm));
+            }
+            else
+            {
+                var context = new CompareContext();
+                var providerForDecryption = CryptoProviderFactory.Default.CreateAuthenticatedEncryptionProvider(new SymmetricSecurityKey(RSAES_OAEP_KeyWrap.CEK), AES_256_GCM.Algorithm);
+                var plaintext = providerForDecryption.Decrypt(AES_256_GCM.E, AES_256_GCM.A, AES_256_GCM.IV, AES_256_GCM.T);
 
-            if (!Utility.AreEqual(plaintext, AES_256_GCM.P))
-                context.AddDiff($"!Utility.AreEqual(plaintext, testParams.Plaintext)");
+                if (!Utility.AreEqual(plaintext, AES_256_GCM.P))
+                    context.AddDiff($"!Utility.AreEqual(plaintext, testParams.Plaintext)");
 
-            TestUtilities.AssertFailIfErrors(context);
+                TestUtilities.AssertFailIfErrors(context);
+            }
         }
 
         [Theory, MemberData(nameof(AuthenticatedEncryptionTheoryData))]

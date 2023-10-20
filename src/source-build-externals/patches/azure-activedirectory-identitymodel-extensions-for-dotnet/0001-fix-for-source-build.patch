@@ -1,10 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Eric Erhardt <eric.erhardt@microsoft.com>
-Date: Mon, 11 Sep 2023 11:09:12 -0500
+Date: Tue, 17 Oct 2023 12:59:45 -0500
 Subject: [PATCH] fix for source build
 
 ---
- build/common.props                                        | 5 -----
+ build/common.props                                        | 6 +-----
  build/dependencies.props                                  | 8 ++++----
  build/targets.props                                       | 4 ++--
  buildConfiguration.xml                                    | 2 +-
@@ -19,20 +19,22 @@ Subject: [PATCH] fix for source build
  .../Microsoft.IdentityModel.Validators.csproj             | 7 -------
  .../Microsoft.IdentityModel.Xml.csproj                    | 7 -------
  .../System.IdentityModel.Tokens.Jwt.csproj                | 7 -------
- 15 files changed, 7 insertions(+), 89 deletions(-)
+ 15 files changed, 8 insertions(+), 89 deletions(-)
 
 diff --git a/build/common.props b/build/common.props
-index 001d7daa..77c12525 100644
+index 9f99de11..143d8509 100644
 --- a/build/common.props
 +++ b/build/common.props
-@@ -1,6 +1,5 @@
- <Project>
+@@ -35,7 +35,7 @@
+   </PropertyGroup>
  
--  <Import Project="apiCompat.props" />
-   <Import Project="dependencies.props" />
-   <Import Project="targets.props" />
-   <Import Project="version.props" />
-@@ -43,9 +42,5 @@
+   <PropertyGroup>
+-    <EnablePackageValidation>true</EnablePackageValidation>
++    <EnablePackageValidation>false</EnablePackageValidation>
+     <PackageValidationBaselineVersion>7.0.0</PackageValidationBaselineVersion>
+   </PropertyGroup>
+ 
+@@ -47,9 +47,5 @@
      <NoWarn>$(NoWarn);SYSLIB0050</NoWarn>
      <NoWarn>$(NoWarn);SYSLIB0051</NoWarn>
    </PropertyGroup>
@@ -80,7 +82,7 @@ index f020b59b..934aae74 100644
    </PropertyGroup>
  </Project>
 diff --git a/buildConfiguration.xml b/buildConfiguration.xml
-index 8920a438..1cf387b1 100644
+index 83cd80e1..868c5395 100644
 --- a/buildConfiguration.xml
 +++ b/buildConfiguration.xml
 @@ -1,7 +1,7 @@
@@ -89,8 +91,8 @@ index 8920a438..1cf387b1 100644
    <nugetVersion>3.5.0-rc-1285</nugetVersion>
 -  <runtimes>net461,netstandard2.0</runtimes>
 +  <runtimes>netstandard2.0</runtimes>
-   <assemblyVersion>7.0.0</assemblyVersion>
-   <nugetSuffix></nugetSuffix>
+   <assemblyVersion>7.0.3</assemblyVersion>
+   <nugetSuffix>preview</nugetSuffix>
    <projects>
 diff --git a/src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj b/src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj
 index f7a11afe..4a87af91 100644

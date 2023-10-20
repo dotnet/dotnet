@@ -15,13 +15,15 @@ namespace Test
         {
             __builder.OpenComponent<global::Test.TestComponent>(0);
             __builder.AddComponentParameter(1, "P2", "abc");
+            global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode = 
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                     global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode = Microsoft.AspNetCore.Components.Web.RenderMode.Server;
+                                     Microsoft.AspNetCore.Components.Web.RenderMode.Server
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __builder.AddComponentParameter(2, "P1", "def");
             __builder.AddComponentRenderMode(__renderMode);
             __builder.CloseComponent();
