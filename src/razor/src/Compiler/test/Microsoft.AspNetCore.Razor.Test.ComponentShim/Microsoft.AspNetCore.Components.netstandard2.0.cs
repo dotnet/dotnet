@@ -465,7 +465,9 @@ namespace Microsoft.AspNetCore.Components.Rendering
         public void OpenElement(int sequence, string elementName) { }
         public void OpenRegion(int sequence) { }
         public void SetKey(object value) { }
-        public void AddComponentRenderMode(IComponentRenderMode renderMode) { }
+#nullable enable
+        public void AddComponentRenderMode(IComponentRenderMode? renderMode) { }
+#nullable disable
         public void SetUpdatesAttributeName(string updatesAttributeName) { }
         void System.IDisposable.Dispose() { }
     }

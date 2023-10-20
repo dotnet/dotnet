@@ -16,8 +16,8 @@ namespace Test
             __builder.OpenComponent<global::Test.TestComponent>(0);
             global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode = 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                            true ? Microsoft.AspNetCore.Components.Web.RenderMode.Server : null
+#line 10 "x:\dir\subdir\Test\TestComponent.cshtml"
+                            Container.RenderMode
 
 #line default
 #line hidden
@@ -27,6 +27,19 @@ namespace Test
             __builder.CloseComponent();
         }
         #pragma warning restore 1998
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+ 
+    public class RenderModeContainer
+    {
+        public Microsoft.AspNetCore.Components.IComponentRenderMode RenderMode => Microsoft.AspNetCore.Components.Web.RenderMode.Server;
+    }
+
+    RenderModeContainer? Container => null;
+
+#line default
+#line hidden
+#nullable disable
     }
 }
 #pragma warning restore 1591

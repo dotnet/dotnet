@@ -17,7 +17,7 @@ namespace Test
             global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode = 
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                            true ? Microsoft.AspNetCore.Components.Web.RenderMode.Server : null
+                            null
 
 #line default
 #line hidden
