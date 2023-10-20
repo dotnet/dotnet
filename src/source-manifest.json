@@ -115,10 +115,10 @@
       "commitSha": "54ad220ef4f236325dec31f2c0c66fa48a6fce33"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.23502.1",
+      "packageVersion": "9.0.0-alpha.1.23519.1",
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "05ffbf9df6c1dc621665ee1864874c4fe6de874c"
+      "commitSha": "e5eb3eb0fc5187adef1aa04629b12aa118e2270b"
     },
     {
       "packageVersion": "8.0.0-beta.23510.3",
