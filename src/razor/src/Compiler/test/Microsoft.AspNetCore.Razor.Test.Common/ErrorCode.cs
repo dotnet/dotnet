@@ -16,5 +16,6 @@ public enum ErrorCode
     WRN_UnreferencedFieldAssg = 414,
     ERR_BadArgType = 1503,
     WRN_AsyncLacksAwaits = 1998,
+    WRN_NullReferenceReceiver = 8602,
     WRN_UninitializedNonNullableField = 8618,
 }

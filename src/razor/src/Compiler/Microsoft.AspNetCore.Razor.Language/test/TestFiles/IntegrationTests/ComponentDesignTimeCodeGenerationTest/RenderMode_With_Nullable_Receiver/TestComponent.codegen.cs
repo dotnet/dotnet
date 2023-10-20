@@ -22,19 +22,18 @@ namespace Test
         {
             __o = (global::Microsoft.AspNetCore.Components.IComponentRenderMode)(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                            Microsoft.AspNetCore.Components.Web.RenderMode.Server
+#line 10 "x:\dir\subdir\Test\TestComponent.cshtml"
+                            Container.RenderMode
 
 #line default
 #line hidden
 #nullable disable
             );
-            __o = "";
             __builder.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
             }
             ));
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line 10 "x:\dir\subdir\Test\TestComponent.cshtml"
 __o = typeof(global::Test.TestComponent);
 
 #line default
@@ -42,6 +41,19 @@ __o = typeof(global::Test.TestComponent);
 #nullable disable
         }
         #pragma warning restore 1998
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+ 
+    public class RenderModeContainer
+    {
+        public Microsoft.AspNetCore.Components.IComponentRenderMode RenderMode => Microsoft.AspNetCore.Components.Web.RenderMode.Server;
+    }
+
+    RenderModeContainer? Container => null;
+
+#line default
+#line hidden
+#nullable disable
     }
 }
 #pragma warning restore 1591

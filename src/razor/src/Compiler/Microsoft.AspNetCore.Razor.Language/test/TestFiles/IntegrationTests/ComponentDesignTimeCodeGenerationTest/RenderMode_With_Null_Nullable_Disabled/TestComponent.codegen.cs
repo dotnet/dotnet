@@ -10,21 +10,35 @@ namespace Test
     using global::Microsoft.AspNetCore.Components;
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     {
+        #pragma warning disable 219
+        private void __RazorDirectiveTokenHelpers__() {
+        }
+        #pragma warning restore 219
+        #pragma warning disable 0414
+        private static object __o = null;
+        #pragma warning restore 0414
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
-            __builder.OpenComponent<global::Test.TestComponent>(0);
-            global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode = 
+            __o = (global::Microsoft.AspNetCore.Components.IComponentRenderMode)(
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                            true ? Microsoft.AspNetCore.Components.Web.RenderMode.Server : null
+                            null
 
 #line default
 #line hidden
 #nullable disable
-            ;
-            __builder.AddComponentRenderMode(__renderMode);
-            __builder.CloseComponent();
+            );
+            __builder.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
+            }
+            ));
+#nullable restore
+#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+__o = typeof(global::Test.TestComponent);
+
+#line default
+#line hidden
+#nullable disable
         }
         #pragma warning restore 1998
     }
