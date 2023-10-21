@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
@@ -78,10 +79,7 @@ namespace Microsoft.IdentityModel.Xml
         {
             XmlUtil.CheckReaderOnEntry(reader, XmlSignatureConstants.Elements.KeyInfo, XmlSignatureConstants.Namespace);
 
-            var keyInfo = new KeyInfo
-            {
-                Prefix = reader.Prefix
-            };
+            var keyInfo = CreateKeyInfo(reader);
 
             try
             {
@@ -91,53 +89,9 @@ namespace Microsoft.IdentityModel.Xml
                 reader.ReadStartElement();
                 while (reader.IsStartElement())
                 {
-                    // <X509Data>
-                    if (reader.IsStartElement(XmlSignatureConstants.Elements.X509Data, XmlSignatureConstants.Namespace))
+                    // Skip the element since it is not one of elements handled by TryReadKeyInfoType
+                    if (!TryReadKeyInfoType(reader, ref keyInfo))
                     {
-                        keyInfo.X509Data.Add(ReadX509Data(reader));
-                    }
-                    // <RetrievalMethod>
-                    else if (reader.IsStartElement(XmlSignatureConstants.Elements.RetrievalMethod, XmlSignatureConstants.Namespace))
-                    {
-                        keyInfo.RetrievalMethodUri = reader.GetAttribute(XmlSignatureConstants.Attributes.URI);
-                        reader.ReadOuterXml();
-                    }
-                    // <KeyName>
-                    else if (reader.IsStartElement(XmlSignatureConstants.Elements.KeyName, XmlSignatureConstants.Namespace))
-                    {
-                        keyInfo.KeyName = reader.ReadElementContentAsString(XmlSignatureConstants.Elements.KeyName, XmlSignatureConstants.Namespace);
-                    }
-                    // <KeyValue>
-                    else if (reader.IsStartElement(XmlSignatureConstants.Elements.KeyValue, XmlSignatureConstants.Namespace))
-                    {
-                        reader.ReadStartElement(XmlSignatureConstants.Elements.KeyValue, XmlSignatureConstants.Namespace);
-                        if (reader.IsStartElement(XmlSignatureConstants.Elements.RSAKeyValue, XmlSignatureConstants.Namespace))
-                        {
-                            // Multiple RSAKeyValues were found
-                            if (keyInfo.RSAKeyValue != null)
-                                throw XmlUtil.LogReadException(LogMessages.IDX30015, XmlSignatureConstants.Elements.RSAKeyValue);
-
-                            keyInfo.RSAKeyValue = ReadRSAKeyValue(reader);
-                        }
-                        else
-                        {
-                            // Skip the element since it is not an <RSAKeyValue>
-                            if (LogHelper.IsEnabled(EventLogLevel.Warning))
-                            {
-                                LogHelper.LogWarning(LogMessages.IDX30300, reader.ReadOuterXml());
-                            }
-                            else
-                            {
-                                reader.Skip();
-                            }
-                        }
-
-                        // </KeyValue>
-                        reader.ReadEndElement();
-                    }
-                    else
-                    {
-                        // Skip the element since it is not one of  <RetrievalMethod>, <X509Data>, <KeyValue>
                         if (LogHelper.IsEnabled(EventLogLevel.Warning))
                         {
                             LogHelper.LogWarning(LogMessages.IDX30300, reader.ReadOuterXml());
@@ -154,7 +108,7 @@ namespace Microsoft.IdentityModel.Xml
                     reader.ReadEndElement();
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (ex is XmlReadException)
                     throw;
@@ -165,13 +119,176 @@ namespace Microsoft.IdentityModel.Xml
             return keyInfo;
         }
 
+
         /// <summary>
-        /// Reads the "X509DataElement" element conforming to https://www.w3.org/TR/2001/PR-xmldsig-core-20010820/#sec-X509Data.
+        /// Creates a new <see cref="KeyInfo"/> object.
+        /// </summary>
+        /// <param name="reader">The current <see cref="XmlReader"/>.</param>
+        protected virtual KeyInfo CreateKeyInfo(XmlReader reader)
+        {
+            XmlUtil.CheckReaderOnEntry(reader, XmlSignatureConstants.Elements.KeyInfo, XmlSignatureConstants.Namespace);
+
+            return new KeyInfo
+            {
+                Prefix = reader.Prefix
+            };
+        }
+
+        /// <summary>
+        /// Attempts to read the key info type which is the child of the &lt;KeyInfo> element.
+        /// </summary>
+        /// <param name="reader">A <see cref="XmlReader"/> positioned on a child of a <see cref="XmlSignatureConstants.Elements.KeyInfo"/> element.</param>
+        /// <param name="keyInfo">The <see cref="KeyInfo"/> object to populate.</param>
+        protected virtual bool TryReadKeyInfoType(XmlReader reader, ref KeyInfo keyInfo)
+        {
+            if (reader == null)
+                throw LogArgumentNullException(nameof(reader));
+
+            if (keyInfo == null)
+                throw LogArgumentNullException(nameof(keyInfo));
+
+            // <X509Data>
+            if (TryReadX509Data(reader, out var x509Data))
+                keyInfo.X509Data.Add(x509Data);
+            // <RetrievalMethod>
+            else if (TryReadRetrievalMethod(reader, out var retreivalMethodUri))
+                keyInfo.RetrievalMethodUri = retreivalMethodUri;
+            // <KeyName>
+            else if (TryReadKeyName(reader, out var keyName))
+                keyInfo.KeyName = keyName;
+            // <KeyValue>
+            else if (reader.IsStartElement(XmlSignatureConstants.Elements.KeyValue, XmlSignatureConstants.Namespace))
+            {
+                reader.ReadStartElement(XmlSignatureConstants.Elements.KeyValue, XmlSignatureConstants.Namespace);
+                if (!TryReadKeyValueType(reader, ref keyInfo)) return false;
+
+                // </KeyValue>
+                reader.ReadEndElement();
+            }
+            else
+                return false;
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// Attempts to read the <see cref="XmlSignatureConstants.Elements.KeyValue"/> element conforming to https://www.w3.org/TR/2001/PR-xmldsig-core-20010820/#sec-KeyValue.
+        /// <para>Only supports <see cref="RSAKeyValue"/>, but can be extended to support more key value types.</para>
+        /// </summary>
+        /// <param name="reader">A <see cref="XmlReader"/> positioned on a child of <see cref="XmlSignatureConstants.Elements.KeyValue"/> element.</param>
+        /// <param name="keyInfo">The <see cref="KeyInfo"/> object to populate.</param>
+        protected virtual bool TryReadKeyValueType(XmlReader reader, ref KeyInfo keyInfo)
+        {
+            if (reader == null)
+                throw LogArgumentNullException(nameof(reader));
+
+            if (keyInfo == null)
+                throw LogArgumentNullException(nameof(keyInfo));
+
+            if (TryReadRSAKeyValue(reader, out var rsaKeyValue))
+            {
+                if (keyInfo.RSAKeyValue != null)
+                    throw XmlUtil.LogReadException(LogMessages.IDX30015, XmlSignatureConstants.Elements.RSAKeyValue);
+                keyInfo.RSAKeyValue = rsaKeyValue;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to read the <see cref="XmlSignatureConstants.Elements.RSAKeyValue"/> element conforming to https://www.w3.org/TR/2001/PR-xmldsig-core-20010820/#sec-RSAKeyValue.
+        /// </summary>
+        /// <param name="reader">A <see cref="XmlReader"/> positioned on a <see cref="XmlSignatureConstants.Elements.RSAKeyValue"/> element.</param>
+        /// <param name="value">The parsed <see cref="XmlSignatureConstants.Elements.RSAKeyValue"/> element.</param>
+        protected virtual bool TryReadRSAKeyValue(XmlReader reader, out RSAKeyValue value)
+        {
+            if (reader == null)
+                throw LogArgumentNullException(nameof(reader));
+
+            if (!reader.IsStartElement(XmlSignatureConstants.Elements.RSAKeyValue, XmlSignatureConstants.Namespace))
+            {
+                value = null;
+                return false;
+            }
+
+            reader.ReadStartElement(XmlSignatureConstants.Elements.RSAKeyValue, XmlSignatureConstants.Namespace);
+
+            if (!reader.IsStartElement(XmlSignatureConstants.Elements.Modulus, XmlSignatureConstants.Namespace))
+                throw XmlUtil.LogReadException(LogMessages.IDX30011, XmlSignatureConstants.Namespace, XmlSignatureConstants.Elements.Modulus, reader.NamespaceURI, reader.LocalName);
+
+            var modulus = reader.ReadElementContentAsString(XmlSignatureConstants.Elements.Modulus, XmlSignatureConstants.Namespace);
+
+            if (!reader.IsStartElement(XmlSignatureConstants.Elements.Exponent, XmlSignatureConstants.Namespace))
+                throw XmlUtil.LogReadException(LogMessages.IDX30011, XmlSignatureConstants.Namespace, XmlSignatureConstants.Elements.Exponent, reader.NamespaceURI, reader.LocalName);
+
+            var exponent = reader.ReadElementContentAsString(XmlSignatureConstants.Elements.Exponent, XmlSignatureConstants.Namespace);
+
+            reader.ReadEndElement();
+
+            value = new RSAKeyValue(modulus, exponent);
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// Attempts to read the <see cref="XmlSignatureConstants.Elements.KeyName"/> element conforming to https://www.w3.org/TR/2001/PR-xmldsig-core-20010820/#sec-KeyName.
+        /// </summary>
+        /// <param name="reader">A <see cref="XmlReader"/> positioned on a <see cref="XmlSignatureConstants.Elements.KeyName"/> element.</param>
+        /// <param name="name">The parsed <see cref="XmlSignatureConstants.Elements.KeyName"/> element.</param>
+        protected virtual bool TryReadKeyName(XmlReader reader, out string name)
+        {
+            if (reader == null)
+                throw LogArgumentNullException(nameof(reader));
+
+            if (!reader.IsStartElement(XmlSignatureConstants.Elements.KeyName, XmlSignatureConstants.Namespace))
+            {
+                name = null;
+                return false;
+            }
+            name = reader.ReadElementContentAsString(XmlSignatureConstants.Elements.KeyName, XmlSignatureConstants.Namespace);
+            return true;
+        }
+
+        /// <summary>
+        /// Attempts to read the <see cref="XmlSignatureConstants.Elements.RetrievalMethod"/> element conforming to https://www.w3.org/TR/2001/PR-xmldsig-core-20010820/#sec-RetrievalMethod.
+        /// </summary>
+        /// <param name="reader">A <see cref="XmlReader"/> positioned on a <see cref="XmlSignatureConstants.Elements.RetrievalMethod"/> element.</param>
+        /// <param name="method">The parsed <see cref="XmlSignatureConstants.Elements.RetrievalMethod"/> element.</param>
+        protected virtual bool TryReadRetrievalMethod(XmlReader reader, out string method)
+        {
+            if (reader == null)
+                throw LogArgumentNullException(nameof(reader));
+
+            if (!reader.IsStartElement(XmlSignatureConstants.Elements.RetrievalMethod, XmlSignatureConstants.Namespace))
+            {
+                method = null;
+                return false;
+            }
+            method = reader.GetAttribute(XmlSignatureConstants.Attributes.URI);
+            _ = reader.ReadOuterXml();
+            return true;
+        }
+
+        /// <summary>
+        /// Attempts to read the <see cref="XmlSignatureConstants.Elements.X509Data"/> element conforming to https://www.w3.org/TR/2001/PR-xmldsig-core-20010820/#sec-X509Data.
         /// </summary>
         /// <param name="reader">A <see cref="XmlReader"/> positioned on a <see cref="XmlSignatureConstants.Elements.X509Data"/> element.</param>
-        private static X509Data ReadX509Data(XmlReader reader)
+        /// <param name="data">The parsed <see cref="XmlSignatureConstants.Elements.X509Data"/> element.</param>
+        protected virtual bool TryReadX509Data(XmlReader reader, out X509Data data)
         {
-            var data = new X509Data();
+            if (reader == null)
+                throw LogArgumentNullException(nameof(reader));
+
+            if (!reader.IsStartElement(XmlSignatureConstants.Elements.X509Data, XmlSignatureConstants.Namespace))
+            {
+                data = null;
+                return false;
+            }
+
+            data = new X509Data();
 
             if (reader.IsEmptyElement)
                 throw XmlUtil.LogReadException(LogMessages.IDX30108);
@@ -224,7 +341,7 @@ namespace Microsoft.IdentityModel.Xml
             // </X509Data>
             reader.ReadEndElement();
 
-            return data;
+            return true;
         }
 
         /// <summary>
@@ -248,29 +365,6 @@ namespace Microsoft.IdentityModel.Xml
             reader.ReadEndElement();
 
             return new IssuerSerial(issuerName, serialNumber);
-         }
-
-        /// <summary>
-        /// Reads the "RSAKeyValue" element conforming to https://www.w3.org/TR/2001/PR-xmldsig-core-20010820/#sec-RSAKeyValue.
-        /// </summary>
-        /// <param name="reader">A <see cref="XmlReader"/> positioned on a <see cref="XmlSignatureConstants.Elements.RSAKeyValue"/> element.</param>
-        private static RSAKeyValue ReadRSAKeyValue(XmlReader reader)
-        {
-            reader.ReadStartElement(XmlSignatureConstants.Elements.RSAKeyValue, XmlSignatureConstants.Namespace);
-
-            if (!reader.IsStartElement(XmlSignatureConstants.Elements.Modulus, XmlSignatureConstants.Namespace))
-                throw XmlUtil.LogReadException(LogMessages.IDX30011, XmlSignatureConstants.Namespace, XmlSignatureConstants.Elements.Modulus, reader.NamespaceURI, reader.LocalName);
-
-            string modulus = reader.ReadElementContentAsString(XmlSignatureConstants.Elements.Modulus, XmlSignatureConstants.Namespace);
-
-            if (!reader.IsStartElement(XmlSignatureConstants.Elements.Exponent, XmlSignatureConstants.Namespace))
-                throw XmlUtil.LogReadException(LogMessages.IDX30011, XmlSignatureConstants.Namespace, XmlSignatureConstants.Elements.Exponent, reader.NamespaceURI, reader.LocalName);
-
-            string exponent = reader.ReadElementContentAsString(XmlSignatureConstants.Elements.Exponent, XmlSignatureConstants.Namespace);
-
-            reader.ReadEndElement();
-
-            return new RSAKeyValue(modulus, exponent);    
         }
 
         /// <summary>
@@ -315,7 +409,7 @@ namespace Microsoft.IdentityModel.Xml
                     SignatureValue = signatureValue
                 };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (ex is XmlReadException)
                     throw;
@@ -395,10 +489,9 @@ namespace Microsoft.IdentityModel.Xml
                 // this should be very rare.
                 signedInfo.CanonicalizationMethod = ReadCanonicalizationMethod(actualReader);
                 signedInfo.SignatureMethod = ReadSignatureMethod(actualReader);
-                signedInfo.References.Add(ReadReference(actualReader));
 
-                if (actualReader.IsStartElement(XmlSignatureConstants.Elements.Reference, XmlSignatureConstants.Namespace))
-                    throw XmlUtil.LogReadException(LogMessages.IDX30020);
+                foreach (var reference in ReadReferences(actualReader))
+                    signedInfo.References.Add(reference);
 
                 actualReader.ReadEndElement();
                 canonicalizingReader.EndCanonicalization();
@@ -406,13 +499,32 @@ namespace Microsoft.IdentityModel.Xml
 
                 return signedInfo;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (ex is XmlReadException)
                     throw;
 
                 throw XmlUtil.LogReadException(LogMessages.IDX30016, ex, XmlSignatureConstants.Elements.SignedInfo);
             }
+        }
+
+        /// <summary>
+        /// Reads multiple XML elements conforming to https://www.w3.org/TR/2001/PR-xmldsig-core-20010820/#sec-Reference
+        /// </summary>
+        /// <param name="reader">a <see cref="XmlReader"/>positioned on a &lt;Reference> element.</param>
+        /// <exception cref="ArgumentNullException">if <paramref name="reader"/> is null.</exception>
+        /// <exception cref="XmlReadException">if there is a problem reading the XML.</exception>
+        /// <returns><see cref="IEnumerable{T}"/> of <seealso cref="Reference"/></returns>
+        public virtual IEnumerable<Reference> ReadReferences(XmlReader reader)
+        {
+            XmlUtil.CheckReaderOnEntry(reader, XmlSignatureConstants.Elements.Reference, XmlSignatureConstants.Namespace);
+
+            var reference = ReadReference(reader);
+
+            if (reader.IsStartElement(XmlSignatureConstants.Elements.Reference, XmlSignatureConstants.Namespace))
+                throw XmlUtil.LogReadException(LogMessages.IDX30020);
+
+            return new[] { reference };
         }
 
         /// <summary>
@@ -467,7 +579,7 @@ namespace Microsoft.IdentityModel.Xml
 
                 return reference;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (ex is XmlReadException)
                     throw;
@@ -585,7 +697,7 @@ namespace Microsoft.IdentityModel.Xml
 
                 return signatureMethod;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (ex is XmlReadException)
                     throw;
@@ -629,7 +741,7 @@ namespace Microsoft.IdentityModel.Xml
 
                 return algorithm;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (ex is XmlReadException)
                     throw;
@@ -799,7 +911,7 @@ namespace Microsoft.IdentityModel.Xml
                 // </Transform>
                 writer.WriteEndElement();
             }
-            
+
             // Write Canonicalizing transform
             if (reference.CanonicalizingTransfrom != null)
             {
@@ -933,14 +1045,14 @@ namespace Microsoft.IdentityModel.Xml
 
             // <CanonicalizationMethod>
             writer.WriteStartElement(Prefix, XmlSignatureConstants.Elements.CanonicalizationMethod, XmlSignatureConstants.Namespace);
-            
+
             //@Algorithm
             writer.WriteAttributeString(XmlSignatureConstants.Attributes.Algorithm, null, signedInfo.CanonicalizationMethod);
             writer.WriteEndElement();
 
             // <SignatureMethod>
             writer.WriteStartElement(Prefix, XmlSignatureConstants.Elements.SignatureMethod, XmlSignatureConstants.Namespace);
-            
+
             // @Algorithm
             writer.WriteAttributeString(XmlSignatureConstants.Attributes.Algorithm, null, signedInfo.SignatureMethod);
 
@@ -948,7 +1060,7 @@ namespace Microsoft.IdentityModel.Xml
             writer.WriteEndElement();
 
             // <Reference>
-            foreach(var reference in signedInfo.References)
+            foreach (var reference in signedInfo.References)
                 WriteReference(writer, reference);
 
             // </SignedInfo>

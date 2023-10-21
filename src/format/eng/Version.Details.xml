@@ -6,9 +6,9 @@
       <Sha>232f7afa4966411958759c880de3a1765bdb28a0</Sha>
       <SourceBuild RepoName="roslyn" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23475.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23502.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>e04156dbe14f882a80d4499dbebd45ab156b6c3c</Sha>
+      <Sha>ed17956dbc31097b7ba6a66be086f4a70a97d84f</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="8.0.0-alpha.1.23471.1">
@@ -25,14 +25,14 @@
       <Uri>https://github.com/dotnet/symreader</Uri>
       <Sha>27e584661980ee6d82c419a2a471ae505b7d122e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.Logging" Version="8.0.0-rc.1.23408.3">
+    <Dependency Name="Microsoft.Extensions.Logging" Version="8.0.0-rtm.23517.16">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>749b2d2f70d8d60834fd8628ed70c694a0a45403</Sha>
+      <Sha>6f7af556d2761b0c93299cb88c61e4b747d6176a</Sha>
       <SourceBuild RepoName="runtime" />
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="8.0.0-rc.1.23408.3">
+    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="8.0.0-rtm.23517.16">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>749b2d2f70d8d60834fd8628ed70c694a0a45403</Sha>
+      <Sha>6f7af556d2761b0c93299cb88c61e4b747d6176a</Sha>
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.command-line-api" Version="0.1.430701">
       <Uri>https://github.com/dotnet/command-line-api</Uri>

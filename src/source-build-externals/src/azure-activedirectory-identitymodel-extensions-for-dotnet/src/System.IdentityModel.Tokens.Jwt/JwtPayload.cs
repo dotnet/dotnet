@@ -543,6 +543,14 @@ namespace System.IdentityModel.Tokens.Jwt
                     }
                     else if (keyValuePair.Value is DateTime dateTime)
                         claims.Add(new Claim(keyValuePair.Key, dateTime.ToString("o", CultureInfo.InvariantCulture), ClaimValueTypes.DateTime, issuer, issuer));
+                    else if (keyValuePair.Value is bool boolValue)
+                    {
+                        // Can't just use ToString or bools will get encoded as True/False instead of true/false.
+                        if (boolValue)
+                            claims.Add(new Claim(keyValuePair.Key, "true", ClaimValueTypes.Boolean, issuer, issuer));
+                        else
+                            claims.Add(new Claim(keyValuePair.Key, "false", ClaimValueTypes.Boolean, issuer, issuer));
+                    }
                     else if (keyValuePair.Value != null)
                         claims.Add(new Claim(keyValuePair.Key, keyValuePair.Value.ToString(), GetClaimValueType(keyValuePair.Value), issuer, issuer));
                 }
@@ -557,6 +565,13 @@ namespace System.IdentityModel.Tokens.Jwt
             {
                 if (obj is string claimValue)
                     claims.Add(new Claim(key, claimValue, ClaimValueTypes.String, issuer, issuer));
+                else if (obj is bool boolValue)
+                {
+                    if (boolValue)
+                        claims.Add(new Claim(key, "true", ClaimValueTypes.Boolean, issuer, issuer));
+                    else
+                        claims.Add(new Claim(key, "false", ClaimValueTypes.Boolean, issuer, issuer));
+                }
                 else if (obj is DateTime dateTimeValue)
                     claims.Add(new Claim(key, dateTimeValue.ToString("o", CultureInfo.InvariantCulture), ClaimValueTypes.DateTime, issuer, issuer));
                 else if (obj is JsonElement jsonElement)

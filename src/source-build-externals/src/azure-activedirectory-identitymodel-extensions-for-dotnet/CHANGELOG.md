@@ -1,8 +1,24 @@
 See the [releases](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/releases) for details on bug fixes and added features.
 
+7.0.3
+======
+### Bug Fixes:
+- Fix errors like the following reported by multiple customers at dotnet/aspnetcore#51005 when they tried to upgrade their app using `AddMicrosoftIdentityWebApp` to .NET 8. See [PR](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2361) for details.
+- Fix compatibility issue with 6x when claims are a bool. See issue [#2354](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2354) for details.
+
+7.0.2
+======
+### Bug Fixes:
+- Resolved an issue where JsonWebToken properties would throw exceptions when the input string was 'null'. See PR[#2335](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2335) for details.
+
+7.0.1
+======
+### Bug Fixes:
+- GetPayloadClaim("aud") returns a string when a single audience is specified, aligning with the behavior in 6.x. See PR[#2331](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/pull/2331) for details.
+
 7.0.0
 ======
-See [IdentityModel7x](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/wiki/IdentityModel-7x-breaking-changes) for the updates on this much anticipated release.
+See [IdentityModel7x](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/wiki/IdentityModel-7x) for the updates on this much anticipated release.
 
 7.0.0-preview5
 =======

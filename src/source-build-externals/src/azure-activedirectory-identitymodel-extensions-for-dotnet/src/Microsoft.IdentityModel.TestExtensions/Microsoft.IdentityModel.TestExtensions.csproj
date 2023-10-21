@@ -11,6 +11,7 @@
     <PackageId>Microsoft.IdentityModel.TestExtensions</PackageId>
     <SignAssembly>true</SignAssembly>
     <Nullable>enable</Nullable>
+    <EnablePackageValidation>false</EnablePackageValidation>
   </PropertyGroup>
 
   <ItemGroup>

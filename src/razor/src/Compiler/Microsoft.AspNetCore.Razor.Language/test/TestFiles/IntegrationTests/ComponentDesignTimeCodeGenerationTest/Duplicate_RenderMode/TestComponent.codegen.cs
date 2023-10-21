@@ -20,13 +20,15 @@ namespace Test
         #pragma warning disable 1998
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
+            __o = (global::Microsoft.AspNetCore.Components.IComponentRenderMode)(
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                            __o = (global::Microsoft.AspNetCore.Components.IComponentRenderMode)(Microsoft.AspNetCore.Components.Web.RenderMode.Server);
+                            Microsoft.AspNetCore.Components.Web.RenderMode.Server
 
 #line default
 #line hidden
 #nullable disable
+            );
             __o = "";
             __builder.AddAttribute(-1, "ChildContent", (global::Microsoft.AspNetCore.Components.RenderFragment)((__builder2) => {
             }

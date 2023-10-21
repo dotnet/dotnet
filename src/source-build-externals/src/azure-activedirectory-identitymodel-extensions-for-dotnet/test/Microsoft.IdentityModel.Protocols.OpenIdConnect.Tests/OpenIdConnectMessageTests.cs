@@ -10,7 +10,6 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect.Json.Tests;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
 #pragma warning disable SYSLIB0013 // Type or member is obsolete
 
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
@@ -20,29 +19,92 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
     /// </summary>
     public class OpenIdConnectMessageTests
     {
-        [Theory, MemberData(nameof(ConstructorsTheoryData))]
-        public void Constructors(OpenIdConnectMessageTheoryData theoryData)
+        [Theory, MemberData(nameof(GetMessagePropertyTheoryData), DisableDiscoveryEnumeration = true)]
+        public void GetMessageProperty(OpenIdConnectMessageTheoryData theoryData)
         {
-            TestUtilities.WriteHeader($"{this}.Constructors", theoryData);
-            var context = new CompareContext($"{this}.ReadMetadata, {theoryData.TestId}");
-            OpenIdConnectMessage messageFromJson;
-            // TODO - these local variable has been left commented out as
-            // we will need this to check a 6x -> 7x compatibility test that needs to be written.
-            //OpenIdConnectMessage messageFromJsonObj;
-            var diffs = new List<string>();
+            CompareContext context = TestUtilities.WriteHeader($"{this}.GetMessageProperty", theoryData);
             try
             {
-                messageFromJson = new OpenIdConnectMessage(theoryData.Json);
-//#pragma warning disable CS0618 // Type or member is obsolete
-//                messageFromJsonObj = new OpenIdConnectMessage6x(theoryData.JObject);
-//#pragma warning restore CS0618 // Type or member is obsolete
-                //IdentityComparer.AreEqual(messageFromJson, messageFromJsonObj, context);
-                IdentityComparer.AreEqual(messageFromJson, theoryData.Message, context);
-                theoryData.ExpectedException.ProcessNoException();
+                OpenIdConnectMessage oidcMessage = new OpenIdConnectMessage(theoryData.Json);
+                OpenIdConnectMessage6x oidcMessage6x = new OpenIdConnectMessage6x(theoryData.Json);
+                theoryData.ExpectedException.ProcessNoException(context);
+
+                IdentityComparer.AreEqual(oidcMessage.ExpiresIn, theoryData.PropertyValue, context);
+                // Note: in 6x Newtonsoft was set to format the json with /r/n and spaces, we don't do that in 7x
+                IdentityComparer.AreEqual(oidcMessage6x.ExpiresIn.Replace("\r", "").Replace("\n", "").Replace(" ", ""), theoryData.PropertyValue, context);
+            }
+            catch (Exception ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex.InnerException, context);
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        public static TheoryData<OpenIdConnectMessageTheoryData> GetMessagePropertyTheoryData()
+        {
+            // all of the properties are translated to strings so the single property of ExpiresIn was chosen to test.
+            // this test is to ensure that the 6x and 7x versions of the library return the same value.
+            TheoryData<OpenIdConnectMessageTheoryData> theoryData = new TheoryData<OpenIdConnectMessageTheoryData>();
+
+            theoryData.Add(new OpenIdConnectMessageTheoryData("String")
+            {
+                Json = $@"{{""expires_in"":""string""}}",
+                PropertyValue = "string"
+            });
+
+            theoryData.Add(new OpenIdConnectMessageTheoryData("Number")
+            {
+                Json = $@"{{""expires_in"":600}}",
+                PropertyValue = "600"
+            });
+
+            theoryData.Add(new OpenIdConnectMessageTheoryData("Array")
+            {
+                Json = $@"{{""expires_in"":[600,500]}}",
+                PropertyValue = "[600,500]"
+            });
+
+            theoryData.Add(new OpenIdConnectMessageTheoryData("Object")
+            {
+                Json = $@"{{""expires_in"":{{""object"":""value""}}}}",
+                PropertyValue = $@"{{""object"":""value""}}"
+            });
+
+            theoryData.Add(new OpenIdConnectMessageTheoryData("null")
+            {
+                Json = $@"{{""expires_in"":null}}",
+                PropertyValue = ""
+            });
+
+            theoryData.Add(new OpenIdConnectMessageTheoryData("true")
+            {
+                Json = $@"{{""expires_in"":true}}",
+                PropertyValue = "True"
+            });
+
+            theoryData.Add(new OpenIdConnectMessageTheoryData("false")
+            {
+                Json = $@"{{""expires_in"":false}}",
+                PropertyValue = "False"
+            });
+
+            return theoryData;
+        }
+
+        [Theory, MemberData(nameof(ConstructorsTheoryData), DisableDiscoveryEnumeration = true)]
+        public void Constructors(OpenIdConnectMessageTheoryData theoryData)
+        {
+            var context = TestUtilities.WriteHeader($"{this}.Constructors", theoryData);
+            try
+            {
+                OpenIdConnectMessage oidcMessage = new OpenIdConnectMessage(theoryData.Json);
+                IdentityComparer.AreEqual(oidcMessage, theoryData.Message, context);
+                theoryData.ExpectedException.ProcessNoException(context);
             }
             catch (Exception exception)
             {
-                theoryData.ExpectedException.ProcessException(exception);
+                theoryData.ExpectedException.ProcessException(exception, context);
             }
 
             TestUtilities.AssertFailIfErrors(context);
@@ -52,6 +114,11 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         {
             return new TheoryData<OpenIdConnectMessageTheoryData>
             {
+                new OpenIdConnectMessageTheoryData("InvalidJson")
+                {
+                    ExpectedException = ExpectedException.ArgumentException("IDX21106"),
+                    Json =  @"{""response_mode"":""responseMode"";""response_mode"":""duplicateResponeMode""}"
+                },
                 new OpenIdConnectMessageTheoryData("EmptyString")
                 {
                     ExpectedException = ExpectedException.ArgumentNullException("IDX10000:"),
@@ -63,10 +130,13 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
                 },
                 new OpenIdConnectMessageTheoryData("ResponseModeDuplicated")
                 {
-                    ExpectedException = ExpectedException.ArgumentException("IDX21106"),
-                    Json =  @"{""response_mode"":""responseMode"";""respone_mode"":""duplicateResponeMode""}"
+                    Json =  @"{""response_mode"":""responseMode"",""response_mode"":""duplicateResponseMode""}",
+                    Message = new OpenIdConnectMessage
+                    {
+                        ResponseMode = "duplicateResponseMode"
+                    }
                 },
-                new OpenIdConnectMessageTheoryData("EmptyJsonStringEmptyJobj")
+new OpenIdConnectMessageTheoryData("EmptyJsonStringEmptyJobj")
                 {
                     JObject = new JObject(),
                     Json = "{}",
@@ -618,7 +688,9 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             public OpenIdConnectMessageTheoryData(string testId) : base(testId) { }
 
             public OpenIdConnectMessage Message { get; set; }
-            
+
+            public string PropertyValue { get; set; }
+
             public string Json { get; set; }
 
             internal JObject JObject { get; set; }
@@ -627,4 +699,3 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
 }
 
 #pragma warning restore SYSLIB0013 // Type or member is obsolete
-#pragma warning restore CS3016 // Arrays as attribute arguments is not CLS-compliant
