@@ -59,7 +59,7 @@ public class GenerateScriptTests
                 break;
         }
 
-        ExecuteHelper.ExecuteProcess(command, arguments, output);
+        ExecuteHelper.ExecuteProcessValidateExitCode(command, arguments, output);
         Assert.Empty(ExecuteHelper.ExecuteProcess("git", $"diff --no-index {packageSrcDirectory} {sandboxPackageGeneratedDirecotry}", output, true).StdOut);
     }
 }
