@@ -227,9 +227,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>af841c8b33cecc92d74222298f1e45bf7bf3d90a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.23523.3">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.23523.4">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>e30c7df3df1f4c15477a18d91f432a9a08971821</Sha>
+      <Sha>c397c475b357738fbbf535f5c5ffb4d87c20aed0</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23516.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
