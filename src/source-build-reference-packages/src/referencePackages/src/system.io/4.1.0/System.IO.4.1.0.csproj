@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;netstandard1.3;netstandard1.5</TargetFrameworks>
     <AssemblyName>System.IO</AssemblyName>
-    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.0'">

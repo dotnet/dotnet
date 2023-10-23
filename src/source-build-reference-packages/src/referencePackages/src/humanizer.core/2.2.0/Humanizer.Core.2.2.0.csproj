@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0</TargetFrameworks>
     <AssemblyName>Humanizer.Core</AssemblyName>
-    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
 </Project>

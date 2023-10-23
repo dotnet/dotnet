@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>$$TargetFrameworks$$</TargetFrameworks>
-    <AssemblyName>$$AssemblyName$$</AssemblyName>
-    <ProjectTemplateVersion>2</ProjectTemplateVersion>$$KeyFileTag$$
+    <AssemblyName>$$AssemblyName$$</AssemblyName>$$KeyFileTag$$
   </PropertyGroup>
 
 $$References$$</Project>
