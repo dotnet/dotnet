@@ -4,29 +4,26 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-
 using System;
-using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Security;
-
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ReferenceAssembly]
-[assembly: AssemblyTitle("System.Runtime")]
-[assembly: AssemblyDescription("System.Runtime")]
-[assembly: AssemblyDefaultAlias("System.Runtime")]
-[assembly: AssemblyCompany("Microsoft Corporation")]
+[assembly: AssemblyMetadata("BuildLabel", "130703.2")]
+[assembly: AssemblyMetadata("BuildBranch", "Release\\ReferenceAssemblies\\1.0")]
 [assembly: AssemblyProduct("Microsoft® .NET Framework")]
-[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
 [assembly: AssemblyFileVersion("4.0.40013.0")]
 [assembly: CLSCompliant(true)]
-[assembly: AssemblyVersion("4.0.10.0")]
-
-
-
-
+[assembly: System.Security.AllowPartiallyTrustedCallers]
+[assembly: AssemblyCompany("Microsoft Corporation")]
+[assembly: AssemblyInformationalVersion("4.0.40013.0")]
+[assembly: AssemblyCopyright("© Microsoft Corporation.  All rights reserved.")]
+[assembly: CompilationRelaxations(8)]
+[assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
+[assembly: System.Runtime.CompilerServices.ReferenceAssembly]
+[assembly: AssemblyTitle("System.Runtime.dll")]
+[assembly: AssemblyDescription("System.Runtime.dll")]
+[assembly: AssemblyDefaultAlias("System.Runtime.dll")]
+[assembly: System.Reflection.AssemblyVersionAttribute("4.0.10.0")]
+[assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
 namespace System
 {
     public delegate void Action();
@@ -48,699 +45,1221 @@ namespace System
     public delegate void Action<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9);
     public static partial class Activator
     {
-        public static object CreateInstance(System.Type type) { throw null; }
-        public static object CreateInstance(System.Type type, params object[] args) { throw null; }
+        public static Object CreateInstance(Type type, params Object[] args) { throw null; }
+
+        public static Object CreateInstance(Type type) { throw null; }
+
         public static T CreateInstance<T>() { throw null; }
     }
-    public partial class ArgumentException : System.Exception
+
+    public partial class ArgumentException : Exception
     {
         public ArgumentException() { }
-        public ArgumentException(string message) { }
-        public ArgumentException(string message, System.Exception innerException) { }
-        public ArgumentException(string message, string paramName) { }
-        public ArgumentException(string message, string paramName, System.Exception innerException) { }
-        public override string Message { get { throw null; } }
-        public virtual string ParamName { get { throw null; } }
+
+        public ArgumentException(String message, Exception innerException) { }
+
+        public ArgumentException(String message, String paramName, Exception innerException) { }
+
+        public ArgumentException(String message, String paramName) { }
+
+        public ArgumentException(String message) { }
+
+        public override String Message { get { throw null; } }
+
+        public virtual String ParamName { get { throw null; } }
     }
-    public partial class ArgumentNullException : System.ArgumentException
+
+    public partial class ArgumentNullException : ArgumentException
     {
         public ArgumentNullException() { }
-        public ArgumentNullException(string paramName) { }
-        public ArgumentNullException(string message, System.Exception innerException) { }
-        public ArgumentNullException(string paramName, string message) { }
+
+        public ArgumentNullException(String message, Exception innerException) { }
+
+        public ArgumentNullException(String paramName, String message) { }
+
+        public ArgumentNullException(String paramName) { }
     }
-    public partial class ArgumentOutOfRangeException : System.ArgumentException
+
+    public partial class ArgumentOutOfRangeException : ArgumentException
     {
         public ArgumentOutOfRangeException() { }
-        public ArgumentOutOfRangeException(string paramName) { }
-        public ArgumentOutOfRangeException(string message, System.Exception innerException) { }
-        public ArgumentOutOfRangeException(string paramName, object actualValue, string message) { }
-        public ArgumentOutOfRangeException(string paramName, string message) { }
-        public virtual object ActualValue { get { throw null; } }
-        public override string Message { get { throw null; } }
+
+        public ArgumentOutOfRangeException(String message, Exception innerException) { }
+
+        public ArgumentOutOfRangeException(String paramName, Object actualValue, String message) { }
+
+        public ArgumentOutOfRangeException(String paramName, String message) { }
+
+        public ArgumentOutOfRangeException(String paramName) { }
+
+        public virtual Object ActualValue { get { throw null; } }
+
+        public override String Message { get { throw null; } }
     }
-    public partial class ArithmeticException : System.Exception
+
+    public partial class ArithmeticException : Exception
     {
         public ArithmeticException() { }
-        public ArithmeticException(string message) { }
-        public ArithmeticException(string message, System.Exception innerException) { }
+
+        public ArithmeticException(String message, Exception innerException) { }
+
+        public ArithmeticException(String message) { }
     }
-    public abstract partial class Array : System.Collections.ICollection, System.Collections.IEnumerable, System.Collections.IList, System.Collections.IStructuralComparable, System.Collections.IStructuralEquatable
+
+    public abstract partial class Array : Collections.IList, Collections.ICollection, Collections.IEnumerable, Collections.IStructuralComparable, Collections.IStructuralEquatable
     {
         internal Array() { }
-        public int Length { get { throw null; } }
-        public int Rank { get { throw null; } }
-        int System.Collections.ICollection.Count { get { throw null; } }
-        bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-        object System.Collections.ICollection.SyncRoot { get { throw null; } }
-        bool System.Collections.IList.IsFixedSize { get { throw null; } }
-        bool System.Collections.IList.IsReadOnly { get { throw null; } }
-        object System.Collections.IList.this[int index] { get { throw null; } set { } }
-        public static int BinarySearch(System.Array array, int index, int length, object value) { throw null; }
-        public static int BinarySearch(System.Array array, int index, int length, object value, System.Collections.IComparer comparer) { throw null; }
-        public static int BinarySearch(System.Array array, object value) { throw null; }
-        public static int BinarySearch(System.Array array, object value, System.Collections.IComparer comparer) { throw null; }
-        public static int BinarySearch<T>(T[] array, int index, int length, T value) { throw null; }
-        public static int BinarySearch<T>(T[] array, int index, int length, T value, System.Collections.Generic.IComparer<T> comparer) { throw null; }
-        public static int BinarySearch<T>(T[] array, T value) { throw null; }
-        public static int BinarySearch<T>(T[] array, T value, System.Collections.Generic.IComparer<T> comparer) { throw null; }
-        public static void Clear(System.Array array, int index, int length) { }
-        public object Clone() { throw null; }
-        public static void ConstrainedCopy(System.Array sourceArray, int sourceIndex, System.Array destinationArray, int destinationIndex, int length) { }
-        public static void Copy(System.Array sourceArray, System.Array destinationArray, int length) { }
-        public static void Copy(System.Array sourceArray, int sourceIndex, System.Array destinationArray, int destinationIndex, int length) { }
-        public void CopyTo(System.Array array, int index) { }
-        public static System.Array CreateInstance(System.Type elementType, params int[] lengths) { throw null; }
-        public static System.Array CreateInstance(System.Type elementType, int[] lengths, int[] lowerBounds) { throw null; }
-        public static bool Exists<T>(T[] array, System.Predicate<T> match) { throw null; }
-        public static T[] FindAll<T>(T[] array, System.Predicate<T> match) { throw null; }
-        public static int FindIndex<T>(T[] array, int startIndex, int count, System.Predicate<T> match) { throw null; }
-        public static int FindIndex<T>(T[] array, int startIndex, System.Predicate<T> match) { throw null; }
-        public static int FindIndex<T>(T[] array, System.Predicate<T> match) { throw null; }
-        public static int FindLastIndex<T>(T[] array, int startIndex, int count, System.Predicate<T> match) { throw null; }
-        public static int FindLastIndex<T>(T[] array, int startIndex, System.Predicate<T> match) { throw null; }
-        public static int FindLastIndex<T>(T[] array, System.Predicate<T> match) { throw null; }
-        public static T FindLast<T>(T[] array, System.Predicate<T> match) { throw null; }
-        public static T Find<T>(T[] array, System.Predicate<T> match) { throw null; }
-        public System.Collections.IEnumerator GetEnumerator() { throw null; }
-        public int GetLength(int dimension) { throw null; }
-        public int GetLowerBound(int dimension) { throw null; }
-        public int GetUpperBound(int dimension) { throw null; }
-        public object GetValue(params int[] indices) { throw null; }
-        public static int IndexOf(System.Array array, object value) { throw null; }
-        public static int IndexOf(System.Array array, object value, int startIndex) { throw null; }
-        public static int IndexOf(System.Array array, object value, int startIndex, int count) { throw null; }
-        public static int IndexOf<T>(T[] array, T value) { throw null; }
-        public static int IndexOf<T>(T[] array, T value, int startIndex) { throw null; }
-        public static int IndexOf<T>(T[] array, T value, int startIndex, int count) { throw null; }
+
+        public Int32 Length { get { throw null; } }
+
+        public Int32 Rank { get { throw null; } }
+
+        Int32 Collections.ICollection.Count { get { throw null; } }
+
+        Boolean Collections.ICollection.IsSynchronized { get { throw null; } }
+
+        Object Collections.ICollection.SyncRoot { get { throw null; } }
+
+        Boolean Collections.IList.IsFixedSize { get { throw null; } }
+
+        Boolean Collections.IList.IsReadOnly { get { throw null; } }
+
+        Object Collections.IList.this[Int32 index] { get { throw null; } set { } }
+
+        public static Int32 BinarySearch(Array array, Int32 index, Int32 length, Object value, Collections.IComparer comparer) { throw null; }
+
+        public static Int32 BinarySearch(Array array, Int32 index, Int32 length, Object value) { throw null; }
+
+        public static Int32 BinarySearch(Array array, Object value, Collections.IComparer comparer) { throw null; }
+
+        public static Int32 BinarySearch(Array array, Object value) { throw null; }
+
+        public static Int32 BinarySearch<T>(T[] array, T value, Collections.Generic.IComparer<T> comparer) { throw null; }
+
+        public static Int32 BinarySearch<T>(T[] array, T value) { throw null; }
+
+        public static Int32 BinarySearch<T>(T[] array, Int32 index, Int32 length, T value, Collections.Generic.IComparer<T> comparer) { throw null; }
+
+        public static Int32 BinarySearch<T>(T[] array, Int32 index, Int32 length, T value) { throw null; }
+
+        public static void Clear(Array array, Int32 index, Int32 length) { }
+
+        public Object Clone() { throw null; }
+
+        public static void ConstrainedCopy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length) { }
+
+        public static void Copy(Array sourceArray, Array destinationArray, Int32 length) { }
+
+        public static void Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length) { }
+
+        public void CopyTo(Array array, Int32 index) { }
+
+        public static Array CreateInstance(Type elementType, Int32[] lengths, Int32[] lowerBounds) { throw null; }
+
+        public static Array CreateInstance(Type elementType, params Int32[] lengths) { throw null; }
+
+        public static Boolean Exists<T>(T[] array, Predicate<T> match) { throw null; }
+
+        public static T Find<T>(T[] array, Predicate<T> match) { throw null; }
+
+        public static T[] FindAll<T>(T[] array, Predicate<T> match) { throw null; }
+
+        public static Int32 FindIndex<T>(T[] array, Int32 startIndex, Int32 count, Predicate<T> match) { throw null; }
+
+        public static Int32 FindIndex<T>(T[] array, Int32 startIndex, Predicate<T> match) { throw null; }
+
+        public static Int32 FindIndex<T>(T[] array, Predicate<T> match) { throw null; }
+
+        public static T FindLast<T>(T[] array, Predicate<T> match) { throw null; }
+
+        public static Int32 FindLastIndex<T>(T[] array, Int32 startIndex, Int32 count, Predicate<T> match) { throw null; }
+
+        public static Int32 FindLastIndex<T>(T[] array, Int32 startIndex, Predicate<T> match) { throw null; }
+
+        public static Int32 FindLastIndex<T>(T[] array, Predicate<T> match) { throw null; }
+
+        public Collections.IEnumerator GetEnumerator() { throw null; }
+
+        public Int32 GetLength(Int32 dimension) { throw null; }
+
+        public Int32 GetLowerBound(Int32 dimension) { throw null; }
+
+        public Int32 GetUpperBound(Int32 dimension) { throw null; }
+
+        public Object GetValue(params Int32[] indices) { throw null; }
+
+        public static Int32 IndexOf(Array array, Object value, Int32 startIndex, Int32 count) { throw null; }
+
+        public static Int32 IndexOf(Array array, Object value, Int32 startIndex) { throw null; }
+
+        public static Int32 IndexOf(Array array, Object value) { throw null; }
+
+        public static Int32 IndexOf<T>(T[] array, T value, Int32 startIndex, Int32 count) { throw null; }
+
+        public static Int32 IndexOf<T>(T[] array, T value, Int32 startIndex) { throw null; }
+
+        public static Int32 IndexOf<T>(T[] array, T value) { throw null; }
+
         public void Initialize() { }
-        public static int LastIndexOf(System.Array array, object value) { throw null; }
-        public static int LastIndexOf(System.Array array, object value, int startIndex) { throw null; }
-        public static int LastIndexOf(System.Array array, object value, int startIndex, int count) { throw null; }
-        public static int LastIndexOf<T>(T[] array, T value) { throw null; }
-        public static int LastIndexOf<T>(T[] array, T value, int startIndex) { throw null; }
-        public static int LastIndexOf<T>(T[] array, T value, int startIndex, int count) { throw null; }
-        public static void Resize<T>(ref T[] array, int newSize) { }
-        public static void Reverse(System.Array array) { }
-        public static void Reverse(System.Array array, int index, int length) { }
-        public void SetValue(object value, params int[] indices) { }
-        public static void Sort(System.Array array) { }
-        public static void Sort(System.Array array, System.Collections.IComparer comparer) { }
-        public static void Sort(System.Array array, int index, int length) { }
-        public static void Sort(System.Array array, int index, int length, System.Collections.IComparer comparer) { }
+
+        public static Int32 LastIndexOf(Array array, Object value, Int32 startIndex, Int32 count) { throw null; }
+
+        public static Int32 LastIndexOf(Array array, Object value, Int32 startIndex) { throw null; }
+
+        public static Int32 LastIndexOf(Array array, Object value) { throw null; }
+
+        public static Int32 LastIndexOf<T>(T[] array, T value, Int32 startIndex, Int32 count) { throw null; }
+
+        public static Int32 LastIndexOf<T>(T[] array, T value, Int32 startIndex) { throw null; }
+
+        public static Int32 LastIndexOf<T>(T[] array, T value) { throw null; }
+
+        public static void Resize<T>(ref T[] array, Int32 newSize) { }
+
+        public static void Reverse(Array array, Int32 index, Int32 length) { }
+
+        public static void Reverse(Array array) { }
+
+        public void SetValue(Object value, params Int32[] indices) { }
+
+        public static void Sort(Array array, Collections.IComparer comparer) { }
+
+        public static void Sort(Array array, Int32 index, Int32 length, Collections.IComparer comparer) { }
+
+        public static void Sort(Array array, Int32 index, Int32 length) { }
+
+        public static void Sort(Array array) { }
+
+        public static void Sort<T>(T[] array, Collections.Generic.IComparer<T> comparer) { }
+
+        public static void Sort<T>(T[] array, Comparison<T> comparison) { }
+
+        public static void Sort<T>(T[] array, Int32 index, Int32 length, Collections.Generic.IComparer<T> comparer) { }
+
+        public static void Sort<T>(T[] array, Int32 index, Int32 length) { }
+
         public static void Sort<T>(T[] array) { }
-        public static void Sort<T>(T[] array, System.Collections.Generic.IComparer<T> comparer) { }
-        public static void Sort<T>(T[] array, System.Comparison<T> comparison) { }
-        public static void Sort<T>(T[] array, int index, int length) { }
-        public static void Sort<T>(T[] array, int index, int length, System.Collections.Generic.IComparer<T> comparer) { }
-        int System.Collections.IList.Add(object value) { throw null; }
-        void System.Collections.IList.Clear() { }
-        bool System.Collections.IList.Contains(object value) { throw null; }
-        int System.Collections.IList.IndexOf(object value) { throw null; }
-        void System.Collections.IList.Insert(int index, object value) { }
-        void System.Collections.IList.Remove(object value) { }
-        void System.Collections.IList.RemoveAt(int index) { }
-        int System.Collections.IStructuralComparable.CompareTo(object other, System.Collections.IComparer comparer) { throw null; }
-        bool System.Collections.IStructuralEquatable.Equals(object other, System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.Collections.IStructuralEquatable.GetHashCode(System.Collections.IEqualityComparer comparer) { throw null; }
-        public static bool TrueForAll<T>(T[] array, System.Predicate<T> match) { throw null; }
+
+        Int32 Collections.IList.Add(Object value) { throw null; }
+
+        void Collections.IList.Clear() { }
+
+        Boolean Collections.IList.Contains(Object value) { throw null; }
+
+        Int32 Collections.IList.IndexOf(Object value) { throw null; }
+
+        void Collections.IList.Insert(Int32 index, Object value) { }
+
+        void Collections.IList.Remove(Object value) { }
+
+        void Collections.IList.RemoveAt(Int32 index) { }
+
+        Int32 Collections.IStructuralComparable.CompareTo(Object other, Collections.IComparer comparer) { throw null; }
+
+        Boolean Collections.IStructuralEquatable.Equals(Object other, Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 Collections.IStructuralEquatable.GetHashCode(Collections.IEqualityComparer comparer) { throw null; }
+
+        public static Boolean TrueForAll<T>(T[] array, Predicate<T> match) { throw null; }
     }
-    public partial struct ArraySegment<T> : System.Collections.Generic.ICollection<T>, System.Collections.Generic.IEnumerable<T>, System.Collections.Generic.IList<T>, System.Collections.Generic.IReadOnlyCollection<T>, System.Collections.Generic.IReadOnlyList<T>, System.Collections.IEnumerable
+
+    public partial struct ArraySegment<T> : Collections.Generic.IList<T>, Collections.Generic.ICollection<T>, Collections.Generic.IReadOnlyList<T>, Collections.Generic.IReadOnlyCollection<T>, Collections.Generic.IEnumerable<T>, Collections.IEnumerable
     {
-        public ArraySegment(T[] array) { throw null; }
-        public ArraySegment(T[] array, int offset, int count) { throw null; }
+        public ArraySegment(T[] array, Int32 offset, Int32 count) { }
+
+        public ArraySegment(T[] array) { }
+
         public T[] Array { get { throw null; } }
-        public int Count { get { throw null; } }
-        public int Offset { get { throw null; } }
-        bool System.Collections.Generic.ICollection<T>.IsReadOnly { get { throw null; } }
-        T System.Collections.Generic.IList<T>.this[int index] { get { throw null; } set { } }
-        T System.Collections.Generic.IReadOnlyList<T>.this[int index] { get { throw null; } }
-        public bool Equals(System.ArraySegment<T> obj) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static bool operator ==(System.ArraySegment<T> a, System.ArraySegment<T> b) { throw null; }
-        public static bool operator !=(System.ArraySegment<T> a, System.ArraySegment<T> b) { throw null; }
-        void System.Collections.Generic.ICollection<T>.Add(T item) { }
-        void System.Collections.Generic.ICollection<T>.Clear() { }
-        bool System.Collections.Generic.ICollection<T>.Contains(T item) { throw null; }
-        void System.Collections.Generic.ICollection<T>.CopyTo(T[] array, int arrayIndex) { }
-        bool System.Collections.Generic.ICollection<T>.Remove(T item) { throw null; }
-        System.Collections.Generic.IEnumerator<T> System.Collections.Generic.IEnumerable<T>.GetEnumerator() { throw null; }
-        int System.Collections.Generic.IList<T>.IndexOf(T item) { throw null; }
-        void System.Collections.Generic.IList<T>.Insert(int index, T item) { }
-        void System.Collections.Generic.IList<T>.RemoveAt(int index) { }
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw null; }
+
+        public Int32 Count { get { throw null; } }
+
+        public Int32 Offset { get { throw null; } }
+
+        Boolean Collections.Generic.ICollection<T>.IsReadOnly { get { throw null; } }
+
+        T Collections.Generic.IList<T>.this[Int32 index] { get { throw null; } set { } }
+
+        T Collections.Generic.IReadOnlyList<T>.this[Int32 index] { get { throw null; } }
+
+        public Boolean Equals(ArraySegment<T> obj) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Boolean operator ==(ArraySegment<T> a, ArraySegment<T> b) { throw null; }
+
+        public static Boolean operator !=(ArraySegment<T> a, ArraySegment<T> b) { throw null; }
+
+        void Collections.Generic.ICollection<T>.Add(T item) { }
+
+        void Collections.Generic.ICollection<T>.Clear() { }
+
+        Boolean Collections.Generic.ICollection<T>.Contains(T item) { throw null; }
+
+        void Collections.Generic.ICollection<T>.CopyTo(T[] array, Int32 arrayIndex) { }
+
+        Boolean Collections.Generic.ICollection<T>.Remove(T item) { throw null; }
+
+        Collections.Generic.IEnumerator<T> Collections.Generic.IEnumerable<T>.GetEnumerator() { throw null; }
+
+        Int32 Collections.Generic.IList<T>.IndexOf(T item) { throw null; }
+
+        void Collections.Generic.IList<T>.Insert(Int32 index, T item) { }
+
+        void Collections.Generic.IList<T>.RemoveAt(Int32 index) { }
+
+        Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
     }
-    public partial class ArrayTypeMismatchException : System.Exception
+
+    public partial class ArrayTypeMismatchException : Exception
     {
         public ArrayTypeMismatchException() { }
-        public ArrayTypeMismatchException(string message) { }
-        public ArrayTypeMismatchException(string message, System.Exception innerException) { }
+
+        public ArrayTypeMismatchException(String message, Exception innerException) { }
+
+        public ArrayTypeMismatchException(String message) { }
     }
-    public delegate void AsyncCallback(System.IAsyncResult ar);
-    [System.AttributeUsageAttribute(System.AttributeTargets.All, Inherited=true, AllowMultiple=false)]
+
+    public delegate void AsyncCallback(IAsyncResult ar);
+    [AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
     public abstract partial class Attribute
     {
-        protected Attribute() { }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum AttributeTargets
     {
-        All = 32767,
         Assembly = 1,
-        Class = 4,
-        Constructor = 32,
-        Delegate = 4096,
-        Enum = 16,
-        Event = 512,
-        Field = 256,
-        GenericParameter = 16384,
-        Interface = 1024,
-        Method = 64,
         Module = 2,
-        Parameter = 2048,
-        Property = 128,
-        ReturnValue = 8192,
+        Class = 4,
         Struct = 8,
+        Enum = 16,
+        Constructor = 32,
+        Method = 64,
+        Property = 128,
+        Field = 256,
+        Event = 512,
+        Interface = 1024,
+        Parameter = 2048,
+        Delegate = 4096,
+        ReturnValue = 8192,
+        GenericParameter = 16384,
+        All = 32767
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class, Inherited=true)]
-    public sealed partial class AttributeUsageAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Class, Inherited = true)]
+    public sealed partial class AttributeUsageAttribute : Attribute
     {
-        public AttributeUsageAttribute(System.AttributeTargets validOn) { }
-        public bool AllowMultiple { get { throw null; } set { } }
-        public bool Inherited { get { throw null; } set { } }
-        public System.AttributeTargets ValidOn { get { throw null; } }
+        public AttributeUsageAttribute(AttributeTargets validOn) { }
+
+        public Boolean AllowMultiple { get { throw null; } set { } }
+
+        public Boolean Inherited { get { throw null; } set { } }
+
+        public AttributeTargets ValidOn { get { throw null; } }
     }
-    public partial class BadImageFormatException : System.Exception
+
+    public partial class BadImageFormatException : Exception
     {
         public BadImageFormatException() { }
-        public BadImageFormatException(string message) { }
-        public BadImageFormatException(string message, System.Exception inner) { }
-        public BadImageFormatException(string message, string fileName) { }
-        public BadImageFormatException(string message, string fileName, System.Exception inner) { }
-        public string FileName { get { throw null; } }
-        public override string Message { get { throw null; } }
-        public override string ToString() { throw null; }
+
+        public BadImageFormatException(String message, Exception inner) { }
+
+        public BadImageFormatException(String message, String fileName, Exception inner) { }
+
+        public BadImageFormatException(String message, String fileName) { }
+
+        public BadImageFormatException(String message) { }
+
+        public String FileName { get { throw null; } }
+
+        public override String Message { get { throw null; } }
+
+        public override String ToString() { throw null; }
     }
-    public partial struct Boolean : System.IComparable, System.IComparable<bool>, System.IEquatable<bool>
+
+    public partial struct Boolean : IComparable, IComparable<Boolean>, IEquatable<Boolean>
     {
-        public static readonly string FalseString;
-        public static readonly string TrueString;
-        public int CompareTo(System.Boolean value) { throw null; }
-        public System.Boolean Equals(System.Boolean obj) { throw null; }
-        public override System.Boolean Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static System.Boolean Parse(string value) { throw null; }
-        int System.IComparable.CompareTo(object obj) { throw null; }
-        public override string ToString() { throw null; }
-        public static System.Boolean TryParse(string value, out System.Boolean result) { throw null; }
+        public static readonly String FalseString;
+        public static readonly String TrueString;
+        public Int32 CompareTo(Boolean value) { throw null; }
+
+        public Boolean Equals(Boolean obj) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Boolean Parse(String value) { throw null; }
+
+        Int32 IComparable.CompareTo(Object obj) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public static Boolean TryParse(String value, out Boolean result) { throw null; }
     }
+
     public static partial class Buffer
     {
-        public static void BlockCopy(System.Array src, int srcOffset, System.Array dst, int dstOffset, int count) { }
-        public static int ByteLength(System.Array array) { throw null; }
-        public static byte GetByte(System.Array array, int index) { throw null; }
-        public static void SetByte(System.Array array, int index, byte value) { }
+        public static void BlockCopy(Array src, Int32 srcOffset, Array dst, Int32 dstOffset, Int32 count) { }
+
+        public static Int32 ByteLength(Array array) { throw null; }
+
+        public static Byte GetByte(Array array, Int32 index) { throw null; }
+
+        public static void SetByte(Array array, Int32 index, Byte value) { }
     }
-    public partial struct Byte : System.IComparable, System.IComparable<byte>, System.IEquatable<byte>, System.IFormattable
+
+    public partial struct Byte : IComparable, IComparable<Byte>, IEquatable<Byte>, IFormattable
     {
-        public const byte MaxValue = (byte)255;
-        public const byte MinValue = (byte)0;
-        public int CompareTo(System.Byte value) { throw null; }
-        public bool Equals(System.Byte obj) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static System.Byte Parse(string s) { throw null; }
-        public static System.Byte Parse(string s, System.Globalization.NumberStyles style) { throw null; }
-        public static System.Byte Parse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider) { throw null; }
-        public static System.Byte Parse(string s, System.IFormatProvider provider) { throw null; }
-        int System.IComparable.CompareTo(object value) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(System.IFormatProvider provider) { throw null; }
-        public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider provider) { throw null; }
-        public static bool TryParse(string s, out System.Byte result) { throw null; }
-        public static bool TryParse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider, out System.Byte result) { throw null; }
+        public const Byte MaxValue = 255;
+        public const Byte MinValue = 0;
+        public Int32 CompareTo(Byte value) { throw null; }
+
+        public Boolean Equals(Byte obj) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Byte Parse(String s, Globalization.NumberStyles style, IFormatProvider provider) { throw null; }
+
+        public static Byte Parse(String s, Globalization.NumberStyles style) { throw null; }
+
+        public static Byte Parse(String s, IFormatProvider provider) { throw null; }
+
+        public static Byte Parse(String s) { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(IFormatProvider provider) { throw null; }
+
+        public String ToString(String format, IFormatProvider provider) { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        public static Boolean TryParse(String s, out Byte result) { throw null; }
+
+        public static Boolean TryParse(String s, Globalization.NumberStyles style, IFormatProvider provider, out Byte result) { throw null; }
     }
-    public partial struct Char : System.IComparable, System.IComparable<char>, System.IEquatable<char>
+
+    public partial struct Char : IComparable, IComparable<Char>, IEquatable<Char>
     {
-        public const char MaxValue = '\uFFFF';
-        public const char MinValue = '\0';
-        public int CompareTo(System.Char value) { throw null; }
-        public static string ConvertFromUtf32(int utf32) { throw null; }
-        public static int ConvertToUtf32(System.Char highSurrogate, System.Char lowSurrogate) { throw null; }
-        public static int ConvertToUtf32(string s, int index) { throw null; }
-        public bool Equals(System.Char obj) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static double GetNumericValue(System.Char c) { throw null; }
-        public static double GetNumericValue(string s, int index) { throw null; }
-        public static bool IsControl(System.Char c) { throw null; }
-        public static bool IsControl(string s, int index) { throw null; }
-        public static bool IsDigit(System.Char c) { throw null; }
-        public static bool IsDigit(string s, int index) { throw null; }
-        public static bool IsHighSurrogate(System.Char c) { throw null; }
-        public static bool IsHighSurrogate(string s, int index) { throw null; }
-        public static bool IsLetter(System.Char c) { throw null; }
-        public static bool IsLetter(string s, int index) { throw null; }
-        public static bool IsLetterOrDigit(System.Char c) { throw null; }
-        public static bool IsLetterOrDigit(string s, int index) { throw null; }
-        public static bool IsLower(System.Char c) { throw null; }
-        public static bool IsLower(string s, int index) { throw null; }
-        public static bool IsLowSurrogate(System.Char c) { throw null; }
-        public static bool IsLowSurrogate(string s, int index) { throw null; }
-        public static bool IsNumber(System.Char c) { throw null; }
-        public static bool IsNumber(string s, int index) { throw null; }
-        public static bool IsPunctuation(System.Char c) { throw null; }
-        public static bool IsPunctuation(string s, int index) { throw null; }
-        public static bool IsSeparator(System.Char c) { throw null; }
-        public static bool IsSeparator(string s, int index) { throw null; }
-        public static bool IsSurrogate(System.Char c) { throw null; }
-        public static bool IsSurrogate(string s, int index) { throw null; }
-        public static bool IsSurrogatePair(System.Char highSurrogate, System.Char lowSurrogate) { throw null; }
-        public static bool IsSurrogatePair(string s, int index) { throw null; }
-        public static bool IsSymbol(System.Char c) { throw null; }
-        public static bool IsSymbol(string s, int index) { throw null; }
-        public static bool IsUpper(System.Char c) { throw null; }
-        public static bool IsUpper(string s, int index) { throw null; }
-        public static bool IsWhiteSpace(System.Char c) { throw null; }
-        public static bool IsWhiteSpace(string s, int index) { throw null; }
-        int System.IComparable.CompareTo(object value) { throw null; }
-        public static System.Char ToLower(System.Char c) { throw null; }
-        public static System.Char ToLowerInvariant(System.Char c) { throw null; }
-        public override string ToString() { throw null; }
-        public static string ToString(System.Char c) { throw null; }
-        public static System.Char ToUpper(System.Char c) { throw null; }
-        public static System.Char ToUpperInvariant(System.Char c) { throw null; }
-        public static bool TryParse(string s, out System.Char result) { throw null; }
+        public const Char MaxValue = '\uffff';
+        public const Char MinValue = '\0';
+        public Int32 CompareTo(Char value) { throw null; }
+
+        public static String ConvertFromUtf32(Int32 utf32) { throw null; }
+
+        public static Int32 ConvertToUtf32(Char highSurrogate, Char lowSurrogate) { throw null; }
+
+        public static Int32 ConvertToUtf32(String s, Int32 index) { throw null; }
+
+        public Boolean Equals(Char obj) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Double GetNumericValue(Char c) { throw null; }
+
+        public static Double GetNumericValue(String s, Int32 index) { throw null; }
+
+        public static Boolean IsControl(Char c) { throw null; }
+
+        public static Boolean IsControl(String s, Int32 index) { throw null; }
+
+        public static Boolean IsDigit(Char c) { throw null; }
+
+        public static Boolean IsDigit(String s, Int32 index) { throw null; }
+
+        public static Boolean IsHighSurrogate(Char c) { throw null; }
+
+        public static Boolean IsHighSurrogate(String s, Int32 index) { throw null; }
+
+        public static Boolean IsLetter(Char c) { throw null; }
+
+        public static Boolean IsLetter(String s, Int32 index) { throw null; }
+
+        public static Boolean IsLetterOrDigit(Char c) { throw null; }
+
+        public static Boolean IsLetterOrDigit(String s, Int32 index) { throw null; }
+
+        public static Boolean IsLower(Char c) { throw null; }
+
+        public static Boolean IsLower(String s, Int32 index) { throw null; }
+
+        public static Boolean IsLowSurrogate(Char c) { throw null; }
+
+        public static Boolean IsLowSurrogate(String s, Int32 index) { throw null; }
+
+        public static Boolean IsNumber(Char c) { throw null; }
+
+        public static Boolean IsNumber(String s, Int32 index) { throw null; }
+
+        public static Boolean IsPunctuation(Char c) { throw null; }
+
+        public static Boolean IsPunctuation(String s, Int32 index) { throw null; }
+
+        public static Boolean IsSeparator(Char c) { throw null; }
+
+        public static Boolean IsSeparator(String s, Int32 index) { throw null; }
+
+        public static Boolean IsSurrogate(Char c) { throw null; }
+
+        public static Boolean IsSurrogate(String s, Int32 index) { throw null; }
+
+        public static Boolean IsSurrogatePair(Char highSurrogate, Char lowSurrogate) { throw null; }
+
+        public static Boolean IsSurrogatePair(String s, Int32 index) { throw null; }
+
+        public static Boolean IsSymbol(Char c) { throw null; }
+
+        public static Boolean IsSymbol(String s, Int32 index) { throw null; }
+
+        public static Boolean IsUpper(Char c) { throw null; }
+
+        public static Boolean IsUpper(String s, Int32 index) { throw null; }
+
+        public static Boolean IsWhiteSpace(Char c) { throw null; }
+
+        public static Boolean IsWhiteSpace(String s, Int32 index) { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        public static Char ToLower(Char c) { throw null; }
+
+        public static Char ToLowerInvariant(Char c) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public static String ToString(Char c) { throw null; }
+
+        public static Char ToUpper(Char c) { throw null; }
+
+        public static Char ToUpperInvariant(Char c) { throw null; }
+
+        public static Boolean TryParse(String s, out Char result) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.All, Inherited=true, AllowMultiple=false)]
-    public sealed partial class CLSCompliantAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
+    public sealed partial class CLSCompliantAttribute : Attribute
     {
-        public CLSCompliantAttribute(bool isCompliant) { }
-        public bool IsCompliant { get { throw null; } }
+        public CLSCompliantAttribute(Boolean isCompliant) { }
+
+        public Boolean IsCompliant { get { throw null; } }
     }
-    public delegate int Comparison<in T>(T x, T y);
-    public partial struct DateTime : System.IComparable, System.IComparable<System.DateTime>, System.IEquatable<System.DateTime>, System.IFormattable
+
+    public delegate Int32 Comparison<in T>(T x, T y);
+    public partial struct DateTime : IComparable, IComparable<DateTime>, IEquatable<DateTime>, IFormattable
     {
-        public static readonly System.DateTime MaxValue;
-        public static readonly System.DateTime MinValue;
-        public DateTime(int year, int month, int day) { throw null; }
-        public DateTime(int year, int month, int day, int hour, int minute, int second) { throw null; }
-        public DateTime(int year, int month, int day, int hour, int minute, int second, System.DateTimeKind kind) { throw null; }
-        public DateTime(int year, int month, int day, int hour, int minute, int second, int millisecond) { throw null; }
-        public DateTime(int year, int month, int day, int hour, int minute, int second, int millisecond, System.DateTimeKind kind) { throw null; }
-        public DateTime(long ticks) { throw null; }
-        public DateTime(long ticks, System.DateTimeKind kind) { throw null; }
-        public System.DateTime Date { get { throw null; } }
-        public int Day { get { throw null; } }
-        public System.DayOfWeek DayOfWeek { get { throw null; } }
-        public int DayOfYear { get { throw null; } }
-        public int Hour { get { throw null; } }
-        public System.DateTimeKind Kind { get { throw null; } }
-        public int Millisecond { get { throw null; } }
-        public int Minute { get { throw null; } }
-        public int Month { get { throw null; } }
-        public static System.DateTime Now { get { throw null; } }
-        public int Second { get { throw null; } }
-        public long Ticks { get { throw null; } }
-        public System.TimeSpan TimeOfDay { get { throw null; } }
-        public static System.DateTime Today { get { throw null; } }
-        public static System.DateTime UtcNow { get { throw null; } }
-        public int Year { get { throw null; } }
-        public System.DateTime Add(System.TimeSpan value) { throw null; }
-        public System.DateTime AddDays(double value) { throw null; }
-        public System.DateTime AddHours(double value) { throw null; }
-        public System.DateTime AddMilliseconds(double value) { throw null; }
-        public System.DateTime AddMinutes(double value) { throw null; }
-        public System.DateTime AddMonths(int months) { throw null; }
-        public System.DateTime AddSeconds(double value) { throw null; }
-        public System.DateTime AddTicks(long value) { throw null; }
-        public System.DateTime AddYears(int value) { throw null; }
-        public static int Compare(System.DateTime t1, System.DateTime t2) { throw null; }
-        public int CompareTo(System.DateTime value) { throw null; }
-        public static int DaysInMonth(int year, int month) { throw null; }
-        public bool Equals(System.DateTime value) { throw null; }
-        public static bool Equals(System.DateTime t1, System.DateTime t2) { throw null; }
-        public override bool Equals(object value) { throw null; }
-        public static System.DateTime FromBinary(long dateData) { throw null; }
-        public static System.DateTime FromFileTime(long fileTime) { throw null; }
-        public static System.DateTime FromFileTimeUtc(long fileTime) { throw null; }
-        public string[] GetDateTimeFormats() { throw null; }
-        public string[] GetDateTimeFormats(char format) { throw null; }
-        public string[] GetDateTimeFormats(char format, System.IFormatProvider provider) { throw null; }
-        public string[] GetDateTimeFormats(System.IFormatProvider provider) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public bool IsDaylightSavingTime() { throw null; }
-        public static bool IsLeapYear(int year) { throw null; }
-        public static System.DateTime operator +(System.DateTime d, System.TimeSpan t) { throw null; }
-        public static bool operator ==(System.DateTime d1, System.DateTime d2) { throw null; }
-        public static bool operator >(System.DateTime t1, System.DateTime t2) { throw null; }
-        public static bool operator >=(System.DateTime t1, System.DateTime t2) { throw null; }
-        public static bool operator !=(System.DateTime d1, System.DateTime d2) { throw null; }
-        public static bool operator <(System.DateTime t1, System.DateTime t2) { throw null; }
-        public static bool operator <=(System.DateTime t1, System.DateTime t2) { throw null; }
-        public static System.TimeSpan operator -(System.DateTime d1, System.DateTime d2) { throw null; }
-        public static System.DateTime operator -(System.DateTime d, System.TimeSpan t) { throw null; }
-        public static System.DateTime Parse(string s) { throw null; }
-        public static System.DateTime Parse(string s, System.IFormatProvider provider) { throw null; }
-        public static System.DateTime Parse(string s, System.IFormatProvider provider, System.Globalization.DateTimeStyles styles) { throw null; }
-        public static System.DateTime ParseExact(string s, string format, System.IFormatProvider provider) { throw null; }
-        public static System.DateTime ParseExact(string s, string format, System.IFormatProvider provider, System.Globalization.DateTimeStyles style) { throw null; }
-        public static System.DateTime ParseExact(string s, string[] formats, System.IFormatProvider provider, System.Globalization.DateTimeStyles style) { throw null; }
-        public static System.DateTime SpecifyKind(System.DateTime value, System.DateTimeKind kind) { throw null; }
-        public System.TimeSpan Subtract(System.DateTime value) { throw null; }
-        public System.DateTime Subtract(System.TimeSpan value) { throw null; }
-        int System.IComparable.CompareTo(object value) { throw null; }
-        public long ToBinary() { throw null; }
-        public long ToFileTime() { throw null; }
-        public long ToFileTimeUtc() { throw null; }
-        public System.DateTime ToLocalTime() { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(System.IFormatProvider provider) { throw null; }
-        public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider provider) { throw null; }
-        public System.DateTime ToUniversalTime() { throw null; }
-        public static bool TryParse(string s, out System.DateTime result) { throw null; }
-        public static bool TryParse(string s, System.IFormatProvider provider, System.Globalization.DateTimeStyles styles, out System.DateTime result) { throw null; }
-        public static bool TryParseExact(string s, string format, System.IFormatProvider provider, System.Globalization.DateTimeStyles style, out System.DateTime result) { throw null; }
-        public static bool TryParseExact(string s, string[] formats, System.IFormatProvider provider, System.Globalization.DateTimeStyles style, out System.DateTime result) { throw null; }
+        public static readonly DateTime MaxValue;
+        public static readonly DateTime MinValue;
+        public DateTime(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, DateTimeKind kind) { }
+
+        public DateTime(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond, DateTimeKind kind) { }
+
+        public DateTime(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond) { }
+
+        public DateTime(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second) { }
+
+        public DateTime(Int32 year, Int32 month, Int32 day) { }
+
+        public DateTime(Int64 ticks, DateTimeKind kind) { }
+
+        public DateTime(Int64 ticks) { }
+
+        public DateTime Date { get { throw null; } }
+
+        public Int32 Day { get { throw null; } }
+
+        public DayOfWeek DayOfWeek { get { throw null; } }
+
+        public Int32 DayOfYear { get { throw null; } }
+
+        public Int32 Hour { get { throw null; } }
+
+        public DateTimeKind Kind { get { throw null; } }
+
+        public Int32 Millisecond { get { throw null; } }
+
+        public Int32 Minute { get { throw null; } }
+
+        public Int32 Month { get { throw null; } }
+
+        public static DateTime Now { get { throw null; } }
+
+        public Int32 Second { get { throw null; } }
+
+        public Int64 Ticks { get { throw null; } }
+
+        public TimeSpan TimeOfDay { get { throw null; } }
+
+        public static DateTime Today { get { throw null; } }
+
+        public static DateTime UtcNow { get { throw null; } }
+
+        public Int32 Year { get { throw null; } }
+
+        public DateTime Add(TimeSpan value) { throw null; }
+
+        public DateTime AddDays(Double value) { throw null; }
+
+        public DateTime AddHours(Double value) { throw null; }
+
+        public DateTime AddMilliseconds(Double value) { throw null; }
+
+        public DateTime AddMinutes(Double value) { throw null; }
+
+        public DateTime AddMonths(Int32 months) { throw null; }
+
+        public DateTime AddSeconds(Double value) { throw null; }
+
+        public DateTime AddTicks(Int64 value) { throw null; }
+
+        public DateTime AddYears(Int32 value) { throw null; }
+
+        public static Int32 Compare(DateTime t1, DateTime t2) { throw null; }
+
+        public Int32 CompareTo(DateTime value) { throw null; }
+
+        public static Int32 DaysInMonth(Int32 year, Int32 month) { throw null; }
+
+        public static Boolean Equals(DateTime t1, DateTime t2) { throw null; }
+
+        public Boolean Equals(DateTime value) { throw null; }
+
+        public override Boolean Equals(Object value) { throw null; }
+
+        public static DateTime FromBinary(Int64 dateData) { throw null; }
+
+        public static DateTime FromFileTime(Int64 fileTime) { throw null; }
+
+        public static DateTime FromFileTimeUtc(Int64 fileTime) { throw null; }
+
+        public String[] GetDateTimeFormats() { throw null; }
+
+        public String[] GetDateTimeFormats(Char format, IFormatProvider provider) { throw null; }
+
+        public String[] GetDateTimeFormats(Char format) { throw null; }
+
+        public String[] GetDateTimeFormats(IFormatProvider provider) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public Boolean IsDaylightSavingTime() { throw null; }
+
+        public static Boolean IsLeapYear(Int32 year) { throw null; }
+
+        public static DateTime operator +(DateTime d, TimeSpan t) { throw null; }
+
+        public static Boolean operator ==(DateTime d1, DateTime d2) { throw null; }
+
+        public static Boolean operator >(DateTime t1, DateTime t2) { throw null; }
+
+        public static Boolean operator >=(DateTime t1, DateTime t2) { throw null; }
+
+        public static Boolean operator !=(DateTime d1, DateTime d2) { throw null; }
+
+        public static Boolean operator <(DateTime t1, DateTime t2) { throw null; }
+
+        public static Boolean operator <=(DateTime t1, DateTime t2) { throw null; }
+
+        public static TimeSpan operator -(DateTime d1, DateTime d2) { throw null; }
+
+        public static DateTime operator -(DateTime d, TimeSpan t) { throw null; }
+
+        public static DateTime Parse(String s, IFormatProvider provider, Globalization.DateTimeStyles styles) { throw null; }
+
+        public static DateTime Parse(String s, IFormatProvider provider) { throw null; }
+
+        public static DateTime Parse(String s) { throw null; }
+
+        public static DateTime ParseExact(String s, String format, IFormatProvider provider, Globalization.DateTimeStyles style) { throw null; }
+
+        public static DateTime ParseExact(String s, String format, IFormatProvider provider) { throw null; }
+
+        public static DateTime ParseExact(String s, String[] formats, IFormatProvider provider, Globalization.DateTimeStyles style) { throw null; }
+
+        public static DateTime SpecifyKind(DateTime value, DateTimeKind kind) { throw null; }
+
+        public TimeSpan Subtract(DateTime value) { throw null; }
+
+        public DateTime Subtract(TimeSpan value) { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        public Int64 ToBinary() { throw null; }
+
+        public Int64 ToFileTime() { throw null; }
+
+        public Int64 ToFileTimeUtc() { throw null; }
+
+        public DateTime ToLocalTime() { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(IFormatProvider provider) { throw null; }
+
+        public String ToString(String format, IFormatProvider provider) { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        public DateTime ToUniversalTime() { throw null; }
+
+        public static Boolean TryParse(String s, out DateTime result) { throw null; }
+
+        public static Boolean TryParse(String s, IFormatProvider provider, Globalization.DateTimeStyles styles, out DateTime result) { throw null; }
+
+        public static Boolean TryParseExact(String s, String format, IFormatProvider provider, Globalization.DateTimeStyles style, out DateTime result) { throw null; }
+
+        public static Boolean TryParseExact(String s, String[] formats, IFormatProvider provider, Globalization.DateTimeStyles style, out DateTime result) { throw null; }
     }
+
     public enum DateTimeKind
     {
-        Local = 2,
         Unspecified = 0,
         Utc = 1,
+        Local = 2
     }
-    public partial struct DateTimeOffset : System.IComparable, System.IComparable<System.DateTimeOffset>, System.IEquatable<System.DateTimeOffset>, System.IFormattable
+
+    public partial struct DateTimeOffset : IComparable, IComparable<DateTimeOffset>, IEquatable<DateTimeOffset>, IFormattable
     {
-        public static readonly System.DateTimeOffset MaxValue;
-        public static readonly System.DateTimeOffset MinValue;
-        public DateTimeOffset(System.DateTime dateTime) { throw null; }
-        public DateTimeOffset(System.DateTime dateTime, System.TimeSpan offset) { throw null; }
-        public DateTimeOffset(int year, int month, int day, int hour, int minute, int second, int millisecond, System.TimeSpan offset) { throw null; }
-        public DateTimeOffset(int year, int month, int day, int hour, int minute, int second, System.TimeSpan offset) { throw null; }
-        public DateTimeOffset(long ticks, System.TimeSpan offset) { throw null; }
-        public System.DateTime Date { get { throw null; } }
-        public System.DateTime DateTime { get { throw null; } }
-        public int Day { get { throw null; } }
-        public System.DayOfWeek DayOfWeek { get { throw null; } }
-        public int DayOfYear { get { throw null; } }
-        public int Hour { get { throw null; } }
-        public System.DateTime LocalDateTime { get { throw null; } }
-        public int Millisecond { get { throw null; } }
-        public int Minute { get { throw null; } }
-        public int Month { get { throw null; } }
-        public static System.DateTimeOffset Now { get { throw null; } }
-        public System.TimeSpan Offset { get { throw null; } }
-        public int Second { get { throw null; } }
-        public long Ticks { get { throw null; } }
-        public System.TimeSpan TimeOfDay { get { throw null; } }
-        public System.DateTime UtcDateTime { get { throw null; } }
-        public static System.DateTimeOffset UtcNow { get { throw null; } }
-        public long UtcTicks { get { throw null; } }
-        public int Year { get { throw null; } }
-        public System.DateTimeOffset Add(System.TimeSpan timeSpan) { throw null; }
-        public System.DateTimeOffset AddDays(double days) { throw null; }
-        public System.DateTimeOffset AddHours(double hours) { throw null; }
-        public System.DateTimeOffset AddMilliseconds(double milliseconds) { throw null; }
-        public System.DateTimeOffset AddMinutes(double minutes) { throw null; }
-        public System.DateTimeOffset AddMonths(int months) { throw null; }
-        public System.DateTimeOffset AddSeconds(double seconds) { throw null; }
-        public System.DateTimeOffset AddTicks(long ticks) { throw null; }
-        public System.DateTimeOffset AddYears(int years) { throw null; }
-        public static int Compare(System.DateTimeOffset first, System.DateTimeOffset second) { throw null; }
-        public int CompareTo(System.DateTimeOffset other) { throw null; }
-        public bool Equals(System.DateTimeOffset other) { throw null; }
-        public static bool Equals(System.DateTimeOffset first, System.DateTimeOffset second) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public bool EqualsExact(System.DateTimeOffset other) { throw null; }
-        public static System.DateTimeOffset FromFileTime(long fileTime) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static System.DateTimeOffset operator +(System.DateTimeOffset dateTimeOffset, System.TimeSpan timeSpan) { throw null; }
-        public static bool operator ==(System.DateTimeOffset left, System.DateTimeOffset right) { throw null; }
-        public static bool operator >(System.DateTimeOffset left, System.DateTimeOffset right) { throw null; }
-        public static bool operator >=(System.DateTimeOffset left, System.DateTimeOffset right) { throw null; }
-        public static implicit operator System.DateTimeOffset (System.DateTime dateTime) { throw null; }
-        public static bool operator !=(System.DateTimeOffset left, System.DateTimeOffset right) { throw null; }
-        public static bool operator <(System.DateTimeOffset left, System.DateTimeOffset right) { throw null; }
-        public static bool operator <=(System.DateTimeOffset left, System.DateTimeOffset right) { throw null; }
-        public static System.TimeSpan operator -(System.DateTimeOffset left, System.DateTimeOffset right) { throw null; }
-        public static System.DateTimeOffset operator -(System.DateTimeOffset dateTimeOffset, System.TimeSpan timeSpan) { throw null; }
-        public static System.DateTimeOffset Parse(string input) { throw null; }
-        public static System.DateTimeOffset Parse(string input, System.IFormatProvider formatProvider) { throw null; }
-        public static System.DateTimeOffset Parse(string input, System.IFormatProvider formatProvider, System.Globalization.DateTimeStyles styles) { throw null; }
-        public static System.DateTimeOffset ParseExact(string input, string format, System.IFormatProvider formatProvider) { throw null; }
-        public static System.DateTimeOffset ParseExact(string input, string format, System.IFormatProvider formatProvider, System.Globalization.DateTimeStyles styles) { throw null; }
-        public static System.DateTimeOffset ParseExact(string input, string[] formats, System.IFormatProvider formatProvider, System.Globalization.DateTimeStyles styles) { throw null; }
-        public System.TimeSpan Subtract(System.DateTimeOffset value) { throw null; }
-        public System.DateTimeOffset Subtract(System.TimeSpan value) { throw null; }
-        int System.IComparable.CompareTo(object obj) { throw null; }
-        public long ToFileTime() { throw null; }
-        public System.DateTimeOffset ToLocalTime() { throw null; }
-        public System.DateTimeOffset ToOffset(System.TimeSpan offset) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(System.IFormatProvider formatProvider) { throw null; }
-        public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider formatProvider) { throw null; }
-        public System.DateTimeOffset ToUniversalTime() { throw null; }
-        public static bool TryParse(string input, out System.DateTimeOffset result) { throw null; }
-        public static bool TryParse(string input, System.IFormatProvider formatProvider, System.Globalization.DateTimeStyles styles, out System.DateTimeOffset result) { throw null; }
-        public static bool TryParseExact(string input, string format, System.IFormatProvider formatProvider, System.Globalization.DateTimeStyles styles, out System.DateTimeOffset result) { throw null; }
-        public static bool TryParseExact(string input, string[] formats, System.IFormatProvider formatProvider, System.Globalization.DateTimeStyles styles, out System.DateTimeOffset result) { throw null; }
+        public static readonly DateTimeOffset MaxValue;
+        public static readonly DateTimeOffset MinValue;
+        public DateTimeOffset(DateTime dateTime, TimeSpan offset) { }
+
+        public DateTimeOffset(DateTime dateTime) { }
+
+        public DateTimeOffset(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, Int32 millisecond, TimeSpan offset) { }
+
+        public DateTimeOffset(Int32 year, Int32 month, Int32 day, Int32 hour, Int32 minute, Int32 second, TimeSpan offset) { }
+
+        public DateTimeOffset(Int64 ticks, TimeSpan offset) { }
+
+        public DateTime Date { get { throw null; } }
+
+        public DateTime DateTime { get { throw null; } }
+
+        public Int32 Day { get { throw null; } }
+
+        public DayOfWeek DayOfWeek { get { throw null; } }
+
+        public Int32 DayOfYear { get { throw null; } }
+
+        public Int32 Hour { get { throw null; } }
+
+        public DateTime LocalDateTime { get { throw null; } }
+
+        public Int32 Millisecond { get { throw null; } }
+
+        public Int32 Minute { get { throw null; } }
+
+        public Int32 Month { get { throw null; } }
+
+        public static DateTimeOffset Now { get { throw null; } }
+
+        public TimeSpan Offset { get { throw null; } }
+
+        public Int32 Second { get { throw null; } }
+
+        public Int64 Ticks { get { throw null; } }
+
+        public TimeSpan TimeOfDay { get { throw null; } }
+
+        public DateTime UtcDateTime { get { throw null; } }
+
+        public static DateTimeOffset UtcNow { get { throw null; } }
+
+        public Int64 UtcTicks { get { throw null; } }
+
+        public Int32 Year { get { throw null; } }
+
+        public DateTimeOffset Add(TimeSpan timeSpan) { throw null; }
+
+        public DateTimeOffset AddDays(Double days) { throw null; }
+
+        public DateTimeOffset AddHours(Double hours) { throw null; }
+
+        public DateTimeOffset AddMilliseconds(Double milliseconds) { throw null; }
+
+        public DateTimeOffset AddMinutes(Double minutes) { throw null; }
+
+        public DateTimeOffset AddMonths(Int32 months) { throw null; }
+
+        public DateTimeOffset AddSeconds(Double seconds) { throw null; }
+
+        public DateTimeOffset AddTicks(Int64 ticks) { throw null; }
+
+        public DateTimeOffset AddYears(Int32 years) { throw null; }
+
+        public static Int32 Compare(DateTimeOffset first, DateTimeOffset second) { throw null; }
+
+        public Int32 CompareTo(DateTimeOffset other) { throw null; }
+
+        public static Boolean Equals(DateTimeOffset first, DateTimeOffset second) { throw null; }
+
+        public Boolean Equals(DateTimeOffset other) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public Boolean EqualsExact(DateTimeOffset other) { throw null; }
+
+        public static DateTimeOffset FromFileTime(Int64 fileTime) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static DateTimeOffset operator +(DateTimeOffset dateTimeOffset, TimeSpan timeSpan) { throw null; }
+
+        public static Boolean operator ==(DateTimeOffset left, DateTimeOffset right) { throw null; }
+
+        public static Boolean operator >(DateTimeOffset left, DateTimeOffset right) { throw null; }
+
+        public static Boolean operator >=(DateTimeOffset left, DateTimeOffset right) { throw null; }
+
+        public static implicit operator DateTimeOffset(DateTime dateTime) { throw null; }
+
+        public static Boolean operator !=(DateTimeOffset left, DateTimeOffset right) { throw null; }
+
+        public static Boolean operator <(DateTimeOffset left, DateTimeOffset right) { throw null; }
+
+        public static Boolean operator <=(DateTimeOffset left, DateTimeOffset right) { throw null; }
+
+        public static TimeSpan operator -(DateTimeOffset left, DateTimeOffset right) { throw null; }
+
+        public static DateTimeOffset operator -(DateTimeOffset dateTimeOffset, TimeSpan timeSpan) { throw null; }
+
+        public static DateTimeOffset Parse(String input, IFormatProvider formatProvider, Globalization.DateTimeStyles styles) { throw null; }
+
+        public static DateTimeOffset Parse(String input, IFormatProvider formatProvider) { throw null; }
+
+        public static DateTimeOffset Parse(String input) { throw null; }
+
+        public static DateTimeOffset ParseExact(String input, String format, IFormatProvider formatProvider, Globalization.DateTimeStyles styles) { throw null; }
+
+        public static DateTimeOffset ParseExact(String input, String format, IFormatProvider formatProvider) { throw null; }
+
+        public static DateTimeOffset ParseExact(String input, String[] formats, IFormatProvider formatProvider, Globalization.DateTimeStyles styles) { throw null; }
+
+        public TimeSpan Subtract(DateTimeOffset value) { throw null; }
+
+        public DateTimeOffset Subtract(TimeSpan value) { throw null; }
+
+        Int32 IComparable.CompareTo(Object obj) { throw null; }
+
+        public Int64 ToFileTime() { throw null; }
+
+        public DateTimeOffset ToLocalTime() { throw null; }
+
+        public DateTimeOffset ToOffset(TimeSpan offset) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(IFormatProvider formatProvider) { throw null; }
+
+        public String ToString(String format, IFormatProvider formatProvider) { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        public DateTimeOffset ToUniversalTime() { throw null; }
+
+        public static Boolean TryParse(String input, out DateTimeOffset result) { throw null; }
+
+        public static Boolean TryParse(String input, IFormatProvider formatProvider, Globalization.DateTimeStyles styles, out DateTimeOffset result) { throw null; }
+
+        public static Boolean TryParseExact(String input, String format, IFormatProvider formatProvider, Globalization.DateTimeStyles styles, out DateTimeOffset result) { throw null; }
+
+        public static Boolean TryParseExact(String input, String[] formats, IFormatProvider formatProvider, Globalization.DateTimeStyles styles, out DateTimeOffset result) { throw null; }
     }
+
     public enum DayOfWeek
     {
-        Friday = 5,
-        Monday = 1,
-        Saturday = 6,
         Sunday = 0,
-        Thursday = 4,
+        Monday = 1,
         Tuesday = 2,
         Wednesday = 3,
+        Thursday = 4,
+        Friday = 5,
+        Saturday = 6
     }
-    public partial struct Decimal : System.IComparable, System.IComparable<decimal>, System.IEquatable<decimal>, System.IFormattable
+
+    public partial struct Decimal : IComparable, IComparable<Decimal>, IEquatable<Decimal>, IFormattable
     {
-        [System.Runtime.CompilerServices.DecimalConstantAttribute((byte)0, (byte)0, (uint)4294967295, (uint)4294967295, (uint)4294967295)]
-        public static readonly decimal MaxValue;
-        [System.Runtime.CompilerServices.DecimalConstantAttribute((byte)0, (byte)128, (uint)0, (uint)0, (uint)1)]
-        public static readonly decimal MinusOne;
-        [System.Runtime.CompilerServices.DecimalConstantAttribute((byte)0, (byte)128, (uint)4294967295, (uint)4294967295, (uint)4294967295)]
-        public static readonly decimal MinValue;
-        [System.Runtime.CompilerServices.DecimalConstantAttribute((byte)0, (byte)0, (uint)0, (uint)0, (uint)1)]
-        public static readonly decimal One;
-        [System.Runtime.CompilerServices.DecimalConstantAttribute((byte)0, (byte)0, (uint)0, (uint)0, (uint)0)]
-        public static readonly decimal Zero;
-        public Decimal(double value) { throw null; }
-        public Decimal(int value) { throw null; }
-        public Decimal(int lo, int mid, int hi, bool isNegative, byte scale) { throw null; }
-        public Decimal(int[] bits) { throw null; }
-        public Decimal(long value) { throw null; }
-        public Decimal(float value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public Decimal(uint value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public Decimal(ulong value) { throw null; }
-        public static System.Decimal Add(System.Decimal d1, System.Decimal d2) { throw null; }
-        public static System.Decimal Ceiling(System.Decimal d) { throw null; }
-        public static int Compare(System.Decimal d1, System.Decimal d2) { throw null; }
-        public int CompareTo(System.Decimal value) { throw null; }
-        public static System.Decimal Divide(System.Decimal d1, System.Decimal d2) { throw null; }
-        public bool Equals(System.Decimal value) { throw null; }
-        public static bool Equals(System.Decimal d1, System.Decimal d2) { throw null; }
-        public override bool Equals(object value) { throw null; }
-        public static System.Decimal Floor(System.Decimal d) { throw null; }
-        public static int[] GetBits(System.Decimal d) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static System.Decimal Multiply(System.Decimal d1, System.Decimal d2) { throw null; }
-        public static System.Decimal Negate(System.Decimal d) { throw null; }
-        public static System.Decimal operator +(System.Decimal d1, System.Decimal d2) { throw null; }
-        public static System.Decimal operator --(System.Decimal d) { throw null; }
-        public static System.Decimal operator /(System.Decimal d1, System.Decimal d2) { throw null; }
-        public static bool operator ==(System.Decimal d1, System.Decimal d2) { throw null; }
-        public static explicit operator byte (System.Decimal value) { throw null; }
-        public static explicit operator char (System.Decimal value) { throw null; }
-        public static explicit operator double (System.Decimal value) { throw null; }
-        public static explicit operator short (System.Decimal value) { throw null; }
-        public static explicit operator int (System.Decimal value) { throw null; }
-        public static explicit operator long (System.Decimal value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator sbyte (System.Decimal value) { throw null; }
-        public static explicit operator float (System.Decimal value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator ushort (System.Decimal value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator uint (System.Decimal value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static explicit operator ulong (System.Decimal value) { throw null; }
-        public static explicit operator System.Decimal (double value) { throw null; }
-        public static explicit operator System.Decimal (float value) { throw null; }
-        public static bool operator >(System.Decimal d1, System.Decimal d2) { throw null; }
-        public static bool operator >=(System.Decimal d1, System.Decimal d2) { throw null; }
-        public static implicit operator System.Decimal (byte value) { throw null; }
-        public static implicit operator System.Decimal (char value) { throw null; }
-        public static implicit operator System.Decimal (short value) { throw null; }
-        public static implicit operator System.Decimal (int value) { throw null; }
-        public static implicit operator System.Decimal (long value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static implicit operator System.Decimal (sbyte value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static implicit operator System.Decimal (ushort value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static implicit operator System.Decimal (uint value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static implicit operator System.Decimal (ulong value) { throw null; }
-        public static System.Decimal operator ++(System.Decimal d) { throw null; }
-        public static bool operator !=(System.Decimal d1, System.Decimal d2) { throw null; }
-        public static bool operator <(System.Decimal d1, System.Decimal d2) { throw null; }
-        public static bool operator <=(System.Decimal d1, System.Decimal d2) { throw null; }
-        public static System.Decimal operator %(System.Decimal d1, System.Decimal d2) { throw null; }
-        public static System.Decimal operator *(System.Decimal d1, System.Decimal d2) { throw null; }
-        public static System.Decimal operator -(System.Decimal d1, System.Decimal d2) { throw null; }
-        public static System.Decimal operator -(System.Decimal d) { throw null; }
-        public static System.Decimal operator +(System.Decimal d) { throw null; }
-        public static System.Decimal Parse(string s) { throw null; }
-        public static System.Decimal Parse(string s, System.Globalization.NumberStyles style) { throw null; }
-        public static System.Decimal Parse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider) { throw null; }
-        public static System.Decimal Parse(string s, System.IFormatProvider provider) { throw null; }
-        public static System.Decimal Remainder(System.Decimal d1, System.Decimal d2) { throw null; }
-        public static System.Decimal Subtract(System.Decimal d1, System.Decimal d2) { throw null; }
-        int System.IComparable.CompareTo(object value) { throw null; }
-        public static byte ToByte(System.Decimal value) { throw null; }
-        public static double ToDouble(System.Decimal d) { throw null; }
-        public static short ToInt16(System.Decimal value) { throw null; }
-        public static int ToInt32(System.Decimal d) { throw null; }
-        public static long ToInt64(System.Decimal d) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static sbyte ToSByte(System.Decimal value) { throw null; }
-        public static float ToSingle(System.Decimal d) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(System.IFormatProvider provider) { throw null; }
-        public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider provider) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static ushort ToUInt16(System.Decimal value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static uint ToUInt32(System.Decimal d) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static ulong ToUInt64(System.Decimal d) { throw null; }
-        public static System.Decimal Truncate(System.Decimal d) { throw null; }
-        public static bool TryParse(string s, out System.Decimal result) { throw null; }
-        public static bool TryParse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider, out System.Decimal result) { throw null; }
+        public const Decimal MaxValue = 79228162514264337593543950335M;
+        public const Decimal MinusOne = -1M;
+        public const Decimal MinValue = -79228162514264337593543950335M;
+        public const Decimal One = 1M;
+        public const Decimal Zero = 0M;
+        public Decimal(Double value) { }
+
+        public Decimal(Int32 lo, Int32 mid, Int32 hi, Boolean isNegative, Byte scale) { }
+
+        public Decimal(Int32 value) { }
+
+        public Decimal(Int32[] bits) { }
+
+        public Decimal(Int64 value) { }
+
+        public Decimal(Single value) { }
+
+        [CLSCompliant(false)]
+        public Decimal(UInt32 value) { }
+
+        [CLSCompliant(false)]
+        public Decimal(UInt64 value) { }
+
+        public static Decimal Add(Decimal d1, Decimal d2) { throw null; }
+
+        public static Decimal Ceiling(Decimal d) { throw null; }
+
+        public static Int32 Compare(Decimal d1, Decimal d2) { throw null; }
+
+        public Int32 CompareTo(Decimal value) { throw null; }
+
+        public static Decimal Divide(Decimal d1, Decimal d2) { throw null; }
+
+        public static Boolean Equals(Decimal d1, Decimal d2) { throw null; }
+
+        public Boolean Equals(Decimal value) { throw null; }
+
+        public override Boolean Equals(Object value) { throw null; }
+
+        public static Decimal Floor(Decimal d) { throw null; }
+
+        public static Int32[] GetBits(Decimal d) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Decimal Multiply(Decimal d1, Decimal d2) { throw null; }
+
+        public static Decimal Negate(Decimal d) { throw null; }
+
+        public static Decimal operator +(Decimal d1, Decimal d2) { throw null; }
+
+        public static Decimal operator --(Decimal d) { throw null; }
+
+        public static Decimal operator /(Decimal d1, Decimal d2) { throw null; }
+
+        public static Boolean operator ==(Decimal d1, Decimal d2) { throw null; }
+
+        public static explicit operator Byte(Decimal value) { throw null; }
+
+        public static explicit operator Char(Decimal value) { throw null; }
+
+        public static explicit operator Double(Decimal value) { throw null; }
+
+        public static explicit operator Int16(Decimal value) { throw null; }
+
+        public static explicit operator Int32(Decimal value) { throw null; }
+
+        public static explicit operator Int64(Decimal value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator SByte(Decimal value) { throw null; }
+
+        public static explicit operator Single(Decimal value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator UInt16(Decimal value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator UInt32(Decimal value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static explicit operator UInt64(Decimal value) { throw null; }
+
+        public static explicit operator Decimal(Double value) { throw null; }
+
+        public static explicit operator Decimal(Single value) { throw null; }
+
+        public static Boolean operator >(Decimal d1, Decimal d2) { throw null; }
+
+        public static Boolean operator >=(Decimal d1, Decimal d2) { throw null; }
+
+        public static implicit operator Decimal(Byte value) { throw null; }
+
+        public static implicit operator Decimal(Char value) { throw null; }
+
+        public static implicit operator Decimal(Int16 value) { throw null; }
+
+        public static implicit operator Decimal(Int32 value) { throw null; }
+
+        public static implicit operator Decimal(Int64 value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static implicit operator Decimal(SByte value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static implicit operator Decimal(UInt16 value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static implicit operator Decimal(UInt32 value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static implicit operator Decimal(UInt64 value) { throw null; }
+
+        public static Decimal operator ++(Decimal d) { throw null; }
+
+        public static Boolean operator !=(Decimal d1, Decimal d2) { throw null; }
+
+        public static Boolean operator <(Decimal d1, Decimal d2) { throw null; }
+
+        public static Boolean operator <=(Decimal d1, Decimal d2) { throw null; }
+
+        public static Decimal operator %(Decimal d1, Decimal d2) { throw null; }
+
+        public static Decimal operator *(Decimal d1, Decimal d2) { throw null; }
+
+        public static Decimal operator -(Decimal d1, Decimal d2) { throw null; }
+
+        public static Decimal operator -(Decimal d) { throw null; }
+
+        public static Decimal operator +(Decimal d) { throw null; }
+
+        public static Decimal Parse(String s, Globalization.NumberStyles style, IFormatProvider provider) { throw null; }
+
+        public static Decimal Parse(String s, Globalization.NumberStyles style) { throw null; }
+
+        public static Decimal Parse(String s, IFormatProvider provider) { throw null; }
+
+        public static Decimal Parse(String s) { throw null; }
+
+        public static Decimal Remainder(Decimal d1, Decimal d2) { throw null; }
+
+        public static Decimal Subtract(Decimal d1, Decimal d2) { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        public static Byte ToByte(Decimal value) { throw null; }
+
+        public static Double ToDouble(Decimal d) { throw null; }
+
+        public static Int16 ToInt16(Decimal value) { throw null; }
+
+        public static Int32 ToInt32(Decimal d) { throw null; }
+
+        public static Int64 ToInt64(Decimal d) { throw null; }
+
+        [CLSCompliant(false)]
+        public static SByte ToSByte(Decimal value) { throw null; }
+
+        public static Single ToSingle(Decimal d) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(IFormatProvider provider) { throw null; }
+
+        public String ToString(String format, IFormatProvider provider) { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt16 ToUInt16(Decimal value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt32 ToUInt32(Decimal d) { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt64 ToUInt64(Decimal d) { throw null; }
+
+        public static Decimal Truncate(Decimal d) { throw null; }
+
+        public static Boolean TryParse(String s, out Decimal result) { throw null; }
+
+        public static Boolean TryParse(String s, Globalization.NumberStyles style, IFormatProvider provider, out Decimal result) { throw null; }
     }
+
     public abstract partial class Delegate
     {
         internal Delegate() { }
-        public object Target { get { throw null; } }
-        public static System.Delegate Combine(System.Delegate a, System.Delegate b) { throw null; }
-        public static System.Delegate Combine(params System.Delegate[] delegates) { throw null; }
-        public object DynamicInvoke(params object[] args) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public virtual System.Delegate[] GetInvocationList() { throw null; }
-        public static bool operator ==(System.Delegate d1, System.Delegate d2) { throw null; }
-        public static bool operator !=(System.Delegate d1, System.Delegate d2) { throw null; }
-        public static System.Delegate Remove(System.Delegate source, System.Delegate value) { throw null; }
-        public static System.Delegate RemoveAll(System.Delegate source, System.Delegate value) { throw null; }
+
+        public Object Target { get { throw null; } }
+
+        public static Delegate Combine(Delegate a, Delegate b) { throw null; }
+
+        public static Delegate Combine(params Delegate[] delegates) { throw null; }
+
+        public Object DynamicInvoke(params Object[] args) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public virtual Delegate[] GetInvocationList() { throw null; }
+
+        public static Boolean operator ==(Delegate d1, Delegate d2) { throw null; }
+
+        public static Boolean operator !=(Delegate d1, Delegate d2) { throw null; }
+
+        public static Delegate Remove(Delegate source, Delegate value) { throw null; }
+
+        public static Delegate RemoveAll(Delegate source, Delegate value) { throw null; }
     }
-    public partial class DivideByZeroException : System.ArithmeticException
+
+    public partial class DivideByZeroException : ArithmeticException
     {
         public DivideByZeroException() { }
-        public DivideByZeroException(string message) { }
-        public DivideByZeroException(string message, System.Exception innerException) { }
+
+        public DivideByZeroException(String message, Exception innerException) { }
+
+        public DivideByZeroException(String message) { }
     }
-    public partial struct Double : System.IComparable, System.IComparable<double>, System.IEquatable<double>, System.IFormattable
+
+    public partial struct Double : IComparable, IComparable<Double>, IEquatable<Double>, IFormattable
     {
-        public const double Epsilon = 4.94065645841247E-324;
-        public const double MaxValue = 1.7976931348623157E+308;
-        public const double MinValue = -1.7976931348623157E+308;
-        public const double NaN = 0.0 / 0.0;
-        public const double NegativeInfinity = -1.0 / 0.0;
-        public const double PositiveInfinity = 1.0 / 0.0;
-        public int CompareTo(System.Double value) { throw null; }
-        public bool Equals(System.Double obj) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static bool IsInfinity(System.Double d) { throw null; }
-        public static bool IsNaN(System.Double d) { throw null; }
-        public static bool IsNegativeInfinity(System.Double d) { throw null; }
-        public static bool IsPositiveInfinity(System.Double d) { throw null; }
-        public static bool operator ==(System.Double left, System.Double right) { throw null; }
-        public static bool operator >(System.Double left, System.Double right) { throw null; }
-        public static bool operator >=(System.Double left, System.Double right) { throw null; }
-        public static bool operator !=(System.Double left, System.Double right) { throw null; }
-        public static bool operator <(System.Double left, System.Double right) { throw null; }
-        public static bool operator <=(System.Double left, System.Double right) { throw null; }
-        public static System.Double Parse(string s) { throw null; }
-        public static System.Double Parse(string s, System.Globalization.NumberStyles style) { throw null; }
-        public static System.Double Parse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider) { throw null; }
-        public static System.Double Parse(string s, System.IFormatProvider provider) { throw null; }
-        int System.IComparable.CompareTo(object value) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(System.IFormatProvider provider) { throw null; }
-        public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider provider) { throw null; }
-        public static bool TryParse(string s, out System.Double result) { throw null; }
-        public static bool TryParse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider, out System.Double result) { throw null; }
+        public const Double Epsilon = 5E-324D;
+        public const Double MaxValue = 1.7976931348623157E+308D;
+        public const Double MinValue = -1.7976931348623157E+308D;
+        public const Double NaN = 0D / 0D;
+        public const Double NegativeInfinity = -1D / 0D;
+        public const Double PositiveInfinity = 1D / 0D;
+        public Int32 CompareTo(Double value) { throw null; }
+
+        public Boolean Equals(Double obj) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Boolean IsInfinity(Double d) { throw null; }
+
+        public static Boolean IsNaN(Double d) { throw null; }
+
+        public static Boolean IsNegativeInfinity(Double d) { throw null; }
+
+        public static Boolean IsPositiveInfinity(Double d) { throw null; }
+
+        public static Boolean operator ==(Double left, Double right) { throw null; }
+
+        public static Boolean operator >(Double left, Double right) { throw null; }
+
+        public static Boolean operator >=(Double left, Double right) { throw null; }
+
+        public static Boolean operator !=(Double left, Double right) { throw null; }
+
+        public static Boolean operator <(Double left, Double right) { throw null; }
+
+        public static Boolean operator <=(Double left, Double right) { throw null; }
+
+        public static Double Parse(String s, Globalization.NumberStyles style, IFormatProvider provider) { throw null; }
+
+        public static Double Parse(String s, Globalization.NumberStyles style) { throw null; }
+
+        public static Double Parse(String s, IFormatProvider provider) { throw null; }
+
+        public static Double Parse(String s) { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(IFormatProvider provider) { throw null; }
+
+        public String ToString(String format, IFormatProvider provider) { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        public static Boolean TryParse(String s, out Double result) { throw null; }
+
+        public static Boolean TryParse(String s, Globalization.NumberStyles style, IFormatProvider provider, out Double result) { throw null; }
     }
-    public abstract partial class Enum : System.ValueType, System.IComparable, System.IFormattable
+
+    public abstract partial class Enum : ValueType, IComparable, IFormattable
     {
-        protected Enum() { }
-        public int CompareTo(object target) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public static string Format(System.Type enumType, object value, string format) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static string GetName(System.Type enumType, object value) { throw null; }
-        public static string[] GetNames(System.Type enumType) { throw null; }
-        public static System.Type GetUnderlyingType(System.Type enumType) { throw null; }
-        public static System.Array GetValues(System.Type enumType) { throw null; }
-        public bool HasFlag(System.Enum flag) { throw null; }
-        public static bool IsDefined(System.Type enumType, object value) { throw null; }
-        public static object Parse(System.Type enumType, string value) { throw null; }
-        public static object Parse(System.Type enumType, string value, bool ignoreCase) { throw null; }
-        [System.ObsoleteAttribute("The provider argument is not used. Please use ToString(String).")]
-        string System.IFormattable.ToString(string format, System.IFormatProvider provider) { throw null; }
-        public static object ToObject(System.Type enumType, object value) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(string format) { throw null; }
-        public static bool TryParse<TEnum>(string value, bool ignoreCase, out TEnum result) where TEnum : struct { throw null; }
-        public static bool TryParse<TEnum>(string value, out TEnum result) where TEnum : struct { throw null; }
+        public Int32 CompareTo(Object target) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public static String Format(Type enumType, Object value, String format) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static String GetName(Type enumType, Object value) { throw null; }
+
+        public static String[] GetNames(Type enumType) { throw null; }
+
+        public static Type GetUnderlyingType(Type enumType) { throw null; }
+
+        public static Array GetValues(Type enumType) { throw null; }
+
+        public Boolean HasFlag(Enum flag) { throw null; }
+
+        public static Boolean IsDefined(Type enumType, Object value) { throw null; }
+
+        public static Object Parse(Type enumType, String value, Boolean ignoreCase) { throw null; }
+
+        public static Object Parse(Type enumType, String value) { throw null; }
+
+        [Obsolete("The provider argument is not used. Please use ToString(String).")]
+        String IFormattable.ToString(String format, IFormatProvider provider) { throw null; }
+
+        public static Object ToObject(Type enumType, Object value) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        public static Boolean TryParse<TEnum>(String value, out TEnum result)
+            where TEnum : struct { throw null; }
+
+        public static Boolean TryParse<TEnum>(String value, Boolean ignoreCase, out TEnum result)
+            where TEnum : struct { throw null; }
     }
+
     public partial class EventArgs
     {
-        public static readonly System.EventArgs Empty;
-        public EventArgs() { }
+        public static readonly EventArgs Empty;
     }
-    public delegate void EventHandler(object sender, System.EventArgs e);
-    public delegate void EventHandler<TEventArgs>(object sender, TEventArgs e);
+
+    public delegate void EventHandler(Object sender, EventArgs e);
+    public delegate void EventHandler<TEventArgs>(Object sender, TEventArgs e);
     public partial class Exception
     {
         public Exception() { }
-        public Exception(string message) { }
-        public Exception(string message, System.Exception innerException) { }
-        public virtual System.Collections.IDictionary Data { get { throw null; } }
-        public virtual string HelpLink { get { throw null; } set { } }
-        public int HResult { get { throw null; } protected set { } }
-        public System.Exception InnerException { get { throw null; } }
-        public virtual string Message { get { throw null; } }
-        public virtual string Source { get { throw null; } set { } }
-        public virtual string StackTrace { get { throw null; } }
-        public virtual System.Exception GetBaseException() { throw null; }
-        public override string ToString() { throw null; }
+
+        public Exception(String message, Exception innerException) { }
+
+        public Exception(String message) { }
+
+        public virtual Collections.IDictionary Data { get { throw null; } }
+
+        public virtual String HelpLink { get { throw null; } set { } }
+
+        public Int32 HResult { get { throw null; } protected set { } }
+
+        public Exception InnerException { get { throw null; } }
+
+        public virtual String Message { get { throw null; } }
+
+        public virtual String Source { get { throw null; } set { } }
+
+        public virtual String StackTrace { get { throw null; } }
+
+        public virtual Exception GetBaseException() { throw null; }
+
+        public override String ToString() { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Enum, Inherited=false)]
-    public partial class FlagsAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Enum, Inherited = false)]
+    public partial class FlagsAttribute : Attribute
     {
-        public FlagsAttribute() { }
     }
-    public partial class FormatException : System.Exception
+
+    public partial class FormatException : Exception
     {
         public FormatException() { }
-        public FormatException(string message) { }
-        public FormatException(string message, System.Exception innerException) { }
+
+        public FormatException(String message, Exception innerException) { }
+
+        public FormatException(String message) { }
     }
+
     public delegate TResult Func<out TResult>();
     public delegate TResult Func<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, out TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9);
     public delegate TResult Func<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in T10, out TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10);
@@ -760,1974 +1279,3043 @@ namespace System
     public delegate TResult Func<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, out TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8);
     public static partial class GC
     {
-        public static int MaxGeneration { get { throw null; } }
-        public static void AddMemoryPressure(long bytesAllocated) { }
+        public static Int32 MaxGeneration { get { throw null; } }
+
+        public static void AddMemoryPressure(Int64 bytesAllocated) { }
+
         public static void Collect() { }
-        public static void Collect(int generation) { }
-        public static void Collect(int generation, System.GCCollectionMode mode) { }
-        public static void Collect(int generation, System.GCCollectionMode mode, bool blocking) { }
-        public static int CollectionCount(int generation) { throw null; }
-        public static long GetTotalMemory(bool forceFullCollection) { throw null; }
-        public static void KeepAlive(object obj) { }
-        public static void RemoveMemoryPressure(long bytesAllocated) { }
-        public static void ReRegisterForFinalize(object obj) { }
-        public static void SuppressFinalize(object obj) { }
+
+        public static void Collect(Int32 generation, GCCollectionMode mode, Boolean blocking) { }
+
+        public static void Collect(Int32 generation, GCCollectionMode mode) { }
+
+        public static void Collect(Int32 generation) { }
+
+        public static Int32 CollectionCount(Int32 generation) { throw null; }
+
+        public static Int64 GetTotalMemory(Boolean forceFullCollection) { throw null; }
+
+        public static void KeepAlive(Object obj) { }
+
+        public static void RemoveMemoryPressure(Int64 bytesAllocated) { }
+
+        public static void ReRegisterForFinalize(Object obj) { }
+
+        public static void SuppressFinalize(Object obj) { }
+
         public static void WaitForPendingFinalizers() { }
     }
+
     public enum GCCollectionMode
     {
         Default = 0,
         Forced = 1,
-        Optimized = 2,
+        Optimized = 2
     }
-    public partial struct Guid : System.IComparable, System.IComparable<System.Guid>, System.IEquatable<System.Guid>, System.IFormattable
+
+    public partial struct Guid : IComparable, IComparable<Guid>, IEquatable<Guid>, IFormattable
     {
-        public static readonly System.Guid Empty;
-        public Guid(byte[] b) { throw null; }
-        public Guid(int a, short b, short c, byte d, byte e, byte f, byte g, byte h, byte i, byte j, byte k) { throw null; }
-        public Guid(int a, short b, short c, byte[] d) { throw null; }
-        public Guid(string g) { throw null; }
-        public int CompareTo(System.Guid value) { throw null; }
-        public bool Equals(System.Guid g) { throw null; }
-        public override bool Equals(object o) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static System.Guid NewGuid() { throw null; }
-        public static bool operator ==(System.Guid a, System.Guid b) { throw null; }
-        public static bool operator !=(System.Guid a, System.Guid b) { throw null; }
-        public static System.Guid Parse(string input) { throw null; }
-        public static System.Guid ParseExact(string input, string format) { throw null; }
-        int System.IComparable.CompareTo(object value) { throw null; }
-        string System.IFormattable.ToString(string format, System.IFormatProvider provider) { throw null; }
-        public byte[] ToByteArray() { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(string format) { throw null; }
-        public static bool TryParse(string input, out System.Guid result) { throw null; }
-        public static bool TryParseExact(string input, string format, out System.Guid result) { throw null; }
+        public static readonly Guid Empty;
+        public Guid(Byte[] b) { }
+
+        public Guid(Int32 a, Int16 b, Int16 c, Byte d, Byte e, Byte f, Byte g, Byte h, Byte i, Byte j, Byte k) { }
+
+        public Guid(Int32 a, Int16 b, Int16 c, Byte[] d) { }
+
+        public Guid(String g) { }
+
+        public Int32 CompareTo(Guid value) { throw null; }
+
+        public Boolean Equals(Guid g) { throw null; }
+
+        public override Boolean Equals(Object o) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Guid NewGuid() { throw null; }
+
+        public static Boolean operator ==(Guid a, Guid b) { throw null; }
+
+        public static Boolean operator !=(Guid a, Guid b) { throw null; }
+
+        public static Guid Parse(String input) { throw null; }
+
+        public static Guid ParseExact(String input, String format) { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        String IFormattable.ToString(String format, IFormatProvider provider) { throw null; }
+
+        public Byte[] ToByteArray() { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        public static Boolean TryParse(String input, out Guid result) { throw null; }
+
+        public static Boolean TryParseExact(String input, String format, out Guid result) { throw null; }
     }
+
     public partial interface IAsyncResult
     {
-        object AsyncState { get; }
-        System.Threading.WaitHandle AsyncWaitHandle { get; }
-        bool CompletedSynchronously { get; }
-        bool IsCompleted { get; }
+        Object AsyncState { get; }
+
+        Threading.WaitHandle AsyncWaitHandle { get; }
+
+        Boolean CompletedSynchronously { get; }
+
+        Boolean IsCompleted { get; }
     }
+
     public partial interface IComparable
     {
-        int CompareTo(object obj);
+        Int32 CompareTo(Object obj);
     }
+
     public partial interface IComparable<in T>
     {
-        int CompareTo(T other);
+        Int32 CompareTo(T other);
     }
+
     public partial interface ICustomFormatter
     {
-        string Format(string format, object arg, System.IFormatProvider formatProvider);
+        String Format(String format, Object arg, IFormatProvider formatProvider);
     }
+
     public partial interface IDisposable
     {
         void Dispose();
     }
+
     public partial interface IEquatable<T>
     {
-        bool Equals(T other);
+        Boolean Equals(T other);
     }
+
     public partial interface IFormatProvider
     {
-        object GetFormat(System.Type formatType);
+        Object GetFormat(Type formatType);
     }
+
     public partial interface IFormattable
     {
-        string ToString(string format, System.IFormatProvider formatProvider);
+        String ToString(String format, IFormatProvider formatProvider);
     }
-    public sealed partial class IndexOutOfRangeException : System.Exception
+
+    public sealed partial class IndexOutOfRangeException : Exception
     {
         public IndexOutOfRangeException() { }
-        public IndexOutOfRangeException(string message) { }
-        public IndexOutOfRangeException(string message, System.Exception innerException) { }
+
+        public IndexOutOfRangeException(String message, Exception innerException) { }
+
+        public IndexOutOfRangeException(String message) { }
     }
-    public partial struct Int16 : System.IComparable, System.IComparable<short>, System.IEquatable<short>, System.IFormattable
+
+    public partial struct Int16 : IComparable, IComparable<Int16>, IEquatable<Int16>, IFormattable
     {
-        public const short MaxValue = (short)32767;
-        public const short MinValue = (short)-32768;
-        public int CompareTo(System.Int16 value) { throw null; }
-        public bool Equals(System.Int16 obj) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static System.Int16 Parse(string s) { throw null; }
-        public static System.Int16 Parse(string s, System.Globalization.NumberStyles style) { throw null; }
-        public static System.Int16 Parse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider) { throw null; }
-        public static System.Int16 Parse(string s, System.IFormatProvider provider) { throw null; }
-        int System.IComparable.CompareTo(object value) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(System.IFormatProvider provider) { throw null; }
-        public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider provider) { throw null; }
-        public static bool TryParse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider, out System.Int16 result) { throw null; }
-        public static bool TryParse(string s, out System.Int16 result) { throw null; }
+        public const Int16 MaxValue = 32767;
+        public const Int16 MinValue = -32768;
+        public Int32 CompareTo(Int16 value) { throw null; }
+
+        public Boolean Equals(Int16 obj) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Int16 Parse(String s, Globalization.NumberStyles style, IFormatProvider provider) { throw null; }
+
+        public static Int16 Parse(String s, Globalization.NumberStyles style) { throw null; }
+
+        public static Int16 Parse(String s, IFormatProvider provider) { throw null; }
+
+        public static Int16 Parse(String s) { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(IFormatProvider provider) { throw null; }
+
+        public String ToString(String format, IFormatProvider provider) { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        public static Boolean TryParse(String s, Globalization.NumberStyles style, IFormatProvider provider, out Int16 result) { throw null; }
+
+        public static Boolean TryParse(String s, out Int16 result) { throw null; }
     }
-    public partial struct Int32 : System.IComparable, System.IComparable<int>, System.IEquatable<int>, System.IFormattable
+
+    public partial struct Int32 : IComparable, IComparable<Int32>, IEquatable<Int32>, IFormattable
     {
-        public const int MaxValue = 2147483647;
-        public const int MinValue = -2147483648;
-        public System.Int32 CompareTo(System.Int32 value) { throw null; }
-        public bool Equals(System.Int32 obj) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public override System.Int32 GetHashCode() { throw null; }
-        public static System.Int32 Parse(string s) { throw null; }
-        public static System.Int32 Parse(string s, System.Globalization.NumberStyles style) { throw null; }
-        public static System.Int32 Parse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider) { throw null; }
-        public static System.Int32 Parse(string s, System.IFormatProvider provider) { throw null; }
-        System.Int32 System.IComparable.CompareTo(object value) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(System.IFormatProvider provider) { throw null; }
-        public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider provider) { throw null; }
-        public static bool TryParse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider, out System.Int32 result) { throw null; }
-        public static bool TryParse(string s, out System.Int32 result) { throw null; }
+        public const Int32 MaxValue = 2147483647;
+        public const Int32 MinValue = -2147483648;
+        public Int32 CompareTo(Int32 value) { throw null; }
+
+        public Boolean Equals(Int32 obj) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Int32 Parse(String s, Globalization.NumberStyles style, IFormatProvider provider) { throw null; }
+
+        public static Int32 Parse(String s, Globalization.NumberStyles style) { throw null; }
+
+        public static Int32 Parse(String s, IFormatProvider provider) { throw null; }
+
+        public static Int32 Parse(String s) { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(IFormatProvider provider) { throw null; }
+
+        public String ToString(String format, IFormatProvider provider) { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        public static Boolean TryParse(String s, Globalization.NumberStyles style, IFormatProvider provider, out Int32 result) { throw null; }
+
+        public static Boolean TryParse(String s, out Int32 result) { throw null; }
     }
-    public partial struct Int64 : System.IComparable, System.IComparable<long>, System.IEquatable<long>, System.IFormattable
+
+    public partial struct Int64 : IComparable, IComparable<Int64>, IEquatable<Int64>, IFormattable
     {
-        public const long MaxValue = (long)9223372036854775807;
-        public const long MinValue = (long)-9223372036854775808;
-        public int CompareTo(System.Int64 value) { throw null; }
-        public bool Equals(System.Int64 obj) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static System.Int64 Parse(string s) { throw null; }
-        public static System.Int64 Parse(string s, System.Globalization.NumberStyles style) { throw null; }
-        public static System.Int64 Parse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider) { throw null; }
-        public static System.Int64 Parse(string s, System.IFormatProvider provider) { throw null; }
-        int System.IComparable.CompareTo(object value) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(System.IFormatProvider provider) { throw null; }
-        public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider provider) { throw null; }
-        public static bool TryParse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider, out System.Int64 result) { throw null; }
-        public static bool TryParse(string s, out System.Int64 result) { throw null; }
+        public const Int64 MaxValue = 9223372036854775807L;
+        public const Int64 MinValue = -9223372036854775808;
+        public Int32 CompareTo(Int64 value) { throw null; }
+
+        public Boolean Equals(Int64 obj) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Int64 Parse(String s, Globalization.NumberStyles style, IFormatProvider provider) { throw null; }
+
+        public static Int64 Parse(String s, Globalization.NumberStyles style) { throw null; }
+
+        public static Int64 Parse(String s, IFormatProvider provider) { throw null; }
+
+        public static Int64 Parse(String s) { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(IFormatProvider provider) { throw null; }
+
+        public String ToString(String format, IFormatProvider provider) { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        public static Boolean TryParse(String s, Globalization.NumberStyles style, IFormatProvider provider, out Int64 result) { throw null; }
+
+        public static Boolean TryParse(String s, out Int64 result) { throw null; }
     }
+
     public partial struct IntPtr
     {
-        public static readonly System.IntPtr Zero;
-        public IntPtr(int value) { throw null; }
-        public IntPtr(long value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public unsafe IntPtr(void* value) { throw null; }
-        public static int Size { get { throw null; } }
-        public static System.IntPtr Add(System.IntPtr pointer, int offset) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static System.IntPtr operator +(System.IntPtr pointer, int offset) { throw null; }
-        public static bool operator ==(System.IntPtr value1, System.IntPtr value2) { throw null; }
-        public static explicit operator System.IntPtr (int value) { throw null; }
-        public static explicit operator System.IntPtr (long value) { throw null; }
-        public static explicit operator int (System.IntPtr value) { throw null; }
-        public static explicit operator long (System.IntPtr value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public unsafe static explicit operator void* (System.IntPtr value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public unsafe static explicit operator System.IntPtr (void* value) { throw null; }
-        public static bool operator !=(System.IntPtr value1, System.IntPtr value2) { throw null; }
-        public static System.IntPtr operator -(System.IntPtr pointer, int offset) { throw null; }
-        public static System.IntPtr Subtract(System.IntPtr pointer, int offset) { throw null; }
-        public int ToInt32() { throw null; }
-        public long ToInt64() { throw null; }
-        [System.CLSCompliantAttribute(false)]
+        public static readonly IntPtr Zero;
+        public IntPtr(Int32 value) { }
+
+        public IntPtr(Int64 value) { }
+
+        [CLSCompliant(false)]
+        public unsafe IntPtr(void* value) { }
+
+        public static Int32 Size { get { throw null; } }
+
+        public static IntPtr Add(IntPtr pointer, Int32 offset) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static IntPtr operator +(IntPtr pointer, Int32 offset) { throw null; }
+
+        public static Boolean operator ==(IntPtr value1, IntPtr value2) { throw null; }
+
+        public static explicit operator IntPtr(Int32 value) { throw null; }
+
+        public static explicit operator IntPtr(Int64 value) { throw null; }
+
+        public static explicit operator Int32(IntPtr value) { throw null; }
+
+        public static explicit operator Int64(IntPtr value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static unsafe explicit operator void*(IntPtr value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static unsafe explicit operator IntPtr(void* value) { throw null; }
+
+        public static Boolean operator !=(IntPtr value1, IntPtr value2) { throw null; }
+
+        public static IntPtr operator -(IntPtr pointer, Int32 offset) { throw null; }
+
+        public static IntPtr Subtract(IntPtr pointer, Int32 offset) { throw null; }
+
+        public Int32 ToInt32() { throw null; }
+
+        public Int64 ToInt64() { throw null; }
+
+        [CLSCompliant(false)]
         public unsafe void* ToPointer() { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(string format) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(String format) { throw null; }
     }
-    public partial class InvalidCastException : System.Exception
+
+    public partial class InvalidCastException : Exception
     {
         public InvalidCastException() { }
-        public InvalidCastException(string message) { }
-        public InvalidCastException(string message, System.Exception innerException) { }
-        public InvalidCastException(string message, int errorCode) { }
+
+        public InvalidCastException(String message, Exception innerException) { }
+
+        public InvalidCastException(String message, Int32 errorCode) { }
+
+        public InvalidCastException(String message) { }
     }
-    public partial class InvalidOperationException : System.Exception
+
+    public partial class InvalidOperationException : Exception
     {
         public InvalidOperationException() { }
-        public InvalidOperationException(string message) { }
-        public InvalidOperationException(string message, System.Exception innerException) { }
+
+        public InvalidOperationException(String message, Exception innerException) { }
+
+        public InvalidOperationException(String message) { }
     }
-    public partial class InvalidTimeZoneException : System.Exception
+
+    public partial class InvalidTimeZoneException : Exception
     {
         public InvalidTimeZoneException() { }
-        public InvalidTimeZoneException(string message) { }
-        public InvalidTimeZoneException(string message, System.Exception innerException) { }
+
+        public InvalidTimeZoneException(String message, Exception innerException) { }
+
+        public InvalidTimeZoneException(String message) { }
     }
+
     public partial interface IObservable<out T>
     {
-        System.IDisposable Subscribe(System.IObserver<T> observer);
+        IDisposable Subscribe(IObserver<T> observer);
     }
+
     public partial interface IObserver<in T>
     {
         void OnCompleted();
-        void OnError(System.Exception error);
+        void OnError(Exception error);
         void OnNext(T value);
     }
+
     public partial interface IProgress<in T>
     {
         void Report(T value);
     }
+
     public partial class Lazy<T>
     {
         public Lazy() { }
-        public Lazy(bool isThreadSafe) { }
-        public Lazy(System.Func<T> valueFactory) { }
-        public Lazy(System.Func<T> valueFactory, bool isThreadSafe) { }
-        public Lazy(System.Func<T> valueFactory, System.Threading.LazyThreadSafetyMode mode) { }
-        public Lazy(System.Threading.LazyThreadSafetyMode mode) { }
-        public bool IsValueCreated { get { throw null; } }
+
+        public Lazy(Boolean isThreadSafe) { }
+
+        public Lazy(Func<T> valueFactory, Boolean isThreadSafe) { }
+
+        public Lazy(Func<T> valueFactory, Threading.LazyThreadSafetyMode mode) { }
+
+        public Lazy(Func<T> valueFactory) { }
+
+        public Lazy(Threading.LazyThreadSafetyMode mode) { }
+
+        public Boolean IsValueCreated { get { throw null; } }
+
         public T Value { get { throw null; } }
-        public override string ToString() { throw null; }
+
+        public override String ToString() { throw null; }
     }
-    public partial class Lazy<T, TMetadata> : System.Lazy<T>
+
+    public partial class Lazy<T, TMetadata> : Lazy<T>
     {
-        public Lazy(System.Func<T> valueFactory, TMetadata metadata) { }
-        public Lazy(System.Func<T> valueFactory, TMetadata metadata, bool isThreadSafe) { }
-        public Lazy(System.Func<T> valueFactory, TMetadata metadata, System.Threading.LazyThreadSafetyMode mode) { }
+        public Lazy(TMetadata metadata, Boolean isThreadSafe) { }
+
+        public Lazy(TMetadata metadata, Threading.LazyThreadSafetyMode mode) { }
+
         public Lazy(TMetadata metadata) { }
-        public Lazy(TMetadata metadata, bool isThreadSafe) { }
-        public Lazy(TMetadata metadata, System.Threading.LazyThreadSafetyMode mode) { }
+
+        public Lazy(Func<T> valueFactory, TMetadata metadata, Boolean isThreadSafe) { }
+
+        public Lazy(Func<T> valueFactory, TMetadata metadata, Threading.LazyThreadSafetyMode mode) { }
+
+        public Lazy(Func<T> valueFactory, TMetadata metadata) { }
+
         public TMetadata Metadata { get { throw null; } }
     }
-    public partial class MemberAccessException : System.Exception
+
+    public partial class MemberAccessException : Exception
     {
         public MemberAccessException() { }
-        public MemberAccessException(string message) { }
-        public MemberAccessException(string message, System.Exception inner) { }
+
+        public MemberAccessException(String message, Exception inner) { }
+
+        public MemberAccessException(String message) { }
     }
-    public partial class MissingMemberException : System.MemberAccessException
+
+    public partial class MissingMemberException : MemberAccessException
     {
         public MissingMemberException() { }
-        public MissingMemberException(string message) { }
-        public MissingMemberException(string message, System.Exception inner) { }
-        public override string Message { get { throw null; } }
+
+        public MissingMemberException(String message, Exception inner) { }
+
+        public MissingMemberException(String message) { }
+
+        public override String Message { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Method)]
-    public sealed partial class MTAThreadAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public sealed partial class MTAThreadAttribute : Attribute
     {
-        public MTAThreadAttribute() { }
     }
-    public abstract partial class MulticastDelegate : System.Delegate
+
+    public abstract partial class MulticastDelegate : Delegate
     {
         internal MulticastDelegate() { }
-        public sealed override bool Equals(object obj) { throw null; }
-        public sealed override int GetHashCode() { throw null; }
-        public sealed override System.Delegate[] GetInvocationList() { throw null; }
-        public static bool operator ==(System.MulticastDelegate d1, System.MulticastDelegate d2) { throw null; }
-        public static bool operator !=(System.MulticastDelegate d1, System.MulticastDelegate d2) { throw null; }
+
+        public sealed override Boolean Equals(Object obj) { throw null; }
+
+        public sealed override Int32 GetHashCode() { throw null; }
+
+        public sealed override Delegate[] GetInvocationList() { throw null; }
+
+        public static Boolean operator ==(MulticastDelegate d1, MulticastDelegate d2) { throw null; }
+
+        public static Boolean operator !=(MulticastDelegate d1, MulticastDelegate d2) { throw null; }
     }
-    public partial class NotImplementedException : System.Exception
+
+    public partial class NotImplementedException : Exception
     {
         public NotImplementedException() { }
-        public NotImplementedException(string message) { }
-        public NotImplementedException(string message, System.Exception inner) { }
+
+        public NotImplementedException(String message, Exception inner) { }
+
+        public NotImplementedException(String message) { }
     }
-    public partial class NotSupportedException : System.Exception
+
+    public partial class NotSupportedException : Exception
     {
         public NotSupportedException() { }
-        public NotSupportedException(string message) { }
-        public NotSupportedException(string message, System.Exception innerException) { }
+
+        public NotSupportedException(String message, Exception innerException) { }
+
+        public NotSupportedException(String message) { }
     }
+
     public static partial class Nullable
     {
-        public static int Compare<T>(System.Nullable<T> n1, System.Nullable<T> n2) where T : struct { throw null; }
-        public static bool Equals<T>(System.Nullable<T> n1, System.Nullable<T> n2) where T : struct { throw null; }
-        public static System.Type GetUnderlyingType(System.Type nullableType) { throw null; }
+        public static Int32 Compare<T>(T? n1, T? n2)
+            where T : struct { throw null; }
+
+        public static Boolean Equals<T>(T? n1, T? n2)
+            where T : struct { throw null; }
+
+        public static Type GetUnderlyingType(Type nullableType) { throw null; }
     }
-    public partial struct Nullable<T> where T : struct
+
+    public partial struct Nullable<T>
+        where T : struct
     {
-        public Nullable(T value) { throw null; }
-        public bool HasValue { get { throw null; } }
+        public Nullable(T value) { }
+
+        public Boolean HasValue { get { throw null; } }
+
         public T Value { get { throw null; } }
-        public override bool Equals(object other) { throw null; }
-        public override int GetHashCode() { throw null; }
+
+        public override Boolean Equals(Object other) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
         public T GetValueOrDefault() { throw null; }
+
         public T GetValueOrDefault(T defaultValue) { throw null; }
-        public static explicit operator T (System.Nullable<T> value) { throw null; }
-        public static implicit operator System.Nullable<T> (T value) { throw null; }
-        public override string ToString() { throw null; }
+
+        public static explicit operator T(T? value) { throw null; }
+
+        public static implicit operator T?(T value) { throw null; }
+
+        public override String ToString() { throw null; }
     }
-    public partial class NullReferenceException : System.Exception
+
+    public partial class NullReferenceException : Exception
     {
         public NullReferenceException() { }
-        public NullReferenceException(string message) { }
-        public NullReferenceException(string message, System.Exception innerException) { }
+
+        public NullReferenceException(String message, Exception innerException) { }
+
+        public NullReferenceException(String message) { }
     }
+
     public partial class Object
     {
-        public Object() { }
-        public virtual bool Equals(System.Object obj) { throw null; }
-        public static bool Equals(System.Object objA, System.Object objB) { throw null; }
-        ~Object() { }
-        public virtual int GetHashCode() { throw null; }
-        public System.Type GetType() { throw null; }
-        protected System.Object MemberwiseClone() { throw null; }
-        public static bool ReferenceEquals(System.Object objA, System.Object objB) { throw null; }
-        public virtual string ToString() { throw null; }
+        public static Boolean Equals(Object objA, Object objB) { throw null; }
+
+        public virtual Boolean Equals(Object obj) { throw null; }
+
+        ~Object() {
+        }
+
+        public virtual Int32 GetHashCode() { throw null; }
+
+        public Type GetType() { throw null; }
+
+        protected Object MemberwiseClone() { throw null; }
+
+        public static Boolean ReferenceEquals(Object objA, Object objB) { throw null; }
+
+        public virtual String ToString() { throw null; }
     }
-    public partial class ObjectDisposedException : System.InvalidOperationException
+
+    public partial class ObjectDisposedException : InvalidOperationException
     {
-        public ObjectDisposedException(string objectName) { }
-        public ObjectDisposedException(string message, System.Exception innerException) { }
-        public ObjectDisposedException(string objectName, string message) { }
-        public override string Message { get { throw null; } }
-        public string ObjectName { get { throw null; } }
+        public ObjectDisposedException(String message, Exception innerException) { }
+
+        public ObjectDisposedException(String objectName, String message) { }
+
+        public ObjectDisposedException(String objectName) { }
+
+        public override String Message { get { throw null; } }
+
+        public String ObjectName { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class | System.AttributeTargets.Constructor | System.AttributeTargets.Delegate | System.AttributeTargets.Enum | System.AttributeTargets.Event | System.AttributeTargets.Field | System.AttributeTargets.Interface | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Struct, Inherited=false)]
-    public sealed partial class ObsoleteAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Event | AttributeTargets.Interface | AttributeTargets.Delegate, Inherited = false)]
+    public sealed partial class ObsoleteAttribute : Attribute
     {
         public ObsoleteAttribute() { }
-        public ObsoleteAttribute(string message) { }
-        public ObsoleteAttribute(string message, bool error) { }
-        public bool IsError { get { throw null; } }
-        public string Message { get { throw null; } }
+
+        public ObsoleteAttribute(String message, Boolean error) { }
+
+        public ObsoleteAttribute(String message) { }
+
+        public Boolean IsError { get { throw null; } }
+
+        public String Message { get { throw null; } }
     }
-    public partial class OutOfMemoryException : System.Exception
+
+    public partial class OutOfMemoryException : Exception
     {
         public OutOfMemoryException() { }
-        public OutOfMemoryException(string message) { }
-        public OutOfMemoryException(string message, System.Exception innerException) { }
+
+        public OutOfMemoryException(String message, Exception innerException) { }
+
+        public OutOfMemoryException(String message) { }
     }
-    public partial class OverflowException : System.ArithmeticException
+
+    public partial class OverflowException : ArithmeticException
     {
         public OverflowException() { }
-        public OverflowException(string message) { }
-        public OverflowException(string message, System.Exception innerException) { }
+
+        public OverflowException(String message, Exception innerException) { }
+
+        public OverflowException(String message) { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Parameter, Inherited=true, AllowMultiple=false)]
-    public sealed partial class ParamArrayAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = true, AllowMultiple = false)]
+    public sealed partial class ParamArrayAttribute : Attribute
     {
-        public ParamArrayAttribute() { }
     }
-    public partial class PlatformNotSupportedException : System.NotSupportedException
+
+    public partial class PlatformNotSupportedException : NotSupportedException
     {
         public PlatformNotSupportedException() { }
-        public PlatformNotSupportedException(string message) { }
-        public PlatformNotSupportedException(string message, System.Exception inner) { }
+
+        public PlatformNotSupportedException(String message, Exception inner) { }
+
+        public PlatformNotSupportedException(String message) { }
     }
-    public delegate bool Predicate<in T>(T obj);
-    public partial class RankException : System.Exception
+
+    public delegate Boolean Predicate<in T>(T obj);
+    public partial class RankException : Exception
     {
         public RankException() { }
-        public RankException(string message) { }
-        public RankException(string message, System.Exception innerException) { }
+
+        public RankException(String message, Exception innerException) { }
+
+        public RankException(String message) { }
     }
+
     public partial struct RuntimeFieldHandle
     {
-        public override bool Equals(object obj) { throw null; }
-        public bool Equals(System.RuntimeFieldHandle handle) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static bool operator ==(System.RuntimeFieldHandle left, System.RuntimeFieldHandle right) { throw null; }
-        public static bool operator !=(System.RuntimeFieldHandle left, System.RuntimeFieldHandle right) { throw null; }
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public Boolean Equals(RuntimeFieldHandle handle) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Boolean operator ==(RuntimeFieldHandle left, RuntimeFieldHandle right) { throw null; }
+
+        public static Boolean operator !=(RuntimeFieldHandle left, RuntimeFieldHandle right) { throw null; }
     }
+
     public partial struct RuntimeMethodHandle
     {
-        public override bool Equals(object obj) { throw null; }
-        public bool Equals(System.RuntimeMethodHandle handle) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static bool operator ==(System.RuntimeMethodHandle left, System.RuntimeMethodHandle right) { throw null; }
-        public static bool operator !=(System.RuntimeMethodHandle left, System.RuntimeMethodHandle right) { throw null; }
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public Boolean Equals(RuntimeMethodHandle handle) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Boolean operator ==(RuntimeMethodHandle left, RuntimeMethodHandle right) { throw null; }
+
+        public static Boolean operator !=(RuntimeMethodHandle left, RuntimeMethodHandle right) { throw null; }
     }
+
     public partial struct RuntimeTypeHandle
     {
-        public override bool Equals(object obj) { throw null; }
-        public bool Equals(System.RuntimeTypeHandle handle) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static bool operator ==(object left, System.RuntimeTypeHandle right) { throw null; }
-        public static bool operator ==(System.RuntimeTypeHandle left, object right) { throw null; }
-        public static bool operator !=(object left, System.RuntimeTypeHandle right) { throw null; }
-        public static bool operator !=(System.RuntimeTypeHandle left, object right) { throw null; }
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public Boolean Equals(RuntimeTypeHandle handle) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Boolean operator ==(Object left, RuntimeTypeHandle right) { throw null; }
+
+        public static Boolean operator ==(RuntimeTypeHandle left, Object right) { throw null; }
+
+        public static Boolean operator !=(Object left, RuntimeTypeHandle right) { throw null; }
+
+        public static Boolean operator !=(RuntimeTypeHandle left, Object right) { throw null; }
     }
-    [System.CLSCompliantAttribute(false)]
-    public partial struct SByte : System.IComparable, System.IComparable<sbyte>, System.IEquatable<sbyte>, System.IFormattable
+
+    [CLSCompliant(false)]
+    public partial struct SByte : IComparable, IComparable<SByte>, IEquatable<SByte>, IFormattable
     {
-        public const sbyte MaxValue = (sbyte)127;
-        public const sbyte MinValue = (sbyte)-128;
-        public int CompareTo(System.SByte value) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public bool Equals(System.SByte obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.SByte Parse(string s) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.SByte Parse(string s, System.Globalization.NumberStyles style) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.SByte Parse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.SByte Parse(string s, System.IFormatProvider provider) { throw null; }
-        int System.IComparable.CompareTo(object obj) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(System.IFormatProvider provider) { throw null; }
-        public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider provider) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static bool TryParse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider, out System.SByte result) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static bool TryParse(string s, out System.SByte result) { throw null; }
+        public const SByte MaxValue = 127;
+        public const SByte MinValue = -128;
+        public Int32 CompareTo(SByte value) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public Boolean Equals(SByte obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        [CLSCompliant(false)]
+        public static SByte Parse(String s, Globalization.NumberStyles style, IFormatProvider provider) { throw null; }
+
+        [CLSCompliant(false)]
+        public static SByte Parse(String s, Globalization.NumberStyles style) { throw null; }
+
+        [CLSCompliant(false)]
+        public static SByte Parse(String s, IFormatProvider provider) { throw null; }
+
+        [CLSCompliant(false)]
+        public static SByte Parse(String s) { throw null; }
+
+        Int32 IComparable.CompareTo(Object obj) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(IFormatProvider provider) { throw null; }
+
+        public String ToString(String format, IFormatProvider provider) { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Boolean TryParse(String s, Globalization.NumberStyles style, IFormatProvider provider, out SByte result) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Boolean TryParse(String s, out SByte result) { throw null; }
     }
-    public partial struct Single : System.IComparable, System.IComparable<float>, System.IEquatable<float>, System.IFormattable
+
+    public partial struct Single : IComparable, IComparable<Single>, IEquatable<Single>, IFormattable
     {
-        public const float Epsilon = 1.401298E-45f;
-        public const float MaxValue = 3.40282347E+38f;
-        public const float MinValue = -3.40282347E+38f;
-        public const float NaN = 0.0f / 0.0f;
-        public const float NegativeInfinity = -1.0f / 0.0f;
-        public const float PositiveInfinity = 1.0f / 0.0f;
-        public int CompareTo(System.Single value) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public bool Equals(System.Single obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static bool IsInfinity(System.Single f) { throw null; }
-        public static bool IsNaN(System.Single f) { throw null; }
-        public static bool IsNegativeInfinity(System.Single f) { throw null; }
-        public static bool IsPositiveInfinity(System.Single f) { throw null; }
-        public static bool operator ==(System.Single left, System.Single right) { throw null; }
-        public static bool operator >(System.Single left, System.Single right) { throw null; }
-        public static bool operator >=(System.Single left, System.Single right) { throw null; }
-        public static bool operator !=(System.Single left, System.Single right) { throw null; }
-        public static bool operator <(System.Single left, System.Single right) { throw null; }
-        public static bool operator <=(System.Single left, System.Single right) { throw null; }
-        public static System.Single Parse(string s) { throw null; }
-        public static System.Single Parse(string s, System.Globalization.NumberStyles style) { throw null; }
-        public static System.Single Parse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider) { throw null; }
-        public static System.Single Parse(string s, System.IFormatProvider provider) { throw null; }
-        int System.IComparable.CompareTo(object value) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(System.IFormatProvider provider) { throw null; }
-        public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider provider) { throw null; }
-        public static bool TryParse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider, out System.Single result) { throw null; }
-        public static bool TryParse(string s, out System.Single result) { throw null; }
+        public const Single Epsilon = 1E-45F;
+        public const Single MaxValue = 3.4028235E+38F;
+        public const Single MinValue = -3.4028235E+38F;
+        public const Single NaN = 0F / 0F;
+        public const Single NegativeInfinity = -1F / 0F;
+        public const Single PositiveInfinity = 1F / 0F;
+        public Int32 CompareTo(Single value) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public Boolean Equals(Single obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Boolean IsInfinity(Single f) { throw null; }
+
+        public static Boolean IsNaN(Single f) { throw null; }
+
+        public static Boolean IsNegativeInfinity(Single f) { throw null; }
+
+        public static Boolean IsPositiveInfinity(Single f) { throw null; }
+
+        public static Boolean operator ==(Single left, Single right) { throw null; }
+
+        public static Boolean operator >(Single left, Single right) { throw null; }
+
+        public static Boolean operator >=(Single left, Single right) { throw null; }
+
+        public static Boolean operator !=(Single left, Single right) { throw null; }
+
+        public static Boolean operator <(Single left, Single right) { throw null; }
+
+        public static Boolean operator <=(Single left, Single right) { throw null; }
+
+        public static Single Parse(String s, Globalization.NumberStyles style, IFormatProvider provider) { throw null; }
+
+        public static Single Parse(String s, Globalization.NumberStyles style) { throw null; }
+
+        public static Single Parse(String s, IFormatProvider provider) { throw null; }
+
+        public static Single Parse(String s) { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(IFormatProvider provider) { throw null; }
+
+        public String ToString(String format, IFormatProvider provider) { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        public static Boolean TryParse(String s, Globalization.NumberStyles style, IFormatProvider provider, out Single result) { throw null; }
+
+        public static Boolean TryParse(String s, out Single result) { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Method)]
-    public sealed partial class STAThreadAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Method)]
+    public sealed partial class STAThreadAttribute : Attribute
     {
-        public STAThreadAttribute() { }
     }
-    public sealed partial class String : System.Collections.Generic.IEnumerable<char>, System.Collections.IEnumerable, System.IComparable, System.IComparable<string>, System.IEquatable<string>
+
+    public sealed partial class String : IComparable, IComparable<String>, IEquatable<String>, Collections.Generic.IEnumerable<Char>, Collections.IEnumerable
     {
-        public static readonly string Empty;
-        [System.CLSCompliantAttribute(false)]
-        public unsafe String(char* value) { }
-        [System.CLSCompliantAttribute(false)]
-        public unsafe String(char* value, int startIndex, int length) { }
-        public String(char c, int count) { }
-        public String(char[] value) { }
-        public String(char[] value, int startIndex, int length) { }
-        [System.Runtime.CompilerServices.IndexerName("Chars")]
-        public char this[int index] { get { throw null; } }
-        public int Length { get { throw null; } }
-        public static int Compare(System.String strA, int indexA, System.String strB, int indexB, int length) { throw null; }
-        public static int Compare(System.String strA, int indexA, System.String strB, int indexB, int length, System.StringComparison comparisonType) { throw null; }
-        public static int Compare(System.String strA, System.String strB) { throw null; }
-        public static int Compare(System.String strA, System.String strB, System.StringComparison comparisonType) { throw null; }
-        public static int CompareOrdinal(System.String strA, int indexA, System.String strB, int indexB, int length) { throw null; }
-        public static int CompareOrdinal(System.String strA, System.String strB) { throw null; }
-        public int CompareTo(System.String strB) { throw null; }
-        public static System.String Concat(System.Collections.Generic.IEnumerable<string> values) { throw null; }
-        public static System.String Concat(object arg0) { throw null; }
-        public static System.String Concat(object arg0, object arg1) { throw null; }
-        public static System.String Concat(object arg0, object arg1, object arg2) { throw null; }
-        public static System.String Concat(params object[] args) { throw null; }
-        public static System.String Concat(System.String str0, System.String str1) { throw null; }
-        public static System.String Concat(System.String str0, System.String str1, System.String str2) { throw null; }
-        public static System.String Concat(System.String str0, System.String str1, System.String str2, System.String str3) { throw null; }
-        public static System.String Concat(params string[] values) { throw null; }
-        public static System.String Concat<T>(System.Collections.Generic.IEnumerable<T> values) { throw null; }
-        public bool Contains(System.String value) { throw null; }
-        public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) { }
-        public bool EndsWith(System.String value) { throw null; }
-        public bool EndsWith(System.String value, System.StringComparison comparisonType) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public bool Equals(System.String value) { throw null; }
-        public static bool Equals(System.String a, System.String b) { throw null; }
-        public static bool Equals(System.String a, System.String b, System.StringComparison comparisonType) { throw null; }
-        public bool Equals(System.String value, System.StringComparison comparisonType) { throw null; }
-        public static System.String Format(System.IFormatProvider provider, System.String format, params object[] args) { throw null; }
-        public static System.String Format(System.String format, params object[] args) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public int IndexOf(char value) { throw null; }
-        public int IndexOf(char value, int startIndex) { throw null; }
-        public int IndexOf(char value, int startIndex, int count) { throw null; }
-        public int IndexOf(System.String value) { throw null; }
-        public int IndexOf(System.String value, int startIndex) { throw null; }
-        public int IndexOf(System.String value, int startIndex, int count) { throw null; }
-        public int IndexOf(System.String value, int startIndex, int count, System.StringComparison comparisonType) { throw null; }
-        public int IndexOf(System.String value, int startIndex, System.StringComparison comparisonType) { throw null; }
-        public int IndexOf(System.String value, System.StringComparison comparisonType) { throw null; }
-        public int IndexOfAny(char[] anyOf) { throw null; }
-        public int IndexOfAny(char[] anyOf, int startIndex) { throw null; }
-        public int IndexOfAny(char[] anyOf, int startIndex, int count) { throw null; }
-        public System.String Insert(int startIndex, System.String value) { throw null; }
-        public static bool IsNullOrEmpty(System.String value) { throw null; }
-        public static bool IsNullOrWhiteSpace(System.String value) { throw null; }
-        public static System.String Join(System.String separator, System.Collections.Generic.IEnumerable<string> values) { throw null; }
-        public static System.String Join(System.String separator, params object[] values) { throw null; }
-        public static System.String Join(System.String separator, params string[] value) { throw null; }
-        public static System.String Join(System.String separator, string[] value, int startIndex, int count) { throw null; }
-        public static System.String Join<T>(System.String separator, System.Collections.Generic.IEnumerable<T> values) { throw null; }
-        public int LastIndexOf(char value) { throw null; }
-        public int LastIndexOf(char value, int startIndex) { throw null; }
-        public int LastIndexOf(char value, int startIndex, int count) { throw null; }
-        public int LastIndexOf(System.String value) { throw null; }
-        public int LastIndexOf(System.String value, int startIndex) { throw null; }
-        public int LastIndexOf(System.String value, int startIndex, int count) { throw null; }
-        public int LastIndexOf(System.String value, int startIndex, int count, System.StringComparison comparisonType) { throw null; }
-        public int LastIndexOf(System.String value, int startIndex, System.StringComparison comparisonType) { throw null; }
-        public int LastIndexOf(System.String value, System.StringComparison comparisonType) { throw null; }
-        public int LastIndexOfAny(char[] anyOf) { throw null; }
-        public int LastIndexOfAny(char[] anyOf, int startIndex) { throw null; }
-        public int LastIndexOfAny(char[] anyOf, int startIndex, int count) { throw null; }
-        public static bool operator ==(System.String a, System.String b) { throw null; }
-        public static bool operator !=(System.String a, System.String b) { throw null; }
-        public System.String PadLeft(int totalWidth) { throw null; }
-        public System.String PadLeft(int totalWidth, char paddingChar) { throw null; }
-        public System.String PadRight(int totalWidth) { throw null; }
-        public System.String PadRight(int totalWidth, char paddingChar) { throw null; }
-        public System.String Remove(int startIndex) { throw null; }
-        public System.String Remove(int startIndex, int count) { throw null; }
-        public System.String Replace(char oldChar, char newChar) { throw null; }
-        public System.String Replace(System.String oldValue, System.String newValue) { throw null; }
-        public string[] Split(params char[] separator) { throw null; }
-        public string[] Split(char[] separator, int count) { throw null; }
-        public string[] Split(char[] separator, int count, System.StringSplitOptions options) { throw null; }
-        public string[] Split(char[] separator, System.StringSplitOptions options) { throw null; }
-        public string[] Split(string[] separator, int count, System.StringSplitOptions options) { throw null; }
-        public string[] Split(string[] separator, System.StringSplitOptions options) { throw null; }
-        public bool StartsWith(System.String value) { throw null; }
-        public bool StartsWith(System.String value, System.StringComparison comparisonType) { throw null; }
-        public System.String Substring(int startIndex) { throw null; }
-        public System.String Substring(int startIndex, int length) { throw null; }
-        System.Collections.Generic.IEnumerator<char> System.Collections.Generic.IEnumerable<System.Char>.GetEnumerator() { throw null; }
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw null; }
-        int System.IComparable.CompareTo(object value) { throw null; }
-        public char[] ToCharArray() { throw null; }
-        public char[] ToCharArray(int startIndex, int length) { throw null; }
-        public System.String ToLower() { throw null; }
-        public System.String ToLowerInvariant() { throw null; }
-        public override System.String ToString() { throw null; }
-        public System.String ToUpper() { throw null; }
-        public System.String ToUpperInvariant() { throw null; }
-        public System.String Trim() { throw null; }
-        public System.String Trim(params char[] trimChars) { throw null; }
-        public System.String TrimEnd(params char[] trimChars) { throw null; }
-        public System.String TrimStart(params char[] trimChars) { throw null; }
+        public static readonly String Empty;
+        public String(Char c, Int32 count) { }
+
+        public String(Char[] value, Int32 startIndex, Int32 length) { }
+
+        public String(Char[] value) { }
+
+        [CLSCompliant(false)]
+        public unsafe String(Char* value, Int32 startIndex, Int32 length) { }
+
+        [CLSCompliant(false)]
+        public unsafe String(Char* value) { }
+
+        public Char this[Int32 index] { get { throw null; } }
+
+        public Int32 Length { get { throw null; } }
+
+        public static Int32 Compare(String strA, Int32 indexA, String strB, Int32 indexB, Int32 length, StringComparison comparisonType) { throw null; }
+
+        public static Int32 Compare(String strA, Int32 indexA, String strB, Int32 indexB, Int32 length) { throw null; }
+
+        public static Int32 Compare(String strA, String strB, StringComparison comparisonType) { throw null; }
+
+        public static Int32 Compare(String strA, String strB) { throw null; }
+
+        public static Int32 CompareOrdinal(String strA, Int32 indexA, String strB, Int32 indexB, Int32 length) { throw null; }
+
+        public static Int32 CompareOrdinal(String strA, String strB) { throw null; }
+
+        public Int32 CompareTo(String strB) { throw null; }
+
+        public static String Concat(Collections.Generic.IEnumerable<String> values) { throw null; }
+
+        public static String Concat(Object arg0, Object arg1, Object arg2) { throw null; }
+
+        public static String Concat(Object arg0, Object arg1) { throw null; }
+
+        public static String Concat(Object arg0) { throw null; }
+
+        public static String Concat(params Object[] args) { throw null; }
+
+        public static String Concat(String str0, String str1, String str2, String str3) { throw null; }
+
+        public static String Concat(String str0, String str1, String str2) { throw null; }
+
+        public static String Concat(String str0, String str1) { throw null; }
+
+        public static String Concat(params String[] values) { throw null; }
+
+        public static String Concat<T>(Collections.Generic.IEnumerable<T> values) { throw null; }
+
+        public Boolean Contains(String value) { throw null; }
+
+        public void CopyTo(Int32 sourceIndex, Char[] destination, Int32 destinationIndex, Int32 count) { }
+
+        public Boolean EndsWith(String value, StringComparison comparisonType) { throw null; }
+
+        public Boolean EndsWith(String value) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public static Boolean Equals(String a, String b, StringComparison comparisonType) { throw null; }
+
+        public static Boolean Equals(String a, String b) { throw null; }
+
+        public Boolean Equals(String value, StringComparison comparisonType) { throw null; }
+
+        public Boolean Equals(String value) { throw null; }
+
+        public static String Format(IFormatProvider provider, String format, params Object[] args) { throw null; }
+
+        public static String Format(String format, params Object[] args) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public Int32 IndexOf(Char value, Int32 startIndex, Int32 count) { throw null; }
+
+        public Int32 IndexOf(Char value, Int32 startIndex) { throw null; }
+
+        public Int32 IndexOf(Char value) { throw null; }
+
+        public Int32 IndexOf(String value, Int32 startIndex, Int32 count, StringComparison comparisonType) { throw null; }
+
+        public Int32 IndexOf(String value, Int32 startIndex, Int32 count) { throw null; }
+
+        public Int32 IndexOf(String value, Int32 startIndex, StringComparison comparisonType) { throw null; }
+
+        public Int32 IndexOf(String value, Int32 startIndex) { throw null; }
+
+        public Int32 IndexOf(String value, StringComparison comparisonType) { throw null; }
+
+        public Int32 IndexOf(String value) { throw null; }
+
+        public Int32 IndexOfAny(Char[] anyOf, Int32 startIndex, Int32 count) { throw null; }
+
+        public Int32 IndexOfAny(Char[] anyOf, Int32 startIndex) { throw null; }
+
+        public Int32 IndexOfAny(Char[] anyOf) { throw null; }
+
+        public String Insert(Int32 startIndex, String value) { throw null; }
+
+        public static Boolean IsNullOrEmpty(String value) { throw null; }
+
+        public static Boolean IsNullOrWhiteSpace(String value) { throw null; }
+
+        public static String Join(String separator, Collections.Generic.IEnumerable<String> values) { throw null; }
+
+        public static String Join(String separator, params Object[] values) { throw null; }
+
+        public static String Join(String separator, String[] value, Int32 startIndex, Int32 count) { throw null; }
+
+        public static String Join(String separator, params String[] value) { throw null; }
+
+        public static String Join<T>(String separator, Collections.Generic.IEnumerable<T> values) { throw null; }
+
+        public Int32 LastIndexOf(Char value, Int32 startIndex, Int32 count) { throw null; }
+
+        public Int32 LastIndexOf(Char value, Int32 startIndex) { throw null; }
+
+        public Int32 LastIndexOf(Char value) { throw null; }
+
+        public Int32 LastIndexOf(String value, Int32 startIndex, Int32 count, StringComparison comparisonType) { throw null; }
+
+        public Int32 LastIndexOf(String value, Int32 startIndex, Int32 count) { throw null; }
+
+        public Int32 LastIndexOf(String value, Int32 startIndex, StringComparison comparisonType) { throw null; }
+
+        public Int32 LastIndexOf(String value, Int32 startIndex) { throw null; }
+
+        public Int32 LastIndexOf(String value, StringComparison comparisonType) { throw null; }
+
+        public Int32 LastIndexOf(String value) { throw null; }
+
+        public Int32 LastIndexOfAny(Char[] anyOf, Int32 startIndex, Int32 count) { throw null; }
+
+        public Int32 LastIndexOfAny(Char[] anyOf, Int32 startIndex) { throw null; }
+
+        public Int32 LastIndexOfAny(Char[] anyOf) { throw null; }
+
+        public static Boolean operator ==(String a, String b) { throw null; }
+
+        public static Boolean operator !=(String a, String b) { throw null; }
+
+        public String PadLeft(Int32 totalWidth, Char paddingChar) { throw null; }
+
+        public String PadLeft(Int32 totalWidth) { throw null; }
+
+        public String PadRight(Int32 totalWidth, Char paddingChar) { throw null; }
+
+        public String PadRight(Int32 totalWidth) { throw null; }
+
+        public String Remove(Int32 startIndex, Int32 count) { throw null; }
+
+        public String Remove(Int32 startIndex) { throw null; }
+
+        public String Replace(Char oldChar, Char newChar) { throw null; }
+
+        public String Replace(String oldValue, String newValue) { throw null; }
+
+        public String[] Split(Char[] separator, Int32 count, StringSplitOptions options) { throw null; }
+
+        public String[] Split(Char[] separator, Int32 count) { throw null; }
+
+        public String[] Split(Char[] separator, StringSplitOptions options) { throw null; }
+
+        public String[] Split(params Char[] separator) { throw null; }
+
+        public String[] Split(String[] separator, Int32 count, StringSplitOptions options) { throw null; }
+
+        public String[] Split(String[] separator, StringSplitOptions options) { throw null; }
+
+        public Boolean StartsWith(String value, StringComparison comparisonType) { throw null; }
+
+        public Boolean StartsWith(String value) { throw null; }
+
+        public String Substring(Int32 startIndex, Int32 length) { throw null; }
+
+        public String Substring(Int32 startIndex) { throw null; }
+
+        Collections.Generic.IEnumerator<Char> Collections.Generic.IEnumerable<Char>.GetEnumerator() { throw null; }
+
+        Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        public Char[] ToCharArray() { throw null; }
+
+        public Char[] ToCharArray(Int32 startIndex, Int32 length) { throw null; }
+
+        public String ToLower() { throw null; }
+
+        public String ToLowerInvariant() { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToUpper() { throw null; }
+
+        public String ToUpperInvariant() { throw null; }
+
+        public String Trim() { throw null; }
+
+        public String Trim(params Char[] trimChars) { throw null; }
+
+        public String TrimEnd(params Char[] trimChars) { throw null; }
+
+        public String TrimStart(params Char[] trimChars) { throw null; }
     }
+
     public enum StringComparison
     {
         CurrentCulture = 0,
         CurrentCultureIgnoreCase = 1,
         Ordinal = 4,
-        OrdinalIgnoreCase = 5,
+        OrdinalIgnoreCase = 5
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum StringSplitOptions
     {
         None = 0,
-        RemoveEmptyEntries = 1,
+        RemoveEmptyEntries = 1
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field, Inherited=false)]
-    public partial class ThreadStaticAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Field, Inherited = false)]
+    public partial class ThreadStaticAttribute : Attribute
     {
-        public ThreadStaticAttribute() { }
     }
-    public partial class TimeoutException : System.Exception
+
+    public partial class TimeoutException : Exception
     {
         public TimeoutException() { }
-        public TimeoutException(string message) { }
-        public TimeoutException(string message, System.Exception innerException) { }
+
+        public TimeoutException(String message, Exception innerException) { }
+
+        public TimeoutException(String message) { }
     }
-    public partial struct TimeSpan : System.IComparable, System.IComparable<System.TimeSpan>, System.IEquatable<System.TimeSpan>, System.IFormattable
+
+    public partial struct TimeSpan : IComparable, IComparable<TimeSpan>, IEquatable<TimeSpan>, IFormattable
     {
-        public static readonly System.TimeSpan MaxValue;
-        public static readonly System.TimeSpan MinValue;
-        public const long TicksPerDay = (long)864000000000;
-        public const long TicksPerHour = (long)36000000000;
-        public const long TicksPerMillisecond = (long)10000;
-        public const long TicksPerMinute = (long)600000000;
-        public const long TicksPerSecond = (long)10000000;
-        public static readonly System.TimeSpan Zero;
-        public TimeSpan(int hours, int minutes, int seconds) { throw null; }
-        public TimeSpan(int days, int hours, int minutes, int seconds) { throw null; }
-        public TimeSpan(int days, int hours, int minutes, int seconds, int milliseconds) { throw null; }
-        public TimeSpan(long ticks) { throw null; }
-        public int Days { get { throw null; } }
-        public int Hours { get { throw null; } }
-        public int Milliseconds { get { throw null; } }
-        public int Minutes { get { throw null; } }
-        public int Seconds { get { throw null; } }
-        public long Ticks { get { throw null; } }
-        public double TotalDays { get { throw null; } }
-        public double TotalHours { get { throw null; } }
-        public double TotalMilliseconds { get { throw null; } }
-        public double TotalMinutes { get { throw null; } }
-        public double TotalSeconds { get { throw null; } }
-        public System.TimeSpan Add(System.TimeSpan ts) { throw null; }
-        public static int Compare(System.TimeSpan t1, System.TimeSpan t2) { throw null; }
-        public int CompareTo(System.TimeSpan value) { throw null; }
-        public System.TimeSpan Duration() { throw null; }
-        public override bool Equals(object value) { throw null; }
-        public bool Equals(System.TimeSpan obj) { throw null; }
-        public static bool Equals(System.TimeSpan t1, System.TimeSpan t2) { throw null; }
-        public static System.TimeSpan FromDays(double value) { throw null; }
-        public static System.TimeSpan FromHours(double value) { throw null; }
-        public static System.TimeSpan FromMilliseconds(double value) { throw null; }
-        public static System.TimeSpan FromMinutes(double value) { throw null; }
-        public static System.TimeSpan FromSeconds(double value) { throw null; }
-        public static System.TimeSpan FromTicks(long value) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public System.TimeSpan Negate() { throw null; }
-        public static System.TimeSpan operator +(System.TimeSpan t1, System.TimeSpan t2) { throw null; }
-        public static bool operator ==(System.TimeSpan t1, System.TimeSpan t2) { throw null; }
-        public static bool operator >(System.TimeSpan t1, System.TimeSpan t2) { throw null; }
-        public static bool operator >=(System.TimeSpan t1, System.TimeSpan t2) { throw null; }
-        public static bool operator !=(System.TimeSpan t1, System.TimeSpan t2) { throw null; }
-        public static bool operator <(System.TimeSpan t1, System.TimeSpan t2) { throw null; }
-        public static bool operator <=(System.TimeSpan t1, System.TimeSpan t2) { throw null; }
-        public static System.TimeSpan operator -(System.TimeSpan t1, System.TimeSpan t2) { throw null; }
-        public static System.TimeSpan operator -(System.TimeSpan t) { throw null; }
-        public static System.TimeSpan operator +(System.TimeSpan t) { throw null; }
-        public static System.TimeSpan Parse(string s) { throw null; }
-        public static System.TimeSpan Parse(string input, System.IFormatProvider formatProvider) { throw null; }
-        public static System.TimeSpan ParseExact(string input, string format, System.IFormatProvider formatProvider) { throw null; }
-        public static System.TimeSpan ParseExact(string input, string format, System.IFormatProvider formatProvider, System.Globalization.TimeSpanStyles styles) { throw null; }
-        public static System.TimeSpan ParseExact(string input, string[] formats, System.IFormatProvider formatProvider) { throw null; }
-        public static System.TimeSpan ParseExact(string input, string[] formats, System.IFormatProvider formatProvider, System.Globalization.TimeSpanStyles styles) { throw null; }
-        public System.TimeSpan Subtract(System.TimeSpan ts) { throw null; }
-        int System.IComparable.CompareTo(object value) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider formatProvider) { throw null; }
-        public static bool TryParse(string input, System.IFormatProvider formatProvider, out System.TimeSpan result) { throw null; }
-        public static bool TryParse(string s, out System.TimeSpan result) { throw null; }
-        public static bool TryParseExact(string input, string format, System.IFormatProvider formatProvider, System.Globalization.TimeSpanStyles styles, out System.TimeSpan result) { throw null; }
-        public static bool TryParseExact(string input, string format, System.IFormatProvider formatProvider, out System.TimeSpan result) { throw null; }
-        public static bool TryParseExact(string input, string[] formats, System.IFormatProvider formatProvider, System.Globalization.TimeSpanStyles styles, out System.TimeSpan result) { throw null; }
-        public static bool TryParseExact(string input, string[] formats, System.IFormatProvider formatProvider, out System.TimeSpan result) { throw null; }
+        public static readonly TimeSpan MaxValue;
+        public static readonly TimeSpan MinValue;
+        public const Int64 TicksPerDay = 864000000000L;
+        public const Int64 TicksPerHour = 36000000000L;
+        public const Int64 TicksPerMillisecond = 10000L;
+        public const Int64 TicksPerMinute = 600000000L;
+        public const Int64 TicksPerSecond = 10000000L;
+        public static readonly TimeSpan Zero;
+        public TimeSpan(Int32 days, Int32 hours, Int32 minutes, Int32 seconds, Int32 milliseconds) { }
+
+        public TimeSpan(Int32 days, Int32 hours, Int32 minutes, Int32 seconds) { }
+
+        public TimeSpan(Int32 hours, Int32 minutes, Int32 seconds) { }
+
+        public TimeSpan(Int64 ticks) { }
+
+        public Int32 Days { get { throw null; } }
+
+        public Int32 Hours { get { throw null; } }
+
+        public Int32 Milliseconds { get { throw null; } }
+
+        public Int32 Minutes { get { throw null; } }
+
+        public Int32 Seconds { get { throw null; } }
+
+        public Int64 Ticks { get { throw null; } }
+
+        public Double TotalDays { get { throw null; } }
+
+        public Double TotalHours { get { throw null; } }
+
+        public Double TotalMilliseconds { get { throw null; } }
+
+        public Double TotalMinutes { get { throw null; } }
+
+        public Double TotalSeconds { get { throw null; } }
+
+        public TimeSpan Add(TimeSpan ts) { throw null; }
+
+        public static Int32 Compare(TimeSpan t1, TimeSpan t2) { throw null; }
+
+        public Int32 CompareTo(TimeSpan value) { throw null; }
+
+        public TimeSpan Duration() { throw null; }
+
+        public override Boolean Equals(Object value) { throw null; }
+
+        public static Boolean Equals(TimeSpan t1, TimeSpan t2) { throw null; }
+
+        public Boolean Equals(TimeSpan obj) { throw null; }
+
+        public static TimeSpan FromDays(Double value) { throw null; }
+
+        public static TimeSpan FromHours(Double value) { throw null; }
+
+        public static TimeSpan FromMilliseconds(Double value) { throw null; }
+
+        public static TimeSpan FromMinutes(Double value) { throw null; }
+
+        public static TimeSpan FromSeconds(Double value) { throw null; }
+
+        public static TimeSpan FromTicks(Int64 value) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public TimeSpan Negate() { throw null; }
+
+        public static TimeSpan operator +(TimeSpan t1, TimeSpan t2) { throw null; }
+
+        public static Boolean operator ==(TimeSpan t1, TimeSpan t2) { throw null; }
+
+        public static Boolean operator >(TimeSpan t1, TimeSpan t2) { throw null; }
+
+        public static Boolean operator >=(TimeSpan t1, TimeSpan t2) { throw null; }
+
+        public static Boolean operator !=(TimeSpan t1, TimeSpan t2) { throw null; }
+
+        public static Boolean operator <(TimeSpan t1, TimeSpan t2) { throw null; }
+
+        public static Boolean operator <=(TimeSpan t1, TimeSpan t2) { throw null; }
+
+        public static TimeSpan operator -(TimeSpan t1, TimeSpan t2) { throw null; }
+
+        public static TimeSpan operator -(TimeSpan t) { throw null; }
+
+        public static TimeSpan operator +(TimeSpan t) { throw null; }
+
+        public static TimeSpan Parse(String input, IFormatProvider formatProvider) { throw null; }
+
+        public static TimeSpan Parse(String s) { throw null; }
+
+        public static TimeSpan ParseExact(String input, String format, IFormatProvider formatProvider, Globalization.TimeSpanStyles styles) { throw null; }
+
+        public static TimeSpan ParseExact(String input, String format, IFormatProvider formatProvider) { throw null; }
+
+        public static TimeSpan ParseExact(String input, String[] formats, IFormatProvider formatProvider, Globalization.TimeSpanStyles styles) { throw null; }
+
+        public static TimeSpan ParseExact(String input, String[] formats, IFormatProvider formatProvider) { throw null; }
+
+        public TimeSpan Subtract(TimeSpan ts) { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(String format, IFormatProvider formatProvider) { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        public static Boolean TryParse(String input, IFormatProvider formatProvider, out TimeSpan result) { throw null; }
+
+        public static Boolean TryParse(String s, out TimeSpan result) { throw null; }
+
+        public static Boolean TryParseExact(String input, String format, IFormatProvider formatProvider, Globalization.TimeSpanStyles styles, out TimeSpan result) { throw null; }
+
+        public static Boolean TryParseExact(String input, String format, IFormatProvider formatProvider, out TimeSpan result) { throw null; }
+
+        public static Boolean TryParseExact(String input, String[] formats, IFormatProvider formatProvider, Globalization.TimeSpanStyles styles, out TimeSpan result) { throw null; }
+
+        public static Boolean TryParseExact(String input, String[] formats, IFormatProvider formatProvider, out TimeSpan result) { throw null; }
     }
-    public sealed partial class TimeZoneInfo : System.IEquatable<System.TimeZoneInfo>
+
+    public sealed partial class TimeZoneInfo : IEquatable<TimeZoneInfo>
     {
         internal TimeZoneInfo() { }
-        public System.TimeSpan BaseUtcOffset { get { throw null; } }
-        public string DaylightName { get { throw null; } }
-        public string DisplayName { get { throw null; } }
-        public static System.TimeZoneInfo Local { get { throw null; } }
-        public string StandardName { get { throw null; } }
-        public bool SupportsDaylightSavingTime { get { throw null; } }
-        public static System.TimeZoneInfo Utc { get { throw null; } }
-        public static System.DateTime ConvertTime(System.DateTime dateTime, System.TimeZoneInfo destinationTimeZone) { throw null; }
-        public static System.DateTimeOffset ConvertTime(System.DateTimeOffset dateTimeOffset, System.TimeZoneInfo destinationTimeZone) { throw null; }
-        public bool Equals(System.TimeZoneInfo other) { throw null; }
-        public System.TimeSpan[] GetAmbiguousTimeOffsets(System.DateTime dateTime) { throw null; }
-        public System.TimeSpan[] GetAmbiguousTimeOffsets(System.DateTimeOffset dateTimeOffset) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public System.TimeSpan GetUtcOffset(System.DateTime dateTime) { throw null; }
-        public System.TimeSpan GetUtcOffset(System.DateTimeOffset dateTimeOffset) { throw null; }
-        public bool IsAmbiguousTime(System.DateTime dateTime) { throw null; }
-        public bool IsAmbiguousTime(System.DateTimeOffset dateTimeOffset) { throw null; }
-        public bool IsDaylightSavingTime(System.DateTime dateTime) { throw null; }
-        public bool IsDaylightSavingTime(System.DateTimeOffset dateTimeOffset) { throw null; }
-        public bool IsInvalidTime(System.DateTime dateTime) { throw null; }
-        public override string ToString() { throw null; }
+
+        public TimeSpan BaseUtcOffset { get { throw null; } }
+
+        public String DaylightName { get { throw null; } }
+
+        public String DisplayName { get { throw null; } }
+
+        public static TimeZoneInfo Local { get { throw null; } }
+
+        public String StandardName { get { throw null; } }
+
+        public Boolean SupportsDaylightSavingTime { get { throw null; } }
+
+        public static TimeZoneInfo Utc { get { throw null; } }
+
+        public static DateTime ConvertTime(DateTime dateTime, TimeZoneInfo destinationTimeZone) { throw null; }
+
+        public static DateTimeOffset ConvertTime(DateTimeOffset dateTimeOffset, TimeZoneInfo destinationTimeZone) { throw null; }
+
+        public Boolean Equals(TimeZoneInfo other) { throw null; }
+
+        public TimeSpan[] GetAmbiguousTimeOffsets(DateTime dateTime) { throw null; }
+
+        public TimeSpan[] GetAmbiguousTimeOffsets(DateTimeOffset dateTimeOffset) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public TimeSpan GetUtcOffset(DateTime dateTime) { throw null; }
+
+        public TimeSpan GetUtcOffset(DateTimeOffset dateTimeOffset) { throw null; }
+
+        public Boolean IsAmbiguousTime(DateTime dateTime) { throw null; }
+
+        public Boolean IsAmbiguousTime(DateTimeOffset dateTimeOffset) { throw null; }
+
+        public Boolean IsDaylightSavingTime(DateTime dateTime) { throw null; }
+
+        public Boolean IsDaylightSavingTime(DateTimeOffset dateTimeOffset) { throw null; }
+
+        public Boolean IsInvalidTime(DateTime dateTime) { throw null; }
+
+        public override String ToString() { throw null; }
     }
+
     public static partial class Tuple
     {
-        public static System.Tuple<T1> Create<T1>(T1 item1) { throw null; }
-        public static System.Tuple<T1, T2> Create<T1, T2>(T1 item1, T2 item2) { throw null; }
-        public static System.Tuple<T1, T2, T3> Create<T1, T2, T3>(T1 item1, T2 item2, T3 item3) { throw null; }
-        public static System.Tuple<T1, T2, T3, T4> Create<T1, T2, T3, T4>(T1 item1, T2 item2, T3 item3, T4 item4) { throw null; }
-        public static System.Tuple<T1, T2, T3, T4, T5> Create<T1, T2, T3, T4, T5>(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5) { throw null; }
-        public static System.Tuple<T1, T2, T3, T4, T5, T6> Create<T1, T2, T3, T4, T5, T6>(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6) { throw null; }
-        public static System.Tuple<T1, T2, T3, T4, T5, T6, T7> Create<T1, T2, T3, T4, T5, T6, T7>(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6, T7 item7) { throw null; }
-        public static System.Tuple<T1, T2, T3, T4, T5, T6, T7, System.Tuple<T8>> Create<T1, T2, T3, T4, T5, T6, T7, T8>(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6, T7 item7, T8 item8) { throw null; }
+        public static Tuple<T1> Create<T1>(T1 item1) { throw null; }
+
+        public static Tuple<T1, T2> Create<T1, T2>(T1 item1, T2 item2) { throw null; }
+
+        public static Tuple<T1, T2, T3> Create<T1, T2, T3>(T1 item1, T2 item2, T3 item3) { throw null; }
+
+        public static Tuple<T1, T2, T3, T4> Create<T1, T2, T3, T4>(T1 item1, T2 item2, T3 item3, T4 item4) { throw null; }
+
+        public static Tuple<T1, T2, T3, T4, T5> Create<T1, T2, T3, T4, T5>(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5) { throw null; }
+
+        public static Tuple<T1, T2, T3, T4, T5, T6> Create<T1, T2, T3, T4, T5, T6>(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6) { throw null; }
+
+        public static Tuple<T1, T2, T3, T4, T5, T6, T7> Create<T1, T2, T3, T4, T5, T6, T7>(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6, T7 item7) { throw null; }
+
+        public static Tuple<T1, T2, T3, T4, T5, T6, T7, Tuple<T8>> Create<T1, T2, T3, T4, T5, T6, T7, T8>(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6, T7 item7, T8 item8) { throw null; }
     }
-    public partial class Tuple<T1> : System.Collections.IStructuralComparable, System.Collections.IStructuralEquatable, System.IComparable
+
+    public partial class Tuple<T1> : Collections.IStructuralComparable, Collections.IStructuralEquatable, IComparable
     {
         public Tuple(T1 item1) { }
+
         public T1 Item1 { get { throw null; } }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        int System.Collections.IStructuralComparable.CompareTo(object other, System.Collections.IComparer comparer) { throw null; }
-        bool System.Collections.IStructuralEquatable.Equals(object other, System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.Collections.IStructuralEquatable.GetHashCode(System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.IComparable.CompareTo(object obj) { throw null; }
-        public override string ToString() { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        Int32 Collections.IStructuralComparable.CompareTo(Object other, Collections.IComparer comparer) { throw null; }
+
+        Boolean Collections.IStructuralEquatable.Equals(Object other, Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 Collections.IStructuralEquatable.GetHashCode(Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 IComparable.CompareTo(Object obj) { throw null; }
+
+        public override String ToString() { throw null; }
     }
-    public partial class Tuple<T1, T2> : System.Collections.IStructuralComparable, System.Collections.IStructuralEquatable, System.IComparable
+
+    public partial class Tuple<T1, T2> : Collections.IStructuralComparable, Collections.IStructuralEquatable, IComparable
     {
         public Tuple(T1 item1, T2 item2) { }
+
         public T1 Item1 { get { throw null; } }
+
         public T2 Item2 { get { throw null; } }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        int System.Collections.IStructuralComparable.CompareTo(object other, System.Collections.IComparer comparer) { throw null; }
-        bool System.Collections.IStructuralEquatable.Equals(object other, System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.Collections.IStructuralEquatable.GetHashCode(System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.IComparable.CompareTo(object obj) { throw null; }
-        public override string ToString() { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        Int32 Collections.IStructuralComparable.CompareTo(Object other, Collections.IComparer comparer) { throw null; }
+
+        Boolean Collections.IStructuralEquatable.Equals(Object other, Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 Collections.IStructuralEquatable.GetHashCode(Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 IComparable.CompareTo(Object obj) { throw null; }
+
+        public override String ToString() { throw null; }
     }
-    public partial class Tuple<T1, T2, T3> : System.Collections.IStructuralComparable, System.Collections.IStructuralEquatable, System.IComparable
+
+    public partial class Tuple<T1, T2, T3> : Collections.IStructuralComparable, Collections.IStructuralEquatable, IComparable
     {
         public Tuple(T1 item1, T2 item2, T3 item3) { }
+
         public T1 Item1 { get { throw null; } }
+
         public T2 Item2 { get { throw null; } }
+
         public T3 Item3 { get { throw null; } }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        int System.Collections.IStructuralComparable.CompareTo(object other, System.Collections.IComparer comparer) { throw null; }
-        bool System.Collections.IStructuralEquatable.Equals(object other, System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.Collections.IStructuralEquatable.GetHashCode(System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.IComparable.CompareTo(object obj) { throw null; }
-        public override string ToString() { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        Int32 Collections.IStructuralComparable.CompareTo(Object other, Collections.IComparer comparer) { throw null; }
+
+        Boolean Collections.IStructuralEquatable.Equals(Object other, Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 Collections.IStructuralEquatable.GetHashCode(Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 IComparable.CompareTo(Object obj) { throw null; }
+
+        public override String ToString() { throw null; }
     }
-    public partial class Tuple<T1, T2, T3, T4> : System.Collections.IStructuralComparable, System.Collections.IStructuralEquatable, System.IComparable
+
+    public partial class Tuple<T1, T2, T3, T4> : Collections.IStructuralComparable, Collections.IStructuralEquatable, IComparable
     {
         public Tuple(T1 item1, T2 item2, T3 item3, T4 item4) { }
+
         public T1 Item1 { get { throw null; } }
+
         public T2 Item2 { get { throw null; } }
+
         public T3 Item3 { get { throw null; } }
+
         public T4 Item4 { get { throw null; } }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        int System.Collections.IStructuralComparable.CompareTo(object other, System.Collections.IComparer comparer) { throw null; }
-        bool System.Collections.IStructuralEquatable.Equals(object other, System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.Collections.IStructuralEquatable.GetHashCode(System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.IComparable.CompareTo(object obj) { throw null; }
-        public override string ToString() { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        Int32 Collections.IStructuralComparable.CompareTo(Object other, Collections.IComparer comparer) { throw null; }
+
+        Boolean Collections.IStructuralEquatable.Equals(Object other, Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 Collections.IStructuralEquatable.GetHashCode(Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 IComparable.CompareTo(Object obj) { throw null; }
+
+        public override String ToString() { throw null; }
     }
-    public partial class Tuple<T1, T2, T3, T4, T5> : System.Collections.IStructuralComparable, System.Collections.IStructuralEquatable, System.IComparable
+
+    public partial class Tuple<T1, T2, T3, T4, T5> : Collections.IStructuralComparable, Collections.IStructuralEquatable, IComparable
     {
         public Tuple(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5) { }
+
         public T1 Item1 { get { throw null; } }
+
         public T2 Item2 { get { throw null; } }
+
         public T3 Item3 { get { throw null; } }
+
         public T4 Item4 { get { throw null; } }
+
         public T5 Item5 { get { throw null; } }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        int System.Collections.IStructuralComparable.CompareTo(object other, System.Collections.IComparer comparer) { throw null; }
-        bool System.Collections.IStructuralEquatable.Equals(object other, System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.Collections.IStructuralEquatable.GetHashCode(System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.IComparable.CompareTo(object obj) { throw null; }
-        public override string ToString() { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        Int32 Collections.IStructuralComparable.CompareTo(Object other, Collections.IComparer comparer) { throw null; }
+
+        Boolean Collections.IStructuralEquatable.Equals(Object other, Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 Collections.IStructuralEquatable.GetHashCode(Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 IComparable.CompareTo(Object obj) { throw null; }
+
+        public override String ToString() { throw null; }
     }
-    public partial class Tuple<T1, T2, T3, T4, T5, T6> : System.Collections.IStructuralComparable, System.Collections.IStructuralEquatable, System.IComparable
+
+    public partial class Tuple<T1, T2, T3, T4, T5, T6> : Collections.IStructuralComparable, Collections.IStructuralEquatable, IComparable
     {
         public Tuple(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6) { }
+
         public T1 Item1 { get { throw null; } }
+
         public T2 Item2 { get { throw null; } }
+
         public T3 Item3 { get { throw null; } }
+
         public T4 Item4 { get { throw null; } }
+
         public T5 Item5 { get { throw null; } }
+
         public T6 Item6 { get { throw null; } }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        int System.Collections.IStructuralComparable.CompareTo(object other, System.Collections.IComparer comparer) { throw null; }
-        bool System.Collections.IStructuralEquatable.Equals(object other, System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.Collections.IStructuralEquatable.GetHashCode(System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.IComparable.CompareTo(object obj) { throw null; }
-        public override string ToString() { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        Int32 Collections.IStructuralComparable.CompareTo(Object other, Collections.IComparer comparer) { throw null; }
+
+        Boolean Collections.IStructuralEquatable.Equals(Object other, Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 Collections.IStructuralEquatable.GetHashCode(Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 IComparable.CompareTo(Object obj) { throw null; }
+
+        public override String ToString() { throw null; }
     }
-    public partial class Tuple<T1, T2, T3, T4, T5, T6, T7> : System.Collections.IStructuralComparable, System.Collections.IStructuralEquatable, System.IComparable
+
+    public partial class Tuple<T1, T2, T3, T4, T5, T6, T7> : Collections.IStructuralComparable, Collections.IStructuralEquatable, IComparable
     {
         public Tuple(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6, T7 item7) { }
+
         public T1 Item1 { get { throw null; } }
+
         public T2 Item2 { get { throw null; } }
+
         public T3 Item3 { get { throw null; } }
+
         public T4 Item4 { get { throw null; } }
+
         public T5 Item5 { get { throw null; } }
+
         public T6 Item6 { get { throw null; } }
+
         public T7 Item7 { get { throw null; } }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        int System.Collections.IStructuralComparable.CompareTo(object other, System.Collections.IComparer comparer) { throw null; }
-        bool System.Collections.IStructuralEquatable.Equals(object other, System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.Collections.IStructuralEquatable.GetHashCode(System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.IComparable.CompareTo(object obj) { throw null; }
-        public override string ToString() { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        Int32 Collections.IStructuralComparable.CompareTo(Object other, Collections.IComparer comparer) { throw null; }
+
+        Boolean Collections.IStructuralEquatable.Equals(Object other, Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 Collections.IStructuralEquatable.GetHashCode(Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 IComparable.CompareTo(Object obj) { throw null; }
+
+        public override String ToString() { throw null; }
     }
-    public partial class Tuple<T1, T2, T3, T4, T5, T6, T7, TRest> : System.Collections.IStructuralComparable, System.Collections.IStructuralEquatable, System.IComparable
+
+    public partial class Tuple<T1, T2, T3, T4, T5, T6, T7, TRest> : Collections.IStructuralComparable, Collections.IStructuralEquatable, IComparable
     {
         public Tuple(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6, T7 item7, TRest rest) { }
+
         public T1 Item1 { get { throw null; } }
+
         public T2 Item2 { get { throw null; } }
+
         public T3 Item3 { get { throw null; } }
+
         public T4 Item4 { get { throw null; } }
+
         public T5 Item5 { get { throw null; } }
+
         public T6 Item6 { get { throw null; } }
+
         public T7 Item7 { get { throw null; } }
+
         public TRest Rest { get { throw null; } }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        int System.Collections.IStructuralComparable.CompareTo(object other, System.Collections.IComparer comparer) { throw null; }
-        bool System.Collections.IStructuralEquatable.Equals(object other, System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.Collections.IStructuralEquatable.GetHashCode(System.Collections.IEqualityComparer comparer) { throw null; }
-        int System.IComparable.CompareTo(object obj) { throw null; }
-        public override string ToString() { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        Int32 Collections.IStructuralComparable.CompareTo(Object other, Collections.IComparer comparer) { throw null; }
+
+        Boolean Collections.IStructuralEquatable.Equals(Object other, Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 Collections.IStructuralEquatable.GetHashCode(Collections.IEqualityComparer comparer) { throw null; }
+
+        Int32 IComparable.CompareTo(Object obj) { throw null; }
+
+        public override String ToString() { throw null; }
     }
+
     public abstract partial class Type
     {
         internal Type() { }
-        public static readonly object Missing;
-        public abstract string AssemblyQualifiedName { get; }
-        public abstract System.Type DeclaringType { get; }
-        public abstract string FullName { get; }
-        public abstract int GenericParameterPosition { get; }
-        public abstract System.Type[] GenericTypeArguments { get; }
-        public bool HasElementType { get { throw null; } }
-        public bool IsArray { get { throw null; } }
-        public bool IsByRef { get { throw null; } }
-        public abstract bool IsConstructedGenericType { get; }
-        public abstract bool IsGenericParameter { get; }
-        public bool IsNested { get { throw null; } }
-        public bool IsPointer { get { throw null; } }
-        public abstract string Name { get; }
-        public abstract string Namespace { get; }
-        public virtual System.RuntimeTypeHandle TypeHandle { get { throw null; } }
-        public override bool Equals(object o) { throw null; }
-        public bool Equals(System.Type o) { throw null; }
-        public abstract int GetArrayRank();
-        public abstract System.Type GetElementType();
-        public abstract System.Type GetGenericTypeDefinition();
-        public override int GetHashCode() { throw null; }
-        public static System.Type GetType(string typeName) { throw null; }
-        public static System.Type GetType(string typeName, bool throwOnError) { throw null; }
-        public static System.Type GetTypeFromHandle(System.RuntimeTypeHandle handle) { throw null; }
-        public abstract System.Type MakeArrayType();
-        public abstract System.Type MakeArrayType(int rank);
-        public abstract System.Type MakeByRefType();
-        public abstract System.Type MakeGenericType(params System.Type[] typeArguments);
-        public abstract System.Type MakePointerType();
-        public override string ToString() { throw null; }
+
+        public static readonly Object Missing;
+        public abstract String AssemblyQualifiedName { get; }
+        public abstract Type DeclaringType { get; }
+        public abstract String FullName { get; }
+        public abstract Int32 GenericParameterPosition { get; }
+        public abstract Type[] GenericTypeArguments { get; }
+
+        public Boolean HasElementType { get { throw null; } }
+
+        public Boolean IsArray { get { throw null; } }
+
+        public Boolean IsByRef { get { throw null; } }
+
+        public abstract Boolean IsConstructedGenericType { get; }
+        public abstract Boolean IsGenericParameter { get; }
+
+        public Boolean IsNested { get { throw null; } }
+
+        public Boolean IsPointer { get { throw null; } }
+
+        public abstract String Name { get; }
+        public abstract String Namespace { get; }
+
+        public virtual RuntimeTypeHandle TypeHandle { get { throw null; } }
+
+        public override Boolean Equals(Object o) { throw null; }
+
+        public Boolean Equals(Type o) { throw null; }
+
+        public abstract Int32 GetArrayRank();
+        public abstract Type GetElementType();
+        public abstract Type GetGenericTypeDefinition();
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Type GetType(String typeName, Boolean throwOnError) { throw null; }
+
+        public static Type GetType(String typeName) { throw null; }
+
+        public static Type GetTypeFromHandle(RuntimeTypeHandle handle) { throw null; }
+
+        public abstract Type MakeArrayType();
+        public abstract Type MakeArrayType(Int32 rank);
+        public abstract Type MakeByRefType();
+        public abstract Type MakeGenericType(params Type[] typeArguments);
+        public abstract Type MakePointerType();
+        public override String ToString() { throw null; }
     }
-    public partial class TypeAccessException : System.TypeLoadException
+
+    public partial class TypeAccessException : TypeLoadException
     {
         public TypeAccessException() { }
-        public TypeAccessException(string message) { }
-        public TypeAccessException(string message, System.Exception inner) { }
+
+        public TypeAccessException(String message, Exception inner) { }
+
+        public TypeAccessException(String message) { }
     }
-    public sealed partial class TypeInitializationException : System.Exception
+
+    public sealed partial class TypeInitializationException : Exception
     {
-        public TypeInitializationException(string fullTypeName, System.Exception innerException) { }
-        public string TypeName { get { throw null; } }
+        public TypeInitializationException(String fullTypeName, Exception innerException) { }
+
+        public String TypeName { get { throw null; } }
     }
-    public partial class TypeLoadException : System.Exception
+
+    public partial class TypeLoadException : Exception
     {
         public TypeLoadException() { }
-        public TypeLoadException(string message) { }
-        public TypeLoadException(string message, System.Exception inner) { }
-        public override string Message { get { throw null; } }
-        public string TypeName { get { throw null; } }
+
+        public TypeLoadException(String message, Exception inner) { }
+
+        public TypeLoadException(String message) { }
+
+        public override String Message { get { throw null; } }
+
+        public String TypeName { get { throw null; } }
     }
-    [System.CLSCompliantAttribute(false)]
-    public partial struct UInt16 : System.IComparable, System.IComparable<ushort>, System.IEquatable<ushort>, System.IFormattable
+
+    [CLSCompliant(false)]
+    public partial struct UInt16 : IComparable, IComparable<UInt16>, IEquatable<UInt16>, IFormattable
     {
-        public const ushort MaxValue = (ushort)65535;
-        public const ushort MinValue = (ushort)0;
-        public int CompareTo(System.UInt16 value) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public bool Equals(System.UInt16 obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.UInt16 Parse(string s) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.UInt16 Parse(string s, System.Globalization.NumberStyles style) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.UInt16 Parse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.UInt16 Parse(string s, System.IFormatProvider provider) { throw null; }
-        int System.IComparable.CompareTo(object value) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(System.IFormatProvider provider) { throw null; }
-        public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider provider) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static bool TryParse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider, out System.UInt16 result) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static bool TryParse(string s, out System.UInt16 result) { throw null; }
+        public const UInt16 MaxValue = 65535;
+        public const UInt16 MinValue = 0;
+        public Int32 CompareTo(UInt16 value) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public Boolean Equals(UInt16 obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt16 Parse(String s, Globalization.NumberStyles style, IFormatProvider provider) { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt16 Parse(String s, Globalization.NumberStyles style) { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt16 Parse(String s, IFormatProvider provider) { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt16 Parse(String s) { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(IFormatProvider provider) { throw null; }
+
+        public String ToString(String format, IFormatProvider provider) { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Boolean TryParse(String s, Globalization.NumberStyles style, IFormatProvider provider, out UInt16 result) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Boolean TryParse(String s, out UInt16 result) { throw null; }
     }
-    [System.CLSCompliantAttribute(false)]
-    public partial struct UInt32 : System.IComparable, System.IComparable<uint>, System.IEquatable<uint>, System.IFormattable
+
+    [CLSCompliant(false)]
+    public partial struct UInt32 : IComparable, IComparable<UInt32>, IEquatable<UInt32>, IFormattable
     {
-        public const uint MaxValue = (uint)4294967295;
-        public const uint MinValue = (uint)0;
-        public int CompareTo(System.UInt32 value) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public bool Equals(System.UInt32 obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.UInt32 Parse(string s) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.UInt32 Parse(string s, System.Globalization.NumberStyles style) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.UInt32 Parse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.UInt32 Parse(string s, System.IFormatProvider provider) { throw null; }
-        int System.IComparable.CompareTo(object value) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(System.IFormatProvider provider) { throw null; }
-        public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider provider) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static bool TryParse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider, out System.UInt32 result) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static bool TryParse(string s, out System.UInt32 result) { throw null; }
+        public const UInt32 MaxValue = 4294967295U;
+        public const UInt32 MinValue = 0U;
+        public Int32 CompareTo(UInt32 value) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public Boolean Equals(UInt32 obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt32 Parse(String s, Globalization.NumberStyles style, IFormatProvider provider) { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt32 Parse(String s, Globalization.NumberStyles style) { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt32 Parse(String s, IFormatProvider provider) { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt32 Parse(String s) { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(IFormatProvider provider) { throw null; }
+
+        public String ToString(String format, IFormatProvider provider) { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Boolean TryParse(String s, Globalization.NumberStyles style, IFormatProvider provider, out UInt32 result) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Boolean TryParse(String s, out UInt32 result) { throw null; }
     }
-    [System.CLSCompliantAttribute(false)]
-    public partial struct UInt64 : System.IComparable, System.IComparable<ulong>, System.IEquatable<ulong>, System.IFormattable
+
+    [CLSCompliant(false)]
+    public partial struct UInt64 : IComparable, IComparable<UInt64>, IEquatable<UInt64>, IFormattable
     {
-        public const ulong MaxValue = (ulong)18446744073709551615;
-        public const ulong MinValue = (ulong)0;
-        public int CompareTo(System.UInt64 value) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public bool Equals(System.UInt64 obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.UInt64 Parse(string s) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.UInt64 Parse(string s, System.Globalization.NumberStyles style) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.UInt64 Parse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static System.UInt64 Parse(string s, System.IFormatProvider provider) { throw null; }
-        int System.IComparable.CompareTo(object value) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(System.IFormatProvider provider) { throw null; }
-        public string ToString(string format) { throw null; }
-        public string ToString(string format, System.IFormatProvider provider) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static bool TryParse(string s, System.Globalization.NumberStyles style, System.IFormatProvider provider, out System.UInt64 result) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public static bool TryParse(string s, out System.UInt64 result) { throw null; }
+        public const UInt64 MaxValue = 18446744073709551615UL;
+        public const UInt64 MinValue = 0UL;
+        public Int32 CompareTo(UInt64 value) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public Boolean Equals(UInt64 obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt64 Parse(String s, Globalization.NumberStyles style, IFormatProvider provider) { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt64 Parse(String s, Globalization.NumberStyles style) { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt64 Parse(String s, IFormatProvider provider) { throw null; }
+
+        [CLSCompliant(false)]
+        public static UInt64 Parse(String s) { throw null; }
+
+        Int32 IComparable.CompareTo(Object value) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(IFormatProvider provider) { throw null; }
+
+        public String ToString(String format, IFormatProvider provider) { throw null; }
+
+        public String ToString(String format) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Boolean TryParse(String s, Globalization.NumberStyles style, IFormatProvider provider, out UInt64 result) { throw null; }
+
+        [CLSCompliant(false)]
+        public static Boolean TryParse(String s, out UInt64 result) { throw null; }
     }
-    [System.CLSCompliantAttribute(false)]
+
+    [CLSCompliant(false)]
     public partial struct UIntPtr
     {
-        public static readonly System.UIntPtr Zero;
-        public UIntPtr(uint value) { throw null; }
-        public UIntPtr(ulong value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public unsafe UIntPtr(void* value) { throw null; }
-        public static int Size { get { throw null; } }
-        public static System.UIntPtr Add(System.UIntPtr pointer, int offset) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static System.UIntPtr operator +(System.UIntPtr pointer, int offset) { throw null; }
-        public static bool operator ==(System.UIntPtr value1, System.UIntPtr value2) { throw null; }
-        public static explicit operator System.UIntPtr (uint value) { throw null; }
-        public static explicit operator System.UIntPtr (ulong value) { throw null; }
-        public static explicit operator uint (System.UIntPtr value) { throw null; }
-        public static explicit operator ulong (System.UIntPtr value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public unsafe static explicit operator void* (System.UIntPtr value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public unsafe static explicit operator System.UIntPtr (void* value) { throw null; }
-        public static bool operator !=(System.UIntPtr value1, System.UIntPtr value2) { throw null; }
-        public static System.UIntPtr operator -(System.UIntPtr pointer, int offset) { throw null; }
-        public static System.UIntPtr Subtract(System.UIntPtr pointer, int offset) { throw null; }
-        [System.CLSCompliantAttribute(false)]
+        public static readonly UIntPtr Zero;
+        public UIntPtr(UInt32 value) { }
+
+        public UIntPtr(UInt64 value) { }
+
+        [CLSCompliant(false)]
+        public unsafe UIntPtr(void* value) { }
+
+        public static Int32 Size { get { throw null; } }
+
+        public static UIntPtr Add(UIntPtr pointer, Int32 offset) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static UIntPtr operator +(UIntPtr pointer, Int32 offset) { throw null; }
+
+        public static Boolean operator ==(UIntPtr value1, UIntPtr value2) { throw null; }
+
+        public static explicit operator UIntPtr(UInt32 value) { throw null; }
+
+        public static explicit operator UIntPtr(UInt64 value) { throw null; }
+
+        public static explicit operator UInt32(UIntPtr value) { throw null; }
+
+        public static explicit operator UInt64(UIntPtr value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static unsafe explicit operator void*(UIntPtr value) { throw null; }
+
+        [CLSCompliant(false)]
+        public static unsafe explicit operator UIntPtr(void* value) { throw null; }
+
+        public static Boolean operator !=(UIntPtr value1, UIntPtr value2) { throw null; }
+
+        public static UIntPtr operator -(UIntPtr pointer, Int32 offset) { throw null; }
+
+        public static UIntPtr Subtract(UIntPtr pointer, Int32 offset) { throw null; }
+
+        [CLSCompliant(false)]
         public unsafe void* ToPointer() { throw null; }
-        public override string ToString() { throw null; }
-        public uint ToUInt32() { throw null; }
-        public ulong ToUInt64() { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public UInt32 ToUInt32() { throw null; }
+
+        public UInt64 ToUInt64() { throw null; }
     }
-    public partial class UnauthorizedAccessException : System.Exception
+
+    public partial class UnauthorizedAccessException : Exception
     {
         public UnauthorizedAccessException() { }
-        public UnauthorizedAccessException(string message) { }
-        public UnauthorizedAccessException(string message, System.Exception inner) { }
+
+        public UnauthorizedAccessException(String message, Exception inner) { }
+
+        public UnauthorizedAccessException(String message) { }
     }
+
     public partial class Uri
     {
-        public Uri(string uriString) { }
-        public Uri(string uriString, System.UriKind uriKind) { }
-        public Uri(System.Uri baseUri, string relativeUri) { }
-        public Uri(System.Uri baseUri, System.Uri relativeUri) { }
-        public string AbsolutePath { get { throw null; } }
-        public string AbsoluteUri { get { throw null; } }
-        public string Authority { get { throw null; } }
-        public string DnsSafeHost { get { throw null; } }
-        public string Fragment { get { throw null; } }
-        public string Host { get { throw null; } }
-        public System.UriHostNameType HostNameType { get { throw null; } }
-        public bool IsAbsoluteUri { get { throw null; } }
-        public bool IsDefaultPort { get { throw null; } }
-        public bool IsFile { get { throw null; } }
-        public bool IsLoopback { get { throw null; } }
-        public bool IsUnc { get { throw null; } }
-        public string LocalPath { get { throw null; } }
-        public string OriginalString { get { throw null; } }
-        public string PathAndQuery { get { throw null; } }
-        public int Port { get { throw null; } }
-        public string Query { get { throw null; } }
-        public string Scheme { get { throw null; } }
-        public string[] Segments { get { throw null; } }
-        public bool UserEscaped { get { throw null; } }
-        public string UserInfo { get { throw null; } }
-        public static System.UriHostNameType CheckHostName(string name) { throw null; }
-        public static bool CheckSchemeName(string schemeName) { throw null; }
-        public static int Compare(System.Uri uri1, System.Uri uri2, System.UriComponents partsToCompare, System.UriFormat compareFormat, System.StringComparison comparisonType) { throw null; }
-        public override bool Equals(object comparand) { throw null; }
-        public static string EscapeDataString(string stringToEscape) { throw null; }
-        public static string EscapeUriString(string stringToEscape) { throw null; }
-        public string GetComponents(System.UriComponents components, System.UriFormat format) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public bool IsBaseOf(System.Uri uri) { throw null; }
-        public bool IsWellFormedOriginalString() { throw null; }
-        public static bool IsWellFormedUriString(string uriString, System.UriKind uriKind) { throw null; }
-        public System.Uri MakeRelativeUri(System.Uri uri) { throw null; }
-        public static bool operator ==(System.Uri uri1, System.Uri uri2) { throw null; }
-        public static bool operator !=(System.Uri uri1, System.Uri uri2) { throw null; }
-        public override string ToString() { throw null; }
-        public static bool TryCreate(string uriString, System.UriKind uriKind, out System.Uri result) { throw null; }
-        public static bool TryCreate(System.Uri baseUri, string relativeUri, out System.Uri result) { throw null; }
-        public static bool TryCreate(System.Uri baseUri, System.Uri relativeUri, out System.Uri result) { throw null; }
-        public static string UnescapeDataString(string stringToUnescape) { throw null; }
+        public Uri(String uriString, UriKind uriKind) { }
+
+        public Uri(String uriString) { }
+
+        public Uri(Uri baseUri, String relativeUri) { }
+
+        public Uri(Uri baseUri, Uri relativeUri) { }
+
+        public String AbsolutePath { get { throw null; } }
+
+        public String AbsoluteUri { get { throw null; } }
+
+        public String Authority { get { throw null; } }
+
+        public String DnsSafeHost { get { throw null; } }
+
+        public String Fragment { get { throw null; } }
+
+        public String Host { get { throw null; } }
+
+        public UriHostNameType HostNameType { get { throw null; } }
+
+        public Boolean IsAbsoluteUri { get { throw null; } }
+
+        public Boolean IsDefaultPort { get { throw null; } }
+
+        public Boolean IsFile { get { throw null; } }
+
+        public Boolean IsLoopback { get { throw null; } }
+
+        public Boolean IsUnc { get { throw null; } }
+
+        public String LocalPath { get { throw null; } }
+
+        public String OriginalString { get { throw null; } }
+
+        public String PathAndQuery { get { throw null; } }
+
+        public Int32 Port { get { throw null; } }
+
+        public String Query { get { throw null; } }
+
+        public String Scheme { get { throw null; } }
+
+        public String[] Segments { get { throw null; } }
+
+        public Boolean UserEscaped { get { throw null; } }
+
+        public String UserInfo { get { throw null; } }
+
+        public static UriHostNameType CheckHostName(String name) { throw null; }
+
+        public static Boolean CheckSchemeName(String schemeName) { throw null; }
+
+        public static Int32 Compare(Uri uri1, Uri uri2, UriComponents partsToCompare, UriFormat compareFormat, StringComparison comparisonType) { throw null; }
+
+        public override Boolean Equals(Object comparand) { throw null; }
+
+        public static String EscapeDataString(String stringToEscape) { throw null; }
+
+        public static String EscapeUriString(String stringToEscape) { throw null; }
+
+        public String GetComponents(UriComponents components, UriFormat format) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public Boolean IsBaseOf(Uri uri) { throw null; }
+
+        public Boolean IsWellFormedOriginalString() { throw null; }
+
+        public static Boolean IsWellFormedUriString(String uriString, UriKind uriKind) { throw null; }
+
+        public Uri MakeRelativeUri(Uri uri) { throw null; }
+
+        public static Boolean operator ==(Uri uri1, Uri uri2) { throw null; }
+
+        public static Boolean operator !=(Uri uri1, Uri uri2) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public static Boolean TryCreate(String uriString, UriKind uriKind, out Uri result) { throw null; }
+
+        public static Boolean TryCreate(Uri baseUri, String relativeUri, out Uri result) { throw null; }
+
+        public static Boolean TryCreate(Uri baseUri, Uri relativeUri, out Uri result) { throw null; }
+
+        public static String UnescapeDataString(String stringToUnescape) { throw null; }
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum UriComponents
     {
-        AbsoluteUri = 127,
-        Fragment = 64,
-        Host = 4,
-        HostAndPort = 132,
-        HttpRequestUrl = 61,
-        KeepDelimiter = 1073741824,
-        NormalizedHost = 256,
-        Path = 16,
-        PathAndQuery = 48,
-        Port = 8,
-        Query = 32,
+        SerializationInfoString = Int32.MinValue,
         Scheme = 1,
-        SchemeAndServer = 13,
-        SerializationInfoString = -2147483648,
-        StrongAuthority = 134,
-        StrongPort = 128,
         UserInfo = 2,
+        Host = 4,
+        Port = 8,
+        SchemeAndServer = 13,
+        Path = 16,
+        Query = 32,
+        PathAndQuery = 48,
+        HttpRequestUrl = 61,
+        Fragment = 64,
+        AbsoluteUri = 127,
+        StrongPort = 128,
+        HostAndPort = 132,
+        StrongAuthority = 134,
+        NormalizedHost = 256,
+        KeepDelimiter = 1073741824
     }
+
     public enum UriFormat
     {
-        SafeUnescaped = 3,
-        Unescaped = 2,
         UriEscaped = 1,
+        Unescaped = 2,
+        SafeUnescaped = 3
     }
+
     public enum UriHostNameType
     {
+        Unknown = 0,
         Basic = 1,
         Dns = 2,
         IPv4 = 3,
-        IPv6 = 4,
-        Unknown = 0,
+        IPv6 = 4
     }
+
     public enum UriKind
     {
-        Absolute = 1,
-        Relative = 2,
         RelativeOrAbsolute = 0,
+        Absolute = 1,
+        Relative = 2
     }
+
     public abstract partial class ValueType
     {
-        protected ValueType() { }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public override string ToString() { throw null; }
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public override String ToString() { throw null; }
     }
-    public sealed partial class Version : System.IComparable, System.IComparable<System.Version>, System.IEquatable<System.Version>
+
+    public sealed partial class Version : IComparable, IComparable<Version>, IEquatable<Version>
     {
-        public Version(int major, int minor) { }
-        public Version(int major, int minor, int build) { }
-        public Version(int major, int minor, int build, int revision) { }
-        public Version(string version) { }
-        public int Build { get { throw null; } }
-        public int Major { get { throw null; } }
-        public short MajorRevision { get { throw null; } }
-        public int Minor { get { throw null; } }
-        public short MinorRevision { get { throw null; } }
-        public int Revision { get { throw null; } }
-        public int CompareTo(System.Version value) { throw null; }
-        public override bool Equals(object obj) { throw null; }
-        public bool Equals(System.Version obj) { throw null; }
-        public override int GetHashCode() { throw null; }
-        public static bool operator ==(System.Version v1, System.Version v2) { throw null; }
-        public static bool operator >(System.Version v1, System.Version v2) { throw null; }
-        public static bool operator >=(System.Version v1, System.Version v2) { throw null; }
-        public static bool operator !=(System.Version v1, System.Version v2) { throw null; }
-        public static bool operator <(System.Version v1, System.Version v2) { throw null; }
-        public static bool operator <=(System.Version v1, System.Version v2) { throw null; }
-        public static System.Version Parse(string input) { throw null; }
-        int System.IComparable.CompareTo(object version) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(int fieldCount) { throw null; }
-        public static bool TryParse(string input, out System.Version result) { throw null; }
+        public Version(Int32 major, Int32 minor, Int32 build, Int32 revision) { }
+
+        public Version(Int32 major, Int32 minor, Int32 build) { }
+
+        public Version(Int32 major, Int32 minor) { }
+
+        public Version(String version) { }
+
+        public Int32 Build { get { throw null; } }
+
+        public Int32 Major { get { throw null; } }
+
+        public Int16 MajorRevision { get { throw null; } }
+
+        public Int32 Minor { get { throw null; } }
+
+        public Int16 MinorRevision { get { throw null; } }
+
+        public Int32 Revision { get { throw null; } }
+
+        public Int32 CompareTo(Version value) { throw null; }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public Boolean Equals(Version obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
+
+        public static Boolean operator ==(Version v1, Version v2) { throw null; }
+
+        public static Boolean operator >(Version v1, Version v2) { throw null; }
+
+        public static Boolean operator >=(Version v1, Version v2) { throw null; }
+
+        public static Boolean operator !=(Version v1, Version v2) { throw null; }
+
+        public static Boolean operator <(Version v1, Version v2) { throw null; }
+
+        public static Boolean operator <=(Version v1, Version v2) { throw null; }
+
+        public static Version Parse(String input) { throw null; }
+
+        Int32 IComparable.CompareTo(Object version) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(Int32 fieldCount) { throw null; }
+
+        public static Boolean TryParse(String input, out Version result) { throw null; }
     }
+
     public partial struct Void
     {
     }
+
     public partial class WeakReference
     {
-        public WeakReference(object target) { }
-        public WeakReference(object target, bool trackResurrection) { }
-        public virtual bool IsAlive { get { throw null; } }
-        public virtual object Target { get { throw null; } set { } }
-        public virtual bool TrackResurrection { get { throw null; } }
-        ~WeakReference() { }
+        public WeakReference(Object target, Boolean trackResurrection) { }
+
+        public WeakReference(Object target) { }
+
+        public virtual Boolean IsAlive { get { throw null; } }
+
+        public virtual Object Target { get { throw null; } set { } }
+
+        public virtual Boolean TrackResurrection { get { throw null; } }
+
+        ~WeakReference() {
+        }
     }
-    public sealed partial class WeakReference<T> where T : class
+
+    public sealed partial class WeakReference<T>
+        where T : class
     {
+        public WeakReference(T target, Boolean trackResurrection) { }
+
         public WeakReference(T target) { }
-        public WeakReference(T target, bool trackResurrection) { }
-        ~WeakReference() { }
+
+        ~WeakReference() {
+        }
+
         public void SetTarget(T target) { }
-        public bool TryGetTarget(out T target) { throw null; }
+
+        public Boolean TryGetTarget(out T target) { throw null; }
     }
 }
+
 namespace System.Collections
 {
     public partial struct DictionaryEntry
     {
-        public DictionaryEntry(object key, object value) { throw null; }
-        public object Key { get { throw null; } set { } }
-        public object Value { get { throw null; } set { } }
+        public DictionaryEntry(Object key, Object value) { }
+
+        public Object Key { get { throw null; } set { } }
+
+        public Object Value { get { throw null; } set { } }
     }
-    public partial interface ICollection : System.Collections.IEnumerable
+
+    public partial interface ICollection : IEnumerable
     {
-        int Count { get; }
-        bool IsSynchronized { get; }
-        object SyncRoot { get; }
-        void CopyTo(System.Array array, int index);
+        Int32 Count { get; }
+
+        Boolean IsSynchronized { get; }
+
+        Object SyncRoot { get; }
+
+        void CopyTo(Array array, Int32 index);
     }
+
     public partial interface IComparer
     {
-        int Compare(object x, object y);
+        Int32 Compare(Object x, Object y);
     }
-    public partial interface IDictionary : System.Collections.ICollection, System.Collections.IEnumerable
+
+    public partial interface IDictionary : ICollection, IEnumerable
     {
-        bool IsFixedSize { get; }
-        bool IsReadOnly { get; }
-        object this[object key] { get; set; }
-        System.Collections.ICollection Keys { get; }
-        System.Collections.ICollection Values { get; }
-        void Add(object key, object value);
+        Boolean IsFixedSize { get; }
+
+        Boolean IsReadOnly { get; }
+
+        Object this[Object key] { get; set; }
+
+        ICollection Keys { get; }
+
+        ICollection Values { get; }
+
+        void Add(Object key, Object value);
         void Clear();
-        bool Contains(object key);
-        new System.Collections.IDictionaryEnumerator GetEnumerator();
-        void Remove(object key);
+        Boolean Contains(Object key);
+        IDictionaryEnumerator GetEnumerator();
+        void Remove(Object key);
     }
-    public partial interface IDictionaryEnumerator : System.Collections.IEnumerator
+
+    public partial interface IDictionaryEnumerator : IEnumerator
     {
-        System.Collections.DictionaryEntry Entry { get; }
-        object Key { get; }
-        object Value { get; }
+        DictionaryEntry Entry { get; }
+
+        Object Key { get; }
+
+        Object Value { get; }
     }
+
     public partial interface IEnumerable
     {
-        System.Collections.IEnumerator GetEnumerator();
+        IEnumerator GetEnumerator();
     }
+
     public partial interface IEnumerator
     {
-        object Current { get; }
-        bool MoveNext();
+        Object Current { get; }
+
+        Boolean MoveNext();
         void Reset();
     }
+
     public partial interface IEqualityComparer
     {
-        bool Equals(object x, object y);
-        int GetHashCode(object obj);
+        Boolean Equals(Object x, Object y);
+        Int32 GetHashCode(Object obj);
     }
-    public partial interface IList : System.Collections.ICollection, System.Collections.IEnumerable
+
+    public partial interface IList : ICollection, IEnumerable
     {
-        bool IsFixedSize { get; }
-        bool IsReadOnly { get; }
-        object this[int index] { get; set; }
-        int Add(object value);
+        Boolean IsFixedSize { get; }
+
+        Boolean IsReadOnly { get; }
+
+        Object this[Int32 index] { get; set; }
+
+        Int32 Add(Object value);
         void Clear();
-        bool Contains(object value);
-        int IndexOf(object value);
-        void Insert(int index, object value);
-        void Remove(object value);
-        void RemoveAt(int index);
+        Boolean Contains(Object value);
+        Int32 IndexOf(Object value);
+        void Insert(Int32 index, Object value);
+        void Remove(Object value);
+        void RemoveAt(Int32 index);
     }
+
     public partial interface IStructuralComparable
     {
-        int CompareTo(object other, System.Collections.IComparer comparer);
+        Int32 CompareTo(Object other, IComparer comparer);
     }
+
     public partial interface IStructuralEquatable
     {
-        bool Equals(object other, System.Collections.IEqualityComparer comparer);
-        int GetHashCode(System.Collections.IEqualityComparer comparer);
+        Boolean Equals(Object other, IEqualityComparer comparer);
+        Int32 GetHashCode(IEqualityComparer comparer);
     }
 }
+
 namespace System.Collections.Generic
 {
-    public partial interface ICollection<T> : System.Collections.Generic.IEnumerable<T>, System.Collections.IEnumerable
+    public partial interface ICollection<T> : IEnumerable<T>, IEnumerable
     {
-        int Count { get; }
-        bool IsReadOnly { get; }
+        Int32 Count { get; }
+
+        Boolean IsReadOnly { get; }
+
         void Add(T item);
         void Clear();
-        bool Contains(T item);
-        void CopyTo(T[] array, int arrayIndex);
-        bool Remove(T item);
+        Boolean Contains(T item);
+        void CopyTo(T[] array, Int32 arrayIndex);
+        Boolean Remove(T item);
     }
+
     public partial interface IComparer<in T>
     {
-        int Compare(T x, T y);
+        Int32 Compare(T x, T y);
     }
-    public partial interface IDictionary<TKey, TValue> : System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey, TValue>>, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<TKey, TValue>>, System.Collections.IEnumerable
+
+    public partial interface IDictionary<TKey, TValue> : ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>, IEnumerable
     {
         TValue this[TKey key] { get; set; }
-        System.Collections.Generic.ICollection<TKey> Keys { get; }
-        System.Collections.Generic.ICollection<TValue> Values { get; }
+
+        ICollection<TKey> Keys { get; }
+
+        ICollection<TValue> Values { get; }
+
         void Add(TKey key, TValue value);
-        bool ContainsKey(TKey key);
-        bool Remove(TKey key);
-        bool TryGetValue(TKey key, out TValue value);
+        Boolean ContainsKey(TKey key);
+        Boolean Remove(TKey key);
+        Boolean TryGetValue(TKey key, out TValue value);
     }
-    public partial interface IEnumerable<out T> : System.Collections.IEnumerable
+
+    public partial interface IEnumerable<out T> : IEnumerable
     {
-        new System.Collections.Generic.IEnumerator<T> GetEnumerator();
+        IEnumerator<T> GetEnumerator();
     }
-    public partial interface IEnumerator<out T> : System.Collections.IEnumerator, System.IDisposable
+
+    public partial interface IEnumerator<out T> : IEnumerator, IDisposable
     {
-        new T Current { get; }
+        T Current { get; }
     }
+
     public partial interface IEqualityComparer<in T>
     {
-        bool Equals(T x, T y);
-        int GetHashCode(T obj);
+        Boolean Equals(T x, T y);
+        Int32 GetHashCode(T obj);
     }
-    public partial interface IList<T> : System.Collections.Generic.ICollection<T>, System.Collections.Generic.IEnumerable<T>, System.Collections.IEnumerable
+
+    public partial interface IList<T> : ICollection<T>, IEnumerable<T>, IEnumerable
     {
-        T this[int index] { get; set; }
-        int IndexOf(T item);
-        void Insert(int index, T item);
-        void RemoveAt(int index);
+        T this[Int32 index] { get; set; }
+
+        Int32 IndexOf(T item);
+        void Insert(Int32 index, T item);
+        void RemoveAt(Int32 index);
     }
-    public partial interface IReadOnlyCollection<out T> : System.Collections.Generic.IEnumerable<T>, System.Collections.IEnumerable
+
+    public partial interface IReadOnlyCollection<out T> : IEnumerable<T>, IEnumerable
     {
-        int Count { get; }
+        Int32 Count { get; }
     }
-    public partial interface IReadOnlyDictionary<TKey, TValue> : System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<TKey, TValue>>, System.Collections.Generic.IReadOnlyCollection<System.Collections.Generic.KeyValuePair<TKey, TValue>>, System.Collections.IEnumerable
+
+    public partial interface IReadOnlyDictionary<TKey, TValue> : IReadOnlyCollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>, IEnumerable
     {
         TValue this[TKey key] { get; }
-        System.Collections.Generic.IEnumerable<TKey> Keys { get; }
-        System.Collections.Generic.IEnumerable<TValue> Values { get; }
-        bool ContainsKey(TKey key);
-        bool TryGetValue(TKey key, out TValue value);
+
+        IEnumerable<TKey> Keys { get; }
+
+        IEnumerable<TValue> Values { get; }
+
+        Boolean ContainsKey(TKey key);
+        Boolean TryGetValue(TKey key, out TValue value);
     }
-    public partial interface IReadOnlyList<out T> : System.Collections.Generic.IEnumerable<T>, System.Collections.Generic.IReadOnlyCollection<T>, System.Collections.IEnumerable
+
+    public partial interface IReadOnlyList<out T> : IReadOnlyCollection<T>, IEnumerable<T>, IEnumerable
     {
-        T this[int index] { get; }
+        T this[Int32 index] { get; }
     }
-    public partial interface ISet<T> : System.Collections.Generic.ICollection<T>, System.Collections.Generic.IEnumerable<T>, System.Collections.IEnumerable
+
+    public partial interface ISet<T> : ICollection<T>, IEnumerable<T>, IEnumerable
     {
-        new bool Add(T item);
-        void ExceptWith(System.Collections.Generic.IEnumerable<T> other);
-        void IntersectWith(System.Collections.Generic.IEnumerable<T> other);
-        bool IsProperSubsetOf(System.Collections.Generic.IEnumerable<T> other);
-        bool IsProperSupersetOf(System.Collections.Generic.IEnumerable<T> other);
-        bool IsSubsetOf(System.Collections.Generic.IEnumerable<T> other);
-        bool IsSupersetOf(System.Collections.Generic.IEnumerable<T> other);
-        bool Overlaps(System.Collections.Generic.IEnumerable<T> other);
-        bool SetEquals(System.Collections.Generic.IEnumerable<T> other);
-        void SymmetricExceptWith(System.Collections.Generic.IEnumerable<T> other);
-        void UnionWith(System.Collections.Generic.IEnumerable<T> other);
+        Boolean Add(T item);
+        void ExceptWith(IEnumerable<T> other);
+        void IntersectWith(IEnumerable<T> other);
+        Boolean IsProperSubsetOf(IEnumerable<T> other);
+        Boolean IsProperSupersetOf(IEnumerable<T> other);
+        Boolean IsSubsetOf(IEnumerable<T> other);
+        Boolean IsSupersetOf(IEnumerable<T> other);
+        Boolean Overlaps(IEnumerable<T> other);
+        Boolean SetEquals(IEnumerable<T> other);
+        void SymmetricExceptWith(IEnumerable<T> other);
+        void UnionWith(IEnumerable<T> other);
     }
-    public partial class KeyNotFoundException : System.Exception
+
+    public partial class KeyNotFoundException : Exception
     {
         public KeyNotFoundException() { }
-        public KeyNotFoundException(string message) { }
-        public KeyNotFoundException(string message, System.Exception innerException) { }
+
+        public KeyNotFoundException(String message, Exception innerException) { }
+
+        public KeyNotFoundException(String message) { }
     }
+
     public partial struct KeyValuePair<TKey, TValue>
     {
-        public KeyValuePair(TKey key, TValue value) { throw null; }
+        public KeyValuePair(TKey key, TValue value) { }
+
         public TKey Key { get { throw null; } }
+
         public TValue Value { get { throw null; } }
-        public override string ToString() { throw null; }
+
+        public override String ToString() { throw null; }
     }
 }
+
 namespace System.Collections.ObjectModel
 {
-    public partial class Collection<T> : System.Collections.Generic.ICollection<T>, System.Collections.Generic.IEnumerable<T>, System.Collections.Generic.IList<T>, System.Collections.Generic.IReadOnlyCollection<T>, System.Collections.Generic.IReadOnlyList<T>, System.Collections.ICollection, System.Collections.IEnumerable, System.Collections.IList
+    public partial class Collection<T> : Generic.IList<T>, Generic.ICollection<T>, Generic.IReadOnlyList<T>, Generic.IReadOnlyCollection<T>, Generic.IEnumerable<T>, IList, ICollection, IEnumerable
     {
         public Collection() { }
-        public Collection(System.Collections.Generic.IList<T> list) { }
-        public int Count { get { throw null; } }
-        public T this[int index] { get { throw null; } set { } }
-        protected System.Collections.Generic.IList<T> Items { get { throw null; } }
-        bool System.Collections.Generic.ICollection<T>.IsReadOnly { get { throw null; } }
-        bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-        object System.Collections.ICollection.SyncRoot { get { throw null; } }
-        bool System.Collections.IList.IsFixedSize { get { throw null; } }
-        bool System.Collections.IList.IsReadOnly { get { throw null; } }
-        object System.Collections.IList.this[int index] { get { throw null; } set { } }
+
+        public Collection(Generic.IList<T> list) { }
+
+        public Int32 Count { get { throw null; } }
+
+        public T this[Int32 index] { get { throw null; } set { } }
+
+        protected Generic.IList<T> Items { get { throw null; } }
+
+        Boolean Generic.ICollection<T>.IsReadOnly { get { throw null; } }
+
+        Boolean ICollection.IsSynchronized { get { throw null; } }
+
+        Object ICollection.SyncRoot { get { throw null; } }
+
+        Boolean IList.IsFixedSize { get { throw null; } }
+
+        Boolean IList.IsReadOnly { get { throw null; } }
+
+        Object IList.this[Int32 index] { get { throw null; } set { } }
+
         public void Add(T item) { }
+
         public void Clear() { }
+
         protected virtual void ClearItems() { }
-        public bool Contains(T item) { throw null; }
-        public void CopyTo(T[] array, int index) { }
-        public System.Collections.Generic.IEnumerator<T> GetEnumerator() { throw null; }
-        public int IndexOf(T item) { throw null; }
-        public void Insert(int index, T item) { }
-        protected virtual void InsertItem(int index, T item) { }
-        public bool Remove(T item) { throw null; }
-        public void RemoveAt(int index) { }
-        protected virtual void RemoveItem(int index) { }
-        protected virtual void SetItem(int index, T item) { }
-        void System.Collections.ICollection.CopyTo(System.Array array, int index) { }
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw null; }
-        int System.Collections.IList.Add(object value) { throw null; }
-        bool System.Collections.IList.Contains(object value) { throw null; }
-        int System.Collections.IList.IndexOf(object value) { throw null; }
-        void System.Collections.IList.Insert(int index, object value) { }
-        void System.Collections.IList.Remove(object value) { }
+
+        public Boolean Contains(T item) { throw null; }
+
+        public void CopyTo(T[] array, Int32 index) { }
+
+        public Generic.IEnumerator<T> GetEnumerator() { throw null; }
+
+        public Int32 IndexOf(T item) { throw null; }
+
+        public void Insert(Int32 index, T item) { }
+
+        protected virtual void InsertItem(Int32 index, T item) { }
+
+        public Boolean Remove(T item) { throw null; }
+
+        public void RemoveAt(Int32 index) { }
+
+        protected virtual void RemoveItem(Int32 index) { }
+
+        protected virtual void SetItem(Int32 index, T item) { }
+
+        void ICollection.CopyTo(Array array, Int32 index) { }
+
+        IEnumerator IEnumerable.GetEnumerator() { throw null; }
+
+        Int32 IList.Add(Object value) { throw null; }
+
+        Boolean IList.Contains(Object value) { throw null; }
+
+        Int32 IList.IndexOf(Object value) { throw null; }
+
+        void IList.Insert(Int32 index, Object value) { }
+
+        void IList.Remove(Object value) { }
     }
-    public partial class ReadOnlyCollection<T> : System.Collections.Generic.ICollection<T>, System.Collections.Generic.IEnumerable<T>, System.Collections.Generic.IList<T>, System.Collections.Generic.IReadOnlyCollection<T>, System.Collections.Generic.IReadOnlyList<T>, System.Collections.ICollection, System.Collections.IEnumerable, System.Collections.IList
+
+    public partial class ReadOnlyCollection<T> : Generic.IList<T>, Generic.ICollection<T>, Generic.IReadOnlyList<T>, Generic.IReadOnlyCollection<T>, Generic.IEnumerable<T>, IList, ICollection, IEnumerable
     {
-        public ReadOnlyCollection(System.Collections.Generic.IList<T> list) { }
-        public int Count { get { throw null; } }
-        public T this[int index] { get { throw null; } }
-        protected System.Collections.Generic.IList<T> Items { get { throw null; } }
-        bool System.Collections.Generic.ICollection<T>.IsReadOnly { get { throw null; } }
-        T System.Collections.Generic.IList<T>.this[int index] { get { throw null; } set { } }
-        bool System.Collections.ICollection.IsSynchronized { get { throw null; } }
-        object System.Collections.ICollection.SyncRoot { get { throw null; } }
-        bool System.Collections.IList.IsFixedSize { get { throw null; } }
-        bool System.Collections.IList.IsReadOnly { get { throw null; } }
-        object System.Collections.IList.this[int index] { get { throw null; } set { } }
-        public bool Contains(T value) { throw null; }
-        public void CopyTo(T[] array, int index) { }
-        public System.Collections.Generic.IEnumerator<T> GetEnumerator() { throw null; }
-        public int IndexOf(T value) { throw null; }
-        void System.Collections.Generic.ICollection<T>.Add(T value) { }
-        void System.Collections.Generic.ICollection<T>.Clear() { }
-        bool System.Collections.Generic.ICollection<T>.Remove(T value) { throw null; }
-        void System.Collections.Generic.IList<T>.Insert(int index, T value) { }
-        void System.Collections.Generic.IList<T>.RemoveAt(int index) { }
-        void System.Collections.ICollection.CopyTo(System.Array array, int index) { }
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { throw null; }
-        int System.Collections.IList.Add(object value) { throw null; }
-        void System.Collections.IList.Clear() { }
-        bool System.Collections.IList.Contains(object value) { throw null; }
-        int System.Collections.IList.IndexOf(object value) { throw null; }
-        void System.Collections.IList.Insert(int index, object value) { }
-        void System.Collections.IList.Remove(object value) { }
-        void System.Collections.IList.RemoveAt(int index) { }
+        public ReadOnlyCollection(Generic.IList<T> list) { }
+
+        public Int32 Count { get { throw null; } }
+
+        public T this[Int32 index] { get { throw null; } }
+
+        protected Generic.IList<T> Items { get { throw null; } }
+
+        Boolean Generic.ICollection<T>.IsReadOnly { get { throw null; } }
+
+        T Generic.IList<T>.this[Int32 index] { get { throw null; } set { } }
+
+        Boolean ICollection.IsSynchronized { get { throw null; } }
+
+        Object ICollection.SyncRoot { get { throw null; } }
+
+        Boolean IList.IsFixedSize { get { throw null; } }
+
+        Boolean IList.IsReadOnly { get { throw null; } }
+
+        Object IList.this[Int32 index] { get { throw null; } set { } }
+
+        public Boolean Contains(T value) { throw null; }
+
+        public void CopyTo(T[] array, Int32 index) { }
+
+        public Generic.IEnumerator<T> GetEnumerator() { throw null; }
+
+        public Int32 IndexOf(T value) { throw null; }
+
+        void Generic.ICollection<T>.Add(T value) { }
+
+        void Generic.ICollection<T>.Clear() { }
+
+        Boolean Generic.ICollection<T>.Remove(T value) { throw null; }
+
+        void Generic.IList<T>.Insert(Int32 index, T value) { }
+
+        void Generic.IList<T>.RemoveAt(Int32 index) { }
+
+        void ICollection.CopyTo(Array array, Int32 index) { }
+
+        IEnumerator IEnumerable.GetEnumerator() { throw null; }
+
+        Int32 IList.Add(Object value) { throw null; }
+
+        void IList.Clear() { }
+
+        Boolean IList.Contains(Object value) { throw null; }
+
+        Int32 IList.IndexOf(Object value) { throw null; }
+
+        void IList.Insert(Int32 index, Object value) { }
+
+        void IList.Remove(Object value) { }
+
+        void IList.RemoveAt(Int32 index) { }
     }
 }
+
 namespace System.ComponentModel
 {
-    [System.AttributeUsageAttribute(System.AttributeTargets.All)]
-    public partial class DefaultValueAttribute : System.Attribute
+    [AttributeUsage(AttributeTargets.All)]
+    public partial class DefaultValueAttribute : Attribute
     {
-        public DefaultValueAttribute(bool value) { }
-        public DefaultValueAttribute(byte value) { }
-        public DefaultValueAttribute(char value) { }
-        public DefaultValueAttribute(double value) { }
-        public DefaultValueAttribute(short value) { }
-        public DefaultValueAttribute(int value) { }
-        public DefaultValueAttribute(long value) { }
-        public DefaultValueAttribute(object value) { }
-        public DefaultValueAttribute(float value) { }
-        public DefaultValueAttribute(string value) { }
-        public DefaultValueAttribute(System.Type type, string value) { }
-        public virtual object Value { get { throw null; } }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
+        public DefaultValueAttribute(Boolean value) { }
+
+        public DefaultValueAttribute(Byte value) { }
+
+        public DefaultValueAttribute(Char value) { }
+
+        public DefaultValueAttribute(Double value) { }
+
+        public DefaultValueAttribute(Int16 value) { }
+
+        public DefaultValueAttribute(Int32 value) { }
+
+        public DefaultValueAttribute(Int64 value) { }
+
+        public DefaultValueAttribute(Object value) { }
+
+        public DefaultValueAttribute(Single value) { }
+
+        public DefaultValueAttribute(String value) { }
+
+        public DefaultValueAttribute(Type type, String value) { }
+
+        public virtual Object Value { get { throw null; } }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class | System.AttributeTargets.Constructor | System.AttributeTargets.Delegate | System.AttributeTargets.Enum | System.AttributeTargets.Event | System.AttributeTargets.Field | System.AttributeTargets.Interface | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Struct)]
-    public sealed partial class EditorBrowsableAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Event | AttributeTargets.Interface | AttributeTargets.Delegate)]
+    public sealed partial class EditorBrowsableAttribute : Attribute
     {
-        public EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState state) { }
-        public System.ComponentModel.EditorBrowsableState State { get { throw null; } }
-        public override bool Equals(object obj) { throw null; }
-        public override int GetHashCode() { throw null; }
+        public EditorBrowsableAttribute(EditorBrowsableState state) { }
+
+        public EditorBrowsableState State { get { throw null; } }
+
+        public override Boolean Equals(Object obj) { throw null; }
+
+        public override Int32 GetHashCode() { throw null; }
     }
+
     public enum EditorBrowsableState
     {
-        Advanced = 2,
         Always = 0,
         Never = 1,
+        Advanced = 2
     }
 }
+
 namespace System.Diagnostics
 {
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class | System.AttributeTargets.Method, AllowMultiple=true)]
-    public sealed partial class ConditionalAttribute : System.Attribute
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
+    public sealed partial class ConditionalAttribute : Attribute
     {
-        public ConditionalAttribute(string conditionString) { }
-        public string ConditionString { get { throw null; } }
+        public ConditionalAttribute(String conditionString) { }
+
+        public String ConditionString { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly | System.AttributeTargets.Module, AllowMultiple=false)]
-    public sealed partial class DebuggableAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module, AllowMultiple = false)]
+    public sealed partial class DebuggableAttribute : Attribute
     {
-        public DebuggableAttribute(System.Diagnostics.DebuggableAttribute.DebuggingModes modes) { }
-        [System.FlagsAttribute]
+        public DebuggableAttribute(DebuggingModes modes) { }
+
+        [Flags]
         public enum DebuggingModes
         {
-            Default = 1,
-            DisableOptimizations = 256,
-            EnableEditAndContinue = 4,
-            IgnoreSymbolStoreSequencePoints = 2,
             None = 0,
+            Default = 1,
+            IgnoreSymbolStoreSequencePoints = 2,
+            EnableEditAndContinue = 4,
+            DisableOptimizations = 256
         }
     }
 }
+
 namespace System.Globalization
 {
-    [System.FlagsAttribute]
+    [Flags]
     public enum DateTimeStyles
     {
-        AdjustToUniversal = 16,
-        AllowInnerWhite = 4,
+        None = 0,
         AllowLeadingWhite = 1,
         AllowTrailingWhite = 2,
+        AllowInnerWhite = 4,
         AllowWhiteSpaces = 7,
+        NoCurrentDateDefault = 8,
+        AdjustToUniversal = 16,
         AssumeLocal = 32,
         AssumeUniversal = 64,
-        NoCurrentDateDefault = 8,
-        None = 0,
-        RoundtripKind = 128,
+        RoundtripKind = 128
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum NumberStyles
     {
-        AllowCurrencySymbol = 256,
-        AllowDecimalPoint = 32,
-        AllowExponent = 128,
-        AllowHexSpecifier = 512,
-        AllowLeadingSign = 4,
-        AllowLeadingWhite = 1,
-        AllowParentheses = 16,
-        AllowThousands = 64,
-        AllowTrailingSign = 8,
-        AllowTrailingWhite = 2,
-        Any = 511,
-        Currency = 383,
-        Float = 167,
-        HexNumber = 515,
-        Integer = 7,
         None = 0,
+        AllowLeadingWhite = 1,
+        AllowTrailingWhite = 2,
+        AllowLeadingSign = 4,
+        Integer = 7,
+        AllowTrailingSign = 8,
+        AllowParentheses = 16,
+        AllowDecimalPoint = 32,
+        AllowThousands = 64,
         Number = 111,
+        AllowExponent = 128,
+        Float = 167,
+        AllowCurrencySymbol = 256,
+        Currency = 383,
+        Any = 511,
+        AllowHexSpecifier = 512,
+        HexNumber = 515
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum TimeSpanStyles
     {
-        AssumeNegative = 1,
         None = 0,
+        AssumeNegative = 1
     }
 }
+
 namespace System.Reflection
 {
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyCompanyAttribute : System.Attribute
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyCompanyAttribute : Attribute
     {
-        public AssemblyCompanyAttribute(string company) { }
-        public string Company { get { throw null; } }
+        public AssemblyCompanyAttribute(String company) { }
+
+        public String Company { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyConfigurationAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyConfigurationAttribute : Attribute
     {
-        public AssemblyConfigurationAttribute(string configuration) { }
-        public string Configuration { get { throw null; } }
+        public AssemblyConfigurationAttribute(String configuration) { }
+
+        public String Configuration { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyCopyrightAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyCopyrightAttribute : Attribute
     {
-        public AssemblyCopyrightAttribute(string copyright) { }
-        public string Copyright { get { throw null; } }
+        public AssemblyCopyrightAttribute(String copyright) { }
+
+        public String Copyright { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyCultureAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyCultureAttribute : Attribute
     {
-        public AssemblyCultureAttribute(string culture) { }
-        public string Culture { get { throw null; } }
+        public AssemblyCultureAttribute(String culture) { }
+
+        public String Culture { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyDefaultAliasAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyDefaultAliasAttribute : Attribute
     {
-        public AssemblyDefaultAliasAttribute(string defaultAlias) { }
-        public string DefaultAlias { get { throw null; } }
+        public AssemblyDefaultAliasAttribute(String defaultAlias) { }
+
+        public String DefaultAlias { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyDelaySignAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyDelaySignAttribute : Attribute
     {
-        public AssemblyDelaySignAttribute(bool delaySign) { }
-        public bool DelaySign { get { throw null; } }
+        public AssemblyDelaySignAttribute(Boolean delaySign) { }
+
+        public Boolean DelaySign { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyDescriptionAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyDescriptionAttribute : Attribute
     {
-        public AssemblyDescriptionAttribute(string description) { }
-        public string Description { get { throw null; } }
+        public AssemblyDescriptionAttribute(String description) { }
+
+        public String Description { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyFileVersionAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyFileVersionAttribute : Attribute
     {
-        public AssemblyFileVersionAttribute(string version) { }
-        public string Version { get { throw null; } }
+        public AssemblyFileVersionAttribute(String version) { }
+
+        public String Version { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyFlagsAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyFlagsAttribute : Attribute
     {
-        public AssemblyFlagsAttribute(System.Reflection.AssemblyNameFlags assemblyFlags) { }
-        public int AssemblyFlags { get { throw null; } }
+        public AssemblyFlagsAttribute(AssemblyNameFlags assemblyFlags) { }
+
+        public Int32 AssemblyFlags { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyInformationalVersionAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyInformationalVersionAttribute : Attribute
     {
-        public AssemblyInformationalVersionAttribute(string informationalVersion) { }
-        public string InformationalVersion { get { throw null; } }
+        public AssemblyInformationalVersionAttribute(String informationalVersion) { }
+
+        public String InformationalVersion { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyKeyFileAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyKeyFileAttribute : Attribute
     {
-        public AssemblyKeyFileAttribute(string keyFile) { }
-        public string KeyFile { get { throw null; } }
+        public AssemblyKeyFileAttribute(String keyFile) { }
+
+        public String KeyFile { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyKeyNameAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyKeyNameAttribute : Attribute
     {
-        public AssemblyKeyNameAttribute(string keyName) { }
-        public string KeyName { get { throw null; } }
+        public AssemblyKeyNameAttribute(String keyName) { }
+
+        public String KeyName { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, AllowMultiple=true, Inherited=false)]
-    public sealed partial class AssemblyMetadataAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true, Inherited = false)]
+    public sealed partial class AssemblyMetadataAttribute : Attribute
     {
-        public AssemblyMetadataAttribute(string key, string value) { }
-        public string Key { get { throw null; } }
-        public string Value { get { throw null; } }
+        public AssemblyMetadataAttribute(String key, String value) { }
+
+        public String Key { get { throw null; } }
+
+        public String Value { get { throw null; } }
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum AssemblyNameFlags
     {
         None = 0,
         PublicKey = 1,
-        Retargetable = 256,
+        Retargetable = 256
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyProductAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyProductAttribute : Attribute
     {
-        public AssemblyProductAttribute(string product) { }
-        public string Product { get { throw null; } }
+        public AssemblyProductAttribute(String product) { }
+
+        public String Product { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false, AllowMultiple=false)]
-    public sealed partial class AssemblySignatureKeyAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false, AllowMultiple = false)]
+    public sealed partial class AssemblySignatureKeyAttribute : Attribute
     {
-        public AssemblySignatureKeyAttribute(string publicKey, string countersignature) { }
-        public string Countersignature { get { throw null; } }
-        public string PublicKey { get { throw null; } }
+        public AssemblySignatureKeyAttribute(String publicKey, String countersignature) { }
+
+        public String Countersignature { get { throw null; } }
+
+        public String PublicKey { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyTitleAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyTitleAttribute : Attribute
     {
-        public AssemblyTitleAttribute(string title) { }
-        public string Title { get { throw null; } }
+        public AssemblyTitleAttribute(String title) { }
+
+        public String Title { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyTrademarkAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyTrademarkAttribute : Attribute
     {
-        public AssemblyTrademarkAttribute(string trademark) { }
-        public string Trademark { get { throw null; } }
+        public AssemblyTrademarkAttribute(String trademark) { }
+
+        public String Trademark { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false)]
-    public sealed partial class AssemblyVersionAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false)]
+    public sealed partial class AssemblyVersionAttribute : Attribute
     {
-        public AssemblyVersionAttribute(string version) { }
-        public string Version { get { throw null; } }
+        public AssemblyVersionAttribute(String version) { }
+
+        public String Version { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class | System.AttributeTargets.Interface | System.AttributeTargets.Struct)]
-    public sealed partial class DefaultMemberAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface)]
+    public sealed partial class DefaultMemberAttribute : Attribute
     {
-        public DefaultMemberAttribute(string memberName) { }
-        public string MemberName { get { throw null; } }
+        public DefaultMemberAttribute(String memberName) { }
+
+        public String MemberName { get { throw null; } }
     }
 }
+
 namespace System.Runtime
 {
     public enum GCLargeObjectHeapCompactionMode
     {
-        CompactOnce = 2,
         Default = 1,
+        CompactOnce = 2
     }
+
     public enum GCLatencyMode
     {
         Batch = 0,
         Interactive = 1,
         LowLatency = 2,
-        SustainedLowLatency = 3,
+        SustainedLowLatency = 3
     }
+
     public static partial class GCSettings
     {
-        public static bool IsServerGC { get { throw null; } }
-        public static System.Runtime.GCLargeObjectHeapCompactionMode LargeObjectHeapCompactionMode { get { throw null; } set { } }
-        public static System.Runtime.GCLatencyMode LatencyMode { get { throw null; } set { } }
+        public static Boolean IsServerGC { get { throw null; } }
+
+        public static GCLargeObjectHeapCompactionMode LargeObjectHeapCompactionMode { get { throw null; } set { } }
+
+        public static GCLatencyMode LatencyMode { get { throw null; } set { } }
     }
 }
+
 namespace System.Runtime.CompilerServices
 {
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field)]
-    public sealed partial class AccessedThroughPropertyAttribute : System.Attribute
+    [AttributeUsage(AttributeTargets.Field)]
+    public sealed partial class AccessedThroughPropertyAttribute : Attribute
     {
-        public AccessedThroughPropertyAttribute(string propertyName) { }
-        public string PropertyName { get { throw null; } }
+        public AccessedThroughPropertyAttribute(String propertyName) { }
+
+        public String PropertyName { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Method, Inherited=false, AllowMultiple=false)]
-    public sealed partial class AsyncStateMachineAttribute : System.Runtime.CompilerServices.StateMachineAttribute
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+    public sealed partial class AsyncStateMachineAttribute : StateMachineAttribute
     {
-        public AsyncStateMachineAttribute(System.Type stateMachineType) : base (default(System.Type)) { }
+        public AsyncStateMachineAttribute(Type stateMachineType) : base(default!) { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Parameter, Inherited=false)]
-    public sealed partial class CallerFilePathAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    public sealed partial class CallerFilePathAttribute : Attribute
     {
-        public CallerFilePathAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Parameter, Inherited=false)]
-    public sealed partial class CallerLineNumberAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    public sealed partial class CallerLineNumberAttribute : Attribute
     {
-        public CallerLineNumberAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Parameter, Inherited=false)]
-    public sealed partial class CallerMemberNameAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    public sealed partial class CallerMemberNameAttribute : Attribute
     {
-        public CallerMemberNameAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly | System.AttributeTargets.Class | System.AttributeTargets.Method | System.AttributeTargets.Module)]
-    public partial class CompilationRelaxationsAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class | AttributeTargets.Method)]
+    public partial class CompilationRelaxationsAttribute : Attribute
     {
-        public CompilationRelaxationsAttribute(int relaxations) { }
-        public int CompilationRelaxations { get { throw null; } }
+        public CompilationRelaxationsAttribute(Int32 relaxations) { }
+
+        public Int32 CompilationRelaxations { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.All, Inherited=true)]
-    public sealed partial class CompilerGeneratedAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.All, Inherited = true)]
+    public sealed partial class CompilerGeneratedAttribute : Attribute
     {
-        public CompilerGeneratedAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter, Inherited=false)]
-    public abstract partial class CustomConstantAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    public abstract partial class CustomConstantAttribute : Attribute
     {
-        protected CustomConstantAttribute() { }
-        public abstract object Value { get; }
+        public abstract Object Value { get; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter, Inherited=false)]
-    public sealed partial class DateTimeConstantAttribute : System.Runtime.CompilerServices.CustomConstantAttribute
+
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    public sealed partial class DateTimeConstantAttribute : CustomConstantAttribute
     {
-        public DateTimeConstantAttribute(long ticks) { }
-        public override object Value { get { throw null; } }
+        public DateTimeConstantAttribute(Int64 ticks) { }
+
+        public override Object Value { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field | System.AttributeTargets.Parameter, Inherited=false)]
-    public sealed partial class DecimalConstantAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    public sealed partial class DecimalConstantAttribute : Attribute
     {
-        public DecimalConstantAttribute(byte scale, byte sign, int hi, int mid, int low) { }
-        [System.CLSCompliantAttribute(false)]
-        public DecimalConstantAttribute(byte scale, byte sign, uint hi, uint mid, uint low) { }
-        public decimal Value { get { throw null; } }
+        public DecimalConstantAttribute(Byte scale, Byte sign, Int32 hi, Int32 mid, Int32 low) { }
+
+        [CLSCompliant(false)]
+        public DecimalConstantAttribute(Byte scale, Byte sign, UInt32 hi, UInt32 mid, UInt32 low) { }
+
+        public Decimal Value { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly | System.AttributeTargets.Class | System.AttributeTargets.Method)]
-    public sealed partial class ExtensionAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method)]
+    public sealed partial class ExtensionAttribute : Attribute
     {
-        public ExtensionAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field, Inherited=false)]
-    public sealed partial class FixedBufferAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Field, Inherited = false)]
+    public sealed partial class FixedBufferAttribute : Attribute
     {
-        public FixedBufferAttribute(System.Type elementType, int length) { }
-        public System.Type ElementType { get { throw null; } }
-        public int Length { get { throw null; } }
+        public FixedBufferAttribute(Type elementType, Int32 length) { }
+
+        public Type ElementType { get { throw null; } }
+
+        public Int32 Length { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Property, Inherited=true)]
-    public sealed partial class IndexerNameAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
+    public sealed partial class IndexerNameAttribute : Attribute
     {
-        public IndexerNameAttribute(string indexerName) { }
+        public IndexerNameAttribute(String indexerName) { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, AllowMultiple=true, Inherited=false)]
-    public sealed partial class InternalsVisibleToAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true, Inherited = false)]
+    public sealed partial class InternalsVisibleToAttribute : Attribute
     {
-        public InternalsVisibleToAttribute(string assemblyName) { }
-        public string AssemblyName { get { throw null; } }
+        public InternalsVisibleToAttribute(String assemblyName) { }
+
+        public String AssemblyName { get { throw null; } }
     }
+
     public partial interface IStrongBox
     {
-        object Value { get; set; }
+        Object Value { get; set; }
     }
+
     public static partial class IsVolatile
     {
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Method, Inherited=false, AllowMultiple=false)]
-    public sealed partial class IteratorStateMachineAttribute : System.Runtime.CompilerServices.StateMachineAttribute
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+    public sealed partial class IteratorStateMachineAttribute : StateMachineAttribute
     {
-        public IteratorStateMachineAttribute(System.Type stateMachineType) : base (default(System.Type)) { }
+        public IteratorStateMachineAttribute(Type stateMachineType) : base(default!) { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Constructor | System.AttributeTargets.Method, Inherited=false)]
-    public sealed partial class MethodImplAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method, Inherited = false)]
+    public sealed partial class MethodImplAttribute : Attribute
     {
-        public MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions methodImplOptions) { }
-        public System.Runtime.CompilerServices.MethodImplOptions Value { get { throw null; } }
+        public MethodImplAttribute(MethodImplOptions methodImplOptions) { }
+
+        public MethodImplOptions Value { get { throw null; } }
     }
-    [System.FlagsAttribute]
+
+    [Flags]
     public enum MethodImplOptions
     {
-        AggressiveInlining = 256,
         NoInlining = 8,
         NoOptimization = 64,
         PreserveSig = 128,
+        AggressiveInlining = 256
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, AllowMultiple=false)]
-    public sealed partial class ReferenceAssemblyAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false)]
+    public sealed partial class ReferenceAssemblyAttribute : Attribute
     {
         public ReferenceAssemblyAttribute() { }
-        public ReferenceAssemblyAttribute(string description) { }
-        public string Description { get { throw null; } }
+
+        public ReferenceAssemblyAttribute(String description) { }
+
+        public String Description { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, Inherited=false, AllowMultiple=false)]
-    public sealed partial class RuntimeCompatibilityAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, Inherited = false, AllowMultiple = false)]
+    public sealed partial class RuntimeCompatibilityAttribute : Attribute
     {
-        public RuntimeCompatibilityAttribute() { }
-        public bool WrapNonExceptionThrows { get { throw null; } set { } }
+        public Boolean WrapNonExceptionThrows { get { throw null; } set { } }
     }
+
     public static partial class RuntimeHelpers
     {
-        public static int OffsetToStringData { get { throw null; } }
-        public static int GetHashCode(object o) { throw null; }
-        public static object GetObjectValue(object obj) { throw null; }
-        public static void InitializeArray(System.Array array, System.RuntimeFieldHandle fldHandle) { }
-        public static void RunClassConstructor(System.RuntimeTypeHandle type) { }
+        public static Int32 OffsetToStringData { get { throw null; } }
+
+        public static Int32 GetHashCode(Object o) { throw null; }
+
+        public static Object GetObjectValue(Object obj) { throw null; }
+
+        public static void InitializeArray(Array array, RuntimeFieldHandle fldHandle) { }
+
+        public static void RunClassConstructor(RuntimeTypeHandle type) { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Method, Inherited=false, AllowMultiple=false)]
-    public partial class StateMachineAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+    public partial class StateMachineAttribute : Attribute
     {
-        public StateMachineAttribute(System.Type stateMachineType) { }
-        public System.Type StateMachineType { get { throw null; } }
+        public StateMachineAttribute(Type stateMachineType) { }
+
+        public Type StateMachineType { get { throw null; } }
     }
-    public partial class StrongBox<T> : System.Runtime.CompilerServices.IStrongBox
+
+    public partial class StrongBox<T> : IStrongBox
     {
         public T Value;
         public StrongBox() { }
+
         public StrongBox(T value) { }
-        object System.Runtime.CompilerServices.IStrongBox.Value { get { throw null; } set { } }
+
+        Object IStrongBox.Value { get { throw null; } set { } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class | System.AttributeTargets.Delegate | System.AttributeTargets.Enum | System.AttributeTargets.Interface | System.AttributeTargets.Struct, Inherited=false, AllowMultiple=false)]
-    public sealed partial class TypeForwardedFromAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Interface | AttributeTargets.Delegate, Inherited = false, AllowMultiple = false)]
+    public sealed partial class TypeForwardedFromAttribute : Attribute
     {
-        public TypeForwardedFromAttribute(string assemblyFullName) { }
-        public string AssemblyFullName { get { throw null; } }
+        public TypeForwardedFromAttribute(String assemblyFullName) { }
+
+        public String AssemblyFullName { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, AllowMultiple=true, Inherited=false)]
-    public sealed partial class TypeForwardedToAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true, Inherited = false)]
+    public sealed partial class TypeForwardedToAttribute : Attribute
     {
-        public TypeForwardedToAttribute(System.Type destination) { }
-        public System.Type Destination { get { throw null; } }
+        public TypeForwardedToAttribute(Type destination) { }
+
+        public Type Destination { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Struct)]
-    public sealed partial class UnsafeValueTypeAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Struct)]
+    public sealed partial class UnsafeValueTypeAttribute : Attribute
     {
-        public UnsafeValueTypeAttribute() { }
     }
 }
+
 namespace System.Runtime.ExceptionServices
 {
     public sealed partial class ExceptionDispatchInfo
     {
         internal ExceptionDispatchInfo() { }
-        public System.Exception SourceException { get { throw null; } }
-        public static System.Runtime.ExceptionServices.ExceptionDispatchInfo Capture(System.Exception source) { throw null; }
+
+        public Exception SourceException { get { throw null; } }
+
+        public static ExceptionDispatchInfo Capture(Exception source) { throw null; }
+
         public void Throw() { }
     }
 }
+
 namespace System.Runtime.InteropServices
 {
     public enum CharSet
     {
         Ansi = 2,
-        Unicode = 3,
+        Unicode = 3
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly | System.AttributeTargets.Class | System.AttributeTargets.Delegate | System.AttributeTargets.Enum | System.AttributeTargets.Field | System.AttributeTargets.Interface | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Struct, Inherited=false)]
-    public sealed partial class ComVisibleAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Interface | AttributeTargets.Delegate, Inherited = false)]
+    public sealed partial class ComVisibleAttribute : Attribute
     {
-        public ComVisibleAttribute(bool visibility) { }
-        public bool Value { get { throw null; } }
+        public ComVisibleAttribute(Boolean visibility) { }
+
+        public Boolean Value { get { throw null; } }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Field, Inherited=false)]
-    public sealed partial class FieldOffsetAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Field, Inherited = false)]
+    public sealed partial class FieldOffsetAttribute : Attribute
     {
-        public FieldOffsetAttribute(int offset) { }
-        public int Value { get { throw null; } }
+        public FieldOffsetAttribute(Int32 offset) { }
+
+        public Int32 Value { get { throw null; } }
     }
+
     public enum LayoutKind
     {
-        Auto = 3,
-        Explicit = 2,
         Sequential = 0,
+        Explicit = 2,
+        Auto = 3
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Parameter, Inherited=false)]
-    public sealed partial class OutAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    public sealed partial class OutAttribute : Attribute
     {
-        public OutAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class | System.AttributeTargets.Struct, Inherited=false)]
-    public sealed partial class StructLayoutAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false)]
+    public sealed partial class StructLayoutAttribute : Attribute
     {
-        public System.Runtime.InteropServices.CharSet CharSet;
-        public int Pack;
-        public int Size;
-        public StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind layoutKind) { }
-        public System.Runtime.InteropServices.LayoutKind Value { get { throw null; } }
+        public CharSet CharSet;
+        public Int32 Pack;
+        public Int32 Size;
+        public StructLayoutAttribute(LayoutKind layoutKind) { }
+
+        public LayoutKind Value { get { throw null; } }
     }
 }
+
 namespace System.Runtime.Versioning
 {
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, AllowMultiple=false, Inherited=false)]
-    public sealed partial class TargetFrameworkAttribute : System.Attribute
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = false)]
+    public sealed partial class TargetFrameworkAttribute : Attribute
     {
-        public TargetFrameworkAttribute(string frameworkName) { }
-        public string FrameworkDisplayName { get { throw null; } set { } }
-        public string FrameworkName { get { throw null; } }
+        public TargetFrameworkAttribute(String frameworkName) { }
+
+        public String FrameworkDisplayName { get { throw null; } set { } }
+
+        public String FrameworkName { get { throw null; } }
     }
 }
+
 namespace System.Security
 {
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, AllowMultiple=false, Inherited=false)]
-    public sealed partial class AllowPartiallyTrustedCallersAttribute : System.Attribute
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = false)]
+    public sealed partial class AllowPartiallyTrustedCallersAttribute : Attribute
     {
-        public AllowPartiallyTrustedCallersAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly | System.AttributeTargets.Class | System.AttributeTargets.Constructor | System.AttributeTargets.Delegate | System.AttributeTargets.Enum | System.AttributeTargets.Field | System.AttributeTargets.Interface | System.AttributeTargets.Method | System.AttributeTargets.Struct, AllowMultiple=false, Inherited=false)]
-    public sealed partial class SecurityCriticalAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Field | AttributeTargets.Interface | AttributeTargets.Delegate, AllowMultiple = false, Inherited = false)]
+    public sealed partial class SecurityCriticalAttribute : Attribute
     {
-        public SecurityCriticalAttribute() { }
     }
-    public partial class SecurityException : System.Exception
+
+    public partial class SecurityException : Exception
     {
         public SecurityException() { }
-        public SecurityException(string message) { }
-        public SecurityException(string message, System.Exception inner) { }
-        public override string ToString() { throw null; }
+
+        public SecurityException(String message, Exception inner) { }
+
+        public SecurityException(String message) { }
+
+        public override String ToString() { throw null; }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Class | System.AttributeTargets.Constructor | System.AttributeTargets.Delegate | System.AttributeTargets.Enum | System.AttributeTargets.Field | System.AttributeTargets.Interface | System.AttributeTargets.Method | System.AttributeTargets.Struct, AllowMultiple=false, Inherited=false)]
-    public sealed partial class SecuritySafeCriticalAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Field | AttributeTargets.Interface | AttributeTargets.Delegate, AllowMultiple = false, Inherited = false)]
+    public sealed partial class SecuritySafeCriticalAttribute : Attribute
     {
-        public SecuritySafeCriticalAttribute() { }
     }
-    [System.AttributeUsageAttribute(System.AttributeTargets.Assembly, AllowMultiple=false, Inherited=false)]
-    public sealed partial class SecurityTransparentAttribute : System.Attribute
+
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = false)]
+    public sealed partial class SecurityTransparentAttribute : Attribute
     {
-        public SecurityTransparentAttribute() { }
     }
-    public partial class VerificationException : System.Exception
+
+    public partial class VerificationException : Exception
     {
         public VerificationException() { }
-        public VerificationException(string message) { }
-        public VerificationException(string message, System.Exception innerException) { }
+
+        public VerificationException(String message, Exception innerException) { }
+
+        public VerificationException(String message) { }
     }
 }
+
 namespace System.Text
 {
     public sealed partial class StringBuilder
     {
         public StringBuilder() { }
-        public StringBuilder(int capacity) { }
-        public StringBuilder(int capacity, int maxCapacity) { }
-        public StringBuilder(string value) { }
-        public StringBuilder(string value, int capacity) { }
-        public StringBuilder(string value, int startIndex, int length, int capacity) { }
-        public int Capacity { get { throw null; } set { } }
-        [System.Runtime.CompilerServices.IndexerName("Chars")]
-        public char this[int index] { get { throw null; } set { } }
-        public int Length { get { throw null; } set { } }
-        public int MaxCapacity { get { throw null; } }
-        public System.Text.StringBuilder Append(bool value) { throw null; }
-        public System.Text.StringBuilder Append(byte value) { throw null; }
-        public System.Text.StringBuilder Append(char value) { throw null; }
-        public System.Text.StringBuilder Append(char value, int repeatCount) { throw null; }
-        public System.Text.StringBuilder Append(char[] value) { throw null; }
-        public System.Text.StringBuilder Append(char[] value, int startIndex, int charCount) { throw null; }
-        public System.Text.StringBuilder Append(decimal value) { throw null; }
-        public System.Text.StringBuilder Append(double value) { throw null; }
-        public System.Text.StringBuilder Append(short value) { throw null; }
-        public System.Text.StringBuilder Append(int value) { throw null; }
-        public System.Text.StringBuilder Append(long value) { throw null; }
-        public System.Text.StringBuilder Append(object value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public System.Text.StringBuilder Append(sbyte value) { throw null; }
-        public System.Text.StringBuilder Append(float value) { throw null; }
-        public System.Text.StringBuilder Append(string value) { throw null; }
-        public System.Text.StringBuilder Append(string value, int startIndex, int count) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public System.Text.StringBuilder Append(ushort value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public System.Text.StringBuilder Append(uint value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public System.Text.StringBuilder Append(ulong value) { throw null; }
-        public System.Text.StringBuilder AppendFormat(System.IFormatProvider provider, string format, params object[] args) { throw null; }
-        public System.Text.StringBuilder AppendFormat(string format, params object[] args) { throw null; }
-        public System.Text.StringBuilder AppendLine() { throw null; }
-        public System.Text.StringBuilder AppendLine(string value) { throw null; }
-        public System.Text.StringBuilder Clear() { throw null; }
-        public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) { }
-        public int EnsureCapacity(int capacity) { throw null; }
-        public bool Equals(System.Text.StringBuilder sb) { throw null; }
-        public System.Text.StringBuilder Insert(int index, bool value) { throw null; }
-        public System.Text.StringBuilder Insert(int index, byte value) { throw null; }
-        public System.Text.StringBuilder Insert(int index, char value) { throw null; }
-        public System.Text.StringBuilder Insert(int index, char[] value) { throw null; }
-        public System.Text.StringBuilder Insert(int index, char[] value, int startIndex, int charCount) { throw null; }
-        public System.Text.StringBuilder Insert(int index, decimal value) { throw null; }
-        public System.Text.StringBuilder Insert(int index, double value) { throw null; }
-        public System.Text.StringBuilder Insert(int index, short value) { throw null; }
-        public System.Text.StringBuilder Insert(int index, int value) { throw null; }
-        public System.Text.StringBuilder Insert(int index, long value) { throw null; }
-        public System.Text.StringBuilder Insert(int index, object value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public System.Text.StringBuilder Insert(int index, sbyte value) { throw null; }
-        public System.Text.StringBuilder Insert(int index, float value) { throw null; }
-        public System.Text.StringBuilder Insert(int index, string value) { throw null; }
-        public System.Text.StringBuilder Insert(int index, string value, int count) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public System.Text.StringBuilder Insert(int index, ushort value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public System.Text.StringBuilder Insert(int index, uint value) { throw null; }
-        [System.CLSCompliantAttribute(false)]
-        public System.Text.StringBuilder Insert(int index, ulong value) { throw null; }
-        public System.Text.StringBuilder Remove(int startIndex, int length) { throw null; }
-        public System.Text.StringBuilder Replace(char oldChar, char newChar) { throw null; }
-        public System.Text.StringBuilder Replace(char oldChar, char newChar, int startIndex, int count) { throw null; }
-        public System.Text.StringBuilder Replace(string oldValue, string newValue) { throw null; }
-        public System.Text.StringBuilder Replace(string oldValue, string newValue, int startIndex, int count) { throw null; }
-        public override string ToString() { throw null; }
-        public string ToString(int startIndex, int length) { throw null; }
+
+        public StringBuilder(Int32 capacity, Int32 maxCapacity) { }
+
+        public StringBuilder(Int32 capacity) { }
+
+        public StringBuilder(String value, Int32 startIndex, Int32 length, Int32 capacity) { }
+
+        public StringBuilder(String value, Int32 capacity) { }
+
+        public StringBuilder(String value) { }
+
+        public Int32 Capacity { get { throw null; } set { } }
+
+        public Char this[Int32 index] { get { throw null; } set { } }
+
+        public Int32 Length { get { throw null; } set { } }
+
+        public Int32 MaxCapacity { get { throw null; } }
+
+        public StringBuilder Append(Boolean value) { throw null; }
+
+        public StringBuilder Append(Byte value) { throw null; }
+
+        public StringBuilder Append(Char value, Int32 repeatCount) { throw null; }
+
+        public StringBuilder Append(Char value) { throw null; }
+
+        public StringBuilder Append(Char[] value, Int32 startIndex, Int32 charCount) { throw null; }
+
+        public StringBuilder Append(Char[] value) { throw null; }
+
+        public StringBuilder Append(Decimal value) { throw null; }
+
+        public StringBuilder Append(Double value) { throw null; }
+
+        public StringBuilder Append(Int16 value) { throw null; }
+
+        public StringBuilder Append(Int32 value) { throw null; }
+
+        public StringBuilder Append(Int64 value) { throw null; }
+
+        public StringBuilder Append(Object value) { throw null; }
+
+        [CLSCompliant(false)]
+        public StringBuilder Append(SByte value) { throw null; }
+
+        public StringBuilder Append(Single value) { throw null; }
+
+        public StringBuilder Append(String value, Int32 startIndex, Int32 count) { throw null; }
+
+        public StringBuilder Append(String value) { throw null; }
+
+        [CLSCompliant(false)]
+        public StringBuilder Append(UInt16 value) { throw null; }
+
+        [CLSCompliant(false)]
+        public StringBuilder Append(UInt32 value) { throw null; }
+
+        [CLSCompliant(false)]
+        public StringBuilder Append(UInt64 value) { throw null; }
+
+        public StringBuilder AppendFormat(IFormatProvider provider, String format, params Object[] args) { throw null; }
+
+        public StringBuilder AppendFormat(String format, params Object[] args) { throw null; }
+
+        public StringBuilder AppendLine() { throw null; }
+
+        public StringBuilder AppendLine(String value) { throw null; }
+
+        public StringBuilder Clear() { throw null; }
+
+        public void CopyTo(Int32 sourceIndex, Char[] destination, Int32 destinationIndex, Int32 count) { }
+
+        public Int32 EnsureCapacity(Int32 capacity) { throw null; }
+
+        public Boolean Equals(StringBuilder sb) { throw null; }
+
+        public StringBuilder Insert(Int32 index, Boolean value) { throw null; }
+
+        public StringBuilder Insert(Int32 index, Byte value) { throw null; }
+
+        public StringBuilder Insert(Int32 index, Char value) { throw null; }
+
+        public StringBuilder Insert(Int32 index, Char[] value, Int32 startIndex, Int32 charCount) { throw null; }
+
+        public StringBuilder Insert(Int32 index, Char[] value) { throw null; }
+
+        public StringBuilder Insert(Int32 index, Decimal value) { throw null; }
+
+        public StringBuilder Insert(Int32 index, Double value) { throw null; }
+
+        public StringBuilder Insert(Int32 index, Int16 value) { throw null; }
+
+        public StringBuilder Insert(Int32 index, Int32 value) { throw null; }
+
+        public StringBuilder Insert(Int32 index, Int64 value) { throw null; }
+
+        public StringBuilder Insert(Int32 index, Object value) { throw null; }
+
+        [CLSCompliant(false)]
+        public StringBuilder Insert(Int32 index, SByte value) { throw null; }
+
+        public StringBuilder Insert(Int32 index, Single value) { throw null; }
+
+        public StringBuilder Insert(Int32 index, String value, Int32 count) { throw null; }
+
+        public StringBuilder Insert(Int32 index, String value) { throw null; }
+
+        [CLSCompliant(false)]
+        public StringBuilder Insert(Int32 index, UInt16 value) { throw null; }
+
+        [CLSCompliant(false)]
+        public StringBuilder Insert(Int32 index, UInt32 value) { throw null; }
+
+        [CLSCompliant(false)]
+        public StringBuilder Insert(Int32 index, UInt64 value) { throw null; }
+
+        public StringBuilder Remove(Int32 startIndex, Int32 length) { throw null; }
+
+        public StringBuilder Replace(Char oldChar, Char newChar, Int32 startIndex, Int32 count) { throw null; }
+
+        public StringBuilder Replace(Char oldChar, Char newChar) { throw null; }
+
+        public StringBuilder Replace(String oldValue, String newValue, Int32 startIndex, Int32 count) { throw null; }
+
+        public StringBuilder Replace(String oldValue, String newValue) { throw null; }
+
+        public override String ToString() { throw null; }
+
+        public String ToString(Int32 startIndex, Int32 length) { throw null; }
     }
 }
+
 namespace System.Threading
 {
     public enum LazyThreadSafetyMode
     {
-        ExecutionAndPublication = 2,
         None = 0,
         PublicationOnly = 1,
+        ExecutionAndPublication = 2
     }
+
     public static partial class Timeout
     {
-        public const int Infinite = -1;
-        public static readonly System.TimeSpan InfiniteTimeSpan;
+        public const Int32 Infinite = -1;
+        public static readonly TimeSpan InfiniteTimeSpan;
     }
-    public abstract partial class WaitHandle : System.IDisposable
+
+    public abstract partial class WaitHandle : IDisposable
     {
-        protected static readonly System.IntPtr InvalidHandle;
-        public const int WaitTimeout = 258;
-        protected WaitHandle() { }
+        protected static readonly IntPtr InvalidHandle;
+        public const Int32 WaitTimeout = 258;
         public void Dispose() { }
-        protected virtual void Dispose(bool explicitDisposing) { }
-        public static bool WaitAll(System.Threading.WaitHandle[] waitHandles) { throw null; }
-        public static bool WaitAll(System.Threading.WaitHandle[] waitHandles, int millisecondsTimeout) { throw null; }
-        public static bool WaitAll(System.Threading.WaitHandle[] waitHandles, System.TimeSpan timeout) { throw null; }
-        public static int WaitAny(System.Threading.WaitHandle[] waitHandles) { throw null; }
-        public static int WaitAny(System.Threading.WaitHandle[] waitHandles, int millisecondsTimeout) { throw null; }
-        public static int WaitAny(System.Threading.WaitHandle[] waitHandles, System.TimeSpan timeout) { throw null; }
-        public virtual bool WaitOne() { throw null; }
-        public virtual bool WaitOne(int millisecondsTimeout) { throw null; }
-        public virtual bool WaitOne(System.TimeSpan timeout) { throw null; }
+
+        protected virtual void Dispose(Boolean explicitDisposing) { }
+
+        public static Boolean WaitAll(WaitHandle[] waitHandles, Int32 millisecondsTimeout) { throw null; }
+
+        public static Boolean WaitAll(WaitHandle[] waitHandles, TimeSpan timeout) { throw null; }
+
+        public static Boolean WaitAll(WaitHandle[] waitHandles) { throw null; }
+
+        public static Int32 WaitAny(WaitHandle[] waitHandles, Int32 millisecondsTimeout) { throw null; }
+
+        public static Int32 WaitAny(WaitHandle[] waitHandles, TimeSpan timeout) { throw null; }
+
+        public static Int32 WaitAny(WaitHandle[] waitHandles) { throw null; }
+
+        public virtual Boolean WaitOne() { throw null; }
+
+        public virtual Boolean WaitOne(Int32 millisecondsTimeout) { throw null; }
+
+        public virtual Boolean WaitOne(TimeSpan timeout) { throw null; }
     }
 }
