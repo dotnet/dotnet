@@ -89,6 +89,10 @@ function Verify-Nuget-Packages {
             if ($expectedNumOfFiles[$packageKey] -ne $actualNumOfFiles) {
                 $errors += "Number of files are not equal for '$packageBaseName', expected: $($expectedNumOfFiles[$packageKey]) actual: $actualNumOfFiles"
             }
+
+            if ($packageKey -eq "Microsoft.TestPlatform") {
+                Verify-Version -nugetDir $unzipNugetPackageDir -errors $errors
+            }
         }
         finally {
             if ($null -ne $unzipNugetPackageDir -and (Test-Path $unzipNugetPackageDir)) {
@@ -110,6 +114,44 @@ function Unzip {
     Write-Verbose "Unzipping '$zipfile' to '$outpath'."
 
     [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
+}
+
+function Match-VersionAgainstBranch {
+    param ([string]$vsTestVersion, [string]$branchName,  [string[]]$errors)
+
+    # Output useful info.
+    Write-Host "VSTest Product Version: `"$vsTestVersion`""
+    Write-Host "Current Branch: `"$branchName`""
+
+    $versionIsRTM = $vsTestVersion -match "^\d+\.\d+\.\d+$"
+    $versionIsRelease = $vsTestVersion -match "^\d+\.\d+\.\d+\-release\-\d{8}\-\d{2}$"
+    $versionIsPreview = $vsTestVersion -match "^\d+\.\d+\.\d+\-preview\-\d{8}\-\d{2}$"
+
+    $isReleaseBranch = $branchName -like "rel/*"
+    $isPreviewBranch = $branchName -like "main"
+
+    if (!$isReleaseBranch -and !$isPreviewBranch) {
+        Write-Host "Skipping check since branch is neither `"release`" nor `"preview`""
+        return
+    }
+
+    Write-Host "Matching branch against product version ... "
+    if ($isReleaseBranch -and !$versionIsRTM -and !$versionIsRelease) {
+        $errors += "Release version `"$vsTestVersion`" should either be RTM, or contain a `"release`" suffix."
+    }
+    if ($isPreviewBranch -and !$versionIsPreview) {
+        $errors += "Preview version `"$vsTestVersion`" should contain a `"preview`" suffix."
+    }
+}
+
+function Verify-Version {
+    param ([string]$nugetDir, [string[]] $errors)
+
+    $vsTestExe = "$nugetDir/tools/net462/Common7/IDE/Extensions/TestPlatform/vstest.console.exe"
+    $vsTestProductVersion = (Get-Item $vsTestExe).VersionInfo.ProductVersion
+    $currentBranch = git branch --show-current
+
+    Match-VersionAgainstBranch -vsTestVersion $vsTestProductVersion -branchName $currentBranch -errors $errors
 }
 
 Verify-Nuget-Packages
