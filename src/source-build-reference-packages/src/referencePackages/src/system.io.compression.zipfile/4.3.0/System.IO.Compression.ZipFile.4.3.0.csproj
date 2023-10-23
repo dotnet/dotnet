@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3</TargetFrameworks>
     <AssemblyName>System.IO.Compression.ZipFile</AssemblyName>
-    <ProjectTemplateVersion>2</ProjectTemplateVersion>
     <StrongNameKeyId>ECMA</StrongNameKeyId>
   </PropertyGroup>
 

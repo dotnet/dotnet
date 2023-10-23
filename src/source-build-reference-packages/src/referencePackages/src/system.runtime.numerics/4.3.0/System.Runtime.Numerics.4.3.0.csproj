@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1</TargetFrameworks>
     <AssemblyName>System.Runtime.Numerics</AssemblyName>
-    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.1'">

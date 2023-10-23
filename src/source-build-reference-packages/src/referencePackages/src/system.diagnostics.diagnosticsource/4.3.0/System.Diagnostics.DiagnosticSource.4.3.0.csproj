@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;netstandard1.3</TargetFrameworks>
     <AssemblyName>System.Diagnostics.DiagnosticSource</AssemblyName>
-    <ProjectTemplateVersion>2</ProjectTemplateVersion>
     <StrongNameKeyId>Open</StrongNameKeyId>
   </PropertyGroup>
 

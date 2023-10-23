@@ -54,25 +54,15 @@
     </NetStandard1xPackage>
   </PropertyGroup>
 
-  <!-- Setting that are dependent on the project template version. -->
-  <Choose>
-    <When Condition="'$(ProjectTemplateVersion)' == '2'">
-      <PropertyGroup>
-        <!-- When the library targets netstandard1.x and is part of the .NET Standard 1.x dependency graph, disable the implicit framework references to avoid cyclic dependencies. -->
-        <DisableImplicitFrameworkReferences Condition="'$(DisableImplicitFrameworkReferences)' == '' and ($(TargetFramework.StartsWith('netstandard1')) or '$(TargetFramework)' == 'netcoreapp1.1') and $(NetStandard1xPackage.Contains('$(AssemblyName);'))">true</DisableImplicitFrameworkReferences>
-      </PropertyGroup>
+  <PropertyGroup>
+    <!-- When the library targets netstandard1.x and is part of the .NET Standard 1.x dependency graph, disable the implicit framework references to avoid cyclic dependencies. -->
+    <DisableImplicitFrameworkReferences Condition="'$(DisableImplicitFrameworkReferences)' == '' and ($(TargetFramework.StartsWith('netstandard1')) or '$(TargetFramework)' == 'netcoreapp1.1') and $(NetStandard1xPackage.Contains('$(AssemblyName);'))">true</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
 
-      <ItemGroup>
-        <Compile Include="ref/$(TargetFramework)/*$(DefaultLanguageSourceExtension)" />
-        <Compile Include="lib/$(TargetFramework)/*$(DefaultLanguageSourceExtension)" />
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <DisableImplicitFrameworkReferences Condition="'$(DisableImplicitFrameworkReferences)' == ''">true</DisableImplicitFrameworkReferences>
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
+  <ItemGroup>
+    <Compile Include="ref/$(TargetFramework)/*$(DefaultLanguageSourceExtension)" />
+    <Compile Include="lib/$(TargetFramework)/*$(DefaultLanguageSourceExtension)" />
+  </ItemGroup>
 
   <!--
     ### Targeting Packs section ###

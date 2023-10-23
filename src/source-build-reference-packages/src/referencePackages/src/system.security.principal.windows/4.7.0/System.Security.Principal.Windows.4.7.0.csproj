@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.0;netstandard1.3;netstandard2.0</TargetFrameworks>
     <AssemblyName>System.Security.Principal.Windows</AssemblyName>
-    <ProjectTemplateVersion>2</ProjectTemplateVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">

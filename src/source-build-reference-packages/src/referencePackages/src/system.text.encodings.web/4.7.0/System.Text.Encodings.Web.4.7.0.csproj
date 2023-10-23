@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;netstandard2.0;netstandard2.1</TargetFrameworks>
     <AssemblyName>System.Text.Encodings.Web</AssemblyName>
-    <ProjectTemplateVersion>2</ProjectTemplateVersion>
     <StrongNameKeyId>Open</StrongNameKeyId>
     <!-- Don't warn on CS3011 - Some types have abstract members that are not CLS-compliant -->
     <NoWarn>$(NoWarn);CS3011</NoWarn>
