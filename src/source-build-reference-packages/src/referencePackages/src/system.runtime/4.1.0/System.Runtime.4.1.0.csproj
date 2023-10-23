@@ -1,28 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;netstandard1.2;netstandard1.3;netstandard1.5</TargetFrameworks>
-   </PropertyGroup>
+    <AssemblyName>System.Runtime</AssemblyName>
+    <ProjectTemplateVersion>2</ProjectTemplateVersion>
+  </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="**/ref/$(TargetFramework)/*.cs" />
-    <Compile Include="**/lib/$(TargetFramework)/*.cs" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.0'">
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
+    <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
   </ItemGroup>
 
-<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.2'">
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
     <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
-</ItemGroup>
-<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.2' ">
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
     <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
-</ItemGroup>
-<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.5'">
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
     <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
-</ItemGroup>
-<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
-    <PackageReference Include="Microsoft.NETCore.Platforms" Version="1.0.1" />
-    <PackageReference Include="Microsoft.NETCore.Targets" Version="1.0.1" />
-</ItemGroup>
+  </ItemGroup>
 
 </Project>
