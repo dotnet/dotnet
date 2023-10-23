@@ -12,6 +12,7 @@
   <ItemGroup>
     <Compile Remove="Resources\**\*.*" />
     <Compile Include="..\..\..\Compiler\test\Microsoft.AspNetCore.Razor.Test.Common\Language\Legacy\SyntaxNodeWriter.cs" />
+    <Compile Include="..\..\..\Compiler\test\Microsoft.AspNetCore.Razor.Test.Common\Language\IntegrationTests\SourceMappingsSerializer.cs" />
   </ItemGroup>
 
   <ItemGroup>

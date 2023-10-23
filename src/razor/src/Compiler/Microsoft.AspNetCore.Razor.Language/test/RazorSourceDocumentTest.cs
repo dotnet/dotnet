@@ -20,9 +20,8 @@ public class RazorSourceDocumentTest
         var document = RazorSourceDocument.ReadFrom(content, "file.cshtml");
 
         // Assert
-        Assert.IsType<StreamSourceDocument>(document);
         Assert.Equal("file.cshtml", document.FilePath);
-        Assert.Same(Encoding.UTF8, document.Encoding);
+        Assert.Same(Encoding.UTF8, document.Text.Encoding);
     }
 
     [Fact]
@@ -36,7 +35,7 @@ public class RazorSourceDocumentTest
 
         // Assert
         Assert.Equal("file.cshtml", document.FilePath);
-        Assert.Same(Encoding.UTF32, Assert.IsType<StreamSourceDocument>(document).Encoding);
+        Assert.Same(Encoding.UTF32, document.Text.Encoding);
     }
 
     [Fact]
@@ -44,7 +43,7 @@ public class RazorSourceDocumentTest
     {
         // Arrange
         var content = TestRazorSourceDocument.CreateStreamContent(encoding: Encoding.UTF32);
-        var properties = new RazorSourceDocumentProperties("c:\\myapp\\filePath.cshtml", "filePath.cshtml");
+        var properties = RazorSourceDocumentProperties.Create("c:\\myapp\\filePath.cshtml", "filePath.cshtml");
 
         // Act
         var document = RazorSourceDocument.ReadFrom(content, Encoding.UTF32, properties);
@@ -52,7 +51,7 @@ public class RazorSourceDocumentTest
         // Assert
         Assert.Equal("c:\\myapp\\filePath.cshtml", document.FilePath);
         Assert.Equal("filePath.cshtml", document.RelativePath);
-        Assert.Same(Encoding.UTF32, Assert.IsType<StreamSourceDocument>(document).Encoding);
+        Assert.Same(Encoding.UTF32, document.Text.Encoding);
     }
 
     [Fact]
@@ -66,7 +65,7 @@ public class RazorSourceDocumentTest
 
         // Assert
         Assert.Equal("file.cshtml", document.FilePath);
-        Assert.Same(Encoding.UTF32, Assert.IsType<StreamSourceDocument>(document).Encoding);
+        Assert.Same(Encoding.UTF32, document.Text.Encoding);
     }
 
     [Fact]
@@ -142,7 +141,7 @@ public class RazorSourceDocumentTest
         // Assert
         Assert.Equal(fileName, document.FilePath);
         Assert.Equal(content, ReadContent(document));
-        Assert.Same(Encoding.UTF8, document.Encoding);
+        Assert.Same(Encoding.UTF8, document.Text.Encoding);
     }
 
     [Fact]
@@ -159,7 +158,7 @@ public class RazorSourceDocumentTest
         // Assert
         Assert.Equal(fileName, document.FilePath);
         Assert.Equal(content, ReadContent(document));
-        Assert.Same(encoding, document.Encoding);
+        Assert.Same(encoding, document.Text.Encoding);
     }
 
     [Fact]
@@ -167,7 +166,7 @@ public class RazorSourceDocumentTest
     {
         // Arrange
         var content = "Hello world";
-        var properties = new RazorSourceDocumentProperties("c:\\myapp\\filePath.cshtml", "filePath.cshtml");
+        var properties = RazorSourceDocumentProperties.Create("c:\\myapp\\filePath.cshtml", "filePath.cshtml");
 
         // Act
         var document = RazorSourceDocument.Create(content, Encoding.UTF32, properties);
@@ -176,7 +175,7 @@ public class RazorSourceDocumentTest
         Assert.Equal("c:\\myapp\\filePath.cshtml", document.FilePath);
         Assert.Equal("filePath.cshtml", document.RelativePath);
         Assert.Equal(content, ReadContent(document));
-        Assert.Same(Encoding.UTF32, Assert.IsType<StringSourceDocument>(document).Encoding);
+        Assert.Same(Encoding.UTF32, document.Text.Encoding);
     }
 
     [Fact]
@@ -210,11 +209,5 @@ public class RazorSourceDocumentTest
         Assert.Equal(relativePhysicalPath, document.RelativePath);
     }
 
-    private static string ReadContent(RazorSourceDocument razorSourceDocument)
-    {
-        var buffer = new char[razorSourceDocument.Length];
-        razorSourceDocument.CopyTo(0, buffer, 0, buffer.Length);
-
-        return new string(buffer);
-    }
+    private static string ReadContent(RazorSourceDocument razorSourceDocument) => razorSourceDocument.Text.ToString();
 }

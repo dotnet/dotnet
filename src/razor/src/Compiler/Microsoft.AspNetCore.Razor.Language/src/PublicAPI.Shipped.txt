@@ -44,9 +44,6 @@
 ~abstract Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeFormatter.WriteContent(string content) -> void
 ~abstract Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeFormatter.WriteProperty(string key, string value) -> void
 ~abstract Microsoft.AspNetCore.Razor.Language.IntermediateNodePassBase.ExecuteCore(Microsoft.AspNetCore.Razor.Language.RazorCodeDocument codeDocument, Microsoft.AspNetCore.Razor.Language.Intermediate.DocumentIntermediateNode documentNode) -> void
-~abstract Microsoft.AspNetCore.Razor.Language.RazorCodeDocument.Imports.get -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.RazorSourceDocument>
-~abstract Microsoft.AspNetCore.Razor.Language.RazorCodeDocument.Items.get -> Microsoft.AspNetCore.Razor.Language.ItemCollection
-~abstract Microsoft.AspNetCore.Razor.Language.RazorCodeDocument.Source.get -> Microsoft.AspNetCore.Razor.Language.RazorSourceDocument
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptionsBuilder.Build() -> Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorConfiguration.ConfigurationName.get -> string
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorConfiguration.Extensions.get -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.RazorExtension>
@@ -54,10 +51,6 @@
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.Diagnostics.get -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.RazorDiagnostic>
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.GeneratedCode.get -> string
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.Options.get -> Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions
-~abstract Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.SourceMappings.get -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.SourceMapping>
-~abstract Microsoft.AspNetCore.Razor.Language.RazorEngine.Features.get -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.IRazorEngineFeature>
-~abstract Microsoft.AspNetCore.Razor.Language.RazorEngine.Phases.get -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.IRazorEnginePhase>
-~abstract Microsoft.AspNetCore.Razor.Language.RazorEngine.Process(Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> void
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorEnginePhaseBase.ExecuteCore(Microsoft.AspNetCore.Razor.Language.RazorCodeDocument codeDocument) -> void
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorExtension.ExtensionName.get -> string
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorExtensionInitializer.Initialize(Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder builder) -> void
@@ -67,27 +60,10 @@
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorProject.EnumerateItems(string basePath) -> System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorProjectItem>
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorProject.GetItem(string path) -> Microsoft.AspNetCore.Razor.Language.RazorProjectItem
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorProject.GetItem(string path, string fileKind) -> Microsoft.AspNetCore.Razor.Language.RazorProjectItem
-~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.Configuration.get -> Microsoft.AspNetCore.Razor.Language.RazorConfiguration
-~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.CreateCodeDocumentCore(Microsoft.AspNetCore.Razor.Language.RazorProjectItem projectItem) -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
-~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.CreateCodeDocumentDesignTimeCore(Microsoft.AspNetCore.Razor.Language.RazorProjectItem projectItem) -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
-~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.Engine.get -> Microsoft.AspNetCore.Razor.Language.RazorEngine
-~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.FileSystem.get -> Microsoft.AspNetCore.Razor.Language.RazorProjectFileSystem
-~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.ProcessCore(Microsoft.AspNetCore.Razor.Language.RazorCodeDocument codeDocument) -> void
-~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.ProjectFeatures.get -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.IRazorProjectEngineFeature>
-~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder.Build() -> Microsoft.AspNetCore.Razor.Language.RazorProjectEngine
-~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder.Configuration.get -> Microsoft.AspNetCore.Razor.Language.RazorConfiguration
-~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder.Features.get -> System.Collections.Generic.ICollection<Microsoft.AspNetCore.Razor.Language.IRazorFeature>
-~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder.FileSystem.get -> Microsoft.AspNetCore.Razor.Language.RazorProjectFileSystem
-~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder.Phases.get -> System.Collections.Generic.IList<Microsoft.AspNetCore.Razor.Language.IRazorEnginePhase>
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectItem.BasePath.get -> string
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectItem.FilePath.get -> string
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectItem.PhysicalPath.get -> string
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorProjectItem.Read() -> System.IO.Stream
-~abstract Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) -> void
-~abstract Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.Encoding.get -> System.Text.Encoding
-~abstract Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.FilePath.get -> string
-~abstract Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.GetChecksum() -> byte[]
-~abstract Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.Lines.get -> Microsoft.AspNetCore.Razor.Language.RazorSourceLineCollection
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree.Diagnostics.get -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.RazorDiagnostic>
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree.Options.get -> Microsoft.AspNetCore.Razor.Language.RazorParserOptions
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree.Source.get -> Microsoft.AspNetCore.Razor.Language.RazorSourceDocument
@@ -375,9 +351,6 @@
 ~Microsoft.AspNetCore.Razor.Language.IRazorDirectiveClassifierPass.Execute(Microsoft.AspNetCore.Razor.Language.RazorCodeDocument codeDocument, Microsoft.AspNetCore.Razor.Language.Intermediate.DocumentIntermediateNode documentNode) -> void
 ~Microsoft.AspNetCore.Razor.Language.IRazorDirectiveFeature.Directives.get -> System.Collections.Generic.ICollection<Microsoft.AspNetCore.Razor.Language.DirectiveDescriptor>
 ~Microsoft.AspNetCore.Razor.Language.IRazorDocumentClassifierPass.Execute(Microsoft.AspNetCore.Razor.Language.RazorCodeDocument codeDocument, Microsoft.AspNetCore.Razor.Language.Intermediate.DocumentIntermediateNode documentNode) -> void
-~Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder.Build() -> Microsoft.AspNetCore.Razor.Language.RazorEngine
-~Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder.Features.get -> System.Collections.Generic.ICollection<Microsoft.AspNetCore.Razor.Language.IRazorEngineFeature>
-~Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder.Phases.get -> System.Collections.Generic.IList<Microsoft.AspNetCore.Razor.Language.IRazorEnginePhase>
 ~Microsoft.AspNetCore.Razor.Language.IRazorEngineFeature.Engine.get -> Microsoft.AspNetCore.Razor.Language.RazorEngine
 ~Microsoft.AspNetCore.Razor.Language.IRazorEngineFeature.Engine.set -> void
 ~Microsoft.AspNetCore.Razor.Language.IRazorEnginePhase.Engine.get -> Microsoft.AspNetCore.Razor.Language.RazorEngine
@@ -388,7 +361,6 @@
 ~Microsoft.AspNetCore.Razor.Language.IRazorProjectEngineFeature.ProjectEngine.get -> Microsoft.AspNetCore.Razor.Language.RazorProjectEngine
 ~Microsoft.AspNetCore.Razor.Language.IRazorProjectEngineFeature.ProjectEngine.set -> void
 ~Microsoft.AspNetCore.Razor.Language.IRazorTargetExtensionFeature.TargetExtensions.get -> System.Collections.Generic.ICollection<Microsoft.AspNetCore.Razor.Language.CodeGeneration.ICodeTargetExtension>
-~Microsoft.AspNetCore.Razor.Language.ITagHelperDescriptorProvider.Execute(Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorProviderContext context) -> void
 ~Microsoft.AspNetCore.Razor.Language.ITagHelperFeature.GetDescriptors() -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor>
 ~Microsoft.AspNetCore.Razor.Language.ItemCollection.Add(object key, object value) -> void
 ~Microsoft.AspNetCore.Razor.Language.ItemCollection.Add(System.Collections.Generic.KeyValuePair<object, object> item) -> void
@@ -422,15 +394,10 @@
 ~Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion.CompareTo(Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion other) -> int
 ~Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion.Equals(Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion other) -> bool
 ~Microsoft.AspNetCore.Razor.Language.RazorProject.FindHierarchicalItems(string path, string fileName) -> System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorProjectItem>
-~Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.EngineFeatures.get -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.IRazorEngineFeature>
-~Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.Phases.get -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.IRazorEnginePhase>
 ~Microsoft.AspNetCore.Razor.Language.RazorProjectItem.CombinedPath.get -> string
 ~Microsoft.AspNetCore.Razor.Language.RazorProjectItem.Extension.get -> string
 ~Microsoft.AspNetCore.Razor.Language.RazorProjectItem.FileName.get -> string
 ~Microsoft.AspNetCore.Razor.Language.RazorProjectItem.FilePathWithoutExtension.get -> string
-~Microsoft.AspNetCore.Razor.Language.RazorSourceDocumentProperties.FilePath.get -> string
-~Microsoft.AspNetCore.Razor.Language.RazorSourceDocumentProperties.RazorSourceDocumentProperties(string filePath, string relativePath) -> void
-~Microsoft.AspNetCore.Razor.Language.RazorSourceDocumentProperties.RelativePath.get -> string
 ~Microsoft.AspNetCore.Razor.Language.SourceChange.Equals(Microsoft.AspNetCore.Razor.Language.SourceChange other) -> bool
 ~Microsoft.AspNetCore.Razor.Language.SourceChange.NewText.get -> string
 ~Microsoft.AspNetCore.Razor.Language.SourceChange.SourceChange(int absoluteIndex, int length, string newText) -> void
@@ -617,10 +584,6 @@
 ~override Microsoft.AspNetCore.Razor.Language.SourceSpan.ToString() -> string
 ~override sealed Microsoft.AspNetCore.Razor.Language.DocumentClassifierPassBase.ExecuteCore(Microsoft.AspNetCore.Razor.Language.RazorCodeDocument codeDocument, Microsoft.AspNetCore.Razor.Language.Intermediate.DocumentIntermediateNode documentNode) -> void
 ~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilderExtensions.AsDictionary(this Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilder builder, string attributeNamePrefix, string valueTypeName) -> void
-~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilderExtensions.GetPropertyName(this Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilder builder) -> string
-~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilderExtensions.GetPropertyName(this Microsoft.AspNetCore.Razor.Language.BoundAttributeParameterDescriptorBuilder builder) -> string
-~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilderExtensions.SetPropertyName(this Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilder builder, string propertyName) -> void
-~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilderExtensions.SetPropertyName(this Microsoft.AspNetCore.Razor.Language.BoundAttributeParameterDescriptorBuilder builder, string propertyName) -> void
 ~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorExtensions.GetPropertyName(this Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptor attribute) -> string
 ~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorExtensions.GetPropertyName(this Microsoft.AspNetCore.Razor.Language.BoundAttributeParameterDescriptor parameter) -> string
 ~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorExtensions.IsDefaultKind(this Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptor attribute) -> bool
@@ -664,12 +627,9 @@
 ~static Microsoft.AspNetCore.Razor.Language.DirectiveTokenDescriptor.CreateToken(Microsoft.AspNetCore.Razor.Language.DirectiveTokenKind kind) -> Microsoft.AspNetCore.Razor.Language.DirectiveTokenDescriptor
 ~static Microsoft.AspNetCore.Razor.Language.DirectiveTokenDescriptor.CreateToken(Microsoft.AspNetCore.Razor.Language.DirectiveTokenKind kind, bool optional) -> Microsoft.AspNetCore.Razor.Language.DirectiveTokenDescriptor
 ~static Microsoft.AspNetCore.Razor.Language.DirectiveTokenDescriptor.CreateToken(Microsoft.AspNetCore.Razor.Language.DirectiveTokenKind kind, bool optional, string name, string description) -> Microsoft.AspNetCore.Razor.Language.DirectiveTokenDescriptor
-~static Microsoft.AspNetCore.Razor.Language.Extensions.FunctionsDirective.Register(Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder builder) -> void
 ~static Microsoft.AspNetCore.Razor.Language.Extensions.FunctionsDirective.Register(Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder builder) -> void
-~static Microsoft.AspNetCore.Razor.Language.Extensions.InheritsDirective.Register(Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder builder) -> void
 ~static Microsoft.AspNetCore.Razor.Language.Extensions.InheritsDirective.Register(Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder builder) -> void
 ~static Microsoft.AspNetCore.Razor.Language.Extensions.NamespaceDirective.Register(Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder builder) -> Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder
-~static Microsoft.AspNetCore.Razor.Language.Extensions.SectionDirective.Register(Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder builder) -> void
 ~static Microsoft.AspNetCore.Razor.Language.Extensions.SectionDirective.Register(Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder builder) -> void
 ~static Microsoft.AspNetCore.Razor.Language.FileKinds.GetComponentFileKindFromFilePath(string filePath) -> string
 ~static Microsoft.AspNetCore.Razor.Language.FileKinds.GetFileKindFromFilePath(string filePath) -> string
@@ -685,9 +645,6 @@
 ~static Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeExtensions.FindDescendantNodes<TNode>(this Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNode node) -> System.Collections.Generic.IReadOnlyList<TNode>
 ~static Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeExtensions.GetAllDiagnostics(this Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNode node) -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.RazorDiagnostic>
 ~static Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeExtensions.IsImported(this Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNode node) -> bool
-~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocument.Create(Microsoft.AspNetCore.Razor.Language.RazorSourceDocument source) -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
-~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocument.Create(Microsoft.AspNetCore.Razor.Language.RazorSourceDocument source, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorSourceDocument> imports) -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
-~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocument.Create(Microsoft.AspNetCore.Razor.Language.RazorSourceDocument source, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorSourceDocument> imports, Microsoft.AspNetCore.Razor.Language.RazorParserOptions parserOptions, Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions codeGenerationOptions) -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetCodeGenerationOptions(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetCSharpDocument(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetCssScope(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> string
@@ -713,18 +670,6 @@
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions.CreateDesignTimeDefault() -> Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions
 ~static Microsoft.AspNetCore.Razor.Language.RazorConfiguration.Create(Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion languageVersion, string configurationName, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorExtension> extensions, bool useConsolidatedMvcViews = false) -> Microsoft.AspNetCore.Razor.Language.RazorConfiguration
 ~static Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.Create(string generatedCode, Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions options, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorDiagnostic> diagnostics) -> Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument
-~static Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.Create(string generatedCode, Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions options, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorDiagnostic> diagnostics, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.SourceMapping> sourceMappings, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.CodeGeneration.LinePragma> linePragmas) -> Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument
-~static Microsoft.AspNetCore.Razor.Language.RazorEngine.Create() -> Microsoft.AspNetCore.Razor.Language.RazorEngine
-~static Microsoft.AspNetCore.Razor.Language.RazorEngine.Create(System.Action<Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder> configure) -> Microsoft.AspNetCore.Razor.Language.RazorEngine
-~static Microsoft.AspNetCore.Razor.Language.RazorEngine.CreateDesignTime() -> Microsoft.AspNetCore.Razor.Language.RazorEngine
-~static Microsoft.AspNetCore.Razor.Language.RazorEngine.CreateDesignTime(System.Action<Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder> configure) -> Microsoft.AspNetCore.Razor.Language.RazorEngine
-~static Microsoft.AspNetCore.Razor.Language.RazorEngine.CreateDesignTimeEmpty(System.Action<Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder> configure) -> Microsoft.AspNetCore.Razor.Language.RazorEngine
-~static Microsoft.AspNetCore.Razor.Language.RazorEngine.CreateEmpty(System.Action<Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder> configure) -> Microsoft.AspNetCore.Razor.Language.RazorEngine
-~static Microsoft.AspNetCore.Razor.Language.RazorEngineBuilderExtensions.AddDirective(this Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder builder, Microsoft.AspNetCore.Razor.Language.DirectiveDescriptor directive) -> Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder
-~static Microsoft.AspNetCore.Razor.Language.RazorEngineBuilderExtensions.AddTargetExtension(this Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder builder, Microsoft.AspNetCore.Razor.Language.CodeGeneration.ICodeTargetExtension extension) -> Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder
-~static Microsoft.AspNetCore.Razor.Language.RazorEngineBuilderExtensions.ConfigureClass(this Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder builder, System.Action<Microsoft.AspNetCore.Razor.Language.RazorCodeDocument, Microsoft.AspNetCore.Razor.Language.Intermediate.ClassDeclarationIntermediateNode> configureClass) -> Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder
-~static Microsoft.AspNetCore.Razor.Language.RazorEngineBuilderExtensions.SetBaseType(this Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder builder, string baseType) -> Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder
-~static Microsoft.AspNetCore.Razor.Language.RazorEngineBuilderExtensions.SetNamespace(this Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder builder, string namespaceName) -> Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder
 ~static Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion.Parse(string languageVersion) -> Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion
 ~static Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion.TryParse(string languageVersion, out Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion version) -> bool
 ~static Microsoft.AspNetCore.Razor.Language.RazorParserOptions.Create(System.Action<Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder> configure) -> Microsoft.AspNetCore.Razor.Language.RazorParserOptions
@@ -732,8 +677,6 @@
 ~static Microsoft.AspNetCore.Razor.Language.RazorParserOptions.CreateDefault() -> Microsoft.AspNetCore.Razor.Language.RazorParserOptions
 ~static Microsoft.AspNetCore.Razor.Language.RazorParserOptions.CreateDesignTime(System.Action<Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder> configure) -> Microsoft.AspNetCore.Razor.Language.RazorParserOptions
 ~static Microsoft.AspNetCore.Razor.Language.RazorParserOptions.CreateDesignTime(System.Action<Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder> configure, string fileKind) -> Microsoft.AspNetCore.Razor.Language.RazorParserOptions
-~static Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.Create(Microsoft.AspNetCore.Razor.Language.RazorConfiguration configuration, Microsoft.AspNetCore.Razor.Language.RazorProjectFileSystem fileSystem) -> Microsoft.AspNetCore.Razor.Language.RazorProjectEngine
-~static Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.Create(Microsoft.AspNetCore.Razor.Language.RazorConfiguration configuration, Microsoft.AspNetCore.Razor.Language.RazorProjectFileSystem fileSystem, System.Action<Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder> configure) -> Microsoft.AspNetCore.Razor.Language.RazorProjectEngine
 ~static Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilderExtensions.AddDefaultImports(this Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder builder, params string[] imports) -> Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder
 ~static Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilderExtensions.AddDirective(this Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder builder, Microsoft.AspNetCore.Razor.Language.DirectiveDescriptor directive) -> Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder
 ~static Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilderExtensions.AddDirective(this Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder builder, Microsoft.AspNetCore.Razor.Language.DirectiveDescriptor directive, params string[] fileKinds) -> Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder
@@ -745,14 +688,6 @@
 ~static Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilderExtensions.SetRootNamespace(this Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder builder, string rootNamespace) -> Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder
 ~static Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilderExtensions.SetSupportLocalizedComponentNames(this Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder builder) -> Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder
 ~static Microsoft.AspNetCore.Razor.Language.RazorProjectFileSystem.Create(string rootDirectoryPath) -> Microsoft.AspNetCore.Razor.Language.RazorProjectFileSystem
-~static Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.Create(string content, Microsoft.AspNetCore.Razor.Language.RazorSourceDocumentProperties properties) -> Microsoft.AspNetCore.Razor.Language.RazorSourceDocument
-~static Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.Create(string content, string fileName) -> Microsoft.AspNetCore.Razor.Language.RazorSourceDocument
-~static Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.Create(string content, string fileName, System.Text.Encoding encoding) -> Microsoft.AspNetCore.Razor.Language.RazorSourceDocument
-~static Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.Create(string content, System.Text.Encoding encoding, Microsoft.AspNetCore.Razor.Language.RazorSourceDocumentProperties properties) -> Microsoft.AspNetCore.Razor.Language.RazorSourceDocument
-~static Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.ReadFrom(Microsoft.AspNetCore.Razor.Language.RazorProjectItem projectItem) -> Microsoft.AspNetCore.Razor.Language.RazorSourceDocument
-~static Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.ReadFrom(System.IO.Stream stream, string fileName) -> Microsoft.AspNetCore.Razor.Language.RazorSourceDocument
-~static Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.ReadFrom(System.IO.Stream stream, string fileName, System.Text.Encoding encoding) -> Microsoft.AspNetCore.Razor.Language.RazorSourceDocument
-~static Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.ReadFrom(System.IO.Stream stream, System.Text.Encoding encoding, Microsoft.AspNetCore.Razor.Language.RazorSourceDocumentProperties properties) -> Microsoft.AspNetCore.Razor.Language.RazorSourceDocument
 ~static Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree.Parse(Microsoft.AspNetCore.Razor.Language.RazorSourceDocument source) -> Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree
 ~static Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree.Parse(Microsoft.AspNetCore.Razor.Language.RazorSourceDocument source, Microsoft.AspNetCore.Razor.Language.RazorParserOptions options) -> Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree
 ~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilderExtensions.GetTypeName(this Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder builder) -> string
@@ -876,20 +811,11 @@
 ~virtual Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.LanguageVersion.get -> Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion
 ~virtual Microsoft.AspNetCore.Razor.Language.RazorProject.FindHierarchicalItems(string basePath, string path, string fileName) -> System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorProjectItem>
 ~virtual Microsoft.AspNetCore.Razor.Language.RazorProject.NormalizeAndEnsureValidPath(string path) -> string
-~virtual Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.Process(Microsoft.AspNetCore.Razor.Language.RazorProjectItem projectItem) -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
-~virtual Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.Process(Microsoft.AspNetCore.Razor.Language.RazorSourceDocument source, string fileKind, System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.RazorSourceDocument> importSources, System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor> tagHelpers) -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
-~virtual Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.ProcessDeclarationOnly(Microsoft.AspNetCore.Razor.Language.RazorProjectItem projectItem) -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
-~virtual Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.ProcessDeclarationOnly(Microsoft.AspNetCore.Razor.Language.RazorSourceDocument source, string fileKind, System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.RazorSourceDocument> importSources, System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor> tagHelpers) -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
-~virtual Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.ProcessDesignTime(Microsoft.AspNetCore.Razor.Language.RazorProjectItem projectItem) -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
-~virtual Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.ProcessDesignTime(Microsoft.AspNetCore.Razor.Language.RazorSourceDocument source, string fileKind, System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.RazorSourceDocument> importSources, System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor> tagHelpers) -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
 ~virtual Microsoft.AspNetCore.Razor.Language.RazorProjectEngineFeatureBase.ProjectEngine.get -> Microsoft.AspNetCore.Razor.Language.RazorProjectEngine
 ~virtual Microsoft.AspNetCore.Razor.Language.RazorProjectEngineFeatureBase.ProjectEngine.set -> void
 ~virtual Microsoft.AspNetCore.Razor.Language.RazorProjectItem.CssScope.get -> string
 ~virtual Microsoft.AspNetCore.Razor.Language.RazorProjectItem.FileKind.get -> string
 ~virtual Microsoft.AspNetCore.Razor.Language.RazorProjectItem.RelativePhysicalPath.get -> string
-~virtual Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.GetChecksumAlgorithm() -> string
-~virtual Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.GetFilePathForDisplay() -> string
-~virtual Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.RelativePath.get -> string
 abstract Microsoft.AspNetCore.Razor.Language.DirectiveDescriptor.Kind.get -> Microsoft.AspNetCore.Razor.Language.DirectiveKind
 abstract Microsoft.AspNetCore.Razor.Language.DirectiveDescriptor.Usage.get -> Microsoft.AspNetCore.Razor.Language.DirectiveUsage
 abstract Microsoft.AspNetCore.Razor.Language.DirectiveTokenDescriptor.Kind.get -> Microsoft.AspNetCore.Razor.Language.DirectiveTokenKind
@@ -912,10 +838,6 @@ abstract Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.DesignTim
 abstract Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.ParseLeadingDirectives.get -> bool
 abstract Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.ParseLeadingDirectives.set -> void
 abstract Microsoft.AspNetCore.Razor.Language.RazorProjectItem.Exists.get -> bool
-abstract Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.Length.get -> int
-abstract Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.this[int position].get -> char
-abstract Microsoft.AspNetCore.Razor.Language.RazorSourceLineCollection.Count.get -> int
-abstract Microsoft.AspNetCore.Razor.Language.RazorSourceLineCollection.GetLineLength(int index) -> int
 Microsoft.AspNetCore.Razor.Language.AssemblyExtension
 Microsoft.AspNetCore.Razor.Language.AttributeStructure
 Microsoft.AspNetCore.Razor.Language.AttributeStructure.DoubleQuotes = 0 -> Microsoft.AspNetCore.Razor.Language.AttributeStructure
@@ -1177,8 +1099,6 @@ Microsoft.AspNetCore.Razor.Language.IRazorDirectiveFeature
 Microsoft.AspNetCore.Razor.Language.IRazorDocumentClassifierPass
 Microsoft.AspNetCore.Razor.Language.IRazorDocumentClassifierPass.Order.get -> int
 Microsoft.AspNetCore.Razor.Language.IRazorDocumentClassifierPhase
-Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder
-Microsoft.AspNetCore.Razor.Language.IRazorEngineBuilder.DesignTime.get -> bool
 Microsoft.AspNetCore.Razor.Language.IRazorEngineFeature
 Microsoft.AspNetCore.Razor.Language.IRazorEnginePhase
 Microsoft.AspNetCore.Razor.Language.IRazorFeature
@@ -1191,8 +1111,6 @@ Microsoft.AspNetCore.Razor.Language.IRazorParsingPhase
 Microsoft.AspNetCore.Razor.Language.IRazorProjectEngineFeature
 Microsoft.AspNetCore.Razor.Language.IRazorTagHelperBinderPhase
 Microsoft.AspNetCore.Razor.Language.IRazorTargetExtensionFeature
-Microsoft.AspNetCore.Razor.Language.ITagHelperDescriptorProvider
-Microsoft.AspNetCore.Razor.Language.ITagHelperDescriptorProvider.Order.get -> int
 Microsoft.AspNetCore.Razor.Language.ITagHelperFeature
 Microsoft.AspNetCore.Razor.Language.ItemCollection
 Microsoft.AspNetCore.Razor.Language.ItemCollection.Clear() -> void
@@ -1200,8 +1118,6 @@ Microsoft.AspNetCore.Razor.Language.ItemCollection.Count.get -> int
 Microsoft.AspNetCore.Razor.Language.ItemCollection.IsReadOnly.get -> bool
 Microsoft.AspNetCore.Razor.Language.ItemCollection.ItemCollection() -> void
 Microsoft.AspNetCore.Razor.Language.ProvideRazorExtensionInitializerAttribute
-Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
-Microsoft.AspNetCore.Razor.Language.RazorCodeDocument.RazorCodeDocument() -> void
 Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions
 Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions
 Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions.RazorCodeGenerationOptions() -> void
@@ -1226,13 +1142,9 @@ Microsoft.AspNetCore.Razor.Language.RazorDiagnosticCollection.RemoveAt(int index
 Microsoft.AspNetCore.Razor.Language.RazorDiagnosticSeverity
 Microsoft.AspNetCore.Razor.Language.RazorDiagnosticSeverity.Error = 3 -> Microsoft.AspNetCore.Razor.Language.RazorDiagnosticSeverity
 Microsoft.AspNetCore.Razor.Language.RazorDiagnosticSeverity.Warning = 2 -> Microsoft.AspNetCore.Razor.Language.RazorDiagnosticSeverity
-Microsoft.AspNetCore.Razor.Language.RazorEngine
-Microsoft.AspNetCore.Razor.Language.RazorEngine.RazorEngine() -> void
-Microsoft.AspNetCore.Razor.Language.RazorEngineBuilderExtensions
 Microsoft.AspNetCore.Razor.Language.RazorEngineFeatureBase
 Microsoft.AspNetCore.Razor.Language.RazorEngineFeatureBase.RazorEngineFeatureBase() -> void
 Microsoft.AspNetCore.Razor.Language.RazorEngineFeatureBase.ThrowForMissingDocumentDependency<TDocumentDependency>(TDocumentDependency value) -> void
-Microsoft.AspNetCore.Razor.Language.RazorEngineFeatureBase.ThrowForMissingFeatureDependency<TEngineDependency>(TEngineDependency value) -> void
 Microsoft.AspNetCore.Razor.Language.RazorEnginePhaseBase
 Microsoft.AspNetCore.Razor.Language.RazorEnginePhaseBase.GetRequiredFeature<T>() -> T
 Microsoft.AspNetCore.Razor.Language.RazorEnginePhaseBase.RazorEnginePhaseBase() -> void
@@ -1251,10 +1163,6 @@ Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder
 Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.RazorParserOptionsBuilder() -> void
 Microsoft.AspNetCore.Razor.Language.RazorProject
 Microsoft.AspNetCore.Razor.Language.RazorProject.RazorProject() -> void
-Microsoft.AspNetCore.Razor.Language.RazorProjectEngine
-Microsoft.AspNetCore.Razor.Language.RazorProjectEngine.RazorProjectEngine() -> void
-Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder
-Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder.RazorProjectEngineBuilder() -> void
 Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilderExtensions
 Microsoft.AspNetCore.Razor.Language.RazorProjectEngineFeatureBase
 Microsoft.AspNetCore.Razor.Language.RazorProjectEngineFeatureBase.RazorProjectEngineFeatureBase() -> void
@@ -1263,11 +1171,7 @@ Microsoft.AspNetCore.Razor.Language.RazorProjectFileSystem.RazorProjectFileSyste
 Microsoft.AspNetCore.Razor.Language.RazorProjectItem
 Microsoft.AspNetCore.Razor.Language.RazorProjectItem.RazorProjectItem() -> void
 Microsoft.AspNetCore.Razor.Language.RazorSourceDocument
-Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.RazorSourceDocument() -> void
 Microsoft.AspNetCore.Razor.Language.RazorSourceDocumentProperties
-Microsoft.AspNetCore.Razor.Language.RazorSourceDocumentProperties.RazorSourceDocumentProperties() -> void
-Microsoft.AspNetCore.Razor.Language.RazorSourceLineCollection
-Microsoft.AspNetCore.Razor.Language.RazorSourceLineCollection.RazorSourceLineCollection() -> void
 Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree
 Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree.RazorSyntaxTree() -> void
 Microsoft.AspNetCore.Razor.Language.RequiredAttributeDescriptorBuilderExtensions

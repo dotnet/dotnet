@@ -3,12 +3,13 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
-public abstract class CodeRenderingContext
+public abstract class CodeRenderingContext : IDisposable
 {
     internal static readonly object NewLineString = "NewLineString";
 
@@ -47,4 +48,6 @@ public abstract class CodeRenderingContext
     public virtual void AddLinePragma(LinePragma linePragma)
     {
     }
+
+    public abstract void Dispose();
 }

@@ -198,9 +198,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
         {
 
             var syntaxTree = codeDocument.GetSyntaxTree();
-            var sourceBuffer = new char[syntaxTree.Source.Length];
-            syntaxTree.Source.CopyTo(0, sourceBuffer, 0, syntaxTree.Source.Length);
-            var sourceContent = new string(sourceBuffer);
+            var sourceContent = syntaxTree.Source.Text.ToString();
             var classifiedSpans = syntaxTree.GetClassifiedSpans();
             foreach (var classifiedSpan in classifiedSpans)
             {

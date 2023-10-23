@@ -126,7 +126,7 @@ internal sealed class AddUsingsCodeActionResolver : IRazorCodeActionResolver
 
             if (string.CompareOrdinal(newUsingNamespace, usingDirectiveNamespace) < 0)
             {
-                var usingDirectiveLineIndex = codeDocument.Source.Lines.GetLocation(usingDirective.Node.Span.Start).LineIndex;
+                var usingDirectiveLineIndex = codeDocument.Source.Text.Lines.GetLinePosition(usingDirective.Node.Span.Start).Line;
                 var head = new Position(usingDirectiveLineIndex, 0);
                 var edit = new TextEdit() { Range = new Range { Start = head, End = head }, NewText = newText };
                 edits.Add(edit);
@@ -188,13 +188,13 @@ internal sealed class AddUsingsCodeActionResolver : IRazorCodeActionResolver
 
     private static int GetLineIndexOrEnd(RazorCodeDocument codeDocument, int endIndex)
     {
-        if (endIndex < codeDocument.Source.Length)
+        if (endIndex < codeDocument.Source.Text.Length)
         {
-            return codeDocument.Source.Lines.GetLocation(endIndex).LineIndex;
+            return codeDocument.Source.Text.Lines.GetLinePosition(endIndex).Line;
         }
         else
         {
-            return codeDocument.Source.Lines.Count;
+            return codeDocument.Source.Text.Lines.Count;
         }
     }
 

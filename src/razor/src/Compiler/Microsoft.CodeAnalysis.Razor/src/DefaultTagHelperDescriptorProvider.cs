@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
@@ -27,52 +28,42 @@ public sealed class DefaultTagHelperDescriptorProvider : RazorEngineFeatureBase,
             return;
         }
 
-        var iTagHelper = compilation.GetTypeByMetadataName(TagHelperTypes.ITagHelper);
-        if (iTagHelper == null || iTagHelper.TypeKind == TypeKind.Error)
+        var tagHelperTypeSymbol = compilation.GetTypeByMetadataName(TagHelperTypes.ITagHelper);
+        if (tagHelperTypeSymbol == null || tagHelperTypeSymbol.TypeKind == TypeKind.Error)
         {
             // Could not find attributes we care about in the compilation. Nothing to do.
             return;
         }
 
-        using var _ = ListPool<INamedTypeSymbol>.GetPooledObject(out var types);
-        var visitor = new TagHelperTypeVisitor(iTagHelper, types);
-
         var targetSymbol = context.Items.GetTargetSymbol();
-        if (targetSymbol is not null)
-        {
-            visitor.Visit(targetSymbol);
-        }
-        else
-        {
-            visitor.Visit(compilation.Assembly.GlobalNamespace);
+        var factory = new DefaultTagHelperDescriptorFactory(compilation, context.IncludeDocumentation, context.ExcludeHidden);
+        var collector = new Collector(compilation, targetSymbol, factory, tagHelperTypeSymbol);
+        collector.Collect(context);
+    }
 
-            foreach (var reference in compilation.References)
+    private class Collector(
+        Compilation compilation, ISymbol targetSymbol, DefaultTagHelperDescriptorFactory factory, INamedTypeSymbol tagHelperTypeSymbol)
+        : TagHelperCollector<Collector>(compilation, targetSymbol)
+    {
+        private readonly DefaultTagHelperDescriptorFactory _factory = factory;
+        private readonly INamedTypeSymbol _tagHelperTypeSymbol = tagHelperTypeSymbol;
+
+        protected override void Collect(ISymbol symbol, ICollection<TagHelperDescriptor> results)
+        {
+            using var _ = ListPool<INamedTypeSymbol>.GetPooledObject(out var types);
+            var visitor = new TagHelperTypeVisitor(_tagHelperTypeSymbol, types);
+
+            visitor.Visit(symbol);
+
+            foreach (var type in types)
             {
-                if (compilation.GetAssemblyOrModuleSymbol(reference) is IAssemblySymbol assembly)
+                var descriptor = _factory.CreateDescriptor(type);
+
+                if (descriptor != null)
                 {
-                    if (IsTagHelperAssembly(assembly))
-                    {
-                        visitor.Visit(assembly.GlobalNamespace);
-                    }
+                    results.Add(descriptor);
                 }
             }
         }
-
-        var factory = new DefaultTagHelperDescriptorFactory(compilation, context.IncludeDocumentation, context.ExcludeHidden);
-
-        foreach (var type in types)
-        {
-            var descriptor = factory.CreateDescriptor(type);
-
-            if (descriptor != null)
-            {
-                context.Results.Add(descriptor);
-            }
-        }
-    }
-
-    private static bool IsTagHelperAssembly(IAssemblySymbol assembly)
-    {
-        return assembly.Name != null && !assembly.Name.StartsWith("System.", StringComparison.Ordinal);
     }
 }

@@ -5,7 +5,6 @@
 
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language;
-using Moq;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
@@ -34,14 +33,14 @@ public class MvcImportProjectFeatureTest
         var projectItem = new TestRazorProjectItem("/Contact/Index.cshtml");
         var testFileSystem = new TestRazorProjectFileSystem(new[]
         {
-                new TestRazorProjectItem("/Index.cshtml"),
-                new TestRazorProjectItem("/_ViewImports.cshtml"),
-                new TestRazorProjectItem("/Contact/_ViewImports.cshtml"),
-                projectItem,
-            });
+            new TestRazorProjectItem("/Index.cshtml"),
+            new TestRazorProjectItem("/_ViewImports.cshtml"),
+            new TestRazorProjectItem("/Contact/_ViewImports.cshtml"),
+            projectItem,
+        });
         var mvcImportFeature = new MvcImportProjectFeature()
         {
-            ProjectEngine = Mock.Of<RazorProjectEngine>(projectEngine => projectEngine.FileSystem == testFileSystem)
+            ProjectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, testFileSystem)
         };
 
         // Act
@@ -62,7 +61,7 @@ public class MvcImportProjectFeatureTest
         var testFileSystem = new TestRazorProjectFileSystem(new[] { projectItem });
         var mvcImportFeature = new MvcImportProjectFeature()
         {
-            ProjectEngine = Mock.Of<RazorProjectEngine>(projectEngine => projectEngine.FileSystem == testFileSystem)
+            ProjectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, testFileSystem)
         };
 
         // Act

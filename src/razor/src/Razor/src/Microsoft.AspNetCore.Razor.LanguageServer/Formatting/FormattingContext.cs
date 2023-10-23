@@ -3,12 +3,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
@@ -26,7 +28,7 @@ internal class FormattingContext : IDisposable
     private IReadOnlyList<FormattingSpan>? _formattingSpans;
     private IReadOnlyDictionary<int, IndentationContext>? _indentations;
     private RazorProjectEngine? _engine;
-    private IReadOnlyList<RazorSourceDocument>? _importSources;
+    private ImmutableArray<RazorSourceDocument> _importSources;
 
     private FormattingContext(AdhocWorkspaceFactory workspaceFactory, Uri uri, IDocumentSnapshot originalSnapshot, RazorCodeDocument codeDocument, FormattingOptions options,
         bool isFormatOnType, bool automaticallyAddUsings, int hostDocumentIndex, char triggerCharacter)
@@ -42,7 +44,7 @@ internal class FormattingContext : IDisposable
         TriggerCharacter = triggerCharacter;
     }
 
-    private FormattingContext(RazorProjectEngine engine, IReadOnlyList<RazorSourceDocument> importSources, AdhocWorkspaceFactory workspaceFactory, Uri uri, IDocumentSnapshot originalSnapshot, RazorCodeDocument codeDocument, FormattingOptions options,
+    private FormattingContext(RazorProjectEngine engine, ImmutableArray<RazorSourceDocument> importSources, AdhocWorkspaceFactory workspaceFactory, Uri uri, IDocumentSnapshot originalSnapshot, RazorCodeDocument codeDocument, FormattingOptions options,
         bool isFormatOnType, bool automaticallyAddUsings, int hostDocumentIndex, char triggerCharacter)
         : this(workspaceFactory, uri, originalSnapshot, codeDocument, options, isFormatOnType, automaticallyAddUsings, hostDocumentIndex, triggerCharacter)
     {
@@ -161,8 +163,8 @@ internal class FormattingContext : IDisposable
                     // Couldn't find a corresponding FormattingSpan. Happens if it is a 0 length line.
                     // Let's create a 0 length span to represent this and default it to HTML.
                     var placeholderSpan = new FormattingSpan(
-                        new Language.Syntax.TextSpan(nonWsPos.Value, 0),
-                        new Language.Syntax.TextSpan(nonWsPos.Value, 0),
+                        new TextSpan(nonWsPos.Value, 0),
+                        new TextSpan(nonWsPos.Value, 0),
                         FormattingSpanKind.Markup,
                         FormattingBlockKind.Markup,
                         razorIndentationLevel: 0,
@@ -284,9 +286,11 @@ internal class FormattingContext : IDisposable
             await InitializeProjectEngineAsync().ConfigureAwait(false);
         }
 
-        var changedSourceDocument = changedText.GetRazorSourceDocument(OriginalSnapshot.FilePath, OriginalSnapshot.TargetPath);
+        Assumes.NotNull(_engine);
 
-        var codeDocument = _engine!.ProcessDesignTime(changedSourceDocument, OriginalSnapshot.FileKind, _importSources, OriginalSnapshot.Project.TagHelpers);
+        var changedSourceDocument = RazorSourceDocument.Create(changedText, RazorSourceDocumentProperties.Create(OriginalSnapshot.FilePath, OriginalSnapshot.TargetPath));
+
+        var codeDocument = _engine.ProcessDesignTime(changedSourceDocument, OriginalSnapshot.FileKind, _importSources, OriginalSnapshot.Project.TagHelpers);
 
         DEBUG_ValidateComponents(CodeDocument, codeDocument);
 
@@ -309,18 +313,19 @@ internal class FormattingContext : IDisposable
     private async Task InitializeProjectEngineAsync()
     {
         var engine = OriginalSnapshot.Project.GetProjectEngine();
-        var importSources = new List<RazorSourceDocument>();
 
         var imports = OriginalSnapshot.GetImports();
+        using var importSources = new PooledArrayBuilder<RazorSourceDocument>(imports.Length);
+
         foreach (var import in imports)
         {
             var sourceText = await import.GetTextAsync().ConfigureAwait(false);
-            var source = sourceText.GetRazorSourceDocument(import.FilePath, import.TargetPath);
+            var source = RazorSourceDocument.Create(sourceText, RazorSourceDocumentProperties.Create(import.FilePath, import.TargetPath));
             importSources.Add(source);
         }
 
         _engine = engine;
-        _importSources = importSources;
+        _importSources = importSources.DrainToImmutable();
     }
 
     /// <summary>

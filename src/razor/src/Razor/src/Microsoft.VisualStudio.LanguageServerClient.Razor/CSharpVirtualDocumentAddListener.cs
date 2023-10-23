@@ -37,16 +37,21 @@ internal class CSharpVirtualDocumentAddListener(IOutputWindowLogger logger) : LS
             {
                 lock (_gate)
                 {
-                    if (_tcs is not null)
+                    if (_tcs is null)
                     {
-                        logger.LogDebug("CSharpVirtualDocumentAddListener: Timed out waiting for a document to be added");
-                        _tcs.SetResult(false);
-                        _cts.Dispose();
-                        _cts = null;
-                        _tcs = null;
+                        return;
                     }
+
+                    logger.LogDebug("CSharpVirtualDocumentAddListener: Timed out waiting for a document to be added");
+
+                    _tcs.SetResult(false);
+                    _tcs = null;
                 }
+
+                _cts.Dispose();
+                _cts = null;
             });
+
             _cts.CancelAfter(s_waitTimeout);
             _tcs = new TaskCompletionSource<bool>();
         }
@@ -60,16 +65,19 @@ internal class CSharpVirtualDocumentAddListener(IOutputWindowLogger logger) : LS
         {
             lock (_gate)
             {
-                if (_tcs is not null)
+                if (_tcs is null)
                 {
-                    logger.LogDebug("CSharpVirtualDocumentAddListener: Document added ({doc}) (not that we care)", @new!.Uri);
-
-                    _tcs.SetResult(true);
-                    _cts!.Dispose();
-                    _cts = null;
-                    _tcs = null;
+                    return;
                 }
+
+                logger.LogDebug("CSharpVirtualDocumentAddListener: Document added ({doc}) (not that we care)", @new!.Uri);
+
+                _tcs.SetResult(true);
+                _tcs = null;
             }
+
+            _cts!.Dispose();
+            _cts = null;
         }
     }
 }

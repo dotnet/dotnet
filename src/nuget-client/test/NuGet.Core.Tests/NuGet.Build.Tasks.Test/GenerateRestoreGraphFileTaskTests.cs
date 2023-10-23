@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using FluentAssertions;
 using NuGet.Test.Utility;
 using Xunit;
@@ -49,19 +48,25 @@ namespace NuGet.Build.Tasks.Test
                     RestoreGraphOutputPath = restoreGraphOutputPath,
                 })
                 {
-                    var arguments = task.GetCommandLineArguments().ToList();
-                    arguments.Should().BeEquivalentTo(
+                    string arguments = task.GetCommandLineArguments(globalProperties);
+
+                    arguments.Should().Be($"\"{string.Join("\" \"", GetExpectedArguments(msbuildBinPath, projectPath))}\"");
+                }
+
+                IEnumerable<string> GetExpectedArguments(string msbuildBinPath, string projectPath)
+                {
 #if IS_CORECLR
-                    Path.ChangeExtension(typeof(RestoreTaskEx).Assembly.Location, ".Console.dll"),
+                    yield return Path.ChangeExtension(typeof(RestoreTaskEx).Assembly.Location, ".Console.dll");
 #endif
-                    $"Recursive=True;GenerateRestoreGraphFile=True;RestoreGraphOutputPath={restoreGraphOutputPath}",
+                    yield return $"Recursive=True;GenerateRestoreGraphFile=True;RestoreGraphOutputPath={restoreGraphOutputPath}";
 #if IS_CORECLR
-                    Path.Combine(msbuildBinPath, "MSBuild.dll"),
+                    yield return Path.Combine(msbuildBinPath, "MSBuild.dll");
 #else
-                    Path.Combine(msbuildBinPath, "MSBuild.exe"),
+                    yield return Path.Combine(msbuildBinPath, "MSBuild.exe");
 #endif
-                    projectPath,
-                        $"Property1=Value1;Property2=  Value2  ;ExcludeRestorePackageImports=True;OriginalMSBuildStartupDirectory={testDirectory}");
+                    yield return projectPath;
+
+                    yield return $"Property1=Value1;Property2=  Value2  ";
                 }
             }
         }

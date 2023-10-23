@@ -19,6 +19,8 @@ variables:
 
 trigger: none
 
+pr: none
+
 schedules:
 - cron: '0 */12 * * *'
   displayName: Every 12 hours

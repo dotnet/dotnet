@@ -208,4 +208,25 @@
     <value>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Please use RestoreNoHttpCache instead.</value>
     <comment>Do not translate RestoreNoCache and RestoreNoHttpCache</comment>
   </data>
+  <data name="Error_StaticGraphRestoreArgumentParsingFailedInvalidNumberOfArguments" xml:space="preserve">
+    <value>An error occurred parsing command-line arguments in static graph-based restore as there was an unexpected number of arguments, {0}. Please file an issue at https://github.com/NuGet/Home</value>
+    <comment>0 - The number of arguments</comment>
+  </data>
+  <data name="Error_StaticGraphRestoreArgumentsParsingFailedEndOfStream" xml:space="preserve">
+    <value>An error occurred parsing command-line arguments in static graph-based restore as end of the standard input stream was unexpectedly encountered. Please file an issue at https://github.com/NuGet/Home</value>
+  </data>
+  <data name="Error_StaticGraphRestoreArgumentsParsingFailedExceptionReadingStream" xml:space="preserve">
+    <value>An error occurred parsing command-line arguments in static graph-based restore as an exception occurred reading the standard input stream, {0} Please file an issue at https://github.com/NuGet/Home
+{1}</value>
+    <comment>0 - The exception message
+1 - The string representation of the exception</comment>
+  </data>
+  <data name="Error_StaticGraphRestoreArgumentsParsingFailedUnexpectedIntegerValue" xml:space="preserve">
+    <value>An error occurred parsing command-line arguments in static graph-based restore as the first integer read, {0}, is not an allowable value. Please file an issue at https://github.com/NuGet/Home</value>
+    <comment>0 - The value of the first integer read from the stream</comment>
+  </data>
+  <data name="Error_StaticGraphRestoreFailedToStart" xml:space="preserve">
+    <value>An error occurred starting static graph-based restore. {0}. Please file an issue at https://github.com/NuGet/Home</value>
+    <comment>0 - The exception message</comment>
+  </data>
 </root>

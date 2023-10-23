@@ -23,10 +23,10 @@ internal class SyntaxTreeVerifier
         if (ensureFullFidelity)
         {
             var syntaxTreeString = syntaxTree.Root.ToFullString();
-            var builder = new StringBuilder(syntaxTree.Source.Length);
-            for (var i = 0; i < syntaxTree.Source.Length; i++)
+            var builder = new StringBuilder(syntaxTree.Source.Text.Length);
+            for (var i = 0; i < syntaxTree.Source.Text.Length; i++)
             {
-                builder.Append(syntaxTree.Source[i]);
+                builder.Append(syntaxTree.Source.Text[i]);
             }
 
             var sourceString = builder.ToString();
@@ -35,7 +35,7 @@ internal class SyntaxTreeVerifier
             Assert.Equal(sourceString, syntaxTreeString);
 
             // Ensure all source is locatable
-            for (var i = 0; i < syntaxTree.Source.Length; i++)
+            for (var i = 0; i < syntaxTree.Source.Text.Length; i++)
             {
                 var span = new SourceSpan(i, 0);
                 var location = new SourceChange(span, string.Empty);
@@ -46,12 +46,12 @@ internal class SyntaxTreeVerifier
                     var snippetStartIndex = Math.Max(0, i - 10);
                     var snippetStartLength = i - snippetStartIndex;
                     var snippetStart = new char[snippetStartLength];
-                    syntaxTree.Source.CopyTo(snippetStartIndex, snippetStart, 0, snippetStartLength);
+                    syntaxTree.Source.Text.CopyTo(snippetStartIndex, snippetStart, 0, snippetStartLength);
 
-                    var snippetEndIndex = Math.Min(syntaxTree.Source.Length - 1, i + 10);
+                    var snippetEndIndex = Math.Min(syntaxTree.Source.Text.Length - 1, i + 10);
                     var snippetEndLength = snippetEndIndex - i;
                     var snippetEnd = new char[snippetEndLength];
-                    syntaxTree.Source.CopyTo(i, snippetEnd, 0, snippetEndLength);
+                    syntaxTree.Source.Text.CopyTo(i, snippetEnd, 0, snippetEndLength);
 
                     var snippet = new char[snippetStart.Length + snippetEnd.Length + 1];
                     snippetStart.CopyTo(snippet, 0);

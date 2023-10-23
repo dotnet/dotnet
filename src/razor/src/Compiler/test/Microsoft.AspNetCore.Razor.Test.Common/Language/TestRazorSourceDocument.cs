@@ -31,8 +31,8 @@ public static class TestRazorSourceDocument
                 content = NormalizeNewLines(content);
             }
 
-            var properties = new RazorSourceDocumentProperties(resourcePath, resourcePath);
-            return new StringSourceDocument(content, encoding ?? Encoding.UTF8, properties);
+            var properties = RazorSourceDocumentProperties.Create(resourcePath, resourcePath);
+            return RazorSourceDocument.Create(content, encoding ?? Encoding.UTF8, properties);
         }
     }
 
@@ -54,7 +54,7 @@ public static class TestRazorSourceDocument
                 content = NormalizeNewLines(content);
             }
 
-            return new StringSourceDocument(content, encoding ?? Encoding.UTF8, properties);
+            return RazorSourceDocument.Create(content, encoding ?? Encoding.UTF8, properties);
         }
     }
 
@@ -89,8 +89,8 @@ public static class TestRazorSourceDocument
             content = NormalizeNewLines(content);
         }
 
-        var properties = new RazorSourceDocumentProperties(filePath, relativePath);
-        return new StringSourceDocument(content, encoding ?? Encoding.UTF8, properties);
+        var properties = RazorSourceDocumentProperties.Create(filePath, relativePath);
+        return RazorSourceDocument.Create(content, encoding ?? Encoding.UTF8, properties);
     }
 
     public static RazorSourceDocument Create(
@@ -104,7 +104,7 @@ public static class TestRazorSourceDocument
             content = NormalizeNewLines(content);
         }
 
-        return new StringSourceDocument(content, encoding ?? Encoding.UTF8, properties);
+        return RazorSourceDocument.Create(content, encoding ?? Encoding.UTF8, properties);
     }
 
     private static string NormalizeNewLines(string content)

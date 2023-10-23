@@ -3,6 +3,7 @@
 
 using System;
 using System.Net;
+using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -22,6 +23,27 @@ internal static class UriExtensions
         }
 
         // Absolute paths are usually encoded.
-        return uri.AbsolutePath.Contains("%") ? WebUtility.UrlDecode(uri.AbsolutePath) : uri.AbsolutePath;
+        var absolutePath = uri.AbsolutePath.Contains("%") ? WebUtility.UrlDecode(uri.AbsolutePath) : uri.AbsolutePath;
+
+        if (string.Equals(uri.Scheme, "git", StringComparison.OrdinalIgnoreCase))
+        {
+            // return a normalized path when we want to add to a fake git directory path (hacky fix for https://github.com/dotnet/razor/issues/9365)
+            return AddToFakeGitDirectoryAtRoot(absolutePath);
+        }
+
+        return absolutePath;
+    }
+
+    private static string AddToFakeGitDirectoryAtRoot(string decodedAbsolutePath)
+    {
+        var normalizedPath = FilePathNormalizer.Normalize(decodedAbsolutePath);
+        var firstSeparatorIndex = normalizedPath.IndexOf('/');
+        if (firstSeparatorIndex < 0)
+        {
+            // no-op
+            return decodedAbsolutePath;
+        }
+
+        return normalizedPath.Insert(firstSeparatorIndex + 1, "_git_/");
     }
 }

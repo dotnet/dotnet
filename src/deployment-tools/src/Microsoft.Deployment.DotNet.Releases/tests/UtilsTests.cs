@@ -54,7 +54,7 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
 
             Uri sourceAddress = new Uri(Path.GetFullPath(sourceFile));
             string destinationFile = Path.GetFullPath(Path.GetTempFileName());
-            await Utils.DownloadFileAsync(sourceAddress, destinationFile).ConfigureAwait(false);
+            await Utils.DownloadFileAsync(sourceAddress, destinationFile);
 
             HashAlgorithm sha256 = SHA256.Create();
             string sourceHash = Utils.GetFileHash(sourceFile, sha256);

@@ -69,12 +69,12 @@
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDescription">
         <source>If true, pressing space will commit suggestions for Html elements and components</source>
-        <target state="new">If true, pressing space will commit suggestions for Html elements and components</target>
+        <target state="translated">true일 경우 스페이스바를 누르면 Html 요소 및 구성 요소에 대한 제안이 커밋됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
         <source>Commit Elements with Space</source>
-        <target state="new">Commit Elements with Space</target>
+        <target state="translated">공백을 사용하여 요소 커밋</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">

@@ -133,9 +133,8 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
             throw new InvalidOperationException("Cannot use document mapping service on a generated document that has a null CodeDocument.");
         }
 
-        for (var i = 0; i < generatedDocument.SourceMappings.Count; i++)
+        foreach (var mapping in generatedDocument.SourceMappings)
         {
-            var mapping = generatedDocument.SourceMappings[i];
             var generatedSpan = mapping.GeneratedSpan;
             var generatedAbsoluteIndex = generatedSpan.AbsoluteIndex;
             if (generatedAbsoluteIndex <= generatedDocumentIndex)
@@ -148,8 +147,7 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
                     // Found the generated span that contains the generated absolute index
 
                     hostDocumentIndex = mapping.OriginalSpan.AbsoluteIndex + distanceIntoGeneratedSpan;
-                    var originalLocation = codeDocument.Source.Lines.GetLocation(hostDocumentIndex);
-                    hostDocumentPosition = new LinePosition(originalLocation.LineIndex, originalLocation.CharacterIndex);
+                    hostDocumentPosition = codeDocument.Source.Text.Lines.GetLinePosition(hostDocumentIndex);
                     return true;
                 }
             }

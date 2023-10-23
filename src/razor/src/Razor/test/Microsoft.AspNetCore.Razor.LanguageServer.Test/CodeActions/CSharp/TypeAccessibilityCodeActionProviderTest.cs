@@ -466,7 +466,7 @@ public class TypeAccessibilityCodeActionProviderTest : LanguageServerTestBase
             builder.AddTagHelpers(tagHelpers);
             builder.AddDirective(InjectDirective.Directive);
         });
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, FileKinds.Component, Array.Empty<RazorSourceDocument>(), tagHelpers);
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, FileKinds.Component, importSources: default, tagHelpers);
 
         var cSharpDocument = codeDocument.GetCSharpDocument();
         var diagnosticDescriptor = new RazorDiagnosticDescriptor("RZ10012", "diagnostic", RazorDiagnosticSeverity.Error);

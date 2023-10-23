@@ -1272,7 +1272,6 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         // __o = (global::Microsoft.AspNetCore.Components.IComponentRenderMode)(expression);
         WriteCSharpCode(context, new CSharpCodeIntermediateNode
         {
-            Source = node.Source,
             Children =
             {
                 new IntermediateToken
@@ -1280,7 +1279,11 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                     Kind = TokenKind.CSharp,
                     Content = $"{DesignTimeVariable} = (global::{ComponentsApi.IComponentRenderMode.FullTypeName})(" 
                 },
-                node.Children[0],
+                new CSharpCodeIntermediateNode
+                {
+                    Source = node.Source,
+                    Children = { node.Children[0] }
+                },
                 new IntermediateToken
                 {
                     Kind = TokenKind.CSharp,

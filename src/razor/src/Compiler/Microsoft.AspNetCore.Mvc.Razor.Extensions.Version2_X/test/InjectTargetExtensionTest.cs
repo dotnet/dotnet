@@ -6,8 +6,6 @@
 using System;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
-using Microsoft.AspNetCore.Razor.Language.Intermediate;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
@@ -18,7 +16,7 @@ public class InjectTargetExtensionTest
     public void InjectDirectiveTargetExtension_WritesProperty()
     {
         // Arrange
-        var context = TestCodeRenderingContext.CreateRuntime();
+        using var context = TestCodeRenderingContext.CreateRuntime();
         var target = new InjectTargetExtension();
         var node = new InjectIntermediateNode()
         {
@@ -40,7 +38,7 @@ public class InjectTargetExtensionTest
     public void InjectDirectiveTargetExtension_WritesPropertyWithLinePragma_WhenSourceIsSet()
     {
         // Arrange
-        var context = TestCodeRenderingContext.CreateRuntime();
+        using var context = TestCodeRenderingContext.CreateRuntime();
         var target = new InjectTargetExtension();
         var node = new InjectIntermediateNode()
         {

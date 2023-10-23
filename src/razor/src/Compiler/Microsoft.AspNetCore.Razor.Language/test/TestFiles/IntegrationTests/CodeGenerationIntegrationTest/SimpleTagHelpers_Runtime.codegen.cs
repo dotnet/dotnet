@@ -5,7 +5,7 @@
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 {
     #line hidden
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"cc678f2e7fe9415c8275fdb0aa72ebab925dcf86a98dcdcfcb8939af2a5f2a9e", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SimpleTagHelpers.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"cc678f2e7fe9415c8275fdb0aa72ebab925dcf86a98dcdcfcb8939af2a5f2a9e", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SimpleTagHelpers.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_SimpleTagHelpers_Runtime
     {
         private static readonly global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute __tagHelperAttribute_0 = new global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute("value", "Hello", global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.SingleQuotes);

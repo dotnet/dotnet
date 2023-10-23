@@ -76,10 +76,8 @@ public abstract class DocumentExcerptServiceTestBase : WorkspaceTestBase
     {
         var output = await primary.GetGeneratedOutputAsync();
 
-        var mappings = output.GetCSharpDocument().SourceMappings;
-        for (var i = 0; i < mappings.Count; i++)
+        foreach (var mapping in output.GetCSharpDocument().SourceMappings)
         {
-            var mapping = mappings[i];
             if (mapping.OriginalSpan.AbsoluteIndex <= primarySpan.Start &&
                 (mapping.OriginalSpan.AbsoluteIndex + mapping.OriginalSpan.Length) >= primarySpan.End)
             {

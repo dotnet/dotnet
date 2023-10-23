@@ -98,28 +98,20 @@ internal partial class RazorCustomMessageTarget
             throw new ArgumentNullException(nameof(resolveCodeActionParams));
         }
 
-        if (!_documentManager.TryGetDocument(resolveCodeActionParams.Uri, out var documentSnapshot))
-        {
-            // Couldn't resolve the document associated with the code action bail out.
-            return null;
-        }
-
         bool synchronized;
         VirtualDocumentSnapshot virtualDocumentSnapshot;
         if (resolveCodeActionParams.LanguageKind == RazorLanguageKind.Html)
         {
-            // TODO: Need to get project context to pass to the synchronizer
-            (synchronized, virtualDocumentSnapshot) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
+            (synchronized, virtualDocumentSnapshot) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
                 resolveCodeActionParams.HostDocumentVersion,
-                resolveCodeActionParams.Uri,
+                resolveCodeActionParams.Identifier,
                 cancellationToken).ConfigureAwait(false);
         }
         else if (resolveCodeActionParams.LanguageKind == RazorLanguageKind.CSharp)
         {
-            // TODO: Need to get project context to pass to the synchronizer
-            (synchronized, virtualDocumentSnapshot) = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
+            (synchronized, virtualDocumentSnapshot) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
                 resolveCodeActionParams.HostDocumentVersion,
-                resolveCodeActionParams.Uri,
+                resolveCodeActionParams.Identifier,
                 cancellationToken).ConfigureAwait(false);
         }
         else

@@ -3,11 +3,7 @@
 
 #nullable disable
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -23,7 +19,7 @@ public class CreateNewOnMetadataUpdateAttributePassTest : RazorProjectEngineTest
     public void Execute_AddsAttributes()
     {
         // Arrange
-        var properties = new RazorSourceDocumentProperties(filePath: "ignored", relativePath: "Test.cshtml");
+        var properties = RazorSourceDocumentProperties.Create(filePath: "ignored", relativePath: "Test.cshtml");
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create("Hello world", properties));
 
         var engine = CreateProjectEngine(b =>
@@ -62,7 +58,7 @@ public class CreateNewOnMetadataUpdateAttributePassTest : RazorProjectEngineTest
     public void Execute_NoOpsForBlazorComponents()
     {
         // Arrange
-        var properties = new RazorSourceDocumentProperties(filePath: "ignored", relativePath: "Test.razor");
+        var properties = RazorSourceDocumentProperties.Create(filePath: "ignored", relativePath: "Test.razor");
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create("Hello world", properties));
         codeDocument.SetFileKind(FileKinds.Component);
 
@@ -89,9 +85,8 @@ public class CreateNewOnMetadataUpdateAttributePassTest : RazorProjectEngineTest
 
     private static DocumentIntermediateNode CreateIRDocument(RazorEngine engine, RazorCodeDocument codeDocument)
     {
-        for (var i = 0; i < engine.Phases.Count; i++)
+        foreach (var phase in engine.Phases)
         {
-            var phase = engine.Phases[i];
             phase.Execute(codeDocument);
 
             if (phase is IRazorIntermediateNodeLoweringPhase)

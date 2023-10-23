@@ -63,7 +63,7 @@ internal static class CodeWriterExtensions
             var spaceCount = 0;
             for (var i = span.Value.AbsoluteIndex - 1; i >= 0; i--)
             {
-                var @char = context.SourceDocument[i];
+                var @char = context.SourceDocument.Text[i];
                 if (@char == '\n' || @char == '\r')
                 {
                     break;

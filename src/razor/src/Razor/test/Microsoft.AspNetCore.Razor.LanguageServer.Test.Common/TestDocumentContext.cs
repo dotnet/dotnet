@@ -39,7 +39,7 @@ internal static class TestDocumentContext
 
     public static DocumentContext From(string filePath)
     {
-        var properties = new RazorSourceDocumentProperties(filePath, filePath);
+        var properties = RazorSourceDocumentProperties.Create(filePath, filePath);
         var sourceDocument = RazorSourceDocument.Create(content: string.Empty, properties);
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
         return From(filePath, codeDocument);
@@ -47,7 +47,7 @@ internal static class TestDocumentContext
 
     public static VersionedDocumentContext From(string filePath, int hostDocumentVersion)
     {
-        var properties = new RazorSourceDocumentProperties(filePath, filePath);
+        var properties = RazorSourceDocumentProperties.Create(filePath, filePath);
         var sourceDocument = RazorSourceDocument.Create(content: string.Empty, properties);
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
         return From(filePath, codeDocument, hostDocumentVersion);

@@ -95,7 +95,7 @@ internal static class FormattingUtilities
         var startingIndent = 0;
         for (var i = 1; i <= numCharacterBefore; i++)
         {
-            if (source[startAbsoluteIndex - i] == '\t')
+            if (source.Text[startAbsoluteIndex - i] == '\t')
             {
                 startingIndent += options.TabSize;
             }

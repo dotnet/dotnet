@@ -3,7 +3,7 @@
 
 #nullable disable
 
-using System;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
@@ -38,7 +38,7 @@ public class PageDirectiveTest
         var content = "Hello world";
         var sourceDocument = RazorSourceDocument.Create(content, "file");
         var importDocument = RazorSourceDocument.Create("@page", "imports.cshtml");
-        var codeDocument = RazorCodeDocument.Create(sourceDocument, new[] { importDocument });
+        var codeDocument = RazorCodeDocument.Create(sourceDocument, ImmutableArray.Create(importDocument));
         var engine = CreateEngine();
         var irDocument = CreateIRDocument(engine, codeDocument);
 
@@ -133,9 +133,8 @@ public class PageDirectiveTest
 
     private DocumentIntermediateNode CreateIRDocument(RazorEngine engine, RazorCodeDocument codeDocument)
     {
-        for (var i = 0; i < engine.Phases.Count; i++)
+        foreach (var phase in engine.Phases)
         {
-            var phase = engine.Phases[i];
             phase.Execute(codeDocument);
 
             if (phase is IRazorDocumentClassifierPhase)

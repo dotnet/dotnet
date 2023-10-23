@@ -12,7 +12,7 @@ namespace AspNetCore
     using global::Microsoft.AspNetCore.Mvc;
     using global::Microsoft.AspNetCore.Mvc.Rendering;
     using global::Microsoft.AspNetCore.Mvc.ViewFeatures;
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"3b8355e6c17c9dc5d6062d64a789a8b5a81db5adec1e9913ff7a7c1565682765", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InvalidNamespaceAtEOF.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"3b8355e6c17c9dc5d6062d64a789a8b5a81db5adec1e9913ff7a7c1565682765", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InvalidNamespaceAtEOF.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InvalidNamespaceAtEOF.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]
     #nullable restore

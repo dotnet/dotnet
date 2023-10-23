@@ -3,6 +3,8 @@
 
 #nullable disable
 
+using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -117,5 +119,55 @@ public class RazorProjectEngineTest
             extension => Assert.IsType<DesignTimeDirectiveTargetExtension>(extension),
             extension => Assert.IsType<MetadataAttributeTargetExtension>(extension),
             extension => Assert.IsType<PreallocatedAttributeTargetExtension>(extension));
+    }
+
+    [Fact]
+    public void GetImportSourceDocuments_DoesNotIncludeNonExistentItems()
+    {
+        // Arrange
+        var existingItem = new TestRazorProjectItem("Index.cshtml");
+        var nonExistentItem = Mock.Of<RazorProjectItem>(item => item.Exists == false);
+        var items = ImmutableArray.Create(existingItem, nonExistentItem);
+
+        // Act
+        var sourceDocuments = RazorProjectEngine.GetImportSourceDocuments(items);
+
+        // Assert
+        var sourceDocument = Assert.Single(sourceDocuments);
+        Assert.Equal(existingItem.FilePath, sourceDocument.FilePath);
+    }
+
+    [Fact]
+    public void GetImportSourceDocuments_UnreadableItem_Throws()
+    {
+        // Arrange
+        var projectItem = new Mock<RazorProjectItem>(MockBehavior.Strict);
+        projectItem.SetupGet(p => p.Exists).Returns(true);
+        projectItem.SetupGet(p => p.PhysicalPath).Returns("path/to/file.cshtml");
+        projectItem.Setup(p => p.Read()).Throws(new IOException("Couldn't read file."));
+        var items = ImmutableArray.Create(projectItem.Object);
+
+        // Act & Assert
+        var exception = Assert.Throws<IOException>(() => RazorProjectEngine.GetImportSourceDocuments(items));
+        Assert.Equal("Couldn't read file.", exception.Message);
+    }
+
+    [Fact]
+    public void GetImportSourceDocuments_WithSuppressExceptions_UnreadableItem_DoesNotThrow()
+    {
+        // Arrange
+        var projectItem = new Mock<RazorProjectItem>(MockBehavior.Strict);
+        projectItem.SetupGet(p => p.Exists).Returns(true);
+        projectItem.SetupGet(p => p.PhysicalPath).Returns("path/to/file.cshtml");
+        projectItem.SetupGet(p => p.FilePath).Returns("path/to/file.cshtml");
+        projectItem.SetupGet(p => p.RelativePhysicalPath).Returns("path/to/file.cshtml");
+        projectItem.Setup(p => p.Read()).Throws(new IOException("Couldn't read file."));
+        var items = ImmutableArray.Create(projectItem.Object);
+
+        // Act
+        var sourceDocuments = RazorProjectEngine.GetImportSourceDocuments(items, suppressExceptions: true);
+
+        // Assert - Does not throw
+        Assert.Empty(sourceDocuments);
     }
 }

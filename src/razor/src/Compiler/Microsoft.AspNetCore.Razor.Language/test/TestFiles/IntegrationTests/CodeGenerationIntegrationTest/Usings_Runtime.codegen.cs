@@ -47,7 +47,7 @@ using static global::System.Text.Encoding;
 #line default
 #line hidden
 #nullable disable
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"f52e72ba69034334ab681d1f5e91cd50788cbfc0d1390104ee1e60d95d4ca443", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"f52e72ba69034334ab681d1f5e91cd50788cbfc0d1390104ee1e60d95d4ca443", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Usings_Runtime
     {
         #pragma warning disable 1998

@@ -126,7 +126,7 @@ internal partial class RazorCustomMessageTarget
             using var builder = new PooledArrayBuilder<CompletionItem>();
 
             // Make sure to call our addition to completion before tracking telemetry requests
-            AddSnippetCompletions(request.ProjectedKind, ref builder.AsRef());
+            AddSnippetCompletions(request, ref builder.AsRef());
 
             var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
             var lspMethodName = Methods.TextDocumentCompletion.Name;
@@ -148,10 +148,15 @@ internal partial class RazorCustomMessageTarget
             {
                 completionList = new VSInternalCompletionList()
                 {
+                    // If we don't get a response from the delegated server, we have to make sure to return an incomplete completion
+                    // list. When a user is typing quickly, the delegated request from the first keystroke will fail to synchronize,
+                    // so if we return a "complete" list then the query won't re-query us for completion once the typing stops/slows
+                    // so we'd only ever return Razor completion items.
+                    IsIncomplete = true,
                     Items = builder.ToArray(),
                 };
             }
-            
+
             return completionList;
         }
         finally
@@ -232,9 +237,10 @@ internal partial class RazorCustomMessageTarget
     public async Task<CompletionItem?> ProvideResolvedCompletionItemAsync(DelegatedCompletionItemResolveParams request, CancellationToken cancellationToken)
     {
         // Check if we're completing a snippet item that we provided
-        if (SnippetCompletionData.TryParse(request.CompletionItem.Data, out var snippetCompletionData))
+        if (SnippetCompletionData.TryParse(request.CompletionItem.Data, out var snippetCompletionData) &&
+            _snippetCache.TryResolveSnippetString(snippetCompletionData) is { } snippetInsertText)
         {
-            request.CompletionItem.InsertText = _snippetCache.TryResolveSnippetString(snippetCompletionData);
+            request.CompletionItem.InsertText = snippetInsertText;
             return request.CompletionItem;
         }
 
@@ -300,9 +306,23 @@ internal partial class RazorCustomMessageTarget
         return Task.FromResult(formattingOptions);
     }
 
-    private void AddSnippetCompletions(RazorLanguageKind languageKind, ref PooledArrayBuilder<CompletionItem> builder)
+    private void AddSnippetCompletions(DelegatedCompletionParams request, ref PooledArrayBuilder<CompletionItem> builder)
     {
-        var snippets = _snippetCache.GetSnippets(ConvertLanguageKind(languageKind));
+        // Temporary fix: snippets are broken in CSharp. We're investigating
+        // but this is very disruptive. This quick fix unblocks things.
+        // TODO: Add an option to enable this. 
+        if (request.ProjectedKind != RazorLanguageKind.Html)
+        {
+            return;
+        }
+
+        // Don't add snippets for deletion of a character
+        if (request.Context.InvokeKind == VSInternalCompletionInvokeKind.Deletion)
+        {
+            return;
+        }
+
+        var snippets = _snippetCache.GetSnippets(ConvertLanguageKind(request.ProjectedKind));
         if (snippets.IsDefaultOrEmpty)
         {
             return;
@@ -316,7 +336,8 @@ internal partial class RazorCustomMessageTarget
                 InsertTextFormat = InsertTextFormat.Snippet,
                 InsertText = s.Shortcut,
                 Data = s.CompletionData,
-                Kind = CompletionItemKind.Snippet
+                Kind = CompletionItemKind.Snippet,
+                CommitCharacters = []
             }));
     }
 

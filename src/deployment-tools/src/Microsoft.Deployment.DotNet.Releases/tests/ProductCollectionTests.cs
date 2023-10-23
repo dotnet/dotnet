@@ -15,7 +15,7 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         [Fact]
         public async Task ItReturnsAllSupportPhases()
         {
-            ProductCollection products = await ProductCollection.GetFromFileAsync(@"data\\releases-index.json", false).ConfigureAwait(false);
+            ProductCollection products = await ProductCollection.GetFromFileAsync(@"data\\releases-index.json", false);
             IEnumerable<SupportPhase> supportPhases = products.GetSupportPhases();
 
             Assert.Equal(4, supportPhases.Count());
@@ -28,26 +28,26 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         [Fact]
         public async Task ItThrowsIfPathIsNull()
         {
-            Func<Task> f = async () => await ProductCollection.GetFromFileAsync((string)null, false).ConfigureAwait(false); ;
+            Func<Task> f = async () => await ProductCollection.GetFromFileAsync((string)null, false); ;
 
-            _ = await Assert.ThrowsAsync<ArgumentNullException>(f).ConfigureAwait(false); 
+            _ = await Assert.ThrowsAsync<ArgumentNullException>(f); 
         }
 
         [Fact]
         public async Task ItThrowsIfPathIsEmpty()
         {
-            Func<Task> f = async () => await ProductCollection.GetFromFileAsync("", false).ConfigureAwait(false); 
+            Func<Task> f = async () => await ProductCollection.GetFromFileAsync("", false); 
 
-            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(f).ConfigureAwait(false);
+            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(f);
             Assert.Equal($"Value cannot be empty. (Parameter 'path')", exception.Message);
         }
 
         [Fact]
         public async Task ItThrowsIfFileDoesNotExitAndCannotBeDownloaded()
         {
-            Func<Task> f = async () => await ProductCollection.GetFromFileAsync("data.json", false).ConfigureAwait(false);
+            Func<Task> f = async () => await ProductCollection.GetFromFileAsync("data.json", false);
 
-            FileNotFoundException exception = await Assert.ThrowsAsync<FileNotFoundException>(f).ConfigureAwait(false);
+            FileNotFoundException exception = await Assert.ThrowsAsync<FileNotFoundException>(f);
 
             Assert.Equal("Could not find the specified file: data.json", exception.Message);
         }
@@ -55,17 +55,17 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         [Fact]
         public async Task ItThrowsIfReleasesUriIsNull()
         {
-            Func<Task> f = async () => await ProductCollection.GetAsync((string)null).ConfigureAwait(false);
+            Func<Task> f = async () => await ProductCollection.GetAsync((string)null);
 
-            ArgumentNullException exception = await Assert.ThrowsAsync<ArgumentNullException>(f).ConfigureAwait(false);
+            ArgumentNullException exception = await Assert.ThrowsAsync<ArgumentNullException>(f);
         }
 
         [Fact]
         public async Task ItThrowsIfReleasesUriIsEmpty()
         {
-            Func<Task> f = async () => await ProductCollection.GetAsync("").ConfigureAwait(false);
+            Func<Task> f = async () => await ProductCollection.GetAsync("");
 
-            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(f).ConfigureAwait(false);
+            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(f);
             Assert.Equal($"Value cannot be empty. (Parameter 'releasesIndexUri')", exception.Message);
         }
     }

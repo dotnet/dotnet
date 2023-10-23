@@ -5,7 +5,7 @@
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 {
     #line hidden
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"66a1fd3b9b40b304a7d1864845d2b7ab0f5f5c8a98d810ff8f97a245644661a9", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"66a1fd3b9b40b304a7d1864845d2b7ab0f5f5c8a98d810ff8f97a245644661a9", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersInSection.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_TagHelpersInSection_Runtime
     {
         #line hidden

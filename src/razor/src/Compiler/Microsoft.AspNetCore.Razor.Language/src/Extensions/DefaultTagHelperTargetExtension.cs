@@ -644,7 +644,7 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
     internal static string GetDeterministicId(CodeRenderingContext context)
     {
         // Use the file checksum along with the absolute position in the generated code to create a unique id for each tag helper call site.
-        var checksum = ChecksumUtilities.BytesToString(context.SourceDocument.GetChecksum());
+        var checksum = ChecksumUtilities.BytesToString(context.SourceDocument.Text.GetChecksum());
         var uniqueId = checksum + context.CodeWriter.Location.AbsoluteIndex;
 
         return uniqueId;

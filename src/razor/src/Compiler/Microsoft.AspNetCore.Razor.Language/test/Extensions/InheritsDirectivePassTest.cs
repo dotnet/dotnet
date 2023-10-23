@@ -73,9 +73,8 @@ public class InheritsDirectivePassTest : RazorProjectEngineTestBase
 
     private static DocumentIntermediateNode Lower(RazorCodeDocument codeDocument, RazorEngine engine)
     {
-        for (var i = 0; i < engine.Phases.Count; i++)
+        foreach (var phase in engine.Phases)
         {
-            var phase = engine.Phases[i];
             phase.Execute(codeDocument);
 
             if (phase is IRazorDocumentClassifierPhase)

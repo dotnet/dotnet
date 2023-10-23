@@ -15,7 +15,7 @@ public class LiteralRuntimeNodeWriterTest
     {
         // Arrange
         var writer = new LiteralRuntimeNodeWriter();
-        var context = TestCodeRenderingContext.CreateRuntime();
+        using var context = TestCodeRenderingContext.CreateRuntime();
 
         var node = new CSharpExpressionIntermediateNode()
         {

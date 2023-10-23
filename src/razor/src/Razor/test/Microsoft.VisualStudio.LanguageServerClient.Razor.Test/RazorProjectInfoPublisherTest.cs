@@ -68,7 +68,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
 
         // Assert
         var stalePublishTask = Assert.Single(publisher.DeferredPublishTasks);
-        await stalePublishTask.Value.ConfigureAwait(false);
+        await stalePublishTask.Value;
         Assert.True(serializationSuccessful);
     }
 
@@ -150,7 +150,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
         await RunOnDispatcherThreadAsync(() =>
         {
             _projectSnapshotManager.DocumentOpened(hostProject.Key, hostDocument.FilePath, SourceText.From(string.Empty));
-        }).ConfigureAwait(false);
+        });
         
 
         // Assert
@@ -189,7 +189,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
 
         // Assert
         var kvp = Assert.Single(publisher.DeferredPublishTasks);
-        await kvp.Value.ConfigureAwait(false);
+        await kvp.Value;
         Assert.True(serializationSuccessful);
     }
 
@@ -226,7 +226,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
 
         // Flush publish task
         var kvp = Assert.Single(publisher.DeferredPublishTasks);
-        await kvp.Value.ConfigureAwait(false);
+        await kvp.Value;
         aboutToChange = true;
         publisher.DeferredPublishTasks.Clear();
 
@@ -264,7 +264,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
 
         // Assert
         var kvp = Assert.Single(publisher.DeferredPublishTasks);
-        await kvp.Value.ConfigureAwait(false);
+        await kvp.Value;
 
         Assert.False(attemptedToSerialize);
     }
@@ -298,7 +298,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
 
         // Assert
         var kvp = Assert.Single(publisher.DeferredPublishTasks);
-        await kvp.Value.ConfigureAwait(false);
+        await kvp.Value;
         Assert.True(serializationSuccessful);
     }
 
@@ -331,7 +331,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
 
         // Assert
         var kvp = Assert.Single(publisher.DeferredPublishTasks);
-        await kvp.Value.ConfigureAwait(false);
+        await kvp.Value;
         Assert.True(serializationSuccessful);
     }
 
@@ -370,7 +370,7 @@ public class RazorProjectInfoPublisherTest : LanguageServerTestBase
 
         // Assert
         var kvp = Assert.Single(publisher.DeferredPublishTasks);
-        await kvp.Value.ConfigureAwait(false);
+        await kvp.Value;
         Assert.False(serializationSuccessful);
     }
 

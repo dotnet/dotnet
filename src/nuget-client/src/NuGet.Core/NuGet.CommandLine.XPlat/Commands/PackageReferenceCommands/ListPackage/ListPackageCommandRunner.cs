@@ -405,7 +405,7 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="frameworks"> List of <see cref="FrameworkPackages"/>.</param>
         /// <param name="packageMetadata">Package metadata from package sources</param>
         /// <param name="listPackageArgs">Arguments for list package to get the right latest version</param>
-        private async Task UpdatePackagesWithSourceMetadata(
+        internal async Task UpdatePackagesWithSourceMetadata(
             List<FrameworkPackages> frameworks,
             Dictionary<string, List<IPackageSearchMetadata>> packageMetadata,
             ListPackageArgs listPackageArgs)
@@ -414,57 +414,67 @@ namespace NuGet.CommandLine.XPlat
             {
                 foreach (var topLevelPackage in frameworkPackages.TopLevelPackages)
                 {
-                    var matchingPackage = packageMetadata.Where(p => p.Key.Equals(topLevelPackage.Name, StringComparison.OrdinalIgnoreCase)).First();
-
-                    // Get latest metadata *only* if this is a report requiring "outdated" metadata
-                    if (listPackageArgs.ReportType == ReportType.Outdated && matchingPackage.Value.Count > 0)
+                    if (packageMetadata.TryGetValue(topLevelPackage.Name, out List<IPackageSearchMetadata> matchingPackage))
                     {
-                        var latestVersion = matchingPackage.Value.Where(newVersion => MeetsConstraints(newVersion.Identity.Version, topLevelPackage, listPackageArgs)).Max(i => i.Identity.Version);
+                        // Get latest metadata *only* if this is a report requiring "outdated" metadata
+                        if (listPackageArgs.ReportType == ReportType.Outdated && matchingPackage.Count > 0)
+                        {
+                            var latestVersion = matchingPackage.Where(newVersion => MeetsConstraints(newVersion.Identity.Version, topLevelPackage, listPackageArgs)).Max(i => i.Identity.Version);
 
-                        topLevelPackage.LatestPackageMetadata = matchingPackage.Value.First(p => p.Identity.Version == latestVersion);
-                        topLevelPackage.UpdateLevel = GetUpdateLevel(topLevelPackage.ResolvedPackageMetadata.Identity.Version, topLevelPackage.LatestPackageMetadata.Identity.Version);
-                    }
+                            if (latestVersion is not null)
+                            {
+                                topLevelPackage.LatestPackageMetadata = matchingPackage.First(p => p.Identity.Version == latestVersion);
+                                topLevelPackage.UpdateLevel = GetUpdateLevel(topLevelPackage.ResolvedPackageMetadata.Identity.Version, topLevelPackage.LatestPackageMetadata.Identity.Version);
+                            }
+                            else // no latest version available with the given constraints
+                            {
+                                topLevelPackage.LatestPackageMetadata = null;
+                                topLevelPackage.UpdateLevel = UpdateLevel.NoUpdate;
+                            }
+                        }
 
-                    var matchingPackagesWithDeprecationMetadata = await Task.WhenAll(
-                        matchingPackage.Value.Select(async v => new { SearchMetadata = v, DeprecationMetadata = await v.GetDeprecationMetadataAsync() }));
+                        var matchingPackagesWithDeprecationMetadata = await Task.WhenAll(
+                            matchingPackage.Select(async v => new { SearchMetadata = v, DeprecationMetadata = await v.GetDeprecationMetadataAsync() }));
 
-                    // Update resolved version with additional metadata information returned by the server.
-                    var resolvedVersionFromServer = matchingPackagesWithDeprecationMetadata
-                        .Where(v => v.SearchMetadata.Identity.Version == topLevelPackage.ResolvedPackageMetadata.Identity.Version &&
-                                (v.DeprecationMetadata != null || v.SearchMetadata?.Vulnerabilities != null))
-                        .FirstOrDefault();
+                        // Update resolved version with additional metadata information returned by the server.
+                        var resolvedVersionFromServer = matchingPackagesWithDeprecationMetadata
+                            .Where(v => v.SearchMetadata.Identity.Version == topLevelPackage.ResolvedPackageMetadata.Identity.Version &&
+                                    (v.DeprecationMetadata != null || v.SearchMetadata?.Vulnerabilities != null))
+                            .FirstOrDefault();
 
-                    if (resolvedVersionFromServer != null)
-                    {
-                        topLevelPackage.ResolvedPackageMetadata = resolvedVersionFromServer.SearchMetadata;
+                        if (resolvedVersionFromServer != null)
+                        {
+                            topLevelPackage.ResolvedPackageMetadata = resolvedVersionFromServer.SearchMetadata;
+                        }
                     }
                 }
 
                 foreach (var transitivePackage in frameworkPackages.TransitivePackages)
                 {
-                    var matchingPackage = packageMetadata.Where(p => p.Key.Equals(transitivePackage.Name, StringComparison.OrdinalIgnoreCase)).First();
-
-                    // Get latest metadata *only* if this is a report requiring "outdated" metadata
-                    if (listPackageArgs.ReportType == ReportType.Outdated && matchingPackage.Value.Count > 0)
+                    if (packageMetadata.TryGetValue(transitivePackage.Name, out List<IPackageSearchMetadata> matchingPackage))
                     {
-                        var latestVersion = matchingPackage.Value.Where(newVersion => MeetsConstraints(newVersion.Identity.Version, transitivePackage, listPackageArgs)).Max(i => i.Identity.Version);
+                        // Get latest metadata *only* if this is a report requiring "outdated" metadata
+                        if (listPackageArgs.ReportType == ReportType.Outdated && matchingPackage.Count > 0)
+                        {
+                            var latestVersion = matchingPackage.Where(newVersion => MeetsConstraints(newVersion.Identity.Version, transitivePackage, listPackageArgs)).Max(i => i.Identity.Version);
 
-                        transitivePackage.LatestPackageMetadata = matchingPackage.Value.First(p => p.Identity.Version == latestVersion);
-                        transitivePackage.UpdateLevel = GetUpdateLevel(transitivePackage.ResolvedPackageMetadata.Identity.Version, transitivePackage.LatestPackageMetadata.Identity.Version);
-                    }
+                            transitivePackage.LatestPackageMetadata = matchingPackage.First(p => p.Identity.Version == latestVersion);
+                            transitivePackage.UpdateLevel = GetUpdateLevel(transitivePackage.ResolvedPackageMetadata.Identity.Version, transitivePackage.LatestPackageMetadata.Identity.Version);
+                        }
 
-                    var matchingPackagesWithDeprecationMetadata = await Task.WhenAll(
-                        matchingPackage.Value.Select(async v => new { SearchMetadata = v, DeprecationMetadata = await v.GetDeprecationMetadataAsync() }));
+                        var matchingPackagesWithDeprecationMetadata = await Task.WhenAll(
+                            matchingPackage.Select(async v => new { SearchMetadata = v, DeprecationMetadata = await v.GetDeprecationMetadataAsync() }));
 
-                    // Update resolved version with additional metadata information returned by the server.
-                    var resolvedVersionFromServer = matchingPackagesWithDeprecationMetadata
-                        .Where(v => v.SearchMetadata.Identity.Version == transitivePackage.ResolvedPackageMetadata.Identity.Version &&
-                                (v.DeprecationMetadata != null || v.SearchMetadata?.Vulnerabilities != null))
-                        .FirstOrDefault();
+                        // Update resolved version with additional metadata information returned by the server.
+                        var resolvedVersionFromServer = matchingPackagesWithDeprecationMetadata
+                            .Where(v => v.SearchMetadata.Identity.Version == transitivePackage.ResolvedPackageMetadata.Identity.Version &&
+                                    (v.DeprecationMetadata != null || v.SearchMetadata?.Vulnerabilities != null))
+                            .FirstOrDefault();
 
-                    if (resolvedVersionFromServer != null)
-                    {
-                        transitivePackage.ResolvedPackageMetadata = resolvedVersionFromServer.SearchMetadata;
+                        if (resolvedVersionFromServer != null)
+                        {
+                            transitivePackage.ResolvedPackageMetadata = resolvedVersionFromServer.SearchMetadata;
+                        }
                     }
                 }
             }

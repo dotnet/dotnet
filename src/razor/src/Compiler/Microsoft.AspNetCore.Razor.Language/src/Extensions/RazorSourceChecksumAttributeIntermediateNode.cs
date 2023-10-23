@@ -4,8 +4,10 @@
 #nullable disable
 
 using System;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
@@ -13,9 +15,9 @@ internal sealed class RazorSourceChecksumAttributeIntermediateNode : ExtensionIn
 {
     public override IntermediateNodeCollection Children => IntermediateNodeCollection.ReadOnly;
 
-    public byte[] Checksum { get; set; }
+    public ImmutableArray<byte> Checksum { get; set; }
 
-    public string ChecksumAlgorithm { get; set; }
+    public SourceHashAlgorithm ChecksumAlgorithm { get; set; }
 
     public string Identifier { get; set; }
 
@@ -26,7 +28,7 @@ internal sealed class RazorSourceChecksumAttributeIntermediateNode : ExtensionIn
             throw new ArgumentNullException(nameof(visitor));
         }
 
-        AcceptExtensionNode<RazorSourceChecksumAttributeIntermediateNode>(this, visitor);
+        AcceptExtensionNode(this, visitor);
     }
 
     public override void WriteNode(CodeTarget target, CodeRenderingContext context)

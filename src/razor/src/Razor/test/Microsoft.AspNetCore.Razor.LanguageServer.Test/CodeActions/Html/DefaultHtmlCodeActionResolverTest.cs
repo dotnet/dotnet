@@ -86,7 +86,10 @@ public class DefaultHtmlCodeActionResolverTest : LanguageServerTestBase
         var codeActionParams = new CodeActionResolveParams()
         {
             Data = new JObject(),
-            RazorFileUri = new Uri(documentPath)
+            RazorFileIdentifier = new VSTextDocumentIdentifier
+            {
+                Uri = new Uri(documentPath)
+            }
         };
 
         // Act

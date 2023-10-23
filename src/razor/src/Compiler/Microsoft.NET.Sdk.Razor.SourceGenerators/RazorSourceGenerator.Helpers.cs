@@ -98,7 +98,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 fileSystem.Add(import);
             }
 
-            var projectEngine = (DefaultRazorProjectEngine)RazorProjectEngine.Create(razorSourceGeneratorOptions.Configuration, fileSystem, b =>
+            var projectEngine = RazorProjectEngine.Create(razorSourceGeneratorOptions.Configuration, fileSystem, b =>
             {
                 b.Features.Add(new DefaultTypeNameFeature());
                 b.SetRootNamespace(razorSourceGeneratorOptions.RootNamespace);

@@ -27,7 +27,6 @@ stages:
       helixRepo: dotnet/razor-tooling
       helixType: build.product/
       enableRichCodeNavigation: true
-      richCodeNavigationEnvironment: 'production'
       richCodeNavigationLanguage: 'csharp,typescript'
       jobs:
       - job: Windows

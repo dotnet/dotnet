@@ -1,33 +1,26 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.IO;
 using System.Text;
-using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 /// <summary>
 /// The Razor template source.
 /// </summary>
-public abstract class RazorSourceDocument
+public sealed class RazorSourceDocument
 {
     internal const int LargeObjectHeapLimitInChars = 40 * 1024; // 40K Unicode chars is 80KB which is less than the large object heap limit.
 
-    internal static readonly RazorSourceDocument[] EmptyArray = Array.Empty<RazorSourceDocument>();
+    private readonly RazorSourceDocumentProperties _properties;
 
     /// <summary>
-    /// Gets the encoding of the text in the original source document.
+    /// Gets the source text of the document.
     /// </summary>
-    /// <remarks>
-    /// Depending on the method used to create a <see cref="RazorSourceDocument"/> the encoding may be used to
-    /// read the file contents, or it may be solely informational. Refer to the documentation on the method
-    /// used to create the <see cref="RazorSourceDocument"/> for details.
-    /// </remarks>
-    public abstract Encoding Encoding { get; }
+    public SourceText Text { get; }
 
     /// <summary>
     /// Gets the file path of the original source document.
@@ -36,7 +29,7 @@ public abstract class RazorSourceDocument
     /// The file path may be either an absolute path or project-relative path. An absolute path is required
     /// to generate debuggable assemblies.
     /// </remarks>
-    public abstract string FilePath { get; }
+    public string? FilePath => _properties.FilePath;
 
     /// <summary>
     /// Gets the project-relative path to the source file. May be <c>null</c>.
@@ -45,58 +38,13 @@ public abstract class RazorSourceDocument
     /// The relative path (if provided) is used for display (error messages). The project-relative path may also
     /// be used to embed checksums of the original source documents to support runtime recompilation of Razor code.
     /// </remarks>
-    public virtual string RelativePath => null;
-
-    /// <summary>
-    /// Gets a character at given position.
-    /// </summary>
-    /// <param name="position">The position to get the character from.</param>
-    public abstract char this[int position] { get; }
-
-    /// <summary>
-    /// Gets the length of the text in characters.
-    /// </summary>
-    public abstract int Length { get; }
-
-    /// <summary>
-    /// Gets the <see cref="RazorSourceLineCollection"/>.
-    /// </summary>
-    public abstract RazorSourceLineCollection Lines { get; }
-
-    /// <summary>
-    /// Copies a range of characters from the <see cref="RazorSourceDocument"/> to the specified <paramref name="destination"/>.
-    /// </summary>
-    /// <param name="sourceIndex">The index of the first character in this instance to copy.</param>
-    /// <param name="destination">The destination buffer.</param>
-    /// <param name="destinationIndex">The index in destination at which the copy operation begins.</param>
-    /// <param name="count">The number of characters in this instance to copy to destination.</param>
-    public abstract void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count);
-
-    /// <summary>
-    /// Calculates the checksum for the <see cref="RazorSourceDocument"/>.
-    /// </summary>
-    /// <returns>The checksum.</returns>
-    public abstract byte[] GetChecksum();
-
-    /// <summary>
-    /// Gets the name of the algorithm used to compute the checksum returned by <see cref="GetChecksum"/>.
-    /// </summary>
-    /// <remarks>
-    /// This member did not exist in the 2.0 release, so it is possible for an implementation to return
-    /// the wrong value (or <c>null</c>). Implementations of <see cref="RazorSourceDocument"/> should
-    /// override this member and specify their choice of hash algorithm even if it is the same as the
-    /// default (<c>SHA256</c>).
-    /// </remarks>
-    public virtual string GetChecksumAlgorithm()
-    {
-        return HashAlgorithmOperations.GetAlgorithmName();
-    }
+    public string? RelativePath => _properties.RelativePath;
 
     /// <summary>
     /// Gets the file path in a format that should be used for display.
     /// </summary>
     /// <returns>The <see cref="RelativePath"/> if set, or the <see cref="FilePath"/>.</returns>
-    public virtual string GetFilePathForDisplay()
+    public string? GetFilePathForDisplay()
     {
         return RelativePath ?? FilePath;
     }
@@ -114,8 +62,9 @@ public abstract class RazorSourceDocument
             throw new ArgumentNullException(nameof(stream));
         }
 
-        var properties = new RazorSourceDocumentProperties(fileName, relativePath: null);
-        return new StreamSourceDocument(stream, null, properties);
+        var properties = RazorSourceDocumentProperties.Create(fileName, relativePath: null);
+        var sourceText = SourceText.From(stream, checksumAlgorithm: SourceHashAlgorithm.Sha256);
+        return new RazorSourceDocument(sourceText, properties);
     }
 
     /// <summary>
@@ -137,8 +86,9 @@ public abstract class RazorSourceDocument
             throw new ArgumentNullException(nameof(encoding));
         }
 
-        var properties = new RazorSourceDocumentProperties(fileName, relativePath: null);
-        return new StreamSourceDocument(stream, encoding, properties);
+        var properties = RazorSourceDocumentProperties.Create(fileName, relativePath: null);
+        var sourceText = SourceText.From(stream, encoding, checksumAlgorithm: SourceHashAlgorithm.Sha256);
+        return new RazorSourceDocument(sourceText, properties);
     }
 
     /// <summary>
@@ -165,7 +115,8 @@ public abstract class RazorSourceDocument
             throw new ArgumentNullException(nameof(properties));
         }
 
-        return new StreamSourceDocument(stream, encoding, properties);
+        var sourceText = SourceText.From(stream, encoding, checksumAlgorithm: SourceHashAlgorithm.Sha256);
+        return new RazorSourceDocument(sourceText, properties);
     }
 
     /// <summary>
@@ -204,7 +155,8 @@ public abstract class RazorSourceDocument
         {
             // Autodetect the encoding.
             var relativePath = projectItem.RelativePhysicalPath ?? projectItem.FilePath;
-            return new StreamSourceDocument(stream, null, new RazorSourceDocumentProperties(filePath, relativePath));
+            var sourceText = SourceText.From(stream, checksumAlgorithm: SourceHashAlgorithm.Sha256);
+            return new RazorSourceDocument(sourceText, RazorSourceDocumentProperties.Create(filePath, relativePath));
         }
     }
 
@@ -267,8 +219,9 @@ public abstract class RazorSourceDocument
             throw new ArgumentNullException(nameof(encoding));
         }
 
-        var properties = new RazorSourceDocumentProperties(fileName, relativePath: null);
-        return new StringSourceDocument(content, encoding, properties);
+        var properties = RazorSourceDocumentProperties.Create(fileName, relativePath: null);
+        var sourceText = SourceText.From(content, encoding, checksumAlgorithm: SourceHashAlgorithm.Sha256);
+        return new RazorSourceDocument(sourceText, properties);
     }
 
     /// <summary>
@@ -295,6 +248,34 @@ public abstract class RazorSourceDocument
             throw new ArgumentNullException(nameof(properties));
         }
 
-        return new StringSourceDocument(content, encoding, properties);
+        var sourceText = SourceText.From(content, encoding, checksumAlgorithm: SourceHashAlgorithm.Sha256);
+        return new RazorSourceDocument(sourceText, properties);
+    }
+
+    /// <summary>
+    /// Creates a <see cref="RazorSourceDocument"/> from the specified <paramref name="text"/>.
+    /// </summary>
+    /// <param name="content">The source text.</param>
+    /// <param name="properties">Properties to configure the <see cref="RazorSourceDocument"/>.</param>
+    /// <returns>The <see cref="RazorSourceDocument"/>.</returns>
+    public static RazorSourceDocument Create(SourceText text, RazorSourceDocumentProperties properties)
+    {
+        if (text == null)
+        {
+            throw new ArgumentNullException(nameof(text));
+        }
+
+        if (properties == null)
+        {
+            throw new ArgumentNullException(nameof(properties));
+        }
+
+        return new RazorSourceDocument(text, properties);
+    }
+
+    private RazorSourceDocument(SourceText sourceText, RazorSourceDocumentProperties properties)
+    {
+        Text = sourceText;
+        _properties = properties;
     }
 }

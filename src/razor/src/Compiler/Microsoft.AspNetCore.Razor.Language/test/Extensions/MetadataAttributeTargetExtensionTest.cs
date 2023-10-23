@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Xunit;
 
@@ -18,7 +19,7 @@ public class MetadataAttributeTargetExtensionTest
         {
             CompiledItemAttributeName = "global::TestItem",
         };
-        var context = TestCodeRenderingContext.CreateRuntime();
+        using var context = TestCodeRenderingContext.CreateRuntime();
 
         var node = new RazorCompiledItemAttributeIntermediateNode()
         {
@@ -47,12 +48,12 @@ public class MetadataAttributeTargetExtensionTest
         {
             SourceChecksumAttributeName = "global::TestChecksum",
         };
-        var context = TestCodeRenderingContext.CreateRuntime();
+        using var context = TestCodeRenderingContext.CreateRuntime();
 
         var node = new RazorSourceChecksumAttributeIntermediateNode()
         {
-            ChecksumAlgorithm = "SHA256",
-            Checksum = new byte[] { (byte)'t', (byte)'e', (byte)'s', (byte)'t', },
+            ChecksumAlgorithm = CodeAnalysis.Text.SourceHashAlgorithm.Sha256,
+            Checksum = ImmutableArray.Create((byte)'t', (byte)'e', (byte)'s', (byte)'t'),
             Identifier = "Foo/Bar",
         };
 
@@ -62,7 +63,7 @@ public class MetadataAttributeTargetExtensionTest
         // Assert
         var csharp = context.CodeWriter.GenerateCode();
         Assert.Equal(
-@"[global::TestChecksum(@""SHA256"", @""74657374"", @""Foo/Bar"")]
+@"[global::TestChecksum(@""Sha256"", @""74657374"", @""Foo/Bar"")]
 ",
             csharp,
             ignoreLineEndingDifferences: true);
@@ -76,7 +77,7 @@ public class MetadataAttributeTargetExtensionTest
         {
             CompiledItemMetadataAttributeName = "global::TestItemMetadata",
         };
-        var context = TestCodeRenderingContext.CreateRuntime();
+        using var context = TestCodeRenderingContext.CreateRuntime();
 
         var node = new RazorCompiledItemMetadataAttributeIntermediateNode
         {
@@ -103,7 +104,7 @@ public class MetadataAttributeTargetExtensionTest
         {
             CompiledItemMetadataAttributeName = "global::TestItemMetadata",
         };
-        var context = TestCodeRenderingContext.CreateRuntime();
+        using var context = TestCodeRenderingContext.CreateRuntime();
 
         var node = new RazorCompiledItemMetadataAttributeIntermediateNode
         {

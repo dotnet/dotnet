@@ -83,7 +83,7 @@ internal class WrapWithTagEndpoint : IRazorRequestHandler<WrapWithTagParams, Wra
             // <p>[|@currentCount|]</p>
 
             var tree = await documentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-            var requestSpan = request.Range.ToRazorTextSpan(sourceText);
+            var requestSpan = request.Range.ToTextSpan(sourceText);
             var node = tree.Root.FindNode(requestSpan, includeWhitespace: false, getInnermostNodeForTie: true);
             if (node?.FirstAncestorOrSelf<CSharpImplicitExpressionSyntax>() is { Parent: CSharpCodeBlockSyntax codeBlock } &&
                 (requestSpan == codeBlock.FullSpan || requestSpan.Length == 0))

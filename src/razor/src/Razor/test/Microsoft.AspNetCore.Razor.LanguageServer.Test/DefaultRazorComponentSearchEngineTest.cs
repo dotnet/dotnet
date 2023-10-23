@@ -151,7 +151,7 @@ public class DefaultRazorComponentSearchEngineTest : LanguageServerTestBase
     {
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath, relativePath: filePath);
         var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, builder => builder.AddDirective(NamespaceDirective.Directive));
-        var codeDocument = projectEngine.Process(sourceDocument, FileKinds.Component, Array.Empty<RazorSourceDocument>(), Array.Empty<TagHelperDescriptor>());
+        var codeDocument = projectEngine.Process(sourceDocument, FileKinds.Component, importSources: default, Array.Empty<TagHelperDescriptor>());
 
         var namespaceNode = (NamespaceDeclarationIntermediateNode)codeDocument
             .GetDocumentIntermediateNode()

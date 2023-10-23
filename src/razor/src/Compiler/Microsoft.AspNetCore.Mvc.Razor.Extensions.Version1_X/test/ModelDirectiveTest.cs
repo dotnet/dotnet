@@ -3,8 +3,6 @@
 
 #nullable disable
 
-using System;
-using System.IO;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -264,9 +262,8 @@ public class ModelDirectiveTest : RazorProjectEngineTestBase
 
     private DocumentIntermediateNode CreateIRDocument(RazorEngine engine, RazorCodeDocument codeDocument)
     {
-        for (var i = 0; i < engine.Phases.Count; i++)
+        foreach (var phase in engine.Phases)
         {
-            var phase = engine.Phases[i];
             phase.Execute(codeDocument);
 
             if (phase is IRazorDocumentClassifierPhase)
@@ -283,21 +280,6 @@ public class ModelDirectiveTest : RazorProjectEngineTestBase
         pass.Execute(codeDocument, codeDocument.GetDocumentIntermediateNode());
 
         return codeDocument.GetDocumentIntermediateNode();
-    }
-
-    private string GetCSharpContent(IntermediateNode node)
-    {
-        var builder = new StringBuilder();
-        for (var i = 0; i < node.Children.Count; i++)
-        {
-            var child = node.Children[i] as IntermediateToken;
-            if (child.Kind == TokenKind.CSharp)
-            {
-                builder.Append(child.Content);
-            }
-        }
-
-        return builder.ToString();
     }
 
     private class ClassNodeVisitor : IntermediateNodeWalker

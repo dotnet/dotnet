@@ -3,9 +3,6 @@
 
 #nullable disable
 
-using System;
-using System.Globalization;
-using System.Text;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -34,7 +31,7 @@ public class MvcViewDocumentClassifierPass : DocumentClassifierPassBase
         {
             // It's possible for a Razor document to not have a file path.
             // Eg. When we try to generate code for an in memory document like default imports.
-            var checksum = BytesToString(codeDocument.Source.GetChecksum());
+            var checksum = ChecksumUtilities.BytesToString(codeDocument.Source.Text.GetChecksum());
             @class.ClassName = $"AspNetCore_{checksum}";
         }
         else
@@ -52,22 +49,5 @@ public class MvcViewDocumentClassifierPass : DocumentClassifierPassBase
         method.Modifiers.Add("async");
         method.Modifiers.Add("override");
         method.ReturnType = $"global::{typeof(System.Threading.Tasks.Task).FullName}";
-    }
-
-    private static string BytesToString(byte[] bytes)
-    {
-        if (bytes == null)
-        {
-            throw new ArgumentNullException(nameof(bytes));
-        }
-
-        var result = new StringBuilder(bytes.Length);
-        for (var i = 0; i < bytes.Length; i++)
-        {
-            // The x2 format means lowercase hex, where each byte is a 2-character string.
-            result.Append(bytes[i].ToString("x2", CultureInfo.InvariantCulture));
-        }
-
-        return result.ToString();
     }
 }

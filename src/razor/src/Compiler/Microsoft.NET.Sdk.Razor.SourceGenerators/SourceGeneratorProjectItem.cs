@@ -23,7 +23,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             var text = AdditionalText.GetText();
             if (text is not null)
             {
-                RazorSourceDocument = new SourceTextRazorSourceDocument(AdditionalText.Path, relativePhysicalPath, text);
+                RazorSourceDocument = RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Create(AdditionalText.Path, relativePhysicalPath));
             }
         }
 
@@ -43,7 +43,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
         public override string? CssScope { get; }
 
-        public override Stream Read() 
+        public override Stream Read()
             => throw new NotSupportedException("This API should not be invoked. We should instead be relying on " +
                 "the RazorSourceDocument associated with this item instead.");
 

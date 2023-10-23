@@ -5,6 +5,7 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Xunit;
@@ -169,6 +170,85 @@ namespace Test
         Assert.False(attribute.IsStringProperty);
         Assert.False(attribute.IsBooleanProperty);
         Assert.False(attribute.IsEnum);
+    }
+
+    [Fact]
+    public void Execute_BindTagHelperReturnsValuesWhenProvidedNoTargetSymbol()
+    {
+        // When BindTagHelperDescriptorProvider is given a compilation that references
+        // API assemblies with "BindConverter" and "BindAttributes", but no target symbol,
+        // it will find the expected tag helpers.
+
+        // Arrange
+        var compilation = BaseCompilation;
+
+        Assert.Empty(compilation.GetDiagnostics());
+
+        var context = TagHelperDescriptorProviderContext.Create();
+        context.SetCompilation(compilation);
+
+        var bindTagHelperProvider = new BindTagHelperDescriptorProvider();
+
+        // Act
+        bindTagHelperProvider.Execute(context);
+
+        // Assert
+        var matches = context.Results.Where(t => t.IsBindTagHelper());
+        Assert.NotEmpty(matches);
+    }
+
+    [Fact]
+    public void Execute_BindTagHelperReturnsValuesWhenProvidedCorrectAssemblyTargetSymbol()
+    {
+        // When BindTagHelperDescriptorProvider is given a compilation that references
+        // API assemblies with "BindConverter", and a target symbol matching the assembly
+        // containing "BindConverter", it will find the expected tag helpers.
+
+        // Arrange
+        var compilation = BaseCompilation;
+
+        Assert.Empty(compilation.GetDiagnostics());
+
+        var context = TagHelperDescriptorProviderContext.Create();
+        context.SetCompilation(compilation);
+
+        var bindConverterSymbol = compilation.GetTypeByMetadataName(ComponentsApi.BindConverter.FullTypeName);
+        context.Items.SetTargetSymbol(bindConverterSymbol.ContainingAssembly);
+
+        var bindTagHelperProvider = new BindTagHelperDescriptorProvider();
+
+        // Act
+        bindTagHelperProvider.Execute(context);
+
+        // Assert
+        var matches = context.Results.Where(t => t.IsBindTagHelper());
+        Assert.NotEmpty(matches);
+    }
+
+    [Fact]
+    public void Execute_BindTagHelperReturnsEmptyWhenCompilationAssemblyTargetSymbol()
+    {
+        // When BindTagHelperDescriptorProvider is given a compilation that references
+        // API assemblies with "BindConverter", and a target symbol that does not match the
+        // assembly containing "BindConverter", it will NOT find the expected tag helpers.
+
+        // Arrange
+        var compilation = BaseCompilation;
+
+        Assert.Empty(compilation.GetDiagnostics());
+
+        var context = TagHelperDescriptorProviderContext.Create();
+        context.SetCompilation(compilation);
+        context.Items.SetTargetSymbol(compilation.Assembly);
+
+        var bindTagHelperProvider = new BindTagHelperDescriptorProvider();
+
+        // Act
+        bindTagHelperProvider.Execute(context);
+
+        // Assert
+        var matches = GetBindTagHelpers(context);
+        Assert.Empty(matches);
     }
 
     [Fact]

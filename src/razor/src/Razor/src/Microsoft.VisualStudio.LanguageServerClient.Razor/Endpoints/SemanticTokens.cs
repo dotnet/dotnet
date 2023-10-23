@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic.Models;
@@ -50,7 +51,7 @@ internal partial class RazorCustomMessageTarget
             cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<ProvideSemanticTokensResponse?> ProvideSemanticTokensAsync(
+    private async Task<ProvideSemanticTokensResponse?> ProvideSemanticTokensAsync(
         ProvideSemanticTokensRangesParams semanticTokensParams,
         string lspMethodName,
         Func<JToken, bool> capabilitiesFilter,
@@ -68,6 +69,28 @@ internal partial class RazorCustomMessageTarget
         }
 
         var (synchronized, csharpDoc) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>((int)semanticTokensParams.RequiredHostDocumentVersion, semanticTokensParams.TextDocument, cancellationToken);
+
+        if (synchronized && csharpDoc.HostDocumentSyncVersion == 1)
+        {
+            // HACK: Workaround for https://github.com/dotnet/razor/issues/9197 to stop Roslyn NFWs
+            // Sometimes we get asked for semantic tokens on v1, and we have sent a v1 to Roslyn, but its the wrong v1.
+            // To prevent Roslyn throwing, lets validate the range we're asking about with the generated document they
+            // would have seen.
+            var lastGeneratedDocumentLine = requestParams switch
+            {
+                SemanticTokensRangeParams range => range.Range.End.Line,
+                SemanticTokensRangesParams ranges => ranges.Ranges[^1].End.Line,
+                _ => Assumed.Unreachable<int>()
+            };
+
+            if (csharpDoc.Snapshot.LineCount < lastGeneratedDocumentLine)
+            {
+                // We report this as a fail to synchronize, as that's essentially what it is: We were asked for v1, with X lines
+                // and whilst we have v1, we don't have X lines, so we need to wait for a future update to arrive and give us
+                // more content.
+                return new ProvideSemanticTokensResponse(tokens: null, -1);
+            }
+        }
 
         if (csharpDoc is null)
         {

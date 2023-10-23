@@ -5,7 +5,7 @@
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 {
     #line hidden
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"27a85171d5a386c4f1b5ff7df75346b702207bfa961bbf3b5418584132a09c45", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/HtmlCommentWithQuote_Double.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"27a85171d5a386c4f1b5ff7df75346b702207bfa961bbf3b5418584132a09c45", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/HtmlCommentWithQuote_Double.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_HtmlCommentWithQuote_Double_Runtime
     {
         #pragma warning disable 1998

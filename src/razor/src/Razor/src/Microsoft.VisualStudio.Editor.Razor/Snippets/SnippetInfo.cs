@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Snippets;
@@ -39,13 +40,16 @@ internal record SnippetInfo
         => _parsedXmlSnippet.Value;
 }
 
-internal record SnippetCompletionData(string Path)
+internal record SnippetCompletionData([property: JsonProperty(SnippetCompletionData.PropertyName)] string Path)
 {
+    private const string PropertyName = "__razor_snippet_path";
+
     internal static bool TryParse(object? data, [NotNullWhen(true)] out SnippetCompletionData? snippetCompletionData)
     {
         snippetCompletionData = data as SnippetCompletionData;
 
-        if (data is JObject jObject)
+        if (data is JObject jObject &&
+            jObject.Property(PropertyName) is not null)
         {
             try
             {

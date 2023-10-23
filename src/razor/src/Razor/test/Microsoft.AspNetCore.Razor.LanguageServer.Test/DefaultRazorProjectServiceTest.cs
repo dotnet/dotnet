@@ -908,7 +908,9 @@ public class DefaultRazorProjectServiceTest : LanguageServerTestBase
                 // We updated the project in the DocumentChanged callback, so we expect to get a new snapshot
                 Assert.NotSame(ownerProject.GetDocument(documentFilePath), snapshot);
                 Assert.Equal(documentFilePath, snapshot.FilePath);
+#pragma warning disable xUnit1031 // Do not use blocking task operations in test method
                 Assert.Equal(newText, snapshot.GetTextAsync().Result);
+#pragma warning restore xUnit1031
                 Assert.Equal(1337, version);
             });
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);

@@ -491,9 +491,7 @@ public abstract class IntegrationTestBase
         var visitor = new CodeSpanVisitor();
         visitor.Visit(syntaxTree.Root);
 
-        var charBuffer = new char[codeDocument.Source.Length];
-        codeDocument.Source.CopyTo(0, charBuffer, 0, codeDocument.Source.Length);
-        var sourceContent = new string(charBuffer);
+        var sourceContent = codeDocument.Source.Text.ToString();
 
         var spans = visitor.CodeSpans;
         for (var i = 0; i < spans.Count; i++)
@@ -528,9 +526,8 @@ public abstract class IntegrationTestBase
             }
 
             var found = false;
-            for (var j = 0; j < csharpDocument.SourceMappings.Count; j++)
+            foreach (var mapping in csharpDocument.SourceMappings)
             {
-                var mapping = csharpDocument.SourceMappings[j];
                 if (mapping.OriginalSpan == sourceSpan)
                 {
                     var actualSpan = csharpDocument.GeneratedCode.Substring(
@@ -593,9 +590,7 @@ public abstract class IntegrationTestBase
         else
         {
             var syntaxTree = codeDocument.GetSyntaxTree();
-            var sourceBuffer = new char[syntaxTree.Source.Length];
-            syntaxTree.Source.CopyTo(0, sourceBuffer, 0, syntaxTree.Source.Length);
-            var sourceContent = new string(sourceBuffer);
+            var sourceContent = syntaxTree.Source.Text.ToString();
             var classifiedSpans = syntaxTree.GetClassifiedSpans();
             foreach (var classifiedSpan in classifiedSpans)
             {

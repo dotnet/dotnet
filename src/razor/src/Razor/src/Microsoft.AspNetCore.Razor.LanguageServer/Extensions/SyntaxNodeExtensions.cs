@@ -127,10 +127,11 @@ internal static class SyntaxNodeExtensions
 
         var start = node.Position;
         var end = node.EndPosition;
+        var sourceText = source.Text;
 
-        Debug.Assert(start <= source.Length && end <= source.Length, "Node position exceeds source length.");
+        Debug.Assert(start <= sourceText.Length && end <= sourceText.Length, "Node position exceeds source length.");
 
-        if (start == source.Length && node.FullWidth == 0)
+        if (start == sourceText.Length && node.FullWidth == 0)
         {
             // Marker symbol at the end of the document.
             var location = node.GetSourceLocation(source);
@@ -138,10 +139,8 @@ internal static class SyntaxNodeExtensions
             return new LinePositionSpan(position, position);
         }
 
-        var startLocation = source.Lines.GetLocation(start);
-        var endLocation = source.Lines.GetLocation(end);
-        var startPosition = GetLinePosition(startLocation);
-        var endPosition = GetLinePosition(endLocation);
+        var startPosition = sourceText.Lines.GetLinePosition(start);
+        var endPosition = sourceText.Lines.GetLinePosition(end);
 
         return new LinePositionSpan(startPosition, endPosition);
 
@@ -239,10 +238,12 @@ internal static class SyntaxNodeExtensions
                 throw new ArgumentNullException(nameof(source));
             }
 
+            var sourceText = source.Text;
+
             var start = node.Position + parentStart;
             var end = node.EndPosition + parentStart;
 
-            if (start == source.Length && node.FullWidth == 0)
+            if (start == sourceText.Length && node.FullWidth == 0)
             {
                 // Marker symbol at the end of the document.
                 var location = node.GetSourceLocation(source);
@@ -250,10 +251,8 @@ internal static class SyntaxNodeExtensions
                 return new LinePositionSpan(position, position);
             }
 
-            var startLocation = source.Lines.GetLocation(start);
-            var endLocation = source.Lines.GetLocation(end);
-            var startPosition = GetLinePosition(startLocation);
-            var endPosition = GetLinePosition(endLocation);
+            var startPosition = sourceText.Lines.GetLinePosition(start);
+            var endPosition = sourceText.Lines.GetLinePosition(end);
 
             return new LinePositionSpan(startPosition, endPosition);
 
@@ -346,7 +345,7 @@ internal static class SyntaxNodeExtensions
         return token.Parent;
     }
 
-    public static SyntaxNode? FindNode(this SyntaxNode @this, Language.Syntax.TextSpan span, bool includeWhitespace = false, bool getInnermostNodeForTie = false)
+    public static SyntaxNode? FindNode(this SyntaxNode @this, TextSpan span, bool includeWhitespace = false, bool getInnermostNodeForTie = false)
     {
         if (!@this.FullSpan.Contains(span))
         {

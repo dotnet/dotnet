@@ -32,7 +32,7 @@ public class ProjectEngineFactory_UnsupportedTest(ITestOutputHelper testOutput) 
         var sourceDocument = TestRazorSourceDocument.Create("<strong>Hello World!</strong>", RazorSourceDocumentProperties.Default);
 
         // Act
-        var codeDocument = engine.ProcessDesignTime(sourceDocument, "test", Array.Empty<RazorSourceDocument>(), Array.Empty<TagHelperDescriptor>());
+        var codeDocument = engine.ProcessDesignTime(sourceDocument, "test", importSources: default, Array.Empty<TagHelperDescriptor>());
 
         // Assert
         Assert.Equal(UnsupportedCSharpLoweringPhase.UnsupportedDisclaimer, codeDocument.GetCSharpDocument().GeneratedCode);

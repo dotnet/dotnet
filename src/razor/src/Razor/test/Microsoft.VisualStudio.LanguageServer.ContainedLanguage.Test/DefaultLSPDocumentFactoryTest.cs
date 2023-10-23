@@ -101,7 +101,7 @@ public class DefaultLSPDocumentFactoryTest : TestBase
         var lspDocument = factory.Create(textBuffer);
 
         // Assert
-        Assert.Equal(0, lspDocument.VirtualDocuments.Count);
+        Assert.Empty(lspDocument.VirtualDocuments);
     }
 
     [Fact]

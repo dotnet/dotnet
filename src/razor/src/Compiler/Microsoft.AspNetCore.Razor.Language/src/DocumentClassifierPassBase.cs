@@ -19,8 +19,9 @@ public abstract class DocumentClassifierPassBase : IntermediateNodePassBase, IRa
 
     protected override void OnInitialized()
     {
-        var feature = Engine.GetFeature<IRazorTargetExtensionFeature>();
-        TargetExtensions = feature?.TargetExtensions.ToArray() ?? Array.Empty<ICodeTargetExtension>();
+        TargetExtensions = Engine.TryGetFeature(out IRazorTargetExtensionFeature feature)
+            ? feature.TargetExtensions.ToArray()
+            : Array.Empty<ICodeTargetExtension>();
     }
 
     protected sealed override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)

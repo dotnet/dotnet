@@ -2,16 +2,13 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Host;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -460,9 +457,9 @@ internal class DocumentState
                 inputVersion = documentCollectionVersion;
             }
 
-            for (var i = 0; i < imports.Count; i++)
+            foreach (var import in imports)
             {
-                var importVersion = imports[i].Version;
+                var importVersion = import.Version;
                 if (inputVersion.GetNewerVersion(importVersion) == importVersion)
                 {
                     inputVersion = importVersion;
@@ -486,7 +483,7 @@ internal class DocumentState
             }
 
             // OK we have to generate the code.
-            var importSources = new List<RazorSourceDocument>();
+            using var importSources = new PooledArrayBuilder<RazorSourceDocument>(imports.Length);
             var projectEngine = project.GetProjectEngine();
             foreach (var item in imports)
             {
@@ -498,42 +495,33 @@ internal class DocumentState
             var projectItem = document.FilePath is null ? null : projectEngine.FileSystem.GetItem(document.FilePath, document.FileKind);
             var documentSource = await GetRazorSourceDocumentAsync(document, projectItem).ConfigureAwait(false);
 
-            var codeDocument = projectEngine.ProcessDesignTime(documentSource, fileKind: document.FileKind, importSources, project.TagHelpers);
+            var codeDocument = projectEngine.ProcessDesignTime(documentSource, fileKind: document.FileKind, importSources.DrainToImmutable(), project.TagHelpers);
             return (codeDocument, inputVersion);
         }
 
         private static async Task<RazorSourceDocument> GetRazorSourceDocumentAsync(IDocumentSnapshot document, RazorProjectItem? projectItem)
         {
             var sourceText = await document.GetTextAsync().ConfigureAwait(false);
-            return sourceText.GetRazorSourceDocument(document.FilePath, projectItem?.RelativePhysicalPath);
+            return RazorSourceDocument.Create(sourceText, RazorSourceDocumentProperties.Create(document.FilePath, projectItem?.RelativePhysicalPath));
         }
 
-        private static async Task<IReadOnlyList<ImportItem>> GetImportsAsync(IDocumentSnapshot document)
+        private static async Task<ImmutableArray<ImportItem>> GetImportsAsync(IDocumentSnapshot document)
         {
-            var imports = new List<ImportItem>();
-            foreach (var snapshot in document.GetImports())
+            var imports = document.GetImports();
+            using var result = new PooledArrayBuilder<ImportItem>(imports.Length);
+
+            foreach (var snapshot in imports)
             {
                 var versionStamp = await snapshot.GetTextVersionAsync().ConfigureAwait(false);
-                imports.Add(new ImportItem(snapshot.FilePath, versionStamp, snapshot));
+                result.Add(new ImportItem(snapshot.FilePath, versionStamp, snapshot));
             }
 
-            return imports;
+            return result.DrainToImmutable();
         }
 
-        private readonly struct ImportItem
+        private record struct ImportItem(string? FilePath, VersionStamp Version, IDocumentSnapshot Document)
         {
-            public string? FilePath { get; }
-            public VersionStamp Version { get; }
-            public IDocumentSnapshot Document { get; }
-
-            public string? FileKind => Document.FileKind;
-
-            public ImportItem(string? filePath, VersionStamp version, IDocumentSnapshot document)
-            {
-                FilePath = filePath;
-                Version = version;
-                Document = document;
-            }
+            public readonly string? FileKind => Document.FileKind;
         }
 
         private class ComputedOutput

@@ -105,18 +105,4 @@ public class PageDirective
             }
         }
     }
-
-    #region Obsolete
-    [Obsolete("This method is obsolete and will be removed in a future version.")]
-    public static IRazorEngineBuilder Register(IRazorEngineBuilder builder)
-    {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        builder.AddDirective(Directive);
-        return builder;
-    }
-    #endregion
 }
