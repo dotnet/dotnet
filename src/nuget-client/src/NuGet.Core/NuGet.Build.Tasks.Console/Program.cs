@@ -7,7 +7,10 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+#if NETFRAMEWORK
 using System.Reflection;
+#endif
+using System.Text;
 using System.Threading.Tasks;
 
 namespace NuGet.Build.Tasks.Console
@@ -46,7 +49,7 @@ namespace NuGet.Build.Tasks.Console
                 NuGet.Common.Migrations.MigrationRunner.Run();
 
                 // Parse command-line arguments
-                if (!TryParseArguments(args, out (Dictionary<string, string> Options, FileInfo MSBuildExeFilePath, string EntryProjectFilePath, Dictionary<string, string> MSBuildGlobalProperties) arguments))
+                if (!TryParseArguments(args, () => System.Console.OpenStandardInput(), System.Console.Error, out (Dictionary<string, string> Options, FileInfo MSBuildExeFilePath, string EntryProjectFilePath, Dictionary<string, string> MSBuildGlobalProperties) arguments))
                 {
                     return 1;
                 }
@@ -144,23 +147,62 @@ namespace NuGet.Build.Tasks.Console
         /// Parses command-line arguments.
         /// </summary>
         /// <param name="args">A <see cref="T:string[]" /> containing the process command-line arguments.</param>
+        /// <param name="getStream">A <see cref="Func{TResult}" /> that is called to get a <see cref="Stream" /> to read.</param>
+        /// <param name="errorWriter">A <see cref="TextWriter" /> to write errors to.</param>
         /// <param name="arguments">A <see cref="T:Tuple&lt;Dictionary&lt;string, string&gt;, FileInfo, string, Dictionary&lt;string, string&gt;&gt;" /> that receives the parsed command-line arguments.</param>
         /// <returns><code>true</code> if the arguments were successfully parsed, otherwise <code>false</code>.</returns>
-        private static bool TryParseArguments(string[] args, out (Dictionary<string, string> Options, FileInfo MSBuildExeFilePath, string EntryProjectFilePath, Dictionary<string, string> MSBuildGlobalProperties) arguments)
+        internal static bool TryParseArguments(string[] args, Func<Stream> getStream, TextWriter errorWriter, out (Dictionary<string, string> Options, FileInfo MSBuildExeFilePath, string EntryProjectFilePath, Dictionary<string, string> MSBuildGlobalProperties) arguments)
         {
-            if (args.Length != 4)
+            arguments = (null, null, null, null);
+
+            // This application receives 3 or 4 arguments:
+            // 1. A semicolon delimited list of key value pairs that are the options to the program
+            // 2. The full path to MSBuild.exe
+            // 3. The full path to the entry project file
+            // 4. (optional) A semicolon delimited list of key value pairs that are the global properties to pass to MSBuild
+            if (args.Length < 3 || args.Length > 4)
             {
-                arguments = (null, null, null, null);
+                // An error occurred parsing command-line arguments in static graph-based restore as there was an unexpected number of arguments, {0}. Please file an issue at https://github.com/NuGet/Home. {0}
+                LogError(errorWriter, Strings.Error_StaticGraphRestoreArgumentParsingFailedInvalidNumberOfArguments, args.Length);
 
                 return false;
             }
 
             try
             {
-                var options = ParseSemicolonDelimitedListOfKeyValuePairs(args[0]);
+                Dictionary<string, string> options = ParseSemicolonDelimitedListOfKeyValuePairs(args[0]);
                 var msbuildExeFilePath = new FileInfo(args[1]);
                 var entryProjectFilePath = args[2];
-                var globalProperties = ParseSemicolonDelimitedListOfKeyValuePairs(args[3]);
+
+                Dictionary<string, string> globalProperties = null;
+
+                // If there are 3 arguments then the global properties will be read from STDIN
+                if (args.Length == 3)
+                {
+#if NETFRAMEWORK
+                    if (AppDomain.CurrentDomain.IsDefaultAppDomain())
+                    {
+                        // The application is called twice and the first invocation does not need to read the global properties
+                        globalProperties = null;
+                    }
+                    else
+                    {
+#endif
+                        using var reader = new BinaryReader(getStream(), new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true), leaveOpen: true);
+
+                        if (!TryDeserializeGlobalProperties(errorWriter, reader, out globalProperties))
+                        {
+                            // An error will have already been logged by TryDeserializeGlobalProperties()
+                            return false;
+                        }
+#if NETFRAMEWORK
+                    }
+#endif
+                }
+                else
+                {
+                    globalProperties = ParseSemicolonDelimitedListOfKeyValuePairs(args[3]);
+                }
 
                 arguments = (options, msbuildExeFilePath, entryProjectFilePath, globalProperties);
 
@@ -173,6 +215,75 @@ namespace NuGet.Build.Tasks.Console
 
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Logs an error to the specified <see cref="TextWriter" />.
+        /// </summary>
+        /// <param name="errorWriter">The <see cref="TextWriter" /> to write the error to.</param>
+        /// <param name="format">The formatted string of the error.</param>
+        /// <param name="args">An object array of zero or more objects to format with the error message.</param>
+        private static void LogError(TextWriter errorWriter, string format, params object[] args)
+        {
+            errorWriter.WriteLine(format, args);
+        }
+
+        /// <summary>
+        /// Attempts to deserialize global properties from the standard input stream.
+        /// </summary>
+        /// <remarks>
+        /// <param name="errorWriter">A <see cref="TextWriter" /> to write errors to if one occurs.</param>
+        /// <param name="reader">The <see cref="BinaryReader" /> to use when deserializing the arguments.</param>
+        /// <param name="globalProperties">Receives a <see cref="Dictionary{TKey, TValue}" /> representing the global properties.</param>
+        /// <returns><see langword="true" /> if the arguments were successfully deserialized, otherwise <see langword="false" />.</returns>
+        internal static bool TryDeserializeGlobalProperties(TextWriter errorWriter, BinaryReader reader, out Dictionary<string, string> globalProperties)
+        {
+            globalProperties = null;
+
+            int count = 0;
+
+            try
+            {
+                // Read the first integer from the stream which is the number of global properties
+                count = reader.ReadInt32();
+            }
+            catch (Exception e)
+            {
+                LogError(errorWriter, Strings.Error_StaticGraphRestoreArgumentsParsingFailedExceptionReadingStream, e.Message, e.ToString());
+
+                return false;
+            }
+
+            // If the integer is negative or larger than a short then the value is considered invalid.  No user should have anywhere near 32,000+ global properties
+            // and this should only happen if the bytes in the stream contain completely unexpected values.
+            if (count < 0 || count > short.MaxValue)
+            {
+                // An error occurred parsing command-line arguments in static graph-based restore as the first integer read, {0}, was is greater than the allowable value. Please file an issue at https://github.com/NuGet/Home
+                LogError(errorWriter, Strings.Error_StaticGraphRestoreArgumentsParsingFailedUnexpectedIntegerValue, count);
+
+                return false;
+            }
+
+            globalProperties = new Dictionary<string, string>(capacity: count, StringComparer.OrdinalIgnoreCase);
+
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    globalProperties[reader.ReadString()] = reader.ReadString();
+                }
+                catch (Exception e)
+                {
+                    globalProperties = null;
+
+                    // An error occurred parsing command-line arguments in static graph-based restore as an exception occurred reading the standard input stream, {0}. Please file an issue at https://github.com/NuGet/Home
+                    LogError(errorWriter, Strings.Error_StaticGraphRestoreArgumentsParsingFailedExceptionReadingStream, e.Message, e.ToString());
+
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

@@ -151,6 +151,52 @@ namespace NuGet.Build.Tasks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred parsing command-line arguments in static graph-based restore as there was an unexpected number of arguments, {0}. Please file an issue at https://github.com/NuGet/Home.
+        /// </summary>
+        public static string Error_StaticGraphRestoreArgumentParsingFailedInvalidNumberOfArguments {
+            get {
+                return ResourceManager.GetString("Error_StaticGraphRestoreArgumentParsingFailedInvalidNumberOfArguments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred parsing command-line arguments in static graph-based restore as end of the standard input stream was unexpectedly encountered. Please file an issue at https://github.com/NuGet/Home.
+        /// </summary>
+        public static string Error_StaticGraphRestoreArgumentsParsingFailedEndOfStream {
+            get {
+                return ResourceManager.GetString("Error_StaticGraphRestoreArgumentsParsingFailedEndOfStream", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred parsing command-line arguments in static graph-based restore as an exception occurred reading the standard input stream, {0} Please file an issue at https://github.com/NuGet/Home
+        ///{1}.
+        /// </summary>
+        public static string Error_StaticGraphRestoreArgumentsParsingFailedExceptionReadingStream {
+            get {
+                return ResourceManager.GetString("Error_StaticGraphRestoreArgumentsParsingFailedExceptionReadingStream", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred parsing command-line arguments in static graph-based restore as the first integer read, {0}, is not an allowable value. Please file an issue at https://github.com/NuGet/Home.
+        /// </summary>
+        public static string Error_StaticGraphRestoreArgumentsParsingFailedUnexpectedIntegerValue {
+            get {
+                return ResourceManager.GetString("Error_StaticGraphRestoreArgumentsParsingFailedUnexpectedIntegerValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred starting static graph-based restore. {0}. Please file an issue at https://github.com/NuGet/Home.
+        /// </summary>
+        public static string Error_StaticGraphRestoreFailedToStart {
+            get {
+                return ResourceManager.GetString("Error_StaticGraphRestoreFailedToStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Static graph-based restore encountered an unhandled exception. Please file an issue at https://github.com/NuGet/Home.  The exception was:
         ///{0}.
         /// </summary>

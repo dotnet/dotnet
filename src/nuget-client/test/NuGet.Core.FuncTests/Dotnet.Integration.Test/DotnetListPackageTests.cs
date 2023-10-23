@@ -510,7 +510,7 @@ namespace Dotnet.Integration.Test
             // Arrange
             using (var pathContext = _fixture.CreateSimpleTestPathContext())
             {
-                var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, "net46");
+                var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, "net472");
                 var packageX = XPlatTestUtils.CreatePackage(packageId: "packageX", packageVersion: "1.0.0");
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -535,6 +535,47 @@ namespace Dotnet.Integration.Test
 
                 // Assert
                 string[] lines = listResult.AllOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                Assert.True(lines.Any(l => l.Contains("packageX") && l.Contains("Not found at the sources")), "Line containing 'packageX' and 'Not found at the sources' not found: " + listResult.AllOutput);
+            }
+        }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData("1.1.0-beta", "")]
+        [InlineData("2.0.0-beta", "--highest-patch")]
+        [InlineData("2.0.0-beta", "--highest-minor")]
+        public async Task DotnetListPackage_OutdatedWithNoAvailableVersion_Succeeds(string currentVersion, string args)
+        {
+            // Arrange
+            using (var pathContext = _fixture.CreateSimpleTestPathContext())
+            {
+                var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, "net472");
+                var packageX = XPlatTestUtils.CreatePackage(packageId: "packageX", packageVersion: currentVersion);
+                var packageY = XPlatTestUtils.CreatePackage(packageId: "packageY", packageVersion: "1.0.0");
+                var packageY2 = XPlatTestUtils.CreatePackage(packageId: "packageY", packageVersion: "1.0.1");
+
+                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                        pathContext.PackageSource,
+                        PackageSaveMode.Defaultv3,
+                        packageX,
+                        packageY,
+                        packageY2);
+
+                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"add {projectA.ProjectPath} package packageX --version {currentVersion} --no-restore");
+
+                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"add {projectA.ProjectPath} package packageY --version 1.0.0 --no-restore");
+
+                _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"restore {projectA.ProjectName}.csproj");
+
+                // Act
+                CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
+                    $"list {projectA.ProjectPath} package --outdated {args}");
+
+                // Assert
+                string[] lines = listResult.AllOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                Assert.True(lines.Any(l => l.Contains("packageY") && l.Contains("1.0.1")), "Line containing 'packageY' and '1.0.1' not found: " + listResult.AllOutput);
                 Assert.True(lines.Any(l => l.Contains("packageX") && l.Contains("Not found at the sources")), "Line containing 'packageX' and 'Not found at the sources' not found: " + listResult.AllOutput);
             }
         }

@@ -23,6 +23,7 @@
     </PropertyGroup>
 
     <RemoveDir Directories="$(WorkingDir)" />
+    <MakeDir Directories="$(EndToEndPackageOutputPath)" />
 
     <ItemGroup>
       <Artifact Remove="@(Artifact)" />

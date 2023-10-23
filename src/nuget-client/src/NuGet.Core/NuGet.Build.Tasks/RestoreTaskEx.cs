@@ -3,9 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-#if !IS_CORECLR
-using System.Reflection;
-#endif
 
 namespace NuGet.Build.Tasks
 {
