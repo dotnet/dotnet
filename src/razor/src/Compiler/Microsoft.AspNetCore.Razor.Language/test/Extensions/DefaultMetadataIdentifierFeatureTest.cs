@@ -15,7 +15,7 @@ public class DefaultMetadataIdentifierFeatureTest : RazorProjectEngineTestBase
     public void GetIdentifier_ReturnsNull_ForNullRelativePath()
     {
         // Arrange
-        var sourceDocument = RazorSourceDocument.Create("content", new RazorSourceDocumentProperties("Test.cshtml", null));
+        var sourceDocument = RazorSourceDocument.Create("content", RazorSourceDocumentProperties.Create("Test.cshtml", null));
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
 
         var feature = new DefaultMetadataIdentifierFeature()
@@ -34,7 +34,7 @@ public class DefaultMetadataIdentifierFeatureTest : RazorProjectEngineTestBase
     public void GetIdentifier_ReturnsNull_ForEmptyRelativePath()
     {
         // Arrange
-        var sourceDocument = RazorSourceDocument.Create("content", new RazorSourceDocumentProperties("Test.cshtml", string.Empty));
+        var sourceDocument = RazorSourceDocument.Create("content", RazorSourceDocumentProperties.Create("Test.cshtml", string.Empty));
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
 
         var feature = new DefaultMetadataIdentifierFeature()
@@ -58,7 +58,7 @@ public class DefaultMetadataIdentifierFeatureTest : RazorProjectEngineTestBase
     public void GetIdentifier_SanitizesRelativePath(string relativePath, string expected)
     {
         // Arrange
-        var sourceDocument = RazorSourceDocument.Create("content", new RazorSourceDocumentProperties("Test.cshtml", relativePath));
+        var sourceDocument = RazorSourceDocument.Create("content", RazorSourceDocumentProperties.Create("Test.cshtml", relativePath));
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
 
         var feature = new DefaultMetadataIdentifierFeature()

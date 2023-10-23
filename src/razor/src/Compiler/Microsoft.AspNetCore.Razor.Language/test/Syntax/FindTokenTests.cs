@@ -28,7 +28,7 @@ public class FindTokenTests
 
     private static RazorSyntaxTree Parse(string text)
     {
-        return RazorSyntaxTree.Parse(new StringSourceDocument(text, System.Text.Encoding.Default, RazorSourceDocumentProperties.Default));
+        return RazorSyntaxTree.Parse(RazorSourceDocument.Create(text, System.Text.Encoding.Default, RazorSourceDocumentProperties.Default));
     }
 
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/7505")]

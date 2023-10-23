@@ -4,6 +4,7 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 

@@ -5,7 +5,7 @@
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 {
     #line hidden
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"3c3f70086ebb07abc64ab51a5ec8d70be530fb87bb11790ef3989464e5532b55", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicTagHelpers_RemoveTagHelper.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"3c3f70086ebb07abc64ab51a5ec8d70be530fb87bb11790ef3989464e5532b55", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicTagHelpers_RemoveTagHelper.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_BasicTagHelpers_RemoveTagHelper_Runtime
     {
         private static readonly global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute __tagHelperAttribute_0 = new global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute("type", "text", global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);

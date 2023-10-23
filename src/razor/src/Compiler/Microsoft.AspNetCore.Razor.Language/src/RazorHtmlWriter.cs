@@ -2,10 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -13,7 +14,7 @@ namespace Microsoft.AspNetCore.Razor.Language;
 // So we want replace all non-HTML content with whitespace.
 // Ideally we should just use ClassifiedSpans to generate this document but
 // not all characters in the document are included in the ClassifiedSpans.
-internal class RazorHtmlWriter : SyntaxWalker
+internal class RazorHtmlWriter : SyntaxWalker, IDisposable
 {
     private readonly Action<RazorCommentBlockSyntax> _baseVisitRazorCommentBlock;
     private readonly Action<RazorMetaCodeSyntax> _baseVisitRazorMetaCode;
@@ -30,6 +31,8 @@ internal class RazorHtmlWriter : SyntaxWalker
     private readonly Action<MarkupTextLiteralSyntax> _baseVisitMarkupTextLiteral;
     private readonly Action<UnclassifiedTextLiteralSyntax> _baseVisitUnclassifiedTextLiteral;
 
+    private readonly PooledObject<ImmutableArray<SourceMapping>.Builder> _sourceMappingsBuilder;
+
     private bool _isHtml;
     private SourceSpan _lastOriginalSourceSpan = SourceSpan.Undefined;
     private SourceSpan _lastGeneratedSourceSpan = SourceSpan.Undefined;
@@ -43,7 +46,7 @@ internal class RazorHtmlWriter : SyntaxWalker
 
         Source = source;
         Builder = new CodeWriter();
-        SourceMappings = new List<SourceMapping>();
+        _sourceMappingsBuilder = ArrayBuilderPool<SourceMapping>.GetPooledObject();
         _isHtml = true;
 
         _baseVisitRazorCommentBlock = base.VisitRazorCommentBlock;
@@ -66,7 +69,7 @@ internal class RazorHtmlWriter : SyntaxWalker
 
     public CodeWriter Builder { get; }
 
-    public List<SourceMapping> SourceMappings { get; }
+    public ImmutableArray<SourceMapping>.Builder SourceMappings => _sourceMappingsBuilder.Object;
 
     public static RazorHtmlDocument? GetHtmlDocument(RazorCodeDocument codeDocument)
     {
@@ -77,19 +80,17 @@ internal class RazorHtmlWriter : SyntaxWalker
             return null;
         }
 
-        var writer = new RazorHtmlWriter(codeDocument.Source);
+        using var writer = new RazorHtmlWriter(codeDocument.Source);
         var syntaxTree = codeDocument.GetSyntaxTree();
 
         writer.Visit(syntaxTree);
 
         Debug.Assert(
-            writer.Source.Length == writer.Builder.Length,
-            $"The backing HTML document should be the same length as the original document. Expected: {writer.Source.Length} Actual: {writer.Builder.Length}");
+            writer.Source.Text.Length == writer.Builder.Length,
+            $"The backing HTML document should be the same length as the original document. Expected: {writer.Source.Text.Length} Actual: {writer.Builder.Length}");
         var generatedHtml = writer.Builder.GenerateCode();
 
-        var sourceMappings = writer.SourceMappings.ToArray();
-
-        var razorHtmlDocument = new DefaultRazorHtmlDocument(codeDocument, generatedHtml, options, sourceMappings);
+        var razorHtmlDocument = new DefaultRazorHtmlDocument(codeDocument, generatedHtml, options, writer.SourceMappings.DrainToImmutable());
         return razorHtmlDocument;
     }
 
@@ -271,5 +272,10 @@ internal class RazorHtmlWriter : SyntaxWalker
         _isHtml = isHtml;
         handler(node);
         _isHtml = old;
+    }
+
+    public void Dispose()
+    {
+        _sourceMappingsBuilder.Dispose();
     }
 }

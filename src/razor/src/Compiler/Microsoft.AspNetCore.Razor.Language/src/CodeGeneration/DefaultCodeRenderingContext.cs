@@ -5,7 +5,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
@@ -15,6 +17,8 @@ internal class DefaultCodeRenderingContext : CodeRenderingContext
     private readonly RazorCodeDocument _codeDocument;
     private readonly DocumentIntermediateNode _documentNode;
     private readonly List<ScopeInternal> _scopes;
+
+    private readonly PooledObject<ImmutableArray<SourceMapping>.Builder> _sourceMappingsBuilder;
 
     public DefaultCodeRenderingContext(
         CodeWriter codeWriter,
@@ -56,7 +60,7 @@ internal class DefaultCodeRenderingContext : CodeRenderingContext
         _ancestors = new Stack<IntermediateNode>();
         Diagnostics = new RazorDiagnosticCollection();
         Items = new ItemCollection();
-        SourceMappings = new List<SourceMapping>();
+        _sourceMappingsBuilder = ArrayBuilderPool<SourceMapping>.GetPooledObject();
         LinePragmas = new List<LinePragma>();
 
         var diagnostics = _documentNode.GetAllDiagnostics();
@@ -94,7 +98,7 @@ internal class DefaultCodeRenderingContext : CodeRenderingContext
 
     public override ItemCollection Items { get; }
 
-    public List<SourceMapping> SourceMappings { get; }
+    public ImmutableArray<SourceMapping>.Builder SourceMappings => _sourceMappingsBuilder.Object;
 
     internal List<LinePragma> LinePragmas { get; }
 
@@ -211,6 +215,11 @@ internal class DefaultCodeRenderingContext : CodeRenderingContext
     public override void AddLinePragma(LinePragma linePragma)
     {
         LinePragmas.Add(linePragma);
+    }
+
+    public override void Dispose()
+    {
+        _sourceMappingsBuilder.Dispose();
     }
 
     private struct ScopeInternal

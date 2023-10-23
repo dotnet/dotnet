@@ -16,7 +16,7 @@ public class DesignTimeDirectiveTargetExtensionTest
     {
         // Arrange
         var extension = new DesignTimeDirectiveTargetExtension();
-        var context = TestCodeRenderingContext.CreateDesignTime();
+        using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new DesignTimeDirectiveIntermediateNode();
 
@@ -40,7 +40,7 @@ private void __RazorDirectiveTokenHelpers__() {
     {
         // Arrange
         var extension = new DesignTimeDirectiveTargetExtension();
-        var context = TestCodeRenderingContext.CreateDesignTime();
+        using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new DesignTimeDirectiveIntermediateNode();
         var token = new DirectiveTokenIntermediateNode()
@@ -81,7 +81,7 @@ System.String __typeHelper = default!;
     {
         // Arrange
         var extension = new DesignTimeDirectiveTargetExtension();
-        var context = TestCodeRenderingContext.CreateDesignTime();
+        using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new DesignTimeDirectiveIntermediateNode();
         var token = new DirectiveTokenIntermediateNode()
@@ -122,7 +122,7 @@ global::System.Object __typeHelper = nameof(System.Collections.Generic);
     {
         // Arrange
         var extension = new DesignTimeDirectiveTargetExtension();
-        var context = TestCodeRenderingContext.CreateDesignTime();
+        using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new DesignTimeDirectiveIntermediateNode();
         var token = new DirectiveTokenIntermediateNode()
@@ -163,7 +163,7 @@ global::System.Object Foo = null!;
     {
         // Arrange
         var extension = new DesignTimeDirectiveTargetExtension();
-        var context = TestCodeRenderingContext.CreateDesignTime();
+        using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new DesignTimeDirectiveIntermediateNode();
         var token = new DirectiveTokenIntermediateNode()
@@ -221,7 +221,7 @@ global::System.Object __typeHelper = ""Value"";
     {
         // Arrange
         var extension = new DesignTimeDirectiveTargetExtension();
-        var context = TestCodeRenderingContext.CreateDesignTime();
+        using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new DesignTimeDirectiveIntermediateNode();
         var token = new DirectiveTokenIntermediateNode()
@@ -262,7 +262,7 @@ global::System.Boolean __typeHelper = true;
     {
         // Arrange
         var extension = new DesignTimeDirectiveTargetExtension();
-        var context = TestCodeRenderingContext.CreateDesignTime();
+        using var context = TestCodeRenderingContext.CreateDesignTime();
 
         var node = new DesignTimeDirectiveIntermediateNode();
         var token = new DirectiveTokenIntermediateNode()

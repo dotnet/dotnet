@@ -16,7 +16,7 @@ public class ComponentMarkupEncodingPassTest
     public ComponentMarkupEncodingPassTest()
     {
         Pass = new ComponentMarkupEncodingPass();
-        ProjectEngine = (DefaultRazorProjectEngine)RazorProjectEngine.Create(
+        ProjectEngine = RazorProjectEngine.Create(
             RazorConfiguration.Default,
             RazorProjectFileSystem.Create(Environment.CurrentDirectory),
             b =>
@@ -31,7 +31,7 @@ public class ComponentMarkupEncodingPassTest
         Pass.Engine = Engine;
     }
 
-    private DefaultRazorProjectEngine ProjectEngine { get; }
+    private RazorProjectEngine ProjectEngine { get; }
 
     private RazorEngine Engine { get; }
 
@@ -193,9 +193,8 @@ The time is ");
 
     private DocumentIntermediateNode Lower(RazorCodeDocument codeDocument)
     {
-        for (var i = 0; i < Engine.Phases.Count; i++)
+        foreach (var phase in Engine.Phases)
         {
-            var phase = Engine.Phases[i];
             if (phase is IRazorCSharpLoweringPhase)
             {
                 break;

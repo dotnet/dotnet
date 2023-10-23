@@ -69,12 +69,12 @@
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDescription">
         <source>If true, pressing space will commit suggestions for Html elements and components</source>
-        <target state="new">If true, pressing space will commit suggestions for Html elements and components</target>
+        <target state="translated">Si vrai, appuyez sur Espace pour valider les suggestions d’éléments et de composants HTML</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
         <source>Commit Elements with Space</source>
-        <target state="new">Commit Elements with Space</target>
+        <target state="translated">Valider les éléments en appuyant sur Espace</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">

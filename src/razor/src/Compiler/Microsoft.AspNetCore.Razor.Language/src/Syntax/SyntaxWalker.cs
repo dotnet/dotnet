@@ -3,6 +3,8 @@
 
 #nullable disable
 
+using Microsoft.CodeAnalysis.Text;
+
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
 /// <summary>

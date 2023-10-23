@@ -3,7 +3,10 @@
 
 #nullable disable
 
+using Microsoft.AspNetCore.Razor.PooledObjects;
+
 namespace Microsoft.AspNetCore.Razor.Language;
+
 #pragma warning disable CS0618 // Type or member is obsolete
 internal class DefaultRazorParsingPhase : RazorEnginePhaseBase, IRazorParsingPhase
 {
@@ -20,11 +23,13 @@ internal class DefaultRazorParsingPhase : RazorEnginePhaseBase, IRazorParsingPha
         var syntaxTree = RazorSyntaxTree.Parse(codeDocument.Source, options);
         codeDocument.SetSyntaxTree(syntaxTree);
 
-        var importSyntaxTrees = new RazorSyntaxTree[codeDocument.Imports.Count];
-        for (var i = 0; i < codeDocument.Imports.Count; i++)
+        using var importSyntaxTrees = new PooledArrayBuilder<RazorSyntaxTree>(codeDocument.Imports.Length);
+
+        foreach (var import in codeDocument.Imports)
         {
-            importSyntaxTrees[i] = RazorSyntaxTree.Parse(codeDocument.Imports[i], options);
+            importSyntaxTrees.Add(RazorSyntaxTree.Parse(import, options));
         }
-        codeDocument.SetImportSyntaxTrees(importSyntaxTrees);
+
+        codeDocument.SetImportSyntaxTrees(importSyntaxTrees.ToArray());
     }
 }

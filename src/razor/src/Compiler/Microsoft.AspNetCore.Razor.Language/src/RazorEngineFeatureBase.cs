@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using System.Linq;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -27,17 +26,24 @@ public abstract class RazorEngineFeatureBase : IRazorEngineFeature
         }
     }
 
-    protected TFeature GetRequiredFeature<TFeature>() where TFeature : IRazorEngineFeature
+    protected TFeature GetRequiredFeature<TFeature>()
+        where TFeature : class, IRazorEngineFeature
     {
         if (Engine == null)
         {
             throw new InvalidOperationException(Resources.FormatFeatureMustBeInitialized(nameof(Engine)));
         }
 
-        var feature = Engine.GetFeature<TFeature>();
-        ThrowForMissingFeatureDependency<TFeature>(feature);
+        if (Engine.TryGetFeature(out TFeature feature))
+        {
+            return feature;
+        }
 
-        return feature;
+        throw new InvalidOperationException(
+            Resources.FormatFeatureDependencyMissing(
+                GetType().Name,
+                typeof(TFeature).Name,
+                typeof(RazorEngine).Name));
     }
 
     protected void ThrowForMissingDocumentDependency<TDocumentDependency>(TDocumentDependency value)
@@ -49,18 +55,6 @@ public abstract class RazorEngineFeatureBase : IRazorEngineFeature
                     GetType().Name,
                     typeof(TDocumentDependency).Name,
                     typeof(RazorCodeDocument).Name));
-        }
-    }
-
-    protected void ThrowForMissingFeatureDependency<TEngineDependency>(TEngineDependency value)
-    {
-        if (value == null)
-        {
-            throw new InvalidOperationException(
-                Resources.FormatFeatureDependencyMissing(
-                    GetType().Name,
-                    typeof(TEngineDependency).Name,
-                    typeof(RazorEngine).Name));
         }
     }
 

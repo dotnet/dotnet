@@ -242,7 +242,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
             tagHelpers = tagHelpers.AddRange(RazorTestResources.BlazorServerAppTagHelpers);
         }
 
-        var sourceDocument = text.GetRazorSourceDocument(path, path);
+        var sourceDocument = RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Create(path, path));
 
         const string DefaultImports = """
                 @using BlazorApp1
@@ -256,7 +256,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
 
         var importsPath = new Uri("file:///path/to/_Imports.razor").AbsolutePath;
         var importsSourceText = SourceText.From(DefaultImports);
-        var importsDocument = importsSourceText.GetRazorSourceDocument(importsPath, importsPath);
+        var importsDocument = RazorSourceDocument.Create(importsSourceText, RazorSourceDocumentProperties.Create(importsPath, importsPath));
         var importsSnapshot = new Mock<IDocumentSnapshot>(MockBehavior.Strict);
         importsSnapshot
             .Setup(d => d.GetTextAsync())
@@ -274,7 +274,7 @@ public class FormattingTestBase : RazorIntegrationTestBase
             builder.Features.Add(new DefaultTypeNameFeature());
             RazorExtensions.Register(builder);
         });
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, new[] { importsDocument }, tagHelpers);
+        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, ImmutableArray.Create(importsDocument), tagHelpers);
 
         if (!allowDiagnostics)
         {

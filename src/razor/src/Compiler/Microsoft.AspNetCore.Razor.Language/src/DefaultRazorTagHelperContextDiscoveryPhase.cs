@@ -24,8 +24,7 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
         var descriptors = codeDocument.GetTagHelpers();
         if (descriptors == null)
         {
-            var feature = Engine.GetFeature<ITagHelperFeature>();
-            if (feature == null)
+            if (!Engine.TryGetFeature(out ITagHelperFeature feature))
             {
                 // No feature, nothing to do.
                 return;

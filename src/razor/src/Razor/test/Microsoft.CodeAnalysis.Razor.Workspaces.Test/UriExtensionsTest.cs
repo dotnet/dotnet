@@ -55,6 +55,41 @@ public class UriExtensionsTest : TestBase
         Assert.Equal("c:/Some/path/to/file path.cshtml", path);
     }
 
+    [OSSkipConditionTheory(new[] { "OSX", "Linux" }), WorkItem("https://github.com/dotnet/razor/issues/9365")]
+    [InlineData(@"git:/c%3A/path/to/dir/Index.cshtml", @"c:/_git_/path/to/dir/Index.cshtml")]
+    [InlineData(@"git:/c:/path%2Fto/dir/Index.cshtml?%7B%22p", @"c:/_git_/path/to/dir/Index.cshtml")]
+    [InlineData(@"git:/c:/path/to/dir/Index.cshtml", @"c:/_git_/path/to/dir/Index.cshtml")]
+    public void GetAbsoluteOrUNCPath_AbsolutePath_HandlesGitScheme(string filePath, string expected)
+    {
+        // Arrange
+        var uri = new Uri(filePath);
+
+        // Act
+        var path = uri.GetAbsoluteOrUNCPath();
+
+        // Assert
+        Assert.Equal(expected, path);
+    }
+
+    [OSSkipConditionTheory(new[] { "OSX", "Linux" })]
+    [InlineData(@"file:///c:/path/to/dir/Index.cshtml", @"c:/path/to/dir/Index.cshtml")]
+    [InlineData(@"file:///c:\path/to\dir/Index.cshtml", @"c:/path/to/dir/Index.cshtml")]
+    [InlineData(@"file:///C:\path\to\dir\Index.cshtml", @"C:/path/to/dir/Index.cshtml")]
+    [InlineData(@"file:///C:\PATH\TO\DIR\Index.cshtml", @"C:/PATH/TO/DIR/Index.cshtml")]
+    [InlineData(@"file:\\path\to\dir\Index.cshtml", @"\\path\to\dir\Index.cshtml")]
+    [InlineData("file:///path/to/dir/Index.cshtml", @"/path/to/dir/Index.cshtml")]
+    public void GetAbsoluteOrUNCPath_AbsolutePath_HandlesFileScheme(string filePath, string expected)
+    {
+        // Arrange
+        var uri = new Uri(filePath);
+
+        // Act
+        var path = uri.GetAbsoluteOrUNCPath();
+
+        // Assert
+        Assert.Equal(expected, path);
+    }
+
     [Fact]
     public void GetAbsoluteOrUNCPath_UNCPath_ReturnsLocalPath()
     {
@@ -92,5 +127,22 @@ public class UriExtensionsTest : TestBase
 
         // Assert
         Assert.Equal(@"\\some\path\to\file path.cshtml", path);
+    }
+
+    [OSSkipConditionTheory(new[] { "Windows" }), WorkItem("https://github.com/dotnet/razor/issues/9365")]
+    [InlineData("git:///path/to/dir/Index.cshtml", "/_git_/path/to/dir/Index.cshtml")]
+    [InlineData("git:///path%2Fto/dir/Index.cshtml", "/_git_/path/to/dir/Index.cshtml")]
+    [InlineData("file:///path/to/dir/Index.cshtml", @"/path/to/dir/Index.cshtml")]
+    [InlineData("file:///path%2Fto/dir/Index.cshtml", @"/path/to/dir/Index.cshtml")]
+    public void GetAbsoluteOrUNCPath_AbsolutePath_HandlesSchemeProperly(string filePath, string expected)
+    {
+        // Arrange
+        var uri = new Uri(filePath);
+        
+        // Act
+        var path = uri.GetAbsoluteOrUNCPath();
+
+        // Assert
+        Assert.Equal(expected, path);
     }
 }

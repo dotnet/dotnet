@@ -12,7 +12,7 @@ namespace AspNetCore
     using global::Microsoft.AspNetCore.Mvc;
     using global::Microsoft.AspNetCore.Mvc.Rendering;
     using global::Microsoft.AspNetCore.Mvc.ViewFeatures;
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"f0ec78e6ab6def57bd9067e564edaa84059a8ecb9a3c1766a148a7df3096b7b0", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inject.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"f0ec78e6ab6def57bd9067e564edaa84059a8ecb9a3c1766a148a7df3096b7b0", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inject.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inject.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]
     #nullable restore

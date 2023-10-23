@@ -100,12 +100,12 @@ internal sealed class ExtractToCodeBehindCodeActionResolver : IRazorCodeActionRe
         var codeBlockContent = text.GetSubTextString(new CodeAnalysis.Text.TextSpan(actionParams.ExtractStart, actionParams.ExtractEnd - actionParams.ExtractStart)).Trim();
         var codeBehindContent = await GenerateCodeBehindClassAsync(documentContext.Project, codeBehindUri, className, actionParams.Namespace, codeBlockContent, codeDocument, cancellationToken).ConfigureAwait(false);
 
-        var start = codeDocument.Source.Lines.GetLocation(actionParams.RemoveStart);
-        var end = codeDocument.Source.Lines.GetLocation(actionParams.RemoveEnd);
+        var start = codeDocument.Source.Text.Lines.GetLinePosition(actionParams.RemoveStart);
+        var end = codeDocument.Source.Text.Lines.GetLinePosition(actionParams.RemoveEnd);
         var removeRange = new Range
         {
-            Start = new Position(start.LineIndex, start.CharacterIndex),
-            End = new Position(end.LineIndex, end.CharacterIndex)
+            Start = new Position(start.Line, start.Character),
+            End = new Position(end.Line, end.Character)
         };
 
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier { Uri = actionParams.Uri };

@@ -106,12 +106,6 @@ internal static class RangeExtensions
     public static TextSpan ToTextSpan(this Range range, SourceText sourceText)
         => sourceText.GetTextSpan(range.Start.Line, range.Start.Character, range.End.Line, range.End.Character);
 
-    public static Language.Syntax.TextSpan ToRazorTextSpan(this Range range, SourceText sourceText)
-    {
-        var span = range.ToTextSpan(sourceText);
-        return new Language.Syntax.TextSpan(span.Start, span.Length);
-    }
-
     public static LinePositionSpan ToLinePositionSpan(this Range range)
         => new LinePositionSpan(range.Start.ToLinePosition(), range.End.ToLinePosition());
 

@@ -5,7 +5,7 @@
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 {
     #line hidden
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"8d4533fb0fc90f8228aa0b0c9ec2d1cb53d3ef9b2018884e3e906a63b2e7ec39", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MarkupInCodeBlock.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"8d4533fb0fc90f8228aa0b0c9ec2d1cb53d3ef9b2018884e3e906a63b2e7ec39", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/MarkupInCodeBlock.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_MarkupInCodeBlock_Runtime
     {
         #pragma warning disable 1998

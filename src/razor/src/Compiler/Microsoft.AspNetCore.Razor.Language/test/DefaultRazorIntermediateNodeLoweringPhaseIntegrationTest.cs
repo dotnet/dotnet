@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -356,11 +357,9 @@ public class DefaultRazorIntermediateNodeLoweringPhaseIntegrationTest
         // Arrange
         var source = TestRazorSourceDocument.Create(@"@using System.Threading.Tasks
 <p>Hi!</p>");
-        var imports = new[]
-        {
-                TestRazorSourceDocument.Create("@using System.Globalization"),
-                TestRazorSourceDocument.Create("@using System.Text"),
-            };
+        var imports = ImmutableArray.Create(
+            TestRazorSourceDocument.Create("@using System.Globalization"),
+            TestRazorSourceDocument.Create("@using System.Text"));
 
         var codeDocument = TestRazorCodeDocument.Create(source, imports);
 
@@ -382,10 +381,8 @@ public class DefaultRazorIntermediateNodeLoweringPhaseIntegrationTest
         // Arrange
         var source = TestRazorSourceDocument.Create(@"@using System.Threading.Tasks
 @using System.Threading.Tasks");
-        var imports = new[]
-        {
-                TestRazorSourceDocument.Create("@using System.Threading.Tasks"),
-            };
+        var imports = ImmutableArray.Create(
+            TestRazorSourceDocument.Create("@using System.Threading.Tasks"));
 
         var codeDocument = TestRazorCodeDocument.Create(source, imports);
 
@@ -404,11 +401,9 @@ public class DefaultRazorIntermediateNodeLoweringPhaseIntegrationTest
     {
         // Arrange
         var source = TestRazorSourceDocument.Create("<p>Hi!</p>");
-        var imports = new[]
-        {
-                TestRazorSourceDocument.Create("@test value1"),
-                TestRazorSourceDocument.Create("@test value2"),
-            };
+        var imports = ImmutableArray.Create(
+            TestRazorSourceDocument.Create("@test value1"),
+            TestRazorSourceDocument.Create("@test value2"));
 
         var codeDocument = TestRazorCodeDocument.Create(source, imports);
 
@@ -437,10 +432,8 @@ public class DefaultRazorIntermediateNodeLoweringPhaseIntegrationTest
     {
         // Arrange
         var source = TestRazorSourceDocument.Create("<p>Hi!</p>");
-        var imports = new[]
-        {
-                TestRazorSourceDocument.Create("@block token { }"),
-            };
+        var imports = ImmutableArray.Create(
+            TestRazorSourceDocument.Create("@block token { }"));
 
         var codeDocument = TestRazorCodeDocument.Create(source, imports);
 
@@ -476,9 +469,8 @@ public class DefaultRazorIntermediateNodeLoweringPhaseIntegrationTest
 
         var projectEngine = RazorProjectEngine.Create(configureEngine);
 
-        for (var i = 0; i < projectEngine.Phases.Count; i++)
+        foreach (var phase in projectEngine.Phases)
         {
-            var phase = projectEngine.Phases[i];
             phase.Execute(codeDocument);
 
             if (phase is IRazorIntermediateNodeLoweringPhase)

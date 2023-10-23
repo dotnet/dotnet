@@ -1,0 +1,14 @@
+﻿Document - 
+    NamespaceDeclaration -  - Test
+        UsingDirective - (3:1,1 [22] ) - global::System
+        UsingDirective - (26:2,1 [42] ) - global::System.Collections.Generic
+        UsingDirective - (69:3,1 [27] ) - global::System.Linq
+        UsingDirective - (97:4,1 [38] ) - global::System.Threading.Tasks
+        UsingDirective - (136:5,1 [47] ) - global::Microsoft.AspNetCore.Components
+        ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase - 
+            MethodDeclaration -  - protected override - void - BuildRenderTree
+                Component - (250:9,0 [55] x:\dir\subdir\Test\TestComponent.cshtml) - TestComponent
+                    RenderMode - (278:9,28 [23] x:\dir\subdir\Test\TestComponent.cshtml)
+                        LazyIntermediateToken - (280:9,30 [20] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - Container.RenderMode
+            CSharpCode - (8:1,1 [239] x:\dir\subdir\Test\TestComponent.cshtml)
+                LazyIntermediateToken - (8:1,1 [239] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - \n    public class RenderModeContainer\n    {\n        public Microsoft.AspNetCore.Components.IComponentRenderMode RenderMode => Microsoft.AspNetCore.Components.Web.RenderMode.Server;\n    }\n\n    RenderModeContainer? Container => null;\n

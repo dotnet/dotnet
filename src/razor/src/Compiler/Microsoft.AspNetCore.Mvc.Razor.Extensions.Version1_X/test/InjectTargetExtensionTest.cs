@@ -18,7 +18,7 @@ public class InjectTargetExtensionTest
     public void InjectDirectiveTargetExtension_WritesProperty()
     {
         // Arrange
-        var context = TestCodeRenderingContext.CreateRuntime();
+        using var context = TestCodeRenderingContext.CreateRuntime();
         var target = new InjectTargetExtension();
         var node = new InjectIntermediateNode()
         {
@@ -40,7 +40,7 @@ public class InjectTargetExtensionTest
     public void InjectDirectiveTargetExtension_WritesPropertyWithLinePragma_WhenSourceIsSet()
     {
         // Arrange
-        var context = TestCodeRenderingContext.CreateRuntime();
+        using var context = TestCodeRenderingContext.CreateRuntime();
         var target = new InjectTargetExtension();
         var node = new InjectIntermediateNode()
         {

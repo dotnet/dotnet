@@ -356,7 +356,7 @@ public class RazorCustomMessageTargetTest : TestBase
         {
             Title = "Something",
         };
-        var request = new RazorResolveCodeActionParams(razorUri, HostDocumentVersion: 1, RazorLanguageKind.CSharp, codeAction);
+        var request = new RazorResolveCodeActionParams(new TextDocumentIdentifier { Uri = razorUri }, HostDocumentVersion: 1, RazorLanguageKind.CSharp, codeAction);
 
         // Act
         var result = await target.ResolveCodeActionsAsync(request, DisposalToken);

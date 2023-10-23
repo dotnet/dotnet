@@ -98,11 +98,11 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
         for (var i = 0; i < NumberOfCsSemanticRangesToReturn; i++)
         {
             var startLine = random.Next(Range.Start.Line, Range.End.Line);
-            var startChar = random.Next(0, codeDocument.Source.Lines.GetLineLength(startLine));
+            var startChar = random.Next(0, codeDocument.Source.Text.Lines[startLine].Span.Length);
             var endLine = random.Next(startLine, Range.End.Line);
             var endChar = startLine == endLine
-                ? random.Next(startChar, codeDocument.Source.Lines.GetLineLength(startLine))
-                : random.Next(0, codeDocument.Source.Lines.GetLineLength(endLine));
+                ? random.Next(startChar, codeDocument.Source.Text.Lines[startLine].Span.Length)
+                : random.Next(0, codeDocument.Source.Text.Lines[endLine].Span.Length);
 
             builder.Add(
                 new SemanticRange(random.Next(), startLine, startChar, endLine, endChar, 0, fromRazor: false));

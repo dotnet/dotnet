@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using System.Collections.Immutable;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -64,11 +65,9 @@ public class DefaultRazorParsingPhaseTest
             builder.Features.Add(new MyParserOptionsFeature());
         });
 
-        var imports = new[]
-        {
-                TestRazorSourceDocument.Create(),
-                TestRazorSourceDocument.Create(),
-            };
+        var imports = ImmutableArray.Create(
+            TestRazorSourceDocument.Create(),
+            TestRazorSourceDocument.Create());
 
         var codeDocument = TestRazorCodeDocument.Create(TestRazorSourceDocument.Create(), imports);
 

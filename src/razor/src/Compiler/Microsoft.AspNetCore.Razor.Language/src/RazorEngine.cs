@@ -1,213 +1,59 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language.Extensions;
+using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public abstract class RazorEngine
+public sealed class RazorEngine
 {
-#pragma warning disable CS0618 // Type or member is obsolete
-    private static RazorEngine CreateCore(RazorConfiguration configuration, bool designTime, Action<IRazorEngineBuilder> configure)
-#pragma warning restore CS0618 // Type or member is obsolete
+    public ImmutableArray<IRazorEngineFeature> Features { get; }
+    public ImmutableArray<IRazorEnginePhase> Phases { get; }
+
+    internal RazorEngine(ImmutableArray<IRazorEngineFeature> features, ImmutableArray<IRazorEnginePhase> phases)
     {
-        if (configuration == null)
+        Features = features;
+        Phases = phases;
+
+        foreach (var feature in features)
         {
-            throw new ArgumentNullException(nameof(configuration));
+            feature.Engine = this;
         }
 
-        var builder = new DefaultRazorEngineBuilder(designTime);
-        AddDefaults(builder);
-
-        if (designTime)
+        foreach (var phase in phases)
         {
-            AddDefaultDesignTimeFeatures(configuration, builder.Features);
+            phase.Engine = this;
         }
-        else
+    }
+
+    public void Process(RazorCodeDocument document)
+    {
+        if (document == null)
         {
-            AddDefaultRuntimeFeatures(configuration, builder.Features);
+            throw new ArgumentNullException(nameof(document));
         }
 
-        configure?.Invoke(builder);
-        return builder.Build();
-    }
-
-#pragma warning disable CS0618 // Type or member is obsolete
-    private static void AddDefaults(IRazorEngineBuilder builder)
-#pragma warning restore CS0618 // Type or member is obsolete
-    {
-        AddDefaultPhases(builder.Phases);
-        AddDefaultFeatures(builder.Features);
-    }
-
-    private static void AddDefaultPhases(IList<IRazorEnginePhase> phases)
-    {
-        phases.Add(new DefaultRazorParsingPhase());
-        phases.Add(new DefaultRazorSyntaxTreePhase());
-        phases.Add(new DefaultRazorTagHelperContextDiscoveryPhase());
-        phases.Add(new DefaultRazorTagHelperRewritePhase());
-        phases.Add(new DefaultRazorIntermediateNodeLoweringPhase());
-        phases.Add(new DefaultRazorDocumentClassifierPhase());
-        phases.Add(new DefaultRazorDirectiveClassifierPhase());
-        phases.Add(new DefaultRazorOptimizationPhase());
-        phases.Add(new DefaultRazorCSharpLoweringPhase());
-    }
-
-    private static void AddDefaultFeatures(ICollection<IRazorEngineFeature> features)
-    {
-        // General extensibility
-        features.Add(new DefaultRazorDirectiveFeature());
-        var targetExtensionFeature = new DefaultRazorTargetExtensionFeature();
-        features.Add(targetExtensionFeature);
-        features.Add(new DefaultMetadataIdentifierFeature());
-
-        // Syntax Tree passes
-        features.Add(new DefaultDirectiveSyntaxTreePass());
-        features.Add(new HtmlNodeOptimizationPass());
-
-        // Intermediate Node Passes
-        features.Add(new DefaultDocumentClassifierPass());
-        features.Add(new MetadataAttributePass());
-        features.Add(new DirectiveRemovalOptimizationPass());
-        features.Add(new DefaultTagHelperOptimizationPass());
-
-        // Default Code Target Extensions
-        targetExtensionFeature.TargetExtensions.Add(new MetadataAttributeTargetExtension());
-
-        // Default configuration
-        var configurationFeature = new DefaultDocumentClassifierPassFeature();
-        configurationFeature.ConfigureClass.Add((document, @class) =>
+        foreach (var phase in Phases)
         {
-            @class.ClassName = "Template";
-            @class.Modifiers.Add("public");
-        });
-
-        configurationFeature.ConfigureNamespace.Add((document, @namespace) =>
-        {
-            @namespace.Content = "Razor";
-        });
-
-        configurationFeature.ConfigureMethod.Add((document, method) =>
-        {
-            method.MethodName = "ExecuteAsync";
-            method.ReturnType = $"global::{typeof(Task).FullName}";
-
-            method.Modifiers.Add("public");
-            method.Modifiers.Add("async");
-            method.Modifiers.Add("override");
-        });
-
-        features.Add(configurationFeature);
+            phase.Execute(document);
+        }
     }
 
-    private static void AddDefaultRuntimeFeatures(RazorConfiguration configuration, ICollection<IRazorEngineFeature> features)
+    internal bool TryGetFeature<TFeature>([NotNullWhen(true)] out TFeature? feature)
+        where TFeature : class, IRazorEngineFeature
     {
-        // Configure options
-        features.Add(new DefaultRazorParserOptionsFeature(designTime: false, version: configuration.LanguageVersion, fileKind: null));
-        features.Add(new DefaultRazorCodeGenerationOptionsFeature(designTime: false));
-
-        // Intermediate Node Passes
-        features.Add(new PreallocatedTagHelperAttributeOptimizationPass());
-
-        // Code Target Extensions
-        var targetExtension = features.OfType<IRazorTargetExtensionFeature>().FirstOrDefault();
-        Debug.Assert(targetExtension != null);
-
-        targetExtension.TargetExtensions.Add(new DefaultTagHelperTargetExtension());
-        targetExtension.TargetExtensions.Add(new PreallocatedAttributeTargetExtension());
-    }
-
-    private static void AddDefaultDesignTimeFeatures(RazorConfiguration configuration, ICollection<IRazorEngineFeature> features)
-    {
-        // Configure options
-        features.Add(new DefaultRazorParserOptionsFeature(designTime: true, version: configuration.LanguageVersion, fileKind: null));
-        features.Add(new DefaultRazorCodeGenerationOptionsFeature(designTime: true));
-        features.Add(new SuppressChecksumOptionsFeature());
-
-        // Intermediate Node Passes
-        features.Add(new DesignTimeDirectivePass());
-
-        // Code Target Extensions
-        var targetExtension = features.OfType<IRazorTargetExtensionFeature>().FirstOrDefault();
-        Debug.Assert(targetExtension != null);
-
-        targetExtension.TargetExtensions.Add(new DefaultTagHelperTargetExtension());
-        targetExtension.TargetExtensions.Add(new DesignTimeDirectiveTargetExtension());
-    }
-
-    public abstract IReadOnlyList<IRazorEngineFeature> Features { get; }
-
-    public abstract IReadOnlyList<IRazorEnginePhase> Phases { get; }
-
-    public abstract void Process(RazorCodeDocument document);
-
-#nullable restore
-    internal TFeature? GetFeature<TFeature>()
-    {
-        var count = Features.Count;
-        for (var i = 0; i < count; i++)
+        foreach (var item in Features)
         {
-            if (Features[i] is TFeature feature)
+            if (item is TFeature result)
             {
-                return feature;
+                feature = result;
+                return true;
             }
         }
 
-        return default;
+        feature = null;
+        return false;
     }
-#nullable disable
-
-    #region Obsolete
-    [Obsolete("This method is obsolete and will be removed in a future version.")]
-    public static RazorEngine Create()
-    {
-        return Create(configure: null);
-    }
-
-    [Obsolete("This method is obsolete and will be removed in a future version. The recommended alternative is " + nameof(RazorProjectEngine) + "." + nameof(RazorProjectEngine.Create))]
-    public static RazorEngine Create(Action<IRazorEngineBuilder> configure) => CreateCore(RazorConfiguration.Default, false, configure);
-
-    [Obsolete("This method is obsolete and will be removed in a future version. The recommended alternative is " + nameof(RazorProjectEngine) + "." + nameof(RazorProjectEngine.Create))]
-    public static RazorEngine CreateDesignTime()
-    {
-        return CreateDesignTime(configure: null);
-    }
-
-    [Obsolete("This method is obsolete and will be removed in a future version. The recommended alternative is " + nameof(RazorProjectEngine) + "." + nameof(RazorProjectEngine.Create))]
-    public static RazorEngine CreateDesignTime(Action<IRazorEngineBuilder> configure) => CreateCore(RazorConfiguration.Default, true, configure);
-
-    [Obsolete("This method is obsolete and will be removed in a future version.")]
-    public static RazorEngine CreateEmpty(Action<IRazorEngineBuilder> configure)
-    {
-        if (configure == null)
-        {
-            throw new ArgumentNullException(nameof(configure));
-        }
-
-        var builder = new DefaultRazorEngineBuilder(designTime: false);
-        configure(builder);
-        return builder.Build();
-    }
-
-    [Obsolete("This method is obsolete and will be removed in a future version.")]
-    public static RazorEngine CreateDesignTimeEmpty(Action<IRazorEngineBuilder> configure)
-    {
-        if (configure == null)
-        {
-            throw new ArgumentNullException(nameof(configure));
-        }
-
-        var builder = new DefaultRazorEngineBuilder(designTime: true);
-        configure(builder);
-        return builder.Build();
-    }
-    #endregion
 }
-

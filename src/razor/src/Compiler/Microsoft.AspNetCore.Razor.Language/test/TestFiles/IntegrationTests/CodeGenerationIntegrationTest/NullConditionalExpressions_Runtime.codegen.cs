@@ -5,7 +5,7 @@
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 {
     #line hidden
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"bb8d8c34e68ddf6c5aaf34e0f1c5f319f48c57e4ba3661228c4eeeb8bb9b79ce", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"bb8d8c34e68ddf6c5aaf34e0f1c5f319f48c57e4ba3661228c4eeeb8bb9b79ce", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_NullConditionalExpressions_Runtime
     {
         #pragma warning disable 1998

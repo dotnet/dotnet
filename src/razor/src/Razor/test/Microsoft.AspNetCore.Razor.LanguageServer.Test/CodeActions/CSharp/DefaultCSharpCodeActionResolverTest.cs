@@ -194,7 +194,10 @@ public class DefaultCSharpCodeActionResolverTest : LanguageServerTestBase
         codeActionParams = new CodeActionResolveParams()
         {
             Data = new JObject(),
-            RazorFileUri = documentUri
+            RazorFileIdentifier = new VSTextDocumentIdentifier
+            {
+                Uri = documentUri
+            }
         };
 
         languageServer ??= CreateLanguageServer();

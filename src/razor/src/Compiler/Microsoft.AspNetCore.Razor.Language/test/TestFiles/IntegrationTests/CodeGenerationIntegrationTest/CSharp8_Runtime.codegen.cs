@@ -12,7 +12,7 @@ using System.Collections.Generic;
 #line default
 #line hidden
 #nullable disable
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"4c55c366b179d82f3d2800004985646e9bf0edbf993e2f4a94cbb70079823905", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"4c55c366b179d82f3d2800004985646e9bf0edbf993e2f4a94cbb70079823905", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_CSharp8_Runtime
     {
         #pragma warning disable 1998

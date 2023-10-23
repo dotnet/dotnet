@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -13,7 +14,7 @@ internal class DefaultRazorCSharpDocument : RazorCSharpDocument
 {
     private readonly string _generatedCode;
     private readonly RazorDiagnostic[] _diagnostics;
-    private readonly SourceMapping[] _sourceMappings;
+    private readonly ImmutableArray<SourceMapping> _sourceMappings;
     private readonly LinePragma[] _linePragmas;
     private readonly RazorCodeGenerationOptions _options;
     private readonly RazorCodeDocument _codeDocument;
@@ -23,7 +24,7 @@ internal class DefaultRazorCSharpDocument : RazorCSharpDocument
         string generatedCode,
         RazorCodeGenerationOptions options,
         RazorDiagnostic[] diagnostics,
-        SourceMapping[] sourceMappings,
+        ImmutableArray<SourceMapping> sourceMappings,
         LinePragma[] linePragmas)
     {
         if (generatedCode == null)
@@ -41,7 +42,7 @@ internal class DefaultRazorCSharpDocument : RazorCSharpDocument
         _options = options;
 
         _diagnostics = diagnostics ?? Array.Empty<RazorDiagnostic>();
-        _sourceMappings = sourceMappings ?? Array.Empty<SourceMapping>();
+        _sourceMappings = sourceMappings;
         _linePragmas = linePragmas ?? Array.Empty<LinePragma>();
     }
 
@@ -49,7 +50,7 @@ internal class DefaultRazorCSharpDocument : RazorCSharpDocument
 
     public override string GeneratedCode => _generatedCode;
 
-    public override IReadOnlyList<SourceMapping> SourceMappings => _sourceMappings;
+    public override ImmutableArray<SourceMapping> SourceMappings => _sourceMappings;
 
     internal override IReadOnlyList<LinePragma> LinePragmas => _linePragmas;
 

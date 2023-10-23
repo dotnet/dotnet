@@ -30,18 +30,4 @@ public static class InheritsDirective
         builder.AddDirective(Directive, FileKinds.Legacy, FileKinds.Component, FileKinds.ComponentImport);
         builder.Features.Add(new InheritsDirectivePass());
     }
-
-    #region Obsolete
-    [Obsolete("This method is obsolete and will be removed in a future version.")]
-    public static void Register(IRazorEngineBuilder builder)
-    {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        builder.AddDirective(Directive);
-        builder.Features.Add(new InheritsDirectivePass());
-    }
-    #endregion
 }

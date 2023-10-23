@@ -40,7 +40,7 @@ public class DefaultWorkspaceSemanticTokensRefreshPublisherTest : LanguageServer
         testAccessor.WaitForEmpty();
 
         // Assert
-        Assert.Equal(0, serverClient.Requests.Count);
+        Assert.Empty(serverClient.Requests);
     }
 
     [Fact]

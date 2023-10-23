@@ -7,6 +7,8 @@ using System;
 using System.Globalization;
 using Microsoft.Extensions.Internal;
 
+using CSharpLinePosition = Microsoft.CodeAnalysis.Text.LinePosition;
+
 namespace Microsoft.AspNetCore.Razor.Language;
 
 /// <summary>
@@ -35,6 +37,11 @@ public struct SourceLocation : IEquatable<SourceLocation>
     /// <param name="characterIndex">The character index.</param>
     public SourceLocation(int absoluteIndex, int lineIndex, int characterIndex)
         : this(filePath: null, absoluteIndex: absoluteIndex, lineIndex: lineIndex, characterIndex: characterIndex)
+    {
+    }
+
+    public SourceLocation(string filePath, int absoluteIndex, CSharpLinePosition linePosition)
+        : this(filePath, absoluteIndex, linePosition.Line, linePosition.Character)
     {
     }
 

@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using Moq;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -17,7 +16,7 @@ public class RazorProjectEngineFeatureBaseTest
         var testFeature = new TestFeature();
 
         // Act
-        testFeature.ProjectEngine = Mock.Of<RazorProjectEngine>();
+        testFeature.ProjectEngine = RazorProjectEngine.CreateEmpty();
 
         // Assert
         Assert.Equal(1, testFeature.InitializationCount);

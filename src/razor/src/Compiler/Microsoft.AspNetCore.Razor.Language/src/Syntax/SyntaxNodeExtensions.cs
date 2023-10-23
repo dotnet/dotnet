@@ -69,30 +69,29 @@ internal static class SyntaxNodeExtensions
     {
         try
         {
-            if (source.Length == 0)
+            if (source.Text.Length == 0)
             {
                 // Just a marker symbol
                 return new SourceLocation(source.FilePath, 0, 0, 0);
             }
-            if (node.Position == source.Length)
+            if (node.Position == source.Text.Length)
             {
                 // E.g. Marker symbol at the end of the document
-                var lastPosition = source.Length - 1;
-                var endsWithLineBreak = SyntaxFacts.IsNewLine(source[lastPosition]);
-                var lastLocation = source.Lines.GetLocation(lastPosition);
+                var lastPosition = source.Text.Length - 1;
+                var endsWithLineBreak = SyntaxFacts.IsNewLine(source.Text[lastPosition]);
+                var lastLocation = source.Text.Lines.GetLinePosition(lastPosition);
                 return new SourceLocation(
                     source.FilePath, // GetLocation prefers RelativePath but we want FilePath.
-                    lastLocation.AbsoluteIndex + 1,
-                    lastLocation.LineIndex + (endsWithLineBreak ? 1 : 0),
-                    endsWithLineBreak ? 0 : lastLocation.CharacterIndex + 1);
+                    lastPosition + 1,
+                    lastLocation.Line + (endsWithLineBreak ? 1 : 0),
+                    endsWithLineBreak ? 0 : lastLocation.Character + 1);
             }
 
-            var location = source.Lines.GetLocation(node.Position);
+            var location = source.Text.Lines.GetLinePosition(node.Position);
             return new SourceLocation(
                 source.FilePath, // GetLocation prefers RelativePath but we want FilePath.
-                location.AbsoluteIndex,
-                location.LineIndex,
-                location.CharacterIndex);
+                node.Position,
+                location);
         }
         catch (IndexOutOfRangeException)
         {
@@ -104,9 +103,9 @@ internal static class SyntaxNodeExtensions
     public static SourceSpan GetSourceSpan(this SyntaxNode node, RazorSourceDocument source)
     {
         var location = node.GetSourceLocation(source);
-        var endLocation = source.Lines.GetLocation(node.EndPosition);
-        var lineCount = endLocation.LineIndex - location.LineIndex;
-        return new SourceSpan(location.FilePath, location.AbsoluteIndex, location.LineIndex, location.CharacterIndex, node.FullWidth, lineCount, endLocation.CharacterIndex);
+        var endLocation = source.Text.Lines.GetLinePosition(node.EndPosition);
+        var lineCount = endLocation.Line - location.LineIndex;
+        return new SourceSpan(location.FilePath, location.AbsoluteIndex, location.LineIndex, location.CharacterIndex, node.FullWidth, lineCount, endLocation.Character);
     }
 
     /// <summary>

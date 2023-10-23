@@ -616,7 +616,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
             parser.StartParser();
 
             // Assert
-            Assert.Equal(1, textBuffer.AttachedChangedEvents.Count);
+            Assert.Single(textBuffer.AttachedChangedEvents);
             Assert.NotNull(parser._parser);
         }
     }

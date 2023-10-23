@@ -5,7 +5,7 @@
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 {
     #line hidden
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"9168a1bd59651e5e083cf79f3271ea80436a9539f637069ba388b14b675f3b39", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SwitchExpression_RecursivePattern.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"9168a1bd59651e5e083cf79f3271ea80436a9539f637069ba388b14b675f3b39", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/SwitchExpression_RecursivePattern.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_SwitchExpression_RecursivePattern_Runtime
     {
         #pragma warning disable 1998

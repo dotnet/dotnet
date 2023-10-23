@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
@@ -28,10 +27,7 @@ internal class ViewComponentTypeVisitor : SymbolVisitor
 
     public override void VisitAssembly(IAssemblySymbol symbol)
     {
-        if (ViewComponentTagHelperDescriptorProvider.IsTagHelperAssembly(symbol))
-        {
-            Visit(symbol.GlobalNamespace);
-        }
+        Visit(symbol.GlobalNamespace);
     }
 
     public override void VisitNamedType(INamedTypeSymbol symbol)

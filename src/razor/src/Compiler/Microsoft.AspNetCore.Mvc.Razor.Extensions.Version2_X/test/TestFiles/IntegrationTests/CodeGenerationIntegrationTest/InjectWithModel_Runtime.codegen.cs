@@ -13,7 +13,7 @@ namespace AspNetCore
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"319d5fa6f848e64d19bf7eab2f5e3339cdfc75b02a9bc6f2773eed1a40f5e9d0", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"319d5fa6f848e64d19bf7eab2f5e3339cdfc75b02a9bc6f2773eed1a40f5e9d0", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InjectWithModel.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_InjectWithModel : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<MyModel>
     {
         #pragma warning disable 1998

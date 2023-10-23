@@ -29,7 +29,7 @@ public class SectionTargetExtensionTest
             SectionMethodName = "CreateSection"
         };
 
-        var context = TestCodeRenderingContext.CreateRuntime();
+        using var context = TestCodeRenderingContext.CreateRuntime();
 
         // Act
         extension.WriteSection(context, node);
@@ -63,7 +63,7 @@ public class SectionTargetExtensionTest
             SectionMethodName = "CreateSection"
         };
 
-        var context = TestCodeRenderingContext.CreateDesignTime();
+        using var context = TestCodeRenderingContext.CreateDesignTime();
 
         // Act
         extension.WriteSection(context, node);

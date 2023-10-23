@@ -164,9 +164,8 @@ public class FunctionsDirectivePassTest : RazorProjectEngineTestBase
 
     private static DocumentIntermediateNode Lower(RazorCodeDocument codeDocument, RazorProjectEngine projectEngine)
     {
-        for (var i = 0; i < projectEngine.Phases.Count; i++)
+        foreach (var phase in projectEngine.Phases)
         {
-            var phase = projectEngine.Phases[i];
             phase.Execute(codeDocument);
 
             if (phase is IRazorDocumentClassifierPhase)

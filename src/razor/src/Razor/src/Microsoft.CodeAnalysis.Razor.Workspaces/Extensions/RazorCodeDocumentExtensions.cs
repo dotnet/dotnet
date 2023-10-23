@@ -9,7 +9,6 @@ namespace Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 
 internal static class RazorCodeDocumentExtensions
 {
-    private static readonly object s_sourceTextKey = new();
     private static readonly object s_cSharpSourceTextKey = new();
     private static readonly object s_htmlSourceTextKey = new();
 
@@ -20,19 +19,7 @@ internal static class RazorCodeDocumentExtensions
             throw new ArgumentNullException(nameof(document));
         }
 
-        var sourceTextObj = document.Items[s_sourceTextKey];
-        if (sourceTextObj is null)
-        {
-            var source = document.Source;
-            var charBuffer = new char[source.Length];
-            source.CopyTo(0, charBuffer, 0, source.Length);
-            var sourceText = SourceText.From(new string(charBuffer));
-            document.Items[s_sourceTextKey] = sourceText;
-
-            return sourceText;
-        }
-
-        return (SourceText)sourceTextObj;
+        return document.Source.Text;
     }
 
     public static SourceText GetCSharpSourceText(this RazorCodeDocument document)

@@ -30,19 +30,4 @@ public static class SectionDirective
         builder.Features.Add(new SectionDirectivePass());
         builder.AddTargetExtension(new SectionTargetExtension());
     }
-
-    #region Obsolete
-    [Obsolete("This method is obsolete and will be removed in a future version.")]
-    public static void Register(IRazorEngineBuilder builder)
-    {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        builder.AddDirective(Directive);
-        builder.Features.Add(new SectionDirectivePass());
-        builder.AddTargetExtension(new SectionTargetExtension());
-    }
-    #endregion
 }

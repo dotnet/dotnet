@@ -5,7 +5,7 @@
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 {
     #line hidden
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"77f2d2a6c05eb6fd6b50ca4e425c887ee527eddaca21ae01f7c0288ab53bff45", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EnumTagHelpers.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"77f2d2a6c05eb6fd6b50ca4e425c887ee527eddaca21ae01f7c0288ab53bff45", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EnumTagHelpers.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_EnumTagHelpers_Runtime
     {
         #line hidden

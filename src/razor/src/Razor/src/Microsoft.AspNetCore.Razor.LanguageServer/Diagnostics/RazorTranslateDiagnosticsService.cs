@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging;
 using Diagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
 using DiagnosticSeverity = Microsoft.VisualStudio.LanguageServer.Protocol.DiagnosticSeverity;
@@ -20,7 +21,6 @@ using Position = Microsoft.VisualStudio.LanguageServer.Protocol.Position;
 using RazorDiagnosticFactory = Microsoft.AspNetCore.Razor.Language.RazorDiagnosticFactory;
 using SourceText = Microsoft.CodeAnalysis.Text.SourceText;
 using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
-using TextSpan = Microsoft.AspNetCore.Razor.Language.Syntax.TextSpan;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 
@@ -170,8 +170,7 @@ internal class RazorTranslateDiagnosticsService
             return false;
         }
 
-        
-        var owner = syntaxTree.Root.FindNode(d.Range.ToRazorTextSpan(sourceText), getInnermostNodeForTie: true);
+        var owner = syntaxTree.Root.FindNode(d.Range.ToTextSpan(sourceText), getInnermostNodeForTie: true);
         if (IsCsharpKind(owner))
         {
             return true;
@@ -509,7 +508,7 @@ internal class RazorTranslateDiagnosticsService
         // semi-intelligent way.
 
         var syntaxTree = codeDocument.GetSyntaxTree();
-        var span = diagnosticRange.ToRazorTextSpan(codeDocument.GetSourceText());
+        var span = diagnosticRange.ToTextSpan(codeDocument.GetSourceText());
         var owner = syntaxTree.Root.FindNode(span, getInnermostNodeForTie: true);
 
         switch (owner?.Kind)

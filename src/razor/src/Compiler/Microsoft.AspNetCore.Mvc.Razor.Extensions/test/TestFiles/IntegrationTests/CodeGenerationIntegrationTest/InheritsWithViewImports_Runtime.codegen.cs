@@ -12,8 +12,8 @@ namespace AspNetCore
     using global::Microsoft.AspNetCore.Mvc;
     using global::Microsoft.AspNetCore.Mvc.Rendering;
     using global::Microsoft.AspNetCore.Mvc.ViewFeatures;
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"a652fac42d6a27ace9b45de079bd1bd21d47f29255b96899785aaa55a4a8e354", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsWithViewImports.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"0fd3e40bc660f76f39c803bba3ce5cbaf8ca19f7a8c1563212571e769673e06a", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"a652fac42d6a27ace9b45de079bd1bd21d47f29255b96899785aaa55a4a8e354", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsWithViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"0fd3e40bc660f76f39c803bba3ce5cbaf8ca19f7a8c1563212571e769673e06a", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/_ViewImports.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InheritsWithViewImports.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]
     #nullable restore

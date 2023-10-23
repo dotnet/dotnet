@@ -63,7 +63,7 @@ internal static class CodeActionExtensions
         var resolveParams = new CodeActionResolveParams()
         {
             Data = razorCodeAction.Data,
-            RazorFileUri = context.Request.TextDocument.Uri
+            RazorFileIdentifier = context.Request.TextDocument
         };
 
         var resolutionParams = new RazorCodeActionResolutionParams()
@@ -100,7 +100,7 @@ internal static class CodeActionExtensions
         var resolveParams = new CodeActionResolveParams()
         {
             Data = razorCodeAction.Data,
-            RazorFileUri = context.Request.TextDocument.Uri
+            RazorFileIdentifier = context.Request.TextDocument
         };
 
         var resolutionParams = new RazorCodeActionResolutionParams()

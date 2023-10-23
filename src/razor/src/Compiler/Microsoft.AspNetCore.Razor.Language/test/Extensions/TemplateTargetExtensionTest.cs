@@ -33,7 +33,7 @@ public class TemplateTargetExtensionTest
             PopWriterMethod = "TestPopWriter"
         };
 
-        var context = TestCodeRenderingContext.CreateRuntime(nodeWriter: nodeWriter);
+        using var context = TestCodeRenderingContext.CreateRuntime(nodeWriter: nodeWriter);
 
         // Act
         extension.WriteTemplate(context, node);

@@ -5,7 +5,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -19,7 +18,8 @@ internal class MetadataAttributePass : IntermediateNodePassBase, IRazorOptimizat
 
     protected override void OnInitialized()
     {
-        _identifierFeature = Engine.GetFeature<IMetadataIdentifierFeature>();
+        Engine.TryGetFeature(out _identifierFeature);
+        Debug.Assert(_identifierFeature is not null);
     }
 
     protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
@@ -101,9 +101,9 @@ internal class MetadataAttributePass : IntermediateNodePassBase, IRazorOptimizat
         }
 
         // Checksum of the main source
-        var checksum = codeDocument.Source.GetChecksum();
-        var checksumAlgorithm = codeDocument.Source.GetChecksumAlgorithm();
-        if (checksum == null || checksum.Length == 0 || checksumAlgorithm == null)
+        var checksum = codeDocument.Source.Text.GetChecksum();
+        var checksumAlgorithm = codeDocument.Source.Text.ChecksumAlgorithm;
+        if (checksum == null || checksum.Length == 0 || checksumAlgorithm is CodeAnalysis.Text.SourceHashAlgorithm.None)
         {
             // Don't generate anything unless we have all of the required information.
             return;
@@ -118,15 +118,14 @@ internal class MetadataAttributePass : IntermediateNodePassBase, IRazorOptimizat
 
         // Now process the checksums of the imports
         Debug.Assert(_identifierFeature != null);
-        for (var i = 0; i < codeDocument.Imports.Count; i++)
-        {
-            var import = codeDocument.Imports[i];
 
-            checksum = import.GetChecksum();
-            checksumAlgorithm = import.GetChecksumAlgorithm();
+        foreach (var import in codeDocument.Imports)
+        {
+            checksum = import.Text.GetChecksum();
+            checksumAlgorithm = import.Text.ChecksumAlgorithm;
             identifier = _identifierFeature.GetIdentifier(codeDocument, import);
 
-            if (checksum == null || checksum.Length == 0 || checksumAlgorithm == null || identifier == null)
+            if (checksum == null || checksum.Length == 0 || checksumAlgorithm == CodeAnalysis.Text.SourceHashAlgorithm.None || identifier == null)
             {
                 // It's ok to skip an import if we don't have all of the required information.
                 continue;

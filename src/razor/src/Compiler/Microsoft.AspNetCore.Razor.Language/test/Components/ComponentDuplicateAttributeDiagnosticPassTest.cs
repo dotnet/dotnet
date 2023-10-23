@@ -18,7 +18,7 @@ public class ComponentDuplicateAttributeDiagnosticPassTest
     public ComponentDuplicateAttributeDiagnosticPassTest()
     {
         Pass = new ComponentMarkupDiagnosticPass();
-        ProjectEngine = (DefaultRazorProjectEngine)RazorProjectEngine.Create(
+        ProjectEngine = RazorProjectEngine.Create(
             RazorConfiguration.Default,
             RazorProjectFileSystem.Create(Environment.CurrentDirectory),
             b =>
@@ -33,7 +33,7 @@ public class ComponentDuplicateAttributeDiagnosticPassTest
         Pass.Engine = Engine;
     }
 
-    private DefaultRazorProjectEngine ProjectEngine { get; }
+    private RazorProjectEngine ProjectEngine { get; }
 
     private RazorEngine Engine { get; }
 
@@ -167,9 +167,8 @@ public class ComponentDuplicateAttributeDiagnosticPassTest
 
     private DocumentIntermediateNode Lower(RazorCodeDocument codeDocument)
     {
-        for (var i = 0; i < Engine.Phases.Count; i++)
+        foreach (var phase in Engine.Phases)
         {
-            var phase = Engine.Phases[i];
             if (phase is IRazorCSharpLoweringPhase)
             {
                 break;

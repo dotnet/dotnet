@@ -5,7 +5,7 @@
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 {
     #line hidden
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA256", @"af161186fc847e3b1cff0dd7b9c1f0535ff384409c6559dbf0799a8c3407d342", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyImplicitExpressionInCode.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"af161186fc847e3b1cff0dd7b9c1f0535ff384409c6559dbf0799a8c3407d342", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyImplicitExpressionInCode.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_EmptyImplicitExpressionInCode_Runtime
     {
         #pragma warning disable 1998

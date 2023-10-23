@@ -26,7 +26,4 @@ internal static class TextSpanExtensions
 
         return range;
     }
-
-    public static Range ToRange(this Language.Syntax.TextSpan span, SourceText sourceText)
-        => new TextSpan(span.Start, span.Length).ToRange(sourceText);
 }

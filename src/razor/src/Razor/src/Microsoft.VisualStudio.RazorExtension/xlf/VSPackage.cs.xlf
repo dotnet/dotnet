@@ -69,12 +69,12 @@
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDescription">
         <source>If true, pressing space will commit suggestions for Html elements and components</source>
-        <target state="new">If true, pressing space will commit suggestions for Html elements and components</target>
+        <target state="translated">Pokud pravdiví, stisknutím mezerníku se potvrdí návrhy pro elementy a komponenty HTML.</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CommitElementsWithSpaceDisplayName">
         <source>Commit Elements with Space</source>
-        <target state="new">Commit Elements with Space</target>
+        <target state="translated">Potvrdit elementy mezerníkem</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_FormattingOnTypeDescription">

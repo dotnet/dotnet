@@ -5,6 +5,7 @@
 
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X;
@@ -80,7 +81,7 @@ public class MvcViewDocumentClassifierPassTest : RazorProjectEngineTestBase
     public void MvcViewDocumentClassifierPass_SetsClass()
     {
         // Arrange
-        var properties = new RazorSourceDocumentProperties(filePath: "ignored", relativePath: "Test.cshtml");
+        var properties = RazorSourceDocumentProperties.Create(filePath: "ignored", relativePath: "Test.cshtml");
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create("some-content", properties));
 
         var projectEngine = CreateProjectEngine();
@@ -105,7 +106,7 @@ public class MvcViewDocumentClassifierPassTest : RazorProjectEngineTestBase
     public void MvcViewDocumentClassifierPass_NullFilePath_SetsClass()
     {
         // Arrange
-        var properties = new RazorSourceDocumentProperties(filePath: null, relativePath: null);
+        var properties = RazorSourceDocumentProperties.Create(filePath: null, relativePath: null);
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create("some-content", properties));
 
         var projectEngine = CreateProjectEngine();
@@ -123,7 +124,7 @@ public class MvcViewDocumentClassifierPassTest : RazorProjectEngineTestBase
         // Assert
         Assert.Equal("global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>", visitor.Class.BaseType);
         Assert.Equal(new[] { "public" }, visitor.Class.Modifiers);
-        Assert.Equal("AspNetCore_0a8cac771ca188eacc57e2c96c31f5611925c5ecedccb16b8c236d6c0d325112", visitor.Class.ClassName);
+        AssertEx.Equal("AspNetCore_ec563e63d931b806184cb02f79875e4f3b21d1ca043ad06699424459128b58c0", visitor.Class.ClassName);
     }
 
     [Theory]
@@ -132,7 +133,7 @@ public class MvcViewDocumentClassifierPassTest : RazorProjectEngineTestBase
     public void MvcViewDocumentClassifierPass_UsesRelativePathToGenerateTypeName(string relativePath, string expected)
     {
         // Arrange
-        var properties = new RazorSourceDocumentProperties(filePath: "ignored", relativePath: relativePath);
+        var properties = RazorSourceDocumentProperties.Create(filePath: "ignored", relativePath: relativePath);
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create("some-content", properties));
 
         var projectEngine = CreateProjectEngine();
@@ -155,7 +156,7 @@ public class MvcViewDocumentClassifierPassTest : RazorProjectEngineTestBase
     public void MvcViewDocumentClassifierPass_UsesAbsolutePath_IfRelativePathIsNotSet()
     {
         // Arrange
-        var properties = new RazorSourceDocumentProperties(filePath: @"x::\application\Views\Home\Index.cshtml", relativePath: null);
+        var properties = RazorSourceDocumentProperties.Create(filePath: @"x::\application\Views\Home\Index.cshtml", relativePath: null);
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create("some-content", properties));
 
         var projectEngine = CreateProjectEngine();
@@ -178,7 +179,7 @@ public class MvcViewDocumentClassifierPassTest : RazorProjectEngineTestBase
     public void MvcViewDocumentClassifierPass_SanitizesClassName()
     {
         // Arrange
-        var properties = new RazorSourceDocumentProperties(filePath: @"x:\Test.cshtml", relativePath: "path.with+invalid-chars");
+        var properties = RazorSourceDocumentProperties.Create(filePath: @"x:\Test.cshtml", relativePath: "path.with+invalid-chars");
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create("@page", properties));
 
         var projectEngine = CreateProjectEngine();
@@ -223,9 +224,8 @@ public class MvcViewDocumentClassifierPassTest : RazorProjectEngineTestBase
 
     private static DocumentIntermediateNode CreateIRDocument(RazorProjectEngine engine, RazorCodeDocument codeDocument)
     {
-        for (var i = 0; i < engine.Phases.Count; i++)
+        foreach (var phase in engine.Phases)
         {
-            var phase = engine.Phases[i];
             phase.Execute(codeDocument);
 
             if (phase is IRazorIntermediateNodeLoweringPhase)

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Razor;
@@ -48,16 +49,17 @@ internal static class CodeBlockService
             // No well-formed @code block exists. Generate the method within an @code block at the end of the file and conduct manual formatting.
             var indentedMethod = FormattingUtilities.AddIndentationToMethod(templateWithMethodSignature, options, startingIndent: 0);
             var codeBlockStartText = "@code {" + Environment.NewLine;
-            var lastCharacterLocation = code.Source.Lines.GetLocation(code.Source.Length - 1);
+            var sourceText = code.Source.Text;
+            var lastCharacterLocation = sourceText.Lines[^1];
             var insertCharacterIndex = 0;
-            if (lastCharacterLocation.LineIndex == code.Source.Lines.Count - 1 && !IsLineEmpty(code.Source, lastCharacterLocation))
+            if (!IsLineEmpty(lastCharacterLocation))
             {
                 // The last line of the file is not empty so we need to place the code at the end of that line with a new line at the beginning.
-                insertCharacterIndex = lastCharacterLocation.CharacterIndex + 1;
+                insertCharacterIndex = lastCharacterLocation.EndIncludingLineBreak - lastCharacterLocation.Start;
                 codeBlockStartText = $"{Environment.NewLine}{codeBlockStartText}";
             }
 
-            var eofPosition = new Position(code.Source.Lines.Count - 1, insertCharacterIndex);
+            var eofPosition = new Position(lastCharacterLocation.LineNumber, insertCharacterIndex);
             var eofRange = new Range { Start = eofPosition, End = eofPosition };
             var start = new TextEdit()
             {
@@ -84,12 +86,13 @@ internal static class CodeBlockService
 
         var openBraceLocation = openBrace.GetSourceLocation(code.Source);
         var closeBraceLocation = closeBrace.GetSourceLocation(code.Source);
-        var previousLine = code.Source.Lines.GetLocation(closeBraceLocation.AbsoluteIndex - closeBraceLocation.CharacterIndex - 1);
+        var previousLineAbsoluteIndex = closeBraceLocation.AbsoluteIndex - closeBraceLocation.CharacterIndex - 1;
+        var previousLine = code.Source.Text.Lines.GetLinePosition(previousLineAbsoluteIndex);
 
         var insertLineLocation =
-            openBraceLocation.LineIndex == closeBraceLocation.LineIndex || !IsLineEmpty(code.Source, previousLine)
+            openBraceLocation.LineIndex == closeBraceLocation.LineIndex || !IsLineEmpty(code.Source.Text.Lines[previousLine.Line])
             ? closeBraceLocation
-            : previousLine;
+            : new SourceLocation(previousLineAbsoluteIndex, previousLine.Line, previousLine.Character);
 
         var formattedGeneratedMethod = FormatMethodInCodeBlock(
             code.Source,
@@ -153,8 +156,8 @@ internal static class CodeBlockService
 
         // There is other code that exists in the @code block. Look at what is above the line we are going to insert at.
         // If there is code above it, we need to add a new line at the beginning the generated code.
-        var previousLine = source.Lines.GetLocation(insertLocation.AbsoluteIndex - insertLocation.CharacterIndex - 1);
-        if (!IsLineEmpty(source, previousLine))
+        var previousLine = source.Text.Lines.GetLineFromPosition(insertLocation.AbsoluteIndex - insertLocation.CharacterIndex - 1);
+        if (!IsLineEmpty(previousLine))
         {
             formattedGeneratedMethod = $"{Environment.NewLine}{formattedGeneratedMethod}";
         }
@@ -165,22 +168,7 @@ internal static class CodeBlockService
     /// <summary>
     ///  Determines whether the line is empty.
     /// </summary>
-    /// <param name="source">The RazorSourceDocument of where the line in question lives.</param>
-    /// <param name="endLineLocation">
-    ///  The <see cref="CodeAnalysis.SourceLocation"/> of the end of the line in question.
-    /// </param>
+    /// <param name="textLine">The line to check.</param>
     /// <returns>true if the line is empty, otherwise false.</returns>
-    private static bool IsLineEmpty(RazorSourceDocument source, SourceLocation endLineLocation)
-    {
-        var beginningLineIndex = endLineLocation.AbsoluteIndex - endLineLocation.CharacterIndex;
-        for(var i = endLineLocation.AbsoluteIndex; i >= beginningLineIndex; i--)
-        {
-            if (!char.IsWhiteSpace(source[i]))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
+    private static bool IsLineEmpty(TextLine textLine) => textLine.Start == textLine.End;
 }

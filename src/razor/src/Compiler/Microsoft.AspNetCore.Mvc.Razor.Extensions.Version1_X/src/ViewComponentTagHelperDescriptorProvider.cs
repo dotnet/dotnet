@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 
@@ -37,37 +38,39 @@ public sealed class ViewComponentTagHelperDescriptorProvider : RazorEngineFeatur
             return;
         }
 
-        var types = new List<INamedTypeSymbol>();
-        var visitor = new ViewComponentTypeVisitor(vcAttribute, nonVCAttribute, types);
+        var factory = new ViewComponentTagHelperDescriptorFactory(compilation);
+        var collector = new Collector(compilation, factory, vcAttribute, nonVCAttribute);
 
-        // We always visit the global namespace.
-        visitor.Visit(compilation.Assembly.GlobalNamespace);
+        collector.Collect(context);
+    }
 
-        foreach (var reference in compilation.References)
+    private class Collector(
+        Compilation compilation,
+        ViewComponentTagHelperDescriptorFactory factory,
+        INamedTypeSymbol vcAttribute,
+        INamedTypeSymbol nonVCAttribute)
+        : TagHelperCollector<Collector>(compilation, targetSymbol: null)
+    {
+        private readonly ViewComponentTagHelperDescriptorFactory _factory = factory;
+        private readonly INamedTypeSymbol _vcAttribute = vcAttribute;
+        private readonly INamedTypeSymbol _nonVCAttribute = nonVCAttribute;
+
+        protected override void Collect(ISymbol symbol, ICollection<TagHelperDescriptor> results)
         {
-            if (compilation.GetAssemblyOrModuleSymbol(reference) is IAssemblySymbol assembly)
+            using var _ = ListPool<INamedTypeSymbol>.GetPooledObject(out var types);
+            var visitor = new ViewComponentTypeVisitor(_vcAttribute, _nonVCAttribute, types);
+
+            visitor.Visit(symbol);
+
+            foreach (var type in types)
             {
-                if (IsTagHelperAssembly(assembly))
+                var descriptor = _factory.CreateDescriptor(type);
+
+                if (descriptor != null)
                 {
-                    visitor.Visit(assembly.GlobalNamespace);
+                    results.Add(descriptor);
                 }
             }
         }
-
-        var factory = new ViewComponentTagHelperDescriptorFactory(compilation);
-        for (var i = 0; i < types.Count; i++)
-        {
-            var descriptor = factory.CreateDescriptor(types[i]);
-
-            if (descriptor != null)
-            {
-                context.Results.Add(descriptor);
-            }
-        }
-    }
-
-    private bool IsTagHelperAssembly(IAssemblySymbol assembly)
-    {
-        return assembly.Name != null && !assembly.Name.StartsWith("System.", StringComparison.Ordinal);
     }
 }

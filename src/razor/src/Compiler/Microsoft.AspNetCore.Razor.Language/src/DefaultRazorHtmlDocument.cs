@@ -4,7 +4,7 @@
 #nullable disable
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -12,14 +12,14 @@ internal class DefaultRazorHtmlDocument : RazorHtmlDocument
 {
     private readonly string _generatedHtml;
     private readonly RazorCodeGenerationOptions _options;
-    private readonly SourceMapping[] _sourceMappings;
+    private readonly ImmutableArray<SourceMapping> _sourceMappings;
     private readonly RazorCodeDocument _codeDocument;
 
     public DefaultRazorHtmlDocument(
         RazorCodeDocument codeDocument,
         string generatedHtml,
         RazorCodeGenerationOptions options,
-        SourceMapping[] sourceMappings)
+        ImmutableArray<SourceMapping> sourceMappings)
     {
         if (generatedHtml == null)
         {
@@ -41,7 +41,7 @@ internal class DefaultRazorHtmlDocument : RazorHtmlDocument
 
     public override RazorCodeGenerationOptions Options => _options;
 
-    public override IReadOnlyList<SourceMapping> SourceMappings => _sourceMappings;
+    public override ImmutableArray<SourceMapping> SourceMappings => _sourceMappings;
 
     public override RazorCodeDocument CodeDocument => _codeDocument;
 }

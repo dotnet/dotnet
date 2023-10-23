@@ -1010,7 +1010,6 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
         // global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode0 = expression;
         WriteCSharpCode(context, new CSharpCodeIntermediateNode
         {
-            Source = node.Source,
             Children =
             {
                 new IntermediateToken
@@ -1018,7 +1017,11 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
                     Kind = TokenKind.CSharp,
                     Content = $"global::{ComponentsApi.IComponentRenderMode.FullTypeName} {_scopeStack.RenderModeVarName} = "
                 },
-                node.Children[0],
+                new CSharpCodeIntermediateNode
+                {
+                    Source = node.Source,
+                    Children = { node.Children[0] }
+                },
                 new IntermediateToken
                 {
                     Kind = TokenKind.CSharp,

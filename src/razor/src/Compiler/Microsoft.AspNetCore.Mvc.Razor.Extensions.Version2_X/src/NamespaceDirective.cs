@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language;
@@ -188,18 +187,4 @@ public static class NamespaceDirective
             base.VisitDirective(node);
         }
     }
-
-    #region Obsolete
-    [Obsolete("This method is obsolete and will be removed in a future version.")]
-    public static void Register(IRazorEngineBuilder builder)
-    {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        builder.AddDirective(Directive);
-        builder.Features.Add(new Pass());
-    }
-    #endregion
 }

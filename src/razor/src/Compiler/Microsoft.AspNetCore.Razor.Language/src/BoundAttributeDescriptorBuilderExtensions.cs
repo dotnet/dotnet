@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language.Components;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -36,42 +35,6 @@ public static class BoundAttributeDescriptorBuilderExtensions
         builder.SetMetadata(MetadataCollection.Create(pair1, pair2, pair3));
     }
 
-    [Obsolete($"Do not use this method. {nameof(BoundAttributeDescriptorBuilder.SetMetadata)} should be used instead.")]
-    public static void SetPropertyName(this BoundAttributeDescriptorBuilder builder, string propertyName)
-    {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        if (propertyName == null)
-        {
-            throw new ArgumentNullException(nameof(propertyName));
-        }
-
-        Debug.Fail($"Do not use this method. {nameof(BoundAttributeDescriptorBuilder.SetMetadata)} should be used instead.");
-
-        builder.Metadata[TagHelperMetadata.Common.PropertyName] = propertyName;
-    }
-
-    [Obsolete($"Do not use this method. {nameof(BoundAttributeDescriptorBuilder.TryGetMetadataValue)} should be used instead.")]
-    public static string GetPropertyName(this BoundAttributeDescriptorBuilder builder)
-    {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        Debug.Fail($"Do not use this method. {nameof(BoundAttributeDescriptorBuilder.TryGetMetadataValue)} should be used instead.");
-
-        if (builder.TryGetMetadataValue(TagHelperMetadata.Common.PropertyName, out var value))
-        {
-            return value;
-        }
-
-        return null;
-    }
-
     public static void AsDictionary(
         this BoundAttributeDescriptorBuilder builder,
         string attributeNamePrefix,
@@ -90,62 +53,5 @@ public static class BoundAttributeDescriptorBuilderExtensions
     internal static void SetMetadata(this BoundAttributeParameterDescriptorBuilder builder, KeyValuePair<string, string> pair)
     {
         builder.SetMetadata(MetadataCollection.Create(pair));
-    }
-
-    [Obsolete($"Do not use this method. {nameof(BoundAttributeParameterDescriptorBuilder.SetMetadata)} should be used instead.")]
-    public static void SetPropertyName(this BoundAttributeParameterDescriptorBuilder builder, string propertyName)
-    {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        if (propertyName == null)
-        {
-            throw new ArgumentNullException(nameof(propertyName));
-        }
-
-        Debug.Fail($"Do not use this method. {nameof(BoundAttributeParameterDescriptorBuilder.SetMetadata)} should be used instead.");
-
-        builder.Metadata[TagHelperMetadata.Common.PropertyName] = propertyName;
-    }
-
-    [Obsolete($"Do not use this method. {nameof(BoundAttributeParameterDescriptorBuilder.SetMetadata)} should be used instead.")]
-    public static void SetBindAttributeGetSet(this BoundAttributeParameterDescriptorBuilder builder)
-    {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        Debug.Fail($"Do not use this method. {nameof(BoundAttributeParameterDescriptorBuilder.SetMetadata)} should be used instead.");
-
-        builder.Metadata[ComponentMetadata.Bind.BindAttributeGetSet] = bool.TrueString;
-    }
-
-    [Obsolete($"Do not use this method. {nameof(BoundAttributeParameterDescriptorBuilder.TryGetMetadataValue)} should be used instead.")]
-    public static string GetPropertyName(this BoundAttributeParameterDescriptorBuilder builder)
-    {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        Debug.Fail($"Do not use this method. {nameof(BoundAttributeParameterDescriptorBuilder.TryGetMetadataValue)} should be used instead.");
-
-        if (builder.TryGetMetadataValue(TagHelperMetadata.Common.PropertyName, out var value))
-        {
-            return value;
-        }
-
-        return null;
-    }
-
-    [Obsolete($"Do not use this method. {nameof(BoundAttributeDescriptorBuilder.SetMetadata)} should be used instead.")]
-    public static void SetGloballyQualifiedTypeName(this BoundAttributeDescriptorBuilder builder, string globallyQualifiedTypeName)
-    {
-        Debug.Fail($"Do not use this method. {nameof(BoundAttributeDescriptorBuilder.SetMetadata)} should be used instead.");
-
-        builder.Metadata[TagHelperMetadata.Common.GloballyQualifiedTypeName] = globallyQualifiedTypeName;
     }
 }

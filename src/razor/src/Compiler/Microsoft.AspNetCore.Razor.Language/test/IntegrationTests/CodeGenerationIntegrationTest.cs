@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Xunit;
@@ -1097,11 +1098,14 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         AssertSourceMappingsMatchBaseline(codeDocument);
     }
 
-    private static IReadOnlyList<RazorSourceDocument> GetImports(RazorProjectEngine projectEngine, RazorProjectItem projectItem)
+    private static ImmutableArray<RazorSourceDocument> GetImports(RazorProjectEngine projectEngine, RazorProjectItem projectItem)
     {
         var importFeatures = projectEngine.ProjectFeatures.OfType<IImportProjectFeature>();
         var importItems = importFeatures.SelectMany(f => f.GetImports(projectItem));
-        var importSourceDocuments = importItems.Where(i => i.Exists).Select(i => RazorSourceDocument.ReadFrom(i)).ToList();
+        var importSourceDocuments = importItems
+            .Where(i => i.Exists)
+            .Select(RazorSourceDocument.ReadFrom)
+            .ToImmutableArray();
 
         return importSourceDocuments;
     }

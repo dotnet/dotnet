@@ -1,15 +1,30 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public abstract class RazorCodeDocument
+public sealed class RazorCodeDocument
 {
+    public ImmutableArray<RazorSourceDocument> Imports { get; }
+    public ItemCollection Items { get; }
+    public RazorSourceDocument Source { get; }
+
+    internal RazorCodeDocument(RazorSourceDocument source, ImmutableArray<RazorSourceDocument> imports)
+    {
+        if (source == null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        Source = source;
+        Imports = imports.NullToEmpty();
+
+        Items = new ItemCollection();
+    }
+
     public static RazorCodeDocument Create(RazorSourceDocument source)
     {
         if (source == null)
@@ -17,24 +32,24 @@ public abstract class RazorCodeDocument
             throw new ArgumentNullException(nameof(source));
         }
 
-        return Create(source, imports: null);
+        return Create(source, imports: default);
     }
 
     public static RazorCodeDocument Create(
         RazorSourceDocument source,
-        IEnumerable<RazorSourceDocument> imports)
+        ImmutableArray<RazorSourceDocument> imports)
     {
         if (source == null)
         {
             throw new ArgumentNullException(nameof(source));
         }
 
-        return new DefaultRazorCodeDocument(source, imports);
+        return new RazorCodeDocument(source, imports);
     }
 
     public static RazorCodeDocument Create(
         RazorSourceDocument source,
-        IEnumerable<RazorSourceDocument> imports,
+        ImmutableArray<RazorSourceDocument> imports,
         RazorParserOptions parserOptions,
         RazorCodeGenerationOptions codeGenerationOptions)
     {
@@ -43,15 +58,9 @@ public abstract class RazorCodeDocument
             throw new ArgumentNullException(nameof(source));
         }
 
-        var codeDocument = new DefaultRazorCodeDocument(source, imports);
+        var codeDocument = new RazorCodeDocument(source, imports);
         codeDocument.SetParserOptions(parserOptions);
         codeDocument.SetCodeGenerationOptions(codeGenerationOptions);
         return codeDocument;
     }
-
-    public abstract IReadOnlyList<RazorSourceDocument> Imports { get; }
-
-    public abstract ItemCollection Items { get; }
-
-    public abstract RazorSourceDocument Source { get; }
 }
