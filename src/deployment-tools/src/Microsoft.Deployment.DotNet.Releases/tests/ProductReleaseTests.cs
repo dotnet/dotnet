@@ -59,7 +59,7 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         [Fact]
         public async Task ItCanCreateASingleRelease()
         {
-            var releases = await Product.GetReleasesAsync(@"data\5.0\releases.json").ConfigureAwait(false);
+            var releases = await Product.GetReleasesAsync(@"data\5.0\releases.json");
 
             Assert.Equal(new ReleaseVersion("5.0.17"), releases[0].Version);
             Assert.Null(releases[0].Product);
@@ -70,11 +70,11 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         {
             string tempPath = Path.GetRandomFileName();
             var products = await ProductCollection.GetFromFileAsync(
-                Path.Combine(tempPath, "releases-index.json"), downloadLatest: true).ConfigureAwait(false);
+                Path.Combine(tempPath, "releases-index.json"), downloadLatest: true);
 
             foreach (var product in products)
             {
-                await product.GetReleasesAsync(Path.Combine(tempPath, product.ProductVersion, "releases.json"), downloadLatest: true).ConfigureAwait(false);
+                await product.GetReleasesAsync(Path.Combine(tempPath, product.ProductVersion, "releases.json"), downloadLatest: true);
             }
 
             // Nothing to assert, but we want to ensure there are no exceptions parsing all the latest data from the CDN

@@ -63,9 +63,9 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         {
             ProductRelease release = GetProductRelease("2.1", "2.1.8");
             ReleaseFile file = release.Files.FirstOrDefault();
-            Func<Task> f = async () => await file.DownloadAsync(null).ConfigureAwait(false);
+            Func<Task> f = async () => await file.DownloadAsync(null);
 
-            ArgumentNullException exception = await Assert.ThrowsAsync<ArgumentNullException>(f).ConfigureAwait(false);
+            ArgumentNullException exception = await Assert.ThrowsAsync<ArgumentNullException>(f);
         }
 
         [Fact]
@@ -73,9 +73,9 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         {
             ProductRelease release = GetProductRelease("2.1", "2.1.8");
             ReleaseFile file = release.Files.FirstOrDefault();
-            Func<Task> f = async () => await file.DownloadAsync("").ConfigureAwait(false);
+            Func<Task> f = async () => await file.DownloadAsync("");
 
-            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(f).ConfigureAwait(false);
+            ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(f);
 
             Assert.Equal($"Value cannot be empty. (Parameter 'destinationPath')", exception.Message);
         }

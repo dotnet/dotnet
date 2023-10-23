@@ -73,8 +73,8 @@ exit /b 1
 
 :VS2022
 :: Setup vars for VS2022
-set __PlatformToolset=v142
-set __VSVersion=16 2019
+set __PlatformToolset=v143
+set __VSVersion=17 2022
 :: Set the environment for the native build
 call "%VS170COMNTOOLS%..\..\VC\Auxiliary\Build\vcvarsall.bat" %__VCBuildArch%
 goto :SetupDirs
