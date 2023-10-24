@@ -304,7 +304,13 @@ internal static class RazorSyntaxNodeExtensions
         // Tie-breaking.
         if (!getInnermostNodeForTie)
         {
-            var cuRoot = node.Ancestors().Last();
+            var cuRoot = node.Ancestors();
+
+            // Only null if node is the original node is the root
+            if (cuRoot is null)
+            {
+                return node;
+            }
 
             while (true)
             {
@@ -326,5 +332,114 @@ internal static class RazorSyntaxNodeExtensions
         }
 
         return node;
+    }
+
+    public static bool ExistsOnTarget(this SyntaxNode node, SyntaxNode target)
+    {
+        var nodeString = node.RemoveEmptyNewLines().ToFullString();
+        var matchingNode = target.DescendantNodesAndSelf()
+            // Empty new lines can affect our comparison so we remove them since they're insignificant.
+            .Where(n => n.RemoveEmptyNewLines().ToFullString() == nodeString)
+            .FirstOrDefault();
+
+        return matchingNode is not null;
+    }
+
+    public static SyntaxNode RemoveEmptyNewLines(this SyntaxNode node)
+    {
+        if (node is MarkupTextLiteralSyntax markupTextLiteral)
+        {
+            var literalTokensWithoutLines = new AspNetCore.Razor.Language.Syntax.SyntaxList<SyntaxToken>(
+                markupTextLiteral.LiteralTokens.Where(t => t.Kind != SyntaxKind.NewLine));
+            var updatedLiteral = markupTextLiteral.WithLiteralTokens(literalTokensWithoutLines);
+            return updatedLiteral;
+        }
+
+        return node;
+    }
+
+    public static bool IsCSharpNode(this SyntaxNode node, [NotNullWhen(true)] out CSharpCodeBlockSyntax? csharpCodeBlock)
+    {
+        csharpCodeBlock = null;
+
+        // Any piece of C# code can potentially be surrounded by a CSharpCodeBlockSyntax.
+        if (node is CSharpCodeBlockSyntax outerCSharpCodeBlock)
+        {
+            var innerCSharpNode = outerCSharpCodeBlock.ChildNodes().FirstOrDefault(
+                n => n is CSharpStatementSyntax or
+                     RazorDirectiveSyntax or
+                     CSharpExplicitExpressionSyntax or
+                     CSharpImplicitExpressionSyntax);
+            if (innerCSharpNode is not null)
+            {
+                return innerCSharpNode.IsCSharpNode(out csharpCodeBlock);
+            }
+        }
+        // @code {
+        //    var foo = "bar";
+        // }
+        else if (node is RazorDirectiveSyntax razorDirective)
+        {
+            // code {
+            //    var foo = "bar";
+            // }
+            var razorDirectiveBody = razorDirective.Body as RazorDirectiveBodySyntax;
+            if (razorDirectiveBody is not null)
+            {
+                var directive = razorDirectiveBody.Keyword.ToFullString();
+                if (directive != "code")
+                {
+                    return false;
+                }
+
+                // {
+                //    var foo = "bar";
+                // }
+                csharpCodeBlock = razorDirectiveBody.CSharpCode;
+
+                // var foo = "bar";
+                var innerCodeBlock = csharpCodeBlock.ChildNodes().FirstOrDefault(n => n is CSharpCodeBlockSyntax);
+                if (innerCodeBlock is not null)
+                {
+                    csharpCodeBlock = innerCodeBlock as CSharpCodeBlockSyntax;
+                }
+            }
+        }
+        // @(x)
+        else if (node is CSharpExplicitExpressionSyntax csharpExplicitExpression)
+        {
+            // (x)
+            var body = csharpExplicitExpression.Body as CSharpExplicitExpressionBodySyntax;
+            if (body is not null)
+            {
+                // x
+                csharpCodeBlock = body.CSharpCode;
+            }
+        }
+        // @x
+        else if (node is CSharpImplicitExpressionSyntax csharpImplicitExpression)
+        {
+            var csharpImplicitExpressionBody = csharpImplicitExpression.Body as CSharpImplicitExpressionBodySyntax;
+            if (csharpImplicitExpressionBody is not null)
+            {
+                // x
+                csharpCodeBlock = csharpImplicitExpressionBody.CSharpCode;
+            }
+        }
+        // @{
+        //    var x = 1;
+        // }
+        else if (node is CSharpStatementSyntax csharpStatement)
+        {
+            // {
+            //    var x = 1;
+            // }
+            var csharpStatementBody = csharpStatement.Body;
+
+            // var x = 1;
+            csharpCodeBlock = csharpStatementBody.ChildNodes().FirstOrDefault(n => n is CSharpCodeBlockSyntax) as CSharpCodeBlockSyntax;
+        }
+
+        return csharpCodeBlock is not null;
     }
 }

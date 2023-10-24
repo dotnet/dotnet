@@ -26,6 +26,15 @@ internal static class IRazorDocumentMappingServiceExtensions
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
 
+        return GetPositionInfo(service, codeDocument, sourceText, hostDocumentIndex);
+    }
+
+    public static DocumentPositionInfo GetPositionInfo(
+        this IRazorDocumentMappingService service,
+        RazorCodeDocument codeDocument,
+        SourceText sourceText,
+        int hostDocumentIndex)
+    {
         sourceText.GetLineAndOffset(hostDocumentIndex, out var line, out var character);
         var position = new Position(line, character);
 

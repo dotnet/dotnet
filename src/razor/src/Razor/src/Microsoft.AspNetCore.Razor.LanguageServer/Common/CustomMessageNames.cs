@@ -23,6 +23,7 @@ internal static class CustomMessageNames
     public const string RazorProjectContextsEndpoint = "razor/projectContexts";
     public const string RazorPullDiagnosticEndpointName = "razor/pullDiagnostics";
     public const string RazorProvidePreciseRangeSemanticTokensEndpoint = "razor/provideSemanticTokensRanges";
+    public const string RazorMapCodeEndpoint = "razor/mapCode";
 
     // VS Windows and VS Code
     public const string RazorUpdateCSharpBufferEndpoint = "razor/updateCSharpBuffer";

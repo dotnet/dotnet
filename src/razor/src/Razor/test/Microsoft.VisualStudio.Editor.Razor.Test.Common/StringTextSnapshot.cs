@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.VisualStudio.Utilities;
 
@@ -222,7 +221,7 @@ public class StringTextSnapshot : ITextSnapshot2
             {
                 _content = _content[..^2];
             }
-            else if(_content.Length > 0 && SyntaxFacts.IsNewLine(_content[_content.Length - 1]))
+            else if(_content.Length > 0 && SyntaxFacts.IsNewLine(_content[^1]))
             {
                 _content = _content[..^1];
             }
