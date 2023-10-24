@@ -11,7 +11,8 @@ namespace Microsoft.AspNetCore.Razor.Utilities;
 
 internal sealed partial record Checksum
 {
-    private const int HashSize = 32;
+    // Size of SHA-256
+    private const int HashSize = 256 / 8;
 
     public static readonly Checksum Null = new(default(HashData));
 

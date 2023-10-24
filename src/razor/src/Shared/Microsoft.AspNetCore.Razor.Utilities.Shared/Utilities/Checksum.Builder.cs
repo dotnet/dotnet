@@ -2,19 +2,37 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+#if !NET5_0_OR_GREATER
 using System.Buffers;
+#endif
 using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.Extensions.ObjectPool;
+
+// PERFORMANCE: Care has been taken to avoid using IncrementalHash on .NET Framework, which can cause
+// threadpool starvation. Essentially, on .NET Framework, IncrementalHash ends up using the OS implementation
+// of SHA-256, which creates several finalizable objects in the form of safe handles. By creating instances
+// of SHA256 for .NET Framework (and netstandard2.0), we get the managed code version of SHA-256, which
+// doesn't have the overhead of using the OS implementations.
+//
+// See https://github.com/dotnet/roslyn/issues/67995 for more detail.
+
+#if NET5_0_OR_GREATER
+using HashingType = System.Security.Cryptography.IncrementalHash;
+#else
+using HashingType = System.Security.Cryptography.SHA256;
+#endif
 
 namespace Microsoft.AspNetCore.Razor.Utilities;
 
 internal sealed partial record Checksum
 {
-    internal readonly ref struct Builder
+    internal readonly ref partial struct Builder
     {
+        private static readonly ObjectPool<HashingType> s_hashPool = DefaultPool.Create(Policy.Instance);
+
         private enum TypeKind : byte
         {
             Null,
@@ -31,11 +49,15 @@ internal sealed partial record Checksum
         [ThreadStatic]
         private static byte[]? s_buffer;
 
-        private readonly IncrementalHash _hash;
+        private readonly HashingType _hash;
 
         public Builder()
         {
-            _hash = IncrementalHashPool.Default.Get();
+            _hash = s_hashPool.Get();
+
+#if !NET5_0_OR_GREATER
+            _hash.Initialize();
+#endif
         }
 
         static byte[] GetBuffer()
@@ -43,119 +65,141 @@ internal sealed partial record Checksum
 
         public Checksum FreeAndGetChecksum()
         {
-            var result = From(_hash.GetHashAndReset());
-            IncrementalHashPool.Default.Return(_hash);
+#if NET5_0_OR_GREATER
+            Span<byte> hash = stackalloc byte[HashSize];
+            _hash.GetHashAndReset(hash);
+            var result = From(hash);
+#else
+            _hash.TransformFinalBlock(inputBuffer: [], inputOffset: 0, inputCount: 0);
+            var result = From(_hash.Hash);
+#endif
+
+            s_hashPool.Return(_hash);
             return result;
         }
 
-        private static void AppendTypeKind(IncrementalHash hash, TypeKind kind)
+        private void AppendBuffer(int count)
+        {
+            Debug.Assert(s_buffer is not null);
+
+#if NET5_0_OR_GREATER
+            _hash.AppendData(s_buffer, offset: 0, count);
+#else
+            _hash.TransformBlock(s_buffer, inputOffset: 0, inputCount: count, outputBuffer: null, outputOffset: 0);
+#endif
+        }
+
+        private void AppendTypeKind(TypeKind kind)
         {
             var buffer = GetBuffer();
             buffer[0] = (byte)kind;
-            hash.AppendData(buffer, offset: 0, count: 1);
+            AppendBuffer(count: 1);
         }
 
-        private static void AppendBoolValue(IncrementalHash hash, bool value)
+        private void AppendBoolValue(bool value)
         {
-            var buffer = GetBuffer();
-            buffer[0] = (byte)(value ? 1 : 0);
-            hash.AppendData(buffer, offset: 0, count: sizeof(bool));
+            AppendByteValue((byte)(value ? 1 : 0));
         }
 
-        private static void AppendByteValue(IncrementalHash hash, byte value)
+        private void AppendByteValue(byte value)
         {
             var buffer = GetBuffer();
             buffer[0] = value;
-            hash.AppendData(buffer, offset: 0, count: sizeof(byte));
+            AppendBuffer(count: sizeof(byte));
         }
 
-        private static void AppendCharValue(IncrementalHash hash, char value)
+        private void AppendCharValue(char value)
         {
             var buffer = GetBuffer();
             BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(0, sizeof(char)), value);
-            hash.AppendData(buffer, offset: 0, count: sizeof(char));
+            AppendBuffer(count: sizeof(char));
         }
 
-        private static void AppendInt32Value(IncrementalHash hash, int value)
+        private void AppendInt32Value(int value)
         {
             var buffer = GetBuffer();
             BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(0, sizeof(int)), value);
-            hash.AppendData(buffer, offset: 0, count: sizeof(int));
+            AppendBuffer(count: sizeof(int));
         }
 
-        private static void AppendInt64Value(IncrementalHash hash, long value)
+        private void AppendInt64Value(long value)
         {
             var buffer = GetBuffer();
             BinaryPrimitives.WriteInt64LittleEndian(buffer.AsSpan(0, sizeof(long)), value);
-            hash.AppendData(buffer, offset: 0, count: sizeof(long));
+            AppendBuffer(count: sizeof(long));
         }
 
-        private static void AppendStringValue(IncrementalHash hash, string value)
+        private void AppendStringValue(string value)
         {
-            var stringBytes = MemoryMarshal.AsBytes(value.AsSpan());
-            Debug.Assert(stringBytes.Length == value.Length * 2);
+#if NET5_0_OR_GREATER
+            _hash.AppendData(MemoryMarshal.AsBytes(value.AsSpan()));
+            _hash.AppendData(MemoryMarshal.AsBytes("\0".AsSpan()));
+#else
+            using var _ = ArrayPool<byte>.Shared.GetPooledArray(4 * 1024, out var buffer);
 
-            var buffer = ArrayPool<byte>.Shared.Rent(4 * 1024);
-            try
+            AppendData(_hash, buffer, value);
+            AppendData(_hash, buffer, "\0");
+
+            static void AppendData(HashingType hash, byte[] buffer, string value)
             {
+                var stringBytes = MemoryMarshal.AsBytes(value.AsSpan());
+                Debug.Assert(stringBytes.Length == value.Length * 2);
+
                 var index = 0;
                 while (index < stringBytes.Length)
                 {
-                    var remaining = stringBytes.Length - index;
+                    var remaining = stringBytes.Length;
                     var toCopy = Math.Min(remaining, buffer.Length);
+
                     stringBytes.Slice(index, toCopy).CopyTo(buffer);
-                    hash.AppendData(buffer, 0, toCopy);
+                    hash.TransformBlock(buffer, inputOffset: 0, inputCount: toCopy, outputBuffer: null, outputOffset: 0);
 
                     index += toCopy;
                 }
             }
-            finally
-            {
-                ArrayPool<byte>.Shared.Return(buffer);
-            }
+#endif
         }
-
-        private static void AppendHashDataValue(IncrementalHash hash, HashData value)
+        private void AppendHashDataValue(HashData value)
         {
-            AppendInt64Value(hash, value.Data1);
-            AppendInt64Value(hash, value.Data2);
-            AppendInt64Value(hash, value.Data3);
-            AppendInt64Value(hash, value.Data4);
+            AppendInt64Value(value.Data1);
+            AppendInt64Value(value.Data2);
+            AppendInt64Value(value.Data3);
+            AppendInt64Value(value.Data4);
         }
 
         public void AppendNull()
         {
-            AppendTypeKind(_hash, TypeKind.Null);
+            AppendTypeKind(TypeKind.Null);
         }
 
         public void AppendData(bool value)
         {
-            AppendTypeKind(_hash, TypeKind.Bool);
-            AppendBoolValue(_hash, value);
+            AppendTypeKind(TypeKind.Bool);
+            AppendBoolValue(value);
         }
 
         public void AppendData(byte value)
         {
-            AppendTypeKind(_hash, TypeKind.Byte);
-            AppendByteValue(_hash, value);
+            AppendTypeKind(TypeKind.Byte);
+            AppendByteValue(value);
         }
 
         public void AppendData(char value)
         {
-            AppendTypeKind(_hash, TypeKind.Char);
-            AppendCharValue(_hash, value);
+            AppendTypeKind(TypeKind.Char);
+            AppendCharValue(value);
         }
 
         public void AppendData(int value)
         {
-            AppendTypeKind(_hash, TypeKind.Int32);
-            AppendInt32Value(_hash, value);
+            AppendTypeKind(TypeKind.Int32);
+            AppendInt32Value(value);
         }
 
         public void AppendData(long value)
         {
-            AppendTypeKind(_hash, TypeKind.Int64);
-            AppendInt64Value(_hash, value);
+            AppendTypeKind(TypeKind.Int64);
+            AppendInt64Value(value);
         }
 
         public void AppendData(string? value)
@@ -166,14 +210,14 @@ internal sealed partial record Checksum
                 return;
             }
 
-            AppendTypeKind(_hash, TypeKind.String);
-            AppendStringValue(_hash, value);
+            AppendTypeKind(TypeKind.String);
+            AppendStringValue(value);
         }
 
         public void AppendData(Checksum value)
         {
-            AppendTypeKind(_hash, TypeKind.Checksum);
-            AppendHashDataValue(_hash, value.Data);
+            AppendTypeKind(TypeKind.Checksum);
+            AppendHashDataValue(value.Data);
         }
 
         public void AppendData(object? value)

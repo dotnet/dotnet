@@ -123,26 +123,25 @@ internal partial class RazorCustomMessageTarget
 
         try
         {
-            using var builder = new PooledArrayBuilder<CompletionItem>();
-
-            // Make sure to call our addition to completion before tracking telemetry requests
-            AddSnippetCompletions(request, ref builder.AsRef());
-
             var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
             var lspMethodName = Methods.TextDocumentCompletion.Name;
-            using var _ = _telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, request.CorrelationId);
-            var response = await _requestInvoker.ReinvokeRequestOnServerAsync<CompletionParams, VSInternalCompletionList?>(
-                textBuffer,
-                lspMethodName,
-                languageServerName,
-                completionParams,
-                cancellationToken).ConfigureAwait(continueOnCapturedContext);
+            ReinvocationResponse<VSInternalCompletionList?>? response;
+            using (_telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, request.CorrelationId))
+            {
+                response = await _requestInvoker.ReinvokeRequestOnServerAsync<CompletionParams, VSInternalCompletionList?>(
+                    textBuffer,
+                    lspMethodName,
+                    languageServerName,
+                    completionParams,
+                    cancellationToken).ConfigureAwait(continueOnCapturedContext);
+            }
 
             var completionList = response?.Response;
+            using var builder = new PooledArrayBuilder<CompletionItem>();
+
             if (completionList is not null)
             {
                 builder.AddRange(completionList.Items);
-                completionList.Items = builder.ToArray();
             }
             else
             {
@@ -153,9 +152,11 @@ internal partial class RazorCustomMessageTarget
                     // so if we return a "complete" list then the query won't re-query us for completion once the typing stops/slows
                     // so we'd only ever return Razor completion items.
                     IsIncomplete = true,
-                    Items = builder.ToArray(),
                 };
             }
+
+            AddSnippetCompletions(request, ref builder.AsRef());
+            completionList.Items = builder.ToArray();
 
             return completionList;
         }
@@ -318,6 +319,13 @@ internal partial class RazorCustomMessageTarget
 
         // Don't add snippets for deletion of a character
         if (request.Context.InvokeKind == VSInternalCompletionInvokeKind.Deletion)
+        {
+            return;
+        }
+
+        // Don't add snippets if the trigger characters contain whitespace
+        if (request.Context.TriggerCharacter is not null
+            && request.Context.TriggerCharacter.Contains(' '))
         {
             return;
         }
