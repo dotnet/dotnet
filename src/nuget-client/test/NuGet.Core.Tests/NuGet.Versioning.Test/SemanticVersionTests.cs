@@ -90,7 +90,7 @@ namespace NuGet.Versioning.Test
         [InlineData("1.2.3-A.00.B")]
         public void TryParseStrictReturnsFalseIfVersionIsNotStrictSemVer(string version)
         {
-            // Act 
+            // Act
             SemanticVersion? semanticVersion;
             var result = SemanticVersion.TryParse(version, out semanticVersion);
 
@@ -107,6 +107,20 @@ namespace NuGet.Versioning.Test
             string result = target.ToString();
 
             Assert.Equal("1.2.3", result);
+        }
+
+        [Fact]
+        public void Metadata_NoNullableWarning_After_HasMetadata_checked()
+        {
+            // Arrange
+            SemanticVersion target = new(1, 2, 3);
+
+            // Act
+            // should not result in a compiler warning CS8602: Dereference of a possibly null reference.
+            string result = target.HasMetadata ? target.Metadata.Substring(1) : "no-metadata";
+
+            // Assert
+            Assert.Equal("no-metadata", result);
         }
 
         private class ExtendedSemanticVersion : SemanticVersion
