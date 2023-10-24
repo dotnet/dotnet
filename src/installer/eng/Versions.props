@@ -25,8 +25,8 @@
     <VersionFeature21>30</VersionFeature21>
     <VersionFeature31>32</VersionFeature31>
     <VersionFeature50>17</VersionFeature50>
-    <VersionFeature60>21</VersionFeature60>
-    <VersionFeature70>10</VersionFeature70>
+    <VersionFeature60>22</VersionFeature60>
+    <VersionFeature70>11</VersionFeature70>
     <!-- Should be kept in sync with VersionFeature70. It should match the version of Microsoft.NET.ILLink.Tasks
          referenced by the same 7.0 SDK that references the 7.0.VersionFeature70 runtime pack. -->
     <_NET70ILLinkPackVersion>7.0.100-1.23211.1</_NET70ILLinkPackVersion>
@@ -244,13 +244,15 @@
   </PropertyGroup>
   <!-- Workload manifest package versions -->
   <PropertyGroup>
-    <MauiFeatureBand>8.0.100-preview.6</MauiFeatureBand>
-    <MauiWorkloadManifestVersion>8.0.0-preview.6.8686</MauiWorkloadManifestVersion>
-    <XamarinAndroidWorkloadManifestVersion>34.0.0-preview.6.359</XamarinAndroidWorkloadManifestVersion>
-    <XamarinIOSWorkloadManifestVersion>16.4.8646-net8-p6</XamarinIOSWorkloadManifestVersion>
-    <XamarinMacCatalystWorkloadManifestVersion>16.4.8646-net8-p6</XamarinMacCatalystWorkloadManifestVersion>
-    <XamarinMacOSWorkloadManifestVersion>13.3.8646-net8-p6</XamarinMacOSWorkloadManifestVersion>
-    <XamarinTvOSWorkloadManifestVersion>16.4.8646-net8-p6</XamarinTvOSWorkloadManifestVersion>
+    <AspireFeatureBand>8.0.100-rc.1</AspireFeatureBand>
+    <AspireWorkloadManifestVersion>8.0.0-alpha.23471.13</AspireWorkloadManifestVersion>
+    <MauiFeatureBand>8.0.100-rc.1</MauiFeatureBand>
+    <MauiWorkloadManifestVersion>8.0.0-rc.1.9171</MauiWorkloadManifestVersion>
+    <XamarinAndroidWorkloadManifestVersion>34.0.0-rc.1.432</XamarinAndroidWorkloadManifestVersion>
+    <XamarinIOSWorkloadManifestVersion>16.4.8825-net8-rc1</XamarinIOSWorkloadManifestVersion>
+    <XamarinMacCatalystWorkloadManifestVersion>16.4.8825-net8-rc1</XamarinMacCatalystWorkloadManifestVersion>
+    <XamarinMacOSWorkloadManifestVersion>13.3.8825-net8-rc1</XamarinMacOSWorkloadManifestVersion>
+    <XamarinTvOSWorkloadManifestVersion>16.4.8825-net8-rc1</XamarinTvOSWorkloadManifestVersion>
     <!-- Workloads from dotnet/emsdk -->
     <MicrosoftNETWorkloadEmscriptenCurrentManifest90100TransportPackageVersion>9.0.0-alpha.1.23507.1</MicrosoftNETWorkloadEmscriptenCurrentManifest90100TransportPackageVersion>
     <EmscriptenWorkloadManifestVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest90100TransportPackageVersion)</EmscriptenWorkloadManifestVersion>
