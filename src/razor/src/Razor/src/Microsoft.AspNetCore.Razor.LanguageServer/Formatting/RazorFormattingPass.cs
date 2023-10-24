@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -461,9 +462,73 @@ internal class RazorFormattingPass : FormattingPassBase
             }
 
             var desiredIndentationOffset = context.GetIndentationOffsetForLevel(desiredIndentationLevel);
-            var currentIndentationOffset = openBraceNode.GetTrailingWhitespaceLength(context) + codeNode.GetLeadingWhitespaceLength(context);
+            var currentIndentationOffset = GetTrailingWhitespaceLength(openBraceNode, context) + GetLeadingWhitespaceLength(codeNode, context);
 
             return desiredIndentationOffset - currentIndentationOffset;
+
+            static int GetLeadingWhitespaceLength(SyntaxNode node, FormattingContext context)
+            {
+                var tokens = node.GetTokens();
+                var whitespaceLength = 0;
+
+                foreach (var token in tokens)
+                {
+                    if (token.IsWhitespace())
+                    {
+                        if (token.Kind == SyntaxKind.NewLine)
+                        {
+                            // We need to reset when we move to a new line.
+                            whitespaceLength = 0;
+                        }
+                        else if (token.IsSpace())
+                        {
+                            whitespaceLength++;
+                        }
+                        else if (token.IsTab())
+                        {
+                            whitespaceLength += (int)context.Options.TabSize;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                return whitespaceLength;
+            }
+
+            static int GetTrailingWhitespaceLength(SyntaxNode node, FormattingContext context)
+            {
+                var tokens = node.GetTokens();
+                var whitespaceLength = 0;
+
+                for (var i = tokens.Count - 1; i >= 0; i--)
+                {
+                    var token = tokens[i];
+                    if (token.IsWhitespace())
+                    {
+                        if (token.Kind == SyntaxKind.NewLine)
+                        {
+                            whitespaceLength = 0;
+                        }
+                        else if (token.IsSpace())
+                        {
+                            whitespaceLength++;
+                        }
+                        else if (token.IsTab())
+                        {
+                            whitespaceLength += (int)context.Options.TabSize;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                return whitespaceLength;
+            }
         }
     }
 }

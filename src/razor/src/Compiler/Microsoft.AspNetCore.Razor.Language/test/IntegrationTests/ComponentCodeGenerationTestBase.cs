@@ -9862,6 +9862,40 @@ Welcome to your new app.
     }
 
     [Fact]
+    public void Component_ComplexContentInAttribute()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse(@"
+using Microsoft.AspNetCore.Components;
+
+namespace Test
+{
+    public class MyComponent : ComponentBase
+    {
+        [Parameter] public string StringProperty { get; set; }
+    }
+}
+"));
+
+        // Act
+        var generated = CompileToCSharp("""
+            <MyComponent StringProperty="@MyEnum." />
+
+            @code {
+                public enum MyEnum
+                {
+                    One,
+                    Two
+                }
+            }
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument, verifyLinePragmas: false);
+    }
+
+    [Fact]
     public void Component_TextTagsAreNotRendered()
     {
         // Arrange

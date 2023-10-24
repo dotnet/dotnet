@@ -2,12 +2,15 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using SyntaxKind = Microsoft.AspNetCore.Razor.Language.SyntaxKind;
-using SyntaxToken = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxToken;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+namespace Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 
-internal static class SyntaxTokenExtensions
+#pragma warning disable IDE0065 // Misplaced using directive
+using SyntaxKind = AspNetCore.Razor.Language.SyntaxKind;
+using SyntaxToken = AspNetCore.Razor.Language.Syntax.SyntaxToken;
+#pragma warning restore IDE0065 // Misplaced using directive
+
+internal static class RazorSyntaxTokenExtensions
 {
     public static bool IsWhitespace(this SyntaxToken token)
     {

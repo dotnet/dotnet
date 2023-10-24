@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "52cfc6738aa414d9545ca07ac0b4ecf8fab64698"
+      "commitSha": "ba5b9001a0a61ddff041886745b0b395623a9227"
     },
     {
       "packageVersion": "17.9.0-preview-23523-01",
@@ -73,10 +73,10 @@
       "commitSha": "62c02514a26464c03574137628e33ed3690c06ef"
     },
     {
-      "packageVersion": "7.0.0-preview.23522.1",
+      "packageVersion": "7.0.0-preview.23523.5",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "3112f027fde820a6efe875b7fa0b7f93acca09df"
+      "commitSha": "2e0e074455b83084137fe90208dc425b190ae80c"
     },
     {
       "packageVersion": "4.9.0-1.23520.1",
@@ -103,10 +103,10 @@
       "commitSha": "8af694a5e3986a27ccfee1a638ba311c7e9bc55d"
     },
     {
-      "packageVersion": "9.0.100-alpha.1.23523.43",
+      "packageVersion": "9.0.100-alpha.1.23523.45",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "b971c2cef431d5665f28707b9c5f17d19857d338"
+      "commitSha": "559c13a0c304bc67ae2f641479d7eaa69011de73"
     },
     {
       "packageVersion": "9.0.0-alpha.1.23518.2",

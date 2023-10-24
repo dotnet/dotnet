@@ -36,88 +36,86 @@ internal class ComponentComplexAttributeContentPass : ComponentIntermediateNodeP
     {
         for (var i = node.Children.Count - 1; i >= 0; i--)
         {
-            if (node.Children[i] is TagHelperPropertyIntermediateNode propertyNode)
+            if (node.Children[i] is TagHelperPropertyIntermediateNode propertyNode &&
+                node.TagHelpers.Any(t => t.IsComponentTagHelper))
             {
-                if (!TrySimplifyContent(propertyNode) && node.TagHelpers.Any(t => t.IsComponentTagHelper))
-                {
-                    node.Diagnostics.Add(ComponentDiagnosticFactory.Create_UnsupportedComplexContent(
-                        propertyNode,
-                        propertyNode.AttributeName));
-                    node.Children.RemoveAt(i);
-                    continue;
-                }
+                ProcessAttribute(node, propertyNode, propertyNode.AttributeName);
             }
-            else if (node.Children[i] is TagHelperHtmlAttributeIntermediateNode htmlNode)
+            else if (node.Children[i] is TagHelperHtmlAttributeIntermediateNode htmlNode &&
+                node.TagHelpers.Any(t => t.IsComponentTagHelper))
             {
-                if (!TrySimplifyContent(htmlNode) && node.TagHelpers.Any(t => t.IsComponentTagHelper))
-                {
-                    node.Diagnostics.Add(ComponentDiagnosticFactory.Create_UnsupportedComplexContent(
-                        htmlNode,
-                        htmlNode.AttributeName));
-                    node.Children.RemoveAt(i);
-                    continue;
-                }
+                ProcessAttribute(node, htmlNode, htmlNode.AttributeName);
             }
             else if (node.Children[i] is TagHelperDirectiveAttributeIntermediateNode directiveAttributeNode)
             {
-                if (!TrySimplifyContent(directiveAttributeNode))
-                {
-                    node.Diagnostics.Add(ComponentDiagnosticFactory.Create_UnsupportedComplexContent(
-                        directiveAttributeNode,
-                        directiveAttributeNode.OriginalAttributeName));
-                    node.Children.RemoveAt(i);
-                    continue;
-                }
+                ProcessAttribute(node, directiveAttributeNode, directiveAttributeNode.OriginalAttributeName);
             }
         }
     }
 
-    private static bool TrySimplifyContent(IntermediateNode node)
+    private static void ProcessAttribute(IntermediateNode parent, IntermediateNode node, string attributeName)
     {
-        if (node.Children.Count == 1 &&
-            node.Children[0] is HtmlAttributeIntermediateNode htmlNode &&
-            htmlNode.Children.Count > 1)
+        var removeNode = false;
+        var issueDiagnostic = false;
+
+        if (node.Children is [HtmlAttributeIntermediateNode { Children.Count: > 1 }])
         {
             // This case can be hit for a 'string' attribute
-            return false;
+            removeNode = true;
+            issueDiagnostic = true;
         }
-        else if (node.Children.Count == 1 &&
-            node.Children[0] is CSharpExpressionIntermediateNode cSharpNode &&
-            cSharpNode.Children.Count > 1)
+        else if (node.Children is [CSharpExpressionIntermediateNode { Children.Count: > 1 } cSharpNode])
         {
             // This case can be hit when the attribute has an explicit @ inside, which
             // 'escapes' any special sugar we provide for codegen.
             //
             // There's a special case here for explicit expressions. See https://github.com/aspnet/Razor/issues/2203
             // handling this case as a tactical matter since it's important for lambdas.
-            if (cSharpNode.Children.Count == 3 &&
-                cSharpNode.Children[0] is IntermediateToken token0 &&
-                cSharpNode.Children[2] is IntermediateToken token2 &&
-                token0.Content == "(" &&
-                token2.Content == ")")
+            if (cSharpNode.Children is [IntermediateToken { Content: "(" }, _, IntermediateToken { Content: ")" }])
             {
                 cSharpNode.Children.RemoveAt(2);
                 cSharpNode.Children.RemoveAt(0);
-
-                // We were able to simplify it, all good.
-                return true;
             }
-
-            return false;
+            else
+            {
+                removeNode = true;
+                issueDiagnostic = true;
+            }
         }
-        else if (node.Children.Count == 1 &&
-            node.Children[0] is CSharpCodeIntermediateNode)
+        else if (node.Children is [CSharpCodeIntermediateNode])
         {
             // This is the case when an attribute contains a code block @{ ... }
             // We don't support this.
-            return false;
+            removeNode = true;
+            issueDiagnostic = true;
+        }
+        else if (node.Children is [CSharpExpressionIntermediateNode, HtmlContentIntermediateNode { Children: [IntermediateToken { Content: "." }] }])
+        {
+            // This is the case when an attribute contains something like "@MyEnum."
+            // We simplify this to remove the "." so that tooling can provide completion on "MyEnum"
+            // in case the user is in the middle of typing
+            node.Children.RemoveAt(1);
+
+            // We still want to issue a diagnostic, even though we simplified, because ultimately
+            // we don't support this, so if the user isn't typing, we can't let this through
+            issueDiagnostic = true;
         }
         else if (node.Children.Count > 1)
         {
             // This is the common case for 'mixed' content
-            return false;
+            removeNode = true;
+            issueDiagnostic = true;
         }
 
-        return true;
+        if (issueDiagnostic)
+        {
+            parent.Diagnostics.Add(ComponentDiagnosticFactory.Create_UnsupportedComplexContent(
+                node,
+                attributeName));
+        }
+        if (removeNode)
+        {
+            parent.Children.Remove(node);
+        }
     }
 }
