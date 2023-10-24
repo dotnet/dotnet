@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace NuGet.Versioning
@@ -231,6 +232,7 @@ namespace NuGet.Versioning
         /// <summary>
         /// True if metadata exists for the version.
         /// </summary>
+        [MemberNotNullWhen(true, nameof(Metadata))]
         public virtual bool HasMetadata
         {
             get { return !string.IsNullOrEmpty(Metadata); }
