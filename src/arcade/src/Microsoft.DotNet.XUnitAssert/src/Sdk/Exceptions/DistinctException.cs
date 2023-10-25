@@ -31,8 +31,8 @@ namespace Xunit.Sdk
 			string collection) =>
 				new DistinctException(
 					"Assert.Distinct() Failure: Duplicate item found" + Environment.NewLine +
-					"Collection: " + collection + Environment.NewLine +
-					"Item:       " + item
+					"Collection: " + Assert.GuardArgumentNotNull(nameof(collection), collection) + Environment.NewLine +
+					"Item:       " + Assert.GuardArgumentNotNull(nameof(item), item)
 				);
 	}
 }

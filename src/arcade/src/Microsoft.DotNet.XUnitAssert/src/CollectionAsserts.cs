@@ -152,28 +152,30 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(collection), collection);
 			GuardArgumentNotNull(nameof(elementInspectors), elementInspectors);
 
-			var tracker = collection.AsTracker();
-			var index = 0;
-
-			foreach (var item in tracker)
+			using (var tracker = collection.AsTracker())
 			{
-				try
+				var index = 0;
+
+				foreach (var item in tracker)
 				{
-					if (index < elementInspectors.Length)
-						elementInspectors[index](item);
-				}
-				catch (Exception ex)
-				{
-					int? pointerIndent;
-					var formattedCollection = tracker.FormatIndexedMismatch(index, out pointerIndent);
-					throw CollectionException.ForMismatchedItem(ex, index, pointerIndent, formattedCollection);
+					try
+					{
+						if (index < elementInspectors.Length)
+							elementInspectors[index](item);
+					}
+					catch (Exception ex)
+					{
+						int? pointerIndent;
+						var formattedCollection = tracker.FormatIndexedMismatch(index, out pointerIndent);
+						throw CollectionException.ForMismatchedItem(ex, index, pointerIndent, formattedCollection);
+					}
+
+					index++;
 				}
 
-				index++;
+				if (tracker.IterationCount != elementInspectors.Length)
+					throw CollectionException.ForMismatchedItemCount(elementInspectors.Length, tracker.IterationCount, tracker.FormatStart());
 			}
-
-			if (tracker.IterationCount != elementInspectors.Length)
-				throw CollectionException.ForMismatchedItemCount(elementInspectors.Length, tracker.IterationCount, tracker.FormatStart());
 		}
 
 #if XUNIT_VALUETASK
@@ -192,28 +194,30 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(collection), collection);
 			GuardArgumentNotNull(nameof(elementInspectors), elementInspectors);
 
-			var tracker = collection.AsTracker();
-			var index = 0;
-
-			foreach (var item in tracker)
+			using (var tracker = collection.AsTracker())
 			{
-				try
+				var index = 0;
+
+				foreach (var item in tracker)
 				{
-					if (index < elementInspectors.Length)
-						await elementInspectors[index](item);
-				}
-				catch (Exception ex)
-				{
-					int? pointerIndent;
-					var formattedCollection = tracker.FormatIndexedMismatch(index, out pointerIndent);
-					throw CollectionException.ForMismatchedItem(ex, index, pointerIndent, formattedCollection);
+					try
+					{
+						if (index < elementInspectors.Length)
+							await elementInspectors[index](item);
+					}
+					catch (Exception ex)
+					{
+						int? pointerIndent;
+						var formattedCollection = tracker.FormatIndexedMismatch(index, out pointerIndent);
+						throw CollectionException.ForMismatchedItem(ex, index, pointerIndent, formattedCollection);
+					}
+
+					index++;
 				}
 
-				index++;
+				if (tracker.IterationCount != elementInspectors.Length)
+					throw CollectionException.ForMismatchedItemCount(elementInspectors.Length, tracker.IterationCount, tracker.FormatStart());
 			}
-
-			if (tracker.IterationCount != elementInspectors.Length)
-				throw CollectionException.ForMismatchedItemCount(elementInspectors.Length, tracker.IterationCount, tracker.FormatStart());
 		}
 #endif
 
@@ -255,10 +259,9 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(collection), collection);
 			GuardArgumentNotNull(nameof(comparer), comparer);
 
-			var tracker = collection.AsTracker();
-
-			if (!tracker.Contains(expected, comparer))
-				throw ContainsException.ForCollectionItemNotFound(ArgumentFormatter.Format(expected), tracker.FormatStart());
+			using (var tracker = collection.AsTracker())
+				if (!tracker.Contains(expected, comparer))
+					throw ContainsException.ForCollectionItemNotFound(ArgumentFormatter.Format(expected), tracker.FormatStart());
 		}
 
 		/// <summary>
@@ -275,13 +278,14 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(collection), collection);
 			GuardArgumentNotNull(nameof(filter), filter);
 
-			var tracker = collection.AsTracker();
+			using (var tracker = collection.AsTracker())
+			{
+				foreach (var item in tracker)
+					if (filter(item))
+						return;
 
-			foreach (var item in tracker)
-				if (filter(item))
-					return;
-
-			throw ContainsException.ForCollectionFilterNotMatched(tracker.FormatStart());
+				throw ContainsException.ForCollectionFilterNotMatched(tracker.FormatStart());
+			}
 		}
 
 		/// <summary>
@@ -307,12 +311,14 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(collection), collection);
 			GuardArgumentNotNull(nameof(comparer), comparer);
 
-			var tracker = collection.AsTracker();
-			var set = new HashSet<T>(comparer);
+			using (var tracker = collection.AsTracker())
+			{
+				var set = new HashSet<T>(comparer);
 
-			foreach (var item in tracker)
-				if (!set.Add(item))
-					throw DistinctException.ForDuplicateItem(ArgumentFormatter.Format(item), tracker.FormatStart());
+				foreach (var item in tracker)
+					if (!set.Add(item))
+						throw DistinctException.ForDuplicateItem(ArgumentFormatter.Format(item), tracker.FormatStart());
+			}
 		}
 
 		/// <summary>
@@ -353,25 +359,27 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(collection), collection);
 			GuardArgumentNotNull(nameof(comparer), comparer);
 
-			var tracker = collection.AsTracker();
-			var index = 0;
-
-			foreach (var item in tracker)
+			using (var tracker = collection.AsTracker())
 			{
-				if (comparer.Equals(item, expected))
+				var index = 0;
+
+				foreach (var item in tracker)
 				{
-					int? pointerIndent;
-					var formattedCollection = tracker.FormatIndexedMismatch(index, out pointerIndent);
+					if (comparer.Equals(item, expected))
+					{
+						int? pointerIndent;
+						var formattedCollection = tracker.FormatIndexedMismatch(index, out pointerIndent);
 
-					throw DoesNotContainException.ForCollectionItemFound(
-						ArgumentFormatter.Format(expected),
-						index,
-						pointerIndent,
-						formattedCollection
-					);
+						throw DoesNotContainException.ForCollectionItemFound(
+							ArgumentFormatter.Format(expected),
+							index,
+							pointerIndent,
+							formattedCollection
+						);
+					}
+
+					++index;
 				}
-
-				++index;
 			}
 		}
 
@@ -389,24 +397,26 @@ namespace Xunit
 			GuardArgumentNotNull(nameof(collection), collection);
 			GuardArgumentNotNull(nameof(filter), filter);
 
-			var tracker = collection.AsTracker();
-			var index = 0;
-
-			foreach (var item in tracker)
+			using (var tracker = collection.AsTracker())
 			{
-				if (filter(item))
+				var index = 0;
+
+				foreach (var item in tracker)
 				{
-					int? pointerIndent;
-					var formattedCollection = tracker.FormatIndexedMismatch(index, out pointerIndent);
+					if (filter(item))
+					{
+						int? pointerIndent;
+						var formattedCollection = tracker.FormatIndexedMismatch(index, out pointerIndent);
 
-					throw DoesNotContainException.ForCollectionFilterMatched(
-						index,
-						pointerIndent,
-						formattedCollection
-					);
+						throw DoesNotContainException.ForCollectionFilterMatched(
+							index,
+							pointerIndent,
+							formattedCollection
+						);
+					}
+
+					++index;
 				}
-
-				++index;
 			}
 		}
 
@@ -420,8 +430,7 @@ namespace Xunit
 		{
 			GuardArgumentNotNull(nameof(collection), collection);
 
-			var tracker = collection.AsTracker();
-
+			using (var tracker = collection.AsTracker())
 			using (var enumerator = tracker.GetEnumerator())
 				if (enumerator.MoveNext())
 					throw EmptyException.ForNonEmptyCollection(tracker.FormatStart());
@@ -653,33 +662,35 @@ namespace Xunit
 			var index = 0;
 			var matchIndices = new List<int>();
 			var result = default(T);
-			var tracker = collection.AsTracker();
 
-			foreach (var item in tracker)
+			using (var tracker = collection.AsTracker())
 			{
-				if (predicate == null || predicate(item))
+				foreach (var item in tracker)
 				{
-					if (++count == 1)
-						result = item;
-					if (predicate != null)
-						matchIndices.Add(index);
+					if (predicate == null || predicate(item))
+					{
+						if (++count == 1)
+							result = item;
+						if (predicate != null)
+							matchIndices.Add(index);
+					}
+
+					++index;
 				}
 
-				++index;
-			}
-
-			switch (count)
-			{
-				case 0:
-					throw SingleException.Empty(expected, tracker.FormatStart());
-				case 1:
+				switch (count)
+				{
+					case 0:
+						throw SingleException.Empty(expected, tracker.FormatStart());
+					case 1:
 #if XUNIT_NULLABLE
-					return result!;
+						return result!;
 #else
-					return result;
+						return result;
 #endif
-				default:
-					throw SingleException.MoreThanOne(count, expected, tracker.FormatStart(), matchIndices);
+					default:
+						throw SingleException.MoreThanOne(count, expected, tracker.FormatStart(), matchIndices);
+				}
 			}
 		}
 	}

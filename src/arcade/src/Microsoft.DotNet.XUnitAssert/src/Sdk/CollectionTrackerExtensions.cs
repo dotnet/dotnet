@@ -5,7 +5,6 @@
 #pragma warning disable CS8603
 #endif
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -25,8 +24,6 @@ namespace Xunit.Sdk
 #endif
 	static class CollectionTrackerExtensions
 	{
-		static readonly Type typeofIEnumerableOfT = typeof(IEnumerable<>);
-
 #if XUNIT_NULLABLE
 		internal static IEnumerable? AsNonStringEnumerable(this object? value) =>
 #else

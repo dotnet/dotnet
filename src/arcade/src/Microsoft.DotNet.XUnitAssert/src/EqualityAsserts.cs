@@ -9,6 +9,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Xunit.Sdk;
@@ -318,8 +319,8 @@ namespace Xunit
 
 			if (!(object.Equals(expected, actual) || Math.Abs(expected - actual) <= tolerance))
 				throw EqualException.ForMismatchedValues(
-					expected.ToString("G17"),
-					actual.ToString("G17"),
+					expected.ToString("G17", CultureInfo.CurrentCulture),
+					actual.ToString("G17", CultureInfo.CurrentCulture),
 					$"Values are not within tolerance {tolerance:G17}"
 				);
 		}
@@ -390,8 +391,8 @@ namespace Xunit
 
 			if (!(object.Equals(expected, actual) || Math.Abs(expected - actual) <= tolerance))
 				throw EqualException.ForMismatchedValues(
-					expected.ToString("G9"),
-					actual.ToString("G9"),
+					expected.ToString("G9", CultureInfo.CurrentCulture),
+					actual.ToString("G9", CultureInfo.CurrentCulture),
 					$"Values are not within tolerance {tolerance:G9}"
 				);
 		}
@@ -737,8 +738,8 @@ namespace Xunit
 
 			if (object.Equals(expected, actual) || Math.Abs(expected - actual) <= tolerance)
 				throw NotEqualException.ForEqualValues(
-					expected.ToString("G17"),
-					actual.ToString("G17"),
+					expected.ToString("G17", CultureInfo.CurrentCulture),
+					actual.ToString("G17", CultureInfo.CurrentCulture),
 					$"Values are within tolerance {tolerance:G17}"
 				);
 		}
@@ -809,8 +810,8 @@ namespace Xunit
 
 			if (object.Equals(expected, actual) || Math.Abs(expected - actual) <= tolerance)
 				throw NotEqualException.ForEqualValues(
-					expected.ToString("G9"),
-					actual.ToString("G9"),
+					expected.ToString("G9", CultureInfo.CurrentCulture),
+					actual.ToString("G9", CultureInfo.CurrentCulture),
 					$"Values are within tolerance {tolerance:G9}"
 				);
 		}

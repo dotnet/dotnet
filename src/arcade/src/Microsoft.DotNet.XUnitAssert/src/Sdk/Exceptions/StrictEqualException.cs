@@ -31,8 +31,8 @@ namespace Xunit.Sdk
 			string actual) =>
 				new StrictEqualException(
 					"Assert.StrictEqual() Failure: Values differ" + Environment.NewLine +
-					"Expected: " + expected + Environment.NewLine +
-					"Actual:   " + actual
+					"Expected: " + Assert.GuardArgumentNotNull(nameof(expected), expected) + Environment.NewLine +
+					"Actual:   " + Assert.GuardArgumentNotNull(nameof(actual), actual)
 				);
 	}
 }

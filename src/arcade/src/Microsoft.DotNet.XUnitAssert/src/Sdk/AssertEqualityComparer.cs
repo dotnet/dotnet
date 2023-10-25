@@ -24,7 +24,7 @@ namespace Xunit.Sdk
 	/// Default implementation of <see cref="IEqualityComparer{T}"/> used by the xUnit.net equality assertions.
 	/// </summary>
 	/// <typeparam name="T">The type that is being compared.</typeparam>
-	class AssertEqualityComparer<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] T> : IEqualityComparer<T>
+	sealed class AssertEqualityComparer<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] T> : IEqualityComparer<T>
 	{
 		internal static readonly IEqualityComparer DefaultInnerComparer = new AssertEqualityComparerAdapter<object>(new AssertEqualityComparer<object>());
 
@@ -182,9 +182,9 @@ namespace Xunit.Sdk
 		}
 
 #if XUNIT_NULLABLE
-		class FuncEqualityComparer : IEqualityComparer<T?>
+		sealed class FuncEqualityComparer : IEqualityComparer<T?>
 #else
-		class FuncEqualityComparer : IEqualityComparer<T>
+		sealed class FuncEqualityComparer : IEqualityComparer<T>
 #endif
 		{
 			readonly Func<T, T, bool> comparer;
@@ -225,7 +225,7 @@ namespace Xunit.Sdk
 			}
 		}
 
-		class TypeErasedEqualityComparer : IEqualityComparer
+		sealed class TypeErasedEqualityComparer : IEqualityComparer
 		{
 			readonly IEqualityComparer innerComparer;
 

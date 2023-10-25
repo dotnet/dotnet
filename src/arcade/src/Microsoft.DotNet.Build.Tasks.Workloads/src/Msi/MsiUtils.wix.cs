@@ -35,6 +35,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         private const string _getDirectoriesQuery = "SELECT `Directory`, `Directory_Parent`, `DefaultDir` FROM `Directory`";
 
         /// <summary>
+        /// Query string to retrieve all rows from the MSI Registry table.
+        /// </summary>
+        private const string _getRegistryQuery = "SELECT `Root`, `Key`, `Name`, `Value` FROM `Registry`";
+
+        /// <summary>
         /// Gets an enumeration of all the files inside an MSI.
         /// </summary>
         /// <param name="packagePath">The path of the MSI package to query.</param>
@@ -74,6 +79,27 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             }
 
             return directories;
+        }
+
+        /// <summary>
+        /// Gets an enumeration of all the registry keys inside an MSI.
+        /// </summary>
+        /// <param name="packagePath">The path of the MSI package to query.</param>
+        /// <returns>An enumeration of all the registry keys.</returns>
+        public static IEnumerable<RegistryRow> GetAllRegistryKeys(string packagePath)
+        {
+            using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
+            using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
+            using View view = db.OpenView(_getRegistryQuery);
+            List<RegistryRow> registryKeys = new();
+            view.Execute();
+
+            foreach (Record directoryRecord in view)
+            {
+                registryKeys.Add(RegistryRow.Create(directoryRecord));
+            }
+
+            return registryKeys;
         }
 
         /// <summary>
@@ -155,5 +181,44 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <returns>The number of bytes required to install the MSI.</returns>
         public static long GetInstallSize(string packagePath, double factor = 1.4) =>
             GetAllFiles(packagePath).Sum(f => Convert.ToInt64(f.FileSize * factor));
+
+        /// <summary>
+        /// Validates that a <see cref="Version"/> represents a valid MSI ProductVersion.
+        /// </summary>
+        /// <param name="version">The version to validate.</param>
+        /// <exception cref="ArgumentOutOfRangeException" />
+        public static void ValidateProductVersion(Version version)
+        {
+            // See to https://learn.microsoft.com/en-us/windows/win32/msi/productversion for additional information.
+
+            if (version.Major > 255)
+            {
+                throw new ArgumentOutOfRangeException(string.Format(Strings.MsiProductVersionOutOfRange, nameof(version.Major), 255));
+            }
+                
+            if (version.Minor > 255)
+            {
+                throw new ArgumentOutOfRangeException(string.Format(Strings.MsiProductVersionOutOfRange, nameof(version.Minor), 255));
+            }
+
+            if (version.Build > ushort.MaxValue)
+            {
+                throw new ArgumentOutOfRangeException(string.Format(Strings.MsiProductVersionOutOfRange, nameof(version.Build), ushort.MaxValue));
+            }
+        }
+
+        /// <summary>
+        /// Determines if the MSI contains a specific table.
+        /// </summary>
+        /// <param name="packagePath">The path to the MSI package.</param>
+        /// <param name="tableName">The name of the table.</param>
+        /// <returns><see langword="true"/> if the table exists; <see langword="false"/> otherwise.</returns>
+        public static bool HasTable(string packagePath, string tableName)
+        {
+            using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
+            using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
+
+            return db.Tables.Contains(tableName);
+        }
     }
 }

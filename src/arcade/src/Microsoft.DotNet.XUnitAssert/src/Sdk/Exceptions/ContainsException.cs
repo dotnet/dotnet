@@ -29,7 +29,7 @@ namespace Xunit.Sdk
 		public static ContainsException ForCollectionFilterNotMatched(string collection) =>
 			new ContainsException(
 				"Assert.Contains() Failure: Filter not matched in collection" + Environment.NewLine +
-				"Collection: " + collection
+				"Collection: " + Assert.GuardArgumentNotNull(nameof(collection), collection)
 			);
 
 		/// <summary>
@@ -43,8 +43,8 @@ namespace Xunit.Sdk
 			string collection) =>
 				new ContainsException(
 					"Assert.Contains() Failure: Item not found in collection" + Environment.NewLine +
-					"Collection: " + collection + Environment.NewLine +
-					"Not found:  " + item
+					"Collection: " + Assert.GuardArgumentNotNull(nameof(collection), collection) + Environment.NewLine +
+					"Not found:  " + Assert.GuardArgumentNotNull(nameof(item), item)
 				);
 
 		/// <summary>
@@ -58,8 +58,8 @@ namespace Xunit.Sdk
 			string keys) =>
 				new ContainsException(
 					"Assert.Contains() Failure: Key not found in dictionary" + Environment.NewLine +
-					"Keys:      " + keys + Environment.NewLine +
-					"Not found: " + expectedKey
+					"Keys:      " + Assert.GuardArgumentNotNull(nameof(keys), keys) + Environment.NewLine +
+					"Not found: " + Assert.GuardArgumentNotNull(nameof(expectedKey), expectedKey)
 				);
 
 		/// <summary>
@@ -73,8 +73,8 @@ namespace Xunit.Sdk
 			string set) =>
 				new ContainsException(
 					"Assert.Contains() Failure: Item not found in set" + Environment.NewLine +
-					"Set:       " + set + Environment.NewLine +
-					"Not found: " + item
+					"Set:       " + Assert.GuardArgumentNotNull(nameof(set), set) + Environment.NewLine +
+					"Not found: " + Assert.GuardArgumentNotNull(nameof(item), item)
 				);
 
 		/// <summary>
@@ -88,8 +88,8 @@ namespace Xunit.Sdk
 			string memory) =>
 				new ContainsException(
 					"Assert.Contains() Failure: Sub-memory not found" + Environment.NewLine +
-					"Memory:    " + memory + Environment.NewLine +
-					"Not found: " + expectedSubMemory
+					"Memory:    " + Assert.GuardArgumentNotNull(nameof(memory), memory) + Environment.NewLine +
+					"Not found: " + Assert.GuardArgumentNotNull(nameof(expectedSubMemory), expectedSubMemory)
 				);
 
 		/// <summary>
@@ -103,8 +103,8 @@ namespace Xunit.Sdk
 			string span) =>
 				new ContainsException(
 					"Assert.Contains() Failure: Sub-span not found" + Environment.NewLine +
-					"Span:      " + span + Environment.NewLine +
-					"Not found: " + expectedSubSpan
+					"Span:      " + Assert.GuardArgumentNotNull(nameof(span), span) + Environment.NewLine +
+					"Not found: " + Assert.GuardArgumentNotNull(nameof(expectedSubSpan), expectedSubSpan)
 				);
 
 		/// <summary>
@@ -123,7 +123,7 @@ namespace Xunit.Sdk
 				new ContainsException(
 					"Assert.Contains() Failure: Sub-string not found" + Environment.NewLine +
 					"String:    " + AssertHelper.ShortenAndEncodeString(@string) + Environment.NewLine +
-					"Not found: " + AssertHelper.ShortenAndEncodeString(expectedSubString)
+					"Not found: " + AssertHelper.ShortenAndEncodeString(Assert.GuardArgumentNotNull(nameof(expectedSubString), expectedSubString))
 				);
 	}
 }

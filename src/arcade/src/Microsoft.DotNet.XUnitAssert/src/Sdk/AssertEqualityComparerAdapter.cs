@@ -15,7 +15,7 @@ namespace Xunit.Sdk
 	/// A class that wraps <see cref="IEqualityComparer{T}"/> to add <see cref="IEqualityComparer"/>.
 	/// </summary>
 	/// <typeparam name="T">The type that is being compared.</typeparam>
-	class AssertEqualityComparerAdapter<T> : IEqualityComparer, IEqualityComparer<T>
+	sealed class AssertEqualityComparerAdapter<T> : IEqualityComparer, IEqualityComparer<T>
 	{
 		readonly IEqualityComparer<T> innerComparer;
 

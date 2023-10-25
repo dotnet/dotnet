@@ -24,6 +24,6 @@ namespace Xunit.Sdk
 		/// </summary>
 		/// <param name="propertyName">The name of the property that was expected to be changed.</param>
 		public static PropertyChangedException ForUnsetProperty(string propertyName) =>
-			new PropertyChangedException($"Assert.PropertyChanged() failure: Property '{propertyName}' was not set");
+			new PropertyChangedException($"Assert.PropertyChanged() failure: Property '{Assert.GuardArgumentNotNull(nameof(propertyName), propertyName)}' was not set");
 	}
 }

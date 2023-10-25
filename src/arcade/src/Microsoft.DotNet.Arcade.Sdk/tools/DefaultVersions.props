@@ -81,8 +81,8 @@
     <MicrosoftDotNetSignToolVersion Condition="'$(MicrosoftDotNetSignToolVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetSignToolVersion>
     <MicrosoftDotNetTarVersion Condition="'$(MicrosoftDotNetTarVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetTarVersion>
     <MicrosoftTestPlatformVersion Condition="'$(MicrosoftTestPlatformVersion)' == ''">16.5.0</MicrosoftTestPlatformVersion>
-    <XUnitVersion Condition="'$(XUnitVersion)' == ''">2.5.1</XUnitVersion>
-    <XUnitAnalyzersVersion Condition="'$(XUnitAnalyzersVersion)' == ''">1.3.0</XUnitAnalyzersVersion>
+    <XUnitVersion Condition="'$(XUnitVersion)' == ''">2.5.3</XUnitVersion>
+    <XUnitAnalyzersVersion Condition="'$(XUnitAnalyzersVersion)' == ''">1.4.0</XUnitAnalyzersVersion>
     <XUnitRunnerConsoleVersion Condition="'$(XUnitRunnerConsoleVersion)' == ''">$(XUnitVersion)</XUnitRunnerConsoleVersion>
     <XUnitRunnerVisualStudioVersion Condition="'$(XUnitRunnerVisualStudioVersion)' == ''">$(XUnitVersion)</XUnitRunnerVisualStudioVersion>
     <MSTestVersion Condition="'$(MSTestVersion)' == ''">2.0.0</MSTestVersion>

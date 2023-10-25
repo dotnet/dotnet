@@ -35,7 +35,7 @@ namespace Xunit.Sdk
 #endif
 				new IsTypeException(
 					"Assert.IsType() Failure: Value is " + (actualTypeName == null ? "null" : "not the exact type") + Environment.NewLine +
-					"Expected: " + expectedTypeName + Environment.NewLine +
+					"Expected: " + Assert.GuardArgumentNotNull(nameof(expectedTypeName), expectedTypeName) + Environment.NewLine +
 					"Actual:   " + (actualTypeName ?? "null")
 				);
 	}

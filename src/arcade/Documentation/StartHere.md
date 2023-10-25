@@ -27,8 +27,7 @@ areas:
 
 ## Does my repository need to be involved?
 
-Generally, if your repo is shipping in .NET, yes.  For ['Tier
-1'](TierOneRepos.md) repos a full transition is required.  While there exist
+Generally, if your repo is shipping in .NET, yes.  For core functionality repos a full transition is required.  While there exist
 some special cases (e.g. repos used as submodules in aspnet/universe), we're
 striving to move as many people towards the new infrastructure as possible.
 - If you use .NET CI (ci.dot.net, ci2.dot.net, ci3.dot.net) you'll need to move

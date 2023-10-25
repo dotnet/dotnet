@@ -9,6 +9,7 @@ using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Deployment.DotNet.Releases;
+using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
 using Microsoft.NET.Sdk.WorkloadManifestReader;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads
@@ -22,14 +23,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         public override PackageExtractionMethod ExtractionMethod => PackageExtractionMethod.Unzip;
 
         /// <summary>
-        /// Prefix used in Visual Studio for SWIX based package group.
-        /// </summary>
-        private const string PackageGroupPrefix = "PackageGroup";
-
-        /// <summary>
         /// Special separator value used in workload manifest package IDs.
         /// </summary>
-        private const string ManifestSeparator = ".Manifest-";
+        internal const string ManifestSeparator = ".Manifest-";
 
         /// <summary>
         /// The filename and extension of the workload manifest file.
@@ -68,14 +64,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         }
 
         /// <summary>
-        /// The package ID to use when wrapping the manifest MSI inside a package group.
-        /// </summary>
-        public string SwixPackageGroupId
-        {
-            get;
-        }
-
-        /// <summary>
         /// Creates a new instance of a <see cref="WorkloadManifestPackage"/>.
         /// </summary>
         /// <param name="package">A task item for the workload manifest NuGet package.</param>
@@ -89,23 +77,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             ITaskItem[]? shortNames = null, TaskLoggingHelper? log = null, bool isSxS = false) :
             base(package.ItemSpec, destinationBaseDirectory, shortNames, log)
         {
-            if (!string.IsNullOrWhiteSpace(package.GetMetadata(Metadata.MsiVersion)))
-            {
-                // We prefer version information on the manifest package item.
-                MsiVersion = new(package.GetMetadata(Metadata.MsiVersion));
-            }
-            else if (msiVersion != null)
-            {
-                // Fall back to the version provided by the task parameter, e.g. if all manifests follow the same versioning rules.
-                MsiVersion = msiVersion;
-            }
-            else
-            {
-                // While we could use the major.minor.patch part of the package, manifests are upgradable, so we want
-                // the user to be aware of this and explicitly tell us the value.
-                throw new Exception(string.Format(Strings.NoManifestInstallerVersion, nameof(CreateVisualStudioWorkload),
-                    nameof(CreateVisualStudioWorkload.ManifestMsiVersion), nameof(CreateVisualStudioWorkload.WorkloadManifestPackageFiles), Metadata.MsiVersion));
-            }
+            MsiVersion = GetMsiVersion(package, msiVersion, nameof(CreateVisualStudioWorkload),
+                    nameof(CreateVisualStudioWorkload.ManifestMsiVersion), nameof(CreateVisualStudioWorkload.WorkloadManifestPackageFiles));
+            MsiUtils.ValidateProductVersion(MsiVersion);
 
             SdkFeatureBand = GetSdkFeatureBandVersion(GetSdkVersion(Id));
             ManifestId = GetManifestId(Id);
@@ -117,7 +91,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             // in the package ID. For example, if the package ID is "Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100-preview.6"
             // then we want the package group to be "Microsoft.NET.Workload.Emscripten.net6.Manifest-8.0.100". The group would still point
             // to the versioned SWIX package wrapping the MSI.
-            SwixPackageGroupId = $"{PackageGroupPrefix}.{ManifestId.Replace(shortNames)}.Manifest-{SdkFeatureBand.ToString(3)}";
+            SwixPackageGroupId = $"{DefaultValues.PackageGroupPrefix}.{ManifestId.Replace(shortNames)}.Manifest-{SdkFeatureBand.ToString(3)}";
             SupportsMachineArch = bool.TryParse(package.GetMetadata(Metadata.SupportsMachineArch), out bool supportsMachineArch) ? supportsMachineArch : false;
         }
 
@@ -155,42 +129,13 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         }
 
         /// <summary>
-        /// Converts a string containing an SDK version to a semantic version that normalizes the patch level and 
-        /// optionally includes the first two prerelease labels. For example, if the specified version is 6.0.105, then
-        /// 6.0.100 would be returned. If the version is 6.0.301-preview.2.1234, the result would be 6.0.300-preview.1.
-        /// </summary>
-        /// <param name="sdkVersion">A string containing an SDK version.</param>
-        /// <returns>An SDK feature band version.</returns>
-        internal static ReleaseVersion GetSdkFeatureBandVersion(string sdkVersion)
-        {
-            ReleaseVersion version = new(sdkVersion);
-
-            // Ignore CI and dev builds.
-            if (string.IsNullOrEmpty(version.Prerelease) || version.Prerelease.Split('.').Any(s => string.Equals("ci", s) || string.Equals("dev", s)))
-            {
-                return new ReleaseVersion(version.Major, version.Minor, version.SdkFeatureBand);
-            }
-
-            string[] preleaseParts = version.Prerelease.Split('.');
-
-            // Only the first two prerelease identifiers are used to support side-by-side previews.
-            string prerelease = (preleaseParts.Length > 1) ?
-                $"{preleaseParts[0]}.{preleaseParts[1]}" :
-                preleaseParts[0];
-
-            return new ReleaseVersion(version.Major, version.Minor, version.SdkFeatureBand, prerelease);
-        }
-
-        /// <summary>
         /// Extracts the SDK version from the package ID.
         /// </summary>
         /// <param name="packageId">The package ID from which to extract the SDK version.</param>
         /// <returns>SDK version part of the package ID.</returns>
         /// <exception cref="FormatException" />
         internal static string GetSdkVersion(string packageId) =>
-            !string.IsNullOrWhiteSpace(packageId) && packageId.IndexOf(ManifestSeparator) > -1 ?
-                packageId.Substring(packageId.IndexOf(ManifestSeparator) + ManifestSeparator.Length) :
-                throw new FormatException(string.Format(Strings.CannotExtractSdkVersionFromPackageId, packageId));
+            GetSdkVersion(packageId, ManifestSeparator);
 
         /// <summary>
         /// Extracts the manifest ID from the package ID.

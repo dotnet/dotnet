@@ -31,8 +31,8 @@ namespace Xunit.Sdk
 			string actual) =>
 				new SupersetException(
 					"Assert.Superset() Failure: Value is not a superset" + Environment.NewLine +
-					"Expected: " + expected + Environment.NewLine +
-					"Actual:   " + actual
+					"Expected: " + Assert.GuardArgumentNotNull(nameof(expected), expected) + Environment.NewLine +
+					"Actual:   " + Assert.GuardArgumentNotNull(nameof(actual), actual)
 				);
 	}
 }

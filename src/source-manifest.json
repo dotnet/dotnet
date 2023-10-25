@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.23518.2",
+      "packageVersion": "9.0.0-beta.23524.1",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "6a5ca678aef84f34a1fccc46f76623f41da56553"
+      "commitSha": "3b9d8a14dfad67dc3a5c18734db967d3ad173537"
     },
     {
       "packageVersion": "9.0.0-alpha.1.23523.17",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "769bf84255cd6f0ebc87fb56a7a18db6d41f8061"
+      "commitSha": "b67004625784d364063bcf5be30248970893e5c6"
     },
     {
       "packageVersion": "17.9.0-preview-23523-01",
@@ -157,10 +157,10 @@
       "commitSha": "9a1c3e1b7f0c8763d4c96e593961a61a72679a7b"
     },
     {
-      "packageVersion": "1.0.0-beta.23516.1",
+      "packageVersion": "1.0.0-beta.23523.1",
       "path": "xliff-tasks",
       "remoteUri": "https://github.com/dotnet/xliff-tasks",
-      "commitSha": "d66a09c8b11e1235273c8e6cd946e5c8e247f189"
+      "commitSha": "83531fff1a39abe38de53e2e6b702bc1bb9c3bb4"
     }
   ],
   "submodules": [

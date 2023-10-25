@@ -1,3 +1,5 @@
+#pragma warning disable CA1711  // This is an interface which indicates exceptions, so ending its name with Exception is correct
+
 #if XUNIT_NULLABLE
 #nullable enable
 #endif

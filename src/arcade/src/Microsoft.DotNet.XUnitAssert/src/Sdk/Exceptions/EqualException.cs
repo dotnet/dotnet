@@ -57,6 +57,8 @@ namespace Xunit.Sdk
 			string collectionDisplay = null)
 #endif
 		{
+			Assert.GuardArgumentNotNull(nameof(actual), actual);
+
 			var message = $"Assert.Equal() Failure: {collectionDisplay ?? "Collections"} differ";
 			var expectedTypeText = expectedType != null && actualType != null && expectedType != actualType ? $", type {expectedType}" : "";
 			var actualTypeText = expectedType != null && actualType != null && expectedType != actualType ? $", type {actualType}" : "";

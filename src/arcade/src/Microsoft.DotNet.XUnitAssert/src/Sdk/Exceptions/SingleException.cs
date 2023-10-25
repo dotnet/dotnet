@@ -35,6 +35,8 @@ namespace Xunit.Sdk
 #endif
 			string collection)
 		{
+			Assert.GuardArgumentNotNull(nameof(collection), collection);
+
 			if (expected == null)
 				return new SingleException("Assert.Single() Failure: The collection was empty");
 
@@ -61,8 +63,11 @@ namespace Xunit.Sdk
 			string expected,
 #endif
 			string collection,
-			List<int> matchIndices)
+			ICollection<int> matchIndices)
 		{
+			Assert.GuardArgumentNotNull(nameof(collection), collection);
+			Assert.GuardArgumentNotNull(nameof(matchIndices), matchIndices);
+
 			var message = $"Assert.Single() Failure: The collection contained {count} {(expected == null ? "" : "matching ")}items";
 
 			if (expected == null)

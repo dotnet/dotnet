@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?include Variables.wxi?>
+  <Product Id="$(var.ProductCode)" Name="$(var.ProductName)" Language="$(var.ProductLanguage)" Version="$(var.ProductVersion)"
+           Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
+
+    <Package InstallerVersion="$(var.InstallerVersion)" Compressed="yes" InstallScope="perMachine" />
+
+    <?if $(var.Platform)~=x64?>
+    <CustomActionRef Id="Set_DOTNETHOME_NON_NATIVE_ARCHITECTURE" />
+    <?endif?>
+
+    <MediaTemplate CompressionLevel="high" EmbedCab="yes" />
+
+    <!-- Record the original package used to generate the MSI -->
+    <Property Id="PackageId" Value="$(var.PackageId)" />
+    <Property Id="PackageVersion" Value="$(var.PackageVersion)" />
+
+    <Feature Id="F_PackageContents">
+      <ComponentGroupRef Id="CG_PackageContents"/>
+      
+      <!-- Workload set installation record, similar to workload pack records. -->
+
+      <Component Id="C_InstalledWorkloadSet" Win64="$(var.Win64)" Directory="TARGETDIR">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\dotnet\$(var.InstallationRecordKey)\$(var.Platform)\$(var.SdkFeatureBandVersion)\$(var.PackageVersion)">
+          <RegistryValue Name="DependencyProviderKey" Type="string" Value="$(var.DependencyProviderKeyName)" KeyPath="yes"/>
+          <RegistryValue Name="ProductCode" Type="string" Value="$(var.ProductCode)"/>
+          <RegistryValue Name="UpgradeCode" Type="string" Value="$(var.UpgradeCode)"/>
+          <RegistryValue Name="ProductVersion" Type="string" Value="$(var.ProductVersion)" />
+          <RegistryValue Name="ProductLanguage" Type="integer" Value="$(var.ProductLanguage)" />
+        </RegistryKey>
+      </Component>
+    </Feature>
+
+    <FeatureRef Id="F_DependencyProvider" />
+
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.EulaRtf)" />
+    <UIRef Id="WixUI_Minimal"/>
+  </Product>
+</Wix>

@@ -26,7 +26,7 @@ namespace Xunit.Sdk
 		/// </summary>
 		/// <param name="type">The inner type of the value</param>
 		public static Exception ForNullStruct(Type type) =>
-			new NotNullException($"Assert.NotNull() Failure: Value of type 'Nullable<{ArgumentFormatter.FormatTypeName(type)}>' does not have a value");
+			new NotNullException($"Assert.NotNull() Failure: Value of type 'Nullable<{ArgumentFormatter.FormatTypeName(Assert.GuardArgumentNotNull(nameof(type), type))}>' does not have a value");
 
 		/// <summary>
 		/// Creates a new instance of the <see cref="NotNullException"/> class to be

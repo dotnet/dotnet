@@ -83,7 +83,7 @@ The simplest Helix use-case is zipping up a single folder containing your projec
 Simply specify the xUnit project(s) you wish to run (semicolon delimited) with the `XUnitProjects` parameter. Then, specify:
 * the `XUnitPublishTargetFramework` &ndash; this is the framework your **test projects are targeting**, e.g. `netcoreapp3.1`.
 * the `XUnitRuntimeTargetFramework` &ndash; this is the framework version of xUnit you want to use from the xUnit NuGet package, e.g. `netcoreapp2.0`. Notably, the xUnit console runner only supports up to netcoreapp2.0 as of 14 March 2018, so this is the target that should be specified for running against any higher version test projects.
-* the `XUnitRunnerVersion` (the version of the xUnit nuget package you want to use, e.g. `2.5.1`).
+* the `XUnitRunnerVersion` (the version of the xUnit nuget package you want to use, e.g. `2.5.3`).
 
 Finally, set `IncludeDotNetCli` to true and specify which `DotNetCliPackageType` (`sdk`, `runtime` or `aspnetcore-runtime`) and `DotNetCliVersion` you wish to use. (For a full list of .NET CLI versions/package types, see these links: [3.0](https://dotnet.microsoft.com/download/dotnet-core/3.0), [2.1](https://dotnet.microsoft.com/download/dotnet-core/2.1), [2.2](https://dotnet.microsoft.com/download/dotnet-core/2.2).)
 
@@ -104,7 +104,7 @@ The list of available Helix queues can be found on the [Helix homepage](https://
       # XUnitWorkItemTimeout: '00:05:00' -- a timeout (specified as a System.TimeSpan string) for all work items created from XUnitProjects
       XUnitPublishTargetFramework: netcoreapp3.1 # specify your publish target framework here
       XUnitRuntimeTargetFramework: netcoreapp2.0 # specify the framework you want to use for the xUnit runner
-      XUnitRunnerVersion: 2.5.1 # specify the version of xUnit runner you wish to use here
+      XUnitRunnerVersion: 2.5.3 # specify the version of xUnit runner you wish to use here
       # WorkItemDirectory: '' -- payload directory to zip up and send to Helix; requires WorkItemCommand; incompatible with XUnitProjects
       # WorkItemCommand: '' -- a command to execute on the payload; requires WorkItemDirectory; incompatible with XUnitProjects
       # WorkItemTimeout: '' -- a timeout (specified as a System.TimeSpan string) for the work item command; requires WorkItemDirectory; incompatible with XUnitProjects

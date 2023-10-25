@@ -22,8 +22,7 @@ namespace Xunit.Sdk
 		MultipleException(IEnumerable<Exception> innerExceptions) :
 			base("Assert.Multiple() Failure: Multiple failures were encountered")
 		{
-			if (innerExceptions == null)
-				throw new ArgumentNullException(nameof(innerExceptions));
+			Assert.GuardArgumentNotNull(nameof(innerExceptions), innerExceptions);
 
 			InnerExceptions = innerExceptions.ToList();
 		}

@@ -20,16 +20,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
     {
         public WorkloadManifestPackage Package { get; }
 
-        /// <summary>
-        /// The directory reference to use when harvesting the package contents for upgradable manifest installers
-        /// </summary>
-        private static readonly string s_ManifestIdDirectory = "ManifestIdDir";
-
-        /// <summary>
-        /// Directory reference to use when harvesting the package contents for SxS installers.
-        /// </summary>
-        private static readonly string s_ManifestVersionDirectory = "ManifestVersionDir";
-
         public List<WorkloadPackGroupJson> WorkloadPackGroups { get; } = new();
 
         /// <inheritdoc />
@@ -62,7 +52,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
             HarvesterToolTask heat = new(BuildEngine, WixToolsetPath)
             {
-                DirectoryReference = IsSxS ? s_ManifestVersionDirectory : s_ManifestIdDirectory,
+                DirectoryReference = IsSxS ? MsiDirectories.ManifestVersionDirectory : MsiDirectories.ManifestIdDirectory,
                 OutputFile = packageContentWxs,
                 Platform = this.Platform,
                 SourceDirectory = packageDataDirectory
@@ -95,7 +85,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
 
                 HarvesterToolTask jsonHeat = new(BuildEngine, WixToolsetPath)
                 {
-                    DirectoryReference = IsSxS ? s_ManifestVersionDirectory : s_ManifestIdDirectory,
+                    DirectoryReference = IsSxS ? MsiDirectories.ManifestVersionDirectory : MsiDirectories.ManifestIdDirectory,
                     OutputFile = jsonContentWxs,
                     Platform = this.Platform,
                     SourceDirectory = jsonDirectory,

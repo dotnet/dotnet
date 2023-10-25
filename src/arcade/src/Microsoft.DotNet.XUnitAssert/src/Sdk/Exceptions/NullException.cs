@@ -34,7 +34,7 @@ namespace Xunit.Sdk
 			T? actual)
 				where T : struct =>
 					new NullException(
-						$"Assert.Null() Failure: Value of type 'Nullable<{ArgumentFormatter.FormatTypeName(type)}>' has a value" + Environment.NewLine +
+						$"Assert.Null() Failure: Value of type 'Nullable<{ArgumentFormatter.FormatTypeName(Assert.GuardArgumentNotNull(nameof(type), type))}>' has a value" + Environment.NewLine +
 						"Expected: null" + Environment.NewLine +
 						"Actual:   " + ArgumentFormatter.Format(actual)
 					);
@@ -48,7 +48,7 @@ namespace Xunit.Sdk
 			new NullException(
 				"Assert.Null() Failure: Value is not null" + Environment.NewLine +
 				"Expected: null" + Environment.NewLine +
-				"Actual:   " + ArgumentFormatter.Format(actual)
+				"Actual:   " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(actual), actual))
 			);
 	}
 }
