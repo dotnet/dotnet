@@ -27,6 +27,8 @@ namespace Xunit.Sdk
 		/// <param name="type">The expected type</param>
 		public static IsNotTypeException ForExactType(Type type)
 		{
+			Assert.GuardArgumentNotNull(nameof(type), type);
+
 			var formattedType = ArgumentFormatter.Format(type);
 
 			return new IsNotTypeException(

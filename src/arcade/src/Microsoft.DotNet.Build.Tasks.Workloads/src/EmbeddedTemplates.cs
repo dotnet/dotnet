@@ -71,6 +71,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 { "Directories.wxs", $"{ns}.MsiTemplate.Directories.wxs" },
                 { "dotnethome_x64.wxs", $"{ns}.MsiTemplate.dotnethome_x64.wxs" },
                 { "ManifestProduct.wxs", $"{ns}.MsiTemplate.ManifestProduct.wxs" },
+                { "WorkloadSetProduct.wxs", $"{ns}.MsiTemplate.WorkloadSetProduct.wxs" },
                 { "Product.wxs", $"{ns}.MsiTemplate.Product.wxs" },
                 { "Registry.wxs", $"{ns}.MsiTemplate.Registry.wxs" },
                 { "Variables.wxi", $"{ns}.MsiTemplate.Variables.wxi" },

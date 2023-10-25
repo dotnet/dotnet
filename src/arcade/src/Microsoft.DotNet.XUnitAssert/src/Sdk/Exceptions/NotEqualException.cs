@@ -41,8 +41,8 @@ namespace Xunit.Sdk
 		{
 			return new NotEqualException(
 				"Assert.NotEqual() Failure: " + (collectionDisplay ?? "Collections") + " are equal" + Environment.NewLine +
-				"Expected: Not " + expected + Environment.NewLine +
-				"Actual:       " + actual
+				"Expected: Not " + Assert.GuardArgumentNotNull(nameof(expected), expected) + Environment.NewLine +
+				"Actual:       " + Assert.GuardArgumentNotNull(nameof(actual), actual)
 			);
 		}
 
@@ -66,8 +66,8 @@ namespace Xunit.Sdk
 		{
 			return new NotEqualException(
 				"Assert.NotEqual() Failure: " + (banner ?? "Values are equal") + Environment.NewLine +
-				"Expected: Not " + expected + Environment.NewLine +
-				"Actual:       " + actual
+				"Expected: Not " + Assert.GuardArgumentNotNull(nameof(expected), expected) + Environment.NewLine +
+				"Actual:       " + Assert.GuardArgumentNotNull(nameof(actual), actual)
 			);
 		}
 	}

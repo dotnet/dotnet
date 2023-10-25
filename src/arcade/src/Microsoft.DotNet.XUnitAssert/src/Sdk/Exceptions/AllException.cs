@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Xunit.Sdk
@@ -45,7 +46,9 @@ namespace Xunit.Sdk
 			int totalItems,
 			IReadOnlyList<Tuple<int, string, Exception>> errors)
 		{
-			var maxItemIndexLength = errors.Max(x => x.Item1).ToString().Length + 4; // "[#]: "
+			Assert.GuardArgumentNotNull(nameof(errors), errors);
+
+			var maxItemIndexLength = errors.Max(x => x.Item1).ToString(CultureInfo.CurrentCulture).Length + 4; // "[#]: "
 			var indexSpaces = new string(' ', maxItemIndexLength);
 			var maxWrapIndent = maxItemIndexLength + 7; // "Item:  " and "Error: "
 			var wrapSpaces = Environment.NewLine + new string(' ', maxWrapIndent);

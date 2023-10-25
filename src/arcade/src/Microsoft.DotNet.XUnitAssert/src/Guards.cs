@@ -18,16 +18,18 @@ namespace Xunit
 	partial class Assert
 	{
 		/// <summary/>
-		internal static void GuardArgumentNotNull(
+		internal static T GuardArgumentNotNull<T>(
 			string argName,
 #if XUNIT_NULLABLE
-			[NotNull] object? argValue)
+			[NotNull] T? argValue)
 #else
-			object argValue)
+			T argValue)
 #endif
 		{
 			if (argValue == null)
-				throw new ArgumentNullException(argName);
+				throw new ArgumentNullException(argName.TrimStart('@'));
+
+			return argValue;
 		}
 	}
 }

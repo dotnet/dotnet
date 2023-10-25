@@ -46,6 +46,8 @@ namespace Xunit.Sdk
 			int? failurePointerIndent,
 			string formattedCollection)
 		{
+			Assert.GuardArgumentNotNull(nameof(exception), exception);
+
 			var message = "Assert.Collection() Failure: Item comparison failure";
 
 			if (failurePointerIndent.HasValue)
@@ -69,7 +71,7 @@ namespace Xunit.Sdk
 			string formattedCollection) =>
 				new CollectionException(
 					"Assert.Collection() Failure: Mismatched item count" + Environment.NewLine +
-					"Collection:     " + formattedCollection + Environment.NewLine +
+					"Collection:     " + Assert.GuardArgumentNotNull(nameof(formattedCollection), formattedCollection) + Environment.NewLine +
 					"Expected count: " + expectedCount + Environment.NewLine +
 					"Actual count:   " + actualCount
 				);

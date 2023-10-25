@@ -42,7 +42,7 @@ namespace Xunit.Sdk
 		/// </summary>
 		/// <param name="memberName">The name of the member that caused the circular reference</param>
 		public static EquivalentException ForCircularReference(string memberName) =>
-			new EquivalentException($"Assert.Equivalent() Failure: Circular reference found in '{memberName}'");
+			new EquivalentException($"Assert.Equivalent() Failure: Circular reference found in '{Assert.GuardArgumentNotNull(nameof(memberName), memberName)}'");
 
 		/// <summary>
 		/// Creates a new instance of <see cref="EquivalentException"/> which shows a message that indicates
@@ -53,7 +53,7 @@ namespace Xunit.Sdk
 		public static EquivalentException ForExceededDepth(
 			int depth,
 			string memberName) =>
-				new EquivalentException($"Assert.Equivalent() Failure: Exceeded the maximum depth {depth} with '{memberName}'; check for infinite recursion or circular references");
+				new EquivalentException($"Assert.Equivalent() Failure: Exceeded the maximum depth {depth} with '{Assert.GuardArgumentNotNull(nameof(memberName), memberName)}'; check for infinite recursion or circular references");
 
 		/// <summary>
 		/// Creates a new instance of <see cref="EquivalentException"/> which shows a message that indicates
@@ -69,8 +69,8 @@ namespace Xunit.Sdk
 			string prefix) =>
 				new EquivalentException(
 					"Assert.Equivalent() Failure: Mismatched member list" + Environment.NewLine +
-					"Expected: " + FormatMemberNameList(expectedMemberNames, prefix) + Environment.NewLine +
-					"Actual:   " + FormatMemberNameList(actualMemberNames, prefix)
+					"Expected: " + FormatMemberNameList(Assert.GuardArgumentNotNull(nameof(expectedMemberNames), expectedMemberNames), prefix) + Environment.NewLine +
+					"Actual:   " + FormatMemberNameList(Assert.GuardArgumentNotNull(nameof(actualMemberNames), actualMemberNames), prefix)
 				);
 
 		/// <summary>
@@ -98,7 +98,7 @@ namespace Xunit.Sdk
 			Exception innerException = null) =>
 #endif
 				new EquivalentException(
-					"Assert.Equivalent() Failure" + (memberName == string.Empty ? string.Empty : $": Mismatched value on member '{memberName}'") + Environment.NewLine +
+					"Assert.Equivalent() Failure" + (Assert.GuardArgumentNotNull(nameof(memberName), memberName).Length == 0 ? string.Empty : $": Mismatched value on member '{memberName}'") + Environment.NewLine +
 					"Expected: " + ArgumentFormatter.Format(expected) + Environment.NewLine +
 					"Actual:   " + ArgumentFormatter.Format(actual),
 					innerException
@@ -122,7 +122,7 @@ namespace Xunit.Sdk
 #endif
 			string memberName) =>
 				new EquivalentException(
-					"Assert.Equivalent() Failure: Collection value not found" + (memberName == string.Empty ? string.Empty : $" in member '{memberName}'") + Environment.NewLine +
+					"Assert.Equivalent() Failure: Collection value not found" + (Assert.GuardArgumentNotNull(nameof(memberName), memberName).Length == 0 ? string.Empty : $" in member '{memberName}'") + Environment.NewLine +
 					"Expected: " + ArgumentFormatter.Format(expected) + Environment.NewLine +
 					"In:       " + ArgumentFormatter.Format(actual)
 				);
@@ -151,9 +151,9 @@ namespace Xunit.Sdk
 #endif
 			string memberName) =>
 				new EquivalentException(
-					"Assert.Equivalent() Failure: Extra values found" + (memberName == string.Empty ? string.Empty : $" in member '{memberName}'") + Environment.NewLine +
-					"Expected: " + ArgumentFormatter.Format(expected) + Environment.NewLine +
-					"Actual:   " + ArgumentFormatter.Format(actualLeftovers) + " left over from " + ArgumentFormatter.Format(actual)
+					"Assert.Equivalent() Failure: Extra values found" + (Assert.GuardArgumentNotNull(nameof(memberName), memberName).Length == 0 ? string.Empty : $" in member '{memberName}'") + Environment.NewLine +
+					"Expected: " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected)) + Environment.NewLine +
+					"Actual:   " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(actualLeftovers), actualLeftovers)) + " left over from " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(actual), actual))
 				);
 
 		/// <summary>
@@ -172,9 +172,9 @@ namespace Xunit.Sdk
 			Type actualType,
 			string memberName) =>
 				new EquivalentException(
-					"Assert.Equivalent() Failure: Types did not match" + (memberName == string.Empty ? string.Empty : $" in member '{memberName}'") + Environment.NewLine +
-					"Expected type: " + ArgumentFormatter.FormatTypeName(expectedType, fullTypeName: true) + Environment.NewLine +
-					"Actual type:   " + ArgumentFormatter.FormatTypeName(actualType, fullTypeName: true)
+					"Assert.Equivalent() Failure: Types did not match" + (Assert.GuardArgumentNotNull(nameof(memberName), memberName).Length == 0 ? string.Empty : $" in member '{memberName}'") + Environment.NewLine +
+					"Expected type: " + ArgumentFormatter.FormatTypeName(Assert.GuardArgumentNotNull(nameof(expectedType), expectedType), fullTypeName: true) + Environment.NewLine +
+					"Actual type:   " + ArgumentFormatter.FormatTypeName(Assert.GuardArgumentNotNull(nameof(actualType), actualType), fullTypeName: true)
 				);
 	}
 }

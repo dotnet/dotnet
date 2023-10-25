@@ -20,24 +20,23 @@ gantt
         UB Week: ub-week, 2023-10-02, 1w
 
     section Vertical Build
-        Win VB PoC: after net8-ga, 6w
-        Linux VB PoC: after net8-rc2, 11w
-        MacOS VB PoC: after net8-rc2, 11w
-        Workloads PoC: after net8-ga, 6w
-        Identify Join Points: after net8-ga, 6w
+        Win VB PoC (TBD): after net8-ga, 6w
+        Linux VB PoC (SteveP): after net8-rc2, 11w
+        MacOS VB PoC (SteveP): after net8-rc2, 11w
+        Workloads PoC (SteveP): after net8-ga, 6w
         Vertical Builds Design: after holiday, 7w
         Enable Vertical Builds: after net9-p1, 8w
-        Crossbuilds Design: after net8-ga, 13w
+        Crossbuilds Design (JoS / SteveP): after net8-ga, 13w
 
-    section Source-Build
+    section Source-Build (MichaelS)
         VMR UX Improvements: after net8-ga, 13w
         Multi-band SDKs: after net9-p4, 4w
 
-    section Product Validation
+    section Product Validation (RichaV)
         Scenario tests in VMR: after net8-rc2, 10w
         PR Validation: after net9-p2, 4w
 
-    section Product Construction
+    section Product Construction (TomasK / MattM / PremekV)
         Backflow design: after net8-rc2, 5w
         Backflow tooling: after net8-ga, 6w
         Dependency Flow Service: after holiday, 7w
@@ -47,7 +46,7 @@ gantt
         Dependency Flow Switch Preparation: after net9-p3, 8w
         Depenendency Flow Switch: after net9-p5, 4w
 
-    section Release Infra
+    section Release Infra (TomasK)
         Release infra investigation & design: after net8-ga, 6w
         Signing Design: after holiday, 7w
         Identify Repo Dependencies: after net9-p3, 4w

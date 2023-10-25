@@ -51,7 +51,7 @@ You will need a fork of both `xunit/assert.xunit` (this repository) and `xunit/x
    * `git submodule update --init` to ensure the Git submodule in `/src/xunit.v3.assert/Asserts` is initialized.
    * `git switch main`
    * `git pull origin --ff-only` to ensure that `main` is up to date.
-   * `git remote add fork https://github.com/yourusername/assert.xunit` to point to your fork (update the URL as appropriate).
+   * `git remote add fork https://github.com/yourusername/xunit` to point to your fork (update the URL as appropriate).
    * `git fetch fork` to ensure that your `fork` remote is working.
    * `git switch -c my-branch-name` to create a new branch for `xunit/xunit`.
 

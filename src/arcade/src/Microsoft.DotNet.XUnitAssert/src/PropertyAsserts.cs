@@ -35,7 +35,8 @@ namespace Xunit
 
 			var propertyChangeHappened = false;
 
-			PropertyChangedEventHandler handler = (sender, args) => propertyChangeHappened |= string.IsNullOrEmpty(args.PropertyName) || propertyName.Equals(args.PropertyName, StringComparison.OrdinalIgnoreCase);
+			PropertyChangedEventHandler handler = (sender, args) =>
+				propertyChangeHappened = propertyChangeHappened || string.IsNullOrEmpty(args.PropertyName) || propertyName.Equals(args.PropertyName, StringComparison.OrdinalIgnoreCase);
 
 			@object.PropertyChanged += handler;
 
@@ -94,7 +95,8 @@ namespace Xunit
 
 			var propertyChangeHappened = false;
 
-			PropertyChangedEventHandler handler = (sender, args) => propertyChangeHappened |= string.IsNullOrEmpty(args.PropertyName) || propertyName.Equals(args.PropertyName, StringComparison.OrdinalIgnoreCase);
+			PropertyChangedEventHandler handler = (sender, args) =>
+				propertyChangeHappened = propertyChangeHappened || string.IsNullOrEmpty(args.PropertyName) || propertyName.Equals(args.PropertyName, StringComparison.OrdinalIgnoreCase);
 
 			@object.PropertyChanged += handler;
 
@@ -130,7 +132,8 @@ namespace Xunit
 
 			var propertyChangeHappened = false;
 
-			PropertyChangedEventHandler handler = (sender, args) => propertyChangeHappened |= string.IsNullOrEmpty(args.PropertyName) || propertyName.Equals(args.PropertyName, StringComparison.OrdinalIgnoreCase);
+			PropertyChangedEventHandler handler = (sender, args) =>
+				propertyChangeHappened = propertyChangeHappened || string.IsNullOrEmpty(args.PropertyName) || propertyName.Equals(args.PropertyName, StringComparison.OrdinalIgnoreCase);
 
 			@object.PropertyChanged += handler;
 

@@ -31,8 +31,8 @@ namespace Xunit.Sdk
 			object actual) =>
 				new IsNotAssignableFromException(
 					"Assert.IsNotAssignableFrom() Failure: Value is a compatible type" + Environment.NewLine +
-					"Expected: " + ArgumentFormatter.Format(expected) + Environment.NewLine +
-					"Actual:   " + ArgumentFormatter.Format(actual.GetType())
+					"Expected: " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected)) + Environment.NewLine +
+					"Actual:   " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(actual), actual).GetType())
 				);
 	}
 }

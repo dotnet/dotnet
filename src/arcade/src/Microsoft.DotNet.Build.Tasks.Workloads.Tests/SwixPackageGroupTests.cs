@@ -2,17 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.Arcade.Test.Common;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Microsoft.Deployment.DotNet.Releases;
-using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
 using Microsoft.DotNet.Build.Tasks.Workloads.Swix;
-using Microsoft.NET.Sdk.WorkloadManifestReader;
-using NuGet.Packaging.Core;
 using Xunit;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
@@ -31,8 +25,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             string destinationBaseDirectory = Path.Combine(BaseIntermediateOutputPath, destinationDirectory);
             TaskItem manifestPackageItem = new(Path.Combine(TestAssetsPath, manifestPackageFilename));
             WorkloadManifestPackage manifestPackage = new(manifestPackageItem, destinationBaseDirectory, msiVersion, shortNames, null, isSxS: true);
-            var packageGroup = SwixPackageGroup.Create(manifestPackage);
-            var packageGroupItem = PackageGroupSwixProject.CreateProjectItem(packageGroup, BaseIntermediateOutputPath, BaseOutputPath);
+            var packageGroup = new SwixPackageGroup(manifestPackage);
+            var packageGroupItem = PackageGroupSwixProject.CreateProjectItem(packageGroup, BaseIntermediateOutputPath, BaseOutputPath,
+                DefaultValues.PackageTypeManifestPackageGroup);
 
             // Verify package group expectations
             Assert.Equal(expectedPackageId, packageGroup.Name);
@@ -45,14 +40,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 
             // Verify the task item metadata
             Assert.Equal(expectedFeatureBand, packageGroupItem.GetMetadata(Metadata.SdkFeatureBand));
-            Assert.Equal(DefaultValues.PackageTypePackageGroup, packageGroupItem.GetMetadata(Metadata.PackageType));
+            Assert.Equal(DefaultValues.PackageTypeManifestPackageGroup, packageGroupItem.GetMetadata(Metadata.PackageType));
         }
 
         public static readonly IEnumerable<object[]> PackageGroupData = new List<object[]>
         {
-            new object[] { "microsoft.net.workload.mono.toolchain.manifest-6.0.200.6.0.3.nupkg", "grp1", 
-                new Version("1.2.3"), s_shortNames, "PackageGroup.Mono.ToolChain.Manifest-6.0.200", new Version("1.2.3"),
-                "  vs.dependency id=Mono.ToolChain.Manifest-6.0.200.6.0.3", "6.0.200" },
+            new object[] { "microsoft.net.workload.mono.toolchain.manifest-6.0.300.6.0.21.nupkg", "grp1", 
+                new Version("1.2.3"), s_shortNames, "PackageGroup.Mono.ToolChain.Manifest-6.0.300", new Version("1.2.3"),
+                "  vs.dependency id=Mono.ToolChain.Manifest-6.0.300.6.0.21", "6.0.300" },
             new object[] { "microsoft.net.workload.emscripten.net6.manifest-8.0.100-preview.6.8.0.0-preview.6.23326.2.nupkg", "grp2",
                 new Version("1.2.3"), s_shortNames, "PackageGroup.Emscripten.net6.Manifest-8.0.100", new Version("1.2.3"),
                 "  vs.dependency id=Emscripten.net6.Manifest-8.0.100-preview.6.8.0.0-preview.6.23326.2", "8.0.100-preview.6" },

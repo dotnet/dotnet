@@ -37,8 +37,8 @@ namespace Xunit.Sdk
 				new DoesNotMatchException(
 					"Assert.DoesNotMatch() Failure: Match found" + Environment.NewLine +
 					"        " + new string(' ', failurePointerIndent) + "↓ (pos " + indexFailurePoint + ")" + Environment.NewLine +
-					"String: " + @string + Environment.NewLine +
-					"RegEx:  " + expectedRegexPattern
+					"String: " + Assert.GuardArgumentNotNull(nameof(@string), @string) + Environment.NewLine +
+					"RegEx:  " + Assert.GuardArgumentNotNull(nameof(expectedRegexPattern), expectedRegexPattern)
 				);
 	}
 }

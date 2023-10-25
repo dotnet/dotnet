@@ -14,6 +14,7 @@ using Xunit;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 {
+    [Collection("SWIX Package")]
     public class SwixPackageTests : TestBase
     {
         [WindowsOnlyFact]
@@ -35,32 +36,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         }
 
         [WindowsOnlyFact]
-        public void SwixPackageIdsIncludeThePackageVersion()
-        {
-            // Build to a different path to avoid any file read locks on the MSI from other tests
-            // that can open it.
-            string PackageRootDirectory = Path.Combine(BaseIntermediateOutputPath, Path.GetRandomFileName());
-            string packagePath = Path.Combine(TestAssetsPath, "microsoft.ios.templates.15.2.302-preview.14.122.nupkg");
-
-            WorkloadPack p = new(new WorkloadPackId("Microsoft.iOS.Templates"), "15.2.302-preview.14.122", WorkloadPackKind.Template, null);
-            TemplatePackPackage pkg = new(p, packagePath, new[] { "x64" }, PackageRootDirectory);
-            pkg.Extract();
-            WorkloadPackMsi msi = new(pkg, "x64", new MockBuildEngine(), WixToolsetPath, BaseIntermediateOutputPath);
-
-            ITaskItem item = msi.Build(MsiOutputPath);
-
-            Assert.Equal("Microsoft.iOS.Templates.15.2.302-preview.14.122", item.GetMetadata(Metadata.SwixPackageId));
-        }
-
-        [WindowsOnlyFact]
         public void ItOnlyIncludesDefinedPropertiesForMsiPackages()
         {
             // Build to a different path to avoid any file read locks on the MSI from other tests
             // that can open it.
+            string packageVersion = "16.0.527";
             string PackageRootDirectory = Path.Combine(BaseIntermediateOutputPath, Path.GetRandomFileName());
-            string packagePath = Path.Combine(TestAssetsPath, "microsoft.ios.templates.15.2.302-preview.14.122.nupkg");
+            string packagePath = Path.Combine(TestAssetsPath, $"microsoft.ios.templates.{packageVersion}.nupkg");
 
-            WorkloadPack p = new(new WorkloadPackId("Microsoft.iOS.Templates"), "15.2.302-preview.14.122", WorkloadPackKind.Template, null);
+            WorkloadPack p = new(new WorkloadPackId("Microsoft.iOS.Templates"), packageVersion, WorkloadPackKind.Template, null);
             TemplatePackPackage pkg = new(p, packagePath, new[] { "x64" }, PackageRootDirectory);
             pkg.Extract();
             WorkloadPackMsi msi = new(pkg, "x64", new MockBuildEngine(), WixToolsetPath, BaseIntermediateOutputPath);
@@ -68,7 +52,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             ITaskItem msiItem = msi.Build(MsiOutputPath);
             msiItem.SetMetadata(Metadata.Platform, "x64");
 
-            Assert.Equal("Microsoft.iOS.Templates.15.2.302-preview.14.122", msiItem.GetMetadata(Metadata.SwixPackageId));
+            Assert.Equal($"Microsoft.iOS.Templates.{packageVersion}", msiItem.GetMetadata(Metadata.SwixPackageId));
 
             MsiSwixProject swixProject = new(msiItem, BaseIntermediateOutputPath, BaseOutputPath,
                 new ReleaseVersion("6.0.100"),

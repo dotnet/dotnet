@@ -34,11 +34,10 @@ namespace Xunit.Sdk
 #endif
 			bool? value) =>
 				new FalseException(
-					message != null
-						? message
-						: "Assert.False() Failure" + Environment.NewLine +
-						  "Expected: False" + Environment.NewLine +
-						  "Actual:   " + (value?.ToString() ?? "null")
+					message ??
+						"Assert.False() Failure" + Environment.NewLine +
+						"Expected: False" + Environment.NewLine +
+						"Actual:   " + (value?.ToString() ?? "null")
 				);
 	}
 }

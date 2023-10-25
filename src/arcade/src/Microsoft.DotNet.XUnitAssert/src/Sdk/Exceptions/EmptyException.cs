@@ -29,7 +29,7 @@ namespace Xunit.Sdk
 		public static EmptyException ForNonEmptyCollection(string collection) =>
 			new EmptyException(
 				"Assert.Empty() Failure: Collection was not empty" + Environment.NewLine +
-				"Collection: " + collection
+				"Collection: " + Assert.GuardArgumentNotNull(nameof(collection), collection)
 			);
 
 		/// <summary>
@@ -40,7 +40,7 @@ namespace Xunit.Sdk
 		public static EmptyException ForNonEmptyString(string value) =>
 			new EmptyException(
 				"Assert.Empty() Failure: String was not empty" + Environment.NewLine +
-				"String: " + AssertHelper.ShortenAndEncodeString(value)
+				"String: " + AssertHelper.ShortenAndEncodeString(Assert.GuardArgumentNotNull(nameof(value), value))
 			);
 	}
 }

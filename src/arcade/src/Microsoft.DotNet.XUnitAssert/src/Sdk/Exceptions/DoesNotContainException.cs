@@ -33,6 +33,8 @@ namespace Xunit.Sdk
 			int? failurePointerIndent,
 			string collection)
 		{
+			Assert.GuardArgumentNotNull(nameof(collection), collection);
+
 			var message = "Assert.DoesNotContain() Failure: Filter matched in collection";
 
 			if (failurePointerIndent.HasValue)
@@ -57,6 +59,9 @@ namespace Xunit.Sdk
 			int? failurePointerIndent,
 			string collection)
 		{
+			Assert.GuardArgumentNotNull(nameof(item), item);
+			Assert.GuardArgumentNotNull(nameof(collection), collection);
+
 			var message = "Assert.DoesNotContain() Failure: Item found in collection";
 
 			if (failurePointerIndent.HasValue)
@@ -78,8 +83,8 @@ namespace Xunit.Sdk
 			string keys) =>
 				new DoesNotContainException(
 					"Assert.DoesNotContain() Failure: Key found in dictionary" + Environment.NewLine +
-					"Keys:  " + keys + Environment.NewLine +
-					"Found: " + expectedKey
+					"Keys:  " + Assert.GuardArgumentNotNull(nameof(keys), keys) + Environment.NewLine +
+					"Found: " + Assert.GuardArgumentNotNull(nameof(expectedKey), expectedKey)
 				);
 
 		/// <summary>
@@ -93,8 +98,8 @@ namespace Xunit.Sdk
 			string set) =>
 				new DoesNotContainException(
 					"Assert.DoesNotContain() Failure: Item found in set" + Environment.NewLine +
-					"Set:   " + set + Environment.NewLine +
-					"Found: " + item
+					"Set:   " + Assert.GuardArgumentNotNull(nameof(set), set) + Environment.NewLine +
+					"Found: " + Assert.GuardArgumentNotNull(nameof(item), item)
 				);
 
 		/// <summary>
@@ -111,6 +116,9 @@ namespace Xunit.Sdk
 			int? failurePointerIndent,
 			string memory)
 		{
+			Assert.GuardArgumentNotNull(nameof(expectedSubMemory), expectedSubMemory);
+			Assert.GuardArgumentNotNull(nameof(memory), memory);
+
 			var message = "Assert.DoesNotContain() Failure: Sub-memory found";
 
 			if (failurePointerIndent.HasValue)
@@ -135,6 +143,9 @@ namespace Xunit.Sdk
 			int? failurePointerIndent,
 			string span)
 		{
+			Assert.GuardArgumentNotNull(nameof(expectedSubSpan), expectedSubSpan);
+			Assert.GuardArgumentNotNull(nameof(span), span);
+
 			var message = "Assert.DoesNotContain() Failure: Sub-span found";
 
 			if (failurePointerIndent.HasValue)
@@ -157,6 +168,9 @@ namespace Xunit.Sdk
 			int indexFailurePoint,
 			string @string)
 		{
+			Assert.GuardArgumentNotNull(nameof(expectedSubString), expectedSubString);
+			Assert.GuardArgumentNotNull(nameof(@string), @string);
+
 			int failurePointerIndent;
 			var encodedString = AssertHelper.ShortenAndEncodeString(@string, indexFailurePoint, out failurePointerIndent);
 

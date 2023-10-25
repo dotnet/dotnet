@@ -31,8 +31,8 @@ namespace Xunit.Sdk
 			string actual) =>
 				new NotStrictEqualException(
 					"Assert.NotStrictEqual() Failure: Values are equal" + Environment.NewLine +
-					"Expected: Not " + expected + Environment.NewLine +
-					"Actual:       " + actual
+					"Expected: Not " + Assert.GuardArgumentNotNull(nameof(expected), expected) + Environment.NewLine +
+					"Actual:       " + Assert.GuardArgumentNotNull(nameof(actual), actual)
 				);
 	}
 }

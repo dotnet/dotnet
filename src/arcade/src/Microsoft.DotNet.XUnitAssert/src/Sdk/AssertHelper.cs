@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -214,7 +215,7 @@ namespace Xunit.Internal
 			out object converted)
 #endif
 		{
-			converted = Convert.ChangeType(value, targetType);
+			converted = Convert.ChangeType(value, targetType, CultureInfo.CurrentCulture);
 			return converted != null;
 		}
 
@@ -454,7 +455,9 @@ namespace Xunit.Internal
 			HashSet<object> actualRefs,
 			int depth)
 		{
-			var prefixDot = prefix == string.Empty ? string.Empty : prefix + ".";
+			Assert.GuardArgumentNotNull(nameof(prefix), prefix);
+
+			var prefixDot = prefix.Length == 0 ? string.Empty : prefix + ".";
 
 			// Enumerate over public instance fields and properties and validate equivalence
 			var expectedGetters = GetGettersForType(expected.GetType());

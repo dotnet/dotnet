@@ -183,6 +183,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                     }
 
                     Log.LogMessage($"Retrying download of '{uri}' to '{DestinationPath}' due to failure: '{e.Message}' ({attempt}/{Retries})");
+                    Log.LogErrorFromException(e, true, true, null);
 
                     await Tasks.Task.Delay(RetryDelayMilliseconds).ConfigureAwait(false);
                     continue;

@@ -40,8 +40,8 @@ namespace Xunit.Sdk
 			Exception actual) =>
 				new ThrowsAnyException(
 					"Assert.ThrowsAny() Failure: Exception type was not compatible" + Environment.NewLine +
-					"Expected: " + ArgumentFormatter.Format(expected) + Environment.NewLine +
-					"Actual:   " + ArgumentFormatter.Format(actual.GetType()),
+					"Expected: " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected)) + Environment.NewLine +
+					"Actual:   " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(actual), actual).GetType()),
 					actual
 				);
 
@@ -53,7 +53,7 @@ namespace Xunit.Sdk
 		public static ThrowsAnyException ForNoException(Type expected) =>
 			new ThrowsAnyException(
 				"Assert.ThrowsAny() Failure: No exception was thrown" + Environment.NewLine +
-				"Expected: " + ArgumentFormatter.Format(expected)
+				"Expected: " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected))
 			);
 	}
 }
