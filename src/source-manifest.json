@@ -7,10 +7,10 @@
       "commitSha": "39042b4048580366d35a7c1c4f4ce8fc0dbea4b4"
     },
     {
-      "packageVersion": "8.0.0-rtm.23524.15",
+      "packageVersion": "8.0.0-rtm.23526.2",
       "path": "aspnetcore",
-      "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "815eb281ecad13eb69cf50516ac7f534b947f2b0"
+      "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
+      "commitSha": "757f469b66312ed15c563c8a0cc170159d571b94"
     },
     {
       "packageVersion": "0.11.4-alpha.23509.2",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "ec7d3cf9805f22616516f9007f2517a32a32534c"
+      "commitSha": "4b3305b14d56d8e39157dddc4554b6d7763e2f76"
     },
     {
       "packageVersion": "17.8.3-preview-23519-04",
@@ -91,16 +91,16 @@
       "commitSha": "b4d9a1334d5189172977ba8fddd00bda70161e4a"
     },
     {
-      "packageVersion": "8.0.0-rtm.23524.7",
+      "packageVersion": "8.0.0-rtm.23525.7",
       "path": "runtime",
-      "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "59edaad404d1b8e47080015ae8d0787f94c970df"
+      "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
+      "commitSha": "17ea9ab3f662320d4ac62d3a2b783b5054ad80bf"
     },
     {
-      "packageVersion": "8.0.100-rtm.23526.9",
+      "packageVersion": "8.0.100-rtm.23526.11",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "1ddf252cbda7f6d87624edc81c59b9863d761bc6"
+      "commitSha": "ad5c9dfff0ed7674a2196f138518daea5783f1f6"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23518.1",
@@ -127,10 +127,10 @@
       "commitSha": "2c8079e2e8e78c0cd11ac75a32014756136ecdb9"
     },
     {
-      "packageVersion": "8.0.100-rtm.23524.6",
+      "packageVersion": "8.0.100-rtm.23525.3",
       "path": "templating",
-      "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "4ec7aea82f054ac4c89d8e12d823edd978add50a"
+      "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-templating",
+      "commitSha": "5bef12183a4bcb79a599d35fc6b71ac1fd5aecb9"
     },
     {
       "packageVersion": "1.1.0-rc.23410.2",
