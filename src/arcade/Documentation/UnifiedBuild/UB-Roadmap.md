@@ -20,7 +20,7 @@ gantt
         UB Week: ub-week, 2023-10-02, 1w
 
     section Vertical Build
-        Win VB PoC (TBD): after net8-ga, 6w
+        Win VB PoC (ViktorH (confirm with Jeff)): after net8-ga, 6w
         Linux VB PoC (SteveP): after net8-rc2, 11w
         MacOS VB PoC (SteveP): after net8-rc2, 11w
         Workloads PoC (SteveP): after net8-ga, 6w
@@ -29,12 +29,16 @@ gantt
         Crossbuilds Design (JoS / SteveP): after net8-ga, 13w
 
     section Source-Build (MichaelS)
-        VMR UX Improvements: after net8-ga, 13w
+        Eliminate Src Edits During Build: after net8-ga, 8w
+        Parallel Build Support: after net9-p1, 2w
+        Remove Inner Clone: after net9-p2, 3w
+        Incremental Build Support: after net9-p3, 6w
         Multi-band SDKs: after net9-p4, 4w
 
     section Product Validation (RichaV)
         Scenario tests in VMR: after net8-rc2, 10w
         PR Validation: after net9-p2, 4w
+        Product Validation Tooling: after net9-p1, 16w
 
     section Product Construction (TomasK / MattM / PremekV)
         Backflow design: after net8-rc2, 5w
@@ -115,20 +119,14 @@ Design for cross-arch or cross-platform builds and determine how to define cross
 
 ## Source-Build area
 
-**VMR UX Improvements**
-
-Improvements of the VMR user experience. This includes, but is not limited to:
-  * Updating source-build to not modify source-controlled files
-  * Design of appropriate controls and command line options
-  * Source-build inner clone removal
-  * Incremental build improvements
-
-**Multi-band SDKs**
-
-Implementing support for building multiple SDK bands sharing one binary copy of shared components (e.g. runtime).
+* [Eliminate Src Edits During Build](https://github.com/dotnet/source-build/issues/3664)
+* [Parallel Build Support](https://github.com/dotnet/source-build/issues/3072)
+* [Remove Inner Clone](https://github.com/dotnet/source-build/issues/3666)
+* [Incremental Build Support](https://github.com/dotnet/source-build/issues/3608)
+* [Multi-band SDKs](https://github.com/dotnet/source-build/issues/3667)
 
 ## Product Validation area
-        
+
 **Scenario tests in VMR**
 
 End-to-end scenario tests (such as `dotnet new console` or a running a Stage 2 Linux source-build of the SDK) of the .NET product.

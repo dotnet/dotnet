@@ -7,5 +7,6 @@ package name=__VS_PACKAGE_NAME__
 
 vs.properties
   isUiGroup=__VS_IS_UI_GROUP__
+  isAdvertisedPackage=__VS_IS_ADVERTISED_PACKAGE__
 
 vs.dependencies
