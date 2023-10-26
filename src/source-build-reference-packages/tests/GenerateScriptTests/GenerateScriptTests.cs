@@ -45,21 +45,27 @@ public class GenerateScriptTests
     {
         string command = Path.Combine(RepoRoot, RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "generate.cmd" : "generate.sh");
         string arguments = $"-p {package},{version} -x -d {SandboxDirectory}";
-        string packageSrcDirectory = string.Empty;
-        string sandboxPackageGeneratedDirecotry = Path.Combine(SandboxDirectory, package.ToLower(), version);
+        string pkgSrcDirectory = string.Empty;
+        string pkgSandboxDirectory = Path.Combine(SandboxDirectory, package.ToLower(), version);
 
         switch (type)
         {
             case PackageType.Reference:
-                packageSrcDirectory = Path.Combine(RepoRoot, "src", "referencePackages", "src", package.ToLower(), version);
+                pkgSrcDirectory = Path.Combine(RepoRoot, "src", "referencePackages", "src", package.ToLower(), version);
                 break;
             case PackageType.Text:
                 arguments += " -t text";
-                packageSrcDirectory = Path.Combine(RepoRoot, "src", "textOnlyPackages", "src", package.ToLower(), version);
+                pkgSrcDirectory = Path.Combine(RepoRoot, "src", "textOnlyPackages", "src", package.ToLower(), version);
                 break;
         }
 
         ExecuteHelper.ExecuteProcessValidateExitCode(command, arguments, output);
-        Assert.Empty(ExecuteHelper.ExecuteProcess("git", $"diff --no-index {packageSrcDirectory} {sandboxPackageGeneratedDirecotry}", output, true).StdOut);
+
+        string diff = ExecuteHelper.ExecuteProcess("git", $"diff --no-index {pkgSrcDirectory} {pkgSandboxDirectory}", output, true).StdOut;
+        if (diff != string.Empty)
+        {
+            Assert.Fail($"Regenerated package '{package}' does not match the checked-in content.  {Environment.NewLine}"
+                    + $"{diff}{Environment.NewLine}");
+        }
     }
 }
