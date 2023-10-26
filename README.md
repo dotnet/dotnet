@@ -162,7 +162,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/arcade`  
 *[dotnet/arcade@39042b4](https://github.com/dotnet/arcade/commit/39042b4048580366d35a7c1c4f4ce8fc0dbea4b4)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@757f469](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/commit/757f469b66312ed15c563c8a0cc170159d571b94)*
+*[_git/dotnet-aspnetcore@9b5f201](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/commit/9b5f201a559077cab447d022259cb9766b85b198)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@7e33b6a](https://github.com/google/googletest/commit/7e33b6a1c497ced1e98fc60175aeb4678419281c)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -182,7 +182,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@f41fe15](https://github.com/dotnet/fsharp/commit/f41fe153f68dd6b20cf4f91de9ea1e55fc09bb20)*
 - `src/installer`  
-*[dotnet/installer@4b3305b](https://github.com/dotnet/installer/commit/4b3305b14d56d8e39157dddc4554b6d7763e2f76)*
+*[dotnet/installer@686b496](https://github.com/dotnet/installer/commit/686b49618547dc30b335b83f64c59305d77dcb51)*
 - `src/msbuild`  
 *[dotnet/msbuild@195e7f5](https://github.com/dotnet/msbuild/commit/195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22)*
 - `src/nuget-client`  
@@ -198,7 +198,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@17ea9ab](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/commit/17ea9ab3f662320d4ac62d3a2b783b5054ad80bf)*
 - `src/sdk`  
-*[_git/dotnet-sdk@ad5c9df](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/commit/ad5c9dfff0ed7674a2196f138518daea5783f1f6)*
+*[_git/dotnet-sdk@fc894af](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/commit/fc894af5e747aec82e6581c7bec01aea120c7115)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@3dc0515](https://github.com/dotnet/source-build-externals/commit/3dc05150cf234f76f6936dcb2853d31a0da1f60e)*
     - `src/source-build-externals/src/abstractions-xunit`  
