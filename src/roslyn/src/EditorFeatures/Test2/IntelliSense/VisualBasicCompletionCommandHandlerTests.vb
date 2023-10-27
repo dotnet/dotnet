@@ -396,7 +396,7 @@ End Class
             End Using
         End Function
 
-        <WpfFact(Skip:="https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1906990")>
+        <WpfFact>
         Public Async Function TestBackspaceBeforeCompletedComputation() As Task
             ' Simulate a very slow completionImplementation provider.
             Using state = TestStateFactory.CreateVisualBasicTestState(
