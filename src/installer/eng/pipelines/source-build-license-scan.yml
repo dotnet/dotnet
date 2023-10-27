@@ -1,12 +1,13 @@
 # Pipeline documentation at https://github.com/dotnet/dotnet/blob/main/docs/license-scanning.md
 
 schedules:
-- cron: "0 7 * * 1-5"
-  displayName: Run on weekdays at 7am UTC
+- cron: "0 7 * * 1"
+  displayName: Run on Mondays at 7am UTC
   branches:
     include:
     - main
-    - release/*
+    - release/*.0.1xx*
+    - internal/release/*.0.1xx*
 
 pr: none
 trigger: none
