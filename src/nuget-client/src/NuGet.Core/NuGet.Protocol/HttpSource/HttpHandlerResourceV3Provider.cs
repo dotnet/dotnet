@@ -54,7 +54,6 @@ namespace NuGet.Protocol
             {
                 Proxy = proxy,
                 AutomaticDecompression = (DecompressionMethods.GZip | DecompressionMethods.Deflate),
-                PreAuthenticate = true
             };
 
 #if IS_DESKTOP

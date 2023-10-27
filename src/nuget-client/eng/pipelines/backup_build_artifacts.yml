@@ -1,0 +1,102 @@
+# No CI trigger rely on Pipeline trigger only
+trigger: none
+
+resources:
+  pipelines:
+    - pipeline: officialbuild
+      source: NuGet.Client-Official
+      trigger: true
+
+jobs:
+  - job: Backup_Build_Artifacts
+    displayName: "Backup Build Artifacts"
+    timeoutInMinutes: 10
+    pool:
+      name: VSEngSS-MicroBuild2022-1ES
+
+    steps:
+      - checkout: none
+
+      - pwsh: |
+          $buildNumber = "$(resources.pipeline.officialbuild.runName)"
+          Write-Host "Setting build number to $buildNumber"
+          Write-Host "##vso[build.updatebuildnumber]$buildNumber"
+        displayName: "Set build number"
+
+      - pwsh: "Get-ChildItem Env: | Sort-Object Name | Format-Table -Wrap -AutoSize"
+        displayName: 'Display environment variables'
+
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download product NonRTM'
+        continueOnError: true # in case build didn't publish this artifact
+        inputs:
+          buildType: specific
+          project: $(resources.pipeline.officialbuild.projectID)
+          definition: $(resources.pipeline.officialbuild.pipelineID)
+          artifactName: 'VS15'
+          targetPath: $(Build.ArtifactStagingDirectory)/backup/VS15
+
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download product RTM'
+        continueOnError: true # in case build didn't publish this artifact
+        inputs:
+          buildType: specific
+          project: $(resources.pipeline.officialbuild.projectID)
+          definition: $(resources.pipeline.officialbuild.pipelineID)
+          artifactName: 'VS15-RTM'
+          targetPath: $(Build.ArtifactStagingDirectory)/backup/VS15-RTM
+
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download nupkgs NonRTM'
+        continueOnError: true # in case build didn't publish this artifact
+        inputs:
+          buildType: specific
+          project: $(resources.pipeline.officialbuild.projectID)
+          definition: $(resources.pipeline.officialbuild.pipelineID)
+          artifactName: 'nupkgs - NonRTM'
+          targetPath: $(Build.ArtifactStagingDirectory)/backup/VS15/nupkgs
+
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download nupkgs RTM'
+        continueOnError: true # in case build didn't publish this artifact
+        inputs:
+          buildType: specific
+          project: $(resources.pipeline.officialbuild.projectID)
+          definition: $(resources.pipeline.officialbuild.pipelineID)
+          artifactName: 'nupkgs - RTM'
+          targetPath: $(Build.ArtifactStagingDirectory)/backup/VS15-RTM/nupkgs
+
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download symbols NonRTM'
+        continueOnError: true # in case build didn't publish this artifact
+        inputs:
+          buildType: specific
+          project: $(resources.pipeline.officialbuild.projectID)
+          definition: $(resources.pipeline.officialbuild.pipelineID)
+          artifactName: 'symbols - NonRTM'
+          targetPath: $(Build.ArtifactStagingDirectory)/backup/symbols
+
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download symbols RTM'
+        continueOnError: true # in case build didn't publish this artifact
+        inputs:
+          buildType: specific
+          project: $(resources.pipeline.officialbuild.projectID)
+          definition: $(resources.pipeline.officialbuild.pipelineID)
+          artifactName: 'symbols - RTM'
+          targetPath: $(Build.ArtifactStagingDirectory)/backup/symbols-rtm
+
+      - pwsh: gci -recurse -file | Resolve-Path -Relative
+        workingDirectory: $(Build.ArtifactStagingDirectory)/backup
+        displayName: "List files being backed up"
+
+      - task: artifactDropTask@0
+        displayName: "Upload Drop"
+        inputs:
+          dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
+          buildNumber: 'Backup/$(System.TeamProject)/NuGet.Client/$(resources.pipeline.officialbuild.pipelineName)/$(resources.pipeline.officialbuild.runName)'
+          sourcePath: "$(Build.ArtifactStagingDirectory)/backup"
+          toLowerCase: false
+          usePat: true
+          dropMetadataContainerName: "DropMetadata-Backup"
+          retentionDays: 186
