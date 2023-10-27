@@ -43,10 +43,10 @@
       "commitSha": "51bf18a2e20024dfa89d63e20b0c3b695b5c1eed"
     },
     {
-      "packageVersion": "8.0.452414",
+      "packageVersion": "8.0.452603",
       "path": "format",
-      "remoteUri": "https://github.com/dotnet/format",
-      "commitSha": "aadaa166c39c8686c55dbec3462355b1ca033b62"
+      "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-format",
+      "commitSha": "52642a896459c299d5bd615fc9d0e326d0e01090"
     },
     {
       "packageVersion": "8.0.100-beta.23523.6",
@@ -58,7 +58,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "686b49618547dc30b335b83f64c59305d77dcb51"
+      "commitSha": "4d885f6071018dcfff672e74c12aac781b67f108"
     },
     {
       "packageVersion": "17.8.3-preview-23519-04",
@@ -97,10 +97,10 @@
       "commitSha": "17ea9ab3f662320d4ac62d3a2b783b5054ad80bf"
     },
     {
-      "packageVersion": "8.0.100-rtm.23526.13",
+      "packageVersion": "8.0.100-rtm.23526.16",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "fc894af5e747aec82e6581c7bec01aea120c7115"
+      "commitSha": "45e463695e4291b777812f0b7cc3130d83e9a003"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23518.1",
