@@ -98,7 +98,7 @@ In case you don't want to / cannot prepare your environment per the requirements
     ```
 
     This builds the entire .NET SDK from source.
-    The resulting SDK is placed at `artifacts/x64/Release/dotnet-sdk-8.0.100-your-RID.tar.gz`.
+    The resulting SDK is placed at `artifacts/x64/Release/dotnet-sdk-9.0.100-your-RID.tar.gz`.
 
     Currently, the `--online` flag is required to allow NuGet restore from online sources during the build.
     This is useful for testing unsupported releases that don't yet build without downloading pre-built binaries from the internet.
@@ -109,7 +109,7 @@ In case you don't want to / cannot prepare your environment per the requirements
 
     ```bash
     mkdir -p $HOME/dotnet
-    tar zxf artifacts/[your-arch]/Release/dotnet-sdk-8.0.100-[your-RID].tar.gz -C $HOME/dotnet
+    tar zxf artifacts/[your-arch]/Release/dotnet-sdk-9.0.100-[your-RID].tar.gz -C $HOME/dotnet
     ln -s $HOME/dotnet/dotnet /usr/bin/dotnet
     ```
     
@@ -129,7 +129,7 @@ docker run --rm -it -v vmr:/vmr -w /vmr mcr.microsoft.com/dotnet-buildtools/prer
 git clone https://github.com/dotnet/dotnet .
 ./prep.sh && ./build.sh --online
 mkdir -p $HOME/.dotnet
-tar -zxf artifacts/x64/Release/dotnet-sdk-8.0.100-centos.8-x64.tar.gz -C $HOME/.dotnet
+tar -zxf artifacts/x64/Release/dotnet-sdk-9.0.100-centos.8-x64.tar.gz -C $HOME/.dotnet
 ln -s $HOME/.dotnet/dotnet /usr/bin/dotnet
 ```
 
@@ -184,7 +184,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@0c5e24d](https://github.com/dotnet/fsharp/commit/0c5e24d19dc915b00b8755a8532bfb2582aa2b47)*
 - `src/installer`  
-*[dotnet/installer@af20dd0](https://github.com/dotnet/installer/commit/af20dd0ff1397956ef8cfa8d2417c9f2a7ca3de2)*
+*[dotnet/installer@fb7c971](https://github.com/dotnet/installer/commit/fb7c9717cfd661b120e900a073c60a8fc9e898da)*
 - `src/msbuild`  
 *[dotnet/msbuild@08494c7](https://github.com/dotnet/msbuild/commit/08494c73128451a3f7cfb47a5e9cbd63f5507a1f)*
 - `src/nuget-client`  
