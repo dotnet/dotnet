@@ -40,6 +40,8 @@ internal class ProjectSnapshot : IProjectSnapshot
 
     public string? RootNamespace => State.HostProject.RootNamespace;
 
+    public string DisplayName => State.HostProject.DisplayName;
+
     public LanguageVersion CSharpLanguageVersion => State.CSharpLanguageVersion;
 
     public HostProject HostProject => State.HostProject;

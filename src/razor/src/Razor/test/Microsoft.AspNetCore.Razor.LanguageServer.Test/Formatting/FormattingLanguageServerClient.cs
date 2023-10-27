@@ -1,46 +1,37 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
-using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Razor;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 using Microsoft.WebTools.Languages.Shared.ContentTypes;
-using Microsoft.WebTools.Languages.Shared.Editor.Composition;
-using Microsoft.WebTools.Languages.Shared.Editor.Text;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using OmniSharp.Extensions.LanguageServer.Protocol;
-using Xunit;
-using FormattingOptions = Microsoft.VisualStudio.LanguageServer.Protocol.FormattingOptions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-internal class FormattingLanguageServerClient : ClientNotifierServiceBase
+internal class FormattingLanguageServerClient(ILoggerFactory loggerFactory) : ClientNotifierServiceBase
 {
-    private readonly Dictionary<string, RazorCodeDocument> _documents = new Dictionary<string, RazorCodeDocument>();
+    private readonly Dictionary<string, RazorCodeDocument> _documents = [];
+    private readonly ILoggerFactory _loggerFactory = loggerFactory;
 
-    public InitializeResult ServerSettings => throw new NotImplementedException();
+    public InitializeResult ServerSettings
+        => throw new NotImplementedException();
 
     public void AddCodeDocument(RazorCodeDocument codeDocument)
     {
@@ -48,45 +39,52 @@ internal class FormattingLanguageServerClient : ClientNotifierServiceBase
         _documents.TryAdd("/" + path, codeDocument);
     }
 
-    private RazorDocumentFormattingResponse Format(DocumentOnTypeFormattingParams @params)
+    private Task<RazorDocumentFormattingResponse> FormatAsync(DocumentOnTypeFormattingParams @params)
     {
         var generatedHtml = GetGeneratedHtml(@params.TextDocument.Uri);
         var generatedHtmlSource = SourceText.From(generatedHtml, Encoding.UTF8);
-        var absoluteIndex = @params.Position.GetRequiredAbsoluteIndex(generatedHtmlSource, null);
+        var absoluteIndex = @params.Position.GetRequiredAbsoluteIndex(generatedHtmlSource, logger: null);
 
-        var request = $@"{{
-    ""Options"": {{
-        ""UseSpaces"": {(@params.Options.InsertSpaces ? "true" : "false")},
-        ""TabSize"": {@params.Options.TabSize},
-        ""IndentSize"": {@params.Options.TabSize}
-    }},
-    ""Uri"": ""{@params.TextDocument.Uri}"",
-    ""GeneratedChanges"": [
-    ],
-    ""OperationType"": ""FormatOnType"",
-    ""SpanToFormat"": {{ ""Start"": {absoluteIndex}, ""End"": {absoluteIndex} }}
-}}
-";
-        return CallWebToolsApplyFormattedEditsHandler(request, @params.TextDocument.Uri, generatedHtml);
+        var request = $$"""
+            {
+                "Options":
+                {
+                    "UseSpaces": {{(@params.Options.InsertSpaces ? "true" : "false")}},
+                    "TabSize": {{@params.Options.TabSize}},
+                    "IndentSize": {{@params.Options.TabSize}}
+                },
+                "Uri": "{{@params.TextDocument.Uri}}",
+                "GeneratedChanges": [],
+                "OperationType": "FormatOnType",
+                "SpanToFormat":
+                {
+                    "Start": {{absoluteIndex}},
+                    "End": {{absoluteIndex}}
+                }
+            }
+            """;
+
+        return CallWebToolsApplyFormattedEditsHandlerAsync(request, @params.TextDocument.Uri, generatedHtml);
     }
 
-    private RazorDocumentFormattingResponse Format(DocumentFormattingParams @params)
+    private Task<RazorDocumentFormattingResponse> FormatAsync(DocumentFormattingParams @params)
     {
         var generatedHtml = GetGeneratedHtml(@params.TextDocument.Uri);
 
-        var request = $@"{{
-    ""Options"": {{
-        ""UseSpaces"": {(@params.Options.InsertSpaces ? "true" : "false")},
-        ""TabSize"": {@params.Options.TabSize},
-        ""IndentSize"": {@params.Options.TabSize}
-    }},
-    ""Uri"": ""{@params.TextDocument.Uri}"",
-    ""GeneratedChanges"": [
-    ]
-}}
-";
+        var request = $$"""
+            {
+                "Options":
+                {
+                    "UseSpaces": {{(@params.Options.InsertSpaces ? "true" : "false")}},
+                    "TabSize": {{@params.Options.TabSize}},
+                    "IndentSize": {{@params.Options.TabSize}}
+                },
+                "Uri": "{{@params.TextDocument.Uri}}",
+                "GeneratedChanges": [],
+            }
+            """;
 
-        return CallWebToolsApplyFormattedEditsHandler(request, @params.TextDocument.Uri, generatedHtml);
+        return CallWebToolsApplyFormattedEditsHandlerAsync(request, @params.TextDocument.Uri, generatedHtml);
     }
 
     private string GetGeneratedHtml(Uri uri)
@@ -96,16 +94,8 @@ internal class FormattingLanguageServerClient : ClientNotifierServiceBase
         return generatedHtml.Replace("\r", "", StringComparison.Ordinal).Replace("\n", "\r\n", StringComparison.Ordinal);
     }
 
-    private RazorDocumentFormattingResponse CallWebToolsApplyFormattedEditsHandler(string serializedValue, Uri documentUri, string generatedHtml)
+    private async Task<RazorDocumentFormattingResponse> CallWebToolsApplyFormattedEditsHandlerAsync(string serializedValue, Uri documentUri, string generatedHtml)
     {
-        var response = new RazorDocumentFormattingResponse();
-
-        response.Edits = Array.Empty<TextEdit>();
-
-        var editHandlerAssembly = Assembly.Load("Microsoft.WebTools.Languages.LanguageServer.Server, Version=16.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
-        var editHandlerType = editHandlerAssembly.GetType("Microsoft.WebTools.Languages.LanguageServer.Server.Html.OperationHandlers.ApplyFormatEditsHandler", throwOnError: true);
-        var bufferManagerType = editHandlerAssembly.GetType("Microsoft.WebTools.Languages.LanguageServer.Server.Shared.Buffer.BufferManager", throwOnError: true);
-
         var exportProvider = EditorTestCompositions.Editor.ExportProviderFactory.CreateExportProvider();
         var contentTypeService = exportProvider.GetExportedValue<IContentTypeRegistryService>();
 
@@ -114,101 +104,75 @@ internal class FormattingLanguageServerClient : ClientNotifierServiceBase
             contentTypeService.AddContentType(HtmlContentTypeDefinition.HtmlContentType, new[] { StandardContentTypeNames.Text });
         }
 
-        var textBufferFactoryService = exportProvider.GetExportedValue<ITextBufferFactoryService>();
-        var textBufferListeners = Array.Empty<Lazy<IWebTextBufferListener, IOrderedComponentContentTypes>>();
-        var bufferManager = Activator.CreateInstance(bufferManagerType, new object[] { contentTypeService, textBufferFactoryService, textBufferListeners });
-        var loggerProvider = NullLoggerProvider.Instance;
-        var applyFormatEditsHandler = Activator.CreateInstance(editHandlerType, new object[] { bufferManager, textBufferFactoryService, loggerProvider });
+        var textBufferFactoryService = (ITextBufferFactoryService3)exportProvider.GetExportedValue<ITextBufferFactoryService>();
+        var bufferManager = WebTools.BufferManager.New(contentTypeService, textBufferFactoryService, []);
+        var logger = _loggerFactory.CreateLogger(GetType()).ToRazorLogger();
+        var applyFormatEditsHandler = WebTools.ApplyFormatEditsHandler.New(textBufferFactoryService, bufferManager, logger);
 
         // Make sure the buffer manager knows about the source document
-        var contentTypeName = HtmlContentTypeDefinition.HtmlContentType;
-        var initialContent = generatedHtml;
-        var snapshotVersionFromLSP = 0;
-        var oSharpDocUri = DocumentUri.From(documentUri);
-        Assert.IsAssignableFrom<ITextSnapshot>(bufferManager.GetType().GetMethod("CreateBuffer").Invoke(bufferManager, new object[] { oSharpDocUri, contentTypeName, initialContent, snapshotVersionFromLSP }));
+        var textSnapshot = bufferManager.CreateBuffer(
+            documentUri: documentUri,
+            contentTypeName: HtmlContentTypeDefinition.HtmlContentType,
+            initialContent: generatedHtml,
+            snapshotVersionFromLSP: 0);
 
-        var requestType = editHandlerAssembly.GetType("Microsoft.WebTools.Languages.LanguageServer.Server.ContainedLanguage.ApplyFormatEditsParamForOmniSharp", throwOnError: true);
-        var request = JsonConvert.DeserializeObject(serializedValue, requestType);
+        var requestContext = WebTools.RequestContext.New(textSnapshot);
 
-        var resultTask = (Task)applyFormatEditsHandler.GetType()
-            .GetRuntimeMethod(
-                name: "Handle",
-                parameters: new[] { requestType, typeof(CancellationToken) })
-            .Invoke(
-                obj: applyFormatEditsHandler,
-                parameters: new object[] { request, CancellationToken.None });
+        var request = WebTools.ApplyFormatEditsParam.DeserializeFrom(serializedValue);
+        var response = await applyFormatEditsHandler.HandleRequestAsync(request, requestContext, CancellationToken.None);
 
-        var result = resultTask.GetType()
-            .GetProperty(nameof(Task<int>.Result))
-            .GetValue(resultTask);
+        var sourceText = SourceText.From(generatedHtml);
 
-        var rawTextChanges = result.GetType()
-            .GetProperty("TextChanges")
-            .GetValue(result);
+        using var edits = new PooledArrayBuilder<TextEdit>();
 
-        var serializedTextChanges = JsonConvert.SerializeObject(rawTextChanges, Newtonsoft.Json.Formatting.Indented);
-        var textChanges = JsonConvert.DeserializeObject<HtmlFormatterTextEdit[]>(serializedTextChanges);
-        response.Edits = textChanges.Select(change => change.AsTextEdit(SourceText.From(generatedHtml))).ToArray();
-
-        return response;
-    }
-
-    private struct HtmlFormatterTextEdit
-    {
-#pragma warning disable CS0649 // Field 'name' is never assigned to, and will always have its default value
-#pragma warning disable IDE1006 // Naming Styles - This type is deserialized above so these need to be cased like this
-        public int Position;
-        public int Length;
-        public string NewText;
-#pragma warning restore IDE1006 // Naming Styles
-#pragma warning restore CS0649 // Field 'name' is never assigned to, and will always have its default value
-
-        public TextEdit AsTextEdit(SourceText sourceText)
+        foreach (var textChange in response.TextChanges)
         {
-            var startLinePosition = sourceText.Lines.GetLinePosition(Position);
-            var endLinePosition = sourceText.Lines.GetLinePosition(Position + Length);
+            var startLinePosition = sourceText.Lines.GetLinePosition(textChange.Position);
+            var endLinePosition = sourceText.Lines.GetLinePosition(textChange.Position + textChange.Length);
 
-            return new TextEdit
+            var edit = new TextEdit()
             {
-                Range = new Range()
+                Range = new()
                 {
-                    Start = new Position(startLinePosition.Line, startLinePosition.Character),
-                    End = new Position(endLinePosition.Line, endLinePosition.Character),
+                    Start = new(startLinePosition.Line, startLinePosition.Character),
+                    End = new(endLinePosition.Line, endLinePosition.Character)
                 },
-                NewText = NewText,
+                NewText = textChange.NewText
             };
+
+            edits.Add(edit);
         }
+
+        return new()
+        {
+            Edits = edits.ToArray()
+        };
     }
 
-    public override Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
+    public override async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
     {
         if (@params is DocumentFormattingParams formattingParams &&
             string.Equals(method, CustomMessageNames.RazorHtmlFormattingEndpoint, StringComparison.Ordinal))
         {
-            var response = Format(formattingParams);
+            var response = await FormatAsync(formattingParams);
 
-            return Task.FromResult(Convert<TResponse>(response));
+            return Convert(response);
         }
         else if (@params is DocumentOnTypeFormattingParams onTypeFormattingParams &&
             string.Equals(method, CustomMessageNames.RazorHtmlOnTypeFormattingEndpoint, StringComparison.Ordinal))
         {
-            var response = Format(onTypeFormattingParams);
+            var response = await FormatAsync(onTypeFormattingParams);
 
-            return Task.FromResult(Convert<TResponse>(response));
+            return Convert(response);
         }
 
         throw new NotImplementedException();
-    }
 
-    private static TResponse Convert<TResponse>(RazorDocumentFormattingResponse response)
-    {
-        if (response is TResponse tResp)
+        static TResponse Convert(RazorDocumentFormattingResponse response)
         {
-            return tResp;
-        }
-        else
-        {
-            throw new InvalidOperationException();
+            return response is TResponse typedResponse
+                ? typedResponse
+                : throw new InvalidOperationException();
         }
     }
 

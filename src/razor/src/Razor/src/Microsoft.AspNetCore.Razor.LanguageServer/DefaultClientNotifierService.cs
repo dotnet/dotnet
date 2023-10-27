@@ -5,35 +5,27 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-// The VSCode OmniSharp client starts the RazorServer before all of its handlers are registered
-// because of this we need to wait until everthing is initialized to make some client requests.
-// This class takes a TCS which will complete when everything is initialized
-// ensuring that no requests are sent before the client is ready.
+// Care is taken by this class to wait for initialization before making any requests.
 internal class DefaultClientNotifierService : ClientNotifierServiceBase
 {
+    private readonly JsonRpc _jsonRpc;
     private readonly TaskCompletionSource<bool> _initializedCompletionSource;
-    private readonly StreamJsonRpc.JsonRpc _jsonRpc;
 
-    public DefaultClientNotifierService(StreamJsonRpc.JsonRpc jsonRpc)
+    public DefaultClientNotifierService(JsonRpc jsonRpc)
     {
-        if (jsonRpc is null)
-        {
-            throw new ArgumentNullException(nameof(jsonRpc));
-        }
-
-        _jsonRpc = jsonRpc;
+        _jsonRpc = jsonRpc ?? throw new ArgumentNullException(nameof(jsonRpc));
         _initializedCompletionSource = new TaskCompletionSource<bool>();
     }
 
     public override async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
     {
         await _initializedCompletionSource.Task.ConfigureAwait(false);
-        var result = await _jsonRpc.InvokeWithParameterObjectAsync<TResponse>(method, @params, cancellationToken).ConfigureAwait(false);
 
-        return result;
+        return await _jsonRpc.InvokeWithParameterObjectAsync<TResponse>(method, @params, cancellationToken).ConfigureAwait(false);
     }
 
     public override async Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
@@ -53,9 +45,6 @@ internal class DefaultClientNotifierService : ClientNotifierServiceBase
     /// <summary>
     /// Fires when the language server is set to "Started".
     /// </summary>
-    /// <param name="clientCapabilities"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
     public override Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
     {
         _initializedCompletionSource.TrySetResult(true);

@@ -64,11 +64,12 @@ World", cleanedSummary);
     public void TryCreateTooltip_Markup_NoAssociatedTagHelperDescriptions_ReturnsFalse()
     {
         // Arrange
-        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
         var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip(elementDescription, MarkupKind.Markdown,  out var markdown);
+        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, MarkupKind.Markdown, out var markdown);
 
         // Assert
         Assert.False(result);
@@ -79,14 +80,15 @@ World", cleanedSummary);
     public void TryCreateTooltip_Markup_Element_SingleAssociatedTagHelper_ReturnsTrue()
     {
         // Arrange
-        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>Uses <see cref=\"T:System.Collections.List{System.String}\" />s</summary>"),
         };
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
         // Act
-        var result = descriptionFactory.TryCreateTooltip(elementDescription, MarkupKind.Markdown, out var markdown);
+        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, MarkupKind.Markdown, out var markdown);
 
         // Assert
         Assert.True(result);
@@ -100,7 +102,8 @@ Uses `List<System.String>`s", markdown.Value);
     public void TryCreateTooltip_Markup_Element_PlainText_NoBold()
     {
         // Arrange
-        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>Uses <see cref=\"T:System.Collections.List{System.String}\" />s</summary>"),
@@ -108,7 +111,7 @@ Uses `List<System.String>`s", markdown.Value);
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip(elementDescription, MarkupKind.PlainText, out var markdown);
+        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, MarkupKind.PlainText, out var markdown);
 
         // Assert
         Assert.True(result, "TryCreateTooltip should have succeeded");
@@ -122,7 +125,8 @@ Uses `List<System.String>`s", markdown.Value);
     public void TryCreateTooltip_Markup_Attribute_PlainText_NoBold()
     {
         // Arrange
-        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(
@@ -148,7 +152,8 @@ Uses `List<System.String>`s", markdown.Value);
     public void TryCreateTooltip_Markup_Element_MultipleAssociatedTagHelpers_ReturnsTrue()
     {
         // Arrange
-        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
@@ -157,7 +162,7 @@ Uses `List<System.String>`s", markdown.Value);
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip(elementDescription, MarkupKind.Markdown, out var markdown);
+        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, MarkupKind.Markdown, out var markdown);
 
         // Assert
         Assert.True(result);
@@ -175,7 +180,8 @@ Also uses `List<System.String>`s", markdown.Value);
     public void TryCreateTooltip_Markup_Attribute_SingleAssociatedAttribute_ReturnsTrue()
     {
         // Arrange
-        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(
@@ -201,7 +207,8 @@ Uses `List<System.String>`s", markdown.Value);
     public void TryCreateTooltip_Markup_Attribute_MultipleAssociatedAttributes_ReturnsTrue()
     {
         // Arrange
-        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(

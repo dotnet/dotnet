@@ -13,7 +13,7 @@ internal static class PositionExtensions
     public static LinePosition ToLinePosition(this Position position)
         => new LinePosition(position.Line, position.Character);
 
-    public static bool TryGetAbsoluteIndex(this Position position, SourceText sourceText, ILogger logger, out int absoluteIndex)
+    public static bool TryGetAbsoluteIndex(this Position position, SourceText sourceText, ILogger? logger, out int absoluteIndex)
     {
         if (position is null)
         {
@@ -28,7 +28,7 @@ internal static class PositionExtensions
         return sourceText.TryGetAbsoluteIndex(position.Line, position.Character, logger, out absoluteIndex);
     }
 
-    public static int GetRequiredAbsoluteIndex(this Position position, SourceText sourceText, ILogger logger)
+    public static int GetRequiredAbsoluteIndex(this Position position, SourceText sourceText, ILogger? logger)
     {
         if (!position.TryGetAbsoluteIndex(sourceText, logger, out var absoluteIndex))
         {

@@ -8,5 +8,5 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 
 internal interface IHoverInfoService
 {
-    VSInternalHover? GetHoverInfo(RazorCodeDocument codeDocument, SourceLocation location, VSInternalClientCapabilities clientCapabilities);
+    VSInternalHover? GetHoverInfo(string documentFilePath, RazorCodeDocument codeDocument, SourceLocation location, VSInternalClientCapabilities clientCapabilities);
 }

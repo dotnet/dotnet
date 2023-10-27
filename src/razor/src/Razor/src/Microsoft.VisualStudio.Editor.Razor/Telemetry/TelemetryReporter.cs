@@ -15,38 +15,90 @@ namespace Microsoft.AspNetCore.Razor.Telemetry;
 
 internal abstract class TelemetryReporter : ITelemetryReporter
 {
-    public ImmutableArray<TelemetrySession> TelemetrySessions { get; set; }
+    protected ImmutableArray<TelemetrySession> TelemetrySessions { get; set; }
 
-    public TelemetryReporter(ImmutableArray<TelemetrySession> telemetrySessions)
+    protected TelemetryReporter(ImmutableArray<TelemetrySession> telemetrySessions)
     {
         // Get the DefaultSession for telemetry. This is set by VS with
         // TelemetryService.SetDefaultSession and provides the correct
         // appinsights keys etc
-        TelemetrySessions = telemetrySessions;
+        TelemetrySessions = telemetrySessions.NullToEmpty();
     }
+
+    private static string GetEventName(string name) => "dotnet/razor/" + name;
+    private static string GetPropertyName(string name) => "dotnet.razor." + name;
+
+    private static TelemetrySeverity ConvertSeverity(Severity severity)
+        => severity switch
+        {
+            Severity.Normal => TelemetrySeverity.Normal,
+            Severity.Low => TelemetrySeverity.Low,
+            Severity.High => TelemetrySeverity.High,
+            _ => throw new InvalidOperationException($"Unknown severity: {severity}")
+        };
 
     public void ReportEvent(string name, Severity severity)
     {
-        var telemetryEvent = new TelemetryEvent(TelemetryHelpers.GetTelemetryName(name), TelemetryHelpers.ToTelemetrySeverity(severity));
+        var telemetryEvent = new TelemetryEvent(GetEventName(name), ConvertSeverity(severity));
+
         Report(telemetryEvent);
     }
 
-    public void ReportEvent(string name, Severity severity, ImmutableDictionary<string, object?> values)
+    public void ReportEvent(string name, Severity severity, Property property)
     {
-        var telemetryEvent = new TelemetryEvent(TelemetryHelpers.GetTelemetryName(name), TelemetryHelpers.ToTelemetrySeverity(severity));
-        foreach (var (propertyName, propertyValue) in values)
+        var telemetryEvent = new TelemetryEvent(GetEventName(name), ConvertSeverity(severity));
+
+        AddToProperties(telemetryEvent.Properties, property);
+        Report(telemetryEvent);
+    }
+
+    public void ReportEvent(string name, Severity severity, Property property1, Property property2)
+    {
+        var telemetryEvent = new TelemetryEvent(GetEventName(name), ConvertSeverity(severity));
+
+        AddToProperties(telemetryEvent.Properties, property1);
+        AddToProperties(telemetryEvent.Properties, property2);
+        Report(telemetryEvent);
+    }
+
+    public void ReportEvent(string name, Severity severity, Property property1, Property property2, Property property3)
+    {
+        var telemetryEvent = new TelemetryEvent(GetEventName(name), ConvertSeverity(severity));
+
+        AddToProperties(telemetryEvent.Properties, property1);
+        AddToProperties(telemetryEvent.Properties, property2);
+        AddToProperties(telemetryEvent.Properties, property3);
+        Report(telemetryEvent);
+    }
+
+    public void ReportEvent(string name, Severity severity, params Property[] properties)
+    {
+        var telemetryEvent = new TelemetryEvent(GetEventName(name), ConvertSeverity(severity));
+
+        foreach (var property in properties)
         {
-            if (TelemetryHelpers.IsNumeric(propertyValue))
-            {
-                telemetryEvent.Properties.Add(TelemetryHelpers.GetPropertyName(propertyName), propertyValue);
-            }
-            else
-            {
-                telemetryEvent.Properties.Add(TelemetryHelpers.GetPropertyName(propertyName), new TelemetryComplexProperty(propertyValue));
-            }
+            AddToProperties(telemetryEvent.Properties, property);
         }
 
         Report(telemetryEvent);
+    }
+
+    private static void AddToProperties(IDictionary<string, object?> properties, Property property)
+    {
+        if (IsNumericValue(property.Value))
+        {
+            properties.Add(GetPropertyName(property.Name), property.Value);
+        }
+        else
+        {
+            properties.Add(GetPropertyName(property.Name), new TelemetryComplexProperty(property.Value));
+        }
+
+        static bool IsNumericValue(object? o)
+        {
+            return o is Type { IsEnum: false } type &&
+                   Type.GetTypeCode(type) is >= TypeCode.Char and <= TypeCode.Double;
+        }
     }
 
     public void ReportFault(Exception exception, string? message, params object?[] @params)
@@ -78,8 +130,8 @@ internal abstract class TelemetryReporter : ITelemetryReporter
             var currentProcess = Process.GetCurrentProcess();
 
             var faultEvent = new FaultEvent(
-                eventName: TelemetryHelpers.GetTelemetryName("fault"),
-                description: TelemetryHelpers.GetDescription(exception),
+                eventName: GetEventName("fault"),
+                description: GetExceptionDetails(exception),
                 FaultSeverity.General,
                 exceptionObject: exception,
                 gatherEventDetails: faultUtility =>
@@ -108,6 +160,55 @@ internal abstract class TelemetryReporter : ITelemetryReporter
         }
     }
 
+    private static string GetExceptionDetails(Exception exception)
+    {
+        const string CodeAnalysisNamespace = nameof(Microsoft) + "." + nameof(CodeAnalysis);
+        const string AspNetCoreNamespace = nameof(Microsoft) + "." + nameof(AspNetCore);
+
+        // Be resilient to failing here.  If we can't get a suitable name, just fall back to the standard name we
+        // used to report.
+        try
+        {
+            // walk up the stack looking for the first call from a type that isn't in the ErrorReporting namespace.
+            var frames = new StackTrace(exception).GetFrames();
+
+            // On the .NET Framework, GetFrames() can return null even though it's not documented as such.
+            // At least one case here is if the exception's stack trace itself is null.
+            if (frames != null)
+            {
+                foreach (var frame in frames)
+                {
+                    var method = frame?.GetMethod();
+                    var methodName = method?.Name;
+                    if (methodName is null)
+                    {
+                        continue;
+                    }
+
+                    var declaringTypeName = method?.DeclaringType?.FullName;
+                    if (declaringTypeName == null)
+                    {
+                        continue;
+                    }
+
+                    if (!declaringTypeName.StartsWith(CodeAnalysisNamespace) &&
+                        !declaringTypeName.StartsWith(AspNetCoreNamespace))
+                    {
+                        continue;
+                    }
+
+                    return declaringTypeName + "." + methodName;
+                }
+            }
+        }
+        catch
+        {
+        }
+
+        // If we couldn't get a stack, do this
+        return exception.Message;
+    }
+
     private void Report(TelemetryEvent telemetryEvent)
     {
         try
@@ -131,7 +232,7 @@ internal abstract class TelemetryReporter : ITelemetryReporter
                 var exception = eventType.GetProperty("ExceptionObject", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(telemetryEvent, null);
                 var message = $"Fault Event: {name} \n Exception Info: {exception ?? description} \n Properties: {propertyString}";
 
-                Debug.Assert(true, message);
+                Debug.Fail(message);
             }
 #endif
         }
@@ -143,36 +244,47 @@ internal abstract class TelemetryReporter : ITelemetryReporter
         }
     }
 
-    public IDisposable BeginBlock(string name, Severity severity)
+    protected virtual bool HandleException(Exception exception, string? message, params object?[] @params)
+        => false;
+
+    protected virtual void LogTrace(string? message, params object?[] args)
     {
-        return BeginBlock(name, severity, ImmutableDictionary<string, object?>.Empty);
     }
 
-    public IDisposable BeginBlock(string name, Severity severity, ImmutableDictionary<string, object?> values)
+    protected virtual void LogError(Exception exception, string? message, params object?[] args)
     {
-        return new TelemetryScope(this, name, severity, values.ToImmutableDictionary((tuple) => tuple.Key, (tuple) => (object?)tuple.Value));
     }
 
-    public IDisposable TrackLspRequest(string lspMethodName, string languageServerName, Guid correlationId)
+    public TelemetryScope BeginBlock(string name, Severity severity)
+        => TelemetryScope.Create(this, name, severity);
+
+    public TelemetryScope BeginBlock(string name, Severity severity, Property property)
+        => TelemetryScope.Create(this, name, severity, property);
+
+    public TelemetryScope BeginBlock(string name, Severity severity, Property property1, Property property2)
+        => TelemetryScope.Create(this, name, severity, property1, property2);
+
+    public TelemetryScope BeginBlock(string name, Severity severity, Property property1, Property property2, Property property3)
+        => TelemetryScope.Create(this, name, severity, property1, property2, property3);
+
+    public TelemetryScope BeginBlock(string name, Severity severity, params Property[] properties)
+        => TelemetryScope.Create(this, name, severity, properties);
+
+    public TelemetryScope TrackLspRequest(string lspMethodName, string languageServerName, Guid correlationId)
     {
         if (correlationId == Guid.Empty)
         {
-            return NullTelemetryScope.Instance;
+            return TelemetryScope.Null;
         }
 
-        return BeginBlock("TrackLspRequest", Severity.Normal, ImmutableDictionary.CreateRange(new KeyValuePair<string, object?>[]
-        {
+        ReportEvent("BeginLspRequest", Severity.Normal,
             new("eventscope.method", lspMethodName),
             new("eventscope.languageservername", languageServerName),
-            new("eventscope.correlationid", correlationId),
-        }));
+            new("eventscope.correlationid", correlationId));
+
+        return BeginBlock("TrackLspRequest", Severity.Normal, 
+            new("eventscope.method", lspMethodName),
+            new("eventscope.languageservername", languageServerName),
+            new("eventscope.correlationid", correlationId));
     }
-
-    public abstract void InitializeSession(string telemetryLevel, string? sessionId, bool isDefaultSession);
-
-    public abstract bool HandleException(Exception exception, string? message, params object?[] @params);
-
-    public abstract void LogTrace(string? message, params object?[] args);
-
-    public abstract void LogError(Exception exception, string? message, params object?[] args);
 }

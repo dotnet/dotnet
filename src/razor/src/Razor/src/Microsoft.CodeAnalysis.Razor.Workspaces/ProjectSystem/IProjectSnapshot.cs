@@ -27,6 +27,7 @@ internal interface IProjectSnapshot
     string IntermediateOutputPath { get; }
 
     string? RootNamespace { get; }
+    string DisplayName { get; }
     VersionStamp Version { get; }
     LanguageVersion CSharpLanguageVersion { get; }
     ImmutableArray<TagHelperDescriptor> TagHelpers { get; }

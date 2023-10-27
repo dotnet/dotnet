@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
 
@@ -19,13 +18,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 internal static class TestRazorFormattingService
 {
     public static async Task<IRazorFormattingService> CreateWithFullSupportAsync(
+        ILoggerFactory loggerFactory,
         RazorCodeDocument? codeDocument = null,
         IDocumentSnapshot? documentSnapshot = null,
-        ILoggerFactory? loggerFactory = null,
         RazorLSPOptions? razorLSPOptions = null)
     {
         codeDocument ??= TestRazorCodeDocument.CreateEmpty();
-        loggerFactory ??= NullLoggerFactory.Instance;
 
         var filePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
         var mappingService = new RazorDocumentMappingService(filePathService, new TestDocumentContextFactory(), loggerFactory);
@@ -40,7 +38,7 @@ internal static class TestRazorFormattingService
             }, CancellationToken.None);
         }
 
-        var client = new FormattingLanguageServerClient();
+        var client = new FormattingLanguageServerClient(loggerFactory);
         client.AddCodeDocument(codeDocument);
 
         var configurationSyncService = new Mock<IConfigurationSyncService>(MockBehavior.Strict);

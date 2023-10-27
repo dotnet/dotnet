@@ -58,74 +58,28 @@ internal partial class RazorCustomMessageTarget
             throw new ArgumentNullException(nameof(documentManager));
         }
 
+        if (documentManager is not TrackingLSPDocumentManager trackingDocumentManager)
+        {
+            throw new ArgumentException($"The LSP document manager should be of type {typeof(TrackingLSPDocumentManager).FullName}", nameof(documentManager));
+        }
+
         if (joinableTaskContext is null)
         {
             throw new ArgumentNullException(nameof(joinableTaskContext));
         }
 
-        if (requestInvoker is null)
-        {
-            throw new ArgumentNullException(nameof(requestInvoker));
-        }
-
-        if (formattingOptionsProvider is null)
-        {
-            throw new ArgumentNullException(nameof(formattingOptionsProvider));
-        }
-
-        if (editorSettingsManager is null)
-        {
-            throw new ArgumentNullException(nameof(editorSettingsManager));
-        }
-
-        if (documentSynchronizer is null)
-        {
-            throw new ArgumentNullException(nameof(documentSynchronizer));
-        }
-
-        if (csharpVirtualDocumentAddListener is null)
-        {
-            throw new ArgumentNullException(nameof(csharpVirtualDocumentAddListener));
-        }
-
-        _documentManager = (TrackingLSPDocumentManager)documentManager;
-
-        if (_documentManager is null)
-        {
-            throw new ArgumentException("The LSP document manager should be of type " + typeof(TrackingLSPDocumentManager).FullName, nameof(_documentManager));
-        }
-
-        if (telemetryReporter is null)
-        {
-            throw new ArgumentNullException(nameof(telemetryReporter));
-        }
-
-        if (languageServerFeatureOptions is null)
-        {
-            throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        }
-
-        if (projectSnapshotManagerAccessor is null)
-        {
-            throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
-        }
-
-        if (snippetCache is null)
-        {
-            throw new ArgumentNullException(nameof(snippetCache));
-        }
-
+        _documentManager = trackingDocumentManager;
         _joinableTaskFactory = joinableTaskContext.Factory;
 
-        _requestInvoker = requestInvoker;
-        _formattingOptionsProvider = formattingOptionsProvider;
-        _editorSettingsManager = editorSettingsManager;
-        _documentSynchronizer = documentSynchronizer;
-        _csharpVirtualDocumentAddListener = csharpVirtualDocumentAddListener;
-        _telemetryReporter = telemetryReporter;
-        _languageServerFeatureOptions = languageServerFeatureOptions;
-        _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
-        _snippetCache = snippetCache;
+        _requestInvoker = requestInvoker ?? throw new ArgumentNullException(nameof(requestInvoker));
+        _formattingOptionsProvider = formattingOptionsProvider ?? throw new ArgumentNullException(nameof(formattingOptionsProvider));
+        _editorSettingsManager = editorSettingsManager ?? throw new ArgumentNullException(nameof(editorSettingsManager));
+        _documentSynchronizer = documentSynchronizer ?? throw new ArgumentNullException(nameof(documentSynchronizer));
+        _csharpVirtualDocumentAddListener = csharpVirtualDocumentAddListener ?? throw new ArgumentNullException(nameof(csharpVirtualDocumentAddListener));
+        _telemetryReporter = telemetryReporter ?? throw new ArgumentNullException(nameof(telemetryReporter));
+        _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
+        _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor ?? throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
+        _snippetCache = snippetCache ?? throw new ArgumentNullException(nameof(snippetCache));
     }
 
     internal void SetLogger(ILogger? logger)
@@ -239,8 +193,8 @@ internal partial class RazorCustomMessageTarget
     }
 
     private SynchronizedResult<TVirtualDocumentSnapshot>? TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(
-        int requiredHostDocumentVersion,
-        TextDocumentIdentifier hostDocument) where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
+        int requiredHostDocumentVersion, TextDocumentIdentifier hostDocument)
+        where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
     {
         if (_documentSynchronizer is not DefaultLSPDocumentSynchronizer documentSynchronizer)
         {
@@ -261,11 +215,11 @@ internal partial class RazorCustomMessageTarget
     }
 
     private CSharpVirtualDocumentSnapshot? FindVirtualDocument<TVirtualDocumentSnapshot>(
-        Uri hostDocumentUri,
-        VSProjectContext? projectContext) where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
+        Uri hostDocumentUri, VSProjectContext? projectContext)
+        where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
     {
         if (!_documentManager.TryGetDocument(hostDocumentUri, out var documentSnapshot) ||
-            !documentSnapshot.TryGetAllVirtualDocuments<TVirtualDocumentSnapshot>(out var virtualDocuments))
+            !documentSnapshot.TryGetAllVirtualDocumentsAsArray<TVirtualDocumentSnapshot>(out var virtualDocuments))
         {
             return null;
         }

@@ -47,6 +47,11 @@
         <target state="translated">Serviços de Linguagem Razor não configurados corretamente, serviço de linguagem '{0}' ausente.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Not_Available_In">
+        <source>Not available in</source>
+        <target state="new">Not available in</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PositionIndex_Outside_Range">
         <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
         <target state="translated">A linha '{0}' fora do intervalo {1} de '{2}' foi consultada. O documento pode não estar atualizado.</target>

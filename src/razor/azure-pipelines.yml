@@ -88,10 +88,6 @@ stages:
               name: $(DncEngInternalBuildPool)
               demands: ImageOverride -equals windows.vs2022preview.scout.amd64
           steps:
-          - task: NodeTool@0
-            displayName: Install Node 10.x
-            inputs:
-              versionSpec: 10.x
           - task: NuGetCommand@2
             displayName: 'Clear NuGet caches'
             condition: succeeded()
@@ -168,15 +164,6 @@ stages:
               /p:GenerateSbom=true
 
         steps:
-        - task: NodeTool@0
-          displayName: Install Node 10.x
-          inputs:
-            versionSpec: 10.x
-
-        - powershell: npm install -g yarn
-          displayName: Install yarn
-          condition: succeeded()
-
         - task: NuGetCommand@2
           displayName: 'Clear NuGet caches'
           condition: succeeded()
@@ -322,11 +309,6 @@ stages:
               /p:OfficialBuildId=$(Build.BuildNumber)
 
         steps:
-        - task: NodeTool@0
-          displayName: Install Node 10.x
-          inputs:
-            versionSpec: 10.x
-
         - ${{ if ne(variables['System.TeamProject'], 'public') }}:
           - task: Bash@3
             displayName: Setup Private Feeds Credentials
@@ -387,10 +369,6 @@ stages:
               /p:OfficialBuildId=$(Build.BuildNumber)
 
         steps:
-        - task: NodeTool@0
-          displayName: Install Node 10.x
-          inputs:
-            versionSpec: 10.x
         - ${{ if ne(variables['System.TeamProject'], 'public') }}:
           - task: Bash@3
             displayName: Setup Private Feeds Credentials

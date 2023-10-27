@@ -76,12 +76,17 @@ public class Program
         ITelemetryReporter? devKitTelemetryReporter = null;
         if (!telemetryExtensionPath.IsNullOrEmpty())
         {
-            using var exportProvider = await ExportProviderBuilder.CreateExportProviderAsync(
-              telemetryExtensionPath).ConfigureAwait(true);
+            using var exportProvider = await ExportProviderBuilder
+                .CreateExportProviderAsync(telemetryExtensionPath)
+                .ConfigureAwait(true);
 
             // Initialize the telemetry reporter if available
             devKitTelemetryReporter = exportProvider.GetExports<ITelemetryReporter>().SingleOrDefault()?.Value;
-            devKitTelemetryReporter?.InitializeSession(telemetryLevel, sessionId, isDefaultSession: true);
+
+            if (devKitTelemetryReporter is ITelemetryReporterInitializer initializer)
+            {
+                initializer.InitializeSession(telemetryLevel, sessionId, isDefaultSession: true);
+            }
         }
 
         var logger = new LspLogger(trace);

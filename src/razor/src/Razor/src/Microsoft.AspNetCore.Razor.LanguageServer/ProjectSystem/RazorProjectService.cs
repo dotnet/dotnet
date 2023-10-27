@@ -1,7 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization;
@@ -22,12 +22,13 @@ internal abstract class RazorProjectService
 
     public abstract void UpdateDocument(string filePath, SourceText sourceText, int version);
 
-    public abstract ProjectKey AddProject(string filePath, string intermediateOutputPath, RazorConfiguration? configuration, string? rootNamespace);
+    public abstract ProjectKey AddProject(string filePath, string intermediateOutputPath, RazorConfiguration? configuration, string? rootNamespace, string displayName);
 
     public abstract void UpdateProject(
         ProjectKey projectKey,
         RazorConfiguration? configuration,
         string? rootNamespace,
+        string displayName,
         ProjectWorkspaceState projectWorkspaceState,
-        IReadOnlyList<DocumentSnapshotHandle> documents);
+        ImmutableArray<DocumentSnapshotHandle> documents);
 }

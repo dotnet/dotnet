@@ -165,11 +165,12 @@ End summary description.";
     public void TryCreateTooltip_ClassifiedTextElement_NoAssociatedTagHelperDescriptions_ReturnsFalse()
     {
         // Arrange
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
         var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip(elementDescription, out ClassifiedTextElement classifiedTextElement);
+        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, out ClassifiedTextElement classifiedTextElement);
 
         // Assert
         Assert.False(result);
@@ -180,7 +181,8 @@ End summary description.";
     public void TryCreateTooltip_ClassifiedTextElement_Element_SingleAssociatedTagHelper_ReturnsTrue_NestedTypes()
     {
         // Arrange
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo(
@@ -190,7 +192,7 @@ End summary description.";
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip(elementDescription, out ClassifiedTextElement classifiedTextElement);
+        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, out ClassifiedTextElement classifiedTextElement);
 
         // Assert
         Assert.True(result);
@@ -220,7 +222,8 @@ End summary description.";
     public void TryCreateTooltip_ClassifiedTextElement_Element_NamespaceContainsTypeName_ReturnsTrue()
     {
         // Arrange
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo(
@@ -230,7 +233,7 @@ End summary description.";
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip(elementDescription, out ClassifiedTextElement classifiedTextElement);
+        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, out ClassifiedTextElement classifiedTextElement);
 
         // Assert
         Assert.True(result);
@@ -259,7 +262,8 @@ End summary description.";
     public void TryCreateTooltip_ClassifiedTextElement_Element_MultipleAssociatedTagHelpers_ReturnsTrue()
     {
         // Arrange
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
@@ -268,7 +272,7 @@ End summary description.";
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip(elementDescription, out ClassifiedTextElement classifiedTextElement);
+        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, out ClassifiedTextElement classifiedTextElement);
 
         // Assert
         Assert.True(result);
@@ -312,7 +316,8 @@ End summary description.";
     public void TryCreateTooltip_ClassifiedTextElement_NoAssociatedAttributeDescriptions_ReturnsFalse()
     {
         // Arrange
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
         var elementDescription = AggregateBoundAttributeDescription.Empty;
 
         // Act
@@ -327,7 +332,8 @@ End summary description.";
     public void TryCreateTooltip_ClassifiedTextElement_Attribute_SingleAssociatedAttribute_ReturnsTrue_NestedTypes()
     {
         // Arrange
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(
@@ -375,7 +381,8 @@ End summary description.";
     public void TryCreateTooltip_ClassifiedTextElement_Attribute_MultipleAssociatedAttributes_ReturnsTrue()
     {
         // Arrange
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(
@@ -449,11 +456,12 @@ End summary description.";
     public void TryCreateTooltip_ContainerElement_NoAssociatedTagHelperDescriptions_ReturnsFalse()
     {
         // Arrange
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
         var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip(elementDescription, out ContainerElement containerElement);
+        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, out ContainerElement containerElement);
 
         // Assert
         Assert.False(result);
@@ -464,7 +472,8 @@ End summary description.";
     public void TryCreateTooltip_ContainerElement_Attribute_MultipleAssociatedTagHelpers_ReturnsTrue()
     {
         // Arrange
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
         var associatedTagHelperInfos = new[]
         {
             new BoundElementDescriptionInfo("Microsoft.AspNetCore.SomeTagHelper", "<summary>\nUses <see cref=\"T:System.Collections.List{System.String}\" />s\n</summary>"),
@@ -473,7 +482,7 @@ End summary description.";
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip(elementDescription, out ContainerElement container);
+        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, out ContainerElement container);
 
         // Assert
         Assert.True(result);
@@ -547,7 +556,8 @@ End summary description.";
     public void TryCreateTooltip_ContainerElement_NoAssociatedAttributeDescriptions_ReturnsFalse()
     {
         // Arrange
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
         var elementDescription = AggregateBoundAttributeDescription.Empty;
 
         // Act
@@ -562,7 +572,8 @@ End summary description.";
     public void TryCreateTooltip_ContainerElement_Attribute_MultipleAssociatedAttributes_ReturnsTrue()
     {
         // Arrange
-        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory();
+        var snapshotResolver = new TestSnapshotResolver();
+        var descriptionFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
         var associatedAttributeDescriptions = new[]
         {
             new BoundAttributeDescriptionInfo(

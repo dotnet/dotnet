@@ -35,6 +35,7 @@ internal class EphemeralProjectSnapshot : IProjectSnapshot
         _services = services;
         FilePath = projectPath;
         IntermediateOutputPath = Path.Combine(Path.GetDirectoryName(FilePath) ?? FilePath, "obj");
+        DisplayName = Path.GetFileNameWithoutExtension(projectPath);
 
         _projectEngine = new Lazy<RazorProjectEngine>(CreateProjectEngine);
 
@@ -52,6 +53,8 @@ internal class EphemeralProjectSnapshot : IProjectSnapshot
     public string IntermediateOutputPath { get; }
 
     public string? RootNamespace { get; }
+
+    public string DisplayName { get; }
 
     public VersionStamp Version => VersionStamp.Default;
 

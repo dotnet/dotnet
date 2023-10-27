@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Debugging;
 using Microsoft.VisualStudio.Editor.Razor.Snippets;
+using Microsoft.VisualStudio.LanguageServerClient.Razor.Options;
 using Microsoft.VisualStudio.LanguageServices.Razor;
 using Microsoft.VisualStudio.RazorExtension.Options;
 using Microsoft.VisualStudio.RazorExtension.Snippets;
@@ -83,8 +84,8 @@ internal sealed class RazorPackage : AsyncPackage
         var componentModel = (IComponentModel)GetGlobalService(typeof(SComponentModel));
         var joinableTaskContext = componentModel.GetService<JoinableTaskContext>();
         var cache = componentModel.GetService<SnippetCache>();
-
-        return new SnippetService(joinableTaskContext.Factory, this, cache);
+        var optionsStorage = componentModel.GetService<OptionsStorage>();
+        return new SnippetService(joinableTaskContext.Factory, this, cache, optionsStorage);
     }
 
     /// <summary>

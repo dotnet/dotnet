@@ -27,6 +27,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
                 "c:/path/to/project.csproj",
                 configuration: null,
                 rootNamespace: null,
+                displayName: "project",
                 projectWorkspaceState: null,
                 documents: ImmutableArray<DocumentSnapshotHandle>.Empty));
 
@@ -54,6 +55,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
             "c:/path/to/project.csproj",
             configuration: null,
             rootNamespace: null,
+            displayName: "project",
             projectWorkspaceState: null,
             documents: ImmutableArray<DocumentSnapshotHandle>.Empty);
 
@@ -84,6 +86,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
             "c:/path/to/project.csproj",
             configuration: null,
             rootNamespace: null,
+            displayName: "project",
             projectWorkspaceState: null,
             documents: ImmutableArray<DocumentSnapshotHandle>.Empty);
 

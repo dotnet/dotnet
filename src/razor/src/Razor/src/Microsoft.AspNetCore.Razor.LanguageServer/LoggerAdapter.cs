@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.Extensions.Logging;
 
@@ -16,13 +15,20 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 // but we did not want to migrate them all at once
 internal class LoggerAdapter : IRazorLogger
 {
-    private readonly IEnumerable<ILogger> _loggers;
+    private readonly ImmutableArray<ILogger> _loggers;
     private readonly ITelemetryReporter? _telemetryReporter;
     private readonly TraceSource? _traceSource;
 
-    public LoggerAdapter(IEnumerable<ILogger> loggers, ITelemetryReporter? telemetryReporter, TraceSource? traceSource = null)
+    public LoggerAdapter(IEnumerable<ILogger> loggers, ITelemetryReporter? telemetryReporter = null, TraceSource? traceSource = null)
     {
-        _loggers = loggers;
+        _loggers = loggers.ToImmutableArray();
+        _telemetryReporter = telemetryReporter;
+        _traceSource = traceSource;
+    }
+
+    public LoggerAdapter(ILogger logger, ITelemetryReporter? telemetryReporter = null, TraceSource? traceSource = null)
+    {
+        _loggers =  ImmutableArray.Create(logger);
         _telemetryReporter = telemetryReporter;
         _traceSource = traceSource;
     }
@@ -90,16 +96,16 @@ internal class LoggerAdapter : IRazorLogger
 
         if (_telemetryReporter is not null)
         {
-            using var _ = DictionaryPool<string, object?>.GetPooledObject(out var props);
+            var properties = new Property[@params.Length + 1];
 
-            var index = 0;
-            foreach (var param in @params)
+            for (var i = 0; i < @params.Length; i++)
             {
-                props.Add("param" + index++, param);
+                properties[i] = new("param" + i, @params[i]);
             }
 
-            props.Add("message", message);
-            _telemetryReporter.ReportEvent("lsperror", Severity.High, props.ToImmutableDictionary());
+            properties[^1] = new("message", message);
+
+            _telemetryReporter.ReportEvent("lsperror", Severity.High, properties);
         }
     }
 
@@ -150,10 +156,10 @@ internal class LoggerAdapter : IRazorLogger
 #pragma warning restore CA2254 // Template should be a static expression
     }
 
-    private class CompositeDisposable : IDisposable
+    private sealed class CompositeDisposable : IDisposable
     {
         private bool _disposed = false;
-        private readonly IList<IDisposable> _disposables = new List<IDisposable>();
+        private readonly List<IDisposable> _disposables = [];
 
         public void AddDisposable(IDisposable disposable)
         {
@@ -168,6 +174,7 @@ internal class LoggerAdapter : IRazorLogger
         public void Dispose()
         {
             _disposed = true;
+
             foreach (var disposable in _disposables)
             {
                 disposable.Dispose();

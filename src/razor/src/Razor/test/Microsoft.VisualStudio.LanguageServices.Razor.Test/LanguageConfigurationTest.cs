@@ -4,7 +4,6 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using EnvDTE;
 using Microsoft.CodeAnalysis.Testing;
 using Newtonsoft.Json.Linq;
 using Xunit;

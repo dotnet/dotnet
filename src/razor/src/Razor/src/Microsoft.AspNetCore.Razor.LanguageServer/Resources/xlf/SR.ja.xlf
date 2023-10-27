@@ -47,6 +47,11 @@
         <target state="translated">Razor 言語サービスが正しく構成されていません。言語サービス '{0}' がありません。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Not_Available_In">
+        <source>Not available in</source>
+        <target state="new">Not available in</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PositionIndex_Outside_Range">
         <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
         <target state="translated">'{2}' の {1} 範囲外の行 '{0}' がクエリされました。ドキュメントが最新ではない可能性があります。</target>
