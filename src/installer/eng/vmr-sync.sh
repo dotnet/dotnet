@@ -135,7 +135,7 @@ while [[ $# -gt 0 ]]; do
       recursive=true
       ;;
     --remote)
-      additional_remotes="$additional_remotes $2"
+      additional_remotes="$additional_remotes,$2"
       shift
       ;;
     --readme-template)
@@ -265,9 +265,9 @@ fi
   $azdev_pat                                 \
   --$verbosity                               \
   $recursive_arg                             \
-  $additional_remotes                        \
   --readme-template "$readme_template"       \
   --tpn-template "$tpn_template"             \
+  $additional_remotes                        \
   "$repository"
 
 if [[ $? == 0 ]]; then
