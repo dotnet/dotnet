@@ -155,6 +155,7 @@ stages:
             -prepareMachine
             $(_InternalBuildArgs)
             /p:Test=false
+            /p:SourceBranchName=$(Build.SourceBranchName)
           name: Build
           displayName: Build
 
