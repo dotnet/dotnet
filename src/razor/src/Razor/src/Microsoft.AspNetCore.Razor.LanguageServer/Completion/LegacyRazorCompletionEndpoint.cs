@@ -102,7 +102,8 @@ internal class LegacyRazorCompletionEndpoint : IVSCompletionEndpoint
         var completionCapability = _clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
 
         // The completion items are cached and can be retrieved via this result id to enable the "resolve" completion functionality.
-        var resultId = _completionListCache.Add(completionList, razorCompletionItems);
+        var razorResolveContext = new RazorCompletionResolveContext(documentContext.FilePath, razorCompletionItems);
+        var resultId = _completionListCache.Add(completionList, razorResolveContext);
         completionList.SetResultId(resultId, completionCapability);
 
         return completionList;

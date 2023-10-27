@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
@@ -124,7 +125,7 @@ internal class ProjectConfigurationStateSynchronizer : IProjectConfigurationFile
             var intermediateOutputPath = Path.GetDirectoryName(configurationFilePath).AssumeNotNull();
             var rootNamespace = projectInfo.RootNamespace;
 
-            var projectKey = _projectService.AddProject(projectFilePath, intermediateOutputPath, projectInfo.Configuration, rootNamespace);
+            var projectKey = _projectService.AddProject(projectFilePath, intermediateOutputPath, projectInfo.Configuration, rootNamespace, projectInfo.DisplayName);
             _configurationToProjectMap[configurationFilePath] = projectKey;
 
             _logger.LogInformation("Project configuration file added for project '{0}': '{1}'", projectFilePath, configurationFilePath);
@@ -147,6 +148,7 @@ internal class ProjectConfigurationStateSynchronizer : IProjectConfigurationFile
                 projectKey,
                 projectInfo.Configuration,
                 projectInfo.RootNamespace,
+                projectInfo.DisplayName,
                 projectWorkspaceState,
                 documents);
         }
@@ -181,8 +183,9 @@ internal class ProjectConfigurationStateSynchronizer : IProjectConfigurationFile
                 projectKey,
                 configuration: null,
                 rootNamespace: null,
+                displayName: "",
                 ProjectWorkspaceState.Default,
-                Array.Empty<DocumentSnapshotHandle>());
+                ImmutableArray<DocumentSnapshotHandle>.Empty);
         }
     }
 

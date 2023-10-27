@@ -30,7 +30,7 @@ internal class VSTelemetryReporter : TelemetryReporter
         _logger = loggerFactory?.CreateLogger<VSTelemetryReporter>();
     }
 
-    public override bool HandleException(Exception exception, string? message, params object?[] @params)
+    protected override bool HandleException(Exception exception, string? message, params object?[] @params)
     {
         var handled = false;
         foreach (var handler in _faultExceptionHandlers)
@@ -48,18 +48,9 @@ internal class VSTelemetryReporter : TelemetryReporter
         return handled;
     }
 
-    public override void InitializeSession(string telemetryLevel, string? sessionId, bool isDefaultSession)
-    {
-        // We don't need to do anything here. We're using the default session
-        // which is already initialized by VS.
-        throw new Exception("InitializeSession should not be called in VS.");
-    }
-
-    public override void LogTrace(string? message, params object?[] args)
+    protected override void LogTrace(string? message, params object?[] args)
         => _logger?.LogTrace(message, args);
 
-    public override void LogError(Exception exception, string? message, params object?[] args)
+    protected override void LogError(Exception exception, string? message, params object?[] args)
         => _logger?.LogError(exception, message, args);
-
-
 }

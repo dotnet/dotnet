@@ -28,16 +28,16 @@ First you need to locally download and extract the build artifacts that you want
     - You may want to use a build that has already successfully been inserted into Visual Studio for Windows, so that we get the benefit from the various smoke tests and regression tests that are present in that process.
 
 2. Click the "X Artifacts" link from the build information
-    ![image](![Alt text](images/build_summary.png)
+    ![image](images/build_summary.png)
 3. Find the **BlobArtifacts** artifact and download it by clicking the `...` menu:
     - You won't need everything in BlobArtifacts but its much more convenient to download a single file, and you only approximately 7% of the download is unnecessary.
 
     ![image](images/blobartifacts.png)
 4. Unzip the BlobArtifacts.zip file you end up with and delete:
-    - Any file that doesn't start with "RazorLanguageServer"
-    - The file that starts with "RazorLanguageServer-PlatformAgnostic"
+    - Any file that doesn't start with "RazorLanguageServer" or "DevKitTelemetry"
+    - Any file that contains "PlatformAgnostic"
 
-At the end of this process you should have a folder containing 9 files. Rename the folder to the version number, pulled from any one of the file names in the folder.
+At the end of this process you should have a folder containing 18 files. Rename the folder to the version number, pulled from any one of the file names in the folder.
 
 ![image](images/remaining_files.png)
 
@@ -47,7 +47,7 @@ At the end of this process you should have a folder containing 9 files. Rename t
 2. Go to the server, and the `release` share, then the `\ddpublish\vscode-razor` folder
     - For the name of the server, skip to step 4, and you'll see it in the Azure DevOps UI. The actual server name is unimportant, and liable to change, as long as its the one the release pipeline linked below is looking at.
 3. Upload the entire folder you created above.
-    - Alternatively, create a folder named the version that you'll be publishing, i.e. `7.0.0-preview.23328.2`, and then upload each of the 9 zip files you have after the above steps.
+    - Alternatively, create a folder named the version that you'll be publishing, i.e. `7.0.0-preview.23328.2`, and then upload each of the 9 (or 18) zip files you have after the above steps.
 4. Navigate to the CDN upload [Release Pipeline](https://devdiv.visualstudio.com/DevDiv/_releases2?definitionId=1025&view=mine&_a=releases) and click **Create release** in the top right corner.
     - **BranchName:** use the format `vscode-razor-{VERSION}` where `{VERSION}` is something like `7.0.0-preview.23328.2`.
     - **OwnerAliases:** Leave existing aliases, adding your alias(es) in the form `{DOMAIN}\{ALIAS}` where `{ALIAS}` is something like `REDMOND\FNURK` - semicolon delimited, including the single quotes.
@@ -60,12 +60,11 @@ At the end of this process you should have a folder containing 9 files. Rename t
 10. Once the "Wait For Publish Completed" stage is done view its logs.
 11. Click on the `Get Published Link Relationships` log. This will have a section that contains a relationship of file -> CDN URL.
 
-### Prepare URLs
+### Prepare Razor language server URLs
 
-You should now have 9 lines of text that are in the format:
+You should now have 9 lines of text containing `razorlanguageserver` that are in the format:
 
 ```
-2023-06-29T01:16:17.9746140Z release\DDPublish\vscode-razor\7.0.0-preview.23328.2\microsoft.aspnetcore.razor.vscode-7.0.0-preview.23328.2.tgz -> https://download.visualstudio.microsoft.com/download/pr/51d2bf3c-cb3c-4385-b59f-d4d6c9a96743/7651d4e99d29188466f10e64fffe4996/microsoft.aspnetcore.razor.vscode-7.0.0-preview.23328.2.tgz
 2023-06-29T01:16:17.9751735Z release\DDPublish\vscode-razor\7.0.0-preview.23328.2\RazorLanguageServer-linux-arm64-7.0.0-preview.23328.2.zip -> https://download.visualstudio.microsoft.com/download/pr/51d2bf3c-cb3c-4385-b59f-d4d6c9a96743/c74964f4e130b50f9aef47d430c34a97/razorlanguageserver-linux-arm64-7.0.0-preview.23328.2.zip
 2023-06-29T01:16:17.9757540Z release\DDPublish\vscode-razor\7.0.0-preview.23328.2\RazorLanguageServer-linux-musl-arm64-7.0.0-preview.23328.2.zip -> https://download.visualstudio.microsoft.com/download/pr/51d2bf3c-cb3c-4385-b59f-d4d6c9a96743/7ad5dd2c8780d3e4eaaafb5352a21afa/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23328.2.zip
 2023-06-29T01:16:17.9763098Z release\DDPublish\vscode-razor\7.0.0-preview.23328.2\RazorLanguageServer-linux-musl-x64-7.0.0-preview.23328.2.zip -> https://download.visualstudio.microsoft.com/download/pr/51d2bf3c-cb3c-4385-b59f-d4d6c9a96743/c204acfa0fd9d0e06fbcc3aac3ba846e/razorlanguageserver-linux-musl-x64-7.0.0-preview.23328.2.zip
@@ -93,11 +92,14 @@ You need to put that in your text editor of choice, remove everything but the `h
 6. Paste the version of the packages into the `NEW_DEPS_VERSION` environment variable
 7. Run the task
 8. It takes a while to run, as it has to download and compute hashes for each file, but when finished it will have changed the package.json file.
-9. Commit both files, push your branch, and create a PR.
+9. Repeat the steps in the previous section and this section, but for Razor DevKit telemetry. The CDN URLs should instead look something like:
+```
+2023-06-29T01:16:17.9751735Z release\DDPublish\vscode-razor\7.0.0-preview.23328.2\DevKitTelemetry-linux-arm64-7.0.0-preview.23328.2.zip -> https://download.visualstudio.microsoft.com/download/pr/51d2bf3c-cb3c-4385-b59f-d4d6c9a96743/c74964f4e130b50f9aef47d430c34a97/devkittelemetry-linux-arm64-7.0.0-preview.23328.2.zip
+```
+and the task mentioned in the previous section (step 4) is instead "Update razor telemetry package dependencies".
 
-### Optional additional changes
-
-If there were changes to the Razor grammar you'll need to update that as well. In the `vscode-csharp` repo you can do that by updating the `src/razor/syntaxes/aspnetcorerazor.tmLanguage.json` file, copying across the one from this repo.
+10. Update `CHANGELOG.md` with the changes from these updates.
+11. Commit all files, push your branch, and create a PR.
 
 ## Testing
 

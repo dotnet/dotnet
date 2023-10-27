@@ -27,7 +27,8 @@ internal class TestProjectSnapshot : ProjectSnapshot
         string intermediateOutputPath,
         string[] documentFilePaths,
         RazorConfiguration configuration,
-        ProjectWorkspaceState? projectWorkspaceState)
+        ProjectWorkspaceState? projectWorkspaceState,
+        string? displayName = null)
     {
         var workspaceServices = new List<IWorkspaceService>()
         {
@@ -38,7 +39,7 @@ internal class TestProjectSnapshot : ProjectSnapshot
 
         var hostServices = TestServices.Create(workspaceServices, languageServices);
         using var workspace = TestWorkspace.Create(hostServices);
-        var hostProject = new HostProject(filePath, intermediateOutputPath, configuration, "TestRootNamespace");
+        var hostProject = new HostProject(filePath, intermediateOutputPath, configuration, "TestRootNamespace", displayName);
         var state = ProjectState.Create(workspace.Services, hostProject);
         foreach (var documentFilePath in documentFilePaths)
         {

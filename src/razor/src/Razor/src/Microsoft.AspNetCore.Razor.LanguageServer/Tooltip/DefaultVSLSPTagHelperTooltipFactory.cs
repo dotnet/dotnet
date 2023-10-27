@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.Core.Imaging;
@@ -14,7 +15,7 @@ using Microsoft.VisualStudio.Text.Adornments;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 
-internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactory
+internal class DefaultVSLSPTagHelperTooltipFactory(ISnapshotResolver snapshotResolver) : VSLSPTagHelperTooltipFactory(snapshotResolver)
 {
     private static readonly Guid s_imageCatalogGuid = new("{ae27a6b0-e345-4288-96df-5eaf394ee369}");
 
@@ -50,14 +51,14 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
     private static readonly ClassifiedTextRun s_newLine = new(VSPredefinedClassificationTypeNames.WhiteSpace, Environment.NewLine);
     private static readonly ClassifiedTextRun s_nullableType = new(VSPredefinedClassificationTypeNames.Punctuation, "?");
 
-    public override bool TryCreateTooltip(AggregateBoundElementDescription elementDescriptionInfo, [NotNullWhen(true)] out ContainerElement? tooltipContent)
+    public override bool TryCreateTooltip(string documentFilePath, AggregateBoundElementDescription elementDescriptionInfo, [NotNullWhen(true)] out ContainerElement? tooltipContent)
     {
         if (elementDescriptionInfo is null)
         {
             throw new ArgumentNullException(nameof(elementDescriptionInfo));
         }
 
-        if (!TryClassifyElement(elementDescriptionInfo, out var descriptionClassifications))
+        if (!TryClassifyElement(documentFilePath, elementDescriptionInfo, out var descriptionClassifications))
         {
             tooltipContent = null;
             return false;
@@ -86,14 +87,14 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
 
     // TO-DO: This method can be removed once LSP's VSCompletionItem supports returning ContainerElements for
     // its Description property, tracked by https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1319274.
-    public override bool TryCreateTooltip(AggregateBoundElementDescription elementDescriptionInfo, [NotNullWhen(true)] out ClassifiedTextElement? tooltipContent)
+    public override bool TryCreateTooltip(string documentFilePath, AggregateBoundElementDescription elementDescriptionInfo, [NotNullWhen(true)] out ClassifiedTextElement? tooltipContent)
     {
         if (elementDescriptionInfo is null)
         {
             throw new ArgumentNullException(nameof(elementDescriptionInfo));
         }
 
-        if (!TryClassifyElement(elementDescriptionInfo, out var descriptionClassifications))
+        if (!TryClassifyElement(documentFilePath, elementDescriptionInfo, out var descriptionClassifications))
         {
             tooltipContent = null;
             return false;
@@ -122,7 +123,7 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
         return true;
     }
 
-    private static bool TryClassifyElement(AggregateBoundElementDescription elementInfo, out ImmutableArray<DescriptionClassification> classifications)
+    private bool TryClassifyElement(string documentFilePath, AggregateBoundElementDescription elementInfo, out ImmutableArray<DescriptionClassification> classifications)
     {
         var associatedTagHelperInfos = elementInfo.DescriptionInfos;
         if (associatedTagHelperInfos.Length == 0)
@@ -148,12 +149,25 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
             var documentationRuns = new List<ClassifiedTextRun>();
             TryClassifySummary(documentationRuns, descriptionInfo.Documentation);
 
-            // 3. Combine type + summary information
+            // 3. Project availability
+            AddProjectAvailabilityInfo(documentFilePath, descriptionInfo.TagHelperTypeName, documentationRuns);
+
+            // 4. Combine type + summary information
             descriptions.Add(new DescriptionClassification(typeRuns, documentationRuns));
         }
 
         classifications = descriptions.DrainToImmutable();
         return true;
+    }
+
+    private void AddProjectAvailabilityInfo(string documentFilePath, string tagHelperTypeName, List<ClassifiedTextRun> documentationRuns)
+    {
+        var availability = GetProjectAvailability(documentFilePath, tagHelperTypeName);
+
+        if (availability is not null)
+        {
+            documentationRuns.Add(new ClassifiedTextRun(VSPredefinedClassificationTypeNames.Text, availability));
+        }
     }
 
     private static bool TryClassifyAttribute(AggregateBoundAttributeDescription attributeInfo, out ImmutableArray<DescriptionClassification> classifications)
@@ -405,7 +419,6 @@ internal class DefaultVSLSPTagHelperTooltipFactory : VSLSPTagHelperTooltipFactor
         {
             if (currentTextRun.Length != 0)
             {
-
                 runs.Add(new ClassifiedTextRun(VSPredefinedClassificationTypeNames.Text, currentTextRun.ToString()));
                 currentTextRun.Clear();
             }

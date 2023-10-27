@@ -31,7 +31,7 @@ namespace NuGet.Protocol.FuncTest
             _output = output;
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/12962")]
         public async Task GetAsync_GetPackageAfterServiceIndex_SecondUrlIsPreAuthenticated()
         {
             // Arrange

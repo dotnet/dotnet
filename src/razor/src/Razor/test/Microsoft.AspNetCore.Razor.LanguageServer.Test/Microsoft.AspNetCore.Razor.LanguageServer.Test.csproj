@@ -31,8 +31,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Text.Logic" Version="$(MicrosoftVisualStudioTextLogicPackageVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Web" Version="$(MicrosoftVisualStudioWebPackageVersion)" NoWarn="NU1701" />
     <PackageReference Include="Microsoft.WebTools.Shared" Version="$(MicrosoftWebToolsSharedPackageVersion)" NoWarn="NU1701" />
-    <!-- Included for tests only -->
-    <PackageReference Include="OmniSharp.Extensions.LanguageProtocol" Version="$(OmniSharpExtensionsLanguageProtocolPackageVersion)" />
 
     <!--
         Nuget changed behaviour and now validates transitive references, so the NU1701 suppressions above don't affect those

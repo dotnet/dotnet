@@ -80,7 +80,7 @@ internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocume
         }
 
         var location = new SourceLocation(positionInfo.HostDocumentIndex, request.Position.Line, request.Position.Character);
-        return _hoverInfoService.GetHoverInfo(codeDocument, location, _clientCapabilities!);
+        return _hoverInfoService.GetHoverInfo(documentContext.FilePath, codeDocument, location, _clientCapabilities!);
     }
 
     protected override async Task<VSInternalHover?> HandleDelegatedResponseAsync(VSInternalHover? response, TextDocumentPositionParams originalRequest, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)

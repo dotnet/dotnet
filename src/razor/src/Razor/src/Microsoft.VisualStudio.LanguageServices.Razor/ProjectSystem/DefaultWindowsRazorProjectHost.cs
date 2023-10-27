@@ -83,7 +83,12 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
 
             await UpdateAsync(() =>
             {
-                var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace, displayName: sliceDimensions);
+                var projectFileName = Path.GetFileNameWithoutExtension(CommonServices.UnconfiguredProject.FullPath);
+                var displayName = sliceDimensions is { Length: > 0 }
+                    ? $"{projectFileName} ({sliceDimensions})"
+                    : projectFileName;
+
+                var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace, displayName);
 
                 if (_languageServerFeatureOptions is not null)
                 {
@@ -274,7 +279,6 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
         return true;
     }
 
-    // Internal for testing
     internal static bool TryGetRootNamespace(
         IImmutableDictionary<string, IProjectRuleSnapshot> state,
         [NotNullWhen(returnValue: true)] out string? rootNamespace)

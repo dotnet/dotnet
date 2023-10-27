@@ -20,11 +20,13 @@ internal partial class RazorCustomMessageTarget
 {
     // Called by the Razor Language Server to provide ranged semantic tokens from the platform.
     [JsonRpcMethod(CustomMessageNames.RazorProvideSemanticTokensRangeEndpoint, UseSingleObjectParameterDeserialization = true)]
-    public async Task<ProvideSemanticTokensResponse?> ProvideMinimalRangeSemanticTokensAsync(ProvideSemanticTokensRangesParams inputParams, CancellationToken cancellationToken)
+    public Task<ProvideSemanticTokensResponse?> ProvideMinimalRangeSemanticTokensAsync(
+        ProvideSemanticTokensRangesParams inputParams,
+        CancellationToken cancellationToken)
     {
         Debug.Assert(inputParams.Ranges.Length == 1);
 
-        return await ProvideSemanticTokensAsync(
+        return ProvideSemanticTokensAsync(
             semanticTokensParams: inputParams,
             lspMethodName: Methods.TextDocumentSemanticTokensRangeName,
             capabilitiesFilter: _ => true,
@@ -33,13 +35,15 @@ internal partial class RazorCustomMessageTarget
                 TextDocument = inputParams.TextDocument,
                 Range = inputParams.Ranges[0],
             },
-            cancellationToken).ConfigureAwait(false);
+            cancellationToken);
     }
 
     [JsonRpcMethod(CustomMessageNames.RazorProvidePreciseRangeSemanticTokensEndpoint, UseSingleObjectParameterDeserialization = true)]
-    public async Task<ProvideSemanticTokensResponse?> ProvidePreciseRangeSemanticTokensAsync(ProvideSemanticTokensRangesParams inputParams, CancellationToken cancellationToken)
+    public Task<ProvideSemanticTokensResponse?> ProvidePreciseRangeSemanticTokensAsync(
+        ProvideSemanticTokensRangesParams inputParams,
+        CancellationToken cancellationToken)
     {
-        return await ProvideSemanticTokensAsync(
+        return ProvideSemanticTokensAsync(
             semanticTokensParams: inputParams,
             lspMethodName: RazorLSPConstants.RoslynSemanticTokenRangesEndpointName,
             capabilitiesFilter: SupportsPreciseRanges,
@@ -48,7 +52,7 @@ internal partial class RazorCustomMessageTarget
                 TextDocument = inputParams.TextDocument,
                 Ranges = inputParams.Ranges
             },
-            cancellationToken).ConfigureAwait(false);
+            cancellationToken);
     }
 
     private async Task<ProvideSemanticTokensResponse?> ProvideSemanticTokensAsync(
@@ -68,13 +72,16 @@ internal partial class RazorCustomMessageTarget
             throw new ArgumentNullException(nameof(semanticTokensParams.Ranges));
         }
 
-        var (synchronized, csharpDoc) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>((int)semanticTokensParams.RequiredHostDocumentVersion, semanticTokensParams.TextDocument, cancellationToken);
+        var (synchronized, csharpDoc) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
+            (int)semanticTokensParams.RequiredHostDocumentVersion,
+            semanticTokensParams.TextDocument,
+            cancellationToken);
 
         if (synchronized && csharpDoc.HostDocumentSyncVersion == 1)
         {
             // HACK: Workaround for https://github.com/dotnet/razor/issues/9197 to stop Roslyn NFWs
             // Sometimes we get asked for semantic tokens on v1, and we have sent a v1 to Roslyn, but its the wrong v1.
-            // To prevent Roslyn throwing, lets validate the range we're asking about with the generated document they
+            // To prevent Roslyn throwing, let's validate the range we're asking about with the generated document they
             // would have seen.
             var lastGeneratedDocumentLine = requestParams switch
             {

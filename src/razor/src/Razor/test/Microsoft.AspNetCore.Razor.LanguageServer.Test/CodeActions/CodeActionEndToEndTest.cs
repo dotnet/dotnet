@@ -919,7 +919,7 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
             File.WriteAllText(codeBehindFilePath, initialCodeBehindContent);
 
             var result = await GetCodeActionsAsync(uri, textSpan, razorSourceText, requestContext, razorCodeActionProviders: new[] { new GenerateMethodCodeActionProvider() }, diagnostics);
-            var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync();
+            var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory);
             var changes = await GetEditsAsync(result, requestContext, codeAction, CreateRazorCodeActionResolversFn(razorFilePath, codeDocument, formattingService));
 
             var razorEdits = new List<TextChange>();
@@ -971,7 +971,7 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
 
         var result = await GetCodeActionsAsync(uri, textSpan, sourceText, requestContext, razorCodeActionProviders, diagnostics);
         Assert.NotEmpty(result);
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(codeDocument, documentContext.Snapshot, LoggerFactory, optionsMonitor?.CurrentValue);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument, documentContext.Snapshot, optionsMonitor?.CurrentValue);
         var razorCodeActionResolvers = createRazorCodeActionResolversFn is null
             ? Array.Empty<IRazorCodeActionResolver>()
             : createRazorCodeActionResolversFn(razorFilePath, codeDocument, formattingService, optionsMonitor);
@@ -1041,7 +1041,7 @@ public class CodeActionEndToEndTest : SingleServerDelegatingEndpointTestBase
             codeActionToRun = codeActionToRun.Children[childActionIndex];
         }
 
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync();
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory);
 
         var csharpCodeActionResolvers = new CSharpCodeActionResolver[]
         {

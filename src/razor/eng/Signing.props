@@ -6,11 +6,6 @@
   -->
   <ItemGroup>
     <FileSignInfo Include="Newtonsoft.Json.dll" CertificateName="3PartySHA2" />
-    <FileSignInfo Include="MediatR.dll" CertificateName="3PartySHA2" />
-    <FileSignInfo Include="OmniSharp.Extensions.JsonRpc.dll" CertificateName="3PartySHA2" />
-    <FileSignInfo Include="OmniSharp.Extensions.LanguageProtocol.dll" CertificateName="3PartySHA2" />
-    <FileSignInfo Include="OmniSharp.Extensions.LanguageServer.dll" CertificateName="3PartySHA2" />
-    <FileSignInfo Include="OmniSharp.Extensions.LanguageServer.Shared.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Nerdbank.Streams.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="MessagePack.Annotations.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="MessagePack.dll" CertificateName="3PartySHA2" />

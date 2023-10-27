@@ -23,6 +23,7 @@ internal sealed class RazorProjectInfo
     public string FilePath { get; }
     public RazorConfiguration? Configuration { get; }
     public string? RootNamespace { get; }
+    public string DisplayName { get; }
     public ProjectWorkspaceState? ProjectWorkspaceState { get; }
     public ImmutableArray<DocumentSnapshotHandle> Documents { get; }
 
@@ -31,6 +32,7 @@ internal sealed class RazorProjectInfo
         string filePath,
         RazorConfiguration? configuration,
         string? rootNamespace,
+        string displayName,
         ProjectWorkspaceState? projectWorkspaceState,
         ImmutableArray<DocumentSnapshotHandle> documents)
     {
@@ -38,6 +40,7 @@ internal sealed class RazorProjectInfo
         FilePath = filePath;
         Configuration = configuration;
         RootNamespace = rootNamespace;
+        DisplayName = displayName;
         ProjectWorkspaceState = projectWorkspaceState;
         Documents = documents.NullToEmpty();
     }

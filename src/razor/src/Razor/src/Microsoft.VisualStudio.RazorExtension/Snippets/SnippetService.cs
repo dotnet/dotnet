@@ -4,10 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Razor.Editor;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Snippets;
@@ -23,6 +25,7 @@ internal class SnippetService
     private readonly JoinableTaskFactory _joinableTaskFactory;
     private readonly IAsyncServiceProvider _serviceProvider;
     private readonly SnippetCache _snippetCache;
+    private readonly IAdvancedSettingsStorage _advancedSettingsStorage;
     private IVsExpansionManager? _vsExpansionManager;
 
     private readonly object _cacheGuard = new();
@@ -30,11 +33,9 @@ internal class SnippetService
     private static readonly Guid s_CSharpLanguageId = new("694dd9b6-b865-4c5b-ad85-86356e9c88dc");
     private static readonly Guid s_HtmlLanguageId = new("9bbfd173-9770-47dc-b191-651b7ff493cd");
 
-    private static readonly Dictionary<Guid, ImmutableHashSet<string>> s_ignoredSnippets = new()
+    private static readonly Dictionary<Guid, ImmutableHashSet<string>> s_builtInSnippets = new()
     {
         {
-            // These are identified as the snippets that are provided by the C# Language Server. The list is found
-            // in https://github.com/dotnet/roslyn/blob/8eb40e64564a2a8d44be2fde9b079605f1f10e0f/src/Features/LanguageServer/Protocol/Handler/InlineCompletions/InlineCompletionsHandler.cs#L41
             s_CSharpLanguageId,
             ImmutableHashSet.Create(
                 "~", "Attribute", "checked", "class", "ctor", "cw", "do", "else", "enum", "equals", "Exception", "for", "foreach", "forr",
@@ -42,26 +43,35 @@ internal class SnippetService
                 "propfull", "propg", "sim", "struct", "svm", "switch", "try", "tryf", "unchecked", "unsafe", "using", "while")
         },
         {
-            // Currently no HTML snippets are ignored
-            s_HtmlLanguageId, ImmutableHashSet<string>.Empty
+            s_HtmlLanguageId,
+            ImmutableHashSet.Create(
+                "a", "audio", "base", "br", "charset", "content", "dd", "div", "figure", "form", "html", "html4f", "html4s", "html4t", "html5", "iframe",
+                "img", "input", "link", "meta", "metaviewport", "picture", "region", "script", "scriptr", "scriptr2", "select", "selfclosing",
+                "source", "style", "svg", "table", "ul", "video", "xhtml10f", "xhtml10s", "xhtml10t", "xhtml11", "xhtml5")
         }
     };
 
     public SnippetService(
         JoinableTaskFactory joinableTaskFactory,
         IAsyncServiceProvider serviceProvider,
-        SnippetCache snippetCache)
+        SnippetCache snippetCache,
+        IAdvancedSettingsStorage advancedSettingsStorage)
     {
         _joinableTaskFactory = joinableTaskFactory;
         _serviceProvider = serviceProvider;
         _snippetCache = snippetCache;
-        _ = _joinableTaskFactory.RunAsync(InitializeAsync);
+        _advancedSettingsStorage = advancedSettingsStorage;
+        _advancedSettingsStorage.Changed += (s, e) =>
+        {
+            _joinableTaskFactory.RunAsync(PopulateAsync).FileAndForget("SnippetService_Populate");
+        };
+
+        _joinableTaskFactory.RunAsync(InitializeAsync).FileAndForget("SnippetService_Initialize");
     }
 
     private async Task InitializeAsync()
     {
         await _joinableTaskFactory.SwitchToMainThreadAsync();
-
         var textManager = (IVsTextManager2?)await _serviceProvider.GetServiceAsync(typeof(SVsTextManager)).ConfigureAwait(true);
         if (textManager is null)
         {
@@ -130,16 +140,21 @@ internal class SnippetService
     private void PopulateSnippetCacheFromExpansionEnumeration(params (SnippetLanguage language, IVsExpansionEnumeration expansionEnumerator)[] enumerators)
     {
         _joinableTaskFactory.Context.AssertUIThread();
-
+        var snippetSetting = _advancedSettingsStorage.GetAdvancedSettings().SnippetSetting;
         foreach (var (language, enumerator) in enumerators)
         {
-            _snippetCache.Update(language, ExtractSnippetInfo(language, enumerator));
+            _snippetCache.Update(language, ExtractSnippetInfo(language, enumerator, snippetSetting));
         }
     }
 
-    private ImmutableArray<SnippetInfo> ExtractSnippetInfo(SnippetLanguage language, IVsExpansionEnumeration expansionEnumerator)
+    private ImmutableArray<SnippetInfo> ExtractSnippetInfo(SnippetLanguage language, IVsExpansionEnumeration expansionEnumerator, SnippetSetting snippetSetting)
     {
         _joinableTaskFactory.Context.AssertUIThread();
+
+        if (snippetSetting == SnippetSetting.None)
+        {
+            return ImmutableArray<SnippetInfo>.Empty;
+        }
 
         var snippetInfo = new VsExpansion();
         var pSnippetInfo = new IntPtr[1];
@@ -149,17 +164,13 @@ internal class SnippetService
             // Allocate enough memory for one VSExpansion structure. This memory is filled in by the Next method.
             pSnippetInfo[0] = Marshal.AllocCoTaskMem(Marshal.SizeOf(snippetInfo));
 
-            var langGuid = language == SnippetLanguage.CSharp
-                ? s_CSharpLanguageId
-                : s_HtmlLanguageId;
-
-            var toIgnore = s_ignoredSnippets[langGuid];
             var result = expansionEnumerator.GetCount(out var count);
             if (result != HResult.OK)
             {
                 return ImmutableArray<SnippetInfo>.Empty;
             }
 
+            var ignoredSnippets = GetIgnoredSnippets(language, snippetSetting);
             using var snippetListBuilder = new PooledArrayBuilder<SnippetInfo>();
 
             for (uint i = 0; i < count; i++)
@@ -175,7 +186,7 @@ internal class SnippetService
                     // Convert the returned blob of data into a structure that can be read in managed code.
                     snippetInfo = ConvertToVsExpansionAndFree(pSnippetInfo[0]);
 
-                    if (!string.IsNullOrEmpty(snippetInfo.shortcut) && !toIgnore.Contains(snippetInfo.shortcut))
+                    if (!string.IsNullOrEmpty(snippetInfo.shortcut) && !ignoredSnippets.Contains(snippetInfo.shortcut))
                     {
                         snippetListBuilder.Add(new SnippetInfo(snippetInfo.shortcut, snippetInfo.title, snippetInfo.description, snippetInfo.path, language));
                     }
@@ -188,6 +199,30 @@ internal class SnippetService
         {
             Marshal.FreeCoTaskMem(pSnippetInfo[0]);
         }
+    }
+
+    private static ImmutableHashSet<string> GetIgnoredSnippets(SnippetLanguage language, SnippetSetting snippetSetting)
+    {
+        if (language == SnippetLanguage.CSharp)
+        {
+            // In call cases for C# we want to filter out the built in snippets. The C#
+            // language server will handle returning these and isn't required for the
+            // Razor code to add them.
+            return s_builtInSnippets[s_CSharpLanguageId];
+        }
+
+        if (snippetSetting == SnippetSetting.All)
+        {
+            return ImmutableHashSet<string>.Empty;
+        }
+
+        // As of writing, Html and CSharp are the only languages we actually
+        // get snippets for. This assert acts as both a testament to that and 
+        // a catch for any future soul who might change that behavior. This
+        // code will need to be updated accordingly, as well as the 
+        // the s_buildInSnippets dictionary
+        Debug.Assert(language == SnippetLanguage.Html);
+        return s_builtInSnippets[s_HtmlLanguageId];
     }
 
     private static VsExpansion ConvertToVsExpansionAndFree(IntPtr expansionPtr)
