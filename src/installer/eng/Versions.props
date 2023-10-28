@@ -237,8 +237,8 @@
   </PropertyGroup>
   <!-- Workload manifest package versions -->
   <PropertyGroup>
-    <AspireFeatureBand>8.0.100-rc.1</AspireFeatureBand>
-    <AspireWorkloadManifestVersion>8.0.0-alpha.23471.13</AspireWorkloadManifestVersion>
+    <AspireFeatureBand>8.0.100</AspireFeatureBand>
+    <AspireWorkloadManifestVersion>8.0.0-preview.1.23526.4</AspireWorkloadManifestVersion>
     <MauiFeatureBand>8.0.100-rc.2</MauiFeatureBand>
     <MauiWorkloadManifestVersion>8.0.0-rc.2.9373</MauiWorkloadManifestVersion>
     <XamarinAndroidWorkloadManifestVersion>34.0.0-rc.2.468</XamarinAndroidWorkloadManifestVersion>
