@@ -58,13 +58,13 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "653023a1268cc3b772673830b9deb85a9d89cfe0"
+      "commitSha": "c033c029dd75279339e8254973c4f0eb26524754"
     },
     {
-      "packageVersion": "17.9.0-preview-23525-03",
+      "packageVersion": "17.9.0-preview-23527-03",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "ed404c0d68dc073a09c5c9402a5c56f65e7a29a8"
+      "commitSha": "d3fa6693db77b6aad33ac934ca0a87f852f4cdf2"
     },
     {
       "packageVersion": "6.9.0-preview.1.21",
@@ -79,10 +79,10 @@
       "commitSha": "aeb01dfb4f3c9aaa9aa799f59369ba55f3272a85"
     },
     {
-      "packageVersion": "4.9.0-1.23526.18",
+      "packageVersion": "4.9.0-1.23527.6",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "a151c1e6f707b478960cfc84a05c1f52a0daf001"
+      "commitSha": "18c05195e6973330cf465404c65f90626fc0bbea"
     },
     {
       "packageVersion": "3.11.0-beta1.23523.1",
@@ -91,10 +91,10 @@
       "commitSha": "b4ed6a3093cfd3c8d353214ce97aaa7d24cf2df1"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.23527.3",
+      "packageVersion": "9.0.0-alpha.1.23527.4",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "2dc7c31b6b1ef1ebe5c3914aa4a03b8348a12873"
+      "commitSha": "c7479b9ab66c68af74b2c2a27c2543ba2d47c569"
     },
     {
       "packageVersion": "8.0.0-preview.23424.2",
@@ -103,10 +103,10 @@
       "commitSha": "8af694a5e3986a27ccfee1a638ba311c7e9bc55d"
     },
     {
-      "packageVersion": "9.0.100-alpha.1.23527.12",
+      "packageVersion": "9.0.100-alpha.1.23527.15",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "4055436573214fb2806f642c39d7cc0a9f85a380"
+      "commitSha": "e0e8b174aafb7d0866db7bedd5c2f6f6867a9962"
     },
     {
       "packageVersion": "9.0.0-alpha.1.23518.2",
