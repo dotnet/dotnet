@@ -1,0 +1,174 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
+<Project>
+
+  <PropertyGroup>
+    <XliffTasksDirectory Condition="'$(XliffTasksDirectory)' == '' and '$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net8.0\</XliffTasksDirectory>
+    <XliffTasksDirectory Condition="'$(XliffTasksDirectory)' == '' and '$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net472\</XliffTasksDirectory>
+    <XliffTasksAssembly>$(XliffTasksDirectory)Microsoft.DotNet.XliffTasks.dll</XliffTasksAssembly>
+  </PropertyGroup>
+
+  <UsingTask TaskName="GatherXlf" AssemblyFile="$(XliffTasksAssembly)" Condition="'$(XliffTasksAssembly)' != ''" />
+  <UsingTask TaskName="GatherTranslatedSource" AssemblyFile="$(XliffTasksAssembly)" Condition="'$(XliffTasksAssembly)' != ''" />
+  <UsingTask TaskName="TransformTemplates" AssemblyFile="$(XliffTasksAssembly)" Condition="'$(XliffTasksAssembly)' != ''" />
+  <UsingTask TaskName="TranslateSource" AssemblyFile="$(XliffTasksAssembly)" Condition="'$(XliffTasksAssembly)' != ''" />
+  <UsingTask TaskName="UpdateXlf" AssemblyFile="$(XliffTasksAssembly)" Condition="'$(XliffTasksAssembly)' != ''" />
+  <UsingTask TaskName="SortXlf" AssemblyFile="$(XliffTasksAssembly)" Condition="'$(XliffTasksAssembly)' != ''" />
+  <UsingTask TaskName="EnsureAllResourcesTranslated" AssemblyFile="$(XliffTasksAssembly)" Condition="'$(XliffTasksAssembly)' != ''" />
+
+  <!--
+    Note that .xlf files are source files, not build outputs. We therefore cannot use their modification time
+    to drive incremental build. It is possible for .xlf files to be out-of-sync with their source
+    documents without being older than them. For example, you can be in this state after pulling from
+    a repository with out-of-sync xlf files. To deal with this, we instead use a marker file with a
+    timestamp corresponding to the last successful update to drive fast incremental builds. We also keep
+    a list of all the XlfSource files and if that list changes (e.g. new .resx is added to the project), we
+    also trigger a new update.
+  -->
+  <PropertyGroup>
+    <XlfIntermediateOutputPath Condition="'$(XlfIntermediateOutputPath)' == ''">$(IntermediateOutputPath)$(MSBuildProjectName).xlf\</XlfIntermediateOutputPath>
+    <_XlfSourceList>$(XlfIntermediateOutputPath)XlfSources.txt</_XlfSourceList>
+    <_UpdateXlfLastRun>$(XlfIntermediateOutputPath)UpdateXlf.lastrun</_UpdateXlfLastRun>
+
+    <!--
+      This is an "inner build" of a cross-targeted project if there are multiple target frameworks, but 
+      we're instantiated with a single one. We musn't trigger an update  of .xlf source files on inner build
+      because inner builds happen in parallel, which would cause a race when modifying the same files. Instead,
+      there is an outer build trigger that calls inner UpdateXlf serially.
+    -->
+    <_IsInnerXlfBuild Condition="'$(TargetFrameworks)' != '' and '$(TargetFramework)' != ''">true</_IsInnerXlfBuild>
+  </PropertyGroup>
+
+  <!-- Updates the list of XlfSource items that drives incremental update (see above) -->
+  <Target Name="UpdateXlfSourceList"
+          DependsOnTargets="GetXlfSources">
+    <MakeDir Directories="$(XlfIntermediateOutputPath)" />
+
+    <WriteLinesToFile File="$(_XlfSourceList)"
+                      Lines="@(XlfSource)"
+                      Overwrite="true"
+                      WriteOnlyWhenDifferent="true" />
+
+    <ItemGroup>
+      <FileWrites Include="$(_XlfSourceList)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="UpdateXlfOnBuild"
+          Condition="'$(EnableXlfLocalization)' == 'true' and '$(UpdateXlfOnBuild)' == 'true' and '$(_IsInnerXlfBuild)' != 'true'"
+          BeforeTargets="BeforeBuild"
+          DependsOnTargets="UpdateXlf" />
+
+  <Target Name="EnsureXlfIsUpToDate"
+          Condition="'$(ErrorOnOutOfDateXlf)' == 'true' and '$(DesignTimeBuild)' != 'true' and '$(BuildingProject)' != 'false'"
+          DependsOnTargets="_DisallowXlfModification;_UpdateXlf" />
+
+  <Target Name="UpdateXlf"
+          DependsOnTargets="_AllowXlfModification;_UpdateXlf" />
+
+  <Target Name="_AllowXlfModification">
+    <PropertyGroup>
+      <_AllowXlfModification>true</_AllowXlfModification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_DisallowXlfModification">
+    <PropertyGroup>
+      <_AllowXlfModification>false</_AllowXlfModification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_UpdateXlf"
+          DependsOnTargets="GetXlfSources;UpdateXlfSourceList"
+          Inputs="@(XlfSource);$(_XlfSourceList)"
+          Outputs="$(_UpdateXlfLastRun)">
+    <UpdateXlf Sources="@(XlfSource)"
+               Languages="$(XlfLanguages)"
+               AllowModification="$(_AllowXlfModification)" />
+
+    <Touch Files="$(_UpdateXlfLastRun)" AlwaysCreate="true" />
+
+    <ItemGroup>
+      <FileWrites Include="$(_UpdateXlfLastRun)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="GetXlfSources" Returns="@(XlfSource)">
+    <ItemGroup>
+      <EmbeddedResource Update="@(EmbeddedResource)">
+        <XlfInput Condition="'%(EmbeddedResource.XlfInput)' == '' and '%(EmbeddedResource.Extension)' == '.resx'">true</XlfInput>
+      </EmbeddedResource>
+
+      <UnstructuredResource Include="%(VSTemplate.TranslatableResources)" />
+
+      <XlfSource Include="@(EmbeddedResource->WithMetadataValue('XlfInput', 'true'))" />
+      <XlfSource Include="@(UnstructuredResource->WithMetadataValue('XlfInput', 'true'))" />
+      <XlfSource Include="@(VSCTCompile->WithMetadataValue('XlfInput', 'true'))" />
+      <XlfSource Include="@(XamlPropertyRule->WithMetadataValue('XlfInput', 'true'))" />
+      <XlfSource Include="@(XamlPropertyRuleNoCodeBehind->WithMetadataValue('XlfInput', 'true'))" />
+      <XlfSource Include="@(XamlPropertyProjectItemsSchema->WithMetadataValue('XlfInput', 'true'))" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="GatherXlf"
+          DependsOnTargets="GetXlfSources;EnsureXlfIsUpToDate">
+    <GatherXlf Sources="@(XlfSource)"
+               Languages="$(XlfLanguages)"
+               TranslatedOutputDirectory="$(XlfIntermediateOutputPath)">
+      <Output TaskParameter="Outputs" ItemName="Xlf" />
+    </GatherXlf>
+  </Target>
+
+  <Target Name="TranslateSourceFromXlf"
+          Condition="'$(EnableXlfLocalization)' == 'true'"
+          DependsOnTargets="GatherXlf;BatchTranslateSourceFromXlf"
+          BeforeTargets="VSCTCompile;PrepareResourceNames;$(PrepareResourceNamesDependsOn)">
+    <GatherTranslatedSource XlfFiles="@(Xlf)" Condition="'@(Xlf)' != ''">
+      <Output TaskParameter="Outputs" ItemName="%(Xlf.XlfOutputItem)" />
+      <Output TaskParameter="Outputs" ItemName="FileWrites" />
+    </GatherTranslatedSource>
+
+    <ItemGroup>
+      <_VSTemplatesToLocalize Include="@(VSTemplate)" Condition="'%(VSTemplate.TranslatableResources)' != ''" />
+    </ItemGroup>
+
+    <TransformTemplates Templates="@(_VSTemplatesToLocalize)"
+                        UnstructuredResources="@(UnstructuredResource)"
+                        Languages="$(XlfLanguages)"
+                        TranslatedOutputDirectory="$(XlfIntermediateOutputPath)"
+                        Condition="'@(VSTemplate)' != '' and '@(UnstructuredResource)' != ''">
+      <Output TaskParameter="TransformedTemplates" ItemName="VSTemplate" />
+    </TransformTemplates>
+    <ItemGroup>
+      <!--
+      All items of the @(_VSTemplatesToLocalize) group (which was populated from @(VSTemplate)) have been
+      re-added to the collection with the string holes removed, so @(_VSTemplatesToLocalize) can all be
+      removed from the @(VSTemplate) collection.
+      -->
+      <VSTemplate Remove="@(_VSTemplatesToLocalize)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="BatchTranslateSourceFromXlf"
+          Inputs="@(Xlf);%(Xlf.XlfSource)"
+          Outputs="%(Xlf.XlfTranslatedFullPath)">
+    <TranslateSource XlfFile="@(Xlf)" />
+  </Target>
+
+  <!--
+    Sorts the trans-unit elements in the .xlf files by the value of their id attributes.
+  -->
+  <Target Name="SortXlf"
+          DependsOnTargets="GetXlfSources">
+    <SortXlf Sources="@(XlfSource)"
+             Languages="$(XlfLanguages)" />
+  </Target>
+
+  <!--
+    Checks that all trans-unit elements in the .xlf files have an up-to-date translation.
+  -->
+  <Target Name="EnsureAllResourcesTranslated"
+          DependsOnTargets="GetXlfSources">
+    <EnsureAllResourcesTranslated Sources="@(XlfSource)"
+                                  Languages="$(XlfLanguages)" />
+  </Target>
+</Project>

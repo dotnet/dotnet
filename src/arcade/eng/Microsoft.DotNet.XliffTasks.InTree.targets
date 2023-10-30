@@ -1,0 +1,29 @@
+<Project>
+
+  <PropertyGroup>
+    <XliffTasksProjectDirectory>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'src', 'Microsoft.DotNet.XliffTasks'))</XliffTasksProjectDirectory>
+    <XliffTasksBaseOutputDirectory>$(ArtifactsBinDir)Microsoft.DotNet.XliffTasks\$(Configuration)\</XliffTasksBaseOutputDirectory>
+    <!-- Keep TFMs in sync with Microsoft.DotNet.XliffTasks.csproj -->
+    <XliffTasksDirectory Condition="'$(MSBuildRuntimeType)' == 'Core'">$(XliffTasksBaseOutputDirectory)$(NetCurrent)\</XliffTasksDirectory>
+    <XliffTasksDirectory Condition="'$(MSBuildRuntimeType)' != 'Core'">$(XliffTasksBaseOutputDirectory)$(NetFrameworkToolCurrent)\</XliffTasksDirectory>
+  </PropertyGroup>
+
+  <!-- Props and targets files get automatically imported when referencing XliffTasks via a PackageReference,
+       but that's not the case when using ProjectReference: https://github.com/NuGet/Home/issues/6624.
+       Props files should ideally be imported from the project file or other props files but it doesn't matter in this case. -->
+  <Import Project="$(XliffTasksProjectDirectory)build\Microsoft.DotNet.XliffTasks.props" />
+  <Import Project="$(XliffTasksProjectDirectory)build\Microsoft.DotNet.XliffTasks.targets" Condition="'$(IsCrossTargetingBuild)' != 'true'" />
+  <Import Project="$(XliffTasksProjectDirectory)buildCrossTargeting\Microsoft.DotNet.XliffTasks.targets" Condition="'$(IsCrossTargetingBuild)' == 'true'" />
+
+  <ItemGroup>
+    <ProjectReference Include="$(XliffTasksProjectDirectory)Microsoft.DotNet.XliffTasks.csproj"
+                      ReferenceOutputAssembly="false"
+                      PrivateAssets="all"
+                      Private="false">
+      <!-- Keep TFMs in sync with Microsoft.DotNet.XliffTasks.csproj -->
+      <SetTargetFramework Condition="'$(MSBuildRuntimeType)' == 'Core'">TargetFramework=$(NetCurrent)</SetTargetFramework>
+      <SetTargetFramework Condition="'$(MSBuildRuntimeType)' != 'Core'">TargetFramework=$(NetFrameworkToolCurrent)</SetTargetFramework>
+    </ProjectReference>
+  </ItemGroup>
+
+</Project>

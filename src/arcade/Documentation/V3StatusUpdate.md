@@ -31,7 +31,6 @@ This table represents the status of the .NET 5 V3 publishing status on a Per-Rep
 | sourcelink          | tmat         | ❌     |                                      |
 | clrmd               | leculver     | ❌     |                                      |
 | msbuild             | marcpopMSFT  | ❌     |                                      |
-| xliff-tasks         | epananth     | ❌     |                                      |
 | roslyn-analyzer     | epananth     | ✔️     |                                      |
 | Nuget.Client        | epananth     | ❌     |                                      |
 | mono/linker         | masafa       | ❌     |                                      |
