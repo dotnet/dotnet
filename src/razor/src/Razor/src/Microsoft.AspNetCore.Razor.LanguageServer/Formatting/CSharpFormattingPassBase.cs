@@ -58,20 +58,21 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
 #if DEBUG
             var spanText = context.SourceText.GetSubText(mappingSpan).ToString();
 #endif
-            if (!ShouldFormat(context, mappingSpan, allowImplicitStatements: true, out var owner))
+
+            var options = new ShouldFormatOptions(
+                // Implicit expressions and single line explicit expressions don't affect the indentation of anything
+                // under them, so we don't want their positions to be "significant".
+                AllowImplicitExpressions: false,
+                AllowSingleLineExplicitExpressions: false,
+
+                // Implicit statements are @if, @foreach etc. so they do affect indentation
+                AllowImplicitStatements: true,
+
+                IsLineRequest: false);
+
+            if (!ShouldFormat(context, mappingSpan, options, out var owner))
             {
                 // We don't care about this range as this can potentially lead to incorrect scopes.
-                continue;
-            }
-
-            // Special case: We are looking for "significant locations" that should affect indentation, but
-            // single line explicit expressions shouldn't. If there are any at the start of a line, the next
-            // loop will find them. Sadly the ShouldFormat method is used in too many places, for too many
-            // different purposes, to put this check there.
-            if (owner is { Parent.Parent.Parent: CSharpExplicitExpressionSyntax explicitExpression } &&
-                explicitExpression.Span.ToRange(text) is { } exprRange &&
-                exprRange.Start.Line == exprRange.End.Line)
-            {
                 continue;
             }
 
@@ -291,21 +292,15 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
     }
 
     protected static bool ShouldFormat(FormattingContext context, TextSpan mappingSpan, bool allowImplicitStatements)
-    {
-        return ShouldFormat(context, mappingSpan, allowImplicitStatements, out _);
-    }
+        => ShouldFormat(context, mappingSpan, allowImplicitStatements, out _);
 
     protected static bool ShouldFormat(FormattingContext context, TextSpan mappingSpan, bool allowImplicitStatements, out SyntaxNode? foundOwner)
-    {
-        return ShouldFormatCore(context, mappingSpan, allowImplicitStatements, isLineRequest: false, out foundOwner);
-    }
+        => ShouldFormat(context, mappingSpan, new ShouldFormatOptions(allowImplicitStatements, isLineRequest: false), out foundOwner);
 
     private static bool ShouldFormatLine(FormattingContext context, TextSpan mappingSpan, bool allowImplicitStatements)
-    {
-        return ShouldFormatCore(context, mappingSpan, allowImplicitStatements, isLineRequest: true, out _);
-    }
+        => ShouldFormat(context, mappingSpan, new ShouldFormatOptions(allowImplicitStatements, isLineRequest: true), out _);
 
-    private static bool ShouldFormatCore(FormattingContext context, TextSpan mappingSpan, bool allowImplicitStatements, bool isLineRequest, out SyntaxNode? foundOwner)
+    private static bool ShouldFormat(FormattingContext context, TextSpan mappingSpan, ShouldFormatOptions options, out SyntaxNode? foundOwner)
     {
         // We should be called with the range of various C# SourceMappings.
 
@@ -329,7 +324,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
 
         // Special case: If we're formatting implicit statements, we want to treat the `@attribute` directive and
         // the `@typeparam` directive as one so that the C# content within them is formatted as C#
-        if (allowImplicitStatements &&
+        if (options.AllowImplicitStatements &&
             (
                 IsAttributeDirective() ||
                 IsTypeParamDirective()
@@ -363,7 +358,12 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             return false;
         }
 
-        if (!allowImplicitStatements && IsImplicitExpression())
+        if (!options.AllowImplicitExpressions && IsImplicitExpression())
+        {
+            return false;
+        }
+
+        if (!options.AllowSingleLineExplicitExpressions && IsSingleLineExplicitExpression())
         {
             return false;
         }
@@ -373,7 +373,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             return false;
         }
 
-        if (!allowImplicitStatements && IsImplicitStatementStart())
+        if (!options.AllowImplicitStatements && IsImplicitStatementStart())
         {
             return false;
         }
@@ -444,7 +444,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
                         MarkupTagHelperDirectiveAttributeSyntax { TagHelperAttributeInfo: { Bound: true } } or
                         MarkupMinimizedTagHelperAttributeSyntax { TagHelperAttributeInfo: { Bound: true } } or
                         MarkupMinimizedTagHelperDirectiveAttributeSyntax { TagHelperAttributeInfo: { Bound: true } }
-            } && !isLineRequest;
+            } && !options.IsLineRequest;
         }
 
         bool IsInHtmlAttributeValue()
@@ -514,6 +514,21 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             return owner.AncestorsAndSelf().Any(n => n is CSharpImplicitExpressionSyntax);
         }
 
+        bool IsSingleLineExplicitExpression()
+        {
+            // E.g, (| is position)
+            //
+            // `|@{ foo }` - true
+            //
+            if (owner is { Parent.Parent.Parent: CSharpExplicitExpressionSyntax explicitExpression } &&
+                explicitExpression.Span.ToRange(context.SourceText) is { } exprRange &&
+                exprRange.Start.Line == exprRange.End.Line)
+            {
+                return true;
+            }
+            return owner.AncestorsAndSelf().Any(n => n is CSharpImplicitExpressionSyntax);
+        }
+
         bool IsInTemplateBlock()
         {
             // E.g, (| is position)
@@ -558,6 +573,14 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             }
 
             return false;
+        }
+    }
+
+    private record struct ShouldFormatOptions(bool AllowImplicitStatements, bool AllowImplicitExpressions, bool AllowSingleLineExplicitExpressions, bool IsLineRequest)
+    {
+        public ShouldFormatOptions(bool allowImplicitStatements, bool isLineRequest)
+            : this(allowImplicitStatements, true, true, isLineRequest)
+        {
         }
     }
 

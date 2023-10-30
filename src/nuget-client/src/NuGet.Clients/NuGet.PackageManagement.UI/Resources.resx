@@ -1038,4 +1038,8 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</value>
   <data name="Vulnerabilities_Loading" xml:space="preserve">
     <value>Loading vulnerable packages...</value>
   </data>
+  <data name="Error_SourceMapping_GPF_NotEnabled" xml:space="preserve">
+    <value>The package `{0}` is available in the Global packages folder, but the source it came from `{1}` is not one of this solution's configured sources.</value>
+    <comment>{0} is the package ID. {1} is the URI of the package source found in the Global packages folder.</comment>
+  </data>
 </root>

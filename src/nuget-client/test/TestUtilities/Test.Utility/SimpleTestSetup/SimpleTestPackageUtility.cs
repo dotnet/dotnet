@@ -524,6 +524,16 @@ namespace NuGet.Test.Utility
             }
         }
 
+        public static async Task CreateFolderFeedV3WithNupkgMetadataAsync(string root, string nupkgMetadataSource, params SimpleTestPackageContext[] contexts)
+        {
+            using var tempRoot = TestDirectory.Create();
+            await CreatePackagesAsync(tempRoot, contexts);
+
+            var saveMode = PackageSaveMode.Nupkg | PackageSaveMode.Nuspec;
+
+            await CreateFolderFeedV3Async(root, nupkgMetadataSource, saveMode, Directory.GetFiles(tempRoot));
+        }
+
         /// <summary>
         /// Create a v3 folder of nupkgs
         /// </summary>
@@ -537,10 +547,15 @@ namespace NuGet.Test.Utility
             }
         }
 
+        public static async Task CreateFolderFeedV3Async(string root, PackageSaveMode saveMode, params string[] nupkgPaths)
+        {
+            await CreateFolderFeedV3Async(root, nupkgMetadataSource: null, saveMode, nupkgPaths);
+        }
+
         /// <summary>
         /// Create a v3 folder of nupkgs
         /// </summary>
-        public static async Task CreateFolderFeedV3Async(string root, PackageSaveMode saveMode, params string[] nupkgPaths)
+        public static async Task CreateFolderFeedV3Async(string root, string nupkgMetadataSource, PackageSaveMode saveMode, params string[] nupkgPaths)
         {
             var pathResolver = new VersionFolderPathResolver(root);
 
@@ -558,7 +573,7 @@ namespace NuGet.Test.Utility
                     using (var fileStream = File.OpenRead(file))
                     {
                         await PackageExtractor.InstallFromSourceAsync(
-                            null,
+                            source: nupkgMetadataSource,
                             identity,
                             (stream) => fileStream.CopyToAsync(stream, 4096, CancellationToken.None),
                             new VersionFolderPathResolver(root),
@@ -573,8 +588,13 @@ namespace NuGet.Test.Utility
             }
         }
 
+        public static async Task CreateFolderFeedV3WithNupkgMetadataAsync(string root, string nupkgMetadataSource, PackageSaveMode saveMode, params string[] nupkgPaths)
+        {
+            await CreateFolderFeedV3Async(root, nupkgMetadataSource, saveMode, nupkgPaths);
+        }
+
         /// <summary>
-        /// Create a packagets.config folder of nupkgs
+        /// Create a packages.config folder of nupkgs
         /// </summary>
         public static async Task CreateFolderFeedPackagesConfigAsync(string root, params PackageIdentity[] packages)
         {
@@ -584,7 +604,7 @@ namespace NuGet.Test.Utility
         }
 
         /// <summary>
-        /// Create a packagets.config folder of nupkgs
+        /// Create a packages.config folder of nupkgs
         /// </summary>
         public static async Task CreateFolderFeedPackagesConfigAsync(string root, params SimpleTestPackageContext[] contexts)
         {
@@ -597,7 +617,7 @@ namespace NuGet.Test.Utility
         }
 
         /// <summary>
-        /// Create a packagets.config folder of nupkgs
+        /// Create a packages.config folder of nupkgs
         /// </summary>
         public static async Task CreateFolderFeedPackagesConfigAsync(string root, params string[] nupkgPaths)
         {

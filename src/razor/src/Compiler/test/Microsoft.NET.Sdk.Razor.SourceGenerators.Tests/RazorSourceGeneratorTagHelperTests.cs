@@ -5,6 +5,7 @@
 
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Roslyn.Test.Utilities;
 using Xunit;
@@ -1462,5 +1463,61 @@ public sealed class RazorSourceGeneratorTagHelperTests : RazorSourceGeneratorTes
         Assert.Empty(result.Diagnostics);
         Assert.Equal(7, result.GeneratedSources.Length);
         await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/issues/49728")]
+    public async Task Suppression()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Pages/Index.cshtml"] = """
+                @addTagHelper *, TestProject
+                <email />
+                <!email />
+                <!email></!email>
+                < email />
+                <@("email") />
+                @(await Html.RenderComponentAsync<MyApp.Shared.Component1>(RenderMode.Static))
+                """,
+            ["Shared/Component1.razor"] = """
+                Component1:
+                <Component2 />
+                <!Component2 />
+                <!Component2></!Component2>
+                < Component2 />
+                <@("Component2") />
+                """,
+            ["Shared/Component2.razor"] = """
+                Component2
+                """,
+        }, new()
+        {
+            ["EmailTagHelper.cs"] = """
+                using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                public class EmailTagHelper : TagHelper
+                {
+                    public override void Process(TagHelperContext context, TagHelperOutput output)
+                    {
+                        output.TagName = "a";
+                    }
+                }
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project, options =>
+        {
+            options.AdditionalTextOptions["Pages/Index.cshtml"]["build_metadata.AdditionalFiles.CssScope"] = "cshtml-scope";
+            options.AdditionalTextOptions["Shared/Component1.razor"]["build_metadata.AdditionalFiles.CssScope"] = "razor-scope";
+        });
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver, out compilation);
+
+        // Assert
+        result.Diagnostics.Verify();
+        Assert.Equal(3, result.GeneratedSources.Length);
+        await VerifyRazorPageMatchesBaselineAsync(compilation, "Pages_Index");
     }
 }

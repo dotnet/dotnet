@@ -463,6 +463,30 @@ public class HtmlFormattingTest : FormattingTestBase
     }
 
     [Fact]
+    public async Task FormatsComponentTag_WithImplicitExpression()
+    {
+        var tagHelpers = GetComponents();
+        await RunFormattingTestAsync(
+            input: """
+                        <GridTable>
+                            <GridRow >
+                        <GridCell>@cell</GridCell>
+                    <GridCell>cell</GridCell>
+                        </GridRow>
+                    </GridTable>
+                    """,
+            expected: """
+                    <GridTable>
+                        <GridRow>
+                            <GridCell>@cell</GridCell>
+                            <GridCell>cell</GridCell>
+                        </GridRow>
+                    </GridTable>
+                    """,
+            tagHelpers: tagHelpers);
+    }
+
+    [Fact]
     public async Task FormatsComponentTag_WithExplicitExpression()
     {
         var tagHelpers = GetComponents();

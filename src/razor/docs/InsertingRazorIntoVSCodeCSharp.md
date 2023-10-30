@@ -33,11 +33,9 @@ First you need to locally download and extract the build artifacts that you want
     - You won't need everything in BlobArtifacts but its much more convenient to download a single file, and you only approximately 7% of the download is unnecessary.
 
     ![image](images/blobartifacts.png)
-4. Unzip the BlobArtifacts.zip file you end up with and delete:
-    - Any file that doesn't start with "RazorLanguageServer" or "DevKitTelemetry"
-    - Any file that contains "PlatformAgnostic"
+4. Unzip the BlobArtifacts.zip file you end up with and delete any file that doesn't start with "RazorLanguageServer" or "DevKitTelemetry"
 
-At the end of this process you should have a folder containing 18 files. Rename the folder to the version number, pulled from any one of the file names in the folder.
+At the end of this process you should have a folder containing 20 files. Rename the folder to the version number, pulled from any one of the file names in the folder.
 
 ![image](images/remaining_files.png)
 
@@ -62,7 +60,7 @@ At the end of this process you should have a folder containing 18 files. Rename 
 
 ### Prepare Razor language server URLs
 
-You should now have 9 lines of text containing `razorlanguageserver` that are in the format:
+You should now have 10 lines of text containing `razorlanguageserver` that are in the format:
 
 ```
 2023-06-29T01:16:17.9751735Z release\DDPublish\vscode-razor\7.0.0-preview.23328.2\RazorLanguageServer-linux-arm64-7.0.0-preview.23328.2.zip -> https://download.visualstudio.microsoft.com/download/pr/51d2bf3c-cb3c-4385-b59f-d4d6c9a96743/c74964f4e130b50f9aef47d430c34a97/razorlanguageserver-linux-arm64-7.0.0-preview.23328.2.zip

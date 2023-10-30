@@ -18,11 +18,39 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.SpellCheck;
 
-public class DocumentSpellCheckEndpointTest : SingleServerDelegatingEndpointTestBase
+public class DocumentSpellCheckEndpointTest(ITestOutputHelper testOutput) : SingleServerDelegatingEndpointTestBase(testOutput)
 {
-    public DocumentSpellCheckEndpointTest(ITestOutputHelper testOutput)
-        : base(testOutput)
+    [Fact]
+    public async Task Handle_Attributes()
     {
+        var input = $$"""
+                <SurveyPrompt Title="[|Hello|][| there|]" />
+                <SurveyPrompt @bind-Title="InputValue" />
+
+                <form @onsubmit="DoSubmit" required></form>
+
+                <input type="[|checkbox|]" checked></input>
+
+                @code
+                {
+                    private string? [|InputValue|] { get; set; }
+                }
+                """;
+
+        // Need to put this in the right namespace, to match the tag helper defined in our test json
+        var surveyPrompt = """
+                @namespace BlazorApp1.Shared
+
+                <div></div>
+
+                @code
+                {
+                    [Parameter]
+                    public string Title { get; set; }
+                }
+                """;
+
+        await ValidateSpellCheckRangesAsync(input, filePath: "file.razor", [("SurveyPrompt.razor", surveyPrompt)]);
     }
 
     [Fact]
@@ -136,15 +164,15 @@ public class DocumentSpellCheckEndpointTest : SingleServerDelegatingEndpointTest
         await ValidateSpellCheckRangesAsync(input);
     }
 
-    private async Task ValidateSpellCheckRangesAsync(string originalInput)
+    private async Task ValidateSpellCheckRangesAsync(string originalInput, string? filePath = null, IEnumerable<(string filePath, string contents)>? additionalRazorDocuments = null)
     {
         TestFileMarkupParser.GetSpans(originalInput, out var testInput, out ImmutableArray<TextSpan> spans);
 
-        var codeDocument = CreateCodeDocument(testInput);
+        var codeDocument = CreateCodeDocument(testInput, filePath: filePath);
         var sourceText = codeDocument.GetSourceText();
         var razorFilePath = "file://C:/path/test.razor";
         var uri = new Uri(razorFilePath);
-        await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        await CreateLanguageServerAsync(codeDocument, razorFilePath, additionalRazorDocuments);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var requestContext = new RazorRequestContext(documentContext, Logger, null!);
 

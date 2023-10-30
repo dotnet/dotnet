@@ -1601,6 +1601,55 @@ public class CodeDirectiveFormattingTest : FormattingTestBase
     }
 
     [Fact]
+    public async Task IfBlock_Nested_Contents()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <div>
+                    <div></div>
+                            @if (true)
+                    {
+                    <div></div>
+                    }
+                    <div></div>
+                    </div>
+                    """,
+            expected: """
+                    <div>
+                        <div></div>
+                        @if (true)
+                        {
+                            <div></div>
+                        }
+                        <div></div>
+                    </div>
+                    """);
+    }
+
+    [Fact]
+    public async Task IfBlock_SingleLine_Nested_Contents()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                    <div>
+                    <div></div>
+                            @if (true) { <div></div> }
+                    <div></div>
+                    </div>
+                    """,
+            expected: """
+                    <div>
+                        <div></div>
+                        @if (true)
+                        {
+                            <div></div>
+                        }
+                        <div></div>
+                    </div>
+                    """);
+    }
+
+    [Fact]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/5648")]
     public async Task GenericComponentWithCascadingTypeParameter()
     {

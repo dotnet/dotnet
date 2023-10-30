@@ -3,10 +3,15 @@
 
 #nullable enable
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using NuGet.Configuration;
 using NuGet.PackageManagement.VisualStudio;
+using NuGet.Packaging;
+using NuGet.Packaging.Core;
+using NuGet.Protocol.Core.Types;
 
 namespace NuGet.PackageManagement.UI
 {
@@ -16,14 +21,14 @@ namespace NuGet.PackageManagement.UI
         /// Determines if new package source mappings should be written to the <paramref name="sourceMappingProvider"/> which is returned as a count.
         /// </summary>
         /// <param name="userAction"></param>
-        /// <param name="addedPackageIds"></param>
+        /// <param name="sourceMappingPreviewResult"></param>
         /// <param name="sourceMappingProvider"></param>
         /// <param name="existingPackageSourceMappingSourceItems"></param>
         /// <param name="countCreatedTopLevelSourceMappings">For Top-Level packages: <see langword="null" /> if not applicable; 0 if none needed to be added; > 0 is the count of new package source mappings added.</param>
         /// <param name="countCreatedTransitiveSourceMappings">For Transitive packages: <see langword="null" /> if not applicable; 0 if none needed to be added; > 0 is the count of new package source mappings added.</param>
-        internal static void ConfigureNewPackageSourceMapping(
+        internal static void ConfigureNewPackageSourceMappings(
             UserAction? userAction,
-            IReadOnlyList<string>? addedPackageIds,
+            PreviewResult? sourceMappingPreviewResult,
             PackageSourceMappingProvider sourceMappingProvider,
             IReadOnlyList<PackageSourceMappingSourceItem> existingPackageSourceMappingSourceItems,
             out int? countCreatedTopLevelSourceMappings,
@@ -32,72 +37,107 @@ namespace NuGet.PackageManagement.UI
             countCreatedTopLevelSourceMappings = null;
             countCreatedTransitiveSourceMappings = null;
 
-            if (userAction?.SelectedSourceName is null || addedPackageIds is null)
+            if (userAction?.SelectedSourceName is null || sourceMappingPreviewResult is null
+                || sourceMappingPreviewResult.NewSourceMappings is null || sourceMappingPreviewResult.NewSourceMappings.IsEmpty)
             {
                 return;
             }
 
             countCreatedTopLevelSourceMappings = 0;
             countCreatedTransitiveSourceMappings = 0;
-
             string topLevelPackageId = userAction.PackageId;
+
             Dictionary<string, IReadOnlyList<string>> patternsReadOnly = existingPackageSourceMappingSourceItems
                 .ToDictionary(pair => pair.Key, pair => (IReadOnlyList<string>)(pair.Patterns.Select(p => p.Pattern).ToList()));
 
             PackageSourceMapping packageSourceMapping = new(patternsReadOnly);
 
-            // Expand all patterns/globs so we can later check if this package ID was already mapped.
-            List<string> addedPackageIdsWithoutExistingMappings = new(capacity: addedPackageIds.Count + 1);
+            List<string> addedPackageIdsWithoutExistingMappings =
+                new(capacity: sourceMappingPreviewResult.NewSourceMappings.Count + 1);
+            List<PackageSourceMappingSourceItem> newAndExistingPackageSourceMappingItems = new(existingPackageSourceMappingSourceItems);
 
-            foreach (string addedPackageId in addedPackageIds)
+            foreach (KeyValuePair<string, SortedSet<string>> newSourceMapping in sourceMappingPreviewResult.NewSourceMappings)
             {
-                IReadOnlyList<string> configuredSource = packageSourceMapping.GetConfiguredPackageSources(addedPackageId);
+                string addedSourceName = newSourceMapping.Key;
+                SortedSet<string> addedPackageIds = newSourceMapping.Value;
 
-                // Top-level package was looked up.
-                if (addedPackageId == topLevelPackageId)
+                foreach (var addedPackageId in addedPackageIds)
                 {
-                    // The top-level package is not already mapped to the selected source.
-                    if (configuredSource.Count == 0 || !configuredSource.Contains(userAction.SelectedSourceName))
+                    // Expand all patterns/globs so we can check if this package ID was already mapped.
+                    IReadOnlyList<string> configuredSource = packageSourceMapping.GetConfiguredPackageSources(addedPackageId);
+
+                    // Top-level package was looked up.
+                    if (addedPackageId == topLevelPackageId)
                     {
-                        countCreatedTopLevelSourceMappings = 1;
-                        addedPackageIdsWithoutExistingMappings.Add(topLevelPackageId);
+                        // The top-level package is not already mapped to the selected source.
+                        if (configuredSource.Count == 0 || !configuredSource.Contains(userAction.SelectedSourceName))
+                        {
+                            countCreatedTopLevelSourceMappings++;
+                            addedPackageIdsWithoutExistingMappings.Add(topLevelPackageId);
+                        }
                     }
-                }
-                // Transitive package was looked up.
-                else if (configuredSource.Count == 0)
-                {
-                    addedPackageIdsWithoutExistingMappings.Add(addedPackageId);
+                    // Transitive package was looked up.
+                    else if (configuredSource.Count == 0)
+                    {
+                        countCreatedTransitiveSourceMappings++;
+                    }
+
+                    MergePackageSourceMappings(addedSourceName, addedPackageIds, sourceMappingProvider, newAndExistingPackageSourceMappingItems);
                 }
             }
 
-            countCreatedTransitiveSourceMappings = addedPackageIdsWithoutExistingMappings.Count - countCreatedTopLevelSourceMappings;
-
-            CreateAndSavePackageSourceMappings(
-                userAction.SelectedSourceName,
-                addedPackageIdsWithoutExistingMappings,
-                sourceMappingProvider,
-                existingPackageSourceMappingSourceItems);
+            sourceMappingProvider.SavePackageSourceMappings(newAndExistingPackageSourceMappingItems);
         }
 
-        private static void CreateAndSavePackageSourceMappings(
+        private static string? FindSourceForPackageInGlobalPackagesFolder(
+            PackageIdentity package,
+            VersionFolderPathResolver resolver)
+        {
+            if (package is null)
+            {
+                throw new ArgumentNullException(nameof(package));
+            }
+
+            if (resolver is null)
+            {
+                throw new ArgumentNullException(nameof(resolver));
+            }
+
+            try
+            {
+                string nupkgMetadataPath = resolver.GetNupkgMetadataPath(package.Id, package.Version);
+                NupkgMetadataFile nupkgMetadata = NupkgMetadataFileFormat.Read(nupkgMetadataPath);
+
+                if (string.IsNullOrEmpty(nupkgMetadata.Source))
+                {
+                    return null;
+                }
+
+                return nupkgMetadata.Source;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static void MergePackageSourceMappings(
             string sourceName,
-            List<string> newPackageIdsToSourceMap,
+            SortedSet<string> newPackageIdsToSourceMap,
             PackageSourceMappingProvider mappingProvider,
-            IReadOnlyList<PackageSourceMappingSourceItem> existingPackageSourceMappingSourceItems)
+            List<PackageSourceMappingSourceItem> newAndExistingPackageSourceMappingItems)
         {
             if (string.IsNullOrWhiteSpace(sourceName) || newPackageIdsToSourceMap is null || newPackageIdsToSourceMap.Count == 0)
             {
                 return;
             }
 
-            IEnumerable<PackagePatternItem> newPackagePatternItems = newPackageIdsToSourceMap.Select(packageId => new PackagePatternItem(packageId));
-
-            List<PackageSourceMappingSourceItem> newAndExistingPackageSourceMappingItems = new(existingPackageSourceMappingSourceItems);
-
             PackageSourceMappingSourceItem packageSourceMappingItemForSource =
-                existingPackageSourceMappingSourceItems
+                newAndExistingPackageSourceMappingItems
                 .Where(mappingItem => mappingItem.Key == sourceName)
                 .FirstOrDefault();
+
+            IEnumerable<PackagePatternItem> newPackagePatternItems = newPackageIdsToSourceMap.Select(packageId => new PackagePatternItem(packageId));
 
             // Source is being mapped for the first time.
             if (packageSourceMappingItemForSource is null)
@@ -115,8 +155,6 @@ namespace NuGet.PackageManagement.UI
                     }
                 }
             }
-
-            mappingProvider.SavePackageSourceMappings(newAndExistingPackageSourceMappingItems);
         }
 
         internal static string? GetNewSourceMappingSourceName(PackageSourceMapping packageSourceMapping, PackageSourceMoniker activePackageSourceMoniker)
@@ -128,15 +166,27 @@ namespace NuGet.PackageManagement.UI
             return sourceMappingSourceName;
         }
 
-        internal static void AddNewSourceMappingsFromAddedPackages(ref Dictionary<string, SortedSet<string>>? newSourceMappings, string newMappingSourceName, List<AccessiblePackageIdentity> added, PackageSourceMapping packageSourceMapping)
+        internal static void AddNewSourceMappingsFromAddedPackages(
+            ref Dictionary<string, SortedSet<string>>? newSourceMappings,
+            string selectedSourceName,
+            string topLevelPackageId,
+            List<AccessiblePackageIdentity> added,
+            PackageSourceMapping packageSourceMapping,
+            IReadOnlyList<SourceRepository>? globalPackageFolders,
+            IReadOnlyList<SourceRepository> enabledSourceRepositories)
         {
-            if (newMappingSourceName is null || added.Count == 0 || packageSourceMapping is null)
+            if (selectedSourceName is null || added.Count == 0 || packageSourceMapping is null)
             {
                 return;
             }
 
+            string? globalPackageFolderName = globalPackageFolders?.Where(folder => folder.PackageSource.IsLocal).FirstOrDefault()?.PackageSource.Name;
+            VersionFolderPathResolver? resolver = globalPackageFolderName != null ? new(globalPackageFolderName) : null;
+
             foreach (AccessiblePackageIdentity addedPackage in added)
             {
+                string? sourceNameToMap = null;
+                string? sourceFoundInGlobalPackagesFolder = null;
                 IReadOnlyList<string> configuredSources = packageSourceMapping.GetConfiguredPackageSources(packageId: addedPackage.Id);
 
                 if (configuredSources.Count > 0)
@@ -144,20 +194,61 @@ namespace NuGet.PackageManagement.UI
                     continue;
                 }
 
+                if (topLevelPackageId == addedPackage.Id)
+                {
+                    sourceNameToMap = selectedSourceName;
+                }
+                // Check whether the Transitive Dependency exists in the GPF on an enabled package source for this project.
+                else if (globalPackageFolderName != null && resolver != null && enabledSourceRepositories.Count > 0)
+                {
+                    sourceFoundInGlobalPackagesFolder = FindSourceForPackageInGlobalPackagesFolder(addedPackage, resolver);
+
+                    // The package was found in the GPF.
+                    if (!string.IsNullOrEmpty(sourceFoundInGlobalPackagesFolder))
+                    {
+                        SourceRepository enabledSourceFoundInGlobalPackagesFolder = enabledSourceRepositories.FirstOrDefault(sourceRepository =>
+                            string.Equals(sourceRepository.PackageSource.Source, sourceFoundInGlobalPackagesFolder, StringComparison.Ordinal));
+
+                        if (enabledSourceFoundInGlobalPackagesFolder != null)
+                        {
+                            // Map to the GPF source.
+                            sourceNameToMap = enabledSourceFoundInGlobalPackagesFolder.PackageSource.Name;
+                        }
+                        else // GPF source is not enabled for this solution, so this is an error.
+                        {
+                            string formattedError = string.Format(CultureInfo.CurrentCulture,
+                                Resources.Error_SourceMapping_GPF_NotEnabled,
+                                addedPackage.Id,
+                                sourceFoundInGlobalPackagesFolder);
+                            throw new ApplicationException(formattedError);
+                        }
+                    }
+                    else // The transitive dependency doesn't exist in GPF, so attempt to map to the selected source from the UI.
+                    {
+                        sourceNameToMap = selectedSourceName;
+                    }
+                }
+
+                // Default to the selected source from the UI if not found in the GPF.
+                if (sourceNameToMap is null)
+                {
+                    sourceNameToMap = selectedSourceName;
+                }
+
                 if (newSourceMappings is null)
                 {
                     newSourceMappings = new Dictionary<string, SortedSet<string>>(capacity: 1)
                     {
-                        { newMappingSourceName, new SortedSet<string>(new List<string>(capacity: added.Count) { addedPackage.Id }) }
+                        { sourceNameToMap, new SortedSet<string>(new List<string>(capacity: added.Count) { addedPackage.Id }) }
                     };
                 }
-                else if (newSourceMappings.TryGetValue(newMappingSourceName, out SortedSet<string>? newMappingPackageIds))
+                else if (newSourceMappings.TryGetValue(sourceNameToMap, out SortedSet<string>? newMappingPackageIds))
                 {
                     newMappingPackageIds.Add(addedPackage.Id);
                 }
                 else
                 {
-                    newSourceMappings.Add(newMappingSourceName, new SortedSet<string>(new List<string>(capacity: added.Count) { addedPackage.Id }));
+                    newSourceMappings.Add(sourceNameToMap, new SortedSet<string>(new List<string>(capacity: added.Count) { addedPackage.Id }));
                 }
             }
         }

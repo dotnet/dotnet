@@ -137,15 +137,13 @@
 
                 <!-- New Source Mappings for added packages -->
                 <StackPanel
-                  Margin="0,8"
                   Visibility="{Binding Path=NewSourceMappings,Converter={StaticResource EnumerableToVisibilityConverter}}">
                   <ItemsControl
-                    Margin="10,0,0,0"
                     ItemsSource="{Binding Path=NewSourceMappings}"
                     IsTabStop="False">
                     <ItemsControl.ItemTemplate>
                       <DataTemplate>
-                        <StackPanel>
+                        <StackPanel Margin="0,8">
                           <!-- New Source Mapping with Source Name -->
                           <TextBlock
                             FontWeight="Bold"
@@ -153,7 +151,9 @@
                           </TextBlock>
 
                           <!-- New Source Mapping Package IDs -->
-                          <ItemsControl ItemsSource="{Binding Value}"
+                          <ItemsControl
+                            Margin="10,0,0,0"
+                            ItemsSource="{Binding Value}"
                             IsTabStop="False">
                             <ItemsControl.ItemTemplate>
                               <DataTemplate>

@@ -462,8 +462,14 @@ namespace NuGet.PackageManagement.UI
 
                     if (!cancellationToken.IsCancellationRequested)
                     {
-                        List<string>? addedPackageIds = addedPackages != null ? addedPackages.Select(pair => pair.Item1).Distinct().ToList() : null;
-                        PackageSourceMappingUtility.ConfigureNewPackageSourceMapping(userAction, addedPackageIds, sourceMappingProvider, existingPackageSourceMappingSourceItems, out countCreatedTopLevelSourceMappings, out countCreatedTransitiveSourceMappings);
+                        PreviewResult? sourceMappingPreviewResult = results.SingleOrDefault(result => result.NewSourceMappings != null);
+                        PackageSourceMappingUtility.ConfigureNewPackageSourceMappings(
+                            userAction,
+                            sourceMappingPreviewResult,
+                            sourceMappingProvider,
+                            existingPackageSourceMappingSourceItems,
+                            out countCreatedTopLevelSourceMappings,
+                            out countCreatedTransitiveSourceMappings);
 
                         await projectManagerService.ExecuteActionsAsync(
                             actions,
@@ -919,7 +925,7 @@ namespace NuGet.PackageManagement.UI
         }
 
         // Non-private only to facilitate testing.
-        internal static async ValueTask<IReadOnlyList<PreviewResult>> GetPreviewResultsAsync(
+        internal async ValueTask<IReadOnlyList<PreviewResult>> GetPreviewResultsAsync(
             INuGetProjectManagerService projectManagerService,
             IReadOnlyList<ProjectAction> projectActions,
             UserAction? userAction,
@@ -1009,8 +1015,21 @@ namespace NuGet.PackageManagement.UI
 
                 if (userAction?.SelectedSourceName != null)
                 {
+                    IReadOnlyList<SourceRepository>? globalPackageFolders = _packageManager.GlobalPackageFolderRepositories;
+                    IReadOnlyList<SourceRepository> enabledSourceRepositories = _sourceProvider.GetRepositories()
+                        .Where(e => e.PackageSource.IsEnabled)
+                        .ToList()
+                        .AsReadOnly();
+
                     // Everything added which didn't already have a source mapping will be mentioned in the Preview Window.
-                    PackageSourceMappingUtility.AddNewSourceMappingsFromAddedPackages(ref newSourceMappings, userAction.SelectedSourceName, added, uiService.UIContext.PackageSourceMapping);
+                    PackageSourceMappingUtility.AddNewSourceMappingsFromAddedPackages(
+                        ref newSourceMappings,
+                        userAction.SelectedSourceName,
+                        userAction.PackageId,
+                        added,
+                        uiService.UIContext.PackageSourceMapping,
+                        globalPackageFolders,
+                        enabledSourceRepositories);
                 }
 
                 IProjectMetadataContextInfo projectMetadata = await projectManagerService.GetMetadataAsync(actions.Key, cancellationToken);
