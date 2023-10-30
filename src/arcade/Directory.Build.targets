@@ -1,6 +1,7 @@
 <Project>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+  <Import Project="$(RepositoryEngineeringDir)Microsoft.DotNet.XliffTasks.InTree.targets" Condition="'$(UsingInTreeToolXliff)' == 'true'" />
 
   <ItemGroup>
     <!-- Upgrade xunit's transitive NETStandard.Library dependency to avoid .NET Standard 1.x dependencies. -->

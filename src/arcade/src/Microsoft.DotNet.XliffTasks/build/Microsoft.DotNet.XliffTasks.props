@@ -1,0 +1,69 @@
+﻿<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. See the LICENSE file in the project root for more information. -->
+<Project>
+
+  <PropertyGroup>
+    <!-- 
+      Set this to to true to update .xlf files with corresponding .resx/.vcst/.xaml on every build.
+
+      If used, it should be configured so that official/CI builds keep it off as those should never
+      modify source code in the repository.
+    -->
+    <UpdateXlfOnBuild Condition="'$(UpdateXlfOnBuild)' == ''">false</UpdateXlfOnBuild>
+
+    <!--
+      Set this to false to use .xlf files as they are without verifying that they are up-to-date
+      with corresponding .resx/.vsct/.xaml files.
+    -->
+    <ErrorOnOutOfDateXlf Condition="'$(ErrorOnOutOfDateXlf)' == ''">true</ErrorOnOutOfDateXlf>
+    
+    <!--
+       The set of languages to which the project is localized. The default matches Visual Studio.
+    -->
+    <XlfLanguages Condition="'$(XlfLanguages)' == ''">cs;de;es;fr;it;ja;ko;pl;pt-BR;ru;tr;zh-Hans;zh-Hant</XlfLanguages>
+
+    <!--
+      Set this to to false to skip all xlf processing.
+    -->
+    <EnableXlfLocalization Condition="'$(EnableXlfLocalization)' == ''">true</EnableXlfLocalization>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <EmbeddedResource>
+      <!-- XlfInput set in targets to true if not already set and %(Extension) is .resx -->
+      <XlfSourceFormat>Resx</XlfSourceFormat>
+      <XlfOutputItem>EmbeddedResource</XlfOutputItem>
+    </EmbeddedResource>
+
+    <UnstructuredResource>
+      <Visible>false</Visible>
+      <XlfInput>true</XlfInput>
+      <XlfSourceFormat>Unstructured</XlfSourceFormat>
+      <XlfOutputItem>UnstructuredResourceTranslated</XlfOutputItem>
+    </UnstructuredResource>
+
+    <VSCTCompile>
+      <XlfInput>true</XlfInput>
+      <XlfSourceFormat>Vsct</XlfSourceFormat>
+      <XlfOutputItem>VSCTCompile</XlfOutputItem>
+    </VSCTCompile>
+
+    <XamlPropertyRule>
+      <XlfInput>true</XlfInput>
+      <XlfSourceFormat>XamlRule</XlfSourceFormat>
+      <XlfOutputItem>XamlPropertyRuleTranslated</XlfOutputItem>
+    </XamlPropertyRule>
+
+    <XamlPropertyRuleNoCodeBehind>
+      <XlfInput>true</XlfInput>
+      <XlfSourceFormat>XamlRule</XlfSourceFormat>
+      <XlfOutputItem>XamlPropertyRuleTranslated</XlfOutputItem>
+    </XamlPropertyRuleNoCodeBehind>
+
+    <XamlPropertyProjectItemsSchema>
+      <XlfInput>true</XlfInput>
+      <XlfSourceFormat>XamlRule</XlfSourceFormat>
+      <XlfOutputItem>XamlPropertyRuleTranslated</XlfOutputItem>
+    </XamlPropertyProjectItemsSchema>
+  </ItemDefinitionGroup>
+
+</Project>

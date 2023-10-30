@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <IsPackable>true</IsPackable>
+    <RootNamespace>XliffTasks</RootNamespace>
+    <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.DotNet.XliffTasks.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Model\xliff-core-1.2-transitional.xsd" />
+    <EmbeddedResource Include="Model\xml.xsd" />
+  </ItemGroup>
+
+  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
+
+</Project>

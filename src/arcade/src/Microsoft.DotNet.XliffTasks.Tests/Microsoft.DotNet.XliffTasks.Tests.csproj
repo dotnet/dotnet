@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.DotNet.XliffTasks\Microsoft.DotNet.XliffTasks.csproj" />
+  </ItemGroup>
+
+</Project>
