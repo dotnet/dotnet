@@ -53,7 +53,7 @@
     <vstestOutputPackageVersion>17.9.0-preview-23527-02</vstestOutputPackageVersion>
     <xdtGitCommitHash>9a1c3e1b7f0c8763d4c96e593961a61a72679a7b</xdtGitCommitHash>
     <xdtOutputPackageVersion>7.0.0-preview.22423.2</xdtOutputPackageVersion>
-    <xlifftasksGitCommitHash>83531fff1a39abe38de53e2e6b702bc1bb9c3bb4</xlifftasksGitCommitHash>
-    <xlifftasksOutputPackageVersion>1.0.0-beta.23523.1</xlifftasksOutputPackageVersion>
+    <xlifftasksGitCommitHash>d3553ca27fb1c128f302f52b73c0079e65d62ea8</xlifftasksGitCommitHash>
+    <xlifftasksOutputPackageVersion>1.0.0-beta.23381.1</xlifftasksOutputPackageVersion>
   </PropertyGroup>
 </Project>
