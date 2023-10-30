@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
@@ -35,14 +34,11 @@ internal partial class RazorCustomMessageTarget
             if (project is ProjectSnapshot snapshot &&
                 project.GetDocument(documentFilePath) is not null)
             {
-                var projectFileName = Path.GetFileNameWithoutExtension(snapshot.HostProject.FilePath);
                 projectContexts.Add(new VSProjectContext
                 {
                     Id = project.Key.Id,
                     Kind = VSProjectKind.CSharp,
-                    Label = snapshot.HostProject.DisplayName is { Length: > 0 } displayName
-                        ? $"{projectFileName} ({displayName})"
-                        : projectFileName
+                    Label = snapshot.HostProject.DisplayName
                 });
             }
         }

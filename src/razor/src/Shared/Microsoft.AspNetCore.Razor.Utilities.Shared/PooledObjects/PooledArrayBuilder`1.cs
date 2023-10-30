@@ -414,7 +414,7 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
 
         return _inlineCount switch
         {
-            0 => Array.Empty<T>(),
+            0 => [],
             1 => new[] { _element0 },
             2 => new[] { _element0, _element1 },
             3 => new[] { _element0, _element1, _element2 },

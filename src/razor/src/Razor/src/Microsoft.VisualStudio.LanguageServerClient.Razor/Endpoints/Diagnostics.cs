@@ -96,7 +96,7 @@ internal partial class RazorCustomMessageTarget
         {
             // Important that we send back an empty list here, because null would result it the above method throwing away any other
             // diagnostics it receives from the other delegated server
-            return Array.Empty<VSInternalDiagnosticReport>();
+            return [];
         }
 
         return response.Response;

@@ -29,19 +29,9 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
     [ImportingConstructor]
     public DefaultLSPDocumentSynchronizer(FileUriProvider fileUriProvider, LSPDocumentManager documentManager)
     {
-        if (fileUriProvider is null)
-        {
-            throw new ArgumentNullException(nameof(fileUriProvider));
-        }
-
-        if (documentManager is null)
-        {
-            throw new ArgumentNullException(nameof(documentManager));
-        }
-
-        _fileUriProvider = fileUriProvider;
+        _fileUriProvider = fileUriProvider ?? throw new ArgumentNullException(nameof(fileUriProvider));
         _virtualDocumentContexts = new Dictionary<Uri, DocumentContext>();
-        _documentManager = documentManager;
+        _documentManager = documentManager ?? throw new ArgumentNullException(nameof(documentManager));
     }
 
     internal record SynchronizedResult<TVirtualDocumentSnapshot>(bool Synchronized, TVirtualDocumentSnapshot VirtualSnapshot)
@@ -108,20 +98,20 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
             if (!_virtualDocumentContexts.TryGetValue(virtualDocumentUri, out var documentContext))
             {
                 // Document was deleted/removed in mid-synchronization
-                return new SynchronizedResult<TVirtualDocumentSnapshot>(false, preSyncedSnapshot);
+                return new SynchronizedResult<TVirtualDocumentSnapshot>(Synchronized: false, preSyncedSnapshot);
             }
 
             if (requiredHostDocumentVersion == documentContext.SeenHostDocumentVersion)
             {
                 // Already synchronized
-                return new SynchronizedResult<TVirtualDocumentSnapshot>(true, preSyncedSnapshot);
+                return new SynchronizedResult<TVirtualDocumentSnapshot>(Synchronized: true, preSyncedSnapshot);
             }
 
             // Currently tracked synchronizing context is not sufficient, need to update a new one.
             onSynchronizedTask = documentContext.GetSynchronizationTaskAsync(requiredHostDocumentVersion, rejectOnNewerParallelRequest, cancellationToken);
         }
 
-        var onSynchronizedResult = await onSynchronizedTask.ConfigureAwait(false);
+        var onSynchronizedResult = await onSynchronizedTask.ConfigureAwait(continueOnCapturedContext: false);
 
         // If we couldn't synchronize, there might not be a virtual document with the specific Uri, so we just get whichever one we can
         // so the caller can use it if they want to. Since the result is false, they hopefully don't use it for much!
@@ -190,8 +180,7 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
             }
 
             // Currently tracked synchronizing context is not sufficient, need to update a new one.
-            var onSynchronizedTask = documentContext.GetSynchronizationTaskAsync(requiredHostDocumentVersion, rejectOnNewerParallelRequest, cancellationToken);
-            return onSynchronizedTask;
+            return documentContext.GetSynchronizationTaskAsync(requiredHostDocumentVersion, rejectOnNewerParallelRequest, cancellationToken);
         }
     }
 
@@ -268,10 +257,12 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
         {
             if (kind == LSPDocumentChangeKind.Added)
             {
-                var lspDocument = @new!;
-                for (var i = 0; i < lspDocument.VirtualDocuments.Count; i++)
+                Assumes.NotNull(@new);
+                var virtualDocuments = @new.VirtualDocuments;
+
+                for (var i = 0; i < virtualDocuments.Count; i++)
                 {
-                    var virtualDocument = lspDocument.VirtualDocuments[i];
+                    var virtualDocument = virtualDocuments[i];
 
                     Debug.Assert(!_virtualDocumentContexts.ContainsKey(virtualDocument.Uri));
 
@@ -282,10 +273,12 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
             }
             else if (kind == LSPDocumentChangeKind.Removed)
             {
-                var lspDocument = old!;
-                for (var i = 0; i < lspDocument.VirtualDocuments.Count; i++)
+                Assumes.NotNull(old);
+                var virtualDocuments = old.VirtualDocuments;
+
+                for (var i = 0; i < virtualDocuments.Count; i++)
                 {
-                    var virtualDocument = lspDocument.VirtualDocuments[i];
+                    var virtualDocument = virtualDocuments[i];
 
                     if (!_virtualDocumentContexts.TryGetValue(virtualDocument.Uri, out var virtualDocumentContext))
                     {
@@ -302,7 +295,10 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
             }
             else if (kind == LSPDocumentChangeKind.VirtualDocumentChanged)
             {
-                if (virtualOld!.Snapshot.Version == virtualNew!.Snapshot.Version)
+                Assumes.NotNull(virtualOld);
+                Assumes.NotNull(virtualNew);
+
+                if (virtualOld.Snapshot.Version == virtualNew.Snapshot.Version)
                 {
                     // UpdateDocumentContextVersionInternal is typically invoked through a buffer notification,
                     //   however in the case where VirtualDocumentBase.Update is called with a zero change edit,
@@ -314,16 +310,10 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
         }
     }
 
-    private class DocumentContext : IDisposable
+    private sealed class DocumentContext(TimeSpan synchronizingTimeout) : IDisposable
     {
-        private readonly TimeSpan _synchronizingTimeout;
-        private readonly List<DocumentSynchronizingContext> _synchronizingContexts;
-
-        public DocumentContext(TimeSpan synchronizingTimeout)
-        {
-            _synchronizingTimeout = synchronizingTimeout;
-            _synchronizingContexts = new List<DocumentSynchronizingContext>();
-        }
+        private readonly TimeSpan _synchronizingTimeout = synchronizingTimeout;
+        private readonly List<DocumentSynchronizingContext> _synchronizingContexts = [];
 
         public long SeenHostDocumentVersion { get; private set; }
 
@@ -391,10 +381,10 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
             _synchronizingContexts.Clear();
         }
 
-        private class DocumentSynchronizingContext
+        private sealed class DocumentSynchronizingContext
         {
             private readonly TaskCompletionSource<bool> _onSynchronizedSource;
-            private readonly CancellationTokenSource _cts;
+            private readonly CancellationTokenSource? _cts;
             private bool _synchronizedSet;
 
             public DocumentSynchronizingContext(
@@ -407,14 +397,16 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
                 RejectOnNewerParallelRequest = rejectOnNewerParallelRequest;
                 _onSynchronizedSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-                _cts = CancellationTokenSource.CreateLinkedTokenSource(requestCancellationToken);
-
                 // This might throw because the token has already been marked as cancelled
                 try
                 {
+                    _cts = CancellationTokenSource.CreateLinkedTokenSource(requestCancellationToken);
+
                     // This cancellation token is the one passed in from the call-site that needs to synchronize an LSP document with a virtual document.
                     // Meaning, if the outer token is cancelled we need to fail to synchronize.
-                    _cts.Token.Register(() => SetSynchronized(false));
+                    //
+                    // Note that we use a pre-allocated delegate here to avoid unneeded Action delegate allocations.
+                    _cts.Token.Register(s_setSynchonizedToFalse, state: this);
                     _cts.CancelAfter(timeout);
                 }
                 catch (ObjectDisposedException)
@@ -429,6 +421,11 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
 
             public Task<bool> OnSynchronizedAsync => _onSynchronizedSource.Task;
 
+            private static readonly Action<object> s_setSynchonizedToFalse = obj =>
+            {
+                ((DocumentSynchronizingContext)obj).SetSynchronized(false);
+            };
+
             public void SetSynchronized(bool result)
             {
                 lock (_onSynchronizedSource)
@@ -441,7 +438,7 @@ internal class DefaultLSPDocumentSynchronizer : LSPDocumentSynchronizer
                     _synchronizedSet = true;
                 }
 
-                _cts.Dispose();
+                _cts?.Dispose();
                 _onSynchronizedSource.SetResult(result);
             }
         }

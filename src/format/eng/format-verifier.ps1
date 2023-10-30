@@ -4,6 +4,7 @@ Param(
     [string]$sha,
     [string]$branchName,
     [string]$targetSolution,
+    [bool]$useParentSdk,
     [string]$testPath,
     [string]$stage  # Valid values are "prepare", "format-workspace", "format-folder"
 )
@@ -51,14 +52,6 @@ try {
         .\eng\common\Build.ps1 -restore
     }
 
-    # project-system doesn't use Arcade so we may not have installed a local .dotnet sdk.
-    if (Test-Path '.\.dotnet') {
-        $dotnetPath = Join-Path $repoPath ".dotnet"
-        $parentDotNetPath = Join-Path $dotnetPath "dotnet.exe"
-    }
-
-    $Env:DOTNET_ROOT = $dotnetPath
-
     if ($stage -eq "prepare" -or $stage -eq "format-workspace") {
         Write-Output "$(Get-Date) - Finding solutions."
         $solutions = Get-ChildItem -Filter *.sln -Recurse -Depth 2 | Select-Object -ExpandProperty FullName | Where-Object { $_ -match '.sln$' }
@@ -75,12 +68,18 @@ try {
 
             if ($stage -eq "prepare") {
                 Write-Output "$(Get-Date) - $solutionFile - Restoring"
-                dotnet.exe restore $solution
+
+                # Restore the solution either with the repo local sdk or optionally with the dotnet/format SDK.
+                if ($useParentSdk) {
+                    & $parentDotNetPath restore $solution --configfile nuget.config
+                } else {
+                    dotnet.exe restore $solution
+                }
             }
 
             if ($stage -eq "format-workspace") {
                 Write-Output "$(Get-Date) - $solutionFile - Formatting Workspace"
-                $output = & $parentDotNetPath "$currentLocation/artifacts/bin/dotnet-format/Release/net8.0/dotnet-format.dll" $solution --no-restore -v diag --verify-no-changes | Out-String
+                $output = & $parentDotNetPath "$currentLocation/artifacts/bin/dotnet-format/Release/net9.0/dotnet-format.dll" $solution --no-restore -v diag --verify-no-changes | Out-String
                 Write-Output $output.TrimEnd()
 
                 # Ignore CheckFailedExitCode since we don't expect these repos to be properly formatted.
@@ -102,7 +101,7 @@ try {
 
     if ($stage -eq "format-folder") {
         Write-Output "$(Get-Date) - $folderName - Formatting Folder"
-        $output = & $parentDotNetPath "$currentLocation/artifacts/bin/dotnet-format/Release/net8.0/dotnet-format.dll" whitespace $repoPath --folder -v diag --verify-no-changes | Out-String
+        $output = & $parentDotNetPath "$currentLocation/artifacts/bin/dotnet-format/Release/net9.0/dotnet-format.dll" whitespace $repoPath --folder -v diag --verify-no-changes | Out-String
         Write-Output $output.TrimEnd()
 
         # Ignore CheckFailedExitCode since we don't expect these repos to be properly formatted.

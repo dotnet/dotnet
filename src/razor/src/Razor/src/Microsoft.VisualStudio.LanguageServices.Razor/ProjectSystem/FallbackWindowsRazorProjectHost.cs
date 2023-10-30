@@ -132,7 +132,12 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
         await UpdateAsync(() =>
         {
             var configuration = FallbackRazorConfiguration.SelectConfiguration(version);
-            var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace: null, displayName: sliceDimensions);
+            var projectFileName = Path.GetFileNameWithoutExtension(CommonServices.UnconfiguredProject.FullPath);
+            var displayName = sliceDimensions is { Length: > 0 }
+                ? $"{projectFileName} ({sliceDimensions})"
+                : projectFileName;
+
+            var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace: null, displayName);
 
             if (_languageServerFeatureOptions is not null)
             {

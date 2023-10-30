@@ -5,15 +5,17 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 
-internal class DefaultLSPTagHelperTooltipFactory : LSPTagHelperTooltipFactory
+internal class DefaultLSPTagHelperTooltipFactory(ISnapshotResolver snapshotResolver) : LSPTagHelperTooltipFactory(snapshotResolver)
 {
     public override bool TryCreateTooltip(
+        string documentFilePath,
         AggregateBoundElementDescription elementDescriptionInfo,
         MarkupKind markupKind,
         [NotNullWhen(true)] out MarkupContent? tooltipContent)
@@ -54,15 +56,20 @@ internal class DefaultLSPTagHelperTooltipFactory : LSPTagHelperTooltipFactory
             StartOrEndBold(descriptionBuilder, markupKind);
 
             var documentation = descriptionInfo.Documentation;
-            if (!TryExtractSummary(documentation, out var summaryContent))
+            if (TryExtractSummary(documentation, out var summaryContent))
             {
-                continue;
+                descriptionBuilder.AppendLine();
+                descriptionBuilder.AppendLine();
+                var finalSummaryContent = CleanSummaryContent(summaryContent);
+                descriptionBuilder.Append(finalSummaryContent);
             }
 
-            descriptionBuilder.AppendLine();
-            descriptionBuilder.AppendLine();
-            var finalSummaryContent = CleanSummaryContent(summaryContent);
-            descriptionBuilder.Append(finalSummaryContent);
+            var availability = GetProjectAvailability(documentFilePath, tagHelperType);
+            if (availability is not null)
+            {
+                descriptionBuilder.AppendLine();
+                descriptionBuilder.Append(availability);
+            }
         }
 
         tooltipContent = new MarkupContent

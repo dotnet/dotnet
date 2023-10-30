@@ -4,6 +4,7 @@
 #nullable enable
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Threading;
@@ -138,12 +139,14 @@ namespace NuGet.SolutionRestoreManager
 
         protected InfoBarModel GetInfoBarModel()
         {
+            IEnumerable<IVsInfoBarTextSpan> textSpans = new IVsInfoBarTextSpan[]
+            {
+                new InfoBarTextSpan(Resources.InfoBar_TextMessage + " "),
+                new InfoBarHyperlink(Resources.InfoBar_HyperlinkMessage)
+            };
+
             return new InfoBarModel(
-                Resources.InfoBar_TextMessage,
-                new IVsInfoBarActionItem[]
-                {
-                    new InfoBarHyperlink(Resources.InfoBar_HyperlinkMessage),
-                },
+                textSpans,
                 KnownMonikers.StatusWarning);
         }
     }

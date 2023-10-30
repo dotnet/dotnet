@@ -27,7 +27,7 @@ stages:
       helixRepo: dotnet/razor-tooling
       helixType: build.product/
       enableRichCodeNavigation: true
-      richCodeNavigationLanguage: 'csharp,typescript'
+      richCodeNavigationLanguage: 'csharp'
       jobs:
       - job: Windows
         pool:
@@ -35,13 +35,6 @@ stages:
           demands: ImageOverride -equals windows.vs2019.amd64.open
 
         steps:
-        - task: NodeTool@0
-          displayName: Install Node 10.x
-          inputs:
-            versionSpec: 10.x
-        - powershell: npm install -g yarn
-          displayName: Install yarn
-          condition: succeeded()
         - task: NuGetCommand@2
           displayName: 'Clear NuGet caches'
           condition: succeeded()

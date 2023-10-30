@@ -3,10 +3,18 @@
 
 #nullable disable
 
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Components;
+using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
+using TestBase = Microsoft.AspNetCore.Razor.Test.Common.TestBase;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.Completion;
 
@@ -330,4 +338,145 @@ There is no xml, but I got you this < and the >.
         Assert.True(result);
         Assert.Equal("There is no xml, but I got you this < and the >.", summary);
     }
+
+    [Fact]
+    public void GetAvailableProjects_NoProjects_ReturnsNull()
+    {
+        var snapshotResolver = new TestSnapshotResolver();
+        var service = new TestTagHelperToolTipFactory(snapshotResolver);
+
+        var availability = service.GetProjectAvailability("file.razor", "MyTagHelper");
+
+        Assert.Null(availability);
+    }
+
+    [Fact]
+    public void GetAvailableProjects_OneProject_ReturnsNull()
+    {
+        var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "TestTagHelper", "TestAssembly");
+        builder.TagMatchingRule(rule => rule.TagName = "Test");
+        var tagHelperTypeName = "TestNamespace.TestTagHelper";
+        builder.Metadata(TypeName(tagHelperTypeName));
+        var tagHelpers = ImmutableArray.Create(builder.Build());
+        var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.Default);
+
+        var razorFilePath = @"C:\path\to\file.razor";
+        var project = TestProjectSnapshot.Create(@"C:\path\to\project.csproj", documentFilePaths: new[] { razorFilePath }, projectWorkspaceState);
+
+        var snapshotResolver = new TestSnapshotResolver(razorFilePath, project);
+        var service = new TestTagHelperToolTipFactory(snapshotResolver);
+
+        var availability = service.GetProjectAvailability(razorFilePath, tagHelperTypeName);
+
+        Assert.Null(availability);
+    }
+
+    [Fact]
+    public void GetAvailableProjects_AvailableInAllProjects_ReturnsNull()
+    {
+        var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "TestTagHelper", "TestAssembly");
+        builder.TagMatchingRule(rule => rule.TagName = "Test");
+        var tagHelperTypeName = "TestNamespace.TestTagHelper";
+        builder.Metadata(TypeName(tagHelperTypeName));
+        var tagHelpers = ImmutableArray.Create(builder.Build());
+        var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.Default);
+
+        var razorFilePath = @"C:\path\to\file.razor";
+        var project1 = TestProjectSnapshot.Create(
+            @"C:\path\to\project.csproj",
+            @"C:\path\to\obj\1",
+            documentFilePaths: new[] { razorFilePath },
+            RazorConfiguration.Default,
+            projectWorkspaceState);
+
+        var project2 = TestProjectSnapshot.Create(
+           @"C:\path\to\project.csproj",
+           @"C:\path\to\obj\2",
+           documentFilePaths: new[] { razorFilePath },
+           RazorConfiguration.Default,
+           projectWorkspaceState);
+
+        var snapshotResolver = new TestSnapshotResolver(razorFilePath, project1, project2);
+        var service = new TestTagHelperToolTipFactory(snapshotResolver);
+
+        var availability = service.GetProjectAvailability(razorFilePath, tagHelperTypeName);
+
+        Assert.Null(availability);
+    }
+
+    [Fact]
+    public void GetAvailableProjects_NotAvailableInAllProjects_ReturnsText()
+    {
+        var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "TestTagHelper", "TestAssembly");
+        builder.TagMatchingRule(rule => rule.TagName = "Test");
+        var tagHelperTypeName = "TestNamespace.TestTagHelper";
+        builder.Metadata(TypeName(tagHelperTypeName));
+        var tagHelpers = ImmutableArray.Create(builder.Build());
+        var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.Default);
+
+        var razorFilePath = @"C:\path\to\file.razor";
+        var project1 = TestProjectSnapshot.Create(
+            @"C:\path\to\project.csproj",
+            @"C:\path\to\obj\1",
+            documentFilePaths: new[] { razorFilePath },
+            RazorConfiguration.Default,
+            projectWorkspaceState,
+            displayName: "project1");
+
+        var project2 = TestProjectSnapshot.Create(
+           @"C:\path\to\project.csproj",
+           @"C:\path\to\obj\2",
+           documentFilePaths: new[] { razorFilePath },
+           RazorConfiguration.Default,
+           projectWorkspaceState: null,
+            displayName: "project2");
+
+        var snapshotResolver = new TestSnapshotResolver(razorFilePath, project1, project2);
+        var service = new TestTagHelperToolTipFactory(snapshotResolver);
+
+        var availability = service.GetProjectAvailability(razorFilePath, tagHelperTypeName);
+
+        AssertEx.EqualOrDiff("""
+
+            ⚠️ Not available in:
+                project2
+            """, availability);
+    }
+
+    [Fact]
+    public void GetAvailableProjects_NotAvailableInAnyProject_ReturnsText()
+    {
+        var razorFilePath = @"C:\path\to\file.razor";
+        var project1 = TestProjectSnapshot.Create(
+            @"C:\path\to\project.csproj",
+            @"C:\path\to\obj\1",
+            documentFilePaths: new[] { razorFilePath },
+            RazorConfiguration.Default,
+            projectWorkspaceState: null,
+            displayName: "project1");
+
+        var project2 = TestProjectSnapshot.Create(
+           @"C:\path\to\project.csproj",
+           @"C:\path\to\obj\2",
+           documentFilePaths: new[] { razorFilePath },
+           RazorConfiguration.Default,
+           projectWorkspaceState: null,
+           displayName: "project2");
+
+        var snapshotResolver = new TestSnapshotResolver(razorFilePath, project1, project2);
+        var service = new TestTagHelperToolTipFactory(snapshotResolver);
+
+        var availability = service.GetProjectAvailability(razorFilePath, "MyTagHelper");
+
+        AssertEx.EqualOrDiff("""
+
+            ⚠️ Not available in:
+                project1
+                project2
+            """, availability);
+    }
+}
+
+file class TestTagHelperToolTipFactory(ISnapshotResolver snapshotResolver) : TagHelperTooltipFactoryBase(snapshotResolver)
+{
 }

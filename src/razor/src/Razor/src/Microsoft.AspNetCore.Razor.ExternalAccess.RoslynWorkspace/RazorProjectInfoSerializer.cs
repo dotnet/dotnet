@@ -94,6 +94,7 @@ internal static class RazorProjectInfoSerializer
             filePath: project.FilePath!,
             configuration: configuration,
             rootNamespace: defaultNamespace,
+            displayName: project.Name,
             projectWorkspaceState: projectWorkspaceState,
             documents: documents);
 

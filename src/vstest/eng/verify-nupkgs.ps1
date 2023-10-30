@@ -5,7 +5,10 @@ Param(
     [string] $configuration,
 
     [Parameter(Mandatory)]
-    [string] $versionPrefix
+    [string] $versionPrefix,
+
+    [Parameter(Mandatory)]
+    [string] $currentBranch
 )
 
 $ErrorActionPreference = 'Stop'
@@ -149,7 +152,6 @@ function Verify-Version {
 
     $vsTestExe = "$nugetDir/tools/net462/Common7/IDE/Extensions/TestPlatform/vstest.console.exe"
     $vsTestProductVersion = (Get-Item $vsTestExe).VersionInfo.ProductVersion
-    $currentBranch = git branch --show-current
 
     Match-VersionAgainstBranch -vsTestVersion $vsTestProductVersion -branchName $currentBranch -errors $errors
 }

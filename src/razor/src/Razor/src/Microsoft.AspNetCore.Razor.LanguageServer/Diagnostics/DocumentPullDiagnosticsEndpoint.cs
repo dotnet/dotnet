@@ -69,11 +69,13 @@ internal class DocumentPullDiagnosticsEndpoint : IRazorRequestHandler<VSInternal
 
         var (csharpDiagnostics, htmlDiagnostics) = await GetHtmlCSharpDiagnosticsAsync(documentContext, correlationId, cancellationToken).ConfigureAwait(false);
 
-        using var _ = ListPool<VSInternalDiagnosticReport>.GetPooledObject(out var allDiagnostics);
-        allDiagnostics.SetCapacityIfLarger(
+        var diagnosticCount =
             (razorDiagnostics?.Length ?? 0) +
             (csharpDiagnostics?.Length ?? 0) +
-            (htmlDiagnostics?.Length ?? 0));
+            (htmlDiagnostics?.Length ?? 0);
+
+        using var _ = ListPool<VSInternalDiagnosticReport>.GetPooledObject(out var allDiagnostics);
+        allDiagnostics.SetCapacityIfLarger(diagnosticCount);
 
         if (razorDiagnostics is not null)
         {
@@ -126,15 +128,14 @@ internal class DocumentPullDiagnosticsEndpoint : IRazorRequestHandler<VSInternal
 
         var convertedDiagnostics = RazorDiagnosticConverter.Convert(diagnostics, sourceText);
 
-        var razorDiagnostics = new VSInternalDiagnosticReport[]
-        {
-            new VSInternalDiagnosticReport
+        return
+        [
+            new()
             {
                 Diagnostics = convertedDiagnostics,
                 ResultId = Guid.NewGuid().ToString()
             }
-        };
-        return razorDiagnostics;
+        ];
     }
 
     private async Task<(VSInternalDiagnosticReport[]? CSharpDiagnostics, VSInternalDiagnosticReport[]? HtmlDiagnostics)> GetHtmlCSharpDiagnosticsAsync(VersionedDocumentContext documentContext, Guid correlationId, CancellationToken cancellationToken)

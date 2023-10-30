@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
@@ -33,12 +32,11 @@ internal abstract class GeneratedVirtualDocument<T>(Uri uri, ITextBuffer textBuf
                 changes = new[] { new VisualStudioTextChange(0, currentSnapshotLength, change.NewText) };
             }
 
-            var data = ImmutableDictionary<string, object?>.Empty
-                .Add("version", hostDocumentVersion)
-                .Add("type", typeof(T).Name)
-                .Add("recoverable", recoverable);
-
-            _telemetryReporter.ReportEvent("sync", Severity.High, data);
+            _telemetryReporter.ReportEvent(
+                "sync", Severity.High,
+                new("version", hostDocumentVersion),
+                new("type", typeof(T).Name),
+                new("recoverable", recoverable));
         }
 
         return base.Update(changes, hostDocumentVersion, state);

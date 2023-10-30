@@ -230,30 +230,30 @@ stages:
         additionalBuildParameters: '/p:HostOSName="linux-musl"'
         linuxPortable: false
         runTests: false
-    # - template: eng/build.yml
-    #   parameters:
-    #     agentOs: Linux
-    #     jobName: Build_Linux_Portable_Deb_Release_x64
-    #     container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-debpkg'
-    #     buildConfiguration: Release
-    #     buildArchitecture: x64
-    #     # Do not publish zips and tarballs. The linux-x64 binaries are
-    #     # already published by Build_LinuxPortable_Release_x64
-    #     additionalBuildParameters: '/p:PublishBinariesAndBadge=false /p:BuildSdkDeb=true'
-    #     linuxPortable: true
-    #     runTests: false
-    # - template: eng/build.yml
-    #   parameters:
-    #     agentOs: Linux
-    #     jobName: Build_Linux_Portable_Rpm_Release_x64
-    #     container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-fpm'
-    #     buildConfiguration: Release
-    #     buildArchitecture: x64
-    #     # Do not publish zips and tarballs. The linux-x64 binaries are
-    #     # already published by Build_LinuxPortable_Release_x64
-    #     additionalBuildParameters: '/p:PublishBinariesAndBadge=false /p:IsRPMBasedDistro=true'
-    #     linuxPortable: true
-    #     runTests: false
+    - template: eng/build.yml
+      parameters:
+        agentOs: Linux
+        jobName: Build_Linux_Portable_Deb_Release_x64
+        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-debpkg'
+        buildConfiguration: Release
+        buildArchitecture: x64
+        # Do not publish zips and tarballs. The linux-x64 binaries are
+        # already published by Build_LinuxPortable_Release_x64
+        additionalBuildParameters: '/p:PublishBinariesAndBadge=false /p:BuildSdkDeb=true'
+        linuxPortable: true
+        runTests: false
+    - template: eng/build.yml
+      parameters:
+        agentOs: Linux
+        jobName: Build_Linux_Portable_Rpm_Release_x64
+        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-fpm'
+        buildConfiguration: Release
+        buildArchitecture: x64
+        # Do not publish zips and tarballs. The linux-x64 binaries are
+        # already published by Build_LinuxPortable_Release_x64
+        additionalBuildParameters: '/p:PublishBinariesAndBadge=false /p:IsRPMBasedDistro=true'
+        linuxPortable: true
+        runTests: false
     - template: eng/build.yml
       parameters:
         agentOs: Linux

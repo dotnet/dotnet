@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,13 +33,13 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
         VSInternalClientCapabilities? clientCapabilities,
         CancellationToken cancellationToken)
     {
-        if (originalRequestContext is not IReadOnlyList<RazorCompletionItem> razorCompletionItems)
+        if (originalRequestContext is not RazorCompletionResolveContext razorCompletionResolveContext)
         {
             // Can't recognize the original request context, bail.
             return Task.FromResult<VSInternalCompletionItem?>(null);
         }
 
-        var associatedRazorCompletion = razorCompletionItems.FirstOrDefault(completion => string.Equals(completion.DisplayText, completionItem.Label, StringComparison.Ordinal));
+        var associatedRazorCompletion = razorCompletionResolveContext.CompletionItems.FirstOrDefault(completion => string.Equals(completion.DisplayText, completionItem.Label, StringComparison.Ordinal));
         if (associatedRazorCompletion is null)
         {
             return Task.FromResult<VSInternalCompletionItem?>(null);
@@ -107,11 +106,11 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
 
                 if (useDescriptionProperty)
                 {
-                    _vsLspTagHelperTooltipFactory.TryCreateTooltip(descriptionInfo, out tagHelperClassifiedTextTooltip);
+                    _vsLspTagHelperTooltipFactory.TryCreateTooltip(razorCompletionResolveContext.FilePath, descriptionInfo, out tagHelperClassifiedTextTooltip);
                 }
                 else
                 {
-                    _lspTagHelperTooltipFactory.TryCreateTooltip(descriptionInfo, documentationKind, out tagHelperMarkupTooltip);
+                    _lspTagHelperTooltipFactory.TryCreateTooltip(razorCompletionResolveContext.FilePath, descriptionInfo, documentationKind, out tagHelperMarkupTooltip);
                 }
 
                 break;

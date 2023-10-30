@@ -33,7 +33,6 @@ stages:
 - stage: build
   displayName: Build
   jobs:
-
   # Windows based jobs. This needs to be separate from Unix based jobs because it generates
   # TRX files. That can only be toggled at the top level template level, not at the individual
   # job.
@@ -66,15 +65,6 @@ stages:
         - __VSNeverShowWhatsNew: 1
 
         steps:
-        - task: NodeTool@0
-          displayName: Install Node 10.x
-          inputs:
-            versionSpec: 10.x
-
-        - powershell: npm install -g yarn
-          displayName: Install yarn
-          condition: succeeded()
-
         - task: NuGetCommand@2
           displayName: 'Clear NuGet caches'
           condition: succeeded()
