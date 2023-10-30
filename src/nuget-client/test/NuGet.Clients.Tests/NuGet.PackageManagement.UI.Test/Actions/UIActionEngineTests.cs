@@ -20,6 +20,7 @@ using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
 using NuGet.Protocol.Core.Types;
+using NuGet.Test.Utility;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
@@ -83,7 +84,8 @@ namespace NuGet.PackageManagement.UI.Test
             mockUIContext.Setup(uiContext => uiContext.PackageSourceMapping).Returns((PackageSourceMapping)null);
             mockUIController.Setup(uiController => uiController.UIContext).Returns(mockUIContext.Object);
 
-            IReadOnlyList<PreviewResult> previewResults = await UIActionEngine.GetPreviewResultsAsync(
+            UIActionEngine uiActionEngine = CreateUIActionEngine();
+            IReadOnlyList<PreviewResult> previewResults = await uiActionEngine.GetPreviewResultsAsync(
                 Mock.Of<INuGetProjectManagerService>(),
                 projectActions: new[] { uninstallAction, installAction },
                 userAction: null,
@@ -141,7 +143,8 @@ namespace NuGet.PackageManagement.UI.Test
             mockUIContext.Setup(uiContext => uiContext.PackageSourceMapping).Returns((PackageSourceMapping)null);
             mockUIController.Setup(uiController => uiController.UIContext).Returns(mockUIContext.Object);
 
-            IReadOnlyList<PreviewResult> previewResults = await UIActionEngine.GetPreviewResultsAsync(
+            UIActionEngine uiActionEngine = CreateUIActionEngine();
+            IReadOnlyList<PreviewResult> previewResults = await uiActionEngine.GetPreviewResultsAsync(
                 Mock.Of<INuGetProjectManagerService>(),
                 projectActions: new[] { installAction },
                 userAction: null,
@@ -156,6 +159,21 @@ namespace NuGet.PackageManagement.UI.Test
             Assert.Equal(packageIdentityA.Id, addedResults[0].Id);
             Assert.Equal(packageIdentityB.Id, addedResults[1].Id);
             Assert.Equal(packageIdentityC.Id, addedResults[2].Id);
+        }
+
+        private UIActionEngine CreateUIActionEngine(ISettings settings = null)
+        {
+            settings = settings ?? Mock.Of<ISettings>();
+            var sourceRepositoryProvider = Mock.Of<ISourceRepositoryProvider>();
+            var packageManager = new NuGetPackageManager(
+                sourceRepositoryProvider,
+                Mock.Of<ISettings>(),
+                TestDirectory.Create().Path);
+
+            return new UIActionEngine(
+                sourceRepositoryProvider,
+                packageManager,
+                Mock.Of<INuGetLockService>());
         }
 
         [Theory]
