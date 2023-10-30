@@ -89,12 +89,12 @@
       </trans-unit>
       <trans-unit id="Setting_SnippetsDescription">
         <source>What snippets to include in a razor file. If set to custom, only snippets that are not included with Visual Studio will be shown. </source>
-        <target state="new">What snippets to include in a razor file. If set to custom, only snippets that are not included with Visual Studio will be shown. </target>
+        <target state="translated">Razor 파일에 포함할 코드 조각입니다. 사용자 지정으로 설정하면 Visual Studio에 포함되지 않은 코드 조각만 표시됩니다. </target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_SnippetsDisplayName">
         <source>Included Snippets</source>
-        <target state="new">Included Snippets</target>
+        <target state="translated">포함된 코드 조각</target>
         <note />
       </trans-unit>
       <trans-unit id="Typing">

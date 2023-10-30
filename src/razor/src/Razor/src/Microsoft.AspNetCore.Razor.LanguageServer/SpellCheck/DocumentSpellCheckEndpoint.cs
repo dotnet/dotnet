@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -97,13 +96,24 @@ internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSIntern
                 // Attribute names are text literals, but we don't want to spell check them because either C# will,
                 // whether they're component attributes based on property names, or they come from tag helper attribute
                 // parameters as strings, or they're Html attributes which are not necessarily expected to be real words.
-                if (node.Parent is MarkupTagHelperAttributeSyntax or MarkupAttributeBlockSyntax)
+                if (node.Parent is MarkupTagHelperAttributeSyntax or
+                    MarkupAttributeBlockSyntax or
+                    MarkupMinimizedAttributeBlockSyntax or
+                    MarkupTagHelperDirectiveAttributeSyntax or
+                    MarkupMinimizedTagHelperAttributeSyntax or
+                    MarkupMinimizedTagHelperDirectiveAttributeSyntax or
+                    MarkupMiscAttributeContentSyntax)
                 {
                     continue;
                 }
 
                 // Text literals appear everywhere in Razor to hold newlines and indentation, so its worth saving the tokens
                 if (textLiteralSyntax.ContainsOnlyWhitespace())
+                {
+                    continue;
+                }
+
+                if (textLiteralSyntax.Span.Length == 0)
                 {
                     continue;
                 }
@@ -163,7 +173,7 @@ internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSIntern
     private static int[] ConvertSpellCheckRangesToIntTriples(List<SpellCheckRange> ranges)
     {
         // Important to sort first, or the client will just ignore anything we say
-        ranges.Sort(AbsoluteStartIndexComparer.Instance);
+        ranges.Sort(CompareSpellCheckRanges);
 
         using var _ = ListPool<int>.GetPooledObject(out var data);
         data.SetCapacityIfLarger(ranges.Count * 3);
@@ -186,22 +196,10 @@ internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSIntern
         return data.ToArray();
     }
 
-    private sealed record SpellCheckRange(int Kind, int AbsoluteStartIndex, int Length);
+    private record struct SpellCheckRange(int Kind, int AbsoluteStartIndex, int Length);
 
-    private sealed class AbsoluteStartIndexComparer : IComparer<SpellCheckRange>
+    private static int CompareSpellCheckRanges(SpellCheckRange x, SpellCheckRange y)
     {
-        public static readonly AbsoluteStartIndexComparer Instance = new();
-
-        public int Compare(SpellCheckRange? x, SpellCheckRange? y)
-        {
-            if (x is null || y is null)
-            {
-                Debug.Fail("There shouldn't be a null in the list of spell check ranges.");
-
-                return 0;
-            }
-
-            return x.AbsoluteStartIndex.CompareTo(y.AbsoluteStartIndex);
-        }
+        return x.AbsoluteStartIndex.CompareTo(y.AbsoluteStartIndex);
     }
 }

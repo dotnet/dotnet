@@ -29,13 +29,14 @@ internal class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPa
 
         var scopeWithSeparator = " " + cssScope;
         var nodes = documentNode.FindDescendantNodes<HtmlContentIntermediateNode>();
-        for (var i = 0; i < nodes.Count; i++)
+        IntermediateToken previousTokenOpt = null;
+        foreach (var node in nodes)
         {
-            ProcessElement(nodes[i], scopeWithSeparator);
+            ProcessElement(node, scopeWithSeparator, ref previousTokenOpt);
         }
     }
 
-    private void ProcessElement(HtmlContentIntermediateNode node, string cssScope)
+    private void ProcessElement(HtmlContentIntermediateNode node, string cssScope, ref IntermediateToken previousTokenOpt)
     {
         // Add a minimized attribute whose name is simply the CSS scope
         for (var i = 0; i < node.Children.Count; i++)
@@ -43,7 +44,7 @@ internal class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPa
             var child = node.Children[i];
             if (child is IntermediateToken token && token.IsHtml)
             {
-                if (IsValidElement(token))
+                if (IsValidElement(token, previousTokenOpt))
                 {
                     node.Children.Insert(i + 1, new IntermediateToken()
                     {
@@ -53,12 +54,31 @@ internal class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPa
                     });
                     i++;
                 }
+
+                previousTokenOpt = token;
             }
         }
 
-        static bool IsValidElement(IntermediateToken token)
+        static bool IsValidElement(IntermediateToken token, IntermediateToken previousTokenOpt)
         {
-            var content = token.Content;
+            var content = token.Content.AsSpan();
+
+            // `<!tag` is lowered into separate nodes `<` and `tag`, we process the latter.
+            if (previousTokenOpt?.Content == "<" && content is [not '<', ..])
+            {
+                // There is no leading `<` to trim.
+            }
+            // Otherwise process the token if it starts with `<` but ignore if it is *only* `<`.
+            else if (content is ['<', _, ..])
+            {
+                // Trim the leading `<`.
+                content = content[1..];
+            }
+            else
+            {
+                return false;
+            }
+
             /// <remarks>
             /// We want to avoid adding the CSS scope to elements that do not appear
             /// within the body element of the document. When this pass executes over the
@@ -67,17 +87,16 @@ internal class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPa
             /// is valid this way. Instead, we go for a straight-forward check on the tag
             /// name that we are currently inspecting.
             /// </remarks>
-            return content.StartsWith("<", StringComparison.Ordinal)
-                && !content.StartsWith("</", StringComparison.Ordinal)
-                && !content.StartsWith("<!", StringComparison.Ordinal)
-                && !content.Equals("<head", StringComparison.OrdinalIgnoreCase)
-                && !content.Equals("<meta", StringComparison.OrdinalIgnoreCase)
-                && !content.Equals("<title", StringComparison.OrdinalIgnoreCase)
-                && !content.Equals("<link", StringComparison.OrdinalIgnoreCase)
-                && !content.Equals("<base", StringComparison.OrdinalIgnoreCase)
-                && !content.Equals("<script", StringComparison.OrdinalIgnoreCase)
-                && !content.Equals("<style", StringComparison.OrdinalIgnoreCase)
-                && !content.Equals("<html", StringComparison.OrdinalIgnoreCase);
+            return !content.StartsWith("/".AsSpan(), StringComparison.Ordinal)
+                && !content.StartsWith("!".AsSpan(), StringComparison.Ordinal)
+                && !content.Equals("head".AsSpan(), StringComparison.OrdinalIgnoreCase)
+                && !content.Equals("meta".AsSpan(), StringComparison.OrdinalIgnoreCase)
+                && !content.Equals("title".AsSpan(), StringComparison.OrdinalIgnoreCase)
+                && !content.Equals("link".AsSpan(), StringComparison.OrdinalIgnoreCase)
+                && !content.Equals("base".AsSpan(), StringComparison.OrdinalIgnoreCase)
+                && !content.Equals("script".AsSpan(), StringComparison.OrdinalIgnoreCase)
+                && !content.Equals("style".AsSpan(), StringComparison.OrdinalIgnoreCase)
+                && !content.Equals("html".AsSpan(), StringComparison.OrdinalIgnoreCase);
         }
     }
 }
