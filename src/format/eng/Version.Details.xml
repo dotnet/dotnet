@@ -3,11 +3,11 @@
   <ProductDependencies>
     <Dependency Name="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>17ea9ab3f662320d4ac62d3a2b783b5054ad80bf</Sha>
+      <Sha>0395649aa16820be8a669203b265b0a578e82843</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis" Version="4.8.0-3.23518.7">
+    <Dependency Name="Microsoft.CodeAnalysis" Version="4.8.0-3.23524.11">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>12b11685a551e0a6a203dcecb584f610f4df1157</Sha>
+      <Sha>f43cd10b737b6343956dee421cff8c50b602c788</Sha>
       <SourceBuild RepoName="roslyn" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="8.0.0-alpha.1.23502.1">
@@ -31,15 +31,15 @@
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Logging" Version="8.0.0">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>17ea9ab3f662320d4ac62d3a2b783b5054ad80bf</Sha>
+      <Sha>0395649aa16820be8a669203b265b0a578e82843</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="8.0.0">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>17ea9ab3f662320d4ac62d3a2b783b5054ad80bf</Sha>
+      <Sha>0395649aa16820be8a669203b265b0a578e82843</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.runtime.linux-x64" Version="8.0.0-rtm.23525.7">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.runtime.linux-x64" Version="8.0.0-rtm.23530.12">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>17ea9ab3f662320d4ac62d3a2b783b5054ad80bf</Sha>
+      <Sha>0395649aa16820be8a669203b265b0a578e82843</Sha>
       <SourceBuild RepoName="runtime" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.command-line-api" Version="0.1.430701">
@@ -57,9 +57,9 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23516.4">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23525.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>39042b4048580366d35a7c1c4f4ce8fc0dbea4b4</Sha>
+      <Sha>a57022b44f3ff23de925530ea1d27da9701aed57</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.23475.1" CoherentParentDependency="Microsoft.DotNet.Arcade.Sdk">
