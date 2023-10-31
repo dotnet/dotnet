@@ -1,28 +1,38 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
   <!-- Repositories using the arcade SDK can stay up to date with their target framework more easily using the properties in this file.
-       - NetCurrent - The TFM of the major release of .NET that the Arcade SDK aligns with.
-       - NetPrevious - The previously released version of .NET (e.g. this would be net7 if NetCurrent is net8)
-       - NetMinimum - Lowest supported version of .NET the time of the release of NetCurrent. E.g. if NetCurrent is net8, then NetMinimum is net6
-       - NetFrameworkMinimum - Lowest supported version of .NET Framework the time of the release of NetCurrent. E.g. if NetCurrent is net8, then NetFrameworkMinimum is net462
-       - NetFrameworkToolCurrent - The version of .NET Framework that tools (msbuild tasks) should target.
-       - NetFrameworkCurrent - The TFM of the latest version of .NET Framework.
+
+       - NetCurrent               The TFM of the major release of .NET that the Arcade SDK aligns with.
+       - NetPrevious              The previously released version of .NET. NetPrevious property is undefined whenever NetMinimum and
+                                  NetPrevious would evaluate to the same TFM. This is necessary as NuGet doesn't support duplicated TFM
+                                  values in the TargetFrameworks string.
+       - NetMinimum               Lowest supported version of .NET the time of the release of NetCurrent. E.g. if NetCurrent is net8.0,
+                                  then NetMinimum is net6.0.
+       - NetToolCurrent           The version of .NET that tools (msbuild tasks) should target.
+
+       - NetFrameworkCurrent      The TFM of the latest version of .NET Framework.
+       - NetFrameworkMinimum      Lowest supported version of .NET Framework the time of the release of NetCurrent. E.g. if NetCurrent is
+                                  net8.0, then NetFrameworkMinimum is net462
+       - NetFrameworkToolCurrent  The version of .NET Framework that tools (msbuild tasks) should target.
 
        Examples:
-
        <TargetFrameworks>$(NetCurrent)</TargetFrameworks>
-       <TargetFrameworks>$(NetCurrent);net472</TargetFrameworks>
-       <TargetFrameworks>$(NetCurrent);$(NetPrevious);$(NetFrameworkMinimum);net472</TargetFrameworks>
+       <TargetFrameworks>$(NetCurrent);$(NetFrameworkCurrent)</TargetFrameworks>
+       <TargetFrameworks>$(NetCurrent);$(NetMinimum);netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
   -->
+
   <PropertyGroup>
     <!-- .NET -->
     <NetCurrent>net8.0</NetCurrent>
     <NetPrevious>net7.0</NetPrevious>
     <NetMinimum>net6.0</NetMinimum>
+    <NetToolCurrent Condition="'$(DotNetBuildFromSource)' != 'true'">net8.0</NetToolCurrent>
+    <NetToolCurrent Condition="'$(DotNetBuildFromSource)' == 'true'">$(NetCurrent)</NetToolCurrent>
 
     <!-- .NET Framework -->
+    <NetFrameworkCurrent>net481</NetFrameworkCurrent>
     <NetFrameworkMinimum>net462</NetFrameworkMinimum>
     <NetFrameworkToolCurrent>net472</NetFrameworkToolCurrent>
-    <NetFrameworkCurrent>net481</NetFrameworkCurrent>
   </PropertyGroup>
+
 </Project>
