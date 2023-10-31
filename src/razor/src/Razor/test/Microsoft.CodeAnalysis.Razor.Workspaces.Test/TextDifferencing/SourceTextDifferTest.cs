@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.TextDifferencing;
 
-public class SourceTextDifferTest : TestBase
+public class SourceTextDifferTest : ToolingTestBase
 {
     public SourceTextDifferTest(ITestOutputHelper testOutput)
         : base(testOutput)

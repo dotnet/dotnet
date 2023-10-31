@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 
-public class DefaultProxyAccessorTest : TestBase
+public class DefaultProxyAccessorTest : ToolingTestBase
 {
     public DefaultProxyAccessorTest(ITestOutputHelper testOutput)
         : base(testOutput)

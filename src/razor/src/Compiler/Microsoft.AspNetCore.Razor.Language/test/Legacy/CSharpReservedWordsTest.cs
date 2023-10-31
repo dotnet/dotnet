@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-public class CSharpReservedWordsTest : ParserTestBase
+public class CSharpReservedWordsTest() : ParserTestBase(layer: TestProject.Layer.Compiler)
 {
     [Fact]
     public void ReservedWord()
@@ -16,7 +16,7 @@ public class CSharpReservedWordsTest : ParserTestBase
     }
 
     [Fact]
-    private void ReservedWordIsCaseSensitive()
+    public void ReservedWordIsCaseSensitive()
     {
         ParseDocumentTest("@NameSpace");
     }

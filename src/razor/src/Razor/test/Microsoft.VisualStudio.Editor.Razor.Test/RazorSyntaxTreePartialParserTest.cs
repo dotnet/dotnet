@@ -15,7 +15,7 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public class RazorSyntaxTreePartialParserTest : ParserTestBase
+public class RazorSyntaxTreePartialParserTest : ToolingParserTestBase
 {
     private const string NewLine = "\r\n";
 

@@ -15,7 +15,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test;
 
-public class SerializationTest : TestBase
+public class SerializationTest : ToolingTestBase
 {
     private readonly RazorConfiguration _configuration;
     private readonly ProjectWorkspaceState _projectWorkspaceState;

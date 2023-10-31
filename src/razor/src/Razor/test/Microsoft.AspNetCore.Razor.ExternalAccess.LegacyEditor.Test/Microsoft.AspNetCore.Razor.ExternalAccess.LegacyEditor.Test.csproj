@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../Microsoft.AspNetCore.Razor.Test.Common.Tooling/Microsoft.AspNetCore.Razor.Test.Common.Tooling.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor\Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.csproj" />
-    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.Common\Microsoft.AspNetCore.Razor.Test.Common.csproj" />
   </ItemGroup>
 
 </Project>

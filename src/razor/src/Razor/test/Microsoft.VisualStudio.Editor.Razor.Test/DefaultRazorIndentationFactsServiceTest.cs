@@ -12,7 +12,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     [Fact]
     public void GetPreviousLineEndIndex_ReturnsPreviousLine()

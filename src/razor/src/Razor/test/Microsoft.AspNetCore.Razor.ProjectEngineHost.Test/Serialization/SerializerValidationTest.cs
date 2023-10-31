@@ -17,7 +17,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test.Serialization;
 
-public class SerializerValidationTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class SerializerValidationTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     [Theory]
     [InlineData("Kendo.Mvc.Examples.project.razor.json")]

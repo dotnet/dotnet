@@ -12,7 +12,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
-public class DefaultFormattingOptionsProviderTest : TestBase
+public class DefaultFormattingOptionsProviderTest : ToolingTestBase
 {
     public DefaultFormattingOptionsProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)

@@ -22,7 +22,7 @@ using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
-public class RazorLanguageService_IVsLanguageDebugInfoTest : TestBase
+public class RazorLanguageService_IVsLanguageDebugInfoTest : ToolingTestBase
 {
     private readonly TextSpan[] _textSpans;
 

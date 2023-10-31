@@ -14,7 +14,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-public class DirectiveAttributeParameterCompletionItemProviderTest : RazorIntegrationTestBase
+public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolingIntegrationTestBase
 {
     private readonly DirectiveAttributeParameterCompletionItemProvider _provider;
     private readonly TagHelperDocumentContext _defaultTagHelperDocumentContext;

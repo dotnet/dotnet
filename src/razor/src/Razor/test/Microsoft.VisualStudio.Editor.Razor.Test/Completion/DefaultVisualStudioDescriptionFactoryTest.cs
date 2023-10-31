@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Completion;
 
-public class DefaultVisualStudioDescriptionFactoryTest : TestBase
+public class DefaultVisualStudioDescriptionFactoryTest : ToolingTestBase
 {
     public DefaultVisualStudioDescriptionFactoryTest(ITestOutputHelper testOutput)
         : base(testOutput)

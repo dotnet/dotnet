@@ -27,7 +27,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common;
 
-public abstract class LanguageServerTestBase : TestBase
+public abstract class LanguageServerTestBase : ToolingTestBase
 {
     // This is marked as legacy because in its current form it's being assigned a "TestProjectSnapshotManagerDispatcher" which takes the
     // synchronization context from the constructing thread and binds to that. We've seen in XUnit how this can unexpectedly lead to flaky
@@ -71,7 +71,9 @@ public abstract class LanguageServerTestBase : TestBase
 
     protected static RazorCodeDocument CreateCodeDocument(string text, ImmutableArray<TagHelperDescriptor> tagHelpers = default, string? filePath = null)
     {
-        var fileKind = FileKinds.GetFileKindFromFilePath(filePath ?? "test.cshtml");
+        filePath ??= "test.cshtml";
+
+        var fileKind = FileKinds.GetFileKindFromFilePath(filePath);
         tagHelpers = tagHelpers.NullToEmpty();
 
         if (fileKind == FileKinds.Component)
@@ -79,7 +81,7 @@ public abstract class LanguageServerTestBase : TestBase
             tagHelpers = tagHelpers.AddRange(RazorTestResources.BlazorServerAppTagHelpers);
         }
 
-        var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath);
+        var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath, relativePath: filePath);
         var projectEngine = RazorProjectEngine.Create(RazorExtensions.Register);
         var importDocumentName = fileKind == FileKinds.Legacy ? "_ViewImports.cshtml" : "_Imports.razor";
         var defaultImportDocument = TestRazorSourceDocument.Create(

@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
-public class DefaultFallbackCapabilitiesFilterResolverTest : TestBase
+public class DefaultFallbackCapabilitiesFilterResolverTest : ToolingTestBase
 {
     private static readonly DefaultFallbackCapabilitiesFilterResolver s_resolver = new();
 

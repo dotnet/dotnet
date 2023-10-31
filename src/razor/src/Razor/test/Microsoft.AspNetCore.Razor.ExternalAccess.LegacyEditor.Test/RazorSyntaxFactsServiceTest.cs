@@ -9,7 +9,7 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.Test;
 
-public class RazorSyntaxFactsServiceTest(ITestOutputHelper testOutput) : RazorProjectEngineTestBase(testOutput)
+public class RazorSyntaxFactsServiceTest(ITestOutputHelper testOutput) : RazorToolingProjectEngineTestBase(testOutput)
 {
     protected override RazorLanguageVersion Version => RazorLanguageVersion.Latest;
 

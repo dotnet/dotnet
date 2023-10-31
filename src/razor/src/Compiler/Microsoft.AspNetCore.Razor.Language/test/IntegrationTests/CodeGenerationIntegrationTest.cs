@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 public class CodeGenerationIntegrationTest : IntegrationTestBase
 {
     public CodeGenerationIntegrationTest()
-        : base(generateBaselines: null)
+        : base(layer: TestProject.Layer.Compiler, generateBaselines: null)
     {
     }
 

@@ -19,7 +19,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-public class RazorSemanticTokensRefreshEndpointTest : TestBase
+public class RazorSemanticTokensRefreshEndpointTest : ToolingTestBase
 {
     public RazorSemanticTokensRefreshEndpointTest(ITestOutputHelper testOutput)
         : base(testOutput)

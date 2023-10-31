@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test;
 
-public class VirtualDocumentFactoryBaseTest : TestBase
+public class VirtualDocumentFactoryBaseTest : ToolingTestBase
 {
     private readonly ITextBuffer _nonHostLSPBuffer;
     private readonly ITextBuffer _hostLSPBuffer;

@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class DocumentSnapshotTextLoaderTest : TestBase
+public class DocumentSnapshotTextLoaderTest : ToolingTestBase
 {
     public DocumentSnapshotTextLoaderTest(ITestOutputHelper testOutput)
         : base(testOutput)

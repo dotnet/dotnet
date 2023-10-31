@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 //  * Tests for various types of nested statements
 //  * Comment tests
 
-public class CSharpStatementTest : ParserTestBase
+public class CSharpStatementTest() : ParserTestBase(layer: TestProject.Layer.Compiler)
 {
     [Fact]
     public void ForStatement()

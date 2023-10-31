@@ -15,7 +15,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test.Serialization;
 
-public class ProjectSnapshotHandleSerializationTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class ProjectSnapshotHandleSerializationTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     private static readonly MessagePackSerializerOptions s_options = MessagePackSerializerOptions.Standard
         .WithResolver(CompositeResolver.Create(

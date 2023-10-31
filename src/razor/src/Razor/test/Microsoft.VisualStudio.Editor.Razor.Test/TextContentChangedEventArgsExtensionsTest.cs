@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Text;
 
-public class TextContentChangedEventArgsExtensionsTest : TestBase
+public class TextContentChangedEventArgsExtensionsTest : ToolingTestBase
 {
     public TextContentChangedEventArgsExtensionsTest(ITestOutputHelper testOutput)
         : base(testOutput)

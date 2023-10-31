@@ -12,7 +12,7 @@ using Xunit.Sdk;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public class DefaultProjectPathProviderTest : TestBase
+public class DefaultProjectPathProviderTest : ToolingTestBase
 {
     public DefaultProjectPathProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)

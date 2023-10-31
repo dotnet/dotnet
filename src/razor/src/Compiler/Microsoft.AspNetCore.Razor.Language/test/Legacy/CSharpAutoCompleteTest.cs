@@ -4,13 +4,12 @@
 #nullable disable
 
 using System;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-public class CSharpAutoCompleteTest : ParserTestBase
+public class CSharpAutoCompleteTest() : ParserTestBase(layer: TestProject.Layer.Compiler)
 {
     [Fact]
     public void FunctionsDirectiveAutoCompleteAtEOF()

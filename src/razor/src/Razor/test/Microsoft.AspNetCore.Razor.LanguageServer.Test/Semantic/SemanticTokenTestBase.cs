@@ -27,7 +27,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 public abstract class SemanticTokenTestBase : TagHelperServiceTestBase
 {
     private static readonly AsyncLocal<string?> s_fileName = new();
-    private static readonly string s_projectPath = TestProject.GetProjectDirectory(typeof(TagHelperServiceTestBase));
+    private static readonly string s_projectPath = TestProject.GetProjectDirectory(typeof(TagHelperServiceTestBase), layer: TestProject.Layer.Tooling);
 
     protected static readonly VSInternalServerCapabilities SemanticTokensServerCapabilities = new()
     {

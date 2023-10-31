@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.WebTools.Languages.Shared.VS.Test.LanguageServer.MiddleLayerProviders;
 
-public class InterceptionMiddleLayerTest : TestBase
+public class InterceptionMiddleLayerTest : ToolingTestBase
 {
     public InterceptionMiddleLayerTest(ITestOutputHelper testOutput)
         : base(testOutput)

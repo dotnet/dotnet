@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 
 namespace Xunit;
 
-public abstract class ProjectSnapshotManagerDispatcherTestBase : ParserTestBase
+public abstract class ProjectSnapshotManagerDispatcherTestBase : ToolingParserTestBase
 {
     internal ProjectSnapshotManagerDispatcher Dispatcher { get; }
 

@@ -14,7 +14,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
-public class DirectiveAttributeTransitionCompletionItemProviderTest : TestBase
+public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTestBase
 {
     private static readonly RazorCompletionItem s_transitionCompletionItem = DirectiveAttributeTransitionCompletionItemProvider.TransitionCompletionItem;
 

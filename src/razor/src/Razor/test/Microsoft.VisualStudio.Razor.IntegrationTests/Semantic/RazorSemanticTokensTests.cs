@@ -197,7 +197,7 @@ public class RazorSemanticTokensTests(ITestOutputHelper testOutputHelper) : Abst
 
     private static string GetBaselineFileName(string testName)
     {
-        s_projectPath ??= TestProject.GetProjectDirectory(typeof(RazorSemanticTokensTests), useCurrentDirectory: true);
+        s_projectPath ??= TestProject.GetProjectDirectory(typeof(RazorSemanticTokensTests), layer: TestProject.Layer.Tooling, useCurrentDirectory: true);
         var semanticBaselinePath = Path.Combine(s_projectPath, "Semantic", "TestFiles", nameof(RazorSemanticTokensTests), testName + ".txt");
         return semanticBaselinePath;
     }

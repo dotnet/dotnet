@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
-public class HtmlAttributeIntegrationTest : IntegrationTestBase
+public class HtmlAttributeIntegrationTest() : IntegrationTestBase(layer: TestProject.Layer.Compiler)
 {
     [Fact]
     public void HtmlWithDataDashAttribute()

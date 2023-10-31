@@ -8,7 +8,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-public class AddUsingsCodeActionProviderFactoryTest : TestBase
+public class AddUsingsCodeActionProviderFactoryTest : ToolingTestBase
 {
     public AddUsingsCodeActionProviderFactoryTest(ITestOutputHelper testOutput)
         : base(testOutput)

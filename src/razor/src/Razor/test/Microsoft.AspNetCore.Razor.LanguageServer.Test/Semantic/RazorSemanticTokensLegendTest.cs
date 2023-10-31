@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
 using Modifiers = RazorSemanticTokensLegend.RazorTokenModifiers;
 
-public class RazorSemanticTokensLegendTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class RazorSemanticTokensLegendTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     [Fact]
     public void RazorModifiers_MustStartAfterRoslyn()

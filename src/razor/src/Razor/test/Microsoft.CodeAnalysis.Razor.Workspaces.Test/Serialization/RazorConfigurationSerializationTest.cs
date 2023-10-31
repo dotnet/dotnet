@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.Serialization;
 
-public class RazorConfigurationSerializationTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class RazorConfigurationSerializationTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     [Fact]
     public void RazorConfigurationJsonConverter_Serialization_CanRoundTrip()

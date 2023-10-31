@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
-public class CompletionListMergerTest : TestBase
+public class CompletionListMergerTest : ToolingTestBase
 {
     private readonly VSInternalCompletionItem _completionItem1;
     private readonly VSInternalCompletionItem _completionItem2;

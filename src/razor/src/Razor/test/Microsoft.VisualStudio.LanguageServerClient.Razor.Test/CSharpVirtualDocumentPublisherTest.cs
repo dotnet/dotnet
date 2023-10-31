@@ -15,7 +15,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
-public class CSharpVirtualDocumentPublisherTest : TestBase
+public class CSharpVirtualDocumentPublisherTest : ToolingTestBase
 {
     public CSharpVirtualDocumentPublisherTest(ITestOutputHelper testOutput)
         : base(testOutput)

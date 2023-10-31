@@ -35,7 +35,7 @@ public abstract class TagHelperDescriptorProviderTestBase
     {
         var results =
          context.Results
-            .Where(c => c.AssemblyName != "Microsoft.AspNetCore.Razor.Test.ComponentShim.Compiler")
+            .Where(c => c.AssemblyName != "Microsoft.AspNetCore.Razor.Test.ComponentShim")
             .Where(c => !c.DisplayName.StartsWith("Microsoft.AspNetCore.Components.Web", StringComparison.Ordinal))
             .Where(c => c.GetTypeName() != "Microsoft.AspNetCore.Components.Bind")
             .OrderBy(c => c.Name)

@@ -13,7 +13,7 @@ using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-public class DirectiveAttributeCompletionItemProviderBaseTest : RazorIntegrationTestBase
+public class DirectiveAttributeCompletionItemProviderBaseTest : RazorToolingIntegrationTestBase
 {
     internal override string FileKind => FileKinds.Component;
     internal override bool UseTwoPhaseCompilation => true;

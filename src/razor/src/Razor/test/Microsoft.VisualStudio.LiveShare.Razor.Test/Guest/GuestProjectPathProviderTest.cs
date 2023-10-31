@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 
-public class GuestProjectPathProviderTest : TestBase
+public class GuestProjectPathProviderTest : ToolingTestBase
 {
     private readonly LiveShareSessionAccessor _sessionAccessor;
 

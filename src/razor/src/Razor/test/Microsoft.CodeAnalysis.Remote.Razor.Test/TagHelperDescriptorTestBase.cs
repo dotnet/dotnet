@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.Test;
 
-public class TagHelperDescriptorTestBase : TestBase
+public class TagHelperDescriptorTestBase : ToolingTestBase
 {
     protected string Project1FilePath { get; }
     internal ProjectId Project1Id { get; }

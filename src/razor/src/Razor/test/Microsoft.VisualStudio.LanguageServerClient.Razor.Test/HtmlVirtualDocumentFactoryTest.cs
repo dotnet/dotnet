@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
-public class HtmlVirtualDocumentFactoryTest : TestBase
+public class HtmlVirtualDocumentFactoryTest : ToolingTestBase
 {
     private readonly ITextBuffer _nonRazorLSPBuffer;
     private readonly ITextBuffer _razorLSPBuffer;

@@ -8,7 +8,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test;
 
-public class FilePathNormalizerTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     [OSSkipConditionFact(new[] { "OSX", "Linux" })]
     public void Normalize_Windows_StripsPrecedingSlash()

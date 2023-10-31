@@ -22,7 +22,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Debugging;
 
-public class DefaultRazorProximityExpressionResolverTest : TestBase
+public class DefaultRazorProximityExpressionResolverTest : ToolingTestBase
 {
     private readonly string _validProximityExpressionRoot;
     private readonly string _invalidProximityExpressionRoot;

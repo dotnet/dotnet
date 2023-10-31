@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
@@ -46,11 +45,4 @@ internal abstract class ProjectSnapshotManagerBase : ProjectSnapshotManager
     internal abstract void SolutionOpened();
 
     internal abstract void SolutionClosed();
-
-    /// <summary>
-    /// Gets a project if it's already loaded, or calls <see cref="ProjectAdded(HostProject)" /> with a new host project
-    /// </summary>
-    internal abstract IProjectSnapshot GetOrAddLoadedProject(ProjectKey projectKey, Func<HostProject> createHostProjectFunc);
-
-    internal abstract bool TryRemoveLoadedProject(ProjectKey projectKey, [NotNullWhen(true)] out IProjectSnapshot? project);
 }

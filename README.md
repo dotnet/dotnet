@@ -180,29 +180,29 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/emsdk`  
 *[dotnet/emsdk@104f090](https://github.com/dotnet/emsdk/commit/104f09072729ed5953f0be303f62e8567f3a5478)*
 - `src/format`  
-*[dotnet/format@af05872](https://github.com/dotnet/format/commit/af058725f990c40e7a3085ade0c5940ea01dd310)*
+*[dotnet/format@d71cade](https://github.com/dotnet/format/commit/d71cadeb2b56774e5031c0a3a316cb94315cdadd)*
 - `src/fsharp`  
 *[dotnet/fsharp@c040d25](https://github.com/dotnet/fsharp/commit/c040d25693a071efb0df0deb24fca347802d0f22)*
 - `src/installer`  
-*[dotnet/installer@502993f](https://github.com/dotnet/installer/commit/502993f2fe917ad47c1b04eeb7896397fad8e660)*
+*[dotnet/installer@1a06ce4](https://github.com/dotnet/installer/commit/1a06ce4f0885d9a9f07a443ac5b79cf953c8b838)*
 - `src/msbuild`  
-*[dotnet/msbuild@d3fa669](https://github.com/dotnet/msbuild/commit/d3fa6693db77b6aad33ac934ca0a87f852f4cdf2)*
+*[dotnet/msbuild@d5e157a](https://github.com/dotnet/msbuild/commit/d5e157ae4e93efb560eec5777de0b6826c7491a4)*
 - `src/nuget-client`  
 *[nuget/nuget.client@b10ba99](https://github.com/nuget/nuget.client/commit/b10ba996eeb40da639273848408d2628e01076f4)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/commit/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@fcae177](https://github.com/dotnet/razor/commit/fcae177dd5bf7a41c83ffee3da6afe03851e486b)*
+*[dotnet/razor@50409b0](https://github.com/dotnet/razor/commit/50409b08f909984fa4de13c3f0461f932b9cda43)*
 - `src/roslyn`  
 *[dotnet/roslyn@b6b82d4](https://github.com/dotnet/roslyn/commit/b6b82d4037a19f1c61e3390a4bfe2903e1b731b3)*
 - `src/roslyn-analyzers`  
-*[dotnet/roslyn-analyzers@cf0cf55](https://github.com/dotnet/roslyn-analyzers/commit/cf0cf5520edcf81aecc4b1a9a689dbe9ec0f166f)*
+*[dotnet/roslyn-analyzers@d3e5965](https://github.com/dotnet/roslyn-analyzers/commit/d3e5965671b7a8277cf0eb400b4ca4c0b627c118)*
 - `src/runtime`  
 *[dotnet/runtime@920cd6e](https://github.com/dotnet/runtime/commit/920cd6e2b01d0fbede8882d015329e9b4d448c98)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@8af694a](https://github.com/dotnet/scenario-tests/commit/8af694a5e3986a27ccfee1a638ba311c7e9bc55d)*
 - `src/sdk`  
-*[dotnet/sdk@da6285e](https://github.com/dotnet/sdk/commit/da6285ecf8ca3d12761352a052e981591f6c1f38)*
+*[dotnet/sdk@a312859](https://github.com/dotnet/sdk/commit/a3128590d8846521c9709047f1e8c64d3ca02934)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@54ad220](https://github.com/dotnet/source-build-externals/commit/54ad220ef4f236325dec31f2c0c66fa48a6fce33)*
     - `src/source-build-externals/src/abstractions-xunit`  

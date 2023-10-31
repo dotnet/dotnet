@@ -14,7 +14,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
-public class BatchingWorkQueueTest : TestBase
+public class BatchingWorkQueueTest : ToolingTestBase
 {
     private readonly BatchingWorkQueue _workQueue;
     private readonly BatchingWorkQueue.TestAccessor _testAccessor;

@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class DefaultWorkspaceDirectoryPathResolverTest : TestBase
+public class DefaultWorkspaceDirectoryPathResolverTest : ToolingTestBase
 {
     public DefaultWorkspaceDirectoryPathResolverTest(ITestOutputHelper testOutput)
         : base(testOutput)

@@ -15,7 +15,7 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
-public class TagHelperDescriptorSerializationTest : TestBase
+public class TagHelperDescriptorSerializationTest : ToolingTestBase
 {
     public TagHelperDescriptorSerializationTest(ITestOutputHelper testOutput)
         : base(testOutput)

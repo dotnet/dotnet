@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test.Utilities;
 
-public class UrlDecoderTests(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class UrlDecoderTests(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     public static IEnumerable<object[]> UrlDecodeData =>
         new[]

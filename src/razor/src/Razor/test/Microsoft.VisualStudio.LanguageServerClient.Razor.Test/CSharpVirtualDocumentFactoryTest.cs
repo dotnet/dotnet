@@ -22,7 +22,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
-public class CSharpVirtualDocumentFactoryTest : TestBase
+public class CSharpVirtualDocumentFactoryTest : ToolingTestBase
 {
     private readonly ITextBuffer _nonRazorLSPBuffer;
     private readonly ITextBuffer _razorLSPBuffer;

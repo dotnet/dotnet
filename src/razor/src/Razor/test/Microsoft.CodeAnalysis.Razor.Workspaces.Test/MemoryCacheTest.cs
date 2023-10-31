@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.Test;
 
-public class MemoryCacheTest : TestBase
+public class MemoryCacheTest : ToolingTestBase
 {
     public MemoryCacheTest(ITestOutputHelper testOutput)
         : base(testOutput)

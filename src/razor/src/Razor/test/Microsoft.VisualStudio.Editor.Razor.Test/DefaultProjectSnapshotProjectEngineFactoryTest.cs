@@ -20,7 +20,7 @@ using MvcLatest = Microsoft.AspNetCore.Mvc.Razor.Extensions;
 namespace Microsoft.CodeAnalysis.Razor;
 
 // Testing this here because we need references to the MVC factories.
-public class DefaultProjectSnapshotProjectEngineFactoryTest : TestBase
+public class DefaultProjectSnapshotProjectEngineFactoryTest : ToolingTestBase
 {
     private readonly Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>[] _customFactories;
     private readonly IFallbackProjectEngineFactory _fallbackFactory;

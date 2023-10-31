@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-public class UriExtensionsTest : TestBase
+public class UriExtensionsTest : ToolingTestBase
 {
     public UriExtensionsTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -138,7 +138,7 @@ public class UriExtensionsTest : TestBase
     {
         // Arrange
         var uri = new Uri(filePath);
-        
+
         // Act
         var path = uri.GetAbsoluteOrUNCPath();
 

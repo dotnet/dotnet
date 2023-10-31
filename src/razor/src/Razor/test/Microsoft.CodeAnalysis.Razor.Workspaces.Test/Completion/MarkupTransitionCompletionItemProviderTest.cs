@@ -14,7 +14,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-public class MarkupTransitionCompletionItemProviderTest : TestBase
+public class MarkupTransitionCompletionItemProviderTest : ToolingTestBase
 {
     private readonly MarkupTransitionCompletionItemProvider _provider;
 
