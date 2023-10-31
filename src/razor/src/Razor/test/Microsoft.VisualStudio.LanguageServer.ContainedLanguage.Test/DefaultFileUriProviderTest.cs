@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
-public class DefaultFileUriProviderTest : TestBase
+public class DefaultFileUriProviderTest : ToolingTestBase
 {
     private readonly ITextBuffer _textBuffer;
 

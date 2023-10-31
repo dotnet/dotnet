@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.Tooltip;
 
-public class BoundAttributeDescriptionInfoTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class BoundAttributeDescriptionInfoTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     [Fact]
     public void ResolveTagHelperTypeName_ExtractsTypeName_SimpleReturnType()

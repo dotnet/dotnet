@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Microsoft.AspNetCore.Razor.Test.Common.Tooling.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.Razor.Workspaces\Microsoft.CodeAnalysis.Razor.Workspaces.csproj" />
-    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.Common\Microsoft.AspNetCore.Razor.Test.Common.csproj" />
     <ProjectReference Include="..\..\..\Compiler\Microsoft.AspNetCore.Razor.Language\src\Microsoft.CodeAnalysis.Razor.Compiler.Language.csproj" />
     <ProjectReference Include="..\..\..\Compiler\Microsoft.CodeAnalysis.Razor\src\Microsoft.CodeAnalysis.Razor.Compiler.CSharp.csproj" />
   </ItemGroup>

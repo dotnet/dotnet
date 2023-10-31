@@ -15,7 +15,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
-public class RazorLanguageServerTest : TestBase
+public class RazorLanguageServerTest : ToolingTestBase
 {
     public RazorLanguageServerTest(ITestOutputHelper testOutput)
         : base(testOutput)

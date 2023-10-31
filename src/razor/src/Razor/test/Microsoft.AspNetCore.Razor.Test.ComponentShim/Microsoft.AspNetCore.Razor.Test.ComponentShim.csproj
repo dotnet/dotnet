@@ -1,9 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <IsShipping>false</IsShipping>
-    <IsApiShim>true</IsApiShim>
-  </PropertyGroup>
-
-</Project>

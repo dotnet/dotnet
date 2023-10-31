@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
-public class CompletionListOptimizerTest : TestBase
+public class CompletionListOptimizerTest : ToolingTestBase
 {
     public CompletionListOptimizerTest(ITestOutputHelper testOutput)
         : base(testOutput)

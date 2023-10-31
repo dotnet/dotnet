@@ -10,7 +10,7 @@ using Xunit.Sdk;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test;
 
-public class ProjectEngineFactory_UnsupportedTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class ProjectEngineFactory_UnsupportedTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     [Fact]
     public void Create_IgnoresConfigureParameter()

@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
-public class DefaultProjectConfigurationFilePathStoreTest : TestBase
+public class DefaultProjectConfigurationFilePathStoreTest : ToolingTestBase
 {
     public DefaultProjectConfigurationFilePathStoreTest(ITestOutputHelper testOutput)
         : base(testOutput)

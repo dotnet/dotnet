@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class RemoteRazorProjectFileSystemTest : TestBase
+public class RemoteRazorProjectFileSystemTest : ToolingTestBase
 {
     public RemoteRazorProjectFileSystemTest(ITestOutputHelper testOutput)
         : base(testOutput)

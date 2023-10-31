@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-public class CSharpNestedStatementsTest : ParserTestBase
+public class CSharpNestedStatementsTest() : ParserTestBase(layer: TestProject.Layer.Compiler)
 {
     [Fact]
     public void NestedSimpleStatement()

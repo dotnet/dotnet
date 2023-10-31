@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
@@ -30,7 +30,7 @@ public abstract class ComponentCodeGenerationTestBase : RazorBaselineIntegration
     internal override string DefaultFileName => ComponentName + ".cshtml";
 
     protected ComponentCodeGenerationTestBase()
-        : base(generateBaselines: null)
+        : base(layer: TestProject.Layer.Compiler, generateBaselines: null)
     {
     }
 
@@ -10800,7 +10800,7 @@ Time: @DateTime.Now
     public void FormName_NoAddNamedEventMethod()
     {
         // Arrange
-        var componentShim = BaseCompilation.References.Single(r => r.Display.EndsWith("Microsoft.AspNetCore.Razor.Test.ComponentShim.Compiler.dll", StringComparison.Ordinal));
+        var componentShim = BaseCompilation.References.Single(r => r.Display.EndsWith("Microsoft.AspNetCore.Razor.Test.ComponentShim.dll", StringComparison.Ordinal));
         var minimalShim = """
             namespace Microsoft.AspNetCore.Components
             {

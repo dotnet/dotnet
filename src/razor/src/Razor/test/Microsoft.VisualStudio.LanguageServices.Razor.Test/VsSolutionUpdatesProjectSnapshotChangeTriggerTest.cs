@@ -22,7 +22,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
-public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : TestBase
+public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : ToolingTestBase
 {
     private static readonly ProjectSnapshotManagerDispatcher s_dispatcher = new TestDispatcher();
 

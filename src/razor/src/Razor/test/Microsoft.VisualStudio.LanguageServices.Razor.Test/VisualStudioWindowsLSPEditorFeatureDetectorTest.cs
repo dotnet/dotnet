@@ -12,7 +12,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
-public class VisualStudioWindowsLSPEditorFeatureDetectorTest : TestBase
+public class VisualStudioWindowsLSPEditorFeatureDetectorTest : ToolingTestBase
 {
     public VisualStudioWindowsLSPEditorFeatureDetectorTest(ITestOutputHelper testOutput)
         : base(testOutput)

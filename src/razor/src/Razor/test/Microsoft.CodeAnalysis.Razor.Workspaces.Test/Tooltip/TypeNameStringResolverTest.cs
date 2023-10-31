@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.Tooltip;
 
-public class TypeNameStringResolverTest : TestBase
+public class TypeNameStringResolverTest : ToolingTestBase
 {
     public TypeNameStringResolverTest(ITestOutputHelper testOutput)
         : base(testOutput)

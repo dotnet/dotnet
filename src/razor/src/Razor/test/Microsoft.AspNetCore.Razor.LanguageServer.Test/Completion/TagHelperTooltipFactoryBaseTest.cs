@@ -14,11 +14,10 @@ using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
-using TestBase = Microsoft.AspNetCore.Razor.Test.Common.TestBase;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.Completion;
 
-public class TagHelperTooltipFactoryBaseTest : TestBase
+public class TagHelperTooltipFactoryBaseTest : ToolingTestBase
 {
     public TagHelperTooltipFactoryBaseTest(ITestOutputHelper testOutput)
         : base(testOutput)

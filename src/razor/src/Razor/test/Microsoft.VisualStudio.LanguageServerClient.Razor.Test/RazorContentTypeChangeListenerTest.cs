@@ -19,7 +19,7 @@ using Xunit.Sdk;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
-public class RazorContentTypeChangeListenerTest : TestBase
+public class RazorContentTypeChangeListenerTest : ToolingTestBase
 {
     private readonly IContentType _nonRazorContentType;
     private readonly IContentType _razorContentType;

@@ -10,7 +10,7 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
-public class TagHelpersIntegrationTest : IntegrationTestBase
+public class TagHelpersIntegrationTest() : IntegrationTestBase(layer: TestProject.Layer.Compiler)
 {
     [Fact]
     public void SimpleTagHelpers()

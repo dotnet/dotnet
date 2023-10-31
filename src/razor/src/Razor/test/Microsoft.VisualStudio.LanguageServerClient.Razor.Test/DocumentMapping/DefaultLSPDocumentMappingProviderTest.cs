@@ -20,7 +20,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;
 
-public class DefaultLSPDocumentMappingProviderTest : TestBase
+public class DefaultLSPDocumentMappingProviderTest : ToolingTestBase
 {
     private static readonly Uri s_razorFile = new("file:///some/folder/to/file.razor");
     private static readonly Uri s_razorVirtualCSharpFile = new("file:///some/folder/to/file.razor.ide.g.cs");

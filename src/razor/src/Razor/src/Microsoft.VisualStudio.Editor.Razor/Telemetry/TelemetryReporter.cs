@@ -85,20 +85,17 @@ internal abstract class TelemetryReporter : ITelemetryReporter
 
     private static void AddToProperties(IDictionary<string, object?> properties, Property property)
     {
-        if (IsNumericValue(property.Value))
-        {
-            properties.Add(GetPropertyName(property.Name), property.Value);
-        }
-        else
+        if (IsComplexValue(property.Value))
         {
             properties.Add(GetPropertyName(property.Name), new TelemetryComplexProperty(property.Value));
         }
-
-        static bool IsNumericValue(object? o)
+        else
         {
-            return o is Type { IsEnum: false } type &&
-                   Type.GetTypeCode(type) is >= TypeCode.Char and <= TypeCode.Double;
+            properties.Add(GetPropertyName(property.Name), property.Value);
         }
+
+        static bool IsComplexValue(object? o)
+            => o is Type type && Type.GetTypeCode(type) == TypeCode.Object;
     }
 
     public void ReportFault(Exception exception, string? message, params object?[] @params)

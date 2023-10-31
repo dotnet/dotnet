@@ -17,7 +17,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
-public class ViewCodeCommandHandlerTests : TestBase
+public class ViewCodeCommandHandlerTests : ToolingTestBase
 {
     public ViewCodeCommandHandlerTests(ITestOutputHelper testOutput)
         : base(testOutput)

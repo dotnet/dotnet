@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 
-public class RazorGuestInitializationServiceTest : TestBase
+public class RazorGuestInitializationServiceTest : ToolingTestBase
 {
     private readonly DefaultLiveShareSessionAccessor _liveShareSessionAccessor;
 

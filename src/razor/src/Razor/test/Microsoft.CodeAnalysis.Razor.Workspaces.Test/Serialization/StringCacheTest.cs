@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public class StringCacheTest : TestBase
+public class StringCacheTest : ToolingTestBase
 {
     public StringCacheTest(ITestOutputHelper testOutput)
         : base(testOutput)

@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-public class EmptyTextLoaderTest : TestBase
+public class EmptyTextLoaderTest : ToolingTestBase
 {
     public EmptyTextLoaderTest(ITestOutputHelper testOutput)
         : base(testOutput)

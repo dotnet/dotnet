@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class RazorLSPOptionsMonitorTest : TestBase
+public class RazorLSPOptionsMonitorTest : ToolingTestBase
 {
     private readonly IOptionsMonitorCache<RazorLSPOptions> _cache;
 

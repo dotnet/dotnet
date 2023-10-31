@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
-public class UriExtensionsTest : TestBase
+public class UriExtensionsTest : ToolingTestBase
 {
     public UriExtensionsTest(ITestOutputHelper testOutput)
         : base(testOutput)

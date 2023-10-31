@@ -15,7 +15,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
-public class DefaultLSPDocumentTest : TestBase
+public class DefaultLSPDocumentTest : ToolingTestBase
 {
     private readonly Uri _uri;
     private readonly IContentType _notInertContentType;

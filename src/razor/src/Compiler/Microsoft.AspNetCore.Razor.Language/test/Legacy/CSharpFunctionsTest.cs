@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-public class CSharpFunctionsTest : ParserTestBase
+public class CSharpFunctionsTest() : ParserTestBase(layer: TestProject.Layer.Compiler)
 {
     [Fact]
     public void Functions_SingleLineControlFlowStatement_Error()

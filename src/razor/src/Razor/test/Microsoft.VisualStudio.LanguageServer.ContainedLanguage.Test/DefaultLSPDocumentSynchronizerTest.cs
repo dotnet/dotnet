@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
-public class DefaultLSPDocumentSynchronizerTest : TestBase
+public class DefaultLSPDocumentSynchronizerTest : ToolingTestBase
 {
     private readonly ITextSnapshot _virtualDocumentSnapshot;
     private readonly ITextBuffer _virtualDocumentTextBuffer;

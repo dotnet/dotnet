@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
-public class DefaultLSPRequestInvokerTest : TestBase
+public class DefaultLSPRequestInvokerTest : ToolingTestBase
 {
     private readonly FallbackCapabilitiesFilterResolver _capabilitiesResolver;
 

@@ -15,7 +15,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-public class DirectiveCompletionItemProviderTest : TestBase
+public class DirectiveCompletionItemProviderTest : ToolingTestBase
 {
     private static readonly IReadOnlyList<DirectiveDescriptor> s_defaultDirectives = new[]
     {
@@ -472,7 +472,7 @@ public class DirectiveCompletionItemProviderTest : TestBase
             Assert.Equal(directive.Description, completionDescription.Description);
         }
 
-        
+
         Assert.Equal(item.CommitCharacters, commitCharacters ?? DirectiveCompletionItemProvider.SingleLineDirectiveCommitCharacters);
     }
 

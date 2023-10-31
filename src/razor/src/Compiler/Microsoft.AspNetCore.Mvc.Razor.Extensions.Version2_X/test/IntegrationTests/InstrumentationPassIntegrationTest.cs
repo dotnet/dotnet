@@ -19,7 +19,7 @@ public class InstrumentationPassIntegrationTest : IntegrationTestBase
     private static readonly CSharpCompilation DefaultBaseCompilation = MvcShim.BaseCompilation.WithAssemblyName("AppCode");
 
     public InstrumentationPassIntegrationTest()
-        : base(generateBaselines: null, projectDirectoryHint: "Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X")
+        : base(layer: TestProject.Layer.Compiler, generateBaselines: null, projectDirectoryHint: "Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X")
     {
         Configuration = RazorConfiguration.Create(
             RazorLanguageVersion.Version_2_0,

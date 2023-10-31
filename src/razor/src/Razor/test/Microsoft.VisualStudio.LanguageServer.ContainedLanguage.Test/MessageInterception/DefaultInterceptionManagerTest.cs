@@ -14,7 +14,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test.MessageInterception;
 
-public class DefaultInterceptionManagerTest : TestBase
+public class DefaultInterceptionManagerTest : ToolingTestBase
 {
     public DefaultInterceptionManagerTest(ITestOutputHelper testOutput)
         : base(testOutput)

@@ -14,7 +14,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Completion;
 
-public class RazorDirectiveAttributeCommitManagerTest : TestBase
+public class RazorDirectiveAttributeCommitManagerTest : ToolingTestBase
 {
     public RazorDirectiveAttributeCommitManagerTest(ITestOutputHelper testOutput)
         : base(testOutput)

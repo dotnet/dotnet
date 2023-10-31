@@ -8,7 +8,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
-public class CompletionListCacheTest : TestBase
+public class CompletionListCacheTest : ToolingTestBase
 {
     private readonly CompletionListCache _completionListCache;
     private readonly object _context;

@@ -12,7 +12,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 
-public class DefaultLSPTagHelperTooltipFactoryTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class DefaultLSPTagHelperTooltipFactoryTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     [Fact]
     public void CleanSummaryContent_Markup_ReplacesSeeCrefs()

@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-public class RazorFormattingServiceTest : TestBase
+public class RazorFormattingServiceTest : ToolingTestBase
 {
     public RazorFormattingServiceTest(ITestOutputHelper testOutput)
         : base(testOutput)

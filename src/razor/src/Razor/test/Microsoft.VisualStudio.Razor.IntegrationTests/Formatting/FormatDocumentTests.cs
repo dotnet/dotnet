@@ -79,7 +79,7 @@ public class FormatDocumentTests(ITestOutputHelper testOutputHelper) : AbstractR
         {
             // If there was no expected results file, we generate one, but still fail
             // the test so that its impossible to forget to commit the results.
-            s_projectPath ??= TestProject.GetProjectDirectory(typeof(FormatDocumentTests), useCurrentDirectory: true);
+            s_projectPath ??= TestProject.GetProjectDirectory(typeof(FormatDocumentTests), layer: TestProject.Layer.Tooling, useCurrentDirectory: true);
             var path = Path.Combine(s_projectPath, "Formatting", "TestFiles", "Expected");
             var fileName = expectedResourceName.Split(new[] { '.' }, 8).Last();
 

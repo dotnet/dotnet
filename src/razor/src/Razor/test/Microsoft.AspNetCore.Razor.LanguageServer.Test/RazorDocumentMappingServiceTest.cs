@@ -19,7 +19,7 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class RazorDocumentMappingServiceTest : TestBase
+public class RazorDocumentMappingServiceTest : ToolingTestBase
 {
     private readonly FilePathService _filePathService;
 
@@ -400,7 +400,7 @@ public class RazorDocumentMappingServiceTest : TestBase
     public void TryMapToHostDocumentRange_Inferred_OutOfOrderMappings_DoesntThrow()
     {
         // Real world repo is something like:
-        // 
+        //
         // <Component1>
         //    @if (true)
         //    {

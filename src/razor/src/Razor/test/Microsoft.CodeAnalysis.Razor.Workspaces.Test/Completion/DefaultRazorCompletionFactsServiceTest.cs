@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-public class DefaultRazorCompletionFactsServiceTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class DefaultRazorCompletionFactsServiceTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     [Fact]
     public void GetDirectiveCompletionItems_AllProvidersCompletionItems()

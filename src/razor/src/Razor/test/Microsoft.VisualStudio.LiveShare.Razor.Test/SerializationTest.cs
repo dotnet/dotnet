@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-public class SerializationTest : TestBase
+public class SerializationTest : ToolingTestBase
 {
     public SerializationTest(ITestOutputHelper testOutput)
         : base(testOutput)

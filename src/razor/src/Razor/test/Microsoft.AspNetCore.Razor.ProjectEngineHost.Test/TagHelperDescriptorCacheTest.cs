@@ -12,7 +12,7 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test;
 
-public class TagHelperDescriptorCacheTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class TagHelperDescriptorCacheTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     private readonly TagHelperCache _tagHelperCache = new();
 

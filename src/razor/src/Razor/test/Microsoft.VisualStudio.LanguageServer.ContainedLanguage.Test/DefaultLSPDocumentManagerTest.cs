@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
-public class DefaultLSPDocumentManagerTest : TestBase
+public class DefaultLSPDocumentManagerTest : ToolingTestBase
 {
     private readonly IEnumerable<Lazy<LSPDocumentChangeListener, IContentTypeMetadata>> _changeListeners;
     private readonly ITextBuffer _textBuffer;

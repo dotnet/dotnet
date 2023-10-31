@@ -22,7 +22,7 @@ using RazorMapToDocumentRangesResponse = Microsoft.VisualStudio.LanguageServerCl
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
-public class RazorLSPSpanMappingServiceTest : TestBase
+public class RazorLSPSpanMappingServiceTest : ToolingTestBase
 {
     private readonly Uri _mockDocumentUri = new("C://project/path/document.razor");
 

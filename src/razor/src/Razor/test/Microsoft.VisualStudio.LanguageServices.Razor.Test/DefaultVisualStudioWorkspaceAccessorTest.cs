@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
-public class DefaultVisualStudioWorkspaceAccessorTest : TestBase
+public class DefaultVisualStudioWorkspaceAccessorTest : ToolingTestBase
 {
     public DefaultVisualStudioWorkspaceAccessorTest(ITestOutputHelper testOutput)
         : base(testOutput)

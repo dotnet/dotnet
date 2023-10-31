@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test;
 
-public class ChecksumTests(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class ChecksumTests(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     public static IEnumerable<object[]> Checksums
     {

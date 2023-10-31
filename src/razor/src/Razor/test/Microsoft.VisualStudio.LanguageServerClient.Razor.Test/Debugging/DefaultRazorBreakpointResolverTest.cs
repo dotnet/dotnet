@@ -19,7 +19,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Debugging;
 
-public class DefaultRazorBreakpointResolverTest : TestBase
+public class DefaultRazorBreakpointResolverTest : ToolingTestBase
 {
     private const string ValidBreakpointCSharp = "private int foo = 123;";
     private const string InvalidBreakpointCSharp = "private int bar;";

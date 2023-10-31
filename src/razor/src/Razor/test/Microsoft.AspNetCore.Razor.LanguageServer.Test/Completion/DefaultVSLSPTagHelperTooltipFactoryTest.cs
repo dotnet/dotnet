@@ -16,7 +16,7 @@ using static Microsoft.AspNetCore.Razor.LanguageServer.Tooltip.DefaultVSLSPTagHe
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 
-public class DefaultVSLSPTagHelperTooltipFactoryTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class DefaultVSLSPTagHelperTooltipFactoryTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     [Fact]
     public void CleanAndClassifySummaryContent_ClassifiedTextElement_ReplacesSeeCrefs()

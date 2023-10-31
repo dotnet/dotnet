@@ -17,7 +17,7 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test.Serialization;
 
-public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     private static readonly MessagePackSerializerOptions s_options = MessagePackSerializerOptions.Standard
         .WithResolver(CompositeResolver.Create(

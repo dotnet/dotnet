@@ -14,7 +14,7 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public class DefaultTagHelperFactsServiceTest(ITestOutputHelper testOutput) : TestBase(testOutput)
+public class DefaultTagHelperFactsServiceTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     [Fact]
     public void GetTagHelperBinding_DoesNotAllowOptOutCharacterPrefix()

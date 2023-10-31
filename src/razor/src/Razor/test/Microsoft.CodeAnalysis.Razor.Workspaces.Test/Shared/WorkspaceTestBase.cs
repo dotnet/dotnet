@@ -12,7 +12,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-public abstract class WorkspaceTestBase : TestBase
+public abstract class WorkspaceTestBase : ToolingTestBase
 {
     private bool _initialized;
     private HostServices _hostServices;
