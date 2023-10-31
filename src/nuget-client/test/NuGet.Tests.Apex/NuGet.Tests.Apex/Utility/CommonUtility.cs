@@ -37,6 +37,14 @@ namespace NuGet.Tests.Apex
             await SimpleTestPackageUtility.CreatePackagesAsync(packageSource, package);
         }
 
+        public static async Task CreateDependenciesPackageInSourceAsync(string packageSource, string packageName, string packageVersion, string transitivePackageName, string transitivePackageVersion)
+        {
+            var packageA = CreatePackage(packageName, packageVersion);
+            var packageB = CreatePackage(transitivePackageName, transitivePackageVersion);
+            packageA.Dependencies.Add(packageB);
+            await SimpleTestPackageUtility.CreatePackagesAsync(packageSource, packageA);
+        }
+
         public static async Task CreateAuthorSignedPackageInSourceAsync(
             string packageSource,
             string packageName,
