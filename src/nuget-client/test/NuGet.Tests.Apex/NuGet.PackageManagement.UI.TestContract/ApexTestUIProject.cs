@@ -95,6 +95,11 @@ namespace NuGet.PackageManagement.UI.TestContract
             return result?.IsPackageDeprecated == true;
         }
 
+        public List<PackageItemViewModel> GetPackageItemsOnInstalledTab()
+        {
+            return _packageManagerControl.PackageList.PackageItems.ToList();
+        }
+
         public void InstallPackage(string packageId, string version)
         {
             UIInvoke(() => _packageManagerControl.InstallPackage(packageId, NuGetVersion.Parse(version), null));

@@ -4,12 +4,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using FluentAssertions;
 using Microsoft.Test.Apex.Services;
 using NuGet.PackageManagement.UI;
 using NuGet.PackageManagement.UI.TestContract;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
+using NuGet.VisualStudio;
 
 namespace NuGet.Tests.Apex
 {
@@ -62,6 +64,17 @@ namespace NuGet.Tests.Apex
             DeprecatedPackageResult.Should().BeFalse();
         }
 
+        public void AssertPackageNameAndType(string packageId, PackageLevel packageLevel)
+        {
+            var packageItemsList = _uiproject.GetPackageItemsOnInstalledTab();
+            packageItemsList.Should().NotBeNull("Package items list is empty on installed tab.");
+
+            var package = packageItemsList.Where(x => x.Id == packageId).FirstOrDefault();
+            package.Should().NotBeNull($"Package items list doesn't contain this package {packageId} on installed tab.");
+
+            package.PackageLevel.Should().Be(packageLevel);
+            package.Id.Should().Be(packageId);
+        }
 
         public bool InstallPackageFromUI(string packageId, string version)
         {
