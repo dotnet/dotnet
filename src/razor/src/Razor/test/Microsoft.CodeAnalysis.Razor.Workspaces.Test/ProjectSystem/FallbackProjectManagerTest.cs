@@ -68,8 +68,32 @@ public class FallbackProjectManagerTest : WorkspaceTestBase
         Assert.Equal("DisplayName", project.DisplayName);
         Assert.Equal("RootNamespace", project.RootNamespace);
 
+        Assert.IsType<FallbackHostProject>(((ProjectSnapshot)project).HostProject);
+
         var documentFilePath = Assert.Single(project.DocumentFilePaths);
         Assert.Equal(SomeProjectFile1.FilePath, documentFilePath);
+    }
+
+    [Fact]
+    public void DynamicFileAdded_UnknownToKnownProject_NotFallbackHostProject()
+    {
+        var projectId = ProjectId.CreateNewId();
+        var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
+            .WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(Path.Combine(SomeProject.IntermediateOutputPath, "SomeProject.dll")))
+            .WithDefaultNamespace("RootNamespace");
+
+        Workspace.TryApplyChanges(Workspace.CurrentSolution.AddProject(projectInfo));
+
+        _fallbackProjectManger.DynamicFileAdded(projectId, SomeProject.Key, SomeProject.FilePath, SomeProjectFile1.FilePath);
+
+        var project = Assert.Single(_projectSnapshotManager.GetProjects());
+        Assert.IsType<FallbackHostProject>(((ProjectSnapshot)project).HostProject);
+
+        var hostProject = new HostProject(SomeProject.FilePath, SomeProject.IntermediateOutputPath, RazorConfiguration.Default, "RootNamespace", "DisplayName");
+        _projectSnapshotManager.ProjectConfigurationChanged(hostProject);
+
+        project = Assert.Single(_projectSnapshotManager.GetProjects());
+        Assert.IsNotType<FallbackHostProject>(((ProjectSnapshot)project).HostProject);
     }
 
     [Fact]
