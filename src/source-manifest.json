@@ -7,10 +7,10 @@
       "commitSha": "39042b4048580366d35a7c1c4f4ce8fc0dbea4b4"
     },
     {
-      "packageVersion": "8.0.0-preview.1.23531.6",
+      "packageVersion": "8.0.0-preview.1.23551.7",
       "path": "aspire",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspire",
-      "commitSha": "276cc28b03c11e2850546e604c707e664339fc15"
+      "commitSha": "4b00c57d7ccf9a4c7e2aef211ab6bd8af3ee2324"
     },
     {
       "packageVersion": "8.0.0-rtm.23531.12",
@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "9d6e3d71808815da6f49c7681c35858214d59103"
+      "commitSha": "57efcf1350ab087efe97ced8199ab0b494636adf"
     },
     {
       "packageVersion": "17.8.3-preview-23519-04",
