@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <GitCommitHash>276cc28b03c11e2850546e604c707e664339fc15</GitCommitHash>
+    <OfficialBuildId>20231031.6</OfficialBuildId>
+    <OutputPackageVersion>8.0.0-preview.1.23531.6</OutputPackageVersion>
+    <PreReleaseVersionLabel>preview.1</PreReleaseVersionLabel>
+    <IsStable>false</IsStable>
+  </PropertyGroup>
+</Project>

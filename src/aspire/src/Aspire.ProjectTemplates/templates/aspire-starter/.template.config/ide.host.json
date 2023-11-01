@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/ide.host",
+  "icon": "ide/AspireStarter.ico",
+  "displayOverviewPage": "0",
+  "disableHttpsSymbol": "NoHttps",
+  "unsupportedHosts": [
+    {
+      "id": "vs",
+      "version": "(,17.9)"
+    }
+  ],
+  "requiredComponents": [
+    {
+      "hostId": "vs",
+      "componentType": "setupComponent",
+      "id": "aspire"
+    }
+  ],
+  "symbolInfo": [
+    {
+      "id": "UseRedisCache",
+      "isVisible": true,
+      "persistenceScope": "templateGroup"
+    }
+  ]
+}
