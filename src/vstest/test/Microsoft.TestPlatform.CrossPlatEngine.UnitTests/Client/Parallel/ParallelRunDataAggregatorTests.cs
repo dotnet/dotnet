@@ -46,7 +46,7 @@ public class ParallelRunDataAggregatorTests
 
         var attachmentSet1 = new Collection<AttachmentSet>
         {
-            new AttachmentSet(new Uri("x://hello1"), "hello1")
+            new(new Uri("x://hello1"), "hello1")
         };
 
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, null, attachmentSet1, null, null);
@@ -56,7 +56,7 @@ public class ParallelRunDataAggregatorTests
 
         var attachmentSet2 = new Collection<AttachmentSet>
         {
-            new AttachmentSet(new Uri("x://hello2"), "hello2")
+            new(new Uri("x://hello2"), "hello2")
         };
 
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, null, attachmentSet2, null, null);
@@ -71,7 +71,7 @@ public class ParallelRunDataAggregatorTests
 
         var attachmentSet1 = new Collection<AttachmentSet>
         {
-            new AttachmentSet(new Uri("x://hello1"), "hello1")
+            new(new Uri("x://hello1"), "hello1")
         };
 
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, attachmentSet1, null, null, null);
@@ -80,7 +80,7 @@ public class ParallelRunDataAggregatorTests
 
         var attachmentSet2 = new Collection<AttachmentSet>
         {
-            new AttachmentSet(new Uri("x://hello2"), "hello2")
+            new(new Uri("x://hello2"), "hello2")
         };
 
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, attachmentSet2, null, null, null);
@@ -95,14 +95,14 @@ public class ParallelRunDataAggregatorTests
 
         var invokedDataCollectors = new Collection<InvokedDataCollector>()
         {
-            new InvokedDataCollector(new Uri("datacollector://sample"),"sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location,false)
+            new(new Uri("datacollector://sample"),"sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location,false)
         };
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, null, null, invokedDataCollectors, null);
         Assert.AreEqual(1, aggregator.InvokedDataCollectors.Count, "InvokedDataCollectors List must have data.");
 
         var invokedDataCollectors2 = new Collection<InvokedDataCollector>()
         {
-            new InvokedDataCollector(new Uri("datacollector://sample2"),"sample2", typeof(int).AssemblyQualifiedName!, typeof(int).Assembly.Location,false)
+            new(new Uri("datacollector://sample2"),"sample2", typeof(int).AssemblyQualifiedName!, typeof(int).Assembly.Location,false)
         };
         aggregator.Aggregate(null, null, null, TimeSpan.Zero, false, false, null, null, invokedDataCollectors2, null);
         Assert.AreEqual(2, aggregator.InvokedDataCollectors.Count, "InvokedDataCollectors List must have aggregated data.");

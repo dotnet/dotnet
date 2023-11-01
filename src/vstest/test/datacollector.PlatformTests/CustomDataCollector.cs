@@ -50,6 +50,6 @@ public class CustomDataCollector : ObjectModel.DataCollection.DataCollector, ITe
 
     public IEnumerable<KeyValuePair<string, string>> GetTestExecutionEnvironmentVariables()
     {
-        return new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("key", "value") };
+        return new List<KeyValuePair<string, string>> { new("key", "value") };
     }
 }

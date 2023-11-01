@@ -9,7 +9,7 @@ namespace NuGetClone.Frameworks
 {
     internal sealed class DefaultFrameworkMappings : IFrameworkMappings
     {
-        private static Lazy<KeyValuePair<string, string>[]> IdentifierSynonymsLazy = new Lazy<KeyValuePair<string, string>[]>(() =>
+        private static Lazy<KeyValuePair<string, string>[]> IdentifierSynonymsLazy = new(() =>
         {
             return new[]{
                 // .NET
@@ -43,7 +43,7 @@ namespace NuGetClone.Frameworks
             }
         }
 
-        private static readonly Lazy<KeyValuePair<string, string>[]> IdentifierShortNamesLazy = new Lazy<KeyValuePair<string, string>[]>(() =>
+        private static readonly Lazy<KeyValuePair<string, string>[]> IdentifierShortNamesLazy = new(() =>
         {
             return new[]
             {
@@ -91,7 +91,7 @@ namespace NuGetClone.Frameworks
             }
         }
 
-        private static readonly Lazy<FrameworkSpecificMapping[]> ProfileShortNamesLazy = new Lazy<FrameworkSpecificMapping[]>(() =>
+        private static readonly Lazy<FrameworkSpecificMapping[]> ProfileShortNamesLazy = new(() =>
         {
             return new[]
             {
@@ -111,7 +111,7 @@ namespace NuGetClone.Frameworks
             }
         }
 
-        private static readonly Lazy<KeyValuePair<NuGetFramework, NuGetFramework>[]> EquivalentFrameworksLazy = new Lazy<KeyValuePair<NuGetFramework, NuGetFramework>[]>(() =>
+        private static readonly Lazy<KeyValuePair<NuGetFramework, NuGetFramework>[]> EquivalentFrameworksLazy = new(() =>
         {
             return new[]
             {
@@ -231,7 +231,7 @@ namespace NuGetClone.Frameworks
             }
         }
 
-        private static readonly Lazy<FrameworkSpecificMapping[]> EquivalentProfilesLazy = new Lazy<FrameworkSpecificMapping[]>(() =>
+        private static readonly Lazy<FrameworkSpecificMapping[]> EquivalentProfilesLazy = new(() =>
         {
             return new[]
             {
@@ -251,7 +251,7 @@ namespace NuGetClone.Frameworks
             }
         }
 
-        private static readonly Lazy<KeyValuePair<string, string>[]> SubSetFrameworksLazy = new Lazy<KeyValuePair<string, string>[]>(() =>
+        private static readonly Lazy<KeyValuePair<string, string>[]> SubSetFrameworksLazy = new(() =>
         {
             return new[]
             {
@@ -280,7 +280,7 @@ namespace NuGetClone.Frameworks
             }
         }
 
-        private static readonly Lazy<OneWayCompatibilityMappingEntry[]> CompatibilityMappingsLazy = new Lazy<OneWayCompatibilityMappingEntry[]>(() =>
+        private static readonly Lazy<OneWayCompatibilityMappingEntry[]> CompatibilityMappingsLazy = new(() =>
         {
             return new[]
                 {
@@ -551,7 +551,7 @@ namespace NuGetClone.Frameworks
             return CreateGenerationAndStandardMapping(lowestFramework, netPlatform, netStandard);
         }
 
-        private static readonly Lazy<string[]> NonPackageBasedFrameworkPrecedenceLazy = new Lazy<string[]>(() =>
+        private static readonly Lazy<string[]> NonPackageBasedFrameworkPrecedenceLazy = new(() =>
         {
             return new[]
             {
@@ -570,7 +570,7 @@ namespace NuGetClone.Frameworks
             }
         }
 
-        private static readonly Lazy<string[]> PackageBasedFrameworkPrecedenceLazy = new Lazy<string[]>(() =>
+        private static readonly Lazy<string[]> PackageBasedFrameworkPrecedenceLazy = new(() =>
         {
             return new[]
             {
@@ -589,7 +589,7 @@ namespace NuGetClone.Frameworks
             }
         }
 
-        private static readonly Lazy<string[]> EquivalentFrameworkPrecedenceLazy = new Lazy<string[]>(() =>
+        private static readonly Lazy<string[]> EquivalentFrameworkPrecedenceLazy = new(() =>
         {
             return new[]
             {
@@ -616,7 +616,7 @@ namespace NuGetClone.Frameworks
             }
         }
 
-        private static readonly Lazy<KeyValuePair<NuGetFramework, NuGetFramework>[]> ShortNameReplacementsLazy = new Lazy<KeyValuePair<NuGetFramework, NuGetFramework>[]>(() =>
+        private static readonly Lazy<KeyValuePair<NuGetFramework, NuGetFramework>[]> ShortNameReplacementsLazy = new(() =>
         {
             return new[]
             {
@@ -632,7 +632,7 @@ namespace NuGetClone.Frameworks
             }
         }
 
-        private static readonly Lazy<KeyValuePair<NuGetFramework, NuGetFramework>[]> FullNameReplacementsLazy = new Lazy<KeyValuePair<NuGetFramework, NuGetFramework>[]>(() =>
+        private static readonly Lazy<KeyValuePair<NuGetFramework, NuGetFramework>[]> FullNameReplacementsLazy = new(() =>
         {
             return new[]
             {
@@ -648,7 +648,7 @@ namespace NuGetClone.Frameworks
             }
         }
 
-        private static readonly Lazy<IFrameworkMappings> InstanceLazy = new Lazy<IFrameworkMappings>(() => new DefaultFrameworkMappings());
+        private static readonly Lazy<IFrameworkMappings> InstanceLazy = new(() => new DefaultFrameworkMappings());
 
         /// <summary>
         /// Singleton instance of the default framework mappings.

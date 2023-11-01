@@ -110,7 +110,7 @@ public class DataCollectionTestRunEventsHandlerTests
     {
         var invokedDataCollectors = new Collection<InvokedDataCollector>
         {
-            new InvokedDataCollector(new Uri("datacollector://sample"), "sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, true)
+            new(new Uri("datacollector://sample"), "sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, true)
         };
 
         var testRunCompleteEventArgs = new TestRunCompleteEventArgs(null, false, false, null, new Collection<AttachmentSet>(), new Collection<InvokedDataCollector>(), new TimeSpan());

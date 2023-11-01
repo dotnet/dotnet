@@ -53,10 +53,10 @@ public class ParallelProxyExecutionManagerTests
         _preCreatedMockManagers = new Queue<Mock<IProxyExecutionManager>>(
             new List<Mock<IProxyExecutionManager>>
             {
-                new Mock<IProxyExecutionManager>(),
-                new Mock<IProxyExecutionManager>(),
-                new Mock<IProxyExecutionManager>(),
-                new Mock<IProxyExecutionManager>(),
+                new(),
+                new(),
+                new(),
+                new(),
             });
         _usedMockManagers = new List<Mock<IProxyExecutionManager>>();
         _createMockManager = (_, _2) =>
@@ -73,12 +73,12 @@ public class ParallelProxyExecutionManagerTests
         _processedSources = new List<string>();
         _testRunCriteriaWith2Sources = new TestRunCriteria(_sources, 100, false, string.Empty, TimeSpan.MaxValue, null, "Name~Test", new FilterOptions() { FilterRegEx = @"^[^\s\(]+" });
         _runtimeProviders = new List<TestRuntimeProviderInfo> {
-            new TestRuntimeProviderInfo(typeof(ITestRuntimeProvider), false, "<RunSettings></RunSettings>", new List<SourceDetail>
+            new(typeof(ITestRuntimeProvider), false, "<RunSettings></RunSettings>", new List<SourceDetail>
             {
-                new SourceDetail{ Source = "1.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
-                new SourceDetail{ Source = "2.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
+                new() { Source = "1.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
+                new() { Source = "2.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
                 // For testcases on the bottom.
-                new SourceDetail{ Source = "3.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
+                new() { Source = "3.dll", Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
             })
         };
 
@@ -360,7 +360,7 @@ public class ParallelProxyExecutionManagerTests
                         };
                         var runAttachments = new Collection<AttachmentSet>
                         {
-                            new AttachmentSet(new Uri("hello://x/"), "Hello")
+                            new(new Uri("hello://x/"), "Hello")
                         };
                         var executorUris = new List<string>() { "hello1" };
                         bool isCanceled = false;

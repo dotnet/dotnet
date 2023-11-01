@@ -2078,8 +2078,8 @@ public class VsTestConsoleRequestSenderTests
         });
 
         await _requestSender.ProcessTestRunAttachmentsAsync(
-            new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "a") },
-            new List<InvokedDataCollector>() { new InvokedDataCollector(new Uri("datacollector://sample"), "sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false) },
+            new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "a") },
+            new List<InvokedDataCollector>() { new(new Uri("datacollector://sample"), "sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false) },
             Constants.EmptyRunSettings,
             true,
             mockHandler.Object,
@@ -2101,7 +2101,7 @@ public class VsTestConsoleRequestSenderTests
         var payload = new TestRunAttachmentsProcessingCompletePayload()
         {
             AttachmentsProcessingCompleteEventArgs = new TestRunAttachmentsProcessingCompleteEventArgs(true, new Exception("msg")),
-            Attachments = new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "out") }
+            Attachments = new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "out") }
         };
         var attachmentsProcessingComplete = new Message()
         {
@@ -2117,8 +2117,8 @@ public class VsTestConsoleRequestSenderTests
         });
 
         await _requestSender.ProcessTestRunAttachmentsAsync(
-            new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "a") },
-            new List<InvokedDataCollector>() { new InvokedDataCollector(new Uri("datacollector://sample"), "sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false) },
+            new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "a") },
+            new List<InvokedDataCollector>() { new(new Uri("datacollector://sample"), "sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false) },
             Constants.EmptyRunSettings,
             true,
             mockHandler.Object,
@@ -2140,7 +2140,7 @@ public class VsTestConsoleRequestSenderTests
         var payload = new TestRunAttachmentsProcessingCompletePayload()
         {
             AttachmentsProcessingCompleteEventArgs = new TestRunAttachmentsProcessingCompleteEventArgs(false, null),
-            Attachments = new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "out") }
+            Attachments = new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "out") }
         };
 
         var attachmentsProcessingComplete = new Message()
@@ -2162,8 +2162,8 @@ public class VsTestConsoleRequestSenderTests
             () => _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(attachmentsProcessingComplete)));
 
         await _requestSender.ProcessTestRunAttachmentsAsync(
-            new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "a") },
-            new List<InvokedDataCollector>() { new InvokedDataCollector(new Uri("datacollector://sample"), "sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false) },
+            new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "a") },
+            new List<InvokedDataCollector>() { new(new Uri("datacollector://sample"), "sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false) },
             Constants.EmptyRunSettings,
             false,
             mockHandler.Object,
@@ -2185,7 +2185,7 @@ public class VsTestConsoleRequestSenderTests
         var completePayload = new TestRunAttachmentsProcessingCompletePayload()
         {
             AttachmentsProcessingCompleteEventArgs = new TestRunAttachmentsProcessingCompleteEventArgs(false, null),
-            Attachments = new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "out") }
+            Attachments = new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "out") }
         };
 
         var attachmentsProcessingComplete = new Message()
@@ -2215,8 +2215,8 @@ public class VsTestConsoleRequestSenderTests
             () => _mockCommunicationManager.Setup(cm => cm.ReceiveMessageAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult<Message?>(attachmentsProcessingComplete)));
 
         await _requestSender.ProcessTestRunAttachmentsAsync(
-            new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "a") },
-            new List<InvokedDataCollector>() { new InvokedDataCollector(new Uri("datacollector://sample"), "sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false) },
+            new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "a") },
+            new List<InvokedDataCollector>() { new(new Uri("datacollector://sample"), "sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false) },
             Constants.EmptyRunSettings,
             false,
             mockHandler.Object,
@@ -2240,7 +2240,7 @@ public class VsTestConsoleRequestSenderTests
 
         var payload = new TestRunAttachmentsProcessingCompletePayload()
         {
-            Attachments = new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "out") }
+            Attachments = new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "out") }
         };
         var attachmentsProcessingComplete = new Message()
         {
@@ -2264,8 +2264,8 @@ public class VsTestConsoleRequestSenderTests
         });
 
         await _requestSender.ProcessTestRunAttachmentsAsync(
-            new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "a") },
-            new List<InvokedDataCollector>() { new InvokedDataCollector(new Uri("datacollector://sample"), "sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false) },
+            new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "a") },
+            new List<InvokedDataCollector>() { new(new Uri("datacollector://sample"), "sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false) },
             Constants.EmptyRunSettings,
             false,
             mockHandler.Object,
@@ -2289,7 +2289,7 @@ public class VsTestConsoleRequestSenderTests
 
         var payload = new TestRunAttachmentsProcessingCompletePayload()
         {
-            Attachments = new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "out") }
+            Attachments = new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "out") }
         };
         var attachmentsProcessingComplete = new Message()
         {
@@ -2305,8 +2305,8 @@ public class VsTestConsoleRequestSenderTests
         });
 
         await _requestSender.ProcessTestRunAttachmentsAsync(
-            new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "a") },
-            new List<InvokedDataCollector>() { new InvokedDataCollector(new Uri("datacollector://sample"), "sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false) },
+            new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "a") },
+            new List<InvokedDataCollector>() { new(new Uri("datacollector://sample"), "sample", typeof(string).AssemblyQualifiedName!, typeof(string).Assembly.Location, false) },
             Constants.EmptyRunSettings,
             true,
             mockHandler.Object,
@@ -2324,7 +2324,7 @@ public class VsTestConsoleRequestSenderTests
         var mockHandler = new Mock<ITestRunAttachmentsProcessingEventsHandler>();
         _mockCommunicationManager.Setup(cm => cm.SendMessage(MessageType.TestRunAttachmentsProcessingStart, It.IsAny<object>())).Throws(new IOException());
 
-        await _requestSender.ProcessTestRunAttachmentsAsync(new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "out") }, new List<InvokedDataCollector>(), Constants.EmptyRunSettings, false, mockHandler.Object, CancellationToken.None);
+        await _requestSender.ProcessTestRunAttachmentsAsync(new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "out") }, new List<InvokedDataCollector>(), Constants.EmptyRunSettings, false, mockHandler.Object, CancellationToken.None);
 
         mockHandler.Verify(mh => mh.HandleTestRunAttachmentsProcessingComplete(It.Is<TestRunAttachmentsProcessingCompleteEventArgs>(a => !a.IsCanceled && a.Error is IOException), null), Times.Once, "Attachments Processing Complete must be called");
         mockHandler.Verify(mh => mh.HandleLogMessage(TestMessageLevel.Error, It.IsAny<string>()), Times.Once, "TestMessage event must be called");

@@ -129,8 +129,8 @@ public class BlameLoggerTests
 
         var testCaseList = new List<BlameTestObject>
         {
-            new BlameTestObject(new TestCase("ABC.UnitTestMethod1", new Uri("test://uri"), "C://test/filepath")),
-            new BlameTestObject(new TestCase("ABC.UnitTestMethod2", new Uri("test://uri"), "C://test/filepath"))
+            new(new TestCase("ABC.UnitTestMethod1", new Uri("test://uri"), "C://test/filepath")),
+            new(new TestCase("ABC.UnitTestMethod2", new Uri("test://uri"), "C://test/filepath"))
         };
 
         // Setup and Raise event

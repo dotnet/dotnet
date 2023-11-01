@@ -94,7 +94,7 @@ public class ProxyExecutionManagerTests : ProxyBaseManagerTests
         var inputSource = new List<string> { "inputPackage.appxrecipe" };
 
         var testRunCriteria = new TestRunCriteria(
-            new List<TestCase> { new TestCase("A.C.M", new Uri("excutor://dummy"), inputSource.First()) },
+            new List<TestCase> { new("A.C.M", new Uri("excutor://dummy"), inputSource.First()) },
             frequencyOfRunStatsChangeEvent: 10);
 
         _mockTestHostManager.Setup(hm => hm.GetTestSources(inputSource)).Returns(actualSources);
@@ -116,7 +116,7 @@ public class ProxyExecutionManagerTests : ProxyBaseManagerTests
         var inputSource = new List<string> { "actualSource.dll" };
 
         var testRunCriteria = new TestRunCriteria(
-            new List<TestCase> { new TestCase("A.C.M", new Uri("excutor://dummy"), inputSource.First()) },
+            new List<TestCase> { new("A.C.M", new Uri("excutor://dummy"), inputSource.First()) },
             frequencyOfRunStatsChangeEvent: 10);
 
         _mockTestHostManager.Setup(hm => hm.GetTestSources(inputSource)).Returns(actualSources);
@@ -469,7 +469,7 @@ public class ProxyExecutionManagerTests : ProxyBaseManagerTests
             .Callback(
                 (TestRunCriteriaWithTests criteria, IInternalTestRunEventsHandler sink) => testRunCriteriaPassed = criteria);
         var runCriteria = new Mock<TestRunCriteria>(
-            new List<TestCase> { new TestCase("A.C.M", new Uri("executor://dummy"), "source.dll") },
+            new List<TestCase> { new("A.C.M", new Uri("executor://dummy"), "source.dll") },
             10);
 
         _testExecutionManager.StartTestRun(runCriteria.Object, null!);
@@ -623,7 +623,7 @@ public class ProxyExecutionManagerTests : ProxyBaseManagerTests
         _mockFileHelper.Setup(fh => fh.Exists(It.IsAny<string>())).Returns(true);
         Mock<IInternalTestRunEventsHandler> mockTestRunEventsHandler = new();
         var runCriteria = new Mock<TestRunCriteria>(
-            new List<TestCase> { new TestCase("A.C.M", new Uri("executor://dummy"), "source.dll") },
+            new List<TestCase> { new("A.C.M", new Uri("executor://dummy"), "source.dll") },
             10);
         var testRunChangedArgs = new TestRunChangedEventArgs(null, null, null);
 
@@ -693,7 +693,7 @@ public class ProxyExecutionManagerTests : ProxyBaseManagerTests
         _mockFileHelper.Setup(fh => fh.Exists(It.IsAny<string>())).Returns(true);
         Mock<IInternalTestRunEventsHandler> mockTestRunEventsHandler = new();
         var runCriteria = new Mock<TestRunCriteria>(
-            new List<TestCase> { new TestCase("A.C.M", new Uri("executor://dummy"), "source.dll") },
+            new List<TestCase> { new("A.C.M", new Uri("executor://dummy"), "source.dll") },
             10);
         var payload = new TestProcessStartInfo();
 

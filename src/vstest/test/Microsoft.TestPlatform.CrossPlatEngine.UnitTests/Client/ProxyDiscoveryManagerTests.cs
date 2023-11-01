@@ -454,7 +454,7 @@ public class ProxyDiscoveryManagerTests : ProxyBaseManagerTests
     public void DiscoveryManagerShouldPassOnHandleDiscoveredTests()
     {
         Mock<ITestDiscoveryEventsHandler2> mockTestDiscoveryEventsHandler = new();
-        var testCases = new List<TestCase>() { new TestCase("eventHandler.y.z", new Uri("eventHandler://y"), "eventHandler.dll") };
+        var testCases = new List<TestCase>() { new("eventHandler.y.z", new Uri("eventHandler://y"), "eventHandler.dll") };
 
         var discoveryManager = GetProxyDiscoveryManager();
         SetupChannelMessage(MessageType.StartDiscovery, MessageType.TestCasesFound, testCases);

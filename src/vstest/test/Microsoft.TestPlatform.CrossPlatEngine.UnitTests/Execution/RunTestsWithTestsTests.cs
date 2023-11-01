@@ -54,8 +54,8 @@ public class RunTestsWithTestsTests
     {
         var tests = new List<TestCase>
         {
-            new TestCase("A.C.M1", new Uri("e://d"), "s.dll"),
-            new TestCase("A.C.M2", new Uri("e://d"), "s.dll")
+            new("A.C.M1", new Uri("e://d"), "s.dll"),
+            new("A.C.M2", new Uri("e://d"), "s.dll")
         };
 
         _runTestsInstance = new TestableRunTestsWithTests(
@@ -70,7 +70,7 @@ public class RunTestsWithTestsTests
 
         var expectedMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri("e://d"),
+            new(new Uri("e://d"),
                 Constants.UnspecifiedAdapterPath)
         };
 
@@ -82,8 +82,8 @@ public class RunTestsWithTestsTests
     {
         var tests = new List<TestCase>
         {
-            new TestCase("A.C.M1", new Uri("e://d"), "s.dll"),
-            new TestCase("A.C.M2", new Uri("e://d2"), "s.dll")
+            new("A.C.M1", new Uri("e://d"), "s.dll"),
+            new("A.C.M2", new Uri("e://d2"), "s.dll")
         };
 
         _runTestsInstance = new TestableRunTestsWithTests(
@@ -98,9 +98,9 @@ public class RunTestsWithTestsTests
 
         var expectedMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri("e://d"),
+            new(new Uri("e://d"),
                 Constants.UnspecifiedAdapterPath),
-            new Tuple<Uri, string>(new Uri("e://d2"),
+            new(new Uri("e://d2"),
                 Constants.UnspecifiedAdapterPath)
         };
 
@@ -112,7 +112,7 @@ public class RunTestsWithTestsTests
     {
         var tests = new List<TestCase>
         {
-            new TestCase("A.C.M1", new Uri("e://d"), "s.dll")
+            new("A.C.M1", new Uri("e://d"), "s.dll")
         };
 
         var executorUriVsTestList = new Dictionary<Tuple<Uri, string>, List<TestCase>>();
@@ -144,7 +144,7 @@ public class RunTestsWithTestsTests
     {
         var tests = new List<TestCase>
         {
-            new TestCase("A.C.M1", new Uri("e://d"), "s.dll")
+            new("A.C.M1", new Uri("e://d"), "s.dll")
         };
         var mockTestCaseEventsHandler = new Mock<ITestCaseEventsHandler>();
 
@@ -169,7 +169,7 @@ public class RunTestsWithTestsTests
     {
         var tests = new List<TestCase>
         {
-            new TestCase("A.C.M1", new Uri("e://d"), "s.dll")
+            new("A.C.M1", new Uri("e://d"), "s.dll")
         };
         var mockTestCaseEventsHandler = new Mock<ITestCaseEventsHandler>();
 

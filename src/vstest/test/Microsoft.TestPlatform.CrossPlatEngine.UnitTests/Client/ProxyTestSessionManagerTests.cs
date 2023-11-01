@@ -110,7 +110,7 @@ public class ProxyTestSessionManagerTests
         {
             [_fakeTestSources[0]] = new TestRuntimeProviderInfo(typeof(ITestRuntimeProvider), false, _fakeRunSettings, new List<SourceDetail>
             {
-                new SourceDetail {
+                new() {
                     Source = _fakeTestSources[0],
                     Architecture = Architecture.X86,
                     Framework = Framework.DefaultFramework

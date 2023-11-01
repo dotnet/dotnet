@@ -70,7 +70,7 @@ public class TestExecutionRecorderTests
     [TestMethod]
     public void RecordAttachmentsShouldAddToAttachmentSet()
     {
-        var attachmentSet = new List<AttachmentSet> { new AttachmentSet(new Uri("attachment://dummy"), "attachment") };
+        var attachmentSet = new List<AttachmentSet> { new(new Uri("attachment://dummy"), "attachment") };
 
         _testRecorder.RecordAttachments(attachmentSet);
 
@@ -85,8 +85,8 @@ public class TestExecutionRecorderTests
     {
         var attachmentSet = new List<AttachmentSet>
         {
-            new AttachmentSet(new Uri("attachment://dummy"), "attachment"),
-            new AttachmentSet(new Uri("attachment://infinite"), "infinity")
+            new(new Uri("attachment://dummy"), "attachment"),
+            new(new Uri("attachment://infinite"), "infinity")
         };
 
         _testRecorder.RecordAttachments(attachmentSet);

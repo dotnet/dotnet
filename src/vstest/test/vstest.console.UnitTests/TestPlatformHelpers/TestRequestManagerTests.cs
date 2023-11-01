@@ -1595,10 +1595,11 @@ public class TestRequestManagerTests
         var actualSources = new List<string>() { "1.dll", "2.dll" };
         var payload = new TestRunRequestPayload()
         {
-            TestCases = new List<TestCase>() {
-                new TestCase(){Source = actualSources[0]},
-                new TestCase() { Source = actualSources[0]},
-                new TestCase() { Source = actualSources[1] }
+            TestCases = new List<TestCase>()
+            {
+                new() { Source = actualSources[0] },
+                new() { Source = actualSources[0] },
+                new() { Source = actualSources[1] }
             },
             RunSettings =
                 @"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -2147,7 +2148,7 @@ public class TestRequestManagerTests
 
         var payload = new TestRunAttachmentsProcessingPayload()
         {
-            Attachments = new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "out") },
+            Attachments = new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "out") },
             InvokedDataCollectors = new List<InvokedDataCollector>(),
             RunSettings = Constants.EmptyRunSettings,
             CollectMetrics = true
@@ -2178,7 +2179,7 @@ public class TestRequestManagerTests
 
         var payload = new TestRunAttachmentsProcessingPayload()
         {
-            Attachments = new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "out") },
+            Attachments = new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "out") },
             InvokedDataCollectors = new List<InvokedDataCollector>(),
             RunSettings = Constants.EmptyRunSettings,
             CollectMetrics = false
@@ -2212,7 +2213,7 @@ public class TestRequestManagerTests
 
         var payload = new TestRunAttachmentsProcessingPayload()
         {
-            Attachments = new List<AttachmentSet> { new AttachmentSet(new Uri("http://www.bing.com"), "out") },
+            Attachments = new List<AttachmentSet> { new(new Uri("http://www.bing.com"), "out") },
             InvokedDataCollectors = new List<InvokedDataCollector>(),
             RunSettings = Constants.EmptyRunSettings,
             CollectMetrics = true

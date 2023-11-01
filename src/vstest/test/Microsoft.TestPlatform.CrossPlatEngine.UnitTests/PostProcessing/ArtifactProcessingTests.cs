@@ -69,7 +69,7 @@ public class ArtifactProcessingTests
             null,
             new Collection<AttachmentSet>()
             {
-               new AttachmentSet(new Uri("//sample"),"")
+               new(new Uri("//sample"),"")
             },
             TimeSpan.Zero);
 
@@ -89,7 +89,7 @@ public class ArtifactProcessingTests
             null,
             new Collection<AttachmentSet>()
             {
-               new AttachmentSet(new Uri("//sample"),"")
+               new(new Uri("//sample"),"")
             },
             TimeSpan.Zero);
 
@@ -155,7 +155,7 @@ public class ArtifactProcessingTests
                     false,
                     false,
                     null,
-                    new Collection<AttachmentSet>() { new AttachmentSet(new Uri("attachment://dummy"), "attachment") },
+                    new Collection<AttachmentSet>() { new(new Uri("attachment://dummy"), "attachment") },
                     TimeSpan.Zero);
 
                     string serializedEventArgs = JsonDataSerializer.Instance.SerializePayload(MessageType.ExecutionComplete, testRunCompleteEventArgs);
@@ -198,7 +198,7 @@ public class ArtifactProcessingTests
                     false,
                     false,
                     null,
-                    new Collection<AttachmentSet>() { new AttachmentSet(new Uri("attachment://dummy"), "attachment") },
+                    new Collection<AttachmentSet>() { new(new Uri("attachment://dummy"), "attachment") },
                     TimeSpan.Zero);
 
                     string serializedEventArgs = JsonDataSerializer.Instance.SerializePayload(MessageType.ExecutionComplete, testRunCompleteEventArgs);
@@ -276,7 +276,7 @@ public class ArtifactProcessingTests
                     false,
                     false,
                     null,
-                    new Collection<AttachmentSet>() { new AttachmentSet(new Uri("attachment://dummy"), "attachment") },
+                    new Collection<AttachmentSet>() { new(new Uri("attachment://dummy"), "attachment") },
                     TimeSpan.Zero);
 
                     string serializedEventArgs = JsonDataSerializer.Instance.SerializePayload(MessageType.ExecutionComplete, testRunCompleteEventArgs);

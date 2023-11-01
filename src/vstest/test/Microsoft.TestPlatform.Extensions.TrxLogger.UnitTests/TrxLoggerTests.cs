@@ -775,7 +775,7 @@ public class TrxLoggerTests
         _testableTrxLogger.Initialize(_events.Object, _parameters);
 
         string message = $"one line{Environment.NewLine}second line\r\nthird line";
-        var pass = CreatePassTestResultEventArgsMock("Pass1", new List<TestResultMessage> { new TestResultMessage(TestResultMessage.StandardOutCategory, message) });
+        var pass = CreatePassTestResultEventArgsMock("Pass1", new List<TestResultMessage> { new(TestResultMessage.StandardOutCategory, message) });
 
         _testableTrxLogger.TestResultHandler(new object(), pass.Object);
 

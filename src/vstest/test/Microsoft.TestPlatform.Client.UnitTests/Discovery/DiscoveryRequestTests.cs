@@ -280,7 +280,7 @@ public class DiscoveryRequestTests
     {
         var activeTestCases = new List<TestCase>
         {
-            new TestCase(
+            new(
                 "A.C.M2",
                 new Uri("executor://dummy"),
                 "A")

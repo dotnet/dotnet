@@ -1,5 +1,9 @@
 <Project>
 
+  <PropertyGroup>
+    <SourceBranchName Condition=" '$(SourceBranchName)' == '' ">dev</SourceBranchName>
+  </PropertyGroup>
+
   <Target Name="_VerifyNuGetPackages" AfterTargets="Pack" Condition=" '$(OS)' == 'Windows_NT' ">
     <Exec Command="powershell -NoProfile -NoLogo -ExecutionPolicy Bypass $(RepositoryEngineeringDir)\verify-nupkgs.ps1 -configuration $(Configuration) -versionPrefix $(versionPrefix) -currentBranch $(SourceBranchName)" />
   </Target>

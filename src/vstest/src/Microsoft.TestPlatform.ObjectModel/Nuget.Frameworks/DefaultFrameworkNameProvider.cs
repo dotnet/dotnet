@@ -13,7 +13,7 @@ namespace NuGetClone.Frameworks
         {
         }
 
-        private static readonly Lazy<IFrameworkNameProvider> InstanceLazy = new Lazy<IFrameworkNameProvider>(() => new DefaultFrameworkNameProvider());
+        private static readonly Lazy<IFrameworkNameProvider> InstanceLazy = new(() => new DefaultFrameworkNameProvider());
 
         public static IFrameworkNameProvider Instance
         {

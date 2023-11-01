@@ -58,8 +58,8 @@ public class TestRunAttachmentsProcessingManagerTests
         _mockDataCollectorAttachmentsProcessorsFactory.Setup(p => p.Create(It.IsAny<InvokedDataCollector[]>(), It.IsAny<IMessageLogger>()))
             .Returns(new DataCollectorAttachmentProcessor[]
             {
-                new DataCollectorAttachmentProcessor( "friendlyNameA", _mockAttachmentHandler1.Object ),
-                new DataCollectorAttachmentProcessor( "friendlyNameB"  ,_mockAttachmentHandler2.Object )
+                new( "friendlyNameA", _mockAttachmentHandler1.Object ),
+                new( "friendlyNameB"  ,_mockAttachmentHandler2.Object )
             });
 
         _manager = new TestRunAttachmentsProcessingManager(_mockEventSource.Object, _mockDataCollectorAttachmentsProcessorsFactory.Object);
@@ -414,7 +414,7 @@ public class TestRunAttachmentsProcessingManagerTests
 
         ICollection<AttachmentSet> outputAttachments = new List<AttachmentSet>
         {
-            new AttachmentSet(new Uri(Uri1), "uri1_output")
+            new(new Uri(Uri1), "uri1_output")
         };
 
         var innerTaskCompletionSource = new TaskCompletionSource<object?>();
@@ -498,7 +498,7 @@ public class TestRunAttachmentsProcessingManagerTests
 
         ICollection<AttachmentSet> outputAttachments = new List<AttachmentSet>
         {
-            new AttachmentSet(new Uri(Uri1), "uri1_output")
+            new(new Uri(Uri1), "uri1_output")
         };
 
         var innerTaskCompletionSource = new TaskCompletionSource<object?>();
@@ -560,12 +560,12 @@ public class TestRunAttachmentsProcessingManagerTests
 
         ICollection<AttachmentSet> outputAttachments1 = new List<AttachmentSet>
         {
-            new AttachmentSet(new Uri(Uri1), "uri1_output")
+            new(new Uri(Uri1), "uri1_output")
         };
 
         ICollection<AttachmentSet> outputAttachments2 = new List<AttachmentSet>
         {
-            new AttachmentSet(new Uri(Uri2), "uri2_output")
+            new(new Uri(Uri2), "uri2_output")
         };
 
         var innerTaskCompletionSource = new TaskCompletionSource<object?>();
@@ -635,7 +635,7 @@ public class TestRunAttachmentsProcessingManagerTests
         };
         ICollection<AttachmentSet> outputAttachments = new List<AttachmentSet>
         {
-            new AttachmentSet(new Uri(Uri2), "uri2_output")
+            new(new Uri(Uri2), "uri2_output")
         };
         _mockAttachmentHandler2.Setup(h => h.ProcessAttachmentSetsAsync(It.IsAny<XmlElement>(), It.IsAny<ICollection<AttachmentSet>>(), It.IsAny<IProgress<int>>(), It.IsAny<IMessageLogger>(), It.IsAny<CancellationToken>()))
             .Returns((XmlElement configurationElement, ICollection<AttachmentSet> i1, IProgress<int> progress, IMessageLogger logger, CancellationToken cancellation) =>
@@ -700,7 +700,7 @@ public class TestRunAttachmentsProcessingManagerTests
 
                 ICollection<AttachmentSet> outputAttachments = new List<AttachmentSet>
                 {
-                    new AttachmentSet(new Uri(Uri2), "uri2_output")
+                    new(new Uri(Uri2), "uri2_output")
                 };
                 return Task.FromResult(outputAttachments);
             });
@@ -746,7 +746,7 @@ public class TestRunAttachmentsProcessingManagerTests
 
         ICollection<AttachmentSet> output = new List<AttachmentSet>
         {
-            new AttachmentSet(new Uri(Uri1), "uri1_input_1")
+            new(new Uri(Uri1), "uri1_input_1")
         };
         output.Single().Attachments.Add(UriDataAttachment.CreateFrom("file4", "Merged"));
 
@@ -844,8 +844,8 @@ public class TestRunAttachmentsProcessingManagerTests
         // arrange
         var inputAttachments = new List<AttachmentSet>
         {
-            new AttachmentSet(new Uri(Uri1), "uri1_input"),
-            new AttachmentSet(new Uri(Uri2), "uri2_input")
+            new(new Uri(Uri1), "uri1_input"),
+            new(new Uri(Uri2), "uri2_input")
         };
         _mockAttachmentHandler1.Setup(x => x.SupportsIncrementalProcessing).Returns(false);
 

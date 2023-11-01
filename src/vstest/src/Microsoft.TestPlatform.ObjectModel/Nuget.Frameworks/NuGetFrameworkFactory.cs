@@ -15,17 +15,17 @@ namespace NuGetClone.Frameworks
         /// <summary>
         /// An unknown or invalid framework
         /// </summary>
-        public static readonly NuGetFramework UnsupportedFramework = new NuGetFramework(FrameworkConstants.SpecialIdentifiers.Unsupported);
+        public static readonly NuGetFramework UnsupportedFramework = new(FrameworkConstants.SpecialIdentifiers.Unsupported);
 
         /// <summary>
         /// A framework with no specific target framework. This can be used for content only packages.
         /// </summary>
-        public static readonly NuGetFramework AgnosticFramework = new NuGetFramework(FrameworkConstants.SpecialIdentifiers.Agnostic);
+        public static readonly NuGetFramework AgnosticFramework = new(FrameworkConstants.SpecialIdentifiers.Agnostic);
 
         /// <summary>
         /// A wildcard matching all frameworks
         /// </summary>
-        public static readonly NuGetFramework AnyFramework = new NuGetFramework(FrameworkConstants.SpecialIdentifiers.Any);
+        public static readonly NuGetFramework AnyFramework = new(FrameworkConstants.SpecialIdentifiers.Any);
 
         /// <summary>
         /// Creates a NuGetFramework from a folder name using the default mappings.

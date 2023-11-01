@@ -188,7 +188,7 @@ public class ExecutionManagerTests
 
         var tests = new List<TestCase>
         {
-            new TestCase("A.C.M1", new Uri(RunTestsWithSourcesTestsExecutorUri), assemblyLocation)
+            new("A.C.M1", new Uri(RunTestsWithSourcesTestsExecutorUri), assemblyLocation)
         };
 
         var mockTestRunEventsHandler = new Mock<IInternalTestRunEventsHandler>();
