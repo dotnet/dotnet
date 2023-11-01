@@ -5,14 +5,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal class SyntaxToken : RazorSyntaxNode
 {
+    internal static readonly Func<SyntaxToken, bool> NonZeroWidth = t => t.Width > 0;
+    internal static readonly Func<SyntaxToken, bool> Any = t => true;
+
     internal SyntaxToken(GreenNode green, SyntaxNode parent, int position)
         : base(green, parent, position)
     {
@@ -97,6 +98,24 @@ internal class SyntaxToken : RazorSyntaxNode
         trailingPosition -= trailing.FullWidth;
 
         return new SyntaxTriviaList(trailing.CreateRed(this, trailingPosition), trailingPosition, index);
+    }
+
+    /// <summary>
+    /// Gets the token that follows this token in the syntax tree.
+    /// </summary>
+    /// <returns>The token that follows this token in the syntax tree.</returns>
+    public SyntaxToken GetNextToken(bool includeZeroWidth = false)
+    {
+        return SyntaxNavigator.GetNextToken(this, includeZeroWidth);
+    }
+
+    /// <summary>
+    /// Gets the token that precedes this token in the syntax tree.
+    /// </summary>
+    /// <returns>The previous token that precedes this token in the syntax tree.</returns>
+    public SyntaxToken GetPreviousToken(bool includeZeroWidth = false)
+    {
+        return SyntaxNavigator.GetPreviousToken(this, includeZeroWidth);
     }
 
     public override string ToString()

@@ -7,6 +7,7 @@ using System;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Xunit;
 using Xunit.Sdk;
 
@@ -17,7 +18,7 @@ internal class SyntaxTreeVerifier
 {
     public static void Verify(RazorSyntaxTree syntaxTree, bool ensureFullFidelity = true)
     {
-        var verifier = new Verifier(syntaxTree.Source);
+        using var verifier = new Verifier(syntaxTree.Source);
         verifier.Visit(syntaxTree.Root);
 
         if (ensureFullFidelity)
@@ -66,12 +67,87 @@ $@"Could not locate Syntax Node owner at position '{i}':
                 }
             }
         }
+
+        // Verify that NextToken/PreviousToken/FirstToken/LastToken work correctly
+        ref readonly var tokens = ref verifier.AllTokens;
+
+        if (tokens.Count == 0)
+        {
+            Assert.Fail("No tokens found in the syntax tree. There should at least be an EOF token.");
+        }
+
+        var root = syntaxTree.Root;
+        var lastToken = root.GetLastToken(includeZeroWidth: true);
+        var firstToken = root.GetFirstToken(includeZeroWidth: true);
+        Assert.Equal(SyntaxKind.EndOfFile, lastToken.Kind);
+        Assert.Null(lastToken.GetNextToken(includeZeroWidth: true));
+        Assert.Null(lastToken.GetNextToken(includeZeroWidth: false));
+        Assert.Null(firstToken.GetPreviousToken(includeZeroWidth: true));
+        Assert.Null(firstToken.GetPreviousToken(includeZeroWidth: false));
+
+        Assert.Same(tokens[0], firstToken);
+        Assert.Same(tokens[^1], lastToken);
+
+        if (tokens.Count == 1)
+        {
+            Assert.Same(lastToken, firstToken);
+            Assert.Null(lastToken.GetPreviousToken(includeZeroWidth: true));
+            Assert.Null(lastToken.GetPreviousToken(includeZeroWidth: false));
+            return;
+        }
+
+        for (var i = 1; i < (tokens.Count - 1); i++)
+        {
+            var previousTokenIndex = i - 1;
+            var previous = tokens[previousTokenIndex];
+            var current = tokens[i];
+            Assert.Same(previous.GetNextToken(includeZeroWidth: true), current);
+            Assert.Same(current.GetPreviousToken(includeZeroWidth: true), previous);
+            validateNonZeroWidth(previous.GetNextToken(includeZeroWidth: false), previousTokenIndex, countUp: true, in tokens);
+            validateNonZeroWidth(previous.GetPreviousToken(includeZeroWidth: false), previousTokenIndex, countUp: false, in tokens);
+        }
+
+        validateNonZeroWidth(lastToken.GetPreviousToken(includeZeroWidth: false), tokens.Count - 1, countUp: false, in tokens);
+
+        void validateNonZeroWidth(SyntaxToken foundNonZeroWidthToken, int originalTokenIndex, bool countUp, in PooledArrayBuilder<SyntaxToken> tokens)
+        {
+            var (targetIndex, increment) = countUp ? (tokens.Count, 1) : (-1, -1);
+            if (foundNonZeroWidthToken == null)
+            {
+                for (var i = originalTokenIndex + increment; i != targetIndex; i += increment)
+                {
+                    Assert.Equal(0, tokens[i].Width);
+                }
+
+                return;
+            }
+
+            Assert.NotEqual(0, foundNonZeroWidthToken.Width);
+
+            for (var i = originalTokenIndex + increment; i != targetIndex; i += increment)
+            {
+                var token = tokens[i];
+
+                if (token.Width == 0)
+                {
+                    continue;
+                }
+
+                Assert.Same(foundNonZeroWidthToken, token);
+                return;
+            }
+
+            Assert.Fail("Did not find the non-zero width token in the list of tokens.");
+        }
     }
 
-    private class Verifier : SyntaxWalker
+    private class Verifier : SyntaxWalker, IDisposable
     {
         private readonly RazorSourceDocument _source;
         private SourceLocation _currentLocation;
+#pragma warning disable CA1805
+        internal PooledArrayBuilder<SyntaxToken> AllTokens = new();
+#pragma warning restore CA1805
 
         public Verifier(RazorSourceDocument source)
         {
@@ -81,18 +157,27 @@ $@"Could not locate Syntax Node owner at position '{i}':
 
         public override void VisitToken(SyntaxToken token)
         {
-            if (token != null && !token.IsMissing && token.Kind != SyntaxKind.Marker)
+            if (token != null)
             {
-                var start = token.GetSourceLocation(_source);
-                if (!start.Equals(_currentLocation))
+                AllTokens.Add(token);
+                if (!token.IsMissing && token.Kind != SyntaxKind.Marker)
                 {
-                    throw new InvalidOperationException($"Token starting at {start} should start at {_currentLocation} - {token} ");
-                }
+                    var start = token.GetSourceLocation(_source);
+                    if (!start.Equals(_currentLocation))
+                    {
+                        throw new InvalidOperationException($"Token starting at {start} should start at {_currentLocation} - {token} ");
+                    }
 
-                _currentLocation = SourceLocationTracker.Advance(_currentLocation, token.Content);
+                    _currentLocation = SourceLocationTracker.Advance(_currentLocation, token.Content);
+                }
             }
 
             base.VisitToken(token);
+        }
+
+        public void Dispose()
+        {
+            AllTokens.Dispose();
         }
     }
 }
