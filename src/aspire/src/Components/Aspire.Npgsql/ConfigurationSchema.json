@@ -1,0 +1,61 @@
+{
+  "definitions": {
+    "logLevel": {
+      "properties": {
+        "Npgsql": {
+          "$ref": "#/definitions/logLevelThreshold"
+        },
+        "Npgsql.Command": {
+          "$ref": "#/definitions/logLevelThreshold"
+        },
+        "Npgsql.Connection": {
+          "$ref": "#/definitions/logLevelThreshold"
+        },
+        "Npgsql.Copy": {
+          "$ref": "#/definitions/logLevelThreshold"
+        },
+        "Npgsql.Exception": {
+          "$ref": "#/definitions/logLevelThreshold"
+        },
+        "Npgsql.Replication": {
+          "$ref": "#/definitions/logLevelThreshold"
+        },
+        "Npgsql.Transaction": {
+          "$ref": "#/definitions/logLevelThreshold"
+        }
+      }
+    }
+  },
+  "properties": {
+    "Aspire": {
+      "type": "object",
+      "properties": {
+        "Npgsql": {
+          "type": "object",
+          "properties": {
+            "ConnectionString": {
+              "type": "string",
+              "description": "Gets or sets the connection string of the Postgre SQL database to connect to."
+            },
+            "HealthChecks": {
+              "type": "boolean",
+              "description": "Gets or sets a boolean value that indicates whether the database health check is enabled or not.",
+              "default": true
+            },
+            "Tracing": {
+              "type": "boolean",
+              "description": "Gets or sets a boolean value that indicates whether the OpenTelemetry tracing is enabled or not.",
+              "default": true
+            },
+            "Metrics": {
+              "type": "boolean",
+              "description": "Gets or sets a boolean value that indicates whether the OpenTelemetry metrics are enabled or not.",
+              "default": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "type": "object"
+}
