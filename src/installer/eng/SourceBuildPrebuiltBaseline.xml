@@ -13,9 +13,5 @@
 
     <!-- These are coming in via runtime but the source-build infra isn't able to automatically pick up the right intermediate. -->
     <UsagePattern IdentityGlob="Microsoft.NETCore.App.Crossgen2.linux-x64/*9.0.*" />
-
-    <!-- Temporarily allow prebuilt for Microsoft.DotNet.Common.ProjectTemplates.8.0 since templates aren't available for 9.0 yet
-         Related to https://github.com/dotnet/installer/pull/17433/commits/c542cfcebe2f1677d05c05359fe9e7e04ea663ac -->
-    <UsagePattern IdentityGlob="Microsoft.DotNet.Common.ProjectTemplates.8.0/*" />
   </IgnorePatterns>
 </UsageData>
