@@ -81,22 +81,22 @@
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
       <Sha>64f95ef2377403e075cced875363419755d317a4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="9.0.100-alpha.1.23531.27">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="9.0.100-alpha.1.23531.34">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>480570e2070d8e2ef3221a40d25e15e2c124ec46</Sha>
+      <Sha>9afba205008a6120e6ab943c6982118a054d030a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="9.0.100-alpha.1.23531.27">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="9.0.100-alpha.1.23531.34">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>480570e2070d8e2ef3221a40d25e15e2c124ec46</Sha>
+      <Sha>9afba205008a6120e6ab943c6982118a054d030a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="9.0.100-alpha.1.23531.27">
+    <Dependency Name="Microsoft.NET.Sdk" Version="9.0.100-alpha.1.23531.34">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>480570e2070d8e2ef3221a40d25e15e2c124ec46</Sha>
+      <Sha>9afba205008a6120e6ab943c6982118a054d030a</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="9.0.100-alpha.1.23531.27">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="9.0.100-alpha.1.23531.34">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>480570e2070d8e2ef3221a40d25e15e2c124ec46</Sha>
+      <Sha>9afba205008a6120e6ab943c6982118a054d030a</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.2.1" Version="1.0.2-beta4.22406.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
@@ -181,9 +181,9 @@
       <Sha>1d174267bf45dabbadb12602b1170329611fd219</Sha>
       <SourceBuild RepoName="deployment-tools" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="9.0.0-alpha.1.23518.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="9.0.0-alpha.1.23530.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>54ad220ef4f236325dec31f2c0c66fa48a6fce33</Sha>
+      <Sha>ebe0ddc3a293df4ea172129b02adc25855d9976e</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.symreader" Version="2.1.0-beta.23253.1">
