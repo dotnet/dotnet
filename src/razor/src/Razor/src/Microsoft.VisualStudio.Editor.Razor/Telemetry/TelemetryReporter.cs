@@ -95,7 +95,9 @@ internal abstract class TelemetryReporter : ITelemetryReporter
         }
 
         static bool IsComplexValue(object? o)
-            => o is Type type && Type.GetTypeCode(type) == TypeCode.Object;
+        {
+            return o?.GetType() is Type type && Type.GetTypeCode(type) == TypeCode.Object;
+        }
     }
 
     public void ReportFault(Exception exception, string? message, params object?[] @params)
