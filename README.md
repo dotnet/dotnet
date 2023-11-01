@@ -184,7 +184,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@c040d25](https://github.com/dotnet/fsharp/commit/c040d25693a071efb0df0deb24fca347802d0f22)*
 - `src/installer`  
-*[dotnet/installer@f1b798c](https://github.com/dotnet/installer/commit/f1b798c1f6c395d6c0a037848076064f376c6f04)*
+*[dotnet/installer@1cd4085](https://github.com/dotnet/installer/commit/1cd40851378c6e4d82bcc911411d8b1fc9824365)*
 - `src/msbuild`  
 *[dotnet/msbuild@d5e157a](https://github.com/dotnet/msbuild/commit/d5e157ae4e93efb560eec5777de0b6826c7491a4)*
 - `src/nuget-client`  
@@ -192,7 +192,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/commit/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@b12184b](https://github.com/dotnet/razor/commit/b12184be95fdea17e693c55fd52ec4a326ad503d)*
+*[dotnet/razor@373096f](https://github.com/dotnet/razor/commit/373096fb23ad447761c211c680d3367f6ac128c7)*
 - `src/roslyn`  
 *[dotnet/roslyn@b6b82d4](https://github.com/dotnet/roslyn/commit/b6b82d4037a19f1c61e3390a4bfe2903e1b731b3)*
 - `src/roslyn-analyzers`  
@@ -202,9 +202,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@8af694a](https://github.com/dotnet/scenario-tests/commit/8af694a5e3986a27ccfee1a638ba311c7e9bc55d)*
 - `src/sdk`  
-*[dotnet/sdk@480570e](https://github.com/dotnet/sdk/commit/480570e2070d8e2ef3221a40d25e15e2c124ec46)*
+*[dotnet/sdk@9afba20](https://github.com/dotnet/sdk/commit/9afba205008a6120e6ab943c6982118a054d030a)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@54ad220](https://github.com/dotnet/source-build-externals/commit/54ad220ef4f236325dec31f2c0c66fa48a6fce33)*
+*[dotnet/source-build-externals@ebe0ddc](https://github.com/dotnet/source-build-externals/commit/ebe0ddc3a293df4ea172129b02adc25855d9976e)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/commit/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  

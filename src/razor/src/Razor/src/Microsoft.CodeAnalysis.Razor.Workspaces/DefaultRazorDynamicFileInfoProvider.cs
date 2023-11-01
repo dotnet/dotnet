@@ -43,7 +43,7 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
         _lspEditorFeatureDetector = lspEditorFeatureDetector ?? throw new ArgumentNullException(nameof(lspEditorFeatureDetector));
         _filePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
         _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor ?? throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
-        _fallbackProjectManager = fallbackProjectManager;
+        _fallbackProjectManager = fallbackProjectManager ?? throw new ArgumentNullException(nameof(fallbackProjectManager));
         _entries = new ConcurrentDictionary<Key, Entry>();
         _createEmptyEntry = (key) => new Entry(CreateEmptyInfo(key));
     }
