@@ -134,6 +134,12 @@ internal class BackgroundDocumentGenerator : IProjectSnapshotChangeTrigger
             throw new ArgumentNullException(nameof(document));
         }
 
+        if (project is ProjectSnapshot { HostProject: FallbackHostProject })
+        {
+            // We don't support closed file code generation for fallback projects
+            return;
+        }
+
         _dispatcher.AssertDispatcherThread();
 
         lock (Work)
