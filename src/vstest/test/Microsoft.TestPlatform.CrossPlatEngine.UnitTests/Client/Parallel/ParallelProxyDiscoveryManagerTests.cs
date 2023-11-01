@@ -48,11 +48,11 @@ public class ParallelProxyDiscoveryManagerTests
                 // they will be dequeued when we "create" a non-parallel
                 // manager. The setup adds callback for handler to complete
                 // the discovery.
-                new Mock<IProxyDiscoveryManager>(),
-                new Mock<IProxyDiscoveryManager>(),
-                new Mock<IProxyDiscoveryManager>(),
-                new Mock<IProxyDiscoveryManager>(),
-                new Mock<IProxyDiscoveryManager>(),
+                new(),
+                new(),
+                new(),
+                new(),
+                new(),
             });
         _usedMockManagers = new List<Mock<IProxyDiscoveryManager>>();
         _createMockManager = (_, _2) =>
@@ -70,10 +70,10 @@ public class ParallelProxyDiscoveryManagerTests
         _mockEventHandler = new Mock<ITestDiscoveryEventsHandler2>();
         _discoveryCriteriaWith2Sources = new DiscoveryCriteria(_sources, 100, null);
         _runtimeProviders = new List<TestRuntimeProviderInfo> {
-            new TestRuntimeProviderInfo(typeof(ITestRuntimeProvider), false, "<RunSettings></RunSettings>", new List<SourceDetail>
+            new(typeof(ITestRuntimeProvider), false, "<RunSettings></RunSettings>", new List<SourceDetail>
             {
-                new SourceDetail{ Source = _sources[0], Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
-                new SourceDetail{ Source = _sources[1], Architecture = Architecture.X86, Framework = Framework.DefaultFramework }
+                new() { Source = _sources[0], Architecture = Architecture.X86, Framework = Framework.DefaultFramework },
+                new() { Source = _sources[1], Architecture = Architecture.X86, Framework = Framework.DefaultFramework }
             })
         };
 

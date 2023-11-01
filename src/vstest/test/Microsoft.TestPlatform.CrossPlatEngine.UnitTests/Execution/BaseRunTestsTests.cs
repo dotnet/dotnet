@@ -249,7 +249,7 @@ public class BaseRunTestsTests
         var assemblyLocation = typeof(BaseRunTestsTests).Assembly.Location;
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
+            new(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
         };
         LazyExtension<ITestExecutor, ITestExecutorCapabilities>? receivedExecutor = null;
 
@@ -269,7 +269,7 @@ public class BaseRunTestsTests
     {
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri(BaseRunTestsExecutorUri), Constants.UnspecifiedAdapterPath)
+            new(new Uri(BaseRunTestsExecutorUri), Constants.UnspecifiedAdapterPath)
         };
         LazyExtension<ITestExecutor, ITestExecutorCapabilities>? receivedExecutor = null;
 
@@ -328,7 +328,7 @@ public class BaseRunTestsTests
         var assemblyLocation = typeof(BaseRunTestsTests).Assembly.Location;
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri("executor://nonexistent/"), assemblyLocation)
+            new(new Uri("executor://nonexistent/"), assemblyLocation)
         };
         LazyExtension<ITestExecutor, ITestExecutorCapabilities>? receivedExecutor = null;
 
@@ -364,7 +364,7 @@ public class BaseRunTestsTests
         var assemblyLocation = typeof(BaseRunTestsTests).Assembly.Location;
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
+            new(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
         };
 
         // Setup mocks.
@@ -381,7 +381,7 @@ public class BaseRunTestsTests
         var assemblyLocation = typeof(BaseRunTestsTests).Assembly.Location;
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
+            new(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
         };
 
         // Setup mocks.
@@ -406,7 +406,7 @@ public class BaseRunTestsTests
         var assemblyLocation = typeof(BaseRunTestsTests).Assembly.Location;
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
+            new(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
         };
 
         // Setup mocks.
@@ -437,8 +437,8 @@ public class BaseRunTestsTests
         var assemblyLocation = typeof(BaseRunTestsTests).Assembly.Location;
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri(BadBaseRunTestsExecutorUri), assemblyLocation),
-            new Tuple<Uri, string>(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
+            new(new Uri(BadBaseRunTestsExecutorUri), assemblyLocation),
+            new(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
         };
 
         // Setup mocks.
@@ -470,8 +470,8 @@ public class BaseRunTestsTests
         var assemblyLocation = typeof(BaseRunTestsTests).Assembly.Location;
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri(BadBaseRunTestsExecutorUri), assemblyLocation),
-            new Tuple<Uri, string>(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
+            new(new Uri(BadBaseRunTestsExecutorUri), assemblyLocation),
+            new(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
         };
 
         // Setup mocks.
@@ -609,7 +609,7 @@ public class BaseRunTestsTests
         var assemblyLocation = typeof(BaseRunTestsTests).Assembly.Location;
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
+            new(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
         };
 
         // Setup mocks.
@@ -629,7 +629,7 @@ public class BaseRunTestsTests
         var assemblyLocation = typeof(BaseRunTestsTests).Assembly.Location;
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
+            new(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
         };
         _runTestsInstance.GetExecutorUriExtensionMapCallback = (fh, rc) => executorUriExtensionMap;
         _runTestsInstance.InvokeExecutorCallback =
@@ -697,8 +697,8 @@ public class BaseRunTestsTests
         var assemblyLocation = typeof(BaseRunTestsTests).Assembly.Location;
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri(BadBaseRunTestsExecutorUri), assemblyLocation),
-            new Tuple<Uri, string>(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
+            new(new Uri(BadBaseRunTestsExecutorUri), assemblyLocation),
+            new(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
         };
 
         // Setup mocks.
@@ -779,7 +779,7 @@ public class BaseRunTestsTests
     {
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri(BaseRunTestsExecutorUri), Constants.UnspecifiedAdapterPath)
+            new(new Uri(BaseRunTestsExecutorUri), Constants.UnspecifiedAdapterPath)
         };
         LazyExtension<ITestExecutor, ITestExecutorCapabilities>? receivedExecutor = null;
 
@@ -813,7 +813,7 @@ public class BaseRunTestsTests
         var assemblyLocation = typeof(BaseRunTestsTests).Assembly.Location;
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
+            new(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
         };
         _runTestsInstance.GetExecutorUriExtensionMapCallback = (fh, rc) => executorUriExtensionMap;
     }
@@ -847,8 +847,8 @@ public class BaseRunTestsTests
         var assemblyLocation = typeof(BaseRunTestsTests).Assembly.Location;
         var executorUriExtensionMap = new List<Tuple<Uri, string>>
         {
-            new Tuple<Uri, string>(new Uri(BadBaseRunTestsExecutorUri), assemblyLocation),
-            new Tuple<Uri, string>(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
+            new(new Uri(BadBaseRunTestsExecutorUri), assemblyLocation),
+            new(new Uri(BaseRunTestsExecutorUri), assemblyLocation)
         };
 
         // Setup mocks.

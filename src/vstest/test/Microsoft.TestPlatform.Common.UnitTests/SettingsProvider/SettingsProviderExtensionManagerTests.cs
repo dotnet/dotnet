@@ -36,8 +36,7 @@ public class SettingsProviderExtensionManagerTests
         var extensions = GetMockExtensions("TestableSettings");
         var unfilteredExtensions = new List<LazyExtension<ISettingsProvider, Dictionary<string, object>>>
         {
-            new LazyExtension<ISettingsProvider,Dictionary<string,object>>
-            (
+            new            (
                 new Mock<ISettingsProvider>().Object,
                 new Dictionary<string,object>())
         };
@@ -53,8 +52,7 @@ public class SettingsProviderExtensionManagerTests
         var extensions = GetMockExtensions("TestableSettings", "TestableSettings");
         var unfilteredExtensions = new List<LazyExtension<ISettingsProvider, Dictionary<string, object>>>
         {
-            new LazyExtension<ISettingsProvider,Dictionary<string,object>>
-            (
+            new            (
                 new Mock<ISettingsProvider>().Object,
                 new Dictionary<string,object>())
         };
@@ -128,8 +126,7 @@ public class SettingsProviderExtensionManagerTests
         var extensions = GetMockExtensions("TestableSettings");
         var unfilteredExtensions = new List<LazyExtension<ISettingsProvider, Dictionary<string, object>>>
         {
-            new LazyExtension<ISettingsProvider,Dictionary<string,object>>
-            (
+            new            (
                 new Mock<ISettingsProvider>().Object,
                 new Dictionary<string,object>())
         };
@@ -145,8 +142,7 @@ public class SettingsProviderExtensionManagerTests
         var extensions = GetMockExtensions("TestableSettings");
         var unfilteredExtensions = new List<LazyExtension<ISettingsProvider, Dictionary<string, object>>>
         {
-            new LazyExtension<ISettingsProvider,Dictionary<string,object>>
-            (
+            new            (
                 new Mock<ISettingsProvider>().Object,
                 new Dictionary<string,object>())
         };
@@ -163,8 +159,7 @@ public class SettingsProviderExtensionManagerTests
         var extensions = GetMockExtensions("TestableSettings");
         var unfilteredExtensions = new List<LazyExtension<ISettingsProvider, Dictionary<string, object>>>
         {
-            new LazyExtension<ISettingsProvider,Dictionary<string,object>>
-            (
+            new            (
                 new Mock<ISettingsProvider>().Object,
                 new Dictionary<string,object>())
         };

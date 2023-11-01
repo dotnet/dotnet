@@ -38,9 +38,9 @@ public class TestSourcesUtilityTests
     public void GetSourcesShouldGetDistinctSourcesFromTestCases()
     {
         var path = Path.Combine(Temp, "d");
-        var tests = new List<TestCase>() { new TestCase("test1", new Uri(path), "source1.dll"),
-            new TestCase("test2", new Uri(path), "source2.dll"),
-            new TestCase("test3", new Uri(path), "source1.dll")};
+        var tests = new List<TestCase>() { new("test1", new Uri(path), "source1.dll"),
+            new("test2", new Uri(path), "source2.dll"),
+            new("test3", new Uri(path), "source1.dll")};
 
         var sources = TestSourcesUtility.GetSources(tests);
         Assert.AreEqual(2, sources.Count());
@@ -81,7 +81,7 @@ public class TestSourcesUtilityTests
     [TestMethod]
     public void GetDefaultCodeBasePathShouldReturnDefaultDirectoryPathForTestCaseList()
     {
-        var tests = new List<TestCase>() { new TestCase("test1", new Uri(Path.Combine(Temp, "d")), Path.Combine(Temp, "folder1", "source1.dll")) };
+        var tests = new List<TestCase>() { new("test1", new Uri(Path.Combine(Temp, "d")), Path.Combine(Temp, "folder1", "source1.dll")) };
 
         var defaultCodeBase = TestSourcesUtility.GetDefaultCodebasePath(tests);
         Assert.AreEqual(Path.Combine(Temp, "folder1"), defaultCodeBase);

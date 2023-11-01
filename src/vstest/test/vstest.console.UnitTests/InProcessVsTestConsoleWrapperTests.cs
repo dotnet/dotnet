@@ -42,16 +42,16 @@ public class InProcessVsTestConsoleWrapperTests
     private readonly Mock<ITestPlatformEventSource> _mockEventSource;
 
     private readonly IList<string> _testSources = new List<String>() { "test1", "test2" };
-    private readonly IList<TestCase> _testCases = new List<TestCase>() { new TestCase(), new TestCase() };
+    private readonly IList<TestCase> _testCases = new List<TestCase>() { new(), new() };
     private readonly IList<AttachmentSet> _attachmentSets = new List<AttachmentSet>()
     {
-        new AttachmentSet(new Uri("datacollector://AttachmentSetDataCollector1"), "AttachmentSet1"),
-        new AttachmentSet(new Uri("datacollector://AttachmentSetDataCollector2"), "AttachmentSet2"),
+        new(new Uri("datacollector://AttachmentSetDataCollector1"), "AttachmentSet1"),
+        new(new Uri("datacollector://AttachmentSetDataCollector2"), "AttachmentSet2"),
     };
     private readonly IList<InvokedDataCollector> _invokedDataCollectors = new List<InvokedDataCollector>()
     {
-        new InvokedDataCollector(new Uri("datacollector://InvokedDataCollector1"), "InvokedDataCollector1", "DummyAssemblyName1", "DummyFilePath1", true),
-        new InvokedDataCollector(new Uri("datacollector://InvokedDataCollector2"), "InvokedDataCollector2", "DummyAssemblyName2", "DummyFilePath2", false),
+        new(new Uri("datacollector://InvokedDataCollector1"), "InvokedDataCollector1", "DummyAssemblyName1", "DummyFilePath1", true),
+        new(new Uri("datacollector://InvokedDataCollector2"), "InvokedDataCollector2", "DummyAssemblyName2", "DummyFilePath2", false),
     };
 
     private readonly string _runSettings = "dummy runsettings";

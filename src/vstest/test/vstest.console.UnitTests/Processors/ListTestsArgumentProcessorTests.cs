@@ -265,8 +265,8 @@ public class ListTestsArgumentProcessorTests
         var mockTestPlatform = new Mock<ITestPlatform>();
         var list = new List<TestCase>
         {
-            new TestCase("Test1", new Uri("http://FooTestUri1"), "Source1"),
-            new TestCase("Test2", new Uri("http://FooTestUri2"), "Source2")
+            new("Test1", new Uri("http://FooTestUri1"), "Source1"),
+            new("Test2", new Uri("http://FooTestUri2"), "Source2")
         };
         mockDiscoveryRequest.Setup(dr => dr.DiscoverAsync()).Raises(dr => dr.OnDiscoveredTests += null, new DiscoveredTestsEventArgs(list));
 

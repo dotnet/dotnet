@@ -179,7 +179,7 @@ public class TestPlatformTests
                      </RunConfiguration>
                 </RunSettings>";
 
-        var testRunCriteria = new TestRunCriteria(new List<TestCase> { new TestCase("dll1.class1.test1", new Uri("hello://x/"), $"xyz{Path.DirectorySeparatorChar}1.dll") }, 10, false, settingsXml);
+        var testRunCriteria = new TestRunCriteria(new List<TestCase> { new("dll1.class1.test1", new Uri("hello://x/"), $"xyz{Path.DirectorySeparatorChar}1.dll") }, 10, false, settingsXml);
 
         _testEngine.Setup(te => te.GetExecutionManager(_mockRequestData.Object, It.IsAny<TestRunCriteria>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>())).Returns(_executionManager.Object);
         _testEngine.Setup(te => te.GetExtensionManager()).Returns(_extensionManager.Object);
@@ -208,7 +208,7 @@ public class TestPlatformTests
                      </RunConfiguration>
                 </RunSettings>";
 
-        var testRunCriteria = new TestRunCriteria(new List<TestCase> { new TestCase("dll1.class1.test1", new Uri("hello://x/"), $"xyz{Path.DirectorySeparatorChar}1.dll") }, 10, false, settingsXml);
+        var testRunCriteria = new TestRunCriteria(new List<TestCase> { new("dll1.class1.test1", new Uri("hello://x/"), $"xyz{Path.DirectorySeparatorChar}1.dll") }, 10, false, settingsXml);
         _hostManager.Setup(hm => hm.GetTestSources(It.IsAny<IEnumerable<string>>()))
             .Returns(new List<string> { $"xyz{Path.DirectorySeparatorChar}1.dll" });
 

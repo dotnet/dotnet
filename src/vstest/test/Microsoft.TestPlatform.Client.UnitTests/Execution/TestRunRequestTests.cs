@@ -238,7 +238,7 @@ public class TestRunRequestTests
 
         var testResults = new List<ObjectModel.TestResult>
         {
-            new ObjectModel.TestResult(
+            new(
                 new TestCase(
                     "A.C.M",
                     new Uri("executor://dummy"),
@@ -246,7 +246,7 @@ public class TestRunRequestTests
         };
         var activeTestCases = new List<TestCase>
         {
-            new TestCase(
+            new(
                 "A.C.M2",
                 new Uri("executor://dummy"),
                 "A")
@@ -358,7 +358,7 @@ public class TestRunRequestTests
 
         var testResults = new List<ObjectModel.TestResult>
         {
-            new ObjectModel.TestResult(
+            new(
                 new TestCase(
                     "A.C.M",
                     new Uri("executor://dummy"),
@@ -366,7 +366,7 @@ public class TestRunRequestTests
         };
         var activeTestCases = new List<TestCase>
         {
-            new TestCase(
+            new(
                 "A.C.M2",
                 new Uri("executor://dummy"),
                 "A")
@@ -401,7 +401,7 @@ public class TestRunRequestTests
 
         var testResults = new List<ObjectModel.TestResult>
         {
-            new ObjectModel.TestResult(
+            new(
                 new TestCase(
                     "A.C.M",
                     new Uri("executor://dummy"),
@@ -409,7 +409,7 @@ public class TestRunRequestTests
         };
         var activeTestCases = new List<TestCase>
         {
-            new TestCase(
+            new(
                 "A.C.M2",
                 new Uri("executor://dummy"),
                 "A")
@@ -428,7 +428,7 @@ public class TestRunRequestTests
 
         var testResults = new List<ObjectModel.TestResult>
         {
-            new ObjectModel.TestResult(
+            new(
                 new TestCase(
                     "A.C.M",
                     new Uri("executor://dummy"),
@@ -436,7 +436,7 @@ public class TestRunRequestTests
         };
         var activeTestCases = new List<TestCase>
         {
-            new TestCase(
+            new(
                 "A.C.M2",
                 new Uri("executor://dummy"),
                 "A")
@@ -533,7 +533,7 @@ public class TestRunRequestTests
         bool attachmentsFound = false;
         _testRunRequest.OnRunCompletion += (s, e) => attachmentsFound = e.AttachmentSets != null && e.AttachmentSets.Count == 1;
 
-        Collection<AttachmentSet> attachmentSets = new(new List<AttachmentSet> { new AttachmentSet(new Uri("datacollector://attachment"), "datacollectorAttachment") });
+        Collection<AttachmentSet> attachmentSets = new(new List<AttachmentSet> { new(new Uri("datacollector://attachment"), "datacollectorAttachment") });
 
         _testRunRequest.ExecuteAsync();
         var testRunCompleteEventsArgs = new TestRunCompleteEventArgs(

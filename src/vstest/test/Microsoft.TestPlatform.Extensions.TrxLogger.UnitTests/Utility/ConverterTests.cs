@@ -173,7 +173,7 @@ public class ConverterTests
 
         var attachmentSets = new List<AttachmentSet>
         {
-            new AttachmentSet(new Uri("xyz://microsoft/random/2.0"), "XPlat test run")
+            new(new Uri("xyz://microsoft/random/2.0"), "XPlat test run")
         };
 
         var testRun = new TestRun(Guid.NewGuid());
@@ -229,7 +229,7 @@ public class ConverterTests
             new(new Uri(new Uri("file://"), coverageFilePath2), "Description 2");
         attachmentSets = new List<AttachmentSet>
         {
-            new AttachmentSet(new Uri("datacollector://microsoft/CodeCoverage/2.0"), "Code Coverage")
+            new(new Uri("datacollector://microsoft/CodeCoverage/2.0"), "Code Coverage")
         };
 
         testRun = new TestRun(Guid.NewGuid());

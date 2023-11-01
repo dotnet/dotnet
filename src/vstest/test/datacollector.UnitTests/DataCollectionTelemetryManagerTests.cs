@@ -35,8 +35,8 @@ public class DataCollectionTelemetryManagerTests
         var evnVariablesMock = dataCollectorMock.As<ITestExecutionEnvironmentSpecifier>();
         evnVariablesMock.Setup(a => a.GetTestExecutionEnvironmentVariables()).Returns(new KeyValuePair<string, string>[]
         {
-            new KeyValuePair<string, string>("MicrosoftInstrumentationEngine_ConfigPath32_VanguardInstrumentationProfiler", "path1"),
-            new KeyValuePair<string, string>("MicrosoftInstrumentationEngine_ConfigPath64_VanguardInstrumentationProfiler", "path2")
+            new("MicrosoftInstrumentationEngine_ConfigPath32_VanguardInstrumentationProfiler", "path1"),
+            new("MicrosoftInstrumentationEngine_ConfigPath64_VanguardInstrumentationProfiler", "path2")
         });
 
         _dataCollectorInformation = new DataCollectorInformation(

@@ -12,7 +12,7 @@ namespace NuGetClone.Frameworks
     internal class DefaultPortableFrameworkMappings : IPortableFrameworkMappings
     {
 
-        private static readonly Lazy<KeyValuePair<int, NuGetFramework[]>[]> ProfileFrameworksLazy = new Lazy<KeyValuePair<int, NuGetFramework[]>[]>(() =>
+        private static readonly Lazy<KeyValuePair<int, NuGetFramework[]>[]> ProfileFrameworksLazy = new(() =>
         {
             var net4 = FrameworkConstants.CommonFrameworks.Net4;
             var net403 = FrameworkConstants.CommonFrameworks.Net403;
@@ -105,7 +105,7 @@ namespace NuGetClone.Frameworks
                 5, 6, 7, 14, 19, 24, 37, 42, 44, 47, 49, 78, 92, 102, 111, 136, 147, 151, 158, 225, 255, 259, 328, 336, 344
         };
 
-        private static readonly Lazy<List<KeyValuePair<int, NuGetFramework[]>>> ProfileOptionalFrameworksLazy = new Lazy<List<KeyValuePair<int, NuGetFramework[]>>>(() =>
+        private static readonly Lazy<List<KeyValuePair<int, NuGetFramework[]>>> ProfileOptionalFrameworksLazy = new(() =>
         {
             var monoandroid = new NuGetFramework(FrameworkConstants.FrameworkIdentifiers.MonoAndroid, new Version(0, 0));
             var monotouch = new NuGetFramework(FrameworkConstants.FrameworkIdentifiers.MonoTouch, new Version(0, 0));
@@ -133,7 +133,7 @@ namespace NuGetClone.Frameworks
             }
         }
 
-        private static readonly Lazy<KeyValuePair<int, FrameworkRange>[]> CompatibilityMappingsLazy = new Lazy<KeyValuePair<int, FrameworkRange>[]>(() =>
+        private static readonly Lazy<KeyValuePair<int, FrameworkRange>[]> CompatibilityMappingsLazy = new(() =>
         {
             return new[]
             {
@@ -170,7 +170,7 @@ namespace NuGetClone.Frameworks
             return new KeyValuePair<int, FrameworkRange>(profileNumber, range);
         }
 
-        private static readonly Lazy<IPortableFrameworkMappings> InstanceLazy = new Lazy<IPortableFrameworkMappings>(() => new DefaultPortableFrameworkMappings());
+        private static readonly Lazy<IPortableFrameworkMappings> InstanceLazy = new(() => new DefaultPortableFrameworkMappings());
 
         /// <summary>
         /// Static instance of the portable framework mappings

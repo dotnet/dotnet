@@ -214,7 +214,7 @@ public class TestLoggerManagerTests
                 null,
                 new List<ObjectModel.TestResult>()
                 {
-                    new ObjectModel.TestResult(
+                    new(
                         new TestCase(
                             "This is a string.",
                             new Uri("some://uri"),
@@ -242,7 +242,7 @@ public class TestLoggerManagerTests
                 null,
                 new List<ObjectModel.TestResult>()
                 {
-                    new ObjectModel.TestResult(
+                    new(
                         new TestCase(
                             "This is a string.",
                             new Uri("some://uri"),

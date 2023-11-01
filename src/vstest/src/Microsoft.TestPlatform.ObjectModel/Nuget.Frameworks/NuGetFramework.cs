@@ -484,7 +484,7 @@ namespace NuGetClone.Frameworks
         /// <summary>
         /// Frameworks that are packages based across all versions.
         /// </summary>
-        private static readonly SortedSet<string> PackagesBased = new SortedSet<string>(
+        private static readonly SortedSet<string> PackagesBased = new(
             new[]
             {
                         FrameworkConstants.FrameworkIdentifiers.DnxCore,

@@ -2,10 +2,10 @@
 <Project>
   <PropertyGroup Label="Version settings">
     <!-- This repo version -->
-    <!-- 
-        Workaround for https://github.com/microsoft/vstest/issues/4544 
-        Use semantic versioning V1 because V2 will produce version like 17.7.0-preview.23280.1+94103c3f and DTAExecutionHost 
-        is trying to parse that version and will consider any version with more than 4 `.` in it as invalid. 
+    <!--
+        Workaround for https://github.com/microsoft/vstest/issues/4544
+        Use semantic versioning V1 because V2 will produce version like 17.7.0-preview.23280.1+94103c3f and DTAExecutionHost
+        is trying to parse that version and will consider any version with more than 4 `.` in it as invalid.
     -->
     <SemanticVersioningV1>true</SemanticVersioningV1>
     <VersionPrefix>17.9.0</VersionPrefix>
@@ -16,8 +16,6 @@
     <UsingToolXliff>true</UsingToolXliff>
     <!-- Opt-in to Arcade tools for building VSIX projects. -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
-    <!-- Use the correct compiler version -->
-    <UsingToolMicrosoftNetCompilers>true</UsingToolMicrosoftNetCompilers>
   </PropertyGroup>
   <PropertyGroup Label="VSTest dependencies">
     <CoverletCoverageVersion>1.2.0</CoverletCoverageVersion>
@@ -30,8 +28,7 @@
     <MicrosoftExtensionsDependencyModelPackageVersion>3.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftFakesVersion>17.4.0-beta.22478.3</MicrosoftFakesVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.9.4-beta.23528.2</MicrosoftInternalCodeCoverageVersion>
-    <MicrosoftNetCompilersToolsetVersion>4.7.0-3.23315.4</MicrosoftNetCompilersToolsetVersion>
+    <MicrosoftInternalCodeCoverageVersion>17.9.4-beta.23531.1</MicrosoftInternalCodeCoverageVersion>
     <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.6.33910.51</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
     <MicrosoftVisualStudioInteropVersion>17.3.32622.426</MicrosoftVisualStudioInteropVersion>

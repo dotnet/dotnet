@@ -80,7 +80,7 @@ public class TestRunCriteriaTests
     {
         var testRunCriteria =
             new TestRunCriteria(
-                new List<TestCase> { new TestCase("A.C.M", new Uri("excutor://dummy"), "s.dll") },
+                new List<TestCase> { new("A.C.M", new Uri("excutor://dummy"), "s.dll") },
                 frequencyOfRunStatsChangeEvent: 10);
 
         Assert.IsNull(testRunCriteria.Sources);
@@ -95,7 +95,7 @@ public class TestRunCriteriaTests
     {
         var testRunCriteria =
             new TestRunCriteria(
-                new List<TestCase> { new TestCase("A.C.M", new Uri("excutor://dummy"), "s.dll") },
+                new List<TestCase> { new("A.C.M", new Uri("excutor://dummy"), "s.dll") },
                 frequencyOfRunStatsChangeEvent: 10);
 
         Assert.IsFalse(testRunCriteria.HasSpecificSources);
@@ -119,7 +119,7 @@ public class TestRunCriteriaTests
     {
         var testRunCriteria =
             new TestRunCriteria(
-                new List<TestCase> { new TestCase("A.C.M", new Uri("excutor://dummy"), "s.dll") },
+                new List<TestCase> { new("A.C.M", new Uri("excutor://dummy"), "s.dll") },
                 frequencyOfRunStatsChangeEvent: 10);
 
         Assert.IsTrue(testRunCriteria.HasSpecificTests);
