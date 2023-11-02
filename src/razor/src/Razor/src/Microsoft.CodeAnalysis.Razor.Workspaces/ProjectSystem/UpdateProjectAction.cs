@@ -33,4 +33,4 @@ internal record ProjectRemovedAction(ProjectKey ProjectKey) : IUpdateProjectActi
 
 internal record HostProjectUpdatedAction(HostProject HostProject) : IUpdateProjectAction;
 
-internal record ProjectWorkspaceStateChanged(ProjectWorkspaceState WorkspaceState) : IUpdateProjectAction;
+internal record ProjectWorkspaceStateChangedAction(ProjectWorkspaceState WorkspaceState) : IUpdateProjectAction;

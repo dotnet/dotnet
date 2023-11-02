@@ -37,13 +37,19 @@ internal sealed class FallbackProjectManager
 
     internal void DynamicFileAdded(ProjectId projectId, ProjectKey razorProjectKey, string projectFilePath, string filePath)
     {
+        var project = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(razorProjectKey);
         if (_fallbackProjectIds.Contains(projectId))
         {
-            // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
-            // are the only way to know about files in the project.
-            AddFallbackDocument(razorProjectKey, filePath, projectFilePath);
+            // The project might have started as a fallback project, but it might have been upgraded by our getting CPS info
+            // about it. In that case, leave the CPS bits to do the work
+            if (project is ProjectSnapshot { HostProject: FallbackHostProject })
+            {
+                // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
+                // are the only way to know about files in the project.
+                AddFallbackDocument(razorProjectKey, filePath, projectFilePath);
+            }
         }
-        else if (_projectSnapshotManagerAccessor.Instance.GetLoadedProject(razorProjectKey) is null)
+        else if (project is null)
         {
             // We have been asked to provide dynamic file info, which means there is a .razor or .cshtml file in the project
             // but for some reason our project system doesn't know about the project. In these cases (often when people don't
@@ -81,7 +87,7 @@ internal sealed class FallbackProjectManager
             return;
         }
 
-        var rootNamespace = project.DefaultNamespace ?? "ASP";
+        var rootNamespace = project.DefaultNamespace;
 
         // We create this as a fallback project so that other parts of the system can reason about them - eg we don't do code
         // generation for closed files for documents in these projects. If these projects become "real", either because capabilities
