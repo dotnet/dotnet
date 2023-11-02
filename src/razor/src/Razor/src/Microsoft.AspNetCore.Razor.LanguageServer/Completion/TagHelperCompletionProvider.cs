@@ -58,28 +58,30 @@ internal class TagHelperCompletionProvider : IRazorCompletionItemProvider
             return ImmutableArray<RazorCompletionItem>.Empty;
         }
 
-        var parent = owner.Parent;
-
-        // When overtyping a self closing tag completion happens on "<c$$ />" and the owner is a "misc attribute content"
-        // so we have to navigate back up to the start tag to provide completion. Need to be careful though as we don't
-        // want element completions for <c $$ /> even though the parent node is the same
-        if (parent is MarkupMiscAttributeContentSyntax { Parent: MarkupStartTagSyntax startTag } &&
-            context.AbsoluteIndex == startTag.Name.Span.End)
+        owner = owner switch
         {
-            parent = startTag;
-        }
+            // This provider is trying to find the nearest Start or End tag. Most of the time, that's a level up, but if the index the user is typing at
+            // is a token of a start or end tag directly, we already have the node we want.
+            MarkupStartTagSyntax or MarkupEndTagSyntax or MarkupTagHelperStartTagSyntax or MarkupTagHelperEndTagSyntax => owner,
+            // When overtyping a self closing tag completion happens on "<c$$ />" and the owner is a "misc attribute content"
+            // so we have to navigate back up to the start tag to provide completion. Need to be careful though as we don't
+            // want element completions for <c $$ /> even though the parent node is the same
+            { Parent: MarkupMiscAttributeContentSyntax { Parent: MarkupStartTagSyntax startTag } } when context.AbsoluteIndex == startTag.Name.Span.End => startTag,
+            // Either the parent is a context we can handle, or it's not and we shouldn't show completions.
+            _ => owner.Parent
+        };
 
-        if (_htmlFactsService.TryGetElementInfo(parent, out var containingTagNameToken, out var attributes) &&
+        if (_htmlFactsService.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes) &&
             containingTagNameToken.Span.IntersectsWith(context.AbsoluteIndex))
         {
             var stringifiedAttributes = _tagHelperFactsService.StringifyAttributes(attributes);
-            var containingElement = parent.Parent;
+            var containingElement = owner.Parent;
             var elementCompletions = GetElementCompletions(containingElement, containingTagNameToken.Content, stringifiedAttributes, context);
             return elementCompletions;
         }
 
         if (_htmlFactsService.TryGetAttributeInfo(
-                parent,
+                owner,
                 out containingTagNameToken,
                 out var prefixLocation,
                 out var selectedAttributeName,
@@ -94,7 +96,7 @@ internal class TagHelperCompletionProvider : IRazorCompletionItemProvider
                 selectedAttributeNameLocation.HasValue &&
                 selectedAttributeNameLocation.Value.Length > 1 &&
                 selectedAttributeNameLocation.Value.Start != context.AbsoluteIndex &&
-                !InOrAtEndOfAttribute(parent, context.AbsoluteIndex))
+                !InOrAtEndOfAttribute(owner, context.AbsoluteIndex))
             {
                 // To align with HTML completion behavior we only want to provide completion items if we're trying to resolve completion at the
                 // beginning of an HTML attribute name or at the end of possible partially written attribute. We do extra checks on prefix locations here in order to rule out malformed cases when the Razor
@@ -110,7 +112,7 @@ internal class TagHelperCompletionProvider : IRazorCompletionItemProvider
 
             var stringifiedAttributes = _tagHelperFactsService.StringifyAttributes(attributes);
 
-            return GetAttributeCompletions(parent, containingTagNameToken.Content, selectedAttributeName, stringifiedAttributes, context.TagHelperDocumentContext, context.Options);
+            return GetAttributeCompletions(owner, containingTagNameToken.Content, selectedAttributeName, stringifiedAttributes, context.TagHelperDocumentContext, context.Options);
 
             static bool InOrAtEndOfAttribute(SyntaxNode attributeSyntax, int absoluteIndex)
             {

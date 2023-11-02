@@ -13,6 +13,6 @@ internal class RazorLanguageQueryParams
     [DataMember(Name = "uri")]
     public required Uri Uri { get; set; }
 
-    [DataMember(Name ="position")]
+    [DataMember(Name = "position")]
     public required Position Position { get; set; }
 }

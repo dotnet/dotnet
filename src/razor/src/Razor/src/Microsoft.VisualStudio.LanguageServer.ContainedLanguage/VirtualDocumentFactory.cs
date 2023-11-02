@@ -44,7 +44,7 @@ public abstract class VirtualDocumentFactory
     /// multiple virtual documents to also have a dynamic number of virtual documents. Only virtual documents owned by the factory should
     /// be refreshed, anything else should be ignored, and added to <paramref name="newVirtualDocuments" /> as-is.
     /// </summary>
-    internal virtual bool TryRefreshVirtualDocuments(LSPDocument document, [NotNullWhen(returnValue:true)] out IReadOnlyList<VirtualDocument>? newVirtualDocuments)
+    internal virtual bool TryRefreshVirtualDocuments(LSPDocument document, [NotNullWhen(returnValue: true)] out IReadOnlyList<VirtualDocument>? newVirtualDocuments)
     {
         newVirtualDocuments = null;
         return false;

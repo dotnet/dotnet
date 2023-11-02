@@ -19,10 +19,10 @@ internal class FallbackRazorConfiguration : RazorConfiguration
         "MVC-1.1",
         new[] { new FallbackRazorExtension("MVC-1.1"), });
 
-   public static readonly RazorConfiguration MVC_2_0 = new FallbackRazorConfiguration(
-        RazorLanguageVersion.Version_2_0,
-        "MVC-2.0",
-        new[] { new FallbackRazorExtension("MVC-2.0"), });
+    public static readonly RazorConfiguration MVC_2_0 = new FallbackRazorConfiguration(
+         RazorLanguageVersion.Version_2_0,
+         "MVC-2.0",
+         new[] { new FallbackRazorExtension("MVC-2.0"), });
 
     public static readonly RazorConfiguration MVC_2_1 = new FallbackRazorConfiguration(
          RazorLanguageVersion.Version_2_1,

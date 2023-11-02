@@ -132,7 +132,7 @@ internal class DefaultImportDocumentManager : ImportDocumentManager
 
         var args = new ImportChangedEventArgs(importTracker.FilePath, changeKind, importTracker.AssociatedDocuments);
         Changed.Invoke(this, args);
-}
+    }
 
     private void FileChangeTracker_Changed(object sender, FileChangeEventArgs args)
     {

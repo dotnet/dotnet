@@ -9,11 +9,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -90,8 +90,7 @@ internal class LegacyRazorCompletionEndpoint : IVSCompletionEndpoint
             _ => CompletionReason.Typing,
         };
         var completionOptions = new RazorCompletionOptions(SnippetsSupported: true);
-        var queryableChange = new SourceChange(hostDocumentIndex, length: 0, newText: string.Empty);
-        var owner = syntaxTree.Root.LocateOwner(queryableChange);
+        var owner = syntaxTree.Root.FindInnermostNode(hostDocumentIndex, includeWhitespace: true, walkMarkersBack: true);
         var completionContext = new RazorCompletionContext(hostDocumentIndex, owner, syntaxTree, tagHelperDocumentContext, reason, completionOptions);
 
         var razorCompletionItems = _completionFactsService.GetCompletionItems(completionContext);

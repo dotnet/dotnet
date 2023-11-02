@@ -281,7 +281,7 @@ internal abstract class TelemetryReporter : ITelemetryReporter
             new("eventscope.languageservername", languageServerName),
             new("eventscope.correlationid", correlationId));
 
-        return BeginBlock("TrackLspRequest", Severity.Normal, 
+        return BeginBlock("TrackLspRequest", Severity.Normal,
             new("eventscope.method", lspMethodName),
             new("eventscope.languageservername", languageServerName),
             new("eventscope.correlationid", correlationId));

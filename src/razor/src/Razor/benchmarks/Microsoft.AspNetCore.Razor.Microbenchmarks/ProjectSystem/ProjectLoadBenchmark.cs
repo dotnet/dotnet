@@ -23,7 +23,7 @@ public class ProjectLoadBenchmark : ProjectSnapshotManagerBenchmarkBase
     {
         SnapshotManager.ProjectAdded(HostProject);
 
-        for (var i= 0; i < Documents.Length; i++)
+        for (var i = 0; i < Documents.Length; i++)
         {
             SnapshotManager.DocumentAdded(HostProject.Key, Documents[i], TextLoaders[i % 4]);
         }

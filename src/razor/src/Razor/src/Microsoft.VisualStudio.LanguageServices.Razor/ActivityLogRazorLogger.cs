@@ -55,7 +55,8 @@ internal class ActivityLogRazorLogger : RazorLogger
         // This is an async void method. Catch all exceptions so it doesn't crash the process.
         try
         {
-            _joinableTaskFactory.Run(async () => {
+            _joinableTaskFactory.Run(async () =>
+            {
                 await _joinableTaskFactory.SwitchToMainThreadAsync();
 
                 var activityLog = GetActivityLog();

@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using Microsoft.CodeAnalysis.Razor.Editor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor.Editor;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 

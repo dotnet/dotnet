@@ -101,44 +101,44 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
             switch (e.Kind)
             {
                 case ProjectChangeKind.DocumentAdded:
-                {
-                    // Don't do any work if the solution is closing
-                    if (e.SolutionIsClosing)
                     {
-                        return;
+                        // Don't do any work if the solution is closing
+                        if (e.SolutionIsClosing)
+                        {
+                            return;
+                        }
+
+                        var key = new DocumentKey(e.ProjectKey, e.DocumentFilePath.AssumeNotNull());
+
+                        // GetOrCreateDocument needs to be run on the UI thread
+                        await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
+
+                        var document = DocumentManager.GetOrCreateDocument(
+                            key, e.ProjectFilePath, e.ProjectKey, _onChangedOnDisk, _onChangedInEditor, _onOpened, _onClosed);
+                        if (document.IsOpenInEditor)
+                        {
+                            _onOpened(document, EventArgs.Empty);
+                        }
+
+                        break;
                     }
-
-                    var key = new DocumentKey(e.ProjectKey, e.DocumentFilePath.AssumeNotNull());
-
-                    // GetOrCreateDocument needs to be run on the UI thread
-                    await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
-
-                    var document = DocumentManager.GetOrCreateDocument(
-                        key, e.ProjectFilePath, e.ProjectKey, _onChangedOnDisk, _onChangedInEditor, _onOpened, _onClosed);
-                    if (document.IsOpenInEditor)
-                    {
-                        _onOpened(document, EventArgs.Empty);
-                    }
-
-                    break;
-                }
 
                 case ProjectChangeKind.DocumentRemoved:
-                {
-                    // Need to run this even if the solution is closing because document dispose cleans up file watchers etc.
-
-                    // TryGetDocument and Dispose need to be run on the UI thread
-                    await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
-
-                    if (DocumentManager.TryGetDocument(
-                        new DocumentKey(e.ProjectKey, e.DocumentFilePath.AssumeNotNull()), out var document))
                     {
-                        // This class 'owns' the document entry so it's safe for us to dispose it.
-                        document.Dispose();
-                    }
+                        // Need to run this even if the solution is closing because document dispose cleans up file watchers etc.
 
-                    break;
-                }
+                        // TryGetDocument and Dispose need to be run on the UI thread
+                        await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
+
+                        if (DocumentManager.TryGetDocument(
+                            new DocumentKey(e.ProjectKey, e.DocumentFilePath.AssumeNotNull()), out var document))
+                        {
+                            // This class 'owns' the document entry so it's safe for us to dispose it.
+                            document.Dispose();
+                        }
+
+                        break;
+                    }
             }
         }
         catch (Exception ex)

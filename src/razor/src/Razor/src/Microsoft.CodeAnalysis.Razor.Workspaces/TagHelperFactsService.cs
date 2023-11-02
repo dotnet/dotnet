@@ -105,7 +105,7 @@ internal class TagHelperFactsService : ITagHelperFactsService
         }
 
         var tagHelpers = documentContext?.TagHelpers;
-        if (tagHelpers is not { Count: > 0})
+        if (tagHelpers is not { Count: > 0 })
         {
             return ImmutableArray<TagHelperDescriptor>.Empty;
         }

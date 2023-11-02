@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
@@ -36,7 +35,7 @@ public class ProjectMutationBenchmark : ProjectSnapshotManagerBenchmarkBase
     private DefaultProjectSnapshotManager SnapshotManager { get; set; }
 
     [Benchmark(Description = "Does thread contention add/remove of documents", OperationsPerInvoke = 100)]
-    public async Task ProjectMutation_Mutates100kFiles()
+    public async Task ProjectMutation_Mutates100kFilesAsync()
     {
         await _dispatcher.RunOnDispatcherThreadAsync(() =>
         {

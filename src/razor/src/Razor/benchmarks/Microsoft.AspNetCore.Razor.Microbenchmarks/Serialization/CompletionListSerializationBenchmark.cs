@@ -1,15 +1,15 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
 using System.IO;
 using System.Text;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json;
@@ -83,8 +83,7 @@ public class CompletionListSerializationBenchmark
         var syntaxTree = RazorSyntaxTree.Parse(sourceDocument);
         var tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: string.Empty, CommonResources.LegacyTagHelpers);
 
-        var queryableChange = new SourceChange(queryIndex, length: 0, newText: string.Empty);
-        var owner = syntaxTree.Root.LocateOwner(queryableChange);
+        var owner = syntaxTree.Root.FindInnermostNode(queryIndex, includeWhitespace: true, walkMarkersBack: true);
         var context = new RazorCompletionContext(queryIndex, owner, syntaxTree, tagHelperDocumentContext);
 
         var razorCompletionItems = componentCompletionProvider.GetCompletionItems(context);

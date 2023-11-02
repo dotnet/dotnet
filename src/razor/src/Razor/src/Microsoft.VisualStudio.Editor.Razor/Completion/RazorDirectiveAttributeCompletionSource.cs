@@ -7,11 +7,11 @@ using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.VisualStudio.Core.Imaging;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Language.Intellisense.AsyncCompletion;
@@ -74,8 +74,7 @@ internal class RazorDirectiveAttributeCompletionSource : IAsyncCompletionSource
             var syntaxTree = codeDocument.GetSyntaxTree();
             var tagHelperDocumentContext = codeDocument.GetTagHelperContext();
             var absoluteIndex = triggerLocation.Position;
-            var queryableChange = new SourceChange(absoluteIndex, length: 0, newText: string.Empty);
-            var owner = syntaxTree.Root.LocateOwner(queryableChange);
+            var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex, includeWhitespace: true, walkMarkersBack: true);
             var razorCompletionContext = new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperDocumentContext);
             var razorCompletionItems = _completionFactsService.GetCompletionItems(razorCompletionContext);
 

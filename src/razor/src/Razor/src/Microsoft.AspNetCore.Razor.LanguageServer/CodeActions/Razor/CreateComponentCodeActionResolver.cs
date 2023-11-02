@@ -62,12 +62,12 @@ internal sealed class CreateComponentCodeActionResolver : IRazorCodeActionResolv
 
         // VS Code in Windows expects path to start with '/'
         var updatedPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !actionParams.Path.StartsWith("/")
-			? '/' + actionParams.Path
-			: actionParams.Path;
+            ? '/' + actionParams.Path
+            : actionParams.Path;
         var newComponentUri = new UriBuilder()
         {
             Scheme = Uri.UriSchemeFile,
-			Path = updatedPath,
+            Path = updatedPath,
             Host = string.Empty,
         }.Uri;
 

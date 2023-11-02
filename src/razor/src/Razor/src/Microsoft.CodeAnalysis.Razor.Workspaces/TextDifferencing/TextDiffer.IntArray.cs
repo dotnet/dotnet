@@ -1,4 +1,4 @@
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
 using System.Buffers;

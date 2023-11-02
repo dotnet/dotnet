@@ -203,7 +203,7 @@ internal class VisualStudioEditorDocumentManager : EditorDocumentManagerBase
             // `Remove` can correctly handle the case when the incoming value is null without any exceptions.
             // The method is just not properly annotated for it,
             // so we can suppress the warning here
-            filePaths.Remove(exceptFilePath!); 
+            filePaths.Remove(exceptFilePath!);
 
             foreach (var filePath in filePaths)
             {

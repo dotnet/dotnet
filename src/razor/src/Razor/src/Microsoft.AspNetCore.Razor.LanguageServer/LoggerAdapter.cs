@@ -28,7 +28,7 @@ internal class LoggerAdapter : IRazorLogger
 
     public LoggerAdapter(ILogger logger, ITelemetryReporter? telemetryReporter = null, TraceSource? traceSource = null)
     {
-        _loggers =  ImmutableArray.Create(logger);
+        _loggers = ImmutableArray.Create(logger);
         _telemetryReporter = telemetryReporter;
         _traceSource = traceSource;
     }
