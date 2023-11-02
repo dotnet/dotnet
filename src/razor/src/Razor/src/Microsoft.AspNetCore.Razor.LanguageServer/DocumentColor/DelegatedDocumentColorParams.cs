@@ -10,5 +10,5 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentColor;
 internal class DelegatedDocumentColorParams : DocumentColorParams
 {
     [DataMember(Name = "_razor_hostDocumentVersion")]
-    public int HostDocumentVersion { get; set;}
+    public int HostDocumentVersion { get; set; }
 }

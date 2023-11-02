@@ -16,12 +16,12 @@ internal class RazorFileSystemWatcher : FileSystemWatcher
     // https://github.com/dotnet/aspnetcore-tooling/blob/488cf6e/src/Razor/src/Microsoft.AspNetCore.Razor.LanguageServer/ProjectSystem/DefaultRazorProjectService.cs#L328
     // Consequently, files are being discarded into the MISC project and subsequently re-generated
     public RazorFileSystemWatcher(string path)
-        : base(path.TrimEnd('/','\\'))
+        : base(path.TrimEnd('/', '\\'))
     {
     }
 
     public RazorFileSystemWatcher(string path, string filter)
-        : base(path.TrimEnd('/','\\'), filter)
+        : base(path.TrimEnd('/', '\\'), filter)
     {
     }
 }

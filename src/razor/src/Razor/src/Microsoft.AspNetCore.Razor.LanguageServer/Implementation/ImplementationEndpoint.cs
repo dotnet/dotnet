@@ -40,7 +40,7 @@ internal sealed class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<T
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        serverCapabilities.ImplementationProvider= new ImplementationOptions();
+        serverCapabilities.ImplementationProvider = new ImplementationOptions();
     }
 
     protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(TextDocumentPositionParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)

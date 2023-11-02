@@ -71,7 +71,7 @@ internal class DefaultLSPDocumentFactory : LSPDocumentFactory
 
         return result;
     }
-        
+
     private IReadOnlyList<VirtualDocument> CreateVirtualDocuments(ITextBuffer hostDocumentBuffer)
     {
         var virtualDocuments = new List<VirtualDocument>();

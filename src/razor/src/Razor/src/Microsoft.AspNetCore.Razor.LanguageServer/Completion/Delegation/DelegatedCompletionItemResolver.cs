@@ -57,7 +57,7 @@ internal class DelegatedCompletionItemResolver : CompletionItemResolver
         else
         {
             item.Data = associatedDelegatedCompletion.Data ?? resolutionContext.OriginalCompletionListData;
-        }        
+        }
 
         var delegatedParams = resolutionContext.OriginalRequestParams;
         var delegatedResolveParams = new DelegatedCompletionItemResolveParams(

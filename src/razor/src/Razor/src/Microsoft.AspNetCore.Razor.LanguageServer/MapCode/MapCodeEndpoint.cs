@@ -328,7 +328,8 @@ internal sealed class MapCodeEndpoint : IRazorDocumentlessRequestHandler<LSP.Map
                 CustomMessageNames.RazorMapCodeEndpoint,
                 delegatedRequest,
                 cancellationToken).ConfigureAwait(false);
-        } catch
+        }
+        catch
         {
             // C# hasn't implemented + merged their C# code mapper yet.
             return false;

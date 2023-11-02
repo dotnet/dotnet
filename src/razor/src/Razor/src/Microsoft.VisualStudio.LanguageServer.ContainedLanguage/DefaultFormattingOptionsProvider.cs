@@ -30,7 +30,7 @@ internal class DefaultFormattingOptionsProvider : FormattingOptionsProvider
         {
             return null;
         }
-        
+
         _indentationManagerService.GetIndentation(
             documentSnapshot.Snapshot.TextBuffer,
             explicitFormat: false,

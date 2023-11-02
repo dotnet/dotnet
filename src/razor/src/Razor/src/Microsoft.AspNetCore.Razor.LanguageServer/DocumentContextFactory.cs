@@ -19,7 +19,7 @@ internal abstract class DocumentContextFactory
         => TryCreateCore(documentUri, projectContext, versioned: false);
 
     public VersionedDocumentContext? TryCreateForOpenDocument(Uri documentUri)
-        => (VersionedDocumentContext?) TryCreateCore(documentUri, projectContext: null, versioned: true);
+        => (VersionedDocumentContext?)TryCreateCore(documentUri, projectContext: null, versioned: true);
 
     public VersionedDocumentContext? TryCreateForOpenDocument(TextDocumentIdentifier documentIdentifier)
         => (VersionedDocumentContext?)TryCreateCore(documentIdentifier.Uri, documentIdentifier.GetProjectContext(), versioned: true);

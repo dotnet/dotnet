@@ -133,7 +133,7 @@ internal class GenerateMethodCodeActionResolver : IRazorCodeActionResolver
         };
 
         var delegatedParams = new DelegatedSimplifyMethodParams(
-            new TextDocumentIdentifierAndVersion(new TextDocumentIdentifier() { Uri = codeBehindUri}, 1),
+            new TextDocumentIdentifierAndVersion(new TextDocumentIdentifier() { Uri = codeBehindUri }, 1),
             RequiresVirtualDocument: false,
             edit);
 

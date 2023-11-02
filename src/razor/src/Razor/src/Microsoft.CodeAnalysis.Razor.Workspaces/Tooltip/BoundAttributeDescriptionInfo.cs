@@ -88,7 +88,7 @@ internal record BoundAttributeDescriptionInfo(string ReturnTypeName, string Type
         }
 
         // Strip off the trailing '.'
-        if (displayNameSpan is [ .. var start, '.'])
+        if (displayNameSpan is [.. var start, '.'])
         {
             displayNameSpan = start;
         }

@@ -56,65 +56,65 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
         switch (associatedRazorCompletion.Kind)
         {
             case RazorCompletionItemKind.Directive:
-            {
-                var descriptionInfo = associatedRazorCompletion.GetDirectiveCompletionDescription();
-                if (descriptionInfo is not null)
                 {
-                    completionItem.Documentation = descriptionInfo.Description;
-                }
+                    var descriptionInfo = associatedRazorCompletion.GetDirectiveCompletionDescription();
+                    if (descriptionInfo is not null)
+                    {
+                        completionItem.Documentation = descriptionInfo.Description;
+                    }
 
-                break;
-            }
+                    break;
+                }
             case RazorCompletionItemKind.MarkupTransition:
-            {
-                var descriptionInfo = associatedRazorCompletion.GetMarkupTransitionCompletionDescription();
-                if (descriptionInfo is not null)
                 {
-                    completionItem.Documentation = descriptionInfo.Description;
-                }
+                    var descriptionInfo = associatedRazorCompletion.GetMarkupTransitionCompletionDescription();
+                    if (descriptionInfo is not null)
+                    {
+                        completionItem.Documentation = descriptionInfo.Description;
+                    }
 
-                break;
-            }
+                    break;
+                }
             case RazorCompletionItemKind.DirectiveAttribute:
             case RazorCompletionItemKind.DirectiveAttributeParameter:
             case RazorCompletionItemKind.TagHelperAttribute:
-            {
-                var descriptionInfo = associatedRazorCompletion.GetAttributeCompletionDescription();
-                if (descriptionInfo == null)
                 {
+                    var descriptionInfo = associatedRazorCompletion.GetAttributeCompletionDescription();
+                    if (descriptionInfo == null)
+                    {
+                        break;
+                    }
+
+                    if (useDescriptionProperty)
+                    {
+                        _vsLspTagHelperTooltipFactory.TryCreateTooltip(descriptionInfo, out tagHelperClassifiedTextTooltip);
+                    }
+                    else
+                    {
+                        _lspTagHelperTooltipFactory.TryCreateTooltip(descriptionInfo, documentationKind, out tagHelperMarkupTooltip);
+                    }
+
                     break;
                 }
-
-                if (useDescriptionProperty)
-                {
-                    _vsLspTagHelperTooltipFactory.TryCreateTooltip(descriptionInfo, out tagHelperClassifiedTextTooltip);
-                }
-                else
-                {
-                    _lspTagHelperTooltipFactory.TryCreateTooltip(descriptionInfo, documentationKind, out tagHelperMarkupTooltip);
-                }
-
-                break;
-            }
             case RazorCompletionItemKind.TagHelperElement:
-            {
-                var descriptionInfo = associatedRazorCompletion.GetTagHelperElementDescriptionInfo();
-                if (descriptionInfo == null)
                 {
+                    var descriptionInfo = associatedRazorCompletion.GetTagHelperElementDescriptionInfo();
+                    if (descriptionInfo == null)
+                    {
+                        break;
+                    }
+
+                    if (useDescriptionProperty)
+                    {
+                        _vsLspTagHelperTooltipFactory.TryCreateTooltip(razorCompletionResolveContext.FilePath, descriptionInfo, out tagHelperClassifiedTextTooltip);
+                    }
+                    else
+                    {
+                        _lspTagHelperTooltipFactory.TryCreateTooltip(razorCompletionResolveContext.FilePath, descriptionInfo, documentationKind, out tagHelperMarkupTooltip);
+                    }
+
                     break;
                 }
-
-                if (useDescriptionProperty)
-                {
-                    _vsLspTagHelperTooltipFactory.TryCreateTooltip(razorCompletionResolveContext.FilePath, descriptionInfo, out tagHelperClassifiedTextTooltip);
-                }
-                else
-                {
-                    _lspTagHelperTooltipFactory.TryCreateTooltip(razorCompletionResolveContext.FilePath, descriptionInfo, documentationKind, out tagHelperMarkupTooltip);
-                }
-
-                break;
-            }
         }
 
         if (tagHelperMarkupTooltip != null)

@@ -270,7 +270,15 @@ internal static class RazorSyntaxNodeExtensions
         }
     }
 
-    public static SyntaxNode? FindInnermostNode(this SyntaxNode node, int index, bool includeWhitespace = false)
+    /// <summary>
+    /// Finds the innermost SyntaxNode for a given location in source, within a given node.
+    /// </summary>
+    /// <param name="node">The parent node to search inside.</param>
+    /// <param name="index">The location to find the innermost node at.</param>
+    /// <param name="includeWhitespace">Whether to include whitespace in the search.</param>
+    /// <param name="walkMarkersBack">When true, if there are multiple <see cref="SyntaxKind.Marker"/> tokens in a single location, return the parent node of the
+    /// first one in the tree.</param>
+    public static SyntaxNode? FindInnermostNode(this SyntaxNode node, int index, bool includeWhitespace = false, bool walkMarkersBack = true)
     {
         var token = node.FindToken(index, includeWhitespace);
 
@@ -282,7 +290,24 @@ internal static class RazorSyntaxNodeExtensions
         // of the EOF token)
         if (token.Kind == SyntaxKind.EndOfFile && node.Span.Contains(index - 1))
         {
-            token = node.FindToken(index - 1, includeWhitespace);
+            token = token.GetPreviousToken(includeWhitespace);
+        }
+
+        var foundPosition = token.Position;
+
+        if (walkMarkersBack && token.Kind == SyntaxKind.Marker)
+        {
+            while (true)
+            {
+                var previousToken = token.GetPreviousToken(includeWhitespace);
+
+                if (previousToken.Kind != SyntaxKind.Marker || previousToken.Position != foundPosition)
+                {
+                    break;
+                }
+
+                token = previousToken;
+            }
         }
 
         return token.Parent;
