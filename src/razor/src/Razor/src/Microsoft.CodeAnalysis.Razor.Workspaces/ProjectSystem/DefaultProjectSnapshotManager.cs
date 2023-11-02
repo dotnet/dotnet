@@ -57,7 +57,7 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
                 }
             }
 
-            foreach (var trigger in triggers) 
+            foreach (var trigger in triggers)
             {
                 if (trigger is not IPriorityProjectSnapshotChangeTrigger)
                 {
@@ -310,7 +310,7 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
         if (TryChangeEntry_UsesLock(
             projectKey,
             documentFilePath: null,
-            new ProjectWorkspaceStateChanged(projectWorkspaceState),
+            new ProjectWorkspaceStateChangedAction(projectWorkspaceState),
             out var oldSnapshot,
             out var newSnapshot))
         {
@@ -590,8 +590,8 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
             case ProjectRemovedAction:
                 return null;
 
-            case ProjectWorkspaceStateChanged worskapceStateChangedAction:
-                return new Entry(originalEntry.State.WithProjectWorkspaceState(worskapceStateChangedAction.WorkspaceState));
+            case ProjectWorkspaceStateChangedAction workspaceStateChangedAction:
+                return new Entry(originalEntry.State.WithProjectWorkspaceState(workspaceStateChangedAction.WorkspaceState));
 
             case HostProjectUpdatedAction hostProjectUpdatedAction:
                 return new Entry(originalEntry.State.WithHostProject(hostProjectUpdatedAction.HostProject));

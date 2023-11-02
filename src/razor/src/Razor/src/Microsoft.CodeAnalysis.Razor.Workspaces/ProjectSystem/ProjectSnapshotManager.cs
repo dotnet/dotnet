@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Host;
@@ -17,7 +15,7 @@ internal abstract class ProjectSnapshotManager : ILanguageService
 
     public abstract bool IsDocumentOpen(string documentFilePath);
 
-    public abstract IProjectSnapshot GetLoadedProject(ProjectKey projectKey);
+    public abstract IProjectSnapshot? GetLoadedProject(ProjectKey projectKey);
 
     public abstract ImmutableArray<ProjectKey> GetAllProjectKeys(string projectFileName);
 }

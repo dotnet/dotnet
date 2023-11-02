@@ -526,6 +526,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             {
                 return true;
             }
+
             return owner.AncestorsAndSelf().Any(n => n is CSharpImplicitExpressionSyntax);
         }
 

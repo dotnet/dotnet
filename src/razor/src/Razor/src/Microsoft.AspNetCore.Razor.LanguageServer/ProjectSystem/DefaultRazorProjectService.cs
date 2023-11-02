@@ -270,7 +270,7 @@ internal class DefaultRazorProjectService : RazorProjectService
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
-        var project = (ProjectSnapshot)_projectSnapshotManagerAccessor.Instance.GetLoadedProject(projectKey);
+        var project = (ProjectSnapshot?)_projectSnapshotManagerAccessor.Instance.GetLoadedProject(projectKey);
 
         if (project is null)
         {
@@ -323,7 +323,7 @@ internal class DefaultRazorProjectService : RazorProjectService
     {
         _logger.LogDebug("UpdateProjectDocuments for {projectKey} with {documentCount} documents.", projectKey, documents.Length);
 
-        var project = (ProjectSnapshot)_projectSnapshotManagerAccessor.Instance.GetLoadedProject(projectKey);
+        var project = (ProjectSnapshot)_projectSnapshotManagerAccessor.Instance.GetLoadedProject(projectKey).AssumeNotNull();
         var currentHostProject = project.HostProject;
         var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(project.FilePath);
         var documentMap = documents.ToDictionary(document => EnsureFullPath(document.FilePath, projectDirectory), FilePathComparer.Instance);
@@ -343,7 +343,7 @@ internal class DefaultRazorProjectService : RazorProjectService
             MoveDocument(documentFilePath, project, miscellaneousProject);
         }
 
-        project = (ProjectSnapshot)_projectSnapshotManagerAccessor.Instance.GetLoadedProject(projectKey);
+        project = (ProjectSnapshot)_projectSnapshotManagerAccessor.Instance.GetLoadedProject(projectKey).AssumeNotNull();
 
         // Update existing documents
         foreach (var documentFilePath in project.DocumentFilePaths)
@@ -379,7 +379,7 @@ internal class DefaultRazorProjectService : RazorProjectService
             _projectSnapshotManagerAccessor.Instance.DocumentAdded(currentHostProject.Key, newHostDocument, remoteTextLoader);
         }
 
-        project = (ProjectSnapshot)_projectSnapshotManagerAccessor.Instance.GetLoadedProject(project.Key);
+        project = (ProjectSnapshot)_projectSnapshotManagerAccessor.Instance.GetLoadedProject(project.Key).AssumeNotNull();
         miscellaneousProject = (ProjectSnapshot)_snapshotResolver.GetMiscellaneousProject();
 
         // Add (or migrate from misc) any new documents

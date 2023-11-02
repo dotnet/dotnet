@@ -69,7 +69,7 @@ public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
         // Arrange
         _projectManager.ProjectAdded(_hostProject_For_2_0);
 
-        var projectSnapshot = _projectManager.GetLoadedProject(_hostProject_For_2_0.Key);
+        var projectSnapshot = _projectManager.GetLoadedProject(_hostProject_For_2_0.Key).AssumeNotNull();
 
         var resolver = new TestResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance)
         {
@@ -94,7 +94,7 @@ public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
         // Arrange
         _projectManager.ProjectAdded(_hostProject_For_NonSerializableConfiguration);
 
-        var projectSnapshot = _projectManager.GetLoadedProject(_hostProject_For_2_0.Key);
+        var projectSnapshot = _projectManager.GetLoadedProject(_hostProject_For_2_0.Key).AssumeNotNull();
 
         var resolver = new TestResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance)
         {
@@ -118,7 +118,7 @@ public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
         // Arrange
         _projectManager.ProjectAdded(_hostProject_For_2_0);
 
-        var projectSnapshot = _projectManager.GetLoadedProject(_hostProject_For_2_0.Key);
+        var projectSnapshot = _projectManager.GetLoadedProject(_hostProject_For_2_0.Key).AssumeNotNull();
 
         var cancellationToken = new CancellationToken(canceled: true);
         var resolver = new TestResolver(_engineFactory, ErrorReporter, _workspace, NoOpTelemetryReporter.Instance)

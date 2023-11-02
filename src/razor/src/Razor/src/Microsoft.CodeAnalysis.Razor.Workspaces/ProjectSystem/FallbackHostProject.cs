@@ -7,7 +7,7 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal class FallbackHostProject : HostProject
 {
-    public FallbackHostProject(string projectFilePath, string intermediateOutputPath, RazorConfiguration razorConfiguration, string rootNamespace, string displayName)
+    public FallbackHostProject(string projectFilePath, string intermediateOutputPath, RazorConfiguration razorConfiguration, string? rootNamespace, string displayName)
         : base(projectFilePath, intermediateOutputPath, razorConfiguration, rootNamespace, displayName)
     {
     }

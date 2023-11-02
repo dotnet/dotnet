@@ -64,7 +64,7 @@ internal class SnapshotResolver : ISnapshotResolver
         if (miscellaneousProject is null)
         {
             _projectSnapshotManagerAccessor.Instance.ProjectAdded(MiscellaneousHostProject);
-            miscellaneousProject = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(MiscellaneousHostProject.Key);
+            miscellaneousProject = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(MiscellaneousHostProject.Key).AssumeNotNull();
         }
 
         return miscellaneousProject;

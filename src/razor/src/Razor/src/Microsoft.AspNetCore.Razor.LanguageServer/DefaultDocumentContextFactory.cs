@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -100,9 +101,21 @@ internal class DefaultDocumentContextFactory : DocumentContextFactory
         }
 
         var project = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(projectContext.ToProjectKey());
-        if (project.GetDocument(filePath) is { } document)
+        if (project?.GetDocument(filePath) is { } document)
         {
             documentSnapshot = document;
+            return true;
+        }
+
+        // Couldn't find the document in a real project. Maybe the language server doesn't yet know about the project
+        // that the IDE is asking us about. In that case, we might have the document in our misc files project, and we'll
+        // move it to the real project when/if we find out about it.
+        var miscellaneousProject = _snapshotResolver.GetMiscellaneousProject();
+        var normalizedDocumentPath = FilePathNormalizer.Normalize(filePath);
+        if (miscellaneousProject.GetDocument(normalizedDocumentPath) is { } miscDocument)
+        {
+            _logger.LogDebug("Found document {document} in the misc files project, but was asked for project context {context}", filePath, projectContext);
+            documentSnapshot = miscDocument;
             return true;
         }
 

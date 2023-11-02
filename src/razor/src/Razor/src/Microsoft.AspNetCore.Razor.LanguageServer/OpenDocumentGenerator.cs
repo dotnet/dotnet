@@ -164,7 +164,7 @@ internal class OpenDocumentGenerator : IProjectSnapshotChangeTrigger, IDisposabl
 
                 void TryEnqueue(IDocumentSnapshot document)
                 {
-                    if (!ProjectManager.IsDocumentOpen(document.FilePath) && !_languageServerFeatureOptions.UpdateBuffersForClosedDocuments)
+                    if (!ProjectManager.IsDocumentOpen(document.FilePath.AssumeNotNull()) && !_languageServerFeatureOptions.UpdateBuffersForClosedDocuments)
                     {
                         return;
                     }
