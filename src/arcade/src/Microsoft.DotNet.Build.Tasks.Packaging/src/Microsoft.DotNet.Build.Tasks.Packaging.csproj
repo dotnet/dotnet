@@ -71,7 +71,7 @@
     </PropertyGroup>
 
      <Error Condition="'$(_runtimeJsonPath)'==''" Text="Could not locate '$(_runtimeJsonPath)'." />
-     
+
      <ItemGroup>
        <None Include="$(_runtimeJsonPath)"
              CopyToOutputDirectory="PreserveNewest"

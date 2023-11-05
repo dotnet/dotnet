@@ -22,7 +22,7 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.DotNet.NuGetRepack.Tests" />
   </ItemGroup>

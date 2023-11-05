@@ -17,7 +17,7 @@
     <PackageReference Include="Microsoft.Build.Tasks.Core" />
     <PackageReference Include="Moq" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Content Include="testassets\**\*" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="$(RepositoryEngineeringDir)common\**\*" LinkBase="testassets\boilerplate\eng\common\" CopyToOutputDirectory="PreserveNewest" />

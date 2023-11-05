@@ -176,11 +176,6 @@ secrets:
     type: text
     parameters:
       description: Also located in dnceng-pipeline-secrets keyvault.
-      
-  dotnetfeedmsrc-private-feed-url:
-    type: text
-    parameters:
-      description: created manually from SAS in the format https://dotnetfeedmsrc.azurewebsites.net/sig/{sig}/se{se}
 
   dotnetfeedmsrc-connection-string:
     type: azure-storage-connection-string
@@ -204,11 +199,6 @@ secrets:
     type: text
     parameters:
       description: Also located in dnceng-pipeline-secrets keyvault.
-
-  dotnetclimsrc-private-feed-url:
-    type: text
-    parameters:
-      description: created manually from SAS in the format https://dotnetclimsrc.azurewebsites.net/sig/{sig}/se{se}
 
   dotnetclimsrc-connection-string:
     type: azure-storage-connection-string
@@ -281,3 +271,15 @@ secrets:
         location: dotnetbuildskeys
       permissions: rl
       container: public-checksums
+
+  #OneLocBuildVariables
+  dn-bot-ceapex-package-r:
+    type: azure-devops-access-token
+    parameters:
+      domainAccountName: dn-bot
+      domainAccountSecret:
+          location: helixkv
+          name: dn-bot-account-redmond
+      name: dn-bot-ceapex-package-r
+      organizations: ceapex
+      scopes: packaging

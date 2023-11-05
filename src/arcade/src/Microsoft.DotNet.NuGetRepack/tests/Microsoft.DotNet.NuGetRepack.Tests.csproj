@@ -28,7 +28,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\TestPackageF.1.0.0-beta.12345.1.nupkg">
       <LogicalName>TestPackageF.1.0.0-beta.12345.1.nupkg</LogicalName>
-    </EmbeddedResource>    
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\TestPackageA.1.0.0-beta-final.nupkg">
       <LogicalName>TestPackageA.1.0.0-beta-final.nupkg</LogicalName>
     </EmbeddedResource>
