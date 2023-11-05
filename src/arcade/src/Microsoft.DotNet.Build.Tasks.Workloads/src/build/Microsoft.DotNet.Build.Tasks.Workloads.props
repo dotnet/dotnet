@@ -7,5 +7,6 @@
   </PropertyGroup>
 
   <UsingTask TaskName="CreateVisualStudioWorkload" AssemblyFile="$(MicrosoftDotNetBuildTasksWorkloadsAssembly)" />
+  <UsingTask TaskName="CreateVisualStudioWorkloadSet" AssemblyFile="$(MicrosoftDotNetBuildTasksWorkloadsAssembly)" />
 
 </Project>

@@ -1043,6 +1043,9 @@ If set to `true` the GetResourceString method is not included in the generated c
 #### `FlagNetStandard1XDependencies` (bool)
 If set to `true` the `FlagNetStandard1xDependencies` target validates that the dependency graph doesn't contain any netstandard1.x packages.
 
+#### `_OverrideArcadeInitializeBuildToolFramework` (string)
+If this environment variable is set, the value will be used to override the default Build Tools Framework version.
+
 <!-- Begin Generated Content: Doc Feedback -->
 <sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CArcadeSdk.md)](https://helix.dot.net/f/p/5?p=Documentation%5CArcadeSdk.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CArcadeSdk.md)</sub>
 <!-- End Generated Content-->

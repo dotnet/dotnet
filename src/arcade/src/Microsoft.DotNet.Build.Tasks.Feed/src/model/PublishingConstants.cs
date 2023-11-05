@@ -736,6 +736,39 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 symbolTargetType: InternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude,
                 flatten: false),
+            
+            // .NET AP 1,
+            new TargetChannelConfig(
+                id: 4122,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>(),
+                targetFeeds: DotNetToolsInternalFeeds,
+                symbolTargetType: InternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude,
+                flatten: false),
+            
+            // .NET AP 2,
+            new TargetChannelConfig(
+                id: 4123,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>(),
+                targetFeeds: DotNetToolsInternalFeeds,
+                symbolTargetType: InternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude,
+                flatten: false),
+
+            // .NET AP 3,
+            new TargetChannelConfig(
+                id: 4124,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>(),
+                targetFeeds: DotNetToolsInternalFeeds,
+                symbolTargetType: InternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude,
+                flatten: false),
 
             // General Testing,
             new TargetChannelConfig(
