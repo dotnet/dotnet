@@ -28,8 +28,6 @@ variables:
 
 # Produce real signed binaries for Internal builds
 - ${{ if eq(variables._RunAsInternal, True) }}:
-  # DotNet-Blob-Feed provides: dotnetfeed-storage-access-key-1
-  - group: DotNet-Blob-Feed
   # Group gives access to $microsoft-symbol-server-pat and $symweb-symbol-server-pat
   - group: DotNet-Symbol-Server-Pats
   # Publish-Build-Assets provides: MaestroAccessToken, BotAccount-dotnet-maestro-bot-PAT
