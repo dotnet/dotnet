@@ -222,13 +222,13 @@
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>39042b4048580366d35a7c1c4f4ce8fc0dbea4b4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.23416.3">
+    <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.23551.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>5d63a226d022fda90cae2c239e882ad253baa758</Sha>
+      <Sha>88b0cbb096999d03068ddc9945465a3f5b6ba5da</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.23416.3">
+    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.23551.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>5d63a226d022fda90cae2c239e882ad253baa758</Sha>
+      <Sha>88b0cbb096999d03068ddc9945465a3f5b6ba5da</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Logging.Console" Version="8.0.0-alpha.1.22557.12">
       <Uri>https://github.com/dotnet/runtime</Uri>
