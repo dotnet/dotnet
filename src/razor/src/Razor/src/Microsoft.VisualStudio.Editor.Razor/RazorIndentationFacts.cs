@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
@@ -33,6 +34,7 @@ internal static class RazorIndentationFacts
         int indentSize,
         int tabSize)
     {
+        Debug.Assert(syntaxTreeSnapshot.TextBuffer.IsLegacyCoreRazorBuffer());
         if (syntaxTree is null)
         {
             throw new ArgumentNullException(nameof(syntaxTree));
@@ -60,7 +62,9 @@ internal static class RazorIndentationFacts
 
         var previousLineEndIndex = GetPreviousLineEndIndex(syntaxTreeSnapshot, line);
         var simulatedChange = new SourceChange(previousLineEndIndex, 0, string.Empty);
+#pragma warning disable CS0618 // Type or member is obsolete, RazorIndentationFacts is only used in legacy scenarios
         var owner = syntaxTree.Root.LocateOwner(simulatedChange);
+#pragma warning restore CS0618 // Type or member is obsolete
         if (owner is null || owner.IsCodeSpanKind())
         {
             // Example,

@@ -31,14 +31,10 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
         _colorCodeBackground = colorCodeBackground;
     }
 
-    public static ImmutableArray<SemanticRange> VisitAllNodes(RazorCodeDocument razorCodeDocument, Range? range, RazorSemanticTokensLegend razorSemanticTokensLegend, bool colorCodeBackground)
+    public static ImmutableArray<SemanticRange> VisitAllNodes(RazorCodeDocument razorCodeDocument, Range range, RazorSemanticTokensLegend razorSemanticTokensLegend, bool colorCodeBackground)
     {
-        TextSpan? rangeAsTextSpan = null;
-        if (range is not null)
-        {
-            var sourceText = razorCodeDocument.GetSourceText();
-            rangeAsTextSpan = range.ToTextSpan(sourceText);
-        }
+        var sourceText = razorCodeDocument.GetSourceText();
+        var rangeAsTextSpan = range.ToTextSpan(sourceText);
 
         using var _ = ArrayBuilderPool<SemanticRange>.GetPooledObject(out var builder);
 
@@ -185,6 +181,41 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
         using (ColorCSharpBackground())
         {
             AddSemanticRange(node.CloseBrace, legend.RazorTransition);
+        }
+    }
+
+    public override void VisitCSharpImplicitExpressionBody(CSharpImplicitExpressionBodySyntax node)
+    {
+        // Generally same as explicit expression, below, but different because the parens might not be there,
+        // and because the compiler isn't nice and doesn't give us OpenParen and CloseParen properties we can
+        // easily use.
+
+        // Matches @(SomeCSharpCode())
+        if (node.CSharpCode.Children is
+            [
+                CSharpExpressionLiteralSyntax { LiteralTokens: [{ Kind: SyntaxKind.LeftParenthesis } openParen] },
+                CSharpExpressionLiteralSyntax body,
+                CSharpExpressionLiteralSyntax { LiteralTokens: [{ Kind: SyntaxKind.RightParenthesis } closeParen] },
+            ])
+        {
+            var legend = _razorSemanticTokensLegend;
+
+            using (ColorCSharpBackground())
+            {
+                AddSemanticRange(openParen, legend.RazorTransition);
+            }
+
+            Visit(body);
+
+            using (ColorCSharpBackground())
+            {
+                AddSemanticRange(closeParen, legend.RazorTransition);
+            }
+        }
+        else
+        {
+            // Matches @SomeCSharpCode()
+            Visit(node.CSharpCode);
         }
     }
 

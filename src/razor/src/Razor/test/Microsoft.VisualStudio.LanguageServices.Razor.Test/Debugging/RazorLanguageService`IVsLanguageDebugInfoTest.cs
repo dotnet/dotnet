@@ -216,7 +216,7 @@ public class RazorLanguageService_IVsLanguageDebugInfoTest : ToolingTestBase
         }
 
         uiThreadOperationExecutor ??= new TestIUIThreadOperationExecutor();
-        editorAdaptersFactory ??= Mock.Of<IVsEditorAdaptersFactoryService>(service => service.GetDataBuffer(It.IsAny<IVsTextBuffer>()) == new TestTextBuffer(new StringTextSnapshot(Environment.NewLine)), MockBehavior.Strict);
+        editorAdaptersFactory ??= Mock.Of<IVsEditorAdaptersFactoryService>(service => service.GetDataBuffer(It.IsAny<IVsTextBuffer>()) == new TestTextBuffer(new StringTextSnapshot(Environment.NewLine), /* contentType */ null), MockBehavior.Strict);
 
         var lspServerActivationTracker = new LspServerActivationTracker();
         lspServerActivationTracker.Activated();

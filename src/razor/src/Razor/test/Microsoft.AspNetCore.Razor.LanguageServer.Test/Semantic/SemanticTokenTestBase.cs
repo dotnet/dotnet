@@ -2,9 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +17,6 @@ using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Roslyn.Test.Utilities;
-using StreamJsonRpc;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -96,7 +94,7 @@ public abstract class SemanticTokenTestBase : TagHelperServiceTestBase
     }
 
     private protected async Task<ProvideSemanticTokensResponse> GetCSharpSemanticTokensResponseAsync(
-        string documentText, Range razorRange, bool isRazorFile, int hostDocumentSyncVersion = 0)
+        string documentText, Range razorRange, bool isRazorFile)
     {
         var codeDocument = CreateCodeDocument(documentText, isRazorFile, DefaultTagHelpers);
         var csharpDocumentUri = new Uri("C:\\TestSolution\\TestProject\\TestDocument.cs");
@@ -105,33 +103,34 @@ public abstract class SemanticTokenTestBase : TagHelperServiceTestBase
         await using var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
             csharpSourceText, csharpDocumentUri, SemanticTokensServerCapabilities, SpanMappingService, DisposalToken);
 
-        var csharpRanges = GetMappedCSharpRanges(codeDocument, razorRange, out var minimalRange);
-        if (minimalRange == null)
+        var csharpRanges = GetMappedCSharpRanges(codeDocument, razorRange);
+        if (csharpRanges == null)
         {
-            return new ProvideSemanticTokensResponse(tokens: Array.Empty<int>(), hostDocumentSyncVersion);
+            return new ProvideSemanticTokensResponse(tokens: Array.Empty<int>(), hostDocumentSyncVersion: 0);
         }
 
-        SemanticTokens? result;
-        try
+        if (UsePreciseSemanticTokenRanges)
         {
-            result = await csharpServer.ExecuteRequestAsync<SemanticTokensRangesParams, SemanticTokens>(
-            "roslyn/semanticTokenRanges",
-            CreateVSSemanticTokensRangesParams(csharpRanges, csharpDocumentUri),
-            DisposalToken);
-        }
-        catch (RemoteMethodNotFoundException)
-        {
-            // The new endpoint is available in version 4.8.0-3.23471.2 or higher of Roslyn packages
-            result = await csharpServer.ExecuteRequestAsync<SemanticTokensRangeParams, SemanticTokens>(
-            Methods.TextDocumentSemanticTokensRangeName,
-            CreateVSSemanticTokensRangeParams(minimalRange, csharpDocumentUri),
-            DisposalToken);
-        }
+            var result = await csharpServer.ExecuteRequestAsync<SemanticTokensRangesParams, SemanticTokens>(
+                "roslyn/semanticTokenRanges",
+                CreateVSSemanticTokensRangesParams(csharpRanges, csharpDocumentUri),
+                DisposalToken);
 
-        return new ProvideSemanticTokensResponse(tokens: result?.Data, hostDocumentSyncVersion);
+            return new ProvideSemanticTokensResponse(tokens: result?.Data, hostDocumentSyncVersion: 0);
+        }
+        else
+        {
+            var range = Assert.Single(csharpRanges);
+            var result = await csharpServer.ExecuteRequestAsync<SemanticTokensRangeParams, SemanticTokens>(
+                "textDocument/semanticTokens/range",
+                CreateVSSemanticTokensRangeParams(range, csharpDocumentUri),
+                DisposalToken);
+
+            return new ProvideSemanticTokensResponse(tokens: result?.Data, hostDocumentSyncVersion: 0);
+        }
     }
 
-    protected Range[] GetMappedCSharpRanges(RazorCodeDocument codeDocument, Range razorRange, out Range? minimalRange)
+    protected Range[]? GetMappedCSharpRanges(RazorCodeDocument codeDocument, Range razorRange)
     {
         var documentMappingService = new RazorDocumentMappingService(
             FilePathService, new TestDocumentContextFactory(), LoggerFactory);
@@ -140,22 +139,21 @@ public abstract class SemanticTokenTestBase : TagHelperServiceTestBase
             if (!RazorSemanticTokensInfoService.TryGetSortedCSharpRanges(codeDocument, razorRange, out var csharpRanges))
             {
                 // No C# in the range.
-                minimalRange = null;
-                return Array.Empty<Range>();
+                return null;
             }
 
-            minimalRange = new Range { Start = csharpRanges[0].Start, End = csharpRanges.Last().End }; ;
             return csharpRanges;
         }
 
-        if (!documentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetCSharpDocument(), razorRange, out minimalRange) &&
-            !RazorSemanticTokensInfoService.TryGetMinimalCSharpRange(codeDocument, razorRange, out minimalRange))
+        Range? range;
+        if (!documentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetCSharpDocument(), razorRange, out range) &&
+            !RazorSemanticTokensInfoService.TryGetMinimalCSharpRange(codeDocument, razorRange, out range))
         {
             // No C# in the range.
-            return Array.Empty<Range>();
+            return null;
         }
 
-        return new Range[] { minimalRange };
+        return [range];
     }
 
     internal static SemanticTokensRangesParams CreateVSSemanticTokensRangesParams(Range[] ranges, Uri uri)
@@ -221,42 +219,5 @@ public abstract class SemanticTokenTestBase : TagHelperServiceTestBase
         }
 
         return builder.ToString();
-    }
-
-    private static int[]? ParseSemanticBaseline(string semanticIntStr)
-    {
-        if (string.IsNullOrEmpty(semanticIntStr))
-        {
-            return null;
-        }
-
-        var tokenTypesList = TestRazorSemanticTokensLegend.Instance.Legend.TokenTypes.ToList();
-        var strArr = semanticIntStr.Split(new string[] { " ", Environment.NewLine }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-        var results = new List<int>();
-        for (var i = 0; i < strArr.Length; i++)
-        {
-            if (int.TryParse(strArr[i], System.Globalization.NumberStyles.Integer, Thread.CurrentThread.CurrentCulture, out var intResult))
-            {
-                results.Add(intResult);
-                continue;
-            }
-
-            // Needed to handle token types with spaces in their names, e.g. C#'s 'local name' type
-            var tokenTypeStr = strArr[i];
-            while (i + 1 < strArr.Length && !int.TryParse(strArr[i + 1], System.Globalization.NumberStyles.Integer, Thread.CurrentThread.CurrentCulture, out _))
-            {
-                tokenTypeStr += $" {strArr[i + 1]}";
-                i++;
-            }
-
-            var tokenIndex = tokenTypesList.IndexOf(tokenTypeStr);
-            if (tokenIndex != -1)
-            {
-                results.Add(tokenIndex);
-                continue;
-            }
-        }
-
-        return results.ToArray();
     }
 }

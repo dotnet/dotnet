@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -226,20 +228,6 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
     }
 
     [Fact]
-    public void ShouldProvideCompletions_ReturnsFalseIfNoOwner()
-    {
-        // Arrange
-        var syntaxTree = CreateSyntaxTree("@");
-        var context = CreateRazorCompletionContext(absoluteIndex: 2, syntaxTree);
-
-        // Act
-        var result = DirectiveCompletionItemProvider.ShouldProvideCompletions(context);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
     public void ShouldProvideCompletions_ReturnsFalseWhenOwnerIsNotExpression()
     {
         // Arrange
@@ -448,8 +436,8 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
     private static RazorCompletionContext CreateRazorCompletionContext(int absoluteIndex, RazorSyntaxTree syntaxTree, CompletionReason reason = CompletionReason.Invoked)
     {
         var tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: string.Empty, Array.Empty<TagHelperDescriptor>());
-        var queryableChange = new SourceChange(absoluteIndex, length: 0, newText: string.Empty);
-        var owner = syntaxTree.Root.LocateOwner(queryableChange);
+        var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex);
+        owner = RazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex, new DefaultHtmlFactsService());
         return new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperDocumentContext, reason);
     }
 
@@ -471,7 +459,6 @@ public class DirectiveCompletionItemProviderTest : ToolingTestBase
             Assert.Equal(item.InsertText, directive.Directive);
             Assert.Equal(directive.Description, completionDescription.Description);
         }
-
 
         Assert.Equal(item.CommitCharacters, commitCharacters ?? DirectiveCompletionItemProvider.SingleLineDirectiveCommitCharacters);
     }

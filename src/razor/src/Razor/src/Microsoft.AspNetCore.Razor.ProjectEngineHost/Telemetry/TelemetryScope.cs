@@ -93,7 +93,7 @@ internal sealed class TelemetryScope : IDisposable
 
     public static TelemetryScope Create(ITelemetryReporter reporter, string name, Severity severity, Property property1, Property property2, Property property3)
     {
-        var array = new Property[3];
+        var array = new Property[4];
         array[0] = property1;
         array[1] = property2;
         array[2] = property3;

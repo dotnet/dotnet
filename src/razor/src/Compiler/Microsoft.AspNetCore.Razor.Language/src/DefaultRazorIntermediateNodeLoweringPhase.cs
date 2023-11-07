@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -1250,24 +1251,24 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             base.VisitMarkupElement(node);
 
             _builder.Pop();
+        }
 
-            static bool LooksLikeAComponentName(DocumentIntermediateNode document, string startTagName)
-            {
-                var category = char.GetUnicodeCategory(startTagName, 0);
+        private static bool LooksLikeAComponentName(DocumentIntermediateNode document, string startTagName)
+        {
+            var category = char.GetUnicodeCategory(startTagName, 0);
 
-                // A markup element which starts with an uppercase character is likely a component.
-                //
-                // In certain cultures, characters are not explicitly Uppercase/Lowercase, hence we must check
-                // the specific UnicodeCategory to see if we may still be able to treat it as a component.
-                //
-                // The goal here is to avoid clashing with any future standard-HTML elements.
-                //
-                // To avoid a breaking change, the support of localized component names (without explicit
-                // Uppercase classification) is behind a `SupportLocalizedComponentNames` feature flag.
-                return category is UnicodeCategory.UppercaseLetter ||
-                    (document.Options.SupportLocalizedComponentNames &&
-                        (category is UnicodeCategory.TitlecaseLetter || category is UnicodeCategory.OtherLetter));
-            }
+            // A markup element which starts with an uppercase character is likely a component.
+            //
+            // In certain cultures, characters are not explicitly Uppercase/Lowercase, hence we must check
+            // the specific UnicodeCategory to see if we may still be able to treat it as a component.
+            //
+            // The goal here is to avoid clashing with any future standard-HTML elements.
+            //
+            // To avoid a breaking change, the support of localized component names (without explicit
+            // Uppercase classification) is behind a `SupportLocalizedComponentNames` feature flag.
+            return category is UnicodeCategory.UppercaseLetter ||
+                (document.Options.SupportLocalizedComponentNames &&
+                    (category is UnicodeCategory.TitlecaseLetter || category is UnicodeCategory.OtherLetter));
         }
 
         public override void VisitMarkupStartTag(MarkupStartTagSyntax node)
@@ -1708,6 +1709,19 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             foreach (var tagHelper in info.BindingResult.Descriptors)
             {
                 tagHelperNode.TagHelpers.Add(tagHelper);
+            }
+
+            if (node.StartTag != null &&
+                // We only want this error during the second phase of the two phase compilation.
+                !_document.Options.SuppressPrimaryMethodBody &&
+                // Don't report this warning for components, only for other tag helpers like @ref, @key, etc.
+                info.BindingResult.IsAttributeMatch)
+            {
+                if (!string.IsNullOrEmpty(tagName) && LooksLikeAComponentName(_document, tagName))
+                {
+                    tagHelperNode.Diagnostics.Add(
+                        ComponentDiagnosticFactory.Create_UnexpectedMarkupElement(tagName, BuildSourceSpanFromNode(node.StartTag)));
+                }
             }
 
             _builder.Push(tagHelperNode);

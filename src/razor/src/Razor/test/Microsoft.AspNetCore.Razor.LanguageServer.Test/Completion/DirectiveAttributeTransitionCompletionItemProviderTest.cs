@@ -5,10 +5,11 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -144,19 +145,6 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     }
 
     [Fact]
-    public void GetCompletionItems_OutsideOfFile_ReturnsEmptyList()
-    {
-        // Arrange
-        var context = CreateContext(absoluteIndex: 50, "<input  />");
-
-        // Act
-        var result = _provider.GetCompletionItems(context);
-
-        // Assert
-        Assert.Empty(result);
-    }
-
-    [Fact]
     public void GetCompletionItems_NonAttribute_ReturnsEmptyList()
     {
         // Arrange
@@ -264,6 +252,19 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     }
 
     [Fact]
+    public void GetCompletionItems_ExistingAttribute_TrailingEdgeOnSpace_ReturnsEmptyList()
+    {
+        // Arrange
+        var context = CreateContext(absoluteIndex: 16, "<input src=\"xyz\"   />");
+
+        // Act
+        var result = _provider.GetCompletionItems(context);
+
+        // Assert
+        Assert.Empty(result);
+    }
+
+    [Fact]
     public void GetCompletionItems_ExistingAttribute_Partial_ReturnsEmptyList()
     {
         // Arrange
@@ -318,8 +319,8 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     private RazorCompletionContext CreateContext(int absoluteIndex, string documentContent, string fileKind = null)
     {
         var syntaxTree = GetSyntaxTree(documentContent, fileKind);
-        var queryableChange = new SourceChange(absoluteIndex, length: 0, newText: string.Empty);
-        var owner = syntaxTree.Root.LocateOwner(queryableChange);
+        var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex, includeWhitespace: true, walkMarkersBack: true);
+        owner = RazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex, new DefaultHtmlFactsService());
         var context = new RazorCompletionContext(absoluteIndex, owner, syntaxTree, _tagHelperDocumentContext);
         return context;
     }

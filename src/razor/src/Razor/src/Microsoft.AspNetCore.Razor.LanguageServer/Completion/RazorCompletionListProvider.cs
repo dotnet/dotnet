@@ -14,30 +14,26 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
-internal class RazorCompletionListProvider
+internal class RazorCompletionListProvider(
+    IRazorCompletionFactsService completionFactsService,
+    HtmlFactsService htmlFactsService,
+    CompletionListCache completionListCache,
+    ILoggerFactory loggerFactory)
 {
-    private readonly IRazorCompletionFactsService _completionFactsService;
-    private readonly CompletionListCache _completionListCache;
-    private readonly ILogger<RazorCompletionListProvider> _logger;
+    private readonly IRazorCompletionFactsService _completionFactsService = completionFactsService;
+    private readonly HtmlFactsService _htmlFactsService = htmlFactsService;
+    private readonly CompletionListCache _completionListCache = completionListCache;
+    private readonly ILogger<RazorCompletionListProvider> _logger = loggerFactory.CreateLogger<RazorCompletionListProvider>();
     private static readonly Command s_retriggerCompletionCommand = new()
     {
         CommandIdentifier = "editor.action.triggerSuggest",
         Title = SR.ReTrigger_Completions_Title,
     };
-
-    public RazorCompletionListProvider(
-        IRazorCompletionFactsService completionFactsService,
-        CompletionListCache completionListCache,
-        ILoggerFactory loggerFactory)
-    {
-        _completionFactsService = completionFactsService;
-        _completionListCache = completionListCache;
-        _logger = loggerFactory.CreateLogger<RazorCompletionListProvider>();
-    }
 
     // virtual for tests
     public virtual ImmutableHashSet<string> TriggerCharacters => new[] { "@", "<", ":", " " }.ToImmutableHashSet();
@@ -68,6 +64,8 @@ internal class RazorCompletionListProvider
         var syntaxTree = await documentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
         var tagHelperContext = await documentContext.GetTagHelperContextAsync(cancellationToken).ConfigureAwait(false);
         var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex, includeWhitespace: true, walkMarkersBack: true);
+        owner = RazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex, _htmlFactsService);
+
         var razorCompletionContext = new RazorCompletionContext(
             absoluteIndex,
             owner,

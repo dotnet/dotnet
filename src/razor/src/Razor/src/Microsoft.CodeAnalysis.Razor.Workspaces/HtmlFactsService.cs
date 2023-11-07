@@ -137,7 +137,7 @@ internal abstract class HtmlFactsService
         "wbr",
     };
 
-    public abstract bool TryGetElementInfo(SyntaxNode element, out SyntaxToken containingTagNameToken, out SyntaxList<RazorSyntaxNode> attributeNodes);
+    public abstract bool TryGetElementInfo(SyntaxNode element, out SyntaxToken containingTagNameToken, out SyntaxList<RazorSyntaxNode> attributeNodes, out SyntaxToken closingForwardSlashOrCloseAngleToken);
 
     public abstract bool TryGetAttributeInfo(
         SyntaxNode attribute,

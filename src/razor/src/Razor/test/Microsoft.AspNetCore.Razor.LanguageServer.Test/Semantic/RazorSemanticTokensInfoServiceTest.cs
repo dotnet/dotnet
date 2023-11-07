@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
@@ -21,14 +20,10 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-public abstract class RazorSemanticTokensInfoServiceTest : SemanticTokenTestBase
+public abstract class RazorSemanticTokensInfoServiceTest(ITestOutputHelper testOutput, bool usePreciseSemanticTokenRanges)
+    : SemanticTokenTestBase(testOutput, usePreciseSemanticTokenRanges)
 {
-    private protected readonly Mock<ClientNotifierServiceBase> _languageServer;
-    public RazorSemanticTokensInfoServiceTest(ITestOutputHelper testOutput, bool usePreciseSemanticTokenRanges)
-        : base(testOutput, usePreciseSemanticTokenRanges)
-    {
-        _languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
-    }
+    private readonly Mock<ClientNotifierServiceBase> _languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
 
     [Fact]
     public async Task GetSemanticTokens_CSharp_RazorIfNotReady()
@@ -41,7 +36,7 @@ public abstract class RazorSemanticTokensInfoServiceTest : SemanticTokenTestBase
                 """;
 
         var razorRange = GetRange(documentText);
-        var csharpTokens = new ProvideSemanticTokensResponse(tokens: Array.Empty<int>(), hostDocumentSyncVersion: 1);
+        var csharpTokens = new ProvideSemanticTokensResponse(tokens: [], hostDocumentSyncVersion: 1);
         await AssertSemanticTokensAsync(documentText, isRazorFile: false, razorRange, csharpTokens: csharpTokens, documentVersion: 1);
     }
 
@@ -89,7 +84,7 @@ public abstract class RazorSemanticTokensInfoServiceTest : SemanticTokenTestBase
                 """;
 
         var razorRange = GetRange(documentText);
-        var csharpTokens = new ProvideSemanticTokensResponse(tokens: Array.Empty<int>(), hostDocumentSyncVersion: 1);
+        var csharpTokens = new ProvideSemanticTokensResponse(tokens: [], hostDocumentSyncVersion: 1);
         await AssertSemanticTokensAsync(documentText, isRazorFile: false, razorRange, csharpTokens: csharpTokens, documentVersion: 1);
     }
 
@@ -514,6 +509,22 @@ public abstract class RazorSemanticTokensInfoServiceTest : SemanticTokenTestBase
             """
                 @addTagHelper *, TestAssembly
                 <Component1 @test='Function'></Component1>
+                """;
+
+        var razorRange = GetRange(documentText);
+        var csharpTokens = await GetCSharpSemanticTokensResponseAsync(documentText, razorRange, isRazorFile: true);
+        await AssertSemanticTokensAsync(documentText, isRazorFile: true, razorRange, csharpTokens: csharpTokens);
+        Assert.NotNull(csharpTokens.Tokens);
+        Assert.NotEmpty(csharpTokens.Tokens);
+    }
+
+    [Fact]
+    public async Task GetSemanticTokens_Razor_DirectiveWithExplicitStatementAsync()
+    {
+        var documentText =
+            """
+                @addTagHelper *, TestAssembly
+                <Component1 @onclick="@(Function())"></Component1>
                 """;
 
         var razorRange = GetRange(documentText);
@@ -1048,11 +1059,8 @@ public abstract class RazorSemanticTokensInfoServiceTest : SemanticTokenTestBase
         bool withCSharpBackground = false,
         bool serverSupportsPreciseRanges = true)
     {
-        await AssertSemanticTokensAsync(new DocumentContentVersion[]
-        {
-            new DocumentContentVersion(documentText, documentVersion)
-        },
-        isRazorArray: new bool[] { isRazorFile },
+        await AssertSemanticTokensAsync([new DocumentContentVersion(documentText, documentVersion)],
+        isRazorArray: [isRazorFile],
         range,
         service,
         csharpTokens,
@@ -1115,9 +1123,9 @@ public abstract class RazorSemanticTokensInfoServiceTest : SemanticTokenTestBase
                 CustomMessageNames.RazorProvidePreciseRangeSemanticTokensEndpoint,
                 It.IsAny<SemanticTokensParams>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(serverSupportsPreciseRanges ?
-                csharpTokens :
-                It.Is<ProvideSemanticTokensResponse>(x => x.Tokens == null));
+            .ReturnsAsync(serverSupportsPreciseRanges
+                ? csharpTokens
+                : It.Is<ProvideSemanticTokensResponse>(x => x.Tokens == null));
 
         var documentContextFactory = new TestDocumentContextFactory(documentSnapshots);
         var documentMappingService = new RazorDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
@@ -1179,24 +1187,6 @@ public abstract class RazorSemanticTokensInfoServiceTest : SemanticTokenTestBase
         };
 
         return range;
-    }
-
-    private class TestInitializeManager : IInitializeManager<InitializeParams, InitializeResult>
-    {
-        public InitializeParams GetInitializeParams()
-        {
-            throw new NotImplementedException();
-        }
-
-        public InitializeResult GetInitializeResult()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetInitializeParams(InitializeParams request)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     private class TestDocumentContextFactory : DocumentContextFactory

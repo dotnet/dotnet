@@ -184,9 +184,7 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
     // Internal for testing
     internal static bool IsDirectiveCompletableToken(AspNetCore.Razor.Language.Syntax.SyntaxToken token)
     {
-        return token.Kind == SyntaxKind.Identifier ||
-            // Marker symbol
-            token.Kind == SyntaxKind.Marker ||
-            token.Kind == SyntaxKind.Keyword;
+        return token is { Kind: SyntaxKind.Identifier or SyntaxKind.Marker or SyntaxKind.Keyword }
+                     or { Kind: SyntaxKind.Transition, Parent.Kind: SyntaxKind.CSharpTransition };
     }
 }

@@ -10,29 +10,34 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 
 internal class DefaultHtmlFactsService : HtmlFactsService
 {
-    public override bool TryGetElementInfo(SyntaxNode element, out SyntaxToken containingTagNameToken, out SyntaxList<RazorSyntaxNode> attributeNodes)
+    public override bool TryGetElementInfo(SyntaxNode element, out SyntaxToken containingTagNameToken, out SyntaxList<RazorSyntaxNode> attributeNodes, out SyntaxToken closingForwardSlashOrCloseAngleToken)
     {
         switch (element)
         {
             case MarkupStartTagSyntax startTag:
                 containingTagNameToken = startTag.Name;
                 attributeNodes = startTag.Attributes;
+                closingForwardSlashOrCloseAngleToken = startTag.ForwardSlash ?? startTag.CloseAngle;
                 return true;
             case MarkupEndTagSyntax { Parent: MarkupElementSyntax parent } endTag:
                 containingTagNameToken = endTag.Name;
                 attributeNodes = parent.StartTag?.Attributes ?? new SyntaxList<RazorSyntaxNode>();
+                closingForwardSlashOrCloseAngleToken = endTag.ForwardSlash ?? endTag.CloseAngle;
                 return true;
             case MarkupTagHelperStartTagSyntax startTagHelper:
                 containingTagNameToken = startTagHelper.Name;
                 attributeNodes = startTagHelper.Attributes;
+                closingForwardSlashOrCloseAngleToken = startTagHelper.ForwardSlash ?? startTagHelper.CloseAngle;
                 return true;
             case MarkupTagHelperEndTagSyntax { Parent: MarkupTagHelperElementSyntax parent } endTagHelper:
                 containingTagNameToken = endTagHelper.Name;
                 attributeNodes = parent.StartTag?.Attributes ?? new SyntaxList<RazorSyntaxNode>();
+                closingForwardSlashOrCloseAngleToken = endTagHelper.ForwardSlash ?? endTagHelper.CloseAngle;
                 return true;
             default:
                 containingTagNameToken = null;
                 attributeNodes = default;
+                closingForwardSlashOrCloseAngleToken = null;
                 return false;
         }
     }
@@ -45,7 +50,7 @@ internal class DefaultHtmlFactsService : HtmlFactsService
         out TextSpan? selectedAttributeNameLocation,
         out SyntaxList<RazorSyntaxNode> attributeNodes)
     {
-        if (!TryGetElementInfo(attribute.Parent, out containingTagNameToken, out attributeNodes))
+        if (!TryGetElementInfo(attribute.Parent, out containingTagNameToken, out attributeNodes, closingForwardSlashOrCloseAngleToken: out _))
         {
             containingTagNameToken = null;
             prefixLocation = null;

@@ -6,8 +6,8 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Roslyn.Test.Utilities;
 using Xunit;
@@ -15,14 +15,8 @@ using Xunit.Sdk;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
-[InitializeTestFile]
-
-// These tests must be run serially due to the test specific FileName static var.
-[Collection("RazorBaselineIntegrationTestSerialRuns")]
 public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBase
 {
-    private static readonly AsyncLocal<string> _directoryPath = new AsyncLocal<string>();
-
     // UTF-8 with BOM
     private static readonly Encoding _baselineEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
 
@@ -34,13 +28,6 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
         {
             GenerateBaselines = generateBaselines.Value;
         }
-    }
-
-    // Used by the test framework to set the directory for test files.
-    public static string DirectoryPath
-    {
-        get { return _directoryPath.Value; }
-        set { _directoryPath.Value = value; }
     }
 
 #if GENERATE_BASELINES
@@ -61,16 +48,18 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
     // Force consistent paths since they are going to be recorded in files.
     internal override string WorkingDirectory => ArbitraryWindowsPath;
 
+    protected abstract string GetDirectoryPath(string testName);
+
     [Fact]
     public void GenerateBaselinesMustBeFalse()
     {
         Assert.False(GenerateBaselines, "GenerateBaselines should be set back to false before you check in!");
     }
 
-    protected void AssertDocumentNodeMatchesBaseline(RazorCodeDocument codeDocument)
+    protected void AssertDocumentNodeMatchesBaseline(RazorCodeDocument codeDocument, [CallerMemberName]string testName = "")
     {
         var document = codeDocument.GetDocumentIntermediateNode();
-        var baselineFilePath = GetBaselineFilePath(codeDocument, ".ir.txt");
+        var baselineFilePath = GetBaselineFilePath(codeDocument, ".ir.txt", testName);
 
         if (GenerateBaselines)
         {
@@ -94,16 +83,16 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
         IntermediateNodeVerifier.Verify(document, baseline);
     }
 
-    protected void AssertCSharpDocumentMatchesBaseline(RazorCodeDocument codeDocument, bool verifyLinePragmas = true)
+    protected void AssertCSharpDocumentMatchesBaseline(RazorCodeDocument codeDocument, bool verifyLinePragmas = true, [CallerMemberName] string testName = "")
     {
         var document = codeDocument.GetCSharpDocument();
 
         // Normalize newlines to match those in the baseline.
         var actualCode = document.GeneratedCode.Replace("\r", "").Replace("\n", "\r\n");
 
-        var baselineFilePath = GetBaselineFilePath(codeDocument, ".codegen.cs");
-        var baselineDiagnosticsFilePath = GetBaselineFilePath(codeDocument, ".diagnostics.txt");
-        var baselineMappingsFilePath = GetBaselineFilePath(codeDocument, ".mappings.txt");
+        var baselineFilePath = GetBaselineFilePath(codeDocument, ".codegen.cs", testName);
+        var baselineDiagnosticsFilePath = GetBaselineFilePath(codeDocument, ".diagnostics.txt", testName);
+        var baselineMappingsFilePath = GetBaselineFilePath(codeDocument, ".mappings.txt", testName);
 
         var serializedMappings = SourceMappingsSerializer.Serialize(document, codeDocument.Source);
 
@@ -229,7 +218,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
         }
     }
 
-    private string GetBaselineFilePath(RazorCodeDocument codeDocument, string extension)
+    private string GetBaselineFilePath(RazorCodeDocument codeDocument, string extension, string testName)
     {
         if (codeDocument == null)
         {
@@ -249,13 +238,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
             throw new InvalidOperationException(message);
         }
 
-        if (DirectoryPath == null)
-        {
-            var message = $"{nameof(AssertDocumentNodeMatchesBaseline)} should only be called from an integration test..";
-            throw new InvalidOperationException(message);
-        }
-
-        return Path.Combine(DirectoryPath, Path.ChangeExtension(fileName, extension));
+        return Path.Combine(GetDirectoryPath(testName), Path.ChangeExtension(fileName, extension));
     }
 
     private static void WriteBaseline(string text, string filePath)
