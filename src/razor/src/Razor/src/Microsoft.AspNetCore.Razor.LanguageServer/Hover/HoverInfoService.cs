@@ -93,7 +93,7 @@ internal sealed class HoverInfoService : IHoverInfoService
         // only check nodes that are at a different location in the file.
         var ownerStart = owner.SpanStart;
 
-        if (_htmlFactsService.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes) &&
+        if (_htmlFactsService.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes, closingForwardSlashOrCloseAngleToken: out _) &&
             containingTagNameToken.Span.IntersectsWith(location.AbsoluteIndex))
         {
             // Hovering over HTML tag name

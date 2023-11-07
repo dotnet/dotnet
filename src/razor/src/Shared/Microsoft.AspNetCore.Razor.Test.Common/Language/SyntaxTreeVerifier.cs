@@ -40,7 +40,9 @@ internal class SyntaxTreeVerifier
             {
                 var span = new SourceSpan(i, 0);
                 var location = new SourceChange(span, string.Empty);
+#pragma warning disable CS0618 // Type or member is obsolete, will be removed in an upcoming change
                 var owner = syntaxTree.Root.LocateOwner(location);
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 if (owner == null)
                 {

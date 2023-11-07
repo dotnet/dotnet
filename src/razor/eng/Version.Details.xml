@@ -5,9 +5,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>839cdfb0ecca5e0be3dbccd926e7651ef50fdf10</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.23527.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.23552.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>947ef94c52440c781aeb6ee13e95a9ec9992e444</Sha>
+      <Sha>6a9e0685385c3ca7098676f19026b4f0200070e7</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.8.0-3.23475.1">
@@ -94,14 +94,14 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>3a25a7f1cc446b60678ed25c9d829420d6321eba</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.23531.4">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.23553.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>16a344fc2ff2eecac5b03b88c96e99d7796e5125</Sha>
+      <Sha>1f067970472e5eb1877797bc4304dd13f284c7ba</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.23531.4">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.23553.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>16a344fc2ff2eecac5b03b88c96e99d7796e5125</Sha>
+      <Sha>1f067970472e5eb1877797bc4304dd13f284c7ba</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages
          to be retrieved from live source-build and their content consumed by packages produced by razor.

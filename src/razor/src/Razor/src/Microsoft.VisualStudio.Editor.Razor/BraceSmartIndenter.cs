@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language;
@@ -52,6 +53,7 @@ internal class BraceSmartIndenter : IDisposable
         TextBufferCodeDocumentProvider codeDocumentProvider,
         IEditorOperationsFactoryService editorOperationsFactory)
     {
+        Debug.Assert(documentTracker.TextBuffer.IsLegacyCoreRazorBuffer());
         if (joinableTaskContext is null)
         {
             throw new ArgumentNullException(nameof(joinableTaskContext));
@@ -258,7 +260,9 @@ internal class BraceSmartIndenter : IDisposable
         // @{ |}
 
         var change = new SourceChange(changePosition, 0, string.Empty);
+#pragma warning disable CS0618 // Type or member is obsolete, BraceSmartIndenter is only used in legacy scenarios
         var owner = syntaxTree.Root.LocateOwner(change);
+#pragma warning restore CS0618 // Type or member is obsolete
 
         if (IsUnlinkedSpan(owner))
         {

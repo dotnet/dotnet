@@ -17,11 +17,6 @@ public class InitializeTestFileAttribute : BeforeAfterTestAttribute
             var typeName = methodUnderTest.ReflectedType.Name;
             IntegrationTestBase.FileName = $"TestFiles/IntegrationTests/{typeName}/{methodUnderTest.Name}";
         }
-        else if (typeof(RazorBaselineIntegrationTestBase).GetTypeInfo().IsAssignableFrom(methodUnderTest.DeclaringType.GetTypeInfo()))
-        {
-            var typeName = methodUnderTest.ReflectedType.Name;
-            RazorBaselineIntegrationTestBase.DirectoryPath = $"TestFiles/IntegrationTests/{typeName}/{methodUnderTest.Name}";
-        }
     }
 
     public override void After(MethodInfo methodUnderTest)
@@ -29,10 +24,6 @@ public class InitializeTestFileAttribute : BeforeAfterTestAttribute
         if (typeof(IntegrationTestBase).GetTypeInfo().IsAssignableFrom(methodUnderTest.DeclaringType.GetTypeInfo()))
         {
             IntegrationTestBase.FileName = null;
-        }
-        else if (typeof(RazorBaselineIntegrationTestBase).GetTypeInfo().IsAssignableFrom(methodUnderTest.DeclaringType.GetTypeInfo()))
-        {
-            RazorBaselineIntegrationTestBase.DirectoryPath = null;
         }
     }
 }

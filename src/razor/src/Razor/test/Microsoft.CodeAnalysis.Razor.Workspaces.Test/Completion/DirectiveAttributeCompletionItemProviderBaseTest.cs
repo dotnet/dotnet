@@ -5,8 +5,9 @@
 
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.IntegrationTests;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
 using Xunit.Abstractions;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
@@ -162,7 +163,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest : RazorToolingInte
         var node = GetNodeAt("<p class='hello @DateTime.Now'>", 2);
 
         // Act
-        var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node.Parent, out var tagName, out var attributes);
+        var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node, out var tagName, out var attributes);
 
         // Assert
         Assert.True(result);
@@ -181,7 +182,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest : RazorToolingInte
 }", 2);
 
         // Act
-        var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node.Parent, out var tagName, out var attributes);
+        var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node, out var tagName, out var attributes);
 
         // Assert
         Assert.True(result);
@@ -196,7 +197,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest : RazorToolingInte
         var node = GetNodeAt("<p>", 2);
 
         // Act
-        var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node.Parent, out _, out var attributes);
+        var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node, out _, out var attributes);
 
         // Assert
         Assert.True(result);
@@ -210,7 +211,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest : RazorToolingInte
         var node = GetNodeAt("<p class='hello @DateTime.Now'>", 2);
 
         // Act
-        var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node.Parent, out _, out var attributes);
+        var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node, out _, out var attributes);
 
         // Assert
         Assert.True(result);
@@ -228,7 +229,7 @@ public class DirectiveAttributeCompletionItemProviderBaseTest : RazorToolingInte
 }", 2);
 
         // Act
-        var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node.Parent, out _, out var attributes);
+        var result = DirectiveAttributeCompletionItemProviderBase.TryGetElementInfo(node, out _, out var attributes);
 
         // Assert
         Assert.True(result);
@@ -239,8 +240,8 @@ public class DirectiveAttributeCompletionItemProviderBaseTest : RazorToolingInte
     {
         var result = CompileToCSharp(content, throwOnFailure: false);
         var syntaxTree = result.CodeDocument.GetSyntaxTree();
-        var change = new SourceChange(new SourceSpan(index, 0), string.Empty);
-        var owner = syntaxTree.Root.LocateOwner(change);
+        var owner = syntaxTree.Root.FindInnermostNode(index, includeWhitespace: true, walkMarkersBack: true);
+        owner = RazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, index, new DefaultHtmlFactsService());
 
         return owner;
     }

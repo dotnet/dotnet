@@ -184,6 +184,43 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
             new(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch),
             TypeName("TestDirectiveAttribute"));
 
+        var directiveAttribute3 = TagHelperDescriptorBuilder.Create(ComponentMetadata.EventHandler.TagHelperKind, "OnClickDirectiveAttribute", "TestAssembly");
+        directiveAttribute3.TagMatchingRule(rule =>
+        {
+            rule.TagName = "*";
+            rule.RequireAttributeDescriptor(b =>
+            {
+                b.Name = "@onclick";
+                b.SetMetadata(MetadataCollection.Create(IsDirectiveAttribute));
+                b.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
+            });
+        });
+        directiveAttribute3.TagMatchingRule(rule =>
+        {
+            rule.TagName = "*";
+            rule.RequireAttributeDescriptor(b =>
+            {
+                b.Name = "@onclick";
+                b.SetMetadata(MetadataCollection.Create(IsDirectiveAttribute));
+                b.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch;
+            });
+        });
+        directiveAttribute3.BindAttribute(attribute =>
+        {
+            attribute.Name = "@onclick";
+            attribute.SetMetadata(PropertyName("onclick"), IsDirectiveAttribute, IsWeaklyTyped);
+            attribute.TypeName = "Microsoft.AspNetCore.Components.EventCallback<Microsoft.AspNetCore.Components.Web.MouseEventArgs>";
+        });
+        directiveAttribute3.SetMetadata(
+            RuntimeName(ComponentMetadata.EventHandler.RuntimeName),
+            SpecialKind(ComponentMetadata.EventHandler.TagHelperKind),
+            new(ComponentMetadata.EventHandler.EventArgsType, "Microsoft.AspNetCore.Components.Web.MouseEventArgs"),
+            new(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch),
+            MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
+            TypeName("OnClickDirectiveAttribute"),
+            TypeNamespace("Microsoft.AspNetCore.Components.Web"),
+            TypeNameIdentifier("EventHandlers"));
+
         var htmlTagMutator = TagHelperDescriptorBuilder.Create("HtmlMutator", "TestAssembly");
         htmlTagMutator.TagMatchingRule(rule =>
         {
@@ -208,6 +245,7 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
             builder3.Build(),
             directiveAttribute1.Build(),
             directiveAttribute2.Build(),
+            directiveAttribute3.Build(),
             htmlTagMutator.Build());
 
         HtmlFactsService = new DefaultHtmlFactsService();

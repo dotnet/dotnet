@@ -8,10 +8,10 @@ using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
@@ -898,8 +898,8 @@ public class TagHelperCompletionProviderTest : TagHelperServiceTestBase
         var syntaxTree = codeDocument.GetSyntaxTree();
         var tagHelperDocumentContext = codeDocument.GetTagHelperContext();
 
-        var queryableChange = new SourceChange(position, length: 0, newText: string.Empty);
-        var owner = syntaxTree.Root.LocateOwner(queryableChange);
+        var owner = syntaxTree.Root.FindInnermostNode(position, includeWhitespace: true, walkMarkersBack: true);
+        owner = RazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, position, new DefaultHtmlFactsService());
         return new RazorCompletionContext(position, owner, syntaxTree, tagHelperDocumentContext, Options: options);
     }
 }

@@ -317,7 +317,7 @@ public class BraceSmartIndenterTest : BraceSmartIndenterTestBase
         var editorOperations = new Mock<IEditorOperations>(MockBehavior.Strict);
         editorOperations.Setup(operations => operations.MoveToEndOfLine(false));
         var editorOperationsFactory = new Mock<IEditorOperationsFactoryService>(MockBehavior.Strict);
-        var documentTracker = CreateDocumentTracker(() => Mock.Of<ITextBuffer>(MockBehavior.Strict), textView);
+        var documentTracker = CreateDocumentTracker(SetupTextBufferMock, textView);
         editorOperationsFactory.Setup(factory => factory.GetEditorOperations(textView))
             .Returns(editorOperations.Object);
         var codeDocumentProvider = Mock.Of<TextBufferCodeDocumentProvider>(MockBehavior.Strict);
@@ -393,7 +393,7 @@ public class BraceSmartIndenterTest : BraceSmartIndenterTestBase
         var editorOperationsFactory = new Mock<IEditorOperationsFactoryService>(MockBehavior.Strict);
         var changeCollection = new TestTextChangeCollection();
         var textContentChangeArgs = new TestTextContentChangedEventArgs(changeCollection);
-        var documentTracker = CreateDocumentTracker(() => Mock.Of<ITextBuffer>(MockBehavior.Strict), Mock.Of<ITextView>(MockBehavior.Strict));
+        var documentTracker = CreateDocumentTracker(SetupTextBufferMock, Mock.Of<ITextView>(MockBehavior.Strict));
         var codeDocumentProvider = Mock.Of<TextBufferCodeDocumentProvider>(MockBehavior.Strict);
         using var braceSmartIndenter = new BraceSmartIndenter(JoinableTaskFactory.Context, documentTracker, codeDocumentProvider, editorOperationsFactory.Object);
 
@@ -407,6 +407,7 @@ public class BraceSmartIndenterTest : BraceSmartIndenterTestBase
         // Arrange
         var initialSnapshot = new StringTextSnapshot("Hello World");
         var textBuffer = new TestTextBuffer(initialSnapshot);
+        textBuffer.ChangeContentType(new LegacyCoreContentType(), editTag: null);
         var edit = new TestEdit(0, 0, initialSnapshot, initialSnapshot, string.Empty);
         var editorOperationsFactory = new Mock<IEditorOperationsFactoryService>(MockBehavior.Strict);
         var documentTracker = CreateDocumentTracker(() => textBuffer, Mock.Of<ITextView>(MockBehavior.Strict));
@@ -548,7 +549,9 @@ public class BraceSmartIndenterTest : BraceSmartIndenterTestBase
     private static SyntaxNode ExtractSpan(int spanLocation, string content)
     {
         var syntaxTree = GetSyntaxTree(content);
+#pragma warning disable CS0618 // Type or member is obsolete
         var span = syntaxTree.Root.LocateOwner(new SourceChange(new SourceSpan(spanLocation, 0), string.Empty));
+#pragma warning restore CS0618 // Type or member is obsolete
         return span;
     }
 

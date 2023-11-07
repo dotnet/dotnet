@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
@@ -7,6 +7,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Components;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Test.Utilities;
@@ -15,7 +16,8 @@ using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
-public abstract class ComponentCodeGenerationTestBase : RazorBaselineIntegrationTestBase
+public class ComponentCodeGenerationTestBase(bool designTime = false)
+        : RazorBaselineIntegrationTestBase(layer: TestProject.Layer.Compiler, generateBaselines: null)
 {
     private RazorConfiguration _configuration;
 
@@ -29,14 +31,17 @@ public abstract class ComponentCodeGenerationTestBase : RazorBaselineIntegration
 
     internal override string DefaultFileName => ComponentName + ".cshtml";
 
-    protected ComponentCodeGenerationTestBase()
-        : base(layer: TestProject.Layer.Compiler, generateBaselines: null)
+    internal override bool DesignTime => designTime;
+
+    protected override string GetDirectoryPath(string testName)
     {
+        var directory = DesignTime ? "ComponentDesignTimeCodeGenerationTest" : "ComponentRuntimeCodeGenerationTest";
+        return $"TestFiles/IntegrationTests/{directory}/{testName}";
     }
 
     #region Basics
 
-    [Fact]
+    [IntegrationTestFact]
     public void SingleLineControlFlowStatements_InCodeDirective()
     {
         // Arrange
@@ -61,7 +66,7 @@ public abstract class ComponentCodeGenerationTestBase : RazorBaselineIntegration
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void SingleLineControlFlowStatements_InCodeBlock()
     {
         // Arrange
@@ -82,7 +87,7 @@ public abstract class ComponentCodeGenerationTestBase : RazorBaselineIntegration
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         CompileToAssembly(generated);
     }
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_InFunctionsDirective()
     {
         // Arrange
@@ -116,7 +121,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_InLocalFunction()
     {
         // Arrange
@@ -150,7 +155,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_Simple()
     {
         // Arrange
@@ -175,7 +180,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_WithParameters()
     {
         // Arrange
@@ -212,7 +217,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentWithDecimalParameter()
     {
         // Arrange
@@ -234,7 +239,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentWithBooleanParameter()
     {
         // Arrange
@@ -256,7 +261,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentWithBooleanParameter_Minimized()
     {
         // Arrange
@@ -278,7 +283,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentWithDynamicParameter()
     {
         // Arrange
@@ -300,7 +305,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentWithTypeParameters()
     {
         // Arrange
@@ -330,7 +335,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/8711")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/8711")]
     public void ComponentWithTypeParameters_Interconnected()
     {
         // Arrange
@@ -351,7 +356,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithEscapedParameterName()
     {
         // Arrange
@@ -382,7 +387,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithWriteOnlyParameter()
     {
         // Arrange
@@ -410,7 +415,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithInitOnlyParameter()
     {
         // Arrange
@@ -444,7 +449,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentWithTypeParameters_WithSemicolon()
     {
         // Arrange
@@ -474,7 +479,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentWithTypeParameterArray()
     {
         // Arrange
@@ -533,7 +538,7 @@ public class Tag
         CompileToAssembly(useGenerated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentWithTupleParameter()
     {
         // Arrange
@@ -554,7 +559,7 @@ public class Tag
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentWithTypeParameterValueTuple()
     {
         // Arrange
@@ -610,7 +615,7 @@ public class Tag
         CompileToAssembly(useGenerated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentWithTypeParameterValueTupleGloballyQualifiedTypes()
     {
         // Arrange
@@ -655,7 +660,7 @@ public struct MyStruct
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7628")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/7628")]
     public void ComponentWithTypeParameterValueTuple_ExplicitGenericArguments()
     {
         // Act
@@ -677,7 +682,7 @@ public struct MyStruct
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentWithConstrainedTypeParameters()
     {
         // Arrange
@@ -754,7 +759,7 @@ public class Tag : ITag
         CompileToAssembly(useGenerated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentWithConstrainedTypeParameters_WithSemicolon()
     {
         // Arrange
@@ -831,7 +836,7 @@ public class Tag : ITag
         CompileToAssembly(useGenerated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_WithExplicitStringParameter()
     {
         // Arrange
@@ -858,7 +863,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_WithNonPropertyAttributes()
     {
         // Arrange
@@ -883,7 +888,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentParameter_TypeMismatch_ReportsDiagnostic()
     {
         // Arrange
@@ -915,7 +920,7 @@ namespace Test
             d => Assert.Equal("CS1503", d.Id));
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void DataDashAttribute_ImplicitExpression()
     {
         // Arrange
@@ -933,7 +938,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void DataDashAttribute_ExplicitExpression()
     {
         // Arrange
@@ -951,7 +956,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void MarkupComment_IsNotIncluded()
     {
         // Arrange
@@ -969,7 +974,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void OmitsMinimizedAttributeValueParameter()
     {
         // Act
@@ -982,7 +987,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void IncludesMinimizedAttributeValueParameterBeforeLanguageVersion5()
     {
         // Arrange
@@ -1001,7 +1006,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithFullyQualifiedTagNames()
     {
         // Arrange
@@ -1035,7 +1040,7 @@ namespace Test2
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithNullableActionParameter()
     {
         AdditionalSyntaxTrees.Add(Parse(@"
@@ -1061,7 +1066,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithNullableRenderFragmentParameter()
     {
         AdditionalSyntaxTrees.Add(Parse(@"
@@ -1086,7 +1091,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithEditorRequiredParameter_NoValueSpecified()
     {
         AdditionalSyntaxTrees.Add(Parse(@"
@@ -1114,7 +1119,7 @@ namespace Test
         Assert.Equal("RZ2012", diagnostics.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithEditorRequiredParameter_ValueSpecified()
     {
         AdditionalSyntaxTrees.Add(Parse(@"
@@ -1140,7 +1145,7 @@ namespace Test
         Assert.Empty(generated.Diagnostics);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithEditorRequiredParameter_ValuesSpecifiedUsingSplatting()
     {
         AdditionalSyntaxTrees.Add(Parse(@"
@@ -1166,7 +1171,7 @@ namespace Test
         Assert.Empty(generated.Diagnostics);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7395")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/7395")]
     public void Component_WithEditorRequiredParameter_ValueSpecifiedUsingBind()
     {
         AdditionalSyntaxTrees.Add(Parse("""
@@ -1197,7 +1202,7 @@ namespace Test
         Assert.Empty(generated.Diagnostics);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithEditorRequiredChildContent_NoValueSpecified()
     {
         AdditionalSyntaxTrees.Add(Parse(@"
@@ -1225,7 +1230,7 @@ namespace Test
         Assert.Equal("RZ2012", diagnostics.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithEditorRequiredChildContent_ValueSpecified_WithoutName()
     {
         AdditionalSyntaxTrees.Add(Parse(@"
@@ -1254,7 +1259,7 @@ namespace Test
         Assert.Empty(generated.Diagnostics);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithEditorRequiredChildContent_ValueSpecifiedAsText_WithoutName()
     {
         AdditionalSyntaxTrees.Add(Parse(@"
@@ -1281,7 +1286,7 @@ namespace Test
         Assert.Empty(generated.Diagnostics);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithEditorRequiredChildContent_ValueSpecified()
     {
         AdditionalSyntaxTrees.Add(Parse(@"
@@ -1312,7 +1317,7 @@ namespace Test
         Assert.Empty(generated.Diagnostics);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithEditorRequiredNamedChildContent_NoValueSpecified()
     {
         AdditionalSyntaxTrees.Add(Parse(@"
@@ -1345,7 +1350,7 @@ namespace Test
         Assert.Equal("RZ2012", diagnostics.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithEditorRequiredNamedChildContent_ValueSpecified()
     {
         AdditionalSyntaxTrees.Add(Parse(@"
@@ -1377,7 +1382,7 @@ namespace Test
         Assert.Empty(generated.Diagnostics);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
     public void AddAttribute_ImplicitStringConversion_TypeInference()
     {
         _configuration = base.Configuration.WithVersion(RazorLanguageVersion.Version_7_0);
@@ -1428,7 +1433,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
     public void AddAttribute_ImplicitStringConversion_Bind()
     {
         _configuration = base.Configuration.WithVersion(RazorLanguageVersion.Version_7_0);
@@ -1482,7 +1487,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
     public void AddAttribute_ImplicitStringConversion_CustomEvent()
     {
         _configuration = base.Configuration.WithVersion(RazorLanguageVersion.Version_7_0);
@@ -1537,7 +1542,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
     public void AddAttribute_ImplicitStringConversion_BindUnknown()
     {
         _configuration = base.Configuration.WithVersion(RazorLanguageVersion.Version_7_0);
@@ -1570,7 +1575,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
     public void AddAttribute_ImplicitStringConversion_BindUnknown_Assignment()
     {
         _configuration = base.Configuration.WithVersion(RazorLanguageVersion.Version_7_0);
@@ -1604,7 +1609,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
     public void AddAttribute_ImplicitBooleanConversion()
     {
         _configuration = base.Configuration.WithVersion(RazorLanguageVersion.Version_7_0);
@@ -1642,7 +1647,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://dev.azure.com/devdiv/DevDiv/_workitems/edit/1869483")]
+    [IntegrationTestFact, WorkItem("https://dev.azure.com/devdiv/DevDiv/_workitems/edit/1869483")]
     public void AddComponentParameter()
     {
         var generated = CompileToCSharp("""
@@ -1675,7 +1680,7 @@ namespace Test
 
     #region Bind
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_SpecifiesValue_WithMatchingProperties()
     {
         // Arrange
@@ -1708,7 +1713,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithStringAttribute_DoesNotUseStringSyntax()
     {
         // Arrange
@@ -1755,7 +1760,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_TypeChecked_WithMatchingProperties()
     {
         // Arrange
@@ -1794,7 +1799,7 @@ namespace Test
             d => Assert.Equal("CS1503", d.Id));
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_EventCallback_SpecifiesValue_WithMatchingProperties()
     {
         // Arrange
@@ -1827,7 +1832,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_EventCallback_TypeChecked_WithMatchingProperties()
     {
         // Arrange
@@ -1866,7 +1871,7 @@ namespace Test
             d => Assert.Equal("CS1503", d.Id));
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_SpecifiesValue_WithoutMatchingProperties()
     {
         // Arrange
@@ -1894,7 +1899,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_SpecifiesValueAndChangeEvent_WithMatchingProperties()
     {
         // Arrange
@@ -1926,7 +1931,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_SpecifiesValueAndChangeEvent_WithoutMatchingProperties()
     {
         // Arrange
@@ -1953,7 +1958,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_SpecifiesValueAndExpression()
     {
         // Arrange
@@ -1990,7 +1995,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_EventCallback_SpecifiesValueAndExpression()
     {
         // Arrange
@@ -2027,7 +2032,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_SpecifiesValueAndExpression_TypeChecked()
     {
         // Arrange
@@ -2066,7 +2071,7 @@ namespace Test
             d => Assert.Equal("CS1662", d.Id));
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_SpecifiesValueAndExpression_Generic()
     {
         // Arrange
@@ -2103,7 +2108,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_EventCallback_SpecifiesValueAndExpression_Generic()
     {
         // Arrange
@@ -2140,7 +2145,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_EventCallback_SpecifiesValueAndExpression_NestedGeneric()
     {
         // Arrange
@@ -2178,7 +2183,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElement_WritesAttributes()
     {
         // Arrange
@@ -2207,7 +2212,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElement_WithoutCloseTag()
     {
         // Arrange
@@ -2238,7 +2243,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElement_WithBindAfterAndSuffix()
     {
         // Arrange
@@ -2273,7 +2278,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElement_WithGetSetAndSuffix()
     {
         // Arrange
@@ -2308,7 +2313,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithGetSet_TaskReturningDelegate()
     {
         // Arrange
@@ -2344,7 +2349,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithGetSet_TaskReturningLambda()
     {
         // Arrange
@@ -2378,7 +2383,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithGetSet_Action()
     {
         // Arrange
@@ -2413,7 +2418,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithGetSet_ActionLambda()
     {
         // Arrange
@@ -2446,7 +2451,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithGetSet_EventCallback()
     {
         // Arrange
@@ -2482,7 +2487,7 @@ namespace Test
         Assert.Equal("CS1503", error.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToGenericComponent_InferredType_WithGetSet_EventCallback()
     {
         // Arrange
@@ -2521,7 +2526,7 @@ namespace Test
         Assert.Equal("CS1503", error.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToGenericComponent_ExplicitType_WithGetSet_EventCallback()
     {
         // Arrange
@@ -2561,7 +2566,7 @@ namespace Test
 
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponentBindToGenericComponent_InferredType_WithGetSet_EventCallback()
     {
         // Arrange
@@ -2598,7 +2603,7 @@ namespace Test
         Assert.Equal("CS1503", error.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericBindToGenericComponent_ExplicitType_WithGetSet_EventCallback()
     {
         // Arrange
@@ -2635,7 +2640,7 @@ namespace Test
         Assert.Equal("CS1503", error.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToGenericComponent_InferredType_WithGetSet_Action()
     {
         // Arrange
@@ -2674,7 +2679,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToGenericComponent_InferredType_WithGetSet_Function()
     {
         // Arrange
@@ -2714,7 +2719,7 @@ namespace Test
     }
 
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToGenericComponent_ExplicitType_WithGetSet_Action()
     {
         // Arrange
@@ -2753,7 +2758,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToGenericComponent_ExplicitType_WithGetSet_Function()
     {
         // Arrange
@@ -2792,7 +2797,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponentBindToGenericComponent_InferredType_WithGetSet_Action()
     {
         // Arrange
@@ -2828,7 +2833,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponentBindToGenericComponent_InferredType_WithGetSet_Function()
     {
         // Arrange
@@ -2864,7 +2869,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericBindToGenericComponent_ExplicitType_WithGetSet_Action()
     {
         // Arrange
@@ -2900,7 +2905,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericBindToGenericComponent_ExplicitType_WithGetSet_Function()
     {
         // Arrange
@@ -2936,7 +2941,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithGetSet_EventCallback_ReceivesAction()
     {
         // Arrange
@@ -2969,7 +2974,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithGetSet_EventCallback_ReceivesFunction()
     {
         // Arrange
@@ -3004,7 +3009,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithAfter_EventCallback()
     {
         // Arrange
@@ -3040,7 +3045,7 @@ namespace Test
         Assert.Equal("CS1503", error.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithAfter_TaskReturningDelegate()
     {
         // Arrange
@@ -3076,7 +3081,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithAfter_TaskReturningLambda()
     {
         // Arrange
@@ -3110,7 +3115,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithAfter_Action()
     {
         // Arrange
@@ -3145,7 +3150,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToGenericComponent_InferredType_WithAfter_Action()
     {
         // Arrange
@@ -3180,7 +3185,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToGenericComponent_ExplicitType_WithAfter_Action()
     {
         // Arrange
@@ -3215,7 +3220,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponentBindToGenericComponent_InferredType_WithAfter_Action()
     {
         // Arrange
@@ -3251,7 +3256,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponentBindToGenericComponent_ExplicitType_WithAfter_Action()
     {
         // Arrange
@@ -3287,7 +3292,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithAfter_ActionLambda()
     {
         // Arrange
@@ -3320,7 +3325,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithAfter_EventCallback_ReceivesAction()
     {
         // Arrange
@@ -3353,7 +3358,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithAfter_EventCallback_ReceivesFunction()
     {
         // Arrange
@@ -3388,7 +3393,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithAfter_AsyncLambdaProducesError()
     {
         // Arrange
@@ -3425,7 +3430,7 @@ namespace Test
             d => Assert.Equal("CS8030", d.Id));
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElement_WithStringAttribute_WritesAttributes()
     {
         // Arrange
@@ -3453,7 +3458,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElementWithSuffix_WritesAttributes()
     {
         // Arrange
@@ -3481,7 +3486,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElementWithSuffix_OverridesEvent()
     {
         // Arrange
@@ -3509,7 +3514,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElement_WithEventAsExpression()
     {
         // Arrange
@@ -3538,7 +3543,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElement_WithEventAsExplicitExpression()
     {
         // Arrange
@@ -3567,7 +3572,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BuiltIn_BindToInputWithoutType_WritesAttributes()
     {
         // Arrange
@@ -3585,7 +3590,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BuiltIn_BindToInputWithoutType_IsCaseSensitive()
     {
         // Arrange
@@ -3603,7 +3608,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BuiltIn_BindToInputText_WithFormat_WritesAttributes()
     {
         // Arrange
@@ -3621,7 +3626,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BuiltIn_BindToInputText_WithFormatFromProperty_WritesAttributes()
     {
         // Arrange
@@ -3641,7 +3646,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BuiltIn_BindToInputText_WritesAttributes()
     {
         // Arrange
@@ -3659,7 +3664,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BuiltIn_BindToInputCheckbox_WritesAttributes()
     {
         // Arrange
@@ -3677,7 +3682,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElementFallback_WritesAttributes()
     {
         // Arrange
@@ -3695,7 +3700,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElementFallback_WithFormat_WritesAttributes()
     {
         // Arrange
@@ -3713,7 +3718,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElementFallback_WithCulture()
     {
         // Arrange
@@ -3732,7 +3737,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElementWithCulture()
     {
         // Arrange
@@ -3761,7 +3766,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToInputElementWithDefaultCulture()
     {
         // Arrange
@@ -3791,7 +3796,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToInputElementWithDefaultCulture_Override()
     {
         // Arrange
@@ -3821,7 +3826,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElement_MixingBindAndParamBindSet()
     {
         // Arrange
@@ -3853,7 +3858,7 @@ namespace Test
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElement_MixingBindWithoutSuffixAndParamBindSetWithSuffix()
     {
         // Arrange
@@ -3885,7 +3890,7 @@ namespace Test
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElement_MixingBindValueWithGetSet()
     {
         // Arrange
@@ -3918,7 +3923,7 @@ namespace Test
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToComponent_WithGetSet_ProducesErrorOnOlderLanguageVersions()
     {
         _configuration = RazorConfiguration.Create(
@@ -3961,7 +3966,7 @@ namespace Test
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElement_MixingSetWithAfter()
     {
         // Arrange
@@ -3994,7 +3999,7 @@ namespace Test
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElement_MissingBindGet()
     {
         // Arrange
@@ -4023,7 +4028,7 @@ namespace Test
             diagnostic => Assert.Equal("RZ10016", diagnostic.Id));
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BindToElement_MissingBindSet()
     {
         // Arrange
@@ -4052,7 +4057,7 @@ namespace Test
             diagnostic => Assert.Equal("RZ10017", diagnostic.Id));
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BuiltIn_BindToInputText_CanOverrideEvent()
     {
         // Arrange
@@ -4071,7 +4076,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BuiltIn_BindToInputWithSuffix()
     {
         // Arrange
@@ -4090,7 +4095,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BuiltIn_BindToInputWithSuffix_CanOverrideEvent()
     {
         // Arrange
@@ -4108,7 +4113,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BuiltIn_BindToInputWithDefaultFormat()
     {
         // Arrange
@@ -4137,7 +4142,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BuiltIn_BindToInputWithDefaultFormat_Override()
     {
         // Arrange
@@ -4166,7 +4171,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BuiltIn_BindToInputWithDefaultCultureAndDefaultFormat_Override()
     {
         // Arrange
@@ -4199,7 +4204,7 @@ namespace Test
 
     #region Child Content
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_WithChildContent()
     {
         // Arrange
@@ -4229,7 +4234,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_WithGenericChildContent()
     {
         // Arrange
@@ -4260,7 +4265,7 @@ namespace Test
     }
 
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_WithGenericChildContent_SetsParameterName()
     {
         // Arrange
@@ -4294,7 +4299,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_WithGenericChildContent_SetsParameterNameOnComponent()
     {
         // Arrange
@@ -4328,7 +4333,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_WithElementOnlyChildContent()
     {
         // Arrange
@@ -4355,7 +4360,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_WithExplicitChildContent()
     {
         // Arrange
@@ -4382,7 +4387,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_WithExplicitGenericChildContent()
     {
         // Arrange
@@ -4409,7 +4414,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void MultipleExplictChildContent()
     {
         // Arrange
@@ -4442,7 +4447,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BodyAndAttributeChildContent()
     {
         // Arrange
@@ -4478,7 +4483,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void BodyAndExplicitChildContent()
     {
         // Arrange
@@ -4515,7 +4520,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void MultipleChildContentMatchingComponentName()
     {
         // Arrange
@@ -4557,7 +4562,7 @@ namespace Test
 
     #region Directives
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_WithPageDirective()
     {
         // Arrange
@@ -4584,7 +4589,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithUsingDirectives()
     {
         // Arrange
@@ -4620,7 +4625,7 @@ namespace Test2
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithUsingDirectives_AmbiguousImport()
     {
         // Arrange
@@ -4672,7 +4677,7 @@ namespace Test3
         }
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_IgnoresStaticAndAliasUsings()
     {
         // Arrange
@@ -4714,7 +4719,7 @@ namespace Test3
         CompileToAssembly(generated, throwOnFailure: false);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildContent_FromAnotherNamespace()
     {
         // Arrange
@@ -4765,7 +4770,7 @@ namespace AnotherTest
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithNamespaceDirective()
     {
         // Arrange
@@ -4809,7 +4814,7 @@ namespace AnotherTest
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithPreserveWhitespaceDirective_True()
     {
         // Arrange / Act
@@ -4833,7 +4838,7 @@ namespace AnotherTest
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithPreserveWhitespaceDirective_False()
     {
         // Arrange / Act
@@ -4857,7 +4862,7 @@ namespace AnotherTest
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithPreserveWhitespaceDirective_Invalid()
     {
         // Arrange / Act
@@ -4876,7 +4881,7 @@ namespace AnotherTest
 
     #region EventCallback
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallback_CanPassEventCallback_Explicitly()
     {
         // Arrange
@@ -4911,7 +4916,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallbackOfT_GenericComponent_ExplicitType()
     {
         // Arrange
@@ -4947,7 +4952,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallbackOfT_GenericComponent_ExplicitType_MethodGroup()
     {
         // Arrange
@@ -4985,7 +4990,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallback_CanPassEventCallbackOfT_Explicitly()
     {
         // Arrange
@@ -5022,7 +5027,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallback_CanPassEventCallback_Implicitly_Action()
     {
         // Arrange
@@ -5057,7 +5062,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallback_CanPassEventCallback_Implicitly_ActionOfObject()
     {
         // Arrange
@@ -5092,7 +5097,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallback_CanPassEventCallback_Implicitly_FuncOfTask()
     {
         // Arrange
@@ -5128,7 +5133,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallback_CanPassEventCallback_Implicitly_FuncOfobjectTask()
     {
         // Arrange
@@ -5164,7 +5169,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallback_CanPassEventCallbackOfT_Implicitly_Action()
     {
         // Arrange
@@ -5200,7 +5205,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallback_CanPassEventCallbackOfT_Implicitly_ActionOfT()
     {
         // Arrange
@@ -5237,7 +5242,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallback_CanPassEventCallbackOfT_Implicitly_FuncOfTask()
     {
         // Arrange
@@ -5274,7 +5279,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallback_CanPassEventCallbackOfT_Implicitly_FuncOfTTask()
     {
         // Arrange
@@ -5312,7 +5317,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallback_CanPassEventCallbackOfT_Implicitly_TypeMismatch()
     {
         // Arrange
@@ -5354,7 +5359,7 @@ namespace Test
         Assert.Collection(result.Diagnostics, d => { Assert.Equal("CS1503", d.Id); });
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallbackOfT_GenericComponent_MissingTypeParameterBinding_01()
     {
         // Arrange
@@ -5394,7 +5399,7 @@ namespace Test
             Diagnostic(ErrorCode.WRN_UnreferencedField, "counter").WithArguments("Test.TestComponent.counter").WithLocation(4, 17));
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventCallbackOfT_GenericComponent_MissingTypeParameterBinding_02()
     {
         // Arrange
@@ -5437,7 +5442,7 @@ namespace Test
             Diagnostic(ErrorCode.WRN_UnreferencedField, "counter").WithArguments("Test.TestComponent.counter").WithLocation(4, 17));
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/aspnetcore/issues/48526")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/48526")]
     public void EventCallbackOfT_Array()
     {
         // Arrange
@@ -5471,7 +5476,7 @@ namespace Test
 
     #region Event Handlers
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithImplicitLambdaEventHandler()
     {
         // Arrange
@@ -5504,7 +5509,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_WithLambdaEventHandler()
     {
         // Arrange
@@ -5541,7 +5546,7 @@ namespace Test
 
     // Regression test for #954 - we need to allow arbitrary event handler
     // attributes with weak typing.
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_WithWeaklyTypeEventHandler()
     {
         // Arrange
@@ -5572,7 +5577,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_WithExplicitEventHandler()
     {
         // Arrange
@@ -5607,7 +5612,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandler_OnElement_WithString()
     {
         // Arrange
@@ -5623,7 +5628,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandler_OnElement_WithNoArgsLambdaDelegate()
     {
         // Arrange
@@ -5639,7 +5644,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandler_OnElement_WithEventArgsLambdaDelegate()
     {
         // Arrange
@@ -5655,7 +5660,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandler_OnElement_WithNoArgMethodGroup()
     {
         // Arrange
@@ -5675,7 +5680,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandler_OnElement_WithoutCloseTag()
     {
         // Arrange
@@ -5697,7 +5702,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandler_OnElement_WithEventArgsMethodGroup()
     {
         // Arrange
@@ -5717,7 +5722,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandler_OnElement_ArbitraryEventName_WithEventArgsMethodGroup()
     {
         // Arrange
@@ -5737,7 +5742,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void AsyncEventHandler_OnElement_Action_MethodGroup()
     {
         // Arrange
@@ -5760,7 +5765,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void AsyncEventHandler_OnElement_ActionEventArgs_MethodGroup()
     {
         // Arrange
@@ -5783,7 +5788,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void AsyncEventHandler_OnElement_Action_Lambda()
     {
         // Arrange
@@ -5801,7 +5806,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void AsyncEventHandler_OnElement_ActionEventArgs_Lambda()
     {
         // Arrange
@@ -5819,7 +5824,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandler_OnElement_WithLambdaDelegate()
     {
         // Arrange
@@ -5835,7 +5840,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandler_OnElement_WithDelegate()
     {
         // Arrange
@@ -5855,7 +5860,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandler_AttributeNameIsCaseSensitive()
     {
         // Arrange
@@ -5875,7 +5880,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandler_PreventDefault_StopPropagation_Minimized()
     {
         // Arrange
@@ -5891,7 +5896,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandler_PreventDefault_StopPropagation()
     {
         // Arrange
@@ -5910,7 +5915,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandler_WithDelegate_PreventDefault()
     {
         // Arrange
@@ -5931,7 +5936,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandler_PreventDefault_Duplicates()
     {
         // Arrange
@@ -5951,7 +5956,7 @@ namespace Test
 
     #region Generics
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_Generic()
     {
         // Arrange
@@ -5977,7 +5982,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/8467")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/8467")]
     public void ChildComponent_AtSpecifiedInRazorFileForTypeParameter()
     {
         AdditionalSyntaxTrees.Add(Parse("""
@@ -5998,7 +6003,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_NonPrimitiveType()
     {
         // Arrange
@@ -6028,7 +6033,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_NonPrimitiveTypeRenderFragment()
     {
         // Arrange
@@ -6060,7 +6065,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_Generic_TypeInference()
     {
         // Arrange
@@ -6086,7 +6091,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_Generic_TypeInference_Multiple()
     {
         // Arrange
@@ -6114,7 +6119,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_Explicit()
     {
         // Arrange
@@ -6146,7 +6151,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_ExplicitOverride()
     {
         // Arrange
@@ -6178,7 +6183,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_NotCascaded_Explicit()
     {
         // The point of this test is to show that, without [CascadingTypeParameter], we don't cascade
@@ -6213,7 +6218,7 @@ namespace Test
         Assert.Same(ComponentDiagnosticFactory.GenericComponentTypeInferenceUnderspecified.Id, diagnostic.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_NotCascaded_Inferred()
     {
         // Arrange
@@ -6245,7 +6250,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_Inferred_WithConstraints()
     {
         // Arrange
@@ -6295,7 +6300,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_Inferred_MultipleConstraints()
     {
         // Arrange
@@ -6345,7 +6350,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_Inferred_MultipleConstraints_ClassesAndInterfaces()
     {
         // Arrange
@@ -6398,7 +6403,7 @@ namespace Models {
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_Inferred_MultipleConstraints_GenericClassConstraints()
     {
         // Arrange
@@ -6459,7 +6464,7 @@ namespace Models {
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_Partial_CreatesError()
     {
         // Arrange
@@ -6493,7 +6498,7 @@ namespace Test
         Assert.Same(ComponentDiagnosticFactory.GenericComponentMissingTypeArgument.Id, diagnostic.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_WithSplatAndKey()
     {
         // This is an integration test to show that our type inference code doesn't
@@ -6533,7 +6538,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_Multilayer()
     {
         // Arrange
@@ -6570,7 +6575,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_Override_Multilayer()
     {
         // Arrange
@@ -6605,7 +6610,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_Override()
     {
         // This test is to show that, even if an ancestor is trying to cascade its generic types,
@@ -6641,7 +6646,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_NotCascaded_CreatesError()
     {
         // Arrange
@@ -6674,7 +6679,7 @@ namespace Test
         Assert.Same(ComponentDiagnosticFactory.GenericComponentTypeInferenceUnderspecified.Id, diagnostic.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_GenericChildContent()
     {
         // Arrange
@@ -6707,7 +6712,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_GenericLambda()
     {
         // Arrange
@@ -6740,7 +6745,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_MultipleTypes()
     {
 
@@ -6780,7 +6785,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_WithUnrelatedType_CreatesError()
     {
         // It would succeed if you changed this to Column<TItem, TUnrelated>, or if the Grid took a parameter
@@ -6822,7 +6827,7 @@ namespace Test
         Assert.Same(ComponentDiagnosticFactory.GenericComponentTypeInferenceUnderspecified.Id, diagnostic.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_CombiningMultipleAncestors()
     {
 
@@ -6866,7 +6871,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7103")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/7103")]
     public void CascadingGenericInference_ParameterInNamespace()
     {
         // Arrange
@@ -6905,7 +6910,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CascadingGenericInference_Tuple()
     {
         // Arrange
@@ -6937,7 +6942,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7428")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/7428")]
     public void CascadingGenericInference_NullableEnabled()
     {
         // Arrange
@@ -6971,7 +6976,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_GenericWeaklyTypedAttribute()
     {
         // Arrange
@@ -6997,7 +7002,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_GenericWeaklyTypedAttribute_TypeInference()
     {
         // Arrange
@@ -7023,7 +7028,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_GenericBind()
     {
         // Arrange
@@ -7057,7 +7062,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_GenericBind_TypeInference()
     {
         // Arrange
@@ -7092,7 +7097,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_GenericBindWeaklyTyped()
     {
         // Arrange
@@ -7121,7 +7126,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_GenericBindWeaklyTyped_TypeInference()
     {
         // Arrange
@@ -7151,7 +7156,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_GenericChildContent()
     {
         // Arrange
@@ -7181,7 +7186,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_GenericChildContent_TypeInference()
     {
         // Arrange
@@ -7211,7 +7216,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_NonGenericParameterizedChildContent_TypeInference()
     {
         // Arrange
@@ -7244,7 +7249,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_WithFullyQualifiedTagName()
     {
         // Arrange
@@ -7274,7 +7279,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_MultipleGenerics()
     {
         // Arrange
@@ -7314,7 +7319,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ChildComponent_MultipleGenerics_TypeInference()
     {
         // Arrange
@@ -7357,7 +7362,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void NonGenericComponent_WithGenericEventHandler()
     {
         // Arrange
@@ -7391,7 +7396,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_WithKey()
     {
         // Arrange
@@ -7422,7 +7427,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_WithKey_TypeInference()
     {
         // Arrange
@@ -7453,7 +7458,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_WithComponentRef_CreatesDiagnostic()
     {
         // Arrange
@@ -7485,7 +7490,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_WithComponentRef_TypeInference_CreatesDiagnostic()
     {
         // Arrange
@@ -7517,7 +7522,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_NonGenericParameter_TypeInference()
     {
         // Arrange
@@ -7558,7 +7563,7 @@ namespace Test.Shared
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_NonGenericEventCallback_TypeInference()
     {
         // Arrange
@@ -7588,7 +7593,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_GenericEventCallback_TypeInference()
     {
         // Arrange
@@ -7619,7 +7624,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_NestedGenericEventCallback_TypeInference()
     {
         // Arrange
@@ -7651,7 +7656,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_GenericEventCallbackWithGenericTypeParameter_TypeInference()
     {
         // Arrange
@@ -7682,7 +7687,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_GenericEventCallbackWithGenericTypeParameter_NestedTypeExplicit()
     {
         // Arrange
@@ -7714,7 +7719,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_GenericEventCallbackWithGenericTypeParameter_NestedTypeInference()
     {
         // Arrange
@@ -7751,7 +7756,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_GenericEventCallbackWithNestedGenericTypeParameter_TypeInference()
     {
         // Arrange
@@ -7784,7 +7789,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Theory, WorkItem("https://github.com/dotnet/razor/issues/7074")]
+    [IntegrationTestTheory, WorkItem("https://github.com/dotnet/razor/issues/7074")]
     [InlineData("struct", null, "1")]
     [InlineData("class", null, "string.Empty")]
     [InlineData("notnull", null, "1")]
@@ -7821,7 +7826,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void GenericComponent_UnmanagedConstraint()
     {
         // Arrange
@@ -7850,7 +7855,7 @@ namespace Test
 
     #region Key
 
-    [Fact]
+    [IntegrationTestFact]
     public void Element_WithKey()
     {
         // Arrange/Act
@@ -7868,7 +7873,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Element_WithKey_AndOtherAttributes()
     {
         // Arrange/Act
@@ -7888,7 +7893,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithKey()
     {
         // Arrange
@@ -7918,7 +7923,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithKey_WithChildContent()
     {
         // Arrange
@@ -7946,7 +7951,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Element_WithKey_AttributeNameIsCaseSensitive()
     {
         // Arrange/Act
@@ -7968,7 +7973,7 @@ namespace Test
 
     #region Splat
 
-    [Fact]
+    [IntegrationTestFact]
     public void Element_WithSplat()
     {
         // Arrange/Act
@@ -7986,7 +7991,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Element_WithSplat_ImplicitExpression()
     {
         // Arrange/Act
@@ -8004,7 +8009,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Element_WithSplat_ExplicitExpression()
     {
         // Arrange/Act
@@ -8022,7 +8027,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithSplat()
     {
         // Arrange
@@ -8052,7 +8057,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithSplat_ImplicitExpression()
     {
         // Arrange
@@ -8082,7 +8087,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithSplat_ExplicitExpression()
     {
         // Arrange
@@ -8112,7 +8117,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithSplat_GenericTypeInference()
     {
         // Arrange
@@ -8143,7 +8148,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Element_WithSplat_AttributeNameIsCaseSensitive()
     {
         // Arrange/Act
@@ -8165,7 +8170,7 @@ namespace Test
 
     #region Ref
 
-    [Fact]
+    [IntegrationTestFact]
     public void Element_WithRef()
     {
         // Arrange/Act
@@ -8184,7 +8189,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Element_WithRef_AndOtherAttributes()
     {
         // Arrange/Act
@@ -8205,7 +8210,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithRef()
     {
         // Arrange
@@ -8236,7 +8241,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/8170")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/8170")]
     public void Component_WithRef_Nullable()
     {
         // Act
@@ -8256,7 +8261,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/8170")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/8170")]
     public void Component_WithRef_Nullable_Generic()
     {
         // Arrange
@@ -8288,7 +8293,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithRef_WithChildContent()
     {
         // Arrange
@@ -8321,7 +8326,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Element_WithRef_AttributeNameIsCaseSensitive()
     {
         // Arrange/Act
@@ -8338,7 +8343,7 @@ namespace Test
 
     #region Templates
 
-    [Fact]
+    [IntegrationTestFact]
     public void RazorTemplate_InCodeBlock()
     {
         // Arrange
@@ -8361,7 +8366,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RazorTemplate_InExplicitExpression()
     {
         // Arrange
@@ -8384,7 +8389,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RazorTemplate_NonGeneric_InImplicitExpression()
     {
         // Arrange
@@ -8402,7 +8407,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RazorTemplate_Generic_InImplicitExpression()
     {
         // Arrange
@@ -8425,7 +8430,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RazorTemplate_ContainsComponent()
     {
         // Arrange
@@ -8460,7 +8465,7 @@ namespace Test
     }
 
     // Targeted at the logic that assigns 'builder' names
-    [Fact]
+    [IntegrationTestFact]
     public void RazorTemplate_FollowedByComponent()
     {
         // Arrange
@@ -8498,7 +8503,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RazorTemplate_NonGeneric_AsComponentParameter()
     {
         // Arrange
@@ -8526,7 +8531,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RazorTemplate_Generic_AsComponentParameter()
     {
         // Arrange
@@ -8559,7 +8564,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RazorTemplate_AsComponentParameter_MixedContent()
     {
         // Arrange
@@ -8597,7 +8602,7 @@ namespace Test
 
     #region Whitespace
 
-    [Fact]
+    [IntegrationTestFact]
     public void LeadingWhiteSpace_WithDirective()
     {
         // Arrange/Act
@@ -8613,7 +8618,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void LeadingWhiteSpace_WithCSharpExpression()
     {
         // Arrange/Act
@@ -8629,7 +8634,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void LeadingWhiteSpace_WithComponent()
     {
         // Arrange
@@ -8660,7 +8665,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void TrailingWhiteSpace_WithDirective()
     {
         // Arrange/Act
@@ -8677,7 +8682,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void TrailingWhiteSpace_WithCSharpExpression()
     {
         // Arrange/Act
@@ -8694,7 +8699,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void TrailingWhiteSpace_WithComponent()
     {
         // Arrange
@@ -8723,7 +8728,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Whitespace_BetweenElementAndFunctions()
     {
         // Arrange
@@ -8742,7 +8747,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void WhiteSpace_InsideAttribute_InMarkupBlock()
     {
         // Arrange
@@ -8756,7 +8761,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void WhiteSpace_InMarkupInFunctionsBlock()
     {
         // Arrange
@@ -8785,7 +8790,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void WhiteSpace_WithPreserveWhitespace()
     {
         // Arrange
@@ -8815,7 +8820,7 @@ namespace Test
 
     #region Legacy 3.1 Whitespace
 
-    [Fact]
+    [IntegrationTestFact]
     public void Legacy_3_1_LeadingWhiteSpace_WithDirective()
     {
         // Arrange/Act
@@ -8836,7 +8841,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Legacy_3_1_LeadingWhiteSpace_WithCSharpExpression()
     {
         // Arrange/Act
@@ -8857,7 +8862,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Legacy_3_1_LeadingWhiteSpace_WithComponent()
     {
         // Arrange
@@ -8893,7 +8898,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Legacy_3_1_TrailingWhiteSpace_WithDirective()
     {
         // Arrange/Act
@@ -8915,7 +8920,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Legacy_3_1_TrailingWhiteSpace_WithCSharpExpression()
     {
         // Arrange/Act
@@ -8937,7 +8942,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Legacy_3_1_TrailingWhiteSpace_WithComponent()
     {
         // Arrange
@@ -8971,7 +8976,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Legacy_3_1_Whitespace_BetweenElementAndFunctions()
     {
         // Arrange
@@ -8994,7 +8999,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Legacy_3_1_WhiteSpace_InsideAttribute_InMarkupBlock()
     {
         // Arrange
@@ -9012,7 +9017,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Legacy_3_1_WhiteSpace_InMarkupInFunctionsBlock()
     {
         // Arrange
@@ -9048,7 +9053,7 @@ namespace Test
     #endregion
 
     #region Imports
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithImportsFile()
     {
         // Arrange
@@ -9082,7 +9087,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentImports()
     {
         // Arrange
@@ -9112,7 +9117,7 @@ namespace Test
         CompileToAssembly(generated, throwOnFailure: false);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ComponentImports_GlobalPrefix()
     {
         // Arrange
@@ -9140,7 +9145,7 @@ namespace Test
         Assert.Contains("global::MyComponents.Counter", generated.Code);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_NamespaceDirective_InImports()
     {
         // Arrange
@@ -9174,7 +9179,7 @@ namespace New.Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_NamespaceDirective_OverrideImports()
     {
         // Arrange
@@ -9209,7 +9214,7 @@ namespace New.Test
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/7091")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/7091")]
     public void Component_NamespaceDirective_ContainsSystem()
     {
         // Act
@@ -9221,7 +9226,7 @@ namespace New.Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_PreserveWhitespaceDirective_InImports()
     {
         // Arrange
@@ -9246,7 +9251,7 @@ namespace New.Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_PreserveWhitespaceDirective_OverrideImports()
     {
         // Arrange
@@ -9275,7 +9280,7 @@ namespace New.Test
     #endregion
 
     #region "CSS scoping"
-    [Fact]
+    [IntegrationTestFact]
     public void Component_WithCssScope()
     {
         // Arrange
@@ -9339,7 +9344,7 @@ namespace Test
 
     #region Misc
 
-    [Fact] // We don't process <!DOCTYPE ...> - we just skip them
+    [IntegrationTestFact] // We don't process <!DOCTYPE ...> - we just skip them
     public void Component_WithDocType()
     {
         // Arrange
@@ -9356,7 +9361,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void DuplicateMarkupAttributes_IsAnError()
     {
         // Arrange
@@ -9375,7 +9380,7 @@ namespace Test
         Assert.Same(ComponentDiagnosticFactory.DuplicateMarkupAttribute.Id, diagnostic.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void DuplicateMarkupAttributes_IsAnError_EventHandler()
     {
         // Arrange
@@ -9395,7 +9400,7 @@ namespace Test
         Assert.Same(ComponentDiagnosticFactory.DuplicateMarkupAttributeDirective.Id, diagnostic.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void DuplicateMarkupAttributes_Multiple_IsAnError()
     {
         // Arrange
@@ -9416,7 +9421,7 @@ namespace Test
         });
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void DuplicateMarkupAttributes_IsAnError_BindValue()
     {
         // Arrange
@@ -9441,7 +9446,7 @@ namespace Test
         Assert.Same(ComponentDiagnosticFactory.DuplicateMarkupAttributeDirective.Id, diagnostic.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void DuplicateMarkupAttributes_DifferentCasing_IsAnError_BindValue()
     {
         // Arrange
@@ -9465,7 +9470,7 @@ namespace Test
         Assert.Same(ComponentDiagnosticFactory.DuplicateMarkupAttributeDirective.Id, diagnostic.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void DuplicateMarkupAttributes_IsAnError_BindOnInput()
     {
         // Arrange
@@ -9489,7 +9494,7 @@ namespace Test
         Assert.Same(ComponentDiagnosticFactory.DuplicateMarkupAttributeDirective.Id, diagnostic.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void DuplicateComponentParameters_IsAnError()
     {
         // Arrange
@@ -9518,7 +9523,7 @@ namespace Test
         Assert.Same(ComponentDiagnosticFactory.DuplicateComponentParameter.Id, diagnostic.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void DuplicateComponentParameters_IsAnError_Multiple()
     {
         // Arrange
@@ -9549,7 +9554,7 @@ namespace Test
         });
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void DuplicateComponentParameters_IsAnError_WeaklyTyped()
     {
         // Arrange
@@ -9578,7 +9583,7 @@ namespace Test
         Assert.Same(ComponentDiagnosticFactory.DuplicateComponentParameter.Id, diagnostic.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void DuplicateComponentParameters_IsAnError_BindMessage()
     {
         // Arrange
@@ -9613,7 +9618,7 @@ namespace Test
         Assert.Same(ComponentDiagnosticFactory.DuplicateComponentParameterDirective.Id, diagnostic.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void DuplicateComponentParameters_IsAnError_BindMessageChanged()
     {
         // Arrange
@@ -9648,7 +9653,7 @@ namespace Test
         Assert.Same(ComponentDiagnosticFactory.DuplicateComponentParameterDirective.Id, diagnostic.Id);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void DuplicateComponentParameters_IsAnError_BindMessageExpression()
     {
         // Arrange
@@ -9683,7 +9688,7 @@ namespace Test
         Assert.Same(ComponentDiagnosticFactory.DuplicateComponentParameterDirective.Id, diagnostic.Id);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/blazor/issues/597")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/blazor/issues/597")]
     public void Regression_597()
     {
         // Arrange
@@ -9713,7 +9718,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Regression_609()
     {
         // Arrange
@@ -9749,7 +9754,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/blazor/issues/772")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/blazor/issues/772")]
     public void Regression_772()
     {
         // Arrange
@@ -9787,7 +9792,7 @@ Welcome to your new app.
             d => Assert.Equal("RZ1035", d.Id));
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/blazor/issues/773")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/blazor/issues/773")]
     public void Regression_773()
     {
         // Arrange
@@ -9820,7 +9825,7 @@ Welcome to your new app.
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Regression_784()
     {
         // Arrange
@@ -9844,7 +9849,7 @@ Welcome to your new app.
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void EventHandlerTagHelper_EscapeQuotes()
     {
         // Act
@@ -9861,7 +9866,7 @@ Welcome to your new app.
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_ComplexContentInAttribute()
     {
         // Arrange
@@ -9895,7 +9900,7 @@ namespace Test
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument, verifyLinePragmas: false);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_TextTagsAreNotRendered()
     {
         // Arrange
@@ -9926,7 +9931,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_MatchingIsCaseSensitive()
     {
         // Arrange
@@ -9955,7 +9960,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Component_MultipleComponentsDifferByCase()
     {
         // Arrange
@@ -9987,7 +9992,7 @@ namespace Test
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ElementWithUppercaseTagName_CanHideWarningWithBang()
     {
         // Arrange & Act
@@ -10005,7 +10010,7 @@ namespace Test
 
     #region LinePragmas
 
-    [Fact]
+    [IntegrationTestFact]
     public void ProducesEnhancedLinePragmaWhenNecessary()
     {
         var generated = CompileToCSharp(@"
@@ -10034,7 +10039,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void ProducesStandardLinePragmaForCSharpCode()
     {
         var generated = CompileToCSharp(@"
@@ -10060,7 +10065,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: false);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void CanProduceLinePragmasForComponentWithRenderFragment()
     {
         var generated = CompileToCSharp(@"
@@ -10092,7 +10097,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: false);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9359")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9359")]
     public void LinePragma_Multiline()
     {
         // Act
@@ -10111,7 +10116,7 @@ Time: @DateTime.Now
 
     #region RenderMode
 
-    [Fact]
+    [IntegrationTestFact]
     public void RenderMode_Directive_FullyQualified()
     {
         var generated = CompileToCSharp("""
@@ -10124,7 +10129,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RenderMode_Directive_SimpleExpression()
     {
         var generated = CompileToCSharp("""
@@ -10137,7 +10142,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RenderMode_Directive_SimpleExpression_With_Code()
     {
         var generated = CompileToCSharp("""
@@ -10156,7 +10161,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RenderMode_Directive_SimpleExpression_NotFirst()
     {
         var generated = CompileToCSharp("""
@@ -10174,7 +10179,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RenderMode_Directive_NewExpression()
     {
         var generated = CompileToCSharp("""
@@ -10193,7 +10198,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RenderMode_Directive_WithNamespaces()
     {
         var generated = CompileToCSharp("""
@@ -10208,7 +10213,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RenderMode_Attribute_With_SimpleIdentifier()
     {
         var generated = CompileToCSharp($"""
@@ -10221,7 +10226,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RenderMode_Attribute_With_Expression()
     {
         var generated = CompileToCSharp($$"""
@@ -10241,7 +10246,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RenderMode_Attribute_With_Existing_Attributes()
     {
         var generated = CompileToCSharp($$"""
@@ -10261,7 +10266,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void Duplicate_RenderMode()
     {
         var generated = CompileToCSharp($$"""
@@ -10275,7 +10280,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RenderMode_Multiple_Components()
     {
         var generated = CompileToCSharp($$"""
@@ -10289,7 +10294,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RenderMode_Child_Components()
     {
         var generated = CompileToCSharp($$"""
@@ -10316,7 +10321,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RenderMode_With_TypeInference()
     {
         var generated = CompileToCSharp($$"""
@@ -10336,7 +10341,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact]
+    [IntegrationTestFact]
     public void RenderMode_With_Ternary()
     {
         var generated = CompileToCSharp($$"""
@@ -10349,7 +10354,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9343")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9343")]
     public void RenderMode_With_Null_Nullable_Disabled()
     {
         var generated = CompileToCSharp($$"""
@@ -10362,7 +10367,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9343")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9343")]
     public void RenderMode_With_Null_Nullable_Enabled()
     {
         var generated = CompileToCSharp($$"""
@@ -10375,7 +10380,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated, throwOnFailure: true);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9343")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9343")]
     public void RenderMode_With_Nullable_Receiver()
     {
         var generated = CompileToCSharp($$"""
@@ -10407,7 +10412,7 @@ Time: @DateTime.Now
 
     #region FormName
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_HtmlValue()
     {
         // Act
@@ -10422,7 +10427,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_CSharpValue()
     {
         // Act
@@ -10437,7 +10442,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_CSharpValue_Integer()
     {
         // Act
@@ -10459,7 +10464,7 @@ Time: @DateTime.Now
             Diagnostic(ErrorCode.ERR_BadArgType, "x").WithArguments("1", "int", "string").WithLocation(2, 55));
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_MixedValue()
     {
         // Act
@@ -10476,7 +10481,7 @@ Time: @DateTime.Now
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument, verifyLinePragmas: false);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_Nullability()
     {
         // This could report a nullability warning, but that's not currently supported in other places, either.
@@ -10495,7 +10500,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_CSharpError()
     {
         // Act
@@ -10514,7 +10519,7 @@ Time: @DateTime.Now
             Diagnostic(ErrorCode.ERR_NameNotInContext, "x").WithArguments("x").WithLocation(2, 55));
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_RazorError()
     {
         // Act
@@ -10528,7 +10533,7 @@ Time: @DateTime.Now
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_NotAForm()
     {
         // Act
@@ -10543,7 +10548,7 @@ Time: @DateTime.Now
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_MissingUsing()
     {
         // Act
@@ -10557,7 +10562,7 @@ Time: @DateTime.Now
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_NotAForm_RazorLangVersion7()
     {
         // Act
@@ -10574,7 +10579,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_MissingSubmit()
     {
         // Act
@@ -10589,7 +10594,7 @@ Time: @DateTime.Now
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_FakeSubmit()
     {
         // Act
@@ -10604,7 +10609,7 @@ Time: @DateTime.Now
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_Component()
     {
         // Act
@@ -10619,7 +10624,7 @@ Time: @DateTime.Now
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_Component_RazorLangVersion7()
     {
         // Act
@@ -10636,7 +10641,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_Component_Generic()
     {
         // Act
@@ -10655,7 +10660,7 @@ Time: @DateTime.Now
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_Component_Generic_RazorLangVersion7()
     {
         // Act
@@ -10676,7 +10681,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_Duplicate_HtmlValue()
     {
         // Act
@@ -10691,7 +10696,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_Duplicate_CSharpValue()
     {
         // This emits invalid code and no warnings, but that's a pre-existing bug,
@@ -10718,7 +10723,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_MoreElements_HtmlValue()
     {
         // Act
@@ -10734,7 +10739,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_MoreElements_CSharpValue()
     {
         // Act
@@ -10754,7 +10759,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_Nested()
     {
         // Act
@@ -10779,7 +10784,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9323")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9323")]
     public void FormName_ChildContent()
     {
         // Act
@@ -10796,7 +10801,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_NoAddNamedEventMethod()
     {
         // Arrange
@@ -10870,7 +10875,7 @@ Time: @DateTime.Now
         CompileToAssembly(generated);
     }
 
-    [Fact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
     public void FormName_RazorLangVersion7()
     {
         // Act

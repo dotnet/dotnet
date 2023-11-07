@@ -71,7 +71,9 @@ internal class RazorSyntaxTreePartialParser
         }
 
         // Locate the span responsible for this change
+#pragma warning disable CS0618 // Type or member is obsolete, RazorSyntaxTreePartialParser is only used in legacy scenarios
         _lastChangeOwner = ModifiedSyntaxTreeRoot.LocateOwner(change);
+#pragma warning restore CS0618 // Type or member is obsolete
 
         if (_lastResultProvisional)
         {

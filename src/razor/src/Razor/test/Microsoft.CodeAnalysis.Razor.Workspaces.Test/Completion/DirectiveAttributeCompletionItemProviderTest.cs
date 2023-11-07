@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.IntegrationTests;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
 using Xunit.Abstractions;
@@ -43,19 +43,6 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
     {
         var result = CompileToCSharp(content, throwOnFailure: false);
         return result.CodeDocument;
-    }
-
-    [Fact]
-    public void GetCompletionItems_LocationHasNoOwner_ReturnsEmptyCollection()
-    {
-        // Arrange
-        var context = CreateRazorCompletionContext(absoluteIndex: 30, "<input @  />");
-
-        // Act
-        var completions = _provider.GetCompletionItems(context);
-
-        // Assert
-        Assert.Empty(completions);
     }
 
     [Fact]
@@ -303,8 +290,8 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
         var syntaxTree = codeDocument.GetSyntaxTree();
         var tagHelperDocumentContext = codeDocument.GetTagHelperContext();
 
-        var queryableChange = new SourceChange(absoluteIndex, length: 0, newText: string.Empty);
-        var owner = syntaxTree.Root.LocateOwner(queryableChange);
+        var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex, includeWhitespace: true, walkMarkersBack: true);
+        owner = RazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex, new DefaultHtmlFactsService());
         return new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperDocumentContext);
     }
 }

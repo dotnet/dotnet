@@ -140,6 +140,7 @@ internal static partial class LegacySyntaxNodeExtensions
         return node.WithAnnotations(newAnnotationsArray);
     }
 
+    [Obsolete("Use FindToken or FindInnermostNode instead", error: false)]
     public static SyntaxNode? LocateOwner(this SyntaxNode node, SourceChange change)
     {
         if (node is null)

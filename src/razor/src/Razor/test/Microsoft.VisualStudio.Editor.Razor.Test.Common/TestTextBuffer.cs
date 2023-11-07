@@ -14,9 +14,9 @@ public class TestTextBuffer : ITextBuffer
 {
     private readonly List<EventHandler<TextContentChangedEventArgs>> _attachedChangedEvents;
 
-    public TestTextBuffer(ITextSnapshot initialSnapshot)
+    public TestTextBuffer(ITextSnapshot initialSnapshot, IContentType contentType = null)
     {
-        ChangeContentType(TestInertContentType.Instance, editTag: null);
+        ChangeContentType(contentType ?? TestInertContentType.Instance, editTag: null);
 
         CurrentSnapshot = initialSnapshot;
         if (CurrentSnapshot is StringTextSnapshot testSnapshot)

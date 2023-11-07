@@ -58,16 +58,23 @@ internal class MarkupTransitionCompletionItemProvider : IRazorCompletionItemProv
             return ImmutableArray<RazorCompletionItem>.Empty;
         }
 
+        // If we're at the edge of a razor code block, FindInnermostNode will have returned that edge. However,
+        // the cursor, from the user's perspective, may still be on a markup element, so we want to walk back
+        // one token.
+        if (owner is RazorMetaCodeSyntax { SpanStart: var spanStart, MetaCode: [var metaCodeToken, ..] } && spanStart == context.AbsoluteIndex)
+        {
+            var previousToken = metaCodeToken.GetPreviousToken();
+            owner = previousToken.Parent;
+        }
+
         if (!AtMarkupTransitionCompletionPoint(owner))
         {
             return ImmutableArray<RazorCompletionItem>.Empty;
         }
 
-        var parent = owner.Parent;
-
         // Also helps filter out edge cases like `< te` and `< te=""`
         // (see comment in AtMarkupTransitionCompletionPoint)
-        if (!_htmlFactsService.TryGetElementInfo(parent, out var containingTagNameToken, out _) ||
+        if (!_htmlFactsService.TryGetElementInfo(owner, out var containingTagNameToken, out _, closingForwardSlashOrCloseAngleToken: out _) ||
             !containingTagNameToken.Span.IntersectsWith(context.AbsoluteIndex))
         {
             return ImmutableArray<RazorCompletionItem>.Empty;

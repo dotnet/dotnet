@@ -12,7 +12,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public class BraceSmartIndenterTestBase(ITestOutputHelper testOutput) : ProjectSnapshotManagerDispatcherTestBase(testOutput)
+public partial class BraceSmartIndenterTestBase(ITestOutputHelper testOutput) : ProjectSnapshotManagerDispatcherTestBase(testOutput)
 {
     private protected static VisualStudioDocumentTracker CreateDocumentTracker(Func<ITextBuffer> bufferAccessor, ITextView focusedTextView)
     {
@@ -71,9 +71,16 @@ public class BraceSmartIndenterTestBase(ITestOutputHelper testOutput) : ProjectS
 
     private protected static TestTextBuffer CreateTextBuffer(ITextSnapshot initialSnapshot, VisualStudioDocumentTracker documentTracker)
     {
-        var textBuffer = new TestTextBuffer(initialSnapshot);
+        var textBuffer = new TestTextBuffer(initialSnapshot, new LegacyCoreContentType());
         textBuffer.Properties.AddProperty(typeof(VisualStudioDocumentTracker), documentTracker);
 
         return textBuffer;
+    }
+
+    protected static ITextBuffer SetupTextBufferMock()
+    {
+        var mock = new Mock<ITextBuffer>(MockBehavior.Strict);
+        mock.SetupGet(a => a.ContentType).Returns(new LegacyCoreContentType());
+        return mock.Object;
     }
 }

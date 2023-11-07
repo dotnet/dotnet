@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.VisualStudio.Test;
 using Microsoft.VisualStudio.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -174,6 +175,7 @@ public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutpu
     </div>
 </div>
 ");
+        var textBuffer = new TestTextBuffer(source, new LegacyCoreContentType());
         var syntaxTree = GetSyntaxTree(new StringTextSnapshot("something else"));
 
         // Act
@@ -195,6 +197,7 @@ public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutpu
         var source = new StringTextSnapshot($@"
 @{{
 ");
+        var textBuffer = new TestTextBuffer(source, new LegacyCoreContentType());
         var syntaxTree = GetSyntaxTree(source);
 
         // Act
@@ -217,6 +220,7 @@ public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutpu
         var source = new StringTextSnapshot($@"
 @custom
 ");
+        var textBuffer = new TestTextBuffer(source, new LegacyCoreContentType());
         var syntaxTree = GetSyntaxTree(source, new[] { customDirective });
 
         // Act
@@ -238,6 +242,7 @@ public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutpu
         var source = new StringTextSnapshot($@"@{{
     <div>
 ");
+        var textBuffer = new TestTextBuffer(source, new LegacyCoreContentType());
         var syntaxTree = GetSyntaxTree(source);
 
         // Act
@@ -261,6 +266,7 @@ public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutpu
 {{
     <div>
 }}");
+        var textBuffer = new TestTextBuffer(source, new LegacyCoreContentType());
         var syntaxTree = GetSyntaxTree(source, new[] { customDirective });
 
         // Act
@@ -286,6 +292,7 @@ public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutpu
     }}
 </div>
 ");
+        var textBuffer = new TestTextBuffer(source, new LegacyCoreContentType());
         var syntaxTree = GetSyntaxTree(source);
 
         // Act
@@ -311,6 +318,8 @@ public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutpu
         <div>
     }}
 }}");
+
+        var textBuffer = new TestTextBuffer(source, new LegacyCoreContentType());
         var syntaxTree = GetSyntaxTree(source, new[] { customDirective });
 
         // Act
