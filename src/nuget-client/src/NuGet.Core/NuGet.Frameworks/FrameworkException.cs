@@ -14,6 +14,9 @@ namespace NuGet.Frameworks
         {
         }
 
+#if NET8_0_OR_GREATER
+        [Obsolete(DiagnosticId = "SYSLIB0051")] // https://github.com/dotnet/docs/issues/34893
+#endif
         protected FrameworkException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
