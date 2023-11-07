@@ -21,6 +21,10 @@ parameters:
 - name: architecture
   type: string
 
+- name: artifactsRid
+  type: string
+  default: ''
+
 - name: container
   type: string
 
@@ -141,17 +145,25 @@ jobs:
     - script: |
         set -euo pipefail
 
+        if [[ '${{ parameters.artifactsRid }}' == '' ]]; then
+           echo "'artifactsRid' is not specified. Cannot download source-built SDK."
+           exit 1
+        fi
+
         packageVersionsPath="${{ variables.sourcesPath }}/eng/Versions.props"
         notFoundMessage="No source-built SDK found to download..."
 
         echo "Looking for source-built SDK to download..."
-        archiveUrlLine=`grep -m 1 "<PrivateSourceBuiltSdkUrl_CentOS8Stream>" "$packageVersionsPath" || :`
-        urlPattern="<PrivateSourceBuiltSdkUrl_CentOS8Stream>(.*)</PrivateSourceBuiltSdkUrl_CentOS8Stream>"
+        archiveVersionLine=$(grep -m 1 "<PrivateSourceBuiltSdkVersion>" "$packageVersionsPath" || :)
+        versionPattern="<PrivateSourceBuiltSdkVersion>(.*)</PrivateSourceBuiltSdkVersion>"
 
-        if [[ $archiveUrlLine =~ $urlPattern ]]; then
-          archiveUrl="${BASH_REMATCH[1]}"
+        if [[ $archiveVersionLine =~ $versionPattern ]]; then
+          archiveVersion="${BASH_REMATCH[1]}"
+          archiveUrl="https://dotnetcli.azureedge.net/source-built-artifacts/sdks/dotnet-sdk-$archiveVersion-${{ parameters.artifactsRid }}.tar.gz"
           downloadDir="$(sourcesPath)/prereqs/packages/archive/"
-          (cd $downloadDir && curl --retry 5 -O $archiveUrl)
+
+          echo "Downloading source-built SDK from $archiveUrl..."
+          (cd "$downloadDir" && curl --retry 5 -O "$archiveUrl")
         else
           echo "$notFoundMessage"
           exit 1
@@ -163,8 +175,13 @@ jobs:
 
       customPrepArgs=""
       prepSdk=true
+
+      if [[ -n '${{ parameters.artifactsRid }}' ]]; then
+        customPrepArgs="${customPrepArgs} --artifacts-rid ${{ parameters.artifactsRid }}"
+      fi
+      
       if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
-        # Source-built artifacts are from CentOS 8 Stream. We want to download them without
+        # Source-built artifacts are from CentOS 8 Stream or Alpine 3.17. We want to download them without
         # downloading portable versions from the internet.
         customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
         prepSdk=false
