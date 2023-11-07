@@ -5,7 +5,6 @@ using System;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
@@ -28,32 +27,12 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-// Sets the FileName static variable.
-// Finds the test method name using reflection, and uses
-// that to find the expected input/output test files in the file system.
-[IntializeTestFile]
-
-// These tests must be run serially due to the test specific FileName static var.
-[Collection("FormattingTestSerialRuns")]
 public class FormattingTestBase : RazorToolingIntegrationTestBase
 {
-    private static readonly AsyncLocal<string> s_fileName = new();
-
     public FormattingTestBase(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        TestProjectPath = GetProjectDirectory();
-
         ILoggerExtensions.TestOnlyLoggingEnabled = true;
-    }
-
-    public static string? TestProjectPath { get; private set; }
-
-    // Used by the test framework to set the 'base' name for test files.
-    public static string FileName
-    {
-        get { return s_fileName.Value!; }
-        set { s_fileName.Value = value; }
     }
 
     private protected async Task RunFormattingTestAsync(

@@ -3,6 +3,7 @@
 
 using System;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis.Razor;
 
@@ -166,7 +167,7 @@ internal static class FilePathNormalizer
         }
 
         // Replace slashes in our normalized span.
-        destination[..charsWritten].Replace('\\', '/');
+        NormalizeAndDedupeSlashes(destination, ref charsWritten);
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
             destination is ['/', ..] and not ['/', '/', ..])
@@ -180,6 +181,36 @@ internal static class FilePathNormalizer
             // Already a valid path like C:/path or //path
             return (start: 0, length: charsWritten);
         }
+    }
+
+    private static void NormalizeAndDedupeSlashes(Span<char> span, ref int charsWritten)
+    {
+        ref var src = ref MemoryMarshal.GetReference(span);
+
+        var write = 0;
+        for (var read = 0; read < charsWritten; read++, write++)
+        {
+            ref var readSlot = ref Unsafe.Add(ref src, read);
+            ref var writeSlot = ref Unsafe.Add(ref src, write);
+
+            if (readSlot is '\\' or '/')
+            {
+                writeSlot = '/';
+
+                // if there are two slashes in a row, we skip over one of them, unless we're
+                // at the start of the span, in order to allow '\\network' paths
+                if (read > 0 && Unsafe.Add(ref readSlot, 1) is '/' or '\\')
+                {
+                    read++;
+                }
+            }
+            else
+            {
+                writeSlot = readSlot;
+            }
+        }
+
+        charsWritten = write;
     }
 
     private static unsafe string CreateString(ReadOnlySpan<char> source)
