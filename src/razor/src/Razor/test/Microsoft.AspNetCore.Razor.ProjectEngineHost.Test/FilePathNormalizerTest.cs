@@ -37,6 +37,45 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestB
     }
 
     [Fact]
+    public void NormalizeDirectory_DedupesBackSlashes()
+    {
+        // Arrange
+        var directory = @"C:\path\to\\directory\";
+
+        // Act
+        var normalized = FilePathNormalizer.NormalizeDirectory(directory);
+
+        // Assert
+        Assert.Equal("C:/path/to/directory/", normalized);
+    }
+
+    [Fact]
+    public void NormalizeDirectory_DedupesForwardSlashes()
+    {
+        // Arrange
+        var directory = "C:/path/to//directory/";
+
+        // Act
+        var normalized = FilePathNormalizer.NormalizeDirectory(directory);
+
+        // Assert
+        Assert.Equal("C:/path/to/directory/", normalized);
+    }
+
+    [Fact]
+    public void NormalizeDirectory_DedupesMismatchedSlashes()
+    {
+        // Arrange
+        var directory = "C:\\path\\to\\/directory\\";
+
+        // Act
+        var normalized = FilePathNormalizer.NormalizeDirectory(directory);
+
+        // Assert
+        Assert.Equal("C:/path/to/directory/", normalized);
+    }
+
+    [Fact]
     public void NormalizeDirectory_EndsWithSlash()
     {
         // Arrange

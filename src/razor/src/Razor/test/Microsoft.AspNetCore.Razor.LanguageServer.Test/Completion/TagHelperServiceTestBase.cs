@@ -263,55 +263,6 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
         return CreateCodeDocument(text, isRazorFile ? RazorFile : CSHtmlFile, tagHelpers);
     }
 
-    protected static TextDocumentIdentifier GetIdentifier(bool isRazor)
-    {
-        var file = isRazor ? RazorFile : CSHtmlFile;
-        return new TextDocumentIdentifier
-        {
-            Uri = new Uri($"c:\\${file}")
-        };
-    }
-
-    internal static (Queue<VersionedDocumentContext>, Queue<TextDocumentIdentifier>) CreateDocumentContext(
-        DocumentContentVersion[] textArray,
-        bool[] isRazorArray,
-        ImmutableArray<TagHelperDescriptor> tagHelpers,
-        VersionStamp projectVersion = default,
-        int? documentVersion = null)
-    {
-        var documentContexts = new Queue<VersionedDocumentContext>();
-        var identifiers = new Queue<TextDocumentIdentifier>();
-        foreach (var (text, isRazorFile) in textArray.Zip(isRazorArray, (t, r) => (t, r)))
-        {
-            var document = CreateCodeDocument(text.Content, isRazorFile, tagHelpers);
-
-            var projectSnapshot = new Mock<IProjectSnapshot>(MockBehavior.Strict);
-            projectSnapshot
-                .Setup(p => p.Version)
-                .Returns(projectVersion);
-
-            var documentSnapshot = Mock.Of<IDocumentSnapshot>(MockBehavior.Strict);
-            var documentContext = new Mock<VersionedDocumentContext>(MockBehavior.Strict, new Uri("c:/path/to/file.razor"), documentSnapshot, /* projectContext */ null, 0);
-            documentContext.Setup(d => d.GetCodeDocumentAsync(It.IsAny<CancellationToken>()))
-                .ReturnsAsync(document);
-
-            documentContext.SetupGet(d => d.Version)
-                .Returns(documentVersion ?? Random.Shared.Next());
-
-            documentContext.Setup(d => d.Project)
-                .Returns(projectSnapshot.Object);
-
-            documentContext.Setup(d => d.GetSourceTextAsync(It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(document.GetSourceText()));
-
-            documentContexts.Enqueue(documentContext.Object);
-            var identifier = GetIdentifier(isRazorFile);
-            identifiers.Enqueue(identifier);
-        }
-
-        return (documentContexts, identifiers);
-    }
-
     internal static RazorCodeDocument CreateCodeDocument(string text, string filePath, ImmutableArray<TagHelperDescriptor> tagHelpers)
     {
         tagHelpers = tagHelpers.NullToEmpty();
@@ -330,6 +281,4 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
 
         return CreateCodeDocument(text, filePath, tagHelpers.ToImmutableArray());
     }
-
-    internal record DocumentContentVersion(string Content, int Version = 0);
 }
