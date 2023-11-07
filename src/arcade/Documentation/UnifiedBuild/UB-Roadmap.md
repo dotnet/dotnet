@@ -89,6 +89,18 @@ The Unified Build milestones are aligned with the .NET9 lifecycle, specifically 
 
 * The latest possible time to move to the VMR based dependency flow with confidence to not introduce any risk for .NET9 release.
 
+# Product Areas Owners
+
+List of product area owners from the Vertical Builds perspective.
+
+* Runtime - Jeff Schwartz
+* Libraries - Art Leonard
+* ASP.NET - Dan Moseley
+* Mono - Marek Safar
+* SDK, Winforms, MSBuild - Donald Drake
+* Roslyn - Jared Parsons
+* WPF - TBD
+
 # Individual Tasks
 
 ## Vertical Build area
