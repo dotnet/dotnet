@@ -498,10 +498,11 @@ internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
                     {
                         // We're at an edge.
 
-                        if (span.Length > 0 &&
-                            classifiedSpan.AcceptedCharacters == AcceptedCharactersInternal.None)
+                        if (classifiedSpan.SpanKind is SpanKindInternal.MetaCode or SpanKindInternal.Transition)
                         {
-                            // Non-marker spans do not own the edges after it
+                            // If we're on an edge of a transition of some kind (MetaCode representing an open or closing piece of syntax such as <|,
+                            // and Transition representing an explicit transition to/from razor syntax, such as @|), prefer to classify to the span
+                            // to the right to better represent where the user clicks
                             continue;
                         }
 
