@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0.0",
+  "strings": {
+    "name": "Projekt testów MSTest",
+    "description": "Projekt zawierający testy jednostkowe MSTest, które można uruchomić w środowisku .NET w systemach Windows, Linux i MacOS."
+  }
+}

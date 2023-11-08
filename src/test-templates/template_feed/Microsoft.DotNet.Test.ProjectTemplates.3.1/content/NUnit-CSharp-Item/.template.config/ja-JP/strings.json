@@ -1,7 +1,0 @@
-{
-  "version": "1.0.0.0",
-  "strings": {
-    "name": "NUnit テスト プロジェクト (.NET Core)",
-    "description": "Windows、Linux および MacOS 上の .NET Core で実行できる NUnit テストを含むプロジェクト。"
-  }
-}

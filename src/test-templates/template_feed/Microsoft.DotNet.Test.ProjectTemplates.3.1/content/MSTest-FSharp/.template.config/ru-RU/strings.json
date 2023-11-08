@@ -1,7 +1,0 @@
-{
-  "version": "1.0.0.0",
-  "strings": {
-    "name": "Проект тестов MSTest (.NET Core)",
-    "description": "Проект, содержащий модульные тесты MSTest, которые можно выполнять на платформе .NET Core в Windows, Linux и MacOS."
-  }
-}
