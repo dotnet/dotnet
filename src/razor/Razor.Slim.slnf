@@ -12,6 +12,7 @@
       "src\\Compiler\\Microsoft.AspNetCore.Mvc.Razor.Extensions\\test\\Microsoft.AspNetCore.Mvc.Razor.Extensions.Test.csproj",
       "src\\Compiler\\Microsoft.AspNetCore.Razor.Language\\src\\Microsoft.CodeAnalysis.Razor.Compiler.Language.csproj",
       "src\\Compiler\\Microsoft.AspNetCore.Razor.Language\\test\\Microsoft.AspNetCore.Razor.Language.Test.csproj",
+      "src\\Compiler\\Microsoft.AspNetCore.Razor.Language\\legacyTest\\Microsoft.AspNetCore.Razor.Language.Legacy.Test.csproj",
       "src\\Compiler\\Microsoft.CodeAnalysis.Razor\\src\\Microsoft.CodeAnalysis.Razor.Compiler.CSharp.csproj",
       "src\\Compiler\\Microsoft.CodeAnalysis.Razor\\test\\Microsoft.CodeAnalysis.Razor.Test.csproj",
       "src\\Compiler\\Microsoft.NET.Sdk.Razor.SourceGenerators.Transport\\Microsoft.NET.Sdk.Razor.SourceGenerators.Transport.csproj",

@@ -3,6 +3,8 @@
 
 #nullable disable
 
+using System;
+
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 internal struct ClassifiedSpanInternal
@@ -13,9 +15,12 @@ internal struct ClassifiedSpanInternal
         BlockSpan = blockSpan;
         SpanKind = spanKind;
         BlockKind = blockKind;
+#pragma warning disable CS0618 // Type or member is obsolete
         AcceptedCharacters = acceptedCharacters;
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 
+    [Obsolete("This property is deprecated. Do not use it.", error: false)]
     public AcceptedCharactersInternal AcceptedCharacters { get; }
 
     public BlockKindInternal BlockKind { get; }

@@ -27,7 +27,9 @@ internal static partial class RazorWrapperFactory
                     ConvertSourceSpan(item.BlockSpan),
                     (SpanKind)item.SpanKind,
                     (BlockKind)item.BlockKind,
+#pragma warning disable CS0618 // Type or member is obsolete
                     (AcceptedCharacters)item.AcceptedCharacters));
+#pragma warning restore CS0618 // Type or member is obsolete
             }
 
             return builder.DrainToImmutable();
