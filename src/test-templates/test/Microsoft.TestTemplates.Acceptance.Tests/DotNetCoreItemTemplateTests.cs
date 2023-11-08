@@ -24,7 +24,8 @@ namespace Microsoft.TestTemplates.Acceptance.Tests
             // that are not end-of-life
              "6.0",
              "7.0",
-             "8.0"
+             "8.0",
+             "9.0"
         };
 
         /// <summary>

@@ -3,10 +3,9 @@ trigger:
   branches:
     include:
     - main
-    - release/3.x
-    - release/5.0
     - release/6.0
     - release/7.0
+    - release/8.0
   paths:
     include:
       - '*'
@@ -26,10 +25,9 @@ pr:
   branches:
     include:
     - main
-    - release/3.x
-    - release/5.0
     - release/6.0
     - release/7.0
+    - release/8.0
     - templates
   paths:
     include:
@@ -157,7 +155,7 @@ stages:
       parameters:
         artifacts:
           publish:
-            logs: 
+            logs:
               name: Logs_Test_$(Agent.OS)_$(_BuildConfig)_$(_Testing)
           download: true
         workspace:
@@ -190,7 +188,7 @@ stages:
                 /p:Configuration=Release
                 /p:PublishToMSDL=false
           - powershell: eng\common\build.ps1
-              -configuration $(_BuildConfig) 
+              -configuration $(_BuildConfig)
               -prepareMachine
               -ci
               -restore
@@ -354,7 +352,7 @@ stages:
             clean: true
           steps:
           - powershell: eng\common\build.ps1
-              -configuration $(_BuildConfig) 
+              -configuration $(_BuildConfig)
               -prepareMachine
               -ci
               -restore
@@ -375,7 +373,7 @@ stages:
     jobs:
     - template: /eng/validate-sdk.yml
       parameters:
-        buildArgs: -configuration $(_BuildConfig) 
+        buildArgs: -configuration $(_BuildConfig)
           -prepareMachine
           $(_InternalBuildArgs)
           /p:Test=false
@@ -384,7 +382,7 @@ stages:
     parameters:
       publishingInfraVersion: 3
       # signing validation will not run, even if the below value is 'true', if the 'PostBuildSign' variable is set to 'true'
-      enableSigningValidation: false      
+      enableSigningValidation: false
       # Sourcelink validation isn't passing for Arcade due to some regressions. This should be
       # enabled back once this issue is resolved: https://github.com/dotnet/arcade/issues/2912
       enableSourceLinkValidation: false

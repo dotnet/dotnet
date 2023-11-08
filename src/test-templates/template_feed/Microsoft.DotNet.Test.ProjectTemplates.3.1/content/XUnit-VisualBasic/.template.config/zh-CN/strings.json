@@ -1,7 +1,0 @@
-{
-  "version": "1.0.0.0",
-  "strings": {
-    "name": "xUnit 测试项目 (.NET Core)",
-    "description": "包含 xUnit.net 测试的项目，测试可在 Windows、Linux 和 MacOS 的 .NET Core 上运行"
-  }
-}
