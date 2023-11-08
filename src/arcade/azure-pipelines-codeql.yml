@@ -35,6 +35,7 @@ schedules:
       - main
       - release/6.0
       - release/7.0
+      - release/8.0
     always: true
 
 jobs:
