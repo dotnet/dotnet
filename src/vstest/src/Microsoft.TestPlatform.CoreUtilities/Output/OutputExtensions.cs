@@ -116,6 +116,15 @@ public static class OutputExtensions
             return;
         }
 
+#if NET5_0_OR_GREATER
+        if (OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() || OperatingSystem.IsBrowser() || OperatingSystem.IsTvOS())
+        {
+            // Console color not supported on these platforms.
+            action.Invoke();
+            return;
+        }
+#endif
+
         var previousForegroundColor = Console.ForegroundColor;
         try
         {

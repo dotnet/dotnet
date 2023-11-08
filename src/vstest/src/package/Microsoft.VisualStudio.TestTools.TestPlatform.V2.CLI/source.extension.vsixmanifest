@@ -8,20 +8,26 @@
     <PackageId>Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI</PackageId>
   </Metadata>
   <Installation AllUsers="true" Experimental="true">
-    <InstallationTarget Version="[16.0,17.0)" Id="Microsoft.VisualStudio.Community" />
-    <InstallationTarget Version="[16.0,17.0)" Id="Microsoft.VisualStudio.Pro" />
-    <InstallationTarget Version="[16.0,17.0)" Id="Microsoft.VisualStudio.Enterprise" />
-    <InstallationTarget Version="[16.0,17.0)" Id="Microsoft.VisualStudio.VSWinExpress" />
-    <InstallationTarget Version="[16.0,17.0)" Id="Microsoft.VisualStudio.VSWinDesktopExpress" />
-    <InstallationTarget Version="[16.0,17.0)" Id="Microsoft.VisualStudio.VWDExpress" />
+    <InstallationTarget Version="[17.0, 18.0)" Id="Microsoft.VisualStudio.Community"><ProductArchitecture>amd64</ProductArchitecture></InstallationTarget>
+    <InstallationTarget Version="[17.0, 18.0)" Id="Microsoft.VisualStudio.Community"><ProductArchitecture>x86</ProductArchitecture></InstallationTarget>
+    <InstallationTarget Version="[17.0, 18.0)" Id="Microsoft.VisualStudio.Pro"><ProductArchitecture>amd64</ProductArchitecture></InstallationTarget>
+    <InstallationTarget Version="[17.0, 18.0)" Id="Microsoft.VisualStudio.Pro"><ProductArchitecture>x86</ProductArchitecture></InstallationTarget>
+    <InstallationTarget Version="[17.0, 18.0)" Id="Microsoft.VisualStudio.Enterprise"><ProductArchitecture>amd64</ProductArchitecture></InstallationTarget>
+    <InstallationTarget Version="[17.0, 18.0)" Id="Microsoft.VisualStudio.Enterprise"><ProductArchitecture>x86</ProductArchitecture></InstallationTarget>
+    <InstallationTarget Version="[17.0, 18.0)" Id="Microsoft.VisualStudio.VSWinExpress"><ProductArchitecture>amd64</ProductArchitecture></InstallationTarget>
+    <InstallationTarget Version="[17.0, 18.0)" Id="Microsoft.VisualStudio.VSWinExpress"><ProductArchitecture>x86</ProductArchitecture></InstallationTarget>
+    <InstallationTarget Version="[17.0, 18.0)" Id="Microsoft.VisualStudio.VSWinDesktopExpress"><ProductArchitecture>amd64</ProductArchitecture></InstallationTarget>
+    <InstallationTarget Version="[17.0, 18.0)" Id="Microsoft.VisualStudio.VSWinDesktopExpress"><ProductArchitecture>x86</ProductArchitecture></InstallationTarget>
+    <InstallationTarget Version="[17.0, 18.0)" Id="Microsoft.VisualStudio.VWDExpress"><ProductArchitecture>amd64</ProductArchitecture></InstallationTarget>
+    <InstallationTarget Version="[17.0, 18.0)" Id="Microsoft.VisualStudio.VWDExpress"><ProductArchitecture>x86</ProductArchitecture></InstallationTarget>
   </Installation>
   <Dependencies>
-    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" Version="[4.5,)" />
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" Version="[4.6.2,)" />
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.TestPlatform.V2" Path="vstest.console.exe" />
   </Assets>
   <Prerequisites>
-    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[16.0,17.0)" DisplayName="Visual Studio core editor" />
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0, 18.0)" DisplayName="Visual Studio core editor" />
   </Prerequisites>
 </PackageManifest>
