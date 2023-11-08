@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..35)::35 - [@while(true) { { { { foo(); } } } }]
     MarkupBlock - [0..35)::35
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..35)::35
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..35)::34 - [while(true) { { { { foo(); } } } }] - Gen<Stmt> - SpanEditHandler;Accepts:None
+            CSharpStatementLiteral - [1..35)::34 - [while(true) { { { { foo(); } } } }] - Gen<Stmt>
                 Keyword;[while];
                 LeftParenthesis;[(];
                 Keyword;[true];
@@ -31,6 +31,6 @@
                 RightBrace;[}];
                 Whitespace;[ ];
                 RightBrace;[}];
-        MarkupTextLiteral - [35..35)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [35..35)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

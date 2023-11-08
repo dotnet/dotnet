@@ -76,7 +76,7 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
         {
             // Write syntax tree baseline
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, SyntaxNodeSerializer.Serialize(root));
+            File.WriteAllText(baselineFullPath, SyntaxNodeSerializer.Serialize(root, validateSpanEditHandlers: false));
 
             // Write diagnostics baseline
             var baselineDiagnosticsFullPath = Path.Combine(TestProjectRoot, baselineDiagnosticsFileName);
@@ -92,7 +92,7 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
 
             // Write classified spans baseline
             var classifiedSpansBaselineFullPath = Path.Combine(TestProjectRoot, baselineClassifiedSpansFileName);
-            File.WriteAllText(classifiedSpansBaselineFullPath, ClassifiedSpanSerializer.Serialize(syntaxTree));
+            File.WriteAllText(classifiedSpansBaselineFullPath, ClassifiedSpanSerializer.Serialize(syntaxTree, validateSpanEditHandlers: false));
 
             // Write tag helper spans baseline
             var tagHelperSpansBaselineFullPath = Path.Combine(TestProjectRoot, baselineTagHelperSpansFileName);
@@ -117,7 +117,7 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
         }
 
         var syntaxNodeBaseline = stFile.ReadAllText();
-        var actualSyntaxNodes = SyntaxNodeSerializer.Serialize(root);
+        var actualSyntaxNodes = SyntaxNodeSerializer.Serialize(root, validateSpanEditHandlers: false);
         AssertEx.AssertEqualToleratingWhitespaceDifferences(syntaxNodeBaseline, actualSyntaxNodes);
 
         // Verify diagnostics
@@ -140,7 +140,7 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
         else
         {
             var classifiedSpanBaseline = classifiedSpanFile.ReadAllText();
-            var actualClassifiedSpans = ClassifiedSpanSerializer.Serialize(syntaxTree);
+            var actualClassifiedSpans = ClassifiedSpanSerializer.Serialize(syntaxTree, validateSpanEditHandlers: false);
             AssertEx.AssertEqualToleratingWhitespaceDifferences(classifiedSpanBaseline, actualClassifiedSpans);
         }
 

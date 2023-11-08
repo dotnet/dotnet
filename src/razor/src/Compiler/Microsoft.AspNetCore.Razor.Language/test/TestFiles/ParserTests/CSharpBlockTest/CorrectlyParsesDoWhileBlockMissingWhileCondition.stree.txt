@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..28)::28 - [@do { var foo = bar; } while]
     MarkupBlock - [0..28)::28
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..28)::28
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..28)::27 - [do { var foo = bar; } while] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [1..28)::27 - [do { var foo = bar; } while] - Gen<Stmt>
                 Keyword;[do];
                 Whitespace;[ ];
                 LeftBrace;[{];

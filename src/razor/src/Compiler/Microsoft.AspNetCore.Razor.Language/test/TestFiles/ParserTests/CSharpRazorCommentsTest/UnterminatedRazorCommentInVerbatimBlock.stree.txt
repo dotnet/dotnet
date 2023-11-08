@@ -1,16 +1,16 @@
 ﻿RazorDocument - [0..4)::4 - [@{@*]
     MarkupBlock - [0..4)::4
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..4)::4
             CSharpStatement - [0..4)::4
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 CSharpStatementBody - [1..4)::3
-                    RazorMetaCode - [1..2)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                    RazorMetaCode - [1..2)::1 - Gen<None>
                         LeftBrace;[{];
                     CSharpCodeBlock - [2..4)::2
-                        CSharpStatementLiteral - [2..2)::0 - [] - Gen<Stmt> - AutoCompleteEditHandler;Accepts:Any,AutoComplete:[}];AtEOL
+                        CSharpStatementLiteral - [2..2)::0 - [] - Gen<Stmt>
                             Marker;[];
                         RazorComment - [2..4)::2
                             RazorCommentTransition;[@];
@@ -18,6 +18,6 @@
                             RazorCommentLiteral;[<Missing>];
                             RazorCommentStar;[<Missing>];RZ1028(2:0,2 [2] )
                             RazorCommentTransition;[<Missing>];
-                    RazorMetaCode - [4..4)::0 - Gen<None> - SpanEditHandler;Accepts:Any
+                    RazorMetaCode - [4..4)::0 - Gen<None>
                         RightBrace;[<Missing>];
     EndOfFile;[];

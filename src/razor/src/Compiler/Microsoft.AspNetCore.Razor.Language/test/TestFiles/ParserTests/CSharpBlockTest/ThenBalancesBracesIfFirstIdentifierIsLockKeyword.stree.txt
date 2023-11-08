@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..45)::45 - [@lock(foo) { Debug.WriteLine(@"foo } bar"); }]
     MarkupBlock - [0..45)::45
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..45)::45
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..45)::44 - [lock(foo) { Debug.WriteLine(@"foo } bar"); }] - Gen<Stmt> - SpanEditHandler;Accepts:None
+            CSharpStatementLiteral - [1..45)::44 - [lock(foo) { Debug.WriteLine(@"foo } bar"); }] - Gen<Stmt>
                 Keyword;[lock];
                 LeftParenthesis;[(];
                 Identifier;[foo];
@@ -22,6 +22,6 @@
                 Semicolon;[;];
                 Whitespace;[ ];
                 RightBrace;[}];
-        MarkupTextLiteral - [45..45)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [45..45)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

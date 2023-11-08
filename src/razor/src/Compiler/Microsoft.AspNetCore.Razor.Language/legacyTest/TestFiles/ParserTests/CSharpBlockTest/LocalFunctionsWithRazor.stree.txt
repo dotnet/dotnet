@@ -1,0 +1,75 @@
+﻿RazorDocument - [0..118)::118 - [@{LF    void Foo()LF    {LF        var time = DateTime.NowLF        <strong>Hello the time is @time</strong>LF    }LF}]
+    MarkupBlock - [0..118)::118
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            Marker;[];
+        CSharpCodeBlock - [0..118)::118
+            CSharpStatement - [0..118)::118
+                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                    Transition;[@];
+                CSharpStatementBody - [1..118)::117
+                    RazorMetaCode - [1..2)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                        LeftBrace;[{];
+                    CSharpCodeBlock - [2..117)::115
+                        CSharpStatementLiteral - [2..68)::66 - [LF    void Foo()LF    {LF        var time = DateTime.NowLF        ] - Gen<Stmt> - AutoCompleteEditHandler;Accepts:Any,AutoComplete:[<null>];AtEOL
+                            NewLine;[LF];
+                            Whitespace;[    ];
+                            Keyword;[void];
+                            Whitespace;[ ];
+                            Identifier;[Foo];
+                            LeftParenthesis;[(];
+                            RightParenthesis;[)];
+                            NewLine;[LF];
+                            Whitespace;[    ];
+                            LeftBrace;[{];
+                            NewLine;[LF];
+                            Whitespace;[        ];
+                            Identifier;[var];
+                            Whitespace;[ ];
+                            Identifier;[time];
+                            Whitespace;[ ];
+                            Assign;[=];
+                            Whitespace;[ ];
+                            Identifier;[DateTime];
+                            Dot;[.];
+                            Identifier;[Now];
+                            NewLine;[LF];
+                            Whitespace;[        ];
+                        MarkupBlock - [68..110)::42
+                            MarkupElement - [68..108)::40
+                                MarkupStartTag - [68..76)::8 - [<strong>] - Gen<Markup> - SpanEditHandler;Accepts:None
+                                    OpenAngle;[<];
+                                    Text;[strong];
+                                    CloseAngle;[>];
+                                MarkupTextLiteral - [76..94)::18 - [Hello the time is ] - Gen<Markup> - SpanEditHandler;Accepts:Any
+                                    Text;[Hello];
+                                    Whitespace;[ ];
+                                    Text;[the];
+                                    Whitespace;[ ];
+                                    Text;[time];
+                                    Whitespace;[ ];
+                                    Text;[is];
+                                    Whitespace;[ ];
+                                CSharpCodeBlock - [94..99)::5
+                                    CSharpImplicitExpression - [94..99)::5
+                                        CSharpTransition - [94..95)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                                            Transition;[@];
+                                        CSharpImplicitExpressionBody - [95..99)::4
+                                            CSharpCodeBlock - [95..99)::4
+                                                CSharpExpressionLiteral - [95..99)::4 - [time] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[RTD];K14
+                                                    Identifier;[time];
+                                MarkupEndTag - [99..108)::9 - [</strong>] - Gen<Markup> - SpanEditHandler;Accepts:None
+                                    OpenAngle;[<];
+                                    ForwardSlash;[/];
+                                    Text;[strong];
+                                    CloseAngle;[>];
+                            MarkupTextLiteral - [108..110)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:None
+                                NewLine;[LF];
+                        CSharpStatementLiteral - [110..117)::7 - [    }LF] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+                            Whitespace;[    ];
+                            RightBrace;[}];
+                            NewLine;[LF];
+                    RazorMetaCode - [117..118)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                        RightBrace;[}];
+        MarkupTextLiteral - [118..118)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            Marker;[];
+    EndOfFile;[];

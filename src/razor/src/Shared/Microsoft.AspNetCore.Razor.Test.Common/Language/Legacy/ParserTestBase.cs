@@ -25,10 +25,12 @@ public abstract class ParserTestBase : IParserTest
 
     // UTF-8 with BOM
     private static readonly Encoding _baselineEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
+    private readonly bool _validateSpanEditHandlers;
 
-    internal ParserTestBase(TestProject.Layer layer)
+    internal ParserTestBase(TestProject.Layer layer, bool validateSpanEditHandlers = false)
     {
         TestProjectRoot = TestProject.GetProjectDirectory(GetType(), layer);
+        _validateSpanEditHandlers = validateSpanEditHandlers;
     }
 
     /// <summary>
@@ -88,7 +90,7 @@ public abstract class ParserTestBase : IParserTest
         {
             // Write syntax tree baseline
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, SyntaxNodeSerializer.Serialize(root), _baselineEncoding);
+            File.WriteAllText(baselineFullPath, SyntaxNodeSerializer.Serialize(root, _validateSpanEditHandlers), _baselineEncoding);
 
             // Write diagnostics baseline
             var baselineDiagnosticsFullPath = Path.Combine(TestProjectRoot, baselineDiagnosticsFileName);
@@ -104,7 +106,7 @@ public abstract class ParserTestBase : IParserTest
 
             // Write classified spans baseline
             var classifiedSpansBaselineFullPath = Path.Combine(TestProjectRoot, baselineClassifiedSpansFileName);
-            File.WriteAllText(classifiedSpansBaselineFullPath, ClassifiedSpanSerializer.Serialize(syntaxTree), _baselineEncoding);
+            File.WriteAllText(classifiedSpansBaselineFullPath, ClassifiedSpanSerializer.Serialize(syntaxTree, _validateSpanEditHandlers), _baselineEncoding);
 
             // Write tag helper spans baseline
             var tagHelperSpansBaselineFullPath = Path.Combine(TestProjectRoot, baselineTagHelperSpansFileName);
@@ -129,7 +131,7 @@ public abstract class ParserTestBase : IParserTest
         }
 
         var syntaxNodeBaseline = stFile.ReadAllText();
-        var actualSyntaxNodes = SyntaxNodeSerializer.Serialize(root);
+        var actualSyntaxNodes = SyntaxNodeSerializer.Serialize(root, _validateSpanEditHandlers);
         AssertEx.AssertEqualToleratingWhitespaceDifferences(syntaxNodeBaseline, actualSyntaxNodes);
 
         // Verify diagnostics
@@ -152,7 +154,7 @@ public abstract class ParserTestBase : IParserTest
         else
         {
             var classifiedSpanBaseline = classifiedSpanFile.ReadAllText();
-            var actualClassifiedSpans = ClassifiedSpanSerializer.Serialize(syntaxTree);
+            var actualClassifiedSpans = ClassifiedSpanSerializer.Serialize(syntaxTree, _validateSpanEditHandlers);
             AssertEx.AssertEqualToleratingWhitespaceDifferences(classifiedSpanBaseline, actualClassifiedSpans);
         }
 

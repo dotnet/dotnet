@@ -1,14 +1,14 @@
 ﻿RazorDocument - [0..34)::34 - [@foo.bar[4 * (8 + 7)]["fo\"o"].baz]
     MarkupBlock - [0..34)::34
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..34)::34
             CSharpImplicitExpression - [0..34)::34
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 CSharpImplicitExpressionBody - [1..34)::33
                     CSharpCodeBlock - [1..34)::33
-                        CSharpExpressionLiteral - [1..34)::33 - [foo.bar[4 * (8 + 7)]["fo\"o"].baz] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[RTD];K14
+                        CSharpExpressionLiteral - [1..34)::33 - [foo.bar[4 * (8 + 7)]["fo\"o"].baz] - Gen<Expr>
                             Identifier;[foo];
                             Dot;[.];
                             Identifier;[bar];
@@ -30,6 +30,6 @@
                             RightBracket;[]];
                             Dot;[.];
                             Identifier;[baz];
-        MarkupTextLiteral - [34..34)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [34..34)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -16,12 +14,12 @@ namespace Microsoft.CodeAnalysis.Razor;
 
 internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
 {
-    private static TagHelperDescriptor s_fallbackBindTagHelper;
+    private static TagHelperDescriptor? s_fallbackBindTagHelper;
 
     // Run after the component tag helper provider, because we need to see the results.
     public int Order { get; set; } = 1000;
 
-    public RazorEngine Engine { get; set; }
+    public RazorEngine? Engine { get; set; }
 
     public void Execute(TagHelperDescriptorProviderContext context)
     {
@@ -262,7 +260,7 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                 {
                     var constructorArguments = attribute.ConstructorArguments;
 
-                    TagHelperDescriptor tagHelper = null;
+                    TagHelperDescriptor? tagHelper = null;
 
                     // For case #2 & #3 we have a whole bunch of attribute entries on BindMethods that we can use
                     // to data-drive the definitions of these tag helpers.
@@ -277,11 +275,11 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                             typeName,
                             namespaceName,
                             typeNameIdentifier: type.Name,
-                            element: (string)constructorArguments[0].Value,
+                            element: (string?)constructorArguments[0].Value,
                             typeAttribute: null,
-                            suffix: (string)constructorArguments[1].Value,
-                            valueAttribute: (string)constructorArguments[2].Value,
-                            changeAttribute: (string)constructorArguments[3].Value);
+                            suffix: (string?)constructorArguments[1].Value,
+                            valueAttribute: (string?)constructorArguments[2].Value,
+                            changeAttribute: (string?)constructorArguments[3].Value);
                     }
                     else if (constructorArguments.Length == 4 && SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, bindInputElementAttribute))
                     {
@@ -292,10 +290,10 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                             namespaceName,
                             typeNameIdentifier: type.Name,
                             element: "input",
-                            typeAttribute: (string)constructorArguments[0].Value,
-                            suffix: (string)constructorArguments[1].Value,
-                            valueAttribute: (string)constructorArguments[2].Value,
-                            changeAttribute: (string)constructorArguments[3].Value);
+                            typeAttribute: (string?)constructorArguments[0].Value,
+                            suffix: (string?)constructorArguments[1].Value,
+                            valueAttribute: (string?)constructorArguments[2].Value,
+                            changeAttribute: (string?)constructorArguments[3].Value);
                     }
                     else if (constructorArguments.Length == 6 && SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, bindInputElementAttribute))
                     {
@@ -306,15 +304,18 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                             namespaceName,
                             typeNameIdentifier: type.Name,
                             element: "input",
-                            typeAttribute: (string)constructorArguments[0].Value,
-                            suffix: (string)constructorArguments[1].Value,
-                            valueAttribute: (string)constructorArguments[2].Value,
-                            changeAttribute: (string)constructorArguments[3].Value,
-                            isInvariantCulture: (bool)constructorArguments[4].Value,
-                            format: (string)constructorArguments[5].Value);
+                            typeAttribute: (string?)constructorArguments[0].Value,
+                            suffix: (string?)constructorArguments[1].Value,
+                            valueAttribute: (string?)constructorArguments[2].Value,
+                            changeAttribute: (string?)constructorArguments[3].Value,
+                            isInvariantCulture: (bool?)constructorArguments[4].Value ?? false,
+                            format: (string?)constructorArguments[5].Value);
                     }
 
-                    results.Add(tagHelper);
+                    if (tagHelper is not null)
+                    {
+                        results.Add(tagHelper);
+                    }
                 }
             }
 
@@ -349,13 +350,13 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
             string typeName,
             string typeNamespace,
             string typeNameIdentifier,
-            string element,
-            string typeAttribute,
-            string suffix,
-            string valueAttribute,
-            string changeAttribute,
+            string? element,
+            string? typeAttribute,
+            string? suffix,
+            string? valueAttribute,
+            string? changeAttribute,
             bool isInvariantCulture = false,
-            string format = null)
+            string? format = null)
         {
             string name, attributeName, formatName, formatAttributeName, eventName;
 
@@ -585,8 +586,8 @@ internal class BindTagHelperDescriptorProvider : ITagHelperDescriptorProvider
                     continue;
                 }
 
-                BoundAttributeDescriptor valueAttribute = null;
-                BoundAttributeDescriptor expressionAttribute = null;
+                BoundAttributeDescriptor? valueAttribute = null;
+                BoundAttributeDescriptor? expressionAttribute = null;
                 var valueAttributeName = changeAttribute.Name[..^"Changed".Length];
                 var expressionAttributeName = valueAttributeName + "Expression";
                 foreach (var attribute in tagHelper.BoundAttributes)

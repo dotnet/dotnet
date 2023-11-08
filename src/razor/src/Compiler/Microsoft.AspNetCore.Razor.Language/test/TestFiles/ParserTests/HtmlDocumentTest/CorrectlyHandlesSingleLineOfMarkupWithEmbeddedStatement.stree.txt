@@ -1,17 +1,17 @@
 ﻿RazorDocument - [0..31)::31 - [<div>Foo @if(true) {} Bar</div>]
     MarkupBlock - [0..31)::31
         MarkupElement - [0..31)::31
-            MarkupStartTag - [0..5)::5 - [<div>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupStartTag - [0..5)::5 - [<div>] - Gen<Markup>
                 OpenAngle;[<];
                 Text;[div];
                 CloseAngle;[>];
-            MarkupTextLiteral - [5..9)::4 - [Foo ] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupTextLiteral - [5..9)::4 - [Foo ] - Gen<Markup>
                 Text;[Foo];
                 Whitespace;[ ];
             CSharpCodeBlock - [9..21)::12
-                CSharpTransition - [9..10)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [9..10)::1 - Gen<None>
                     Transition;[@];
-                CSharpStatementLiteral - [10..21)::11 - [if(true) {}] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+                CSharpStatementLiteral - [10..21)::11 - [if(true) {}] - Gen<Stmt>
                     Keyword;[if];
                     LeftParenthesis;[(];
                     Keyword;[true];
@@ -19,10 +19,10 @@
                     Whitespace;[ ];
                     LeftBrace;[{];
                     RightBrace;[}];
-            MarkupTextLiteral - [21..25)::4 - [ Bar] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupTextLiteral - [21..25)::4 - [ Bar] - Gen<Markup>
                 Whitespace;[ ];
                 Text;[Bar];
-            MarkupEndTag - [25..31)::6 - [</div>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupEndTag - [25..31)::6 - [</div>] - Gen<Markup>
                 OpenAngle;[<];
                 ForwardSlash;[/];
                 Text;[div];

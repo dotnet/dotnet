@@ -10,11 +10,11 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 public static class SyntaxNodeSerializer
 {
-    internal static string Serialize(SyntaxNode node)
+    internal static string Serialize(SyntaxNode node, bool validateSpanEditHandlers)
     {
         using (var writer = new StringWriter())
         {
-            var walker = new Walker(writer);
+            var walker = new Walker(writer, validateSpanEditHandlers);
             walker.Visit(node);
 
             return writer.ToString();
@@ -26,9 +26,9 @@ public static class SyntaxNodeSerializer
         private readonly SyntaxNodeWriter _visitor;
         private readonly TextWriter _writer;
 
-        public Walker(TextWriter writer)
+        public Walker(TextWriter writer, bool validateSpanEditHandlers)
         {
-            _visitor = new SyntaxNodeWriter(writer);
+            _visitor = new SyntaxNodeWriter(writer, validateSpanEditHandlers);
             _writer = writer;
         }
 

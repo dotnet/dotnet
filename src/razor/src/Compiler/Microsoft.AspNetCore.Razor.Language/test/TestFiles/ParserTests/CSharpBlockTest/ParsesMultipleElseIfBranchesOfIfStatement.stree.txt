@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..460)::460 - [@if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"foo } bar");LF} else if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"bar } baz");LF} else if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"bar } baz");LF} else if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"bar } baz");LF} else if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"bar } baz");LF}]
     MarkupBlock - [0..460)::460
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..460)::460
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..460)::459 - [if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"foo } bar");LF} else if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"bar } baz");LF} else if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"bar } baz");LF} else if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"bar } baz");LF} else if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"bar } baz");LF}] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [1..460)::459 - [if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"foo } bar");LF} else if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"bar } baz");LF} else if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"bar } baz");LF} else if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"bar } baz");LF} else if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"bar } baz");LF}] - Gen<Stmt>
                 Keyword;[if];
                 LeftParenthesis;[(];
                 Keyword;[int];

@@ -1,14 +1,14 @@
 ﻿RazorDocument - [0..40)::40 - [@Foo(Bar(Baz)LFBizLF<html>LFBozLF</html>]
     MarkupBlock - [0..40)::40
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..20)::20
             CSharpImplicitExpression - [0..20)::20
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 CSharpImplicitExpressionBody - [1..20)::19
                     CSharpCodeBlock - [1..20)::19
-                        CSharpExpressionLiteral - [1..20)::19 - [Foo(Bar(Baz)LFBizLF] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:Any;ImplicitExpression[RTD];K14
+                        CSharpExpressionLiteral - [1..20)::19 - [Foo(Bar(Baz)LFBizLF] - Gen<Expr>
                             Identifier;[Foo];
                             LeftParenthesis;[(];
                             Identifier;[Bar];
@@ -19,15 +19,15 @@
                             Identifier;[Biz];
                             NewLine;[LF];
         MarkupElement - [20..40)::20
-            MarkupStartTag - [20..26)::6 - [<html>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupStartTag - [20..26)::6 - [<html>] - Gen<Markup>
                 OpenAngle;[<];
                 Text;[html];
                 CloseAngle;[>];
-            MarkupTextLiteral - [26..33)::7 - [LFBozLF] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupTextLiteral - [26..33)::7 - [LFBozLF] - Gen<Markup>
                 NewLine;[LF];
                 Text;[Boz];
                 NewLine;[LF];
-            MarkupEndTag - [33..40)::7 - [</html>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupEndTag - [33..40)::7 - [</html>] - Gen<Markup>
                 OpenAngle;[<];
                 ForwardSlash;[/];
                 Text;[html];

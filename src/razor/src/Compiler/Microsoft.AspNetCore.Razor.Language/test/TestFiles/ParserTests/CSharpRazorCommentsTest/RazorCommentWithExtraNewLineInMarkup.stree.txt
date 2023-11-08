@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..45)::45 - [<p>LFLF@* content *@LF@*LFcontentLF*@LFLF</p>]
     MarkupBlock - [0..45)::45
         MarkupElement - [0..45)::45
-            MarkupStartTag - [0..3)::3 - [<p>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupStartTag - [0..3)::3 - [<p>] - Gen<Markup>
                 OpenAngle;[<];
                 Text;[p];
                 CloseAngle;[>];
-            MarkupTextLiteral - [3..7)::4 - [LFLF] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupTextLiteral - [3..7)::4 - [LFLF] - Gen<Markup>
                 NewLine;[LF];
                 NewLine;[LF];
             RazorComment - [7..20)::13
@@ -14,7 +14,7 @@
                 RazorCommentLiteral;[ content ];
                 RazorCommentStar;[*];
                 RazorCommentTransition;[@];
-            MarkupEphemeralTextLiteral - [20..22)::2 - [LF] - Gen<None> - SpanEditHandler;Accepts:Any
+            MarkupEphemeralTextLiteral - [20..22)::2 - [LF] - Gen<None>
                 NewLine;[LF];
             RazorComment - [22..37)::15
                 RazorCommentTransition;[@];
@@ -22,11 +22,11 @@
                 RazorCommentLiteral;[LFcontentLF];
                 RazorCommentStar;[*];
                 RazorCommentTransition;[@];
-            MarkupEphemeralTextLiteral - [37..39)::2 - [LF] - Gen<None> - SpanEditHandler;Accepts:Any
+            MarkupEphemeralTextLiteral - [37..39)::2 - [LF] - Gen<None>
                 NewLine;[LF];
-            MarkupTextLiteral - [39..41)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupTextLiteral - [39..41)::2 - [LF] - Gen<Markup>
                 NewLine;[LF];
-            MarkupEndTag - [41..45)::4 - [</p>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupEndTag - [41..45)::4 - [</p>] - Gen<Markup>
                 OpenAngle;[<];
                 ForwardSlash;[/];
                 Text;[p];

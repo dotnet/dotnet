@@ -65,6 +65,11 @@ public static class TestProject
             Debug.Assert(layer == Layer.Compiler);
             projectDirectory = Path.Combine(repoRoot, "src", "Compiler", "Microsoft.AspNetCore.Razor.Language", "test");
         }
+        else if (string.Equals(assemblyName, "Microsoft.AspNetCore.Razor.Language.Legacy.Test", StringComparison.Ordinal))
+        {
+            Debug.Assert(layer == Layer.Compiler);
+            projectDirectory = Path.Combine(repoRoot, "src", "Compiler", "Microsoft.AspNetCore.Razor.Language", "legacyTest");
+        }
 
         if (!Directory.Exists(projectDirectory))
         {

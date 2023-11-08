@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..11)::11 - [<div></div>]
     MarkupBlock - [0..11)::11
         MarkupElement - [0..11)::11
-            MarkupStartTag - [0..5)::5 - [<div>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupStartTag - [0..5)::5 - [<div>] - Gen<Markup>
                 OpenAngle;[<];
                 Text;[div];
                 CloseAngle;[>];
-            MarkupEndTag - [5..11)::6 - [</div>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupEndTag - [5..11)::6 - [</div>] - Gen<Markup>
                 OpenAngle;[<];
                 ForwardSlash;[/];
                 Text;[div];

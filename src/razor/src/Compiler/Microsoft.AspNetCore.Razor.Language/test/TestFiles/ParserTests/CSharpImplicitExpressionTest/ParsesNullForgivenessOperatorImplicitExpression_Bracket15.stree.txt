@@ -1,14 +1,14 @@
 ﻿RazorDocument - [0..20)::20 - [@val![null! ?? true]]
     MarkupBlock - [0..20)::20
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..20)::20
             CSharpImplicitExpression - [0..20)::20
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 CSharpImplicitExpressionBody - [1..20)::19
                     CSharpCodeBlock - [1..20)::19
-                        CSharpExpressionLiteral - [1..20)::19 - [val![null! ?? true]] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[RTD];K14
+                        CSharpExpressionLiteral - [1..20)::19 - [val![null! ?? true]] - Gen<Expr>
                             Identifier;[val];
                             Not;[!];
                             LeftBracket;[[];
@@ -19,6 +19,6 @@
                             Whitespace;[ ];
                             Keyword;[true];
                             RightBracket;[]];
-        MarkupTextLiteral - [20..20)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [20..20)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

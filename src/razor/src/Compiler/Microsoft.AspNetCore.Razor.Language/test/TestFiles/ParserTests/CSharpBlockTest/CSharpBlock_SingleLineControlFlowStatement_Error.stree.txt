@@ -1,16 +1,16 @@
 ﻿RazorDocument - [0..382)::382 - [@{LF    var time = DateTime.Now;LF    if (time.ToBinary() % 2 == 0) <p>The time: @time</p>LFLF    if (time.ToBinary() %3 == 0)LF        // For some reason we want to render the time now?LF        <p>The confusing time: @time</p>LFLF    if (time.ToBinary() % 4 == 0)LF        @: <p>The time: @time</p>LFLF    if (time.ToBinary() % 5 == 0) @@SomeGitHubUserName <strong>Hi!</strong>LF}]
     MarkupBlock - [0..382)::382
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..382)::382
             CSharpStatement - [0..382)::382
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 CSharpStatementBody - [1..382)::381
-                    RazorMetaCode - [1..2)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                    RazorMetaCode - [1..2)::1 - Gen<None>
                         LeftBrace;[{];
                     CSharpCodeBlock - [2..381)::379
-                        CSharpStatementLiteral - [2..68)::66 - [LF    var time = DateTime.Now;LF    if (time.ToBinary() % 2 == 0) ] - Gen<Stmt> - AutoCompleteEditHandler;Accepts:Any,AutoComplete:[<null>];AtEOL
+                        CSharpStatementLiteral - [2..68)::66 - [LF    var time = DateTime.Now;LF    if (time.ToBinary() % 2 == 0) ] - Gen<Stmt>
                             NewLine;[LF];
                             Whitespace;[    ];
                             Identifier;[var];
@@ -45,31 +45,31 @@
                             Whitespace;[ ];
                         MarkupBlock - [68..92)::24
                             MarkupElement - [68..90)::22
-                                MarkupStartTag - [68..71)::3 - [<p>] - Gen<Markup> - SpanEditHandler;Accepts:None
+                                MarkupStartTag - [68..71)::3 - [<p>] - Gen<Markup>
                                     OpenAngle;[<];
                                     Text;[p];
                                     CloseAngle;[>];
-                                MarkupTextLiteral - [71..81)::10 - [The time: ] - Gen<Markup> - SpanEditHandler;Accepts:Any
+                                MarkupTextLiteral - [71..81)::10 - [The time: ] - Gen<Markup>
                                     Text;[The];
                                     Whitespace;[ ];
                                     Text;[time:];
                                     Whitespace;[ ];
                                 CSharpCodeBlock - [81..86)::5
                                     CSharpImplicitExpression - [81..86)::5
-                                        CSharpTransition - [81..82)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                                        CSharpTransition - [81..82)::1 - Gen<None>
                                             Transition;[@];
                                         CSharpImplicitExpressionBody - [82..86)::4
                                             CSharpCodeBlock - [82..86)::4
-                                                CSharpExpressionLiteral - [82..86)::4 - [time] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[RTD];K14
+                                                CSharpExpressionLiteral - [82..86)::4 - [time] - Gen<Expr>
                                                     Identifier;[time];
-                                MarkupEndTag - [86..90)::4 - [</p>] - Gen<Markup> - SpanEditHandler;Accepts:None
+                                MarkupEndTag - [86..90)::4 - [</p>] - Gen<Markup>
                                     OpenAngle;[<];
                                     ForwardSlash;[/];
                                     Text;[p];
                                     CloseAngle;[>];
-                            MarkupTextLiteral - [90..92)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:None
+                            MarkupTextLiteral - [90..92)::2 - [LF] - Gen<Markup>
                                 NewLine;[LF];
-                        CSharpStatementLiteral - [92..196)::104 - [LF    if (time.ToBinary() %3 == 0)LF        // For some reason we want to render the time now?LF        ] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+                        CSharpStatementLiteral - [92..196)::104 - [LF    if (time.ToBinary() %3 == 0)LF        // For some reason we want to render the time now?LF        ] - Gen<Stmt>
                             NewLine;[LF];
                             Whitespace;[    ];
                             Keyword;[if];
@@ -95,11 +95,11 @@
                             Whitespace;[        ];
                         MarkupBlock - [196..230)::34
                             MarkupElement - [196..228)::32
-                                MarkupStartTag - [196..199)::3 - [<p>] - Gen<Markup> - SpanEditHandler;Accepts:None
+                                MarkupStartTag - [196..199)::3 - [<p>] - Gen<Markup>
                                     OpenAngle;[<];
                                     Text;[p];
                                     CloseAngle;[>];
-                                MarkupTextLiteral - [199..219)::20 - [The confusing time: ] - Gen<Markup> - SpanEditHandler;Accepts:Any
+                                MarkupTextLiteral - [199..219)::20 - [The confusing time: ] - Gen<Markup>
                                     Text;[The];
                                     Whitespace;[ ];
                                     Text;[confusing];
@@ -108,20 +108,20 @@
                                     Whitespace;[ ];
                                 CSharpCodeBlock - [219..224)::5
                                     CSharpImplicitExpression - [219..224)::5
-                                        CSharpTransition - [219..220)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                                        CSharpTransition - [219..220)::1 - Gen<None>
                                             Transition;[@];
                                         CSharpImplicitExpressionBody - [220..224)::4
                                             CSharpCodeBlock - [220..224)::4
-                                                CSharpExpressionLiteral - [220..224)::4 - [time] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[RTD];K14
+                                                CSharpExpressionLiteral - [220..224)::4 - [time] - Gen<Expr>
                                                     Identifier;[time];
-                                MarkupEndTag - [224..228)::4 - [</p>] - Gen<Markup> - SpanEditHandler;Accepts:None
+                                MarkupEndTag - [224..228)::4 - [</p>] - Gen<Markup>
                                     OpenAngle;[<];
                                     ForwardSlash;[/];
                                     Text;[p];
                                     CloseAngle;[>];
-                            MarkupTextLiteral - [228..230)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:None
+                            MarkupTextLiteral - [228..230)::2 - [LF] - Gen<Markup>
                                 NewLine;[LF];
-                        CSharpStatementLiteral - [230..275)::45 - [LF    if (time.ToBinary() % 4 == 0)LF        ] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+                        CSharpStatementLiteral - [230..275)::45 - [LF    if (time.ToBinary() % 4 == 0)LF        ] - Gen<Stmt>
                             NewLine;[LF];
                             Whitespace;[    ];
                             Keyword;[if];
@@ -144,11 +144,11 @@
                             NewLine;[LF];
                             Whitespace;[        ];
                         MarkupBlock - [275..302)::27
-                            MarkupTransition - [275..276)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                            MarkupTransition - [275..276)::1 - Gen<None>
                                 Transition;[@];
-                            RazorMetaCode - [276..277)::1 - Gen<None> - SpanEditHandler;Accepts:Any
+                            RazorMetaCode - [276..277)::1 - Gen<None>
                                 Colon;[:];
-                            MarkupTextLiteral - [277..291)::14 - [ <p>The time: ] - Gen<Markup> - SpanEditHandler;Accepts:Any
+                            MarkupTextLiteral - [277..291)::14 - [ <p>The time: ] - Gen<Markup>
                                 Whitespace;[ ];
                                 OpenAngle;[<];
                                 Text;[p];
@@ -159,19 +159,19 @@
                                 Whitespace;[ ];
                             CSharpCodeBlock - [291..296)::5
                                 CSharpImplicitExpression - [291..296)::5
-                                    CSharpTransition - [291..292)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                                    CSharpTransition - [291..292)::1 - Gen<None>
                                         Transition;[@];
                                     CSharpImplicitExpressionBody - [292..296)::4
                                         CSharpCodeBlock - [292..296)::4
-                                            CSharpExpressionLiteral - [292..296)::4 - [time] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[RTD];K14
+                                            CSharpExpressionLiteral - [292..296)::4 - [time] - Gen<Expr>
                                                 Identifier;[time];
-                            MarkupTextLiteral - [296..302)::6 - [</p>LF] - Gen<Markup> - SpanEditHandler;Accepts:None
+                            MarkupTextLiteral - [296..302)::6 - [</p>LF] - Gen<Markup>
                                 OpenAngle;[<];
                                 ForwardSlash;[/];
                                 Text;[p];
                                 CloseAngle;[>];
                                 NewLine;[LF];
-                        CSharpStatementLiteral - [302..338)::36 - [LF    if (time.ToBinary() % 5 == 0) ] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+                        CSharpStatementLiteral - [302..338)::36 - [LF    if (time.ToBinary() % 5 == 0) ] - Gen<Stmt>
                             NewLine;[LF];
                             Whitespace;[    ];
                             Keyword;[if];
@@ -192,9 +192,9 @@
                             IntegerLiteral;[0];
                             RightParenthesis;[)];
                             Whitespace;[ ];
-                        CSharpEphemeralTextLiteral - [338..339)::1 - [@] - Gen<None> - SpanEditHandler;Accepts:Any
+                        CSharpEphemeralTextLiteral - [338..339)::1 - [@] - Gen<None>
                             Transition;[@];
-                        CSharpStatementLiteral - [339..381)::42 - [@SomeGitHubUserName <strong>Hi!</strong>LF] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+                        CSharpStatementLiteral - [339..381)::42 - [@SomeGitHubUserName <strong>Hi!</strong>LF] - Gen<Stmt>
                             Transition;[@];
                             Identifier;[SomeGitHubUserName];
                             Whitespace;[ ];
@@ -208,8 +208,8 @@
                             Identifier;[strong];
                             GreaterThan;[>];
                             NewLine;[LF];
-                    RazorMetaCode - [381..382)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                    RazorMetaCode - [381..382)::1 - Gen<None>
                         RightBrace;[}];
-        MarkupTextLiteral - [382..382)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [382..382)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

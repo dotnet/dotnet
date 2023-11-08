@@ -1,13 +1,13 @@
 ﻿RazorDocument - [0..28)::28 - [<p class=@DateTime.Now"></p>]
     MarkupBlock - [0..28)::28
         MarkupTagHelperElement - [0..28)::28 - p[StartTagAndEndTag] - ptaghelper
-            MarkupTagHelperStartTag - [0..28)::28 - [<p class=@DateTime.Now"></p>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupTagHelperStartTag - [0..28)::28 - [<p class=@DateTime.Now"></p>] - Gen<Markup>
                 OpenAngle;[<];
                 Text;[p];
                 MarkupTagHelperAttribute - [2..22)::20 - class - DoubleQuotes - Unbound - [ class=@DateTime.Now]
-                    MarkupTextLiteral - [2..3)::1 - [ ] - Gen<Markup> - SpanEditHandler;Accepts:Any
+                    MarkupTextLiteral - [2..3)::1 - [ ] - Gen<Markup>
                         Whitespace;[ ];
-                    MarkupTextLiteral - [3..8)::5 - [class] - Gen<Markup> - SpanEditHandler;Accepts:Any
+                    MarkupTextLiteral - [3..8)::5 - [class] - Gen<Markup>
                         Text;[class];
                     Equals;[=];
                     MarkupTagHelperAttributeValue - [9..22)::13
@@ -15,16 +15,16 @@
                             GenericBlock - [9..22)::13
                                 CSharpCodeBlock - [9..22)::13
                                     CSharpImplicitExpression - [9..22)::13
-                                        CSharpTransition - [9..10)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                                        CSharpTransition - [9..10)::1 - Gen<None>
                                             Transition;[@];
                                         CSharpImplicitExpressionBody - [10..22)::12
                                             CSharpCodeBlock - [10..22)::12
-                                                CSharpExpressionLiteral - [10..22)::12 - [DateTime.Now] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[RTD];K14
+                                                CSharpExpressionLiteral - [10..22)::12 - [DateTime.Now] - Gen<Expr>
                                                     Identifier;[DateTime];
                                                     Dot;[.];
                                                     Identifier;[Now];
                 MarkupMiscAttributeContent - [22..28)::6
-                    MarkupTextLiteral - [22..28)::6 - ["></p>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+                    MarkupTextLiteral - [22..28)::6 - ["></p>] - Gen<Markup>
                         DoubleQuote;["];
                         CloseAngle;[>];
                         OpenAngle;[<];

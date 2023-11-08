@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..55)::55 - [@do { var foo = bar; } @* Foo *@ @* Bar *@ while(true);]
     MarkupBlock - [0..55)::55
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..55)::55
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..23)::22 - [do { var foo = bar; } ] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [1..23)::22 - [do { var foo = bar; } ] - Gen<Stmt>
                 Keyword;[do];
                 Whitespace;[ ];
                 LeftBrace;[{];
@@ -27,7 +27,7 @@
                 RazorCommentLiteral;[ Foo ];
                 RazorCommentStar;[*];
                 RazorCommentTransition;[@];
-            CSharpStatementLiteral - [32..33)::1 - [ ] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [32..33)::1 - [ ] - Gen<Stmt>
                 Whitespace;[ ];
             RazorComment - [33..42)::9
                 RazorCommentTransition;[@];
@@ -35,13 +35,13 @@
                 RazorCommentLiteral;[ Bar ];
                 RazorCommentStar;[*];
                 RazorCommentTransition;[@];
-            CSharpStatementLiteral - [42..55)::13 - [ while(true);] - Gen<Stmt> - SpanEditHandler;Accepts:None
+            CSharpStatementLiteral - [42..55)::13 - [ while(true);] - Gen<Stmt>
                 Whitespace;[ ];
                 Keyword;[while];
                 LeftParenthesis;[(];
                 Keyword;[true];
                 RightParenthesis;[)];
                 Semicolon;[;];
-        MarkupTextLiteral - [55..55)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [55..55)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

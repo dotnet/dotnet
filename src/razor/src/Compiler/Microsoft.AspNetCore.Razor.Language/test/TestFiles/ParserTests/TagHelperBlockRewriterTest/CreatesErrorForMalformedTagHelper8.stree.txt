@@ -1,17 +1,17 @@
 ﻿RazorDocument - [0..25)::25 - [<str<strong></p></strong>]
     MarkupBlock - [0..25)::25
         MarkupElement - [0..25)::25
-            MarkupStartTag - [0..4)::4 - [<str] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupStartTag - [0..4)::4 - [<str] - Gen<Markup>
                 OpenAngle;[<];
                 Text;[str];
                 CloseAngle;[<Missing>];
             MarkupTagHelperElement - [4..25)::21 - strong[StartTagAndEndTag] - strongtaghelper
-                MarkupTagHelperStartTag - [4..12)::8 - [<strong>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+                MarkupTagHelperStartTag - [4..12)::8 - [<strong>] - Gen<Markup>
                     OpenAngle;[<];
                     Text;[strong];
                     CloseAngle;[>];
                 MarkupElement - [12..16)::4
-                    MarkupEndTag - [12..16)::4 - [</p>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+                    MarkupEndTag - [12..16)::4 - [</p>] - Gen<Markup>
                         OpenAngle;[<];
                         ForwardSlash;[/];
                         Text;[p];

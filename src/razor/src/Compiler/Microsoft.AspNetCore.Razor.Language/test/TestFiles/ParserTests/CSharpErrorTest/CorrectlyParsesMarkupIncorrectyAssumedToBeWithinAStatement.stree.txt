@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..65)::65 - [@if(foo) {LF    var foo = "foo bar bazLF    <p>Foo is @foo</p>LF}]
     MarkupBlock - [0..65)::65
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..65)::65
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..44)::43 - [if(foo) {LF    var foo = "foo bar bazLF    ] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [1..44)::43 - [if(foo) {LF    var foo = "foo bar bazLF    ] - Gen<Stmt>
                 Keyword;[if];
                 LeftParenthesis;[(];
                 Identifier;[foo];
@@ -25,30 +25,30 @@
                 Whitespace;[    ];
             MarkupBlock - [44..64)::20
                 MarkupElement - [44..62)::18
-                    MarkupStartTag - [44..47)::3 - [<p>] - Gen<Markup> - SpanEditHandler;Accepts:None
+                    MarkupStartTag - [44..47)::3 - [<p>] - Gen<Markup>
                         OpenAngle;[<];
                         Text;[p];
                         CloseAngle;[>];
-                    MarkupTextLiteral - [47..54)::7 - [Foo is ] - Gen<Markup> - SpanEditHandler;Accepts:Any
+                    MarkupTextLiteral - [47..54)::7 - [Foo is ] - Gen<Markup>
                         Text;[Foo];
                         Whitespace;[ ];
                         Text;[is];
                         Whitespace;[ ];
                     CSharpCodeBlock - [54..58)::4
                         CSharpImplicitExpression - [54..58)::4
-                            CSharpTransition - [54..55)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                            CSharpTransition - [54..55)::1 - Gen<None>
                                 Transition;[@];
                             CSharpImplicitExpressionBody - [55..58)::3
                                 CSharpCodeBlock - [55..58)::3
-                                    CSharpExpressionLiteral - [55..58)::3 - [foo] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[RTD];K14
+                                    CSharpExpressionLiteral - [55..58)::3 - [foo] - Gen<Expr>
                                         Identifier;[foo];
-                    MarkupEndTag - [58..62)::4 - [</p>] - Gen<Markup> - SpanEditHandler;Accepts:None
+                    MarkupEndTag - [58..62)::4 - [</p>] - Gen<Markup>
                         OpenAngle;[<];
                         ForwardSlash;[/];
                         Text;[p];
                         CloseAngle;[>];
-                MarkupTextLiteral - [62..64)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:None
+                MarkupTextLiteral - [62..64)::2 - [LF] - Gen<Markup>
                     NewLine;[LF];
-            CSharpStatementLiteral - [64..65)::1 - [}] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [64..65)::1 - [}] - Gen<Stmt>
                 RightBrace;[}];
     EndOfFile;[];

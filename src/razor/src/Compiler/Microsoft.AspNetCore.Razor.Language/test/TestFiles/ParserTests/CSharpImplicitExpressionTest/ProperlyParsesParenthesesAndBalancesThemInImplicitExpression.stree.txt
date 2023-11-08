@@ -1,14 +1,14 @@
 ﻿RazorDocument - [0..115)::115 - [@foo().bar("bi\"z", 4)("chained method; call").baz(@"bo""z", '\'', () => { return 4; }, (4+5+new { foo = bar[4] }))]
     MarkupBlock - [0..115)::115
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..115)::115
             CSharpImplicitExpression - [0..115)::115
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 CSharpImplicitExpressionBody - [1..115)::114
                     CSharpCodeBlock - [1..115)::114
-                        CSharpExpressionLiteral - [1..115)::114 - [foo().bar("bi\"z", 4)("chained method; call").baz(@"bo""z", '\'', () => { return 4; }, (4+5+new { foo = bar[4] }))] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[RTD];K14
+                        CSharpExpressionLiteral - [1..115)::114 - [foo().bar("bi\"z", 4)("chained method; call").baz(@"bo""z", '\'', () => { return 4; }, (4+5+new { foo = bar[4] }))] - Gen<Expr>
                             Identifier;[foo];
                             LeftParenthesis;[(];
                             RightParenthesis;[)];
@@ -68,6 +68,6 @@
                             RightBrace;[}];
                             RightParenthesis;[)];
                             RightParenthesis;[)];
-        MarkupTextLiteral - [115..115)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [115..115)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];
