@@ -12,7 +12,7 @@
   <Choose>
     <When Condition=" '$(DotNetBuildFromSource)' == 'true' ">
       <PropertyGroup>
-        <Tfm>net9.0</Tfm>
+        <Tfm>$(NetCurrent)</Tfm>
       </PropertyGroup>
     </When>
     <Otherwise>
