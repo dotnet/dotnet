@@ -52,51 +52,51 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>173eb1fb769edd42c856a83ce972ba0a63b425ca</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.App.Ref" Version="9.0.0-alpha.1.23557.1" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.AspNetCore.App.Ref" Version="9.0.0-alpha.1.23557.6" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
-      <Sha>c92e9b4d05f0581a2f0cf1d16f641dc64da3fbdb</Sha>
+      <Sha>1a564a1504fdc9a982405cce0ca3583da797123a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.App.Ref.Internal" Version="9.0.0-alpha.1.23557.1" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.AspNetCore.App.Ref.Internal" Version="9.0.0-alpha.1.23557.6" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
-      <Sha>c92e9b4d05f0581a2f0cf1d16f641dc64da3fbdb</Sha>
+      <Sha>1a564a1504fdc9a982405cce0ca3583da797123a</Sha>
       <SourceBuild RepoName="aspnetcore" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.App.Runtime.win-x64" Version="9.0.0-alpha.1.23557.1" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.AspNetCore.App.Runtime.win-x64" Version="9.0.0-alpha.1.23557.6" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
-      <Sha>c92e9b4d05f0581a2f0cf1d16f641dc64da3fbdb</Sha>
+      <Sha>1a564a1504fdc9a982405cce0ca3583da797123a</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.AspNetCore.SharedFramework.x64.9.0" Version="9.0.0-alpha.1.23557.1" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="VS.Redist.Common.AspNetCore.SharedFramework.x64.9.0" Version="9.0.0-alpha.1.23557.6" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
-      <Sha>c92e9b4d05f0581a2f0cf1d16f641dc64da3fbdb</Sha>
+      <Sha>1a564a1504fdc9a982405cce0ca3583da797123a</Sha>
     </Dependency>
-    <Dependency Name="dotnet-dev-certs" Version="9.0.0-alpha.1.23557.1" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="dotnet-dev-certs" Version="9.0.0-alpha.1.23557.6" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
-      <Sha>c92e9b4d05f0581a2f0cf1d16f641dc64da3fbdb</Sha>
+      <Sha>1a564a1504fdc9a982405cce0ca3583da797123a</Sha>
     </Dependency>
-    <Dependency Name="dotnet-user-jwts" Version="9.0.0-alpha.1.23557.1" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="dotnet-user-jwts" Version="9.0.0-alpha.1.23557.6" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
-      <Sha>c92e9b4d05f0581a2f0cf1d16f641dc64da3fbdb</Sha>
+      <Sha>1a564a1504fdc9a982405cce0ca3583da797123a</Sha>
     </Dependency>
-    <Dependency Name="dotnet-user-secrets" Version="9.0.0-alpha.1.23557.1" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="dotnet-user-secrets" Version="9.0.0-alpha.1.23557.6" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
-      <Sha>c92e9b4d05f0581a2f0cf1d16f641dc64da3fbdb</Sha>
+      <Sha>1a564a1504fdc9a982405cce0ca3583da797123a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="9.0.100-alpha.1.23557.34">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="9.0.100-alpha.1.23558.1">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>446f0c6856fa3f9e26552ef68c277d7da02418b1</Sha>
+      <Sha>f52240f11ad291e6ee3cff86e83c0f7a21b60370</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="9.0.100-alpha.1.23557.34">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="9.0.100-alpha.1.23558.1">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>446f0c6856fa3f9e26552ef68c277d7da02418b1</Sha>
+      <Sha>f52240f11ad291e6ee3cff86e83c0f7a21b60370</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="9.0.100-alpha.1.23557.34">
+    <Dependency Name="Microsoft.NET.Sdk" Version="9.0.100-alpha.1.23558.1">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>446f0c6856fa3f9e26552ef68c277d7da02418b1</Sha>
+      <Sha>f52240f11ad291e6ee3cff86e83c0f7a21b60370</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="9.0.100-alpha.1.23557.34">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="9.0.100-alpha.1.23558.1">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>446f0c6856fa3f9e26552ef68c277d7da02418b1</Sha>
+      <Sha>f52240f11ad291e6ee3cff86e83c0f7a21b60370</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.2.1" Version="1.0.2-beta4.22406.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
