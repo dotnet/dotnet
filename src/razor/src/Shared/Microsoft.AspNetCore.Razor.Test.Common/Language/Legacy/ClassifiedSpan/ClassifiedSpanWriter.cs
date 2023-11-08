@@ -7,20 +7,11 @@ using System.IO;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-internal class ClassifiedSpanWriter
+internal class ClassifiedSpanWriter(TextWriter writer, RazorSyntaxTree syntaxTree, bool validateSpanEditHandlers)
 {
-    private readonly RazorSyntaxTree _syntaxTree;
-    private readonly TextWriter _writer;
-
-    public ClassifiedSpanWriter(TextWriter writer, RazorSyntaxTree syntaxTree)
-    {
-        _writer = writer;
-        _syntaxTree = syntaxTree;
-    }
-
     public virtual void Visit()
     {
-        var classifiedSpans = _syntaxTree.GetClassifiedSpans();
+        var classifiedSpans = syntaxTree.GetClassifiedSpans();
         foreach (var span in classifiedSpans)
         {
             VisitClassifiedSpan(span);
@@ -35,7 +26,11 @@ internal class ClassifiedSpanWriter
 
     protected void WriteClassifiedSpan(ClassifiedSpanInternal span)
     {
-        Write($"{span.SpanKind} span at {span.Span} (Accepts:{span.AcceptedCharacters})");
+        Write($"{span.SpanKind} span at {span.Span}");
+        if (validateSpanEditHandlers)
+        {
+            Write($" (Accepts:{span.AcceptedCharacters})");
+        }
         WriteSeparator();
         Write($"Parent: {span.BlockKind} block at {span.BlockSpan}");
     }
@@ -47,11 +42,11 @@ internal class ClassifiedSpanWriter
 
     protected void WriteNewLine()
     {
-        _writer.WriteLine();
+        writer.WriteLine();
     }
 
     protected void Write(object value)
     {
-        _writer.Write(value);
+        writer.Write(value);
     }
 }

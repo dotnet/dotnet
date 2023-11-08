@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..73)::73 - [@if(true) { foo(); } else if(false) { foo(); } else if(!false) { foo(); }]
     MarkupBlock - [0..73)::73
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..73)::73
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..73)::72 - [if(true) { foo(); } else if(false) { foo(); } else if(!false) { foo(); }] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [1..73)::72 - [if(true) { foo(); } else if(false) { foo(); } else if(!false) { foo(); }] - Gen<Stmt>
                 Keyword;[if];
                 LeftParenthesis;[(];
                 Keyword;[true];

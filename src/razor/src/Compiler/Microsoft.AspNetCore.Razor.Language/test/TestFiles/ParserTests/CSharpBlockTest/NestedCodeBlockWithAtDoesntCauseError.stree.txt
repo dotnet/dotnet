@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..29)::29 - [@if (true) { @if(false) { } }]
     MarkupBlock - [0..29)::29
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..29)::29
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..13)::12 - [if (true) { ] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [1..13)::12 - [if (true) { ] - Gen<Stmt>
                 Keyword;[if];
                 Whitespace;[ ];
                 LeftParenthesis;[(];
@@ -15,9 +15,9 @@
                 LeftBrace;[{];
                 Whitespace;[ ];
             CSharpCodeBlock - [13..27)::14
-                CSharpTransition - [13..14)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [13..14)::1 - Gen<None>
                     Transition;[@];
-                CSharpStatementLiteral - [14..27)::13 - [if(false) { }] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+                CSharpStatementLiteral - [14..27)::13 - [if(false) { }] - Gen<Stmt>
                     Keyword;[if];
                     LeftParenthesis;[(];
                     Keyword;[false];
@@ -26,7 +26,7 @@
                     LeftBrace;[{];
                     Whitespace;[ ];
                     RightBrace;[}];
-            CSharpStatementLiteral - [27..29)::2 - [ }] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [27..29)::2 - [ }] - Gen<Stmt>
                 Whitespace;[ ];
                 RightBrace;[}];
     EndOfFile;[];

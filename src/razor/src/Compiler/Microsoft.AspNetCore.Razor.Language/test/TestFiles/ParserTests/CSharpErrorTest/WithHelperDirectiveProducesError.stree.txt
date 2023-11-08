@@ -1,16 +1,16 @@
 ﻿RazorDocument - [0..21)::21 - [@helper fooHelper { }]
     MarkupBlock - [0..21)::21
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..7)::7
             CSharpImplicitExpression - [0..7)::7
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 CSharpImplicitExpressionBody - [1..7)::6
                     CSharpCodeBlock - [1..7)::6
-                        CSharpExpressionLiteral - [1..7)::6 - [helper] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[RTD];K14
+                        CSharpExpressionLiteral - [1..7)::6 - [helper] - Gen<Expr>
                             Identifier;[helper];
-        MarkupTextLiteral - [7..21)::14 - [ fooHelper { }] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [7..21)::14 - [ fooHelper { }] - Gen<Markup>
             Whitespace;[ ];
             Text;[fooHelper];
             Whitespace;[ ];

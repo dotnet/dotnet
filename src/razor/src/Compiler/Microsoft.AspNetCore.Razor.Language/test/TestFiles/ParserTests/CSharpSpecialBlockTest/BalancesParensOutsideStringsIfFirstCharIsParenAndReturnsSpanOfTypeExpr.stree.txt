@@ -1,16 +1,16 @@
 ﻿RazorDocument - [0..53)::53 - [@(foo"b)ar" if(condition) { string.Format("{0}"); } )]
     MarkupBlock - [0..53)::53
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..53)::53
             CSharpExplicitExpression - [0..53)::53
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 CSharpExplicitExpressionBody - [1..53)::52
-                    RazorMetaCode - [1..2)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                    RazorMetaCode - [1..2)::1 - Gen<None>
                         LeftParenthesis;[(];
                     CSharpCodeBlock - [2..52)::50
-                        CSharpExpressionLiteral - [2..52)::50 - [foo"b)ar" if(condition) { string.Format("{0}"); } ] - Gen<Expr> - SpanEditHandler;Accepts:Any
+                        CSharpExpressionLiteral - [2..52)::50 - [foo"b)ar" if(condition) { string.Format("{0}"); } ] - Gen<Expr>
                             Identifier;[foo];
                             StringLiteral;["b)ar"];
                             Whitespace;[ ];
@@ -31,8 +31,8 @@
                             Whitespace;[ ];
                             RightBrace;[}];
                             Whitespace;[ ];
-                    RazorMetaCode - [52..53)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                    RazorMetaCode - [52..53)::1 - Gen<None>
                         RightParenthesis;[)];
-        MarkupTextLiteral - [53..53)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [53..53)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

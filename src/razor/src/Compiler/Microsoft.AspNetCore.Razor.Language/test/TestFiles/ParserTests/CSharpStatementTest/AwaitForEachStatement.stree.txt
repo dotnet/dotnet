@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..41)::41 - [@await foreach(var foo in bar) { foo(); }]
     MarkupBlock - [0..41)::41
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..41)::41
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..41)::40 - [await foreach(var foo in bar) { foo(); }] - Gen<Stmt> - SpanEditHandler;Accepts:None
+            CSharpStatementLiteral - [1..41)::40 - [await foreach(var foo in bar) { foo(); }] - Gen<Stmt>
                 Keyword;[await];
                 Whitespace;[ ];
                 Keyword;[foreach];
@@ -27,6 +27,6 @@
                 Semicolon;[;];
                 Whitespace;[ ];
                 RightBrace;[}];
-        MarkupTextLiteral - [41..41)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [41..41)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

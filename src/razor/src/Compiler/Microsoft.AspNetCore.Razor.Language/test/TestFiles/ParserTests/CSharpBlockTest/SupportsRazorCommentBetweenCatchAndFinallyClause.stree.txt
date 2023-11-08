@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..76)::76 - [@try { bar(); } catch(bar) { baz(); } @* Foo *@ @* Bar *@ finally { biz(); }]
     MarkupBlock - [0..76)::76
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..76)::76
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..38)::37 - [try { bar(); } catch(bar) { baz(); } ] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [1..38)::37 - [try { bar(); } catch(bar) { baz(); } ] - Gen<Stmt>
                 Keyword;[try];
                 Whitespace;[ ];
                 LeftBrace;[{];
@@ -37,7 +37,7 @@
                 RazorCommentLiteral;[ Foo ];
                 RazorCommentStar;[*];
                 RazorCommentTransition;[@];
-            CSharpStatementLiteral - [47..48)::1 - [ ] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [47..48)::1 - [ ] - Gen<Stmt>
                 Whitespace;[ ];
             RazorComment - [48..57)::9
                 RazorCommentTransition;[@];
@@ -45,7 +45,7 @@
                 RazorCommentLiteral;[ Bar ];
                 RazorCommentStar;[*];
                 RazorCommentTransition;[@];
-            CSharpStatementLiteral - [57..76)::19 - [ finally { biz(); }] - Gen<Stmt> - SpanEditHandler;Accepts:None
+            CSharpStatementLiteral - [57..76)::19 - [ finally { biz(); }] - Gen<Stmt>
                 Whitespace;[ ];
                 Keyword;[finally];
                 Whitespace;[ ];
@@ -57,6 +57,6 @@
                 Semicolon;[;];
                 Whitespace;[ ];
                 RightBrace;[}];
-        MarkupTextLiteral - [76..76)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [76..76)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

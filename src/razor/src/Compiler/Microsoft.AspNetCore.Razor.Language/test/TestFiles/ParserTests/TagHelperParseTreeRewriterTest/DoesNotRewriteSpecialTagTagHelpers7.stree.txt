@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..36)::36 - [<foo><![CDATA[ Hello World ]]></foo>]
     MarkupBlock - [0..36)::36
         MarkupElement - [0..36)::36
-            MarkupStartTag - [0..5)::5 - [<foo>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupStartTag - [0..5)::5 - [<foo>] - Gen<Markup>
                 OpenAngle;[<];
                 Text;[foo];
                 CloseAngle;[>];
-            MarkupTextLiteral - [5..30)::25 - [<![CDATA[ Hello World ]]>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupTextLiteral - [5..30)::25 - [<![CDATA[ Hello World ]]>] - Gen<Markup>
                 OpenAngle;[<];
                 Bang;[!];
                 LeftBracket;[[];
@@ -19,7 +19,7 @@
                 RightBracket;[]];
                 RightBracket;[]];
                 CloseAngle;[>];
-            MarkupEndTag - [30..36)::6 - [</foo>] - Gen<Markup> - SpanEditHandler;Accepts:Any
+            MarkupEndTag - [30..36)::6 - [</foo>] - Gen<Markup>
                 OpenAngle;[<];
                 ForwardSlash;[/];
                 Text;[foo];

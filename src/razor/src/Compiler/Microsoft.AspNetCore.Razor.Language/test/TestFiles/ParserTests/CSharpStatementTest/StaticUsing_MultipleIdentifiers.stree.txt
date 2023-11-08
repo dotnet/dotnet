@@ -1,13 +1,13 @@
 ﻿RazorDocument - [0..28)::28 - [@using static System.Console]
     MarkupBlock - [0..28)::28
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..28)::28
             RazorDirective - [0..28)::28
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 RazorDirectiveBody - [1..28)::27
-                    CSharpStatementLiteral - [1..28)::27 - [using static System.Console] - Gen<Import: static System.Console;> - SpanEditHandler;Accepts:AnyExceptNewline
+                    CSharpStatementLiteral - [1..28)::27 - [using static System.Console] - Gen<Import: static System.Console;>
                         Keyword;[using];
                         Whitespace;[ ];
                         Keyword;[static];
@@ -15,6 +15,6 @@
                         Identifier;[System];
                         Dot;[.];
                         Identifier;[Console];
-        MarkupTextLiteral - [28..28)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [28..28)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

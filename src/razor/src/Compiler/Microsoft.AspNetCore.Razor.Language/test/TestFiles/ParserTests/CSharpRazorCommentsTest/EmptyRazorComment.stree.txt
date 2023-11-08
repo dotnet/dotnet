@@ -1,6 +1,6 @@
 ﻿RazorDocument - [0..4)::4 - [@**@]
     MarkupBlock - [0..4)::4
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         RazorComment - [0..4)::4
             RazorCommentTransition;[@];
@@ -8,6 +8,6 @@
             RazorCommentLiteral;[<Missing>];
             RazorCommentStar;[*];
             RazorCommentTransition;[@];
-        MarkupTextLiteral - [4..4)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [4..4)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

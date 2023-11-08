@@ -1,1 +1,1 @@
-﻿Markup span at (6:0,6 [2] ) (Accepts:Any) - Parent: Tag block at (6:0,6 [2] )
+﻿Markup span at (6:0,6 [2] ) - Parent: Tag block at (6:0,6 [2] )

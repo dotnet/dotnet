@@ -1,16 +1,16 @@
 ﻿RazorDocument - [0..45)::45 - [@{ var foo = bar; if(foo != null) { bar(); } ]
     MarkupBlock - [0..45)::45
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..45)::45
             CSharpStatement - [0..45)::45
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 CSharpStatementBody - [1..45)::44
-                    RazorMetaCode - [1..2)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                    RazorMetaCode - [1..2)::1 - Gen<None>
                         LeftBrace;[{];
                     CSharpCodeBlock - [2..45)::43
-                        CSharpStatementLiteral - [2..45)::43 - [ var foo = bar; if(foo != null) { bar(); } ] - Gen<Stmt> - AutoCompleteEditHandler;Accepts:Any,AutoComplete:[}];AtEOL
+                        CSharpStatementLiteral - [2..45)::43 - [ var foo = bar; if(foo != null) { bar(); } ] - Gen<Stmt>
                             Whitespace;[ ];
                             Identifier;[var];
                             Whitespace;[ ];
@@ -39,6 +39,6 @@
                             Whitespace;[ ];
                             RightBrace;[}];
                             Whitespace;[ ];
-                    RazorMetaCode - [45..45)::0 - Gen<None> - SpanEditHandler;Accepts:Any
+                    RazorMetaCode - [45..45)::0 - Gen<None>
                         RightBrace;[<Missing>];
     EndOfFile;[];

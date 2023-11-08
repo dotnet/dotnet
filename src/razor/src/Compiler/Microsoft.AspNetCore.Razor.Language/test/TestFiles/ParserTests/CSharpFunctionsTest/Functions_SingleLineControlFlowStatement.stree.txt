@@ -1,21 +1,21 @@
 ﻿RazorDocument - [0..147)::147 - [LF@functions {LF    string GetAnnouncmentText(string message)LF    {LF        if (message.Length > 0) return "Anouncement: " + message;LF    }LF}LF]
     MarkupBlock - [0..147)::147
-        MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..2)::2 - [LF] - Gen<Markup>
             NewLine;[LF];
         CSharpCodeBlock - [2..147)::145
             RazorDirective - [2..147)::145 - Directive:{functions;CodeBlock;Unrestricted}
-                CSharpTransition - [2..3)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [2..3)::1 - Gen<None>
                     Transition;[@];
                 RazorDirectiveBody - [3..147)::144
-                    RazorMetaCode - [3..12)::9 - Gen<None> - SpanEditHandler;Accepts:None
+                    RazorMetaCode - [3..12)::9 - Gen<None>
                         Identifier;[functions];
                     CSharpCodeBlock - [12..147)::135
-                        UnclassifiedTextLiteral - [12..13)::1 - [ ] - Gen<None> - SpanEditHandler;Accepts:AllWhitespace
+                        UnclassifiedTextLiteral - [12..13)::1 - [ ] - Gen<None>
                             Whitespace;[ ];
-                        RazorMetaCode - [13..14)::1 - Gen<None> - AutoCompleteEditHandler;Accepts:None,AutoComplete:[<null>];AtEnd
+                        RazorMetaCode - [13..14)::1 - Gen<None>
                             LeftBrace;[{];
                         CSharpCodeBlock - [14..144)::130
-                            CSharpStatementLiteral - [14..144)::130 - [LF    string GetAnnouncmentText(string message)LF    {LF        if (message.Length > 0) return "Anouncement: " + message;LF    }LF] - Gen<Stmt> - CodeBlockEditHandler;Accepts:Any;CodeBlock
+                            CSharpStatementLiteral - [14..144)::130 - [LF    string GetAnnouncmentText(string message)LF    {LF        if (message.Length > 0) return "Anouncement: " + message;LF    }LF] - Gen<Stmt>
                                 NewLine;[LF];
                                 Whitespace;[    ];
                                 Keyword;[string];
@@ -55,9 +55,9 @@
                                 Whitespace;[    ];
                                 RightBrace;[}];
                                 NewLine;[LF];
-                        RazorMetaCode - [144..147)::3 - Gen<None> - SpanEditHandler;Accepts:None
+                        RazorMetaCode - [144..147)::3 - Gen<None>
                             RightBrace;[}];
                             NewLine;[LF];
-        MarkupTextLiteral - [147..147)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [147..147)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

@@ -1,1 +1,1 @@
-﻿Markup span at (0:0,0 [62] ) (Accepts:Any) - Parent: Markup block at (0:0,0 [62] )
+﻿Markup span at (0:0,0 [62] ) - Parent: Markup block at (0:0,0 [62] )

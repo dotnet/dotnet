@@ -1,13 +1,13 @@
 ﻿RazorDocument - [0..79)::79 - [@using StringDictionary = System.Collections.Generic.Dictionary<string, string>]
     MarkupBlock - [0..79)::79
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..79)::79
             RazorDirective - [0..79)::79
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 RazorDirectiveBody - [1..79)::78
-                    CSharpStatementLiteral - [1..79)::78 - [using StringDictionary = System.Collections.Generic.Dictionary<string, string>] - Gen<Import: StringDictionary = System.Collections.Generic.Dictionary<string, string>;> - SpanEditHandler;Accepts:AnyExceptNewline
+                    CSharpStatementLiteral - [1..79)::78 - [using StringDictionary = System.Collections.Generic.Dictionary<string, string>] - Gen<Import: StringDictionary = System.Collections.Generic.Dictionary<string, string>;>
                         Keyword;[using];
                         Whitespace;[ ];
                         Identifier;[StringDictionary];
@@ -27,6 +27,6 @@
                         Whitespace;[ ];
                         Keyword;[string];
                         GreaterThan;[>];
-        MarkupTextLiteral - [79..79)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [79..79)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

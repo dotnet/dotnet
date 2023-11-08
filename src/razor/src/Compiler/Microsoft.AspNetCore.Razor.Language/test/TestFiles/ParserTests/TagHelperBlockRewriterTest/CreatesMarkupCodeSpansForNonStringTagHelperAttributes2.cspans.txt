@@ -1,1 +1,1 @@
-﻿Code span at (18:0,18 [12] ) (Accepts:AnyExceptNewline) - Parent: Tag block at (0:0,0 [34] )
+﻿Code span at (18:0,18 [12] ) - Parent: Tag block at (0:0,0 [34] )

@@ -1,17 +1,17 @@
 ﻿RazorDocument - [0..12)::12 - [@using FooLF]
     MarkupBlock - [0..12)::12
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..12)::12
             RazorDirective - [0..12)::12
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 RazorDirectiveBody - [1..12)::11
-                    CSharpStatementLiteral - [1..12)::11 - [using FooLF] - Gen<Import: Foo;> - SpanEditHandler;Accepts:AnyExceptNewline
+                    CSharpStatementLiteral - [1..12)::11 - [using FooLF] - Gen<Import: Foo;>
                         Keyword;[using];
                         Whitespace;[ ];
                         Identifier;[Foo];
                         NewLine;[LF];
-        MarkupTextLiteral - [12..12)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [12..12)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

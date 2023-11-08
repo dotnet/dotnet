@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..107)::107 - [@if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"foo } bar");LF} else if { foo(); }]
     MarkupBlock - [0..107)::107
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..107)::107
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..107)::106 - [if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"foo } bar");LF} else if { foo(); }] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [1..107)::106 - [if(int i = 0; i < 10; new Foo { Bar = "baz" }) {LF    Debug.WriteLine(@"foo } bar");LF} else if { foo(); }] - Gen<Stmt>
                 Keyword;[if];
                 LeftParenthesis;[(];
                 Keyword;[int];

@@ -1,27 +1,27 @@
 ﻿RazorDocument - [0..246)::246 - [@custom (bool, int) (int aa, string bb)? (  int?   q   ,  bool   w   ) ( int  ?  q, bool ?w ,(long ?  [])) ? (List<(int, string)?> aa, string bb) (string ss, (int u, List<(string, int)> k, (Char c, bool b, List<int> l)), global::System.Int32[] a)]
     MarkupBlock - [0..246)::246
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..246)::246
             RazorDirective - [0..246)::246 - Directive:{custom;SingleLine;Unrestricted}
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 RazorDirectiveBody - [1..246)::245
-                    RazorMetaCode - [1..7)::6 - Gen<None> - SpanEditHandler;Accepts:None
+                    RazorMetaCode - [1..7)::6 - Gen<None>
                         Identifier;[custom];
                     CSharpCodeBlock - [7..246)::239
-                        CSharpStatementLiteral - [7..8)::1 - [ ] - Gen<None> - SpanEditHandler;Accepts:Whitespace
+                        CSharpStatementLiteral - [7..8)::1 - [ ] - Gen<None>
                             Whitespace;[ ];
-                        CSharpStatementLiteral - [8..19)::11 - [(bool, int)] - Gen<DirectiveToken {;Type;Opt:False}> - DirectiveTokenEditHandler;Accepts:NonWhitespace
+                        CSharpStatementLiteral - [8..19)::11 - [(bool, int)] - Gen<DirectiveToken {;Type;Opt:False}>
                             LeftParenthesis;[(];
                             Keyword;[bool];
                             Comma;[,];
                             Whitespace;[ ];
                             Keyword;[int];
                             RightParenthesis;[)];
-                        CSharpStatementLiteral - [19..20)::1 - [ ] - Gen<None> - SpanEditHandler;Accepts:Whitespace
+                        CSharpStatementLiteral - [19..20)::1 - [ ] - Gen<None>
                             Whitespace;[ ];
-                        CSharpStatementLiteral - [20..40)::20 - [(int aa, string bb)?] - Gen<DirectiveToken {;Type;Opt:False}> - DirectiveTokenEditHandler;Accepts:NonWhitespace
+                        CSharpStatementLiteral - [20..40)::20 - [(int aa, string bb)?] - Gen<DirectiveToken {;Type;Opt:False}>
                             LeftParenthesis;[(];
                             Keyword;[int];
                             Whitespace;[ ];
@@ -33,9 +33,9 @@
                             Identifier;[bb];
                             RightParenthesis;[)];
                             QuestionMark;[?];
-                        CSharpStatementLiteral - [40..41)::1 - [ ] - Gen<None> - SpanEditHandler;Accepts:Whitespace
+                        CSharpStatementLiteral - [40..41)::1 - [ ] - Gen<None>
                             Whitespace;[ ];
-                        CSharpStatementLiteral - [41..70)::29 - [(  int?   q   ,  bool   w   )] - Gen<DirectiveToken {;Type;Opt:False}> - DirectiveTokenEditHandler;Accepts:NonWhitespace
+                        CSharpStatementLiteral - [41..70)::29 - [(  int?   q   ,  bool   w   )] - Gen<DirectiveToken {;Type;Opt:False}>
                             LeftParenthesis;[(];
                             Whitespace;[  ];
                             Keyword;[int];
@@ -50,9 +50,9 @@
                             Identifier;[w];
                             Whitespace;[   ];
                             RightParenthesis;[)];
-                        CSharpStatementLiteral - [70..71)::1 - [ ] - Gen<None> - SpanEditHandler;Accepts:Whitespace
+                        CSharpStatementLiteral - [70..71)::1 - [ ] - Gen<None>
                             Whitespace;[ ];
-                        CSharpStatementLiteral - [71..108)::37 - [( int  ?  q, bool ?w ,(long ?  [])) ?] - Gen<DirectiveToken {;Type;Opt:False}> - DirectiveTokenEditHandler;Accepts:NonWhitespace
+                        CSharpStatementLiteral - [71..108)::37 - [( int  ?  q, bool ?w ,(long ?  [])) ?] - Gen<DirectiveToken {;Type;Opt:False}>
                             LeftParenthesis;[(];
                             Whitespace;[ ];
                             Keyword;[int];
@@ -79,9 +79,9 @@
                             RightParenthesis;[)];
                             Whitespace;[ ];
                             QuestionMark;[?];
-                        CSharpStatementLiteral - [108..109)::1 - [ ] - Gen<None> - SpanEditHandler;Accepts:Whitespace
+                        CSharpStatementLiteral - [108..109)::1 - [ ] - Gen<None>
                             Whitespace;[ ];
-                        CSharpStatementLiteral - [109..145)::36 - [(List<(int, string)?> aa, string bb)] - Gen<DirectiveToken {;Type;Opt:False}> - DirectiveTokenEditHandler;Accepts:NonWhitespace
+                        CSharpStatementLiteral - [109..145)::36 - [(List<(int, string)?> aa, string bb)] - Gen<DirectiveToken {;Type;Opt:False}>
                             LeftParenthesis;[(];
                             Identifier;[List];
                             LessThan;[<];
@@ -101,9 +101,9 @@
                             Whitespace;[ ];
                             Identifier;[bb];
                             RightParenthesis;[)];
-                        CSharpStatementLiteral - [145..146)::1 - [ ] - Gen<None> - SpanEditHandler;Accepts:Whitespace
+                        CSharpStatementLiteral - [145..146)::1 - [ ] - Gen<None>
                             Whitespace;[ ];
-                        CSharpStatementLiteral - [146..246)::100 - [(string ss, (int u, List<(string, int)> k, (Char c, bool b, List<int> l)), global::System.Int32[] a)] - Gen<DirectiveToken {;Type;Opt:False}> - DirectiveTokenEditHandler;Accepts:NonWhitespace
+                        CSharpStatementLiteral - [146..246)::100 - [(string ss, (int u, List<(string, int)> k, (Char c, bool b, List<int> l)), global::System.Int32[] a)] - Gen<DirectiveToken {;Type;Opt:False}>
                             LeftParenthesis;[(];
                             Keyword;[string];
                             Whitespace;[ ];
@@ -160,6 +160,6 @@
                             Whitespace;[ ];
                             Identifier;[a];
                             RightParenthesis;[)];
-        MarkupTextLiteral - [246..246)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [246..246)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

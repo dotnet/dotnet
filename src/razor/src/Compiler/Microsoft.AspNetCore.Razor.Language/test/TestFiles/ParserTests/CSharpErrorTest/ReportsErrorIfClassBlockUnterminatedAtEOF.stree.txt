@@ -1,21 +1,21 @@
 ﻿RazorDocument - [0..55)::55 - [@functions { var foo = bar; if(foo != null) { bar(); } ]
     MarkupBlock - [0..55)::55
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..55)::55
             RazorDirective - [0..55)::55 - Directive:{functions;CodeBlock;Unrestricted} [RZ1006(11:0,11 [1] )]
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 RazorDirectiveBody - [1..55)::54
-                    RazorMetaCode - [1..10)::9 - Gen<None> - SpanEditHandler;Accepts:None
+                    RazorMetaCode - [1..10)::9 - Gen<None>
                         Identifier;[functions];
                     CSharpCodeBlock - [10..55)::45
-                        UnclassifiedTextLiteral - [10..11)::1 - [ ] - Gen<None> - SpanEditHandler;Accepts:AllWhitespace
+                        UnclassifiedTextLiteral - [10..11)::1 - [ ] - Gen<None>
                             Whitespace;[ ];
-                        RazorMetaCode - [11..12)::1 - Gen<None> - AutoCompleteEditHandler;Accepts:None,AutoComplete:[}];AtEnd
+                        RazorMetaCode - [11..12)::1 - Gen<None>
                             LeftBrace;[{];
                         CSharpCodeBlock - [12..55)::43
-                            CSharpStatementLiteral - [12..55)::43 - [ var foo = bar; if(foo != null) { bar(); } ] - Gen<Stmt> - CodeBlockEditHandler;Accepts:Any;CodeBlock
+                            CSharpStatementLiteral - [12..55)::43 - [ var foo = bar; if(foo != null) { bar(); } ] - Gen<Stmt>
                                 Whitespace;[ ];
                                 Identifier;[var];
                                 Whitespace;[ ];
@@ -44,6 +44,6 @@
                                 Whitespace;[ ];
                                 RightBrace;[}];
                                 Whitespace;[ ];
-                        RazorMetaCode - [55..55)::0 - Gen<None> - SpanEditHandler;Accepts:Any
+                        RazorMetaCode - [55..55)::0 - Gen<None>
                             RightBrace;[<Missing>];
     EndOfFile;[];

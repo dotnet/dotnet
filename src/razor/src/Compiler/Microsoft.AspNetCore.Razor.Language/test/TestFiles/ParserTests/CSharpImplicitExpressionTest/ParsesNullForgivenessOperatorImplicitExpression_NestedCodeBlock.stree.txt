@@ -1,24 +1,24 @@
 ﻿RazorDocument - [0..25)::25 - [@{ @val!.Name![0]!?.Bar }]
     MarkupBlock - [0..25)::25
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..25)::25
             CSharpStatement - [0..25)::25
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 CSharpStatementBody - [1..25)::24
-                    RazorMetaCode - [1..2)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                    RazorMetaCode - [1..2)::1 - Gen<None>
                         LeftBrace;[{];
                     CSharpCodeBlock - [2..24)::22
-                        CSharpStatementLiteral - [2..3)::1 - [ ] - Gen<Stmt> - AutoCompleteEditHandler;Accepts:Any,AutoComplete:[<null>];AtEOL
+                        CSharpStatementLiteral - [2..3)::1 - [ ] - Gen<Stmt>
                             Whitespace;[ ];
                         CSharpCodeBlock - [3..23)::20
                             CSharpImplicitExpression - [3..23)::20
-                                CSharpTransition - [3..4)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                                CSharpTransition - [3..4)::1 - Gen<None>
                                     Transition;[@];
                                 CSharpImplicitExpressionBody - [4..23)::19
                                     CSharpCodeBlock - [4..23)::19
-                                        CSharpExpressionLiteral - [4..23)::19 - [val!.Name![0]!?.Bar] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[ATD];K14
+                                        CSharpExpressionLiteral - [4..23)::19 - [val!.Name![0]!?.Bar] - Gen<Expr>
                                             Identifier;[val];
                                             Not;[!];
                                             Dot;[.];
@@ -31,10 +31,10 @@
                                             QuestionMark;[?];
                                             Dot;[.];
                                             Identifier;[Bar];
-                        CSharpStatementLiteral - [23..24)::1 - [ ] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+                        CSharpStatementLiteral - [23..24)::1 - [ ] - Gen<Stmt>
                             Whitespace;[ ];
-                    RazorMetaCode - [24..25)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                    RazorMetaCode - [24..25)::1 - Gen<None>
                         RightBrace;[}];
-        MarkupTextLiteral - [25..25)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [25..25)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

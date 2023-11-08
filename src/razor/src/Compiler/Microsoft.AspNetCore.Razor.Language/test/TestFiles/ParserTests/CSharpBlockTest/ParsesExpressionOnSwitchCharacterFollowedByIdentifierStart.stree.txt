@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..26)::26 - [@if(foo) { @foo[4].bar() }]
     MarkupBlock - [0..26)::26
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..26)::26
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..11)::10 - [if(foo) { ] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [1..11)::10 - [if(foo) { ] - Gen<Stmt>
                 Keyword;[if];
                 LeftParenthesis;[(];
                 Identifier;[foo];
@@ -15,11 +15,11 @@
                 Whitespace;[ ];
             CSharpCodeBlock - [11..24)::13
                 CSharpImplicitExpression - [11..24)::13
-                    CSharpTransition - [11..12)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                    CSharpTransition - [11..12)::1 - Gen<None>
                         Transition;[@];
                     CSharpImplicitExpressionBody - [12..24)::12
                         CSharpCodeBlock - [12..24)::12
-                            CSharpExpressionLiteral - [12..24)::12 - [foo[4].bar()] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[ATD];K14
+                            CSharpExpressionLiteral - [12..24)::12 - [foo[4].bar()] - Gen<Expr>
                                 Identifier;[foo];
                                 LeftBracket;[[];
                                 IntegerLiteral;[4];
@@ -28,7 +28,7 @@
                                 Identifier;[bar];
                                 LeftParenthesis;[(];
                                 RightParenthesis;[)];
-            CSharpStatementLiteral - [24..26)::2 - [ }] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [24..26)::2 - [ }] - Gen<Stmt>
                 Whitespace;[ ];
                 RightBrace;[}];
     EndOfFile;[];

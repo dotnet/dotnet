@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..61)::61 - [@if(foo) { var foo = @"blah LFblah; LF<p>Foo</p>LFblah LFblah]
     MarkupBlock - [0..61)::61
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..61)::61
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..61)::60 - [if(foo) { var foo = @"blah LFblah; LF<p>Foo</p>LFblah LFblah] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [1..61)::60 - [if(foo) { var foo = @"blah LFblah; LF<p>Foo</p>LFblah LFblah] - Gen<Stmt>
                 Keyword;[if];
                 LeftParenthesis;[(];
                 Identifier;[foo];

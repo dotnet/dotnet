@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..162)::162 - [@switch(foo) {LF    case 0:LF        break;LF    case 1:LF        {LF            break;LF        }LF    case 2:LF        return;LF    default:LF        return;LF}]
     MarkupBlock - [0..162)::162
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..162)::162
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..162)::161 - [switch(foo) {LF    case 0:LF        break;LF    case 1:LF        {LF            break;LF        }LF    case 2:LF        return;LF    default:LF        return;LF}] - Gen<Stmt> - SpanEditHandler;Accepts:None
+            CSharpStatementLiteral - [1..162)::161 - [switch(foo) {LF    case 0:LF        break;LF    case 1:LF        {LF            break;LF        }LF    case 2:LF        return;LF    default:LF        return;LF}] - Gen<Stmt>
                 Keyword;[switch];
                 LeftParenthesis;[(];
                 Identifier;[foo];
@@ -58,6 +58,6 @@
                 Semicolon;[;];
                 NewLine;[LF];
                 RightBrace;[}];
-        MarkupTextLiteral - [162..162)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [162..162)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

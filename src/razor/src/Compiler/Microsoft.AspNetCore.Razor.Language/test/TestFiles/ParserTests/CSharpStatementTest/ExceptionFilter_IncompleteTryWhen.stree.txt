@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..27)::27 - [@try { someMethod(); } when]
     MarkupBlock - [0..27)::27
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..22)::22
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..22)::21 - [try { someMethod(); }] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [1..22)::21 - [try { someMethod(); }] - Gen<Stmt>
                 Keyword;[try];
                 Whitespace;[ ];
                 LeftBrace;[{];
@@ -16,7 +16,7 @@
                 Semicolon;[;];
                 Whitespace;[ ];
                 RightBrace;[}];
-        MarkupTextLiteral - [22..27)::5 - [ when] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [22..27)::5 - [ when] - Gen<Markup>
             Whitespace;[ ];
             Text;[when];
     EndOfFile;[];

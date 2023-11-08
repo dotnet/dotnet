@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..79)::79 - [@if(foo) { bar(); } else if(bar) { baz(); } /* Foo */ /* Bar */ else { biz(); }]
     MarkupBlock - [0..79)::79
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..79)::79
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..79)::78 - [if(foo) { bar(); } else if(bar) { baz(); } /* Foo */ /* Bar */ else { biz(); }] - Gen<Stmt> - SpanEditHandler;Accepts:None
+            CSharpStatementLiteral - [1..79)::78 - [if(foo) { bar(); } else if(bar) { baz(); } /* Foo */ /* Bar */ else { biz(); }] - Gen<Stmt>
                 Keyword;[if];
                 LeftParenthesis;[(];
                 Identifier;[foo];
@@ -50,6 +50,6 @@
                 Semicolon;[;];
                 Whitespace;[ ];
                 RightBrace;[}];
-        MarkupTextLiteral - [79..79)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [79..79)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

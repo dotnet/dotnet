@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Xunit;
-using Xunit.Sdk;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -34,40 +33,6 @@ internal class SyntaxTreeVerifier
 
             // Make sure the syntax tree contains all of the text in the document.
             Assert.Equal(sourceString, syntaxTreeString);
-
-            // Ensure all source is locatable
-            for (var i = 0; i < sourceText.Length; i++)
-            {
-                var span = new SourceSpan(i, 0);
-                var location = new SourceChange(span, string.Empty);
-#pragma warning disable CS0618 // Type or member is obsolete, will be removed in an upcoming change
-                var owner = syntaxTree.Root.LocateOwner(location);
-#pragma warning restore CS0618 // Type or member is obsolete
-
-                if (owner == null)
-                {
-                    var snippetStartIndex = Math.Max(0, i - 10);
-                    var snippetStartLength = i - snippetStartIndex;
-                    var snippetStart = new char[snippetStartLength];
-                    sourceText.CopyTo(snippetStartIndex, snippetStart, 0, snippetStartLength);
-
-                    var snippetEndIndex = Math.Min(sourceText.Length - 1, i + 10);
-                    var snippetEndLength = snippetEndIndex - i;
-                    var snippetEnd = new char[snippetEndLength];
-                    sourceText.CopyTo(i, snippetEnd, 0, snippetEndLength);
-
-                    var snippet = new char[snippetStart.Length + snippetEnd.Length + 1];
-                    snippetStart.CopyTo(snippet, 0);
-                    snippet[snippetStart.Length] = '|';
-                    snippetEnd.CopyTo(snippet, snippetStart.Length + 1);
-
-                    var snippetString = new string(snippet);
-
-                    throw new XunitException(
-$@"Could not locate Syntax Node owner at position '{i}':
-{snippetString}");
-                }
-            }
         }
 
         // Verify that NextToken/PreviousToken/FirstToken/LastToken work correctly

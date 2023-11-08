@@ -1,13 +1,13 @@
 ﻿RazorDocument - [0..29)::29 - [@using FooBarBaz = FooBarBaz;]
     MarkupBlock - [0..29)::29
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..29)::29
             RazorDirective - [0..29)::29
-                CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [0..1)::1 - Gen<None>
                     Transition;[@];
                 RazorDirectiveBody - [1..29)::28
-                    CSharpStatementLiteral - [1..29)::28 - [using FooBarBaz = FooBarBaz;] - Gen<Import: FooBarBaz = FooBarBaz;> - SpanEditHandler;Accepts:AnyExceptNewline
+                    CSharpStatementLiteral - [1..29)::28 - [using FooBarBaz = FooBarBaz;] - Gen<Import: FooBarBaz = FooBarBaz;>
                         Keyword;[using];
                         Whitespace;[ ];
                         Identifier;[FooBarBaz];
@@ -16,6 +16,6 @@
                         Whitespace;[ ];
                         Identifier;[FooBarBaz];
                         Semicolon;[;];
-        MarkupTextLiteral - [29..29)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [29..29)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

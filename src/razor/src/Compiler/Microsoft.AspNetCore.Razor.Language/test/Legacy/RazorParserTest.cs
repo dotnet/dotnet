@@ -27,18 +27,18 @@ public class RazorParserTest
         var expected =
 @"RazorDocument - [0..12)::12 - [foo @bar baz]
     MarkupBlock - [0..12)::12
-        MarkupTextLiteral - [0..4)::4 - [foo ] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..4)::4 - [foo ] - Gen<Markup>
             Text;[foo];
             Whitespace;[ ];
         CSharpCodeBlock - [4..8)::4
             CSharpImplicitExpression - [4..8)::4
-                CSharpTransition - [4..5)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                CSharpTransition - [4..5)::1 - Gen<None>
                     Transition;[@];
                 CSharpImplicitExpressionBody - [5..8)::3
                     CSharpCodeBlock - [5..8)::3
-                        CSharpExpressionLiteral - [5..8)::3 - [bar] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[RTD];K14
+                        CSharpExpressionLiteral - [5..8)::3 - [bar] - Gen<Expr>
                             Identifier;[bar];
-        MarkupTextLiteral - [8..12)::4 - [ baz] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [8..12)::4 - [ baz] - Gen<Markup>
             Whitespace;[ ];
             Text;[baz];
     EndOfFile;[];
@@ -48,7 +48,7 @@ public class RazorParserTest
         var syntaxTree = parser.Parse(TestRazorSourceDocument.Create("foo @bar baz"));
 
         // Assert
-        var actual = SyntaxNodeSerializer.Serialize(syntaxTree.Root);
+        var actual = SyntaxNodeSerializer.Serialize(syntaxTree.Root, validateSpanEditHandlers: false);
         Assert.Equal(expected, actual);
     }
 }

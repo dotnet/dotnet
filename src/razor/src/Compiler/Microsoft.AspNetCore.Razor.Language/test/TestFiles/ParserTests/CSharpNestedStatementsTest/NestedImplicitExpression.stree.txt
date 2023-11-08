@@ -1,11 +1,11 @@
 ﻿RazorDocument - [0..21)::21 - [@while(true) { @foo }]
     MarkupBlock - [0..21)::21
-        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..0)::0 - [] - Gen<Markup>
             Marker;[];
         CSharpCodeBlock - [0..21)::21
-            CSharpTransition - [0..1)::1 - Gen<None> - SpanEditHandler;Accepts:None
+            CSharpTransition - [0..1)::1 - Gen<None>
                 Transition;[@];
-            CSharpStatementLiteral - [1..15)::14 - [while(true) { ] - Gen<Stmt> - SpanEditHandler;Accepts:Any
+            CSharpStatementLiteral - [1..15)::14 - [while(true) { ] - Gen<Stmt>
                 Keyword;[while];
                 LeftParenthesis;[(];
                 Keyword;[true];
@@ -15,15 +15,15 @@
                 Whitespace;[ ];
             CSharpCodeBlock - [15..19)::4
                 CSharpImplicitExpression - [15..19)::4
-                    CSharpTransition - [15..16)::1 - Gen<None> - SpanEditHandler;Accepts:None
+                    CSharpTransition - [15..16)::1 - Gen<None>
                         Transition;[@];
                     CSharpImplicitExpressionBody - [16..19)::3
                         CSharpCodeBlock - [16..19)::3
-                            CSharpExpressionLiteral - [16..19)::3 - [foo] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[ATD];K14
+                            CSharpExpressionLiteral - [16..19)::3 - [foo] - Gen<Expr>
                                 Identifier;[foo];
-            CSharpStatementLiteral - [19..21)::2 - [ }] - Gen<Stmt> - SpanEditHandler;Accepts:None
+            CSharpStatementLiteral - [19..21)::2 - [ }] - Gen<Stmt>
                 Whitespace;[ ];
                 RightBrace;[}];
-        MarkupTextLiteral - [21..21)::0 - [] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [21..21)::0 - [] - Gen<Markup>
             Marker;[];
     EndOfFile;[];

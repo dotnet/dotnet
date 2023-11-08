@@ -1,6 +1,6 @@
 ﻿RazorDocument - [0..62)::62 - [if(foo) { bar(); } /* Foo */ /* Bar */ else if(bar) { baz(); }]
     MarkupBlock - [0..62)::62
-        MarkupTextLiteral - [0..62)::62 - [if(foo) { bar(); } /* Foo */ /* Bar */ else if(bar) { baz(); }] - Gen<Markup> - SpanEditHandler;Accepts:Any
+        MarkupTextLiteral - [0..62)::62 - [if(foo) { bar(); } /* Foo */ /* Bar */ else if(bar) { baz(); }] - Gen<Markup>
             Text;[if(foo)];
             Whitespace;[ ];
             Text;[{];
