@@ -119,6 +119,10 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>bd5b705548be896c84c672e2f7a033ed0881f8b7</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rc.23558.2">
+      <Uri>https://github.com/dotnet/test-templates</Uri>
+      <Sha>bd5b705548be896c84c672e2f7a033ed0881f8b7</Sha>
+    </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
     <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="9.0.0-alpha.1.23557.11" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">
       <Uri>https://github.com/dotnet/winforms</Uri>
