@@ -170,10 +170,10 @@ internal static partial class LegacySyntaxNodeExtensions
 
         return node switch
         {
-            MarkupStartTagSyntax startTag => LocateOwnerForSyntaxList(startTag.Children, change),
-            MarkupEndTagSyntax endTag => LocateOwnerForSyntaxList(endTag.Children, change),
-            MarkupTagHelperStartTagSyntax startTagHelper => LocateOwnerForSyntaxList(startTagHelper.Children, change),
-            MarkupTagHelperEndTagSyntax endTagHelper => LocateOwnerForSyntaxList(endTagHelper.Children, change),
+            MarkupStartTagSyntax startTag => LocateOwnerForSyntaxList(startTag.LegacyChildren, change),
+            MarkupEndTagSyntax endTag => LocateOwnerForSyntaxList(endTag.LegacyChildren, change),
+            MarkupTagHelperStartTagSyntax startTagHelper => LocateOwnerForSyntaxList(startTagHelper.LegacyChildren, change),
+            MarkupTagHelperEndTagSyntax endTagHelper => LocateOwnerForSyntaxList(endTagHelper.LegacyChildren, change),
             _ => LocateOwnerForChildSyntaxList(node.ChildNodes(), change)
         };
 
@@ -275,7 +275,7 @@ internal static partial class LegacySyntaxNodeExtensions
         {
             if (nextNode is MarkupStartTagSyntax startTag)
             {
-                var children = startTag.Children;
+                var children = startTag.LegacyChildren;
 
                 for (var i = children.Count - 1; i >= 0; i--)
                 {
@@ -288,7 +288,7 @@ internal static partial class LegacySyntaxNodeExtensions
             }
             else if (nextNode is MarkupEndTagSyntax endTag)
             {
-                var children = endTag.Children;
+                var children = endTag.LegacyChildren;
 
                 for (var i = children.Count - 1; i >= 0; i--)
                 {
@@ -317,7 +317,7 @@ internal static partial class LegacySyntaxNodeExtensions
         {
             if (child is MarkupStartTagSyntax startTag)
             {
-                foreach (var tagChild in startTag.Children)
+                foreach (var tagChild in startTag.LegacyChildren)
                 {
                     if (tagChild.IsSpanKind())
                     {
@@ -327,7 +327,7 @@ internal static partial class LegacySyntaxNodeExtensions
             }
             else if (child is MarkupEndTagSyntax endTag)
             {
-                foreach (var tagChild in endTag.Children)
+                foreach (var tagChild in endTag.LegacyChildren)
                 {
                     if (tagChild.IsSpanKind())
                     {

@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Threading;
@@ -28,6 +29,7 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
 {
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly JoinableTaskContext _joinableTaskContext;
+    private readonly ITelemetryReporter _telemetryReporter;
     private readonly EventHandler? _onChangedOnDisk;
     private readonly EventHandler? _onChangedInEditor;
     private readonly EventHandler _onOpened;
@@ -40,20 +42,12 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
     public ProjectSnapshotManagerBase ProjectManager => _projectManager ?? throw new InvalidOperationException($"{nameof(ProjectManager)} called before {nameof(Initialize)}");
 
     [ImportingConstructor]
-    public EditorDocumentManagerListener(ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher, JoinableTaskContext joinableTaskContext)
+    public EditorDocumentManagerListener(ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher, JoinableTaskContext joinableTaskContext, ITelemetryReporter telemetryReporter)
     {
-        if (projectSnapshotManagerDispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-        }
+        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
+        _joinableTaskContext = joinableTaskContext ?? throw new ArgumentNullException(nameof(joinableTaskContext));
+        _telemetryReporter = telemetryReporter ?? throw new ArgumentNullException(nameof(telemetryReporter));
 
-        if (joinableTaskContext is null)
-        {
-            throw new ArgumentNullException(nameof(joinableTaskContext));
-        }
-
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
-        _joinableTaskContext = joinableTaskContext;
         _onChangedOnDisk = Document_ChangedOnDisk;
         _onChangedInEditor = Document_ChangedInEditor;
         _onOpened = Document_Opened;
@@ -77,6 +71,8 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
         _onChangedInEditor = onChangedInEditor;
         _onOpened = onOpened;
         _onClosed = onClosed;
+
+        _telemetryReporter = null!;
     }
 
     [MemberNotNull(nameof(_documentManager), nameof(_projectManager))]
@@ -213,6 +209,20 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
             await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
             {
                 var document = (EditorDocument)sender;
+
+                var project = ProjectManager.GetLoadedProject(document.ProjectKey);
+                if (project is ProjectSnapshot { HostProject: FallbackHostProject } projectSnapshot)
+                {
+                    // The user is opening a document that is part of a fallback project. This is a scenario we are very interested in knowing more about
+                    // so fire some telemetry. We can't log details about the project, for PII reasons, but we can use document count and tag helper count
+                    // as some kind of measure of complexity.
+                    _telemetryReporter.ReportEvent(
+                        "fallbackproject/documentopen",
+                        Severity.Normal,
+                        new Property("document.count", projectSnapshot.DocumentCount),
+                        new Property("taghelper.count", projectSnapshot.TagHelpers.Length));
+                }
+
                 ProjectManager.DocumentOpened(document.ProjectKey, document.DocumentFilePath, document.EditorTextContainer!.CurrentText);
             }, cancellationToken).ConfigureAwait(false);
         }

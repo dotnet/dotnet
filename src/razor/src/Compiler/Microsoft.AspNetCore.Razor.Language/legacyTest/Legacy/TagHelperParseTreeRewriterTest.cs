@@ -58,7 +58,7 @@ public class TagHelperParseTreeRewriterTest : TagHelperRewritingTestBase
             parseResult.Source,
             null,
             Array.Empty<TagHelperDescriptor>(),
-            parseResult.Options.FeatureFlags,
+            parseResult.Options,
             errorSink);
 
         // Assert - Guard

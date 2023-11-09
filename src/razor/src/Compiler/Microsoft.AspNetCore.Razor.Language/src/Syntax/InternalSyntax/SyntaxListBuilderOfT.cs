@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 namespace Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
 
 internal readonly struct SyntaxListBuilder<TNode> where TNode : GreenNode
@@ -58,7 +56,7 @@ internal readonly struct SyntaxListBuilder<TNode> where TNode : GreenNode
         _builder.Clear();
     }
 
-    public SyntaxListBuilder<TNode> Add(TNode node)
+    public SyntaxListBuilder<TNode> Add(TNode? node)
     {
         _builder.Add(node);
         return this;
@@ -96,7 +94,7 @@ internal readonly struct SyntaxListBuilder<TNode> where TNode : GreenNode
         return list;
     }
 
-    public GreenNode ToListNode()
+    public GreenNode? ToListNode()
     {
         return _builder.ToListNode();
     }

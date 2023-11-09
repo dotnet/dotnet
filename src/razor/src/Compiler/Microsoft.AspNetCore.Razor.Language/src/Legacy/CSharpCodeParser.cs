@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -69,7 +67,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
 
     private readonly ImmutableHashSet<string> CurrentKeywords;
 
-    private readonly ImmutableDictionary<CSharpKeyword, Action<SyntaxListBuilder<RazorSyntaxNode>, CSharpTransitionSyntax>> _keywordParserMap;
+    private readonly ImmutableDictionary<CSharpKeyword, Action<SyntaxListBuilder<RazorSyntaxNode>, CSharpTransitionSyntax?>> _keywordParserMap;
     private readonly ImmutableDictionary<string, Action<SyntaxListBuilder<RazorSyntaxNode>, CSharpTransitionSyntax>> _directiveParserMap;
 
     public CSharpCodeParser(ParserContext context)
@@ -91,7 +89,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         }
 
         var keywordsBuilder = ImmutableHashSet<string>.Empty.ToBuilder();
-        var keywordParserMapBuilder = ImmutableDictionary<CSharpKeyword, Action<SyntaxListBuilder<RazorSyntaxNode>, CSharpTransitionSyntax>>.Empty.ToBuilder();
+        var keywordParserMapBuilder = ImmutableDictionary<CSharpKeyword, Action<SyntaxListBuilder<RazorSyntaxNode>, CSharpTransitionSyntax?>>.Empty.ToBuilder();
         var currentKeywordsBuilder = DefaultKeywords.ToBuilder();
         var directiveParserMapBuilder = ImmutableDictionary.CreateBuilder<string, Action<SyntaxListBuilder<RazorSyntaxNode>, CSharpTransitionSyntax>>(StringComparer.Ordinal);
 
@@ -115,7 +113,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         }
 
         void MapKeywords(
-            Action<SyntaxListBuilder<RazorSyntaxNode>, CSharpTransitionSyntax> handler,
+            Action<SyntaxListBuilder<RazorSyntaxNode>, CSharpTransitionSyntax?> handler,
             bool topLevel,
             params CSharpKeyword[] keywords)
         {
@@ -184,13 +182,23 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         }
     }
 
-    public HtmlMarkupParser HtmlParser { get; set; }
+    private HtmlMarkupParser? _htmlParser;
+    public HtmlMarkupParser HtmlParser
+    {
+        get
+        {
+            // Note: Circular reference with CSharpCodeParser means we can't set this in the constructor
+            Debug.Assert(_htmlParser != null, "HtmlParser should have been set during initialization");
+            return _htmlParser!;
+        }
+        set => _htmlParser = value;
+    }
 
     protected internal ImmutableHashSet<string> Keywords { get; private set; }
 
     public bool IsNested { get; set; }
 
-    public CSharpCodeBlockSyntax ParseBlock()
+    public CSharpCodeBlockSyntax? ParseBlock()
     {
         if (Context == null)
         {
@@ -214,7 +222,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 var precedingWhitespace = ReadWhile(IsSpacingTokenIncludingNewLinesAndComments);
 
                 // We are usually called when the other parser sees a transition '@'. Look for it.
-                SyntaxToken transitionToken = null;
+                SyntaxToken? transitionToken = null;
                 if (At(SyntaxKind.StringLiteral) &&
                     CurrentToken.Content.Length > 0 &&
                     CurrentToken.Content[0] == SyntaxConstants.TransitionCharacter)
@@ -393,7 +401,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
 
             var expressionBlock = SyntaxFactory.CSharpCodeBlock(expressionBuilder.ToList());
 
-            RazorMetaCodeSyntax rightParen = null;
+            RazorMetaCodeSyntax? rightParen = null;
             if (At(SyntaxKind.RightParenthesis))
             {
                 rightParen = OutputAsMetaCode(EatCurrentToken());
@@ -433,7 +441,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
 
     private void ParseImplicitExpression(in SyntaxListBuilder<RazorSyntaxNode> builder, AcceptedCharactersInternal acceptedCharacters)
     {
-        using (PushSpanContextConfig((SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator generator) =>
+        using (PushSpanContextConfig((SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator? generator) =>
         {
             ImplicitExpressionEditHandler.SetupBuilder(editHandlerBuilder,
                 acceptedCharacters: acceptedCharacters,
@@ -471,9 +479,9 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 SyntaxKind right;
                 bool success;
 
-                using (PushSpanContextConfig((SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator generator, SpanContextConfigAction prev) =>
+                using (PushSpanContextConfig((SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator? generator, SpanContextConfigAction? prev) =>
                 {
-                    prev(editHandlerBuilder, ref generator);
+                    prev?.Invoke(editHandlerBuilder, ref generator);
                     editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Any;
                 }))
                 {
@@ -615,12 +623,12 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         return false;
     }
 
-    private CSharpStatementBodySyntax ParseStatementBody(Block block = null)
+    private CSharpStatementBodySyntax ParseStatementBody(Block? block = null)
     {
         Assert(SyntaxKind.LeftBrace);
         block = block ?? new Block(Resources.BlockName_Code, CurrentStart);
         var leftBrace = OutputAsMetaCode(EatExpectedToken(SyntaxKind.LeftBrace));
-        CSharpCodeBlockSyntax codeBlock = null;
+        CSharpCodeBlockSyntax? codeBlock = null;
         using (var pooledResult = Pool.Allocate<RazorSyntaxNode>())
         {
             var builder = pooledResult.Builder;
@@ -644,7 +652,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             codeBlock = SyntaxFactory.CSharpCodeBlock(builder.ToList());
         }
 
-        RazorMetaCodeSyntax rightBrace = null;
+        RazorMetaCodeSyntax? rightBrace = null;
         if (At(SyntaxKind.RightBrace))
         {
             rightBrace = OutputAsMetaCode(EatCurrentToken());
@@ -857,12 +865,12 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         }
     }
 
-    private RazorSyntaxNode ParseNestedBlock()
+    private RazorSyntaxNode? ParseNestedBlock()
     {
         var wasNested = IsNested;
         IsNested = true;
 
-        RazorSyntaxNode nestedBlock;
+        RazorSyntaxNode? nestedBlock;
         using (PushSpanContextConfig())
         {
             nestedBlock = ParseBlock();
@@ -1016,7 +1024,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
 
     private void ParseTagHelperPrefixDirective(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax transition)
     {
-        RazorDiagnostic duplicateDiagnostic = null;
+        RazorDiagnostic? duplicateDiagnostic = null;
         if (Context.SeenDirectives.Contains(SyntaxConstants.CSharp.TagHelperPrefixKeyword))
         {
             var directiveStart = CurrentStart;
@@ -1111,77 +1119,72 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
 
         var savedErrorSink = Context.ErrorSink;
         var directiveErrorSink = new ErrorSink();
-        RazorMetaCodeSyntax keywordBlock = null;
+        RazorMetaCodeSyntax? keywordBlock = null;
         using (var pooledResult = Pool.Allocate<RazorSyntaxNode>())
         {
             var directiveBuilder = pooledResult.Builder;
             Context.ErrorSink = directiveErrorSink;
 
-            string directiveValue = null;
+            string? directiveValue = null;
             SourceLocation? valueStartLocation = null;
-            try
+            EnsureDirectiveIsAtStartOfLine();
+
+            var keywordStartLocation = CurrentStart;
+
+            // Accept the directive name
+            var keywordToken = EatCurrentToken();
+            var keywordLength = keywordToken.FullWidth + 1 /* @ */;
+
+            var foundWhitespace = At(SyntaxKind.Whitespace);
+
+            // If we found whitespace then any content placed within the whitespace MAY cause a destructive change
+            // to the document.  We can't accept it.
+            var acceptedCharacters = foundWhitespace ? AcceptedCharactersInternal.None : AcceptedCharactersInternal.AnyExceptNewline;
+            Accept(keywordToken);
+            keywordBlock = OutputAsMetaCode(Output(), acceptedCharacters);
+
+            AcceptWhile(SyntaxKind.Whitespace);
+            chunkGenerator = SpanChunkGenerator.Null;
+            editHandlerBuilder.AcceptedCharacters = acceptedCharacters;
+            directiveBuilder.Add(OutputAsMarkupLiteral());
+
+            if (EndOfFile || At(SyntaxKind.NewLine))
             {
-                EnsureDirectiveIsAtStartOfLine();
+                Context.ErrorSink.OnError(
+                    RazorDiagnosticFactory.CreateParsing_DirectiveMustHaveValue(
+                        new SourceSpan(keywordStartLocation, keywordLength), keyword));
 
-                var keywordStartLocation = CurrentStart;
+                directiveValue = string.Empty;
+            }
+            else
+            {
+                // Need to grab the current location before we accept until the end of the line.
+                valueStartLocation = CurrentStart;
 
-                // Accept the directive name
-                var keywordToken = EatCurrentToken();
-                var keywordLength = keywordToken.FullWidth + 1 /* @ */;
+                // Parse to the end of the line. Essentially accepts anything until end of line, comments, invalid code
+                // etc.
+                AcceptUntil(SyntaxKind.NewLine);
 
-                var foundWhitespace = At(SyntaxKind.Whitespace);
+                // Pull out the value and remove whitespaces and optional quotes
+                var rawValue = string.Concat(TokenBuilder.ToList().Nodes.Select(s => s.Content)).Trim();
 
-                // If we found whitespace then any content placed within the whitespace MAY cause a destructive change
-                // to the document.  We can't accept it.
-                var acceptedCharacters = foundWhitespace ? AcceptedCharactersInternal.None : AcceptedCharactersInternal.AnyExceptNewline;
-                Accept(keywordToken);
-                keywordBlock = OutputAsMetaCode(Output(), acceptedCharacters);
-
-                AcceptWhile(SyntaxKind.Whitespace);
-                chunkGenerator = SpanChunkGenerator.Null;
-                editHandlerBuilder.AcceptedCharacters = acceptedCharacters;
-                directiveBuilder.Add(OutputAsMarkupLiteral());
-
-                if (EndOfFile || At(SyntaxKind.NewLine))
+                var startsWithQuote = rawValue.StartsWith("\"", StringComparison.Ordinal);
+                var endsWithQuote = rawValue.EndsWith("\"", StringComparison.Ordinal);
+                if (startsWithQuote != endsWithQuote)
                 {
                     Context.ErrorSink.OnError(
-                        RazorDiagnosticFactory.CreateParsing_DirectiveMustHaveValue(
-                            new SourceSpan(keywordStartLocation, keywordLength), keyword));
-
-                    directiveValue = string.Empty;
+                        RazorDiagnosticFactory.CreateParsing_IncompleteQuotesAroundDirective(
+                            new SourceSpan(valueStartLocation.Value, rawValue.Length), keyword));
                 }
-                else
-                {
-                    // Need to grab the current location before we accept until the end of the line.
-                    valueStartLocation = CurrentStart;
 
-                    // Parse to the end of the line. Essentially accepts anything until end of line, comments, invalid code
-                    // etc.
-                    AcceptUntil(SyntaxKind.NewLine);
-
-                    // Pull out the value and remove whitespaces and optional quotes
-                    var rawValue = string.Concat(TokenBuilder.ToList().Nodes.Select(s => s.Content)).Trim();
-
-                    var startsWithQuote = rawValue.StartsWith("\"", StringComparison.Ordinal);
-                    var endsWithQuote = rawValue.EndsWith("\"", StringComparison.Ordinal);
-                    if (startsWithQuote != endsWithQuote)
-                    {
-                        Context.ErrorSink.OnError(
-                            RazorDiagnosticFactory.CreateParsing_IncompleteQuotesAroundDirective(
-                                new SourceSpan(valueStartLocation.Value, rawValue.Length), keyword));
-                    }
-
-                    directiveValue = rawValue;
-                }
+                directiveValue = rawValue;
             }
-            finally
-            {
-                chunkGenerator = chunkGeneratorFactory(
-                    directiveValue,
-                    directiveErrorSink.Errors.ToList(),
-                    valueStartLocation ?? CurrentStart);
-                Context.ErrorSink = savedErrorSink;
-            }
+
+            chunkGenerator = chunkGeneratorFactory(
+                directiveValue,
+                directiveErrorSink.Errors.ToList(),
+                valueStartLocation ?? CurrentStart);
+            Context.ErrorSink = savedErrorSink;
 
             // Finish the block and output the tokens
             CompleteBlock();
@@ -1253,31 +1256,28 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
     // Internal for testing.
     internal ParsedDirective ParseAddOrRemoveDirective(ParsedDirective directive, SourceLocation directiveLocation, List<RazorDiagnostic> errors)
     {
-        var text = directive.DirectiveText;
-        var lookupStrings = text?.Split(new[] { ',' });
-
         // Ensure that we have valid lookupStrings to work with. The valid format is "typeName, assemblyName"
-        if (lookupStrings == null ||
-            lookupStrings.Any(string.IsNullOrWhiteSpace) ||
-            lookupStrings.Length != 2 ||
-            text.StartsWith("'", StringComparison.Ordinal) ||
-            text.EndsWith("'", StringComparison.Ordinal))
+        var text = directive.DirectiveText;
+        if (text is null or ['\'', ..] or [.., '\''] ||
+            text.Split([',']) is not [{ } typeName, { } assemblyName] ||
+            typeName.IsNullOrWhiteSpace() ||
+            assemblyName.IsNullOrWhiteSpace())
         {
             errors.Add(
                 RazorDiagnosticFactory.CreateParsing_InvalidTagHelperLookupText(
-                    new SourceSpan(directiveLocation, Math.Max(text.Length, 1)), text));
+                    new SourceSpan(directiveLocation, Math.Max(text?.Length ?? 0, 1)), text ?? string.Empty));
 
             return directive;
         }
 
-        var trimmedAssemblyName = lookupStrings[1].Trim();
+        var trimmedAssemblyName = assemblyName.Trim();
 
         // + 1 is for the comma separator in the lookup text.
         var assemblyNameIndex =
-            lookupStrings[0].Length + 1 + lookupStrings[1].IndexOf(trimmedAssemblyName, StringComparison.Ordinal);
+            typeName.Length + 1 + assemblyName.IndexOf(trimmedAssemblyName, StringComparison.Ordinal);
         var assemblyNamePrefix = directive.DirectiveText.Substring(0, assemblyNameIndex);
 
-        directive.TypePattern = lookupStrings[0].Trim();
+        directive.TypePattern = typeName.Trim();
         directive.AssemblyName = trimmedAssemblyName;
 
         return directive;
@@ -1317,7 +1317,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         using (var pooledResult = Pool.Allocate<RazorSyntaxNode>())
         {
             var directiveBuilder = pooledResult.Builder;
-            RazorMetaCodeSyntax keywordBlock = null;
+            RazorMetaCodeSyntax? keywordBlock = null;
 
             try
             {
@@ -1346,7 +1346,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 // Once we are parsing the constraint token we have lost "easy" access to the identifier for the member. To avoid having complex logic in the generic
                 // constraint token parsing code, we instead keep track of the last identifier we've seen on a member token and use that information to check the
                 // identifier for the constraint an emit a diagnostic in case they are not the same.
-                string lastSeenMemberIdentifier = null;
+                string? lastSeenMemberIdentifier = null;
 
                 for (var i = 0; i < descriptor.Tokens.Count; i++)
                 {
@@ -1519,7 +1519,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                                     // The type parameter in the generic type constraint 'TValue' does not match the type parameter 'TKey' defined in the directive '@typeparam'.
                                     Context.ErrorSink.OnError(
                                         RazorDiagnosticFactory.CreateParsing_GenericTypeParameterIdentifierMismatch(
-                                            new SourceSpan(CurrentStart, CurrentToken.Content.Length), descriptor.Directive, CurrentToken.Content, lastSeenMemberIdentifier));
+                                            new SourceSpan(CurrentStart, CurrentToken.Content.Length), descriptor.Directive, CurrentToken.Content, lastSeenMemberIdentifier ?? string.Empty));
                                     builder.Add(BuildDirective(SyntaxKind.Identifier));
                                     return;
                                 }
@@ -1827,11 +1827,11 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         }
     }
 
-    private bool TryParseKeyword(in SyntaxListBuilder<RazorSyntaxNode> builder, IReadOnlyList<SyntaxToken> whitespace, CSharpTransitionSyntax transition)
+    private bool TryParseKeyword(in SyntaxListBuilder<RazorSyntaxNode> builder, IReadOnlyList<SyntaxToken>? whitespace, CSharpTransitionSyntax? transition)
     {
         var result = CSharpTokenizer.GetTokenKeyword(CurrentToken);
         Debug.Assert(CurrentToken.Kind == SyntaxKind.Keyword && result.HasValue);
-        if (_keywordParserMap.TryGetValue(result.Value, out var handler))
+        if (_keywordParserMap.TryGetValue(result!.Value, out var handler))
         {
             if (whitespace != null)
             {
@@ -1853,7 +1853,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         return result.HasValue && (result.Value == CSharpKeyword.True || result.Value == CSharpKeyword.False);
     }
 
-    private void ParseAwaitExpression(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax transition)
+    private void ParseAwaitExpression(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax? transition)
     {
         // Ensure that we're on the await statement (only runs in debug)
         Assert(CSharpKeyword.Await);
@@ -1890,13 +1890,13 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         }
     }
 
-    private void ParseConditionalBlock(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax transition)
+    private void ParseConditionalBlock(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax? transition)
     {
         var topLevel = transition != null;
         ParseConditionalBlock(builder, transition, topLevel);
     }
 
-    private void ParseConditionalBlock(in SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax transition, bool topLevel)
+    private void ParseConditionalBlock(in SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax? transition, bool topLevel)
     {
         Assert(SyntaxKind.Keyword);
         if (transition != null)
@@ -1987,7 +1987,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         ParseExpectedCodeBlock(builder, block);
     }
 
-    private void ParseCaseStatement(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax transition)
+    private void ParseCaseStatement(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax? transition)
     {
         Assert(SyntaxKind.Keyword);
         if (transition != null)
@@ -2019,7 +2019,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         TryAccept(SyntaxKind.Colon);
     }
 
-    private void ParseIfStatement(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax transition)
+    private void ParseIfStatement(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax? transition)
     {
         Assert(CSharpKeyword.If);
         ParseConditionalBlock(builder, transition, topLevel: false);
@@ -2076,7 +2076,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         }
     }
 
-    private void ParseTryStatement(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax transition)
+    private void ParseTryStatement(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax? transition)
     {
         Assert(CSharpKeyword.Try);
         var topLevel = transition != null;
@@ -2156,7 +2156,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         }
     }
 
-    private void ParseDoStatement(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax transition)
+    private void ParseDoStatement(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax? transition)
     {
         Assert(CSharpKeyword.Do);
         if (transition != null)
@@ -2196,7 +2196,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         }
     }
 
-    private void ParseUsingKeyword(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax transition)
+    private void ParseUsingKeyword(SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax? transition)
     {
         Assert(CSharpKeyword.Using);
         var topLevel = transition != null;
@@ -2265,7 +2265,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         }
     }
 
-    private void ParseUsingStatement(in SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax transition, Block block)
+    private void ParseUsingStatement(in SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax? transition, Block block)
     {
         Assert(CSharpKeyword.Using);
         AcceptAndMoveNext();
@@ -2287,7 +2287,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         }
     }
 
-    private void ParseUsingDeclaration(in SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax transition)
+    private void ParseUsingDeclaration(in SyntaxListBuilder<RazorSyntaxNode> builder, CSharpTransitionSyntax? transition)
     {
         // Using declarations should always be top level. The error case is handled in a different code path.
         Debug.Assert(transition != null);
@@ -2533,21 +2533,21 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         return Array.Empty<SyntaxToken>();
     }
 
-    private void DefaultSpanContextConfig(SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator generator)
+    private void DefaultSpanContextConfig(SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator? generator)
     {
         editHandlerBuilder.Reset();
         editHandlerBuilder.Tokenizer = LanguageTokenizeString;
         generator = StatementChunkGenerator.Instance;
     }
 
-    private void ExplicitExpressionSpanContextConfig(SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator generator)
+    private void ExplicitExpressionSpanContextConfig(SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator? generator)
     {
         editHandlerBuilder.Reset();
         editHandlerBuilder.Tokenizer = LanguageTokenizeString;
         generator = new ExpressionChunkGenerator();
     }
 
-    private CSharpStatementLiteralSyntax OutputTokensAsStatementLiteral()
+    private CSharpStatementLiteralSyntax? OutputTokensAsStatementLiteral()
     {
         var tokens = Output();
         if (tokens.Count == 0)
@@ -2558,7 +2558,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         return GetNodeWithEditHandler(SyntaxFactory.CSharpStatementLiteral(tokens, chunkGenerator));
     }
 
-    private CSharpExpressionLiteralSyntax OutputTokensAsExpressionLiteral()
+    private CSharpExpressionLiteralSyntax? OutputTokensAsExpressionLiteral()
     {
         var tokens = Output();
         if (tokens.Count == 0)
@@ -2569,7 +2569,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         return GetNodeWithEditHandler(SyntaxFactory.CSharpExpressionLiteral(tokens, chunkGenerator));
     }
 
-    private CSharpEphemeralTextLiteralSyntax OutputTokensAsEphemeralLiteral()
+    private CSharpEphemeralTextLiteralSyntax? OutputTokensAsEphemeralLiteral()
     {
         var tokens = Output();
         if (tokens.Count == 0)
@@ -2580,7 +2580,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         return GetNodeWithEditHandler(SyntaxFactory.CSharpEphemeralTextLiteral(tokens, chunkGenerator));
     }
 
-    private UnclassifiedTextLiteralSyntax OutputTokensAsUnclassifiedLiteral()
+    private UnclassifiedTextLiteralSyntax? OutputTokensAsUnclassifiedLiteral()
     {
         var tokens = Output();
         if (tokens.Count == 0)
@@ -2599,7 +2599,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         var wasNested = IsNested;
         IsNested = false;
 
-        RazorSyntaxNode htmlBlock = null;
+        RazorSyntaxNode? htmlBlock = null;
         using (PushSpanContextConfig())
         {
             htmlBlock = HtmlParser.ParseBlock();
@@ -2776,10 +2776,10 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
 
     internal class ParsedDirective
     {
-        public string DirectiveText { get; set; }
+        public required string DirectiveText { get; set; }
 
-        public string AssemblyName { get; set; }
+        public string? AssemblyName { get; set; }
 
-        public string TypePattern { get; set; }
+        public string? TypePattern { get; set; }
     }
 }

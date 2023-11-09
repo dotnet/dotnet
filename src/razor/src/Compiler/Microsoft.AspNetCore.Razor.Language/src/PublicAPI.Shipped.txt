@@ -54,9 +54,6 @@
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorEnginePhaseBase.ExecuteCore(Microsoft.AspNetCore.Razor.Language.RazorCodeDocument codeDocument) -> void
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorExtension.ExtensionName.get -> string
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorExtensionInitializer.Initialize(Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilder builder) -> void
-~abstract Microsoft.AspNetCore.Razor.Language.RazorParserOptions.Directives.get -> System.Collections.Generic.IReadOnlyCollection<Microsoft.AspNetCore.Razor.Language.DirectiveDescriptor>
-~abstract Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.Build() -> Microsoft.AspNetCore.Razor.Language.RazorParserOptions
-~abstract Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.Directives.get -> System.Collections.Generic.ICollection<Microsoft.AspNetCore.Razor.Language.DirectiveDescriptor>
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorProject.EnumerateItems(string basePath) -> System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorProjectItem>
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorProject.GetItem(string path) -> Microsoft.AspNetCore.Razor.Language.RazorProjectItem
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorProject.GetItem(string path, string fileKind) -> Microsoft.AspNetCore.Razor.Language.RazorProjectItem
@@ -805,10 +802,6 @@
 ~virtual Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptionsBuilder.RootNamespace.get -> string
 ~virtual Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptionsBuilder.RootNamespace.set -> void
 ~virtual Microsoft.AspNetCore.Razor.Language.RazorConfiguration.Equals(Microsoft.AspNetCore.Razor.Language.RazorConfiguration other) -> bool
-~virtual Microsoft.AspNetCore.Razor.Language.RazorParserOptions.Version.get -> Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion
-~virtual Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.Configuration.get -> Microsoft.AspNetCore.Razor.Language.RazorConfiguration
-~virtual Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.FileKind.get -> string
-~virtual Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.LanguageVersion.get -> Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion
 ~virtual Microsoft.AspNetCore.Razor.Language.RazorProject.FindHierarchicalItems(string basePath, string path, string fileName) -> System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorProjectItem>
 ~virtual Microsoft.AspNetCore.Razor.Language.RazorProject.NormalizeAndEnsureValidPath(string path) -> string
 ~virtual Microsoft.AspNetCore.Razor.Language.RazorProjectEngineFeatureBase.ProjectEngine.get -> Microsoft.AspNetCore.Razor.Language.RazorProjectEngine
@@ -832,11 +825,6 @@ abstract Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptionsBuilder.I
 abstract Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptionsBuilder.SuppressChecksum.get -> bool
 abstract Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptionsBuilder.SuppressChecksum.set -> void
 abstract Microsoft.AspNetCore.Razor.Language.RazorConfiguration.UseConsolidatedMvcViews.get -> bool
-abstract Microsoft.AspNetCore.Razor.Language.RazorParserOptions.DesignTime.get -> bool
-abstract Microsoft.AspNetCore.Razor.Language.RazorParserOptions.ParseLeadingDirectives.get -> bool
-abstract Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.DesignTime.get -> bool
-abstract Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.ParseLeadingDirectives.get -> bool
-abstract Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.ParseLeadingDirectives.set -> void
 abstract Microsoft.AspNetCore.Razor.Language.RazorProjectItem.Exists.get -> bool
 Microsoft.AspNetCore.Razor.Language.AssemblyExtension
 Microsoft.AspNetCore.Razor.Language.AttributeStructure
@@ -1158,9 +1146,6 @@ Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion
 Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion.Major.get -> int
 Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion.Minor.get -> int
 Microsoft.AspNetCore.Razor.Language.RazorParserOptions
-Microsoft.AspNetCore.Razor.Language.RazorParserOptions.RazorParserOptions() -> void
-Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder
-Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.RazorParserOptionsBuilder() -> void
 Microsoft.AspNetCore.Razor.Language.RazorProject
 Microsoft.AspNetCore.Razor.Language.RazorProject.RazorProject() -> void
 Microsoft.AspNetCore.Razor.Language.RazorProjectEngineBuilderExtensions
@@ -1267,7 +1252,6 @@ virtual Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptionsBuilder.Us
 virtual Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptionsBuilder.UseEnhancedLinePragma.set -> void
 virtual Microsoft.AspNetCore.Razor.Language.RazorEngineFeatureBase.OnInitialized() -> void
 virtual Microsoft.AspNetCore.Razor.Language.RazorEnginePhaseBase.OnIntialized() -> void
-virtual Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.SetDesignTime(bool designTime) -> void
 virtual Microsoft.AspNetCore.Razor.Language.RazorProjectEngineFeatureBase.OnInitialized() -> void
 virtual Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorProviderContext.ExcludeHidden.get -> bool
 virtual Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorProviderContext.ExcludeHidden.set -> void
