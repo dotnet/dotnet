@@ -8,16 +8,17 @@ using System.Collections.Generic;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public abstract class RazorParserOptions
+public sealed class RazorParserOptions
 {
     public static RazorParserOptions CreateDefault()
     {
-        return new DefaultRazorParserOptions(
+        return new RazorParserOptions(
             Array.Empty<DirectiveDescriptor>(),
             designTime: false,
             parseLeadingDirectives: false,
             version: RazorLanguageVersion.Latest,
-            fileKind: FileKinds.Legacy);
+            fileKind: FileKinds.Legacy,
+            enableSpanEditHandlers: false);
     }
 
     public static RazorParserOptions Create(Action<RazorParserOptionsBuilder> configure)
@@ -32,7 +33,7 @@ public abstract class RazorParserOptions
             throw new ArgumentNullException(nameof(configure));
         }
 
-        var builder = new DefaultRazorParserOptionsBuilder(designTime: false, version: RazorLanguageVersion.Latest, fileKind ?? FileKinds.Legacy);
+        var builder = new RazorParserOptionsBuilder(designTime: false, version: RazorLanguageVersion.Latest, fileKind ?? FileKinds.Legacy);
         configure(builder);
         var options = builder.Build();
 
@@ -51,16 +52,32 @@ public abstract class RazorParserOptions
             throw new ArgumentNullException(nameof(configure));
         }
 
-        var builder = new DefaultRazorParserOptionsBuilder(designTime: true, version: RazorLanguageVersion.Latest, fileKind ?? FileKinds.Legacy);
+        var builder = new RazorParserOptionsBuilder(designTime: true, version: RazorLanguageVersion.Latest, fileKind ?? FileKinds.Legacy);
         configure(builder);
         var options = builder.Build();
 
         return options;
     }
 
-    public abstract bool DesignTime { get; }
+    internal RazorParserOptions(DirectiveDescriptor[] directives, bool designTime, bool parseLeadingDirectives, RazorLanguageVersion version, string fileKind, bool enableSpanEditHandlers)
+    {
+        if (directives == null)
+        {
+            throw new ArgumentNullException(nameof(directives));
+        }
 
-    public abstract IReadOnlyCollection<DirectiveDescriptor> Directives { get; }
+        Directives = directives;
+        DesignTime = designTime;
+        ParseLeadingDirectives = parseLeadingDirectives;
+        Version = version;
+        FeatureFlags = RazorParserFeatureFlags.Create(Version, fileKind);
+        FileKind = fileKind;
+        EnableSpanEditHandlers = enableSpanEditHandlers;
+    }
+
+    public bool DesignTime { get; }
+
+    public IReadOnlyCollection<DirectiveDescriptor> Directives { get; }
 
     /// <summary>
     /// Gets a value which indicates whether the parser will parse only the leading directives. If <c>true</c>
@@ -70,11 +87,13 @@ public abstract class RazorParserOptions
     /// Currently setting this option to <c>true</c> will result in only the first line of directives being parsed.
     /// In a future release this may be updated to include all leading directive content.
     /// </remarks>
-    public abstract bool ParseLeadingDirectives { get; }
+    public bool ParseLeadingDirectives { get; }
 
-    public virtual RazorLanguageVersion Version { get; } = RazorLanguageVersion.Latest;
+    public RazorLanguageVersion Version { get; } = RazorLanguageVersion.Latest;
 
-    internal virtual string FileKind { get; }
+    internal string FileKind { get; }
 
-    internal virtual RazorParserFeatureFlags FeatureFlags { get; }
+    internal RazorParserFeatureFlags FeatureFlags { get; /* Testing Only */ init; }
+
+    internal bool EnableSpanEditHandlers { get; }
 }

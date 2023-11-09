@@ -208,7 +208,7 @@ internal abstract class TelemetryReporter : ITelemetryReporter
         return exception.Message;
     }
 
-    private void Report(TelemetryEvent telemetryEvent)
+    protected virtual void Report(TelemetryEvent telemetryEvent)
     {
         try
         {

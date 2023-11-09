@@ -7,7 +7,15 @@ using System;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-internal abstract class RazorParserFeatureFlags
+internal sealed class RazorParserFeatureFlags(
+    bool allowMinimizedBooleanTagHelperAttributes,
+    bool allowHtmlCommentsInTagHelpers,
+    bool allowComponentFileKind,
+    bool allowRazorInAllCodeBlocks,
+    bool allowUsingVariableDeclarations,
+    bool allowConditionalDataDashAttributesInComponents,
+    bool allowCSharpInMarkupAttributeArea,
+    bool allowNullableForgivenessOperator)
 {
     public static RazorParserFeatureFlags Create(RazorLanguageVersion version, string fileKind)
     {
@@ -52,7 +60,7 @@ internal abstract class RazorParserFeatureFlags
             allowConditionalDataDashAttributes = true;
         }
 
-        return new DefaultRazorParserFeatureFlags(
+        return new RazorParserFeatureFlags(
             allowMinimizedBooleanTagHelperAttributes,
             allowHtmlCommentsInTagHelpers,
             allowComponentFileKind,
@@ -63,58 +71,19 @@ internal abstract class RazorParserFeatureFlags
             allowNullableForgivenessOperator);
     }
 
-    public abstract bool AllowMinimizedBooleanTagHelperAttributes { get; }
+    public bool AllowMinimizedBooleanTagHelperAttributes { get; } = allowMinimizedBooleanTagHelperAttributes;
 
-    public abstract bool AllowHtmlCommentsInTagHelpers { get; }
+    public bool AllowHtmlCommentsInTagHelpers { get; } = allowHtmlCommentsInTagHelpers;
 
-    public abstract bool AllowComponentFileKind { get; }
+    public bool AllowComponentFileKind { get; } = allowComponentFileKind;
 
-    public abstract bool AllowRazorInAllCodeBlocks { get; }
+    public bool AllowRazorInAllCodeBlocks { get; } = allowRazorInAllCodeBlocks;
 
-    public abstract bool AllowUsingVariableDeclarations { get; }
+    public bool AllowUsingVariableDeclarations { get; } = allowUsingVariableDeclarations;
 
-    public abstract bool AllowConditionalDataDashAttributes { get; }
+    public bool AllowConditionalDataDashAttributes { get; } = allowConditionalDataDashAttributesInComponents;
 
-    public abstract bool AllowCSharpInMarkupAttributeArea { get; }
+    public bool AllowCSharpInMarkupAttributeArea { get; } = allowCSharpInMarkupAttributeArea;
 
-    public abstract bool AllowNullableForgivenessOperator { get; }
-
-    private class DefaultRazorParserFeatureFlags : RazorParserFeatureFlags
-    {
-        public DefaultRazorParserFeatureFlags(
-            bool allowMinimizedBooleanTagHelperAttributes,
-            bool allowHtmlCommentsInTagHelpers,
-            bool allowComponentFileKind,
-            bool allowRazorInAllCodeBlocks,
-            bool allowUsingVariableDeclarations,
-            bool allowConditionalDataDashAttributesInComponents,
-            bool allowCSharpInMarkupAttributeArea,
-            bool allowNullableForgivenessOperator)
-        {
-            AllowMinimizedBooleanTagHelperAttributes = allowMinimizedBooleanTagHelperAttributes;
-            AllowHtmlCommentsInTagHelpers = allowHtmlCommentsInTagHelpers;
-            AllowComponentFileKind = allowComponentFileKind;
-            AllowRazorInAllCodeBlocks = allowRazorInAllCodeBlocks;
-            AllowUsingVariableDeclarations = allowUsingVariableDeclarations;
-            AllowConditionalDataDashAttributes = allowConditionalDataDashAttributesInComponents;
-            AllowCSharpInMarkupAttributeArea = allowCSharpInMarkupAttributeArea;
-            AllowNullableForgivenessOperator = allowNullableForgivenessOperator;
-        }
-
-        public override bool AllowMinimizedBooleanTagHelperAttributes { get; }
-
-        public override bool AllowHtmlCommentsInTagHelpers { get; }
-
-        public override bool AllowComponentFileKind { get; }
-
-        public override bool AllowRazorInAllCodeBlocks { get; }
-
-        public override bool AllowUsingVariableDeclarations { get; }
-
-        public override bool AllowConditionalDataDashAttributes { get; }
-
-        public override bool AllowCSharpInMarkupAttributeArea { get; }
-
-        public override bool AllowNullableForgivenessOperator { get; }
-    }
+    public bool AllowNullableForgivenessOperator { get; } = allowNullableForgivenessOperator;
 }

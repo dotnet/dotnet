@@ -3,27 +3,56 @@
 
 #nullable disable
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public abstract class RazorParserOptionsBuilder
+public sealed class RazorParserOptionsBuilder
 {
-    public virtual RazorConfiguration Configuration => null;
+    private bool _designTime;
 
-    public abstract bool DesignTime { get; }
-
-    public abstract ICollection<DirectiveDescriptor> Directives { get; }
-
-    public virtual string FileKind => null;
-
-    public abstract bool ParseLeadingDirectives { get; set; }
-
-    public virtual RazorLanguageVersion LanguageVersion { get; }
-
-    public abstract RazorParserOptions Build();
-
-    public virtual void SetDesignTime(bool designTime)
+    internal RazorParserOptionsBuilder(RazorConfiguration configuration, string fileKind)
     {
+        if (configuration == null)
+        {
+            throw new ArgumentNullException(nameof(configuration));
+        }
+
+        Configuration = configuration;
+        LanguageVersion = configuration.LanguageVersion;
+        FileKind = fileKind;
+    }
+
+    internal RazorParserOptionsBuilder(bool designTime, RazorLanguageVersion version, string fileKind)
+    {
+        _designTime = designTime;
+        LanguageVersion = version;
+        FileKind = fileKind;
+    }
+
+    public RazorConfiguration Configuration { get; }
+
+    public bool DesignTime => _designTime;
+
+    public ICollection<DirectiveDescriptor> Directives { get; } = new List<DirectiveDescriptor>();
+
+    public string FileKind { get; }
+
+    public bool ParseLeadingDirectives { get; set; }
+
+    public RazorLanguageVersion LanguageVersion { get; }
+
+    internal bool EnableSpanEditHandlers { get; set; }
+
+    public RazorParserOptions Build()
+    {
+        return new RazorParserOptions(Directives.ToArray(), DesignTime, ParseLeadingDirectives, LanguageVersion, FileKind ?? FileKinds.Legacy, EnableSpanEditHandlers);
+    }
+
+    public void SetDesignTime(bool designTime)
+    {
+        _designTime = designTime;
     }
 }

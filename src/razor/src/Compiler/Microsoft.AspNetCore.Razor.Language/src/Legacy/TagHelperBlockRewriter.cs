@@ -58,7 +58,7 @@ internal static class TagHelperBlockRewriter
 
     public static MarkupTagHelperStartTagSyntax Rewrite(
         string tagName,
-        RazorParserFeatureFlags featureFlags,
+        RazorParserOptions options,
         MarkupStartTagSyntax startTag,
         TagHelperBinding bindingResult,
         ErrorSink errorSink,
@@ -82,7 +82,8 @@ internal static class TagHelperBlockRewriter
                     attributeBlock,
                     bindingResult.Descriptors,
                     errorSink,
-                    processedBoundAttributeNames);
+                    processedBoundAttributeNames,
+                    options.EnableSpanEditHandlers);
                 attributeBuilder.Add(result.RewrittenAttribute);
             }
             else if (child is MarkupMinimizedAttributeBlockSyntax minimizedAttributeBlock)
@@ -148,7 +149,7 @@ internal static class TagHelperBlockRewriter
 
             // Check if it's a non-boolean bound attribute that is minimized or if it's a bound
             // non-string attribute that has null or whitespace content.
-            var isValidMinimizedAttribute = featureFlags.AllowMinimizedBooleanTagHelperAttributes && result.IsBoundBooleanAttribute;
+            var isValidMinimizedAttribute = options.FeatureFlags.AllowMinimizedBooleanTagHelperAttributes && result.IsBoundBooleanAttribute;
             if ((isMinimized &&
                 result.IsBoundAttribute &&
                 !isValidMinimizedAttribute) ||
@@ -223,7 +224,8 @@ internal static class TagHelperBlockRewriter
         MarkupAttributeBlockSyntax attributeBlock,
         IEnumerable<TagHelperDescriptor> descriptors,
         ErrorSink errorSink,
-        HashSet<string> processedBoundAttributeNames)
+        HashSet<string> processedBoundAttributeNames,
+        bool enableSpanEditHandlers)
     {
         // Have a name now. Able to determine correct isBoundNonStringAttribute value.
         var result = CreateTryParseResult(attributeBlock.Name.GetContent(), descriptors, processedBoundAttributeNames);
@@ -266,7 +268,7 @@ internal static class TagHelperBlockRewriter
 
             attributeValue = SyntaxFactory.GenericBlock(builder.ToList());
         }
-        var rewrittenValue = RewriteAttributeValue(result, attributeValue);
+        var rewrittenValue = RewriteAttributeValue(result, attributeValue, enableSpanEditHandlers);
 
         if (result.IsDirectiveAttribute)
         {
@@ -414,9 +416,9 @@ internal static class TagHelperBlockRewriter
         return rewritten;
     }
 
-    private static MarkupTagHelperAttributeValueSyntax RewriteAttributeValue(TryParseResult result, RazorBlockSyntax attributeValue)
+    private static MarkupTagHelperAttributeValueSyntax RewriteAttributeValue(TryParseResult result, RazorBlockSyntax attributeValue, bool enableSpanEditHandlers)
     {
-        var rewriter = new AttributeValueRewriter(result);
+        var rewriter = new AttributeValueRewriter(result, enableSpanEditHandlers);
         var rewrittenValue = attributeValue;
         if (result.IsBoundAttribute)
         {
@@ -534,10 +536,12 @@ internal static class TagHelperBlockRewriter
     {
         private readonly TryParseResult _tryParseResult;
         private bool _rewriteAsMarkup;
+        private readonly bool _enableSpanEditHandlers;
 
-        public AttributeValueRewriter(TryParseResult result)
+        public AttributeValueRewriter(TryParseResult result, bool enableSpanEditHandlers)
         {
             _tryParseResult = result;
+            _enableSpanEditHandlers = enableSpanEditHandlers;
         }
 
         public override SyntaxNode VisitGenericBlock(GenericBlockSyntax node)
@@ -592,7 +596,9 @@ internal static class TagHelperBlockRewriter
 
                 // Convert transition.
                 // Change to a MarkupChunkGenerator so that the '@' \ parenthesis is generated as part of the output.
-                var editHandler = node.GetEditHandler() ?? SpanEditHandler.CreateDefault((content) => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>(), AcceptedCharactersInternal.Any);
+                var editHandler = _enableSpanEditHandlers
+                    ? node.GetEditHandler() ?? SpanEditHandler.CreateDefault((content) => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>(), AcceptedCharactersInternal.Any)
+                    : null;
 
                 var expression = SyntaxFactory.CSharpExpressionLiteral(new SyntaxList<SyntaxToken>(node.Transition.Transition), MarkupChunkGenerator.Instance).WithEditHandler(editHandler);
                 expression = (CSharpExpressionLiteralSyntax)VisitCSharpExpressionLiteral(expression);
@@ -619,7 +625,9 @@ internal static class TagHelperBlockRewriter
             {
                 // Convert transition.
                 // Change to a MarkupChunkGenerator so that the '@' \ parenthesis is generated as part of the output.
-                var editHandler = node.GetEditHandler() ?? SpanEditHandler.CreateDefault((content) => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>(), AcceptedCharactersInternal.Any);
+                var editHandler = _enableSpanEditHandlers
+                    ? node.GetEditHandler() ?? SpanEditHandler.CreateDefault((content) => Enumerable.Empty<Syntax.InternalSyntax.SyntaxToken>(), AcceptedCharactersInternal.Any)
+                    : null;
 
                 var expression = SyntaxFactory.CSharpExpressionLiteral(new SyntaxList<SyntaxToken>(node.Transition.Transition), MarkupChunkGenerator.Instance).WithEditHandler(editHandler);
                 expression = (CSharpExpressionLiteralSyntax)VisitCSharpExpressionLiteral(expression);
@@ -732,7 +740,7 @@ internal static class TagHelperBlockRewriter
             {
                 var literal = SyntaxFactory.MarkupTextLiteral(builder.ToList(), node.Value?.ChunkGenerator);
                 var editHandler = node.Value?.GetEditHandler();
-                literal = editHandler != null ? literal.WithEditHandler(editHandler) : literal;
+                literal = literal.WithEditHandler(editHandler);
 
                 return Visit(literal);
             }

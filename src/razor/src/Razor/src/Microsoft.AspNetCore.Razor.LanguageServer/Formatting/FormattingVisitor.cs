@@ -313,7 +313,7 @@ internal class FormattingVisitor : SyntaxWalker
     {
         WriteBlock(node, FormattingBlockKind.Tag, n =>
         {
-            foreach (var child in n.Children)
+            foreach (var child in n.LegacyChildren)
             {
                 Visit(child);
             }
@@ -324,7 +324,7 @@ internal class FormattingVisitor : SyntaxWalker
     {
         WriteBlock(node, FormattingBlockKind.Tag, n =>
         {
-            foreach (var child in n.Children)
+            foreach (var child in n.LegacyChildren)
             {
                 Visit(child);
             }
@@ -521,7 +521,7 @@ internal class FormattingVisitor : SyntaxWalker
             return new SyntaxList<RazorSyntaxNode>(builder.ToListNode().CreateRed(node, node.Position));
         }
 
-        var children = node.Children;
+        var children = node.LegacyChildren;
         var newChildren = new SyntaxListBuilder(children.Count);
         var literals = new List<MarkupTextLiteralSyntax>();
         foreach (var child in children)
@@ -583,6 +583,6 @@ internal class FormattingVisitor : SyntaxWalker
             return new SyntaxList<RazorSyntaxNode>(builder.ToListNode().CreateRed(node, node.Position));
         }
 
-        return node.Children;
+        return node.LegacyChildren;
     }
 }

@@ -151,6 +151,13 @@ Microsoft.AspNetCore.Razor.Language.RazorDiagnostic.Id.get -> string!
 Microsoft.AspNetCore.Razor.Language.RazorDiagnostic.Severity.get -> Microsoft.AspNetCore.Razor.Language.RazorDiagnosticSeverity
 Microsoft.AspNetCore.Razor.Language.RazorDiagnostic.Span.get -> Microsoft.AspNetCore.Razor.Language.SourceSpan
 Microsoft.AspNetCore.Razor.Language.RazorDiagnosticCollection.Enumerator.Enumerator() -> void
+Microsoft.AspNetCore.Razor.Language.RazorParserOptions.DesignTime.get -> bool
+Microsoft.AspNetCore.Razor.Language.RazorParserOptions.ParseLeadingDirectives.get -> bool
+Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder
+Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.DesignTime.get -> bool
+Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.ParseLeadingDirectives.get -> bool
+Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.ParseLeadingDirectives.set -> void
+Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.SetDesignTime(bool designTime) -> void
 Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.GetFilePathForDisplay() -> string?
 Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.FilePath.get -> string?
 Microsoft.AspNetCore.Razor.Language.RazorSourceDocument.RelativePath.get -> string?
@@ -339,6 +346,13 @@ static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.GetPooledI
 static readonly Microsoft.AspNetCore.Razor.Language.MetadataCollection.Empty -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.CodeDocument.get -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.SourceMappings.get -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.Language.SourceMapping>
+~Microsoft.AspNetCore.Razor.Language.RazorParserOptions.Directives.get -> System.Collections.Generic.IReadOnlyCollection<Microsoft.AspNetCore.Razor.Language.DirectiveDescriptor>
+~Microsoft.AspNetCore.Razor.Language.RazorParserOptions.Version.get -> Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion
+~Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.Build() -> Microsoft.AspNetCore.Razor.Language.RazorParserOptions
+~Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.Configuration.get -> Microsoft.AspNetCore.Razor.Language.RazorConfiguration
+~Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.Directives.get -> System.Collections.Generic.ICollection<Microsoft.AspNetCore.Razor.Language.DirectiveDescriptor>
+~Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.FileKind.get -> string
+~Microsoft.AspNetCore.Razor.Language.RazorParserOptionsBuilder.LanguageVersion.get -> Microsoft.AspNetCore.Razor.Language.RazorLanguageVersion
 ~Microsoft.AspNetCore.Razor.Language.TagHelperObjectBuilderCollection<TObject, TBuilder>.GetEnumerator() -> Microsoft.AspNetCore.Razor.Language.TagHelperObjectBuilderCollection<TObject, TBuilder>.Enumerator
 ~Microsoft.AspNetCore.Razor.Language.SourceLocation.SourceLocation(string filePath, int absoluteIndex, Microsoft.CodeAnalysis.Text.LinePosition linePosition) -> void
 ~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilderExtensions.SetMetadata(this Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorBuilder builder, System.Collections.Generic.KeyValuePair<string, string> pair) -> void

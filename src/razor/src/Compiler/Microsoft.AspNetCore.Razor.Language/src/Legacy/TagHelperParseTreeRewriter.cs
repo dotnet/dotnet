@@ -23,7 +23,7 @@ internal static class TagHelperParseTreeRewriter
             syntaxTree.Source,
             tagHelperPrefix,
             descriptors,
-            syntaxTree.Options.FeatureFlags,
+            syntaxTree.Options,
             errorSink);
 
         var rewritten = rewriter.Visit(syntaxTree.Root);
@@ -63,14 +63,14 @@ internal static class TagHelperParseTreeRewriter
         private readonly TagHelperBinder _tagHelperBinder;
         private readonly Stack<TagTracker> _trackerStack;
         private readonly ErrorSink _errorSink;
-        private readonly RazorParserFeatureFlags _featureFlags;
+        private readonly RazorParserOptions _options;
         private readonly HashSet<TagHelperDescriptor> _usedDescriptors;
 
         public Rewriter(
             RazorSourceDocument source,
             string tagHelperPrefix,
             IReadOnlyList<TagHelperDescriptor> descriptors,
-            RazorParserFeatureFlags featureFlags,
+            RazorParserOptions options,
             ErrorSink errorSink)
         {
             _source = source;
@@ -79,7 +79,7 @@ internal static class TagHelperParseTreeRewriter
             _trackerStack = new Stack<TagTracker>();
             _attributeValueBuilder = new StringBuilder();
             _htmlAttributeTracker = ImmutableArray.CreateBuilder<KeyValuePair<string, string>>();
-            _featureFlags = featureFlags;
+            _options = options;
             _usedDescriptors = new HashSet<TagHelperDescriptor>();
             _errorSink = errorSink;
         }
@@ -289,7 +289,7 @@ internal static class TagHelperParseTreeRewriter
 
             var rewrittenStartTag = TagHelperBlockRewriter.Rewrite(
                 tagName,
-                _featureFlags,
+                _options,
                 startTag,
                 tagHelperBinding,
                 _errorSink,
@@ -553,7 +553,7 @@ internal static class TagHelperParseTreeRewriter
             if (HasAllowedChildren())
             {
                 var isDisallowedContent = true;
-                if (_featureFlags.AllowHtmlCommentsInTagHelpers)
+                if (_options.FeatureFlags.AllowHtmlCommentsInTagHelpers)
                 {
                     isDisallowedContent = !IsComment(child) &&
                         !child.IsTransitionSpanKind() &&
@@ -588,7 +588,7 @@ internal static class TagHelperParseTreeRewriter
             // Treat partial tags such as '</' which have no tag names as content.
             if (string.IsNullOrEmpty(tagName))
             {
-                var firstChild = tagBlock.Children.First();
+                var firstChild = tagBlock.LegacyChildren.First();
                 Debug.Assert(firstChild is MarkupTextLiteralSyntax);
 
                 ValidateParentAllowsContent(firstChild);
@@ -621,7 +621,7 @@ internal static class TagHelperParseTreeRewriter
             // Treat partial tags such as '</' which have no tag names as content.
             if (string.IsNullOrEmpty(tagName))
             {
-                var firstChild = tagBlock.Children.First();
+                var firstChild = tagBlock.LegacyChildren.First();
                 Debug.Assert(firstChild is MarkupTextLiteralSyntax);
 
                 ValidateParentAllowsContent(firstChild);

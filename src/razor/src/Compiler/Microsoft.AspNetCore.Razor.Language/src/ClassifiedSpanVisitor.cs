@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
@@ -363,7 +364,7 @@ internal class ClassifiedSpanVisitor : SyntaxWalker
         }
 
         SpanEditHandler? latestEditHandler = null;
-        var children = node.Children;
+        var children = node.LegacyChildren;
         var newChildren = new SyntaxListBuilder(children.Count);
         var literals = new List<MarkupTextLiteralSyntax>();
         foreach (var child in children)
@@ -406,7 +407,8 @@ internal class ClassifiedSpanVisitor : SyntaxWalker
             if (literals.Count > 0)
             {
                 var mergedLiteral = SyntaxUtilities.MergeTextLiterals(literals.ToArray());
-                mergedLiteral = mergedLiteral.WithEditHandler(latestEditHandler);
+                Debug.Assert(mergedLiteral != null);
+                mergedLiteral = mergedLiteral!.WithEditHandler(latestEditHandler);
                 literals.Clear();
                 latestEditHandler = null;
                 newChildren.Add(mergedLiteral);
@@ -434,6 +436,6 @@ internal class ClassifiedSpanVisitor : SyntaxWalker
             return new SyntaxList<RazorSyntaxNode>(builder.ToListNode().CreateRed(node, node.Position));
         }
 
-        return node.Children;
+        return node.LegacyChildren;
     }
 }

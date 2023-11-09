@@ -834,7 +834,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 return;
             }
 
-            foreach (var child in node.Children)
+            foreach (var child in node.LegacyChildren)
             {
                 Visit(child);
             }
@@ -848,7 +848,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 return;
             }
 
-            foreach (var child in node.Children)
+            foreach (var child in node.LegacyChildren)
             {
                 Visit(child);
             }
