@@ -31,7 +31,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Selenium.WebDriver" Version="4.9.1" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.15.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EdgeDriverTest.cs" />
