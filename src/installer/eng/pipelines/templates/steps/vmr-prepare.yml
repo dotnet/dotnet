@@ -28,11 +28,11 @@ steps:
     path: vmr
     clean: true
 
-- ${{ if or(not(parameters.isBuiltFromVmr), eq(variables['System.TeamProject'], 'internal')) }}:
-  - script: |
-      git switch -c ${{ parameters.vmrBranch }}
-    displayName: Checkout ${{ parameters.vmrBranch }}
-    workingDirectory: $(Agent.BuildDirectory)/vmr
+- script: |
+    git checkout --track origin/${{ parameters.vmrBranch }}
+    echo "##vso[task.setvariable variable=vmrBranch]${{ parameters.vmrBranch }}"
+  displayName: Check out ${{ parameters.vmrBranch }}
+  workingDirectory: $(Agent.BuildDirectory)/vmr
 
 # TODO (https://github.com/dotnet/arcade/issues/11332): Allow full CG?
 # Currently, we ignore dirs of individual repos - they have been scanned before
