@@ -94,7 +94,10 @@ jobs:
   steps:
   - template: ../steps/vmr-prepare.yml
     parameters:
-      vmrBranch: ${{ parameters.vmrBranch }}
+      ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+        vmrBranch: $(System.PullRequest.TargetBranch)
+      ${{ else }}:
+        vmrBranch: ${{ parameters.vmrBranch }}
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       skipComponentGovernanceDetection: true
 
