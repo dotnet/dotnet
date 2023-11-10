@@ -26,6 +26,7 @@ steps:
 # we still pull the commit into the temporary installer clone to use it during the sync.
 - script: |
     git branch installer-head
+    git rev-parse HEAD
   displayName: Label PR commit
   workingDirectory: $(Agent.BuildDirectory)/installer
 
@@ -33,6 +34,12 @@ steps:
     git checkout -B ${{ parameters.vmrBranch }}
     echo "##vso[task.setvariable variable=vmrBranch]${{ parameters.vmrBranch }}"
   displayName: Prepare branch ${{ parameters.vmrBranch }}
+  workingDirectory: ${{ parameters.vmrPath }}
+
+- script: |
+    git config --global user.name "dotnet-maestro[bot]"
+    git config --global user.email "dotnet-maestro[bot]@users.noreply.github.com"
+  displayName: Set git author to dotnet-maestro[bot]
   workingDirectory: ${{ parameters.vmrPath }}
 
 - script: >
