@@ -56,6 +56,11 @@ jobs:
       vmrBranch: ${{ parameters.vmrBranch }}
       targetRef: ${{ parameters.targetRef }}
 
+  - script: |
+      git config --global user.name "dotnet-maestro[bot]"
+      git config --global user.email "dotnet-maestro[bot]@users.noreply.github.com"
+    displayName: Set git author to dotnet-maestro[bot]
+
   
   - ${{ if and(not(parameters.noPush), not(in(variables['Build.Reason'], 'PullRequest')), eq(variables['System.TeamProject'], 'internal')) }}:
     # Push main and release branches to the public VMR
