@@ -40,8 +40,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         /// <summary>
         /// Creates a new <see cref="DirectoryRow"/> instance from the specified <see cref="Record"/>.
         /// </summary>
-        /// <param name="directoryRecord">The file record obtained from querying the MSI File table.</param>
-        /// <returns>A single file row.</returns>
+        /// <param name="directoryRecord">The file record obtained from querying the MSI Directory table.</param>
+        /// <returns>A single directory row.</returns>
         public static DirectoryRow Create(Record directoryRecord)
         {
             return new DirectoryRow

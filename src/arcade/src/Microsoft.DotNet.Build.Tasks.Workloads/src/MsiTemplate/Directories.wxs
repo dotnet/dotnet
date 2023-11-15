@@ -5,15 +5,7 @@
   <Fragment>
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.ProgramFilesFolder)">
-        <Directory Id="DOTNETHOME" Name="dotnet">
-          <Directory Id="InstallDir" Name="$(var.InstallDir)">
-            <?if $(var.PackKind) != "library" and $(var.PackKind) != "template"?>
-            <Directory Id="PackageDir" Name="$(var.PackageId)">
-              <Directory Id="VersionDir" Name="$(var.PackageVersion)" />
-            </Directory>
-            <?endif?>
-          </Directory>
-        </Directory>
+        <Directory Id="DOTNETHOME" Name="dotnet" />
       </Directory>
     </Directory>
 
@@ -21,4 +13,50 @@
     <CustomActionRef Id="Set_DOTNETHOME_NON_NATIVE_ARCHITECTURE" />
     <?endif?>
   </Fragment>
+
+  <?ifdef InstallDir?>
+  <Fragment>
+    <DirectoryRef Id="DOTNETHOME">
+      <Directory Id="InstallDir" Name="$(var.InstallDir)">
+        <?if $(var.PackKind) != "library" and $(var.PackKind) != "template"?>
+        <Directory Id="PackageDir" Name="$(var.PackageId)">
+          <Directory Id="VersionDir" Name="$(var.PackageVersion)" />
+        </Directory>
+        <?endif?>
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
+  <?endif?>
+
+  <?ifdef SdkFeatureBandVersion?>
+  <Fragment>
+    <DirectoryRef Id="DOTNETHOME">
+      <Directory Id="SdkManifestsDir" Name="sdk-manifests">
+        <Directory Id="SdkFeatureBandVersionDir" Name="$(var.SdkFeatureBandVersion)" />
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
+  <?endif?>
+
+  <?ifdef WorkloadSetVersion?>
+  <Fragment>
+    <DirectoryRef Id="SdkFeatureBandVersionDir">
+      <Directory Id="WorkloadSetsDir" Name="workloadsets">
+        <Directory Id="WorkloadSetVersionDir" Name="$(var.WorkloadSetVersion)" />
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
+  <?endif?>
+
+  <?ifdef ManifestId?>
+  <Fragment>
+    <DirectoryRef Id="SdkFeatureBandVersionDir">
+      <Directory Id="ManifestIdDir" Name="$(var.ManifestId)">
+        <?ifdef ManifestVersion ?>
+        <Directory Id="ManifestVersionDir" Name="$(var.ManifestVersion)" />
+        <?endif?>
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
+  <?endif?>
 </Wix>

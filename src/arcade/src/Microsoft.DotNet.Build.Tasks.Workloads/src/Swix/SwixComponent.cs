@@ -28,6 +28,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
         private static readonly Version s_v1 = new Version("1.0.0.0");
 
         /// <summary>
+        /// Determines whether the component will be advertised to a user during an update operation.
+        /// </summary>
+        public bool Advertise
+        {
+            get;
+        }
+
+        /// <summary>
         /// The component category.
         /// </summary>
         public string Category
@@ -88,8 +96,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
         /// <param name="category">The category associated with the component. The value acts as a grouping mechanism on
         /// the individual components tab.</param>
         /// <param name="shortNames">A set of items used to shorten the names and identifiers of setup packages.</param>
+        /// <param name="advertise">Indicates whether new components are advertised to users in Visual Studio during an update.</param>
         internal SwixComponent(ReleaseVersion sdkFeatureBand, string name, string title, string description, Version version,
-            bool isUiGroup, string category, ITaskItem[]? shortNames) : base(name, version)
+            bool isUiGroup, string category, ITaskItem[]? shortNames, bool advertise = false) : base(name, version)
         {
             Title = title;
             Description = description;
@@ -97,6 +106,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             Category = category;
             SdkFeatureBand = sdkFeatureBand;
             ShortNames = shortNames;
+            Advertise = advertise;
         }
 
         /// <summary>
@@ -153,6 +163,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
                 new Version(resourceItem.GetMetadata(Metadata.Version)) :
                 new Version((new ReleaseVersion(manifest.Version)).ToString(3));
 
+            bool.TryParse(resourceItem?.GetMetadata(Metadata.AdvertisePackage), out bool advertise);
+
             // Since workloads only define a description, if no custom resources were provided, both the title and description of
             // the SWIX component will default to the workload description. 
             SwixComponent component = new(sdkFeatureBand, Utils.ToSafeId(workload.Id, componentSuffix),
@@ -160,7 +172,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
                 resourceItem != null && !string.IsNullOrEmpty(resourceItem.GetMetadata(Metadata.Description)) ? resourceItem.GetMetadata(Metadata.Description) : workload.Description ?? throw new Exception(Strings.ComponentDescriptionCannotBeNull),
                 componentVersion, workload.IsAbstract,
                 resourceItem != null && !string.IsNullOrEmpty(resourceItem.GetMetadata(Metadata.Category)) ? resourceItem.GetMetadata(Metadata.Category) : DefaultValues.ComponentCategory ?? throw new Exception(Strings.ComponentCategoryCannotBeNull),
-                shortNames);
+                shortNames,
+                advertise);            
 
             // If the workload extends other workloads, we add those as component dependencies before
             // processing direct pack dependencies.
