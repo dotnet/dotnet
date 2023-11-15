@@ -45,6 +45,9 @@ while [[ $# > 0 ]]; do
         --pgoInstrument)
             args+=("/p:PgoInstrument=true")
             ;;
+        --pack)
+            args+=("/p:PackInstaller=true")
+            ;;
         --help)
             echo "Usage: $0 [--configuration <CONFIGURATION>] [--architecture <ARCHITECTURE>] [--docker <IMAGENAME>] [--help]"
             echo ""
