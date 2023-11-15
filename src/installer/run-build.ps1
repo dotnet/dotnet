@@ -8,6 +8,7 @@ param(
     [string]$Configuration="Debug",
     [string]$Architecture="x64",
     [switch]$Sign=$false,
+    [switch]$Pack=$false,
     [switch]$PgoInstrument,
     [bool]$WarnAsError=$true,
     [Parameter(ValueFromRemainingArguments=$true)][String[]]$ExtraParameters
@@ -23,10 +24,11 @@ if ($PgoInstrument) {
 }
 
 if ($Sign) {
-  $Parameters = "$Parameters -sign /p:SignCoreSdk=true"
+  $Parameters = "$Parameters -sign"
+}
 
-  # Workaround https://github.com/dotnet/arcade/issues/1776
-  $WarnAsError = $false
+if ($Pack) {
+  $Parameters = "$Parameters /p:PackInstaller=true"
 }
 
 $Parameters = "$Parameters -WarnAsError `$$WarnAsError"
