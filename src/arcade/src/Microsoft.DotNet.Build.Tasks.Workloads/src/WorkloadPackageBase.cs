@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Microsoft.Deployment.DotNet.Releases;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
@@ -31,11 +32,17 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             get;
         }
 
+        /// <summary>
+        /// The NuGet package copyright.
+        /// </summary>
         public string Copyright
         {
             get;
         }
 
+        /// <summary>
+        /// The NuGet package description.
+        /// </summary>
         public string Description
         {
             get;
@@ -139,6 +146,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         }
 
         /// <summary>
+        /// The SWIX identifier for a package group that references this SWIX package.
+        /// </summary>
+        public string SwixPackageGroupId
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
         /// Gets an instance of a <see cref="TaskLoggingHelper"/> class containing task logging methods.
         /// </summary>
         protected TaskLoggingHelper? Log
@@ -190,11 +206,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             PackageFileName = Path.GetFileNameWithoutExtension(packagePath);
             ShortName = PackageFileName.Replace(shortNames);
             SwixPackageId = $"{Id.Replace(shortNames)}.{Identity.Version}";
+            SwixPackageGroupId = $"{DefaultValues.PackageGroupPrefix}.{SwixPackageId}";
             Log = log;
         }
 
         /// <summary>
-        /// Extracts the contents of the package based on
+        /// Extracts the contents of the package.
         /// </summary>
         public void Extract()
         {
@@ -248,6 +265,77 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
 
                 HasBeenExtracted = true;
             }
+        }
+
+        /// <summary>
+        /// Converts a string containing an SDK version to a semantic version that normalizes the patch level and 
+        /// optionally includes the first two prerelease labels. For example, if the specified version is 6.0.105, then
+        /// 6.0.100 would be returned. If the version is 6.0.301-preview.2.1234, the result would be 6.0.300-preview.1.
+        /// </summary>
+        /// <param name="sdkVersion">A string containing an SDK version.</param>
+        /// <returns>An SDK feature band version.</returns>
+        internal static ReleaseVersion GetSdkFeatureBandVersion(string sdkVersion)
+        {
+            ReleaseVersion version = new(sdkVersion);
+
+            // Ignore CI and dev builds.
+            if (string.IsNullOrEmpty(version.Prerelease) || version.Prerelease.Split('.').Any(s => string.Equals("ci", s) || string.Equals("dev", s)))
+            {
+                return new ReleaseVersion(version.Major, version.Minor, version.SdkFeatureBand);
+            }
+
+            string[] preleaseParts = version.Prerelease.Split('.');
+
+            // Only the first two prerelease identifiers are used to support side-by-side previews.
+            string prerelease = (preleaseParts.Length > 1) ?
+                $"{preleaseParts[0]}.{preleaseParts[1]}" :
+                preleaseParts[0];
+
+            return new ReleaseVersion(version.Major, version.Minor, version.SdkFeatureBand, prerelease);
+        }
+
+        /// <summary>
+        /// Extracts the SDK version from the package ID.
+        /// </summary>
+        /// <param name="packageId">The package ID from which to extract the SDK version.</param>
+        /// <param name="separator">A string used to determine where the SDK version should start.</param>
+        /// <returns>SDK version part of the package ID.</returns>
+        /// <exception cref="FormatException" />
+        internal static string GetSdkVersion(string packageId, string separator) =>
+            !string.IsNullOrWhiteSpace(packageId) && packageId.IndexOf(separator) > -1 ?
+                packageId.Substring(packageId.IndexOf(separator) + separator.Length) :
+                throw new FormatException(string.Format(Strings.CannotExtractSdkVersionFromPackageId, packageId));
+
+        /// <summary>
+        /// Gets the MSI ProductVersion to use for the given packagage. The task item metadata is used first, before falling
+        /// back to using the version parameter on the task. If neither exist an exception is thrown.
+        /// </summary>
+        /// <param name="package">The package item to convert into an MSI.</param>
+        /// <param name="msiVersion">The default MSI version 1</param>
+        /// <param name="taskName"></param>
+        /// <param name="taskParameterName"></param>
+        /// <param name="taskItemName"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        internal static Version GetMsiVersion(ITaskItem package, Version msiVersion, string taskName,
+            string taskParameterName, string taskItemName)
+        {
+            if (!string.IsNullOrWhiteSpace(package.GetMetadata(Metadata.MsiVersion)))
+            {
+                // We prefer version metadata information on the package item.
+                return new(package.GetMetadata(Metadata.MsiVersion));
+            }
+            else if (msiVersion != null)
+            {
+                // Fall back to the version provided by the task parameter.
+                return msiVersion;
+            }
+
+            // While we could use the major.minor.patch part of the package, it won't work for upgradable MSIs (manifests) and
+            // unlike packs, we want users to be explicit about the MSI versionsand
+            // the user to be aware of this and explicitly tell us the value.
+            throw new Exception(string.Format(Strings.NoInstallerVersion, taskName,
+                taskParameterName, taskItemName, Metadata.MsiVersion));
         }
     }
 }

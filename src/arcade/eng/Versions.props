@@ -50,11 +50,15 @@
     <MicrosoftNETRuntimeEmscripten2023Nodewin_x64>6.0.4</MicrosoftNETRuntimeEmscripten2023Nodewin_x64>
     <MicrosoftNETRuntimeEmscripten2023Pythonwin_x64>6.0.4</MicrosoftNETRuntimeEmscripten2023Pythonwin_x64>
     <MicrosoftNETRuntimeEmscripten2023Sdkwin_x64>6.0.4</MicrosoftNETRuntimeEmscripten2023Sdkwin_x64>
+    <MicrosoftNETWorkloadBaselineVersion>9.0.100-baseline.1.23464.1</MicrosoftNETWorkloadBaselineVersion>
     <MicrosoftNETWorkloadEmscriptenManifest_60200Version>6.0.4</MicrosoftNETWorkloadEmscriptenManifest_60200Version>
     <MicrosoftNETWorkloadEmscriptenManifest_80100Preview6Version>8.0.0-preview.6.23326.2</MicrosoftNETWorkloadEmscriptenManifest_80100Preview6Version>
     <MicrosoftNETWorkloadMonoToolChainManifest_60200Version>6.0.3</MicrosoftNETWorkloadMonoToolChainManifest_60200Version>
     <MicrosoftNETWorkloadMonoToolChainManifest_60200Version_604>6.0.4</MicrosoftNETWorkloadMonoToolChainManifest_60200Version_604>
+    <MicrosoftNETWorkloadMonoToolChainManifest_60300Version_6021>6.0.21</MicrosoftNETWorkloadMonoToolChainManifest_60300Version_6021>
+    <MicrosoftNETWorkloadMonoToolChainManifest_60300Version_6022>6.0.22</MicrosoftNETWorkloadMonoToolChainManifest_60300Version_6022>
     <MicrosoftiOSTemplatesVersion>15.2.302-preview.14.122</MicrosoftiOSTemplatesVersion>
+    <MicrosoftiOSTemplatesVersion160527>16.0.527</MicrosoftiOSTemplatesVersion160527>
     <SystemCollectionsImmutableVersion>7.0.0</SystemCollectionsImmutableVersion>
     <SystemCompositionVersion>7.0.0</SystemCompositionVersion>
     <SystemIOPackagingVersion>7.0.0</SystemIOPackagingVersion>

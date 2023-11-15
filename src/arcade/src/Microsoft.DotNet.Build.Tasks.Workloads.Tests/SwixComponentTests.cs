@@ -39,6 +39,36 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         }
 
         [WindowsOnlyFact]
+        public void ItCanAdvertiseComponents()
+        {
+            ITaskItem[] componentResources = new[]
+            {
+                new TaskItem("microsoft-net-sdk-blazorwebassembly-aot").WithMetadata(Metadata.Version, "4.5.6")
+                .WithMetadata(Metadata.Description, "A long wordy description about Blazor.")
+                .WithMetadata(Metadata.Category, "WebAssembly")
+                .WithMetadata(Metadata.AdvertisePackage, "true")
+            };
+
+            WorkloadManifest manifest = Create("WorkloadManifest.json");
+            WorkloadDefinition workload = (WorkloadDefinition)manifest.Workloads.FirstOrDefault().Value;
+            SwixComponent component = SwixComponent.Create(new ReleaseVersion("6.0.300"), workload, manifest, packGroupId: null,
+                componentResources);
+
+            ComponentSwixProject project = new(component, BaseIntermediateOutputPath, BaseOutputPath);
+            string swixProj = project.Create();
+
+            string componentSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.swr"));
+            Assert.Contains("package name=microsoft.net.sdk.blazorwebassembly.aot", componentSwr);
+            Assert.Contains("version=4.5.6", componentSwr);
+            Assert.Contains("isAdvertisedPackage=yes", componentSwr);
+
+            string componentResSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.res.swr"));
+            Assert.Contains(@"title=""Blazor WebAssembly AOT workload""", componentResSwr);
+            Assert.Contains(@"description=""A long wordy description about Blazor.""", componentResSwr);
+            Assert.Contains(@"category=""WebAssembly""", componentResSwr);
+        }
+
+        [WindowsOnlyFact]
         public void ItPrefersComponentResourcesOverDefaults()
         {
             ITaskItem[] componentResources = new[] 
@@ -59,6 +89,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             string componentSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.swr"));
             Assert.Contains("package name=microsoft.net.sdk.blazorwebassembly.aot", componentSwr);
             Assert.Contains("version=4.5.6", componentSwr);
+            Assert.Contains("isAdvertisedPackage=no", componentSwr);
 
             string componentResSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(swixProj), "component.res.swr"));
             Assert.Contains(@"title=""Blazor WebAssembly AOT workload""", componentResSwr);

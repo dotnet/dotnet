@@ -28,13 +28,6 @@ secrets:
     parameters:
       Name: dotnet-bot
 
-  #DotNet-Blob-Feed
-  dotnetfeed-storage-access-key-1:
-    type: azure-storage-key
-    parameters:
-      subscription: a4fc5514-21a9-4296-bfaf-5c7ee7fa35d1
-      account: dotnetfeed
-
   #Publish-Build-Assets
   MaestroAccessToken:
     type: maestro-access-token

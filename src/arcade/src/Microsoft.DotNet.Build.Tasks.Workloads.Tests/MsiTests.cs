@@ -104,8 +104,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             WorkloadPack p = new(new WorkloadPackId("Microsoft.iOS.Templates"), "15.2.302-preview.14.122", WorkloadPackKind.Template, null);
             TemplatePackPackage pkg = new(p, packagePath, new[] { "x64" }, PackageRootDirectory);
             pkg.Extract();
-            WorkloadPackMsi msi = new(pkg, "x64", new MockBuildEngine(), WixToolsetPath, BaseIntermediateOutputPath);
-
+            var buildEngine = new MockBuildEngine();
+            WorkloadPackMsi msi = new(pkg, "x64", buildEngine, WixToolsetPath, BaseIntermediateOutputPath);
             ITaskItem item = msi.Build(MsiOutputPath);
 
             string msiPath = item.GetMetadata(Metadata.FullPath);

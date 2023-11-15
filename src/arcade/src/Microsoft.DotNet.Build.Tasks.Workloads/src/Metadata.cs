@@ -44,6 +44,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// </summary>
         public static readonly string SupportsMachineArch = nameof(SupportsMachineArch);
 
+        /// <summary>
+        /// Boolean value indicating that a new component should be advertised in VS when performing
+        /// an update.
+        /// </summary>
+        public static readonly string AdvertisePackage = nameof(AdvertisePackage);
+
         public static readonly string Title = nameof(Title);
         public static readonly string Version = nameof(Version);
 

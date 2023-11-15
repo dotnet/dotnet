@@ -104,13 +104,17 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
         }
 
         /// <summary>
-        /// The path w
+        /// The directory containing the WiX toolset binaries.
         /// </summary>
         protected string WixToolsetPath
         {
             get;
         }
 
+        /// <summary>
+        /// Set of files to include in the NuGet package that will wrap the MSI. Keys represent the source files and the
+        /// value contains the relative path inside the generated NuGet package.
+        /// </summary>
         public Dictionary<string, string> NuGetPackageFiles { get; set; } = new();
 
         public MsiBase(MsiMetadata metadata, IBuildEngine buildEngine, string wixToolsetPath,

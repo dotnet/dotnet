@@ -12,6 +12,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
         public static readonly string __VS_COMPONENT_DESCRIPTION__ = nameof(__VS_COMPONENT_DESCRIPTION__);
         public static readonly string __VS_COMPONENT_TITLE__ = nameof(__VS_COMPONENT_TITLE__);
         public static readonly string __VS_IS_UI_GROUP__ = nameof(__VS_IS_UI_GROUP__);
+        public static readonly string __VS_IS_ADVERTISED_PACKAGE__ = nameof(__VS_IS_ADVERTISED_PACKAGE__);
         public static readonly string __VS_PACKAGE_CHIP__ = nameof(__VS_PACKAGE_CHIP__);
         public static readonly string __VS_PACKAGE_INSTALL_SIZE_SYSTEM_DRIVE__ = nameof(__VS_PACKAGE_INSTALL_SIZE_SYSTEM_DRIVE__);
         public static readonly string __VS_PACKAGE_NAME__ = nameof(__VS_PACKAGE_NAME__);

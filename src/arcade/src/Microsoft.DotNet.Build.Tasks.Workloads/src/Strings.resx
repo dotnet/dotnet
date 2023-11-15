@@ -150,11 +150,20 @@
   <data name="HeatFailedToHarvest" xml:space="preserve">
     <value>Failed to harvest package contents.</value>
   </data>
+  <data name="InvalidWorkloadSetPackageMissingDataDir" xml:space="preserve">
+    <value>Invalid workload set package: {0}. The package does not contain a "data" directory.</value>
+  </data>
+  <data name="InvalidWorkloadSetPackageNoWorkloadSet" xml:space="preserve">
+    <value>Invalid workload set package: {0}. The package does not contain any workload set files.</value>
+  </data>
   <data name="ManifestPackageGroupExists" xml:space="preserve">
     <value>Duplicate manifest ID: {0}. A SWIX package group, {1}, with the same ID already exists.</value>
   </data>
-  <data name="NoManifestInstallerVersion" xml:space="preserve">
-    <value>Unable to determine the version of the manifest installer. The {0} task should either provide  a value for the {1} parameter, or the {2} items should set the {3} metadata.</value>
+  <data name="MsiProductVersionOutOfRange" xml:space="preserve">
+    <value>The {0} field of an MSI ProductVersion must be less than or equal to {1}.</value>
+  </data>
+  <data name="NoInstallerVersion" xml:space="preserve">
+    <value>Unable to determine the version of the installer (MSI). The {0} task should either provide  a value for the {1} parameter, or the {2} items should set the {3} metadata.</value>
   </data>
   <data name="PackageGroupsMustHaveAtLeastOneDependency" xml:space="preserve">
     <value>A SWIX package group must have at least one dependency, Id: {0}.</value>
@@ -176,6 +185,9 @@
   </data>
   <data name="UnknownWorkloadKind" xml:space="preserve">
     <value>Unknown workload kind: {0}.</value>
+  </data>
+  <data name="WarnNonWorkloadSetFileFound" xml:space="preserve">
+    <value>A non-workload set file was found inside the workload set package: {0}. The file will be removed and excluded from the workload set installer.</value>
   </data>
   <data name="WorkloadComponentExists" xml:space="preserve">
     <value>Duplicate workload ID: {0}. A SWIX component, {1}, with the same workload ID already exists.</value>
