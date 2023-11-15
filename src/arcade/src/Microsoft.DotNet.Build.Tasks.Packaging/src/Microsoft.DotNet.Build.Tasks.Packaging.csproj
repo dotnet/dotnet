@@ -48,6 +48,8 @@
   <ItemGroup>
     <PackageDownload Include="Microsoft.NETCore.Platforms" Version="[$(MicrosoftNETCorePlatformsVersion)]" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+    <!-- Upgrade System.Security.Cryptography.Xml/6.0.0 which is referenced by Microsoft.Build.Tasks.Core. -->
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
     <PackageReference Include="NuGet.Commands" Version="$(NuGetCommandsVersion)" />
     <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
@@ -71,7 +73,7 @@
     </PropertyGroup>
 
      <Error Condition="'$(_runtimeJsonPath)'==''" Text="Could not locate '$(_runtimeJsonPath)'." />
-     
+
      <ItemGroup>
        <None Include="$(_runtimeJsonPath)"
              CopyToOutputDirectory="PreserveNewest"
