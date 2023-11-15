@@ -64,6 +64,8 @@
     <SystemIOPackagingVersion>7.0.0</SystemIOPackagingVersion>
     <SystemReflectionMetadataVersion>7.0.0</SystemReflectionMetadataVersion>
     <SystemSecurityCryptographyX509CertificatesVersion>4.3.2</SystemSecurityCryptographyX509CertificatesVersion>
+    <!-- Do not move too far ahead of what Microsoft.Build.Tasks.Core depends on (currently >=6.0.0). -->
+    <SystemSecurityCryptographyXmlVersion>6.0.1</SystemSecurityCryptographyXmlVersion>
     <SystemTextEncodingsWebVersion>7.0.0</SystemTextEncodingsWebVersion>
     <SystemTextJsonVersion>7.0.2</SystemTextJsonVersion>
     <!-- sdk -->
