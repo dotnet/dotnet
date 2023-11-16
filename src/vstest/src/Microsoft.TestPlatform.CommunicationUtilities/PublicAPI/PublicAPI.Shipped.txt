@@ -100,8 +100,6 @@ Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.Disconnect
 Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.DisconnectedEventArgs.Error.get -> System.Exception?
 Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.DisconnectedEventArgs.Error.set -> void
 Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationChannel
-Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationChannel.MessageReceived -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.MessageReceivedEventArgs!>!
-Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationChannel.NotifyDataAvailable() -> System.Threading.Tasks.Task!
 Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationChannel.Send(string! data) -> System.Threading.Tasks.Task!
 Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationEndPoint
 Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationEndPoint.Connected -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ConnectedEventArgs!>!
@@ -189,8 +187,6 @@ Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.Se
 Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel
 Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel.Dispose() -> void
 Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel.LengthPrefixCommunicationChannel(System.IO.Stream! stream) -> void
-Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel.MessageReceived -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.MessageReceivedEventArgs!>?
-Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel.NotifyDataAvailable() -> System.Threading.Tasks.Task!
 Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel.Send(string! data) -> System.Threading.Tasks.Task!
 Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message
 Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Message.Message() -> void
@@ -392,3 +388,13 @@ static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerial
 ~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.UnexpectedMessage.get -> string
 ~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.VersionCheckFailed.get -> string
 ~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.VersionCheckTimedout.get -> string
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.TrackableEvent<T>
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.TrackableEvent<T>.TrackableEvent() -> void
+virtual Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.TrackableEvent<T>.Unsubscribe(System.EventHandler<T>? eventHandler) -> void
+virtual Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.TrackableEvent<T>.WaitForSubscriber(int timeoutMilliseconds, System.Threading.CancellationToken cancellationToken) -> bool
+virtual Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.TrackableEvent<T>.Notify(object! sender, T eventArgs, string! traceDisplayName) -> void
+virtual Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.TrackableEvent<T>.Subscribe(System.EventHandler<T>? eventHandler) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationChannel.MessageReceived.get -> Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.TrackableEvent<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.MessageReceivedEventArgs!>!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel.MessageReceived.get -> Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.TrackableEvent<Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.MessageReceivedEventArgs!>!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.ICommunicationChannel.NotifyDataAvailable(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel.NotifyDataAvailable(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!

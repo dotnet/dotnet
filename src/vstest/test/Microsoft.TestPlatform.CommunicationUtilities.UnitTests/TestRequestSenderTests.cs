@@ -52,6 +52,7 @@ public class TestRequestSenderTests
             Transport = Transport.Sockets
         };
         _mockChannel = new Mock<ICommunicationChannel>();
+        _mockChannel.Setup(mc => mc.MessageReceived).Returns(new TrackableEvent<MessageReceivedEventArgs>());
         _mockServer = new Mock<ICommunicationEndPoint>();
         _mockDataSerializer = new Mock<IDataSerializer>();
         _testRequestSender = new TestableTestRequestSender(_mockServer.Object, _connectionInfo, _mockDataSerializer.Object, new ProtocolConfig { Version = Dummyprotocolversion });
@@ -868,14 +869,14 @@ public class TestRequestSenderTests
         SetupFakeCommunicationChannel();
         _testRequestSender.CheckVersionWithTestHost();
         ResetRaiseMessageReceivedOnCheckVersion();
+
+        _mockChannel.Setup(mc => mc.MessageReceived).Returns(new TrackableEvent<MessageReceivedEventArgs>());
     }
 
     private void RaiseMessageReceivedEvent()
     {
-        _mockChannel.Raise(
-            c => c.MessageReceived += null,
-            _mockChannel.Object,
-            new MessageReceivedEventArgs { Data = "DummyData" });
+        var eventArgs = new MessageReceivedEventArgs { Data = "DummyData" };
+        _mockChannel.Object.MessageReceived.Notify(_mockChannel.Object, eventArgs, "TestRequestSenderTests.RaiseMessageReceivedEvent()");
     }
 
     private void RaiseClientDisconnectedEvent()

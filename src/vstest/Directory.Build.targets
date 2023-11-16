@@ -6,7 +6,7 @@
   <!-- Source build properties -->
   <PropertyGroup Condition=" '$(DotNetBuildFromSource)' == 'true' ">
     <!-- Force setting TargetFrameworks to net7.0 only if it was set -->
-    <TargetFrameworks Condition=" '$(TargetFrameworks)' != '' ">net9.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TargetFrameworks)' != '' ">$(NetCurrent)</TargetFrameworks>
     <!-- Force setting TargetFramework to net7.0 only if it was set -->
     <TargetFramework Condition=" '$(TargetFramework)' != '' ">$(NetCurrent)</TargetFramework>
   </PropertyGroup>

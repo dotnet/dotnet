@@ -132,7 +132,7 @@ public class TestRequestHandler : ITestRequestHandler, IDeploymentAwareTestReque
                 throw connectedArgs.Fault;
             }
             _channel = connectedArgs.Channel;
-            _channel.MessageReceived += OnMessageReceived;
+            _channel.MessageReceived.Subscribe(OnMessageReceived);
             _requestSenderConnected.Set();
         };
 

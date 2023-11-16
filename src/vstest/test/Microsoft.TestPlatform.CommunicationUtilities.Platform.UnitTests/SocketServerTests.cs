@@ -125,9 +125,9 @@ public class SocketServerTests : SocketTestsBase, IDisposable
         };
         var channel = SetupChannel(out ConnectedEventArgs? clientConnected);
 
-        channel!.MessageReceived += (sender, args) =>
+        channel!.MessageReceived.Subscribe((sender, args) =>
         {
-        };
+        });
 
         // Close the client channel. Message loop should stop.
         // tcpClient.Close() calls tcpClient.Dispose().

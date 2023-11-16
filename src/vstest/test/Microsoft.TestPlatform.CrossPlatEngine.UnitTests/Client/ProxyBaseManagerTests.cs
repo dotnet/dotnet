@@ -45,6 +45,7 @@ public class ProxyBaseManagerTests
         _mockDataSerializer = new Mock<IDataSerializer>();
         _mockRequestData = new Mock<IRequestData>();
         _mockChannel = new Mock<ICommunicationChannel>();
+        _mockChannel.Setup(mc => mc.MessageReceived).Returns(new TrackableEvent<MessageReceivedEventArgs>());
         _mockFileHelper = new Mock<IFileHelper>();
         _discoveryDataAggregator = new();
 
@@ -87,7 +88,7 @@ public class ProxyBaseManagerTests
     public void SetupChannelMessage<TPayload>(string messageType, string returnMessageType, TPayload returnPayload)
     {
         _mockChannel.Setup(mc => mc.Send(It.Is<string>(s => s.Contains(messageType))))
-            .Callback(() => _mockChannel.Raise(c => c.MessageReceived += null, _mockChannel.Object, new MessageReceivedEventArgs { Data = messageType }));
+            .Callback(() => _mockChannel.Object.MessageReceived.Notify(_mockChannel.Object, new MessageReceivedEventArgs { Data = messageType }, "ProxyBaseManagerTests.SetupChannelMessage()"));
 
         _mockDataSerializer.Setup(ds => ds.SerializePayload(It.Is<string>(s => s.Equals(messageType)), It.IsAny<object>())).Returns(messageType);
         _mockDataSerializer.Setup(ds => ds.SerializePayload(It.Is<string>(s => s.Equals(messageType)), It.IsAny<object>(), It.IsAny<int>())).Returns(messageType);
@@ -97,8 +98,9 @@ public class ProxyBaseManagerTests
 
     public void RaiseMessageReceived(string data)
     {
-        _mockChannel.Raise(c => c.MessageReceived += null, _mockChannel.Object,
-            new MessageReceivedEventArgs { Data = data });
+        _mockChannel.Object.MessageReceived.Notify(_mockChannel.Object,
+            new MessageReceivedEventArgs { Data = data },
+            "ProxyBaseManagerTests.RaiseMessageReceived()");
     }
 
     protected ProxyDiscoveryManager GetProxyDiscoveryManager()

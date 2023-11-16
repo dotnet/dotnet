@@ -194,7 +194,7 @@ public class TestRequestSender : ITestRequestSender
         }
 
         _onMessageReceived = onMessageReceived;
-        _channel.MessageReceived += _onMessageReceived;
+        _channel.MessageReceived.Subscribe(_onMessageReceived);
 
         return true;
     }
@@ -269,7 +269,7 @@ public class TestRequestSender : ITestRequestSender
 
             protocolNegotiated.Set();
         };
-        _channel.MessageReceived += onMessageReceived;
+        _channel.MessageReceived.Subscribe(onMessageReceived);
 
         try
         {
@@ -290,7 +290,7 @@ public class TestRequestSender : ITestRequestSender
         }
         finally
         {
-            _channel.MessageReceived -= onMessageReceived;
+            _channel.MessageReceived.Unsubscribe(onMessageReceived);
         }
     }
 
@@ -516,9 +516,9 @@ public class TestRequestSender : ITestRequestSender
     /// <inheritdoc />
     public void Dispose()
     {
-        if (_channel != null)
+        if (_channel != null && _onMessageReceived != null)
         {
-            _channel.MessageReceived -= _onMessageReceived;
+            _channel.MessageReceived.Unsubscribe(_onMessageReceived);
         }
 
         _communicationEndpoint.Stop();

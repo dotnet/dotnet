@@ -158,9 +158,9 @@ public class SocketClientTests : SocketTestsBase, IDisposable
         var waitEvent = new ManualResetEvent(false);
         _socketClient.Disconnected += (s, e) => waitEvent.Set();
         channel = SetupChannel(out ConnectedEventArgs? _);
-        channel!.MessageReceived += (sender, args) =>
+        channel!.MessageReceived.Subscribe((sender, args) =>
         {
-        };
+        });
         return waitEvent;
     }
 
