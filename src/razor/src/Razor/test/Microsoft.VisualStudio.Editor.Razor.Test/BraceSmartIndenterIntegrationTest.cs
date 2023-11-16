@@ -127,7 +127,11 @@ public class BraceSmartIndenterIntegrationTest : BraceSmartIndenterTestBase
     private static TextBufferCodeDocumentProvider CreateCodeDocumentProvider(string content)
     {
         var sourceDocument = TestRazorSourceDocument.Create(content);
-        var syntaxTree = RazorSyntaxTree.Parse(sourceDocument, RazorParserOptions.Create(opt => opt.Directives.Add(FunctionsDirective.Directive)));
+        var syntaxTree = RazorSyntaxTree.Parse(sourceDocument, RazorParserOptions.Create(opt =>
+        {
+            opt.Directives.Add(FunctionsDirective.Directive);
+            opt.EnableSpanEditHandlers = true;
+        }));
         var codeDocument = TestRazorCodeDocument.Create(content);
         codeDocument.SetSyntaxTree(syntaxTree);
         var codeDocumentProvider = Mock.Of<TextBufferCodeDocumentProvider>(provider => provider.TryGetFromBuffer(It.IsAny<ITextBuffer>(), out codeDocument), MockBehavior.Strict);

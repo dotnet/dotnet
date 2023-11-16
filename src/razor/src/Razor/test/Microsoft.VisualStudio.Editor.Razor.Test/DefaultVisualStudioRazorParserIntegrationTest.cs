@@ -521,6 +521,8 @@ public class DefaultVisualStudioRazorParserIntegrationTest : ProjectSnapshotMana
         await RunTypeKeywordTestAsync("class");
     }
 
+    protected override bool EnableSpanEditHandlers => true;
+
     private void VerifyPartialParseTree(TestParserManager manager, string content, string expectedCode = null)
     {
         if (expectedCode != null)
@@ -582,6 +584,8 @@ public class DefaultVisualStudioRazorParserIntegrationTest : ProjectSnapshotMana
             {
                 builder.AddTagHelpers(tagHelpers);
             }
+
+            builder.Features.Add(new DefaultVisualStudioRazorParser.VisualStudioEnableTagHelpersFeature());
         });
 
         return new TestProjectSnapshotProjectEngineFactory()

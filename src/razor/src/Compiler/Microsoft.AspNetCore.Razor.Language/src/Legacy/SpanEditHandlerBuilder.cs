@@ -18,7 +18,6 @@ internal sealed class SpanEditHandlerBuilder
     private readonly SpanEditHandler? _defaultLanguageEditHandler;
 
     private SpanEditHandler? _currentInstance;
-    private AcceptedCharactersInternal _acceptedCharacters;
     private Func<string, IEnumerable<SyntaxToken>>? _tokenizer;
     private Func<AcceptedCharactersInternal, Func<string, IEnumerable<SyntaxToken>>, SpanEditHandler>? _factory;
 
@@ -30,19 +29,6 @@ internal sealed class SpanEditHandlerBuilder
             _defaultLanguageEditHandler = SpanEditHandler.CreateDefault(_defaultLanguageTokenizer, AcceptedCharactersInternal.Any);
         }
         Reset();
-    }
-
-    public AcceptedCharactersInternal AcceptedCharacters
-    {
-        get => _acceptedCharacters;
-        set
-        {
-            if (_acceptedCharacters != value)
-            {
-                _acceptedCharacters = value;
-                _currentInstance = null;
-            }
-        }
     }
 
     public Func<string, IEnumerable<SyntaxToken>>? Tokenizer
@@ -71,21 +57,19 @@ internal sealed class SpanEditHandlerBuilder
         }
     }
 
-    public SpanEditHandler Build()
+    public SpanEditHandler Build(AcceptedCharactersInternal acceptedCharacters)
     {
-        Debug.Assert(_currentInstance is null ||
-            (_currentInstance.AcceptedCharacters == AcceptedCharacters &&
-             _currentInstance.Tokenizer == Tokenizer));
+        Debug.Assert(_currentInstance is null || _currentInstance.Tokenizer == Tokenizer);
         return _currentInstance ??= CreateHandler();
 
         SpanEditHandler CreateHandler()
         {
             if (Factory is not null)
             {
-                return Factory(AcceptedCharacters, Tokenizer ?? DefaultTokenizer);
+                return Factory(acceptedCharacters, Tokenizer ?? DefaultTokenizer);
             }
 
-            if (AcceptedCharacters == AcceptedCharactersInternal.Any)
+            if (acceptedCharacters == AcceptedCharactersInternal.Any)
             {
                 if (Tokenizer is null)
                 {
@@ -100,7 +84,7 @@ internal sealed class SpanEditHandlerBuilder
 
             return new SpanEditHandler
             {
-                AcceptedCharacters = AcceptedCharacters,
+                AcceptedCharacters = acceptedCharacters,
                 Tokenizer = Tokenizer ?? DefaultTokenizer
             };
         }
@@ -108,7 +92,6 @@ internal sealed class SpanEditHandlerBuilder
 
     public void Reset()
     {
-        AcceptedCharacters = AcceptedCharactersInternal.Any;
         Tokenizer = null;
         Factory = null;
         _currentInstance = null;

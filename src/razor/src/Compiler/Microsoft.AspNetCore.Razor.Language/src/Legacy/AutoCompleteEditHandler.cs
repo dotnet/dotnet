@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -36,7 +34,7 @@ internal class AutoCompleteEditHandler : SpanEditHandler
 
     public required bool AutoCompleteAtEndOfSpan { get; init; }
 
-    public string AutoCompleteString => _autoCompleteStringAccessor.CanAcceptCloseBrace ? "}" : null;
+    public string? AutoCompleteString => _autoCompleteStringAccessor.CanAcceptCloseBrace ? "}" : null;
 
     protected override PartialParseResultInternal CanAcceptChange(SyntaxNode target, SourceChange change)
     {
@@ -83,7 +81,7 @@ internal class AutoCompleteEditHandler : SpanEditHandler
             {
                 // Throw if the value is not set.
                 Debug.Assert(canCompleteBrace is not null);
-                return canCompleteBrace.Value;
+                return canCompleteBrace!.Value;
             }
             set
             {

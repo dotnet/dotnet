@@ -24,6 +24,8 @@ public class RazorSyntaxTreePartialParserTest : ToolingParserTestBase
     {
     }
 
+    protected override bool EnableSpanEditHandlers => true;
+
     public static TheoryData TagHelperPartialParseRejectData
     {
         get
@@ -409,6 +411,8 @@ public class RazorSyntaxTreePartialParserTest : ToolingParserTestBase
             {
                 builder.AddTagHelpers(tagHelpers);
             }
+
+            builder.Features.Add(new DefaultVisualStudioRazorParser.VisualStudioEnableTagHelpersFeature());
         });
 
         return projectEngine;

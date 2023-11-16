@@ -87,6 +87,16 @@
         <target state="translated">Formatuj według typu</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_SnippetsAll">
+        <source>All</source>
+        <target state="translated">Wszystkie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_SnippetsCustom">
+        <source>Custom</source>
+        <target state="translated">Niestandardowe</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_SnippetsDescription">
         <source>What snippets to include in a razor file. If set to custom, only snippets that are not included with Visual Studio will be shown. </source>
         <target state="translated">Jakie fragmenty kodu należy uwzględnić w pliku Razor. Jeśli zostanie ustawiona wartość niestandardowa, będą wyświetlane tylko fragmenty kodu, które nie są dołączone do programu Visual Studio. </target>
@@ -95,6 +105,11 @@
       <trans-unit id="Setting_SnippetsDisplayName">
         <source>Included Snippets</source>
         <target state="translated">Uwzględnione fragmenty kodu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_SnippetsNone">
+        <source>None</source>
+        <target state="translated">Brak</target>
         <note />
       </trans-unit>
       <trans-unit id="Typing">

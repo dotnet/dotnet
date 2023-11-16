@@ -289,7 +289,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 case ParserState.MarkupComment:
                 case ParserState.CData:
                     ParseMarkupNode(builder, ParseMode.MarkupInCodeBlock);
-                    editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+                    SetAcceptedCharacters(AcceptedCharactersInternal.None);
                     builder.Add(OutputAsMarkupLiteral());
                     break;
                 default:
@@ -374,7 +374,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 if (isOuterTagWellFormed)
                 {
                     // Completed tags have no accepted characters inside blocks.
-                    editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+                    SetAcceptedCharacters(AcceptedCharactersInternal.None);
                 }
             }
         }
@@ -393,7 +393,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         Assert(SyntaxKind.Transition);
 
         AcceptAndMoveNext();
-        editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+        SetAcceptedCharacters(AcceptedCharactersInternal.None);
         chunkGenerator = SpanChunkGenerator.Null;
         var transition = GetNodeWithEditHandler(SyntaxFactory.MarkupTransition(Output(), chunkGenerator));
         builder.Add(transition);
@@ -429,8 +429,12 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         // First, signal to code parser that whitespace is significant to us.
         var old = Context.WhiteSpaceIsSignificantToAncestorBlock;
         Context.WhiteSpaceIsSignificantToAncestorBlock = true;
-        editHandlerBuilder.Reset();
-        editHandlerBuilder.Tokenizer = LanguageTokenizeString;
+        SetAcceptedCharacters(AcceptedCharactersInternal.Any);
+        if (editHandlerBuilder != null)
+        {
+            editHandlerBuilder.Reset();
+            editHandlerBuilder.Tokenizer = LanguageTokenizeString;
+        }
 
         // Now parse until a new line.
         do
@@ -445,7 +449,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         if (!EndOfFile && CurrentToken.Kind == SyntaxKind.NewLine)
         {
             AcceptAndMoveNext();
-            editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+            SetAcceptedCharacters(AcceptedCharactersInternal.None);
         }
         PutCurrentBack();
         Context.WhiteSpaceIsSignificantToAncestorBlock = old;
@@ -682,7 +686,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 }
 
                 // Completed tags in code blocks have no accepted characters.
-                editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+                SetAcceptedCharacters(AcceptedCharactersInternal.None);
 
                 if (tagMode != MarkupTagMode.SelfClosing && IsVoidElement(tagName))
                 {
@@ -778,7 +782,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 }
 
                 closeAngleToken = EatCurrentToken();
-                editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+                SetAcceptedCharacters(AcceptedCharactersInternal.None);
             }
             else
             {
@@ -887,7 +891,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 if (At(SyntaxKind.CloseAngle))
                 {
                     // Completed tags in code blocks have no accepted characters.
-                    editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+                    SetAcceptedCharacters(AcceptedCharactersInternal.None);
                 }
             }
 
@@ -933,13 +937,13 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                     RazorDiagnosticFactory.CreateParsing_TextTagCannotContainAttributes(
                         new SourceSpan(textLocation, contentLength: 4 /* text */)));
 
-                editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Any;
+                SetAcceptedCharacters(AcceptedCharactersInternal.Any);
                 RecoverTextTag(out var miscContent, out closeAngleToken);
                 miscAttributeBuilder.Add(miscContent);
             }
             else
             {
-                editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+                SetAcceptedCharacters(AcceptedCharactersInternal.None);
                 closeAngleToken = EatCurrentToken();
             }
 
@@ -1250,12 +1254,12 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                         new LocationTagged<string>(string.Concat(prefixTokens.Select(s => s.Content)), prefixStart),
                         new LocationTagged<string>(CurrentToken.Content, CurrentStart));
                     AcceptAndMoveNext();
-                    editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+                    SetAcceptedCharacters(AcceptedCharactersInternal.None);
                     markupBuilder.Add(OutputAsMarkupLiteral());
 
                     chunkGenerator = SpanChunkGenerator.Null;
                     AcceptAndMoveNext();
-                    editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+                    SetAcceptedCharacters(AcceptedCharactersInternal.None);
                     markupBuilder.Add(OutputAsMarkupEphemeralLiteral());
 
                     var markupBlock = SyntaxFactory.MarkupBlock(markupBuilder.ToList());
@@ -1410,7 +1414,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 }
             }
 
-            editHandlerBuilder.AcceptedCharacters = endTagAcceptedCharacters;
+            SetAcceptedCharacters(endTagAcceptedCharacters);
 
             endTag = SyntaxFactory.MarkupEndTag(
                 openAngleToken,
@@ -1525,10 +1529,10 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             AcceptAndMoveNext();
             AcceptAndMoveNext();
             AcceptAndMoveNext();
-            editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+            SetAcceptedCharacters(AcceptedCharactersInternal.None);
             htmlCommentBuilder.Add(OutputAsMarkupLiteral());
 
-            editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Whitespace;
+            SetAcceptedCharacters(AcceptedCharactersInternal.Whitespace);
             while (!EndOfFile)
             {
                 ParseMarkupNodes(htmlCommentBuilder, ParseMode.Text, t => t.Kind == SyntaxKind.DoubleHyphen);
@@ -1537,13 +1541,13 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 if (At(SyntaxKind.CloseAngle))
                 {
                     // Output the content in the comment block as a separate markup
-                    editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Whitespace;
+                    SetAcceptedCharacters(AcceptedCharactersInternal.Whitespace);
                     htmlCommentBuilder.Add(OutputAsMarkupLiteral());
 
                     // This is the end of a comment block
                     Accept(lastDoubleHyphen);
                     AcceptAndMoveNext();
-                    editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+                    SetAcceptedCharacters(AcceptedCharactersInternal.None);
                     htmlCommentBuilder.Add(OutputAsMarkupLiteral());
                     var commentBlock = SyntaxFactory.MarkupCommentBlock(htmlCommentBuilder.ToList());
                     builder.Add(commentBlock);
@@ -1732,7 +1736,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             }
         }
         Debug.Assert(EndOfFile);
-        editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Any;
+        SetAcceptedCharacters(AcceptedCharactersInternal.Any);
         return false;
     }
 
@@ -2163,12 +2167,17 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                token.Kind == SyntaxKind.DoubleQuote;
     }
 
-    private void DefaultMarkupSpanContext(SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator? generator)
+    private void DefaultMarkupSpanContext(SpanEditHandlerBuilder? editHandlerBuilder, ref ISpanChunkGenerator? generator)
     {
         generator = MarkupChunkGenerator.Instance;
+        SetAcceptedCharacters(AcceptedCharactersInternal.Any);
+        if (editHandlerBuilder == null)
+        {
+            return;
+        }
+
         editHandlerBuilder.Reset();
         editHandlerBuilder.Tokenizer = LanguageTokenizeString;
-        editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Any;
     }
 
     private Syntax.GreenNode? GetLastSpan(RazorSyntaxNode node)

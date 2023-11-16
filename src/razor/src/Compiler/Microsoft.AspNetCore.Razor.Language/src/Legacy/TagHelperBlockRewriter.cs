@@ -833,18 +833,19 @@ internal static class TagHelperBlockRewriter
         private SyntaxNode ConfigureNonStringAttribute(SyntaxNode node)
         {
             var context = node.GetEditHandler();
-            var builder = new SpanEditHandlerBuilder(defaultLanguageTokenizer: null)
-            {
-                Tokenizer = context?.Tokenizer,
-                AcceptedCharacters = AcceptedCharactersInternal.AnyExceptNewline,
-                Factory = (acceptedCharacters, tokenizer) => new ImplicitExpressionEditHandler
+            var builder = _enableSpanEditHandlers
+                ? new SpanEditHandlerBuilder(defaultLanguageTokenizer: null)
                 {
-                    Tokenizer = tokenizer,
-                    AcceptedCharacters = acceptedCharacters,
-                    AcceptTrailingDot = true,
-                    Keywords = CSharpCodeParser.DefaultKeywords
+                    Tokenizer = context?.Tokenizer,
+                    Factory = (acceptedCharacters, tokenizer) => new ImplicitExpressionEditHandler
+                    {
+                        Tokenizer = tokenizer,
+                        AcceptedCharacters = acceptedCharacters,
+                        AcceptTrailingDot = true,
+                        Keywords = CSharpCodeParser.DefaultKeywords
+                    }
                 }
-            };
+                : null;
 
             var originalGenerator = node.GetChunkGenerator();
             var newGenerator = originalGenerator ?? SpanChunkGenerator.Null;
@@ -879,7 +880,7 @@ internal static class TagHelperBlockRewriter
                 };
             }
 
-            context = builder.Build();
+            context = builder?.Build(AcceptedCharactersInternal.AnyExceptNewline);
 
             return node.WithEditHandler(context);
         }

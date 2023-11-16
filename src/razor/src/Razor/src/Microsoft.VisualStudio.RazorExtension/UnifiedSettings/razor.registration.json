@@ -1,0 +1,126 @@
+{
+  "properties": {
+    /*
+    * Migration works by using the previous path that we stored in the VsUserSettingsRegister. This comes
+    * from the OptionsStorage strings related to the option with the form of "{collection}\{name}".
+    * Names much match exactly for the setting to work.
+    */
+    "textEditor.razor.advanced.formatOnType": {
+      "type": "boolean",
+      "default": true,
+      "title": "@Setting_FormattingOnTypeDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "description": "@Setting_FormattingOnTypeDescription;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "migration": {
+        "pass":{
+          "input": {
+            "store": "VsUserSettingsRegistry",
+            "path": "Razor\\FormatOnType"
+          }
+        }
+      }
+    },
+    "textEditor.razor.advanced.autoClosingTags": {
+      "type": "boolean",
+      "default": true,
+      "title": "@Setting_AutoClosingTagsDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "description": "@Setting_AutoClosingTagsDescription;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "migration": {
+        "pass":{
+          "input": {
+            "store": "VsUserSettingsRegistry",
+            "path": "Razor\\AutoClosingTags"
+          }
+        }
+      }
+    },
+    "textEditor.razor.advanced.autoInsertAttributeQuotes": {
+      "type": "boolean",
+      "default": true,
+      "title": "@Setting_AutoInsertAttributeQuotesDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "description": "@Setting_AutoInsertAttributeQuotesDescription;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "migration": {
+        "pass":{
+          "input": {
+            "store": "VsUserSettingsRegistry",
+            "path": "Razor\\AutoInsertAttributeQuotes"
+          }
+        }
+      }
+    },
+    "textEditor.razor.advanced.colorBackground": {
+      "type": "boolean",
+      "default": false,
+      "title": "@Setting_ColorBackgroundDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "description": "@Setting_ColorBackgroundDescription;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "migration": {
+        "pass":{
+          "input": {
+            "store": "VsUserSettingsRegistry",
+            "path": "Razor\\ColorBackground"
+          }
+        }
+      }
+    },
+    "textEditor.razor.advanced.commitElementsWithSpace": {
+      "type": "boolean",
+      "default": true,
+      "title": "@Setting_CommitElementsWithSpaceDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "description": "@Setting_CommitElementsWithSpaceDescription;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "migration": {
+        "pass":{
+          "input": {
+            "store": "VsUserSettingsRegistry",
+            "path": "Razor\\CommitElementsWithSpace"
+          }
+        }
+      }
+    },
+    "textEditor.razor.advanced.snippets": {
+      "type": "string",
+      "default": "all",
+      "enum": [
+        "all",
+        "custom",
+        "none"
+      ],
+      "enumItemLabels": [
+        "@Setting_SnippetsAll;{13b72f58-279e-49e0-a56d-296be02f0805}",
+        "@Setting_SnippetsCustom;{13b72f58-279e-49e0-a56d-296be02f0805}",
+        "@Setting_SnippetsNone;{13b72f58-279e-49e0-a56d-296be02f0805}"
+      ],
+      "title": "@Setting_SnippetsDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "description": "@Setting_SnippetsDescription;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "migration": {
+        "enumIntegerToString": {
+          "input": {
+            "store": "VsUserSettingsRegistry",
+            "path": "Razor\\Snippets"
+          },
+          "map": [
+            {
+              "result": "all",
+              "match": 0
+            },
+            {
+              "result": "custom",
+              "match": 1
+            },
+            {
+              "result": "none",
+              "match": 2
+            }
+          ]
+        }
+      }
+    }
+  },
+  "categories": {
+    "textEditor.razor": {
+      "title": "@110;{13b72f58-279e-49e0-a56d-296be02f0805}" // Razor (ASP.NET Core)
+    },
+    "textEditor.razor.advanced": {
+      "title": "@1050;{13b72f58-279e-49e0-a56d-296be02f0805}", // Advanced
+      "legacyOptionPageId": "8EBB7F64-5BF7-49E6-9023-7CD7B9912203"
+    }
+  }
+}

@@ -87,6 +87,16 @@
         <target state="translated">Mettre en forme durant la frappe</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_SnippetsAll">
+        <source>All</source>
+        <target state="translated">Tout</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_SnippetsCustom">
+        <source>Custom</source>
+        <target state="translated">Personnalisé</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_SnippetsDescription">
         <source>What snippets to include in a razor file. If set to custom, only snippets that are not included with Visual Studio will be shown. </source>
         <target state="translated">Extraits de code à inclure dans un fichier Razor. Si la valeur est personnalisée, seuls les extraits de code qui ne sont pas inclus dans Visual Studio sont affichés. </target>
@@ -95,6 +105,11 @@
       <trans-unit id="Setting_SnippetsDisplayName">
         <source>Included Snippets</source>
         <target state="translated">Extraits de code inclus</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_SnippetsNone">
+        <source>None</source>
+        <target state="translated">Aucune</target>
         <note />
       </trans-unit>
       <trans-unit id="Typing">
