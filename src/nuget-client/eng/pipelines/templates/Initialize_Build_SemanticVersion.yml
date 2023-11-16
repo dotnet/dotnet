@@ -8,12 +8,6 @@ steps:
       InitializeAllTestsToPending -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -CommitSha $(Build.SourceVersion)
   condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"
 
-- task: PublishPipelineArtifact@1
-  displayName: "Save build YAML"
-  inputs:
-    artifactName: yaml
-    targetPath: "$(Build.Repository.LocalPath)\\eng\\pipelines"
-
 - task: PowerShell@1
   displayName: "Set Semantic Version"
   name: "setsemanticversion"

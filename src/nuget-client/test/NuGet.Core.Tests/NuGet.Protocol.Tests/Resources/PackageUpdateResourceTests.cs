@@ -16,6 +16,7 @@ using Xunit;
 
 namespace NuGet.Protocol.Tests
 {
+    [UseCulture("en-US")] // We are asserting exception messages in English
     public class PackageUpdateResourceTests
     {
         private const string ApiKeyHeader = "X-NuGet-ApiKey";
@@ -752,8 +753,7 @@ namespace NuGet.Protocol.Tests
                         log: NullLogger.Instance));
 
                 // Assert
-                Assert.True(ex.Message.Contains("Response status code does not indicate success: 500 (Internal Server Error)"));
-
+                Assert.Contains("Response status code does not indicate success: 500 (Internal Server Error)", ex.Message);
             }
         }
 

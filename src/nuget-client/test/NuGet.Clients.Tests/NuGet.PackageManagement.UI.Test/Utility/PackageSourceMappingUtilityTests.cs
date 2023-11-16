@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Moq;
+using NuGet.Common;
 using NuGet.Configuration;
+using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Test.Utility;
@@ -57,7 +59,8 @@ namespace NuGet.PackageManagement.UI.Test.Utility
                     enabledSourceRepositories: new List<SourceRepository>(capacity: 2)
                     {
                         new SourceRepository(new PackageSource("sourceA"), new List<INuGetResourceProvider>()),
-                    });
+                    },
+                    logger: Mock.Of<INuGetUILogger>());
 
                 // Assert
                 Assert.Equal(1, newSourceMappings.Count);
@@ -134,7 +137,8 @@ namespace NuGet.PackageManagement.UI.Test.Utility
                     added,
                     mockPackageSourceMapping.Object,
                     globalPackageFolders,
-                    enabledSourceRepositories);
+                    enabledSourceRepositories,
+                    logger: Mock.Of<INuGetUILogger>());
 
                 // Assert
                 Assert.Equal(1, newSourceMappings.Count);
@@ -218,7 +222,8 @@ namespace NuGet.PackageManagement.UI.Test.Utility
                     added,
                     mockPackageSourceMapping.Object,
                     globalPackageFolders,
-                    enabledSourceRepositories);
+                    enabledSourceRepositories,
+                    logger: Mock.Of<INuGetUILogger>());
 
                 // Assert
                 Assert.Equal(1, newSourceMappings.Count);
@@ -232,17 +237,30 @@ namespace NuGet.PackageManagement.UI.Test.Utility
         /// Install package `a` which is not currently mapped.
         /// Selected source: `sourceA`
         /// Enabled sources: `sourceA`, `sourceB`.
-        /// Added packages are: `a`, `b`, `c`, `d`.
+        /// Added packages are: `a`, `b`, `c`, `d`, `e`, `f`.
         /// Source mappings exist for: `a`, `b`, `d`.
-        /// Transitive dependency `c` exists in the GPF, but the indicated package source `sourceC` is not enabled so an exception is thrown.
+        /// Transitive dependency `c`, `e`, `f` exist in the GPF, but the indicated package source `sourceC` is not enabled so
+        /// we log NU1110 for each.
         /// </summary>
         [Fact]
-        public async Task AddNewSourceMappingsFromAddedPackages_TransitiveExistsInGPFToNotEnabledSource_Throws()
+        public async Task AddNewSourceMappingsFromAddedPackages_TransitiveExistsInGPFToNotEnabledSource_LogsAndThrowsNU1110()
         {
             // Arrange
             string topLevelPackageId = "a";
             string selectedSourceName = "sourceA";
+
+            List<ILogMessage> loggedMessages = new(capacity: 10);
+            Mock<INuGetUILogger> mockLogger = new Mock<INuGetUILogger>();
+            mockLogger.Setup(logger => logger.Log(It.IsAny<ILogMessage>()))
+                .Callback<ILogMessage>(loggedMessage =>
+                {
+                    loggedMessages.Add(loggedMessage);
+                });
+            INuGetUILogger logger = mockLogger.Object;
+
             AccessiblePackageIdentity packageC = ConvertToAccessiblePackageIdentity("c");
+            AccessiblePackageIdentity packageE = ConvertToAccessiblePackageIdentity("e");
+            AccessiblePackageIdentity packageF = ConvertToAccessiblePackageIdentity("f");
 
             // Existing Package Source Mappings.
             var dictionary = new Dictionary<string, IReadOnlyList<string>>
@@ -253,6 +271,8 @@ namespace NuGet.PackageManagement.UI.Test.Utility
             var patterns = new ReadOnlyDictionary<string, IReadOnlyList<string>>(dictionary);
             var mockPackageSourceMapping = new Mock<PackageSourceMapping>(patterns);
             var contextPackageC = new SimpleTestPackageContext(packageC);
+            var contextPackageE = new SimpleTestPackageContext(packageE);
+            var contextPackageF = new SimpleTestPackageContext(packageF);
 
             // Configure packages which are added by preview restore and may need new Package Source Mappings.
             List<AccessiblePackageIdentity> added = new List<AccessiblePackageIdentity>()
@@ -261,6 +281,8 @@ namespace NuGet.PackageManagement.UI.Test.Utility
                 ConvertToAccessiblePackageIdentity("b"),
                 packageC,
                 ConvertToAccessiblePackageIdentity("d"),
+                packageE,
+                packageF
             };
 
             SourceRepository sourceA = CreateSourceRepository("sourceA");
@@ -279,7 +301,9 @@ namespace NuGet.PackageManagement.UI.Test.Utility
             await SimpleTestPackageUtility.CreateFolderFeedV3WithNupkgMetadataAsync(
                 root: gpfContext.UserPackagesFolder,
                 nupkgMetadataSource: sourceC.PackageSource.Source,
-                contextPackageC);
+                contextPackageC,
+                contextPackageE,
+                contextPackageF);
 
             string nupkgMetadataSourceName = sourceC.PackageSource.Name;
 
@@ -293,21 +317,41 @@ namespace NuGet.PackageManagement.UI.Test.Utility
             // Repeat the Act to simulate multiple ProjectActions to ensure a unique resulting set of packages is created.
             for (int i = 0; i < 2; i++)
             {
+                // Reset logger for each project.
+                loggedMessages.Clear();
+
                 // Act
-                var exception = Assert.Throws<ApplicationException>(
-                    () => PackageSourceMappingUtility.AddNewSourceMappingsFromAddedPackages(
-                        ref newSourceMappings,
-                        selectedSourceName,
-                        topLevelPackageId,
-                        added,
-                        mockPackageSourceMapping.Object,
-                        globalPackageFolders,
-                        enabledSourceRepositories));
+                bool isSuccessful = PackageSourceMappingUtility.AddNewSourceMappingsFromAddedPackages(
+                    ref newSourceMappings,
+                    selectedSourceName,
+                    topLevelPackageId,
+                    added,
+                    mockPackageSourceMapping.Object,
+                    globalPackageFolders,
+                    enabledSourceRepositories,
+                    logger);
 
                 // Assert
-                var expectedExceptionMessage = $"The package `{contextPackageC.Id}` is available in the Global packages folder," +
-                    $" but the source it came from `{sourceC.PackageSource.Source}` is not one of this solution's configured sources.";
-                Assert.Equal(expectedExceptionMessage, exception.Message);
+                int expectedErrorCount = 3;
+
+                var expectedExceptionMessages = new string[expectedErrorCount];
+                expectedExceptionMessages[0] = $"The package `{contextPackageC.Id}` is available in the Global packages folder," +
+                    $" but the source it came from `{sourceC.PackageSource.Source}` is not one of the configured sources.";
+                expectedExceptionMessages[1] = $"The package `{contextPackageE.Id}` is available in the Global packages folder," +
+                    $" but the source it came from `{sourceC.PackageSource.Source}` is not one of the configured sources.";
+                expectedExceptionMessages[2] = $"The package `{contextPackageF.Id}` is available in the Global packages folder," +
+                    $" but the source it came from `{sourceC.PackageSource.Source}` is not one of the configured sources.";
+
+                Assert.False(isSuccessful);
+                Assert.Equal(expectedErrorCount, loggedMessages.Count);
+
+                for (int j = 0; j < expectedErrorCount; j++)
+                {
+                    ILogMessage loggedMessage = loggedMessages[j];
+                    Assert.Equal(LogLevel.Error, loggedMessage.Level);
+                    Assert.Equal(NuGetLogCode.NU1110, loggedMessage.Code);
+                    Assert.Equal(expectedExceptionMessages[j], loggedMessage.Message);
+                }
             }
         }
 

@@ -203,23 +203,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
-        public async Task GetDeprecationMetadataAsync_WhenDeprecationMetadataExists_ReturnsDeprecationMetadata()
-        {
-            using (NuGetPackageSearchService searchService = SetupSearchService())
-            {
-                PackageDeprecationMetadataContextInfo deprecationMetadata = await searchService.GetDeprecationMetadataAsync(
-                    new PackageIdentity("microsoft.extensions.logging.abstractions", new Versioning.NuGetVersion("5.0.0-rc.2.20475.5")),
-                    new List<PackageSourceContextInfo> { PackageSourceContextInfo.Create(_sourceRepository.PackageSource) },
-                    includePrerelease: true,
-                    CancellationToken.None);
-
-                Assert.NotNull(deprecationMetadata);
-                Assert.Equal("This is deprecated.", deprecationMetadata.Message);
-                Assert.Equal("Legacy", deprecationMetadata.Reasons.First());
-            }
-        }
-
-        [Fact]
         public async Task GetPackageVersionsAsync_WhenPackageVersionsExist_ReturnsPackageVersions()
         {
             using (NuGetPackageSearchService searchService = SetupSearchService())

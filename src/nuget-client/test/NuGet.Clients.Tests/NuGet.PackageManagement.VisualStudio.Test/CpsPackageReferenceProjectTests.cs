@@ -2288,6 +2288,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
 
         [Fact]
+        [UseCulture("en-US")] // We are asserting exception messages in English
         public async Task TestPackageManager_CancellationTokenPassed()
         {
             using (var testDirectory = TestDirectory.Create())

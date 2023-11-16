@@ -32,38 +32,28 @@ public class AuditUtilityTests
     private static VersionRange UpToV2 = new VersionRange(maxVersion: new NuGetVersion(2, 0, 0), includeMaxVersion: false);
 
     [Theory]
-    [InlineData(null, nameof(AuditUtility.EnabledValue.ImplicitOptIn))]
-    [InlineData("", nameof(AuditUtility.EnabledValue.ImplicitOptIn))]
-    [InlineData("default", nameof(AuditUtility.EnabledValue.ImplicitOptIn))]
-    [InlineData("true", nameof(AuditUtility.EnabledValue.ExplicitOptIn))]
-    [InlineData("enable", nameof(AuditUtility.EnabledValue.ExplicitOptIn))]
-    [InlineData("TRUE", nameof(AuditUtility.EnabledValue.ExplicitOptIn))]
-    [InlineData("false", nameof(AuditUtility.EnabledValue.ExplicitOptOut))]
-    [InlineData("disable", nameof(AuditUtility.EnabledValue.ExplicitOptOut))]
-    [InlineData("FALSE", nameof(AuditUtility.EnabledValue.ExplicitOptOut))]
-    [InlineData("invalid", nameof(AuditUtility.EnabledValue.Invalid))]
-    public void ParseEnableValue_WithValue_ReturnsExpectedEnum(string input, string expected)
+    [InlineData(null, true)]
+    [InlineData("", true)]
+    [InlineData("default", true)]
+    [InlineData("true", true)]
+    [InlineData("enable", true)]
+    [InlineData("TRUE", true)]
+    [InlineData("false", false)]
+    [InlineData("disable", false)]
+    [InlineData("FALSE", false)]
+    [InlineData("invalid", true, true)]
+    public void ParseEnableValue_WithValue_ReturnsExpected(string input, bool expected, bool expectLog = false)
     {
         // Arrange
-        AuditUtility.EnabledValue expectedValue = (AuditUtility.EnabledValue)Enum.Parse(typeof(AuditUtility.EnabledValue), expected);
         string projectPath = "my.csproj";
-        TestLogger? logger = expectedValue == AuditUtility.EnabledValue.Invalid
-            ? new TestLogger()
-            : null;
+        TestLogger logger = new TestLogger();
 
         // Act
-        AuditUtility.EnabledValue actual = AuditUtility.ParseEnableValue(input, projectPath, logger ?? NullLogger.Instance);
+        bool actual = AuditUtility.ParseEnableValue(input, projectPath, logger);
 
         // Assert
-        actual.Should().Be(expectedValue);
-
-        if (logger is not null)
-        {
-            logger.Errors.Should().Be(1);
-            RestoreLogMessage message = logger.LogMessages.Cast<RestoreLogMessage>().Single();
-            message.Code.Should().Be(NuGetLogCode.NU1014);
-            message.Level.Should().Be(LogLevel.Error);
-        }
+        actual.Should().Be(expected);
+        logger.LogMessages.Cast<RestoreLogMessage>().Count(m => m.Code == NuGetLogCode.NU1014).Should().Be(expectLog ? 1 : 0);
     }
 
     [Fact]
@@ -388,7 +378,6 @@ public class AuditUtilityTests
 
         // Act
         var audit = new AuditUtility(
-            AuditUtility.ParseEnableValue(null, "/path/proj.csproj", log),
             restoreAuditProperties: null,
             "/path/proj.csproj",
             graphs,
@@ -473,8 +462,8 @@ public class AuditUtilityTests
 
         public async Task<AuditUtility> CheckPackageVulnerabilitiesAsync(CancellationToken cancellationToken)
         {
-            AuditUtility.EnabledValue enabled = AuditUtility.ParseEnableValue(Enabled, ProjectFullPath, Log);
-            if (enabled == AuditUtility.EnabledValue.ExplicitOptOut)
+            bool enabled = AuditUtility.ParseEnableValue(Enabled, ProjectFullPath, Log);
+            if (!enabled)
             {
                 throw new InvalidOperationException($"{nameof(Enabled)} must have a value that does not disable NuGetAudit.");
             }
@@ -495,7 +484,7 @@ public class AuditUtilityTests
 
             var vulnProviders = CreateVulnerabilityInformationProviders(_vulnerabilityProviders);
 
-            var audit = new AuditUtility(enabled, restoreAuditProperties, ProjectFullPath, graphs, vulnProviders, Log);
+            var audit = new AuditUtility(restoreAuditProperties, ProjectFullPath, graphs, vulnProviders, Log);
             await audit.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
 
             return audit;

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging;
@@ -166,20 +167,31 @@ namespace NuGet.PackageManagement.UI
             return sourceMappingSourceName;
         }
 
-        internal static void AddNewSourceMappingsFromAddedPackages(
+        /// <summary>
+        /// Builds a dictionary of source mappings to be created based on the <paramref name="added"/> packages.
+        /// </summary>
+        /// <returns>True if successful; false if any error occurred.</returns>
+        internal static bool AddNewSourceMappingsFromAddedPackages(
             ref Dictionary<string, SortedSet<string>>? newSourceMappings,
             string selectedSourceName,
             string topLevelPackageId,
             List<AccessiblePackageIdentity> added,
             PackageSourceMapping packageSourceMapping,
             IReadOnlyList<SourceRepository>? globalPackageFolders,
-            IReadOnlyList<SourceRepository> enabledSourceRepositories)
+            IReadOnlyList<SourceRepository> enabledSourceRepositories,
+            INuGetUILogger logger)
         {
-            if (selectedSourceName is null || added.Count == 0 || packageSourceMapping is null)
+            if (logger is null)
             {
-                return;
+                throw new ArgumentNullException(nameof(logger));
             }
 
+            if (selectedSourceName is null || added.Count == 0 || packageSourceMapping is null)
+            {
+                return true;
+            }
+
+            bool isSuccessful = true;
             string? globalPackageFolderName = globalPackageFolders?.Where(folder => folder.PackageSource.IsLocal).FirstOrDefault()?.PackageSource.Name;
             VersionFolderPathResolver? resolver = globalPackageFolderName != null ? new(globalPackageFolderName) : null;
 
@@ -216,11 +228,15 @@ namespace NuGet.PackageManagement.UI
                         }
                         else // GPF source is not enabled for this solution, so this is an error.
                         {
+                            isSuccessful = false;
+
                             string formattedError = string.Format(CultureInfo.CurrentCulture,
                                 Resources.Error_SourceMapping_GPF_NotEnabled,
                                 addedPackage.Id,
                                 sourceFoundInGlobalPackagesFolder);
-                            throw new ApplicationException(formattedError);
+                            LogMessage logError = new LogMessage(LogLevel.Error, formattedError, NuGetLogCode.NU1110);
+
+                            logger.Log(logError);
                         }
                     }
                     else // The transitive dependency doesn't exist in GPF, so attempt to map to the selected source from the UI.
@@ -251,6 +267,8 @@ namespace NuGet.PackageManagement.UI
                     newSourceMappings.Add(sourceNameToMap, new SortedSet<string>(new List<string>(capacity: added.Count) { addedPackage.Id }));
                 }
             }
+
+            return isSuccessful;
         }
     }
 }

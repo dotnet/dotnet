@@ -772,7 +772,7 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package `{0}` is available in the Global packages folder, but the source it came from `{1}` is not one of this solution&apos;s configured sources..
+        ///   Looks up a localized string similar to The package `{0}` is available in the Global packages folder, but the source it came from `{1}` is not one of the configured sources..
         /// </summary>
         public static string Error_SourceMapping_GPF_NotEnabled {
             get {

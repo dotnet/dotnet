@@ -21,7 +21,6 @@ namespace NuGet.Commands.Restore.Utility
 {
     internal class AuditUtility
     {
-        private readonly EnabledValue _auditEnabled;
         private readonly ProjectModel.RestoreAuditProperties? _restoreAuditProperties;
         private readonly string _projectFullPath;
         private readonly IEnumerable<RestoreTargetGraph> _targetGraphs;
@@ -48,14 +47,12 @@ namespace NuGet.Commands.Restore.Utility
         internal int SourcesWithVulnerabilityData { get; private set; }
 
         public AuditUtility(
-            EnabledValue auditEnabled,
             ProjectModel.RestoreAuditProperties? restoreAuditProperties,
             string projectFullPath,
             IEnumerable<RestoreTargetGraph> graphs,
             IReadOnlyList<IVulnerabilityInformationProvider> vulnerabilityInformationProviders,
             ILogger logger)
         {
-            _auditEnabled = auditEnabled;
             _restoreAuditProperties = restoreAuditProperties;
             _projectFullPath = projectFullPath;
             _targetGraphs = graphs;
@@ -401,50 +398,28 @@ namespace NuGet.Commands.Restore.Utility
             return NuGetAuditMode.Unknown;
         }
 
-        internal enum EnabledValue
-        {
-            Invalid,
-            ImplicitOptIn,
-            ExplicitOptIn,
-            ExplicitOptOut
-        }
-
         // Enum parsing and ToString are a magnitude of times slower than a naive implementation.
-        public static EnabledValue ParseEnableValue(string? value, string projectFullPath, ILogger logger)
+        public static bool ParseEnableValue(string? value, string projectFullPath, ILogger logger)
         {
-            if (string.IsNullOrEmpty(value) || string.Equals(value, "default", StringComparison.OrdinalIgnoreCase))
+            // Earlier versions allowed "enable" and "default" to opt-in
+            if (string.IsNullOrEmpty(value)
+                || string.Equals(value, bool.TrueString, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(value, "enable", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(value, "default", StringComparison.OrdinalIgnoreCase))
             {
-                return EnabledValue.ImplicitOptIn;
-            }
-            if (string.Equals(value, bool.TrueString, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(value, "enable", StringComparison.OrdinalIgnoreCase))
-            {
-                return EnabledValue.ExplicitOptIn;
+                return true;
             }
             if (string.Equals(value, bool.FalseString, StringComparison.OrdinalIgnoreCase)
                 || string.Equals(value, "disable", StringComparison.OrdinalIgnoreCase))
             {
-                return EnabledValue.ExplicitOptOut;
+                return false;
             }
 
             string messageText = string.Format(Strings.Error_InvalidNuGetAuditValue, value, "true, false");
             RestoreLogMessage message = RestoreLogMessage.CreateError(NuGetLogCode.NU1014, messageText);
             message.ProjectPath = projectFullPath;
             logger.Log(message);
-            return EnabledValue.Invalid;
-        }
-
-        // Enum parsing and ToString are a magnitude of times slower than a naive implementation.
-        internal static string GetString(EnabledValue enableAudit)
-        {
-            return enableAudit switch
-            {
-                EnabledValue.Invalid => nameof(EnabledValue.Invalid),
-                EnabledValue.ExplicitOptIn => nameof(EnabledValue.ExplicitOptIn),
-                EnabledValue.ExplicitOptOut => nameof(EnabledValue.ExplicitOptOut),
-                EnabledValue.ImplicitOptIn => nameof(EnabledValue.ImplicitOptIn),
-                _ => enableAudit.ToString()
-            };
+            return true;
         }
 
         // Enum parsing and ToString are a magnitude of times slower than a naive implementation.

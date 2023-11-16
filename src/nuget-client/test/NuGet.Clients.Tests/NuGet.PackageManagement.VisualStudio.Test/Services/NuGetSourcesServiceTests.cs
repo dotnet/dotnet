@@ -20,6 +20,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 {
     using ExceptionUtility = global::Test.Utility.ExceptionUtility;
 
+    [UseCulture("en-US")] // We are asserting exception messages in English
     public class NuGetSourcesServiceTests
     {
         [Fact]

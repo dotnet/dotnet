@@ -139,6 +139,8 @@ function Test-NetCoreConsoleAppRebuildDoesNotDeleteCacheFile {
 }
 
 function Test-NetCoreVSandMSBuildNoOp {
+    [SkipTest('https://github.com/NuGet/Home/issues/13003')]
+    param ()
 
     # Arrange
     $project = New-NetCoreConsoleApp ConsoleApp
@@ -163,6 +165,8 @@ function Test-NetCoreVSandMSBuildNoOp {
 }
 
 function Test-NetCoreTargetFrameworksVSandMSBuildNoOp {
+    [SkipTest('https://github.com/NuGet/Home/issues/13003')]
+    param ()
 
     # Arrange
     $project = New-NetCoreConsoleTargetFrameworksApp ConsoleApp

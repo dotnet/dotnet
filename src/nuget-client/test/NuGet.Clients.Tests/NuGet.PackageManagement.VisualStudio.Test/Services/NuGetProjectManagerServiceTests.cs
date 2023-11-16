@@ -46,6 +46,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace NuGet.PackageManagement.VisualStudio.Test
 {
+    [UseCulture("en-US")] // We are asserting exception messages in English
     [Collection(MockedVS.Collection)]
     public sealed class NuGetProjectManagerServiceTests : MockedVSCollectionTests, IDisposable
     {

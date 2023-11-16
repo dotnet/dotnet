@@ -15,6 +15,7 @@ using Xunit;
 
 namespace NuGet.Packaging.Test
 {
+    [UseCulture("en-US")] // We are asserting exception messages in English
     public class ManifestTest
     {
         [Fact]

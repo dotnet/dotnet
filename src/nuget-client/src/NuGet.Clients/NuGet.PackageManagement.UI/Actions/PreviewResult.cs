@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using NuGet.Common;
 
 namespace NuGet.PackageManagement.UI
 {
@@ -21,6 +22,8 @@ namespace NuGet.PackageManagement.UI
 
         public string Name { get; }
 
+        public NuGetOperationStatus NuGetOperationStatus { get; }
+
         public PreviewResult(
             string projectName,
             IEnumerable<AccessiblePackageIdentity> added,
@@ -31,15 +34,17 @@ namespace NuGet.PackageManagement.UI
             Added = added;
             Deleted = deleted;
             Updated = updated;
+            NuGetOperationStatus = NuGetOperationStatus.Succeeded;
         }
 
-        public PreviewResult(Dictionary<string, SortedSet<string>>? newSourceMappings)
+        public PreviewResult(Dictionary<string, SortedSet<string>>? newSourceMappings, NuGetOperationStatus nuGetOperationStatus)
         {
             Name = Resources.Label_Solution;
             NewSourceMappings = newSourceMappings?.ToImmutableDictionary();
             Added = Enumerable.Empty<AccessiblePackageIdentity>();
             Deleted = Enumerable.Empty<AccessiblePackageIdentity>();
             Updated = Enumerable.Empty<UpdatePreviewResult>();
+            NuGetOperationStatus = nuGetOperationStatus;
         }
     }
 }

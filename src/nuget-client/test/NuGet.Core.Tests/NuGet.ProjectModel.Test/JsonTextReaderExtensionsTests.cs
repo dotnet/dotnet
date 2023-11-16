@@ -10,6 +10,7 @@ using Xunit;
 
 namespace NuGet.ProjectModel.Test
 {
+    [UseCulture("")] // Fix tests failing on systems with non-English locales
     public class JsonTextReaderExtensionsTests
     {
         [Fact]

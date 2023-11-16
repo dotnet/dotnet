@@ -3,8 +3,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Resources;
 using FluentAssertions;
 using Moq;
 using NuGet.Common;
@@ -2351,10 +2353,13 @@ namespace NuGet.Configuration.Test
 
             const string path = "|";
 
+            ResourceManager resourceManager = new ResourceManager("NuGet.Configuration.Resources", typeof(Resources).Assembly);
+            var errorString = resourceManager.GetString("ShowError_ConfigHasInvalidPackageSource", CultureInfo.CurrentCulture);
+            var expectedErrorMessage = string.Format(errorString, NuGetLogCode.NU1006, path, "");
+
             var exception = Assert.Throws<NuGetConfigurationException>(
                 () => Settings.ResolvePathFromOrigin(originDirectoryPath, originFilePath, path));
-
-            Assert.Equal($"{NuGetLogCode.NU1006}: NuGet.Config has an invalid package source value '{path}'. Reason: Illegal characters in path.", exception.Message);
+            Assert.Contains(expectedErrorMessage, exception.Message);
         }
 #endif
 

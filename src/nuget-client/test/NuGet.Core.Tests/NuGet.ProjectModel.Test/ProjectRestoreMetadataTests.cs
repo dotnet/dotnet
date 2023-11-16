@@ -334,6 +334,60 @@ namespace NuGet.ProjectModel.Test
         [InlineData(true, false, false)]
         [InlineData(false, true, false)]
         [InlineData(false, false, true)]
+        public void Equals_WithCentralPackageFloatingVersionsEnabled(bool left, bool right, bool expected)
+        {
+            var leftSide = new ProjectRestoreMetadata
+            {
+                CentralPackageFloatingVersionsEnabled = left
+            };
+            var rightSide = new ProjectRestoreMetadata
+            {
+                CentralPackageFloatingVersionsEnabled = right
+            };
+            AssertEquality(expected, leftSide, rightSide);
+        }
+
+        [Theory]
+        [InlineData(true, true, true)]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, false)]
+        [InlineData(false, false, true)]
+        public void Equals_WithCentralPackageVersionOverrideDisabled(bool left, bool right, bool expected)
+        {
+            var leftSide = new ProjectRestoreMetadata
+            {
+                CentralPackageVersionOverrideDisabled = left
+            };
+            var rightSide = new ProjectRestoreMetadata
+            {
+                CentralPackageVersionOverrideDisabled = right
+            };
+            AssertEquality(expected, leftSide, rightSide);
+        }
+
+        [Theory]
+        [InlineData(true, true, true)]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, false)]
+        [InlineData(false, false, true)]
+        public void Equals_WithCentralPackageTransitivePinningEnabled(bool left, bool right, bool expected)
+        {
+            var leftSide = new ProjectRestoreMetadata
+            {
+                CentralPackageTransitivePinningEnabled = left
+            };
+            var rightSide = new ProjectRestoreMetadata
+            {
+                CentralPackageTransitivePinningEnabled = right
+            };
+            AssertEquality(expected, leftSide, rightSide);
+        }
+
+        [Theory]
+        [InlineData(true, true, true)]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, false)]
+        [InlineData(false, false, true)]
         public void Equals_WithSkipContentFileWrite(bool left, bool right, bool expected)
         {
             var leftSide = new ProjectRestoreMetadata
@@ -579,6 +633,41 @@ namespace NuGet.ProjectModel.Test
         [InlineData(true, false, false)]
         [InlineData(false, true, false)]
         [InlineData(false, false, true)]
+        public void HashCode_WithCentralPackageVersionOverrideDisabled(bool left, bool right, bool expected)
+        {
+            var leftSide = new ProjectRestoreMetadata
+            {
+                CentralPackageVersionOverrideDisabled = left
+            };
+            var rightSide = new ProjectRestoreMetadata
+            {
+                CentralPackageVersionOverrideDisabled = right
+            };
+            AssertHashCode(expected, leftSide, rightSide);
+        }
+        [Theory]
+        [InlineData(true, true, true)]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, false)]
+        [InlineData(false, false, true)]
+        public void HashCode_WithCentralPackageTransitivePinningEnabled(bool left, bool right, bool expected)
+        {
+            var leftSide = new ProjectRestoreMetadata
+            {
+                CentralPackageTransitivePinningEnabled = left
+            };
+            var rightSide = new ProjectRestoreMetadata
+            {
+                CentralPackageTransitivePinningEnabled = right
+            };
+            AssertHashCode(expected, leftSide, rightSide);
+        }
+
+        [Theory]
+        [InlineData(true, true, true)]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, false)]
+        [InlineData(false, false, true)]
         public void HashCode_WithCentralPackageVersionsEnabled(bool left, bool right, bool expected)
         {
             var leftSide = new ProjectRestoreMetadata
@@ -588,6 +677,24 @@ namespace NuGet.ProjectModel.Test
             var rightSide = new ProjectRestoreMetadata
             {
                 CentralPackageVersionsEnabled = right
+            };
+            AssertHashCode(expected, leftSide, rightSide);
+        }
+
+        [Theory]
+        [InlineData(true, true, true)]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, false)]
+        [InlineData(false, false, true)]
+        public void HashCode_WithCentralPackageFloatingVersionsEnabled(bool left, bool right, bool expected)
+        {
+            var leftSide = new ProjectRestoreMetadata
+            {
+                CentralPackageFloatingVersionsEnabled = left
+            };
+            var rightSide = new ProjectRestoreMetadata
+            {
+                CentralPackageFloatingVersionsEnabled = right
             };
             AssertHashCode(expected, leftSide, rightSide);
         }
