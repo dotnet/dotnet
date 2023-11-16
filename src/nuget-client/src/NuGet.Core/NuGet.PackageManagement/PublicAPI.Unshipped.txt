@@ -1,1 +1,2 @@
 #nullable enable
+~const NuGet.ProjectManagement.ProjectBuildProperties.CentralPackageFloatingVersionsEnabled = "CentralPackageFloatingVersionsEnabled" -> string

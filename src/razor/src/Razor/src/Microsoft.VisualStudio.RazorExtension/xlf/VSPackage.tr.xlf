@@ -87,6 +87,16 @@
         <target state="translated">Yazarken Biçimlendir</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_SnippetsAll">
+        <source>All</source>
+        <target state="translated">Tümü</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_SnippetsCustom">
+        <source>Custom</source>
+        <target state="translated">Özel</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_SnippetsDescription">
         <source>What snippets to include in a razor file. If set to custom, only snippets that are not included with Visual Studio will be shown. </source>
         <target state="translated">Razor dosyasına eklenecek kod parçacıkları. Özel olarak ayarlanırsa, yalnızca Visual Studio’ya dahil edilmemiş kod parçacıkları gösterilir. </target>
@@ -95,6 +105,11 @@
       <trans-unit id="Setting_SnippetsDisplayName">
         <source>Included Snippets</source>
         <target state="translated">Dahil Edilen Kod Parçacıkları</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_SnippetsNone">
+        <source>None</source>
+        <target state="translated">Yok</target>
         <note />
       </trans-unit>
       <trans-unit id="Typing">

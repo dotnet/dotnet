@@ -78,14 +78,6 @@ namespace NuGet.PackageManagement.UI.Test.Models
                     It.IsAny<CancellationToken>()))
                 .Returns(new ValueTask<IReadOnlyCollection<PackageSearchMetadataContextInfo>>(packageSearchMetadata));
 
-            mockSearchService.Setup(x =>
-                x.GetDeprecationMetadataAsync(
-                    It.IsAny<PackageIdentity>(),
-                    It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
-                    It.IsAny<bool>(),
-                    It.IsAny<CancellationToken>()))
-                .Returns(null);
-
             mockSearchService.Setup(x => x.GetPackageMetadataAsync(
                     It.IsAny<PackageIdentity>(),
                     It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
@@ -162,14 +154,6 @@ namespace NuGet.PackageManagement.UI.Test.Models
                     It.IsAny<bool>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(new ValueTask<IReadOnlyCollection<PackageSearchMetadataContextInfo>>(packageSearchMetadata));
-
-            mockSearchService.Setup(x =>
-                x.GetDeprecationMetadataAsync(
-                    It.IsAny<PackageIdentity>(),
-                    It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(),
-                    It.IsAny<bool>(),
-                    It.IsAny<CancellationToken>()))
-                .Returns(null);
 
             mockSearchService.Setup(x => x.GetPackageMetadataAsync(
                     It.IsAny<PackageIdentity>(),

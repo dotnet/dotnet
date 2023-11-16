@@ -3725,11 +3725,9 @@ namespace NuGet.Commands.Test
         [Theory]
         [InlineData(null, false)]
         [InlineData("", false)]
-        [InlineData("                     ", false)]
         [InlineData("true", false)]
         [InlineData("invalid", false)]
         [InlineData("false", true)]
-        [InlineData("           false    ", true)]
         public void MSBuildRestoreUtility_GetPackageSpec_CPVM_VersionOverrideCanBeDisabled(string isCentralPackageVersionOverrideEnabled, bool disabled)
         {
             var projectName = "alegacycpvm";
@@ -3825,6 +3823,111 @@ namespace NuGet.Commands.Test
                 else
                 {
                     Assert.False(project1Spec.RestoreMetadata.CentralPackageVersionOverrideDisabled);
+                }
+            }
+        }
+
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData("                     ", false)]
+        [InlineData("false", false)]
+        [InlineData("invalid", false)]
+        [InlineData("true", true)]
+        public void MSBuildRestoreUtility_GetPackageSpec_CPVM_FloatingVersionsCanBeEnabled(string isCentralPackageFloatingVersionsEnabled, bool enabled)
+        {
+            var projectName = "alegacycpvm";
+            using (var workingDir = TestDirectory.Create())
+            {
+                // Arrange
+                var projectUniqueName = "482C20DE-DFF9-4BD0-B90A-BD3201AA351A";
+                var project1Root = Path.Combine(workingDir, projectName);
+                var project1Path = Path.Combine(project1Root, $"{projectName}.csproj");
+
+                var items = new List<IDictionary<string, string>>();
+
+                items.Add(new Dictionary<string, string>()
+                {
+                    { "Type", "ProjectSpec" },
+                    { "ProjectName", projectName },
+                    { "ProjectStyle", "PackageReference" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "ProjectPath", project1Path },
+                    { "_CentralPackageVersionsEnabled", "true"},
+                    { "CentralPackageFloatingVersionsEnabled", isCentralPackageFloatingVersionsEnabled }
+                });
+
+                items.Add(new Dictionary<string, string>()
+                {
+                    { "Type", "TargetFrameworkInformation" },
+                    { "AssetTargetFallback", "" },
+                    { "PackageTargetFallback", "" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "TargetFramework", "net472" },
+                    { "TargetFrameworkIdentifier", ".NETFramework" },
+                    { "TargetFrameworkVersion", "v4.7.2" },
+                    { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.2" },
+                    { "TargetPlatformIdentifier", "" },
+                    { "TargetPlatformMoniker", "" },
+                    { "TargetPlatformVersion", "" },
+                });
+
+                // Package reference
+                // No TargetFrameworks metadata
+                items.Add(new Dictionary<string, string>()
+                {
+                    { "Type", "Dependency" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "Id", "x" },
+                    { "IncludeAssets", "build;compile" },
+                    { "CrossTargeting", "true" },
+                });
+
+
+                // Central Version for the package above and another one for a package y
+                items.Add(new Dictionary<string, string>()
+                {
+                    { "Type", "CentralPackageVersion" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "Id", "x" },
+                    { "VersionRange", "1.0.0" },
+                });
+                items.Add(new Dictionary<string, string>()
+                {
+                    { "Type", "CentralPackageVersion" },
+                    { "ProjectUniqueName", projectUniqueName },
+                    { "Id", "y" },
+                    { "VersionRange", "2.0.0" },
+                });
+
+                var wrappedItems = items.Select(CreateItems).ToList();
+
+                // Act
+                var dgSpec = MSBuildRestoreUtility.GetDependencySpec(wrappedItems);
+                var project1Spec = dgSpec.Projects.Single(e => e.Name == projectName);
+
+                // Assert
+                Assert.Equal(1, project1Spec.TargetFrameworks.Count());
+                Assert.Equal(1, project1Spec.TargetFrameworks.First().Dependencies.Count);
+                Assert.Equal(2, project1Spec.TargetFrameworks.First().CentralPackageVersions.Count);
+
+                Assert.Equal("[1.0.0, )", project1Spec.TargetFrameworks.First().Dependencies[0].LibraryRange.VersionRange.ToNormalizedString());
+                Assert.Equal(LibraryIncludeFlags.Compile | LibraryIncludeFlags.Build, project1Spec.TargetFrameworks.First().Dependencies[0].IncludeType);
+
+                Assert.Equal("x", project1Spec.TargetFrameworks.First().CentralPackageVersions["x"].Name);
+                Assert.Equal("[1.0.0, )", project1Spec.TargetFrameworks.First().CentralPackageVersions["x"].VersionRange.ToNormalizedString());
+
+                Assert.Equal("y", project1Spec.TargetFrameworks.First().CentralPackageVersions["y"].Name);
+                Assert.Equal("[2.0.0, )", project1Spec.TargetFrameworks.First().CentralPackageVersions["y"].VersionRange.ToNormalizedString());
+
+                Assert.True(project1Spec.RestoreMetadata.CentralPackageVersionsEnabled);
+
+                if (enabled)
+                {
+                    Assert.True(project1Spec.RestoreMetadata.CentralPackageFloatingVersionsEnabled);
+                }
+                else
+                {
+                    Assert.False(project1Spec.RestoreMetadata.CentralPackageFloatingVersionsEnabled);
                 }
             }
         }
@@ -4592,6 +4695,47 @@ namespace NuGet.Commands.Test
                 net60Framework.FrameworkName.Profile.Should().Be(profile);
                 net60Framework.FrameworkName.HasPlatform.Should().BeFalse();
             }
+        }
+
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData("", false)]
+        [InlineData("                     ", false)]
+        [InlineData("false", false)]
+        [InlineData("invalid", false)]
+        [InlineData("true", true)]
+        [InlineData("           true    ", true)]
+        public void IsPropertyTrue_ReturnsExpectedValue(string value, bool expected)
+        {
+            const string propertyName = "Property1";
+
+            MSBuildItem item = new("Item1", new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                [propertyName] = value
+            });
+
+            MSBuildRestoreUtility.IsPropertyTrue(item, propertyName).Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData("", false)]
+        [InlineData("                     ", false)]
+        [InlineData("false", true)]
+        [InlineData("   false     ", true)]
+        [InlineData("invalid", false)]
+        [InlineData("true", false)]
+        [InlineData("           true    ", false)]
+        public void IsPropertyFalse_ReturnsExpectedValue(string value, bool expected)
+        {
+            const string propertyName = "Property1";
+
+            MSBuildItem item = new("Item1", new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                [propertyName] = value
+            });
+
+            MSBuildRestoreUtility.IsPropertyFalse(item, propertyName).Should().Be(expected);
         }
 
         private static IDictionary<string, string> CreateProject(string root, string uniqueName)

@@ -12,14 +12,14 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
     where TTokenizer : Tokenizer
 {
-    protected delegate void SpanContextConfigAction(SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator? chunkGenerator);
-    protected delegate void SpanContextConfigActionWithPreviousConfig(SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator? chunkGenerator, SpanContextConfigAction? previousConfig);
+    protected delegate void SpanContextConfigAction(SpanEditHandlerBuilder? editHandlerBuilder, ref ISpanChunkGenerator? chunkGenerator);
+    protected delegate void SpanContextConfigActionWithPreviousConfig(SpanEditHandlerBuilder? editHandlerBuilder, ref ISpanChunkGenerator? chunkGenerator, SpanContextConfigAction? previousConfig);
 
     private readonly SyntaxListPool _pool = new SyntaxListPool();
     private readonly TokenizerView<TTokenizer> _tokenizer;
     private SyntaxListBuilder<SyntaxToken>? _tokenBuilder;
 
-    protected SpanEditHandlerBuilder editHandlerBuilder;
+    protected SpanEditHandlerBuilder? editHandlerBuilder;
     protected ISpanChunkGenerator? chunkGenerator;
 
     // Following four high traffic methods cached as using method groups would cause allocation on every invocation.
@@ -51,7 +51,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
 
         var languageTokenizer = Language.CreateTokenizer(Context.Source);
         _tokenizer = new TokenizerView<TTokenizer>(languageTokenizer);
-        editHandlerBuilder = new SpanEditHandlerBuilder(LanguageTokenizeString);
+        editHandlerBuilder = context.EnableSpanEditHandlers ? new SpanEditHandlerBuilder(LanguageTokenizeString) : null;
     }
 
     protected SyntaxListPool Pool => _pool;
@@ -379,7 +379,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
             // Make sure we generate a marker symbol after a comment if necessary.
             if (!comment.IsMissing || !endStar.IsMissing || !endTransition.IsMissing)
             {
-                Context.LastAcceptedCharacters = AcceptedCharactersInternal.None;
+                Context.MakeMarkerNode = true;
             }
         }
 
@@ -388,9 +388,15 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
         return commentBlock;
     }
 
-    private void CommentSpanContextConfig(SpanEditHandlerBuilder editHandler, ref ISpanChunkGenerator? generator)
+    private void CommentSpanContextConfig(SpanEditHandlerBuilder? editHandler, ref ISpanChunkGenerator? generator)
     {
         generator = SpanChunkGenerator.Null;
+        SetAcceptedCharacters(AcceptedCharactersInternal.Any);
+        if (editHandlerBuilder == null)
+        {
+            return;
+        }
+
         editHandlerBuilder.Reset();
         editHandlerBuilder.Tokenizer = LanguageTokenizeString;
     }
@@ -572,7 +578,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
 
     protected internal void AcceptMarkerTokenIfNecessary()
     {
-        if (TokenBuilder.Count == 0 && Context.LastAcceptedCharacters != AcceptedCharactersInternal.Any)
+        if (TokenBuilder.Count == 0 && Context.MakeMarkerNode)
         {
             Accept(Language.CreateMarkerToken());
         }
@@ -620,19 +626,25 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
 
         var metacode = SyntaxFactory.RazorMetaCode(tokens, SpanChunkGenerator.Null);
         chunkGenerator = SpanChunkGenerator.Null;
-        editHandlerBuilder.AcceptedCharacters = accepted ?? AcceptedCharactersInternal.None;
+        Context.CurrentAcceptedCharacters = accepted ?? AcceptedCharactersInternal.None;
 
         return GetNodeWithEditHandler(metacode);
     }
 
     protected TNode GetNodeWithEditHandler<TNode>(TNode node) where TNode : Syntax.GreenNode
     {
-        var editHandlerBuilder = this.editHandlerBuilder.Build();
-        Context.LastAcceptedCharacters = editHandlerBuilder.AcceptedCharacters;
+        Context.MakeMarkerNode = Context.CurrentAcceptedCharacters != AcceptedCharactersInternal.Any;
+        if (this.editHandlerBuilder == null)
+        {
+            InitializeContext();
+            return node;
+        }
+
+        var editHandlerBuilder = this.editHandlerBuilder.Build(Context.CurrentAcceptedCharacters);
         InitializeContext();
         var annotation = new Syntax.SyntaxAnnotation(SyntaxConstants.EditHandlerKind, editHandlerBuilder);
 
-        return (TNode)node.SetAnnotations(new[] { annotation });
+        return (TNode)node.SetAnnotations([annotation]);
     }
 
     protected DisposableAction PushSpanContextConfig()
@@ -642,7 +654,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
 
     protected DisposableAction PushSpanContextConfig(SpanContextConfigAction newConfig)
     {
-        return PushSpanContextConfig(newConfig == null ? null : (SpanEditHandlerBuilder span, ref ISpanChunkGenerator? chunkGenerator, SpanContextConfigAction? _) => newConfig(span, ref chunkGenerator));
+        return PushSpanContextConfig(newConfig == null ? null : (SpanEditHandlerBuilder? span, ref ISpanChunkGenerator? chunkGenerator, SpanContextConfigAction? _) => newConfig(span, ref chunkGenerator));
     }
 
     protected DisposableAction PushSpanContextConfig(SpanContextConfigActionWithPreviousConfig? newConfig)
@@ -661,19 +673,19 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
     protected void ConfigureSpanContext(SpanContextConfigActionWithPreviousConfig? config)
     {
         var prev = SpanContextConfig;
-        if (config == null)
-        {
-            SpanContextConfig = null;
-        }
-        else
-        {
-            SpanContextConfig = (SpanEditHandlerBuilder span, ref ISpanChunkGenerator? chunkGenerator) => config(span, ref chunkGenerator, prev);
-        }
+        SpanContextConfig = config == null
+            ? null
+            : ((SpanEditHandlerBuilder? span, ref ISpanChunkGenerator? chunkGenerator) => config(span, ref chunkGenerator, prev));
         InitializeContext();
     }
 
     protected void InitializeContext()
     {
         SpanContextConfig?.Invoke(editHandlerBuilder, ref chunkGenerator);
+    }
+
+    protected void SetAcceptedCharacters(AcceptedCharactersInternal? acceptedCharacters)
+    {
+        Context.CurrentAcceptedCharacters = acceptedCharacters ?? AcceptedCharactersInternal.None;
     }
 }

@@ -60,6 +60,8 @@ namespace NuGet.PackageManagement.UI
         /// </summary>
         INuGetUIContext UIContext { get; }
 
+        INuGetUILogger UILogger { get; }
+
         /// <summary>
         /// A project context used for NuGet operations
         /// </summary>

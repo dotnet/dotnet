@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -98,7 +99,7 @@ internal class SyntaxNodeWriter(TextWriter writer, bool validateSpanEditHandlers
         }
         else
         {
-            // Assert.All(node.GetAnnotations(), a => Assert.IsNotType<SpanEditHandler>(a.Data));
+            Assert.All(node.GetAnnotations(), a => Assert.IsNotType<SpanEditHandler>(a.Data));
         }
 
         if (!_visitedRoot)

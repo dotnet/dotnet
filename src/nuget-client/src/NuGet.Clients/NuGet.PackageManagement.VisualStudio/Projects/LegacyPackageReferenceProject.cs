@@ -459,6 +459,7 @@ namespace NuGet.PackageManagement.VisualStudio
                         MSBuildStringUtility.IsTrue(GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.RestoreLockedMode))),
                     CentralPackageVersionsEnabled = isCpvmEnabled,
                     CentralPackageVersionOverrideDisabled = GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.CentralPackageVersionOverrideEnabled).EqualsFalse(),
+                    CentralPackageFloatingVersionsEnabled = MSBuildStringUtility.IsTrue(GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.CentralPackageFloatingVersionsEnabled)),
                     CentralPackageTransitivePinningEnabled = MSBuildStringUtility.IsTrue(GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.CentralPackageTransitivePinningEnabled)),
                     RestoreAuditProperties = auditProperties,
                 }

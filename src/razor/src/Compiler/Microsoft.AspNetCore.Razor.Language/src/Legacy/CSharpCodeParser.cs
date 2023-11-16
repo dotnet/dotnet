@@ -245,7 +245,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 }
 
                 chunkGenerator = SpanChunkGenerator.Null;
-                editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+                SetAcceptedCharacters(AcceptedCharactersInternal.None);
                 var transition = GetNodeWithEditHandler(SyntaxFactory.CSharpTransition(transitionToken, chunkGenerator));
 
                 if (At(SyntaxKind.LeftBrace))
@@ -319,11 +319,14 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                     builder.Add(OutputTokensAsStatementLiteral());
 
                     chunkGenerator = new ExpressionChunkGenerator();
-                    ImplicitExpressionEditHandler.SetupBuilder(editHandlerBuilder,
-                        acceptedCharacters: AcceptedCharactersInternal.NonWhitespace,
-                        tokenizer: LanguageTokenizeString,
-                        acceptTrailingDot: IsNested,
-                        keywords: CurrentKeywords);
+                    SetAcceptedCharacters(AcceptedCharactersInternal.NonWhitespace);
+                    if (editHandlerBuilder != null)
+                    {
+                        ImplicitExpressionEditHandler.SetupBuilder(editHandlerBuilder,
+                            tokenizer: LanguageTokenizeString,
+                            acceptTrailingDot: IsNested,
+                            keywords: CurrentKeywords);
+                    }
 
                     AcceptMarkerTokenIfNecessary();
                     var expressionLiteral = SyntaxFactory.CSharpCodeBlock(OutputTokensAsExpressionLiteral());
@@ -409,7 +412,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             else
             {
                 var missingToken = SyntaxFactory.MissingToken(SyntaxKind.RightParenthesis);
-                rightParen = OutputAsMetaCode(missingToken, editHandlerBuilder.AcceptedCharacters);
+                rightParen = OutputAsMetaCode(missingToken, Context.CurrentAcceptedCharacters);
             }
             if (!EndOfFile)
             {
@@ -441,15 +444,19 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
 
     private void ParseImplicitExpression(in SyntaxListBuilder<RazorSyntaxNode> builder, AcceptedCharactersInternal acceptedCharacters)
     {
-        using (PushSpanContextConfig((SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator? generator) =>
+        using (PushSpanContextConfig((SpanEditHandlerBuilder? editHandlerBuilder, ref ISpanChunkGenerator? generator) =>
         {
+            generator = new ExpressionChunkGenerator();
+            SetAcceptedCharacters(acceptedCharacters);
+            if (editHandlerBuilder == null)
+            {
+                return;
+            }
+
             ImplicitExpressionEditHandler.SetupBuilder(editHandlerBuilder,
-                acceptedCharacters: acceptedCharacters,
                 tokenizer: LanguageTokenizeString,
                 acceptTrailingDot: IsNested,
                 keywords: Keywords);
-            editHandlerBuilder.AcceptedCharacters = acceptedCharacters;
-            generator = new ExpressionChunkGenerator();
         }))
         {
             do
@@ -474,15 +481,15 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 CurrentToken.Kind == SyntaxKind.LeftBracket)
             {
                 // If we end within "(", whitespace is fine
-                editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Any;
+                SetAcceptedCharacters(AcceptedCharactersInternal.Any);
 
                 SyntaxKind right;
                 bool success;
 
-                using (PushSpanContextConfig((SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator? generator, SpanContextConfigAction? prev) =>
+                using (PushSpanContextConfig((SpanEditHandlerBuilder? editHandlerBuilder, ref ISpanChunkGenerator? generator, SpanContextConfigAction? prev) =>
                 {
                     prev?.Invoke(editHandlerBuilder, ref generator);
-                    editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Any;
+                    SetAcceptedCharacters(AcceptedCharactersInternal.Any);
                 }))
                 {
                     right = Language.FlipBracket(CurrentToken.Kind);
@@ -498,7 +505,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                     AcceptAndMoveNext();
 
                     // At the ending brace, restore the initial accepted characters.
-                    editHandlerBuilder.AcceptedCharacters = acceptedCharacters;
+                    SetAcceptedCharacters(acceptedCharacters);
                 }
                 return ParseMethodCallOrArrayIndex(builder, acceptedCharacters);
             }
@@ -633,7 +640,11 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         {
             var builder = pooledResult.Builder;
             // Set up auto-complete and parse the code block
-            AutoCompleteEditHandler.SetupBuilder(editHandlerBuilder, LanguageTokenizeString, autoCompleteAtEndOfSpan: false, out var acceptCloseBraceAccessor);
+            AutoCompleteEditHandler.AutoCompleteStringAccessor? acceptCloseBraceAccessor = null;
+            if (editHandlerBuilder != null)
+            {
+                AutoCompleteEditHandler.SetupBuilder(editHandlerBuilder, LanguageTokenizeString, autoCompleteAtEndOfSpan: false, out acceptCloseBraceAccessor);
+            }
             ParseCodeBlock(builder, block);
 
             if (EndOfFile)
@@ -646,7 +657,10 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             EnsureCurrent();
             chunkGenerator = StatementChunkGenerator.Instance;
             AcceptMarkerTokenIfNecessary();
-            acceptCloseBraceAccessor.CanAcceptCloseBrace = !At(SyntaxKind.RightBrace);
+            if (acceptCloseBraceAccessor != null)
+            {
+                acceptCloseBraceAccessor.CanAcceptCloseBrace = !At(SyntaxKind.RightBrace);
+            }
             builder.Add(OutputTokensAsStatementLiteral());
 
             codeBlock = SyntaxFactory.CSharpCodeBlock(builder.ToList());
@@ -661,7 +675,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         {
             rightBrace = OutputAsMetaCode(
                 SyntaxFactory.MissingToken(SyntaxKind.RightBrace),
-                editHandlerBuilder.AcceptedCharacters);
+                Context.CurrentAcceptedCharacters);
         }
 
         if (!IsNested)
@@ -690,7 +704,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
 
     private void ParseStatement(in SyntaxListBuilder<RazorSyntaxNode> builder, Block block)
     {
-        editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Any;
+        SetAcceptedCharacters(AcceptedCharactersInternal.Any);
         // Accept whitespace but always keep the last whitespace node so we can put it back if necessary
         var lastWhitespace = AcceptWhitespaceInLines();
         if (EndOfFile)
@@ -792,7 +806,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                     else
                     {
                         Assert(SyntaxKind.RightBrace);
-                        editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+                        SetAcceptedCharacters(AcceptedCharactersInternal.None);
                         AcceptAndMoveNext();
                     }
                     break;
@@ -1145,7 +1159,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
 
             AcceptWhile(SyntaxKind.Whitespace);
             chunkGenerator = SpanChunkGenerator.Null;
-            editHandlerBuilder.AcceptedCharacters = acceptedCharacters;
+            SetAcceptedCharacters(acceptedCharacters);
             directiveBuilder.Add(OutputAsMarkupLiteral());
 
             if (EndOfFile || At(SyntaxKind.NewLine))
@@ -1188,7 +1202,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
 
             // Finish the block and output the tokens
             CompleteBlock();
-            editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.AnyExceptNewline;
+            SetAcceptedCharacters(AcceptedCharactersInternal.AnyExceptNewline);
 
             directiveBuilder.Add(OutputTokensAsStatementLiteral());
             var directiveCodeBlock = SyntaxFactory.CSharpCodeBlock(directiveBuilder.ToList());
@@ -1371,7 +1385,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                         AcceptWhile(IsSpacingTokenIncludingComments);
 
                         chunkGenerator = SpanChunkGenerator.Null;
-                        editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Whitespace;
+                        SetAcceptedCharacters(AcceptedCharactersInternal.Whitespace);
 
                         if (tokenDescriptor.Kind == DirectiveTokenKind.Member ||
                             tokenDescriptor.Kind == DirectiveTokenKind.Namespace ||
@@ -1389,7 +1403,11 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                                 // We want CSharp intellisense only if there is whitespace after the directive keyword.
                                 AcceptMarkerTokenIfNecessary();
                                 chunkGenerator = new DirectiveTokenChunkGenerator(tokenDescriptor);
-                                DirectiveTokenEditHandler.SetupBuilder(editHandlerBuilder, AcceptedCharactersInternal.NonWhitespace, LanguageTokenizeString);
+                                SetAcceptedCharacters(AcceptedCharactersInternal.NonWhitespace);
+                                if (editHandlerBuilder != null)
+                                {
+                                    DirectiveTokenEditHandler.SetupBuilder(editHandlerBuilder, LanguageTokenizeString);
+                                }
                                 directiveBuilder.Add(OutputTokensAsStatementLiteral());
                             }
                         }
@@ -1582,7 +1600,11 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                     }
 
                     chunkGenerator = new DirectiveTokenChunkGenerator(tokenDescriptor);
-                    DirectiveTokenEditHandler.SetupBuilder(editHandlerBuilder, AcceptedCharactersInternal.NonWhitespace, LanguageTokenizeString);
+                    SetAcceptedCharacters(AcceptedCharactersInternal.NonWhitespace);
+                    if (editHandlerBuilder != null)
+                    {
+                        DirectiveTokenEditHandler.SetupBuilder(editHandlerBuilder, LanguageTokenizeString);
+                    }
                     directiveBuilder.Add(OutputTokensAsStatementLiteral());
                 }
 
@@ -1592,7 +1614,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 switch (descriptor.Kind)
                 {
                     case DirectiveKind.SingleLine:
-                        editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Whitespace;
+                        SetAcceptedCharacters(AcceptedCharactersInternal.Whitespace);
                         directiveBuilder.Add(OutputTokensAsUnclassifiedLiteral());
 
                         TryAccept(SyntaxKind.Semicolon);
@@ -1617,12 +1639,12 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                         // This should contain the optional whitespace after the optional semicolon and the new line.
                         // Output as Markup as we want intellisense here.
                         chunkGenerator = SpanChunkGenerator.Null;
-                        editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Whitespace;
+                        SetAcceptedCharacters(AcceptedCharactersInternal.Whitespace);
                         directiveBuilder.Add(OutputAsMarkupEphemeralLiteral());
                         break;
                     case DirectiveKind.RazorBlock:
                         AcceptWhile(IsSpacingTokenIncludingNewLinesAndComments);
-                        editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.AllWhitespace;
+                        SetAcceptedCharacters(AcceptedCharactersInternal.AllWhitespace);
                         directiveBuilder.Add(OutputTokensAsUnclassifiedLiteral());
 
                         ParseDirectiveBlock(directiveBuilder, descriptor, parseChildren: (childBuilder, startingBraceLocation) =>
@@ -1646,7 +1668,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                         break;
                     case DirectiveKind.CodeBlock:
                         AcceptWhile(IsSpacingTokenIncludingNewLinesAndComments);
-                        editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.AllWhitespace;
+                        SetAcceptedCharacters(AcceptedCharactersInternal.AllWhitespace);
                         directiveBuilder.Add(OutputTokensAsUnclassifiedLiteral());
 
                         ParseDirectiveBlock(directiveBuilder, descriptor, parseChildren: (childBuilder, startingBraceLocation) =>
@@ -1654,7 +1676,10 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                             NextToken();
 
                             var existingEditHandler = editHandlerBuilder;
-                            CodeBlockEditHandler.SetupBuilder(editHandlerBuilder, LanguageTokenizeString);
+                            if (editHandlerBuilder != null)
+                            {
+                                CodeBlockEditHandler.SetupBuilder(editHandlerBuilder, LanguageTokenizeString);
+                            }
 
                             if (Context.FeatureFlags.AllowRazorInAllCodeBlocks)
                             {
@@ -1792,7 +1817,11 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         }
         else
         {
-            AutoCompleteEditHandler.SetupBuilder(editHandlerBuilder, LanguageTokenizeString, autoCompleteAtEndOfSpan: true, out var autoCompleteStringAccessor);
+            AutoCompleteEditHandler.AutoCompleteStringAccessor? autoCompleteStringAccessor = null;
+            if (editHandlerBuilder != null)
+            {
+                AutoCompleteEditHandler.SetupBuilder(editHandlerBuilder, LanguageTokenizeString, autoCompleteAtEndOfSpan: true, out autoCompleteStringAccessor);
+            }
             var startingBraceLocation = CurrentStart;
             Accept(CurrentToken);
             builder.Add(OutputAsMetaCode(Output()));
@@ -1808,9 +1837,10 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             }
 
             chunkGenerator = SpanChunkGenerator.Null;
+            bool canAcceptCloseBrace;
             if (!TryAccept(SyntaxKind.RightBrace))
             {
-                autoCompleteStringAccessor.CanAcceptCloseBrace = true;
+                canAcceptCloseBrace = true;
                 Context.ErrorSink.OnError(
                     RazorDiagnosticFactory.CreateParsing_ExpectedEndOfBlockBeforeEOF(
                         new SourceSpan(startingBraceLocation, contentLength: 1 /* } */), descriptor.Directive, "}", "{"));
@@ -1819,11 +1849,17 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             }
             else
             {
-                autoCompleteStringAccessor.CanAcceptCloseBrace = false;
-                editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+                canAcceptCloseBrace = false;
+                SetAcceptedCharacters(AcceptedCharactersInternal.None);
             }
+
+            if (autoCompleteStringAccessor != null)
+            {
+                autoCompleteStringAccessor.CanAcceptCloseBrace = canAcceptCloseBrace;
+            }
+
             CompleteBlock(insertMarkerIfNecessary: false, captureWhitespaceToEndOfLine: true);
-            builder.Add(OutputAsMetaCode(Output(), editHandlerBuilder.AcceptedCharacters));
+            builder.Add(OutputAsMetaCode(Output(), Context.CurrentAcceptedCharacters));
         }
     }
 
@@ -2048,7 +2084,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             // No else, return whitespace
             PutCurrentBack();
             PutBack(whitespace);
-            editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Any;
+            SetAcceptedCharacters(AcceptedCharactersInternal.Any);
         }
     }
 
@@ -2117,7 +2153,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             // Return whitespace and end the block
             PutCurrentBack();
             PutBack(whitespace);
-            editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Any;
+            SetAcceptedCharacters(AcceptedCharactersInternal.Any);
         }
     }
 
@@ -2175,7 +2211,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
 
     private void ParseWhileClause(in SyntaxListBuilder<RazorSyntaxNode> builder)
     {
-        editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Any;
+        SetAcceptedCharacters(AcceptedCharactersInternal.Any);
         var whitespace = SkipToNextImportantToken(builder);
 
         if (At(CSharpKeyword.While))
@@ -2186,7 +2222,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             AcceptWhile(IsSpacingTokenIncludingNewLinesAndComments);
             if (TryParseCondition(builder) && TryAccept(SyntaxKind.Semicolon))
             {
-                editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+                SetAcceptedCharacters(AcceptedCharactersInternal.None);
             }
         }
         else
@@ -2340,7 +2376,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 .Skip(nonNamespaceTokenCount)
                 .Where(s => s.Kind != SyntaxKind.CSharpComment && s.Kind != SyntaxKind.Whitespace && s.Kind != SyntaxKind.NewLine);
 
-            editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.AnyExceptNewline;
+            SetAcceptedCharacters(AcceptedCharactersInternal.AnyExceptNewline);
             chunkGenerator = new AddImportChunkGenerator(
                 string.Concat(usingContentTokens.Select(s => s.Content)),
                 string.Concat(parsedNamespaceTokens.Select(s => s.Content)),
@@ -2454,7 +2490,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 new SourceSpan(CurrentStart, CurrentToken.Content.Length), CurrentToken.Content));
 
         AcceptAndMoveNext();
-        editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.None;
+        SetAcceptedCharacters(AcceptedCharactersInternal.None);
         chunkGenerator = SpanChunkGenerator.Null;
         CompleteBlock();
         var keyword = OutputAsMetaCode(Output());
@@ -2478,7 +2514,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
 
     protected void CompleteBlock(bool insertMarkerIfNecessary, bool captureWhitespaceToEndOfLine)
     {
-        if (insertMarkerIfNecessary && Context.LastAcceptedCharacters != AcceptedCharactersInternal.Any)
+        if (insertMarkerIfNecessary)
         {
             AcceptMarkerTokenIfNecessary();
         }
@@ -2519,7 +2555,7 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             if (At(SyntaxKind.RazorCommentTransition))
             {
                 Accept(whitespace);
-                editHandlerBuilder.AcceptedCharacters = AcceptedCharactersInternal.Any;
+                SetAcceptedCharacters(AcceptedCharactersInternal.Any);
                 AcceptMarkerTokenIfNecessary();
                 builder.Add(OutputTokensAsStatementLiteral());
                 var comment = ParseRazorComment();
@@ -2533,18 +2569,30 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
         return Array.Empty<SyntaxToken>();
     }
 
-    private void DefaultSpanContextConfig(SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator? generator)
+    private void DefaultSpanContextConfig(SpanEditHandlerBuilder? editHandlerBuilder, ref ISpanChunkGenerator? generator)
     {
+        generator = StatementChunkGenerator.Instance;
+        SetAcceptedCharacters(AcceptedCharactersInternal.Any);
+        if (editHandlerBuilder == null)
+        {
+            return;
+        }
+
         editHandlerBuilder.Reset();
         editHandlerBuilder.Tokenizer = LanguageTokenizeString;
-        generator = StatementChunkGenerator.Instance;
     }
 
-    private void ExplicitExpressionSpanContextConfig(SpanEditHandlerBuilder editHandlerBuilder, ref ISpanChunkGenerator? generator)
+    private void ExplicitExpressionSpanContextConfig(SpanEditHandlerBuilder? editHandlerBuilder, ref ISpanChunkGenerator? generator)
     {
+        generator = new ExpressionChunkGenerator();
+        SetAcceptedCharacters(AcceptedCharactersInternal.Any);
+        if (editHandlerBuilder == null)
+        {
+            return;
+        }
+
         editHandlerBuilder.Reset();
         editHandlerBuilder.Tokenizer = LanguageTokenizeString;
-        generator = new ExpressionChunkGenerator();
     }
 
     private CSharpStatementLiteralSyntax? OutputTokensAsStatementLiteral()

@@ -1,0 +1,3 @@
+@echo off
+powershell -ExecutionPolicy ByPass -NoProfile -command "& """%~dp0eng\common\Build.ps1""" -NativeToolsOnMachine -restore -build -bl %*"
+exit /b %ErrorLevel%

@@ -115,6 +115,9 @@ steps:
         exit 1
       }
 
+- task: ComponentGovernanceComponentDetection@0
+  displayName: 'Component Detection'
+
 - task: MSBuild@1
   displayName: "Build"
   inputs:
@@ -272,9 +275,6 @@ steps:
     TargetFolders: '$(Build.Repository.LocalPath)\\artifacts\\VS15'
     ApprovalListPathForCerts: '$(Build.Repository.LocalPath)\\build\\ignorecodesign.csv'
     ApprovalListPathForSigs: '$(Build.Repository.LocalPath)\\build\\ignorecodesign.csv'
-
-- task: ComponentGovernanceComponentDetection@0
-  displayName: 'Component Detection'
 
 - task: PublishPipelineArtifact@1
   displayName: "Publish nupkgs"

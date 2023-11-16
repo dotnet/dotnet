@@ -202,7 +202,7 @@ public abstract class ParserTestBase : IParserTest
 
         var source = TestRazorSourceDocument.Create(document, filePath: null, relativePath: null, normalizeNewLines: true);
 
-        var options = CreateParserOptions(version, directives, designTime, featureFlags, fileKind);
+        var options = CreateParserOptions(version, directives, designTime, _validateSpanEditHandlers, featureFlags, fileKind);
         var context = new ParserContext(source, options);
 
         var codeParser = new CSharpCodeParser(directives, context);
@@ -262,6 +262,7 @@ public abstract class ParserTestBase : IParserTest
         RazorLanguageVersion version,
         IEnumerable<DirectiveDescriptor> directives,
         bool designTime,
+        bool enableSpanEditHandlers,
         RazorParserFeatureFlags featureFlags = null,
         string fileKind = null)
     {
@@ -270,9 +271,9 @@ public abstract class ParserTestBase : IParserTest
             directives.ToArray(),
             designTime,
             parseLeadingDirectives: false,
-            version: version,
-            fileKind: fileKind,
-            enableSpanEditHandlers: false)
+            version,
+            fileKind,
+            enableSpanEditHandlers)
         {
             FeatureFlags = featureFlags ?? RazorParserFeatureFlags.Create(version, fileKind)
         };

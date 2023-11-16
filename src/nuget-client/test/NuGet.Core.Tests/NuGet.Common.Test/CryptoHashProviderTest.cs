@@ -43,6 +43,7 @@ namespace NuGet.Common.Test
         }
 
         [Theory]
+        [UseCulture("en-US")] // We are asserting exception messages in English
         [InlineData("md5")]
         [InlineData("MD5")]
         [InlineData("SHA1")]
@@ -54,7 +55,7 @@ namespace NuGet.Common.Test
             Assert.NotNull(ex);
             var tex = Assert.IsAssignableFrom<ArgumentException>(ex);
             Assert.Equal("hashAlgorithm", tex.ParamName);
-            var expectedMessage = String.Format("Hash algorithm '{0}' is unsupported. Supported algorithms include: SHA512 and SHA256.", hashAlgorithm);
+            var expectedMessage = string.Format("Hash algorithm '{0}' is unsupported. Supported algorithms include: SHA512 and SHA256.", hashAlgorithm);
             Assert.Contains(expectedMessage, ex.Message);
             //Remove the expected message from the exception message, the rest part should have param info.
             //Background of this change: System.ArgumentException(string message, string paramName) used to generate two lines of message before, but changed to generate one line

@@ -57,6 +57,25 @@ public class LoggerTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [TestCategory("Windows-Review")]
+    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
+    public void HtmlLoggerWithFriendlyNameContainsExpectedContent(RunnerInfo runnerInfo)
+    {
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var arguments = PrepareArguments(GetSampleTestAssembly(), GetTestAdapterPath(), string.Empty, FrameworkArgValue, runnerInfo.InIsolationValue, TempDirectory.Path);
+        var htmlFileName = "TestResults.html";
+        arguments = string.Concat(arguments, $" /logger:\"html;LogFileName={htmlFileName}\"");
+        InvokeVsTest(arguments);
+
+        var htmlLogFilePath = Path.Combine(TempDirectory.Path, htmlFileName);
+        XmlDocument report = new();
+        report.Load(htmlLogFilePath);
+
+        AssertExpectedHtml(report.DocumentElement!);
+    }
+
+    [TestMethod]
     [NetCoreTargetFrameworkDataSource]
     public void TrxLoggerWithExecutorUriShouldProperlyOverwriteFile(RunnerInfo runnerInfo)
     {
@@ -161,6 +180,21 @@ public class LoggerTests : AcceptanceTestBase
         string? outcomeValue = GetElementAtributeValueFromTrx(trxFilePath, "ResultSummary", "outcome");
 
         Assert.AreEqual("Completed", outcomeValue);
+    }
+
+    private static void AssertExpectedHtml(XmlElement root)
+    {
+        XmlNodeList elementList = root.GetElementsByTagName("details");
+        Assert.AreEqual(2, elementList.Count);
+
+        foreach (XmlElement element in elementList)
+        {
+            Assert.AreEqual("summary", element.FirstChild?.Name);
+            if (element.HasAttributes)
+            {
+                Assert.AreEqual("open", element.Attributes[0].Name);
+            }
+        }
     }
 
     private static bool IsValidXml(string xmlFilePath)

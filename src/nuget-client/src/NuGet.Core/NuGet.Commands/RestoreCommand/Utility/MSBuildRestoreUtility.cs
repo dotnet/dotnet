@@ -161,7 +161,7 @@ namespace NuGet.Commands
             {
                 ProjectStyle restoreType = GetProjectStyle(specItem);
 
-                (bool isCentralPackageManagementEnabled, bool isCentralPackageVersionOverrideDisabled, bool isCentralPackageTransitivePinningEnabled) = GetCentralPackageManagementSettings(specItem, restoreType);
+                (bool isCentralPackageManagementEnabled, bool isCentralPackageVersionOverrideDisabled, bool isCentralPackageTransitivePinningEnabled, bool isCentralPackageFloatingVersionsEnabled) = GetCentralPackageManagementSettings(specItem, restoreType);
 
                 // Get base spec
                 if (restoreType == ProjectStyle.ProjectJson)
@@ -296,6 +296,7 @@ namespace NuGet.Commands
 
                 result.RestoreMetadata.CentralPackageVersionsEnabled = isCentralPackageManagementEnabled;
                 result.RestoreMetadata.CentralPackageVersionOverrideDisabled = isCentralPackageVersionOverrideDisabled;
+                result.RestoreMetadata.CentralPackageFloatingVersionsEnabled = isCentralPackageFloatingVersionsEnabled;
                 result.RestoreMetadata.CentralPackageTransitivePinningEnabled = isCentralPackageTransitivePinningEnabled;
             }
 
@@ -957,7 +958,7 @@ namespace NuGet.Commands
             return s;
         }
 
-        private static bool IsPropertyFalse(IMSBuildItem item, string propertyName, bool defaultValue = false)
+        internal static bool IsPropertyFalse(IMSBuildItem item, string propertyName, bool defaultValue = false)
         {
             string value = item.GetProperty(propertyName);
 
@@ -969,7 +970,7 @@ namespace NuGet.Commands
             return string.Equals(value, bool.FalseString, StringComparison.OrdinalIgnoreCase);
         }
 
-        private static bool IsPropertyTrue(IMSBuildItem item, string propertyName, bool defaultValue = false)
+        internal static bool IsPropertyTrue(IMSBuildItem item, string propertyName, bool defaultValue = false)
         {
             string value = item.GetProperty(propertyName);
 
@@ -1055,11 +1056,23 @@ namespace NuGet.Commands
             return restoreType;
         }
 
-        internal static (bool IsEnabled, bool IsVersionOverrideDisabled, bool IsCentralPackageTransitivePinningEnabled) GetCentralPackageManagementSettings(IMSBuildItem projectSpecItem, ProjectStyle projectStyle)
+        /// <summary>
+        /// Determines the current settings for central package management for the specified project.
+        /// </summary>
+        /// <param name="projectSpecItem">The <see cref="IMSBuildItem" /> to get the central package management settings from.</param>
+        /// <param name="projectStyle">The <see cref="ProjectStyle?" /> of the specified project.  Specify <see langword="null" /> when the project does not define a restore style.</param>
+        /// <returns>A <see cref="Tuple{T1, T2, T3, T4}" /> containing values indicating whether or not central package management is enabled, if the ability to override a package version 
+        public static (bool IsEnabled, bool IsVersionOverrideDisabled, bool IsCentralPackageTransitivePinningEnabled, bool isCentralPackageFloatingVersionsEnabled) GetCentralPackageManagementSettings(IMSBuildItem projectSpecItem, ProjectStyle? projectStyle)
         {
-            return (IsPropertyTrue(projectSpecItem, "_CentralPackageVersionsEnabled") && projectStyle == ProjectStyle.PackageReference,
+            if (!projectStyle.HasValue || (projectStyle.Value == ProjectStyle.PackageReference))
+            {
+                return (IsPropertyTrue(projectSpecItem, "_CentralPackageVersionsEnabled") && projectStyle == ProjectStyle.PackageReference,
                 IsPropertyFalse(projectSpecItem, "CentralPackageVersionOverrideEnabled"),
-                IsPropertyTrue(projectSpecItem, "CentralPackageTransitivePinningEnabled"));
+                IsPropertyTrue(projectSpecItem, "CentralPackageTransitivePinningEnabled"),
+                IsPropertyTrue(projectSpecItem, "CentralPackageFloatingVersionsEnabled"));
+            }
+
+            return (false, false, false, false);
         }
 
         private static void AddCentralPackageVersions(PackageSpec spec, IEnumerable<IMSBuildItem> items)

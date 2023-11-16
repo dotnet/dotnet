@@ -624,7 +624,8 @@ internal class DefaultVisualStudioRazorParser : VisualStudioRazorParser, IDispos
         }
     }
 
-    private class VisualStudioEnableTagHelpersFeature : RazorEngineFeatureBase, IConfigureRazorParserOptionsFeature
+    // Internal for testing
+    internal class VisualStudioEnableTagHelpersFeature : RazorEngineFeatureBase, IConfigureRazorParserOptionsFeature
     {
         public int Order => 0;
 

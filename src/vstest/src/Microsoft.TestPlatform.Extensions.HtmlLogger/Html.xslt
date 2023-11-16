@@ -11,18 +11,7 @@
         <h1>Test run details</h1>
         <xsl:apply-templates select ="/tp:TestRunDetails"/>
       </body>
-      <script language="javascript">
-        function ToggleClass(id) {
-        var elem = document.getElementById(id);
-        if (elem.style.display == "none") {
-        elem.style.display = "block";
-        }
-        else {
-        elem.style.display = "none";
-        }
-        }
-      </script>
-      <style>
+        <style>
         body { font-family: Calibri, Verdana, Arial, sans-serif; background-color: White; color: Black; }
         h2 {
         margin-top: 15px;
@@ -132,10 +121,12 @@
     <xsl:for-each select ="tp:TestResultCollection">
       <xsl:variable name="Source" select="tp:Id" />
       <xsl:if test="tp:ResultList!=''">
-        <div class ="list-row" onclick="ToggleClass('{$Source}')"><xsl:value-of select = "tp:Source" /></div>
-        <div class ="inner-row" Id="{$Source}" style="display:none;">
-          <xsl:for-each select ="tp:ResultList/tp:TestResult"><xsl:call-template name ="TestResult"/></xsl:for-each>
-        </div>
+        <details>
+          <summary><xsl:value-of select = "tp:Source" /></summary>
+          <div class ="inner-row" Id="{$Source}">
+            <xsl:for-each select ="tp:ResultList/tp:TestResult"><xsl:call-template name ="TestResult"/></xsl:for-each>
+          </div>
+        </details>
       </xsl:if>
     </xsl:for-each>
   </xsl:template>
@@ -144,10 +135,13 @@
     <xsl:for-each select ="tp:TestResultCollection">
       <xsl:variable name="Source" select="tp:Id" />
       <xsl:if test="tp:FailedResultList!=''">
-        <div class ="list-row" onclick="ToggleClass('{concat($Source,'-failedResult')}')"><xsl:value-of select = "tp:Source" /> </div>
-        <div class ="inner-row" Id="{concat($Source,'-failedResult')}" style="display:block;">
-          <xsl:for-each select ="tp:FailedResultList/tp:TestResult"><xsl:call-template name ="TestResult"/></xsl:for-each>
-        </div>
+        <details>
+            <xsl:attribute name="open"/>
+            <summary><xsl:value-of select = "tp:Source" /></summary>
+          <div class ="inner-row" Id="{concat($Source,'-failedResult')}">
+            <xsl:for-each select ="tp:FailedResultList/tp:TestResult"><xsl:call-template name ="TestResult"/></xsl:for-each>
+          </div>
+        </details>
       </xsl:if>
     </xsl:for-each>
   </xsl:template>
@@ -156,8 +150,10 @@
     <xsl:variable name="TestResultId" select="tp:TestResultId" />
 
     <xsl:if test ="tp:InnerTestResults!=''">
-      <div class ="row" onclick="ToggleClass('{concat($TestResultId,'-',name(..))}')"><xsl:call-template name = "Result" /></div>
-      <a Id="{concat($TestResultId,'-',name(..))}" style="display:none;"><xsl:apply-templates select = "tp:InnerTestResults" /></a>
+      <details>
+        <summary><xsl:call-template name = "Result" /></summary>
+        <a Id="{concat($TestResultId,'-',name(..))}"><xsl:apply-templates select = "tp:InnerTestResults" /></a>
+      </details>
     </xsl:if>
 
     <xsl:if test ="tp:InnerTestResults=''">

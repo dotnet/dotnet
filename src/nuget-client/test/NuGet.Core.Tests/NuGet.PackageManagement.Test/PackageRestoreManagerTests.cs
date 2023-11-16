@@ -15,18 +15,26 @@ using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Test.Utility;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace NuGet.Test
 {
     public class PackageRestoreManagerTests
     {
         private readonly List<PackageIdentity> Packages = new List<PackageIdentity>
-            {
-                new PackageIdentity("jQuery", new NuGetVersion("1.4.4")),
-                new PackageIdentity("jQuery", new NuGetVersion("1.6.4")),
-                new PackageIdentity("jQuery.Validation", new NuGetVersion("1.13.1")),
-                new PackageIdentity("jQuery.UI.Combined", new NuGetVersion("1.11.2"))
-            };
+        {
+            new PackageIdentity("jQuery", new NuGetVersion("1.4.4")),
+            new PackageIdentity("jQuery", new NuGetVersion("1.6.4")),
+            new PackageIdentity("jQuery.Validation", new NuGetVersion("1.13.1")),
+            new PackageIdentity("jQuery.UI.Combined", new NuGetVersion("1.11.2"))
+        };
+
+        private readonly ITestOutputHelper _output;
+
+        public PackageRestoreManagerTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
 
         [Fact]
         public async Task TestGetMissingPackagesForSolution()
@@ -331,12 +339,19 @@ namespace NuGet.Test
                     sourceRepositoryProvider,
                     testSettings,
                     testSolutionManager);
-                var restoredPackages = new List<PackageIdentity>();
-                packageRestoreManager.PackageRestoredEvent += delegate (object sender, PackageRestoredEventArgs args) { restoredPackages.Add(args.Package); };
+                var restoredPackages = new ConcurrentBag<PackageIdentity>();
+                packageRestoreManager.PackageRestoredEvent += delegate (object sender, PackageRestoredEventArgs args)
+                {
+                    _output.WriteLine($"PackageRestoredEvent: args.Package={args.Package};\n" +
+                        $"args.Restored={args.Restored}\n---\n");
+                    restoredPackages.Add(args.Package);
+                };
 
                 var restoreFailedPackages = new ConcurrentDictionary<Packaging.PackageReference, IEnumerable<string>>(PackageReferenceComparer.Instance);
                 packageRestoreManager.PackageRestoreFailedEvent += delegate (object sender, PackageRestoreFailedEventArgs args)
                 {
+                    _output.WriteLine($"PackageRestoreFailedEvent: {args.RestoreFailedPackageReference}\n" +
+                        $"ProjectNames: {args.ProjectNames}\n---\n");
                     restoreFailedPackages.AddOrUpdate(args.RestoreFailedPackageReference,
                         args.ProjectNames,
                         (Packaging.PackageReference packageReference, IEnumerable<string> oldValue) => { return oldValue; });
@@ -353,7 +368,7 @@ namespace NuGet.Test
                 nuGetPackageManager.PackageExistsInPackagesFolder(testPackage2).Should().BeFalse();
 
                 // Act
-                await packageRestoreManager.RestoreMissingPackagesInSolutionAsync(testSolutionManager.SolutionDirectory,
+                PackageRestoreResult result = await packageRestoreManager.RestoreMissingPackagesInSolutionAsync(testSolutionManager.SolutionDirectory,
                     testNuGetProjectContext,
                     new TestLogger(),
                     CancellationToken.None);

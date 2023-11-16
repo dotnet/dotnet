@@ -63,6 +63,19 @@ Copyright (c) .NET Foundation. All rights reserved.
     <_CentralPackageVersionsEnabled Condition="'$(ManagePackageVersionsCentrally)' == 'true' AND '$(CentralPackageVersionsFileImported)' == 'true'">true</_CentralPackageVersionsEnabled>
   </PropertyGroup>
 
+  <!--
+    Visual Studio's project property page requires defaults to be set to inform customers what the default values are.
+    Project-system uses DefaultValueSourceLocation.AfterContext to detect when a customer's project changes the value, so these defaults must be set here in the targets file.
+  -->
+  <PropertyGroup>
+    <!-- Enable NuGetAudit by default -->
+    <NuGetAudit Condition=" '$(NuGetAudit)' == '' ">true</NuGetAudit>
+    <!-- Report on low severity vulnerabilities, and higher. Allowed values are: low, moderate, high, critical -->
+    <NuGetAuditLevel Condition=" '$(NuGetAuditLevel)' == '' ">low</NuGetAuditLevel>
+    <!-- Report known vulnerabilities on direct dependencies only. Allowed values are: direct, all -->
+    <NuGetAuditMode Condition=" '$(NuGetAuditMode)' == '' ">direct</NuGetAuditMode>
+  </PropertyGroup>
+
   <PropertyGroup>
     <!-- Exclude packages from changing restore inputs.  -->
     <_GenerateRestoreGraphProjectEntryInputProperties>ExcludeRestorePackageImports=true</_GenerateRestoreGraphProjectEntryInputProperties>
@@ -849,6 +862,7 @@ Copyright (c) .NET Foundation. All rights reserved.
         <NuGetLockFilePath>$(NuGetLockFilePath)</NuGetLockFilePath>
         <RestoreLockedMode>$(RestoreLockedMode)</RestoreLockedMode>
         <_CentralPackageVersionsEnabled>$(_CentralPackageVersionsEnabled)</_CentralPackageVersionsEnabled>
+        <CentralPackageFloatingVersionsEnabled>$(CentralPackageFloatingVersionsEnabled)</CentralPackageFloatingVersionsEnabled>
         <CentralPackageVersionOverrideEnabled>$(CentralPackageVersionOverrideEnabled)</CentralPackageVersionOverrideEnabled>
         <CentralPackageTransitivePinningEnabled>$(CentralPackageTransitivePinningEnabled)</CentralPackageTransitivePinningEnabled>
         <NuGetAudit>$(NuGetAudit)</NuGetAudit>

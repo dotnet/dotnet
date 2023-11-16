@@ -34,6 +34,7 @@ using Task = System.Threading.Tasks.Task;
 namespace NuGet.Tools.Test
 {
     [Collection(MockedVS.Collection)]
+    [UseCulture("en-US")] // We are asserting exception messages in English
     public class NuGetBrokeredServiceFactoryTests : IAsyncServiceProvider, SVsBrokeredServiceContainer, IBrokeredServiceContainer
     {
         private readonly Dictionary<ServiceRpcDescriptor, BrokeredServiceFactory> _serviceFactories;

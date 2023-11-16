@@ -177,11 +177,20 @@
   <data name="Setting_FormattingOnTypeDisplayName" xml:space="preserve">
     <value>Format On Type</value>
   </data>
+  <data name="Setting_SnippetsAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Setting_SnippetsCustom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
   <data name="Setting_SnippetsDescription" xml:space="preserve">
     <value>What snippets to include in a razor file. If set to custom, only snippets that are not included with Visual Studio will be shown. </value>
   </data>
   <data name="Setting_SnippetsDisplayName" xml:space="preserve">
     <value>Included Snippets</value>
+  </data>
+  <data name="Setting_SnippetsNone" xml:space="preserve">
+    <value>None</value>
   </data>
   <data name="Typing" xml:space="preserve">
     <value>Typing</value>

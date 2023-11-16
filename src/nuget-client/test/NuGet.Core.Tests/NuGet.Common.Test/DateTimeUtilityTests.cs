@@ -27,13 +27,17 @@ namespace NuGet.Common.Test
 
         [Theory]
         [MemberData(nameof(GetData))]
-        public void ToReadableTimeFormat_Localized_AssumesEnglishLocale_ContainsTimeNumber_Succeeds(string timeNumber, TimeSpan time)
+        public void ToReadableTimeFormat_Localized_AssumesCurrentCulture_ContainsTimeNumber_Succeeds(string timeNumber, TimeSpan time)
         {
+            // Arrange
+            // Convert expected string number to decimal and back to string in a local regional format
+            string expected = decimal.Parse(timeNumber, CultureInfo.InvariantCulture).ToString(CultureInfo.CurrentCulture);
+
             // Act
             string actual = DatetimeUtility.ToReadableTimeFormat(time);
 
             // Assert
-            Assert.Contains(timeNumber, actual);
+            Assert.Contains(expected, actual);
         }
 
         [Fact]

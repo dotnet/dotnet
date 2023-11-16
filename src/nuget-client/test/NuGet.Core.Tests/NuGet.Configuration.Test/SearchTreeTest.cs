@@ -200,6 +200,7 @@ namespace NuGet.Configuration.Test
         }
 
         [Theory]
+        [UseCulture("")] // Fix tests failing on systems with non-English locales
         [InlineData("nuget.org,nuget", null)]
         [InlineData("nuget.org,nuget", "")]
         [InlineData("nuget.org,nuget", " ")]

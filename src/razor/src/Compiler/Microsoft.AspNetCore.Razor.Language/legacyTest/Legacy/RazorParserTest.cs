@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -10,20 +11,10 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 public class RazorParserTest
 {
     [Fact]
-    public void CanParseStuff()
-    {
-        var parser = new RazorParser();
-        var sourceDocument = TestRazorSourceDocument.CreateResource("TestFiles/Source/BasicMarkup.cshtml", GetType());
-        var output = parser.Parse(sourceDocument);
-
-        Assert.NotNull(output);
-    }
-
-    [Fact]
     public void ParseMethodCallsParseDocumentOnMarkupParserAndReturnsResults()
     {
         // Arrange
-        var parser = new RazorParser();
+        var parser = new RazorParser(RazorParserOptions.Create(builder => builder.EnableSpanEditHandlers = true));
         var expected =
 @"RazorDocument - [0..12)::12 - [foo @bar baz]
     MarkupBlock - [0..12)::12
@@ -49,6 +40,6 @@ public class RazorParserTest
 
         // Assert
         var actual = SyntaxNodeSerializer.Serialize(syntaxTree.Root, validateSpanEditHandlers: true);
-        Assert.Equal(expected, actual);
+        AssertEx.AssertEqualToleratingWhitespaceDifferences(expected, actual);
     }
 }

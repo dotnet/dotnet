@@ -1,0 +1,18 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory).., Directory.Build.props))\Directory.Build.props" />
+
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <ProductBrandPrefix>Microsoft Windows Desktop</ProductBrandPrefix>
+    <!-- The Microsoft.WindowsDesktop.App shared framework composition depends on winforms, wpf and runtime transport packages
+         which contain architecture agnostic assets. As the OS part of the RID is always the portable "win", we don't need to
+         support non portable builds. If we ever want to target a specific base OS version,we should update this line. -->
+    <RuntimeIdentifier>win-$(TargetArchitecture)</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.Installers" Version="$(MicrosoftDotNetBuildTasksInstallersVersion)" />
+  </ItemGroup>
+
+</Project>

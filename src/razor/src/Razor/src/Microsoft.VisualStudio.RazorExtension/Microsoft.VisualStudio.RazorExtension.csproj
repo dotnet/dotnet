@@ -129,6 +129,12 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
 
+    <!-- Unified Settings -->
+    <Content Include="UnifiedSettings\razor.registration.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

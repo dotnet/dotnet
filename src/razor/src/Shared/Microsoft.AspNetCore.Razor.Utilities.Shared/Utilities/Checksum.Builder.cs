@@ -148,7 +148,7 @@ internal sealed partial record Checksum
                 var index = 0;
                 while (index < stringBytes.Length)
                 {
-                    var remaining = stringBytes.Length;
+                    var remaining = stringBytes.Length - index;
                     var toCopy = Math.Min(remaining, buffer.Length);
 
                     stringBytes.Slice(index, toCopy).CopyTo(buffer);

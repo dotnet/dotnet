@@ -28,6 +28,8 @@ internal abstract class FakeCommunicationChannel : ICommunicationChannel
     /// </summary>
     public bool Faulted { get; protected set; }
 
+    TrackableEvent<MessageReceivedEventArgs> ICommunicationChannel.MessageReceived => throw new NotImplementedException();
+
     #region ICommunicationChannel
     // The naming for ICommunicationChannel is a bit confusing when this is implemented in-process.
     // Normally one side in one process would have one end of the communication channel,
@@ -67,6 +69,11 @@ internal abstract class FakeCommunicationChannel : ICommunicationChannel
         // This is still a race condition. In real code we solve this via SafeInvoke that does null check
         // and catches the exception. In this code I prefer doing it this way, to see if it is fragile.
         MessageReceived?.Invoke(this, eventArgs);
+    }
+
+    public Task NotifyDataAvailable(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 }
 

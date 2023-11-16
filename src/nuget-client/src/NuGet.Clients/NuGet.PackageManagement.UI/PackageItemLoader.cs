@@ -332,13 +332,6 @@ namespace NuGet.PackageManagement.UI
             return listItemViewModels.ToArray();
         }
 
-        private async Task<PackageDeprecationMetadataContextInfo> GetDeprecationMetadataAsync(PackageIdentity identity)
-        {
-            Assumes.NotNull(identity);
-
-            return await _searchService.GetDeprecationMetadataAsync(identity, _packageSources, _includePrerelease, CancellationToken.None);
-        }
-
         private async Task<IReadOnlyCollection<VersionInfoContextInfo>> GetVersionInfoAsync(PackageIdentity identity)
         {
             Assumes.NotNull(identity);

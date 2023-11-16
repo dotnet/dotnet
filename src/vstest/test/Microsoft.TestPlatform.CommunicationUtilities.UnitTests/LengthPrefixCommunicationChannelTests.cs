@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
@@ -88,11 +89,11 @@ public class LengthPrefixCommunicationChannelTests : IDisposable
     public async Task MessageReceivedShouldProvideDataOverStream()
     {
         var data = string.Empty;
-        _channel.MessageReceived += (sender, messageEventArgs) => data = messageEventArgs.Data;
+        _channel.MessageReceived.Subscribe((sender, messageEventArgs) => data = messageEventArgs.Data);
         _writer.Write(Dummydata);
         SeekToBeginning(_stream);
 
-        await _channel.NotifyDataAvailable();
+        await _channel.NotifyDataAvailable(new CancellationToken());
 
         Assert.AreEqual(Dummydata, data);
     }
@@ -103,7 +104,7 @@ public class LengthPrefixCommunicationChannelTests : IDisposable
         _writer.Write(Dummydata);
         SeekToBeginning(_stream);
 
-        await _channel.NotifyDataAvailable();
+        await _channel.NotifyDataAvailable(new CancellationToken());
 
         // Data is read irrespective of listeners. See note in NotifyDataAvailable
         // implementation.
@@ -131,10 +132,10 @@ public class LengthPrefixCommunicationChannelTests : IDisposable
     public async Task DoNotFailWhenReadingFromADisposedBaseStream()
     {
         var data = string.Empty;
-        _channel.MessageReceived += (sender, messageEventArgs) => data = messageEventArgs.Data;
+        _channel.MessageReceived.Subscribe((sender, messageEventArgs) => data = messageEventArgs.Data);
         // Dispose base stream
         _stream.Dispose();
-        await _channel.NotifyDataAvailable();
+        await _channel.NotifyDataAvailable(new CancellationToken());
     }
 
     // TODO

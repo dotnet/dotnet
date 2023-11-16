@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -40,17 +41,30 @@ internal static class TcpClientExtensions
                 socketException);
         }
 
+        // PERF: check if verbose is enabled once, and re-use for all calls in the tight loop below. The check for verbose is shows in perf traces
+        // below and we are wasting resources re-checking when user does not have it open. Downside of this is that if you change the verbosity level
+        // during runtime (e.g. in VS options), you won't update here. Which is imho an okay tradeoff.
+        var isVerboseEnabled = EqtTrace.IsVerboseEnabled;
+
+        var sw = Stopwatch.StartNew();
         // Set read timeout to avoid blocking receive raw message
         while (channel != null && !cancellationToken.IsCancellationRequested)
         {
-            EqtTrace.Verbose("TcpClientExtensions.MessageLoopAsync: Polling on remoteEndPoint: {0} localEndPoint: {1}", remoteEndPoint, localEndPoint);
+            if (isVerboseEnabled)
+            {
+                EqtTrace.Verbose("TcpClientExtensions.MessageLoopAsync: Polling on remoteEndPoint: {0} localEndPoint: {1} after {2} ms", remoteEndPoint, localEndPoint, sw.ElapsedMilliseconds);
+                sw.Restart();
+            }
 
             try
             {
                 if (client.Client.Poll(Streamreadtimeout, SelectMode.SelectRead))
                 {
-                    EqtTrace.Verbose("TcpClientExtensions.MessageLoopAsync: NotifyDataAvailable remoteEndPoint: {0} localEndPoint: {1}", remoteEndPoint, localEndPoint);
-                    channel.NotifyDataAvailable();
+                    if (isVerboseEnabled)
+                    {
+                        EqtTrace.Verbose("TcpClientExtensions.MessageLoopAsync: NotifyDataAvailable remoteEndPoint: {0} localEndPoint: {1}", remoteEndPoint, localEndPoint);
+                    }
+                    channel.NotifyDataAvailable(cancellationToken);
                 }
             }
             catch (IOException ioException)

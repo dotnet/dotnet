@@ -48,6 +48,8 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
 
     protected int BaselineTestCount { get; set; }
 
+    protected virtual bool EnableSpanEditHandlers => false;
+
     internal virtual void AssertSyntaxTreeNodeMatchesBaseline(RazorSyntaxTree syntaxTree)
     {
         var root = syntaxTree.Root;
@@ -76,7 +78,7 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
         {
             // Write syntax tree baseline
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, SyntaxNodeSerializer.Serialize(root, validateSpanEditHandlers: false));
+            File.WriteAllText(baselineFullPath, SyntaxNodeSerializer.Serialize(root, validateSpanEditHandlers: EnableSpanEditHandlers));
 
             // Write diagnostics baseline
             var baselineDiagnosticsFullPath = Path.Combine(TestProjectRoot, baselineDiagnosticsFileName);
@@ -92,7 +94,7 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
 
             // Write classified spans baseline
             var classifiedSpansBaselineFullPath = Path.Combine(TestProjectRoot, baselineClassifiedSpansFileName);
-            File.WriteAllText(classifiedSpansBaselineFullPath, ClassifiedSpanSerializer.Serialize(syntaxTree, validateSpanEditHandlers: false));
+            File.WriteAllText(classifiedSpansBaselineFullPath, ClassifiedSpanSerializer.Serialize(syntaxTree, validateSpanEditHandlers: EnableSpanEditHandlers));
 
             // Write tag helper spans baseline
             var tagHelperSpansBaselineFullPath = Path.Combine(TestProjectRoot, baselineTagHelperSpansFileName);
@@ -117,7 +119,7 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
         }
 
         var syntaxNodeBaseline = stFile.ReadAllText();
-        var actualSyntaxNodes = SyntaxNodeSerializer.Serialize(root, validateSpanEditHandlers: false);
+        var actualSyntaxNodes = SyntaxNodeSerializer.Serialize(root, validateSpanEditHandlers: EnableSpanEditHandlers);
         AssertEx.AssertEqualToleratingWhitespaceDifferences(syntaxNodeBaseline, actualSyntaxNodes);
 
         // Verify diagnostics
@@ -140,7 +142,7 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
         else
         {
             var classifiedSpanBaseline = classifiedSpanFile.ReadAllText();
-            var actualClassifiedSpans = ClassifiedSpanSerializer.Serialize(syntaxTree, validateSpanEditHandlers: false);
+            var actualClassifiedSpans = ClassifiedSpanSerializer.Serialize(syntaxTree, validateSpanEditHandlers: EnableSpanEditHandlers);
             AssertEx.AssertEqualToleratingWhitespaceDifferences(classifiedSpanBaseline, actualClassifiedSpans);
         }
 
@@ -188,7 +190,7 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
 
         var source = TestRazorSourceDocument.Create(document, filePath: null, relativePath: null, normalizeNewLines: true);
 
-        var options = CreateParserOptions(version, directives, designTime, featureFlags, fileKind);
+        var options = CreateParserOptions(version, directives, designTime, EnableSpanEditHandlers, featureFlags, fileKind);
         var context = new ParserContext(source, options);
 
         var codeParser = new CSharpCodeParser(directives, context);
@@ -248,6 +250,7 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
         RazorLanguageVersion version,
         IEnumerable<DirectiveDescriptor> directives,
         bool designTime,
+        bool enableSpanEditHandlers,
         RazorParserFeatureFlags featureFlags = null,
         string fileKind = null)
     {
@@ -258,7 +261,7 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
             parseLeadingDirectives: false,
             version: version,
             fileKind: fileKind,
-            enableSpanEditHandlers: false)
+            enableSpanEditHandlers)
             {
                 FeatureFlags = featureFlags ?? RazorParserFeatureFlags.Create(version, fileKind)
             };

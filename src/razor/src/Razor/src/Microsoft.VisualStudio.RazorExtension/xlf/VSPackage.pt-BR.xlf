@@ -87,6 +87,16 @@
         <target state="translated">Formatar no Tipo</target>
         <note />
       </trans-unit>
+      <trans-unit id="Setting_SnippetsAll">
+        <source>All</source>
+        <target state="translated">Todos</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_SnippetsCustom">
+        <source>Custom</source>
+        <target state="translated">Personalizadas</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Setting_SnippetsDescription">
         <source>What snippets to include in a razor file. If set to custom, only snippets that are not included with Visual Studio will be shown. </source>
         <target state="translated">Quais snippets de código devem ser incluídos em um arquivo Razor. Se definido como personalizado, somente os snippets que não estiverem incluídos no Visual Studio serão mostrados. </target>
@@ -95,6 +105,11 @@
       <trans-unit id="Setting_SnippetsDisplayName">
         <source>Included Snippets</source>
         <target state="translated">Snippets Incluídos</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_SnippetsNone">
+        <source>None</source>
+        <target state="translated">Nenhum</target>
         <note />
       </trans-unit>
       <trans-unit id="Typing">

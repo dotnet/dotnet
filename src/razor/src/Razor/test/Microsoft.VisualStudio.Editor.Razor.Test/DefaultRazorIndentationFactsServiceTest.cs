@@ -343,6 +343,8 @@ public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutpu
             {
                 builder.AddDirective(directive);
             }
+
+            builder.Features.Add(new DefaultVisualStudioRazorParser.VisualStudioEnableTagHelpersFeature());
         });
 
         var sourceProjectItem = new TestRazorProjectItem("test.cshtml")

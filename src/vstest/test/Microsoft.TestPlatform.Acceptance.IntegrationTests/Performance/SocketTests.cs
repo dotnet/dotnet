@@ -41,7 +41,7 @@ public class SocketTests
         server.Connected += (sender, args) =>
         {
             serverChannel = args.Channel;
-            serverChannel!.MessageReceived += (channel, messageReceived) =>
+            serverChannel!.MessageReceived.Subscribe((channel, messageReceived) =>
             {
                 // Keep count of bytes
                 dataReceived += messageReceived.Data!.Length;
@@ -51,7 +51,7 @@ public class SocketTests
                     dataTransferred.Set();
                     watch.Stop();
                 }
-            };
+            });
 
             clientConnected.Set();
         };

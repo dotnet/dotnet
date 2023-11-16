@@ -32,11 +32,11 @@ public abstract class SocketTestsBase
     {
         var message = string.Empty;
         ManualResetEvent waitForMessage = new(false);
-        SetupChannel(out ConnectedEventArgs? _)!.MessageReceived += (s, e) =>
+        SetupChannel(out ConnectedEventArgs? _)!.MessageReceived.Subscribe((s, e) =>
         {
             message = e.Data;
             waitForMessage.Set();
-        };
+        });
 
         WriteData(Client!);
 

@@ -178,6 +178,11 @@ namespace NuGet.Common
         NU1109 = 1109,
 
         /// <summary>
+        /// The package `packageId` is available in the Global packages folder, but the source it came from `package source URI` is not one of the configured sources.
+        /// </summary>
+        NU1110 = 1110,
+
+        /// <summary>
         /// Dependency project has an incompatible framework.
         /// </summary>
         NU1201 = 1201,

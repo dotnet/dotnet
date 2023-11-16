@@ -1,15 +1,15 @@
 RazorDocument - [0..32)::32 - [foo @DateTime.Now.ToString() baz]
     MarkupBlock - [0..32)::32
-        MarkupTextLiteral - [0..4)::4 - [foo ] - Gen<Markup>
+        MarkupTextLiteral - [0..4)::4 - [foo ] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Text;[foo];
             Whitespace;[ ];
         CSharpCodeBlock - [4..28)::24
             CSharpImplicitExpression - [4..28)::24
-                CSharpTransition - [4..5)::1 - Gen<None>
+                CSharpTransition - [4..5)::1 - Gen<None> - SpanEditHandler;Accepts:None
                     Transition;[@];
                 CSharpImplicitExpressionBody - [5..28)::23
                     CSharpCodeBlock - [5..28)::23
-                        CSharpExpressionLiteral - [5..28)::23 - [DateTime.Now.ToString()] - Gen<Expr>
+                        CSharpExpressionLiteral - [5..28)::23 - [DateTime.Now.ToString()] - Gen<Expr> - ImplicitExpressionEditHandler;Accepts:NonWhitespace;ImplicitExpression[RTD];K22
                             Identifier;[DateTime];
                             Dot;[.];
                             Identifier;[Now];
@@ -17,7 +17,7 @@ RazorDocument - [0..32)::32 - [foo @DateTime.Now.ToString() baz]
                             Identifier;[ToString];
                             LeftParenthesis;[(];
                             RightParenthesis;[)];
-        MarkupTextLiteral - [28..32)::4 - [ baz] - Gen<Markup>
+        MarkupTextLiteral - [28..32)::4 - [ baz] - Gen<Markup> - SpanEditHandler;Accepts:Any
             Whitespace;[ ];
             Text;[baz];
     EndOfFile;[];

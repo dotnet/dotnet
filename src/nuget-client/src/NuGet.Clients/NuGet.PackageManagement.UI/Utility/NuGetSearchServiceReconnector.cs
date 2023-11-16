@@ -141,11 +141,6 @@ namespace NuGet.PackageManagement.UI.Utility
                 return _parent._service.GetAllPackagesAsync(projectContextInfos, packageSources, targetFrameworks, searchFilter, itemFilter, isSolution, cancellationToken);
             }
 
-            public ValueTask<PackageDeprecationMetadataContextInfo> GetDeprecationMetadataAsync(PackageIdentity identity, IReadOnlyCollection<PackageSourceContextInfo> packageSources, bool includePrerelease, CancellationToken cancellationToken)
-            {
-                return _parent._service.GetDeprecationMetadataAsync(identity, packageSources, includePrerelease, cancellationToken);
-            }
-
             public ValueTask<(PackageSearchMetadataContextInfo, PackageDeprecationMetadataContextInfo)> GetPackageMetadataAsync(PackageIdentity identity, IReadOnlyCollection<PackageSourceContextInfo> packageSources, bool includePrerelease, CancellationToken cancellationToken)
             {
                 return _parent._service.GetPackageMetadataAsync(identity, packageSources, includePrerelease, cancellationToken);

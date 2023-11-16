@@ -235,34 +235,6 @@ namespace NuGet.PackageManagement.VisualStudio
             return await cacheEntry.AllVersionsContextInfo;
         }
 
-
-        public async ValueTask<PackageDeprecationMetadataContextInfo?> GetDeprecationMetadataAsync(
-            PackageIdentity identity,
-            IReadOnlyCollection<PackageSourceContextInfo> packageSources,
-            bool includePrerelease,
-            CancellationToken cancellationToken)
-        {
-            Assumes.NotNull(identity);
-            Assumes.NotNullOrEmpty(packageSources);
-
-            string cacheId = PackageSearchMetadataCacheItem.GetCacheId(identity.Id, includePrerelease, packageSources);
-            PackageSearchMetadataCacheItem? backgroundDataCache = PackageSearchMetadataMemoryCache.Get(cacheId) as PackageSearchMetadataCacheItem;
-            if (backgroundDataCache != null)
-            {
-                PackageSearchMetadataCacheItemEntry cacheItem = await backgroundDataCache.GetPackageSearchMetadataCacheVersionedItemAsync(identity, cancellationToken);
-                return await cacheItem.PackageDeprecationMetadataContextInfo;
-            }
-
-            IPackageMetadataProvider packageMetadataProvider = await GetPackageMetadataProviderAsync(packageSources, cancellationToken);
-            IPackageSearchMetadata packageMetadata = await packageMetadataProvider.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken);
-            PackageDeprecationMetadata deprecationMetadata = await packageMetadata.GetDeprecationMetadataAsync();
-            if (deprecationMetadata == null)
-            {
-                return null;
-            }
-            return PackageDeprecationMetadataContextInfo.Create(deprecationMetadata);
-        }
-
         public async ValueTask<SearchResultContextInfo> RefreshSearchAsync(CancellationToken cancellationToken)
         {
             Assumes.NotNull(_searchObject);

@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\System.Windows.Forms.csproj" />
+    <ProjectReference Include="..\WinformsControlsTest\WinformsControlsTest.csproj" />
+  </ItemGroup>
+
+</Project>

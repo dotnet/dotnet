@@ -297,6 +297,11 @@ namespace NuGet.SolutionRestoreManager
             return GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.CentralPackageVersionOverrideEnabled, (value) => value.EqualsFalse());
         }
 
+        internal static bool IsCentralPackageFloatingVersionsEnabled(IEnumerable tfms)
+        {
+            return GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.CentralPackageFloatingVersionsEnabled, MSBuildStringUtility.IsTrue);
+        }
+
         internal static bool IsCentralPackageTransitivePinningEnabled(IEnumerable tfms)
         {
             return GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.CentralPackageTransitivePinningEnabled, MSBuildStringUtility.IsTrue);

@@ -9,6 +9,7 @@ using Xunit;
 
 namespace NuGet.Versioning.Test
 {
+    [UseCulture("en-US")] // We are asserting exception messages in English
     public class NuGetVersionTest
     {
         [Fact]
