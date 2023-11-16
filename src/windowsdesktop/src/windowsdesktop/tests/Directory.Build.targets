@@ -1,0 +1,44 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory).., Directory.Build.targets))\Directory.Build.targets" />
+
+  <Target Name="SetupTestContextVariables"
+          BeforeTargets="Build">
+    <PropertyGroup>
+      <TestRestorePackagesPath>$(ArtifactsObjDir)TestPackageCache\</TestRestorePackagesPath>
+    </PropertyGroup>
+
+    <!--
+      Fetch the package version of Microsoft.WindowsDesktop.App. Use the runtime nupkg project
+      because it always ships.
+
+      Some test projects end in ".Tests", which Arcade detects and applies IsShipping=false. This
+      makes ProductVersion non-stable, so we can't rely on the test project's ProductVersion to be
+      the same as the package's version. Fetch this directly from the project to avoid guesswork.
+    -->
+    <MSBuild
+      Projects="$(MSBuildThisFileDirectory)..\src\sfx\Microsoft.WindowsDesktop.App.Runtime.sfxproj"
+      Targets="ReturnProductVersion">
+      <Output TaskParameter="TargetOutputs" PropertyName="WindowsDesktopRuntimeVersion" />
+    </MSBuild>
+
+    <!--
+      Set up properties used inside tests. Write them to a text file so that they can be found
+      inside the VS Test Explorer context the same way as the XUnit runner will find them.
+      See https://github.com/dotnet/arcade/issues/3077.
+    -->
+    <ItemGroup>
+      <TestContextVariable Include="NUGET_PACKAGES=$(TestRestorePackagesPath)" />
+      <TestContextVariable Include="BUILDRID=$(RuntimeIdentifier)" />
+      <TestContextVariable Include="BUILD_ARCHITECTURE=$(TargetArchitecture)" />
+      <TestContextVariable Include="BUILD_CONFIGURATION=$(Configuration)" />
+      <TestContextVariable Include="MNA_VERSION=$(WindowsDesktopRuntimeVersion)" />
+    </ItemGroup>
+
+    <WriteLinesToFile
+      File="$(OutDir)TestContextVariables.txt"
+      Overwrite="true"
+      Lines="@(TestContextVariable)" />
+  </Target>
+
+</Project>

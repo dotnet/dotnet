@@ -1,0 +1,80 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <!-- Using a csproj extension to get the correct multi-targeting behavior. -->
+    <TargetFrameworks>$(NetCurrent);$(NetPrevious);$(NetMinimum);netstandard2.1;netstandard2.0</TargetFrameworks>
+    <!-- Reference the outputs for the dependency nodes calculation. -->
+    <NoTargetsDoNotReferenceOutputAssemblies>false</NoTargetsDoNotReferenceOutputAssemblies>
+    <IsPackable>true</IsPackable>
+    <!-- This is a meta package and doesn't contain any libs. -->
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageDescription>This Windows Compatibility Pack provides access to APIs that were previously available only for .NET Framework. It can be used from both .NET as well as .NET Standard.</PackageDescription>
+    <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="PACKAGE.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="$(MicrosoftWin32RegistryAccessControlVersion)" />
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="$(MicrosoftWin32SystemEventsVersion)" />
+    <PackageReference Include="System.CodeDom" Version="$(SystemCodeDomVersion)" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="$(SystemComponentModelCompositionVersion)" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="$(SystemConfigurationConfigurationManagerVersion)" />
+    <PackageReference Include="System.Data.Odbc" Version="$(SystemDataOdbcVersion)" />
+    <PackageReference Include="System.Data.OleDb" Version="$(SystemDataOleDbVersion)" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="$(SystemDiagnosticsEventLogVersion)" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="$(SystemDiagnosticsPerformanceCounterVersion)" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="$(SystemDirectoryServicesAccountManagementVersion)" />
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="$(SystemDirectoryServicesProtocolsVersion)" />
+    <PackageReference Include="System.DirectoryServices" Version="$(SystemDirectoryServicesVersion)" />
+    <PackageReference Include="System.IO.Packaging" Version="$(SystemIOPackagingVersion)" />
+    <PackageReference Include="System.IO.Ports" Version="$(SystemIOPortsVersion)" />
+    <PackageReference Include="System.Management" Version="$(SystemManagementVersion)" />
+    <PackageReference Include="System.Reflection.Context" Version="$(SystemReflectionContextVersion)" />
+    <PackageReference Include="System.Runtime.Caching" Version="$(SystemRuntimeCachingVersion)" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="$(SystemSecurityCryptographyPkcsVersion)" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="$(SystemSecurityCryptographyProtectedDataVersion)" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" />
+    <PackageReference Include="System.Security.Permissions" Version="$(SystemSecurityPermissionsVersion)" />
+    <PackageReference Include="System.ServiceModel.Syndication" Version="$(SystemServiceModelSyndicationVersion)" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="$(SystemServiceProcessServiceControllerVersion)" />
+    <PackageReference Include="System.Speech" Version="$(SystemSpeechVersion)" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="$(SystemTextEncodingCodePagesVersion)" />
+    <PackageReference Include="System.Threading.AccessControl" Version="$(SystemThreadingAccessControlVersion)" />
+    <PackageReference Include="System.Drawing.Common" Version="$(SystemDrawingCommonVersion)" />
+    <PackageReference Include="System.Data.SqlClient" Version="$(SystemDataSqlClientVersion)" />  
+    <PackageReference Include="System.ServiceModel.Duplex;
+                               System.ServiceModel.Http;
+                               System.ServiceModel.NetTcp;
+                               System.ServiceModel.Primitives;
+                               System.ServiceModel.Security;
+                               System.Web.Services.Description"
+                      Version="$(SystemServiceModelVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.1'))">
+    <PackageReference Include="System.ComponentModel.Composition.Registration" Version="$(SystemComponentModelCompositionRegistrationVersion)" />
+  </ItemGroup>
+
+  <!-- Packages which are inbox on frameworks newer than .NET Standard 2.0. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Reflection.Emit" Version="$(SystemReflectionEmitVersion)" />
+    <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="$(SystemReflectionEmitILGenerationVersion)" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="$(SystemReflectionEmitLightweightVersion)" />
+  </ItemGroup>
+
+  <!-- Packages which are inbox in NET6 and shouldn't be referenced anymore. -->
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
+    <PackageReference Include="Microsoft.Win32.Registry" Version="$(MicrosoftWin32RegistryVersion)" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="$(SystemDataDataSetExtensionsVersion)" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="$(SystemIOFileSystemAccessControlVersion)" />
+    <PackageReference Include="System.IO.Pipes.AccessControl" Version="$(SystemIOPipesAccessControlVersion)" />
+    <PackageReference Include="System.Security.AccessControl" Version="$(SystemSecurityAccessControlVersion)" />
+    <PackageReference Include="System.Security.Cryptography.Cng" Version="$(SystemSecurityCryptographyCngVersion)" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="$(SystemSecurityPrincipalWindowsVersion)" />
+  </ItemGroup>
+
+</Project>

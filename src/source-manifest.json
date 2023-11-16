@@ -151,6 +151,12 @@
       "commitSha": "b397a1f1393aa9b4ec55ee2f7073d7d1992bdfc7"
     },
     {
+      "packageVersion": "9.0.0-alpha.1.23565.1",
+      "path": "windowsdesktop",
+      "remoteUri": "https://github.com/dotnet/windowsdesktop",
+      "commitSha": "d75d848717201a31bfd2903d690fb5c4b0401adb"
+    },
+    {
       "packageVersion": "7.0.0-preview.22423.2",
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",

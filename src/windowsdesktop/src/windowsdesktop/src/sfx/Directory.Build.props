@@ -1,0 +1,34 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory).., Directory.Build.props))\Directory.Build.props" />
+
+  <PropertyGroup>
+    <!--
+      Disable FileVersion check for WindowsDesktop. Files with no FileVersion, as of writing:
+
+      runtimes\win-x86\native\PenImc_cor3.dll
+      runtimes\win-x86\native\PresentationNative_cor3.dll
+      runtimes\win-x86\native\wpfgfx_cor3.dll
+      runtimes\win-x86\lib\netcoreapp3.0\DirectWriteForwarder.dll
+      runtimes\win-x86\lib\netcoreapp3.0\System.Printing.dll
+    -->
+    <PermitDllAndExeFilesLackingFileVersion>true</PermitDllAndExeFilesLackingFileVersion>
+    <DisableImplicitFrameworkReferences>false</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SharedFrameworkName>Microsoft.WindowsDesktop.App</SharedFrameworkName>
+    <SharedFrameworkFriendlyName>Windows Desktop</SharedFrameworkFriendlyName>
+    <RuntimeFrameworkVersion>$(MicrosoftNETCoreAppRefVersion)</RuntimeFrameworkVersion>
+    <GenerateInstallers>true</GenerateInstallers>
+    <GenerateVSInsertionPackages>true</GenerateVSInsertionPackages>
+  </PropertyGroup>
+
+  <!-- Redistribute package content from other nuget packages. -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Wpf.GitHub" Version="$(MicrosoftDotNetWpfGitHubVersion)" />
+    <PackageReference Include="Microsoft.Private.Winforms" Version="$(MicrosoftPrivateWinformsVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Internal.Runtime.WindowsDesktop.Transport" Version="$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)" />
+  </ItemGroup>
+
+</Project>

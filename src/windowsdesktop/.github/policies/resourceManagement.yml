@@ -1,0 +1,20 @@
+name: GitOps.PullRequestIssueManagement
+description: GitOps.PullRequestIssueManagement primitive
+
+resource: repository
+
+configuration:
+  resourceManagementConfiguration:
+    eventResponderTasks:
+    - if:
+      - payloadType: Pull_Request
+      - isActivitySender:
+          user: dotnet-maestro[bot]
+          issueAuthor: False
+      - isAction:
+          action: Opened
+      then:
+      - approvePullRequest:
+          comment: Approved by FabricService.
+      description: Auto-approve maestro PRs
+

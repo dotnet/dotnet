@@ -1,0 +1,32 @@
+<Project>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <PropertyGroup>
+    <!-- Packaging properties -->
+    <GitHubRepositoryName>windowsdesktop</GitHubRepositoryName>
+    <RepositoryUrl>https://github.com/dotnet/$(GitHubRepositoryName)</RepositoryUrl>
+    <PackageProjectUrl>https://dot.net</PackageProjectUrl>
+    <Owners>microsoft,dotnetframework</Owners>
+    <IncludeSymbols>true</IncludeSymbols>
+    <LicenseFile>$(MSBuildThisFileDirectory)LICENSE</LicenseFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Copyright>$(CopyrightNetFoundation)</Copyright>
+    <PackageThirdPartyNoticesFile>$(MSBuildThisFileDirectory)THIRD-PARTY-NOTICES.TXT</PackageThirdPartyNoticesFile>
+    <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
+
+    <!-- Set up handling of build warnings -->
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <!-- Platform detection -->
+    <TargetArchitecture  Condition="'$(TargetArchitecture)' == ''">x64</TargetArchitecture>
+
+    <!-- Revert when arcade updates its Net* properties for 9.0 -->
+    <NetCurrent>net9.0</NetCurrent>
+    <NetMinimum>net8.0</NetMinimum>
+    <NetPrevious />
+  </PropertyGroup>
+
+</Project>
