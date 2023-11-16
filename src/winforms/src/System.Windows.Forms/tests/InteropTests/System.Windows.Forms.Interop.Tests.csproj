@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(TargetFramework)-windows7.0</TargetFramework>
+    <DisableTransitiveFrameworkReferences>true</DisableTransitiveFrameworkReferences>
+    <AssemblyName>System.Windows.Forms.Interop.Tests</AssemblyName>
+    <Platforms>x86;x64</Platforms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <Import Project="ProjectReference.targets" Sdk="Microsoft.DotNet.CMake.Sdk" />
+
+  <ItemGroup>
+    <PackageReference Include="Moq" Version="$(MoqPackageVersion)" />
+    <PackageReference Include="xunit.stafact" Version="$(XUnitStaFactPackageVersion)" />
+    <PackageReference Include="coverlet.msbuild" Version="$(CoverletMSBuildPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\System.Windows.Forms.csproj" />
+    <ProjectReference Include="..\TestUtilities\System.Windows.Forms.TestUtilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeProjectReference Include="NativeTests\CMakeLists.txt" CMakeProject="NativeTests\NativeTests.proj" BuildNative="true" />
+  </ItemGroup>
+
+  <Target Name="CopyTlbProjectFiles" BeforeTargets="CopyNativeProjectBinaries">
+    <ItemGroup>
+      <NativeProjectBinaries Include="$(NativeProjectOutputFolder)\*.tlb" />
+      <NativeProjectBinaries Include="$(NativeProjectOutputFolder)\*.manifest" />
+    </ItemGroup>
+  </Target>
+
+</Project>

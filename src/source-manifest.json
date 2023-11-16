@@ -157,6 +157,12 @@
       "commitSha": "d75d848717201a31bfd2903d690fb5c4b0401adb"
     },
     {
+      "packageVersion": "9.0.0-alpha.1.23563.7",
+      "path": "winforms",
+      "remoteUri": "https://github.com/dotnet/winforms",
+      "commitSha": "a73318da53d949d04ab3bc51bfde7a796b1b8a40"
+    },
+    {
       "packageVersion": "9.0.0-alpha.1.23564.1",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",

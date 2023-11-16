@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Codecov">
+
+  <PropertyGroup>
+    <!-- We need to specify a framework in order for the Restore target to work -->
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Codecov" Version="$(CodecovVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="ReportGenerator" Version="$(ReportGeneratorVersion)" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <Target Name="Codecov">
+    <PropertyGroup>
+      <_CodecovPath>$(PkgCodecov)\tools\Codecov.exe</_CodecovPath>
+      <_ReportGeneratorPath>$(PkgReportGenerator)\tools\net47\ReportGenerator.exe</_ReportGeneratorPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <!-- [...\artifacts\bin\][project]\[configuration]\[framework]\coverage\[project].coverage-->
+      <_CoverageReports Include="$(ArtifactsBinDir)*\$(Configuration)\*\coverage\*.coverage" />
+    </ItemGroup>
+
+    <!-- Merge multiple coverlet reports into a single Cobertura report before uploading to codecov.io, in order to
+      reduce upload size and load on the codecov.io processing servers. -->
+    <Message Importance="high" Text="&quot;$(_ReportGeneratorPath)&quot; &quot;-reports:@(_CoverageReports)&quot; -targetdir:$(BaseOutputPath)coverage -reporttypes:Cobertura" />
+    <Exec Command="&quot;$(_ReportGeneratorPath)&quot; &quot;-reports:@(_CoverageReports)&quot; -targetdir:$(BaseOutputPath)coverage -reporttypes:Cobertura" />
+
+    <ItemGroup>
+      <_CodecovArgs Include="-f;$(BaseOutputPath)coverage\Cobertura.xml" />
+
+      <!-- Report an error if the upload fails -->
+      <_CodecovArgs Include="--required" />
+
+      <_CodecovFlags Include="$(Configuration)" Condition="'$(Configuration)' != ''" />
+      <_CodecovProductionFlags Include="@(_CodecovFlags)" />
+      <_CodecovProductionFlags Include="production" />
+      <_CodecovTestFlags Include="@(_CodecovFlags)" />
+      <_CodecovTestFlags Include="test" />
+    </ItemGroup>
+
+    <!-- Upload the coverage file with a 'production' flag, which will be filtered by codecov.io to production code -->
+    <Message Importance="high" Text="&quot;$(_CodecovPath)&quot; @(_CodecovArgs, ' ') --flag @(_CodecovProductionFlags, ',')" />
+    <Exec Command="&quot;$(_CodecovPath)&quot; @(_CodecovArgs, ' ') --flag @(_CodecovProductionFlags, ',')" />
+
+    <!-- Upload the coverage file with a 'test' flag, which will be filtered by codecov.io to test code -->
+    <Message Importance="high" Text="&quot;$(_CodecovPath)&quot; @(_CodecovArgs, ' ') --flag @(_CodecovTestFlags, ',')" />
+    <Exec Command="&quot;$(_CodecovPath)&quot; @(_CodecovArgs, ' ') --flag @(_CodecovTestFlags, ',')" />
+  </Target>
+
+</Project>
