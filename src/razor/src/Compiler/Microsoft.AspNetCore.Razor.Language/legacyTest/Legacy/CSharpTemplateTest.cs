@@ -13,13 +13,19 @@ public class CSharpTemplateTest() : ParserTestBase(layer: TestProject.Layer.Comp
     [Fact]
     public void HandlesSingleLineTemplate()
     {
-        ParseDocumentTest("@{ var foo = @: bar" + Environment.NewLine + "; }");
+        ParseDocumentTest("""
+            @{ var foo = @: bar
+            ; }
+            """);
     }
 
     [Fact]
     public void HandlesSingleLineImmediatelyFollowingStatementChar()
     {
-        ParseDocumentTest("@{i@: bar" + Environment.NewLine + "}");
+        ParseDocumentTest("""
+            @{i@: bar
+            }
+            """);
     }
 
     [Fact]

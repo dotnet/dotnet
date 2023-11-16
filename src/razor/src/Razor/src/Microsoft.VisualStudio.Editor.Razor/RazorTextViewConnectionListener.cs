@@ -64,8 +64,12 @@ internal class RazorTextViewConnectionListener : ITextViewConnectionListener
         }
         catch (Exception ex)
         {
-            Debug.Fail("RazorTextViewConnectionListener.SubjectBuffersConnected threw exception:" +
-                Environment.NewLine + ex.Message + Environment.NewLine + "Stack trace:" + Environment.NewLine + ex.StackTrace);
+            Debug.Fail($"""
+                RazorTextViewConnectionListener.SubjectBuffersConnected threw exception:
+                {ex.Message}
+                Stack trace:
+                {ex.StackTrace}
+                """);
         }
     }
 
@@ -94,8 +98,12 @@ internal class RazorTextViewConnectionListener : ITextViewConnectionListener
         }
         catch (Exception ex)
         {
-            Debug.Fail("RazorTextViewConnectionListener.SubjectBuffersDisconnected threw exception:" +
-                Environment.NewLine + ex.Message + Environment.NewLine + "Stack trace:" + Environment.NewLine + ex.StackTrace);
+            Debug.Fail($"""
+                RazorTextViewConnectionListener.SubjectBuffersDisconnected threw exception:
+                {ex.Message}
+                Stack trace:
+                {ex.StackTrace}
+                """);
         }
     }
 }

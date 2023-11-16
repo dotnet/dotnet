@@ -22,24 +22,30 @@ public class HtmlBlockTest() : ParserTestBase(layer: TestProject.Layer.Compiler)
     [Fact]
     public void HandlesOpenAngleAtEof()
     {
-        ParseDocumentTest("@{" + Environment.NewLine
-                        + "<");
+        ParseDocumentTest("""
+            @{
+            <
+            """);
     }
 
     [Fact]
     public void HandlesOpenAngleWithProperTagFollowingIt()
     {
-        ParseDocumentTest("@{" + Environment.NewLine
-                        + "<" + Environment.NewLine
-                        + "</html>",
+        ParseDocumentTest("""
+            @{
+            <
+            </html>
+            """,
                         designTime: true);
     }
 
     [Fact]
     public void TagWithoutCloseAngleDoesNotTerminateBlock()
     {
-        ParseDocumentTest("@{<                      " + Environment.NewLine
-                     + "   ");
+        ParseDocumentTest("""
+            @{<                      
+               
+            """);
     }
 
     [Fact]
@@ -51,8 +57,10 @@ public class HtmlBlockTest() : ParserTestBase(layer: TestProject.Layer.Compiler)
     [Fact]
     public void ReadsToEndOfLineIfFirstCharacterAfterTransitionIsColon()
     {
-        ParseDocumentTest("@{@:<li>Foo Bar Baz" + Environment.NewLine
-                     + "bork}");
+        ParseDocumentTest("""
+            @{@:<li>Foo Bar Baz
+            bork}
+            """);
     }
 
     [Fact]

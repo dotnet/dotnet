@@ -232,6 +232,7 @@
     -->
     <MicrosoftNETWorkloadEmscriptenCurrentManifest90100TransportVersion>9.0.0-alpha.1.23564.1</MicrosoftNETWorkloadEmscriptenCurrentManifest90100TransportVersion>
     <MicrosoftNETRuntimeEmscriptenVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest90100TransportVersion)</MicrosoftNETRuntimeEmscriptenVersion>
+    <MicrosoftNETRuntimeEmscripten3134Pythonwinx64Version>9.0.0-alpha.1.23565.1</MicrosoftNETRuntimeEmscripten3134Pythonwinx64Version>
     <!-- workloads -->
     <SwixPackageVersion>1.1.87-gba258badda</SwixPackageVersion>
     <WixPackageVersion>1.0.0-v3.14.0.5722</WixPackageVersion>
@@ -248,7 +249,7 @@
     <MicrosoftExtensionsLoggingVersion>3.1.7</MicrosoftExtensionsLoggingVersion>
     <MicrosoftSymbolStoreVersion>1.0.406601</MicrosoftSymbolStoreVersion>
     <!-- installer version, for testing workloads -->
-    <MicrosoftDotnetSdkInternalVersion>9.0.100-alpha.1.23563.1</MicrosoftDotnetSdkInternalVersion>
+    <MicrosoftDotnetSdkInternalVersion>9.0.100-alpha.1.23564.26</MicrosoftDotnetSdkInternalVersion>
     <SdkVersionForWorkloadTesting>$(MicrosoftDotnetSdkInternalVersion)</SdkVersionForWorkloadTesting>
   </PropertyGroup>
 </Project>

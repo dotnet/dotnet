@@ -52,9 +52,11 @@ public class HtmlDocumentTest() : ParserTestBase(layer: TestProject.Layer.Compil
     [Fact]
     public void WithinSectionDoesNotCreateDocumentLevelSpan()
     {
-        ParseDocumentTest("@section Foo {" + Environment.NewLine
-                        + "    <html></html>" + Environment.NewLine
-                        + "}",
+        ParseDocumentTest("""
+            @section Foo {
+                <html></html>
+            }
+            """,
             new[] { SectionDirective.Directive, });
     }
 

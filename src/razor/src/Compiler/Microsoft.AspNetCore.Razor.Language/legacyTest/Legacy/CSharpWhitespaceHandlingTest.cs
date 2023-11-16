@@ -13,6 +13,9 @@ public class CSharpWhitespaceHandlingTest() : ParserTestBase(layer: TestProject.
     [Fact]
     public void StmtBlockDoesNotAcceptTrailingNewlineIfTheyAreSignificantToAncestor()
     {
-        ParseDocumentTest("@{@: @if (true) { }" + Environment.NewLine + "}");
+        ParseDocumentTest("""
+            @{@: @if (true) { }
+            }
+            """);
     }
 }

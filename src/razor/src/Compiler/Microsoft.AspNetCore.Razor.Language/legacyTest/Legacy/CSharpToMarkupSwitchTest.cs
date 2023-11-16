@@ -25,69 +25,83 @@ public class CSharpToMarkupSwitchTest() : ParserTestBase(layer: TestProject.Laye
     [Fact]
     public void GivesSpacesToCodeOnAtColonTemplateTransitionInDesignTimeMode()
     {
-        ParseDocumentTest("@Foo(    " + Environment.NewLine
-                     + "@:<p>Foo</p>    " + Environment.NewLine
-                     + ")", designTime: true);
+        ParseDocumentTest("""
+            @Foo(    
+            @:<p>Foo</p>    
+            )
+            """, designTime: true);
     }
 
     [Fact]
     public void GivesSpacesToCodeOnTagTransitionInDesignTimeMode()
     {
-        ParseDocumentTest("@{" + Environment.NewLine
-                     + "    <p>Foo</p>    " + Environment.NewLine
-                     + "}", designTime: true);
+        ParseDocumentTest("""
+            @{
+                <p>Foo</p>    
+            }
+            """, designTime: true);
     }
 
     [Fact]
     public void GivesSpacesToCodeOnInvalidAtTagTransitionInDesignTimeMode()
     {
-        ParseDocumentTest("@{" + Environment.NewLine
-                     + "    @<p>Foo</p>    " + Environment.NewLine
-                     + "}", designTime: true);
+        ParseDocumentTest("""
+            @{
+                @<p>Foo</p>    
+            }
+            """, designTime: true);
     }
 
     [Fact]
     public void GivesSpacesToCodeOnAtColonTransitionInDesignTimeMode()
     {
-        ParseDocumentTest("@{" + Environment.NewLine
-                     + "    @:<p>Foo</p>    " + Environment.NewLine
-                     + "}", designTime: true);
+        ParseDocumentTest("""
+            @{
+                @:<p>Foo</p>    
+            }
+            """, designTime: true);
     }
 
     [Fact]
     public void ShouldSupportSingleLineMarkupContainingStatementBlock()
     {
-        ParseDocumentTest("@Repeat(10," + Environment.NewLine
-                     + "    @: @{}" + Environment.NewLine
-                     + ")");
+        ParseDocumentTest("""
+            @Repeat(10,
+                @: @{}
+            )
+            """);
     }
 
     [Fact]
     public void ShouldSupportMarkupWithoutPreceedingWhitespace()
     {
-        ParseDocumentTest("@foreach(var file in files){" + Environment.NewLine
-                     + Environment.NewLine
-                     + Environment.NewLine
-                     + "@:Baz" + Environment.NewLine
-                     + "<br/>" + Environment.NewLine
-                     + "<a>Foo</a>" + Environment.NewLine
-                     + "@:Bar" + Environment.NewLine
-                     + "}");
+        ParseDocumentTest("""
+            @foreach(var file in files){
+            
+            
+            @:Baz
+            <br/>
+            <a>Foo</a>
+            @:Bar
+            }
+            """);
     }
 
     [Fact]
     public void GivesAllWhitespaceOnSameLineWithTrailingNewLineToMarkupExclPreceedingNewline()
     {
         // ParseBlockGivesAllWhitespaceOnSameLineExcludingPreceedingNewlineButIncludingTrailingNewLineToMarkup
-        ParseDocumentTest("@if(foo) {" + Environment.NewLine
-                     + "    var foo = \"After this statement there are 10 spaces\";          " + Environment.NewLine
-                     + "    <p>" + Environment.NewLine
-                     + "        Foo" + Environment.NewLine
-                     + "        @bar" + Environment.NewLine
-                     + "    </p>" + Environment.NewLine
-                     + "    @:Hello!" + Environment.NewLine
-                     + "    var biz = boz;" + Environment.NewLine
-                     + "}");
+        ParseDocumentTest("""
+            @if(foo) {
+                var foo = "After this statement there are 10 spaces";          
+                <p>
+                    Foo
+                    @bar
+                </p>
+                @:Hello!
+                var biz = boz;
+            }
+            """);
     }
 
     [Fact]
@@ -106,42 +120,46 @@ public class CSharpToMarkupSwitchTest() : ParserTestBase(layer: TestProject.Laye
     public void SupportsMarkupInCaseAndDefaultBranchesOfSwitch()
     {
         // Arrange
-        ParseDocumentTest("@switch(foo) {" + Environment.NewLine
-                     + "    case 0:" + Environment.NewLine
-                     + "        <p>Foo</p>" + Environment.NewLine
-                     + "        break;" + Environment.NewLine
-                     + "    case 1:" + Environment.NewLine
-                     + "        <p>Bar</p>" + Environment.NewLine
-                     + "        return;" + Environment.NewLine
-                     + "    case 2:" + Environment.NewLine
-                     + "        {" + Environment.NewLine
-                     + "            <p>Baz</p>" + Environment.NewLine
-                     + "            <p>Boz</p>" + Environment.NewLine
-                     + "        }" + Environment.NewLine
-                     + "    default:" + Environment.NewLine
-                     + "        <p>Biz</p>" + Environment.NewLine
-                     + "}");
+        ParseDocumentTest("""
+            @switch(foo) {
+                case 0:
+                    <p>Foo</p>
+                    break;
+                case 1:
+                    <p>Bar</p>
+                    return;
+                case 2:
+                    {
+                        <p>Baz</p>
+                        <p>Boz</p>
+                    }
+                default:
+                    <p>Biz</p>
+            }
+            """);
     }
 
     [Fact]
     public void SupportsMarkupInCaseAndDefaultBranchesOfSwitchInCodeBlock()
     {
         // Arrange
-        ParseDocumentTest("@{ switch(foo) {" + Environment.NewLine
-                     + "    case 0:" + Environment.NewLine
-                     + "        <p>Foo</p>" + Environment.NewLine
-                     + "        break;" + Environment.NewLine
-                     + "    case 1:" + Environment.NewLine
-                     + "        <p>Bar</p>" + Environment.NewLine
-                     + "        return;" + Environment.NewLine
-                     + "    case 2:" + Environment.NewLine
-                     + "        {" + Environment.NewLine
-                     + "            <p>Baz</p>" + Environment.NewLine
-                     + "            <p>Boz</p>" + Environment.NewLine
-                     + "        }" + Environment.NewLine
-                     + "    default:" + Environment.NewLine
-                     + "        <p>Biz</p>" + Environment.NewLine
-                     + "} }");
+        ParseDocumentTest("""
+            @{ switch(foo) {
+                case 0:
+                    <p>Foo</p>
+                    break;
+                case 1:
+                    <p>Bar</p>
+                    return;
+                case 2:
+                    {
+                        <p>Baz</p>
+                        <p>Boz</p>
+                    }
+                default:
+                    <p>Biz</p>
+            } }
+            """);
     }
 
     [Fact]
@@ -160,16 +178,20 @@ public class CSharpToMarkupSwitchTest() : ParserTestBase(layer: TestProject.Laye
     public void ParsesMarkupStatementOnSwitchCharacterFollowedByColon()
     {
         // Arrange
-        ParseDocumentTest("@if(foo) { @:Bar" + Environment.NewLine
-                     + "} zoop");
+        ParseDocumentTest("""
+            @if(foo) { @:Bar
+            } zoop
+            """);
     }
 
     [Fact]
     public void ParsesMarkupStatementOnSwitchCharacterFollowedByDoubleColon()
     {
         // Arrange
-        ParseDocumentTest("@if(foo) { @::Sometext" + Environment.NewLine
-                     + "}");
+        ParseDocumentTest("""
+            @if(foo) { @::Sometext
+            }
+            """);
     }
 
 
@@ -177,16 +199,20 @@ public class CSharpToMarkupSwitchTest() : ParserTestBase(layer: TestProject.Laye
     public void ParsesMarkupStatementOnSwitchCharacterFollowedByTripleColon()
     {
         // Arrange
-        ParseDocumentTest("@if(foo) { @:::Sometext" + Environment.NewLine
-                     + "}");
+        ParseDocumentTest("""
+            @if(foo) { @:::Sometext
+            }
+            """);
     }
 
     [Fact]
     public void ParsesMarkupStatementOnSwitchCharacterFollowedByColonInCodeBlock()
     {
         // Arrange
-        ParseDocumentTest("@{ if(foo) { @:Bar" + Environment.NewLine
-                     + "} } zoop");
+        ParseDocumentTest("""
+            @{ if(foo) { @:Bar
+            } } zoop
+            """);
     }
 
     [Fact]
@@ -204,16 +230,18 @@ public class CSharpToMarkupSwitchTest() : ParserTestBase(layer: TestProject.Laye
     [Fact]
     public void SupportsAllKindsOfImplicitMarkupInCodeBlock()
     {
-        ParseDocumentTest("@{" + Environment.NewLine
-                     + "    if(true) {" + Environment.NewLine
-                     + "        @:Single Line Markup" + Environment.NewLine
-                     + "    }" + Environment.NewLine
-                     + "    foreach (var p in Enumerable.Range(1, 10)) {" + Environment.NewLine
-                     + "        <text>The number is @p</text>" + Environment.NewLine
-                     + "    }" + Environment.NewLine
-                     + "    if(!false) {" + Environment.NewLine
-                     + "        <p>A real tag!</p>" + Environment.NewLine
-                     + "    }" + Environment.NewLine
-                     + "}");
+        ParseDocumentTest("""
+            @{
+                if(true) {
+                    @:Single Line Markup
+                }
+                foreach (var p in Enumerable.Range(1, 10)) {
+                    <text>The number is @p</text>
+                }
+                if(!false) {
+                    <p>A real tag!</p>
+                }
+            }
+            """);
     }
 }

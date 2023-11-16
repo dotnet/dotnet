@@ -44,11 +44,13 @@ public class CSharpExplicitExpressionTest() : ParserTestBase(layer: TestProject.
     [Fact]
     public void ShouldAcceptMultiLineVerbatimStrings()
     {
-        ParseDocumentTest(@"@(@""" + Environment.NewLine
-                     + @"Foo" + Environment.NewLine
-                     + @"Bar" + Environment.NewLine
-                     + @"Baz" + Environment.NewLine
-                     + @""")");
+        ParseDocumentTest("""
+            @(@"
+            Foo
+            Bar
+            Baz
+            ")
+            """);
     }
 
     [Fact]

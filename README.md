@@ -164,7 +164,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/arcade`  
 *[dotnet/arcade@b1e52f7](https://github.com/dotnet/arcade/commit/b1e52f70fee51ea06ca106d07aec876c68b7d113)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@c7365a0](https://github.com/dotnet/aspnetcore/commit/c7365a011890320f3701442020f35018ec3259d0)*
+*[dotnet/aspnetcore@362cdcd](https://github.com/dotnet/aspnetcore/commit/362cdcd993c79ff4f8757f540f8a6fbe22be59c7)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@b10fad3](https://github.com/google/googletest/commit/b10fad38c4026a29ea6561ab15fc4818170d1c10)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -184,7 +184,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@341b2fb](https://github.com/dotnet/fsharp/commit/341b2fb045d92d26d0d240c201947ded6af46125)*
 - `src/installer`  
-*[dotnet/installer@29adc59](https://github.com/dotnet/installer/commit/29adc593309594d92a2bf2f0afbbe90c7ccfc39f)*
+*[dotnet/installer@eae1413](https://github.com/dotnet/installer/commit/eae14130765adcef62a2e863fe917867941e2ab7)*
 - `src/msbuild`  
 *[dotnet/msbuild@c8b80b9](https://github.com/dotnet/msbuild/commit/c8b80b94bfec69d2640aaa4a59d057b622893482)*
 - `src/nuget-client`  
@@ -192,17 +192,17 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/commit/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@d5b9cca](https://github.com/dotnet/razor/commit/d5b9cca27eaea1a60fafc4b8e7ddf9a285e8837d)*
+*[dotnet/razor@1d591be](https://github.com/dotnet/razor/commit/1d591bec5300b4f362e33b1a5a296d20ae4290c0)*
 - `src/roslyn`  
 *[dotnet/roslyn@1f80211](https://github.com/dotnet/roslyn/commit/1f802118804658a38c932c885bfc82a9d0f38e86)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@b924542](https://github.com/dotnet/roslyn-analyzers/commit/b924542a1b526322929725a1aaa9586c21b1b231)*
 - `src/runtime`  
-*[dotnet/runtime@9469471](https://github.com/dotnet/runtime/commit/94694710183845273add3bf4f532cc08c1c73b70)*
+*[dotnet/runtime@7990c07](https://github.com/dotnet/runtime/commit/7990c077668117a74e967fac2afa5f7f6458ec07)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@8af694a](https://github.com/dotnet/scenario-tests/commit/8af694a5e3986a27ccfee1a638ba311c7e9bc55d)*
 - `src/sdk`  
-*[dotnet/sdk@d013681](https://github.com/dotnet/sdk/commit/d0136811a635081198ee7f6b0a9f02859aeac037)*
+*[dotnet/sdk@6c6a5a5](https://github.com/dotnet/sdk/commit/6c6a5a5e4cde3955a032049e970873e522a4bce6)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@283f1ea](https://github.com/dotnet/source-build-externals/commit/283f1ead54cc527da6e9745b6f36a086ac997211)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -242,11 +242,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/vstest`  
 *[microsoft/vstest@b397a1f](https://github.com/microsoft/vstest/commit/b397a1f1393aa9b4ec55ee2f7073d7d1992bdfc7)*
 - `src/windowsdesktop`  
-*[dotnet/windowsdesktop@d75d848](https://github.com/dotnet/windowsdesktop/commit/d75d848717201a31bfd2903d690fb5c4b0401adb)*
+*[dotnet/windowsdesktop@9c427e2](https://github.com/dotnet/windowsdesktop/commit/9c427e25fc487ebe6659d696fa419d39340e21c5)*
 - `src/winforms`  
-*[dotnet/winforms@a73318d](https://github.com/dotnet/winforms/commit/a73318da53d949d04ab3bc51bfde7a796b1b8a40)*
+*[dotnet/winforms@6d97d79](https://github.com/dotnet/winforms/commit/6d97d798e7a02a27306b9d231a2434a7a1602af1)*
 - `src/wpf`  
-*[dotnet/wpf@1ced7ab](https://github.com/dotnet/wpf/commit/1ced7ab6fd476126e1ebed719bed88ffa2454101)*
+*[dotnet/wpf@84706a5](https://github.com/dotnet/wpf/commit/84706a52f56c8fb12aab5501330dfa75eeada536)*
 - `src/xdt`  
 *[dotnet/xdt@9a1c3e1](https://github.com/dotnet/xdt/commit/9a1c3e1b7f0c8763d4c96e593961a61a72679a7b)*
 - `src/xliff-tasks`  

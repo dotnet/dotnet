@@ -15,126 +15,174 @@ public class HtmlAttributeTest() : ParserTestBase(layer: TestProject.Layer.Compi
     public void SymbolBoundAttributes_BeforeEqualWhitespace1()
     {
         var attributeName = "[item]";
-        ParseDocumentTest($"@{{<a {attributeName}{Environment.NewLine}='Foo'\t{attributeName}={Environment.NewLine}'Bar' />}}");
+        ParseDocumentTest($$"""
+            @{<a {{attributeName}}
+            ='Foo'	{{attributeName}}=
+            'Bar' />}
+            """);
     }
 
     [Fact]
     public void SymbolBoundAttributes_BeforeEqualWhitespace2()
     {
         var attributeName = "[(item,";
-        ParseDocumentTest($"@{{<a {attributeName}{Environment.NewLine}='Foo'\t{attributeName}={Environment.NewLine}'Bar' />}}");
+        ParseDocumentTest($$"""
+            @{<a {{attributeName}}
+            ='Foo'	{{attributeName}}=
+            'Bar' />}
+            """);
     }
 
     [Fact]
     public void SymbolBoundAttributes_BeforeEqualWhitespace3()
     {
         var attributeName = "(click)";
-        ParseDocumentTest($"@{{<a {attributeName}{Environment.NewLine}='Foo'\t{attributeName}={Environment.NewLine}'Bar' />}}");
+        ParseDocumentTest($$"""
+            @{<a {{attributeName}}
+            ='Foo'	{{attributeName}}=
+            'Bar' />}
+            """);
     }
 
     [Fact]
     public void SymbolBoundAttributes_BeforeEqualWhitespace4()
     {
         var attributeName = "(^click)";
-        ParseDocumentTest($"@{{<a {attributeName}{Environment.NewLine}='Foo'\t{attributeName}={Environment.NewLine}'Bar' />}}");
+        ParseDocumentTest($$"""
+            @{<a {{attributeName}}
+            ='Foo'	{{attributeName}}=
+            'Bar' />}
+            """);
     }
 
     [Fact]
     public void SymbolBoundAttributes_BeforeEqualWhitespace5()
     {
         var attributeName = "*something";
-        ParseDocumentTest($"@{{<a {attributeName}{Environment.NewLine}='Foo'\t{attributeName}={Environment.NewLine}'Bar' />}}");
+        ParseDocumentTest($$"""
+            @{<a {{attributeName}}
+            ='Foo'	{{attributeName}}=
+            'Bar' />}
+            """);
     }
 
     [Fact]
     public void SymbolBoundAttributes_BeforeEqualWhitespace6()
     {
         var attributeName = "#local";
-        ParseDocumentTest($"@{{<a {attributeName}{Environment.NewLine}='Foo'\t{attributeName}={Environment.NewLine}'Bar' />}}");
+        ParseDocumentTest($$"""
+            @{<a {{attributeName}}
+            ='Foo'	{{attributeName}}=
+            'Bar' />}
+            """);
     }
 
     [Fact]
     public void SymbolBoundAttributes_Whitespace1()
     {
         var attributeName = "[item]";
-        ParseDocumentTest($"@{{<a {Environment.NewLine}  {attributeName}='Foo'\t{Environment.NewLine}{attributeName}='Bar' />}}");
+        ParseDocumentTest($$"""
+            @{<a 
+              {{attributeName}}='Foo'	
+            {{attributeName}}='Bar' />}
+            """);
     }
 
     [Fact]
     public void SymbolBoundAttributes_Whitespace2()
     {
         var attributeName = "[(item,";
-        ParseDocumentTest($"@{{<a {Environment.NewLine}  {attributeName}='Foo'\t{Environment.NewLine}{attributeName}='Bar' />}}");
+        ParseDocumentTest($$"""
+            @{<a 
+              {{attributeName}}='Foo'	
+            {{attributeName}}='Bar' />}
+            """);
     }
 
     [Fact]
     public void SymbolBoundAttributes_Whitespace3()
     {
         var attributeName = "(click)";
-        ParseDocumentTest($"@{{<a {Environment.NewLine}  {attributeName}='Foo'\t{Environment.NewLine}{attributeName}='Bar' />}}");
+        ParseDocumentTest($$"""
+            @{<a 
+              {{attributeName}}='Foo'	
+            {{attributeName}}='Bar' />}
+            """);
     }
 
     [Fact]
     public void SymbolBoundAttributes_Whitespace4()
     {
         var attributeName = "(^click)";
-        ParseDocumentTest($"@{{<a {Environment.NewLine}  {attributeName}='Foo'\t{Environment.NewLine}{attributeName}='Bar' />}}");
+        ParseDocumentTest($$"""
+            @{<a 
+              {{attributeName}}='Foo'	
+            {{attributeName}}='Bar' />}
+            """);
     }
 
     [Fact]
     public void SymbolBoundAttributes_Whitespace5()
     {
         var attributeName = "*something";
-        ParseDocumentTest($"@{{<a {Environment.NewLine}  {attributeName}='Foo'\t{Environment.NewLine}{attributeName}='Bar' />}}");
+        ParseDocumentTest($$"""
+            @{<a 
+              {{attributeName}}='Foo'	
+            {{attributeName}}='Bar' />}
+            """);
     }
 
     [Fact]
     public void SymbolBoundAttributes_Whitespace6()
     {
         var attributeName = "#local";
-        ParseDocumentTest($"@{{<a {Environment.NewLine}  {attributeName}='Foo'\t{Environment.NewLine}{attributeName}='Bar' />}}");
+        ParseDocumentTest($$"""
+            @{<a 
+              {{attributeName}}='Foo'	
+            {{attributeName}}='Bar' />}
+            """);
     }
 
     [Fact]
     public void SymbolBoundAttributes1()
     {
         var attributeName = "[item]";
-        ParseDocumentTest($"@{{<a {attributeName}='Foo' />}}");
+        ParseDocumentTest($$"""@{<a {{attributeName}}='Foo' />}""");
     }
 
     [Fact]
     public void SymbolBoundAttributes2()
     {
         var attributeName = "[(item,";
-        ParseDocumentTest($"@{{<a {attributeName}='Foo' />}}");
+        ParseDocumentTest($$"""@{<a {{attributeName}}='Foo' />}""");
     }
 
     [Fact]
     public void SymbolBoundAttributes3()
     {
         var attributeName = "(click)";
-        ParseDocumentTest($"@{{<a {attributeName}='Foo' />}}");
+        ParseDocumentTest($$"""@{<a {{attributeName}}='Foo' />}""");
     }
 
     [Fact]
     public void SymbolBoundAttributes4()
     {
         var attributeName = "(^click)";
-        ParseDocumentTest($"@{{<a {attributeName}='Foo' />}}");
+        ParseDocumentTest($$"""@{<a {{attributeName}}='Foo' />}""");
     }
 
     [Fact]
     public void SymbolBoundAttributes5()
     {
         var attributeName = "*something";
-        ParseDocumentTest($"@{{<a {attributeName}='Foo' />}}");
+        ParseDocumentTest($$"""@{<a {{attributeName}}='Foo' />}""");
     }
 
     [Fact]
     public void SymbolBoundAttributes6()
     {
         var attributeName = "#local";
-        ParseDocumentTest($"@{{<a {attributeName}='Foo' />}}");
+        ParseDocumentTest($$"""@{<a {{attributeName}}='Foo' />}""");
     }
 
     [Fact]

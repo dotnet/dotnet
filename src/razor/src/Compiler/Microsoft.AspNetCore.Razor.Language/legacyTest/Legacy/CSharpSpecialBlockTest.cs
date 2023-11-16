@@ -42,10 +42,11 @@ public class CSharpSpecialBlockTest() : ParserTestBase(layer: TestProject.Layer.
     [Fact]
     public void ParseBlockTerminatesSingleLineCommentAtEndOfLine()
     {
-        ParseDocumentTest(
-"@if(!false) {" + Environment.NewLine +
-"    // Foo" + Environment.NewLine +
-"\t<p>A real tag!</p>" + Environment.NewLine +
-"}");
+        ParseDocumentTest("""
+            @if(!false) {
+                // Foo
+            	<p>A real tag!</p>
+            }
+            """);
     }
 }

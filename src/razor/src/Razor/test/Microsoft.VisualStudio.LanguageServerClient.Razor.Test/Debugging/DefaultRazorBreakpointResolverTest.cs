@@ -35,21 +35,22 @@ public class DefaultRazorBreakpointResolverTest : ToolingTestBase
         _documentUri = new Uri("file://C:/path/to/file.razor", UriKind.Absolute);
         _csharpDocumentUri = new Uri(_documentUri.OriginalString + ".g.cs", UriKind.Absolute);
 
-        var csharpTextSnapshot = new StringTextSnapshot(
-$@"public class SomeRazorFile
-{{
-    {ValidBreakpointCSharp}
-    {InvalidBreakpointCSharp}
-}}");
+        var csharpTextSnapshot = new StringTextSnapshot($$"""
+            public class SomeRazorFile
+            {
+                {{ValidBreakpointCSharp}}
+                {{InvalidBreakpointCSharp}}
+            }
+            """);
         _csharpTextBuffer = new TestTextBuffer(csharpTextSnapshot);
 
-        var textBufferSnapshot = new StringTextSnapshot(@$"
-@code
-{{
-    {ValidBreakpointCSharp}
-    {InvalidBreakpointCSharp}
-}}
-");
+        var textBufferSnapshot = new StringTextSnapshot($$"""
+            @code
+            {
+                {{ValidBreakpointCSharp}}
+                {{InvalidBreakpointCSharp}}
+            }
+            """);
         _hostTextbuffer = new TestTextBuffer(textBufferSnapshot);
     }
 

@@ -32,7 +32,7 @@
   <ItemGroup Condition="'$(Configuration)' == 'Debug' and '@(_MonoComponent->Count())' == 0">
     <_MonoComponent Include="hot_reload;debugger" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(UsingWasiRuntimeWorkload)' != 'true'">
     <_MonoComponent Include="marshal-ilgen" />
   </ItemGroup>
 
@@ -44,7 +44,8 @@
     </PropertyGroup>
 
     <PropertyGroup>
-      <_ToolchainMissingErrorMessage Condition="'$(WASI_SDK_PATH)' == '' and '$(WasiSdkRoot)' == ''">Could not find wasi-sdk. Either set %24(WASI_SDK_PATH), or use workloads to get the sdk.</_ToolchainMissingErrorMessage>
+      <_ToolchainMissingErrorMessage Condition="'$(WASI_SDK_PATH)' == '' and '$(WasiSdkRoot)' == ''">Could not find wasi-sdk. Install wasi-sdk and set %24(WASI_SDK_PATH) . It can be obtained from https://github.com/WebAssembly/wasi-sdk/releases</_ToolchainMissingErrorMessage>
+      <_ToolchainMissingErrorMessage Condition="'$(_ToolchainMissingErrorMessage)' == '' and '$(_ToolchainMissingPaths)' != ''">Using WASI_SDK_PATH=$(WASI_SDK_PATH), cannot find $(_ToolchainMissingPaths) .</_ToolchainMissingErrorMessage>
       <_IsToolchainMissing Condition="'$(_ToolchainMissingErrorMessage)' != ''">true</_IsToolchainMissing>
     </PropertyGroup>
   </Target>
@@ -263,9 +264,9 @@
     </ManagedToNativeGenerator>
   </Target>
 
-  <Target Name="_WasmSelectRuntimeComponentsForLinking" DependsOnTargets="_MonoSelectRuntimeComponents" />
+  <Target Name="_WasmSelectRuntimeComponentsForLinking" Condition="'$(UsingWasiRuntimeWorkload)' == 'true'" DependsOnTargets="_MonoSelectRuntimeComponents" />
 
-  <Target Name="_GetNativeFilesForLinking" Returns="@(_WasmNativeFileForLinking)">
+  <Target Name="_GetNativeFilesForLinking" DependsOnTargets="_WasmSelectRuntimeComponentsForLinking" Returns="@(_WasmNativeFileForLinking)">
     <Message Text="MicrosoftNetCoreAppRuntimePackRidNativeDir: $(MicrosoftNetCoreAppRuntimePackRidNativeDir)" Importance="High" />
     <PropertyGroup>
       <!-- FIXME: eh case -->

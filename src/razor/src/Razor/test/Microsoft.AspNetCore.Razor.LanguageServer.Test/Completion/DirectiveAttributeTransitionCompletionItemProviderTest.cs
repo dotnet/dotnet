@@ -174,7 +174,10 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public void GetCompletionItems_InbetweenSelfClosingEnd_ReturnsEmptyList()
     {
         // Arrange
-        var context = CreateContext(absoluteIndex: 8, "<input /" + Environment.NewLine);
+        var context = CreateContext(absoluteIndex: 8, """
+            <input /
+            
+            """);
 
         // Act
         var result = _provider.GetCompletionItems(context);

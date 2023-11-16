@@ -48,7 +48,10 @@ public class DirectiveRemovalOptimizationPassTest
     public void Execute_MultipleCustomDirectives_RemovesDirectiveNodesFromDocument()
     {
         // Arrange
-        var content = "@custom \"Hello\"" + Environment.NewLine + "@custom \"World\"";
+        var content = """
+            @custom "Hello"
+            @custom "World"
+            """;
         var sourceDocument = TestRazorSourceDocument.Create(content);
         var codeDocument = RazorCodeDocument.Create(sourceDocument);
         var defaultEngine = RazorProjectEngine.Create(b =>

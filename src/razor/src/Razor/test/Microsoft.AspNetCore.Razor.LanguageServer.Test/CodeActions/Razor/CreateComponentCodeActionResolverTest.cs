@@ -126,7 +126,10 @@ public class CreateComponentCodeActionResolverTest : LanguageServerTestBase
     {
         // Arrange
         var documentPath = new Uri("c:/Test.razor");
-        var contents = $"@page \"/test\"{Environment.NewLine}@namespace Another.Namespace";
+        var contents = $"""
+            @page "/test"
+            @namespace Another.Namespace
+            """;
         var codeDocument = CreateCodeDocument(contents);
 
         var resolver = new CreateComponentCodeActionResolver(CreateDocumentContextFactory(documentPath, codeDocument), TestLanguageServerFeatureOptions.Instance);

@@ -139,8 +139,12 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
         }
         catch (Exception ex)
         {
-            Debug.Fail("EditorDocumentManagerListener.ProjectManager_Changed threw exception:" +
-                Environment.NewLine + ex.Message + Environment.NewLine + "Stack trace:" + Environment.NewLine + ex.StackTrace);
+            Debug.Fail($"""
+                EditorDocumentManagerListener.ProjectManager_Changed threw exception:
+                {ex.Message}
+                Stack trace:
+                {ex.StackTrace}
+                """);
         }
     }
 
@@ -163,8 +167,12 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
         }
         catch (Exception ex)
         {
-            Debug.Fail("EditorDocumentManagerListener.Document_ChangedOnDisk threw exception:" +
-                Environment.NewLine + ex.Message + Environment.NewLine + "Stack trace:" + Environment.NewLine + ex.StackTrace);
+            Debug.Fail($"""
+                EditorDocumentManagerListener.Document_ChangedOnDisk threw exception:
+                {ex.Message}
+                Stack trace:
+                {ex.StackTrace}
+                """);
         }
     }
 
@@ -188,8 +196,12 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
         }
         catch (Exception ex)
         {
-            Debug.Fail("EditorDocumentManagerListener.Document_ChangedInEditor threw exception:" +
-                Environment.NewLine + ex.Message + Environment.NewLine + "Stack trace:" + Environment.NewLine + ex.StackTrace);
+            Debug.Fail($"""
+                EditorDocumentManagerListener.Document_ChangedInEditor threw exception:
+                {ex.Message}
+                Stack trace:
+                {ex.StackTrace}
+                """);
         }
     }
 
@@ -228,8 +240,12 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
         }
         catch (Exception ex)
         {
-            Debug.Fail("EditorDocumentManagerListener.Document_Opened threw exception:" +
-                Environment.NewLine + ex.Message + Environment.NewLine + "Stack trace:" + Environment.NewLine + ex.StackTrace);
+            Debug.Fail($"""
+                EditorDocumentManagerListener.Document_Opened threw exception:
+                {ex.Message}
+                Stack trace:
+                {ex.StackTrace}
+                """);
         }
     }
 
@@ -253,8 +269,12 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
         }
         catch (Exception ex)
         {
-            Debug.Fail("EditorDocumentManagerListener.Document_Closed threw exception:" +
-                Environment.NewLine + ex.Message + Environment.NewLine + "Stack trace:" + Environment.NewLine + ex.StackTrace);
+            Debug.Fail($"""
+                EditorDocumentManagerListener.Document_Closed threw exception:
+                {ex.Message}
+                Stack trace:
+                {ex.StackTrace}
+                """);
         }
     }
 }

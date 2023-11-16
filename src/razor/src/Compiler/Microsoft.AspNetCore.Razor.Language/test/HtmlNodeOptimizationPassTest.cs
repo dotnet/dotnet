@@ -17,7 +17,10 @@ public class HtmlNodeOptimizationPassTest
     public void Execute_RewritesWhitespace()
     {
         // Assert
-        var content = Environment.NewLine + "    @true";
+        var content = """
+            
+                @true
+            """;
         var sourceDocument = TestRazorSourceDocument.Create(content);
         var originalTree = RazorSyntaxTree.Parse(sourceDocument);
         var pass = new HtmlNodeOptimizationPass();

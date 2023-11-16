@@ -43,10 +43,11 @@ namespace Test
         // Assert
         var diagnostic = Assert.Single(result.Diagnostics);
         Assert.Equal("RZ9989", diagnostic.Id);
-        Assert.Equal(
-            "The attribute '@bind-value' was matched by multiple bind attributes. Duplicates:" + Environment.NewLine +
-            "Test.BindAttributes" + Environment.NewLine +
-            "Test.BindAttributes",
+        Assert.Equal("""
+            The attribute '@bind-value' was matched by multiple bind attributes. Duplicates:
+            Test.BindAttributes
+            Test.BindAttributes
+            """,
             diagnostic.GetMessage(CultureInfo.CurrentCulture));
     }
 

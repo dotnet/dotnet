@@ -33,8 +33,11 @@ public class CSharpErrorTest() : ParserTestBase(layer: TestProject.Layer.Compile
     public void CapturesWhitespaceToEOLInInvalidUsingStmtAndTreatsAsFileCode()
     {
         // ParseBlockCapturesWhitespaceToEndOfLineInInvalidUsingStatementAndTreatsAsFileCode
-        ParseDocumentTest(
-            "@using          " + Environment.NewLine + Environment.NewLine);
+        ParseDocumentTest("""
+            @using          
+
+
+            """);
     }
 
     [Fact]
@@ -52,23 +55,30 @@ public class CSharpErrorTest() : ParserTestBase(layer: TestProject.Layer.Compile
     [Fact]
     public void MethodProducesErrorIfNewlineFollowsTransition()
     {
-        ParseDocumentTest("@" + Environment.NewLine);
+        ParseDocumentTest("""
+            @
+
+            """);
     }
 
     [Fact]
     public void MethodProducesErrorIfWhitespaceBetweenTransitionAndBlockStartInEmbeddedExpr()
     {
         // ParseBlockMethodProducesErrorIfWhitespaceBetweenTransitionAndBlockStartInEmbeddedExpression
-        ParseDocumentTest("@{" + Environment.NewLine
-                     + "    @   {}" + Environment.NewLine
-                     + "}");
+        ParseDocumentTest("""
+            @{
+                @   {}
+            }
+            """);
     }
 
     [Fact]
     public void MethodProducesErrorIfEOFAfterTransitionInEmbeddedExpression()
     {
-        ParseDocumentTest("@{" + Environment.NewLine
-                     + "    @");
+        ParseDocumentTest("""
+            @{
+                @
+            """);
     }
 
     [Fact]
@@ -81,25 +91,32 @@ public class CSharpErrorTest() : ParserTestBase(layer: TestProject.Layer.Compile
     public void ShouldReportErrorAndTerminateAtEOFIfIfParenInExplicitExprUnclosed()
     {
         // ParseBlockShouldReportErrorAndTerminateAtEOFIfIfParenInExplicitExpressionUnclosed
-        ParseDocumentTest("@(foo bar" + Environment.NewLine
-                     + "baz");
+        ParseDocumentTest("""
+            @(foo bar
+            baz
+            """);
     }
 
     [Fact]
     public void ShouldReportErrorAndTerminateAtMarkupIfIfParenInExplicitExprUnclosed()
     {
         // ParseBlockShouldReportErrorAndTerminateAtMarkupIfIfParenInExplicitExpressionUnclosed
-        ParseDocumentTest("@(foo bar" + Environment.NewLine
-                     + "<html>" + Environment.NewLine
-                     + "baz" + Environment.NewLine
-                     + "</html");
+        ParseDocumentTest("""
+            @(foo bar
+            <html>
+            baz
+            </html
+            """);
     }
 
     [Fact]
     public void CorrectlyHandlesInCorrectTransitionsIfImplicitExpressionParensUnclosed()
     {
-        ParseDocumentTest("@Href(" + Environment.NewLine
-                     + "<h1>@Html.Foo(Bar);</h1>" + Environment.NewLine);
+        ParseDocumentTest("""
+            @Href(
+            <h1>@Html.Foo(Bar);</h1>
+
+            """);
     }
 
     [Fact]
@@ -107,9 +124,11 @@ public class CSharpErrorTest() : ParserTestBase(layer: TestProject.Layer.Compile
     public void ShouldReportErrorAndTerminateAtEOFIfParenInImplicitExprUnclosed()
     {
         // ParseBlockShouldReportErrorAndTerminateAtEOFIfParenInImplicitExpressionUnclosed
-        ParseDocumentTest("@Foo(Bar(Baz)" + Environment.NewLine
-                        + "Biz" + Environment.NewLine
-                        + "Boz");
+        ParseDocumentTest("""
+            @Foo(Bar(Baz)
+            Biz
+            Boz
+            """);
     }
 
     [Fact]
@@ -117,11 +136,13 @@ public class CSharpErrorTest() : ParserTestBase(layer: TestProject.Layer.Compile
     public void ShouldReportErrorAndTerminateAtMarkupIfParenInImplicitExpressionUnclosed()
     {
         // ParseBlockShouldReportErrorAndTerminateAtMarkupIfParenInImplicitExpressionUnclosed
-        ParseDocumentTest("@Foo(Bar(Baz)" + Environment.NewLine
-                        + "Biz" + Environment.NewLine
-                        + "<html>" + Environment.NewLine
-                        + "Boz" + Environment.NewLine
-                        + "</html>");
+        ParseDocumentTest("""
+            @Foo(Bar(Baz)
+            Biz
+            <html>
+            Boz
+            </html>
+            """);
     }
 
     [Fact]
@@ -129,9 +150,11 @@ public class CSharpErrorTest() : ParserTestBase(layer: TestProject.Layer.Compile
     public void ShouldReportErrorAndTerminateAtEOFIfBracketInImplicitExpressionUnclosed()
     {
         // ParseBlockShouldReportErrorAndTerminateAtEOFIfBracketInImplicitExpressionUnclosed
-        ParseDocumentTest("@Foo[Bar[Baz]" + Environment.NewLine
-                     + "Biz" + Environment.NewLine
-                     + "Boz");
+        ParseDocumentTest("""
+            @Foo[Bar[Baz]
+            Biz
+            Boz
+            """);
     }
 
     [Fact]
@@ -139,11 +162,13 @@ public class CSharpErrorTest() : ParserTestBase(layer: TestProject.Layer.Compile
     public void ShouldReportErrorAndTerminateAtMarkupIfBracketInImplicitExprUnclosed()
     {
         // ParseBlockShouldReportErrorAndTerminateAtMarkupIfBracketInImplicitExpressionUnclosed
-        ParseDocumentTest("@Foo[Bar[Baz]" + Environment.NewLine
-                     + "Biz" + Environment.NewLine
-                     + "<b>" + Environment.NewLine
-                     + "Boz" + Environment.NewLine
-                     + "</b>");
+        ParseDocumentTest("""
+            @Foo[Bar[Baz]
+            Biz
+            <b>
+            Boz
+            </b>
+            """);
     }
 
     // Simple EOF handling errors:
@@ -260,45 +285,57 @@ public class CSharpErrorTest() : ParserTestBase(layer: TestProject.Layer.Compile
     [Fact]
     public void TerminatesIfBlockAtEOLWhenRecoveringFromMissingCloseParen()
     {
-        ParseDocumentTest("@if(foo bar" + Environment.NewLine
-                     + "baz");
+        ParseDocumentTest("""
+            @if(foo bar
+            baz
+            """);
     }
 
     [Fact]
     public void TerminatesForeachBlockAtEOLWhenRecoveringFromMissingCloseParen()
     {
-        ParseDocumentTest("@foreach(foo bar" + Environment.NewLine
-                     + "baz");
+        ParseDocumentTest("""
+            @foreach(foo bar
+            baz
+            """);
     }
 
     [Fact]
     public void TerminatesWhileClauseInDoStmtAtEOLWhenRecoveringFromMissingCloseParen()
     {
-        ParseDocumentTest("@do { } while(foo bar" + Environment.NewLine
-                     + "baz");
+        ParseDocumentTest("""
+            @do { } while(foo bar
+            baz
+            """);
     }
 
     [Fact]
     public void TerminatesUsingBlockAtEOLWhenRecoveringFromMissingCloseParen()
     {
-        ParseDocumentTest("@using(foo bar" + Environment.NewLine
-                     + "baz");
+        ParseDocumentTest("""
+            @using(foo bar
+            baz
+            """);
     }
 
     [Fact]
     public void ResumesIfStatementAfterOpenParen()
     {
-        ParseDocumentTest("@if(" + Environment.NewLine
-                     + "else { <p>Foo</p> }");
+        ParseDocumentTest("""
+            @if(
+            else { <p>Foo</p> }
+            """);
     }
 
     [Fact]
     public void TerminatesNormalCSharpStringsAtEOLIfEndQuoteMissing()
     {
-        ParseDocumentTest("@if(foo) {" + Environment.NewLine
-                          + "    var p = \"foo bar baz" + Environment.NewLine
-                          + ";" + Environment.NewLine
-                          + "}");
+        ParseDocumentTest("""
+            @if(foo) {
+                var p = "foo bar baz
+            ;
+            }
+            """);
     }
 
     [Fact]
@@ -310,20 +347,24 @@ public class CSharpErrorTest() : ParserTestBase(layer: TestProject.Layer.Compile
     [Fact]
     public void TerminatesVerbatimStringAtEndOfFile()
     {
-        ParseDocumentTest("@if(foo) { var foo = @\"blah " + Environment.NewLine
-                          + "blah; " + Environment.NewLine
-                          + "<p>Foo</p>" + Environment.NewLine
-                          + "blah " + Environment.NewLine
-                          + "blah");
+        ParseDocumentTest("""
+            @if(foo) { var foo = @"blah 
+            blah; 
+            <p>Foo</p>
+            blah 
+            blah
+            """);
     }
 
     [Fact]
     public void CorrectlyParsesMarkupIncorrectyAssumedToBeWithinAStatement()
     {
-        ParseDocumentTest("@if(foo) {" + Environment.NewLine
-                     + "    var foo = \"foo bar baz" + Environment.NewLine
-                     + "    <p>Foo is @foo</p>" + Environment.NewLine
-                     + "}");
+        ParseDocumentTest("""
+            @if(foo) {
+                var foo = "foo bar baz
+                <p>Foo is @foo</p>
+            }
+            """);
     }
 
     [Fact]
