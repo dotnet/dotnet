@@ -432,8 +432,13 @@ public class TagHelperParseTreeRewriterTest : TagHelperRewritingTestBase
     public void CanHandleInvalidChildrenWithWhitespace()
     {
         // Arrange
-        var documentContent = $"<p>{Environment.NewLine}    <strong>{Environment.NewLine}        Hello" +
-            $"{Environment.NewLine}    </strong>{Environment.NewLine}</p>";
+        var documentContent = $"""
+            <p>
+                <strong>
+                    Hello
+                </strong>
+            </p>
+            """;
         var descriptors = new TagHelperDescriptor[]
         {
                 TagHelperDescriptorBuilder.Create("PTagHelper", "SomeAssembly")
@@ -541,7 +546,11 @@ public class TagHelperParseTreeRewriterTest : TagHelperRewritingTestBase
     public void UnderstandsAllowedChildren2()
     {
         // Arrange
-        var documentContent = $"<p>{Environment.NewLine}<br />{Environment.NewLine}</p>";
+        var documentContent = $"""
+            <p>
+            <br />
+            </p>
+            """;
         var descriptors = TagHelperParseTreeRewriterTest.GetAllowedChildrenTagHelperDescriptors(new[] { "br" });
 
         // Act & Assert

@@ -309,7 +309,10 @@ public class CSharpCodeWriterTest
 
         // Assert
         var output = writer.GenerateCode();
-        Assert.Equal("private global::System.String _myString;" + Environment.NewLine, output);
+        Assert.Equal("""
+            private global::System.String _myString;
+
+            """, output);
     }
 
     [Fact]
@@ -323,7 +326,10 @@ public class CSharpCodeWriterTest
 
         // Assert
         var output = writer.GenerateCode();
-        Assert.Equal("private readonly static global::System.String _myString;" + Environment.NewLine, output);
+        Assert.Equal("""
+            private readonly static global::System.String _myString;
+
+            """, output);
     }
 
     [Fact]
@@ -341,12 +347,14 @@ public class CSharpCodeWriterTest
 
         // Assert
         var output = writer.GenerateCode();
-        Assert.Equal(
-            "#pragma warning disable 0001" + Environment.NewLine +
-            "#pragma warning disable 0002" + Environment.NewLine +
-            "private readonly static global::System.String _myString;" + Environment.NewLine +
-            "#pragma warning restore 0002" + Environment.NewLine +
-            "#pragma warning restore 0001" + Environment.NewLine,
+        Assert.Equal("""
+            #pragma warning disable 0001
+            #pragma warning disable 0002
+            private readonly static global::System.String _myString;
+            #pragma warning restore 0002
+            #pragma warning restore 0001
+
+            """,
             output);
     }
 
@@ -361,7 +369,10 @@ public class CSharpCodeWriterTest
 
         // Assert
         var output = writer.GenerateCode();
-        Assert.Equal("public global::System.String MyString { get; set; }" + Environment.NewLine, output);
+        Assert.Equal("""
+            public global::System.String MyString { get; set; }
+
+            """, output);
     }
 
     [Fact]
@@ -375,7 +386,10 @@ public class CSharpCodeWriterTest
 
         // Assert
         var output = writer.GenerateCode();
-        Assert.Equal("public static global::System.String MyString { get; set; }" + Environment.NewLine, output);
+        Assert.Equal("""
+            public static global::System.String MyString { get; set; }
+
+            """, output);
     }
 
     [Fact]
@@ -396,7 +410,12 @@ public class CSharpCodeWriterTest
 
         // Assert
         var output = writer.GenerateCode();
-        Assert.Equal("class C" + Environment.NewLine + "{" + Environment.NewLine + "\tint f;" + Environment.NewLine, output);
+        Assert.Equal("""
+            class C
+            {
+            	int f;
+
+            """, output);
     }
 
     [Fact]
@@ -417,6 +436,11 @@ public class CSharpCodeWriterTest
 
         // Assert
         var output = writer.GenerateCode();
-        Assert.Equal("class C" + Environment.NewLine + "{" + Environment.NewLine + "    int f;" + Environment.NewLine, output);
+        Assert.Equal("""
+            class C
+            {
+                int f;
+
+            """, output);
     }
 }

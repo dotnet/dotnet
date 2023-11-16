@@ -315,8 +315,12 @@ internal class WorkspaceProjectStateChangeDetector : IProjectSnapshotChangeTrigg
         }
         catch (Exception ex)
         {
-            Debug.Fail("WorkspaceProjectStateChangeDetector.Workspace_WorkspaceChanged threw exception:" +
-                Environment.NewLine + ex.Message + Environment.NewLine + "Stack trace:" + Environment.NewLine + ex.StackTrace);
+            Debug.Fail($"""
+                WorkspaceProjectStateChangeDetector.Workspace_WorkspaceChanged threw exception:
+                {ex.Message}
+                Stack trace:
+                {ex.StackTrace}
+                """);
         }
     }
 

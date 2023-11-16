@@ -111,9 +111,9 @@ Some Content
         // Assert
         var diagnostic = Assert.Single(generated.Diagnostics);
         Assert.Same(ComponentDiagnosticFactory.ChildContentMixedWithExplicitChildContent.Id, diagnostic.Id);
-        Assert.Equal(
-            "Unrecognized child content inside component 'RenderChildContent'. The component 'RenderChildContent' accepts " +
-            "child content through the following top-level items: 'ChildContent'.",
+        Assert.Equal("""
+            Unrecognized child content inside component 'RenderChildContent'. The component 'RenderChildContent' accepts child content through the following top-level items: 'ChildContent'.
+            """,
             diagnostic.GetMessage(CultureInfo.CurrentCulture));
     }
 
@@ -237,9 +237,9 @@ Some Content
         // Assert
         var diagnostic = Assert.Single(generated.Diagnostics);
         Assert.Same(ComponentDiagnosticFactory.ChildContentRepeatedParameterName.Id, diagnostic.Id);
-        Assert.Equal(
-            "The child content element 'ChildContent' of component 'RenderChildContentString' uses the same parameter name ('context') as enclosing child content " +
-            "element 'ChildContent' of component 'RenderChildContentString'. Specify the parameter name like: '<ChildContent Context=\"another_name\"> to resolve the ambiguity",
+        Assert.Equal("""
+            The child content element 'ChildContent' of component 'RenderChildContentString' uses the same parameter name ('context') as enclosing child content element 'ChildContent' of component 'RenderChildContentString'. Specify the parameter name like: '<ChildContent Context="another_name"> to resolve the ambiguity
+            """,
             diagnostic.GetMessage(CultureInfo.CurrentCulture));
     }
 

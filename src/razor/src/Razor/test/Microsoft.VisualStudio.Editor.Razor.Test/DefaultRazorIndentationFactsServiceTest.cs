@@ -194,9 +194,11 @@ public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutpu
     public void GetDesiredIndentation_ReturnsNull_IfOwningSpanIsCode()
     {
         // Arrange
-        var source = new StringTextSnapshot($@"
-@{{
-");
+        var source = new StringTextSnapshot("""
+
+            @{
+
+            """);
         var textBuffer = new TestTextBuffer(source, new LegacyCoreContentType());
         var syntaxTree = GetSyntaxTree(source);
 
@@ -239,9 +241,11 @@ public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutpu
     public void GetDesiredIndentation_ReturnsCorrectIndentation_ForMarkupWithinCodeBlock()
     {
         // Arrange
-        var source = new StringTextSnapshot($@"@{{
-    <div>
-");
+        var source = new StringTextSnapshot("""
+            @{
+                <div>
+
+            """);
         var textBuffer = new TestTextBuffer(source, new LegacyCoreContentType());
         var syntaxTree = GetSyntaxTree(source);
 
@@ -262,10 +266,12 @@ public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutpu
     {
         // Arrange
         var customDirective = DirectiveDescriptor.CreateRazorBlockDirective("custom");
-        var source = new StringTextSnapshot($@"@custom
-{{
-    <div>
-}}");
+        var source = new StringTextSnapshot("""
+            @custom
+            {
+                <div>
+            }
+            """);
         var textBuffer = new TestTextBuffer(source, new LegacyCoreContentType());
         var syntaxTree = GetSyntaxTree(source, new[] { customDirective });
 
@@ -285,13 +291,13 @@ public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutpu
     public void GetDesiredIndentation_ReturnsCorrectIndentation_ForNestedMarkupWithinCodeBlock()
     {
         // Arrange
-        var source = new StringTextSnapshot($@"
-<div>
-    @{{
-        <span>
-    }}
-</div>
-");
+        var source = new StringTextSnapshot("""
+            <div>
+                @{
+                    <span>
+                }
+            </div>
+            """);
         var textBuffer = new TestTextBuffer(source, new LegacyCoreContentType());
         var syntaxTree = GetSyntaxTree(source);
 
@@ -312,12 +318,14 @@ public class DefaultRazorIndentationFactsServiceTest(ITestOutputHelper testOutpu
     {
         // Arrange
         var customDirective = DirectiveDescriptor.CreateRazorBlockDirective("custom");
-        var source = new StringTextSnapshot($@"@custom
-{{
-    @{{
-        <div>
-    }}
-}}");
+        var source = new StringTextSnapshot("""
+            @custom
+            {
+                @{
+                    <div>
+                }
+            }
+            """);
 
         var textBuffer = new TestTextBuffer(source, new LegacyCoreContentType());
         var syntaxTree = GetSyntaxTree(source, new[] { customDirective });

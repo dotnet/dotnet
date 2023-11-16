@@ -115,7 +115,10 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
             attribute.TypeName = typeof(bool).FullName;
         });
         tagHelper.SetMetadata(TypeName("WithBoundAttribute"));
-        var codeDocument = CreateCodeDocument($"@addTagHelper *, TestAssembly{Environment.NewLine}<test bound='true' />", isRazorFile: false, tagHelper.Build());
+        var codeDocument = CreateCodeDocument("""
+            @addTagHelper *, TestAssembly
+            <test bound='true' />
+            """, isRazorFile: false, tagHelper.Build());
         var syntaxTree = codeDocument.GetSyntaxTree();
         var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
 
@@ -145,7 +148,10 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
             attribute.TypeName = typeof(bool).FullName;
         });
         tagHelper.SetMetadata(TypeName("WithBoundAttribute"));
-        var codeDocument = CreateCodeDocument($"@addTagHelper *, TestAssembly{Environment.NewLine}<test bound />", isRazorFile: false, tagHelper.Build());
+        var codeDocument = CreateCodeDocument("""
+            @addTagHelper *, TestAssembly
+            <test bound />
+            """, isRazorFile: false, tagHelper.Build());
         var syntaxTree = codeDocument.GetSyntaxTree();
         var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
 
@@ -166,7 +172,10 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     public void StringifyAttributes_UnboundAttribute()
     {
         // Arrange
-        var codeDocument = CreateCodeDocument($"@addTagHelper *, TestAssembly{Environment.NewLine}<input unbound='hello world' />", isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument("""
+            @addTagHelper *, TestAssembly
+            <input unbound='hello world' />
+            """, isRazorFile: false, DefaultTagHelpers);
         var syntaxTree = codeDocument.GetSyntaxTree();
         var startTag = (MarkupStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
 
@@ -187,7 +196,10 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     public void StringifyAttributes_UnboundMinimizedAttribute()
     {
         // Arrange
-        var codeDocument = CreateCodeDocument($"@addTagHelper *, TestAssembly{Environment.NewLine}<input unbound />", isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument("""
+            @addTagHelper *, TestAssembly
+            <input unbound />
+            """, isRazorFile: false, DefaultTagHelpers);
         var syntaxTree = codeDocument.GetSyntaxTree();
         var startTag = (MarkupStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
 
@@ -208,7 +220,10 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     public void StringifyAttributes_IgnoresMiscContent()
     {
         // Arrange
-        var codeDocument = CreateCodeDocument($"@addTagHelper *, TestAssembly{Environment.NewLine}<input unbound @DateTime.Now />", isRazorFile: false, DefaultTagHelpers);
+        var codeDocument = CreateCodeDocument("""
+            @addTagHelper *, TestAssembly
+            <input unbound @DateTime.Now />
+            """, isRazorFile: false, DefaultTagHelpers);
         var syntaxTree = codeDocument.GetSyntaxTree();
         var startTag = (MarkupStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
 

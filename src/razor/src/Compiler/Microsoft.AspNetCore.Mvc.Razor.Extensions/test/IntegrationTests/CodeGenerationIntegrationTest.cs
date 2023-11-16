@@ -72,11 +72,13 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
     public void IncompleteDirectives_Runtime()
     {
         // Arrange
-        AddCSharpSyntaxTree(@"
-public class MyService<TModel>
-{
-    public string Html { get; set; }
-}");
+        AddCSharpSyntaxTree("""
+
+            public class MyService<TModel>
+            {
+                public string Html { get; set; }
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -96,22 +98,24 @@ public class MyService<TModel>
     public void InheritsViewModel_Runtime()
     {
         // Arrange
-        AddCSharpSyntaxTree(@"
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Razor;
+        AddCSharpSyntaxTree("""
 
-public class MyBasePageForViews<TModel> : RazorPage
-{
-    public override Task ExecuteAsync()
-    {
-        throw new System.NotImplementedException();
-    }
-}
-public class MyModel
-{
+            using System.Threading.Tasks;
+            using Microsoft.AspNetCore.Mvc.Razor;
 
-}
-");
+            public class MyBasePageForViews<TModel> : RazorPage
+            {
+                public override Task ExecuteAsync()
+                {
+                    throw new System.NotImplementedException();
+                }
+            }
+            public class MyModel
+            {
+
+            }
+
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -128,22 +132,24 @@ public class MyModel
     public void InheritsWithViewImports_Runtime()
     {
         // Arrange
-        AddCSharpSyntaxTree(@"
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+        AddCSharpSyntaxTree("""
 
-public abstract class MyPageModel<T> : Page
-{
-    public override Task ExecuteAsync()
-    {
-        throw new System.NotImplementedException();
-    }
-}
+            using System.Threading.Tasks;
+            using Microsoft.AspNetCore.Mvc.RazorPages;
 
-public class MyModel
-{
+            public abstract class MyPageModel<T> : Page
+            {
+                public override Task ExecuteAsync()
+                {
+                    throw new System.NotImplementedException();
+                }
+            }
 
-}");
+            public class MyModel
+            {
+
+            }
+            """);
         AddProjectItemFromText(@"@inherits MyPageModel<TModel>");
 
         var projectItem = CreateProjectItemFromFile();
@@ -162,9 +168,11 @@ public class MyModel
     {
         // Arrange
         var projectItem = CreateProjectItemFromFile();
-        AddProjectItemFromText(@"
-@using System
-@attribute [Serializable]");
+        AddProjectItemFromText("""
+
+            @using System
+            @attribute [Serializable]
+            """);
 
         // Act
         var compiled = CompileToAssembly(projectItem, designTime: false, throwOnFailure: false);
@@ -230,14 +238,15 @@ public class MyModel
     public void Sections_Runtime()
     {
         // Arrange
-        AddCSharpSyntaxTree($@"
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
+        AddCSharpSyntaxTree($$"""
 
-public class InputTestTagHelper : {typeof(TagHelper).FullName}
-{{
-    public ModelExpression For {{ get; set; }}
-}}
-");
+            using Microsoft.AspNetCore.Mvc.ViewFeatures;
+
+            public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
+            {
+                public ModelExpression For { get; set; }
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -269,12 +278,14 @@ public class InputTestTagHelper : {typeof(TagHelper).FullName}
     public void Inject_Runtime()
     {
         // Arrange
-        AddCSharpSyntaxTree(@"
-public class MyApp
-{
-    public string MyProperty { get; set; }
-}
-");
+        AddCSharpSyntaxTree("""
+
+            public class MyApp
+            {
+                public string MyProperty { get; set; }
+            }
+
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -291,21 +302,23 @@ public class MyApp
     public void InjectWithModel_Runtime()
     {
         // Arrange
-        AddCSharpSyntaxTree(@"
-public class MyModel
-{
+        AddCSharpSyntaxTree("""
 
-}
+            public class MyModel
+            {
 
-public class MyService<TModel>
-{
-    public string Html { get; set; }
-}
+            }
 
-public class MyApp
-{
-    public string MyProperty { get; set; }
-}");
+            public class MyService<TModel>
+            {
+                public string Html { get; set; }
+            }
+
+            public class MyApp
+            {
+                public string MyProperty { get; set; }
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -322,22 +335,24 @@ public class MyApp
     public void InjectWithSemicolon_Runtime()
     {
         // Arrange
-        AddCSharpSyntaxTree(@"
-public class MyModel
-{
+        AddCSharpSyntaxTree("""
 
-}
+            public class MyModel
+            {
 
-public class MyApp
-{
-    public string MyProperty { get; set; }
-}
+            }
 
-public class MyService<TModel>
-{
-    public string Html { get; set; }
-}
-");
+            public class MyApp
+            {
+                public string MyProperty { get; set; }
+            }
+
+            public class MyService<TModel>
+            {
+                public string Html { get; set; }
+            }
+
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -370,14 +385,14 @@ public class MyService<TModel>
     public void ModelExpressionTagHelper_Runtime()
     {
         // Arrange
-        AddCSharpSyntaxTree($@"
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
+        AddCSharpSyntaxTree($$"""
+            using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
-public class InputTestTagHelper : {typeof(TagHelper).FullName}
-{{
-    public ModelExpression For {{ get; set; }}
-}}
-");
+            public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
+            {
+                public ModelExpression For { get; set; }
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -394,12 +409,12 @@ public class InputTestTagHelper : {typeof(TagHelper).FullName}
     public void RazorPages_Runtime()
     {
         // Arrange
-        AddCSharpSyntaxTree($@"
-public class DivTagHelper : {typeof(TagHelper).FullName}
-{{
+        AddCSharpSyntaxTree($$"""
+            public class DivTagHelper : {{typeof(TagHelper).FullName}}
+            {
 
-}}
-");
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -431,12 +446,12 @@ public class DivTagHelper : {typeof(TagHelper).FullName}
     public void RazorPagesWithoutModel_Runtime()
     {
         // Arrange
-        AddCSharpSyntaxTree($@"
-public class DivTagHelper : {typeof(TagHelper).FullName}
-{{
+        AddCSharpSyntaxTree($$"""
+            public class DivTagHelper : {{typeof(TagHelper).FullName}}
+            {
 
-}}
-");
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -483,21 +498,21 @@ public class DivTagHelper : {typeof(TagHelper).FullName}
     public void ViewComponentTagHelper_Runtime()
     {
         // Arrange
-        AddCSharpSyntaxTree($@"
-public class TestViewComponent
-{{
-    public string Invoke(string firstName)
-    {{
-        return firstName;
-    }}
-}}
+        AddCSharpSyntaxTree($$"""
+            public class TestViewComponent
+            {
+                public string Invoke(string firstName)
+                {
+                    return firstName;
+                }
+            }
 
-[{typeof(HtmlTargetElementAttribute).FullName}]
-public class AllTagHelper : {typeof(TagHelper).FullName}
-{{
-    public string Bar {{ get; set; }}
-}}
-");
+            [{{typeof(HtmlTargetElementAttribute).FullName}}]
+            public class AllTagHelper : {{typeof(TagHelper).FullName}}
+            {
+                public string Bar { get; set; }
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -514,38 +529,38 @@ public class AllTagHelper : {typeof(TagHelper).FullName}
     public void ViewComponentTagHelperOptionalParam_Runtime()
     {
         // Arrange
-        AddCSharpSyntaxTree($@"
-using System;
+        AddCSharpSyntaxTree($$"""
+            using System;
 
-public class OptionalTestViewComponent
-{{
-    public string Invoke(bool showSecret = false)
-    {{
-        return showSecret ? ""what a secret"" : ""not a secret"";
-    }}
-}}
-public class OptionalTestWithParamViewComponent
-{{
-    public string Invoke(string secret, bool showSecret = false)
-    {{
-        var isSecret = showSecret ? ""what a secret"" : ""not a secret"";
-        return isSecret + "" : "" + secret;
-    }}
-}}
-public class OptionalWithMultipleTypesViewComponent
-{{
-    public string Invoke(
-        int age = 42,
-        double favoriteDecimal = 12.3,
-        char favoriteLetter = 'b',
-        DateTime? birthDate = null,
-        string anotherOne = null)
-    {{
-        birthDate = new DateTime(1979, 8, 23);
-        return age + "" : "" + favoriteDecimal + "" : "" + favoriteLetter + "" : "" + birthDate + "" : "" + anotherOne;
-    }}
-}}
-");
+            public class OptionalTestViewComponent
+            {
+                public string Invoke(bool showSecret = false)
+                {
+                    return showSecret ? "what a secret" : "not a secret";
+                }
+            }
+            public class OptionalTestWithParamViewComponent
+            {
+                public string Invoke(string secret, bool showSecret = false)
+                {
+                    var isSecret = showSecret ? "what a secret" : "not a secret";
+                    return isSecret + " : " + secret;
+                }
+            }
+            public class OptionalWithMultipleTypesViewComponent
+            {
+                public string Invoke(
+                    int age = 42,
+                    double favoriteDecimal = 12.3,
+                    char favoriteLetter = 'b',
+                    DateTime? birthDate = null,
+                    string anotherOne = null)
+                {
+                    birthDate = new DateTime(1979, 8, 23);
+                    return age + " : " + favoriteDecimal + " : " + favoriteLetter + " : " + birthDate + " : " + anotherOne;
+                }
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -580,35 +595,37 @@ public class OptionalWithMultipleTypesViewComponent
     public void RazorPage_WithCssScope()
     {
         // Arrange
-        AddCSharpSyntaxTree($@"
-[{typeof(HtmlTargetElementAttribute).FullName}({"\"all\""})]
-public class AllTagHelper : {typeof(TagHelper).FullName}
-{{
-    public string Bar {{ get; set; }}
-}}
+        AddCSharpSyntaxTree($$"""
+            [{{typeof(HtmlTargetElementAttribute).FullName}}("all")]
+            public class AllTagHelper : {{typeof(TagHelper).FullName}}
+            {
+                public string Bar { get; set; }
+            }
 
-[{typeof(HtmlTargetElementAttribute).FullName}({"\"form\""})]
-public class FormTagHelper : {typeof(TagHelper).FullName}
-{{
-}}
-");
+            [{{typeof(HtmlTargetElementAttribute).FullName}}("form")]
+            public class FormTagHelper : {{typeof(TagHelper).FullName}}
+            {
+            }
+            """);
 
         // Act
         // This test case attempts to use all syntaxes that might interact with auto-generated attributes
-        var generated = CompileToCSharp(@"@page
-@addTagHelper *, AppCode
-@{
-    ViewData[""Title""] = ""Home page"";
-}
-<div class=""text-center"">
-    <h1 class=""display-4"">Welcome</h1>
-    <p>Learn about<a href= ""https://docs.microsoft.com/aspnet/core"" > building Web apps with ASP.NET Core</a>.</p>
-</div>
-<all Bar=""Foo""></all>
-<form asp-route=""register"" method=""post"">
-  <input name=""regular input"" />
-</form>
-", cssScope: "TestCssScope");
+        var generated = CompileToCSharp("""
+            @page
+            @addTagHelper *, AppCode
+            @{
+                ViewData["Title"] = "Home page";
+            }
+            <div class="text-center">
+                <h1 class="display-4">Welcome</h1>
+                <p>Learn about<a href= "https://docs.microsoft.com/aspnet/core" > building Web apps with ASP.NET Core</a>.</p>
+            </div>
+            <all Bar="Foo"></all>
+            <form asp-route="register" method="post">
+              <input name="regular input" />
+            </form>
+
+            """, cssScope: "TestCssScope");
 
         // Assert
         var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
@@ -622,34 +639,36 @@ public class FormTagHelper : {typeof(TagHelper).FullName}
     public void RazorView_WithCssScope()
     {
         // Arrange
-        AddCSharpSyntaxTree($@"
-[{typeof(HtmlTargetElementAttribute).FullName}({"\"all\""})]
-public class AllTagHelper : {typeof(TagHelper).FullName}
-{{
-    public string Bar {{ get; set; }}
-}}
+        AddCSharpSyntaxTree($$"""
+            [{{typeof(HtmlTargetElementAttribute).FullName}}("all")]
+            public class AllTagHelper : {{typeof(TagHelper).FullName}}
+            {
+                public string Bar { get; set; }
+            }
 
-[{typeof(HtmlTargetElementAttribute).FullName}({"\"form\""})]
-public class FormTagHelper : {typeof(TagHelper).FullName}
-{{
-}}
-");
+            [{{typeof(HtmlTargetElementAttribute).FullName}}("form")]
+            public class FormTagHelper : {{typeof(TagHelper).FullName}}
+            {
+            }
+            """);
 
         // Act
         // This test case attempts to use all syntaxes that might interact with auto-generated attributes
-        var generated = CompileToCSharp(@"@addTagHelper *, AppCode
-@{
-    ViewData[""Title""] = ""Home page"";
-}
-<div class=""text-center"">
-    <h1 class=""display-4"">Welcome</h1>
-    <p>Learn about<a href= ""https://docs.microsoft.com/aspnet/core"" > building Web apps with ASP.NET Core</a>.</p>
-</div>
-<all Bar=""Foo""></all>
-<form asp-route=""register"" method=""post"">
-  <input name=""regular input"" />
-</form>
-", cssScope: "TestCssScope");
+        var generated = CompileToCSharp("""
+            @addTagHelper *, AppCode
+            @{
+                ViewData["Title"] = "Home page";
+            }
+            <div class="text-center">
+                <h1 class="display-4">Welcome</h1>
+                <p>Learn about<a href= "https://docs.microsoft.com/aspnet/core" > building Web apps with ASP.NET Core</a>.</p>
+            </div>
+            <all Bar="Foo"></all>
+            <form asp-route="register" method="post">
+              <input name="regular input" />
+            </form>
+
+            """, cssScope: "TestCssScope");
 
         // Assert
         var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
@@ -663,33 +682,35 @@ public class FormTagHelper : {typeof(TagHelper).FullName}
     public void RazorView_Layout_WithCssScope()
     {
         // Arrange
-        AddCSharpSyntaxTree($@"
-[{typeof(HtmlTargetElementAttribute).FullName}({"\"all\""})]
-public class AllTagHelper : {typeof(TagHelper).FullName}
-{{
-    public string Bar {{ get; set; }}
-}}
-[{typeof(HtmlTargetElementAttribute).FullName}({"\"form\""})]
-public class FormTagHelper : {typeof(TagHelper).FullName}
-{{
-}}
-");
+        AddCSharpSyntaxTree($$"""
+            [{{typeof(HtmlTargetElementAttribute).FullName}}("all")]
+            public class AllTagHelper : {{typeof(TagHelper).FullName}}
+            {
+                public string Bar { get; set; }
+            }
+            [{{typeof(HtmlTargetElementAttribute).FullName}}("form")]
+            public class FormTagHelper : {{typeof(TagHelper).FullName}}
+            {
+            }
+            """);
 
         // Act
         // This test case attempts to use all syntaxes that might interact with auto-generated attributes
-        var generated = CompileToCSharp(@"
-<!DOCTYPE html>
-<html lang=""en"">
-<head>
-    <meta charset=""utf-8"" />
-    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"" />
-    <title>@ViewData[""Title""] - Test layout component</title>
-</head>
-<body>
-    <p>This is a body.</p>
-</body>
-</html>
-", cssScope: "TestCssScope");
+        var generated = CompileToCSharp("""
+
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <title>@ViewData["Title"] - Test layout component</title>
+            </head>
+            <body>
+                <p>This is a body.</p>
+            </body>
+            </html>
+
+            """, cssScope: "TestCssScope");
 
         // Assert
         var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
@@ -705,25 +726,29 @@ public class FormTagHelper : {typeof(TagHelper).FullName}
         // Arrange
         BaseCompilation = BaseCompilation.WithOptions(BaseCompilation.Options.WithNullableContextOptions(NullableContextOptions.Enable));
 
-        AddCSharpSyntaxTree(@"
-namespace TestNamespace;
+        AddCSharpSyntaxTree("""
 
-public class TestModel
-{
-    public string Name { get; set; } = string.Empty;
+            namespace TestNamespace;
 
-    public string? Address { get; set; }
-}");
+            public class TestModel
+            {
+                public string Name { get; set; } = string.Empty;
+
+                public string? Address { get; set; }
+            }
+            """);
 
         // Act
         // This test case attempts to use all syntaxes that might interact with auto-generated attributes
-        var generated = CompileToCSharp(@"
-@using TestNamespace
-@model TestModel
+        var generated = CompileToCSharp("""
 
-<h1>@Model.Name</h1>
+            @using TestNamespace
+            @model TestModel
 
-<h2>@Model.Address</h2>");
+            <h1>@Model.Name</h1>
+
+            <h2>@Model.Address</h2>
+            """);
 
         // Assert
         var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
@@ -739,25 +764,29 @@ public class TestModel
         // Arrange
         BaseCompilation = BaseCompilation.WithOptions(BaseCompilation.Options.WithNullableContextOptions(NullableContextOptions.Enable));
 
-        AddCSharpSyntaxTree(@"
-namespace TestNamespace;
+        AddCSharpSyntaxTree("""
 
-public class TestModel
-{
-    public string Name { get; set; } = string.Empty;
+            namespace TestNamespace;
 
-    public string? Address { get; set; }
-}");
+            public class TestModel
+            {
+                public string Name { get; set; } = string.Empty;
+
+                public string? Address { get; set; }
+            }
+            """);
 
         // Act
         // This test case attempts to use all syntaxes that might interact with auto-generated attributes
-        var generated = CompileToCSharp(@"
-@using TestNamespace
-@model TestModel?
+        var generated = CompileToCSharp("""
 
-<h1>@Model?.Name</h1>
+            @using TestNamespace
+            @model TestModel?
 
-<h2>@Model?.Address</h2>");
+            <h1>@Model?.Name</h1>
+
+            <h2>@Model?.Address</h2>
+            """);
 
         // Assert
         var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
@@ -773,25 +802,29 @@ public class TestModel
         // Arrange
         BaseCompilation = BaseCompilation.WithOptions(BaseCompilation.Options.WithNullableContextOptions(NullableContextOptions.Disable));
 
-        AddCSharpSyntaxTree(@"
-namespace TestNamespace;
+        AddCSharpSyntaxTree("""
 
-public class TestModel
-{
-    public string Name { get; set; } = string.Empty;
+            namespace TestNamespace;
 
-    public string Address { get; set; }
-}");
+            public class TestModel
+            {
+                public string Name { get; set; } = string.Empty;
+
+                public string Address { get; set; }
+            }
+            """);
 
         // Act
         // This test case attempts to use all syntaxes that might interact with auto-generated attributes
-        var generated = CompileToCSharp(@"
-@using TestNamespace
-@model TestModel?
+        var generated = CompileToCSharp("""
 
-<h1>@Model?.Name</h1>
+            @using TestNamespace
+            @model TestModel?
 
-<h2>@Model?.Address</h2>");
+            <h1>@Model?.Name</h1>
+
+            <h2>@Model?.Address</h2>
+            """);
 
         // Assert
         var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
@@ -809,28 +842,32 @@ public class TestModel
         // Arrange
         BaseCompilation = BaseCompilation.WithOptions(BaseCompilation.Options.WithNullableContextOptions(NullableContextOptions.Enable));
 
-        AddCSharpSyntaxTree(@"
-namespace TestNamespace;
-using Microsoft.AspNetCore.Mvc.Razor;
+        AddCSharpSyntaxTree("""
 
-public abstract class MyBasePage<TModel> : RazorPage<TModel> where TModel : class? {}
+            namespace TestNamespace;
+            using Microsoft.AspNetCore.Mvc.Razor;
 
-public class TestModel
-{
-    public string Name { get; set; } = string.Empty;
+            public abstract class MyBasePage<TModel> : RazorPage<TModel> where TModel : class? {}
 
-    public string? Address { get; set; }
-}");
+            public class TestModel
+            {
+                public string Name { get; set; } = string.Empty;
+
+                public string? Address { get; set; }
+            }
+            """);
 
         // Act
         // This test case attempts to use all syntaxes that might interact with auto-generated attributes
-        var generated = CompileToCSharp(@"
-@using TestNamespace
-@inherits MyBasePage<TestModel?>
+        var generated = CompileToCSharp("""
 
-<h1>@Model?.Name</h1>
+            @using TestNamespace
+            @inherits MyBasePage<TestModel?>
 
-<h2>@Model?.Address</h2>");
+            <h1>@Model?.Name</h1>
+
+            <h2>@Model?.Address</h2>
+            """);
 
         // Assert
         var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
@@ -887,11 +924,13 @@ public class TestModel
     public void IncompleteDirectives_DesignTime()
     {
         // Arrange
-        AddCSharpSyntaxTree(@"
-public class MyService<TModel>
-{
-    public string Html { get; set; }
-}");
+        AddCSharpSyntaxTree("""
+
+            public class MyService<TModel>
+            {
+                public string Html { get; set; }
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -913,22 +952,24 @@ public class MyService<TModel>
     public void InheritsViewModel_DesignTime()
     {
         // Arrange
-        AddCSharpSyntaxTree(@"
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Razor;
+        AddCSharpSyntaxTree("""
 
-public class MyBasePageForViews<TModel> : RazorPage
-{
-    public override Task ExecuteAsync()
-    {
-        throw new System.NotImplementedException();
-    }
-}
-public class MyModel
-{
+            using System.Threading.Tasks;
+            using Microsoft.AspNetCore.Mvc.Razor;
 
-}
-");
+            public class MyBasePageForViews<TModel> : RazorPage
+            {
+                public override Task ExecuteAsync()
+                {
+                    throw new System.NotImplementedException();
+                }
+            }
+            public class MyModel
+            {
+
+            }
+
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -947,22 +988,24 @@ public class MyModel
     public void InheritsWithViewImports_DesignTime()
     {
         // Arrange
-        AddCSharpSyntaxTree(@"
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+        AddCSharpSyntaxTree("""
 
-public abstract class MyPageModel<T> : Page
-{
-    public override Task ExecuteAsync()
-    {
-        throw new System.NotImplementedException();
-    }
-}
+            using System.Threading.Tasks;
+            using Microsoft.AspNetCore.Mvc.RazorPages;
 
-public class MyModel
-{
+            public abstract class MyPageModel<T> : Page
+            {
+                public override Task ExecuteAsync()
+                {
+                    throw new System.NotImplementedException();
+                }
+            }
 
-}");
+            public class MyModel
+            {
+
+            }
+            """);
 
         AddProjectItemFromText(@"@inherits MyPageModel<TModel>");
 
@@ -984,9 +1027,11 @@ public class MyModel
     {
         // Arrange
         var projectItem = CreateProjectItemFromFile();
-        AddProjectItemFromText(@"
-@using System
-@attribute [Serializable]");
+        AddProjectItemFromText("""
+
+            @using System
+            @attribute [Serializable]
+            """);
 
         // Act
         var compiled = CompileToAssembly(projectItem, designTime: true, throwOnFailure: false);
@@ -1060,14 +1105,14 @@ public class MyModel
     public void Sections_DesignTime()
     {
         // Arrange
-        AddCSharpSyntaxTree($@"
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
+        AddCSharpSyntaxTree($$"""
+            using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
-public class InputTestTagHelper : {typeof(TagHelper).FullName}
-{{
-    public ModelExpression For {{ get; set; }}
-}}
-");
+            public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
+            {
+                public ModelExpression For { get; set; }
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -1103,12 +1148,14 @@ public class InputTestTagHelper : {typeof(TagHelper).FullName}
     public void Inject_DesignTime()
     {
         // Arrange
-        AddCSharpSyntaxTree(@"
-public class MyApp
-{
-    public string MyProperty { get; set; }
-}
-");
+        AddCSharpSyntaxTree("""
+
+            public class MyApp
+            {
+                public string MyProperty { get; set; }
+            }
+
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -1127,21 +1174,23 @@ public class MyApp
     public void InjectWithModel_DesignTime()
     {
         // Arrange
-        AddCSharpSyntaxTree(@"
-public class MyModel
-{
+        AddCSharpSyntaxTree("""
 
-}
+            public class MyModel
+            {
 
-public class MyService<TModel>
-{
-    public string Html { get; set; }
-}
+            }
 
-public class MyApp
-{
-    public string MyProperty { get; set; }
-}");
+            public class MyService<TModel>
+            {
+                public string Html { get; set; }
+            }
+
+            public class MyApp
+            {
+                public string MyProperty { get; set; }
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -1160,22 +1209,24 @@ public class MyApp
     public void InjectWithSemicolon_DesignTime()
     {
         // Arrange
-        AddCSharpSyntaxTree(@"
-public class MyModel
-{
+        AddCSharpSyntaxTree("""
 
-}
+            public class MyModel
+            {
 
-public class MyApp
-{
-    public string MyProperty { get; set; }
-}
+            }
 
-public class MyService<TModel>
-{
-    public string Html { get; set; }
-}
-");
+            public class MyApp
+            {
+                public string MyProperty { get; set; }
+            }
+
+            public class MyService<TModel>
+            {
+                public string Html { get; set; }
+            }
+
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -1211,11 +1262,13 @@ public class MyService<TModel>
     public void MultipleModels_DesignTime()
     {
         // Arrange
-        AddCSharpSyntaxTree(@"
-public class ThisShouldBeGenerated
-{
+        AddCSharpSyntaxTree("""
 
-}");
+            public class ThisShouldBeGenerated
+            {
+
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -1237,14 +1290,14 @@ public class ThisShouldBeGenerated
     public void ModelExpressionTagHelper_DesignTime()
     {
         // Arrange
-        AddCSharpSyntaxTree($@"
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
+        AddCSharpSyntaxTree($$"""
+            using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
-public class InputTestTagHelper : {typeof(TagHelper).FullName}
-{{
-    public ModelExpression For {{ get; set; }}
-}}
-");
+            public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
+            {
+                public ModelExpression For { get; set; }
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -1263,12 +1316,12 @@ public class InputTestTagHelper : {typeof(TagHelper).FullName}
     public void RazorPages_DesignTime()
     {
         // Arrange
-        AddCSharpSyntaxTree($@"
-public class DivTagHelper : {typeof(TagHelper).FullName}
-{{
+        AddCSharpSyntaxTree($$"""
+            public class DivTagHelper : {{typeof(TagHelper).FullName}}
+            {
 
-}}
-");
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -1304,12 +1357,12 @@ public class DivTagHelper : {typeof(TagHelper).FullName}
     public void RazorPagesWithoutModel_DesignTime()
     {
         // Arrange
-        AddCSharpSyntaxTree($@"
-public class DivTagHelper : {typeof(TagHelper).FullName}
-{{
+        AddCSharpSyntaxTree($$"""
+            public class DivTagHelper : {{typeof(TagHelper).FullName}}
+            {
 
-}}
-");
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 
@@ -1362,21 +1415,21 @@ public class DivTagHelper : {typeof(TagHelper).FullName}
     public void ViewComponentTagHelper_DesignTime()
     {
         // Arrange
-        AddCSharpSyntaxTree($@"
-public class TestViewComponent
-{{
-    public string Invoke(string firstName)
-    {{
-        return firstName;
-    }}
-}}
+        AddCSharpSyntaxTree($$"""
+            public class TestViewComponent
+            {
+                public string Invoke(string firstName)
+                {
+                    return firstName;
+                }
+            }
 
-[{typeof(HtmlTargetElementAttribute).FullName}]
-public class AllTagHelper : {typeof(TagHelper).FullName}
-{{
-    public string Bar {{ get; set; }}
-}}
-");
+            [{{typeof(HtmlTargetElementAttribute).FullName}}]
+            public class AllTagHelper : {{typeof(TagHelper).FullName}}
+            {
+                public string Bar { get; set; }
+            }
+            """);
 
         var projectItem = CreateProjectItemFromFile();
 

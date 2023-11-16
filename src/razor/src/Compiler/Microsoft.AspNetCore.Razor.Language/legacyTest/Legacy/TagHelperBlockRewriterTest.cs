@@ -1193,7 +1193,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = $"<input data-required='{dateTimeNowString}' />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         RunParseTreeRewriterTest(document, "input");
@@ -1206,7 +1206,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input data-required='value' />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         RunParseTreeRewriterTest(document, "input");
@@ -1220,7 +1220,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = $"<input data-required='prefix {dateTimeNowString}' />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         RunParseTreeRewriterTest(document, "input");
@@ -1234,7 +1234,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = $"<input data-required='{dateTimeNowString} suffix' />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         RunParseTreeRewriterTest(document, "input");
@@ -1248,7 +1248,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = $"<input data-required='prefix {dateTimeNowString} suffix' />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         RunParseTreeRewriterTest(document, "input");
@@ -1262,7 +1262,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = $"<input pre-attribute data-required='prefix {dateTimeNowString} suffix' post-attribute />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         RunParseTreeRewriterTest(document, "input");
@@ -1276,7 +1276,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = $"<input data-required='{dateTimeNowString} middle {dateTimeNowString}' />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         RunParseTreeRewriterTest(document, "input");
@@ -1681,7 +1681,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input unbound-required />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1694,7 +1694,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<p bound-string></p>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1707,7 +1707,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input bound-required-string />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1720,7 +1720,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input bound-required-int />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1733,7 +1733,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<p bound-int></p>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1746,7 +1746,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input int-dictionary/>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1759,7 +1759,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input string-dictionary />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1772,7 +1772,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input int-prefix- />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1785,7 +1785,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input string-prefix-/>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1798,7 +1798,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input int-prefix-value/>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1811,7 +1811,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input string-prefix-value />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1824,7 +1824,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input int-prefix-value='' />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1837,7 +1837,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input string-prefix-value=''/>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1850,7 +1850,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input int-prefix-value='3'/>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1863,7 +1863,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input string-prefix-value='some string' />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1876,7 +1876,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input unbound-required bound-required-string />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1889,7 +1889,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<p bound-int bound-string></p>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1902,7 +1902,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input bound-required-int unbound-required bound-required-string />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1915,7 +1915,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<p bound-int bound-string bound-string></p>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1928,7 +1928,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input unbound-required class='btn' />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1941,7 +1941,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<p bound-string class='btn'></p>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1954,7 +1954,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input class='btn' unbound-required />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1967,7 +1967,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<p class='btn' bound-string></p>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1980,7 +1980,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input bound-required-string class='btn' />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -1993,7 +1993,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input class='btn' bound-required-string />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -2006,7 +2006,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input bound-required-int class='btn' />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -2019,7 +2019,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<p bound-int class='btn'></p>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -2032,7 +2032,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<input class='btn' bound-required-int />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -2045,7 +2045,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = "<p class='btn' bound-int></p>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -2059,7 +2059,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = $"<input class='{expressionString}' bound-required-int />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -2073,7 +2073,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = $"<p class='{expressionString}' bound-int></p>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -2087,7 +2087,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = $"<input    bound-required-int class='{expressionString}'   bound-required-string class='{expressionString}'  unbound-required  />";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);
@@ -2101,7 +2101,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         var document = $"<p    bound-int class='{expressionString}'   bound-string class='{expressionString}'  bound-string></p>";
 
         // Wrap in a CSharp block
-        document = $"@{{{document}}}";
+        document = $$"""@{{{document}}}""";
 
         // Act & Assert
         EvaluateData(MinimizedAttribute_Descriptors, document);

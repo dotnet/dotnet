@@ -85,7 +85,10 @@ public class BraceSmartIndenterTest : BraceSmartIndenterTestBase
     public void ContainsInvalidContent_NewLineSpan_ReturnsFalse()
     {
         // Arrange
-        var span = ExtractSpan(2, "@{" + Environment.NewLine + "}");
+        var span = ExtractSpan(2, """
+            @{
+            }
+            """);
 
         // Act
         var result = BraceSmartIndenter.ContainsInvalidContent(span);
@@ -428,7 +431,10 @@ public class BraceSmartIndenterTest : BraceSmartIndenterTestBase
     public void TryCreateIndentationContext_ReturnsFalseIfNoFocusedTextView()
     {
         // Arrange
-        var snapshot = new StringTextSnapshot(Environment.NewLine + "Hello World");
+        var snapshot = new StringTextSnapshot("""
+            
+            Hello World
+            """);
         var syntaxTree = RazorSyntaxTree.Parse(TestRazorSourceDocument.Create(snapshot.Content));
         ITextBuffer textBuffer = null;
         var documentTracker = CreateDocumentTracker(() => textBuffer, focusedTextView: null);
@@ -465,7 +471,10 @@ public class BraceSmartIndenterTest : BraceSmartIndenterTestBase
     public void TryCreateIndentationContext_ReturnsFalseIfNewLineIsNotPrecededByOpenBrace_FileStart()
     {
         // Arrange
-        var initialSnapshot = new StringTextSnapshot(Environment.NewLine + "Hello World");
+        var initialSnapshot = new StringTextSnapshot("""
+            
+            Hello World
+            """);
         var syntaxTree = RazorSyntaxTree.Parse(TestRazorSourceDocument.Create(initialSnapshot.Content));
         ITextBuffer textBuffer = null;
         var focusedTextView = CreateFocusedTextView(() => textBuffer);
@@ -503,7 +512,10 @@ public class BraceSmartIndenterTest : BraceSmartIndenterTestBase
     public void TryCreateIndentationContext_ReturnsFalseIfNewLineIsNotFollowedByCloseBrace()
     {
         // Arrange
-        var initialSnapshot = new StringTextSnapshot("@{ " + Environment.NewLine + "World");
+        var initialSnapshot = new StringTextSnapshot("""
+            @{ 
+            World
+            """);
         var syntaxTree = RazorSyntaxTree.Parse(TestRazorSourceDocument.Create(initialSnapshot.Content));
         ITextBuffer textBuffer = null;
         var focusedTextView = CreateFocusedTextView(() => textBuffer);

@@ -74,16 +74,18 @@ namespace Test
             item =>
             {
                 Assert.Equal("RZ9978", item.Id);
-                Assert.Equal("The directives @addTagHelper, @removeTagHelper and @tagHelperPrefix are not valid in a component document. " +
-            "Use '@using <namespace>' directive instead.", item.GetMessage(CultureInfo.CurrentCulture));
+                Assert.Equal("""
+            The directives @addTagHelper, @removeTagHelper and @tagHelperPrefix are not valid in a component document. Use '@using <namespace>' directive instead.
+            """, item.GetMessage(CultureInfo.CurrentCulture));
                 Assert.Equal(0, item.Span.LineIndex);
                 Assert.Equal(0, item.Span.CharacterIndex);
             },
             item =>
             {
                 Assert.Equal("RZ9978", item.Id);
-                Assert.Equal("The directives @addTagHelper, @removeTagHelper and @tagHelperPrefix are not valid in a component document. " +
-            "Use '@using <namespace>' directive instead.", item.GetMessage(CultureInfo.CurrentCulture));
+                Assert.Equal("""
+            The directives @addTagHelper, @removeTagHelper and @tagHelperPrefix are not valid in a component document. Use '@using <namespace>' directive instead.
+            """, item.GetMessage(CultureInfo.CurrentCulture));
                 Assert.Equal(1, item.Span.LineIndex);
                 Assert.Equal(0, item.Span.CharacterIndex);
             });

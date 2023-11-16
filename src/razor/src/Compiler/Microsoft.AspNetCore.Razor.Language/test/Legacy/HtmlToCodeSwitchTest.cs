@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
@@ -40,8 +40,10 @@ public class HtmlToCodeSwitchTest() : ParserTestBase(layer: TestProject.Layer.Co
     public void ParsesCodeWithinSingleLineMarkup()
     {
         // TODO: Fix at a later date, HTML should be a tag block.
-        ParseDocumentTest("@{@:<li>Foo @Bar Baz" + Environment.NewLine
-                     + "bork}");
+        ParseDocumentTest("""
+            @{@:<li>Foo @Bar Baz
+            bork}
+            """);
     }
 
     [Fact]
@@ -83,44 +85,52 @@ public class HtmlToCodeSwitchTest() : ParserTestBase(layer: TestProject.Layer.Co
     [Fact]
     public void GivesWhitespacePreceedingToCodeIfThereIsNoMarkupOnThatLine()
     {
-        ParseDocumentTest("@{   <ul>" + Environment.NewLine
-                     + "    @foreach(var p in Products) {" + Environment.NewLine
-                     + "        <li>Product: @p.Name</li>" + Environment.NewLine
-                     + "    }" + Environment.NewLine
-                     + "    </ul>}");
+        ParseDocumentTest("""
+            @{   <ul>
+                @foreach(var p in Products) {
+                    <li>Product: @p.Name</li>
+                }
+                </ul>}
+            """);
     }
 
     [Fact]
     public void ParseDocumentGivesWhitespacePreceedingToCodeIfThereIsNoMarkupOnThatLine()
     {
-        ParseDocumentTest("   <ul>" + Environment.NewLine
-                        + "    @foreach(var p in Products) {" + Environment.NewLine
-                        + "        <li>Product: @p.Name</li>" + Environment.NewLine
-                        + "    }" + Environment.NewLine
-                        + "    </ul>");
+        ParseDocumentTest("""
+               <ul>
+                @foreach(var p in Products) {
+                    <li>Product: @p.Name</li>
+                }
+                </ul>
+            """);
     }
 
     [Fact]
     public void SectionContextGivesWhitespacePreceedingToCodeIfThereIsNoMarkupOnThatLine()
     {
-        ParseDocumentTest("@{@section foo {" + Environment.NewLine
-                        + "    <ul>" + Environment.NewLine
-                        + "        @foreach(var p in Products) {" + Environment.NewLine
-                        + "            <li>Product: @p.Name</li>" + Environment.NewLine
-                        + "        }" + Environment.NewLine
-                        + "    </ul>" + Environment.NewLine
-                        + "}}",
+        ParseDocumentTest("""
+            @{@section foo {
+                <ul>
+                    @foreach(var p in Products) {
+                        <li>Product: @p.Name</li>
+                    }
+                </ul>
+            }}
+            """,
             new[] { SectionDirective.Directive, });
     }
 
     [Fact]
     public void CSharpCodeParserDoesNotAcceptLeadingOrTrailingWhitespaceInDesignMode()
     {
-        ParseDocumentTest("@{   <ul>" + Environment.NewLine
-                     + "    @foreach(var p in Products) {" + Environment.NewLine
-                     + "        <li>Product: @p.Name</li>" + Environment.NewLine
-                     + "    }" + Environment.NewLine
-                     + "    </ul>}",
+        ParseDocumentTest("""
+            @{   <ul>
+                @foreach(var p in Products) {
+                    <li>Product: @p.Name</li>
+                }
+                </ul>}
+            """,
             designTime: true);
     }
 

@@ -44,11 +44,17 @@ public class CSharpCodeParserTest
                         }
                     },
                     {
-                        "th" + Environment.NewLine,
+                        """
+                        th
+
+                        """,
                         directiveLocation,
                         new[]
                         {
-                            InvalidPrefixError(2 + Environment.NewLine.Length, Environment.NewLine[0], "th" + Environment.NewLine),
+                            InvalidPrefixError(2 + Environment.NewLine.Length, Environment.NewLine[0], """
+                            th
+
+                            """),
                         }
                     },
                     {

@@ -39,20 +39,20 @@ public class DefaultRazorProximityExpressionResolverTest : ToolingTestBase
 
         _validProximityExpressionRoot = "var abc = 123;";
         _invalidProximityExpressionRoot = "private int bar;";
-        var csharpTextSnapshot = new StringTextSnapshot(
-$@"public class SomeRazorFile
-{{
-    {_invalidProximityExpressionRoot}
+        var csharpTextSnapshot = new StringTextSnapshot($$"""
+            public class SomeRazorFile
+            {
+                {{_invalidProximityExpressionRoot}}
 
-    public void Render()
-    {{
-        {_validProximityExpressionRoot}
-    }}
-}}
-");
+                public void Render()
+                {
+                    {{_validProximityExpressionRoot}}
+                }
+            }
+            """);
         _csharpTextBuffer = new TestTextBuffer(csharpTextSnapshot);
 
-        var textBufferSnapshot = new StringTextSnapshot($"@{{{_invalidProximityExpressionRoot}}} @code {{{_validProximityExpressionRoot}}}");
+        var textBufferSnapshot = new StringTextSnapshot($$"""@{{{_invalidProximityExpressionRoot}}} @code {{{_validProximityExpressionRoot}}}""");
         _hostTextbuffer = new TestTextBuffer(textBufferSnapshot);
     }
 

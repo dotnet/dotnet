@@ -64,9 +64,12 @@ public class RazorPageDocumentClassifierPassTest : RazorProjectEngineTestBase
             endCharacterIndex: 0);
 
         var expectedDiagnostic = RazorExtensionsDiagnosticFactory.CreatePageDirective_MustExistAtTheTopOfFile(sourceSpan);
-        var content = Environment.NewLine +
-"@somethingelse" + Environment.NewLine +
-"@page" + Environment.NewLine;
+        var content = """
+            
+            @somethingelse
+            @page
+            
+            """;
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create(content, "Test.cshtml"));
 
         var engine = CreateProjectEngine().Engine;

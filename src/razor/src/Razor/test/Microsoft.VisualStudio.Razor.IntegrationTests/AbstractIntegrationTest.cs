@@ -43,7 +43,10 @@ public abstract class AbstractIntegrationTest : AbstractIdeIntegrationTest
     public override void Dispose()
     {
         var fails = _traceListener?.Fails ?? Array.Empty<string>();
-        Assert.False(fails.Length > 0, $"Expected 0 Debug.Fail calls. Actual:{Environment.NewLine}{string.Join(Environment.NewLine, fails)}");
+        Assert.False(fails.Length > 0, $"""
+            Expected 0 Debug.Fail calls. Actual:
+            {string.Join(Environment.NewLine, fails)}
+            """);
 
         base.Dispose();
     }

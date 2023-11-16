@@ -86,7 +86,11 @@ public class DefaultVSLSPTagHelperTooltipFactoryTest(ITestOutputHelper testOutpu
         //
         //     World
         Assert.Collection(runs, run => AssertExpectedClassification(
-            run, "Hello" + Environment.NewLine + Environment.NewLine + "World", VSPredefinedClassificationTypeNames.Text));
+            run, """
+            Hello
+
+            World
+            """, VSPredefinedClassificationTypeNames.Text));
     }
 
     [Fact]
@@ -150,14 +154,13 @@ End summary description.";
         // Expected output:
         //     code: This is code and This is some other code.
         Assert.Collection(runs, run => AssertExpectedClassification(
-            run,
-            "Summary description:" +
-            Environment.NewLine +
-            Environment.NewLine +
-            "Paragraph text." +
-            Environment.NewLine +
-            Environment.NewLine +
-            "End summary description.",
+            run, """
+            Summary description:
+
+            Paragraph text.
+
+            End summary description.
+            """,
             VSPredefinedClassificationTypeNames.Text));
     }
 

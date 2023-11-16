@@ -493,14 +493,13 @@ public class WorkspaceProjectStateChangeDetectorTest : WorkspaceTestBase
         await s_dispatcher.RunOnDispatcherThreadAsync(() => projectManager.ProjectAdded(_hostProjectOne), DisposalToken);
         workspaceStateGenerator.ClearQueue();
 
-        var sourceText = SourceText.From(
-$@"
-public partial class TestComponent : {ComponentsApi.IComponent.MetadataName} {{}}
-namespace Microsoft.AspNetCore.Components
-{{
-    public interface IComponent {{}}
-}}
-");
+        var sourceText = SourceText.From($$"""
+            public partial class TestComponent : {{ComponentsApi.IComponent.MetadataName}} {}
+            namespace Microsoft.AspNetCore.Components
+            {
+                public interface IComponent {}
+            }
+            """);
         var syntaxTreeRoot = await CSharpSyntaxTree.ParseText(sourceText).GetRootAsync();
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
@@ -589,10 +588,9 @@ namespace Microsoft.AspNetCore.Components
     public async Task IsPartialComponentClass_NoIComponent_ReturnsFalse()
     {
         // Arrange
-        var sourceText = SourceText.From(
-$@"
-public partial class TestComponent{{}}
-");
+        var sourceText = SourceText.From("""
+            public partial class TestComponent{}
+            """);
         var syntaxTreeRoot = await CSharpSyntaxTree.ParseText(sourceText).GetRootAsync();
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
@@ -614,14 +612,13 @@ public partial class TestComponent{{}}
     public async Task IsPartialComponentClass_InitializedDocument_ReturnsTrue()
     {
         // Arrange
-        var sourceText = SourceText.From(
-$@"
-public partial class TestComponent : {ComponentsApi.IComponent.MetadataName} {{}}
-namespace Microsoft.AspNetCore.Components
-{{
-    public interface IComponent {{}}
-}}
-");
+        var sourceText = SourceText.From($$"""
+            public partial class TestComponent : {{ComponentsApi.IComponent.MetadataName}} {}
+            namespace Microsoft.AspNetCore.Components
+            {
+                public interface IComponent {}
+            }
+            """);
         var syntaxTreeRoot = await CSharpSyntaxTree.ParseText(sourceText).GetRootAsync();
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
@@ -643,14 +640,13 @@ namespace Microsoft.AspNetCore.Components
     public void IsPartialComponentClass_Uninitialized_ReturnsFalse()
     {
         // Arrange
-        var sourceText = SourceText.From(
-$@"
-public partial class TestComponent : {ComponentsApi.IComponent.MetadataName} {{}}
-namespace Microsoft.AspNetCore.Components
-{{
-    public interface IComponent {{}}
-}}
-");
+        var sourceText = SourceText.From($$"""
+            public partial class TestComponent : {{ComponentsApi.IComponent.MetadataName}} {}
+            namespace Microsoft.AspNetCore.Components
+            {
+                public interface IComponent {}
+            }
+            """);
         var syntaxTreeRoot = CSharpSyntaxTree.ParseText(sourceText).GetRoot();
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
@@ -668,14 +664,13 @@ namespace Microsoft.AspNetCore.Components
     public async Task IsPartialComponentClass_UninitializedSemanticModel_ReturnsFalse()
     {
         // Arrange
-        var sourceText = SourceText.From(
-$@"
-public partial class TestComponent : {ComponentsApi.IComponent.MetadataName} {{}}
-namespace Microsoft.AspNetCore.Components
-{{
-    public interface IComponent {{}}
-}}
-");
+        var sourceText = SourceText.From($$"""
+            public partial class TestComponent : {{ComponentsApi.IComponent.MetadataName}} {}
+            namespace Microsoft.AspNetCore.Components
+            {
+                public interface IComponent {}
+            }
+            """);
         var syntaxTreeRoot = await CSharpSyntaxTree.ParseText(sourceText).GetRootAsync();
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
@@ -718,18 +713,17 @@ namespace Microsoft.AspNetCore.Components
     {
 
         // Arrange
-        var sourceText = SourceText.From(
-$@"
-public partial class NonComponent1 {{}}
-public class NonComponent2 {{}}
-public partial class TestComponent : {ComponentsApi.IComponent.MetadataName} {{}}
-public partial class NonComponent3 {{}}
-public class NonComponent4 {{}}
-namespace Microsoft.AspNetCore.Components
-{{
-    public interface IComponent {{}}
-}}
-");
+        var sourceText = SourceText.From($$"""
+            public partial class NonComponent1 {}
+            public class NonComponent2 {}
+            public partial class TestComponent : {{ComponentsApi.IComponent.MetadataName}} {}
+            public partial class NonComponent3 {}
+            public class NonComponent4 {}
+            namespace Microsoft.AspNetCore.Components
+            {
+                public interface IComponent {}
+            }
+            """);
         var syntaxTreeRoot = await CSharpSyntaxTree.ParseText(sourceText).GetRootAsync();
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)
@@ -752,17 +746,16 @@ namespace Microsoft.AspNetCore.Components
     {
 
         // Arrange
-        var sourceText = SourceText.From(
-$@"
-public partial class NonComponent1 {{}}
-public class NonComponent2 {{}}
-public partial class NonComponent3 {{}}
-public class NonComponent4 {{}}
-namespace Microsoft.AspNetCore.Components
-{{
-    public interface IComponent {{}}
-}}
-");
+        var sourceText = SourceText.From("""
+            public partial class NonComponent1 {}
+            public class NonComponent2 {}
+            public partial class NonComponent3 {}
+            public class NonComponent4 {}
+            namespace Microsoft.AspNetCore.Components
+            {
+                public interface IComponent {}
+            }
+            """);
         var syntaxTreeRoot = await CSharpSyntaxTree.ParseText(sourceText).GetRootAsync();
         var solution = _solutionWithTwoProjects
             .WithDocumentText(_partialComponentClassDocumentId, sourceText)

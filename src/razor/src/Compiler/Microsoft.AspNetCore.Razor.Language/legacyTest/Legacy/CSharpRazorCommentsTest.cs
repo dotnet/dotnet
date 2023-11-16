@@ -25,8 +25,11 @@ public class CSharpRazorCommentsTest() : ParserTestBase(layer: TestProject.Layer
     [Fact]
     public void RazorCommentInImplicitExpressionMethodCall()
     {
-        ParseDocumentTest("@foo(" + Environment.NewLine
-                        + "@**@" + Environment.NewLine);
+        ParseDocumentTest("""
+            @foo(
+            @**@
+
+            """);
     }
 
     [Fact]
@@ -50,10 +53,12 @@ This is a comment
     [Fact]
     public void RazorCommentInVerbatimBlock()
     {
-        ParseDocumentTest("@{" + Environment.NewLine
-                        + "    <text" + Environment.NewLine
-                        + "    @**@" + Environment.NewLine
-                        + "}");
+        ParseDocumentTest("""
+            @{
+                <text
+                @**@
+            }
+            """);
     }
 
     [Fact]
@@ -77,59 +82,66 @@ This is a comment
     [Fact]
     public void RazorCommentInMarkup()
     {
-        ParseDocumentTest(
-            "<p>" + Environment.NewLine
-            + "@**@" + Environment.NewLine
-            + "</p>");
+        ParseDocumentTest("""
+            <p>
+            @**@
+            </p>
+            """);
     }
 
     [Fact]
     public void MultipleRazorCommentInMarkup()
     {
-        ParseDocumentTest(
-            "<p>" + Environment.NewLine
-            + "  @**@  " + Environment.NewLine
-            + "@**@" + Environment.NewLine
-            + "</p>");
+        ParseDocumentTest("""
+            <p>
+              @**@  
+            @**@
+            </p>
+            """);
     }
 
     [Fact]
     public void MultipleRazorCommentsInSameLineInMarkup()
     {
-        ParseDocumentTest(
-            "<p>" + Environment.NewLine
-            + "@**@  @**@" + Environment.NewLine
-            + "</p>");
+        ParseDocumentTest("""
+            <p>
+            @**@  @**@
+            </p>
+            """);
     }
 
     [Fact]
     public void RazorCommentsSurroundingMarkup()
     {
-        ParseDocumentTest(
-            "<p>" + Environment.NewLine
-            + "@* hello *@ content @* world *@" + Environment.NewLine
-            + "</p>");
+        ParseDocumentTest("""
+            <p>
+            @* hello *@ content @* world *@
+            </p>
+            """);
     }
 
     [Fact]
     public void RazorCommentBetweenCodeBlockAndMarkup()
     {
-        ParseDocumentTest(
-            "@{ }" + Environment.NewLine +
-            "@* Hello World *@" + Environment.NewLine +
-            "<div>Foo</div>"
-        );
+        ParseDocumentTest("""
+            @{ }
+            @* Hello World *@
+            <div>Foo</div>
+            """        );
     }
 
     [Fact]
     public void RazorCommentWithExtraNewLineInMarkup()
     {
-        ParseDocumentTest(
-            "<p>" + Environment.NewLine + Environment.NewLine
-            + "@* content *@" + Environment.NewLine
-            + "@*" + Environment.NewLine
-            + "content" + Environment.NewLine
-            + "*@" + Environment.NewLine + Environment.NewLine
-            + "</p>");
+        ParseDocumentTest("""
+            <p>
+
+            @* content *@
+            @*
+            content
+            *@
+
+            </p>
+            """);
     }
 }

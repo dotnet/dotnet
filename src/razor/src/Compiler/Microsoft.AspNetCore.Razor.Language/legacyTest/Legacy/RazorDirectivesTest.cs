@@ -166,8 +166,10 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
             b => b.AddNamespaceToken());
 
         // Act & Assert
-        ParseDocumentTest(
-            "@custom System." + Environment.NewLine,
+        ParseDocumentTest("""
+            @custom System.
+
+            """,
             new[] { descriptor });
     }
 
@@ -181,8 +183,10 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
             b => b.AddNamespaceToken());
 
         // Act & Assert
-        ParseDocumentTest(
-            "@custom System<" + Environment.NewLine,
+        ParseDocumentTest("""
+            @custom System<
+
+            """,
             new[] { descriptor });
     }
 
@@ -196,7 +200,10 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
             b => b.AddTypeToken());
 
         // Act & Assert
-        ParseDocumentTest(Environment.NewLine + "  @custom System.Text.Encoding.ASCIIEncoding",
+        ParseDocumentTest("""
+
+              @custom System.Text.Encoding.ASCIIEncoding
+            """,
             new[] { descriptor });
     }
 
@@ -204,14 +211,20 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
     public void BuiltInDirectiveDoesNotErorrIfNotAtStartOfLineBecauseOfWhitespace()
     {
         // Act & Assert
-        ParseDocumentTest(Environment.NewLine + "  @addTagHelper \"*, Foo\"");
+        ParseDocumentTest("""
+
+              @addTagHelper "*, Foo"
+            """);
     }
 
     [Fact]
     public void BuiltInDirectiveErrorsIfNotAtStartOfLine()
     {
         // Act & Assert
-        ParseDocumentTest("{  @addTagHelper \"*, Foo\"" + Environment.NewLine + "}");
+        ParseDocumentTest("""
+            {  @addTagHelper "*, Foo"
+            }
+            """);
     }
 
     [Fact]
@@ -225,7 +238,10 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
 
         // Act & Assert
         ParseDocumentTest(
-            "{  @custom System.Text.Encoding.ASCIIEncoding" + Environment.NewLine + "}",
+"""
+            {  @custom System.Text.Encoding.ASCIIEncoding
+            }
+            """,
             new[] { descriptor });
     }
 
@@ -789,24 +805,28 @@ public class RazorDirectivesTest() : ParserTestBase(layer: TestProject.Layer.Com
     [Fact]
     public void TypeParam_WithSemicolon()
     {
-        ParseDocumentTest(@$"@typeparam TItem;
+        ParseDocumentTest($$"""
+@typeparam TItem;
 <ul>
 </ul>
-@code {{
+@code {
     // something
-}}",
+}
+""",
             new[] { ComponentConstrainedTypeParamDirective.Directive });
     }
 
     [Fact]
     public void TypeParam_WithoutSemicolon()
     {
-        ParseDocumentTest(@$"@typeparam TItem
+        ParseDocumentTest($$"""
+@typeparam TItem
 <ul>
 </ul>
-@code {{
+@code {
     // something
-}}",
+}
+""",
             new[] { ComponentConstrainedTypeParamDirective.Directive });
     }
 
