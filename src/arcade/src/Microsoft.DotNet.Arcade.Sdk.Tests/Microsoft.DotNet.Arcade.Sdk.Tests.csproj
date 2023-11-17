@@ -15,9 +15,11 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+    <!-- Upgrade System.Security.Cryptography.Xml/6.0.0 which is referenced by Microsoft.Build.Tasks.Core. -->
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" />
     <PackageReference Include="Moq" Version="$(MoqVersion)" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Content Include="testassets\**\*" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="$(RepositoryEngineeringDir)common\**\*" LinkBase="testassets\boilerplate\eng\common\" CopyToOutputDirectory="PreserveNewest" />

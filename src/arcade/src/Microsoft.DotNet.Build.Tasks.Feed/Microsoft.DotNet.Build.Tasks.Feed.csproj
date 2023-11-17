@@ -13,14 +13,16 @@
     <PackageReference Include="Azure.Core" Version="$(AzureCoreVersion)" />
     <PackageReference Include="Azure.Storage.Blobs" Version="$(AzureStorageBlobsVersion)" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+    <!-- Upgrade System.Security.Cryptography.Xml/6.0.0 which is referenced by Microsoft.Build.Tasks.Core. -->
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" />
 
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MicrosoftExtensionsDependencyInjectionAbstractionsVersion)" />
     <PackageReference Include="Microsoft.SymbolUploader" Version="$(MicrosoftSymbolUploaderVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
-    <!-- Maestro.Client stopped supporting .NET 4.7.2 long ago. 
-         This functionality should eventually be moved into an arcade-services package, 
+    <!-- Maestro.Client stopped supporting .NET 4.7.2 long ago.
+         This functionality should eventually be moved into an arcade-services package,
          but for users consuming other functionality we'll still support 4.7.2 by ifdefing it out. -->
     <PackageReference Include="Microsoft.DotNet.Maestro.Client" Version="$(MicrosoftDotNetMaestroClientVersion)" />
   </ItemGroup>

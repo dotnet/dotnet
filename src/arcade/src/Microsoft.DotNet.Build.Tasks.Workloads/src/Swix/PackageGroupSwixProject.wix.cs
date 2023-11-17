@@ -72,14 +72,16 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
         /// <param name="swixPackageGroup">The package group to use when generating the task item.</param>
         /// <param name="baseIntermediateOutputPath">The root intermediate output directory used for generating files.</param>
         /// <param name="baseOutputPath">The base output directory for storing the compiled SWIX project's output (JSON manifest).</param>
+        /// <param name="packageGroupType">The metadata value for the package group. This is used for batching and selection during builds.</param>
         /// <returns>A task item describing the SWIX project.</returns>
-        public static ITaskItem CreateProjectItem(SwixPackageGroup swixPackageGroup, string baseIntermediateOutputPath, string baseOutputPath)
+        public static ITaskItem CreateProjectItem(SwixPackageGroup swixPackageGroup, string baseIntermediateOutputPath, string baseOutputPath,
+            string packageGroupType)
         {
             PackageGroupSwixProject swixPackageGroupProject = new(swixPackageGroup, baseIntermediateOutputPath, baseOutputPath);
             ITaskItem swixProjectItem = new TaskItem(swixPackageGroupProject.Create());
 
             swixProjectItem.SetMetadata(Metadata.SdkFeatureBand, $"{swixPackageGroup.SdkFeatureBand}");
-            swixProjectItem.SetMetadata(Metadata.PackageType, DefaultValues.PackageTypePackageGroup);
+            swixProjectItem.SetMetadata(Metadata.PackageType, packageGroupType);
             swixProjectItem.SetMetadata(Metadata.IsPreview, "false");
 
             return swixProjectItem;

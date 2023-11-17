@@ -14,6 +14,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildUtilitiesCoreVersion)" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" />
+    <!-- Upgrade System.Security.Cryptography.Xml/6.0.0 which is referenced by Microsoft.Build.Tasks.Core. -->
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" />
     <PackageReference Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkVersion)" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
   </ItemGroup>
@@ -42,7 +44,7 @@
   <ItemGroup>
     <Compile Include="..\Common\Internal\BuildTask.cs" />
   </ItemGroup>
-  
+
   <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>
