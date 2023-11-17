@@ -7,4 +7,10 @@
     <SourceBuildManagedOnly>true</SourceBuildManagedOnly>
   </PropertyGroup>
 
+  <Target Name="AddSourceBuiltPackagesToSourceBuiltCache"
+          BeforeTargets="WritePrebuiltUsageData">
+    <ItemGroup>
+      <SourceBuiltPackageFiles Include="$(CurrentRepoSourceBuildArtifactsPackagesDir)*.nupkg"/>
+    </ItemGroup>
+  </Target>
 </Project>
