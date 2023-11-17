@@ -10,14 +10,16 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
     <PackageReference Include="NuGet.Configuration" Version="6.7.0" />
     <PackageReference Include="NuGet.Versioning" Version="6.7.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <!-- Manual updated version from 13.0.1 to the version included in source-build -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.4" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="NuGet.Configuration" Version="6.7.0" />
     <PackageReference Include="NuGet.Versioning" Version="6.7.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <!-- Manual updated version from 13.0.1 to the version included in source-build -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.4" />
   </ItemGroup>
 

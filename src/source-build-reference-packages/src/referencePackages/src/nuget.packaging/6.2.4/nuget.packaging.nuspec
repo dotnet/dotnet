@@ -17,14 +17,16 @@
       <group targetFramework="net5.0">
         <dependency id="NuGet.Configuration" version="6.2.4" exclude="Build,Analyzers" />
         <dependency id="NuGet.Versioning" version="6.2.4" exclude="Build,Analyzers" />
-        <dependency id="Newtonsoft.Json" version="13.0.1" exclude="Build,Analyzers" />
+        <!-- Manual updated version from 13.0.1 to the version included in source-build -->
+        <dependency id="Newtonsoft.Json" version="13.0.3" exclude="Build,Analyzers" />
         <dependency id="System.Security.Cryptography.Cng" version="5.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Security.Cryptography.Pkcs" version="5.0.0" exclude="Build,Analyzers" />
       </group>
       <group targetFramework=".NETStandard2.0">
         <dependency id="NuGet.Configuration" version="6.2.4" exclude="Build,Analyzers" />
         <dependency id="NuGet.Versioning" version="6.2.4" exclude="Build,Analyzers" />
-        <dependency id="Newtonsoft.Json" version="13.0.1" exclude="Build,Analyzers" />
+        <!-- Manual updated version from 13.0.1 to the version included in source-build -->
+        <dependency id="Newtonsoft.Json" version="13.0.3" exclude="Build,Analyzers" />
         <dependency id="System.Security.Cryptography.Cng" version="5.0.0" exclude="Build,Analyzers" />
         <dependency id="System.Security.Cryptography.Pkcs" version="5.0.0" exclude="Build,Analyzers" />
       </group>
