@@ -19,7 +19,6 @@ jobs:
           name: Logs_ValidateSdk_Windows_NT_Release
     timeoutInMinutes: 90
     variables:
-    - group: DotNet-Blob-Feed
     - group: Publish-Build-Assets
     - _BuildConfig: ${{ parameters.buildConfig }}
     - _BuildArgs: ${{ parameters.buildArgs }}

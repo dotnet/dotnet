@@ -160,6 +160,24 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid workload set package: {0}. The package does not contain a &quot;data&quot; directory..
+        /// </summary>
+        internal static string InvalidWorkloadSetPackageMissingDataDir {
+            get {
+                return ResourceManager.GetString("InvalidWorkloadSetPackageMissingDataDir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid workload set package: {0}. The package does not contain any workload set files..
+        /// </summary>
+        internal static string InvalidWorkloadSetPackageNoWorkloadSet {
+            get {
+                return ResourceManager.GetString("InvalidWorkloadSetPackageNoWorkloadSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Duplicate manifest ID: {0}. A SWIX package group, {1}, with the same ID already exists..
         /// </summary>
         internal static string ManifestPackageGroupExists {
@@ -169,11 +187,20 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to determine the version of the manifest installer. The {0} task should either provide  a value for the {1} parameter, or the {2} items should set the {3} metadata..
+        ///   Looks up a localized string similar to The {0} field of an MSI ProductVersion must be less than or equal to {1}..
         /// </summary>
-        internal static string NoManifestInstallerVersion {
+        internal static string MsiProductVersionOutOfRange {
             get {
-                return ResourceManager.GetString("NoManifestInstallerVersion", resourceCulture);
+                return ResourceManager.GetString("MsiProductVersionOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to determine the version of the installer (MSI). The {0} task should either provide  a value for the {1} parameter, or the {2} items should set the {3} metadata..
+        /// </summary>
+        internal static string NoInstallerVersion {
+            get {
+                return ResourceManager.GetString("NoInstallerVersion", resourceCulture);
             }
         }
         
@@ -237,6 +264,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads {
         internal static string UnknownWorkloadKind {
             get {
                 return ResourceManager.GetString("UnknownWorkloadKind", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A non-workload set file was found inside the workload set package: {0}. The file will be removed and excluded from the workload set installer..
+        /// </summary>
+        internal static string WarnNonWorkloadSetFileFound {
+            get {
+                return ResourceManager.GetString("WarnNonWorkloadSetFileFound", resourceCulture);
             }
         }
         

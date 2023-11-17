@@ -15,6 +15,7 @@ using Xunit;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 {
+    [Collection("Workload Creation")]
     public class CreateVisualStudioWorkloadTests : TestBase
     {
         [WindowsOnlyFact]

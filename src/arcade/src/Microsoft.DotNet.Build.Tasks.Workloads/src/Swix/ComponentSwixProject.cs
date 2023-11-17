@@ -44,6 +44,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
             ReplacementTokens[SwixTokens.__VS_COMPONENT_CATEGORY__] = component.Category;
             ReplacementTokens[SwixTokens.__VS_IS_UI_GROUP__] = component.IsUiGroup ? "yes" : "no";
             ReplacementTokens[SwixTokens.__VS_PACKAGE_OUT_OF_SUPPORT__] = OutOfSupport ? "yes" : "no";
+            ReplacementTokens[SwixTokens.__VS_IS_ADVERTISED_PACKAGE__] = component.Advertise ? "yes" : "no";
         }
 
         /// <inheritdoc />
