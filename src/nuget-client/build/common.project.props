@@ -12,7 +12,7 @@
     <NETFXTargetFrameworkVersion>v4.7.2</NETFXTargetFrameworkVersion>
     <NETFXTargetFramework>net472</NETFXTargetFramework>
     <NETCoreTargetFramework>netcoreapp3.1</NETCoreTargetFramework>
-    <NETCoreTargetFramework Condition="'$(DotNetBuildFromSource)' == 'true'">net8.0</NETCoreTargetFramework>
+    <NETCoreTargetFramework Condition="'$(DotNetBuildFromSource)' == 'true'">net9.0</NETCoreTargetFramework>
     <NETCoreTestTargetFrameworks>net8.0</NETCoreTestTargetFrameworks>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <TargetFrameworksExe>$(NETFXTargetFramework);$(NETCoreTargetFramework)</TargetFrameworksExe>
