@@ -60,7 +60,7 @@ jobs:
       pipeline: $(INSTALLER_OFFICIAL_CI_PIPELINE_ID)
       buildId: $(InstallerBuildId)
       artifact: BlobArtifacts
-      patterns: '**/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-linux-${{ parameters.architecture }}.tar.gz' 
+      patterns: '**/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-linux*-${{ parameters.architecture }}.tar.gz' 
       allowPartiallySucceededBuilds: true
       allowFailedBuilds: true
       downloadPath: $(Pipeline.Workspace)/Artifacts
@@ -82,7 +82,11 @@ jobs:
       checkDownloadedFiles: true
     
   - script: |
-      msft_sdk_tarball_name=$(find "$(Pipeline.Workspace)/Artifacts" -name "dotnet-sdk-*-linux-${{ parameters.architecture }}.tar.gz" -exec basename {} \;)
+      platform="linux"
+      if [[ ${{ parameters.targetRid }} =~ "alpine" ]]; then
+        platform="$platform-musl"
+      fi
+      msft_sdk_tarball_name=$(find "$(Pipeline.Workspace)/Artifacts" -name "dotnet-sdk-*-$platform-${{ parameters.architecture }}.tar.gz" -exec basename {} \;)
 
       if [[ -z "$msft_sdk_tarball_name" ]]; then
         echo "Microsoft SDK tarball does not exist in '$(Pipeline.Workspace)/Artifacts'. The associated build https://dev.azure.com/dnceng/internal/_build/results?buildId=$(InstallerBuildId) might have failed."
@@ -98,6 +102,7 @@ jobs:
 
       eng/common/build.sh -bl --projects $(Build.SourcesDirectory)/src/SourceBuild/content/test/Microsoft.DotNet.SourceBuild.SmokeTests/Microsoft.DotNet.SourceBuild.SmokeTests.csproj --restore
 
+      echo "##vso[task.setvariable variable=Platform]$platform"
       echo "##vso[task.setvariable variable=MsftSdkTarballPath]$(Pipeline.Workspace)/Artifacts/$msft_sdk_tarball_name"
       echo "##vso[task.setvariable variable=SdkTarballPath]$(Pipeline.Workspace)/Artifacts/$sdk_tarball_name"
     displayName: Prepare Tests
@@ -119,7 +124,7 @@ jobs:
       -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=false
       -e SMOKE_TESTS_RUNNING_IN_CI=true
       -e SMOKE_TESTS_TARGET_RID=${{ parameters.targetRid }}
-      -e SMOKE_TESTS_PORTABLE_RID=linux-${{ parameters.architecture }}
+      -e SMOKE_TESTS_PORTABLE_RID=$(Platform)-${{ parameters.architecture }}
       -e SMOKE_TESTS_CUSTOM_PACKAGES_PATH= 
     displayName: Run Tests
     workingDirectory: $(Build.SourcesDirectory)
