@@ -19,11 +19,11 @@ gantt
     section Common
         UB Week: ub-week, 2023-10-02, 1w
 
-    section Vertical Build
-        Win VB PoC (ViktorH (confirm with Jeff)): after net8-ga, 6w
-        Linux VB PoC (SteveP): after net8-rc2, 11w
-        MacOS VB PoC (SteveP): after net8-rc2, 11w
-        Workloads PoC (SteveP): after net8-ga, 6w
+    section Vertical Build (SteveP / TomasK / MattM)
+        Win VB PoC (ViktorH): after net8-ga, 6w
+        Linux VB PoC (JoS, JacksonS): after net8-rc2, 11w
+        MacOS VB PoC (JoS, JacksonS): after net8-rc2, 11w
+        Workloads PoC (AlexK, AnkitJ): after net8-ga, 6w
         Vertical Builds Design: after holiday, 7w
         Enable Vertical Builds: after net9-p1, 8w
         Crossbuilds Design (JoS / SteveP): after net8-ga, 13w
