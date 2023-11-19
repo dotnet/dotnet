@@ -103,22 +103,6 @@ namespace NuGet.Build.Tasks
 #endif
             var log = new MSBuildLogger(Log);
 
-            // Log Inputs
-            BuildTasksUtility.LogInputParam(log, nameof(ProjectUniqueName), ProjectUniqueName);
-            BuildTasksUtility.LogInputParam(log, nameof(RestoreSources), RestoreSources);
-            BuildTasksUtility.LogInputParam(log, nameof(RestorePackagesPath), RestorePackagesPath);
-            BuildTasksUtility.LogInputParam(log, nameof(RestoreRepositoryPath), RestoreRepositoryPath);
-            BuildTasksUtility.LogInputParam(log, nameof(RestoreFallbackFolders), RestoreFallbackFolders);
-            BuildTasksUtility.LogInputParam(log, nameof(RestoreConfigFile), RestoreConfigFile);
-            BuildTasksUtility.LogInputParam(log, nameof(RestoreSolutionDirectory), RestoreSolutionDirectory);
-            BuildTasksUtility.LogInputParam(log, nameof(RestoreRootConfigDirectory), RestoreRootConfigDirectory);
-            BuildTasksUtility.LogInputParam(log, nameof(RestorePackagesPathOverride), RestorePackagesPathOverride);
-            BuildTasksUtility.LogInputParam(log, nameof(RestoreSourcesOverride), RestoreSourcesOverride);
-            BuildTasksUtility.LogInputParam(log, nameof(RestoreFallbackFoldersOverride), RestoreFallbackFoldersOverride);
-            BuildTasksUtility.LogInputParam(log, nameof(RestoreProjectStyle), RestoreProjectStyle);
-            BuildTasksUtility.LogInputParam(log, nameof(MSBuildStartupDirectory), MSBuildStartupDirectory);
-
-
             try
             {
                 // Validate inputs
@@ -188,13 +172,6 @@ namespace NuGet.Build.Tasks
                 ExceptionUtilities.LogException(ex, log);
                 return false;
             }
-
-            // Log Outputs
-            BuildTasksUtility.LogOutputParam(log, nameof(OutputPackagesPath), OutputPackagesPath);
-            BuildTasksUtility.LogOutputParam(log, nameof(OutputRepositoryPath), OutputRepositoryPath);
-            BuildTasksUtility.LogOutputParam(log, nameof(OutputSources), OutputSources);
-            BuildTasksUtility.LogOutputParam(log, nameof(OutputFallbackFolders), OutputFallbackFolders);
-            BuildTasksUtility.LogOutputParam(log, nameof(OutputConfigFilePaths), OutputConfigFilePaths);
 
             return true;
         }

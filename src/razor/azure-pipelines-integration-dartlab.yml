@@ -1,4 +1,4 @@
-# Razor integration test pipeline for validating against branch builds of VS.
+﻿# Razor integration test pipeline for validating against branch builds of VS.
 
 trigger: none # Manual trigger for now
 pr: none
@@ -17,7 +17,7 @@ resources:
     name: DartLab.Templates
     ref: main
   - repository: RazorMirror
-    endpoint: dnceng/internal dotnet-roslyn
+    endpoint: dnceng/internal
     type: git
     name: internal/dotnet-razor
     ref: $(Build.SourceBranch)

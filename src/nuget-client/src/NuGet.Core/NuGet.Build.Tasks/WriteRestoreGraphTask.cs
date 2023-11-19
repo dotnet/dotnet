@@ -49,10 +49,6 @@ namespace NuGet.Build.Tasks
 
             var log = new MSBuildLogger(Log);
 
-            log.LogDebug($"(in) RestoreGraphItems Count '{RestoreGraphItems?.Count() ?? 0}'");
-            log.LogDebug($"(in) RestoreGraphOutputPath '{RestoreGraphOutputPath}'");
-            log.LogDebug($"(in) RestoreRecursive '{RestoreRecursive}'");
-
             // Convert to the internal wrapper
             var wrappedItems = RestoreGraphItems.Select(GetMSBuildItem);
 

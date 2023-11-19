@@ -11,9 +11,6 @@ namespace NuGet.Build.Tasks.Test
 {
     public class GetReferenceNearestTargetFrameworkTaskTest
     {
-        private const int DEBUG_MESSAGE_COUNT_INPUT = 4;
-        private const int DEBUG_MESSAGE_COUNT_INPUT_OUTPUT = DEBUG_MESSAGE_COUNT_INPUT + 1;
-
         [Fact]
         public void GetReferenceNearestTargetFrameworkTask_NoReferences()
         {
@@ -33,7 +30,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT);
         }
 
         [Fact]
@@ -61,7 +57,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(1);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT);
         }
 
         [Fact]
@@ -91,7 +86,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(1);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
         [Fact]
@@ -119,7 +113,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
         [Fact]
@@ -150,7 +143,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
         [Fact]
@@ -180,7 +172,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
         [Fact]
@@ -209,7 +200,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(1);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
         [Fact]
@@ -239,7 +229,6 @@ namespace NuGet.Build.Tasks.Test
             task.AssignedProjects.Should().BeNullOrEmpty();
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(1);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT);
         }
 
         [Fact]
@@ -268,7 +257,6 @@ namespace NuGet.Build.Tasks.Test
             task.AssignedProjects.Should().BeNullOrEmpty();
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(1);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT);
         }
 
         [Theory]
@@ -302,7 +290,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(willGenerateWarning ? 1 : 0);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
         [Theory]
@@ -336,7 +323,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(willGenerateWarning ? 1 : 0);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
         [Theory]
@@ -369,7 +355,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(willGenerateWarning ? 1 : 0);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
         [Theory]
@@ -402,7 +387,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(willGenerateWarning ? 1 : 0);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
 
@@ -435,7 +419,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(1);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
         [Theory]
@@ -467,7 +450,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(1);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
 
@@ -515,7 +497,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
         [Theory]
@@ -552,7 +533,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(1);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
 
@@ -588,7 +568,6 @@ namespace NuGet.Build.Tasks.Test
             task.AssignedProjects.Should().HaveCount(1);
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(1);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
         [Theory]
@@ -627,7 +606,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(1);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
 
 
@@ -667,7 +645,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(1);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(DEBUG_MESSAGE_COUNT_INPUT_OUTPUT);
         }
     }
 }

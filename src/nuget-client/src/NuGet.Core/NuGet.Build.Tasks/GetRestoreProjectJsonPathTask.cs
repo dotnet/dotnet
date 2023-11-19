@@ -25,9 +25,6 @@ namespace NuGet.Build.Tasks
 
         public override bool Execute()
         {
-            var log = new MSBuildLogger(Log);
-            log.LogDebug($"(in) ProjectPath '{ProjectPath}'");
-
             var directory = Path.GetDirectoryName(ProjectPath);
             var projectName = Path.GetFileNameWithoutExtension(ProjectPath);
 
@@ -38,8 +35,6 @@ namespace NuGet.Build.Tasks
             {
                 ProjectJsonPath = path;
             }
-
-            log.LogDebug($"(out) ProjectJsonPath '{ProjectJsonPath}'");
 
             return true;
         }

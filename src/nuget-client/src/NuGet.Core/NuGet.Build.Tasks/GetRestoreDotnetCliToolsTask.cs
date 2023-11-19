@@ -59,26 +59,6 @@ namespace NuGet.Build.Tasks
 
         public override bool Execute()
         {
-            var log = new MSBuildLogger(Log);
-            log.LogDebug($"(in) ProjectPath '{ProjectPath}'");
-            log.LogDebug($"(in) DotnetCliToolReferences '{string.Join(";", DotnetCliToolReferences.Select(p => p.ItemSpec))}'");
-            if (RestoreSources != null)
-            {
-                log.LogDebug($"(in) RestoreSources '{string.Join(";", RestoreSources.Select(p => p))}'");
-            }
-            if (RestorePackagesPath != null)
-            {
-                log.LogDebug($"(in) RestorePackagesPath '{RestorePackagesPath}'");
-            }
-            if (RestoreFallbackFolders != null)
-            {
-                log.LogDebug($"(in) RestoreFallbackFolders '{string.Join(";", RestoreFallbackFolders.Select(p => p))}'");
-            }
-            if (RestoreConfigFilePaths != null)
-            {
-                log.LogDebug($"(in) RestoreConfigFilePaths '{string.Join(";", RestoreConfigFilePaths.Select(p => p))}'");
-            }
-
             var entries = new List<ITaskItem>();
 
             foreach (var msbuildItem in DotnetCliToolReferences)

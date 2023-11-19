@@ -101,17 +101,6 @@ namespace NuGet.Build.Tasks
 
             NuGet.Common.Migrations.MigrationRunner.Run();
 
-            // Log inputs
-            log.LogDebug($"(in) RestoreGraphItems Count '{RestoreGraphItems?.Count() ?? 0}'");
-            log.LogDebug($"(in) RestoreDisableParallel '{RestoreDisableParallel}'");
-            log.LogDebug($"(in) RestoreNoCache '{RestoreNoCache || RestoreNoHttpCache}'");
-            log.LogDebug($"(in) RestoreIgnoreFailedSources '{RestoreIgnoreFailedSources}'");
-            log.LogDebug($"(in) RestoreRecursive '{RestoreRecursive}'");
-            log.LogDebug($"(in) RestoreForce '{RestoreForce}'");
-            log.LogDebug($"(in) HideWarningsAndErrors '{HideWarningsAndErrors}'");
-            log.LogDebug($"(in) RestoreForceEvaluate '{RestoreForceEvaluate}'");
-            log.LogDebug($"(in) RestorePackagesConfig '{RestorePackagesConfig}'");
-
             try
             {
                 return ExecuteAsync(log).Result;
