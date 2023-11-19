@@ -2,7 +2,7 @@
 <Project>
 
   <PropertyGroup>
-    <XunitConsoleNetCore21AppPath>$(MSBuildThisFileDirectory)..\tools\net8.0\xunit.console.dll</XunitConsoleNetCore21AppPath>
+    <XunitConsoleNetCore21AppPath>$(MSBuildThisFileDirectory)..\tools\net9.0\xunit.console.dll</XunitConsoleNetCore21AppPath>
   </PropertyGroup>
 
 </Project>

@@ -9,6 +9,7 @@
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <LangVersion>Latest</LangVersion>
+    <NetCurrent>net9.0</NetCurrent>
 
     <!--
       Tools and packages produced by this repository support infrastructure and are not shipping on NuGet or via any other official channel.
