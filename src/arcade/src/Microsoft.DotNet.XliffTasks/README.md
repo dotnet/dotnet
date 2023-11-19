@@ -2,20 +2,15 @@
 
 A set of MSBuild tasks and targets to automatically update xliff (.xlf) files for localizable resources, and to build satellite assemblies from those xliff files.
 
-## Build Status
-
-|Windows x64 |
-|:------:|
-|[![Build Status][win-x64-build-badge]][win-x64-build]|
-
 ## Installing
 
-If you're using the [Arcade Toolset][arcade-toolset] then the `Microsoft.DotNet.XliffTasks` package is already pulled in, and enabled by default.
+The `Microsoft.DotNet.XliffTasks` package is pulled in and enabled by default for shipping assemblies when using arcade.
+You can opt out of referencing the package by setting `<UsingToolXliff>false</UsingToolXliff>`.
 
-Otherwise, you'll need to add the Azure DevOps feed `https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json` ([browse](https://dev.azure.com/dnceng/public/_packaging?_a=feed&feed=dotnet-eng)) to your NuGet.config file, and then add a `PackageReference` for the XliffTasks package, like so:
+If you're not using arcade you'll need to add the Azure DevOps feed `https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json` ([browse](https://dev.azure.com/dnceng/public/_packaging?_a=feed&feed=dotnet-eng)) to your NuGet.config file, and then add a `PackageReference` for the `Microsoft.DotNet.XliffTasks` package, like so:
 
 ```
-<PackageReference Include="Microsoft.DotNet.XliffTasks" Version="1.0.0-beta.19253.1" PrivateAssets="all" />
+<PackageReference Include="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.23565.1" PrivateAssets="all" />
 ```
 
 The `PrivateAssets` metadata is needed to prevent `dotnet pack` or `msbuild /t:pack` from listing `Microsoft.DotNet.XliffTasks` as one of your package's dependencies.
@@ -65,7 +60,3 @@ Note `XliffTasks` does not force the items into a sorted order if they are not a
 ## Contact
 
 For more information, contact @dotnet/dnceng on GitHub, or file an issue.
-
-[win-x64-build-badge]: https://dev.azure.com/dnceng/internal/_apis/build/status/dotnet/xliff-tasks/dotnet-xliff-tasks-official-ci?branchName=main
-[win-x64-build]: https://dev.azure.com/dnceng/internal/_build?definitionId=485&branchName=main
-[arcade-toolset]: https://github.com/dotnet/arcade
