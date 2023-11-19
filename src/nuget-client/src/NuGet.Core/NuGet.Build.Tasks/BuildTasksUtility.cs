@@ -37,23 +37,6 @@ namespace NuGet.Build.Tasks
 {
     public static class BuildTasksUtility
     {
-        public static void LogInputParam(Common.ILogger log, string name, params string[] values)
-        {
-            LogTaskParam(log, "in", name, values);
-        }
-
-        public static void LogOutputParam(Common.ILogger log, string name, params string[] values)
-        {
-            LogTaskParam(log, "out", name, values);
-        }
-
-        private static void LogTaskParam(Common.ILogger log, string direction, string name, params string[] values)
-        {
-            var stringValues = values?.Select(s => s) ?? Enumerable.Empty<string>();
-
-            log.Log(Common.LogLevel.Debug, $"({direction}) {name} '{string.Join(";", stringValues)}'");
-        }
-
         /// <summary>
         /// Add all restorable projects to the restore list.
         /// This is the behavior for --recursive

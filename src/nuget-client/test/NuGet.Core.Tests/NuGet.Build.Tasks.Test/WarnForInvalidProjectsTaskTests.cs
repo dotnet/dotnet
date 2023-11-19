@@ -37,7 +37,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(2);
         }
 
         [Fact]
@@ -70,7 +69,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(1);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(2);
             testLogger.Messages.Where(e => e.Contains("Skipping restore for project 'b.csproj'. The project file may be invalid or missing targets required for restore.")).Count().Should().Be(1);
         }
 
@@ -101,7 +99,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(1);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(2);
         }
 
         [Fact]
@@ -131,7 +128,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(2);
         }
 
         [Fact]
@@ -151,7 +147,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(2);
         }
 
         [Fact]
@@ -169,7 +164,6 @@ namespace NuGet.Build.Tasks.Test
 
             testLogger.Warnings.Should().Be(0);
             testLogger.Errors.Should().Be(0);
-            testLogger.DebugMessages.Count.Should().Be(2);
         }
     }
 }

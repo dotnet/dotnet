@@ -58,15 +58,6 @@ namespace NuGet.Build.Tasks
 
         public override bool Execute()
         {
-            var log = new MSBuildLogger(Log);
-            log.LogDebug($"(in) ProjectPath '{ProjectPath}'");
-            log.LogDebug($"(in) TargetFrameworkMoniker '{TargetFrameworkMoniker}'");
-            log.LogDebug($"(in) TargetPlatformIdentifier '{TargetPlatformIdentifier}'");
-            log.LogDebug($"(in) TargetPlatformVersion '{TargetPlatformVersion}'");
-            log.LogDebug($"(in) TargetPlatformMinVersion '{TargetPlatformMinVersion}'");
-            log.LogDebug($"(in) TargetFrameworks '{TargetFrameworks}'");
-            log.LogDebug($"(in) TargetFramework '{TargetFramework}'");
-
             // If no framework can be found this will return Unsupported.
             var frameworks = MSBuildProjectFrameworkUtility.GetProjectFrameworkStrings(
                 projectFilePath: ProjectPath,
@@ -78,8 +69,6 @@ namespace NuGet.Build.Tasks
                 targetPlatformMinVersion: TargetPlatformMinVersion);
 
             ProjectTargetFrameworks = string.Join(";", frameworks);
-
-            log.LogDebug($"(out) ProjectTargetFrameworks '{ProjectTargetFrameworks}'");
 
             return true;
         }
