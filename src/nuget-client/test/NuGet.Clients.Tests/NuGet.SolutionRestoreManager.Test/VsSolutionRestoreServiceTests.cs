@@ -1967,7 +1967,7 @@ namespace NuGet.SolutionRestoreManager.Test
         public void ToPackageSpec_CentralVersions_AreAddedToThePackageSpecIfCPVMIsEnabled()
         {
             // Arrange
-            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
+            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "prjectC", Guid.NewGuid().ToString());
             var emptyReferenceItems = Array.Empty<VsReferenceItem>();
 
             var targetFrameworks = new VsTargetFrameworkInfo3[] { new VsTargetFrameworkInfo3(
@@ -2009,7 +2009,7 @@ namespace NuGet.SolutionRestoreManager.Test
         public void ToPackageSpec_CentralVersions_CPVMIsEnabled_NoPackageVersions()
         {
             // Arrange
-            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
+            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "prjectC", Guid.NewGuid().ToString());
             var emptyReferenceItems = Array.Empty<VsReferenceItem>();
 
             var targetFrameworks = new VsTargetFrameworkInfo3[] { new VsTargetFrameworkInfo3(
@@ -2042,7 +2042,7 @@ namespace NuGet.SolutionRestoreManager.Test
         public void ToPackageSpec_CentralVersions_AreNotAddedToThePackageSpecIfCPVMIsNotEnabled(string packRefVersion, string managePackageVersionsCentrally)
         {
             // Arrange
-            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
+            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "prjectC", Guid.NewGuid().ToString());
             var emptyReferenceItems = Array.Empty<VsReferenceItem>();
             var packageReferenceProperties = packRefVersion == null ?
                 new VsReferenceProperties() :
@@ -2090,7 +2090,7 @@ namespace NuGet.SolutionRestoreManager.Test
         public void ToPackageSpec_CentralVersionOverride_CanBeDisabled(string isCentralPackageVersionOverrideEnabled, bool expected)
         {
             // Arrange
-            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
+            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "prjectC", Guid.NewGuid().ToString());
             var emptyReferenceItems = Array.Empty<VsReferenceItem>();
 
             var targetFrameworks = new VsTargetFrameworkInfo3[] { new VsTargetFrameworkInfo3(
@@ -2151,7 +2151,7 @@ namespace NuGet.SolutionRestoreManager.Test
         public void ToPackageSpec_TransitiveDependencyPinning_CanBeEnabled(string CentralPackageTransitivePinningEnabled, bool expected)
         {
             // Arrange
-            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
+            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "prjectC", Guid.NewGuid().ToString());
             var emptyReferenceItems = Array.Empty<VsReferenceItem>();
 
             var targetFrameworks = new VsTargetFrameworkInfo3[] { new VsTargetFrameworkInfo3(
@@ -2180,49 +2180,6 @@ namespace NuGet.SolutionRestoreManager.Test
             else
             {
                 Assert.False(result.RestoreMetadata.CentralPackageTransitivePinningEnabled);
-            }
-        }
-
-        [Theory]
-        [InlineData(null, false)]
-        [InlineData("", false)]
-        [InlineData(" ", false)]
-        [InlineData("invalid", false)]
-        [InlineData("false", false)]
-        [InlineData("true", true)]
-        [InlineData("           true    ", true)]
-        public void ToPackageSpec_CentralPackageFloatingVersions_CanBeEnabled(string centralPackageFloatingVersionsEnabled, bool expected)
-        {
-            // Arrange
-            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
-            var emptyReferenceItems = Array.Empty<VsReferenceItem>();
-
-            var targetFrameworks = new VsTargetFrameworkInfo3[] { new VsTargetFrameworkInfo3(
-                targetFrameworkMoniker: CommonFrameworks.NetStandard20.ToString(),
-                packageReferences: new[] { new VsReferenceItem("foo", new VsReferenceProperties()) },
-                projectReferences: emptyReferenceItems,
-                packageDownloads: emptyReferenceItems,
-                frameworkReferences: emptyReferenceItems,
-                projectProperties: ProjectRestoreInfoBuilder.GetTargetFrameworkProperties(CommonFrameworks.NetStandard20).Concat(new VsProjectProperty[]
-                {
-                    new VsProjectProperty(ProjectBuildProperties.ManagePackageVersionsCentrally, "true"),
-                    new VsProjectProperty(ProjectBuildProperties.CentralPackageFloatingVersionsEnabled, centralPackageFloatingVersionsEnabled),
-                }),
-                centralPackageVersions: Array.Empty<IVsReferenceItem>())
-            };
-
-            // Act
-            PackageSpec result = VsSolutionRestoreService.ToPackageSpec(projectName, targetFrameworks, CommonFrameworks.NetStandard20.ToString(), string.Empty);
-
-            // Assert
-
-            if (expected)
-            {
-                Assert.True(result.RestoreMetadata.CentralPackageFloatingVersionsEnabled);
-            }
-            else
-            {
-                Assert.False(result.RestoreMetadata.CentralPackageFloatingVersionsEnabled);
             }
         }
 
@@ -2276,7 +2233,7 @@ namespace NuGet.SolutionRestoreManager.Test
         public void ToPackageSpec_TargetFrameworkWithAlias_DefinesAliasCorrectly()
         {
             // Arrange
-            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
+            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "prjectC", Guid.NewGuid().ToString());
             var emptyReferenceItems = Array.Empty<VsReferenceItem>();
             var packageReferenceProperties = new VsReferenceProperties();
 

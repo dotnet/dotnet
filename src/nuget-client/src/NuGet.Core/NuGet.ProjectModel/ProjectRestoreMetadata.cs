@@ -123,11 +123,6 @@ namespace NuGet.ProjectModel
         /// </summary>
         public bool CentralPackageVersionOverrideDisabled { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether or not floating versions are allowed when using central package management (CPM).
-        /// </summary>
-        public bool CentralPackageFloatingVersionsEnabled { get; set; }
-
         public bool CentralPackageTransitivePinningEnabled { get; set; }
 
         public RestoreAuditProperties RestoreAuditProperties { get; set; }
@@ -158,7 +153,6 @@ namespace NuGet.ProjectModel
             hashCode.AddObject(ProjectWideWarningProperties);
             hashCode.AddObject(RestoreLockProperties);
             hashCode.AddObject(CentralPackageVersionsEnabled);
-            hashCode.AddObject(CentralPackageFloatingVersionsEnabled);
             hashCode.AddObject(CentralPackageVersionOverrideDisabled);
             hashCode.AddObject(CentralPackageTransitivePinningEnabled);
             hashCode.AddObject(RestoreAuditProperties);
@@ -204,7 +198,6 @@ namespace NuGet.ProjectModel
                    EqualityUtility.EqualsWithNullCheck(ProjectWideWarningProperties, other.ProjectWideWarningProperties) &&
                    EqualityUtility.EqualsWithNullCheck(RestoreLockProperties, other.RestoreLockProperties) &&
                    EqualityUtility.EqualsWithNullCheck(CentralPackageVersionsEnabled, other.CentralPackageVersionsEnabled) &&
-                   EqualityUtility.EqualsWithNullCheck(CentralPackageFloatingVersionsEnabled, other.CentralPackageFloatingVersionsEnabled) &&
                    EqualityUtility.EqualsWithNullCheck(CentralPackageVersionOverrideDisabled, other.CentralPackageVersionOverrideDisabled) &&
                    EqualityUtility.EqualsWithNullCheck(CentralPackageTransitivePinningEnabled, other.CentralPackageTransitivePinningEnabled) &&
                    RestoreAuditProperties == other.RestoreAuditProperties;
@@ -240,7 +233,6 @@ namespace NuGet.ProjectModel
             clone.ProjectWideWarningProperties = ProjectWideWarningProperties?.Clone();
             clone.RestoreLockProperties = RestoreLockProperties?.Clone();
             clone.CentralPackageVersionsEnabled = CentralPackageVersionsEnabled;
-            clone.CentralPackageFloatingVersionsEnabled = CentralPackageFloatingVersionsEnabled;
             clone.CentralPackageVersionOverrideDisabled = CentralPackageVersionOverrideDisabled;
             clone.CentralPackageTransitivePinningEnabled = CentralPackageTransitivePinningEnabled;
             clone.RestoreAuditProperties = RestoreAuditProperties?.Clone();
