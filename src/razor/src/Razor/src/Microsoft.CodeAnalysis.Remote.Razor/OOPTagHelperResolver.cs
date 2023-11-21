@@ -25,14 +25,12 @@ internal class OOPTagHelperResolver : ITagHelperResolver
     private readonly ProjectSnapshotProjectEngineFactory _factory;
     private readonly IErrorReporter _errorReporter;
     private readonly Workspace _workspace;
-    private readonly ITelemetryReporter _telemetryReporter;
 
     public OOPTagHelperResolver(ProjectSnapshotProjectEngineFactory factory, IErrorReporter errorReporter, Workspace workspace, ITelemetryReporter telemetryReporter)
     {
         _factory = factory ?? throw new ArgumentNullException(nameof(factory));
         _errorReporter = errorReporter ?? throw new ArgumentNullException(nameof(errorReporter));
         _workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
-        _telemetryReporter = telemetryReporter ?? throw new ArgumentNullException(nameof(telemetryReporter));
 
         _innerResolver = new CompilationTagHelperResolver(telemetryReporter);
         _resultCache = new TagHelperResultCache();
@@ -186,16 +184,10 @@ internal class OOPTagHelperResolver : ITagHelperResolver
     // Protected virtual for testing
     protected virtual ImmutableArray<Checksum> ProduceChecksumsFromDelta(ProjectId projectId, int lastResultId, TagHelperDeltaResult deltaResult)
     {
-        using var _ = StopwatchPool.GetPooledObject(out var stopWatch);
-        stopWatch.Restart();
-
-        var fromCache = true;
-
         if (!_resultCache.TryGet(projectId, lastResultId, out var checksums))
         {
             // We most likely haven't made a request to the server yet so there's no delta to apply
             checksums = ImmutableArray<Checksum>.Empty;
-            fromCache = false;
 
             if (deltaResult.IsDelta)
             {
@@ -208,7 +200,6 @@ internal class OOPTagHelperResolver : ITagHelperResolver
         {
             // Not a delta based response, we should treat it as a "refresh"
             checksums = ImmutableArray<Checksum>.Empty;
-            fromCache = false;
         }
 
         if (deltaResult.ResultId != lastResultId)
@@ -216,16 +207,6 @@ internal class OOPTagHelperResolver : ITagHelperResolver
             // New results, lets build a coherent TagHelper collection and then cache it
             checksums = deltaResult.Apply(checksums);
             _resultCache.Set(projectId, deltaResult.ResultId, checksums);
-            fromCache = false;
-        }
-
-        stopWatch.Stop();
-        if (fromCache)
-        {
-            _telemetryReporter.ReportEvent(
-                "taghelpers.fromcache",
-                Severity.Normal,
-                new Property("taghelper.cachedresult.ellapsedms", stopWatch.ElapsedMilliseconds));
         }
 
         return checksums;

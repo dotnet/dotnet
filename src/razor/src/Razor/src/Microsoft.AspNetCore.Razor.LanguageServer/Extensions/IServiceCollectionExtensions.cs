@@ -210,8 +210,14 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IProjectConfigurationFileChangeListener, ProjectConfigurationStateSynchronizer>();
         services.AddSingleton<IRazorFileChangeListener, RazorFileSynchronizer>();
 
-        // File Change detectors
-        services.AddSingleton<IFileChangeDetector, ProjectConfigurationFileChangeDetector>();
+        // If we're not monitoring the whole workspace folder for configuration changes, then we don't actually need the the file change
+        // detector wired up via DI, as the razor/monitorProjectConfigurationFilePath endpoint will directly construct one. This means
+        // it can be a little simpler, and doesn't need to worry about which folders it's told to listen to.
+        if (featureOptions.MonitorWorkspaceFolderForConfigurationFiles)
+        {
+            services.AddSingleton<IFileChangeDetector, ProjectConfigurationFileChangeDetector>();
+        }
+
         services.AddSingleton<IFileChangeDetector, RazorFileChangeDetector>();
 
         // Document processed listeners

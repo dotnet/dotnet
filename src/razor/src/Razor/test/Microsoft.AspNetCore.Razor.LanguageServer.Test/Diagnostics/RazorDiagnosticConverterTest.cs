@@ -22,7 +22,7 @@ public class RazorDiagnosticConverterTest
         var sourceText = SourceText.From(string.Empty);
 
         // Act
-        var diagnostic = RazorDiagnosticConverter.Convert(razorDiagnostic, sourceText);
+        var diagnostic = RazorDiagnosticConverter.Convert(razorDiagnostic, sourceText, documentSnapshot: null);
 
         // Assert
         Assert.Equal(razorDiagnostic.Id, diagnostic.Code);
