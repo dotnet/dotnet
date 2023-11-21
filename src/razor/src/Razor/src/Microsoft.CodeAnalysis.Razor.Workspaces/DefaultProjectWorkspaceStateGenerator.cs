@@ -9,7 +9,9 @@ using System.Composition;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -19,30 +21,19 @@ namespace Microsoft.CodeAnalysis.Razor;
 [Shared]
 [Export(typeof(ProjectWorkspaceStateGenerator))]
 [Export(typeof(IProjectSnapshotChangeTrigger))]
-internal class DefaultProjectWorkspaceStateGenerator : ProjectWorkspaceStateGenerator, IDisposable
+[method: ImportingConstructor]
+internal class DefaultProjectWorkspaceStateGenerator(ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher, ITelemetryReporter telemetryReporter) : ProjectWorkspaceStateGenerator, IDisposable
 {
     // Internal for testing
-    internal readonly Dictionary<ProjectKey, UpdateItem> Updates;
+    internal readonly Dictionary<ProjectKey, UpdateItem> Updates = new();
 
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
-    private readonly SemaphoreSlim _semaphore;
+    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
+    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter ?? throw new ArgumentNullException(nameof(telemetryReporter));
+    private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(initialCount: 1);
+
     private ProjectSnapshotManagerBase _projectManager;
     private ITagHelperResolver _tagHelperResolver;
     private bool _disposed;
-
-    [ImportingConstructor]
-    public DefaultProjectWorkspaceStateGenerator(ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher)
-    {
-        if (projectSnapshotManagerDispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-        }
-
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
-
-        _semaphore = new SemaphoreSlim(initialCount: 1);
-        Updates = new Dictionary<ProjectKey, UpdateItem>();
-    }
 
     // Used in unit tests to ensure we can control when background work starts.
     public ManualResetEventSlim BlockBackgroundWorkStart { get; set; }
@@ -134,6 +125,12 @@ internal class DefaultProjectWorkspaceStateGenerator : ProjectWorkspaceStateGene
             return;
         }
 
+        // Specifically not using BeginBlock because we want to capture cases where tag helper discovery never finishes.
+        var telemetryId = Guid.NewGuid();
+        _telemetryReporter.ReportEvent("taghelperresolve/begin", Severity.Normal,
+            new Property("id", telemetryId),
+            new Property("tagHelperCount", projectSnapshot.ProjectWorkspaceState?.TagHelpers.Length ?? 0));
+
         try
         {
             // Only allow a single TagHelper resolver request to process at a time in order to reduce Visual Studio memory pressure. Typically a TagHelper resolution result can be upwards of 10mb+.
@@ -173,17 +170,35 @@ internal class DefaultProjectWorkspaceStateGenerator : ProjectWorkspaceStateGene
                         csharpLanguageVersion = csharpParseOptions.LanguageVersion;
                     }
 
+                    using var _ = StopwatchPool.GetPooledObject(out var watch);
+
+                    watch.Restart();
                     var tagHelpers = await _tagHelperResolver.GetTagHelpersAsync(workspaceProject, projectSnapshot, cancellationToken).ConfigureAwait(false);
+                    watch.Stop();
+
+                    _telemetryReporter.ReportEvent("taghelperresolve/end", Severity.Normal,
+                        new Property("id", telemetryId),
+                        new Property("ellapsedms", watch.ElapsedMilliseconds),
+                        new Property("result", "success"),
+                        new Property("tagHelperCount", tagHelpers.Length));
+
                     workspaceState = new ProjectWorkspaceState(tagHelpers, csharpLanguageVersion);
                 }
             }
             catch (OperationCanceledException)
             {
                 // Abort work if we get a task cancelled exception
+                _telemetryReporter.ReportEvent("taghelperresolve/end", Severity.Normal,
+                    new Property("id", telemetryId),
+                    new Property("result", "cancel"));
                 return;
             }
             catch (Exception ex)
             {
+                _telemetryReporter.ReportEvent("taghelperresolve/end", Severity.Normal,
+                    new Property("id", telemetryId),
+                    new Property("result", "error"));
+
                 await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
                    () => _projectManager.ReportError(ex, projectSnapshot),
                    // Don't allow errors to be cancelled

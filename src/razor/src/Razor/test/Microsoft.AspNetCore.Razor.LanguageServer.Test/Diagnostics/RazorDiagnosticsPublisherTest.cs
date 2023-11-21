@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -193,10 +194,17 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
                     var resultRazorDiagnostic = @params.Diagnostics[0];
                     var razorDiagnostic = s_singleRazorDiagnostic[0];
                     Assert.True(processedOpenDocument.TryGetText(out var sourceText));
-                    var expectedRazorDiagnostic = RazorDiagnosticConverter.Convert(razorDiagnostic, sourceText);
+                    var expectedRazorDiagnostic = RazorDiagnosticConverter.Convert(razorDiagnostic, sourceText, _openedDocument);
                     Assert.Equal(expectedRazorDiagnostic.Message, resultRazorDiagnostic.Message);
                     Assert.Equal(expectedRazorDiagnostic.Severity, resultRazorDiagnostic.Severity);
                     Assert.Equal(expectedRazorDiagnostic.Range, resultRazorDiagnostic.Range);
+                    Assert.NotNull(expectedRazorDiagnostic.Projects);
+                    Assert.Single(expectedRazorDiagnostic.Projects);
+
+                    var project = expectedRazorDiagnostic.Projects.Single();
+                    Assert.Equal(_openedDocument.Project.DisplayName, project.ProjectName);
+                    Assert.Equal(_openedDocument.Project.Key.Id, project.ProjectIdentifier);
+
                 }
             })
             .Returns(Task.CompletedTask);
@@ -247,10 +255,15 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
                 var diagnostic = Assert.Single(@params.Diagnostics);
                 var razorDiagnostic = s_singleRazorDiagnostic[0];
                 Assert.True(processedOpenDocument.TryGetText(out var sourceText));
-                var expectedDiagnostic = RazorDiagnosticConverter.Convert(razorDiagnostic, sourceText);
+                var expectedDiagnostic = RazorDiagnosticConverter.Convert(razorDiagnostic, sourceText, _openedDocument);
                 Assert.Equal(expectedDiagnostic.Message, diagnostic.Message);
                 Assert.Equal(expectedDiagnostic.Severity, diagnostic.Severity);
                 Assert.Equal(expectedDiagnostic.Range, diagnostic.Range);
+
+                Assert.NotNull(expectedDiagnostic.Projects);
+                var project = expectedDiagnostic.Projects.Single();
+                Assert.Equal(_openedDocument.Project.DisplayName, project.ProjectName);
+                Assert.Equal(_openedDocument.Project.Key.Id, project.ProjectIdentifier);
             })
             .Returns(Task.CompletedTask);
 

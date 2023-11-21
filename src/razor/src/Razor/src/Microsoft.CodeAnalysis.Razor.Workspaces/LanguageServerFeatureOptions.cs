@@ -34,4 +34,13 @@ internal abstract class LanguageServerFeatureOptions
     /// ensure a unique file path per project.
     /// </summary>
     public abstract bool IncludeProjectKeyInGeneratedFilePath { get; }
+
+    /// <summary>
+    /// Whether to monitor the entire workspace folder for any project.razor.bin files
+    /// </summary>
+    /// <remarks>
+    /// When this is off, the language server won't have any project knowledge unless the
+    /// razor/monitorProjectConfigurationFilePath notification is sent.
+    /// </remarks>
+    public abstract bool MonitorWorkspaceFolderForConfigurationFiles { get; }
 }
