@@ -4,6 +4,7 @@
 #nullable enable
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Threading.Tasks.Dataflow;
@@ -38,7 +39,7 @@ namespace NuGet.VisualStudio.SolutionExplorer
 
             string? lastAssetsFilePath = null;
             DateTime lastTimestampUtc = DateTime.MinValue;
-            AssetsFileDependenciesSnapshot lastSnapshot = AssetsFileDependenciesSnapshot.Empty;
+            AssetsFileDependenciesSnapshot? lastSnapshot = null;
 
             var intermediateBlock =
                 new BufferBlock<IProjectVersionedValue<IProjectSubscriptionUpdate>>(
@@ -48,7 +49,7 @@ namespace NuGet.VisualStudio.SolutionExplorer
                 = _activeConfiguredProjectSubscriptionService.ProjectRuleSource.SourceBlock;
 
             IPropagatorBlock<IProjectVersionedValue<ValueTuple<IProjectSnapshot, IProjectSubscriptionUpdate>>, IProjectVersionedValue<AssetsFileDependenciesSnapshot>> transformBlock
-                = DataflowBlockSlim.CreateTransformBlock<IProjectVersionedValue<ValueTuple<IProjectSnapshot, IProjectSubscriptionUpdate>>, IProjectVersionedValue<AssetsFileDependenciesSnapshot>>(Transform, skipIntermediateInputData: true, skipIntermediateOutputData: true);
+                = DataflowBlockSlim.CreateTransformManyBlock<IProjectVersionedValue<ValueTuple<IProjectSnapshot, IProjectSubscriptionUpdate>>, IProjectVersionedValue<AssetsFileDependenciesSnapshot>>(Transform, skipIntermediateInputData: true, skipIntermediateOutputData: true);
 
             return new DisposableBag
             {
@@ -75,7 +76,7 @@ namespace NuGet.VisualStudio.SolutionExplorer
                 PropagateCompletion = true  // Make sure source block completion and faults flow onto the target block to avoid hangs.
             };
 
-            IProjectVersionedValue<AssetsFileDependenciesSnapshot> Transform(IProjectVersionedValue<ValueTuple<IProjectSnapshot, IProjectSubscriptionUpdate>> update)
+            IEnumerable<IProjectVersionedValue<AssetsFileDependenciesSnapshot>> Transform(IProjectVersionedValue<ValueTuple<IProjectSnapshot, IProjectSubscriptionUpdate>> update)
             {
                 var projectSnapshot = (IProjectSnapshot2)update.Value.Item1;
                 IProjectSubscriptionUpdate subscriptionUpdate = update.Value.Item2;
@@ -83,7 +84,7 @@ namespace NuGet.VisualStudio.SolutionExplorer
                 string? path = null;
                 DateTime timestampUtc = DateTime.MinValue;
 
-                AssetsFileDependenciesSnapshot snapshot = lastSnapshot;
+                AssetsFileDependenciesSnapshot? snapshot = lastSnapshot;
 
                 if (subscriptionUpdate.CurrentState.TryGetValue(ConfigurationGeneralRule.SchemaName, out IProjectRuleSnapshot ruleSnapshot))
                 {
@@ -115,13 +116,21 @@ namespace NuGet.VisualStudio.SolutionExplorer
                                 lastAssetsFilePath = path;
                                 lastTimestampUtc = timestampUtc;
 
-                                lastSnapshot = snapshot = lastSnapshot.UpdateFromAssetsFile(path);
+                                snapshot ??= AssetsFileDependenciesSnapshot.Empty;
+
+                                lastSnapshot = snapshot = snapshot.UpdateFromAssetsFile(path);
+
+                                yield return new ProjectVersionedValue<AssetsFileDependenciesSnapshot>(snapshot, update.DataSourceVersions);
                             }
                         }
                     }
                 }
 
-                return new ProjectVersionedValue<AssetsFileDependenciesSnapshot>(snapshot, update.DataSourceVersions);
+                if (lastSnapshot is null)
+                {
+                    lastSnapshot = AssetsFileDependenciesSnapshot.Empty;
+                    yield return new ProjectVersionedValue<AssetsFileDependenciesSnapshot>(lastSnapshot, update.DataSourceVersions);
+                }
             }
         }
     }

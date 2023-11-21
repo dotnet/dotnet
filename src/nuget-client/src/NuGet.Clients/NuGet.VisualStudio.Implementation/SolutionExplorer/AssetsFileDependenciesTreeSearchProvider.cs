@@ -70,7 +70,7 @@ namespace NuGet.VisualStudio.SolutionExplorer
 
             foreach ((_, AssetsFileTarget target) in snapshot.DataByTarget)
             {
-                ConfiguredProject? configuredProject = await FindConfiguredProjectAsync(target.TargetFrameworkMoniker);
+                ConfiguredProject? configuredProject = await FindConfiguredProjectAsync(target.TargetAlias);
 
                 if (configuredProject == null)
                 {
@@ -109,7 +109,7 @@ namespace NuGet.VisualStudio.SolutionExplorer
 
                 continue;
 
-                async Task<ConfiguredProject?> FindConfiguredProjectAsync(string tfm)
+                async Task<ConfiguredProject?> FindConfiguredProjectAsync(string targetAlias)
                 {
                     foreach (ConfiguredProject configuredProject in configuredProjects)
                     {
@@ -122,7 +122,7 @@ namespace NuGet.VisualStudio.SolutionExplorer
 
                         if (subscriptionUpdate.CurrentState.TryGetValue(NuGetRestoreRule.SchemaName, out IProjectRuleSnapshot nuGetRestoreSnapshot) &&
                             nuGetRestoreSnapshot.Properties.TryGetValue(NuGetRestoreRule.NuGetTargetMonikerProperty, out string nuGetTargetMoniker) &&
-                            StringComparer.OrdinalIgnoreCase.Equals(nuGetTargetMoniker, tfm))
+                            StringComparer.OrdinalIgnoreCase.Equals(nuGetTargetMoniker, targetAlias))
                         {
                             // Assets file 'target' string matches the configured project's NuGetTargetMoniker property value
                             return configuredProject;
@@ -131,14 +131,14 @@ namespace NuGet.VisualStudio.SolutionExplorer
                         if (subscriptionUpdate.CurrentState.TryGetValue(ConfigurationGeneralRule.SchemaName, out IProjectRuleSnapshot configurationGeneralSnapshot))
                         {
                             if (configurationGeneralSnapshot.Properties.TryGetValue(ConfigurationGeneralRule.TargetFrameworkMonikerProperty, out string targetFrameworkMoniker) &&
-                                StringComparer.OrdinalIgnoreCase.Equals(targetFrameworkMoniker, tfm))
+                                StringComparer.OrdinalIgnoreCase.Equals(targetFrameworkMoniker, targetAlias))
                             {
                                 // Assets file 'target' string matches the configured project's TargetFrameworkMoniker property value
                                 return configuredProject;
                             }
 
                             if (configurationGeneralSnapshot.Properties.TryGetValue(ConfigurationGeneralRule.TargetFrameworkProperty, out string targetFramework) &&
-                                StringComparer.OrdinalIgnoreCase.Equals(targetFramework, tfm))
+                                StringComparer.OrdinalIgnoreCase.Equals(targetFramework, targetAlias))
                             {
                                 // Assets file 'target' string matches the configured project's TargetFramework property value
                                 return configuredProject;
