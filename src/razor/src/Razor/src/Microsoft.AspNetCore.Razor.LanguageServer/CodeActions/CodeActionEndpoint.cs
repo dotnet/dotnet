@@ -98,12 +98,15 @@ internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionPara
 
         using var _ = ArrayBuilderPool<SumType<Command, CodeAction>>.GetPooledObject(out var commandsOrCodeActions);
 
-        ConvertCodeActionsToSumType(razorCodeActions);
-        ConvertCodeActionsToSumType(delegatedCodeActions);
+        // Grouping the code actions causes VS to sort them into groups, rather than just alphabetically sorting them
+        // by title. The latter is bad for us because it can put "Remove <div>" at the top in some locales, and our fully
+        // qualify component code action at the bottom, depending on the users namespace.
+        ConvertCodeActionsToSumType(razorCodeActions, "A-Razor");
+        ConvertCodeActionsToSumType(delegatedCodeActions, "B-Delegated");
 
         return commandsOrCodeActions.ToArray();
 
-        void ConvertCodeActionsToSumType(ImmutableArray<RazorVSInternalCodeAction> codeActions)
+        void ConvertCodeActionsToSumType(ImmutableArray<RazorVSInternalCodeAction> codeActions, string groupName)
         {
             // We must cast the RazorCodeAction into a platform compliant code action
             // For VS (SupportsCodeActionResolve = true) this means just encapsulating the RazorCodeAction in the `CommandOrCodeAction` struct
@@ -112,6 +115,8 @@ internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionPara
             {
                 foreach (var action in codeActions)
                 {
+                    // Make sure we honour the grouping that a delegated server may have created
+                    action.Group = groupName + (action.Group ?? string.Empty);
                     commandsOrCodeActions.Add(action);
                 }
             }

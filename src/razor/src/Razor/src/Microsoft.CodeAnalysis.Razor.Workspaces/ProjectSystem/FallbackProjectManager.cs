@@ -2,9 +2,10 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Immutable;
 using System.Composition;
 using System.IO;
+using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -16,55 +17,58 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 /// </summary>
 [Shared]
 [Export(typeof(FallbackProjectManager))]
-internal sealed class FallbackProjectManager
+[method: ImportingConstructor]
+internal sealed class FallbackProjectManager(
+    ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
+    LanguageServerFeatureOptions languageServerFeatureOptions,
+    ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+    ITelemetryReporter telemetryReporter)
 {
-    private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
-
-    private ImmutableHashSet<ProjectId> _fallbackProjectIds = ImmutableHashSet<ProjectId>.Empty;
-
-    [ImportingConstructor]
-    public FallbackProjectManager(
-        ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
-        LanguageServerFeatureOptions languageServerFeatureOptions,
-        ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor)
-    {
-        _projectConfigurationFilePathStore = projectConfigurationFilePathStore;
-        _languageServerFeatureOptions = languageServerFeatureOptions;
-        _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
-    }
+    private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore = projectConfigurationFilePathStore;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
+    private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
+    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
     internal void DynamicFileAdded(ProjectId projectId, ProjectKey razorProjectKey, string projectFilePath, string filePath)
     {
-        var project = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(razorProjectKey);
-        if (_fallbackProjectIds.Contains(projectId))
+        try
         {
-            // The project might have started as a fallback project, but it might have been upgraded by our getting CPS info
-            // about it. In that case, leave the CPS bits to do the work
+            var project = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(razorProjectKey);
             if (project is ProjectSnapshot { HostProject: FallbackHostProject })
             {
                 // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
                 // are the only way to know about files in the project.
                 AddFallbackDocument(razorProjectKey, filePath, projectFilePath);
             }
+            else if (project is null)
+            {
+                // We have been asked to provide dynamic file info, which means there is a .razor or .cshtml file in the project
+                // but for some reason our project system doesn't know about the project. In these cases (often when people don't
+                // use the Razor or Web SDK) we spin up a fallback experience for them
+                AddFallbackProject(projectId, filePath);
+            }
         }
-        else if (project is null)
+        catch (Exception ex)
         {
-            // We have been asked to provide dynamic file info, which means there is a .razor or .cshtml file in the project
-            // but for some reason our project system doesn't know about the project. In these cases (often when people don't
-            // use the Razor or Web SDK) we spin up a fallback experience for them
-            AddFallbackProject(projectId, filePath);
+            _telemetryReporter.ReportFault(ex, "Error while trying to add fallback document to project");
         }
     }
 
-    internal void DynamicFileRemoved(ProjectId projectId, string projectFilePath, string filePath)
+    internal void DynamicFileRemoved(ProjectId projectId, ProjectKey razorProjectKey, string projectFilePath, string filePath)
     {
-        if (_fallbackProjectIds.Contains(projectId))
+        try
         {
-            // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
-            // are the only way to know about files in the project.
-            RemoveFallbackDocument(projectId, filePath, projectFilePath);
+            var project = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(razorProjectKey);
+            if (project is ProjectSnapshot { HostProject: FallbackHostProject })
+            {
+                // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
+                // are the only way to know about files in the project.
+                RemoveFallbackDocument(projectId, filePath, projectFilePath);
+            }
+        }
+        catch (Exception ex)
+        {
+            _telemetryReporter.ReportFault(ex, "Error while trying to remove fallback document from project");
         }
     }
 
@@ -78,11 +82,6 @@ internal sealed class FallbackProjectManager
 
         var intermediateOutputPath = Path.GetDirectoryName(project.CompilationOutputInfo.AssemblyPath);
         if (intermediateOutputPath is null)
-        {
-            return;
-        }
-
-        if (!ImmutableInterlocked.Update(ref _fallbackProjectIds, (set, id) => set.Add(id), project.Id))
         {
             return;
         }
@@ -107,15 +106,27 @@ internal sealed class FallbackProjectManager
     private void AddFallbackDocument(ProjectKey projectKey, string filePath, string projectFilePath)
     {
         var hostDocument = CreateHostDocument(filePath, projectFilePath);
+        if (hostDocument is null)
+        {
+            return;
+        }
+
         var textLoader = new FileTextLoader(filePath, defaultEncoding: null);
         _projectSnapshotManagerAccessor.Instance.DocumentAdded(projectKey, hostDocument, textLoader);
     }
 
-    private static HostDocument CreateHostDocument(string filePath, string projectFilePath)
+    private static HostDocument? CreateHostDocument(string filePath, string projectFilePath)
     {
-        var targetPath = filePath.StartsWith(projectFilePath, FilePathComparison.Instance)
-            ? filePath[projectFilePath.Length..]
-            : filePath;
+        // The compiler only supports paths that are relative to the project root, so filter our files
+        // that don't match
+        var projectPath = FilePathNormalizer.GetNormalizedDirectoryName(projectFilePath);
+        var normalizedFilePath = FilePathNormalizer.Normalize(filePath);
+        if (!normalizedFilePath.StartsWith(projectPath, FilePathComparison.Instance))
+        {
+            return null;
+        }
+
+        var targetPath = filePath[projectPath.Length..];
         var hostDocument = new HostDocument(filePath, targetPath);
         return hostDocument;
     }
@@ -135,6 +146,11 @@ internal sealed class FallbackProjectManager
         }
 
         var hostDocument = CreateHostDocument(filePath, projectFilePath);
+        if (hostDocument is null)
+        {
+            return;
+        }
+
         _projectSnapshotManagerAccessor.Instance.DocumentRemoved(razorProjectKey, hostDocument);
     }
 
@@ -153,22 +169,5 @@ internal sealed class FallbackProjectManager
         }
 
         return project;
-    }
-
-    internal TestAccessor GetTestAccessor()
-    {
-        return new TestAccessor(this);
-    }
-
-    internal readonly struct TestAccessor
-    {
-        private readonly FallbackProjectManager _instance;
-
-        internal TestAccessor(FallbackProjectManager instance)
-        {
-            _instance = instance;
-        }
-
-        internal ImmutableHashSet<ProjectId> ProjectIds => _instance._fallbackProjectIds;
     }
 }
