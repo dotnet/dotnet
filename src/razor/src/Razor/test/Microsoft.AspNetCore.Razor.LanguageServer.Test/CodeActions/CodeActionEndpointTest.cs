@@ -479,6 +479,59 @@ public class CodeActionEndpointTest : LanguageServerTestBase
     }
 
     [Fact]
+    public async Task Handle_MixedProvider_SupportsCodeActionResolveTrue_UsesGroups()
+    {
+        // Arrange
+        var documentPath = new Uri("C:/path/to/Page.razor");
+        var codeDocument = CreateCodeDocument("@code {}");
+        var documentContext = CreateDocumentContext(documentPath, codeDocument);
+        var documentMappingService = CreateDocumentMappingService();
+        var languageServer = CreateLanguageServer();
+        var codeActionEndpoint = new CodeActionEndpoint(
+            documentMappingService,
+            new IRazorCodeActionProvider[] {
+                    new MockRazorCodeActionProvider(),
+            },
+            new ICSharpCodeActionProvider[] {
+                    new MockCSharpCodeActionProvider()
+            },
+            Array.Empty<IHtmlCodeActionProvider>(),
+            languageServer,
+            _languageServerFeatureOptions,
+            telemetryReporter: null)
+        {
+            _supportsCodeActionResolve = true
+        };
+
+        var request = new VSCodeActionParams()
+        {
+            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            Range = new Range { Start = new Position(0, 1), End = new Position(0, 1) },
+            Context = new VSInternalCodeActionContext()
+        };
+        var requestContext = CreateRazorRequestContext(documentContext);
+
+        // Act
+        var commandOrCodeActionContainer = await codeActionEndpoint.HandleRequestAsync(request, requestContext, default);
+
+        // Assert
+        Assert.NotNull(commandOrCodeActionContainer);
+        Assert.Collection(commandOrCodeActionContainer,
+            c =>
+            {
+                Assert.True(c.TryGetSecond(out var codeAction));
+                Assert.True(codeAction is VSInternalCodeAction);
+                Assert.Equal("A-Razor", ((VSInternalCodeAction)codeAction).Group);
+            },
+            c =>
+            {
+                Assert.True(c.TryGetSecond(out var codeAction));
+                Assert.True(codeAction is VSInternalCodeAction);
+                Assert.Equal("B-Delegated", ((VSInternalCodeAction)codeAction).Group);
+            });
+    }
+
+    [Fact]
     public async Task Handle_MultipleMixedProvider_SupportsCodeActionResolveFalse()
     {
         // Arrange

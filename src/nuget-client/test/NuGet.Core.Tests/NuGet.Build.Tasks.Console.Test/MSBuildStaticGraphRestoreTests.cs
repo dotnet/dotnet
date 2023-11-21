@@ -762,7 +762,7 @@ namespace NuGet.Build.Tasks.Console.Test
             });
 
             // Act
-            var result = MSBuildRestoreUtility.GetCentralPackageManagementSettings(project, projectStyle).IsEnabled;
+            var result = MSBuildStaticGraphRestore.GetCentralPackageManagementSettings(project, projectStyle).IsEnabled;
 
             // Assert
             Assert.Equal(expected, result);
@@ -786,7 +786,7 @@ namespace NuGet.Build.Tasks.Console.Test
                 });
 
             // Act
-            var result = MSBuildRestoreUtility.GetCentralPackageManagementSettings(project, ProjectStyle.PackageReference).IsVersionOverrideDisabled;
+            var result = MSBuildStaticGraphRestore.GetCentralPackageManagementSettings(project, ProjectStyle.PackageReference).IsVersionOverrideDisabled;
 
             // Assert
             Assert.Equal(disabled, result);
@@ -810,7 +810,7 @@ namespace NuGet.Build.Tasks.Console.Test
                 });
 
             // Act
-            var result = MSBuildRestoreUtility.GetCentralPackageManagementSettings(project, ProjectStyle.PackageReference).IsCentralPackageTransitivePinningEnabled;
+            var result = MSBuildStaticGraphRestore.GetCentralPackageManagementSettings(project, ProjectStyle.PackageReference).IsCentralPackageTransitivePinningEnabled;
 
             // Assert
             Assert.Equal(enabled, result);

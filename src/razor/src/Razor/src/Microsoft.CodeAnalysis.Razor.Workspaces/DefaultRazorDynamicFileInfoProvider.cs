@@ -270,7 +270,13 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
             throw new ArgumentNullException(nameof(filePath));
         }
 
-        _fallbackProjectManager.DynamicFileRemoved(projectId, projectFilePath, filePath);
+        var projectKey = TryFindProjectKeyForProjectId(projectId);
+        if (projectKey is not { } razorProjectKey)
+        {
+            return Task.CompletedTask;
+        }
+
+        _fallbackProjectManager.DynamicFileRemoved(projectId, razorProjectKey, projectFilePath, filePath);
 
         // ---------------------------------------------------------- NOTE & CAUTION --------------------------------------------------------------
         //
