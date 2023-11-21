@@ -29,7 +29,6 @@ The following table lists controls and a basic use case for each one.
 |---|---|---|
 |`ButtonHyperlink`|A `Hyperlink` which doesn't function by opening an external URL (web page), but instead performs some action within VS.|Assistive technologies read the control type, and a `Hyperlink` is expected to behave in a way consistent with Web page hyperlinks. The customization sets the control type as a `Button`. |
 
-
 ## Accessibility Testing
 
 #### Accessibility Insights
@@ -45,3 +44,7 @@ The [Accessibility Insights FastPass](https://accessibilityinsights.io/docs/wind
 [Windows Narrator](https://support.microsoft.com/windows/complete-guide-to-narrator-e4397a0d-ef4f-b386-d8ae-c172f109bdb1) is the screen-reader we use for testing. 
 - Ensuring that the screen-reader is able to announce all visible controls and text is ideal. 
 - Generally, Accessibility Insights will catch potential issues, but sometimes a quick test with Narrator reveals more.
+
+## Responsive Testing
+
+When developing new UI we need to make sure that it's responsive for all resolutions and window sizes. We can test that by changing the Display resolution and Scale of our display. Please add proof of this in your pull-requests.

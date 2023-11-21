@@ -88,21 +88,51 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
                     continue;
                 }
 
-                previous.DataByTarget.TryGetValue(lockFileTarget.Name, out AssetsFileTarget? previousTarget);
+                string targetAlias = GetTargetAlias(lockFileTarget.Name);
+
+                previous.DataByTarget.TryGetValue(targetAlias, out AssetsFileTarget? previousTarget);
 
                 ImmutableArray<AssetsFileLogMessage> logMessages = ParseLogMessages(lockFile, previousTarget, lockFileTarget.Name);
 
                 dataByTarget.Add(
-                    lockFileTarget.Name,
+                    targetAlias,
                     new AssetsFileTarget(
                         this,
-                        lockFileTarget.Name,
+                        targetAlias,
                         logMessages,
                         ParseLibraries(lockFile, lockFileTarget, logMessages)));
             }
 
             DataByTarget = dataByTarget.ToImmutable();
             return;
+
+            string GetTargetAlias(string lockFileTargetName)
+            {
+                // In some places, the target alias specified in the project file (e.g. "net472") will not
+                // match the target name used throughout the lock file (e.g. ".NETFramework,Version=v4.7.2").
+                // The dependencies tree only uses the target alias (what's in the project file) so we need
+                // to map back to that. See https://github.com/dotnet/project-system/issues/6832.
+
+                if (lockFile.PackageSpec.TargetFrameworks.Any(t => t.TargetAlias == lockFileTargetName))
+                {
+                    // The target name used in the assets file matches the target alias in the project file.
+                    return lockFileTargetName;
+                }
+
+                // The target name used in the assets file does NOT match any target alias in the project.
+                // Attempt to find the name used in the project.
+                foreach (TargetFrameworkInformation targetInfo in lockFile.PackageSpec.TargetFrameworks)
+                {
+                    if (targetInfo.FrameworkName.DotNetFrameworkName == lockFileTargetName)
+                    {
+                        // We found a match, so return the alias.
+                        return targetInfo.TargetAlias;
+                    }
+                }
+
+                // No match was found. Not ideal. Nothing to do but return the original value.
+                return lockFileTargetName;
+            }
 
             static ImmutableArray<AssetsFileLogMessage> ParseLogMessages(LockFile lockFile, AssetsFileTarget? previousTarget, string target)
             {
