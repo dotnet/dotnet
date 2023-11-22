@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
@@ -23,8 +22,6 @@ internal sealed class ComponentRenderModeLoweringPass : ComponentIntermediateNod
         {
             if (reference is { Node: TagHelperDirectiveAttributeIntermediateNode node, Parent: IntermediateNode parentNode } && node.TagHelper.IsRenderModeTagHelper())
             {
-                Debug.Assert(node.Diagnostics.Count == 0);
-
                 if (parentNode is not ComponentIntermediateNode componentNode)
                 {
                     node.Diagnostics.Add(ComponentDiagnosticFactory.CreateAttribute_ValidOnlyOnComponent(node.Source, node.OriginalAttributeName));
@@ -38,6 +35,7 @@ internal sealed class ComponentRenderModeLoweringPass : ComponentIntermediateNod
                 };
 
                 var renderModeNode = new RenderModeIntermediateNode() { Source = node.Source, Children = { expression } };
+                renderModeNode.Diagnostics.AddRange(node.Diagnostics);
 
                 if (componentNode.Component.Metadata.ContainsKey(ComponentMetadata.Component.HasRenderModeDirectiveKey))
                 {

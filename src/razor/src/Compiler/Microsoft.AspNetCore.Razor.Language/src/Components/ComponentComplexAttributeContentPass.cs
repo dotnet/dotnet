@@ -55,13 +55,11 @@ internal class ComponentComplexAttributeContentPass : ComponentIntermediateNodeP
 
     private static void ProcessAttribute(IntermediateNode parent, IntermediateNode node, string attributeName)
     {
-        var removeNode = false;
         var issueDiagnostic = false;
 
         if (node.Children is [HtmlAttributeIntermediateNode { Children.Count: > 1 }])
         {
             // This case can be hit for a 'string' attribute
-            removeNode = true;
             issueDiagnostic = true;
         }
         else if (node.Children is [CSharpExpressionIntermediateNode { Children.Count: > 1 } cSharpNode])
@@ -78,7 +76,6 @@ internal class ComponentComplexAttributeContentPass : ComponentIntermediateNodeP
             }
             else
             {
-                removeNode = true;
                 issueDiagnostic = true;
             }
         }
@@ -86,36 +83,19 @@ internal class ComponentComplexAttributeContentPass : ComponentIntermediateNodeP
         {
             // This is the case when an attribute contains a code block @{ ... }
             // We don't support this.
-            removeNode = true;
-            issueDiagnostic = true;
-        }
-        else if (node.Children is [CSharpExpressionIntermediateNode, HtmlContentIntermediateNode { Children: [IntermediateToken { Content: "." }] }])
-        {
-            // This is the case when an attribute contains something like "@MyEnum."
-            // We simplify this to remove the "." so that tooling can provide completion on "MyEnum"
-            // in case the user is in the middle of typing
-            node.Children.RemoveAt(1);
-
-            // We still want to issue a diagnostic, even though we simplified, because ultimately
-            // we don't support this, so if the user isn't typing, we can't let this through
             issueDiagnostic = true;
         }
         else if (node.Children.Count > 1)
         {
             // This is the common case for 'mixed' content
-            removeNode = true;
             issueDiagnostic = true;
         }
 
         if (issueDiagnostic)
         {
-            parent.Diagnostics.Add(ComponentDiagnosticFactory.Create_UnsupportedComplexContent(
+            node.Diagnostics.Add(ComponentDiagnosticFactory.Create_UnsupportedComplexContent(
                 node,
                 attributeName));
-        }
-        if (removeNode)
-        {
-            parent.Children.Remove(node);
         }
     }
 }

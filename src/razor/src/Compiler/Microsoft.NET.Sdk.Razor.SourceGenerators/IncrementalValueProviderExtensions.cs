@@ -28,8 +28,8 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         {
             context.RegisterSourceOutput(source, (spc, source) =>
             {
-                var (sourceItem, diagnostic) = source;
-                if (sourceItem == null && diagnostic != null)
+                var (_, diagnostic) = source;
+                if (diagnostic != null)
                 {
                     spc.ReportDiagnostic(diagnostic);
                 }
@@ -42,8 +42,8 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         {
             context.RegisterSourceOutput(source, (spc, source) =>
             {
-                var (sourceItem, diagnostic) = source;
-                if (sourceItem == null && diagnostic != null)
+                var (_, diagnostic) = source;
+                if (diagnostic != null)
                 {
                     spc.ReportDiagnostic(diagnostic);
                 }

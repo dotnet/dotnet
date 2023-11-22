@@ -9897,7 +9897,96 @@ namespace Test
 
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
-        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument, verifyLinePragmas: false);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        var result = CompileToAssembly(generated, throwOnFailure: false);
+        result.Diagnostics.Verify(
+            // x:\dir\subdir\Test\TestComponent.cshtml(1,31): error CS0119: 'TestComponent.MyEnum' is a type, which is not valid in the given context
+            //                               MyEnum
+            Diagnostic(ErrorCode.ERR_BadSKunknown, "MyEnum").WithArguments("Test.TestComponent.MyEnum", "type").WithLocation(1, 31));
+        Assert.NotEmpty(generated.Diagnostics);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9346")]
+    public void Component_ComplexContentInAttribute_02()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace Test
+            {
+                public class MyComponent : ComponentBase
+                {
+                    [Parameter] public string StringProperty { get; set; }
+                }
+            }
+            """));
+
+        // Act
+        var generated = CompileToCSharp("""
+            <MyComponent StringProperty="@MyEnum+" />
+
+            @code {
+                public enum MyEnum
+                {
+                    One,
+                    Two
+                }
+            }
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        var result = CompileToAssembly(generated, throwOnFailure: false);
+        result.Diagnostics.Verify(
+            // x:\dir\subdir\Test\TestComponent.cshtml(1,31): error CS0119: 'TestComponent.MyEnum' is a type, which is not valid in the given context
+            //                               MyEnum
+            Diagnostic(ErrorCode.ERR_BadSKunknown, "MyEnum").WithArguments("Test.TestComponent.MyEnum", "type").WithLocation(1, 31));
+        Assert.NotEmpty(generated.Diagnostics);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9346")]
+    public void Component_ComplexContentInAttribute_03()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace Test
+            {
+                public class MyComponent : ComponentBase
+                {
+                    [Parameter] public string StringProperty { get; set; }
+                }
+            }
+            """));
+
+        // Act
+        var generated = CompileToCSharp("""
+            <MyComponent StringProperty="@x html @("string")" />
+
+            @code {
+                int x = 1;
+            }
+            """);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        var result = CompileToAssembly(generated, throwOnFailure: false);
+        result.Diagnostics.Verify(
+            // x:\dir\subdir\Test\TestComponent.cshtml(1,32): error CS1003: Syntax error, ',' expected
+            //                               x
+            Diagnostic(ErrorCode.ERR_SyntaxError, "").WithArguments(",").WithLocation(1, 32),
+            DesignTime
+            // (23,91): error CS1501: No overload for method 'TypeCheck' takes 2 arguments
+            //             __o = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.String>(
+            ? Diagnostic(ErrorCode.ERR_BadArgCount, "TypeCheck<global::System.String>").WithArguments("TypeCheck", "2").WithLocation(23, 91)
+            // (17,138): error CS1501: No overload for method 'TypeCheck' takes 2 arguments
+            //             __builder.AddComponentParameter(1, "StringProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.String>(
+            : Diagnostic(ErrorCode.ERR_BadArgCount, "TypeCheck<global::System.String>").WithArguments("TypeCheck", "2").WithLocation(17, 138));
+        Assert.NotEmpty(generated.Diagnostics);
     }
 
     [IntegrationTestFact]
@@ -10001,6 +10090,30 @@ namespace Test
 <!DefinitelyNotAComponent></!DefinitelyNotAComponent>");
 
         // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestTheory, CombinatorialData, WorkItem("https://github.com/dotnet/razor/issues/9584")]
+    public void ScriptTag_Razor8([CombinatorialValues("8.0", "latest")] string langVersion)
+    {
+        var generated = CompileToCSharp("""
+            <script>alert("Hello");</script>
+            """,
+            configuration: Configuration.WithVersion(RazorLanguageVersion.Parse(langVersion)));
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9584")]
+    public void ScriptTag_Razor7()
+    {
+        var generated = CompileToCSharp("""
+            <script>alert("Hello");</script>
+            """,
+            configuration: Configuration.WithVersion(RazorLanguageVersion.Version_7_0));
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         CompileToAssembly(generated);
@@ -10478,7 +10591,20 @@ Time: @DateTime.Now
 
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
-        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument, verifyLinePragmas: false);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        var result = CompileToAssembly(generated, throwOnFailure: false);
+        if (DesignTime)
+        {
+            result.Diagnostics.Verify(
+                // x:\dir\subdir\Test\TestComponent.cshtml(2,74): error CS1503: Argument 1: cannot convert from 'int' to 'string'
+                //                                                                          x
+                Diagnostic(ErrorCode.ERR_BadArgType, "x").WithArguments("1", "int", "string").WithLocation(2, 74));
+        }
+        else
+        {
+            result.Diagnostics.Verify();
+        }
+        Assert.NotEmpty(generated.Diagnostics);
     }
 
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
@@ -10531,6 +10657,14 @@ Time: @DateTime.Now
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        var result = CompileToAssembly(generated, throwOnFailure: false);
+        result.Diagnostics.Verify(DesignTime
+            // (39,85): error CS7036: There is no argument given that corresponds to the required parameter 'value' of 'RuntimeHelpers.TypeCheck<T>(T)'
+            //             global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>();
+            ? Diagnostic(ErrorCode.ERR_NoCorrespondingArgument, "TypeCheck<string>").WithArguments("value", "Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<T>(T)").WithLocation(39, 85)
+            // (34,105): error CS7036: There is no argument given that corresponds to the required parameter 'value' of 'RuntimeHelpers.TypeCheck<T>(T)'
+            //             string __formName = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>();
+            : Diagnostic(ErrorCode.ERR_NoCorrespondingArgument, "TypeCheck<string>").WithArguments("value", "Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<T>(T)").WithLocation(34, 105));
     }
 
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]

@@ -31,6 +31,24 @@ using Microsoft.AspNetCore.Components.Web;
 #line hidden
 #nullable disable
             ));
+            string __formName = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>("start" + " " + (
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                                             "literal"
+
+#line default
+#line hidden
+#nullable disable
+            ) + " " + (
+#nullable restore
+#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+                                                                         x
+
+#line default
+#line hidden
+#nullable disable
+            ) + " end");
+            __builder.AddNamedEvent("onsubmit", __formName);
             __builder.CloseElement();
         }
         #pragma warning restore 1998

@@ -26,6 +26,18 @@
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
                             LazyIntermediateToken - (75:1,31 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
                             IntermediateToken -  - CSharp - )
+                    FormName - (97:1,53 [25] x:\dir\subdir\Test\TestComponent.cshtml)
+                        HtmlContent - (97:1,53 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (97:1,53 [5] x:\dir\subdir\Test\TestComponent.cshtml) - Html - start
+                            LazyIntermediateToken - (102:1,58 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html -  
+                        CSharpExpression - (105:1,61 [9] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (105:1,61 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - "literal"
+                        HtmlContent - (115:1,71 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (115:1,71 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html -  
+                        CSharpExpression - (117:1,73 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (117:1,73 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - x
+                        HtmlContent - (118:1,74 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (118:1,74 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html -  end
                 HtmlContent - (131:1,87 [2] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (131:1,87 [2] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n
             CSharpCode - (140:2,7 [18] x:\dir\subdir\Test\TestComponent.cshtml)

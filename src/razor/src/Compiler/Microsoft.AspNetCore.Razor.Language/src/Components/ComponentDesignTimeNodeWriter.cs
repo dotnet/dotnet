@@ -798,6 +798,12 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
     private void WriteComponentAttributeInnards(CodeRenderingContext context, ComponentAttributeIntermediateNode node, bool canTypeCheck)
     {
+        if (node.Children.Count > 1)
+        {
+            Debug.Assert(node.HasDiagnostics, "We should have reported an error for mixed content.");
+            // We render the children anyway, so tooling works.
+        }
+
         // We limit component attributes to simple cases. However there is still a lot of complexity
         // to handle here, since there are a few different cases for how an attribute might be structured.
         //
@@ -806,11 +812,6 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         {
             // Minimized attributes always map to 'true'
             context.CodeWriter.Write("true");
-        }
-        else if (node.Children.Count > 1)
-        {
-            // We don't expect this to happen, we just want to know if it can.
-            throw new InvalidOperationException("Attribute nodes should either be minimized or a single type of content." + string.Join(", ", node.Children));
         }
         else if (node.Children.Count == 1 && node.Children[0] is HtmlContentIntermediateNode)
         {
@@ -1170,27 +1171,20 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
     public sealed override void WriteFormName(CodeRenderingContext context, FormNameIntermediateNode node)
     {
-        var tokens = node.FindDescendantNodes<IntermediateToken>();
-        if (tokens.Count == 0)
+        if (node.Children.Count > 1)
         {
-            return;
+            Debug.Assert(node.HasDiagnostics, "We should have reported an error for mixed content.");
         }
 
-        // Either all tokens should be C# or none of them.
-        if (tokens[0].IsCSharp)
+        foreach (var token in node.FindDescendantNodes<IntermediateToken>())
         {
-            context.CodeWriter.Write(ComponentsApi.RuntimeHelpers.TypeCheck);
-            context.CodeWriter.Write("<string>(");
-            foreach (var token in tokens)
+            if (token.IsCSharp)
             {
-                Debug.Assert(token.IsCSharp);
+                context.CodeWriter.Write(ComponentsApi.RuntimeHelpers.TypeCheck);
+                context.CodeWriter.Write("<string>(");
                 WriteCSharpToken(context, token);
+                context.CodeWriter.WriteLine(");");
             }
-            context.CodeWriter.Write(");");
-        }
-        else
-        {
-            Debug.Assert(!tokens.Any(t => t.IsCSharp));
         }
     }
 

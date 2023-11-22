@@ -8,11 +8,21 @@ Source Location: (75:1,31 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 Generated Location: (1217:32,31 [9] )
 |() => { }|
 
+Source Location: (105:1,61 [9] x:\dir\subdir\Test\TestComponent.cshtml)
+|"literal"|
+Generated Location: (1529:41,61 [9] )
+|"literal"|
+
+Source Location: (117:1,73 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+|x|
+Generated Location: (1853:50,73 [1] )
+|x|
+
 Source Location: (140:2,7 [18] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     int x = 1;
 |
-Generated Location: (1420:42,7 [18] )
+Generated Location: (2048:60,7 [18] )
 |
     int x = 1;
 |

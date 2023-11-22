@@ -36,6 +36,7 @@ using Microsoft.AspNetCore.Components.Web;
 #line hidden
 #nullable disable
             );
+            global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>();
         }
         #pragma warning restore 1998
     }

@@ -31,7 +31,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             globalOptions.TryGetValue("build_property.SupportLocalizedComponentNames", out var supportLocalizedComponentNames);
             globalOptions.TryGetValue("build_property.GenerateRazorMetadataSourceChecksumAttributes", out var generateMetadataSourceChecksumAttributes);
 
-            var razorLanguageVersion = RazorLanguageVersion.Latest;
+            RazorLanguageVersion razorLanguageVersion;
             Diagnostic? diagnostic = null;
             if (!globalOptions.TryGetValue("build_property.RazorLangVersion", out var razorLanguageVersionString) ||
                 !RazorLanguageVersion.TryParse(razorLanguageVersionString, out razorLanguageVersion))
@@ -40,6 +40,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     RazorDiagnostics.InvalidRazorLangVersionDescriptor,
                     Location.None,
                     razorLanguageVersionString);
+                razorLanguageVersion = RazorLanguageVersion.Latest;
             }
 
             var razorConfiguration = RazorConfiguration.Create(razorLanguageVersion, configurationName ?? "default", System.Linq.Enumerable.Empty<RazorExtension>(), true);
