@@ -7,10 +7,10 @@
       "commitSha": "96e79593b458ac7aeff2571604c41fe915da5bff"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.23570.24",
+      "packageVersion": "9.0.0-alpha.1.23571.9",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "5fa9760a727556292ae2b43880e30a24c872c140"
+      "commitSha": "00e3aaafa355bb540b6aae25d01731da6f07df61"
     },
     {
       "packageVersion": "0.11.4-alpha.23509.2",
