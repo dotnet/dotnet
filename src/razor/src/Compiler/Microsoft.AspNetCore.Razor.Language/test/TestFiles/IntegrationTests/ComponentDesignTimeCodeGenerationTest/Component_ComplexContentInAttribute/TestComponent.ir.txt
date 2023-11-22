@@ -18,6 +18,8 @@
                     ComponentAttribute - (29:0,29 [8] x:\dir\subdir\Test\TestComponent.cshtml) - StringProperty - StringProperty - AttributeStructure.DoubleQuotes
                         CSharpExpression - (30:0,30 [6] x:\dir\subdir\Test\TestComponent.cshtml)
                             LazyIntermediateToken - (30:0,30 [6] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - MyEnum
+                        HtmlContent - (36:0,36 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (36:0,36 [1] x:\dir\subdir\Test\TestComponent.cshtml) - Html - .
                 HtmlContent - (41:0,41 [4] x:\dir\subdir\Test\TestComponent.cshtml)
                     LazyIntermediateToken - (41:0,41 [4] x:\dir\subdir\Test\TestComponent.cshtml) - Html - \n\n
             CSharpCode - (52:2,7 [67] x:\dir\subdir\Test\TestComponent.cshtml)

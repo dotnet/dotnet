@@ -144,6 +144,46 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         Assert.Null(completionSession);
     }
 
+    [IdeFact, WorkItem("https://github.com/dotnet/razor/issues/9346")]
+    public async Task Completion_EnumDot()
+    {
+        await TestServices.SolutionExplorer.AddFileAsync(
+            RazorProjectConstants.BlazorProjectName,
+            "Test.razor",
+            """
+            <Test Param="@MyEnum." />
+
+            @code {
+                [Parameter] public string Param { get; set; }
+
+                public enum MyEnum
+                {
+                    One
+                }
+            }
+            """,
+            open: true,
+            ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync("@MyEnum.", charsOffset: 1, ControlledHangMitigatingCancellationToken);
+        TestServices.Input.Send("O");
+
+        await CommitCompletionAndVerifyAsync("""
+            <Test Param="@MyEnum.One" />
+            
+            @code {
+                [Parameter] public string Param { get; set; }
+            
+                public enum MyEnum
+                {
+                    One
+                }
+            }
+            """);
+    }
+
     private async Task CommitCompletionAndVerifyAsync(string expected)
     {
         var textView = await TestServices.Editor.GetActiveTextViewAsync(HangMitigatingCancellationToken);

@@ -2811,5 +2811,26 @@ namespace MyApp
             Assert.Empty(result.Diagnostics);
             Assert.Equal(2, result.GeneratedSources.Length);
         }
+
+        [Theory, CombinatorialData]
+        public async Task RazorLangVersion_Incorrect([CombinatorialValues("incorrect", "-1", "10000")] string langVersion)
+        {
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = "<h1>Hello world</h1>",
+            });
+            var compilation = await project.GetCompilationAsync();
+            var driver = await GetDriverAsync(project, options =>
+            {
+                options.TestGlobalOptions["build_property.RazorLangVersion"] = langVersion;
+            });
+
+            var result = RunGenerator(compilation!, ref driver);
+
+            result.Diagnostics.Verify(
+                // error RZ3600: Invalid value '{0}'' for RazorLangVersion. Valid values include 'Latest' or a valid version in range 1.0 to 8.0.
+                Diagnostic("RZ3600").WithArguments(langVersion).WithLocation(1, 1));
+            Assert.Single(result.GeneratedSources);
+        }
     }
 }

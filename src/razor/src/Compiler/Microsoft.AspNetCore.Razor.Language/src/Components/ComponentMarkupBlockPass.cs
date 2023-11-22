@@ -18,6 +18,13 @@ namespace Microsoft.AspNetCore.Razor.Language.Components;
 // or quote style.
 internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
+    private readonly RazorLanguageVersion _version;
+
+    public ComponentMarkupBlockPass(RazorLanguageVersion version)
+    {
+        _version = version;
+    }
+
     // Runs LATE because we want to destroy structure.
     //
     // We also need to run after ComponentMarkupDiagnosticPass to avoid destroying diagnostics
@@ -39,7 +46,7 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
             return;
         }
 
-        var findVisitor = new FindHtmlTreeVisitor();
+        var findVisitor = new FindHtmlTreeVisitor(_version);
         findVisitor.Visit(documentNode);
 
         var trees = findVisitor.Trees;
@@ -126,6 +133,13 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
     // the a from the list.
     private class FindHtmlTreeVisitor : IntermediateNodeWalker
     {
+        private readonly RazorLanguageVersion _version;
+
+        public FindHtmlTreeVisitor(RazorLanguageVersion version)
+        {
+            _version = version;
+        }
+
         private bool _foundNonHtml;
 
         public List<IntermediateNodeReference> Trees { get; } = new List<IntermediateNodeReference>();
@@ -152,7 +166,13 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
                 _foundNonHtml = true;
             }
 
-            if (string.Equals("option", node.TagName, StringComparison.OrdinalIgnoreCase))
+            if (_version.CompareTo(RazorLanguageVersion.Version_7_0) <= 0 &&
+                string.Equals("script", node.TagName, StringComparison.OrdinalIgnoreCase))
+            {
+                // Treat script tags as non-HTML in .NET 7 and earlier.
+                _foundNonHtml = true;
+            }
+            else if (string.Equals("option", node.TagName, StringComparison.OrdinalIgnoreCase))
             {
                 // Also, treat <option>...</option> as non-HTML - we don't want it to be coalesced so that we can support setting "selected" attribute on it.
                 // We only care about option tags that are nested under a select tag.

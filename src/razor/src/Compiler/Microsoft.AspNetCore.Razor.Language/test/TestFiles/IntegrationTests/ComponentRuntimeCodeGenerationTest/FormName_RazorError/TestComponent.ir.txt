@@ -17,3 +17,6 @@
                             IntermediateToken -  - CSharp - global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
                             LazyIntermediateToken - (75:1,31 [9] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - () => { }
                             IntermediateToken -  - CSharp - )
+                    FormName - (97:1,53 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+                        CSharpCode - (99:1,55 [1] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (99:1,55 [1] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp -  

@@ -16,7 +16,7 @@ public class ComponentMarkupBlockPassTest
 {
     public ComponentMarkupBlockPassTest()
     {
-        Pass = new ComponentMarkupBlockPass();
+        Pass = new ComponentMarkupBlockPass(RazorLanguageVersion.Latest);
         ProjectEngine = RazorProjectEngine.Create(
             RazorConfiguration.Default,
             RazorProjectFileSystem.Create(Environment.CurrentDirectory),
