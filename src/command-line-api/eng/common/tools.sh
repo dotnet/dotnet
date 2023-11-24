@@ -312,12 +312,7 @@ function InitializeBuildTool {
   # return values
   _InitializeBuildTool="$_InitializeDotNetCli/dotnet"
   _InitializeBuildToolCommand="msbuild"
-  # use override if it exists - commonly set by source-build
-  if [[ -z "${_OverrideArcadeInitializeBuildToolFramework}" ]]; then
-    _InitializeBuildToolFramework="net7.0"
-  else
-    _InitializeBuildToolFramework="${_OverrideArcadeInitializeBuildToolFramework}"
-  fi
+  _InitializeBuildToolFramework="net7.0"
 }
 
 # Set RestoreNoCache as a workaround for https://github.com/NuGet/Home/issues/3116
