@@ -86,6 +86,11 @@
     <LangVersion Condition="'$(DotNetBuildFromSource)' == 'true'">latest</LangVersion>
   </PropertyGroup>
 
+  <!-- NuGet's dev branch always targets the next upcoming version of .NET, so we always use the preview SDK -->
+  <PropertyGroup Condition=" '$(IsEscrow)' != 'true' ">
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+  </PropertyGroup>
+
   <!-- DEBUG specific configuration settings -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

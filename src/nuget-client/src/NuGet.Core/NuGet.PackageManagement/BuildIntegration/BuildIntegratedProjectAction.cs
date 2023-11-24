@@ -1,10 +1,12 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NuGet.Commands;
-using NuGet.Frameworks;
 using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
 using NuGet.ProjectModel;
@@ -38,13 +40,18 @@ namespace NuGet.PackageManagement
         /// <summary>
         /// Original user actions.
         /// </summary>
+        [Obsolete("The internal ActionAndContextList property should be used.")]
         public IReadOnlyList<NuGetProjectAction> OriginalActions { get; }
 
         /// <summary>
         /// The context necessary for installing a package.
         /// </summary>
+        [Obsolete("The internal ActionAndContextList property should be used.")]
         public BuildIntegratedInstallationContext InstallationContext { get; }
 
+        internal IReadOnlyList<(NuGetProjectAction, BuildIntegratedInstallationContext)> ActionAndContextList { get; }
+
+        [Obsolete("This type is not expected to be created externally.")]
         public BuildIntegratedProjectAction(NuGetProject project,
             PackageIdentity packageIdentity,
             NuGetProjectActionType nuGetProjectActionType,
@@ -57,6 +64,7 @@ namespace NuGet.PackageManagement
         {
         }
 
+        [Obsolete("This type is not expected to be created externally.")]
         public BuildIntegratedProjectAction(NuGetProject project,
             PackageIdentity packageIdentity,
             NuGetProjectActionType nuGetProjectActionType,
@@ -65,9 +73,14 @@ namespace NuGet.PackageManagement
             IReadOnlyList<SourceRepository> sources,
             IReadOnlyList<NuGetProjectAction> originalActions,
             BuildIntegratedInstallationContext installationContext,
-            VersionRange versionRange)
+            VersionRange? versionRange)
             : base(packageIdentity, nuGetProjectActionType, project, sourceRepository: null, versionRange)
         {
+            if (project == null)
+            {
+                throw new ArgumentNullException(nameof(project));
+            }
+
             if (packageIdentity == null)
             {
                 throw new ArgumentNullException(nameof(packageIdentity));
@@ -90,12 +103,12 @@ namespace NuGet.PackageManagement
 
             if (originalActions == null)
             {
-                throw new ArgumentNullException(nameof(sources));
+                throw new ArgumentNullException(nameof(originalActions));
             }
 
             if (installationContext == null)
             {
-                throw new ArgumentNullException(nameof(sources));
+                throw new ArgumentNullException(nameof(installationContext));
             }
 
             OriginalLockFile = originalLockFile;
@@ -104,6 +117,63 @@ namespace NuGet.PackageManagement
             Sources = sources;
             OriginalActions = originalActions;
             InstallationContext = installationContext;
+            ActionAndContextList = originalActions.Select(e => (e, installationContext)).ToList();
+        }
+
+        internal BuildIntegratedProjectAction(NuGetProject project,
+            PackageIdentity packageIdentity,
+            NuGetProjectActionType nuGetProjectActionType,
+            LockFile originalLockFile,
+            RestoreResultPair restoreResultPair,
+            IReadOnlyList<SourceRepository> sources,
+            IReadOnlyList<(NuGetProjectAction, BuildIntegratedInstallationContext)> originalActionsAndInstallationContexts,
+            VersionRange versionRange)
+            : base(packageIdentity, nuGetProjectActionType, project, sourceRepository: null, versionRange)
+        {
+            if (project == null)
+            {
+                throw new ArgumentNullException(nameof(project));
+            }
+
+            if (packageIdentity == null)
+            {
+                throw new ArgumentNullException(nameof(packageIdentity));
+            }
+
+            if (originalLockFile == null)
+            {
+                throw new ArgumentNullException(nameof(originalLockFile));
+            }
+
+            if (restoreResultPair == null)
+            {
+                throw new ArgumentNullException(nameof(restoreResultPair));
+            }
+
+            if (sources == null)
+            {
+                throw new ArgumentNullException(nameof(sources));
+            }
+
+            if (originalActionsAndInstallationContexts == null)
+            {
+                throw new ArgumentNullException(nameof(originalActionsAndInstallationContexts));
+            }
+
+            if (originalActionsAndInstallationContexts.Count < 1)
+            {
+                throw new ArgumentException("Must contain at least 1 element.", nameof(originalActionsAndInstallationContexts));
+            }
+
+            OriginalLockFile = originalLockFile;
+            RestoreResult = restoreResultPair.Result;
+            RestoreResultPair = restoreResultPair;
+            Sources = sources;
+            ActionAndContextList = originalActionsAndInstallationContexts;
+#pragma warning disable CS0618 // Type or member is obsolete
+            OriginalActions = originalActionsAndInstallationContexts.Select(e => e.Item1).ToList();
+            InstallationContext = originalActionsAndInstallationContexts[0].Item2;
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         public IReadOnlyList<NuGetProjectAction> GetProjectActions()
@@ -117,12 +187,12 @@ namespace NuGet.PackageManagement
 
                 foreach (var package in removed)
                 {
-                    actions.Add(NuGetProjectAction.CreateUninstallProjectAction(package, Project));
+                    actions.Add(CreateUninstallProjectAction(package, Project));
                 }
 
                 foreach (var package in added)
                 {
-                    actions.Add(NuGetProjectAction.CreateInstallProjectAction(package, sourceRepository: null, project: Project));
+                    actions.Add(CreateInstallProjectAction(package, sourceRepository: null, project: Project));
                 }
             }
 

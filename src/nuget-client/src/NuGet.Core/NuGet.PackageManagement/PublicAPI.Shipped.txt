@@ -22,15 +22,15 @@ NuGet.PackageManagement.ActionsTelemetryEvent
 NuGet.PackageManagement.ActionsTelemetryEvent.OperationType.get -> NuGet.PackageManagement.NuGetProjectActionType
 NuGet.PackageManagement.AssetsFileMissingStatusChanged
 NuGet.PackageManagement.BuildIntegratedProjectAction
-~NuGet.PackageManagement.BuildIntegratedProjectAction.BuildIntegratedProjectAction(NuGet.ProjectManagement.NuGetProject project, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.NuGetProjectActionType nuGetProjectActionType, NuGet.ProjectModel.LockFile originalLockFile, NuGet.Commands.RestoreResultPair restoreResultPair, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> sources, System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction> originalActions, NuGet.ProjectManagement.BuildIntegratedInstallationContext installationContext) -> void
-~NuGet.PackageManagement.BuildIntegratedProjectAction.BuildIntegratedProjectAction(NuGet.ProjectManagement.NuGetProject project, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.PackageManagement.NuGetProjectActionType nuGetProjectActionType, NuGet.ProjectModel.LockFile originalLockFile, NuGet.Commands.RestoreResultPair restoreResultPair, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository> sources, System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction> originalActions, NuGet.ProjectManagement.BuildIntegratedInstallationContext installationContext, NuGet.Versioning.VersionRange versionRange) -> void
-~NuGet.PackageManagement.BuildIntegratedProjectAction.GetProjectActions() -> System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction>
-~NuGet.PackageManagement.BuildIntegratedProjectAction.InstallationContext.get -> NuGet.ProjectManagement.BuildIntegratedInstallationContext
-~NuGet.PackageManagement.BuildIntegratedProjectAction.OriginalActions.get -> System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction>
-~NuGet.PackageManagement.BuildIntegratedProjectAction.OriginalLockFile.get -> NuGet.ProjectModel.LockFile
-~NuGet.PackageManagement.BuildIntegratedProjectAction.RestoreResult.get -> NuGet.Commands.RestoreResult
-~NuGet.PackageManagement.BuildIntegratedProjectAction.RestoreResultPair.get -> NuGet.Commands.RestoreResultPair
-~NuGet.PackageManagement.BuildIntegratedProjectAction.Sources.get -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository>
+NuGet.PackageManagement.BuildIntegratedProjectAction.BuildIntegratedProjectAction(NuGet.ProjectManagement.NuGetProject! project, NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.PackageManagement.NuGetProjectActionType nuGetProjectActionType, NuGet.ProjectModel.LockFile! originalLockFile, NuGet.Commands.RestoreResultPair! restoreResultPair, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository!>! sources, System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction!>! originalActions, NuGet.ProjectManagement.BuildIntegratedInstallationContext! installationContext) -> void
+NuGet.PackageManagement.BuildIntegratedProjectAction.BuildIntegratedProjectAction(NuGet.ProjectManagement.NuGetProject! project, NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.PackageManagement.NuGetProjectActionType nuGetProjectActionType, NuGet.ProjectModel.LockFile! originalLockFile, NuGet.Commands.RestoreResultPair! restoreResultPair, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository!>! sources, System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction!>! originalActions, NuGet.ProjectManagement.BuildIntegratedInstallationContext! installationContext, NuGet.Versioning.VersionRange? versionRange) -> void
+NuGet.PackageManagement.BuildIntegratedProjectAction.GetProjectActions() -> System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction!>!
+NuGet.PackageManagement.BuildIntegratedProjectAction.InstallationContext.get -> NuGet.ProjectManagement.BuildIntegratedInstallationContext!
+NuGet.PackageManagement.BuildIntegratedProjectAction.OriginalActions.get -> System.Collections.Generic.IReadOnlyList<NuGet.PackageManagement.NuGetProjectAction!>!
+NuGet.PackageManagement.BuildIntegratedProjectAction.OriginalLockFile.get -> NuGet.ProjectModel.LockFile!
+NuGet.PackageManagement.BuildIntegratedProjectAction.RestoreResult.get -> NuGet.Commands.RestoreResult!
+NuGet.PackageManagement.BuildIntegratedProjectAction.RestoreResultPair.get -> NuGet.Commands.RestoreResultPair!
+NuGet.PackageManagement.BuildIntegratedProjectAction.Sources.get -> System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Core.Types.SourceRepository!>!
 NuGet.PackageManagement.BuildIntegratedRestoreUtility
 NuGet.PackageManagement.DependencyGraphRestoreUtility
 NuGet.PackageManagement.ExceptionUtility

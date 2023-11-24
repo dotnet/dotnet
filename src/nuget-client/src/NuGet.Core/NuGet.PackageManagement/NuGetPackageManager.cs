@@ -24,6 +24,7 @@ using NuGet.ProjectModel;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Resolver;
+using NuGet.Shared;
 using NuGet.Versioning;
 
 namespace NuGet.PackageManagement
@@ -833,10 +834,7 @@ namespace NuGet.PackageManagement
 
             if (packageIdentities.Count == 0 && packageId == null)
             {
-                // Update-Package  all
-
-                //TODO: need to consider whether Update ALL simply does nothing for Build Integrated projects
-
+                // Update All
                 var lowLevelActions = new List<NuGetProjectAction>();
 
                 foreach (var installedPackage in projectInstalledPackageReferences)
@@ -3063,8 +3061,7 @@ namespace NuGet.PackageManagement
 
             foreach (var buildIntegratedProject in buildIntegratedProjects)
             {
-                var nuGetProjectActions = nugetProjectActionsLookup[buildIntegratedProject.MSBuildProjectPath];
-                var nuGetProjectActionsList = nuGetProjectActions;
+                NuGetProjectAction[] nuGetProjectActions = nugetProjectActionsLookup[buildIntegratedProject.MSBuildProjectPath];
                 var updatedPackageSpec = updatedNugetPackageSpecLookup[buildIntegratedProject.MSBuildProjectPath];
                 var originalPackageSpec = originalNugetPackageSpecLookup[buildIntegratedProject.MSBuildProjectPath];
                 var originalLockFile = lockFileLookup[buildIntegratedProject.MSBuildProjectPath];
@@ -3090,20 +3087,36 @@ namespace NuGet.PackageManagement
                     .Distinct()
                     .ToList();
 
-                var successfulFrameworks = allFrameworks
-                    .Except(unsuccessfulFrameworks)
-                    .ToList();
+                var originalFrameworks = updatedPackageSpec
+                    .TargetFrameworks
+                    .ToDictionary(x => x.FrameworkName, x => x.TargetAlias);
 
-                var firstAction = nuGetProjectActionsList[0];
+                List<(NuGetProjectAction, BuildIntegratedInstallationContext)> projectActionsAndInstallationContexts = new(nuGetProjectActions.Length);
+
+                foreach (var action in nuGetProjectActions)
+                {
+                    PackageSpec referencePackageSpec = null;
+                    referencePackageSpec = action.NuGetProjectActionType switch
+                    {
+                        NuGetProjectActionType.Install or NuGetProjectActionType.Update => restoreResult.Result.LockFile.PackageSpec,
+                        NuGetProjectActionType.Uninstall => originalPackageSpec,
+                        _ => throw new InvalidOperationException("Unknown NuGetProjectActionType"),
+                    };
+                    BuildIntegratedInstallationContext installationContext = CreateInstallationContextForPackageId(action.PackageIdentity.Id, referencePackageSpec, unsuccessfulFrameworks, originalFrameworks);
+                    projectActionsAndInstallationContexts.Add((action, installationContext));
+                }
+
+                var firstInstallationAndProjectContext = projectActionsAndInstallationContexts[0];
+                var firstAction = firstInstallationAndProjectContext.Item1;
+                var successfulFrameworks = firstInstallationAndProjectContext.Item2.SuccessfulFrameworks.AsList();
 
                 // If the restore failed and this was a single package install, try to install the package to a subset of
                 // the target frameworks.
-                if (nuGetProjectActionsList.Length == 1 &&
+                if (nuGetProjectActions.Length == 1 &&
                     firstAction.NuGetProjectActionType == NuGetProjectActionType.Install &&
                     !restoreResult.Result.Success &&
-                    successfulFrameworks.Any() &&
-                    unsuccessfulFrameworks.Any() &&
-                    // Exclude upgrades, for now we take the simplest case.
+                    successfulFrameworks.Count > 0 &&
+                    unsuccessfulFrameworks.Count > 0 &&
                     !PackageSpecOperations.HasPackage(originalPackageSpec, firstAction.PackageIdentity.Id))
                 {
                     updatedPackageSpec = originalPackageSpec.Clone();
@@ -3134,16 +3147,6 @@ namespace NuGet.PackageManagement
                     await MSBuildRestoreUtility.ReplayWarningsAndErrorsAsync(restoreResult.Result.LockFile?.LogMessages, logger);
                 }
 
-                // Build the installation context
-                var originalFrameworks = updatedPackageSpec
-                    .TargetFrameworks
-                    .ToDictionary(x => x.FrameworkName, x => x.TargetAlias);
-
-                var installationContext = new BuildIntegratedInstallationContext(
-                    successfulFrameworks,
-                    unsuccessfulFrameworks,
-                    originalFrameworks);
-
                 InstallationCompatibility.EnsurePackageCompatibility(
                     buildIntegratedProject,
                     pathContext,
@@ -3166,8 +3169,7 @@ namespace NuGet.PackageManagement
                     originalLockFile,
                     restoreResult,
                     sources.ToList(),
-                    nuGetProjectActionsList,
-                    installationContext,
+                    projectActionsAndInstallationContexts,
                     versionRange);
 
                 result.Add(new ResolvedAction(buildIntegratedProject, nugetProjectAction));
@@ -3187,6 +3189,35 @@ namespace NuGet.PackageManagement
             TelemetryActivity.EmitTelemetryEvent(actionTelemetryEvent);
 
             return result;
+        }
+
+        /// <summary>
+        /// Build a context for package given package id.
+        /// The "successful" frameworks are the ones that contain the package and are not part of the failed list.
+        /// The "unsuccessful" frameworks are the ones that never had the package or are part of the unsuccessful list.
+        /// </summary>>
+        internal static BuildIntegratedInstallationContext CreateInstallationContextForPackageId(string packageIdentityId, PackageSpec packageSpec, List<NuGetFramework> unsuccessfulFrameworks, Dictionary<NuGetFramework, string> originalFrameworks)
+        {
+            var frameworksWithResultingPackage = packageSpec
+                                .TargetFrameworks
+                                .Where(e => e.Dependencies.Any(a => a.Name == packageIdentityId))
+                                .Select(e => e.FrameworkName)
+                                .Distinct();
+
+            var frameworksWithoutResultingPackage = packageSpec
+                .TargetFrameworks
+                .Where(e => !e.Dependencies.Any(a => a.Name == packageIdentityId))
+                .Select(e => e.FrameworkName)
+                .Distinct();
+
+            var successfulFrameworksWithPackage = frameworksWithResultingPackage
+                .Except(unsuccessfulFrameworks)
+                .ToList();
+
+            return new BuildIntegratedInstallationContext(
+                successfulFrameworksWithPackage,
+                unsuccessfulFrameworks.Union(frameworksWithoutResultingPackage).Distinct(),
+                originalFrameworks);
         }
 
         /// <summary>
@@ -3259,7 +3290,7 @@ namespace NuGet.PackageManagement
                 var ignoreActions = new HashSet<NuGetProjectAction>();
                 var installedIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-                foreach (var action in projectAction.OriginalActions.Reverse())
+                foreach ((var action, _) in projectAction.ActionAndContextList.Reverse())
                 {
                     if (action.NuGetProjectActionType == NuGetProjectActionType.Install)
                     {
@@ -3275,8 +3306,9 @@ namespace NuGet.PackageManagement
                     projectAction.RestoreResult.LockFile.PackageSpec.RestoreMetadata.PackagesPath,
                     projectAction.RestoreResult.LockFile.PackageSpec.RestoreMetadata.FallbackFolders);
 
-                foreach (var originalAction in projectAction.OriginalActions.Where(e => !ignoreActions.Contains(e)))
+                foreach ((var originalAction, var installationContext) in projectAction.ActionAndContextList.Where(e => !ignoreActions.Contains(e.Item1)))
                 {
+                    // This is where we calculate what goes into CPSPackageReferenceProject
                     if (originalAction.NuGetProjectActionType == NuGetProjectActionType.Install)
                     {
                         if (buildIntegratedProject.ProjectStyle == ProjectStyle.PackageReference)
@@ -3286,12 +3318,12 @@ namespace NuGet.PackageManagement
                                 pathResolver,
                                 originalAction.PackageIdentity);
 
-                            var framework = projectAction.InstallationContext.SuccessfulFrameworks.FirstOrDefault();
+                            var framework = installationContext.SuccessfulFrameworks.FirstOrDefault();
                             var resolvedAction = projectAction.RestoreResult.LockFile.PackageSpec.TargetFrameworks.FirstOrDefault(fm => fm.FrameworkName.Equals(framework))
                                 .Dependencies.First(dependency => dependency.Name.Equals(originalAction.PackageIdentity.Id, StringComparison.OrdinalIgnoreCase));
 
-                            projectAction.InstallationContext.SuppressParent = resolvedAction.SuppressParent;
-                            projectAction.InstallationContext.IncludeType = resolvedAction.IncludeType;
+                            installationContext.SuppressParent = resolvedAction.SuppressParent;
+                            installationContext.IncludeType = resolvedAction.IncludeType;
                         }
 
                         // Install the package to the project
@@ -3299,7 +3331,7 @@ namespace NuGet.PackageManagement
                             originalAction.PackageIdentity.Id,
                             originalAction.VersionRange ?? new VersionRange(originalAction.PackageIdentity.Version),
                             nuGetProjectContext,
-                            projectAction.InstallationContext,
+                            installationContext,
                             token: token);
                     }
                     else if (originalAction.NuGetProjectActionType == NuGetProjectActionType.Uninstall)
@@ -3640,12 +3672,6 @@ namespace NuGet.PackageManagement
             {
                 packageWithDirectoriesToBeDeleted.Add(packageIdentity);
             }
-
-            // TODO: Consider using CancelEventArgs instead of a regular EventArgs??
-            //if (packageOperationEventArgs.Cancel)
-            //{
-            //    return;
-            //}
         }
 
         /// <summary>

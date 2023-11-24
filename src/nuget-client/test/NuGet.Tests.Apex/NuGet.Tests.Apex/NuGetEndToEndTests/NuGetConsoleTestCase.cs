@@ -965,6 +965,91 @@ namespace NuGet.Tests.Apex
             }
         }
 
+        [DataTestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task VerifyCmdFindPackageExactMatchInPMC()
+        {
+            EnsureVisualStudioHost();
+            using (var simpleTestPathContext = new SimpleTestPathContext())
+            {
+                // Arrange
+                var PackageName = "TestPackage";
+                var v100 = "1.0.0";
+                await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, PackageName, v100);
+
+                using (var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.NetCoreConsoleApp, Logger, addNetStandardFeeds: true, simpleTestPathContext: simpleTestPathContext))
+                {
+                    SolutionService solutionService = VisualStudio.Get<SolutionService>();
+                    var nugetConsole = GetConsole(testContext.Project);
+
+                    // Act
+                    nugetConsole.Execute($"find-package {PackageName} -ExactMatch");
+
+                    // Assert
+                    string PMCText = nugetConsole.GetText();
+                    PMCText.Should().Contain(PackageName);
+                    PMCText.Should().Contain(v100);
+                }
+            }
+        }
+
+        [DataTestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task VerifyCmdGetPackageUpdateInPMC()
+        {
+            EnsureVisualStudioHost();
+            using (var simpleTestPathContext = new SimpleTestPathContext())
+            {
+                // Arrange
+                var packageName = "TestPackage";
+                var v100 = "1.0.0";
+                var v200 = "2.0.0";
+                await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, v100);
+                await CommonUtility.CreatePackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, v200);
+
+                using (var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.NetCoreConsoleApp, Logger, addNetStandardFeeds: true, simpleTestPathContext: simpleTestPathContext))
+                {
+                    // Arrange
+                    SolutionService solutionService = VisualStudio.Get<SolutionService>();
+                    var nugetConsole = GetConsole(testContext.Project);
+
+                    nugetConsole.InstallPackageFromPMC(packageName, v100);
+                    testContext.SolutionService.Build();
+                    testContext.NuGetApexTestService.WaitForAutoRestore();
+                    nugetConsole.Clear();
+
+                    // Act
+                    nugetConsole.Execute("get-package -update");
+
+                    // Assert
+                    string PMCText = nugetConsole.GetText();
+                    PMCText.Should().Contain(v200);
+                }
+            }
+        }
+
+        [DataTestMethod]
+        [Timeout(DefaultTimeout)]
+        public void VerifyCmdGetProjectInPMC()
+        {
+            EnsureVisualStudioHost();
+            using (var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ClassLibrary, Logger))
+            {
+                // Arrange
+                SolutionService solutionService = VisualStudio.Get<SolutionService>();
+                var nugetConsole = GetConsole(testContext.Project);
+
+                //Act
+                nugetConsole.Execute("Get-Project");
+
+                // Assert
+                string PMCText = nugetConsole.GetText();
+                PMCText.Should().Contain(testContext.Project.Name);
+                PMCText.Should().Contain("C#");
+                PMCText.Should().Contain(testContext.Project.FullPath);
+            }
+        }
+
         public static IEnumerable<object[]> GetNetCoreTemplates()
         {
             yield return new object[] { ProjectTemplate.NetCoreConsoleApp };
