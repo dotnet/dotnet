@@ -13,21 +13,29 @@ internal class Program
 {
     private static async Task<int> Main(string[] args)
     {
-        var rootCommand = new RootCommand("Check that nupkg dependencies are available on specified source(s).");
+        var rootCommand = new CliRootCommand("Check that nupkg dependencies are available on specified source(s).");
 
-        var nupkgsArgument = new Argument<List<FileInfo>>("nupkgs");
+        var nupkgsArgument = new CliArgument<List<FileInfo>>("nupkgs");
         nupkgsArgument.Arity = ArgumentArity.OneOrMore;
         nupkgsArgument.Description = "Nupkgs to check";
         rootCommand.Add(nupkgsArgument);
 
-        var sourcesOption = new Option<List<string>>("--source");
-        sourcesOption.AddAlias("-s");
-        sourcesOption.IsRequired = true;
+        var sourcesOption = new CliOption<List<string>>("--source");
+        sourcesOption.Aliases.Add("-s");
+        sourcesOption.Required = true;
         sourcesOption.Arity = ArgumentArity.OneOrMore;
         rootCommand.Add(sourcesOption);
 
-        rootCommand.SetHandler(ExecuteAsync, nupkgsArgument, sourcesOption);
-        var exitCode = await rootCommand.InvokeAsync(args);
+        rootCommand.SetAction(async (ParseResult, CancellationToken) =>
+        {
+            var files = ParseResult.GetValue<List<FileInfo>>(nupkgsArgument);
+            var sourcesList = ParseResult.GetValue<List<string>>(sourcesOption);
+            if (files is not null && sourcesList is not null)
+            {
+                await ExecuteAsync(files, sourcesList);
+            }
+        });
+        var exitCode = await rootCommand.Parse(args).InvokeAsync();
         return exitCode;
     }
 

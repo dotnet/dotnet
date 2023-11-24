@@ -13,12 +13,12 @@ namespace NuGet.Internal.Tools.ShipPublicApis
         {
             var nugetSlnDirectory = FindNuGetSlnDirectory();
             var pathArgument = nugetSlnDirectory == null
-                ? new Argument<DirectoryInfo>("path")
-                : new Argument<DirectoryInfo>("path", getDefaultValue: () => nugetSlnDirectory);
+                ? new CliArgument<DirectoryInfo>("path")
+                : new CliArgument<DirectoryInfo>("path") { DefaultValueFactory = _ => nugetSlnDirectory };
 
-            var resortOption = new Option<bool>("--resort");
+            var resortOption = new CliOption<bool>("--resort");
 
-            var rootCommand = new RootCommand()
+            var rootCommand = new CliRootCommand()
             {
                 pathArgument,
                 resortOption
@@ -26,9 +26,17 @@ namespace NuGet.Internal.Tools.ShipPublicApis
 
             rootCommand.Description = "Copy and merge contents of PublicAPI.Unshipped.txt to PublicAPI.Shipped.txt. See https://github.com/NuGet/NuGet.Client/tree/dev/docs/nuget-sdk.md#Shipping_NuGet for more details.";
 
-            rootCommand.SetHandler<DirectoryInfo, bool>(MainAsync, pathArgument, resortOption);
+            rootCommand.SetAction(async (ParseResult, CancellationToken) =>
+            {
+                var path_Argument = ParseResult.GetValue<DirectoryInfo>(pathArgument);
+                var resort_Option = ParseResult.GetValue<bool>(resortOption);
+                if (path_Argument is not null && resort_Option)
+                {
+                    await MainAsync(path_Argument, resort_Option);
+                }
+            });
 
-            return await rootCommand.InvokeAsync(args);
+            return await rootCommand.Parse(args).InvokeAsync();
         }
 
         private static DirectoryInfo? FindNuGetSlnDirectory()
