@@ -31,7 +31,7 @@
   <ItemGroup Label="NuGet">
     <NuspecProperty Include="SrcPackageFolder=$(SrcPackageFolder)" />
     <NuspecProperty Include="TesthostRuntimeconfig=$(RepoRoot)temp\testhost" />
-    <NuspecProperty Include="SourceBuildTfm=$(NetCurrent)" />
+    <NuspecProperty Include="SourceBuildTfm=net9.0" />
   </ItemGroup>
 
   <PropertyGroup>
