@@ -161,8 +161,10 @@ To enable full offline source-building of the VMR, we have no other choice than 
 <!-- component list beginning -->
 - `src/arcade`  
 *[dotnet/arcade@0aaeafe](https://github.com/dotnet/arcade/commit/0aaeafef60933f87b0b50350313bb2fd77defb5d)*
+- `src/aspire`  
+*[_git/dotnet-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspire/commit/48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@b0c12df](https://github.com/dotnet/aspnetcore/commit/b0c12dfb32e70e2c48b1e0a62e9ceb0f5c6a14e1)*
+*[_git/dotnet-aspnetcore@3f1acb5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/commit/3f1acb59718cadf111a0a796681e3d3509bb3381)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@7e33b6a](https://github.com/google/googletest/commit/7e33b6a1c497ced1e98fc60175aeb4678419281c)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -176,13 +178,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@5ce78f6](https://github.com/dotnet/diagnostics/commit/5ce78f66d89ea529e459abddb129ab36cb5bd936)*
 - `src/emsdk`  
-*[dotnet/emsdk@51bf18a](https://github.com/dotnet/emsdk/commit/51bf18a2e20024dfa89d63e20b0c3b695b5c1eed)*
+*[dotnet/emsdk@2406616](https://github.com/dotnet/emsdk/commit/2406616d0e3a31d80b326e27c156955bfa41c791)*
 - `src/format`  
-*[dotnet/format@aadaa16](https://github.com/dotnet/format/commit/aadaa166c39c8686c55dbec3462355b1ca033b62)*
+*[_git/dotnet-format@2651752](https://dev.azure.com/dnceng/internal/_git/dotnet-format/commit/2651752953c0d41c8c7b8d661cf2237151af33d0)*
 - `src/fsharp`  
 *[dotnet/fsharp@f41fe15](https://github.com/dotnet/fsharp/commit/f41fe153f68dd6b20cf4f91de9ea1e55fc09bb20)*
 - `src/installer`  
-*[dotnet/installer@f84443f](https://github.com/dotnet/installer/commit/f84443f1c6cd7c9c47c7f795c81ca87e7f135fa0)*
+*[dotnet/installer@769030c](https://github.com/dotnet/installer/commit/769030cd4dfa6beae7e8f22aad3781936442f168)*
 - `src/msbuild`  
 *[dotnet/msbuild@195e7f5](https://github.com/dotnet/msbuild/commit/195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22)*
 - `src/nuget-client`  
@@ -192,13 +194,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@94fc3bd](https://github.com/dotnet/razor/commit/94fc3bd6fb6c8611fd4495e350db0560f46ece19)*
 - `src/roslyn`  
-*[dotnet/roslyn@12b1168](https://github.com/dotnet/roslyn/commit/12b11685a551e0a6a203dcecb584f610f4df1157)*
+*[dotnet/roslyn@f43cd10](https://github.com/dotnet/roslyn/commit/f43cd10b737b6343956dee421cff8c50b602c788)*
 - `src/roslyn-analyzers`  
-*[dotnet/roslyn-analyzers@4ff2809](https://github.com/dotnet/roslyn-analyzers/commit/4ff28092cdb2006c30869fb35b2fd6b7b11382b1)*
+*[dotnet/roslyn-analyzers@b4d9a13](https://github.com/dotnet/roslyn-analyzers/commit/b4d9a1334d5189172977ba8fddd00bda70161e4a)*
 - `src/runtime`  
-*[dotnet/runtime@488a8a3](https://github.com/dotnet/runtime/commit/488a8a3521610422e8fbe22d5cc66127f3dce3dc)*
+*[_git/dotnet-runtime@5535e31](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/commit/5535e31a712343a63f5d7d796cd874e563e5ac14)*
 - `src/sdk`  
-*[dotnet/sdk@a08f890](https://github.com/dotnet/sdk/commit/a08f8900d1b7f4cef2a1077dc4ce90c56cb4ada5)*
+*[_git/dotnet-sdk@e9d13cb](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/commit/e9d13cbe7e8c1d52ce276a8655f52a87e1017c46)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@e844aa0](https://github.com/dotnet/source-build-externals/commit/e844aa02a05b90d8cbe499676ec6ee0f19ec4980)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -232,7 +234,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@2c8079e](https://github.com/dotnet/symreader/commit/2c8079e2e8e78c0cd11ac75a32014756136ecdb9)*
 - `src/templating`  
-*[dotnet/templating@ef1b724](https://github.com/dotnet/templating/commit/ef1b724b2f366b6c6d76eada46d5177cda2aef25)*
+*[_git/dotnet-templating@4085146](https://dev.azure.com/dnceng/internal/_git/dotnet-templating/commit/4085146587b833948a22587b36a108bcdb3f04a3)*
 - `src/test-templates`  
 *[dotnet/test-templates@1e5f360](https://github.com/dotnet/test-templates/commit/1e5f3603af2277910aad946736ee23283e7f3e16)*
 - `src/vstest`  
