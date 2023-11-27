@@ -30,6 +30,7 @@
     <ProjectReference Include="$(RepoRoot)src\vstest.console\vstest.console.csproj" />
     <ProjectReference Include="$(RepoRoot)playground\MSTest1\MSTest1.csproj" />
     <ProjectReference Include="$(RepoRoot)src\AttachVS\AttachVS.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) AND '$(OS)' != 'Windows_NT' ">
     <Reference Include="System" />
@@ -49,7 +50,7 @@
       <FileToCopy Include="$(SourcePath)bin\vstest.console\$(Configuration)\$(NetFrameworkMinimum)\win7-x64\**\*.*" SubFolder="" />
       <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.TestHostProvider\$(Configuration)\$(NetFrameworkMinimum)\**\*.*" SubFolder="Extensions\" />
 
-      <!-- copy net462, net47, net471, net472 and net48 testhosts" -->
+      <!-- copy net462, net47, net471, net472 and net48 testhosts -->
       <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\$(NetFrameworkMinimum)\win7-x86\**\*.*" SubFolder="TestHostNetFramework\" />
       <FileToCopy Include="$(SourcePath)bin\testhost\$(Configuration)\$(NetFrameworkMinimum)\win7-x64\**\*.*" SubFolder="TestHostNetFramework\" />
       <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\net47\win7-x86\**\*.*" SubFolder="TestHostNetFramework\" />
@@ -61,13 +62,16 @@
       <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\net48\win7-x86\**\*.*" SubFolder="TestHostNetFramework\" />
       <FileToCopy Include="$(SourcePath)bin\testhost\$(Configuration)\net48\win7-x64\**\*.*" SubFolder="TestHostNetFramework\" />
 
-      <!-- copy datacollectors" -->
+      <!-- copy datacollectors -->
       <FileToCopy Include="$(SourcePath)bin\datacollector\$(Configuration)\net472\win7-x64\**\*.*" SubFolder="" />
       <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.Extensions.BlameDataCollector\$(Configuration)\net472\**\*.*" SubFolder="Extensions\" />
       <FileToCopy Include="$(SourcePath)bin\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\$(Configuration)\$(NetFrameworkMinimum)\**\*.*" SubFolder="Extensions\" />
       <FileToCopy Include="$(SourcePath)bin\DataCollectors\DumpMinitool\$(Configuration)\$(NetFrameworkMinimum)\win7-x64\**\*.*" SubFolder="Extensions\blame\" />
       <FileToCopy Include="$(SourcePath)bin\DataCollectors\DumpMinitool.x86\$(Configuration)\$(NetFrameworkMinimum)\win7-x86\**\*.*" SubFolder="Extensions\blame\" />
       <FileToCopy Include="$(SourcePath)bin\DataCollectors\DumpMinitool.arm64\$(Configuration)\$(NetFrameworkMinimum)\win10-arm64\**\*.*" SubFolder="Extensions\blame\" />
+
+      <!-- copy loggers -->
+      <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.Extensions.HtmlLogger\$(Configuration)\$(NetFrameworkMinimum)\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger*" SubFolder="Extensions\" />
     </ItemGroup>
 
     <Copy SourceFiles="@(FileToCopy)" DestinationFiles="@(FileToCopy -> '$(DestinationPath)\%(SubFolder)\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="True" OverwriteReadOnlyFiles="True" Retries="3" RetryDelayMilliseconds="500" UseHardlinksIfPossible="False" UseSymboliclinksIfPossible="False" ErrorIfLinkFails="False" Condition="@(FileToCopy-&gt;Count()) &gt; 0">

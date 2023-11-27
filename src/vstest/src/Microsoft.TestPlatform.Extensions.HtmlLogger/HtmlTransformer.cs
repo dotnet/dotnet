@@ -20,7 +20,7 @@ internal class HtmlTransformer : IHtmlTransformer
     public HtmlTransformer()
     {
         _xslTransform = new XslCompiledTransform();
-        _xslTransform.Load(XmlReader.Create(GetType().Assembly.GetManifestResourceStream("Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Html.xslt") ?? throw new InvalidOperationException()));
+        _xslTransform.Load(XmlReader.Create(GetType().Assembly.GetManifestResourceStream("Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.Html.xslt") ?? throw new InvalidOperationException(), new XmlReaderSettings { CheckCharacters = false }));
     }
 
     /// <summary>
@@ -33,7 +33,9 @@ internal class HtmlTransformer : IHtmlTransformer
         // for example &#xFFFF;. DCS will load them, but for XSL to load them here we need to pass it
         // a reader that we've configured to be tolerant of such references.
         using XmlReader xr = XmlReader.Create(xmlFile, new XmlReaderSettings() { CheckCharacters = false });
-        using XmlWriter xw = XmlWriter.Create(htmlFile, new XmlWriterSettings() { CheckCharacters = false });
+
+        // Use output settings from the xslt, especially the output method, which is HTML, which avoids outputting broken <div /> tags.
+        using XmlWriter xw = XmlWriter.Create(htmlFile, _xslTransform.OutputSettings);
 
         _xslTransform.Transform(xr, xw);
     }

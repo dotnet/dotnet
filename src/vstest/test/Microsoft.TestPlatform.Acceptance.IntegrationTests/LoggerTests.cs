@@ -69,10 +69,19 @@ public class LoggerTests : AcceptanceTestBase
         InvokeVsTest(arguments);
 
         var htmlLogFilePath = Path.Combine(TempDirectory.Path, htmlFileName);
-        XmlDocument report = new();
-        report.Load(htmlLogFilePath);
+        XmlDocument report = LoadReport(htmlLogFilePath);
 
         AssertExpectedHtml(report.DocumentElement!);
+    }
+
+    private static XmlDocument LoadReport(string htmlLogFilePath)
+    {
+        // XML reader cannot handle <br> tags because they are not closed, and hence are not valid XML.
+        // They are correct HTML though, so we patch it here. 
+        var text = File.ReadAllText(htmlLogFilePath).Replace("<br>", "<br/>");
+        var report = new XmlDocument();
+        report.Load(new StringReader(text));
+        return report;
     }
 
     [TestMethod]
