@@ -268,6 +268,7 @@ fi
   $additional_remotes                        \
   --readme-template "$readme_template"       \
   --tpn-template "$tpn_template"             \
+  --discard-patches                          \
   "$repository"
 
 if [[ $? == 0 ]]; then

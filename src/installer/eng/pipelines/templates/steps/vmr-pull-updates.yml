@@ -33,6 +33,7 @@ steps:
 - script: |
     git checkout -B ${{ parameters.vmrBranch }}
     echo "##vso[task.setvariable variable=vmrBranch]${{ parameters.vmrBranch }}"
+    mkdir -p ${{ parameters.vmrPath }}/artifacts/x64/Release
   displayName: Prepare branch ${{ parameters.vmrBranch }}
   workingDirectory: ${{ parameters.vmrPath }}
 
@@ -41,6 +42,12 @@ steps:
     git config --global user.email "dotnet-maestro[bot]@users.noreply.github.com"
   displayName: Set git author to dotnet-maestro[bot]
   workingDirectory: ${{ parameters.vmrPath }}
+
+- script: |
+    echo '**/*' > .artifactignore
+    echo '!./*.patch' >> .artifactignore
+  displayName: Prepare .artifactignore
+  workingDirectory: $(Agent.TempDirectory)
 
 - script: >
     ./eng/vmr-sync.sh
@@ -54,5 +61,12 @@ steps:
     --readme-template $(Agent.BuildDirectory)/installer/src/VirtualMonoRepo/README.template.md
     --tpn-template $(Agent.BuildDirectory)/installer/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt
     --debug
+    ||
+    (echo "##vso[task.logissue type=error]Failed to synchronize the VMR" && exit 1)
   displayName: Synchronize dotnet/dotnet
   workingDirectory: $(Agent.BuildDirectory)/installer
+
+- publish: $(Agent.TempDirectory)
+  artifact: $(System.JobDisplayName)_FailedPatches
+  displayName: Upload failed patches
+  condition: failed()
