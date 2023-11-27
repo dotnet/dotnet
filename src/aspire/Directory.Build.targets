@@ -1,0 +1,28 @@
+<Project>
+
+  <PropertyGroup>
+    <ReadMePath>$(MSBuildProjectDirectory)\README.md</ReadMePath>
+    <ReadMeExists Condition="Exists('$(ReadMePath)')">true</ReadMeExists>
+    <PackageReadmeFile Condition="'$(PackageReadmeFile)' == '' And '$(ReadMeExists)' == 'true'">README.md</PackageReadmeFile>
+
+    <PackageIconFullPath Condition="'$(SuppressAspireIcon)' != 'true'">$(SharedDir)Aspire_icon_256.png</PackageIconFullPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageThirdPartyNoticesFile Condition="'$(PackageThirdPartyNoticesFile)' == ''">$(RepoRoot)THIRD-PARTY-NOTICES.TXT</PackageThirdPartyNoticesFile>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsPackable)' == 'true'">
+    <None Include="$(PackageThirdPartyNoticesFile)" Pack="true" PackagePath="." />
+  </ItemGroup>
+
+  <Import Condition="'$(SampleProject)' == 'true' or '$(CI)' != 'true' " Project="eng\Versions.dev.targets" />
+  <Import Condition="'$(SampleProject)' != 'true' and '$(CI)' == 'true' " Project="eng\Versions.targets" />
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <ItemGroup Condition="'$(ReadMeExists)' == 'true'">
+    <None Include="$(ReadMePath)" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  
+</Project>
