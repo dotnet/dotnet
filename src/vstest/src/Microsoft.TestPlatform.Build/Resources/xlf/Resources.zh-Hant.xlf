@@ -12,6 +12,11 @@
         <target state="translated">已開始建置，請稍候...</target>
         <note />
       </trans-unit>
+      <trans-unit id="TestFilePathCannotBeEmptyOrNull">
+        <source>Test file path cannot be empty or null.</source>
+        <target state="translated">測試檔案路徑不可為空白或 null。</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TestRunningSummary">
         <source>Test run for {0} ({1})</source>
         <target state="translated">{0} 的測試回合 ({1})</target>

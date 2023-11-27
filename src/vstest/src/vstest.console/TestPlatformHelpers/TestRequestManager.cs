@@ -809,7 +809,7 @@ internal class TestRequestManager : ITestRequestManager
         settingsUpdated |= UpdateDesignMode(document, runConfiguration);
         settingsUpdated |= UpdateCollectSourceInformation(document, runConfiguration);
         settingsUpdated |= UpdateTargetDevice(navigator, document);
-        settingsUpdated |= AddOrUpdateConsoleLogger(document, runConfiguration, loggerRunSettings);
+        settingsUpdated |= AddOrUpdateBuiltInLoggers(document, runConfiguration, loggerRunSettings);
         settingsUpdated |= AddOrUpdateBatchSize(document, runConfiguration, isDiscovery);
 
         updatedRunSettingsXml = navigator.OuterXml;
@@ -892,27 +892,43 @@ internal class TestRequestManager : ITestRequestManager
         return runsettings;
     }
 
-    private bool AddOrUpdateConsoleLogger(
+    private bool AddOrUpdateBuiltInLoggers(
         XmlDocument document,
         RunConfiguration runConfiguration,
         LoggerRunSettings loggerRunSettings)
     {
-        // Update console logger settings.
+        // Update built-in logger settings if requested by the user on command line to populate
+        // the default assembly path to those loggers so we can find them.
         bool consoleLoggerUpdated = UpdateConsoleLoggerIfExists(document, loggerRunSettings);
+        bool msbuildLoggerUpdated = UpdateMSBuildLoggerIfExists(document, loggerRunSettings);
 
-        // In case of CLI, add console logger if not already present.
         bool designMode = runConfiguration.DesignModeSet
             ? runConfiguration.DesignMode
             : _commandLineOptions.IsDesignMode;
-        if (!designMode && !consoleLoggerUpdated)
+
+        // In design mode (under IDE) don't add the default logger, we are "logging"
+        // via messages to vstest console wrapper.
+        if (!designMode)
         {
-            AddConsoleLogger(document, loggerRunSettings);
+            // When we are not in design mode, add one of the default loggers.
+
+            // If msbuild logger was present on the command line, we are being called from
+            // dotnet sdk via vstest task, and should output to msbuild. If user additionally
+            // specified console logger it is allowed but we won't add automatically.
+            if (!msbuildLoggerUpdated) // msbuild logger is not present on command line
+            {
+                if (!consoleLoggerUpdated) // console logger is not present on commandline
+                {
+                    // Add console logger because that is the default
+                    AddConsoleLogger(document, loggerRunSettings);
+                }
+            }
         }
 
         // Update is required:
         //     1) in case of CLI;
         //     2) in case of design mode if console logger is present in runsettings.
-        return !designMode || consoleLoggerUpdated;
+        return !designMode || consoleLoggerUpdated || msbuildLoggerUpdated;
     }
 
     private static bool UpdateTargetDevice(
@@ -1135,13 +1151,13 @@ internal class TestRequestManager : ITestRequestManager
         XmlDocument document,
         LoggerRunSettings loggerRunSettings)
     {
-        var defaultConsoleLogger = new LoggerSettings
+        var logger = new LoggerSettings
         {
             FriendlyName = ConsoleLogger.FriendlyName,
             Uri = new Uri(ConsoleLogger.ExtensionUri)
         };
 
-        var existingLoggerIndex = loggerRunSettings.GetExistingLoggerIndex(defaultConsoleLogger);
+        var existingLoggerIndex = loggerRunSettings.GetExistingLoggerIndex(logger);
 
         // Update assemblyQualifiedName and codeBase of existing logger.
         if (existingLoggerIndex >= 0)
@@ -1149,6 +1165,41 @@ internal class TestRequestManager : ITestRequestManager
             var consoleLogger = loggerRunSettings.LoggerSettingsList[existingLoggerIndex];
             consoleLogger.AssemblyQualifiedName = typeof(ConsoleLogger).AssemblyQualifiedName;
             consoleLogger.CodeBase = typeof(ConsoleLogger).Assembly.Location;
+            RunSettingsProviderExtensions.UpdateRunSettingsXmlDocumentInnerXml(
+                document,
+                ObjectModel.Constants.LoggerRunSettingsName,
+                loggerRunSettings.ToXml().InnerXml);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Add MSBuild console logger in runsettings if exists.
+    /// </summary>
+    /// <param name="document">Runsettings document.</param>
+    /// <param name="loggerRunSettings">Logger run settings.</param>
+    /// <returns>True if updated console logger in runsettings successfully.</returns>
+    private static bool UpdateMSBuildLoggerIfExists(
+        XmlDocument document,
+        LoggerRunSettings loggerRunSettings)
+    {
+        var logger = new LoggerSettings
+        {
+            FriendlyName = MSBuildLogger.FriendlyName,
+            Uri = new Uri(MSBuildLogger.ExtensionUri)
+        };
+
+        var existingLoggerIndex = loggerRunSettings.GetExistingLoggerIndex(logger);
+
+        // Update assemblyQualifiedName and codeBase of existing logger.
+        if (existingLoggerIndex >= 0)
+        {
+            var msBuildLogger = loggerRunSettings.LoggerSettingsList[existingLoggerIndex];
+            msBuildLogger.AssemblyQualifiedName = typeof(MSBuildLogger).AssemblyQualifiedName;
+            msBuildLogger.CodeBase = typeof(MSBuildLogger).Assembly.Location;
             RunSettingsProviderExtensions.UpdateRunSettingsXmlDocumentInnerXml(
                 document,
                 ObjectModel.Constants.LoggerRunSettingsName,

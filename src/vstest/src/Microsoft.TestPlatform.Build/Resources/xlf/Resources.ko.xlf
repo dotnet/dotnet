@@ -12,6 +12,11 @@
         <target state="translated">빌드가 시작되었습니다. 잠시 기다려 주세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="TestFilePathCannotBeEmptyOrNull">
+        <source>Test file path cannot be empty or null.</source>
+        <target state="translated">테스트 파일 경로는 비어 있거나 null일 수 없습니다.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TestRunningSummary">
         <source>Test run for {0} ({1})</source>
         <target state="translated">{0}({1})에 대한 테스트 실행</target>

@@ -49,10 +49,22 @@ public class Build : IntegrationTestBase
 
     private static void CopyAndPatchDotnet()
     {
-        // TODO: patch dotnet with latest build targets
         var patchedDotnetDir = Path.GetFullPath(Path.Combine(Root, "artifacts", "tmp", ".dotnet"));
 
+        // Copy dotnet.
         DirectoryUtils.CopyDirectory(new DirectoryInfo(DotnetDir), new DirectoryInfo(patchedDotnetDir));
+
+        // Copy target file and build task dll into it.
+        var netTestSdkVersion = IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion;
+        var packageName = $"Microsoft.TestPlatform.Build.{netTestSdkVersion}.nupkg";
+        var packagePath = Path.GetFullPath(Path.Combine(IntegrationTestEnvironment.PublishDirectory, packageName));
+
+        // e.g. artifacts\tmp\.dotnet\sdk\
+        var sdkDirectory = Path.Combine(patchedDotnetDir, "sdk");
+        // e.g. artifacts\tmp\.dotnet\sdk\8.0.100-preview.6.23330.14
+        var dotnetSdkDirectory = Directory.GetDirectories(sdkDirectory).Single();
+        DirectoryUtils.CopyDirectory(Path.Combine(packagePath, "lib", "netstandard2.0"), dotnetSdkDirectory);
+        DirectoryUtils.CopyDirectory(Path.Combine(packagePath, "runtimes", "any", "native"), dotnetSdkDirectory);
     }
 
     private static void BuildTestAssetsCompatibility()
@@ -337,6 +349,7 @@ public class Build : IntegrationTestBase
         {
             $"Microsoft.TestPlatform.{netTestSdkVersion}.nupkg",
             $"Microsoft.TestPlatform.CLI.{netTestSdkVersion}.nupkg",
+            $"Microsoft.TestPlatform.Build.{netTestSdkVersion}.nupkg",
             $"Microsoft.CodeCoverage.{netTestSdkVersion}.nupkg",
             $"Microsoft.TestPlatform.Portable.{netTestSdkVersion}.nupkg",
         };

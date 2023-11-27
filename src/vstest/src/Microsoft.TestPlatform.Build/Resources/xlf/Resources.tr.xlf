@@ -12,6 +12,11 @@
         <target state="translated">Derleme başlatıldı. Lütfen bekleyin...</target>
         <note />
       </trans-unit>
+      <trans-unit id="TestFilePathCannotBeEmptyOrNull">
+        <source>Test file path cannot be empty or null.</source>
+        <target state="translated">Test dosyası yolu boş veya null olamaz.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TestRunningSummary">
         <source>Test run for {0} ({1})</source>
         <target state="translated">{0} ({1}) için test çalıştırması</target>

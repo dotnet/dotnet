@@ -12,6 +12,11 @@
         <target state="translated">Začalo sestavování. Počkejte prosím...</target>
         <note />
       </trans-unit>
+      <trans-unit id="TestFilePathCannotBeEmptyOrNull">
+        <source>Test file path cannot be empty or null.</source>
+        <target state="translated">Cesta k souboru testu nemůže být prázdná nebo null.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TestRunningSummary">
         <source>Test run for {0} ({1})</source>
         <target state="translated">Testovací běh pro {0} ({1})</target>

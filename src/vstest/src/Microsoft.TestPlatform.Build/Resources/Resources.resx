@@ -126,6 +126,9 @@
   <data name="NoIsTestProjectProperty" xml:space="preserve">
     <value>Skipping running test for project {0}. To run tests with dotnet test add "&lt;IsTestProject&gt;true&lt;/IsTestProject&gt;" property to project file.</value>
   </data>
+  <data name="TestFilePathCannotBeEmptyOrNull" xml:space="preserve">
+    <value>Test file path cannot be empty or null.</value>
+  </data>
   <data name="TestRunningSummary" xml:space="preserve">
     <value>Test run for {0} ({1})</value>
   </data>

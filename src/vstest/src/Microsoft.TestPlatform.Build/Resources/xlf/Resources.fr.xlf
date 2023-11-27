@@ -12,6 +12,11 @@
         <target state="translated">La build a démarré. Patientez…</target>
         <note />
       </trans-unit>
+      <trans-unit id="TestFilePathCannotBeEmptyOrNull">
+        <source>Test file path cannot be empty or null.</source>
+        <target state="translated">Le chemin d’accès du fichier de test ne peut pas être vide ou null.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TestRunningSummary">
         <source>Test run for {0} ({1})</source>
         <target state="translated">Série de tests pour {0} ({1})</target>

@@ -8,16 +8,16 @@ The RFC outlines why
 2. Running of tests with disable appdomain is important for resiliency 
 
 ## Motivation
-In past we have seen customer hitting issue with Appdomain.Unload. There are two main issues with Appdoamin.Unload call
+In past we have seen customer hitting issue with AppDomain.Unload. There are two main issues with AppDomain.Unload call
 
-1. Hang in Appdoamin.Unload (Tracking issue https://github.com/Microsoft/testfx/issues/225)
+1. Hang in AppDomain.Unload (Tracking issue https://github.com/Microsoft/testfx/issues/225)
 
 2. AppDomain.Unload call can crash the process even if you have an exception handler in code (check next section for details)
 
 
 ## Details of one such crash during Appdomain.Unload
 
-Below is one of the analysis done for one of the crash dump while calling Appdomain.Unload
+Below is one of the analysis done for one of the crash dump while calling AppDomain.Unload
 
 1.	An HWND (call it X) has a WndProc that is implemented in managed code.
 2.	The app domain that owns the WndProc code shuts down.
