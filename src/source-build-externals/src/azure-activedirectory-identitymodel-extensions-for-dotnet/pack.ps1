@@ -63,11 +63,21 @@ Write-Host "releaseVersion: " $releaseVersion;
 Write-Host "nugetPreview:   " $nugetPreview;
 
 CreateArtifactsFolder($artifactsRoot);
-foreach($project in $buildConfiguration.SelectNodes("root/projects/src/project"))
+
+foreach ($project in $buildConfiguration.SelectNodes("root/projects/src/project"))
 {
-	$name = $project.name;
-	Write-Host ">>> Start-Process -wait -NoNewWindow $dotnetexe 'pack' --no-build --no-restore -nodereuse:false -c $buildType -o $artifactsRoot -v q -s $root\src\$name\$name.csproj"
-	Start-Process -Wait -PassThru -NoNewWindow $dotnetexe "pack --no-build --no-restore -nodereuse:false -c $buildType -o $artifactsRoot -v q -s $root\src\$name\$name.csproj"
+    $name = $project.name
+    $projectPath = [System.IO.Path]::Combine($root, "src", $name, "$name.csproj")
+
+    Write-Host ">>> dotnet pack --no-build --no-restore -nodereuse:false -c $buildType -o $artifactsRoot -v q -s $projectPath"
+    dotnet pack --no-build --no-restore -nodereuse:false -c $buildType -o $artifactsRoot -v q -s $projectPath
+
+    if($LASTEXITCODE -ne 0)
+    {
+        throw "Error occurred while packaging project '$projectPath'!"
+    }
+
+    Write-Host "Packaging for project '$projectPath' completed successfully."
 }
 
 Write-Host "============================"

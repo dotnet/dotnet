@@ -79,6 +79,17 @@ namespace Microsoft.IdentityModel.Tokens
         /// <returns>a <see cref="ICompressionProvider"/>.</returns>
         public ICompressionProvider CreateCompressionProvider(string algorithm)
         {
+            return CreateCompressionProvider(algorithm, TokenValidationParameters.DefaultMaximumTokenSizeInBytes);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="ICompressionProvider"/> for a specific algorithm.
+        /// </summary>
+        /// <param name="algorithm">the decompression algorithm.</param>
+        /// <param name="maximumDeflateSize">the maximum deflate size in chars that will be processed.</param>
+        /// <returns>a <see cref="ICompressionProvider"/>.</returns>
+        public ICompressionProvider CreateCompressionProvider(string algorithm, int maximumDeflateSize)
+        {
             if (string.IsNullOrEmpty(algorithm))
                 throw LogHelper.LogArgumentNullException(nameof(algorithm));
 
@@ -86,10 +97,11 @@ namespace Microsoft.IdentityModel.Tokens
                 return CustomCompressionProvider;
 
             if (algorithm.Equals(CompressionAlgorithms.Deflate))
-                return new DeflateCompressionProvider();
+                return new DeflateCompressionProvider { MaximumDeflateSize = maximumDeflateSize };
 
             throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10652, LogHelper.MarkAsNonPII(algorithm))));
         }
+
     }
 }
 

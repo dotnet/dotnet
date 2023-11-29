@@ -114,31 +114,8 @@ namespace System.IdentityModel.Tokens.Jwt
                     }
                     else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Sub))
                     {
-                        reader.Read();
-                        if (reader.TokenType == JsonTokenType.String)
-                        {
-                            payload._sub = JsonSerializerPrimitives.ReadString(ref reader, JwtRegisteredClaimNames.Sub, ClassName, false);
-                            payload[JwtRegisteredClaimNames.Sub] = payload._sub;
-                        }
-                        else if (reader.TokenType == JsonTokenType.StartArray)
-                        {
-                            payload._audiences = new List<string>();
-                            JsonSerializerPrimitives.ReadStrings(ref reader, payload._audiences, JwtRegisteredClaimNames.Sub, ClassName, false);
-                            payload[JwtRegisteredClaimNames.Sub] = payload._audiences;
-                        }
-                        else
-                        {
-                            throw LogHelper.LogExceptionMessage(
-                                new JsonException(
-                                    LogHelper.FormatInvariant(
-                                        Microsoft.IdentityModel.Tokens.LogMessages.IDX11023,
-                                        LogHelper.MarkAsNonPII("JsonTokenType.String or JsonTokenType.StartArray"),
-                                        LogHelper.MarkAsNonPII(reader.TokenType),
-                                        LogHelper.MarkAsNonPII(ClassName),
-                                        LogHelper.MarkAsNonPII(reader.TokenStartIndex),
-                                        LogHelper.MarkAsNonPII(reader.CurrentDepth),
-                                        LogHelper.MarkAsNonPII(reader.BytesConsumed))));
-                        }
+                        payload._sub = JsonSerializerPrimitives.ReadStringOrNumberAsString(ref reader, JwtRegisteredClaimNames.Sub, ClassName, true);
+                        payload[JwtRegisteredClaimNames.Sub] = payload._sub;
                     }
                     else
                     {

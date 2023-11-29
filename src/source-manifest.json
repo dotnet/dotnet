@@ -13,10 +13,10 @@
       "commitSha": "48e42f59d64d84b404e904996a9ed61f2a17a569"
     },
     {
-      "packageVersion": "8.0.0-rtm.23531.12",
+      "packageVersion": "8.0.1-servicing.23578.9",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "3f1acb59718cadf111a0a796681e3d3509bb3381"
+      "commitSha": "02aeddda68390d089a8cdd32f5a25229cbe6daa3"
     },
     {
       "packageVersion": "0.11.4-alpha.23509.2",
@@ -43,10 +43,10 @@
       "commitSha": "5ce78f66d89ea529e459abddb129ab36cb5bd936"
     },
     {
-      "packageVersion": "8.0.0-rtm.23530.2",
+      "packageVersion": "8.0.1-servicing.23571.1",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "2406616d0e3a31d80b326e27c156955bfa41c791"
+      "commitSha": "201f4dae9d1a1e105d8ba86d7ece61eed1f665e0"
     },
     {
       "packageVersion": "8.0.456602",
@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "5ec6e842469832b27ff17bc3e05186062f56b444"
+      "commitSha": "5a0b2e2ae21bd31ec72f880e4d467b4a0458a9a6"
     },
     {
       "packageVersion": "17.8.3-preview-23519-04",
@@ -85,7 +85,7 @@
       "commitSha": "f0a326f3e15b2370371693a76fd379635387c74d"
     },
     {
-      "packageVersion": "4.8.0-7.23566.2",
+      "packageVersion": "4.8.0-7.23572.1",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
       "commitSha": "7b75981cf3bd520b86ec4ed00ec156c8bc48e4eb"
@@ -97,22 +97,22 @@
       "commitSha": "b4d9a1334d5189172977ba8fddd00bda70161e4a"
     },
     {
-      "packageVersion": "8.0.0-rtm.23531.3",
+      "packageVersion": "8.0.1-servicing.23578.5",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "5535e31a712343a63f5d7d796cd874e563e5ac14"
+      "commitSha": "eddf880ac57b7f2c79a77592e3e6d24d1d02f112"
     },
     {
-      "packageVersion": "8.0.101-servicing.23567.10",
+      "packageVersion": "8.0.101-servicing.23579.8",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "896ac7319c1d96012fa40193a20d1aadc444c697"
+      "commitSha": "6192aadb9e2257206a8328c41df7dc179fcc3197"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23570.1",
+      "packageVersion": "8.0.0-alpha.1.23577.6",
       "path": "source-build-externals",
-      "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "e844aa02a05b90d8cbe499676ec6ee0f19ec4980"
+      "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-source-build-externals",
+      "commitSha": "0f0f1f0f33830f27ed0ff357145d2464b96b1a3e"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23565.1",
@@ -121,10 +121,10 @@
       "commitSha": "95f83e27806330fec09edd96e06bba3acabe3f35"
     },
     {
-      "packageVersion": "8.0.0-beta.23510.2",
+      "packageVersion": "8.0.0-beta.23578.1",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "e2f4720f9e7411122675568b984606c405b3bb53"
+      "commitSha": "f6b97c9ef635ad82b195a952ac0e0a969b9cf39c"
     },
     {
       "packageVersion": "2.1.0-beta.23253.1",
@@ -133,10 +133,10 @@
       "commitSha": "2c8079e2e8e78c0cd11ac75a32014756136ecdb9"
     },
     {
-      "packageVersion": "8.0.101-servicing.23566.3",
+      "packageVersion": "8.0.101-servicing.23570.18",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "9a09ce21db07396b2dc9cbedea36d2c10c9232e3"
+      "commitSha": "fbeda4751af816d3555ea4dff95dbb3a5da35543"
     },
     {
       "packageVersion": "1.1.0-rc.23410.2",
@@ -145,10 +145,10 @@
       "commitSha": "1e5f3603af2277910aad946736ee23283e7f3e16"
     },
     {
-      "packageVersion": "17.8.0-release-23553-01",
+      "packageVersion": "17.8.0-release-23578-02",
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "ae25c3b96fe433c60af70e3991ace49fcbf7e970"
+      "commitSha": "3259862fadd5e784564e7d920a2d61a75f415a79"
     },
     {
       "packageVersion": "7.0.0-preview.22423.2",
@@ -191,8 +191,8 @@
     },
     {
       "path": "source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
-      "remoteUri": "https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git",
-      "commitSha": "bb354ceabed19189245e075abb864f327b6c14ad"
+      "remoteUri": "https://dnceng@dev.azure.com/dnceng/internal/_git/azure-identitymodel",
+      "commitSha": "a607fa5e0005a6178cf1d2fed4fa0f8179cdb186"
     },
     {
       "path": "source-build-externals/src/cssparser",
