@@ -38,8 +38,8 @@ jobs:
 
 - template: templates/jobs/sdk-diff-tests.yml
   parameters:
-    buildName: Fedora38_Offline_MsftSdk
-    targetRid: fedora.38-x64
+    buildName: Fedora39_Offline_MsftSdk
+    targetRid: fedora.39-x64
     architecture: x64
     dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
 
