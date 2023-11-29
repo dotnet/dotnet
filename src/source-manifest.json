@@ -7,10 +7,10 @@
       "commitSha": "0aaeafef60933f87b0b50350313bb2fd77defb5d"
     },
     {
-      "packageVersion": "8.0.0-preview.1.23551.7",
+      "packageVersion": "8.0.0-preview.1.23557.2",
       "path": "aspire",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspire",
-      "commitSha": "4b00c57d7ccf9a4c7e2aef211ab6bd8af3ee2324"
+      "commitSha": "48e42f59d64d84b404e904996a9ed61f2a17a569"
     },
     {
       "packageVersion": "8.0.0-rtm.23531.12",

@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using System.Net.Sockets;
+using Aspire;
 using Aspire.RabbitMQ.Client;
 using HealthChecks.RabbitMQ;
 using Microsoft.Extensions.Configuration;
@@ -76,7 +77,8 @@ public static class AspireRabbitMQExtensions
 
         IConnectionFactory CreateConnectionFactory(IServiceProvider sp)
         {
-            var connectionString = settings.ConnectionString;
+            // ensure the log forwarder is initialized
+            sp.GetRequiredService<RabbitMQEventSourceLogForwarder>().Start();
 
             var factory = new ConnectionFactory();
 
@@ -84,6 +86,7 @@ public static class AspireRabbitMQExtensions
             configurationOptionsSection.Bind(factory);
 
             // the connection string from settings should win over the one from the ConnectionFactory section
+            var connectionString = settings.ConnectionString;
             if (!string.IsNullOrEmpty(connectionString))
             {
                 factory.Uri = new(connectionString);
@@ -105,6 +108,8 @@ public static class AspireRabbitMQExtensions
             builder.Services.AddKeyedSingleton<IConnection>(serviceKey, (sp, key) => CreateConnection(sp.GetRequiredKeyedService<IConnectionFactory>(key), settings.MaxConnectRetryCount));
         }
 
+        builder.Services.AddSingleton<RabbitMQEventSourceLogForwarder>();
+
         if (settings.Tracing)
         {
             // Note that RabbitMQ.Client v6.6 doesn't have built-in support for tracing. See https://github.com/rabbitmq/rabbitmq-dotnet-client/pull/1261
@@ -115,9 +120,7 @@ public static class AspireRabbitMQExtensions
 
         if (settings.HealthChecks)
         {
-            var hcBuilder = builder.Services.AddHealthChecks();
-
-            hcBuilder.Add(new HealthCheckRegistration(
+            builder.TryAddHealthCheck(new HealthCheckRegistration(
                 serviceKey is null ? "RabbitMQ.Client" : $"RabbitMQ.Client_{connectionName}",
                 sp =>
                 {
