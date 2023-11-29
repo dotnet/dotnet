@@ -1,6 +1,6 @@
 # Aspire.Npgsql.EntityFrameworkCore.PostgreSQL library
 
-Registers [EntityFrameworkCore](https://learn.microsoft.com/en-us/ef/core/) [DbContext](https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontext) in the DI container for connecting PostgreSQL®* database. Enables connection pooling, health check, logging and telemetry.
+Registers [EntityFrameworkCore](https://learn.microsoft.com/ef/core/) [DbContext](https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.dbcontext) in the DI container for connecting PostgreSQL®* database. Enables connection pooling, health check, logging and telemetry.
 
 ## Getting started
 
@@ -10,7 +10,7 @@ Registers [EntityFrameworkCore](https://learn.microsoft.com/en-us/ef/core/) [DbC
 
 ### Install the package
 
-Install the Aspire PostgreSQL EntityFrameworkCore Npgsql library with [NuGet][nuget]:
+Install the .NET Aspire PostgreSQL EntityFrameworkCore Npgsql library with [NuGet][nuget]:
 
 ```dotnetcli
 dotnet add package Aspire.Npgsql.EntityFrameworkCore.PostgreSQL
@@ -37,7 +37,7 @@ public ProductsController(MyDbContext context)
 
 ## Configuration
 
-The Aspire PostgreSQL EntityFrameworkCore Npgsql component provides multiple options to configure the database connection based on the requirements and conventions of your project.
+The .NET Aspire PostgreSQL EntityFrameworkCore Npgsql component provides multiple options to configure the database connection based on the requirements and conventions of your project.
 
 ### Use a connection string
 
@@ -61,7 +61,7 @@ See the [ConnectionString documentation](https://www.npgsql.org/doc/connection-s
 
 ### Use configuration providers
 
-The Aspire PostgreSQL EntityFrameworkCore Npgsql component supports [Microsoft.Extensions.Configuration](https://learn.microsoft.com/dotnet/api/microsoft.extensions.configuration). It loads the `NpgsqlEntityFrameworkCorePostgreSQLSettings` from configuration by using the `Aspire:Npgsql:EntityFrameworkCore:PostgreSQL` key. Example `appsettings.json` that configures some of the options:
+The .NET Aspire PostgreSQL EntityFrameworkCore Npgsql component supports [Microsoft.Extensions.Configuration](https://learn.microsoft.com/dotnet/api/microsoft.extensions.configuration). It loads the `NpgsqlEntityFrameworkCorePostgreSQLSettings` from configuration by using the `Aspire:Npgsql:EntityFrameworkCore:PostgreSQL` key. Example `appsettings.json` that configures some of the options:
 
 ```json
 {

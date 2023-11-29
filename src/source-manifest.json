@@ -7,10 +7,10 @@
       "commitSha": "0aaeafef60933f87b0b50350313bb2fd77defb5d"
     },
     {
-      "packageVersion": "8.0.0-preview.1.23551.7",
+      "packageVersion": "8.0.0-preview.1.23557.2",
       "path": "aspire",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspire",
-      "commitSha": "4b00c57d7ccf9a4c7e2aef211ab6bd8af3ee2324"
+      "commitSha": "48e42f59d64d84b404e904996a9ed61f2a17a569"
     },
     {
       "packageVersion": "8.0.0-rtm.23531.12",
@@ -49,22 +49,22 @@
       "commitSha": "2406616d0e3a31d80b326e27c156955bfa41c791"
     },
     {
-      "packageVersion": "8.0.453106",
+      "packageVersion": "8.0.456602",
       "path": "format",
-      "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-format",
-      "commitSha": "2651752953c0d41c8c7b8d661cf2237151af33d0"
+      "remoteUri": "https://github.com/dotnet/format",
+      "commitSha": "28925c0e519d66c80328aacf973b74e40bb1d5bd"
     },
     {
-      "packageVersion": "8.0.100-beta.23523.6",
+      "packageVersion": "8.0.101-beta.23563.2",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "f41fe153f68dd6b20cf4f91de9ea1e55fc09bb20"
+      "commitSha": "424e4b7cffb7656efd63f7a905a2498e39011104"
     },
     {
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "c2cd2e3b12d408613acd1e3d10477c1d4188d3e0"
+      "commitSha": "5ec6e842469832b27ff17bc3e05186062f56b444"
     },
     {
       "packageVersion": "17.8.3-preview-23519-04",
@@ -79,16 +79,16 @@
       "commitSha": "0dd5a1ea536201af94725353e4bc711d7560b246"
     },
     {
-      "packageVersion": "7.0.0-preview.23520.1",
+      "packageVersion": "7.0.0-preview.23531.5",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "94fc3bd6fb6c8611fd4495e350db0560f46ece19"
+      "commitSha": "f0a326f3e15b2370371693a76fd379635387c74d"
     },
     {
-      "packageVersion": "4.8.0-3.23524.11",
+      "packageVersion": "4.8.0-7.23566.2",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "f43cd10b737b6343956dee421cff8c50b602c788"
+      "commitSha": "7b75981cf3bd520b86ec4ed00ec156c8bc48e4eb"
     },
     {
       "packageVersion": "3.11.0-beta1.23525.2",
@@ -103,16 +103,16 @@
       "commitSha": "5535e31a712343a63f5d7d796cd874e563e5ac14"
     },
     {
-      "packageVersion": "8.0.100-rtm.23551.6",
+      "packageVersion": "8.0.101-servicing.23567.10",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "e9d13cbe7e8c1d52ce276a8655f52a87e1017c46"
+      "commitSha": "896ac7319c1d96012fa40193a20d1aadc444c697"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23566.2",
+      "packageVersion": "8.0.0-alpha.1.23570.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "776b128c95ef681d125adc3eb69f12d480418bb5"
+      "commitSha": "e844aa02a05b90d8cbe499676ec6ee0f19ec4980"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23565.1",
@@ -133,10 +133,10 @@
       "commitSha": "2c8079e2e8e78c0cd11ac75a32014756136ecdb9"
     },
     {
-      "packageVersion": "8.0.100-rtm.23531.6",
+      "packageVersion": "8.0.101-servicing.23566.3",
       "path": "templating",
-      "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-templating",
-      "commitSha": "4085146587b833948a22587b36a108bcdb3f04a3"
+      "remoteUri": "https://github.com/dotnet/templating",
+      "commitSha": "9a09ce21db07396b2dc9cbedea36d2c10c9232e3"
     },
     {
       "packageVersion": "1.1.0-rc.23410.2",
@@ -145,7 +145,7 @@
       "commitSha": "1e5f3603af2277910aad946736ee23283e7f3e16"
     },
     {
-      "packageVersion": "17.8.0-release-23523-03",
+      "packageVersion": "17.8.0-release-23553-01",
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
       "commitSha": "ae25c3b96fe433c60af70e3991ace49fcbf7e970"

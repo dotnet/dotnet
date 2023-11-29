@@ -1,9 +1,9 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <RuntimeVersion>8.0.0-rtm.23511.16</RuntimeVersion>
-    <AspNetCoreVersion>8.0.0-rtm.23512.20</AspNetCoreVersion>
-    <EfCoreVersion>8.0.0-rtm.23512.13</EfCoreVersion>
+    <RuntimeVersion>$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion)</RuntimeVersion>
+    <AspNetCoreVersion>$(MicrosoftAspNetCoreOutputCachingStackExchangeRedisPackageVersion)</AspNetCoreVersion>
+    <EfCoreVersion>$(MicrosoftEntityFrameworkCoreSqlServerPackageVersion)</EfCoreVersion>
   </PropertyGroup>
   <ItemGroup>
     <!-- Azure SDK for .NET dependencies -->
@@ -14,8 +14,10 @@
     <PackageVersion Include="Azure.Security.KeyVault.Secrets" Version="4.5.0" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.18.0" />
     <PackageVersion Include="Azure.Storage.Queues" Version="12.16.0" />
+    <PackageVersion Include="Microsoft.Azure.Cosmos" Version="3.36.0-preview" />
     <PackageVersion Include="Microsoft.Extensions.Azure" Version="1.7.1" />
     <!-- Azure Management SDK for .NET dependencies -->
+    <PackageVersion Include="Azure.ResourceManager.CosmosDB" Version="1.4.0-beta.4" />
     <PackageVersion Include="Azure.ResourceManager.KeyVault" Version="1.2.0-beta.2" />
     <PackageVersion Include="Azure.ResourceManager.ServiceBus" Version="1.1.0-beta.3" />
     <PackageVersion Include="Azure.ResourceManager.Storage" Version="1.1.1" />
@@ -44,6 +46,7 @@
     <!-- sql client dependencies -->
     <PackageVersion Include="Microsoft.Data.SqlClient" Version="5.1.1" />
     <!-- efcore dependencies -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Cosmos" Version="$(EfCoreVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="$(EfCoreVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(EfCoreVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="$(EfCoreVersion)" />
@@ -79,7 +82,7 @@
     <PackageVersion Include="RabbitMQ.Client" Version="6.6.0" />
     <PackageVersion Include="StackExchange.Redis" Version="2.6.122" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageVersion Include="Yarp.ReverseProxy" Version="2.1.0-preview.1.23428.7" />
+    <PackageVersion Include="Yarp.ReverseProxy" Version="2.1.0-preview.1.23556.5" />
     <!-- Open Telemetry -->
     <PackageVersion Include="Npgsql.OpenTelemetry" Version="8.0.0-rc.2" />
     <PackageVersion Include="OpenTelemetry.Exporter.InMemory" Version="1.7.0-alpha.1" />
@@ -93,7 +96,7 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.6.0-beta.2" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.5.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.5.1-beta.1" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.0.0-rc9.11" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.0.0-rc9.12" />
     <!-- build dependencies -->
     <PackageVersion Include="MicroBuild.Plugins.SwixBuild.Dotnet" Version="1.1.87-gba258badda" />
     <PackageVersion Include="Microsoft.DotNet.Build.Tasks.Workloads" Version="8.0.0-beta.23371.1" />

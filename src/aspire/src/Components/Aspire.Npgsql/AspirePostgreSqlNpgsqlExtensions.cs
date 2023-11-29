@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Data.Common;
+using Aspire;
 using Aspire.Npgsql;
 using HealthChecks.NpgSql;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Npgsql;
-using OpenTelemetry.Metrics;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -72,18 +72,17 @@ public static class AspirePostgreSqlNpgsqlExtensions
         // https://www.npgsql.org/doc/connection-string-parameters.html#pooling
         if (settings.HealthChecks)
         {
-            builder.Services.AddHealthChecks()
-                .Add(new HealthCheckRegistration(
-                    serviceKey is null ? "PostgreSql" : $"PostgreSql_{connectionName}",
-                    sp => new NpgSqlHealthCheck(new NpgSqlHealthCheckOptions()
-                    {
-                        DataSource = serviceKey is null
-                            ? sp.GetRequiredService<NpgsqlDataSource>()
-                            : sp.GetRequiredKeyedService<NpgsqlDataSource>(serviceKey)
-                    }),
-                    failureStatus: default,
-                    tags: default,
-                    timeout: default));
+            builder.TryAddHealthCheck(new HealthCheckRegistration(
+                serviceKey is null ? "PostgreSql" : $"PostgreSql_{connectionName}",
+                sp => new NpgSqlHealthCheck(new NpgSqlHealthCheckOptions()
+                {
+                    DataSource = serviceKey is null
+                        ? sp.GetRequiredService<NpgsqlDataSource>()
+                        : sp.GetRequiredKeyedService<NpgsqlDataSource>(serviceKey)
+                }),
+                failureStatus: default,
+                tags: default,
+                timeout: default));
         }
 
         if (settings.Tracing)
@@ -98,15 +97,7 @@ public static class AspirePostgreSqlNpgsqlExtensions
         if (settings.Metrics)
         {
             builder.Services.AddOpenTelemetry()
-                .WithMetrics(meterProviderBuilder =>
-                {
-                    // https://www.npgsql.org/doc/diagnostics/metrics.html?q=metrics
-                    meterProviderBuilder.AddEventCountersInstrumentation(eventCountersInstrumentationOptions =>
-                    {
-                        // https://github.com/npgsql/npgsql/blob/b3282aa6124184162b66dd4ab828041f872bc602/src/Npgsql/NpgsqlEventSource.cs#L14
-                        eventCountersInstrumentationOptions.AddEventSources("Npgsql");
-                    });
-                });
+                .WithMetrics(NpgsqlCommon.AddNpgsqlMetrics);
         }
     }
 

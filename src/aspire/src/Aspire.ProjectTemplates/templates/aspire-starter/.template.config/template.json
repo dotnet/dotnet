@@ -3,7 +3,7 @@
   "author": "Microsoft",
   "classifications": [
     "Common",
-    "Aspire",
+    ".NET Aspire",
     "Blazor",
     "Web",
     "Web API",
@@ -11,9 +11,9 @@
     "Service",
     "Cloud"
   ],
-  "name": "Aspire Starter Application",
+  "name": ".NET Aspire Starter Application",
   "defaultName": "AspireApp",
-  "description": "A project template for creating an Aspire app with a Blazor web frontend and web API backend service, optionally using Redis for caching.",
+  "description": "A project template for creating a .NET Aspire app with a Blazor web frontend and web API backend service, optionally using Redis for caching.",
   "shortName": "aspire-starter",
   "sourceName": "AspireStarterApplication-1",
   "preferNameDirectory": false,
@@ -24,7 +24,7 @@
   },
   "precedence": "8000",
   "identity": "Aspire.Starter.CSharp.8.0",
-  "thirdPartyNotices": "https://aka.ms/aspnetcore/8.0-third-party-notices",
+  "thirdPartyNotices": "https://aka.ms/aspire/1.0-third-party-notices",
   "groupIdentity": "Aspire.Starter",
   "guids": [
     "80B24B1B-1E78-4FCB-BDC9-13678F1789F4",
@@ -259,13 +259,13 @@
     "NoHttps": {
       "type": "parameter",
       "datatype": "bool",
-      "defaultValue": "false",
+      "defaultValue": "true",
       "description": "Whether to turn off HTTPS."
     }
   },
   "primaryOutputs": [
     {
-      "path": "AspireApplication.1.sln",
+      "path": "AspireStarterApplication-1.sln",
       "condition": "(hostIdentifier != \"vs\")"
     },
     {
