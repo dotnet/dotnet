@@ -1780,6 +1780,7 @@ namespace System.IdentityModel.Tokens.Jwt
                 EncodedToken = jwtToken.RawData,
                 HeaderAsciiBytes = Encoding.ASCII.GetBytes(jwtToken.EncodedHeader),
                 InitializationVectorBytes = Base64UrlEncoder.DecodeBytes(jwtToken.RawInitializationVector),
+                MaximumDeflateSize = MaximumTokenSizeInBytes,
                 Keys = keys,
                 Zip = jwtToken.Header.Zip,
             });

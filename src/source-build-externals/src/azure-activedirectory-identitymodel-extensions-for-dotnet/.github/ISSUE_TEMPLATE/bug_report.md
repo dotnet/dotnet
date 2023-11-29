@@ -2,7 +2,7 @@
 name: Bug report
 about: Please do NOT file bugs without filling in this form.
 title: '[Bug] '
-labels: ''
+labels: ["untriaged", "needs attention"]
 assignees: ''
 
 ---

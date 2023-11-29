@@ -22,19 +22,30 @@ namespace Microsoft.IdentityModel.JsonWebTokens
     /// <summary>
     /// A class which contains useful methods for processing JWT tokens.
     /// </summary>
-    public class JwtTokenUtilities
+    public partial class JwtTokenUtilities
     {
+        private const int _regexMatchTimeoutMilliseconds = 100;
         private const string _unrecognizedEncodedToken = "UnrecognizedEncodedToken";
 
         /// <summary>
         /// Regex that is used to figure out if a token is in JWS format.
         /// </summary>
-        public static Regex RegexJws = new Regex(JwtConstants.JsonCompactSerializationRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(100));
+        public static Regex RegexJws = CreateJwsRegex();
 
         /// <summary>
         /// Regex that is used to figure out if a token is in JWE format.
         /// </summary>
-        public static Regex RegexJwe = new Regex(JwtConstants.JweCompactSerializationRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(100));
+        public static Regex RegexJwe = CreateJweRegex();
+
+#if NET7_0_OR_GREATER
+        [GeneratedRegex(JwtConstants.JsonCompactSerializationRegex, RegexOptions.CultureInvariant, _regexMatchTimeoutMilliseconds)]
+        private static partial Regex CreateJwsRegex();
+        [GeneratedRegex(JwtConstants.JweCompactSerializationRegex, RegexOptions.CultureInvariant, _regexMatchTimeoutMilliseconds)]
+        private static partial Regex CreateJweRegex();
+#else
+        private static Regex CreateJwsRegex() => new Regex(JwtConstants.JsonCompactSerializationRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(_regexMatchTimeoutMilliseconds));
+        private static Regex CreateJweRegex() => new Regex(JwtConstants.JweCompactSerializationRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(_regexMatchTimeoutMilliseconds));
+#endif
 
         internal static IList<string> DefaultHeaderParameters = new List<string>()
         {
@@ -115,12 +126,13 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// </summary>
         /// <param name="tokenBytes"></param>
         /// <param name="algorithm"></param>
+        /// <param name="maximumDeflateSize"></param>
         /// <exception cref="ArgumentNullException">if <paramref name="tokenBytes"/> is null.</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="algorithm"/> is null.</exception>
         /// <exception cref="NotSupportedException">if the decompression <paramref name="algorithm"/> is not supported.</exception>
         /// <exception cref="SecurityTokenDecompressionFailedException">if decompression using <paramref name="algorithm"/> fails.</exception>
         /// <returns>Decompressed JWT token</returns>
-        internal static string DecompressToken(byte[] tokenBytes, string algorithm)
+        internal static string DecompressToken(byte[] tokenBytes, string algorithm, int maximumDeflateSize)
         {
             if (tokenBytes == null)
                 throw LogHelper.LogArgumentNullException(nameof(tokenBytes));
@@ -131,7 +143,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             if (!CompressionProviderFactory.Default.IsSupportedAlgorithm(algorithm))
                 throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(TokenLogMessages.IDX10682, LogHelper.MarkAsNonPII(algorithm))));
 
-            var compressionProvider = CompressionProviderFactory.Default.CreateCompressionProvider(algorithm);
+            var compressionProvider = CompressionProviderFactory.Default.CreateCompressionProvider(algorithm, maximumDeflateSize);
 
             var decompressedBytes = compressionProvider.Decompress(tokenBytes);
 
@@ -248,7 +260,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 if (string.IsNullOrEmpty(zipAlgorithm))
                     return Encoding.UTF8.GetString(decryptedTokenBytes);
 
-                return decryptionParameters.DecompressionFunction(decryptedTokenBytes, zipAlgorithm);
+                return decryptionParameters.DecompressionFunction(decryptedTokenBytes, zipAlgorithm, decryptionParameters.MaximumDeflateSize);
             }
             catch (Exception ex)
             {

@@ -79,6 +79,9 @@ namespace Microsoft.IdentityModel.Tokens
         /// Gets the <see cref="IList{JsonWebKey}"/>.
         /// </summary>
         [JsonPropertyName(JsonWebKeySetParameterNames.Keys)]
+#if NET8_0_OR_GREATER
+        [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
+#endif
         public IList<JsonWebKey> Keys { get; } = new List<JsonWebKey>();
 
         /// <summary>
