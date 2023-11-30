@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "5a0b2e2ae21bd31ec72f880e4d467b4a0458a9a6"
+      "commitSha": "e9a9fe67515838592a70f32fe46105bf7b70de3b"
     },
     {
       "packageVersion": "17.8.3-preview-23519-04",
@@ -97,16 +97,16 @@
       "commitSha": "b4d9a1334d5189172977ba8fddd00bda70161e4a"
     },
     {
-      "packageVersion": "8.0.1-servicing.23578.5",
+      "packageVersion": "8.0.1-servicing.23580.1",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "eddf880ac57b7f2c79a77592e3e6d24d1d02f112"
+      "commitSha": "bf5e279d9239bfef5bb1b8d6212f1b971c434606"
     },
     {
-      "packageVersion": "8.0.101-servicing.23579.8",
+      "packageVersion": "8.0.101-servicing.23580.4",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "6192aadb9e2257206a8328c41df7dc179fcc3197"
+      "commitSha": "c13aa6f5f37d295ebb20bc7620f32280409228df"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23577.6",
