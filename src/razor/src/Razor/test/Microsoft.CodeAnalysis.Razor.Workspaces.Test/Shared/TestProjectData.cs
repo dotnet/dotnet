@@ -28,14 +28,14 @@ internal static class TestProjectData
         SomeProjectFile1 = new HostDocument(Path.Combine(someProjectPath, "File1.cshtml"), "File1.cshtml", FileKinds.Legacy);
         SomeProjectFile2 = new HostDocument(Path.Combine(someProjectPath, "File2.cshtml"), "File2.cshtml", FileKinds.Legacy);
         SomeProjectImportFile = new HostDocument(Path.Combine(someProjectPath, "_Imports.cshtml"), "_Imports.cshtml", FileKinds.Legacy);
-        SomeProjectNestedFile3 = new HostDocument(Path.Combine(someProjectPath, "Nested", "File3.cshtml"), "Nested\\File1.cshtml", FileKinds.Legacy);
-        SomeProjectNestedFile4 = new HostDocument(Path.Combine(someProjectPath, "Nested", "File4.cshtml"), "Nested\\File2.cshtml", FileKinds.Legacy);
+        SomeProjectNestedFile3 = new HostDocument(Path.Combine(someProjectPath, "Nested", "File3.cshtml"), "Nested\\File3.cshtml", FileKinds.Legacy);
+        SomeProjectNestedFile4 = new HostDocument(Path.Combine(someProjectPath, "Nested", "File4.cshtml"), "Nested\\File4.cshtml", FileKinds.Legacy);
         SomeProjectNestedImportFile = new HostDocument(Path.Combine(someProjectPath, "Nested", "_Imports.cshtml"), "Nested\\_Imports.cshtml", FileKinds.Legacy);
         SomeProjectComponentFile1 = new HostDocument(Path.Combine(someProjectPath, "File1.razor"), "File1.razor", FileKinds.Component);
         SomeProjectComponentFile2 = new HostDocument(Path.Combine(someProjectPath, "File2.razor"), "File2.razor", FileKinds.Component);
         SomeProjectComponentImportFile1 = new HostDocument(Path.Combine(someProjectPath, "_Imports.razor"), "_Imports.razor", FileKinds.Component);
-        SomeProjectNestedComponentFile3 = new HostDocument(Path.Combine(someProjectPath, "Nested", "File3.razor"), "Nested\\File1.razor", FileKinds.Component);
-        SomeProjectNestedComponentFile4 = new HostDocument(Path.Combine(someProjectPath, "Nested", "File4.razor"), "Nested\\File2.razor", FileKinds.Component);
+        SomeProjectNestedComponentFile3 = new HostDocument(Path.Combine(someProjectPath, "Nested", "File3.razor"), "Nested\\File3.razor", FileKinds.Component);
+        SomeProjectNestedComponentFile4 = new HostDocument(Path.Combine(someProjectPath, "Nested", "File4.razor"), "Nested\\File4.razor", FileKinds.Component);
         SomeProjectCshtmlComponentFile5 = new HostDocument(Path.Combine(someProjectPath, "File5.cshtml"), "File5.cshtml", FileKinds.Component);
 
         var anotherProjectPath = Path.Combine(baseDirectory, "AnotherProject");

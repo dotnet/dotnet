@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer;
+using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Moq;
 using Xunit;
@@ -30,7 +32,7 @@ public class FallbackProjectManagerTest : WorkspaceTestBase
 
         var projectSnapshotManagerAccessor = Mock.Of<ProjectSnapshotManagerAccessor>(a => a.Instance == _projectSnapshotManager, MockBehavior.Strict);
 
-        _fallbackProjectManger = new FallbackProjectManager(_projectConfigurationFilePathStore, languageServerFeatureOptions, projectSnapshotManagerAccessor);
+        _fallbackProjectManger = new FallbackProjectManager(_projectConfigurationFilePathStore, languageServerFeatureOptions, projectSnapshotManagerAccessor, NoOpTelemetryReporter.Instance);
     }
 
     [Fact]
@@ -71,6 +73,7 @@ public class FallbackProjectManagerTest : WorkspaceTestBase
 
         var documentFilePath = Assert.Single(project.DocumentFilePaths);
         Assert.Equal(SomeProjectFile1.FilePath, documentFilePath);
+        Assert.Equal(SomeProjectFile1.TargetPath, project.GetDocument(documentFilePath)!.TargetPath);
     }
 
     [Fact]
@@ -109,14 +112,44 @@ public class FallbackProjectManagerTest : WorkspaceTestBase
 
         _fallbackProjectManger.DynamicFileAdded(projectId, SomeProject.Key, SomeProject.FilePath, SomeProjectFile2.FilePath);
 
-        _fallbackProjectManger.DynamicFileAdded(projectId, SomeProject.Key, SomeProject.FilePath, SomeProjectComponentFile1.FilePath);
+        _fallbackProjectManger.DynamicFileAdded(projectId, SomeProject.Key, SomeProject.FilePath, SomeProjectNestedComponentFile3.FilePath);
 
         var project = Assert.Single(_projectSnapshotManager.GetProjects());
 
         Assert.Collection(project.DocumentFilePaths.OrderBy(f => f), // DocumentFilePaths comes from a dictionary, so no sort guarantee
             f => Assert.Equal(SomeProjectFile1.FilePath, f),
-            f => Assert.Equal(SomeProjectComponentFile1.FilePath, f),
-            f => Assert.Equal(SomeProjectFile2.FilePath, f));
+            f => Assert.Equal(SomeProjectFile2.FilePath, f),
+            f => Assert.Equal(SomeProjectNestedComponentFile3.FilePath, f));
+
+        Assert.Equal(SomeProjectFile1.TargetPath, project.GetDocument(SomeProjectFile1.FilePath)!.TargetPath);
+        Assert.Equal(SomeProjectFile2.TargetPath, project.GetDocument(SomeProjectFile2.FilePath)!.TargetPath);
+        // The test data is created with a "\" so when the test runs on linux, and direct string comparison wouldn't work
+        Assert.True(FilePathNormalizer.FilePathsEquivalent(SomeProjectNestedComponentFile3.TargetPath, project.GetDocument(SomeProjectNestedComponentFile3.FilePath)!.TargetPath));
+    }
+
+    [Fact]
+    public void DynamicFileAdded_TrackedProject_IgnoresDocumentFromOutsideCone()
+    {
+        var projectId = ProjectId.CreateNewId();
+        var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
+            .WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(Path.Combine(SomeProject.IntermediateOutputPath, "SomeProject.dll")))
+            .WithDefaultNamespace("RootNamespace");
+
+        Workspace.TryApplyChanges(Workspace.CurrentSolution.AddProject(projectInfo));
+
+        _fallbackProjectManger.DynamicFileAdded(projectId, SomeProject.Key, SomeProject.FilePath, SomeProjectFile1.FilePath);
+
+        // These two represent linked files, or shared project items
+        _fallbackProjectManger.DynamicFileAdded(projectId, SomeProject.Key, SomeProject.FilePath, AnotherProjectFile2.FilePath);
+
+        _fallbackProjectManger.DynamicFileAdded(projectId, SomeProject.Key, SomeProject.FilePath, AnotherProjectComponentFile1.FilePath);
+
+        var project = Assert.Single(_projectSnapshotManager.GetProjects());
+
+        Assert.Collection(project.DocumentFilePaths,
+            f => Assert.Equal(SomeProjectFile1.FilePath, f));
+
+        Assert.Equal(SomeProjectFile1.TargetPath, project.GetDocument(SomeProjectFile1.FilePath)!.TargetPath);
     }
 
     [Fact]

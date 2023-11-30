@@ -13,10 +13,10 @@
       "commitSha": "48e42f59d64d84b404e904996a9ed61f2a17a569"
     },
     {
-      "packageVersion": "8.0.1-servicing.23580.2",
+      "packageVersion": "8.0.1-servicing.23580.6",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "b7bb790a4b195c1903842b96cb409ed59d25d992"
+      "commitSha": "580b6a8488f6afd9340149ce0078bd4eee5a6349"
     },
     {
       "packageVersion": "0.11.4-alpha.23509.2",
@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "b998a6b438eb350d6a399ddf3e2e766aae9de926"
+      "commitSha": "9d29df3aaf5c988e6f0cc6a53a83ea48cda3466a"
     },
     {
       "packageVersion": "17.8.3-preview-23519-04",
@@ -79,10 +79,10 @@
       "commitSha": "0dd5a1ea536201af94725353e4bc711d7560b246"
     },
     {
-      "packageVersion": "7.0.0-preview.23531.5",
+      "packageVersion": "7.0.0-preview.23580.2",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "f0a326f3e15b2370371693a76fd379635387c74d"
+      "commitSha": "8c7fb27bf8e8d4f9ff8080b624b35bca5e812e97"
     },
     {
       "packageVersion": "4.8.0-7.23572.1",
@@ -103,10 +103,10 @@
       "commitSha": "bf5e279d9239bfef5bb1b8d6212f1b971c434606"
     },
     {
-      "packageVersion": "8.0.101-servicing.23580.7",
+      "packageVersion": "8.0.101-servicing.23580.15",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "00fb97552b441808101347d532bf225ac753d017"
+      "commitSha": "ba557d0de5a22ff497bc835c13112a0314419874"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23577.6",

@@ -74,11 +74,11 @@
     <!-- Dependencies from https://github.com/aspnet/AspNetCore -->
     <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>8.0.1</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
     <MicrosoftAspNetCoreAppRefPackageVersion>8.0.1</MicrosoftAspNetCoreAppRefPackageVersion>
-    <MicrosoftAspNetCoreAppRefInternalPackageVersion>8.0.1-servicing.23580.2</MicrosoftAspNetCoreAppRefInternalPackageVersion>
-    <VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>8.0.1-servicing.23580.2</VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>
-    <dotnetdevcertsPackageVersion>8.0.1-servicing.23580.2</dotnetdevcertsPackageVersion>
-    <dotnetuserjwtsPackageVersion>8.0.1-servicing.23580.2</dotnetuserjwtsPackageVersion>
-    <dotnetusersecretsPackageVersion>8.0.1-servicing.23580.2</dotnetusersecretsPackageVersion>
+    <MicrosoftAspNetCoreAppRefInternalPackageVersion>8.0.1-servicing.23580.6</MicrosoftAspNetCoreAppRefInternalPackageVersion>
+    <VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>8.0.1-servicing.23580.6</VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>
+    <dotnetdevcertsPackageVersion>8.0.1-servicing.23580.6</dotnetdevcertsPackageVersion>
+    <dotnetuserjwtsPackageVersion>8.0.1-servicing.23580.6</dotnetuserjwtsPackageVersion>
+    <dotnetusersecretsPackageVersion>8.0.1-servicing.23580.6</dotnetusersecretsPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <MicroBuildCorePackageVersion>0.2.0</MicroBuildCorePackageVersion>
@@ -86,8 +86,8 @@
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/sdk -->
     <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.101</MicrosoftDotNetCommonItemTemplatesPackageVersion>
-    <MicrosoftNETSdkPackageVersion>8.0.101-servicing.23580.7</MicrosoftNETSdkPackageVersion>
-    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.101-servicing.23580.7</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
+    <MicrosoftNETSdkPackageVersion>8.0.101-servicing.23580.15</MicrosoftNETSdkPackageVersion>
+    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.101-servicing.23580.15</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
     <MicrosoftNETBuildExtensionsPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETBuildExtensionsPackageVersion>
     <MicrosoftDotnetToolsetInternalPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetToolsetInternalPackageVersion>
     <MicrosoftDotnetTemplateLocatorPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetTemplateLocatorPackageVersion>
