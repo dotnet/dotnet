@@ -164,7 +164,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[_git/dotnet-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspire/commit/48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@02aeddd](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/commit/02aeddda68390d089a8cdd32f5a25229cbe6daa3)*
+*[_git/dotnet-aspnetcore@b7bb790](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/commit/b7bb790a4b195c1903842b96cb409ed59d25d992)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@7e33b6a](https://github.com/google/googletest/commit/7e33b6a1c497ced1e98fc60175aeb4678419281c)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -184,7 +184,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@424e4b7](https://github.com/dotnet/fsharp/commit/424e4b7cffb7656efd63f7a905a2498e39011104)*
 - `src/installer`  
-*[dotnet/installer@e9a9fe6](https://github.com/dotnet/installer/commit/e9a9fe67515838592a70f32fe46105bf7b70de3b)*
+*[dotnet/installer@b998a6b](https://github.com/dotnet/installer/commit/b998a6b438eb350d6a399ddf3e2e766aae9de926)*
 - `src/msbuild`  
 *[dotnet/msbuild@195e7f5](https://github.com/dotnet/msbuild/commit/195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22)*
 - `src/nuget-client`  
@@ -200,7 +200,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@bf5e279](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/commit/bf5e279d9239bfef5bb1b8d6212f1b971c434606)*
 - `src/sdk`  
-*[_git/dotnet-sdk@c13aa6f](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/commit/c13aa6f5f37d295ebb20bc7620f32280409228df)*
+*[_git/dotnet-sdk@00fb975](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/commit/00fb97552b441808101347d532bf225ac753d017)*
 - `src/source-build-externals`  
 *[_git/dotnet-source-build-externals@0f0f1f0](https://dev.azure.com/dnceng/internal/_git/dotnet-source-build-externals/commit/0f0f1f0f33830f27ed0ff357145d2464b96b1a3e)*
     - `src/source-build-externals/src/abstractions-xunit`  
