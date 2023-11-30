@@ -1,0 +1,50 @@
+parameters:
+- name: Channel
+  displayName: Visual Studio Build Tools Channel (ie, pre == Preview, rel == Release, intpreview == Dogfood, etc...)
+  type: string
+  default: rel
+  values:
+  - pre
+  - rel
+  - intpreview
+
+- name: Release
+  displayName: Visual Studio Build Tools Release (ie, 16, 17, etc...)
+  type: number
+
+trigger: none
+pr: none
+
+name: BuildTools_${{ parameters.Release }}_${{ parameters.Channel }}-$(Rev:r)
+
+jobs:
+- job: Build
+  displayName: Build xcopy-msbuild package
+  pool: 
+    name: NetCore1ESPool-Internal
+    demands: ImageOverride -equals 1es-windows-2022
+  steps:
+    - task: PowerShell@2
+      displayName: Download Visual Studio Build Tools
+      inputs:
+        filePath: 'eng\xcopy-msbuild\install-visualstudiobuildtools.ps1'
+        arguments: -channel "${{ parameters.channel }}" -release "${{ parameters.release }}" -outputDirectory "$(Build.ArtifactStagingDirectory)\install"
+
+    - task: PowerShell@2
+      displayName: Build Xcopy-MSBuild package
+      inputs:
+        filePath: 'eng\xcopy-msbuild\build-msbuild-package.ps1'
+        arguments: -buildToolsDir "$(Build.ArtifactStagingDirectory)\install" -outputDirectory "$(Build.ArtifactStagingDirectory)\package"
+
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(Build.ArtifactStagingDirectory)\package'
+        Contents: '*.nupkg'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)\publish'
+        OverWrite: true
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\publish'
+        ArtifactName: 'package'
+        publishLocation: 'Container'
