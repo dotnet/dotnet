@@ -14,11 +14,11 @@ Status of Arcade public CI builds: [![Build Status](https://dev.azure.com/dnceng
 
 ### Current Version of Arcade in `.NET Eng - Latest`
 
-[Link](https://maestro-prod.westus2.cloudapp.azure.com/2/https:%2F%2Fgithub.com%2Fdotnet%2Farcade/latest/graph) to BARViz
+[Link](https://maestro.dot.net/2/https:%2F%2Fdev.azure.com%2Fdnceng%2Finternal%2F_git%2Fdotnet-arcade/latest/graph) to BARViz
 
 ### Latest Version of Arcade Being Validated
 
-[Link](https://maestro-prod.westus2.cloudapp.azure.com/9/https:%2F%2Fdev.azure.com%2Fdnceng%2Finternal%2F_git%2Fdotnet-arcade/latest/graph) to BARViz. 
+[Link](https://maestro.dot.net/9/https:%2F%2Fdev.azure.com%2Fdnceng%2Finternal%2F_git%2Fdotnet-arcade/latest/graph) to BARViz. 
 
 ### Build Statuses
 

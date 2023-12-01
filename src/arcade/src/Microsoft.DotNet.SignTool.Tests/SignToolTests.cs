@@ -319,7 +319,13 @@ namespace Microsoft.DotNet.SignTool.Tests
             var signTool = new FakeSignTool(signToolArgs, task.Log);
             var configuration = new Configuration(signToolArgs.TempDir, itemsToSign, strongNameSignInfo, fileSignInfo, extensionsSignInfo, dualCertificates, tarToolPath: s_tarToolPath, task.Log);
             var signingInput = configuration.GenerateListOfFiles();
-            var util = new BatchSignUtil(task.BuildEngine, task.Log, signTool, signingInput, new string[] { }, configuration._hashToCollisionIdMap);
+            var util = new BatchSignUtil(
+                task.BuildEngine,
+                task.Log,
+                signTool,
+                signingInput,
+                new string[] { },
+                configuration._hashToCollisionIdMap);
 
             var beforeSigningEngineFilesList = Directory.GetFiles(signToolArgs.TempDir, "*-engine.exe", SearchOption.AllDirectories);
             util.Go(doStrongNameCheck: true);

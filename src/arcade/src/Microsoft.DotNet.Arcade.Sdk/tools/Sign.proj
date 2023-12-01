@@ -72,6 +72,8 @@
         SNBinaryPath="$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe"
         MicroBuildCorePath="$(NuGetPackageRoot)microbuild.core\$(MicroBuildCoreVersion)"
         WixToolsPath="$(WixInstallPath)"
-        TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetSignToolVersion)\tools\net8.0\any\Microsoft.Dotnet.Tar.dll"/>
+        TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetSignToolVersion)\tools\net8.0\any\Microsoft.Dotnet.Tar.dll"
+        RepackParallelism="$(SignToolRepackParallelism)"
+        MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)" />
   </Target>
 </Project>
