@@ -72,7 +72,7 @@ If you only have one Azure DevOps job that publishes assets, then you can add th
 
 Publish manifest to BAR
 
-> `powershell -ExecutionPolicy Bypass -Command "eng\common\sdk-task.ps1 -task PublishBuildAssets -restore -msbuildEngine dotnet /p:ManifestsPath='$(Build.StagingDirectory)/Download/AssetManifests' /p:BuildAssetRegistryToken=$(MaestroAccessToken) /p:MaestroApiEndpoint=https://maestro-prod.westus2.cloudapp.azure.com"`
+> `powershell -ExecutionPolicy Bypass -Command "eng\common\sdk-task.ps1 -task PublishBuildAssets -restore -msbuildEngine dotnet /p:ManifestsPath='$(Build.StagingDirectory)/Download/AssetManifests' /p:BuildAssetRegistryToken=$(MaestroAccessToken) /p:MaestroApiEndpoint=https://maestro.dot.net"`
 
 `MaestroAccessToken` is available by referencing the "Publish-Build-Assets" [variable group](https://github.com/dotnet/arcade/blob/de44b15e79b9d124d04c16458bead2a1d7ea02ef/eng/common/templates/job/publish-build-assets.yml#L36) in dnceng/internal.
 

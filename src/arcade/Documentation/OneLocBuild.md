@@ -62,6 +62,8 @@ that the official build is based on.
 As a further note, the template by default assumes that your mirror repository is located in the dotnet GitHub
 organization. If that is not the case, you will need to specify `GitHubOrg` as well.
 
+If the repo is not in the dotnet organization, dotnet-bot may need to be granted additional permissions to interact with your repository.  Invite dotnet-bot (Go to the repository's "Settings" then click "Collaborators" in the left menu).  After the invite has been sent, reach out to the "First Responders" [channel](https://teams.microsoft.com/l/channel/19%3Aafba3d1545dd45d7b79f34c1821f6055%40thread.skype/First%20Responders?groupId=4d73664c-9f2f-450d-82a5-c2f02756606d&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) and ask them to accept the "dotnet bot" collaboration invite.  To accept the invite, the first responder will need to [login](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/869/How-to-log-into-a-GitHub-bot-in-Key-Vault) as dotnet bot, go to the inviting repository, and then accept the invitation which should appear.
+
 8. Merge the changes to your main branch and then open a
    [repo modification ticket](https://aka.ms/ceChangeLocConfig)
    with the loc team to let them know to retarget the branch.
