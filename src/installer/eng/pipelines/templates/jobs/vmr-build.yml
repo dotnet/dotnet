@@ -61,6 +61,14 @@ parameters:
   type: boolean
   default: false
 
+- name: crossRootFS
+  type: string
+  default: ''
+
+- name: targetRid
+  type: string
+  default: ''
+
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.architecture }}
   timeoutInMinutes: 150
@@ -231,22 +239,37 @@ jobs:
         customBuildArgs="$customBuildArgs --use-mono-runtime"
       fi
 
-      docker run --rm -v "$(sourcesPath):/vmr" -w /vmr $customRunArgs ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) $customBuildArgs
-    displayName: Build
-
-  - script: |
-      set -x
-
-      dockerVolumeArgs="-v $(sourcesPath):/vmr"
-      dockerEnvArgs="-e SMOKE_TESTS_EXCLUDE_OMNISHARP=${{ parameters.excludeOmniSharpTests }} -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=true -e SMOKE_TESTS_RUNNING_IN_CI=true"
-      poisonArg=''
-
-      if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
-        poisonArg='--poison'
+      if [[ ! -z '${{ parameters.crossRootFs }}' || ! -z '${{ parameters.targetRid }}' ]]; then
+        extraBuildProperties="--"
       fi
 
-      docker run --rm $dockerVolumeArgs -w /vmr $dockerEnvArgs ${{ parameters.container }} ./build.sh $poisonArg --run-smoke-test $(additionalBuildArgs) -- -p:SmokeTestConsoleVerbosity=detailed
-    displayName: Run Tests
+      if [[ ! -z '${{ parameters.crossRootFs }}' ]]; then
+        customRunArgs="$customRunArgs -e CROSSCOMPILE=1 -e ROOTFS_DIR=${{ parameters.crossRootFs}}"
+        extraBuildProperties="$extraBuildProperties /p:PortableBuild=true /p:DotNetBuildVertical=true"
+      fi
+
+      if [[ ! -z '${{ parameters.targetRid }}' ]]; then
+        extraBuildProperties="$extraBuildProperties /p:OverrideTargetRid=${{ parameters.targetRid }}"
+      fi
+
+      docker run --rm -v "$(sourcesPath):/vmr" -w /vmr $customRunArgs ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) $customBuildArgs $extraBuildProperties
+    displayName: Build
+
+  # Don't run tests if overriding RID, we don't support that for now
+  - ${{ if eq(parameters.targetRid, '') }}:
+    - script: |
+        set -x
+
+        dockerVolumeArgs="-v $(sourcesPath):/vmr"
+        dockerEnvArgs="-e SMOKE_TESTS_EXCLUDE_OMNISHARP=${{ parameters.excludeOmniSharpTests }} -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=true -e SMOKE_TESTS_RUNNING_IN_CI=true"
+        poisonArg=''
+
+        if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
+          poisonArg='--poison'
+        fi
+
+        docker run --rm $dockerVolumeArgs -w /vmr $dockerEnvArgs ${{ parameters.container }} ./build.sh $poisonArg --run-smoke-test $(additionalBuildArgs) -- -p:SmokeTestConsoleVerbosity=detailed
+      displayName: Run Tests
 
   # Don't use CopyFiles@2 as it encounters permissions issues because it indexes all files in the source directory graph.
   - script: |
