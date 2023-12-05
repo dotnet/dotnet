@@ -2,7 +2,7 @@
 <Project>
 
   <PropertyGroup>
-    <MicrosoftDotNetSourceBuildTasksAssembly Condition="'$(MSBuildRuntimeType)' == 'core'">$(MSBuildThisFileDirectory)..\tools\net8.0\$(MSBuildThisFileName).dll</MicrosoftDotNetSourceBuildTasksAssembly>
+    <MicrosoftDotNetSourceBuildTasksAssembly Condition="'$(MSBuildRuntimeType)' == 'core'">$(MSBuildThisFileDirectory)..\tools\net9.0\$(MSBuildThisFileName).dll</MicrosoftDotNetSourceBuildTasksAssembly>
     <MicrosoftDotNetSourceBuildTasksAssembly Condition="'$(MSBuildRuntimeType)' != 'core'">$(MSBuildThisFileDirectory)..\tools\net472\$(MSBuildThisFileName).dll</MicrosoftDotNetSourceBuildTasksAssembly>
   </PropertyGroup>
 

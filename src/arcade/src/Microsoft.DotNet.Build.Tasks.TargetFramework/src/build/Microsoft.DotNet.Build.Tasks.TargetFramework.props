@@ -1,7 +1,7 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
   <PropertyGroup>
-    <DotNetBuildTasksTargetFrameworkAssembly Condition="'$(MSBuildRuntimeType)' == 'core'">..\tools\net8.0\Microsoft.DotNet.Build.Tasks.TargetFramework.dll</DotNetBuildTasksTargetFrameworkAssembly>
+    <DotNetBuildTasksTargetFrameworkAssembly Condition="'$(MSBuildRuntimeType)' == 'core'">..\tools\net9.0\Microsoft.DotNet.Build.Tasks.TargetFramework.dll</DotNetBuildTasksTargetFrameworkAssembly>
     <DotNetBuildTasksTargetFrameworkAssembly Condition="'$(MSBuildRuntimeType)' != 'core'">..\tools\net472\Microsoft.DotNet.Build.Tasks.TargetFramework.dll</DotNetBuildTasksTargetFrameworkAssembly>
   </PropertyGroup>
 </Project>

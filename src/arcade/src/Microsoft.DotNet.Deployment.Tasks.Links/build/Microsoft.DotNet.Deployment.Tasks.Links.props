@@ -2,7 +2,7 @@
 <Project>
 
   <PropertyGroup>
-    <MicrosoftDotNetDeploymentTasksLinksTaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core' ">$(MSBuildThisFileDirectory)net8.0\Microsoft.DotNet.Deployment.Tasks.Links.dll</MicrosoftDotNetDeploymentTasksLinksTaskAssembly>
+    <MicrosoftDotNetDeploymentTasksLinksTaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core' ">$(MSBuildThisFileDirectory)net9.0\Microsoft.DotNet.Deployment.Tasks.Links.dll</MicrosoftDotNetDeploymentTasksLinksTaskAssembly>
     <MicrosoftDotNetDeploymentTasksLinksTaskAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core' ">$(MSBuildThisFileDirectory)net472\Microsoft.DotNet.Deployment.Tasks.Links.dll</MicrosoftDotNetDeploymentTasksLinksTaskAssembly>
   </PropertyGroup>
 
