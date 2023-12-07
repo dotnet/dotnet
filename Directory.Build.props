@@ -84,6 +84,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <!-- Vertical Build POC exclusion before arcade's SDK features take over. -->
+    <ExcludeFromBuild Condition="'$(DotNetBuildVertical)' == 'true' and '$(IsTestProject)' == 'true'">true</ExcludeFromBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <RootRepo>dotnet</RootRepo>
 
     <BaseOutputPath>$(ArtifactsDir)</BaseOutputPath>
