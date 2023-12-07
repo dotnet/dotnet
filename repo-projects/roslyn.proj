@@ -1,8 +1,9 @@
-<Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <BuildCommandArgs>$(StandardSourceBuildArgs)</BuildCommandArgs>
+    <LogVerbosityOptOut>true</LogVerbosityOptOut>
+
+    <BuildCommandArgs>$(StandardSourceBuildActionsAndArgs)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) /p:TreatWarningsAsErrors=false</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) /p:ApplyPartialNgenOptimization=false</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) /p:EnablePartialNgenOptimization=false</BuildCommandArgs>
@@ -13,20 +14,17 @@
     <BuildCommandArgs>$(BuildCommandArgs) /p:RepoRoot=$(ProjectDirectory)</BuildCommandArgs>
 
     <BuildCommand>$(ProjectDirectory)build$(ShellExtension) $(BuildCommandArgs)</BuildCommand>
-
-    <LogVerbosityOptOut>true</LogVerbosityOptOut>
   </PropertyGroup>
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="command-line-api" />
-    <RepositoryReference Include="source-build-externals" />
+    <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildFromSource)' == 'true'" />
     <RepositoryReference Include="runtime" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
     <UseSourceBuiltSdkOverride Include="@(WindowsDesktopSdkOverride)" />
   </ItemGroup>
 
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

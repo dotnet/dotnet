@@ -1,17 +1,15 @@
-<Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <BuildCommandArgs>$(StandardSourceBuildArgs)</BuildCommandArgs>
+    <LogVerbosityOptOut>true</LogVerbosityOptOut>
+
+    <BuildCommandArgs>$(StandardSourceBuildActionsAndArgs)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildCommandArgs>
     <BuildCommand>$(StandardSourceBuildCommand) $(BuildCommandArgs)</BuildCommand>
-
-    <LogVerbosityOptOut>true</LogVerbosityOptOut>
   </PropertyGroup>
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
   </ItemGroup>
 
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

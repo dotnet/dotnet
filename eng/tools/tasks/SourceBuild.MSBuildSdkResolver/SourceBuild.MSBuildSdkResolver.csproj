@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <SourceBuildMSBuildSdkResolverPath>$(DotNetSdkResolversDir)$(MSBuildProjectName)\$(MSBuildProjectName).dll</SourceBuildMSBuildSdkResolverPath>
+    <SourceBuildMSBuildSdkResolverPath>$([MSBuild]::NormalizePath('$(DotNetRoot)', 'sdk', '$(NETCoreSdkVersion)', 'SdkResolvers', '$(MSBuildProjectName)', '$(MSBuildProjectName).dll'))</SourceBuildMSBuildSdkResolverPath>
   </PropertyGroup>
 
   <Target Name="InstallResolver">

@@ -26,7 +26,8 @@ function print_help () {
     sed -n '/^### /,/^$/p' "$source" | cut -b 5-
 }
 
-MSBUILD_ARGUMENTS=("-flp:v=detailed")
+# TODO: Make it possible to invoke this script for non source build use cases
+MSBUILD_ARGUMENTS=("-flp:v=detailed -p:DotNetBuildFromSource=true")
 CUSTOM_PACKAGES_DIR=''
 alternateTarget=false
 runningSmokeTests=false
@@ -191,7 +192,7 @@ if [ -d "$CUSTOM_SDK_DIR" ]; then
   export SDK_VERSION=$("$CUSTOM_SDK_DIR/dotnet" --version)
   export CLI_ROOT="$CUSTOM_SDK_DIR"
   export _InitializeDotNetCli="$CLI_ROOT/dotnet"
-  export CustomDotNetSdkDir="$CLI_ROOT"
+  export DOTNET_INSTALL_DIR="$CLI_ROOT"
   echo "Using custom bootstrap SDK from '$CLI_ROOT', version '$SDK_VERSION'"
 else
   sdkLine=$(grep -m 1 'dotnet' "$SCRIPT_ROOT/global.json")

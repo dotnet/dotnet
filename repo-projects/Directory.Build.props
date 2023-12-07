@@ -1,39 +1,42 @@
 <Project>
 
+  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
+
   <PropertyGroup>
     <RepositoryName>$(MSBuildProjectName)</RepositoryName>
+    <GitInfoRepoPropsFile>$(GitInfoDir)$(RepositoryName).props</GitInfoRepoPropsFile>
   </PropertyGroup>
-
-  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
 
   <Import Project="$(GitInfoRepoPropsFile)" Condition="Exists('$(GitInfoRepoPropsFile)')" />
 
   <PropertyGroup>
     <SourceDirectory Condition="'$(SourceDirectory)' == ''">$(RepositoryName)</SourceDirectory>
-    <ProjectDirectory Condition="'$(ProjectDirectory)' == ''">$(SubmoduleDirectory)$(SourceDirectory)/</ProjectDirectory>
+    <ProjectDirectory Condition="'$(ProjectDirectory)' == ''">$([MSBuild]::NormalizeDirectory('$(SubmoduleDirectory)', '$(SourceDirectory)'))</ProjectDirectory>
     <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">true</MinimalConsoleLogOutput>
     <RepoConsoleLogFile>$(LoggingDir)$(RepositoryName).log</RepoConsoleLogFile>
     <RedirectRepoOutputToLog Condition="'$(MinimalConsoleLogOutput)' == 'true'">&gt;&gt; $(RepoConsoleLogFile) 2&gt;&amp;1</RedirectRepoOutputToLog>
 
-    <PackagesOutput>$(ProjectDirectory)artifacts/packages/$(Configuration)/NonShipping/</PackagesOutput>
+    <PackagesOutput>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts', 'packages', '$(Configuration)', 'NonShipping'))</PackagesOutput>
 
-    <!--
-      Repo specific semaphore path for incremental build
-    -->
-    <RepoCompletedSemaphorePath>$(CompletedSemaphorePath)$(RepositoryName)/</RepoCompletedSemaphorePath>
+    <!-- Repo specific semaphore path for incremental build -->
+    <RepoCompletedSemaphorePath>$([MSBuild]::NormalizeDirectory('$(CompletedSemaphorePath)', '$(RepositoryName)'))</RepoCompletedSemaphorePath>
 
     <!-- Paths to the version props files -->
     <CurrentSourceBuiltPackageVersionPropsPath>$(IntermediatePath)PackageVersions.$(RepositoryName).Current.props</CurrentSourceBuiltPackageVersionPropsPath>
     <PreviouslySourceBuiltPackageVersionPropsPath>$(IntermediatePath)PackageVersions.$(RepositoryName).Previous.props</PreviouslySourceBuiltPackageVersionPropsPath>
     <SnapshotPackageVersionPropsPath>$(IntermediatePath)PackageVersions.$(RepositoryName).Snapshot.props</SnapshotPackageVersionPropsPath>
-    <PackageVersionPropsPath>$(IntermediatePath)PackageVersions.$(RepositoryName).props</PackageVersionPropsPath>
     <PackageVersionPropsFlowType>DependenciesOnly</PackageVersionPropsFlowType>
 
     <EngCommonToolsShFile Condition="Exists('$(ProjectDirectory)eng/common/tools.sh')">$(ProjectDirectory)eng/common/tools.sh</EngCommonToolsShFile>
-    <EngCommonBuildShFile Condition="Exists('$(ProjectDirectory)eng/common/build.sh')">$(ProjectDirectory)eng/common/build.sh</EngCommonBuildShFile>
     <GlobalJsonFile Condition="'$(GlobalJsonFile)' == '' and Exists('$(ProjectDirectory)global.json')">$(ProjectDirectory)global.json</GlobalJsonFile>
     <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)NuGet.config')">$(ProjectDirectory)NuGet.config</NuGetConfigFile>
     <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)NuGet.Config')">$(ProjectDirectory)NuGet.Config</NuGetConfigFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
+    <PackageVersionPropsPath>$(IntermediatePath)PackageVersions.$(RepositoryName).props</PackageVersionPropsPath>
+    <ArcadeBootstrapDir>$(ArcadeBootstrapPackageDir)</ArcadeBootstrapDir>
+    <ArcadeBootstrapVersion>$(ARCADE_BOOTSTRAP_VERSION)</ArcadeBootstrapVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
@@ -49,10 +52,6 @@
     <GitCommitDateNoDashes>$(GitCommitDate.Replace('-', ''))</GitCommitDateNoDashes>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <DotNetBuildVertical Condition="'$(DotNetBuildVertical)' == ''">false</DotNetBuildVertical>
-  </PropertyGroup>
-
   <!-- A human-readable description of what's building and why. -->
   <PropertyGroup>
     <ProjectBuildReason>'$(RepositoryName)'</ProjectBuildReason>
@@ -65,25 +64,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EnvironmentVariables Include="DotNetBuildFromSource=true" />
-    <EnvironmentVariables Include="DotNetBuildFromSourceFlavor=Product" />
-    <EnvironmentVariables Include="DotNetPackageVersionPropsPath=$(PackageVersionPropsPath)" />
     <EnvironmentVariables Include="DotNetRestorePackagesPath=$(PackagesDir)" />
-    <EnvironmentVariables Include="DotNetBuildOffline=true" />
 
     <!-- Ensure the SDK (Core-SDK/Installer) doesn't add an online source. -->
     <EnvironmentVariables Include="AddDotnetfeedProjectSource=false" />
 
     <!-- Arcade tools.sh picks up DotNetCoreSdkDir, but we can pass DOTNET_INSTALL_DIR directly. -->
-    <EnvironmentVariables Include="DOTNET_INSTALL_DIR=$(DotNetCliToolDir)" />
-    <EnvironmentVariables Include="DOTNET_PATH=$(DotNetCliToolDir)" />
-    <EnvironmentVariables Include="DOTNET_HOST_PATH=$(DotNetCliToolDir)dotnet" />
+    <EnvironmentVariables Include="DOTNET_INSTALL_DIR=$(DotNetRoot)" />
+    <EnvironmentVariables Include="DOTNET_PATH=$(DotNetRoot)" />
+    <EnvironmentVariables Include="DOTNET_HOST_PATH=$(DotNetTool)" />
 
     <!-- _InitializeDotNetCli is used by websdk and templating to decide whether to init the SDK -->
-    <EnvironmentVariables Include="_InitializeDotNetCli=$(DotNetCliToolDir)" />
-    <EnvironmentVariables Include="_DotNetInstallDir=$(DotNetCliToolDir)" />
-    <EnvironmentVariables Include="_InitializeToolset=$(SourceBuiltSdksDir)Microsoft.DotNet.Arcade.Sdk/tools/Build.proj" Condition="'$(UseBootstrapArcade)' != 'true'" />
-    <EnvironmentVariables Include="_OverrideArcadeInitializeBuildToolFramework=$(NetCurrent)" />
+    <EnvironmentVariables Include="_InitializeDotNetCli=$(DotNetRoot)" />
+    <EnvironmentVariables Include="_DotNetInstallDir=$(DotNetRoot)" />
 
     <EnvironmentVariables Include="DotNetUseShippingVersions=true" />
 
@@ -119,7 +112,15 @@
     <EnvironmentVariables Include="DeterministicSourcePaths=false" Condition="'$(DeterministicBuildOptOut)' == 'true'" />
 
     <EnvironmentVariables Include="SourceRoot=$(ProjectDirectory)" />
+  </ItemGroup>
 
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
+    <EnvironmentVariables Include="DotNetBuildFromSource=true" />
+    <EnvironmentVariables Include="DotNetBuildFromSourceFlavor=Product" />
+    <EnvironmentVariables Include="DotNetBuildOffline=true" />
+    <EnvironmentVariables Include="DotNetPackageVersionPropsPath=$(PackageVersionPropsPath)" />
+    <EnvironmentVariables Include="_InitializeToolset=$(SourceBuiltSdksDir)Microsoft.DotNet.Arcade.Sdk/tools/Build.proj" Condition="'$(UseBootstrapArcade)' != 'true'" />
+    <EnvironmentVariables Include="_OverrideArcadeInitializeBuildToolFramework=$(NetCurrent)" />
     <!-- https://github.com/dotnet/source-build/issues/3081 -->
     <EnvironmentVariables Include="CheckEolTargetFramework=false" />
   </ItemGroup>
@@ -145,46 +146,43 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <ArcadeBootstrapDir>$(ArcadeBootstrapPackageDir)</ArcadeBootstrapDir>
-    <ArcadeBootstrapVersion>$(ARCADE_BOOTSTRAP_VERSION)</ArcadeBootstrapVersion>
+    <StandardSourceBuildActions>$(FlagParameterPrefix)restore</StandardSourceBuildActions>
+    <StandardSourceBuildActions>$(StandardSourceBuildActions) $(FlagParameterPrefix)build</StandardSourceBuildActions>
+    <StandardSourceBuildActions>$(StandardSourceBuildActions) $(FlagParameterPrefix)pack</StandardSourceBuildActions>
+    <StandardSourceBuildActions>$(StandardSourceBuildActions) $(FlagParameterPrefix)publish</StandardSourceBuildActions>
+
+    <StandardSourceBuildArgs>$(FlagParameterPrefix)ci</StandardSourceBuildArgs>
+    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) $(FlagParameterPrefix)configuration $(Configuration)</StandardSourceBuildArgs>
+    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) -bl</StandardSourceBuildArgs>
+    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:CopyWipIntoInnerSourceBuildRepo=true</StandardSourceBuildArgs>
+    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:CopySrcInsteadOfClone=true</StandardSourceBuildArgs>
+    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:DotNetBuildVertical=$(DotNetBuildVertical)</StandardSourceBuildArgs>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
+    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:ArcadeBuildFromSource=true</StandardSourceBuildArgs>
+    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:DotNetBuildOffline=true</StandardSourceBuildArgs>
+    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PrebuiltSourceBuiltPackagesPath)"</StandardSourceBuildArgs>
+    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</StandardSourceBuildArgs>
+    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:SourceBuildUseMonoRuntime=$(SourceBuildUseMonoRuntime)</StandardSourceBuildArgs>
+    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:DotNetPackageVersionPropsPath="$(PackageVersionPropsPath)"</StandardSourceBuildArgs>
   </PropertyGroup>
 
   <PropertyGroup>
-    <StandardSourceBuildArgs> $(FlagParameterPrefix)ci</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) $(FlagParameterPrefix)configuration $(Configuration)</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) $(FlagParameterPrefix)restore</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) $(FlagParameterPrefix)build</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) $(FlagParameterPrefix)pack</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) $(FlagParameterPrefix)publish</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) -bl</StandardSourceBuildArgs>
-
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:ArcadeBuildFromSource=true</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:CopyWipIntoInnerSourceBuildRepo=true</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:DotNetBuildOffline=true</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:CopySrcInsteadOfClone=true</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:DotNetPackageVersionPropsPath="$(PackageVersionPropsPath)"</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:AdditionalSourceBuiltNupkgCacheDir="$(SourceBuiltPackagesPath)"</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PrebuiltSourceBuiltPackagesPath)"</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:SourceBuildUseMonoRuntime=$(SourceBuildUseMonoRuntime)</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:DotNetBuildVertical=$(DotNetBuildVertical)</StandardSourceBuildArgs>
-
-    <StandardSourceBuildCommand>$(ProjectDirectory)\build$(ShellExtension)</StandardSourceBuildCommand>
+    <StandardSourceBuildActionsAndArgs>$(StandardSourceBuildActions)$(StandardSourceBuildArgs)</StandardSourceBuildActionsAndArgs>
+    <StandardSourceBuildCommand>$(ProjectDirectory)build$(ShellExtension)</StandardSourceBuildCommand>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
     <ArcadeSdkOverride Include="Microsoft.DotNet.Arcade.Sdk" Group="ARCADE" Version="$(arcadeOutputPackageVersion)"/>
     <ArcadeBootstrapSdkOverride Include="Microsoft.DotNet.Arcade.Sdk" Group="ARCADE" Version="$(ArcadeBootstrapVersion)" Location="$(ArcadeBootstrapDir)microsoft.dotnet.arcade.sdk/$(ArcadeBootstrapVersion)" />
     <ArcadePackagingOverride Include="Microsoft.DotNet.Build.Tasks.Packaging" Group="ARCADE_PACKAGING" Version="$(arcadeOutputPackageVersion)"/>
     <ArcadeTargetFrameworkOverride Include="Microsoft.DotNet.Build.Tasks.TargetFramework" Group="ARCADE_TGT_FX" Version="$(arcadeOutputPackageVersion)"/>
     <ArcadeSharedFrameworkSdkOverride Include="Microsoft.DotNet.SharedFramework.Sdk" Group="ARCADE_SHARED_FX_SDK" Version="$(arcadeOutputPackageVersion)"/>
-    <ILSdkOverride Include="Microsoft.NET.Sdk.IL" Group="IL" />
-    <MsBuildTraversalSdkOverride Include="Microsoft.Build.Traversal" Group="MSBUILD_TRAVERSAL" Version="2.0.2"/>
     <WindowsDesktopSdkOverride Include="Microsoft.Net.Sdk.WindowsDesktop" Group="WINDOWS_DESKTOP" Location="$(ToolsDir)EmptySdk"/>
-  </ItemGroup>
 
-  <ItemGroup>
     <UseSourceBuiltSdkOverride Condition="'$(UseBootstrapArcade)' != 'true'" Include="@(ArcadeSdkOverride)" />
     <UseSourceBuiltSdkOverride Condition="'$(UseBootstrapArcade)' == 'true'" Include="@(ArcadeBootstrapSdkOverride)" />
   </ItemGroup>
+
 </Project>

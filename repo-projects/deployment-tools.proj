@@ -1,13 +1,11 @@
-<Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <BuildCommand>$(ProjectDirectory)eng\common\build$(ShellExtension) $(StandardSourceBuildArgs)</BuildCommand>
+    <BuildCommand>$(ProjectDirectory)eng\common\build$(ShellExtension) $(StandardSourceBuildActionsAndArgs)</BuildCommand>
   </PropertyGroup>
 
   <ItemGroup>
     <RepositoryReference Include="runtime" />
   </ItemGroup>
 
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

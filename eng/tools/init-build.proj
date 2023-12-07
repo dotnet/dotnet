@@ -1,31 +1,24 @@
 <Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
-  <Import Project="$(GitInfoAllRepoPropsFile)" />
-
-  <UsingTask AssemblyFile="$(LeakDetectionTasksAssembly)" TaskName="MarkAndCatalogPackages" />
-  <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="ZipFileExtractToDirectory" />
-  <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="ReplaceTextInFile" />
-
-  <ItemGroup>
-    <BuildTasksTarget Include="Restore;Build;InstallResolver" />
-  </ItemGroup>
-
   <PropertyGroup>
-    <BuildTasksOfflineSources>$(ReferencePackagesDir)%3B$(PrebuiltPackagesPath)%3B$(PrebuiltSourceBuiltPackagesPath)</BuildTasksOfflineSources>
+    <BuildTasksOfflineSourcesProperty Condition="'$(DotNetBuildFromSource)' == 'true'">RestoreSources=$(ReferencePackagesDir)%3B$(PrebuiltPackagesPath)%3B$(PrebuiltSourceBuiltPackagesPath)</BuildTasksOfflineSourcesProperty>
   </PropertyGroup>
 
-  <Target Name="Build">
-    <CallTarget Targets="
+  <ItemGroup>
+    <BuildTasksTarget Include="Restore;Build" />
+  </ItemGroup>
+
+  <Target Name="Build"
+          DependsOnTargets="
       UnpackTarballs;
       BuildXPlatTasks;
       BuildLeakDetection;
       ExtractToolPackage;
       GenerateRootFs;
       PoisonPrebuiltPackages" />
-  </Target>
 
   <Target Name="PrepareOfflineLocalTools"
           DependsOnTargets="
@@ -37,11 +30,12 @@
   </Target>
 
   <Target Name="UnpackTarballs"
+          Condition="'$(DotNetBuildFromSource)' == 'true'"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(CompletedSemaphorePath)UnpackTarballs.complete" >
 
     <MakeDir Directories="$(PrebuiltSourceBuiltPackagesPath)" Condition="'$(CustomPrebuiltSourceBuiltPackagesPath)' == ''" />
-    <Exec Command="tar -xzf $(ExternalTarballsDir)$(SourceBuiltArtifactsTarballName).*.tar.gz"
+    <Exec Command="tar -xzf $(ExternalTarballsDir)$(SourceBuiltArtifactsTarballName).*$(TarBallExtension)"
           WorkingDirectory="$(PrebuiltSourceBuiltPackagesPath)"
           Condition="'$(CustomPrebuiltSourceBuiltPackagesPath)' == ''" />
 
@@ -50,7 +44,7 @@
       the build to be working without prebuilts.
     -->
     <ItemGroup>
-      <SourceBuiltPrebuiltsTarballFile Include="$(ExternalTarballsDir)$(SourceBuiltPrebuiltsTarballName).*.tar.gz" />
+      <SourceBuiltPrebuiltsTarballFile Include="$(ExternalTarballsDir)$(SourceBuiltPrebuiltsTarballName).*$(TarBallExtension)" />
     </ItemGroup>
     <Exec Command="tar -xzf %(SourceBuiltPrebuiltsTarballFile.FullPath)"
           WorkingDirectory="$(PrebuiltPackagesPath)"
@@ -64,25 +58,26 @@
 
     <Copy SourceFiles="@(UnpackedSourceBuildReferencePackages)" DestinationFiles="$(ReferencePackagesDir)%(Filename)%(Extension)" />
 
-    <WriteLinesToFile File="$(CompletedSemaphorePath)UnpackTarballs.complete" Overwrite="true" />
+    <Touch Files="$(CompletedSemaphorePath)UnpackTarballs.complete" AlwaysCreate="true" />
   </Target>
 
   <Target Name="BuildXPlatTasks"
           DependsOnTargets="UnpackTarballs"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(CompletedSemaphorePath)BuildXPlatTasks.complete">
-    <PropertyGroup>
-      <XPlatTaskProjects>tasks\Microsoft.DotNet.SourceBuild.Tasks.XPlat\Microsoft.DotNet.SourceBuild.Tasks.XPlat.csproj;tasks\SourceBuild.MSBuildSdkResolver\SourceBuild.MSBuildSdkResolver.csproj</XPlatTaskProjects>
-    </PropertyGroup>
-    <MSBuild
-      Projects="$(XPlatTaskProjects)"
-      Targets="%(BuildTasksTarget.Identity)"
-      SkipNonexistentTargets="true"
-      Properties="
-        RestoreSources=$(BuildTasksOfflineSources);
-        __ToolInitPhase=%(BuildTasksTarget.Identity)" />
+    <ItemGroup>
+      <XPlatTaskProject Include="tasks\Microsoft.DotNet.SourceBuild.Tasks.XPlat\Microsoft.DotNet.SourceBuild.Tasks.XPlat.csproj" BuildTasksTarget="@(BuildTasksTarget)" />
+      <XPlatTaskProject Include="tasks\SourceBuild.MSBuildSdkResolver\SourceBuild.MSBuildSdkResolver.csproj" BuildTasksTarget="@(BuildTasksTarget);InstallResolver" Condition="'$(DotNetBuildFromSource)' == 'true'" />
+    </ItemGroup>
 
-    <WriteLinesToFile File="$(CompletedSemaphorePath)BuildXPlatTasks.complete" Overwrite="true" />
+    <MSBuild
+      Projects="@(XPlatTaskProject)"
+      Targets="%(XPlatTaskProject.BuildTasksTarget)"
+      Properties="
+        $(BuildTasksOfflineSourcesProperty);
+        __ToolInitPhase=%(XPlatTaskProject.XPlatTaskProject)" />
+
+    <Touch Files="$(CompletedSemaphorePath)BuildXPlatTasks.complete" AlwaysCreate="true" />
   </Target>
 
   <Target Name="BuildLeakDetection"
@@ -90,26 +85,26 @@
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(CompletedSemaphorePath)BuildLeakDetection.complete"
           Condition="'$(EnablePoison)' == 'true'">
-    <PropertyGroup>
-      <LeakDetectionProjects>tasks\Microsoft.DotNet.SourceBuild.Tasks.LeakDetection\Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.csproj</LeakDetectionProjects>
-    </PropertyGroup>
+
     <MSBuild
-      Projects="$(LeakDetectionProjects)"
+      Projects="tasks\Microsoft.DotNet.SourceBuild.Tasks.LeakDetection\Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.csproj"
       Targets="%(BuildTasksTarget.Identity)"
-      SkipNonexistentTargets="true"
       Properties="
-        RestoreSources=$(BuildTasksOfflineSources);
+        $(BuildTasksOfflineSourcesProperty);
         __ToolInitPhase=%(BuildTasksTarget.Identity)" />
 
-    <WriteLinesToFile File="$(CompletedSemaphorePath)BuildLeakDetection.complete" Overwrite="true" />
+    <Touch Files="$(CompletedSemaphorePath)BuildLeakDetection.complete" AlwaysCreate="true" />
   </Target>
 
   <Target Name="GenerateRootFs" Condition="'$(OS)' != 'Windows_NT'">
-     <Exec Condition="$(Platform.Contains('arm')) AND '$(Platform)' != 'armel' AND '$(BuildArchitecture)' != 'arm64' AND '$(BuildArchitecture)' != 'arm'" Command="$(ArmEnvironmentVariables) $(ProjectDir)cross/build-rootfs.sh" />
-     <Exec Condition="'$(Platform)' == 'armel'" Command="$(ArmEnvironmentVariables) $(ProjectDir)cross/armel/tizen-build-rootfs.sh" />
+     <Exec Condition="$(Platform.Contains('arm')) AND '$(Platform)' != 'armel' AND '$(BuildArchitecture)' != 'arm64' AND '$(BuildArchitecture)' != 'arm'" Command="$(ArmEnvironmentVariables) $(RepoRoot)cross/build-rootfs.sh" />
+     <Exec Condition="'$(Platform)' == 'armel'" Command="$(ArmEnvironmentVariables) $(RepoRoot)cross/armel/tizen-build-rootfs.sh" />
   </Target>
 
+  <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="ZipFileExtractToDirectory" />
+  <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="ReplaceTextInFile" />
   <Target Name="ExtractToolPackage"
+          Condition="'$(DotNetBuildFromSource)' == 'true'"
           DependsOnTargets="UnpackTarballs;BuildXPlatTasks"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(CompletedSemaphorePath)ExtractToolPackage.complete">
@@ -117,8 +112,7 @@
                                DestinationDirectory="$(ArcadeBootstrapPackageDir)microsoft.dotnet.arcade.sdk/$(ARCADE_BOOTSTRAP_VERSION)/"
                                OverwriteDestination="true" />
 
-    <!-- TODO: When unpacking using ZipFileExtractToDirectory, this executable file has the wrong
-         permissions.  See https://github.com/dotnet/source-build/issues/2259 -->
+    <!-- When unpacking using ZipFileExtractToDirectory, this executable file has the wrong permissions. -->
     <Exec Command="chmod 755 git-clone-to-dir.sh"
       WorkingDirectory="$(ArcadeBootstrapPackageDir)microsoft.dotnet.arcade.sdk/$(ARCADE_BOOTSTRAP_VERSION)/tools/SourceBuild/" />
 
@@ -136,9 +130,10 @@
       SourceFiles="@(OverrideArcadeFiles)"
       DestinationFiles="$(ArcadeBootstrapPackageDir)microsoft.dotnet.arcade.sdk/$(ARCADE_BOOTSTRAP_VERSION)/tools/SourceBuild/%(RecursiveDir)%(Filename)%(Extension)" />
 
-    <WriteLinesToFile File="$(CompletedSemaphorePath)ExtractToolPackage.complete" Overwrite="true" />
+    <Touch Files="$(CompletedSemaphorePath)ExtractToolPackage.complete" AlwaysCreate="true" />
   </Target>
 
+  <UsingTask AssemblyFile="$(LeakDetectionTasksAssembly)" TaskName="MarkAndCatalogPackages" Condition="'$(EnablePoison)' == 'true'" />
   <Target Name="PoisonPrebuiltPackages"
           Condition="'$(EnablePoison)' == 'true'"
           Inputs="$(MSBuildProjectFullPath)"
@@ -153,7 +148,7 @@
     <MarkAndCatalogPackages PackagesToMark="@(PrebuiltPackages)" CatalogOutputFilePath="$(PoisonReportDataFile)" MarkerFileName="$(PoisonMarkerFile)" />
     <MarkAndCatalogPackages PackagesToMark="@(PrebuiltSourceBuiltPackages)" CatalogOutputFilePath="$(SourceBuiltPoisonReportDataFile)" MarkerFileName="$(SourceBuiltPoisonMarkerFile)" />
 
-    <WriteLinesToFile File="$(CompletedSemaphorePath)PoisonPrebuiltPackages.complete" Overwrite="true" />
+    <Touch Files="$(CompletedSemaphorePath)PoisonPrebuiltPackages.complete" AlwaysCreate="true" />
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Done poisoning." />
   </Target>
 

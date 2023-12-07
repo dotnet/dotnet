@@ -1,11 +1,7 @@
-<Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Build arguments -->
   <PropertyGroup>
     <LogVerbosityOptOut>true</LogVerbosityOptOut>
-
-    <CleanCommand>$(ProjectDirectory)/clean$(ShellExtension)</CleanCommand>
 
     <OverrideTargetRid>$(TargetRid)</OverrideTargetRid>
     <OverrideTargetRid Condition="'$(TargetOS)' == 'OSX'">osx-$(Platform)</OverrideTargetRid>
@@ -22,46 +18,45 @@
     <BuildNonPortable>true</BuildNonPortable>
     <BuildNonPortable Condition="'$(PortableBuild)' == 'true'">false</BuildNonPortable>
 
-    <BuildCommandArgs>$(StandardSourceBuildArgs)</BuildCommandArgs>
-    <BuildCommandArgs Condition="'$(OverrideTargetArch)' != ''">$(BuildCommandArgs) --arch $(OverrideTargetArch)</BuildCommandArgs>
-    <BuildCommandArgs Condition="'$(OverrideTargetOS)' != ''">$(BuildCommandArgs) --os $(OverrideTargetOS)</BuildCommandArgs>
+    <BuildCommandArgs>$(StandardSourceBuildActionsAndArgs)</BuildCommandArgs>
+    <BuildCommandArgs Condition="'$(OverrideTargetArch)' != ''">$(BuildCommandArgs) $(FlagParameterPrefix)arch $(OverrideTargetArch)</BuildCommandArgs>
+    <BuildCommandArgs Condition="'$(OverrideTargetOS)' != ''">$(BuildCommandArgs) $(FlagParameterPrefix)os $(OverrideTargetOS)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) /p:TargetRid=$(OverrideTargetRid)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) /p:RuntimeOS=$(RuntimeOS)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) /p:BaseOS=$(BaseOS)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) /p:PortableBuild=$(PortableBuild)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) /p:SourceBuildNonPortable=$(BuildNonPortable)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) /p:UsingToolMicrosoftNetCompilers=false</BuildCommandArgs>
+
     <BuildCommand>$(StandardSourceBuildCommand) $(BuildCommandArgs)</BuildCommand>
   </PropertyGroup>
 
-  <!-- SDK Overrides -->
   <ItemGroup>
-    <UseSourceBuiltSdkOverride Include="@(ArcadeCoreFxTestingOverride)" />
+    <RepositoryReference Include="arcade" />
+    <RepositoryReference Include="cecil" />
+    <RepositoryReference Include="symreader" />
+    <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildFromSource)' == 'true'" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
     <UseSourceBuiltSdkOverride Include="@(ArcadePackagingOverride)" />
     <UseSourceBuiltSdkOverride Include="@(ArcadeTargetFrameworkOverride)" />
     <UseSourceBuiltSdkOverride Include="@(ArcadeSharedFrameworkSdkOverride)" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
     <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisVersion_4_X" Version="%24(MicrosoftCodeAnalysisVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisVersion_4_4" Version="%24(MicrosoftCodeAnalysisVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisVersion)" />
   </ItemGroup>
 
-  <!-- Repository References -->
-  <ItemGroup>
-      <RepositoryReference Include="arcade" />
-      <RepositoryReference Include="cecil" />
-      <RepositoryReference Include="symreader" />
-      <RepositoryReference Include="source-build-externals" />
-  </ItemGroup>
-
-  <Target Name="SetOutputList" AfterTargets="Package" BeforeTargets="GatherBuiltPackages">
+  <Target Name="SetOutputList"
+          AfterTargets="Package"
+          BeforeTargets="GatherBuiltPackages">
     <ItemGroup>
       <PackagesOutputList Include="$(ShippingPackagesOutput)" />
       <PackagesOutputList Include="$(NonShippingPackagesOutput)" />
     </ItemGroup>
   </Target>
 
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

@@ -1,9 +1,9 @@
-<Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <LogVerbosityOptOut>true</LogVerbosityOptOut>
-    <BuildCommandArgs>$(StandardSourceBuildArgs)</BuildCommandArgs>
+
+    <BuildCommandArgs>$(StandardSourceBuildActionsAndArgs)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)v $(LogVerbosity)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)warnAsError $(ArcadeFalseBoolBuildArg)</BuildCommandArgs>
     <BuildCommand>$(StandardSourceBuildCommand) $(BuildCommandArgs)</BuildCommand>
@@ -11,8 +11,7 @@
 
   <ItemGroup>
     <RepositoryReference Include="nuget-client" />
-    <RepositoryReference Include="source-build-externals" />
+    <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildFromSource)' == 'true'" />
   </ItemGroup>
 
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

@@ -1,12 +1,12 @@
 <Project>
 
   <PropertyGroup>
-    <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
-    <_SuppressSdkImports>true</_SuppressSdkImports>
+    <_SuppressSdkImports Condition="'$(DotNetBuildFromSource)' == 'true'">true</_SuppressSdkImports>
     <Configuration Condition="$(Configuration) == ''">Release</Configuration>
   </PropertyGroup>
 
-  <Import Condition="'$(SkipArcadeSdkImport)' != 'true'" Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" Condition="'$(SkipArcadeSdkImport)' != 'true'" />
+
   <PropertyGroup>
     <!-- TODO: Remove NetCurrent override: https://github.com/dotnet/source-build/issues/3743 -->
     <NetCurrent>net9.0</NetCurrent>
@@ -14,11 +14,19 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <!-- We have no projects targeting multiple frameworks, so don't include in output path. -->
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- This repo's projects are entirely infrastructure and do not ship. -->
+    <IsShipping>false</IsShipping>
+    <!-- It's not unusual to build with a preview SDK -->
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+    <!-- Builds from the VMR are by definition vertical builds. -->
+    <DotNetBuildVertical Condition="'$(DotNetBuildVertical)' == ''">true</DotNetBuildVertical>
+    <!-- By default, the VMR builds with online sources. -->
+    <BuildWithOnlineSources Condition="'$(BuildWithOnlineSources)' == ''">true</BuildWithOnlineSources>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Platform Condition="'$(Platform)' == 'AnyCPU'"></Platform>
     <BuildArchitecture>$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant())</BuildArchitecture>
+    <Platform Condition="'$(Platform)' == 'AnyCPU'" />
     <Platform Condition="'$(Platform)' == '' AND ('$(BuildArchitecture)' == 'arm64' OR '$(BuildArchitecture)' == 'arm')">$(BuildArchitecture)</Platform>
     <Platform Condition="'$(Platform)' == '' AND '$(BuildArchitecture)' == 's390x'">$(BuildArchitecture)</Platform>
     <Platform Condition="'$(Platform)' == '' AND '$(BuildArchitecture)' == 'ppc64le'">$(BuildArchitecture)</Platform>
@@ -27,104 +35,84 @@
 
     <TargetPlatform>$(Platform)</TargetPlatform>
     <TargetPlatform Condition="'$(OverrideTargetRid)' != ''">$(OverrideTargetRid.Substring($(OverrideTargetRid.LastIndexOf('-'))).TrimStart('-'))</TargetPlatform>
-    <UseStableVersions Condition="'$(UseStableVersions)' == ''">false</UseStableVersions>
   </PropertyGroup>
 
-  <!-- This repo's projects are entirely infrastructure and do not ship. -->
-  <PropertyGroup>
-    <IsShipping>false</IsShipping>
+  <!-- Init basic Arcade props, if the project importing this file doesn't use Arcade. -->
+  <PropertyGroup Condition="'$(_SuppressSdkImports)' == 'true' or '$(SkipArcadeSdkImport)' == 'true'">
+    <RepoRoot Condition="'$(RepoRoot)' == ''">$([MSBuild]::NormalizeDirectory('$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'global.json'))'))</RepoRoot>
+
+    <!-- Respect environment variable for the .NET install directory if set; otherwise, use the repo default location -->
+    <DotNetRoot Condition="'$(DOTNET_INSTALL_DIR)' != ''">$(DOTNET_INSTALL_DIR)</DotNetRoot>
+    <DotNetRoot Condition="'$(DotNetRoot)' != ''">$([MSBuild]::NormalizeDirectory('$(DotNetRoot)'))</DotNetRoot>
+    <DotNetRoot Condition="'$(DotNetRoot)' == ''">$([MSBuild]::NormalizeDirectory('$(RepoRoot)', '.dotnet'))</DotNetRoot>
+
+    <!-- Let the exec task find dotnet on PATH -->
+    <DotNetRoot Condition="!Exists($(DotNetRoot))"/>
+
+    <DotNetTool Condition="'$(OS)' == 'Windows_NT'">$(DotNetRoot)dotnet.exe</DotNetTool>
+    <DotNetTool Condition="'$(OS)' != 'Windows_NT'">$(DotNetRoot)dotnet</DotNetTool>
+
+    <ArtifactsDir Condition="'$(ArtifactsDir)' == ''">$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'artifacts'))</ArtifactsDir>
+    <RepositoryEngineeringDir>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'eng'))</RepositoryEngineeringDir>
   </PropertyGroup>
 
   <PropertyGroup>
-    <ProjectDir>$(MSBuildThisFileDirectory)</ProjectDir>
-    <TargetsDir>$(ProjectDir)targets/</TargetsDir>
-    <PrereqsDir>$(ProjectDir)prereqs/</PrereqsDir>
-    <KeysDir>$(PrereqsDir)/keys/</KeysDir>
-    <DotNetCliToolDir Condition="'$(DotNetCliToolDir)' == '' and '$(CustomDotNetSdkDir)' != ''">$([MSBuild]::EnsureTrailingSlash('$(CustomDotNetSdkDir)'))</DotNetCliToolDir>
-    <DotNetCliToolDir Condition="'$(DotNetCliToolDir)' == '' and '$(DOTNET_INSTALL_DIR)' != ''">$([MSBuild]::NormalizeDirectory('$(DOTNET_INSTALL_DIR)'))</DotNetCliToolDir>
-    <DotNetCliToolDir Condition="'$(DotNetCliToolDir)' == ''">$(ProjectDir).dotnet/</DotNetCliToolDir>
-    <DotnetToolCommand>$(DotNetCliToolDir)dotnet</DotnetToolCommand>
-    <PrereqsPackagesDir>$(ProjectDir)prereqs/packages/</PrereqsPackagesDir>
+    <SubmoduleDirectory>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'src'))</SubmoduleDirectory>
+    <ToolsDir>$([MSBuild]::NormalizeDirectory('$(RepositoryEngineeringDir)', 'tools'))</ToolsDir>
+    <TasksDir>$([MSBuild]::NormalizeDirectory('$(ToolsDir)', 'tasks'))</TasksDir>
+    <PrereqsDir>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'prereqs'))</PrereqsDir>
+    <KeysDir>$([MSBuild]::NormalizeDirectory('$(PrereqsDir)', 'keys'))</KeysDir>
+
+    <PrereqsPackagesDir>$(PrereqsDir)/packages/</PrereqsPackagesDir>
     <PackagesDir Condition="'$(NuGetPackageRoot)' != ''">$(NuGetPackageRoot)</PackagesDir>
     <PackagesDir Condition="'$(PackagesDir)' == ''">$(PrereqsPackagesDir)restored/</PackagesDir>
     <ArcadeBootstrapPackageDir>$(PackagesDir)ArcadeBootstrapPackage/</ArcadeBootstrapPackageDir>
-    <!-- if we're not currently building,  Visual Studio will still set this -->
-    <SDK_VERSION Condition="'$(SDK_VERSION)' == ''">$(NETCoreSdkVersion)</SDK_VERSION>
-    <DotNetSdkDir>$(DotNetCliToolDir)sdk/$(SDK_VERSION)/</DotNetSdkDir>
-    <DotNetSdkResolversDir>$(DotNetSdkDir)SdkResolvers/</DotNetSdkResolversDir>
-    <SdkReferenceDir>$(DotNetCliToolDir)sdk/$(SDK_VERSION)/</SdkReferenceDir>
-  </PropertyGroup>
-
-  <!--
-    '.proj' has no DefaultLanguageSourceExtension, causing **/* to be collected
-    in Compile items! Avoid this by disabling the default items.
-  -->
-  <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.proj'">
-    <EnableDefaultItems>false</EnableDefaultItems>
   </PropertyGroup>
 
   <PropertyGroup>
+    <!--
+      '.proj' has no DefaultLanguageSourceExtension, causing **/* to be collected
+      in Compile items! Avoid this by disabling the default items.
+    -->
+    <EnableDefaultItems Condition="'$(MSBuildProjectExtension)' == '.proj'">false</EnableDefaultItems>
+
     <LogVerbosity Condition="'$(LogVerbosity)'==''">minimal</LogVerbosity>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <BuildInParallel Condition="'$(BuildInParallel)'==''">false</BuildInParallel>
-  </PropertyGroup>
 
-  <PropertyGroup>
     <ShellExtension Condition="'$(OS)' == 'Windows_NT'">.cmd</ShellExtension>
     <ShellExtension Condition="'$(OS)' != 'Windows_NT'">.sh</ShellExtension>
-    <TarBallExtension Condition="'$(OS)' == 'Windows_NT'">.zip</TarBallExtension>
-    <TarBallExtension Condition="'$(OS)' != 'Windows_NT'">.tar.gz</TarBallExtension>
   </PropertyGroup>
 
   <PropertyGroup>
-    <SubmoduleDirectory Condition="'$(SubmoduleDirectory)' == ''">$(ProjectDir)src/</SubmoduleDirectory>
-    <GitModulesPath>$(ProjectDir).gitmodules</GitModulesPath>
-  </PropertyGroup>
+    <RootRepo>dotnet</RootRepo>
 
-  <PropertyGroup>
-    <!-- Init basic Arcade props, if the project importing this file doesn't use Arcade. -->
-    <ArtifactsDir Condition="'$(ArtifactsDir)' == ''">$(ProjectDir)artifacts/</ArtifactsDir>
-    <RepositoryEngineeringDir Condition="'$(RepositoryEngineeringDir)' == ''">$(ProjectDir)eng/</RepositoryEngineeringDir>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <ArcadeOverridesDir>$(RepositoryEngineeringDir)arcade-overrides/</ArcadeOverridesDir>
     <BaseOutputPath>$(ArtifactsDir)</BaseOutputPath>
-    <ClonedSubmoduleGitRootDirectory Condition="'$(ClonedSubmoduleGitRootDirectory)' == ''">$(ProjectDir).git/modules/src/</ClonedSubmoduleGitRootDirectory>
-    <SourceBuiltSdksDir>$(ArtifactsDir)source-built-sdks/</SourceBuiltSdksDir>
-    <ToolsDir>$(RepositoryEngineeringDir)/tools/</ToolsDir>
-    <TaskDirectory>$(ToolsDir)tasks/</TaskDirectory>
+    <BaseIntermediatePath>$([MSBuild]::NormalizeDirectory('$(BaseOutputPath)', 'obj'))</BaseIntermediatePath>
+    <OutputPath>$([MSBuild]::NormalizeDirectory('$(BaseOutputPath)', '$(TargetPlatform)', '$(Configuration)'))</OutputPath>
+    <IntermediatePath>$([MSBuild]::NormalizeDirectory('$(BaseIntermediatePath)', '$(TargetPlatform)', '$(Configuration)'))</IntermediatePath>
 
-    <XPlatTasksBinDir>$(TaskDirectory)Microsoft.DotNet.SourceBuild.Tasks.XPlat/bin/$(Configuration)/</XPlatTasksBinDir>
-    <XPlatSourceBuildTasksAssembly>$(XPlatTasksBinDir)Microsoft.DotNet.SourceBuild.Tasks.XPlat.dll</XPlatSourceBuildTasksAssembly>
+    <!-- Semaphore path for incremental builds -->
+    <CompletedSemaphorePath>$([MSBuild]::NormalizeDirectory('$(BaseIntermediatePath)', 'semaphores'))</CompletedSemaphorePath>
 
-    <LeakDetectionTasksBinDir>$(TaskDirectory)Microsoft.DotNet.SourceBuild.Tasks.LeakDetection/</LeakDetectionTasksBinDir>
-    <LeakDetectionTasksAssembly>$(LeakDetectionTasksBinDir)Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.dll</LeakDetectionTasksAssembly>
+    <LocalNuGetPackagesRoot>$([MSBuild]::NormalizeDirectory('$(IntermediatePath)', 'nuget-packages'))</LocalNuGetPackagesRoot>
+    <SourceBuiltBlobFeedDir>$([MSBuild]::NormalizeDirectory('$(IntermediatePath)', 'blob-feed'))</SourceBuiltBlobFeedDir>
+    <SourceBuiltPackagesPath>$([MSBuild]::NormalizeDirectory('$(SourceBuiltBlobFeedDir)', 'packages'))</SourceBuiltPackagesPath>
 
-    <BaseIntermediatePath>$(BaseOutputPath)obj/</BaseIntermediatePath>
-    <OutputPath>$(BaseOutputPath)$(TargetPlatform)/$(Configuration)/</OutputPath>
-    <IntermediatePath>$(BaseIntermediatePath)$(TargetPlatform)/$(Configuration)/</IntermediatePath>
-    <LocalNuGetPackagesRoot>$(IntermediatePath)nuget-packages/</LocalNuGetPackagesRoot>
-    <SourceBuiltBlobFeedDir>$(IntermediatePath)blob-feed/</SourceBuiltBlobFeedDir>
-    <SourceBuiltPackagesPath>$(SourceBuiltBlobFeedDir)packages/</SourceBuiltPackagesPath>
     <SourceBuiltAssetsDir>$(SourceBuiltBlobFeedDir)assets/</SourceBuiltAssetsDir>
     <PrebuiltPackagesPath>$(PrereqsPackagesDir)prebuilt/</PrebuiltPackagesPath>
     <PreviouslyRestoredPackagesPath>$(PrereqsPackagesDir)previouslyRestored/</PreviouslyRestoredPackagesPath>
     <PrebuiltSourceBuiltPackagesPath>$(PrereqsPackagesDir)previously-source-built/</PrebuiltSourceBuiltPackagesPath>
     <PrebuiltSourceBuiltPackagesPath Condition="'$(CustomPrebuiltSourceBuiltPackagesPath)' != ''">$(CustomPrebuiltSourceBuiltPackagesPath)/</PrebuiltSourceBuiltPackagesPath>
     <SourceBuiltTarBallPath>$(OutputPath)</SourceBuiltTarBallPath>
-    <LoggingDir>$(BaseOutputPath)logs/</LoggingDir>
+    <LoggingDir>$([MSBuild]::NormalizeDirectory('$(BaseOutputPath)', 'logs'))</LoggingDir>
     <MSBuildDebugPathTargetDir>$(BaseOutputPath)msbuild-debug/</MSBuildDebugPathTargetDir>
     <RoslynDebugPathTargetDir>$(BaseOutputPath)roslyn-debug/</RoslynDebugPathTargetDir>
     <AspNetRazorBuildServerLogDir>$(BaseOutputPath)aspnet-debug</AspNetRazorBuildServerLogDir>
     <AspNetRazorBuildServerLogFile>$(AspNetRazorBuildServerLogDir)razor-build-server.log</AspNetRazorBuildServerLogFile>
     <GitInfoDir>$(PrereqsDir)git-info/</GitInfoDir>
-    <GitInfoRepoPropsFile>$(GitInfoDir)$(RepositoryName).props</GitInfoRepoPropsFile>
     <GitInfoAllRepoPropsFile>$(GitInfoDir)AllRepoVersions.props</GitInfoAllRepoPropsFile>
     <PackageReportDir>$(BaseOutputPath)prebuilt-report/</PackageReportDir>
-    <RepoProjectsDir>$(ProjectDir)/repo-projects/</RepoProjectsDir>
+    <RepoProjectsDir>$(RepoRoot)repo-projects/</RepoProjectsDir>
     <ResultingPrebuiltPackagesDir>$(PackageReportDir)prebuilt-packages/</ResultingPrebuiltPackagesDir>
     <PackageListsDir>$(PackageReportDir)packagelists/</PackageListsDir>
     <!-- The prefix needs to match what's defined in Arcade's source-build infra. Consider using a single property, in the future. -->
@@ -149,8 +137,14 @@
     <ArchiveArtifactsTextFile>$(ExternalTarballsDir)$(ArchiveArtifactsTextFileName)</ArchiveArtifactsTextFile>
     <BaselineDataFile>$(ToolsDir)prebuilt-baseline.xml</BaselineDataFile>
     <!--Exclude tests that are failing for test enabled projects like - corefx -->
-    <TestExclusionsDir>$(ProjectDir)test/exclusions/</TestExclusionsDir>
-    <SmokeTestsDir>$(ProjectDir)test/Microsoft.DotNet.SourceBuild.SmokeTests/</SmokeTestsDir>
+    <TestExclusionsDir>$(RepoRoot)test/exclusions/</TestExclusionsDir>
+    <SmokeTestsDir>$(RepoRoot)test/Microsoft.DotNet.SourceBuild.SmokeTests/</SmokeTestsDir>
+  </PropertyGroup>
+
+  <!-- Build task paths -->
+  <PropertyGroup>
+    <XPlatSourceBuildTasksAssembly>$([MSBuild]::NormalizePath('$(TasksDir)', 'Microsoft.DotNet.SourceBuild.Tasks.XPlat', 'bin', '$(Configuration)', 'Microsoft.DotNet.SourceBuild.Tasks.XPlat.dll'))</XPlatSourceBuildTasksAssembly>
+    <LeakDetectionTasksAssembly>$([MSBuild]::NormalizePath('$(TasksDir)', 'Microsoft.DotNet.SourceBuild.Tasks.LeakDetection', 'bin', '$(Configuration)', 'Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.dll'))</LeakDetectionTasksAssembly>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -176,17 +170,6 @@
     <TargetRid Condition="'$(PortableBuild)' == 'true' AND '$(PortableRid)' != ''">$(PortableRid)</TargetRid>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <RootRepo>dotnet</RootRepo>
-  </PropertyGroup>
-
-  <!--
-    Semaphore path for incremental builds
-  -->
-  <PropertyGroup>
-    <CompletedSemaphorePath>$(BaseIntermediatePath)semaphores/</CompletedSemaphorePath>
-  </PropertyGroup>
-
   <!-- CLI internal version is statically set by us to a version that will never show up in the wild.
        This ensures we will never restore a public version instead of our source-built version.  We
        invlude the version number because it is used both by CLI.proj and the core-sdk build and they
@@ -197,14 +180,14 @@
     <CliInternalBuildVersion>30000001-1</CliInternalBuildVersion>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
     <ExtraPackageVersionPropsPackageInfo Include="DotnetCliInternalVersion" Version="3.0.100-$(CliInternalReleaseTag)-$(CliInternalBuildVersion)" />
   </ItemGroup>
 
   <Import Project="$(GitInfoAllRepoPropsFile)" />
 
   <!-- Additional pseudo-versions that some repos depend on -->
-  <ItemGroup>
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
     <!-- we don't produce the Windows version of this package but that's the one core-sdk keys off of for the ASP.NET version -->
     <ExtraPackageVersionPropsPackageInfo Include="MicrosoftAspNetCoreAppRuntimewinx64PackageVersion" Version="$(aspnetcoreOutputPackageVersion)" />
     <!-- same thing here for CLI -->
@@ -233,5 +216,7 @@
     <ExtraPackageVersionPropsPackageInfo Include="MicrosoftAspNetCoreAppRuntimeVersion" Version="%24(MicrosoftAspNetCoreAppRefPackageVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="MicrosoftNETCoreAppCrossgen2Version" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
   </ItemGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)Directory.Build.sourcebuild.props" />
 
 </Project>

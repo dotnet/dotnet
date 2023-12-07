@@ -1,23 +1,15 @@
-<Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputVersionArgs>$(OutputVersionArgs) /p:DisableNerdbankVersioning=true</OutputVersionArgs>
-
     <LogVerbosityOptOut>true</LogVerbosityOptOut>
-    <BuildCommandArgs>$(StandardSourceBuildArgs)</BuildCommandArgs>
+    <BuildCommandArgs>$(StandardSourceBuildActionsAndArgs)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)v $(LogVerbosity)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)warnAsError $(ArcadeFalseBoolBuildArg)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) $(OutputVersionArgs)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) /p:DotNetCoreSdkDir=$(DotNetCliToolDir)</BuildCommandArgs>
+    <BuildCommandArgs>$(BuildCommandArgs) /p:DisableNerdbankVersioning=true</BuildCommandArgs>
+    <BuildCommandArgs>$(BuildCommandArgs) /p:DotNetCoreSdkDir=$(DotNetRoot)</BuildCommandArgs>
     <BuildCommand>$(StandardSourceBuildCommand) $(BuildCommandArgs)</BuildCommand>
   </PropertyGroup>
-
-  <ItemGroup>
-    <UseSourceBuiltSdkOverride Include="@(ArcadeSdkOverride)" />
-    <UseSourceBuiltSdkOverride Include="@(CentralVersionsSdkOverride)" />
-  </ItemGroup>
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
@@ -25,9 +17,12 @@
     <RepositoryReference Include="roslyn" />
   </ItemGroup>
 
-  <!--
-    Begin workaround: https://github.com/dotnet/source-build/issues/933
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
+    <UseSourceBuiltSdkOverride Include="@(ArcadeSdkOverride)" />
+    <UseSourceBuiltSdkOverride Include="@(CentralVersionsSdkOverride)" />
+  </ItemGroup>
 
+  <!--
     The CentralPackageVersions SDK isn't actually source-built. We get it as a text-only prebuilt,
     but the NuGet resolver seems flaky so we're using our resolver instead. We only have access to
     the nupkg ahead of time when building, so only enable this workaround then.
@@ -57,11 +52,7 @@
       DestinationDirectory="$(CentralVersionsSdkDir)"
       OverwriteDestination="true" />
  
-    <WriteLinesToFile File="$(RepoCompletedSemaphorePath)ExtractCentralPackageVersionsSdkPackage.complete" Overwrite="true" />
+    <Touch Files="$(RepoCompletedSemaphorePath)ExtractCentralPackageVersionsSdkPackage.complete" AlwaysCreate="true" />
   </Target>
-  <!--
-    End workaround: https://github.com/dotnet/source-build/issues/933
-  -->
 
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

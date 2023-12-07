@@ -4,8 +4,8 @@
   <Target Name="Build">
     <ItemGroup>
       <AllRepoProjects
-        Include="$(ProjectDir)repo-projects\*.proj"
-        Exclude="$(ProjectDir)repo-projects\dotnet.proj" />
+        Include="$(RepoRoot)repo-projects\*.proj"
+        Exclude="$(RepoRoot)repo-projects\dotnet.proj" />
     </ItemGroup>
 
     <MSBuild

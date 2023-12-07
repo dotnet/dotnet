@@ -1,8 +1,9 @@
-<Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <BuildCommandArgs>$(StandardSourceBuildArgs)</BuildCommandArgs>
+    <LogVerbosityOptOut>true</LogVerbosityOptOut>
+
+    <BuildCommandArgs>$(StandardSourceBuildActionsAndArgs)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildCommandArgs>
     <BuildCommandArgs>$(BuildCommandArgs) /p:PackageProjectUrl=https://github.com/dotnet/sdk</BuildCommandArgs>
 
@@ -17,9 +18,7 @@
 
     <!-- Just like mono, arm does not support NativeAot -->
     <BuildCommandArgs Condition="'$(BuildArchitecture)' == 'arm'">$(BuildCommandArgs) /p:NativeAotSupported=false</BuildCommandArgs>
-
-    <LogVerbosityOptOut>true</LogVerbosityOptOut>
-    <BuildCommandArgs>$(BuildCommandArgs) -v $(LogVerbosity)</BuildCommandArgs>
+    <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)v $(LogVerbosity)</BuildCommandArgs>
 
     <BuildCommand>$(StandardSourceBuildCommand) $(BuildCommandArgs)</BuildCommand>
   </PropertyGroup>
@@ -28,7 +27,7 @@
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="runtime" />
     <RepositoryReference Include="msbuild" />
-    <RepositoryReference Include="source-build-externals" />
+    <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildFromSource)' == 'true'" />
     <RepositoryReference Include="nuget-client" />
     <RepositoryReference Include="roslyn-analyzers" />
     <RepositoryReference Include="vstest" />
@@ -38,5 +37,4 @@
     <RepositoryReference Include="razor" />
   </ItemGroup>
 
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>
