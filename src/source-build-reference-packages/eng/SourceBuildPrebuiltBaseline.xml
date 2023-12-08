@@ -11,8 +11,6 @@
     dependencies on it are removed from the previous-source-built packages. -->
     <UsagePattern IdentityGlob="Newtonsoft.Json/13.0.1" />
 
-    <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*/*" />
-
   </IgnorePatterns>
   <Usages/>
 </UsageData>

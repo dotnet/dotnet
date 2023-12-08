@@ -18,4 +18,8 @@ export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 export DOTNET_MULTILEVEL_LOOKUP=0
 
-"$scriptroot/eng/common/build.sh" --build --restore --pack "$@"
+if [[ $@ == *"ArcadeInnerBuildFromSource=true"* ]]; then
+  "$scriptroot/eng/common/build.sh" --build --restore --pack "$@"
+else
+  "$scriptroot/eng/common/build.sh" -sb "$@"
+fi

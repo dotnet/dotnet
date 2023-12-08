@@ -12,6 +12,8 @@ pr:
     - release/*
 
 variables:
+  - template: /eng/common/templates/variables/pool-providers.yml
+
   - name: Codeql.Enabled
     value: true
 
@@ -19,29 +21,62 @@ stages:
 - stage: build
   displayName: Build
   jobs:
-  - template: /eng/common/templates/jobs/jobs.yml
-    parameters:
-      enablePublishUsingPipelines: true
-      enablePublishBuildArtifacts: true
-      enablePublishBuildAssets: true
-      publishAssetsImmediately: true
-      artifacts:
-        publish:
-          artifacts: true
-          manifests: true
-      enableSourceBuild: true
-  - template: /azure-pipelines/builds/generatescript-tests.yml
-    parameters:
-      buildConfiguration: Debug
+  - job: Linux
+    pool:
+      ${{ if eq(variables['System.TeamProject'], 'public') }}:
+        name: $(DncEngPublicBuildPool)
+        demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+      ${{ else }}:
+        name: $(DncEngInternalBuildPool)
+        demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
+    container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
+    steps:
+    - template: /eng/common/templates/steps/source-build.yml
 
-# Based on - https://github.com/dotnet/arcade/blob/9b3f304c7bc9fd4d11be9ca0b466b83e98d2a191/Documentation/CorePackages/Publishing.md#moving-away-from-the-legacy-pushtoblobfeed-task
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-  - template: /eng/common/templates/post-build/post-build.yml
-    parameters:
-      publishingInfraVersion: 3
-      publishAssetsImmediately: true
-      enableSourceLinkValidation: false
-      #Nuget and Signing Validation are not needed as we only produce a transport package.
-      enableSigningValidation: false
-      enableNugetValidation: false
+    - script: $(Build.SourcesDirectory)/test.sh
+      displayName: Run Tests
+    
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      inputs:
+        testResultsFormat: 'xUnit'
+        testResultsFiles: '**/artifacts/TestResults/Debug/*.xml'
+        testRunTitle: 'Linux_SBRP_tests'
+      condition: always()
 
+  ## The job below is a temporary workaround for running the tests on Windows.
+  ## Currently, the source-build-reference-packages repository does not support building on Windows, but it is capable of running the generate tooling tests on Windows.
+  ## This job should be modified once the source-build-reference-packages repository supports building on Windows by transitioning to the template above.
+  - job: Windows
+    pool:
+      ${{ if eq(variables['System.TeamProject'], 'public') }}:
+        name: $(DncEngPublicBuildPool)
+        demands: ImageOverride -equals 1es-windows-2022-open
+      ${{ else }}:
+        name: $(DncEngInternalBuildPool)
+        demands: ImageOverride -equals 1es-windows-2022
+    container: mcr.microsoft.com/windows/servercore:ltsc2022
+    steps:
+    - checkout: self
+      clean: true
+  
+    - script: $(Build.SourcesDirectory)/test.cmd
+      displayName: Run Tests
+  
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      inputs:
+        testResultsFormat: 'xUnit'
+        testResultsFiles: '**/artifacts/TestResults/Debug/*.xml'
+        testRunTitle: 'Windows_SBRP_tests'
+      condition: always()
+
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - template: /eng/common/templates/job/publish-build-assets.yml
+      parameters:
+        dependsOn:
+        - Linux
+        - Windows
+        publishUsingPipelines: true
+        publishAssetsImmediately: true
+        enablePublishBuildArtifacts: true
