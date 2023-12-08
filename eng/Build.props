@@ -4,6 +4,4 @@
     <ProjectToBuild Include="$(RepoRoot)build.proj" />
   </ItemGroup>
 
-  <Import Project="Build.sourcebuild.props" Condition="'$(DotNetBuildFromSource)' == 'true'" />
-
 </Project>
