@@ -205,7 +205,7 @@
     </PropertyGroup>
 
     <Exec
-      Command="$(BaseInnerSourceBuildCommand) $(InnerBuildArgs)"
+      Command="'$(BaseInnerSourceBuildCommand)' $(InnerBuildArgs)"
       WorkingDirectory="$(InnerSourceBuildRepoRoot)"
       EnvironmentVariables="@(InnerBuildEnv)"
       IgnoreStandardErrorWarningFormat="true" />
