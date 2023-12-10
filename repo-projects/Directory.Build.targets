@@ -35,7 +35,7 @@
   <!-- TODO: Remove this target when Arcade targets .NET 9: https://github.com/dotnet/source-build/issues/3743. -->
   <Target Name="UpdateBuildToolFramework"
           BeforeTargets="Build"
-          Condition="'$(EngCommonToolsShFile)' != '' and '$(DotNetBuildFromSource)' == 'true'"
+          Condition="'$(EngCommonToolsShFile)' != ''"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(RepoCompletedSemaphorePath)UpdateBuildToolFramework.complete" >
 
@@ -133,8 +133,7 @@
   <Target Name="CreateBuildInputProps"
           BeforeTargets="Build"
           Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(RepoCompletedSemaphorePath)CreateBuildInputProps.complete"
-          Condition="'$(DotNetBuildFromSource)' == 'true'">
+          Outputs="$(RepoCompletedSemaphorePath)CreateBuildInputProps.complete">
 
     <ItemGroup>
       <_CurrentSourceBuiltPackages Include="$(SourceBuiltPackagesPath)*.nupkg"
@@ -275,8 +274,7 @@
   </Target>
 
   <Target Name="ExtractIntermediatePackages"
-          AfterTargets="Package"
-          Condition="'$(DotNetBuildFromSource)' == 'true'">
+          AfterTargets="Package">
     <ItemGroup>
       <_BuiltIntermediatePackages Condition="'$(PackagesOutput)' != ''" Include="$(PackagesOutput)/Microsoft.SourceBuild.Intermediate.*.nupkg" Exclude="$(PackagesOutput)/*.symbols.nupkg"/>
       <_BuiltIntermediatePackages Condition="'@(PackagesOutputList)' != ''" Include="%(PackagesOutputList.Identity)/Microsoft.SourceBuild.Intermediate.*.nupkg" Exclude="%(PackagesOutputList.Identity)/*.symbols.nupkg"/>
@@ -489,7 +487,7 @@
 
   <Target Name="EnsurePackagesCreated"
           AfterTargets="CopyPackage"
-          Condition="'$(SkipEnsurePackagesCreated)' != 'true' and '$(DotNetBuildFromSource)' == 'true'"
+          Condition="'$(SkipEnsurePackagesCreated)' != 'true'"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(RepoCompletedSemaphorePath)EnsurePackagesCreated.complete">
     <ItemGroup>
