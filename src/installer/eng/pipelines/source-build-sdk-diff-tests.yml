@@ -38,6 +38,13 @@ jobs:
 
 - template: templates/jobs/sdk-diff-tests.yml
   parameters:
+    buildName: Alpine317_Offline_MsftSdk
+    targetRid: alpine.3.17-x64
+    architecture: x64
+    dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
+
+- template: templates/jobs/sdk-diff-tests.yml
+  parameters:
     buildName: Fedora39_Offline_MsftSdk
     targetRid: fedora.39-x64
     architecture: x64
