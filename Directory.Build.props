@@ -66,7 +66,8 @@
     <PrereqsPackagesDir>$(PrereqsDir)/packages/</PrereqsPackagesDir>
     <PackagesDir Condition="'$(NuGetPackageRoot)' != ''">$(NuGetPackageRoot)</PackagesDir>
     <PackagesDir Condition="'$(PackagesDir)' == ''">$(PrereqsPackagesDir)restored/</PackagesDir>
-    <ArcadeBootstrapPackageDir>$(PackagesDir)ArcadeBootstrapPackage/</ArcadeBootstrapPackageDir>
+    <ArcadeBootstrapPackageDir Condition="'$(DotNetBuildFromSource)' == 'true'">$(PackagesDir)ArcadeBootstrapPackage/</ArcadeBootstrapPackageDir>
+    <ArcadeBootstrapPackageDir Condition="'$(DotNetBuildVertical)' == 'true'">$(PackagesDir)</ArcadeBootstrapPackageDir>
   </PropertyGroup>
 
   <PropertyGroup>

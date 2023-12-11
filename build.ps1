@@ -16,7 +16,7 @@ InitializeToolset
 # the msbuild SDK resolver required to force the rest of the repos to use the right arcade SDK.
 
 MSBuild "$PSScriptRoot/eng/tools/init-build.proj" `
-        /bl:"$SCRIPT_ROOT/artifacts/log/Debug/BuildXPlatTasks_$LogDateStamp.binlog" `
+        /bl:"$PSScriptRoot/artifacts/log/Debug/BuildXPlatTasks_$LogDateStamp.binlog" `
         /flp:LogFile="$PSScriptRoot/artifacts/logs/BuildXPlatTasks_$LogDateStamp.log" `
         /t:PrepareOfflineLocalTools `
         /p:DotNetBuildVertical=true
