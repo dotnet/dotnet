@@ -15,9 +15,6 @@
       Tools and packages produced by this repository support infrastructure and are not shipping on NuGet or via any other official channel.
     -->
     <IsShipping>false</IsShipping>
-
-    <!-- Vertical Build POC exclusion before arcade's SDK features take over. -->
-    <ExcludeFromBuild Condition="'$(DotNetBuildVertical)' == 'true' and '$(IsTestProject)' == 'true'">true</ExcludeFromBuild>
   </PropertyGroup>
 
 </Project>

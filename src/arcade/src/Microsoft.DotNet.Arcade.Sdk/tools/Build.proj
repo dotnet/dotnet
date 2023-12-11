@@ -304,6 +304,6 @@
     <MSBuild Projects="Publish.proj"
              Properties="@(_PublishProps);_NETCORE_ENGINEERING_TELEMETRY=Publish"
              Targets="Publish"
-             Condition="'$(Publish)' == 'true' and '$(DotNetBuildFromSource)' != 'true' and '$(DotNetBuildFromSource)' != 'true'"/>
+             Condition="'$(Publish)' == 'true' and '$(DotNetBuildFromSource)' != 'true'"/>
   </Target>
 </Project>

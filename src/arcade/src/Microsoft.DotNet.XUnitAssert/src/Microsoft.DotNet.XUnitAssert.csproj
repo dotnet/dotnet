@@ -9,8 +9,6 @@
     <IsPackable>true</IsPackable>
     <Description>This package is a fork of xunit.assert that is AOT-compatible.</Description>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
-    <!-- Exclude from Vertical build PoC. After arcade builds this should happen for the remaining repos. -->
-    <ExcludeFromBuild Condition="'$(DotNetBuildVertical)' == 'true'">true</ExcludeFromBuild>
     <!-- Remove XUNIT_SPAN define until https://github.com/xunit/xunit/issues/2793 is fixed. -->
     <DefineConstants>$(DefineConstants);XUNIT_NULLABLE;XUNIT_AOT</DefineConstants>
     <IsTrimmable>true</IsTrimmable>
