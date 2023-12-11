@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Xunit.Sdk
 {
@@ -23,25 +24,15 @@ namespace Xunit.Sdk
 			base(message)
 		{ }
 
-#if XUNIT_VALUETASK
-		/// <summary>
-		/// Creates a new instance of the <see cref="AllException"/> class to be thrown when one or
-		/// more items failed during <see cref="Assert.All{T}(IEnumerable{T}, Action{T})"/>,
-		/// <see cref="Assert.All{T}(IEnumerable{T}, Action{T, int})"/>,
-		/// <see cref="Assert.AllAsync{T}(IEnumerable{T}, Func{T, System.Threading.Tasks.ValueTask})"/>,
-		/// or <see cref="Assert.AllAsync{T}(IEnumerable{T}, Func{T, int, System.Threading.Tasks.ValueTask})"/>.
-		/// </summary>
-		/// <param name="totalItems">The total number of items in the collection</param>
-		/// <param name="errors">The list of failures (as index, value, and exception)</param>
-#else
 		/// <summary>
 		/// Creates a new instance of the <see cref="AllException"/> class to be thrown when one or
 		/// more items failed during <see cref="Assert.All{T}(IEnumerable{T}, Action{T})"/>
-		/// or <see cref="Assert.All{T}(IEnumerable{T}, Action{T, int})"/>.
+		/// or <see cref="Assert.All{T}(IEnumerable{T}, Action{T, int})"/>,
+		/// <see cref="Assert.AllAsync{T}(IEnumerable{T}, Func{T, Task})"/>,
+		/// or <see cref="Assert.AllAsync{T}(IEnumerable{T}, Func{T, int, Task})"/>.
 		/// </summary>
 		/// <param name="totalItems">The total number of items in the collection</param>
 		/// <param name="errors">The list of failures (as index, value, and exception)</param>
-#endif
 		public static AllException ForFailures(
 			int totalItems,
 			IReadOnlyList<Tuple<int, string, Exception>> errors)
@@ -54,16 +45,26 @@ namespace Xunit.Sdk
 			var wrapSpaces = Environment.NewLine + new string(' ', maxWrapIndent);
 
 			var message =
-				$"Assert.All() Failure: {errors.Count} out of {totalItems} items in the collection did not pass." + Environment.NewLine +
-				string.Join(
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"Assert.All() Failure: {0} out of {1} items in the collection did not pass.{2}{3}",
+					errors.Count,
+					totalItems,
 					Environment.NewLine,
-					errors.Select(error =>
-					{
-						var indexString = $"[{error.Item1}]:".PadRight(maxItemIndexLength);
-
-						return $"{indexString}Item:  {error.Item2.Replace(Environment.NewLine, wrapSpaces)}" + Environment.NewLine +
-							   $"{indexSpaces}Error: {error.Item3.Message.Replace(Environment.NewLine, wrapSpaces)}";
-					})
+					string.Join(
+						Environment.NewLine,
+						errors.Select(error =>
+							string.Format(
+								CultureInfo.CurrentCulture,
+								"{0}Item:  {1}{2}{3}Error: {4}",
+								string.Format(CultureInfo.CurrentCulture, "[{0}]:", error.Item1).PadRight(maxItemIndexLength),
+								error.Item2.Replace(Environment.NewLine, wrapSpaces),
+								Environment.NewLine,
+								indexSpaces,
+								error.Item3.Message.Replace(Environment.NewLine, wrapSpaces)
+							)
+						)
+					)
 				);
 
 			return new AllException(message);

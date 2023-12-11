@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -30,9 +31,14 @@ namespace Xunit.Sdk
 			string item,
 			string collection) =>
 				new DistinctException(
-					"Assert.Distinct() Failure: Duplicate item found" + Environment.NewLine +
-					"Collection: " + Assert.GuardArgumentNotNull(nameof(collection), collection) + Environment.NewLine +
-					"Item:       " + Assert.GuardArgumentNotNull(nameof(item), item)
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.Distinct() Failure: Duplicate item found{0}Collection: {1}{2}Item:       {3}",
+						Environment.NewLine,
+						Assert.GuardArgumentNotNull(nameof(collection), collection),
+						Environment.NewLine,
+						Assert.GuardArgumentNotNull(nameof(item), item)
+					)
 				);
 	}
 }

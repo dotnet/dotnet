@@ -76,18 +76,6 @@ namespace Xunit
 			throw new NotImplementedException("You must call Assert.ThrowsAsync (and await the result) when testing async code.");
 		}
 
-#if XUNIT_VALUETASK
-		/// <summary/>
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		[Obsolete("You must call Assert.ThrowsAsync (and await the result) when testing async code.", true)]
-		public static Exception Throws(
-			Type exceptionType,
-			Func<ValueTask> testCode)
-		{
-			throw new NotImplementedException("You must call Assert.ThrowsAsync (and await the result) when testing async code.");
-		}
-#endif
-
 		/// <summary>
 		/// Verifies that the exact exception is thrown (and not a derived exception type).
 		/// </summary>
@@ -125,17 +113,6 @@ namespace Xunit
 		{
 			throw new NotImplementedException("You must call Assert.ThrowsAsync<T> (and await the result) when testing async code.");
 		}
-
-#if XUNIT_VALUETASK
-		/// <summary/>
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		[Obsolete("You must call Assert.ThrowsAsync<T> (and await the result) when testing async code.", true)]
-		public static T Throws<T>(Func<ValueTask> testCode)
-			where T : Exception
-		{
-			throw new NotImplementedException("You must call Assert.ThrowsAsync<T> (and await the result) when testing async code.");
-		}
-#endif
 
 		/// <summary>
 		/// Verifies that the exact exception is thrown (and not a derived exception type), where the exception
@@ -201,23 +178,6 @@ namespace Xunit
 			throw new NotImplementedException("You must call Assert.ThrowsAsync<T> (and await the result) when testing async code.");
 		}
 
-#if XUNIT_VALUETASK
-		/// <summary/>
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		[Obsolete("You must call Assert.ThrowsAsync<T> (and await the result) when testing async code.", true)]
-		public static T Throws<T>(
-#if XUNIT_NULLABLE
-			string? paramName,
-#else
-			string paramName,
-#endif
-			Func<ValueTask> testCode)
-				where T : ArgumentException
-		{
-			throw new NotImplementedException("You must call Assert.ThrowsAsync<T> (and await the result) when testing async code.");
-		}
-#endif
-
 		static Exception ThrowsAny(
 			Type exceptionType,
 #if XUNIT_NULLABLE
@@ -271,17 +231,6 @@ namespace Xunit
 			throw new NotImplementedException("You must call Assert.ThrowsAnyAsync<T> (and await the result) when testing async code.");
 		}
 
-#if XUNIT_VALUETASK
-		/// <summary/>
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		[Obsolete("You must call Assert.ThrowsAnyAsync<T> (and await the result) when testing async code.", true)]
-		public static T ThrowsAny<T>(Func<ValueTask> testCode)
-			where T : Exception
-		{
-			throw new NotImplementedException("You must call Assert.ThrowsAnyAsync<T> (and await the result) when testing async code.");
-		}
-#endif
-
 		/// <summary>
 		/// Verifies that the exact exception or a derived exception type is thrown.
 		/// </summary>
@@ -291,18 +240,6 @@ namespace Xunit
 		public static async Task<T> ThrowsAnyAsync<T>(Func<Task> testCode)
 			where T : Exception =>
 				(T)ThrowsAny(typeof(T), await RecordExceptionAsync(testCode));
-
-#if XUNIT_VALUETASK
-		/// <summary>
-		/// Verifies that the exact exception or a derived exception type is thrown.
-		/// </summary>
-		/// <typeparam name="T">The type of the exception expected to be thrown</typeparam>
-		/// <param name="testCode">A delegate to the task to be tested</param>
-		/// <returns>The exception that was thrown, when successful</returns>
-		public static async ValueTask<T> ThrowsAnyAsync<T>(Func<ValueTask> testCode)
-			where T : Exception =>
-				(T)ThrowsAny(typeof(T), await RecordExceptionAsync(testCode));
-#endif
 
 		/// <summary>
 		/// Verifies that the exact exception is thrown (and not a derived exception type).
@@ -315,19 +252,6 @@ namespace Xunit
 			Func<Task> testCode) =>
 				Throws(exceptionType, await RecordExceptionAsync(testCode));
 
-#if XUNIT_VALUETASK
-		/// <summary>
-		/// Verifies that the exact exception is thrown (and not a derived exception type).
-		/// </summary>
-		/// <param name="exceptionType">The type of the exception expected to be thrown</param>
-		/// <param name="testCode">A delegate to the task to be tested</param>
-		/// <returns>The exception that was thrown, when successful</returns>
-		public static async ValueTask<Exception> ThrowsAsync(
-			Type exceptionType,
-			Func<ValueTask> testCode) =>
-				Throws(exceptionType, await RecordExceptionAsync(testCode));
-#endif
-
 		/// <summary>
 		/// Verifies that the exact exception is thrown (and not a derived exception type).
 		/// </summary>
@@ -339,18 +263,6 @@ namespace Xunit
 #pragma warning disable xUnit2015
 				(T)Throws(typeof(T), await RecordExceptionAsync(testCode));
 #pragma warning restore xUnit2015
-
-#if XUNIT_VALUETASK
-		/// <summary>
-		/// Verifies that the exact exception is thrown (and not a derived exception type).
-		/// </summary>
-		/// <typeparam name="T">The type of the exception expected to be thrown</typeparam>
-		/// <param name="testCode">A delegate to the task to be tested</param>
-		/// <returns>The exception that was thrown, when successful</returns>
-		public static async ValueTask<T> ThrowsAsync<T>(Func<ValueTask> testCode)
-			where T : Exception =>
-				(T)Throws(typeof(T), await RecordExceptionAsync(testCode));
-#endif
 
 		/// <summary>
 		/// Verifies that the exact exception is thrown (and not a derived exception type), where the exception
@@ -375,31 +287,5 @@ namespace Xunit
 
 			return ex;
 		}
-
-#if XUNIT_VALUETASK
-		/// <summary>
-		/// Verifies that the exact exception is thrown (and not a derived exception type), where the exception
-		/// derives from <see cref="ArgumentException"/> and has the given parameter name.
-		/// </summary>
-		/// <param name="paramName">The parameter name that is expected to be in the exception</param>
-		/// <param name="testCode">A delegate to the task to be tested</param>
-		/// <returns>The exception that was thrown, when successful</returns>
-		public static async ValueTask<T> ThrowsAsync<T>(
-#if XUNIT_NULLABLE
-			string? paramName,
-#else
-			string paramName,
-#endif
-			Func<ValueTask> testCode)
-				where T : ArgumentException
-		{
-			var ex = await ThrowsAsync<T>(testCode);
-
-			if (paramName != ex.ParamName)
-				throw ThrowsException.ForIncorrectParameterName(typeof(T), paramName, ex.ParamName);
-
-			return ex;
-		}
-#endif
 	}
 }

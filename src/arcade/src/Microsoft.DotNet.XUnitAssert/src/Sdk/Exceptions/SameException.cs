@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -30,9 +31,14 @@ namespace Xunit.Sdk
 			string expected,
 			string actual) =>
 				new SameException(
-					"Assert.Same() Failure: Values are not the same instance" + Environment.NewLine +
-					"Expected: " + Assert.GuardArgumentNotNull(nameof(expected), expected) + Environment.NewLine +
-					"Actual:   " + Assert.GuardArgumentNotNull(nameof(actual), actual)
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.Same() Failure: Values are not the same instance{0}Expected: {1}{2}Actual:   {3}",
+						Environment.NewLine,
+						Assert.GuardArgumentNotNull(nameof(expected), expected),
+						Environment.NewLine,
+						Assert.GuardArgumentNotNull(nameof(actual), actual)
+					)
 				);
 	}
 }

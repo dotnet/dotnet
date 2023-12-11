@@ -7,6 +7,7 @@
 #endif
 
 using System;
+using System.Globalization;
 using System.Reflection;
 using Xunit.Sdk;
 
@@ -177,8 +178,8 @@ namespace Xunit
 
 				if (expectedTypeName == actualTypeName)
 				{
-					expectedTypeName += $" (from {expectedType.GetTypeInfo().Assembly.GetName().FullName})";
-					actualTypeName += $" (from {actualType.GetTypeInfo().Assembly.GetName().FullName})";
+					expectedTypeName += string.Format(CultureInfo.CurrentCulture, " (from {0})", expectedType.GetTypeInfo().Assembly.GetName().FullName);
+					actualTypeName += string.Format(CultureInfo.CurrentCulture, " (from {0})", actualType.GetTypeInfo().Assembly.GetName().FullName);
 				}
 
 				throw IsTypeException.ForMismatchedType(expectedTypeName, actualTypeName);

@@ -16,7 +16,7 @@
 
     <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
     <_GeneratedVersionFilePath>$(IntermediateOutputPath)DefaultVersions.Generated.props</_GeneratedVersionFilePath>
-    <NoWarn>$(NoWarn);3021;NU5105;SYSLIB0013</NoWarn>
+    <NoWarn>$(NoWarn);3021;NU5105;NU5111;SYSLIB0013</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -35,10 +36,17 @@ namespace Xunit.Sdk
 			int failurePointerIndent,
 			string @string) =>
 				new DoesNotMatchException(
-					"Assert.DoesNotMatch() Failure: Match found" + Environment.NewLine +
-					"        " + new string(' ', failurePointerIndent) + "↓ (pos " + indexFailurePoint + ")" + Environment.NewLine +
-					"String: " + Assert.GuardArgumentNotNull(nameof(@string), @string) + Environment.NewLine +
-					"RegEx:  " + Assert.GuardArgumentNotNull(nameof(expectedRegexPattern), expectedRegexPattern)
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.DoesNotMatch() Failure: Match found{0}        {1}\u2193 (pos {2}){3}String: {4}{5}RegEx:  {6}",
+						Environment.NewLine,
+						new string(' ', failurePointerIndent),
+						indexFailurePoint,
+						Environment.NewLine,
+						Assert.GuardArgumentNotNull(nameof(@string), @string),
+						Environment.NewLine,
+						Assert.GuardArgumentNotNull(nameof(expectedRegexPattern), expectedRegexPattern)
+					)
 				);
 	}
 }

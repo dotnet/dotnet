@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -32,9 +33,14 @@ namespace Xunit.Sdk
 			var formattedType = ArgumentFormatter.Format(type);
 
 			return new IsNotTypeException(
-				"Assert.IsNotType() Failure: Value is the exact type" + Environment.NewLine +
-				"Expected: " + formattedType + Environment.NewLine +
-				"Actual:   " + formattedType
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"Assert.IsNotType() Failure: Value is the exact type{0}Expected: {1}{2}Actual:   {3}",
+					Environment.NewLine,
+					formattedType,
+					Environment.NewLine,
+					formattedType
+				)
 			);
 		}
 	}

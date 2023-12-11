@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 using Xunit.Internal;
 
 namespace Xunit.Sdk
@@ -37,9 +38,14 @@ namespace Xunit.Sdk
 			string actual) =>
 #endif
 				new EndsWithException(
-					"Assert.EndsWith() Failure: String end does not match" + Environment.NewLine +
-					"String:       " + AssertHelper.ShortenAndEncodeStringEnd(actual) + Environment.NewLine +
-					"Expected end: " + AssertHelper.ShortenAndEncodeString(expected)
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.EndsWith() Failure: String end does not match{0}String:       {1}{2}Expected end: {3}",
+						Environment.NewLine,
+						AssertHelper.ShortenAndEncodeStringEnd(actual),
+						Environment.NewLine,
+						AssertHelper.ShortenAndEncodeString(expected)
+					)
 				);
 	}
 }

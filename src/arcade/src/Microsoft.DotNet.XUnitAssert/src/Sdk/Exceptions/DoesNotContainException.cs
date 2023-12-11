@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 using Xunit.Internal;
 
 namespace Xunit.Sdk
@@ -38,9 +39,9 @@ namespace Xunit.Sdk
 			var message = "Assert.DoesNotContain() Failure: Filter matched in collection";
 
 			if (failurePointerIndent.HasValue)
-				message += $"{Environment.NewLine}            {new string(' ', failurePointerIndent.Value)}↓ (pos {indexFailurePoint})";
+				message += string.Format(CultureInfo.CurrentCulture, "{0}            {1}\u2193 (pos {2})", Environment.NewLine, new string(' ', failurePointerIndent.Value), indexFailurePoint);
 
-			message += $"{Environment.NewLine}Collection: {collection}";
+			message += string.Format(CultureInfo.CurrentCulture, "{0}Collection: {1}", Environment.NewLine, collection);
 
 			return new DoesNotContainException(message);
 		}
@@ -65,9 +66,9 @@ namespace Xunit.Sdk
 			var message = "Assert.DoesNotContain() Failure: Item found in collection";
 
 			if (failurePointerIndent.HasValue)
-				message += $"{Environment.NewLine}            {new string(' ', failurePointerIndent.Value)}↓ (pos {indexFailurePoint})";
+				message += string.Format(CultureInfo.CurrentCulture, "{0}            {1}\u2193 (pos {2})", Environment.NewLine, new string(' ', failurePointerIndent.Value), indexFailurePoint);
 
-			message += $"{Environment.NewLine}Collection: {collection}{Environment.NewLine}Found:      {item}";
+			message += string.Format(CultureInfo.CurrentCulture, "{0}Collection: {1}{2}Found:      {3}", Environment.NewLine, collection, Environment.NewLine, item);
 
 			return new DoesNotContainException(message);
 		}
@@ -82,9 +83,14 @@ namespace Xunit.Sdk
 			string expectedKey,
 			string keys) =>
 				new DoesNotContainException(
-					"Assert.DoesNotContain() Failure: Key found in dictionary" + Environment.NewLine +
-					"Keys:  " + Assert.GuardArgumentNotNull(nameof(keys), keys) + Environment.NewLine +
-					"Found: " + Assert.GuardArgumentNotNull(nameof(expectedKey), expectedKey)
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.DoesNotContain() Failure: Key found in dictionary{0}Keys:  {1}{2}Found: {3}",
+						Environment.NewLine,
+						Assert.GuardArgumentNotNull(nameof(keys), keys),
+						Environment.NewLine,
+						Assert.GuardArgumentNotNull(nameof(expectedKey), expectedKey)
+					)
 				);
 
 		/// <summary>
@@ -97,9 +103,14 @@ namespace Xunit.Sdk
 			string item,
 			string set) =>
 				new DoesNotContainException(
-					"Assert.DoesNotContain() Failure: Item found in set" + Environment.NewLine +
-					"Set:   " + Assert.GuardArgumentNotNull(nameof(set), set) + Environment.NewLine +
-					"Found: " + Assert.GuardArgumentNotNull(nameof(item), item)
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.DoesNotContain() Failure: Item found in set{0}Set:   {1}{2}Found: {3}",
+						Environment.NewLine,
+						Assert.GuardArgumentNotNull(nameof(set), set),
+						Environment.NewLine,
+						Assert.GuardArgumentNotNull(nameof(item), item)
+					)
 				);
 
 		/// <summary>
@@ -122,9 +133,9 @@ namespace Xunit.Sdk
 			var message = "Assert.DoesNotContain() Failure: Sub-memory found";
 
 			if (failurePointerIndent.HasValue)
-				message += $"{Environment.NewLine}        {new string(' ', failurePointerIndent.Value)}↓ (pos {indexFailurePoint})";
+				message += string.Format(CultureInfo.CurrentCulture, "{0}        {1}\u2193 (pos {2})", Environment.NewLine, new string(' ', failurePointerIndent.Value), indexFailurePoint);
 
-			message += $"{Environment.NewLine}Memory: {memory}{Environment.NewLine}Found:  {expectedSubMemory}";
+			message += string.Format(CultureInfo.CurrentCulture, "{0}Memory: {1}{2}Found:  {3}", Environment.NewLine, memory, Environment.NewLine, expectedSubMemory);
 
 			return new DoesNotContainException(message);
 		}
@@ -149,9 +160,9 @@ namespace Xunit.Sdk
 			var message = "Assert.DoesNotContain() Failure: Sub-span found";
 
 			if (failurePointerIndent.HasValue)
-				message += $"{Environment.NewLine}       {new string(' ', failurePointerIndent.Value)}↓ (pos {indexFailurePoint})";
+				message += string.Format(CultureInfo.CurrentCulture, "{0}       {1}\u2193 (pos {2})", Environment.NewLine, new string(' ', failurePointerIndent.Value), indexFailurePoint);
 
-			message += $"{Environment.NewLine}Span:  {span}{Environment.NewLine}Found: {expectedSubSpan}";
+			message += string.Format(CultureInfo.CurrentCulture, "{0}Span:  {1}{2}Found: {3}", Environment.NewLine, span, Environment.NewLine, expectedSubSpan);
 
 			return new DoesNotContainException(message);
 		}
@@ -175,10 +186,17 @@ namespace Xunit.Sdk
 			var encodedString = AssertHelper.ShortenAndEncodeString(@string, indexFailurePoint, out failurePointerIndent);
 
 			return new DoesNotContainException(
-				"Assert.DoesNotContain() Failure: Sub-string found" + Environment.NewLine +
-				"        " + new string(' ', failurePointerIndent) + "↓ (pos " + indexFailurePoint + ")" + Environment.NewLine +
-				"String: " + encodedString + Environment.NewLine +
-				"Found:  " + AssertHelper.ShortenAndEncodeString(expectedSubString)
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"Assert.DoesNotContain() Failure: Sub-string found{0}        {1}\u2193 (pos {2}){3}String: {4}{5}Found:  {6}",
+					Environment.NewLine,
+					new string(' ', failurePointerIndent),
+					indexFailurePoint,
+					Environment.NewLine,
+					encodedString,
+					Environment.NewLine,
+					AssertHelper.ShortenAndEncodeString(expectedSubString)
+				)
 			);
 		}
 	}
