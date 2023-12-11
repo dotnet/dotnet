@@ -37,6 +37,8 @@
     <PackageVersionPropsPath>$(IntermediatePath)PackageVersions.$(RepositoryName).props</PackageVersionPropsPath>
     <ArcadeBootstrapDir>$(ArcadeBootstrapPackageDir)</ArcadeBootstrapDir>
     <ArcadeBootstrapVersion>$(ARCADE_BOOTSTRAP_VERSION)</ArcadeBootstrapVersion>
+    <!-- Set the bootstrap version to the VMR's version if empty. (no bootstrap set). -->
+    <ArcadeBootstrapVersion Condition="'$(ArcadeBootstrapVersion)' == ''">$(ArcadeSdkVersion)</ArcadeBootstrapVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
@@ -120,6 +122,8 @@
   <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
     <EnvironmentVariables Include="DotNetBuildFromSource=true" />
     <EnvironmentVariables Include="DotNetBuildOffline=true" />
+  </ItemGroup>
+  <ItemGroup>
     <EnvironmentVariables Include="DotNetPackageVersionPropsPath=$(PackageVersionPropsPath)" />
     <EnvironmentVariables Include="_InitializeToolset=$(SourceBuiltSdksDir)Microsoft.DotNet.Arcade.Sdk/tools/Build.proj" Condition="'$(UseBootstrapArcade)' != 'true'" />
     <EnvironmentVariables Include="_OverrideArcadeInitializeBuildToolFramework=$(NetCurrent)" />
