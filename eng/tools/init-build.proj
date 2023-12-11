@@ -67,7 +67,8 @@
           Outputs="$(CompletedSemaphorePath)BuildXPlatTasks.complete">
     <ItemGroup>
       <XPlatTaskProject Include="tasks\Microsoft.DotNet.SourceBuild.Tasks.XPlat\Microsoft.DotNet.SourceBuild.Tasks.XPlat.csproj" BuildTasksTarget="@(BuildTasksTarget)" />
-      <XPlatTaskProject Include="tasks\SourceBuild.MSBuildSdkResolver\SourceBuild.MSBuildSdkResolver.csproj" BuildTasksTarget="@(BuildTasksTarget);InstallResolver" Condition="'$(DotNetBuildFromSource)' == 'true'" />
+      <!-- The SDK resolver needs to be included to be able to override the -->
+      <XPlatTaskProject Include="tasks\SourceBuild.MSBuildSdkResolver\SourceBuild.MSBuildSdkResolver.csproj" BuildTasksTarget="@(BuildTasksTarget);InstallResolver" />
     </ItemGroup>
 
     <MSBuild
