@@ -7,6 +7,12 @@
       "commitSha": "3faeb9817f465151aa4bbcdb315f0a6170206760"
     },
     {
+      "packageVersion": "8.0.0-preview.1.23557.2",
+      "path": "aspire",
+      "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspire",
+      "commitSha": "48e42f59d64d84b404e904996a9ed61f2a17a569"
+    },
+    {
       "packageVersion": "9.0.0-alpha.1.23577.26",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
@@ -58,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "4111be4be16698e65bad2fe36c1ce59d0899b3bb"
+      "commitSha": "8d9388459a2496611d5d0af2bf8c1708c63c6d2e"
     },
     {
       "packageVersion": "17.9.0-preview-23577-01",
