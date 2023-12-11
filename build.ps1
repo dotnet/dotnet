@@ -15,14 +15,24 @@ InitializeToolset
 # Build the init-tools project so that we get the xplat tasks, specifically
 # the msbuild SDK resolver required to force the rest of the repos to use the right arcade SDK.
 
-MSBuild "$PSScriptRoot/eng/tools/init-build.proj" `
+try {
+  $nodeReuse=$false
+  MSBuild "$PSScriptRoot/eng/tools/init-build.proj" `
         /bl:"$PSScriptRoot/artifacts/log/Debug/BuildXPlatTasks_$LogDateStamp.binlog" `
         /flp:LogFile="$PSScriptRoot/artifacts/logs/BuildXPlatTasks_$LogDateStamp.log" `
         /t:PrepareOfflineLocalTools `
         /p:DotNetBuildVertical=true
 
-MSBuild "$PSScriptRoot/build.proj" `
-    /bl:"$PSScriptRoot/artifacts/log/Debug/Build_$LogDateStamp.binlog" `
-    /flp:"LogFile=$PSScriptRoot/artifacts/logs/Build_$LogDateStamp.log" `
-    /flp:v=detailed `
-    /p:DotNetBuildVertical=true
+  Shutdown-Build-Server
+
+  MSBuild "$PSScriptRoot/build.proj" `
+      /bl:"$PSScriptRoot/artifacts/log/Debug/Build_$LogDateStamp.binlog" `
+      /flp:"LogFile=$PSScriptRoot/artifacts/logs/Build_$LogDateStamp.log" `
+      /flp:v=detailed `
+      /p:DotNetBuildVertical=true
+}
+catch {
+  Write-Host $_.ScriptStackTrace
+  Write-PipelineTelemetryError -Category 'Build' -Message $_
+  ExitWithExitCode 1
+}

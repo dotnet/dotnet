@@ -739,6 +739,12 @@ function Stop-Processes() {
   }
 }
 
+function Shutdown-Build-Server() {
+  Write-Host 'Shutting down build server...'
+  $buildTool = InitializeBuildTool
+  $exitCode = Exec-Process $buildTool.Path build-server shutdown
+}
+
 #
 # Executes msbuild (or 'dotnet msbuild') with arguments passed to the function.
 # The arguments are automatically quoted.
