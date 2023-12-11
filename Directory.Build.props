@@ -66,6 +66,8 @@
     <PrereqsPackagesDir>$(PrereqsDir)/packages/</PrereqsPackagesDir>
     <PackagesDir Condition="'$(NuGetPackageRoot)' != ''">$(NuGetPackageRoot)</PackagesDir>
     <PackagesDir Condition="'$(PackagesDir)' == ''">$(PrereqsPackagesDir)restored/</PackagesDir>
+    <!-- When SB mode, the initial arcade is unzipped to a the "ArcadeBootStrap" dir.
+         When running in VBPOC, the bootstrap package is the arcade restored at the beginning of the build. -->
     <ArcadeBootstrapPackageDir Condition="'$(DotNetBuildFromSource)' == 'true'">$(PackagesDir)ArcadeBootstrapPackage/</ArcadeBootstrapPackageDir>
     <ArcadeBootstrapPackageDir Condition="'$(DotNetBuildVertical)' == 'true'">$(PackagesDir)</ArcadeBootstrapPackageDir>
   </PropertyGroup>
