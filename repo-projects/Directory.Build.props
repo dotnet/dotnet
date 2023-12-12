@@ -123,6 +123,10 @@
     <EnvironmentVariables Include="DotNetBuildFromSource=true" />
     <EnvironmentVariables Include="DotNetBuildOffline=true" />
   </ItemGroup>
+  <ItemGroup Condition="'$(DotNetBuildVertical)' == 'true'">
+    <EnvironmentVariables Include="DotNetBuildVertical=true" />
+  </ItemGroup>
+
   <ItemGroup>
     <EnvironmentVariables Include="DotNetPackageVersionPropsPath=$(PackageVersionPropsPath)" />
     <EnvironmentVariables Include="_InitializeToolset=$(SourceBuiltSdksDir)Microsoft.DotNet.Arcade.Sdk/tools/Build.proj" Condition="'$(UseBootstrapArcade)' != 'true'" />

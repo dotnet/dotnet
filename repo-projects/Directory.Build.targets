@@ -462,9 +462,9 @@
     <Copy SourceFiles="@(ExtractedToolFiles)" DestinationFolder="$(SourceBuiltSdksDir)/" />
 
     <!-- TODO: When unpacking using ZipFileExtractToDirectory, this executable file has the wrong
-         permissions.  See https://github.com/dotnet/source-build/issues/2259 -->
+         permissions. On non-windows systems.  See https://github.com/dotnet/source-build/issues/2259 -->
     <Exec Command="chmod 755 git-clone-to-dir.sh"
-      Condition=" '%(_ToolPackage.Id)' == 'Microsoft.DotNet.Arcade.Sdk' "
+      Condition=" '%(_ToolPackage.Id)' == 'Microsoft.DotNet.Arcade.Sdk' and !$([MSBuild]::IsOSPlatform(Windows))"
       WorkingDirectory="$(SourceBuiltSdksDir)%(_ToolPackage.Id)/tools/SourceBuild/" />
 
     <!-- Allow overriding of Arcade targets for SourceBuild to enable quicker
