@@ -8,14 +8,17 @@
     <_portableRidOverridden Condition="'$(TargetRid)' != '$(OverrideTargetRid)'">true</_portableRidOverridden>
     <_portableRidOverridden Condition="'$(TargetRid)' == '$(OverrideTargetRid)'">false</_portableRidOverridden>
 
-    <!-- StandardSourceBuildActionsAndArgs include -publish which is not supported by the aspnetcore build script. -->
-    <BuildCommandArgs>$(FlagParameterPrefix)restore $(FlagParameterPrefix)build $(FlagParameterPrefix)pack $(StandardSourceBuildArgs)</BuildCommandArgs>
-    <BuildCommandArgs Condition="'$(OverrideTargetArch)' == ''">$(BuildCommandArgs) $(FlagParameterPrefix)arch $(Platform)</BuildCommandArgs>
-    <BuildCommandArgs Condition="'$(OverrideTargetArch)' != ''">$(BuildCommandArgs) $(FlagParameterPrefix)arch $(OverrideTargetArch)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)no-build-repo-tasks</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)no-build-nodejs</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) /p:PortableBuild=$(_portableRidOverridden) /p:TargetRuntimeIdentifier=$(OverrideTargetRid)</BuildCommandArgs>
-    <BuildCommand>$(ProjectDirectory)eng\build$(ShellExtension) $(BuildCommandArgs)</BuildCommand>
+    <!-- AspNetCore doesn't have a root build script but one under the eng folder. -->
+    <BuildScript>$(ProjectDirectory)eng\build$(ShellExtension)</BuildScript>
+
+    <!-- BuildActions includes -publish which is not supported by the aspnetcore build script. -->
+    <BuildActions>$(FlagParameterPrefix)restore $(FlagParameterPrefix)build $(FlagParameterPrefix)pack</BuildActions>
+
+    <BuildArgs Condition="'$(OverrideTargetArch)' == ''">$(BuildArgs) $(FlagParameterPrefix)arch $(Platform)</BuildArgs>
+    <BuildArgs Condition="'$(OverrideTargetArch)' != ''">$(BuildArgs) $(FlagParameterPrefix)arch $(OverrideTargetArch)</BuildArgs>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)no-build-repo-tasks</BuildArgs>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)no-build-nodejs</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:PortableBuild=$(_portableRidOverridden) /p:TargetRuntimeIdentifier=$(OverrideTargetRid)</BuildArgs>
 
     <LogVerbosityOptOut>true</LogVerbosityOptOut>
   </PropertyGroup>

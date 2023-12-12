@@ -1,5 +1,9 @@
 <Project InitialTargets="SetNuGetPackagesEnvironment;PrepareOutput">
 
+  <PropertyGroup>
+    <BuildCommand Condition="'$(BuildCommand)' == ''">$(BuildActions) $(BuildArgs)</BuildCommand>
+  </PropertyGroup>
+
   <ItemGroup>
     <EnvironmentVariables Include="LatestCommit=$(GitCommitHash)" />
     <EnvironmentVariables Include="OfficialBuildId=$(OfficialBuildId)" />

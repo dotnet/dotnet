@@ -1,7 +1,2 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <BuildCommand>$(StandardSourceBuildCommand) $(StandardSourceBuildActionsAndArgs)</BuildCommand>
-  </PropertyGroup>
-
 </Project>

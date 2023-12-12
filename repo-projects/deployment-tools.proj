@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <BuildCommand>$(ProjectDirectory)eng\common\build$(ShellExtension) $(StandardSourceBuildActionsAndArgs)</BuildCommand>
-  </PropertyGroup>
+  <!-- TODO: Should we invoke the root build scripts instead? -->
 
   <ItemGroup>
     <RepositoryReference Include="runtime" />

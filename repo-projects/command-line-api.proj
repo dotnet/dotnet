@@ -1,9 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <BuildCommand>$(StandardSourceBuildCommand) $(FlagParameterPrefix)pack $(FlagParameterPrefix)publish $(StandardSourceBuildArgs)</BuildCommand>
-    <BuildCommand>$(BuildCommand) $(FlagParameterPrefix)warnAsError $(ArcadeFalseBoolBuildArg)</BuildCommand>
-    <BuildCommand>$(BuildCommand) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildCommand>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)warnAsError $(ArcadeFalseBoolBuildArg)</BuildArgs>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildArgs>
 
     <LogVerbosityOptOut>true</LogVerbosityOptOut>
   </PropertyGroup>

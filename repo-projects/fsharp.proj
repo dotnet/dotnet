@@ -3,15 +3,19 @@
   <PropertyGroup>
     <LogVerbosityOptOut>true</LogVerbosityOptOut>
 
-    <BuildCommandArgs>$(StandardSourceBuildActionsAndArgs)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) /p:TreatWarningsAsErrors=false</BuildCommandArgs>
+    <!-- Use the repo root build script -->
+    <BuildScript>$(ProjectDirectory)build$(ShellExtension)</BuildScript>
+
+    <!-- Restore and Build actions are already passed in by the root script. -->
+    <BuildActions>$(FlagParameterPrefix)pack $(FlagParameterPrefix)publish</BuildActions>
+
+    <BuildArgs>$(BuildArgs) /p:TreatWarningsAsErrors=false</BuildArgs>
     <!--
       dotnet/fsharp has a custom eng/build.sh script that handles its own sourcebuild arg
       differently from the ArcadeBuildFromSource MSBuild arg. Including both args is fine, but the
       custom sourcebuild arg is the one that's required. This avoids running bootstrapping twice.
     -->
-    <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)sourcebuild</BuildCommandArgs>
-    <BuildCommand>$(StandardSourceBuildCommand) $(BuildCommandArgs)</BuildCommand>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)sourcebuild</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>

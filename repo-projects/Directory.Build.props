@@ -156,34 +156,31 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <StandardSourceBuildActions>$(FlagParameterPrefix)restore</StandardSourceBuildActions>
-    <StandardSourceBuildActions>$(StandardSourceBuildActions) $(FlagParameterPrefix)build</StandardSourceBuildActions>
-    <StandardSourceBuildActions>$(StandardSourceBuildActions) $(FlagParameterPrefix)pack</StandardSourceBuildActions>
-    <StandardSourceBuildActions>$(StandardSourceBuildActions) $(FlagParameterPrefix)publish</StandardSourceBuildActions>
+    <BuildScript>$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'common', 'build$(ShellExtension)'))</BuildScript>
 
-    <StandardSourceBuildArgs>$(FlagParameterPrefix)ci</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) $(FlagParameterPrefix)configuration $(Configuration)</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) -bl</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:CopyWipIntoInnerSourceBuildRepo=true</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:CopySrcInsteadOfClone=true</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:DotNetPackageVersionPropsPath="$(PackageVersionPropsPath)"</StandardSourceBuildArgs>
+    <BuildActions>$(FlagParameterPrefix)restore</BuildActions>
+    <BuildActions>$(BuildActions) $(FlagParameterPrefix)build</BuildActions>
+    <BuildActions>$(BuildActions) $(FlagParameterPrefix)pack</BuildActions>
+    <BuildActions>$(BuildActions) $(FlagParameterPrefix)publish</BuildActions>
+
+    <BuildArgs>$(FlagParameterPrefix)ci</BuildArgs>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)configuration $(Configuration)</BuildArgs>
+    <BuildArgs>$(BuildArgs) -bl</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:CopyWipIntoInnerSourceBuildRepo=true</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:CopySrcInsteadOfClone=true</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:DotNetPackageVersionPropsPath="$(PackageVersionPropsPath)"</BuildArgs>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(DotNetBuildVertical)' == 'true'">
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:ArcadeBuildVertical=true</StandardSourceBuildArgs>
+    <BuildArgs>$(BuildArgs) /p:ArcadeBuildVertical=true</BuildArgs>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:ArcadeBuildFromSource=true</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:DotNetBuildOffline=true</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PrebuiltSourceBuiltPackagesPath)"</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</StandardSourceBuildArgs>
-    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:SourceBuildUseMonoRuntime=$(SourceBuildUseMonoRuntime)</StandardSourceBuildArgs>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <StandardSourceBuildActionsAndArgs>$(StandardSourceBuildActions)$(StandardSourceBuildArgs)</StandardSourceBuildActionsAndArgs>
-    <StandardSourceBuildCommand>$(ProjectDirectory)build$(ShellExtension)</StandardSourceBuildCommand>
+    <BuildArgs>$(BuildArgs) /p:ArcadeBuildFromSource=true</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:DotNetBuildOffline=true</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PrebuiltSourceBuiltPackagesPath)"</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:SourceBuildUseMonoRuntime=$(SourceBuildUseMonoRuntime)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>

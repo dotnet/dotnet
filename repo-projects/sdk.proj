@@ -3,24 +3,21 @@
   <PropertyGroup>
     <LogVerbosityOptOut>true</LogVerbosityOptOut>
 
-    <BuildCommandArgs>$(StandardSourceBuildActionsAndArgs)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) /p:PackageProjectUrl=https://github.com/dotnet/sdk</BuildCommandArgs>
-
     <!-- Propagate RID set in source-build to sdk repo -->
     <_platformIndex>$(NETCoreSdkPortableRuntimeIdentifier.LastIndexOf('-'))</_platformIndex>
     <_baseOS>$(NETCoreSdkPortableRuntimeIdentifier.Substring(0, $(_platformIndex)))</_baseOS>
     <_baseOS Condition="'$(OverrideTargetOS)' != ''">$(OverrideTargetOS)</_baseOS>
     <_targetPortableArch>$(Platform)</_targetPortableArch>
     <_targetPortableArch Condition="'$(OverrideTargetArch)' != ''">$(OverrideTargetArch)</_targetPortableArch>
-    <BuildCommandArgs>$(BuildCommandArgs) /p:PortableRid=$(_baseOS)-$(_targetPortableArch)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) /p:TargetRid=$(TargetRid)</BuildCommandArgs>
+
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:PackageProjectUrl=https://github.com/dotnet/sdk</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:PortableRid=$(_baseOS)-$(_targetPortableArch)</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:TargetRid=$(TargetRid)</BuildArgs>
 
     <!-- Just like mono, arm does not support NativeAot -->
-    <BuildCommandArgs Condition="'$(BuildArchitecture)' == 'arm'">$(BuildCommandArgs) /p:NativeAotSupported=false</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)v $(LogVerbosity)</BuildCommandArgs>
-
-    <BuildCommand>$(StandardSourceBuildCommand) $(BuildCommandArgs)</BuildCommand>
+    <BuildArgs Condition="'$(BuildArchitecture)' == 'arm'">$(BuildArgs) /p:NativeAotSupported=false</BuildArgs>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)v $(LogVerbosity)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
