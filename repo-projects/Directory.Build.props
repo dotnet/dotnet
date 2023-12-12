@@ -167,6 +167,8 @@
   
   <PropertyGroup Condition="'$(DotNetBuildVertical)' == 'true'">
     <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:ArcadeBuildVertical=true</StandardSourceBuildArgs>
+    <!- Temporary while bootstrap arcade incorrectly points to 2.6.1 -->
+    <StandardSourceBuildArgs>$(StandardSourceBuildArgs) /p:XUnitRunnerVisualStudioVersion=2.5.5</StandardSourceBuildArgs>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
