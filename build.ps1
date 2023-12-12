@@ -17,13 +17,6 @@ InitializeToolset
 
 try {
   $nodeReuse=$false
-  MSBuild "$PSScriptRoot/eng/tools/init-build.proj" `
-        /bl:"$PSScriptRoot/artifacts/log/Debug/BuildXPlatTasks_$LogDateStamp.binlog" `
-        /flp:LogFile="$PSScriptRoot/artifacts/logs/BuildXPlatTasks_$LogDateStamp.log" `
-        /t:PrepareOfflineLocalTools `
-        /p:DotNetBuildVertical=true
-
-  Shutdown-Build-Server
 
   MSBuild "$PSScriptRoot/build.proj" `
       /bl:"$PSScriptRoot/artifacts/log/Debug/Build_$LogDateStamp.binlog" `
