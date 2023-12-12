@@ -2,10 +2,12 @@
 #nullable enable
 #else
 // In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
+#pragma warning disable CS8604
 #pragma warning disable CS8625
 #endif
 
 using System;
+using System.Globalization;
 using Xunit.Internal;
 
 namespace Xunit.Sdk
@@ -22,8 +24,14 @@ namespace Xunit.Sdk
 	{
 		static readonly string newLineAndIndent = Environment.NewLine + new string(' ', 10);  // Length of "Expected: " and "Actual:   "
 
-		EqualException(string message) :
-			base(message)
+		EqualException(
+			string message,
+#if XUNIT_NULLABLE
+			Exception? innerException = null) :
+#else
+			Exception innerException = null) :
+#endif
+				base(message, innerException)
 		{ }
 
 		/// <summary>
@@ -51,27 +59,66 @@ namespace Xunit.Sdk
 			int? actualPointer,
 #if XUNIT_NULLABLE
 			string? actualType,
+			string? collectionDisplay = null) =>
+#else
+			string actualType,
+			string collectionDisplay = null) =>
+#endif
+				ForMismatchedCollectionsWithError(mismatchedIndex, expected, expectedPointer, expectedType, actual, actualPointer, actualType, null, collectionDisplay);
+
+		/// <summary>
+		/// Creates a new instance of <see cref="EqualException"/> to be thrown when two collections
+		/// are not equal, and an error has occurred during comparison.
+		/// </summary>
+		/// <param name="mismatchedIndex">The index at which the collections differ</param>
+		/// <param name="expected">The expected collection</param>
+		/// <param name="expectedPointer">The spacing into the expected collection where the difference occurs</param>
+		/// <param name="expectedType">The type of the expected collection items, when they differ in type</param>
+		/// <param name="actual">The actual collection</param>
+		/// <param name="actualPointer">The spacing into the actual collection where the difference occurs</param>
+		/// <param name="actualType">The type of the actual collection items, when they differ in type</param>
+		/// <param name="error">The optional exception that was thrown during comparison</param>
+		/// <param name="collectionDisplay">The display name for the collection type (defaults to "Collections")</param>
+		public static EqualException ForMismatchedCollectionsWithError(
+			int? mismatchedIndex,
+			string expected,
+			int? expectedPointer,
+#if XUNIT_NULLABLE
+			string? expectedType,
+#else
+			string expectedType,
+#endif
+			string actual,
+			int? actualPointer,
+#if XUNIT_NULLABLE
+			string? actualType,
+			Exception? error,
 			string? collectionDisplay = null)
 #else
 			string actualType,
+			Exception error,
 			string collectionDisplay = null)
 #endif
 		{
 			Assert.GuardArgumentNotNull(nameof(actual), actual);
 
-			var message = $"Assert.Equal() Failure: {collectionDisplay ?? "Collections"} differ";
-			var expectedTypeText = expectedType != null && actualType != null && expectedType != actualType ? $", type {expectedType}" : "";
-			var actualTypeText = expectedType != null && actualType != null && expectedType != actualType ? $", type {actualType}" : "";
+			var message =
+				error == null
+					? string.Format(CultureInfo.CurrentCulture, "Assert.Equal() Failure: {0} differ", collectionDisplay ?? "Collections")
+					: "Assert.Equal() Failure: Exception thrown during comparison";
+
+			var expectedTypeText = expectedType != null && actualType != null && expectedType != actualType ? string.Format(CultureInfo.CurrentCulture, ", type {0}", expectedType) : "";
+			var actualTypeText = expectedType != null && actualType != null && expectedType != actualType ? string.Format(CultureInfo.CurrentCulture, ", type {0}", actualType) : "";
 
 			if (expectedPointer.HasValue && mismatchedIndex.HasValue)
-				message += $"{Environment.NewLine}          {new string(' ', expectedPointer.Value)}↓ (pos {mismatchedIndex}{expectedTypeText})";
+				message += string.Format(CultureInfo.CurrentCulture, "{0}          {1}\u2193 (pos {2}{3})", Environment.NewLine, new string(' ', expectedPointer.Value), mismatchedIndex, expectedTypeText);
 
-			message += $"{Environment.NewLine}Expected: {expected}{Environment.NewLine}Actual:   {actual}";
+			message += string.Format(CultureInfo.CurrentCulture, "{0}Expected: {1}{2}Actual:   {3}", Environment.NewLine, expected, Environment.NewLine, actual);
 
 			if (actualPointer.HasValue && mismatchedIndex.HasValue)
-				message += $"{Environment.NewLine}          {new string(' ', actualPointer.Value)}↑ (pos {mismatchedIndex}{actualTypeText})";
+				message += string.Format(CultureInfo.CurrentCulture, "{0}          {1}\u2191 (pos {2}{3})", Environment.NewLine, new string(' ', actualPointer.Value), mismatchedIndex, actualTypeText);
 
-			return new EqualException(message);
+			return new EqualException(message, error);
 		}
 
 		/// <summary>
@@ -102,14 +149,12 @@ namespace Xunit.Sdk
 			var formattedActual = AssertHelper.ShortenAndEncodeString(actual, actualIndex, out actualPointer);
 
 			if (expected != null && expectedIndex > -1 && expectedIndex < expected.Length)
-				message += newLineAndIndent + new string(' ', expectedPointer) + $"↓ (pos {expectedIndex})";
+				message += string.Format(CultureInfo.CurrentCulture, "{0}{1}\u2193 (pos {2})", newLineAndIndent, new string(' ', expectedPointer), expectedIndex);
 
-			message +=
-				Environment.NewLine + "Expected: " + formattedExpected +
-				Environment.NewLine + "Actual:   " + formattedActual;
+			message += string.Format(CultureInfo.CurrentCulture, "{0}Expected: {1}{2}Actual:   {3}", Environment.NewLine, formattedExpected, Environment.NewLine, formattedActual);
 
 			if (actual != null && expectedIndex > -1 && actualIndex < actual.Length)
-				message += newLineAndIndent + new string(' ', actualPointer) + $"↑ (pos {actualIndex})";
+				message += string.Format(CultureInfo.CurrentCulture, "{0}{1}\u2191 (pos {2})", newLineAndIndent, new string(' ', actualPointer), actualIndex);
 
 			return new EqualException(message);
 		}
@@ -127,10 +172,36 @@ namespace Xunit.Sdk
 #if XUNIT_NULLABLE
 			object? expected,
 			object? actual,
+			string? banner = null) =>
+#else
+			object expected,
+			object actual,
+			string banner = null) =>
+#endif
+				ForMismatchedValuesWithError(expected, actual, null, banner);
+
+		/// <summary>
+		/// Creates a new instance of <see cref="EqualException"/> to be thrown when two values
+		/// are not equal. This may be simple values (like intrinsics) or complex values (like
+		/// classes or structs). Used when an error has occurred during comparison.
+		/// </summary>
+		/// <param name="expected">The expected value</param>
+		/// <param name="actual">The actual value</param>
+		/// <param name="error">The optional exception that was thrown during comparison</param>
+		/// <param name="banner">The banner to show; if <c>null</c>, then the standard
+		/// banner of "Values differ" will be used. If <paramref name="error"/> is not <c>null</c>,
+		/// then the banner used will always be "Exception thrown during comparison", regardless
+		/// of the value passed here.</param>
+		public static EqualException ForMismatchedValuesWithError(
+#if XUNIT_NULLABLE
+			object? expected,
+			object? actual,
+			Exception? error = null,
 			string? banner = null)
 #else
 			object expected,
 			object actual,
+			Exception error = null,
 			string banner = null)
 #endif
 		{
@@ -144,10 +215,22 @@ namespace Xunit.Sdk
 			var expectedText = expected as string ?? ArgumentFormatter.Format(expected);
 			var actualText = actual as string ?? ArgumentFormatter.Format(actual);
 
+			var message =
+				error == null
+					? string.Format(CultureInfo.CurrentCulture, "Assert.Equal() Failure: {0}", banner ?? "Values differ")
+					: "Assert.Equal() Failure: Exception thrown during comparison";
+
 			return new EqualException(
-				"Assert.Equal() Failure: " + (banner ?? "Values differ") + Environment.NewLine +
-				"Expected: " + expectedText.Replace(Environment.NewLine, newLineAndIndent) + Environment.NewLine +
-				"Actual:   " + actualText.Replace(Environment.NewLine, newLineAndIndent)
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"{0}{1}Expected: {2}{3}Actual:   {4}",
+					message,
+					Environment.NewLine,
+					expectedText.Replace(Environment.NewLine, newLineAndIndent),
+					Environment.NewLine,
+					actualText.Replace(Environment.NewLine, newLineAndIndent)
+				),
+				error
 			);
 		}
 	}

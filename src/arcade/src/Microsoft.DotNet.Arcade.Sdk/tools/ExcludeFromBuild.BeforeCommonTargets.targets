@@ -4,6 +4,7 @@
   <!--  This file sets properties that enable skipping of a project build if desired.
         Cases where we might skip include:
         - Source-build mode and "ExcludeFromSourceBuild" is set.
+        - Vertical-build mode and "ExcludeFromVerticalBuild" is set.
         - Non source-build mode and "ExcludeFromBuild" is set
         - Target filtering is used and the target filters set "ExcludeFromBuild".
 
@@ -26,8 +27,8 @@
           In that case, Sdk.targets imports it explicitly. -->
 
   <!--
-    If a project specifies ExcludeFromSourceBuild=true during a source build suppress all targets and emulate a no-op
-    (empty common targets like Restore, Build, Pack, etc.).
+    If a project specifies ExcludeFromSourceBuild=true or ExcludeFromVerticalBuild=true during a source build/vertical
+    build suppress all targets and emulate a no-op (empty common targets like Restore, Build, Pack, etc.).
 
     It's also possible to set ExcludeFromBuild prior to importing the Sdk.targets
     to skip building as desired in non-source build scenarios. This might be done to
@@ -36,6 +37,7 @@
   <PropertyGroup>
     <_SuppressAllTargets>false</_SuppressAllTargets>
     <_SuppressAllTargets Condition="'$(DotNetBuildFromSource)' == 'true' and '$(ExcludeFromSourceBuild)' == 'true'">true</_SuppressAllTargets>
+    <_SuppressAllTargets Condition="'$(DotNetBuildVertical)' == 'true' and '$(ExcludeFromVerticalBuild)' == 'true'">true</_SuppressAllTargets>
     <_SuppressAllTargets Condition="'$(ExcludeFromBuild)' == 'true'">true</_SuppressAllTargets>
 
     <!-- If excluding, then disable a restore warning, which will fire on newer SDKs, as well as set the NuGetRestoreTargets property to empty,

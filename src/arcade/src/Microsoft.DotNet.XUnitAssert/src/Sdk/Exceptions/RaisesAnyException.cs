@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -27,9 +28,13 @@ namespace Xunit.Sdk
 		/// <param name="expected">The type of the event args that was expected</param>
 		public static RaisesAnyException ForNoEvent(Type expected) =>
 			new RaisesAnyException(
-				"Assert.RaisesAny() Failure: No event was raised" + Environment.NewLine +
-				"Expected: " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected)) + Environment.NewLine +
-				"Actual:   No event was raised"
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"Assert.RaisesAny() Failure: No event was raised{0}Expected: {1}{2}Actual:   No event was raised",
+					Environment.NewLine,
+					ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected)),
+					Environment.NewLine
+				)
 			);
 	}
 }

@@ -39,5 +39,7 @@
 
     <!-- exclude test projects from source-build by default -->
     <ExcludeFromSourceBuild Condition="'$(ExcludeFromSourceBuild)' == ''">true</ExcludeFromSourceBuild>
+    <!-- Vertical Build PoC. Exclude test projects. -->
+    <ExcludeFromVerticalBuild Condition="'$(ExcludeFromVerticalBuild)' == ''">true</ExcludeFromVerticalBuild>
   </PropertyGroup>
 </Project>

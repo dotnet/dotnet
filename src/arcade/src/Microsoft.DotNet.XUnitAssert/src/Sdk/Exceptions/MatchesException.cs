@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -34,9 +35,14 @@ namespace Xunit.Sdk
 			string actual) =>
 #endif
 				new MatchesException(
-					"Assert.Matches() Failure: Pattern not found in value" + Environment.NewLine +
-					"Regex: " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expectedRegexPattern), expectedRegexPattern)) + Environment.NewLine +
-					"Value: " + ArgumentFormatter.Format(actual)
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.Matches() Failure: Pattern not found in value{0}Regex: {1}{2}Value: {3}",
+						Environment.NewLine,
+						ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expectedRegexPattern), expectedRegexPattern)),
+						Environment.NewLine,
+						ArgumentFormatter.Format(actual)
+					)
 				);
 	}
 }

@@ -3,6 +3,8 @@
 #else
 // In case this is source-imported with global nullable enabled but no XUNIT_NULLABLE
 #pragma warning disable CS8601
+#pragma warning disable CS8602
+#pragma warning disable CS8604
 #pragma warning disable CS8605
 #pragma warning disable CS8618
 #pragma warning disable CS8625
@@ -11,6 +13,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -28,7 +31,10 @@ namespace Xunit.Sdk
 	{
 		internal static readonly IEqualityComparer DefaultInnerComparer = new AssertEqualityComparerAdapter<object>(new AssertEqualityComparer<object>());
 
+		static readonly ConcurrentDictionary<Type, TypeInfo> cacheOfIComparableOfT = new ConcurrentDictionary<Type, TypeInfo>();
+		static readonly ConcurrentDictionary<Type, TypeInfo> cacheOfIEquatableOfT = new ConcurrentDictionary<Type, TypeInfo>();
 		readonly Lazy<IEqualityComparer> innerComparer;
+		static readonly Type typeKeyValuePair = typeof(KeyValuePair<,>);
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AssertEqualityComparer{T}" /> class.
@@ -57,8 +63,6 @@ namespace Xunit.Sdk
 			T y)
 #endif
 		{
-			var typeInfo = typeof(T).GetTypeInfo();
-
 			// Null?
 			if (x == null && y == null)
 				return true;
@@ -82,21 +86,29 @@ namespace Xunit.Sdk
 			if (equatable != null)
 				return equatable.Equals(y);
 
+			var xType = x.GetType();
+			var yType = y.GetType();
+
 #if !XUNIT_AOT
+			var xTypeInfo = xType.GetTypeInfo();
+
 			// Implements IEquatable<typeof(y)>?
 			// Not supported on AOT due to MakeGenericType
-			var iequatableY = typeof(IEquatable<>).MakeGenericType(y.GetType()).GetTypeInfo();
-			if (iequatableY.IsAssignableFrom(x.GetType().GetTypeInfo()))
+			if (xType != yType)
 			{
-				var equalsMethod = iequatableY.GetDeclaredMethod(nameof(IEquatable<T>.Equals));
-				if (equalsMethod == null)
-					return false;
+				var iequatableY = cacheOfIEquatableOfT.GetOrAdd(yType, (t) => typeof(IEquatable<>).MakeGenericType(t).GetTypeInfo());
+				if (iequatableY.IsAssignableFrom(xTypeInfo))
+				{
+					var equalsMethod = iequatableY.GetDeclaredMethod(nameof(IEquatable<T>.Equals));
+					if (equalsMethod == null)
+						return false;
 
 #if XUNIT_NULLABLE
-				return equalsMethod.Invoke(x, new object[] { y }) is true;
+					return equalsMethod.Invoke(x, new object[] { y }) is true;
 #else
-				return (bool)equalsMethod.Invoke(x, new object[] { y });
+					return (bool)equalsMethod.Invoke(x, new object[] { y });
 #endif
+				}
 			}
 #endif // !XUNIT_AOT
 
@@ -124,26 +136,29 @@ namespace Xunit.Sdk
 #if !XUNIT_AOT
 			// Implements IComparable<typeof(y)>?
 			// Not supported on AOT due to MakeGenericType
-			var icomparableY = typeof(IComparable<>).MakeGenericType(y.GetType()).GetTypeInfo();
-			if (icomparableY.IsAssignableFrom(x.GetType().GetTypeInfo()))
+			if (xType != yType)
 			{
-				var compareToMethod = icomparableY.GetDeclaredMethod(nameof(IComparable<T>.CompareTo));
-				if (compareToMethod == null)
-					return false;
+				var icomparableY = cacheOfIComparableOfT.GetOrAdd(yType, (t) => typeof(IComparable<>).MakeGenericType(t).GetTypeInfo());
+				if (icomparableY.IsAssignableFrom(xTypeInfo))
+				{
+					var compareToMethod = icomparableY.GetDeclaredMethod(nameof(IComparable<T>.CompareTo));
+					if (compareToMethod == null)
+						return false;
 
-				try
-				{
+					try
+					{
 #if XUNIT_NULLABLE
-					return compareToMethod.Invoke(x, new object[] { y }) is 0;
+						return compareToMethod.Invoke(x, new object[] { y }) is 0;
 #else
-					return (int)compareToMethod.Invoke(x, new object[] { y }) == 0;
+						return (int)compareToMethod.Invoke(x, new object[] { y }) == 0;
 #endif
-				}
-				catch
-				{
-					// Some implementations of IComparable.CompareTo throw exceptions in
-					// certain situations, such as if x can't compare against y.
-					// If this happens, just swallow up the exception and continue comparing.
+					}
+					catch
+					{
+						// Some implementations of IComparable.CompareTo throw exceptions in
+						// certain situations, such as if x can't compare against y.
+						// If this happens, just swallow up the exception and continue comparing.
+					}
 				}
 			}
 #endif // !XUNIT_AOT
@@ -164,6 +179,17 @@ namespace Xunit.Sdk
 				}
 			}
 
+			// Special case KeyValuePair<K,V>
+			if (xType.IsConstructedGenericType &&
+				xType.GetGenericTypeDefinition() == typeKeyValuePair &&
+				yType.IsConstructedGenericType &&
+				yType.GetGenericTypeDefinition() == typeKeyValuePair)
+			{
+				return
+					innerComparer.Value.Equals(xType.GetRuntimeProperty("Key")?.GetValue(x), yType.GetRuntimeProperty("Key")?.GetValue(y)) &&
+					innerComparer.Value.Equals(xType.GetRuntimeProperty("Value")?.GetValue(x), yType.GetRuntimeProperty("Value")?.GetValue(y));
+			}
+
 			// Last case, rely on object.Equals
 			return object.Equals(x, y);
 		}
@@ -176,10 +202,8 @@ namespace Xunit.Sdk
 			new FuncEqualityComparer(comparer);
 
 		/// <inheritdoc/>
-		public int GetHashCode(T obj)
-		{
-			throw new NotImplementedException();
-		}
+		public int GetHashCode(T obj) =>
+			innerComparer.Value.GetHashCode(GuardArgumentNotNull(nameof(obj), obj));
 
 #if XUNIT_NULLABLE
 		sealed class FuncEqualityComparer : IEqualityComparer<T?>
@@ -216,13 +240,11 @@ namespace Xunit.Sdk
 			}
 
 #if XUNIT_NULLABLE
-			public int GetHashCode(T? obj)
+			public int GetHashCode(T? obj) =>
 #else
-			public int GetHashCode(T obj)
+			public int GetHashCode(T obj) =>
 #endif
-			{
-				throw new NotImplementedException();
-			}
+				GuardArgumentNotNull(nameof(obj), obj).GetHashCode();
 		}
 
 		sealed class TypeErasedEqualityComparer : IEqualityComparer
@@ -289,10 +311,26 @@ namespace Xunit.Sdk
 				U y) =>
 					new AssertEqualityComparer<U>(innerComparer: innerComparer).Equals(x, y);
 
-			public int GetHashCode(object obj)
-			{
-				throw new NotImplementedException();
-			}
+			public int GetHashCode(object obj) =>
+				GuardArgumentNotNull(nameof(obj), obj).GetHashCode();
+		}
+
+		/// <summary/>
+#if XUNIT_NULLABLE
+		[return: NotNull]
+#endif
+		internal static TArg GuardArgumentNotNull<TArg>(
+			string argName,
+#if XUNIT_NULLABLE
+			[NotNull] TArg? argValue)
+#else
+			TArg argValue)
+#endif
+		{
+			if (argValue == null)
+				throw new ArgumentNullException(argName.TrimStart('@'));
+
+			return argValue;
 		}
 	}
 }

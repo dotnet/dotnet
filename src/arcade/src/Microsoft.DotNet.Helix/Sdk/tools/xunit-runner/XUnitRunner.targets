@@ -3,7 +3,7 @@
     <XUnitPublishTargetFramework Condition="'$(XUnitPublishTargetFramework)' == ''">net8.0</XUnitPublishTargetFramework>
     <XUnitRuntimeTargetFramework Condition="'$(XUnitRuntimeTargetFramework)' == ''">netcoreapp2.0</XUnitRuntimeTargetFramework>
 
-    <XUnitRunnerVersion Condition="'$(XUnitRunnerVersion)' == ''">2.5.3</XUnitRunnerVersion>
+    <XUnitRunnerVersion Condition="'$(XUnitRunnerVersion)' == ''">2.6.1</XUnitRunnerVersion>
 
     <_XUnitPublishTargetsPath>$(MSBuildThisFileDirectory)XUnitPublish.targets</_XUnitPublishTargetsPath>
 

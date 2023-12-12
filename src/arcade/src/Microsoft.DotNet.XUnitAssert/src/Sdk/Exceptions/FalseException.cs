@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -34,10 +35,13 @@ namespace Xunit.Sdk
 #endif
 			bool? value) =>
 				new FalseException(
-					message ??
-						"Assert.False() Failure" + Environment.NewLine +
-						"Expected: False" + Environment.NewLine +
-						"Actual:   " + (value?.ToString() ?? "null")
+					message ?? string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.False() Failure{0}Expected: False{1}Actual:   {2}",
+						Environment.NewLine,
+						Environment.NewLine,
+						value?.ToString() ?? "null"
+					)
 				);
 	}
 }

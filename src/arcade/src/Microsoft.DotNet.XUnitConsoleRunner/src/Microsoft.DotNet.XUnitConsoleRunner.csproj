@@ -10,7 +10,7 @@
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
     <IsPackable>true</IsPackable>
     <PackageId>Microsoft.DotNet.XUnitConsoleRunner</PackageId>
-    <VersionPrefix>2.5.3</VersionPrefix>
+    <VersionPrefix>2.6.1</VersionPrefix>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddBuildOutputToPackage</TargetsForTfmSpecificContentInPackage>

@@ -6,6 +6,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -34,9 +35,14 @@ namespace Xunit.Sdk
 			T? actual)
 				where T : struct =>
 					new NullException(
-						$"Assert.Null() Failure: Value of type 'Nullable<{ArgumentFormatter.FormatTypeName(Assert.GuardArgumentNotNull(nameof(type), type))}>' has a value" + Environment.NewLine +
-						"Expected: null" + Environment.NewLine +
-						"Actual:   " + ArgumentFormatter.Format(actual)
+						string.Format(
+							CultureInfo.CurrentCulture,
+							"Assert.Null() Failure: Value of type 'Nullable<{0}>' has a value{1}Expected: null{2}Actual:   {3}",
+							ArgumentFormatter.FormatTypeName(Assert.GuardArgumentNotNull(nameof(type), type)),
+							Environment.NewLine,
+							Environment.NewLine,
+							ArgumentFormatter.Format(actual)
+						)
 					);
 
 		/// <summary>
@@ -46,9 +52,13 @@ namespace Xunit.Sdk
 		/// <param name="actual">The actual non-<c>null</c> value</param>
 		public static NullException ForNonNullValue(object actual) =>
 			new NullException(
-				"Assert.Null() Failure: Value is not null" + Environment.NewLine +
-				"Expected: null" + Environment.NewLine +
-				"Actual:   " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(actual), actual))
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"Assert.Null() Failure: Value is not null{0}Expected: null{1}Actual:   {2}",
+					Environment.NewLine,
+					Environment.NewLine,
+					ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(actual), actual))
+				)
 			);
 	}
 }

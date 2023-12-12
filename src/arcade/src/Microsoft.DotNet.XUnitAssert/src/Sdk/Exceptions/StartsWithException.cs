@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 using Xunit.Internal;
 
 namespace Xunit.Sdk
@@ -37,9 +38,14 @@ namespace Xunit.Sdk
 			string actual) =>
 #endif
 				new StartsWithException(
-					"Assert.StartsWith() Failure: String start does not match" + Environment.NewLine +
-					"String:         " + AssertHelper.ShortenAndEncodeString(actual) + Environment.NewLine +
-					"Expected start: " + AssertHelper.ShortenAndEncodeString(expected)
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.StartsWith() Failure: String start does not match{0}String:         {1}{2}Expected start: {3}",
+						Environment.NewLine,
+						AssertHelper.ShortenAndEncodeString(actual),
+						Environment.NewLine,
+						AssertHelper.ShortenAndEncodeString(expected)
+					)
 				);
 	}
 }

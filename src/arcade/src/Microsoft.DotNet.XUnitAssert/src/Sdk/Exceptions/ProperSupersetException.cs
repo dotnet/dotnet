@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -30,9 +31,14 @@ namespace Xunit.Sdk
 			string expected,
 			string actual) =>
 				new ProperSupersetException(
-					"Assert.ProperSuperset() Failure: Value is not a proper superset" + Environment.NewLine +
-					"Expected: " + Assert.GuardArgumentNotNull(nameof(expected), expected) + Environment.NewLine +
-					"Actual:   " + Assert.GuardArgumentNotNull(nameof(actual), actual)
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.ProperSuperset() Failure: Value is not a proper superset{0}Expected: {1}{2}Actual:   {3}",
+						Environment.NewLine,
+						Assert.GuardArgumentNotNull(nameof(expected), expected),
+						Environment.NewLine,
+						Assert.GuardArgumentNotNull(nameof(actual), actual)
+					)
 				);
 	}
 }

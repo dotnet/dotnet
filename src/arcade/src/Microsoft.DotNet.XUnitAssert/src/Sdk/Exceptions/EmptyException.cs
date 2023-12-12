@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 using Xunit.Internal;
 
 namespace Xunit.Sdk
@@ -28,8 +29,12 @@ namespace Xunit.Sdk
 		/// <param name="collection">The non-empty collection</param>
 		public static EmptyException ForNonEmptyCollection(string collection) =>
 			new EmptyException(
-				"Assert.Empty() Failure: Collection was not empty" + Environment.NewLine +
-				"Collection: " + Assert.GuardArgumentNotNull(nameof(collection), collection)
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"Assert.Empty() Failure: Collection was not empty{0}Collection: {1}",
+					Environment.NewLine,
+					Assert.GuardArgumentNotNull(nameof(collection), collection)
+				)
 			);
 
 		/// <summary>
@@ -39,8 +44,12 @@ namespace Xunit.Sdk
 		/// <param name="value">The non-empty string value</param>
 		public static EmptyException ForNonEmptyString(string value) =>
 			new EmptyException(
-				"Assert.Empty() Failure: String was not empty" + Environment.NewLine +
-				"String: " + AssertHelper.ShortenAndEncodeString(Assert.GuardArgumentNotNull(nameof(value), value))
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"Assert.Empty() Failure: String was not empty{0}String: {1}",
+					Environment.NewLine,
+					AssertHelper.ShortenAndEncodeString(Assert.GuardArgumentNotNull(nameof(value), value))
+				)
 			);
 	}
 }

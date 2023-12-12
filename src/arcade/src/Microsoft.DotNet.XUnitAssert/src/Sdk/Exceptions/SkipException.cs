@@ -2,6 +2,8 @@
 #nullable enable
 #endif
 
+using System.Globalization;
+
 namespace Xunit.Sdk
 {
 	/// <summary>
@@ -24,6 +26,13 @@ namespace Xunit.Sdk
 		/// v3 and later of xUnit.net, as it requires runtime infrastructure changes.
 		/// </summary>
 		public static SkipException ForSkip(string message) =>
-			new SkipException($"{DynamicSkipToken.Value}{Assert.GuardArgumentNotNull(nameof(message), message)}");
+			new SkipException(
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"{0}{1}",
+					DynamicSkipToken.Value,
+					Assert.GuardArgumentNotNull(nameof(message), message)
+				)
+			);
 	}
 }

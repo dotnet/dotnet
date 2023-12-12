@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -30,9 +31,14 @@ namespace Xunit.Sdk
 			Type expected,
 			object actual) =>
 				new IsNotAssignableFromException(
-					"Assert.IsNotAssignableFrom() Failure: Value is a compatible type" + Environment.NewLine +
-					"Expected: " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected)) + Environment.NewLine +
-					"Actual:   " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(actual), actual).GetType())
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.IsNotAssignableFrom() Failure: Value is a compatible type{0}Expected: {1}{2}Actual:   {3}",
+						Environment.NewLine,
+						ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected)),
+						Environment.NewLine,
+						ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(actual), actual).GetType())
+					)
 				);
 	}
 }

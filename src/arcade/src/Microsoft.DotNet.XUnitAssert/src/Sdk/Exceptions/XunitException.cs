@@ -6,6 +6,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -59,11 +60,11 @@ namespace Xunit.Sdk
 			if (message == null || message.Length <= 0)
 				result = className;
 			else
-				result = $"{className}: {message}";
+				result = string.Format(CultureInfo.CurrentCulture, "{0}: {1}", className, message);
 
 			var stackTrace = StackTrace;
 			if (stackTrace != null)
-				result = $"{result}{Environment.NewLine}{stackTrace}";
+				result = string.Format(CultureInfo.CurrentCulture, "{0}{1}{2}", result, Environment.NewLine, stackTrace);
 
 			return result;
 		}

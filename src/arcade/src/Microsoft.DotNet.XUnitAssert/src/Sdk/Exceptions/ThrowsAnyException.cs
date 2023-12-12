@@ -6,6 +6,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -39,9 +40,14 @@ namespace Xunit.Sdk
 			Type expected,
 			Exception actual) =>
 				new ThrowsAnyException(
-					"Assert.ThrowsAny() Failure: Exception type was not compatible" + Environment.NewLine +
-					"Expected: " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected)) + Environment.NewLine +
-					"Actual:   " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(actual), actual).GetType()),
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.ThrowsAny() Failure: Exception type was not compatible{0}Expected: {1}{2}Actual:   {3}",
+						Environment.NewLine,
+						ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected)),
+						Environment.NewLine,
+						ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(actual), actual).GetType())
+					),
 					actual
 				);
 
@@ -52,8 +58,12 @@ namespace Xunit.Sdk
 		/// <param name="expected">The expected exception type</param>
 		public static ThrowsAnyException ForNoException(Type expected) =>
 			new ThrowsAnyException(
-				"Assert.ThrowsAny() Failure: No exception was thrown" + Environment.NewLine +
-				"Expected: " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected))
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"Assert.ThrowsAny() Failure: No exception was thrown{0}Expected: {1}",
+					Environment.NewLine,
+					ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected))
+				)
 			);
 	}
 }

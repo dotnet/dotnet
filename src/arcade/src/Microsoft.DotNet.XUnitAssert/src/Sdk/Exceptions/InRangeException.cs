@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -32,9 +33,15 @@ namespace Xunit.Sdk
 			object low,
 			object high) =>
 				new InRangeException(
-					"Assert.InRange() Failure: Value not in range" + Environment.NewLine +
-					"Range:  (" + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(low), low)) + " - " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(high), high)) + ")" + Environment.NewLine +
-					"Actual: " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(actual), actual))
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.InRange() Failure: Value not in range{0}Range:  ({1} - {2}){3}Actual: {4}",
+						Environment.NewLine,
+						ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(low), low)),
+						ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(high), high)),
+						Environment.NewLine,
+						ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(actual), actual))
+					)
 				);
 	}
 }

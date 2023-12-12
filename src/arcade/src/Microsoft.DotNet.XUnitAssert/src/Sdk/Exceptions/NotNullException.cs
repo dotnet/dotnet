@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -26,7 +27,13 @@ namespace Xunit.Sdk
 		/// </summary>
 		/// <param name="type">The inner type of the value</param>
 		public static Exception ForNullStruct(Type type) =>
-			new NotNullException($"Assert.NotNull() Failure: Value of type 'Nullable<{ArgumentFormatter.FormatTypeName(Assert.GuardArgumentNotNull(nameof(type), type))}>' does not have a value");
+			new NotNullException(
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"Assert.NotNull() Failure: Value of type 'Nullable<{0}>' does not have a value",
+					ArgumentFormatter.FormatTypeName(Assert.GuardArgumentNotNull(nameof(type), type))
+				)
+			);
 
 		/// <summary>
 		/// Creates a new instance of the <see cref="NotNullException"/> class to be
