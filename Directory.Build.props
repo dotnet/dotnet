@@ -220,6 +220,16 @@
     <ExtraPackageVersionPropsPackageInfo Include="MicrosoftNETCoreAppCrossgen2Version" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
   </ItemGroup>
 
-  <Import Project="$(MSBuildThisFileDirectory)Directory.Build.sourcebuild.props" />
+  <PropertyGroup>
+    <ArcadeOverridesDir>$([MSBuild]::NormalizeDirectory('$(RepositoryEngineeringDir)', 'arcade-overrides'))</ArcadeOverridesDir>
+    <SourceBuiltSdksDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'source-built-sdks'))</SourceBuiltSdksDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
+    <!-- While the tarball infrastructure currently only supports non Windows, these properties
+         are already defined for more flexibility in the future. -->
+    <TarBallExtension Condition="'$(OS)' == 'Windows_NT'">.zip</TarBallExtension>
+    <TarBallExtension Condition="'$(OS)' != 'Windows_NT'">.tar.gz</TarBallExtension>
+  </PropertyGroup>
 
 </Project>
