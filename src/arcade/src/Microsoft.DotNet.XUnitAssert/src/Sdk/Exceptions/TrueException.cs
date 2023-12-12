@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -34,11 +35,14 @@ namespace Xunit.Sdk
 #endif
 			bool? value) =>
 				new TrueException(
-					message != null
-						? message
-						: "Assert.True() Failure" + Environment.NewLine +
-						  "Expected: True" + Environment.NewLine +
-						  "Actual:   " + (value?.ToString() ?? "null")
+					message ??
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.True() Failure{0}Expected: True{1}Actual:   {2}",
+						Environment.NewLine,
+						Environment.NewLine,
+						value?.ToString() ?? "null"
+					)
 				);
 	}
 }

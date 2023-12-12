@@ -18,6 +18,9 @@ namespace Xunit
 	partial class Assert
 	{
 		/// <summary/>
+#if XUNIT_NULLABLE
+		[return: NotNull]
+#endif
 		internal static T GuardArgumentNotNull<T>(
 			string argName,
 #if XUNIT_NULLABLE

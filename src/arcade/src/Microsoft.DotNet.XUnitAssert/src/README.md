@@ -28,10 +28,6 @@ The Skip family of assertions (like `Assert.Skip`) require xUnit.net v3. Define 
 
 There are optimized versions of `Assert.Equal` for arrays which use `Span<T>`- and/or `Memory<T>`-based comparison options. If you are using a target framework that supports `Span<T>` and `Memory<T>`, you should define `XUNIT_SPAN` to enable these new assertions.
 
-### `XUNIT_VALUETASK` (min: C# 6.0, xUnit.net v2)
-
-Any asynchronous assertion API (like `Assert.ThrowsAsync`) is available with versions that consume `Task` or `Task<T>`. If you are using a target framework and compiler that support `ValueTask<T>`, you should define `XUNIT_VALUETASK` to enable additional versions of those assertions that will consume `ValueTask` and/or `ValueTask<T>`.
-
 ### `XUNIT_VISIBILITY_INTERNAL`
 
 By default, the `Assert` class has `public` visibility. This is appropriate for the default usage (as a shipped library). If your consumption of `Assert` via source is intended to be local to a single library, you should define `XUNIT_VISIBILITY_INTERNAL` to move the visibility of the `Assert` class to `internal`.

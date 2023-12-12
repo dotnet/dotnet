@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -41,9 +42,14 @@ namespace Xunit.Sdk
 				return new SingleException("Assert.Single() Failure: The collection was empty");
 
 			return new SingleException(
-				"Assert.Single() Failure: The collection did not contain any matching items" + Environment.NewLine +
-				"Expected:   " + expected + Environment.NewLine +
-				"Collection: " + collection
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"Assert.Single() Failure: The collection did not contain any matching items{0}Expected:   {1}{2}Collection: {3}",
+					Environment.NewLine,
+					expected,
+					Environment.NewLine,
+					collection
+				)
 			);
 		}
 
@@ -68,15 +74,31 @@ namespace Xunit.Sdk
 			Assert.GuardArgumentNotNull(nameof(collection), collection);
 			Assert.GuardArgumentNotNull(nameof(matchIndices), matchIndices);
 
-			var message = $"Assert.Single() Failure: The collection contained {count} {(expected == null ? "" : "matching ")}items";
+			var message = string.Format(
+				CultureInfo.CurrentCulture,
+				"Assert.Single() Failure: The collection contained {0} {1}items",
+				count,
+				expected == null ? "" : "matching "
+			);
 
 			if (expected == null)
-				message += Environment.NewLine + "Collection: " + collection;
+				message += string.Format(
+					CultureInfo.CurrentCulture,
+					"{0}Collection: {1}",
+					Environment.NewLine,
+					collection
+				);
 			else
-				message +=
-					Environment.NewLine + "Expected:      " + expected +
-					Environment.NewLine + "Collection:    " + collection +
-					Environment.NewLine + "Match indices: " + string.Join(", ", matchIndices);
+				message += string.Format(
+					CultureInfo.CurrentCulture,
+					"{0}Expected:      {1}{2}Collection:    {3}{4}Match indices: {5}",
+					Environment.NewLine,
+					expected,
+					Environment.NewLine,
+					collection,
+					Environment.NewLine,
+					string.Join(", ", matchIndices)
+				);
 
 			return new SingleException(message);
 		}

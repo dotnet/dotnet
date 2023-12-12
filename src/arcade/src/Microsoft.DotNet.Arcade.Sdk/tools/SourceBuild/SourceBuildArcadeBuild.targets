@@ -24,7 +24,7 @@
             RunInnerSourceBuildCommand;
             PackSourceBuildTarball"
           Condition="
-            '$(ArcadeBuildFromSource)' == 'true' and
+            ('$(ArcadeBuildFromSource)' == 'true' or '$(ArcadeBuildVertical)' == 'true') and
             '$(ArcadeInnerBuildFromSource)' != 'true'"
           BeforeTargets="Execute" />
 
@@ -40,7 +40,7 @@
   -->
   <Target Name="HookExecuteInnerSourceBuild"
           Condition="
-            '$(ArcadeBuildFromSource)' == 'true' and
+            ('$(ArcadeBuildFromSource)' == 'true' or '$(ArcadeBuildVertical)' == 'true') and
             '$(ArcadeInnerBuildFromSource)' == 'true'"
           DependsOnTargets="ExecuteInnerSourceBuild"
           BeforeTargets="Execute"/>
@@ -72,8 +72,9 @@
     <PropertyGroup>
       <!-- Track that this is the inner build to prevent infinite recursion. -->
       <InnerBuildArgs>$(InnerBuildArgs) /p:ArcadeInnerBuildFromSource=true</InnerBuildArgs>
-      <!-- Set DotNetBuildFromSource to avoid publishing. -->
-      <InnerBuildArgs>$(InnerBuildArgs) /p:DotNetBuildFromSource=true</InnerBuildArgs>
+      <!-- Turn on DotNetBuildFromSource or DotNetBuildVertical in the inner build -->
+      <InnerBuildArgs Condition="'$(ArcadeBuildFromSource)' == 'true'">$(InnerBuildArgs) /p:DotNetBuildFromSource=true</InnerBuildArgs>
+      <InnerBuildArgs Condition="'$(ArcadeBuildVertical)' == 'true'">$(InnerBuildArgs) /p:DotNetBuildVertical=true</InnerBuildArgs>
       <!-- Use a fresh clone of the repo so that source-build modifications are isolated. -->
       <InnerBuildArgs>$(InnerBuildArgs) /p:RepoRoot=$(InnerSourceBuildRepoRoot)</InnerBuildArgs>
       <!-- Override the artifacts dir to cleanly separate the inner build from outer build. -->
@@ -87,7 +88,7 @@
       <InnerBuildArgs>$(InnerBuildArgs) /p:SourceBuildOutputDir=$(SourceBuildOutputDir)</InnerBuildArgs>
       <InnerBuildArgs>$(InnerBuildArgs) /p:SourceBuiltBlobFeedDir=$(SourceBuiltBlobFeedDir)</InnerBuildArgs>
 
-      <InnerBuildArgs>$(InnerBuildArgs) /p:DotNetBuildOffline=true</InnerBuildArgs>
+      <InnerBuildArgs Condition="'$(ArcadeBuildVertical)' != 'true'">$(InnerBuildArgs) /p:DotNetBuildOffline=true</InnerBuildArgs>
       <InnerBuildArgs Condition=" '$(DotNetPackageVersionPropsPath)' != '' ">$(InnerBuildArgs) /p:DotNetPackageVersionPropsPath=$(DotNetPackageVersionPropsPath)</InnerBuildArgs>
 
       <InnerBuildArgs>$(InnerBuildArgs) /p:FullAssemblySigningSupported=$(FullAssemblySigningSupported)</InnerBuildArgs>
@@ -96,7 +97,7 @@
     <ItemGroup>
       <!-- Override package cache to separate source-built packages from upstream. -->
       <InnerBuildEnv Include="NUGET_PACKAGES=$(CurrentRepoSourceBuildPackageCache)" />
-      <InnerBuildEnv Include="DotNetTargetFrameworkFilter=$(SourceBuildTargetFrameworkFilter)" />
+      <InnerBuildEnv Include="DotNetTargetFrameworkFilter=$(SourceBuildTargetFrameworkFilter)" Condition="'$(ArcadeBuildVertical)' != 'true'" />
     </ItemGroup>
   </Target>
 
@@ -140,15 +141,27 @@
       <CopyWipIntoInnerSourceBuildRepo Condition="'$(CopyWipIntoInnerSourceBuildRepo)' == ''">true</CopyWipIntoInnerSourceBuildRepo>
 
       <_GitCloneToDirArgs />
+    </PropertyGroup>
+
+    <PropertyGroup Condition="$([MSBuild]::IsOSPlatform(Windows))">
+      <_GitCloneToDirArgs>$(_GitCloneToDirArgs) -Source '$(RepoRoot)'</_GitCloneToDirArgs>
+      <_GitCloneToDirArgs>$(_GitCloneToDirArgs) -Dest '$(InnerSourceBuildRepoRoot)'</_GitCloneToDirArgs>
+      <_GitCloneToDirArgs Condition="'$(CopyWipIntoInnerSourceBuildRepo)' == 'true'">$(_GitCloneToDirArgs) -CopyWip</_GitCloneToDirArgs>
+      <_GitCloneToDirArgs Condition="'$(CleanInnerSourceBuildRepoRoot)' == 'true'">$(_GitCloneToDirArgs) -Clean</_GitCloneToDirArgs>
+
+      <_GitCloneToDirScriptCommand>powershell -ExecutionPolicy Unrestricted -NoProfile -command "&amp; $(MSBuildThisFileDirectory)git-clone-to-dir.ps1 $(_GitCloneToDirArgs)"</_GitCloneToDirScriptCommand>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="!$([MSBuild]::IsOSPlatform(Windows))">
       <_GitCloneToDirArgs>$(_GitCloneToDirArgs) --source &quot;$(RepoRoot)&quot;</_GitCloneToDirArgs>
       <_GitCloneToDirArgs>$(_GitCloneToDirArgs) --dest &quot;$(InnerSourceBuildRepoRoot)&quot;</_GitCloneToDirArgs>
       <_GitCloneToDirArgs Condition="'$(CopyWipIntoInnerSourceBuildRepo)' == 'true'">$(_GitCloneToDirArgs) --copy-wip</_GitCloneToDirArgs>
       <_GitCloneToDirArgs Condition="'$(CleanInnerSourceBuildRepoRoot)' == 'true'">$(_GitCloneToDirArgs) --clean</_GitCloneToDirArgs>
 
-      <_GitCloneToDirScriptFile>$(MSBuildThisFileDirectory)git-clone-to-dir.sh</_GitCloneToDirScriptFile>
+      <_GitCloneToDirScriptCommand>$(MSBuildThisFileDirectory)git-clone-to-dir.sh $(_GitCloneToDirArgs)</_GitCloneToDirScriptCommand>
     </PropertyGroup>
 
-    <Exec Command="$(_GitCloneToDirScriptFile) $(_GitCloneToDirArgs)" />
+    <Exec Command="$(_GitCloneToDirScriptCommand)" />
 
     <!--
       If the repo has submodules, use 'git clone' on each submodule to put it in the inner repo. We

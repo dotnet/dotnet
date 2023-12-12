@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -34,9 +35,15 @@ namespace Xunit.Sdk
 			string actualTypeName) =>
 #endif
 				new IsTypeException(
-					"Assert.IsType() Failure: Value is " + (actualTypeName == null ? "null" : "not the exact type") + Environment.NewLine +
-					"Expected: " + Assert.GuardArgumentNotNull(nameof(expectedTypeName), expectedTypeName) + Environment.NewLine +
-					"Actual:   " + (actualTypeName ?? "null")
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.IsType() Failure: Value is {0}{1}Expected: {2}{3}Actual:   {4}",
+						actualTypeName == null ? "null" : "not the exact type",
+						Environment.NewLine,
+						Assert.GuardArgumentNotNull(nameof(expectedTypeName), expectedTypeName),
+						Environment.NewLine,
+						actualTypeName ?? "null"
+					)
 				);
 	}
 }

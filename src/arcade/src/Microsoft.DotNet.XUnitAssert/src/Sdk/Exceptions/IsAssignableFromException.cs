@@ -6,6 +6,7 @@
 #endif
 
 using System;
+using System.Globalization;
 
 namespace Xunit.Sdk
 {
@@ -37,9 +38,15 @@ namespace Xunit.Sdk
 			object actual) =>
 #endif
 				new IsAssignableFromException(
-					"Assert.IsAssignableFrom() Failure: Value is " + (actual == null ? "null" : "an incompatible type") + Environment.NewLine +
-					"Expected: " + ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected)) + Environment.NewLine +
-					"Actual:   " + ArgumentFormatter.Format(actual?.GetType())
+					string.Format(
+						CultureInfo.CurrentCulture,
+						"Assert.IsAssignableFrom() Failure: Value is {0}{1}Expected: {2}{3}Actual:   {4}",
+						actual == null ? "null" : "an incompatible type",
+						Environment.NewLine,
+						ArgumentFormatter.Format(Assert.GuardArgumentNotNull(nameof(expected), expected)),
+						Environment.NewLine,
+						ArgumentFormatter.Format(actual?.GetType())
+					)
 				);
 	}
 }
