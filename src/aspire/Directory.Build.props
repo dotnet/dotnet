@@ -1,0 +1,42 @@
+<Project>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <PropertyGroup>
+    <Copyright>$(CopyrightNetFoundation)</Copyright>
+    <LangVersion>preview</LangVersion>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <SharedDir>$(MSBuildThisFileDirectory)/src/Shared/</SharedDir>
+    <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <StrongNameKeyId>Open</StrongNameKeyId>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Set RunSettingsFilePath property which is read by VSTest. -->
+    <RunSettingsFilePath>$(RepositoryEngineeringDir).runsettings</RunSettingsFilePath>
+    <!-- We don't want to use the workload for AppHost projects in this repo -->
+    <SkipAspireWorkloadManifest>true</SkipAspireWorkloadManifest>
+  </PropertyGroup>
+
+  <!-- Internal branches don't use package source mapping feature due to internal feeds, so disable NU1507 warning saying it should be used. -->
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
+
+  <!-- OS/Architecture properties for local development resources -->
+  <PropertyGroup>
+    <BuildOs Condition="$([MSBuild]::IsOsPlatform('Linux'))">linux</BuildOs>
+    <BuildOs Condition="$([MSBuild]::IsOsPlatform('OSX'))">darwin</BuildOs>
+    <BuildOs Condition=" '$(BuildOs)' == '' ">windows</BuildOs>
+    <BuildArch Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X86' ">386</BuildArch>
+    <BuildArch Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64' ">arm64</BuildArch>
+    <BuildArch Condition=" '$(BuildArch)' == '' ">amd64</BuildArch>
+    <DcpDir>$(NuGetPackageRoot)microsoft.developercontrolplane.$(BuildOs)-$(BuildArch)/$(MicrosoftDeveloperControlPlanedarwinamd64PackageVersion)/tools/</DcpDir>
+  </PropertyGroup>
+
+</Project>
