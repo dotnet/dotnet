@@ -15,6 +15,10 @@ InitializeToolset
 # Build the init-tools project so that we get the xplat tasks, specifically
 # the msbuild SDK resolver required to force the rest of the repos to use the right arcade SDK.
 
+# Set the NUGET_PACKAGES dir so that we don't accidentally pull some packages from the global location,
+# They should be pulled from the local feeds.
+$env:NUGET_PACKAGES="$PSScriptRoot/.packages"
+
 try {
   $nodeReuse=$false
 
