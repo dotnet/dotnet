@@ -65,18 +65,24 @@
           DependsOnTargets="UnpackTarballs"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(CompletedSemaphorePath)BuildXPlatTasks.complete">
+    <MSBuild
+      Projects="tasks\Microsoft.DotNet.SourceBuild.Tasks.XPlat\Microsoft.DotNet.SourceBuild.Tasks.XPlat.csproj"
+      Targets="%(BuildTasksTarget.Identity)"
+      Properties="
+        $(BuildTasksOfflineSourcesProperty);
+        __ToolInitPhase=%(BuildTasksTarget.Identity)" />
+
     <ItemGroup>
-      <XPlatTaskProject Include="tasks\Microsoft.DotNet.SourceBuild.Tasks.XPlat\Microsoft.DotNet.SourceBuild.Tasks.XPlat.csproj" BuildTasksTarget="@(BuildTasksTarget)" />
-      <!-- The SDK resolver needs to be included to be able to override the -->
-      <XPlatTaskProject Include="tasks\SourceBuild.MSBuildSdkResolver\SourceBuild.MSBuildSdkResolver.csproj" BuildTasksTarget="@(BuildTasksTarget);InstallResolver" />
+      <XPlatBuildTasksTarget Include="@(BuildTasksTarget)" />
+      <XPlatBuildTasksTarget Include="InstallResolver" />
     </ItemGroup>
 
     <MSBuild
-      Projects="@(XPlatTaskProject)"
-      Targets="%(XPlatTaskProject.BuildTasksTarget)"
+      Projects="tasks\SourceBuild.MSBuildSdkResolver\SourceBuild.MSBuildSdkResolver.csproj"
+      Targets="%(XPlatBuildTasksTarget.Identity)"
       Properties="
         $(BuildTasksOfflineSourcesProperty);
-        __ToolInitPhase=%(XPlatTaskProject.BuildTasksTarget)" />
+        __ToolInitPhase=%(XPlatBuildTasksTarget.Identity)" />
 
     <Touch Files="$(CompletedSemaphorePath)BuildXPlatTasks.complete" AlwaysCreate="true" />
   </Target>
