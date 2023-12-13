@@ -2,6 +2,7 @@
   <PropertyGroup>
     <EmscriptenCacheSdkToolsPath>$(MSBuildThisFileDirectory)..\tools\</EmscriptenCacheSdkToolsPath>
     <EmscriptenCacheSdkCacheDir>$([MSBuild]::NormalizeDirectory('$(EmscriptenCacheSdkToolsPath)', 'emscripten', 'cache'))</EmscriptenCacheSdkCacheDir>
+    <WasmCachePath Condition="'$(WasmCachePath)' == ''">$(EmscriptenCacheSdkCacheDir)</WasmCachePath>
   </PropertyGroup>
 
 </Project>
