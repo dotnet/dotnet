@@ -76,7 +76,7 @@
       Targets="%(XPlatTaskProject.BuildTasksTarget)"
       Properties="
         $(BuildTasksOfflineSourcesProperty);
-        __ToolInitPhase=%(XPlatTaskProject.XPlatTaskProject)" />
+        __ToolInitPhase=%(XPlatTaskProject.BuildTasksTarget)" />
 
     <Touch Files="$(CompletedSemaphorePath)BuildXPlatTasks.complete" AlwaysCreate="true" />
   </Target>
