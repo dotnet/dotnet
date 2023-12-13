@@ -1933,6 +1933,9 @@ module TastDefinitionPrinting =
         let props =
             GetImmediateIntrinsicPropInfosOfType (None, ad) g amap m ty
             |> List.filter (fun pinfo -> shouldShow pinfo.ArbitraryValRef)
+            // Filter out 'IsA' properties which are implied by the union cases since they don't need to be displayed
+            // in any printed outputs
+            |> List.filter (fun prop -> not prop.IsUnionCaseTester)
 
         let events = 
             infoReader.GetEventInfosOfType(None, ad, m, ty)
@@ -1960,7 +1963,8 @@ module TastDefinitionPrinting =
                 IsMethInfoAccessible amap m ad minfo &&
                 // Discard method impls such as System.IConvertible.ToBoolean
                 not (minfo.IsILMethod && minfo.DisplayName.Contains(".")) &&
-                not (minfo.DisplayName.Split('.') |> Array.exists (fun part -> isDiscard part)))
+                not minfo.IsUnionCaseTester &&
+                not (minfo.DisplayName.Split('.') |> Array.exists isDiscard))
 
         let ilFields =
             infoReader.GetILFieldInfosOfType (None, ad, m, ty)
@@ -2017,7 +2021,7 @@ module TastDefinitionPrinting =
         let instanceValLs =
             instanceVals
             |> List.map (fun f -> layoutRecdField (fun l -> WordL.keywordVal ^^ l) true denv infoReader tcref f)
-    
+
         let propLs =
             props
             |> List.collect (fun x ->
@@ -2425,8 +2429,7 @@ module InferredSigPrinting =
                     |> List.choose (function ModuleOrNamespaceBinding.Binding bind -> Some bind | _ -> None) 
                     |> valsOfBinds 
                     |> List.filter filterVal
-                    |> List.map mkLocalValRef
-                    |> List.map (PrintTastMemberOrVals.prettyLayoutOfValOrMemberNoInst denv infoReader)
+                    |> List.map (mkLocalValRef >> PrintTastMemberOrVals.prettyLayoutOfValOrMemberNoInst denv infoReader)
                     |> aboveListL) @@
 
                 (mbinds 
@@ -2437,8 +2440,7 @@ module InferredSigPrinting =
             | TMDefLet(bind, _) -> 
                 ([bind.Var] 
                     |> List.filter filterVal 
-                    |> List.map mkLocalValRef
-                    |> List.map (PrintTastMemberOrVals.prettyLayoutOfValOrMemberNoInst denv infoReader) 
+                    |> List.map (mkLocalValRef >> PrintTastMemberOrVals.prettyLayoutOfValOrMemberNoInst denv infoReader) 
                     |> aboveListL)
 
             | TMDefOpens _ -> emptyL
@@ -2662,8 +2664,7 @@ let stringOfMethInfoFSharpStyle infoReader m denv minfo =
 /// Convert MethInfos to lines separated by newline including a newline as the first character
 let multiLineStringOfMethInfos infoReader m denv minfos =
      minfos
-     |> List.map (stringOfMethInfo infoReader m denv)
-     |> List.map (sprintf "%s   %s" Environment.NewLine)
+     |> List.map (stringOfMethInfo infoReader m denv >> sprintf "%s   %s" Environment.NewLine)
      |> String.concat ""
 
 let stringOfPropInfo g amap m denv pinfo =
@@ -2672,8 +2673,7 @@ let stringOfPropInfo g amap m denv pinfo =
 /// Convert PropInfos to lines separated by newline including a newline as the first character
 let multiLineStringOfPropInfos g amap m denv pinfos =
      pinfos
-     |> List.map (stringOfPropInfo g amap m denv)
-     |> List.map (sprintf "%s   %s" Environment.NewLine)
+     |> List.map (stringOfPropInfo g amap m denv >> sprintf "%s   %s" Environment.NewLine)
      |> String.concat ""
 
 /// Convert a ParamData to a string
