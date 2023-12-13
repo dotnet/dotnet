@@ -3,8 +3,6 @@
   <PropertyGroup>
     <!-- We need to use a prebuilt Arcade to build Arcade -->
     <UseBootstrapArcade>true</UseBootstrapArcade>
-
-    <BuildCommand>$(StandardSourceBuildCommand) $(FlagParameterPrefix)pack $(FlagParameterPrefix)publish $(StandardSourceBuildArgs)</BuildCommand>
   </PropertyGroup>
 
   <ItemGroup>

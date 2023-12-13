@@ -1,9 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <BuildCommand>$(ProjectDirectory)eng\common\build$(ShellExtension) $(StandardSourceBuildActionsAndArgs)</BuildCommand>
-  </PropertyGroup>
-
   <ItemGroup>
     <RepositoryReference Include="roslyn" />
     <RepositoryReference Include="roslyn-analyzers" />

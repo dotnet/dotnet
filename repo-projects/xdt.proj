@@ -3,9 +3,7 @@
   <PropertyGroup>
     <LogVerbosityOptOut>true</LogVerbosityOptOut>
 
-    <BuildCommandArgs>$(StandardSourceBuildActionsAndArgs)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildCommandArgs>
-    <BuildCommand>$(StandardSourceBuildCommand) $(BuildCommandArgs)</BuildCommand>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>

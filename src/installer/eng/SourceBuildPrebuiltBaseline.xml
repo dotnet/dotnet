@@ -3,8 +3,6 @@
 
 <UsageData>
   <IgnorePatterns>
-    <UsagePattern IdentityGlob="Microsoft.SourceBuild.Intermediate.*/*" />
-
     <!--
       Temporary exclusion for NuGet packages, since NuGet is not producing source-build intermediate package,
       see: https://github.com/NuGet/Home/issues/11059

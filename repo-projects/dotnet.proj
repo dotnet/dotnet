@@ -1,5 +1,4 @@
-<Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <SkipEnsurePackagesCreated>true</SkipEnsurePackagesCreated>
@@ -9,6 +8,9 @@
       Setting the type to AllPackages will skip that logic.
     -->
     <PackageVersionPropsFlowType>AllPackages</PackageVersionPropsFlowType>
+
+    <!-- This is a wrapper project that doesn't build anything. -->
+    <SkipRepoBuild>true</SkipRepoBuild>
   </PropertyGroup>
 
   <!-- This project file serves a couple of purpose.
@@ -44,6 +46,7 @@
     <RepositoryReference Include="fsharp" />
     <RepositoryReference Include="vstest" />
     <RepositoryReference Include="sdk" />
+    <RepositoryReference Include="aspire" />
     <RepositoryReference Include="installer" />
 
     <!-- Package source-build artifacts -->
@@ -52,9 +55,5 @@
     <!-- Testing. -->
     <RepositoryReference Include="scenario-tests" />
   </ItemGroup>
-
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
-
-  <Target Name="RepoBuild" />
 
 </Project>

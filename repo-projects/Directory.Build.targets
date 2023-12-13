@@ -1,5 +1,9 @@
 <Project InitialTargets="SetNuGetPackagesEnvironment;PrepareOutput">
 
+  <PropertyGroup>
+    <BuildCommand Condition="'$(BuildCommand)' == '' and '$(SkipRepoBuild)' != 'true'">$(BuildScript) $(BuildActions) $(BuildArgs)</BuildCommand>
+  </PropertyGroup>
+
   <ItemGroup>
     <EnvironmentVariables Include="LatestCommit=$(GitCommitHash)" />
     <EnvironmentVariables Include="OfficialBuildId=$(OfficialBuildId)" />
@@ -211,8 +215,7 @@
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(ProjectBuildReason)" />
     <Message Importance="High" Text="Running command:" />
     <Message Importance="High" Text="  $(BuildCommand)" Condition="'$(BuildCommand)' != ''" />
-    <Message Importance="High" Text="  Using custom build target" Condition="'$(BuildCommand)' == ''" />
-    <Message Importance="High" Text="  Log: $(RepoConsoleLogFile)" />
+    <Message Importance="High" Text="  Log: $(RepoConsoleLogFile)" Condition="'$(MinimalConsoleLogOutput)' == 'true'" />
     <Message Importance="High" Text="  With Environment Variables:" />
     <Message Importance="High" Text="    %(EnvironmentVariables.Identity)" />
     <CallTarget Targets="RepoBuild" />
@@ -222,7 +225,8 @@
     <OnError ExecuteTargets="ReportRepoError" />
   </Target>
 
-  <Target Name="RepoBuild">
+  <Target Name="RepoBuild"
+          Condition="'$(SkipRepoBuild)' != 'true'">
     <PropertyGroup>
       <FullCommand Condition="'$(LogVerbosityOptOut)' != 'true'">$(BuildCommand) /v:$(LogVerbosity) $(RedirectRepoOutputToLog)</FullCommand>
       <FullCommand Condition="'$(LogVerbosityOptOut)' == 'true'">$(BuildCommand) $(RedirectRepoOutputToLog)</FullCommand>
@@ -244,26 +248,7 @@
     <Message Importance="High" Text="See '$(RepoConsoleLogFile)' for more information." Condition="Exists('$(RepoConsoleLogFile)') and '$(MinimalConsoleLogOutput)' == 'true'" />
   </Target>
 
-  <Target Name="Package"
-          AfterTargets="Build"
-          Condition="'$(BuildPackagesCommand)' != ''"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(RepoCompletedSemaphorePath)Package.complete">
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Packaging $(ProjectBuildReason)" />
-    <Message Importance="High" Text="Running command:" />
-    <Message Importance="High" Text="  $(BuildPackagesCommand)" />
-    <Message Importance="High" Text="  Log: $(RepoConsoleLogFile)" />
-    <Message Importance="High" Text="  With Environment Variables:" />
-    <Message Importance="High" Text="    %(EnvironmentVariables.Identity)" />
-    <Exec Command="$(BuildPackagesCommand) /v:$(LogVerbosity) $(RedirectRepoOutputToLog)"
-          WorkingDirectory="$(ProjectDirectory)"
-          EnvironmentVariables="@(EnvironmentVariables)"
-          IgnoreStandardErrorWarningFormat="true" />
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Packaging $(ProjectBuildReason)...done" />
-
-    <Touch Files="$(RepoCompletedSemaphorePath)Package.complete" AlwaysCreate="true" />
-    <OnError ExecuteTargets="ReportRepoError" />
-  </Target>
+  <Target Name="Package" AfterTargets="Build" />
 
   <Target Name="GatherBuiltPackages">
     <ItemGroup>

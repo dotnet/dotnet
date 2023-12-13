@@ -1,10 +1,16 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.23606.1",
+      "packageVersion": "9.0.0-beta.23611.2",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
       "commitSha": "0a0217fe0cdd3654105d1c46be4e43eeae9c163e"
+    },
+    {
+      "packageVersion": "8.0.0-preview.1.23557.2",
+      "path": "aspire",
+      "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspire",
+      "commitSha": "48e42f59d64d84b404e904996a9ed61f2a17a569"
     },
     {
       "packageVersion": "9.0.0-alpha.1.23577.26",
@@ -58,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "96a14748f6591a22d22536eef7eb6e26f154baa7"
+      "commitSha": "7cfe9149ec1f8e1a0b632d3babb868d273aa9242"
     },
     {
       "packageVersion": "17.9.0-preview-23577-01",
@@ -109,16 +115,16 @@
       "commitSha": "96b3ef8aecc8e71f067e04ea02401b13bc8bcca7"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.23605.1",
+      "packageVersion": "9.0.0-alpha.1.23611.2",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "77003904b5d315ce3d8aa54a4446a8a46ac4e546"
+      "commitSha": "bc555088c6b4862ad0b93fbc245ef0628e661256"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.23565.2",
+      "packageVersion": "9.0.0-alpha.1.23611.3",
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "b5ceed90b72d1b05975dd95fedd86c2455969adb"
+      "commitSha": "229464299759d6667e8b907d9c321d31a8dcc123"
     },
     {
       "packageVersion": "9.0.0-beta.23570.2",
@@ -139,10 +145,10 @@
       "commitSha": "d1a810150c3a53bb92acd42197737da15dbc2836"
     },
     {
-      "packageVersion": "1.1.0-rc.23607.1",
+      "packageVersion": "1.1.0-rc.23612.1",
       "path": "test-templates",
       "remoteUri": "https://github.com/dotnet/test-templates",
-      "commitSha": "45226f35518e3152b5a54ed7a90ae66bcae22944"
+      "commitSha": "ec54b2c1553db0a544ef0e8595be2318fc12e08d"
     },
     {
       "packageVersion": "17.9.0-preview-23574-01",

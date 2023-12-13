@@ -11,32 +11,33 @@
     <_platformIndex>$(NETCoreSdkPortableRuntimeIdentifier.LastIndexOf('-'))</_platformIndex>
     <PortableOS>$(NETCoreSdkPortableRuntimeIdentifier.Substring(0, $(_platformIndex)))</PortableOS>
 
-    <RuntimeArg>$(FlagParameterPrefix)runtime-id $(OverrideTargetRid)</RuntimeArg>
+    <!-- Use the repo root build script -->
+    <BuildScript>$(ProjectDirectory)build$(ShellExtension)</BuildScript>
 
-    <BuildCommandArgs>$(StandardSourceBuildActionsAndArgs)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) $(RuntimeArg)</BuildCommandArgs>
+    <!-- Restore and Build actions are already passed in by the root script. -->
+    <BuildActions>$(FlagParameterPrefix)pack $(FlagParameterPrefix)publish</BuildActions>
+
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)runtime-id $(OverrideTargetRid)</BuildArgs>
 
     <!--
       Setting NETCoreAppMaximumVersion to a high version so that the sdk doesn't complain if we're restoring/publishing for a higher version than the sdk.
       See https://github.com/dotnet/sdk/issues/1512#issuecomment-377082883
     -->
-    <BuildCommandArgs>$(BuildCommandArgs) /p:NETCoreAppMaximumVersion=99.9</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) /p:OSName=$(OSNameOverride)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) /p:PortableOSName=$(PortableOS)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) /p:Rid=$(OverrideTargetRid)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) /p:DOTNET_INSTALL_DIR=$(DotNetRoot)</BuildCommandArgs>
+    <BuildArgs>$(BuildArgs) /p:NETCoreAppMaximumVersion=99.9</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:OSName=$(OSNameOverride)</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:PortableOSName=$(PortableOS)</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:Rid=$(OverrideTargetRid)</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:DOTNET_INSTALL_DIR=$(DotNetRoot)</BuildArgs>
 
-    <BuildCommandArgs Condition="'$(TargetOS)' != 'Windows_NT'">$(BuildCommandArgs) /p:AspNetCoreInstallerRid=$(OverrideTargetRid)</BuildCommandArgs>
+    <BuildArgs Condition="'$(TargetOS)' != 'Windows_NT'">$(BuildArgs) /p:AspNetCoreInstallerRid=$(OverrideTargetRid)</BuildArgs>
     <!-- core-sdk always wants to build portable on OSX and FreeBSD -->
-    <BuildCommandArgs Condition="'$(TargetOS)' == 'FreeBSD'">$(BuildCommandArgs) /p:PortableBuild=true</BuildCommandArgs>
-    <BuildCommandArgs Condition="'$(TargetOS)' != 'Windows_NT'">$(BuildCommandArgs) /p:CoreSetupRid=$(OverrideTargetRid)</BuildCommandArgs>
+    <BuildArgs Condition="'$(TargetOS)' == 'FreeBSD'">$(BuildArgs) /p:PortableBuild=true</BuildArgs>
+    <BuildArgs Condition="'$(TargetOS)' != 'Windows_NT'">$(BuildArgs) /p:CoreSetupRid=$(OverrideTargetRid)</BuildArgs>
 
     <!-- Consume the source-built Core-Setup and toolset. This line must be removed to source-build CLI without source-building Core-Setup first. -->
-    <BuildCommandArgs>$(BuildCommandArgs) /p:PublicBaseURL=file:%2F%2F$(SourceBuiltAssetsDir)</BuildCommandArgs>
+    <BuildArgs>$(BuildArgs) /p:PublicBaseURL=file:%2F%2F$(SourceBuiltAssetsDir)</BuildArgs>
 
-    <BuildCommandArgs>$(BuildCommandArgs) /p:UsePortableLinuxSharedFramework=false</BuildCommandArgs>
-
-    <BuildCommand>$(StandardSourceBuildCommand) $(BuildCommandArgs)</BuildCommand>
+    <BuildArgs>$(BuildArgs) /p:UsePortableLinuxSharedFramework=false</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>

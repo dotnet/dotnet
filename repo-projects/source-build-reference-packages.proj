@@ -2,14 +2,12 @@
 
   <PropertyGroup>
     <!-- SBRP builds before Arcade so it also needs the bootstrap Arcade version -->
-    <UseBootstrapArcade Condition="'$(DotNetBuildFromSource)' == 'true'">true</UseBootstrapArcade>
+    <UseBootstrapArcade>true</UseBootstrapArcade>
 
     <LocalNuGetPackageCacheDirectory>$(BaseIntermediatePath)source-build-reference-package-cache</LocalNuGetPackageCacheDirectory>
 
-    <BuildCommandArgs>$(StandardSourceBuildActionsAndArgs)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) /p:MicrosoftNetCoreIlasmPackageRuntimeId=$(NETCoreSdkRuntimeIdentifier)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) /p:LocalNuGetPackageCacheDirectory=$(LocalNuGetPackageCacheDirectory)</BuildCommandArgs>
-    <BuildCommand>$(StandardSourceBuildCommand) $(BuildCommandArgs)</BuildCommand>
+    <BuildArgs>$(BuildArgs) /p:MicrosoftNetCoreIlasmPackageRuntimeId=$(NETCoreSdkRuntimeIdentifier)</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:LocalNuGetPackageCacheDirectory=$(LocalNuGetPackageCacheDirectory)</BuildArgs>
   </PropertyGroup>
 
   <Target Name="AddLocalNuGetPackageCacheDirectory"

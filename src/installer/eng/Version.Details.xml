@@ -106,22 +106,22 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>307b8f538d83a955d8f6dd909eee41a5555f2f4d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.6.0" Version="1.1.0-rc.23607.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.6.0" Version="1.1.0-rc.23612.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>45226f35518e3152b5a54ed7a90ae66bcae22944</Sha>
+      <Sha>ec54b2c1553db0a544ef0e8595be2318fc12e08d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.7.0" Version="1.1.0-rc.23607.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.7.0" Version="1.1.0-rc.23612.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>45226f35518e3152b5a54ed7a90ae66bcae22944</Sha>
+      <Sha>ec54b2c1553db0a544ef0e8595be2318fc12e08d</Sha>
       <SourceBuild RepoName="test-templates" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.23607.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.23612.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>45226f35518e3152b5a54ed7a90ae66bcae22944</Sha>
+      <Sha>ec54b2c1553db0a544ef0e8595be2318fc12e08d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rc.23607.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rc.23612.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>45226f35518e3152b5a54ed7a90ae66bcae22944</Sha>
+      <Sha>ec54b2c1553db0a544ef0e8595be2318fc12e08d</Sha>
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
     <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="9.0.0-alpha.1.23575.1" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">
@@ -174,6 +174,11 @@
       <Sha>74e4868be8423562ba8ec2aac522f94a8c2c9f37</Sha>
       <SourceBuild RepoName="emsdk" ManagedOnly="true" />
     </Dependency>
+    <Dependency Name="Microsoft.NET.Sdk.Aspire.Manifest-8.0.100" Version="8.0.0-preview.1.23557.2">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspire</Uri>
+      <Sha>48e42f59d64d84b404e904996a9ed61f2a17a569</Sha>
+      <SourceBuild RepoName="aspire" ManagedOnly="true" />
+    </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="2.0.0-preview.1.23509.2" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/deployment-tools</Uri>
       <Sha>1d174267bf45dabbadb12602b1170329611fd219</Sha>
@@ -185,9 +190,9 @@
       <Sha>1d174267bf45dabbadb12602b1170329611fd219</Sha>
       <SourceBuild RepoName="deployment-tools" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="9.0.0-alpha.1.23605.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="9.0.0-alpha.1.23611.2">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>77003904b5d315ce3d8aa54a4446a8a46ac4e546</Sha>
+      <Sha>bc555088c6b4862ad0b93fbc245ef0628e661256</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.symreader" Version="2.1.0-beta.23253.1">
@@ -206,18 +211,18 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.23606.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.23611.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>71149d1f281ab5e066d1f524f4862152683f5144</Sha>
+      <Sha>0a0217fe0cdd3654105d1c46be4e43eeae9c163e</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="9.0.0-beta.23606.1">
+    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="9.0.0-beta.23611.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>71149d1f281ab5e066d1f524f4862152683f5144</Sha>
+      <Sha>0a0217fe0cdd3654105d1c46be4e43eeae9c163e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="9.0.0-beta.23606.1">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="9.0.0-beta.23611.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>71149d1f281ab5e066d1f524f4862152683f5144</Sha>
+      <Sha>0a0217fe0cdd3654105d1c46be4e43eeae9c163e</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.23578.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
@@ -227,17 +232,17 @@
       <Uri>https://github.com/dotnet/arcade-services</Uri>
       <Sha>5263b603d90991a0c200aca8b8892c3d7cfe4751</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.23606.1">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.23611.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>71149d1f281ab5e066d1f524f4862152683f5144</Sha>
+      <Sha>0a0217fe0cdd3654105d1c46be4e43eeae9c163e</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Logging.Console" Version="8.0.0-alpha.1.22557.12">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>af841c8b33cecc92d74222298f1e45bf7bf3d90a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.23565.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.23611.3">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>b5ceed90b72d1b05975dd95fedd86c2455969adb</Sha>
+      <Sha>229464299759d6667e8b907d9c321d31a8dcc123</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DotNet.ScenarioTests.SdkTemplateTests" Version="8.0.0-preview.23424.2">

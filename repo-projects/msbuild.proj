@@ -2,13 +2,12 @@
 
   <PropertyGroup>
     <LogVerbosityOptOut>true</LogVerbosityOptOut>
-    <BuildCommandArgs>$(StandardSourceBuildActionsAndArgs)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)v $(LogVerbosity)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) $(FlagParameterPrefix)warnAsError $(ArcadeFalseBoolBuildArg)</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) /p:DisableNerdbankVersioning=true</BuildCommandArgs>
-    <BuildCommandArgs>$(BuildCommandArgs) /p:DotNetCoreSdkDir=$(DotNetRoot)</BuildCommandArgs>
-    <BuildCommand>$(StandardSourceBuildCommand) $(BuildCommandArgs)</BuildCommand>
+
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)v $(LogVerbosity)</BuildArgs>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildArgs>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)warnAsError $(ArcadeFalseBoolBuildArg)</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:DisableNerdbankVersioning=true</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:DotNetCoreSdkDir=$(DotNetRoot)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
