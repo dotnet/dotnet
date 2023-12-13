@@ -14,7 +14,8 @@ try {
   MSBuild "$PSScriptRoot/build.proj" `
       /bl:"$PSScriptRoot/artifacts/log/Debug/Build_$LogDateStamp.binlog" `
       /flp:"LogFile=$PSScriptRoot/artifacts/logs/Build_$LogDateStamp.log" `
-      /flp:v=detailed
+      /flp:v=detailed `
+      @properties
 }
 catch {
   Write-Host $_.ScriptStackTrace
