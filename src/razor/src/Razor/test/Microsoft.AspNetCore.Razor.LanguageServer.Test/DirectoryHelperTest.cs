@@ -14,13 +14,8 @@ using static Microsoft.AspNetCore.Razor.LanguageServer.DirectoryHelper;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
-public class DirectoryHelperTest : TagHelperServiceTestBase
+public class DirectoryHelperTest(ITestOutputHelper testOutput) : TagHelperServiceTestBase(testOutput)
 {
-    public DirectoryHelperTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void GetFilteredFiles_FindsFiles()
     {

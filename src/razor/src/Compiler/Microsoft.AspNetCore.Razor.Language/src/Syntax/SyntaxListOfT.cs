@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Linq;
 using System.Collections;
@@ -12,20 +10,17 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
-internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<SyntaxList<TNode>>
+internal readonly struct SyntaxList<TNode>(SyntaxNode? node) : IReadOnlyList<TNode>, IEquatable<SyntaxList<TNode>>
     where TNode : SyntaxNode
 {
-    public SyntaxList(SyntaxNode node)
-    {
-        Node = node;
-    }
+    internal SyntaxNode? Node { get; } = node;
 
     /// <summary>
     /// Creates a singleton list of syntax nodes.
     /// </summary>
     /// <param name="node">The single element node.</param>
-    public SyntaxList(TNode node)
-        : this((SyntaxNode)node)
+    public SyntaxList(TNode? node)
+        : this((SyntaxNode?)node)
     {
     }
 
@@ -33,19 +28,15 @@ internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<Sy
     /// Creates a list of syntax nodes.
     /// </summary>
     /// <param name="nodes">A sequence of element nodes.</param>
-    public SyntaxList(IEnumerable<TNode> nodes)
+    public SyntaxList(SyntaxList<TNode> nodes)
         : this(CreateNode(nodes))
     {
     }
 
-    private static SyntaxNode CreateNode(IEnumerable<TNode> nodes)
+    private static SyntaxNode? CreateNode(SyntaxList<TNode> nodes)
     {
-        if (nodes == null)
-        {
-            return null;
-        }
-
-        var builder = (nodes is ICollection<TNode> collection) ? new SyntaxListBuilder<TNode>(collection.Count) : SyntaxListBuilder<TNode>.Create();
+        using var _ = SyntaxListBuilderPool.GetPooledBuilder<TNode>(out var builder);
+        builder.SetCapacityIfLarger(nodes.Count);
 
         foreach (var node in nodes)
         {
@@ -55,7 +46,15 @@ internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<Sy
         return builder.ToList().Node;
     }
 
-    internal SyntaxNode Node { get; }
+    public static SyntaxList<TNode> Create(SyntaxNode node, SyntaxNode parent, int position)
+    {
+        return new SyntaxList<TNode>(node.Green.CreateRed(parent, position));
+    }
+
+    public static SyntaxList<TNode> Create(SyntaxNode node, SyntaxNode parent)
+    {
+        return new SyntaxList<TNode>(node.Green.CreateRed(parent, parent.Position));
+    }
 
     /// <summary>
     /// The number of nodes in the list.
@@ -83,7 +82,7 @@ internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<Sy
                 {
                     if (unchecked((uint)index < (uint)Node.SlotCount))
                     {
-                        return (TNode)Node.GetNodeSlot(index);
+                        return (TNode)Node.GetNodeSlot(index).AssumeNotNull();
                     }
                 }
                 else if (index == 0)
@@ -91,13 +90,14 @@ internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<Sy
                     return (TNode)Node;
                 }
             }
+
             throw new ArgumentOutOfRangeException(nameof(index));
         }
     }
 
-    internal SyntaxNode ItemInternal(int index)
+    internal SyntaxNode? ItemInternal(int index)
     {
-        if (Node.IsList)
+        if (Node?.IsList is true)
         {
             return Node.GetNodeSlot(index);
         }
@@ -110,37 +110,17 @@ internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<Sy
     /// The absolute span of the list elements in characters, including the leading and trailing trivia of the first and last elements.
     /// </summary>
     public TextSpan FullSpan
-    {
-        get
-        {
-            if (Count == 0)
-            {
-                return default(TextSpan);
-            }
-            else
-            {
-                return TextSpan.FromBounds(this[0].FullSpan.Start, this[Count - 1].FullSpan.End);
-            }
-        }
-    }
+        => Count > 0
+            ? TextSpan.FromBounds(this[0].FullSpan.Start, this[Count - 1].FullSpan.End)
+            : default;
 
     /// <summary>
     /// The absolute span of the list elements in characters, not including the leading and trailing trivia of the first and last elements.
     /// </summary>
     public TextSpan Span
-    {
-        get
-        {
-            if (Count == 0)
-            {
-                return default(TextSpan);
-            }
-            else
-            {
-                return TextSpan.FromBounds(this[0].Span.Start, this[Count - 1].Span.End);
-            }
-        }
-    }
+        => Count > 0
+            ? TextSpan.FromBounds(this[0].Span.Start, this[Count - 1].Span.End)
+            : default;
 
     /// <summary>
     /// Returns the string representation of the nodes in this list, not including
@@ -151,9 +131,7 @@ internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<Sy
     /// the first node's leading trivia and the last node's trailing trivia.
     /// </returns>
     public override string ToString()
-    {
-        return Node != null ? Node.ToString() : string.Empty;
-    }
+        => Node?.ToString() ?? string.Empty;
 
     /// <summary>
     /// Returns the full string representation of the nodes in this list including
@@ -164,9 +142,7 @@ internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<Sy
     /// the first node's leading trivia and the last node's trailing trivia.
     /// </returns>
     public string ToFullString()
-    {
-        return Node != null ? Node.ToFullString() : string.Empty;
-    }
+        => Node?.ToFullString() ?? string.Empty;
 
     /// <summary>
     /// Creates a new list with the specified node added at the end.
@@ -295,23 +271,18 @@ internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<Sy
         }
     }
 
-    static SyntaxList<TNode> CreateList(List<TNode> items)
+    private static SyntaxList<TNode> CreateList(List<TNode> items)
     {
-        if (items.Count == 0)
-        {
-            return default(SyntaxList<TNode>);
-        }
-        else
-        {
-            return CreateList(items[0].Green, items);
-        }
+        return items.Count != 0
+            ? CreateList(items[0].Green, items)
+            : default;
     }
 
     static SyntaxList<TNode> CreateList(GreenNode creator, List<TNode> items)
     {
         if (items.Count == 0)
         {
-            return default(SyntaxList<TNode>);
+            return default;
         }
 
         var newGreen = creator.CreateList(items.Select(n => n.Green));
@@ -321,48 +292,22 @@ internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<Sy
     /// <summary>
     /// The first node in the list.
     /// </summary>
-    public TNode First()
-    {
-        return this[0];
-    }
+    public TNode First() => this[0];
 
     /// <summary>
     /// The first node in the list or default if the list is empty.
     /// </summary>
-    public TNode FirstOrDefault()
-    {
-        if (this.Any())
-        {
-            return this[0];
-        }
-        else
-        {
-            return null;
-        }
-    }
+    public TNode? FirstOrDefault() => Any() ? this[0] : null;
 
     /// <summary>
     /// The last node in the list.
     /// </summary>
-    public TNode Last()
-    {
-        return this[Count - 1];
-    }
+    public TNode Last() => this[^1];
 
     /// <summary>
     /// The last node in the list or default if the list is empty.
     /// </summary>
-    public TNode LastOrDefault()
-    {
-        if (Any())
-        {
-            return this[Count - 1];
-        }
-        else
-        {
-            return null;
-        }
-    }
+    public TNode? LastOrDefault() => Any() ? this[^1] : null;
 
     /// <summary>
     /// True if the list has at least one node.
@@ -373,8 +318,26 @@ internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<Sy
         return Node != null;
     }
 
+    public SyntaxList<TNode> Where(Func<TNode, bool> predicate)
+    {
+        using var _ = SyntaxListBuilderPool.GetPooledBuilder<TNode>(out var builder);
+        builder.SetCapacityIfLarger(Count);
+
+        foreach (var node in this)
+        {
+            if (predicate(node))
+            {
+                builder.Add(node);
+            }
+        }
+
+        return builder.ToList();
+    }
+
     // for debugging
+#pragma warning disable IDE0051 // Remove unused private members
     private TNode[] Nodes
+#pragma warning restore IDE0051 // Remove unused private members
     {
         get { return this.ToArray(); }
     }
@@ -389,7 +352,7 @@ internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<Sy
 
     IEnumerator<TNode> IEnumerable<TNode>.GetEnumerator()
     {
-        if (this.Any())
+        if (Any())
         {
             return new EnumeratorImpl(this);
         }
@@ -399,7 +362,7 @@ internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<Sy
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        if (this.Any())
+        if (Any())
         {
             return new EnumeratorImpl(this);
         }
@@ -408,24 +371,17 @@ internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<Sy
     }
 
     public static bool operator ==(SyntaxList<TNode> left, SyntaxList<TNode> right)
-    {
-        return left.Node == right.Node;
-    }
+        => left.Node == right.Node;
 
     public static bool operator !=(SyntaxList<TNode> left, SyntaxList<TNode> right)
-    {
-        return left.Node != right.Node;
-    }
+        => left.Node != right.Node;
 
     public bool Equals(SyntaxList<TNode> other)
-    {
-        return Node == other.Node;
-    }
+        => Node == other.Node;
 
     public override bool Equals(object obj)
-    {
-        return obj is SyntaxList<TNode> && Equals((SyntaxList<TNode>)obj);
-    }
+        => obj is SyntaxList<TNode> list &&
+           Equals(list);
 
     public override int GetHashCode()
     {
@@ -546,7 +502,7 @@ internal readonly struct SyntaxList<TNode> : IReadOnlyList<TNode>, IEquatable<Sy
         {
             get
             {
-                return (TNode)_list.ItemInternal(_index);
+                return (TNode)_list.ItemInternal(_index)!;
             }
         }
 

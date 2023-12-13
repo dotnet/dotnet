@@ -12,13 +12,8 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
 
-public class AutoClosingTagOnAutoInsertProviderTest : RazorOnAutoInsertProviderTestBase
+public class AutoClosingTagOnAutoInsertProviderTest(ITestOutputHelper testOutput) : RazorOnAutoInsertProviderTestBase(testOutput)
 {
-    public AutoClosingTagOnAutoInsertProviderTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     private RazorLSPOptions Options { get; set; } = RazorLSPOptions.Default;
 
     private static TagHelperDescriptor CatchAllTagHelper

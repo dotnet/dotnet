@@ -3,12 +3,11 @@
 
 #nullable disable
 
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Editor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -33,7 +32,7 @@ public class DefaultRazorDocumentManagerTest : ProjectSnapshotManagerDispatcherT
     private readonly WorkspaceEditorSettings _workspaceEditorSettings;
     private readonly ImportDocumentManager _importDocumentManager;
 
-    private readonly Workspace _workspace;
+    private readonly CodeAnalysis.Workspace _workspace;
 
     public DefaultRazorDocumentManagerTest(ITestOutputHelper testOutput)
         : base(testOutput)

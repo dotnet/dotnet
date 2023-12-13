@@ -4,6 +4,12 @@
     <TargetFrameworks>$(DefaultNetCoreTargetFrameworks);$(DefaultNetFxTargetFramework)</TargetFrameworks>
     <IsShipping>false</IsShipping>
 
+    <RootNamespace>Microsoft.AspNetCore.Razor.Test.Common</RootNamespace>
+
+    <!-- This is a temporary measure because Microsoft.CodeAnalysis.ExternalAccess.Razor does not yet provide IVT to
+         Microsoft.AspNetCore.Razor.Test.Common.Tooling. However, it *does* provide IVT to this assembly name. -->
+    <AssemblyName>Microsoft.AspNetCore.Razor.LanguageServer.Test.Common</AssemblyName>
+
     <!-- To generate baselines, run tests with /p:GenerateBaselines=true -->
     <DefineConstants Condition="'$(GenerateBaselines)'=='true'">$(DefineConstants);GENERATE_BASELINES</DefineConstants>
     <DefineConstants>$(DefineConstants);__RemoveThisBitTo__GENERATE_BASELINES</DefineConstants>
@@ -37,18 +43,27 @@
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonPackageVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzer.Testing" Version="$(MicrosoftCodeAnalysisAnalyzerTestingPackageVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="$(MicrosoftCodeAnalysisCSharpPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.EditorFeatures" Version="$(MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Common" Version="$(MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.Test.Utilities" Version="$(MicrosoftCodeAnalysisTestUtilitiesPackageVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="$(MicrosoftCodeAnalysisWorkspacesCommonPackageVersion)" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.Data" Version="$(MicrosoftVisualStudioTextDataPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.Implementation" Version="$(MicrosoftVisualStudioTextImplementationPackageVersion)" NoWarn="NU1701" />
+    <PackageReference Include="Microsoft.VisualStudio.Text.Logic" Version="$(MicrosoftVisualStudioTextLogicPackageVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Threading" Version="$(MicrosoftVisualStudioThreadingPackageVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Validation" Version="$(MicrosoftVisualStudioValidationPackageVersion)" />
+    <PackageReference Include="Moq" Version="$(MoqPackageVersion)" />
     <PackageReference Include="xunit.analyzers" Version="$(XunitAnalyzersPackageVersion)" />
     <PackageReference Include="xunit.extensibility.execution" Version="$(XunitExtensibilityExecutionPackageVersion)" />
     <PackageReference Include="Xunit.Combinatorial" Version="$(XunitCombinatorialPackageVersion)" />
+    <PackageReference Include="Xunit.StaFact" Version="$(XunitStaFactVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(DefaultNetFxTargetFramework)'">
-    <Reference Include="WindowsBase" />
+    <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" Version="$(MicrosoftVisualStudioLanguageIntellisensePackageVersion)" />
+    <ProjectReference Include="..\..\src\Microsoft.VisualStudio.Editor.Razor\Microsoft.VisualStudio.Editor.Razor.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.VisualStudio.LanguageServer.ContainedLanguage\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.csproj" />
   </ItemGroup>
 
   <ItemGroup>

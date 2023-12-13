@@ -19,10 +19,10 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 internal sealed class CreateComponentCodeActionResolver : IRazorCodeActionResolver
 {
-    private readonly DocumentContextFactory _documentContextFactory;
+    private readonly IDocumentContextFactory _documentContextFactory;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
 
-    public CreateComponentCodeActionResolver(DocumentContextFactory documentContextFactory, LanguageServerFeatureOptions languageServerFeatureOptions)
+    public CreateComponentCodeActionResolver(IDocumentContextFactory documentContextFactory, LanguageServerFeatureOptions languageServerFeatureOptions)
     {
         _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
         _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentException(nameof(languageServerFeatureOptions));

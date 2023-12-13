@@ -14,15 +14,10 @@ using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-public class DirectiveAttributeCompletionItemProviderBaseTest : RazorToolingIntegrationTestBase
+public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper testOutput) : RazorToolingIntegrationTestBase(testOutput)
 {
     internal override string FileKind => FileKinds.Component;
     internal override bool UseTwoPhaseCompilation => true;
-
-    public DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
 
     [Fact]
     public void TryGetAttributeInfo_NonAttribute_ReturnsFalse()

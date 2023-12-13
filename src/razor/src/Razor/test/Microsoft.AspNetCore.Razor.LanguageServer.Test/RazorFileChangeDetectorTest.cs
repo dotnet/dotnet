@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor;
 using Moq;
 using Xunit;
@@ -16,13 +16,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class RazorFileChangeDetectorTest : LanguageServerTestBase
+public class RazorFileChangeDetectorTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    public RazorFileChangeDetectorTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task StartAsync_NotifiesListenersOfExistingRazorFiles()
     {

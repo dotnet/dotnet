@@ -24,12 +24,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
 {
     private readonly FilePathService _documentFilePathService;
-    private readonly DocumentContextFactory _documentContextFactory;
+    private readonly IDocumentContextFactory _documentContextFactory;
     private readonly ILogger _logger;
 
     public RazorDocumentMappingService(
         FilePathService filePathService,
-        DocumentContextFactory documentContextFactory,
+        IDocumentContextFactory documentContextFactory,
         ILoggerFactory loggerFactory)
     {
         _documentFilePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));

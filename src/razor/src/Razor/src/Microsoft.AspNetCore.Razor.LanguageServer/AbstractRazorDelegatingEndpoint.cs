@@ -20,18 +20,18 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
 {
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly IRazorDocumentMappingService _documentMappingService;
-    private readonly ClientNotifierServiceBase _languageServer;
+    private readonly IClientConnection _clientConnection;
     protected readonly ILogger Logger;
 
     protected AbstractRazorDelegatingEndpoint(
         LanguageServerFeatureOptions languageServerFeatureOptions,
         IRazorDocumentMappingService documentMappingService,
-        ClientNotifierServiceBase languageServer,
+        IClientConnection clientConnection,
         ILogger logger)
     {
         _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
-        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
 
         Logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -53,7 +53,7 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
 
     /// <summary>
     /// The name of the endpoint to delegate to, from <see cref="CustomMessageNames"/>. This is the
-    /// custom endpoint that is sent via <see cref="ClientNotifierServiceBase"/> which returns
+    /// custom endpoint that is sent via <see cref="IClientConnection"/> which returns
     /// a response by delegating to C#/HTML.
     /// </summary>
     /// <remarks>
@@ -158,7 +158,7 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
         TResponse? delegatedRequest;
         try
         {
-            delegatedRequest = await _languageServer.SendRequestAsync<IDelegatedParams, TResponse>(CustomMessageTarget, delegatedParams, cancellationToken).ConfigureAwait(false);
+            delegatedRequest = await _clientConnection.SendRequestAsync<IDelegatedParams, TResponse>(CustomMessageTarget, delegatedParams, cancellationToken).ConfigureAwait(false);
             if (delegatedRequest is null)
             {
                 return default;

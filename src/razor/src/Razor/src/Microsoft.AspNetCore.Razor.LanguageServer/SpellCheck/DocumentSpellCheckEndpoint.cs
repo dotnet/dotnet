@@ -23,16 +23,16 @@ internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSIntern
 {
     private readonly IRazorDocumentMappingService _documentMappingService;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly ClientNotifierServiceBase _languageServer;
+    private readonly IClientConnection _clientConnection;
 
     public DocumentSpellCheckEndpoint(
         IRazorDocumentMappingService documentMappingService,
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        ClientNotifierServiceBase languageServer)
+        IClientConnection clientConnection)
     {
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
         _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
     }
 
     public bool MutatesSolutionState => false;
@@ -126,7 +126,7 @@ internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSIntern
     private async Task AddCSharpSpellCheckRangesAsync(List<SpellCheckRange> ranges, VersionedDocumentContext documentContext, CancellationToken cancellationToken)
     {
         var delegatedParams = new DelegatedSpellCheckParams(documentContext.Identifier);
-        var delegatedResponse = await _languageServer.SendRequestAsync<DelegatedSpellCheckParams, VSInternalSpellCheckableRangeReport[]?>(
+        var delegatedResponse = await _clientConnection.SendRequestAsync<DelegatedSpellCheckParams, VSInternalSpellCheckableRangeReport[]?>(
             CustomMessageNames.RazorSpellCheckEndpoint,
             delegatedParams,
             cancellationToken).ConfigureAwait(false);

@@ -7851,6 +7851,44 @@ namespace Test
         CompileToAssembly(generated);
     }
 
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9592")]
+    public void GenericComponent_TypeParameterOrdering()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+            
+            namespace Test;
+
+            public interface IInterfaceConstraint<T> { }
+
+            public interface IComposedInterface : IInterfaceConstraint<string> { }
+
+            public class MyComponent<TService, TKey> : ComponentBase
+                where TService : IInterfaceConstraint<TKey>
+            {
+                [Parameter] public TKey? Value { get; set; }
+                [Parameter] public EventCallback<TKey> ValueChanged { get; set; }
+            }
+            """));
+
+        // Act
+        var generated = CompileToCSharp("""
+            <MyComponent TKey="string" TService="IComposedInterface" @bind-Value="_componentValue" />
+            <MyComponent TService="IComposedInterface" TKey="string" @bind-Value="_componentValue" />
+
+            @code {
+                string _componentValue = string.Empty;
+            }
+            """,
+            nullableEnable: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
     #endregion
 
     #region Key
@@ -8336,6 +8374,23 @@ namespace Test
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9625")]
+    public void Component_WithRef_Generic_SystemInNamespace()
+    {
+        var generated = CompileToCSharp("""
+            @namespace X.Y.System.Z
+            @typeparam T
+
+            <TestComponent Param="Param" @ref="comp" />
+
+            @code {
+                private TestComponent<T?>? comp;
+                [Parameter] public T? Param { get; set; }
+            }
+            """, nullableEnable: true);
         CompileToAssembly(generated);
     }
 

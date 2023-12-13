@@ -8,13 +8,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
 
-public class CloseTextTagOnAutoInsertProviderTest : RazorOnAutoInsertProviderTestBase
+public class CloseTextTagOnAutoInsertProviderTest(ITestOutputHelper testOutput) : RazorOnAutoInsertProviderTestBase(testOutput)
 {
-    public CloseTextTagOnAutoInsertProviderTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void OnTypeCloseAngle_ClosesTextTag()
     {

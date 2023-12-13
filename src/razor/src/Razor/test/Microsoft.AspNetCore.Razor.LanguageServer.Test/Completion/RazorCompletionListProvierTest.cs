@@ -9,8 +9,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.Extensions.Options;
@@ -33,7 +33,7 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
 
     public RazorCompletionListProvierTest(ITestOutputHelper testOutput)
         : base(testOutput)
-    {     
+    {
         _completionFactsService = new RazorCompletionFactsService(GetCompletionProviders());
         _htmlFactsService = new DefaultHtmlFactsService();
         _completionListCache = new CompletionListCache();

@@ -197,6 +197,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 .WithLambdaComparer((old, @new) => old.Left.Equals(@new.Left) && old.Right.SequenceEqual(@new.Right))
                 .Combine(razorSourceGeneratorOptions);
 
+            // Currently unused. See https://github.com/dotnet/roslyn/issues/71024.
             var razorHostOutputsEnabled = analyzerConfigOptions.CheckGlobalFlagSet("EnableRazorHostOutputs");
             var withOptionsDesignTime = withOptions.EmptyWhen(razorHostOutputsEnabled, false);
 
@@ -302,16 +303,6 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
                 context.AddSource(hintName, csharpDocument.GeneratedCode);
             });
-
-            // ExternalAccess.RazorCompiler does not have IVT to the new assembly.
-            // https://github.com/dotnet/razor/issues/8400
-            // context.RegisterHostOutput(processed(designTime: true), static (context, pair, _) =>
-            // {
-            //     var (filePath, document) = pair;
-            //     var hintName = GetIdentifierFromPath(filePath);
-            //     context.AddOutput(hintName + ".rsg.cs", document.CodeDocument.GetCSharpDocument().GeneratedCode);
-            //     context.AddOutput(hintName + ".rsg.html", document.CodeDocument.GetHtmlDocument().GeneratedCode);
-            // });
         }
     }
 }

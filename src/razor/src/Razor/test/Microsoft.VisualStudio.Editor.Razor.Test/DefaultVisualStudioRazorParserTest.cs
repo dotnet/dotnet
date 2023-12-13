@@ -7,11 +7,10 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.Test;
-using Microsoft.VisualStudio.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -22,7 +21,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
 {
     private readonly IProjectSnapshot _projectSnapshot;
     private readonly ProjectSnapshotProjectEngineFactory _projectEngineFactory;
-    private readonly Workspace _workspace;
+    private readonly CodeAnalysis.Workspace _workspace;
 
     public DefaultVisualStudioRazorParserTest(ITestOutputHelper testOutput)
         : base(testOutput)

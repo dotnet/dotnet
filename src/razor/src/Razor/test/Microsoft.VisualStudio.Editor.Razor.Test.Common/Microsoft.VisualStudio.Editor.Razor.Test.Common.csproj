@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.CodeAnalysis.Razor.Workspaces.Test.Common\Microsoft.CodeAnalysis.Razor.Workspaces.Test.Common.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.VisualStudio.Editor.Razor\Microsoft.VisualStudio.Editor.Razor.csproj" />
+    <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Microsoft.AspNetCore.Razor.Test.Common.Tooling.csproj" />
   </ItemGroup>
 
 </Project>

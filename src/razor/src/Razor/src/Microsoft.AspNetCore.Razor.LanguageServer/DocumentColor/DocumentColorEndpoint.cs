@@ -14,11 +14,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentColor;
 [LanguageServerEndpoint(Methods.TextDocumentDocumentColorName)]
 internal sealed class DocumentColorEndpoint : IRazorRequestHandler<DocumentColorParams, ColorInformation[]>, ICapabilitiesProvider
 {
-    private readonly ClientNotifierServiceBase _languageServer;
+    private readonly IClientConnection _clientConnection;
 
-    public DocumentColorEndpoint(ClientNotifierServiceBase languageServer)
+    public DocumentColorEndpoint(IClientConnection clientConnection)
     {
-        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
     }
 
     public bool MutatesSolutionState => false;
@@ -47,7 +47,7 @@ internal sealed class DocumentColorEndpoint : IRazorRequestHandler<DocumentColor
             TextDocument = request.TextDocument
         };
 
-        var documentColors = await _languageServer.SendRequestAsync<DelegatedDocumentColorParams, ColorInformation[]>(
+        var documentColors = await _clientConnection.SendRequestAsync<DelegatedDocumentColorParams, ColorInformation[]>(
             CustomMessageNames.RazorProvideHtmlDocumentColorEndpoint,
             delegatedRequest,
             cancellationToken).ConfigureAwait(false);

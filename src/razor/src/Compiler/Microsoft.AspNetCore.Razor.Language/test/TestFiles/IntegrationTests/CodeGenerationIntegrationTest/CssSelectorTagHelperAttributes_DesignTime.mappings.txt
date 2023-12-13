@@ -1,0 +1,20 @@
+﻿Source Location: (14:0,14 [17] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CssSelectorTagHelperAttributes.cshtml)
+|"*, TestAssembly"|
+Generated Location: (1527:23,37 [17] )
+|"*, TestAssembly"|
+
+Source Location: (156:5,12 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CssSelectorTagHelperAttributes.cshtml)
+|false|
+Generated Location: (3058:50,12 [5] )
+|false|
+
+Source Location: (237:7,11 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CssSelectorTagHelperAttributes.cshtml)
+|false|
+Generated Location: (3437:59,11 [5] )
+|false|
+
+Source Location: (333:9,25 [5] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CssSelectorTagHelperAttributes.cshtml)
+|false|
+Generated Location: (4016:70,25 [5] )
+|false|
+

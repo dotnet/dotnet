@@ -31,7 +31,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
         RazorLanguageServer = RazorLanguageServerWrapper.Create(serverStream, serverStream, Logger, NoOpTelemetryReporter.Instance, configure: (collection) =>
         {
             collection.AddSingleton<IOnInitialized, NoopClientNotifierService>();
-            collection.AddSingleton<ClientNotifierServiceBase, NoopClientNotifierService>();
+            collection.AddSingleton<IClientConnection, NoopClientNotifierService>();
             Builder(collection);
         }, featureOptions: BuildFeatureOptions());
     }
@@ -70,24 +70,24 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
         return documentSnapshot;
     }
 
-    private class NoopClientNotifierService : ClientNotifierServiceBase
+    private class NoopClientNotifierService : IClientConnection, IOnInitialized
     {
-        public override Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
+        public Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }
 
-        public override Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
+        public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public override Task SendNotificationAsync(string method, CancellationToken cancellationToken)
+        public Task SendNotificationAsync(string method, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
+        public Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

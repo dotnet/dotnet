@@ -5,7 +5,8 @@
 
 using System;
 using System.Threading;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -16,13 +17,8 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 
-public class VisualStudioFileChangeTrackerTest : ProjectSnapshotManagerDispatcherTestBase
+public class VisualStudioFileChangeTrackerTest(ITestOutputHelper testOutput) : ProjectSnapshotManagerDispatcherTestBase(testOutput)
 {
-    public VisualStudioFileChangeTrackerTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [UIFact]
     public async Task StartListening_AdvisesForFileChange()
     {

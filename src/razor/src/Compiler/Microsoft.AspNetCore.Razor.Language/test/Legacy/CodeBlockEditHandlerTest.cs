@@ -281,7 +281,8 @@ public class CodeBlockEditHandlerTest
 
     private static SyntaxNode GetSpan(SourceLocation start, string content)
     {
-        var builder = SyntaxListBuilder<SyntaxToken>.Create();
+        using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var builder);
+
         var tokens = CSharpLanguageCharacteristics.Instance.TokenizeString(content).ToArray();
         foreach (var token in tokens)
         {

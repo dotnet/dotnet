@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
@@ -13,40 +12,39 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.FindAllReferences;
 
-public class FoldingEndpointTest : SingleServerDelegatingEndpointTestBase
+public class FoldingEndpointTest(ITestOutputHelper testOutput) : SingleServerDelegatingEndpointTestBase(testOutput)
 {
-    public FoldingEndpointTest(ITestOutputHelper testOutput) : base(testOutput)
-    {
-    }
-
     [Fact]
     public Task FoldRazorUsings()
         => VerifyRazorFoldsAsync("""
-                @using System
-                @using System.Text
+            @using System
+            @using System.Text
 
-                <p>hello!</p>
+            <p>hello!</p>
 
-                @using System.Buffers
-                @using System.Drawing
-                @using System.CodeDom
+            @using System.Buffers
+            @using System.Drawing
+            @using System.CodeDom
 
-                @code {
-                    var helloWorld = "";
-                }
+            @code {
+                var helloWorld = "";
+            }
 
-                <p>hello!</p>
-                """, new List<(int StartLine, int EndLine)> { (0, 1), (5, 7) });
+            <p>hello!</p>
+            """, [(0, 1), (5, 7)]);
 
     private async Task VerifyRazorFoldsAsync(string input, List<(int StartLine, int EndLine)> expected)
     {
         var codeDocument = CreateCodeDocument(input);
         var razorFilePath = "C:/path/to/file.razor";
 
-        await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var endpoint = new FoldingRangeEndpoint(
-            DocumentMappingService, LanguageServer, new List<IRazorFoldingRangeProvider> { new UsingsFoldingRangeProvider(), new RazorCodeBlockFoldingProvider() }, LoggerFactory);
+            DocumentMappingService,
+            languageServer,
+            [new UsingsFoldingRangeProvider(), new RazorCodeBlockFoldingProvider()],
+            LoggerFactory);
 
         var request = new FoldingRangeParams()
         {

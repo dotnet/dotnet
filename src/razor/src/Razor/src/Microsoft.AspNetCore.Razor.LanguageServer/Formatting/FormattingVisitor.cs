@@ -82,7 +82,7 @@ internal class FormattingVisitor : SyntaxWalker
                 _isInClassBody = false;
             }
 
-            if (!(node.Parent is RazorDirectiveBodySyntax))
+            if (node.Parent is not RazorDirectiveBodySyntax)
             {
                 _currentRazorIndentationLevel--;
             }
@@ -155,7 +155,7 @@ internal class FormattingVisitor : SyntaxWalker
     {
         WriteBlock(node, FormattingBlockKind.Tag, n =>
         {
-            var children = GetRewrittenMarkupStartTagChildren(node);
+            var children = SyntaxUtilities.GetRewrittenMarkupStartTagChildren(node);
             foreach (var child in children)
             {
                 Visit(child);
@@ -167,7 +167,8 @@ internal class FormattingVisitor : SyntaxWalker
     {
         WriteBlock(node, FormattingBlockKind.Tag, n =>
         {
-            var children = GetRewrittenMarkupEndTagChildren(node);
+            var children = SyntaxUtilities.GetRewrittenMarkupEndTagChildren(node);
+
             foreach (var child in children)
             {
                 Visit(child);
@@ -394,7 +395,7 @@ internal class FormattingVisitor : SyntaxWalker
 
     public override void VisitRazorMetaCode(RazorMetaCodeSyntax node)
     {
-        if (node.Parent is MarkupTagHelperDirectiveAttributeSyntax { TagHelperAttributeInfo: { Bound: true } })
+        if (node.Parent is MarkupTagHelperDirectiveAttributeSyntax { TagHelperAttributeInfo.Bound: true })
         {
             // For @bind attributes we want to pretend that we're in a Html context, so write this span as markup
             WriteSpan(node, FormattingSpanKind.Markup);
@@ -504,85 +505,5 @@ internal class FormattingVisitor : SyntaxWalker
             _currentComponentIndentationLevel);
 
         _spans.Add(span);
-    }
-
-    private static SyntaxList<RazorSyntaxNode> GetRewrittenMarkupStartTagChildren(MarkupStartTagSyntax node)
-    {
-        // Rewrites the children of the start tag to look like the legacy syntax tree.
-        if (node.IsMarkupTransition)
-        {
-            var tokens = node.DescendantNodes().Where(n => n is SyntaxToken token && !token.IsMissing).Cast<SyntaxToken>().ToArray();
-            var tokenBuilder = SyntaxListBuilder<SyntaxToken>.Create();
-            tokenBuilder.AddRange(tokens, 0, tokens.Length);
-            var markupTransition = SyntaxFactory.MarkupTransition(tokenBuilder.ToList(), node.ChunkGenerator).Green.CreateRed(node, node.Position);
-
-            var builder = new SyntaxListBuilder(1);
-            builder.Add(markupTransition);
-            return new SyntaxList<RazorSyntaxNode>(builder.ToListNode().CreateRed(node, node.Position));
-        }
-
-        var children = node.LegacyChildren;
-        var newChildren = new SyntaxListBuilder(children.Count);
-        var literals = new List<MarkupTextLiteralSyntax>();
-        foreach (var child in children)
-        {
-            if (child is MarkupTextLiteralSyntax literal)
-            {
-                literals.Add(literal);
-            }
-            else if (child is MarkupMiscAttributeContentSyntax miscContent)
-            {
-                foreach (var contentChild in miscContent.Children)
-                {
-                    if (contentChild is MarkupTextLiteralSyntax contentLiteral)
-                    {
-                        literals.Add(contentLiteral);
-                    }
-                    else
-                    {
-                        // Pop stack
-                        AddLiteralIfExists();
-                        newChildren.Add(contentChild);
-                    }
-                }
-            }
-            else
-            {
-                AddLiteralIfExists();
-                newChildren.Add(child);
-            }
-        }
-
-        AddLiteralIfExists();
-
-        return new SyntaxList<RazorSyntaxNode>(newChildren.ToListNode().CreateRed(node, node.Position));
-
-        void AddLiteralIfExists()
-        {
-            if (literals.Count > 0)
-            {
-                var mergedLiteral = SyntaxUtilities.MergeTextLiterals(literals.ToArray());
-                literals.Clear();
-                newChildren.Add(mergedLiteral);
-            }
-        }
-    }
-
-    private static SyntaxList<RazorSyntaxNode> GetRewrittenMarkupEndTagChildren(MarkupEndTagSyntax node)
-    {
-        // Rewrites the children of the end tag to look like the legacy syntax tree.
-        if (node.IsMarkupTransition)
-        {
-            var tokens = node.DescendantNodes().Where(n => n is SyntaxToken token && !token.IsMissing).Cast<SyntaxToken>().ToArray();
-            var tokenBuilder = SyntaxListBuilder<SyntaxToken>.Create();
-            tokenBuilder.AddRange(tokens, 0, tokens.Length);
-            var markupTransition = SyntaxFactory.MarkupTransition(tokenBuilder.ToList(), node.ChunkGenerator).Green.CreateRed(node, node.Position);
-
-            var builder = new SyntaxListBuilder(1);
-            builder.Add(markupTransition);
-            return new SyntaxList<RazorSyntaxNode>(builder.ToListNode().CreateRed(node, node.Position));
-        }
-
-        return node.LegacyChildren;
     }
 }

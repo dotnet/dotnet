@@ -22,9 +22,9 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 internal sealed class AddUsingsCodeActionResolver : IRazorCodeActionResolver
 {
-    private readonly DocumentContextFactory _documentContextFactory;
+    private readonly IDocumentContextFactory _documentContextFactory;
 
-    public AddUsingsCodeActionResolver(DocumentContextFactory documentContextFactory)
+    public AddUsingsCodeActionResolver(IDocumentContextFactory documentContextFactory)
     {
         _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
     }

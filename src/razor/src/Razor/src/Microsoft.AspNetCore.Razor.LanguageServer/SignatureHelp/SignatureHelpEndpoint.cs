@@ -20,9 +20,9 @@ internal sealed class SignatureHelpEndpoint : AbstractRazorDelegatingEndpoint<Si
     public SignatureHelpEndpoint(
         LanguageServerFeatureOptions languageServerFeatureOptions,
         IRazorDocumentMappingService documentMappingService,
-        ClientNotifierServiceBase languageServer,
+        IClientConnection clientConnection,
         ILoggerFactory loggerProvider)
-        : base(languageServerFeatureOptions, documentMappingService, languageServer, loggerProvider.CreateLogger<SignatureHelpEndpoint>())
+        : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerProvider.CreateLogger<SignatureHelpEndpoint>())
     {
     }
 

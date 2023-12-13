@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Moq;
@@ -21,14 +21,9 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
-public class DefaultRazorComponentSearchEngineTest : LanguageServerTestBase
+public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
     private static readonly ProjectSnapshotManagerAccessor s_projectSnapshotManager = CreateProjectSnapshotManagerAccessor();
-
-    public DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
 
     [Fact]
     public async Task Handle_SearchFound_GenericComponent()

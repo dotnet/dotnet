@@ -5,20 +5,15 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
-public class RazorCompletionEndpointTest : LanguageServerTestBase
+public class RazorCompletionEndpointTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    public RazorCompletionEndpointTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task Handle_NoDocumentContext_NoCompletionItems()
     {

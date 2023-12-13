@@ -20,19 +20,19 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresentationEndpointBase<UriPresentationParams>, ITextDocumentUriPresentationHandler
 {
     private readonly RazorComponentSearchEngine _razorComponentSearchEngine;
-    private readonly DocumentContextFactory _documentContextFactory;
+    private readonly IDocumentContextFactory _documentContextFactory;
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly ILogger _logger;
 
     public TextDocumentUriPresentationEndpoint(
         IRazorDocumentMappingService razorDocumentMappingService,
         RazorComponentSearchEngine razorComponentSearchEngine,
-        ClientNotifierServiceBase languageServer,
+        IClientConnection clientConnection,
         FilePathService filePathService,
-        DocumentContextFactory documentContextFactory,
+        IDocumentContextFactory documentContextFactory,
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         ILoggerFactory loggerFactory)
-        : base(razorDocumentMappingService, languageServer, filePathService)
+        : base(razorDocumentMappingService, clientConnection, filePathService)
     {
         _razorComponentSearchEngine = razorComponentSearchEngine ?? throw new ArgumentNullException(nameof(razorComponentSearchEngine));
         _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));

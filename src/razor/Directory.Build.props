@@ -65,7 +65,7 @@
     -->
     <When Condition="'$(DotNetBuildFromSource)' == 'true' AND '$(DotNetBuildFromSourceFlavor)' == 'Product'">
       <PropertyGroup>
-        <DefaultNetCoreTargetFramework>net9.0</DefaultNetCoreTargetFramework>
+        <DefaultNetCoreTargetFramework>$(NetCurrent)</DefaultNetCoreTargetFramework>
         <DefaultNetCoreTargetFrameworks>$(DefaultNetCoreTargetFramework)</DefaultNetCoreTargetFrameworks>
       </PropertyGroup>
     </When>
@@ -77,7 +77,6 @@
       <PropertyGroup>
         <DefaultNetCoreTargetFramework>net8.0</DefaultNetCoreTargetFramework>
         <DefaultNetCoreTargetFrameworks>$(DefaultNetCoreTargetFramework);net7.0</DefaultNetCoreTargetFrameworks>
-        <DefaultNetCoreWindowsTargetFrameworks>net8.0-windows;net7.0-windows</DefaultNetCoreWindowsTargetFrameworks>
       </PropertyGroup>
     </Otherwise>
   </Choose>

@@ -11,7 +11,7 @@ internal class DefaultRazorSyntaxTreePhase : RazorEnginePhaseBase, IRazorSyntaxT
 {
     public IRazorSyntaxTreePass[] Passes { get; private set; }
 
-    protected override void OnIntialized()
+    protected override void OnInitialized()
     {
         Passes = Engine.Features.OfType<IRazorSyntaxTreePass>().OrderBy(p => p.Order).ToArray();
     }

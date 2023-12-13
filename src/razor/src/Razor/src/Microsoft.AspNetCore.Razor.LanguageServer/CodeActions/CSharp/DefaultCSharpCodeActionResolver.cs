@@ -32,14 +32,14 @@ internal sealed class DefaultCSharpCodeActionResolver : CSharpCodeActionResolver
         },
     };
 
-    private readonly DocumentContextFactory _documentContextFactory;
+    private readonly IDocumentContextFactory _documentContextFactory;
     private readonly IRazorFormattingService _razorFormattingService;
 
     public DefaultCSharpCodeActionResolver(
-        DocumentContextFactory documentContextFactory,
-        ClientNotifierServiceBase languageServer,
+        IDocumentContextFactory documentContextFactory,
+        IClientConnection clientConnection,
         IRazorFormattingService razorFormattingService)
-        : base(languageServer)
+        : base(clientConnection)
     {
         if (documentContextFactory is null)
         {

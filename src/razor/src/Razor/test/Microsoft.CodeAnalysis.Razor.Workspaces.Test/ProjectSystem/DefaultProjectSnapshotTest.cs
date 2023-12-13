@@ -8,6 +8,8 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Host;
 using Xunit;
 using Xunit.Abstractions;
@@ -31,14 +33,14 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
             TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()),
             csharpLanguageVersion: default);
 
-        _documents = new HostDocument[]
-        {
+        _documents =
+        [
             TestProjectData.SomeProjectFile1,
             TestProjectData.SomeProjectFile2,
 
             // linked file
             TestProjectData.AnotherProjectNestedFile3,
-        };
+        ];
     }
 
     protected override void ConfigureWorkspaceServices(List<IWorkspaceService> services)

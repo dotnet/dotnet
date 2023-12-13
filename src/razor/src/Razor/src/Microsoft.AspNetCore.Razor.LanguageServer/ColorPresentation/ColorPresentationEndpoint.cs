@@ -17,16 +17,16 @@ internal sealed class ColorPresentationEndpoint : IRazorRequestHandler<ColorPres
 {
     public const string ColorPresentationMethodName = "textDocument/colorPresentation";
 
-    private readonly ClientNotifierServiceBase _languageServer;
+    private readonly IClientConnection _clientConnection;
 
-    public ColorPresentationEndpoint(ClientNotifierServiceBase languageServer)
+    public ColorPresentationEndpoint(IClientConnection clientConnection)
     {
-        if (languageServer is null)
+        if (clientConnection is null)
         {
-            throw new ArgumentNullException(nameof(languageServer));
+            throw new ArgumentNullException(nameof(clientConnection));
         }
 
-        _languageServer = languageServer;
+        _clientConnection = clientConnection;
     }
 
     public bool MutatesSolutionState => false;
@@ -50,7 +50,7 @@ internal sealed class ColorPresentationEndpoint : IRazorRequestHandler<ColorPres
             TextDocument = request.TextDocument
         };
 
-        var colorPresentations = await _languageServer.SendRequestAsync<ColorPresentationParams, ColorPresentation[]>(
+        var colorPresentations = await _clientConnection.SendRequestAsync<ColorPresentationParams, ColorPresentation[]>(
             CustomMessageNames.RazorProvideHtmlColorPresentationEndpoint,
             delegatedRequest,
             cancellationToken).ConfigureAwait(false);

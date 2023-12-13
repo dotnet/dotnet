@@ -3,6 +3,7 @@
 
 #nullable disable
 
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.CodeAnalysis.Razor.Editor;
 using Moq;
 using Xunit;

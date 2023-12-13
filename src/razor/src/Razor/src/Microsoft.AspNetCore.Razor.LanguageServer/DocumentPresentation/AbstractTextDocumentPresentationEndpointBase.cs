@@ -21,16 +21,16 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
     where TParams : IPresentationParams
 {
     private readonly IRazorDocumentMappingService _razorDocumentMappingService;
-    private readonly ClientNotifierServiceBase _languageServer;
+    private readonly IClientConnection _clientConnection;
     private readonly FilePathService _filePathService;
 
     protected AbstractTextDocumentPresentationEndpointBase(
         IRazorDocumentMappingService razorDocumentMappingService,
-        ClientNotifierServiceBase languageServer,
+        IClientConnection clientConnection,
         FilePathService filePathService)
     {
         _razorDocumentMappingService = razorDocumentMappingService ?? throw new ArgumentNullException(nameof(razorDocumentMappingService));
-        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
         _filePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
     }
 
@@ -99,7 +99,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
             requestParams.Range = projectedRange;
         }
 
-        var response = await _languageServer.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(EndpointName, requestParams, cancellationToken).ConfigureAwait(false);
+        var response = await _clientConnection.SendRequestAsync<IRazorPresentationParams, WorkspaceEdit?>(EndpointName, requestParams, cancellationToken).ConfigureAwait(false);
         if (response is null)
         {
             return null;

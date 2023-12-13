@@ -6,19 +6,16 @@
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
-public class SnapshotResolverTest : LanguageServerTestBase
-{
-    public SnapshotResolverTest(ITestOutputHelper testOutput) : base(testOutput)
-    {
-    }
 
+public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
+{
     [Fact]
     public void TryResolveDocumentInAnyProject_AsksPotentialParentProjectForDocumentItsTracking_ReturnsTrue()
     {
@@ -111,7 +108,7 @@ public class SnapshotResolverTest : LanguageServerTestBase
     public void TryResolveAllProjects_OnlyMiscellaneousProjectContainsDocument_ReturnsTrue()
     {
         // Arrange
-        var documentFilePath = Path.Join(TempDirectory.Instance.DirectoryPath, "document.cshtml");
+        var documentFilePath = Path.Combine(TempDirectory.Instance.DirectoryPath, "document.cshtml");
         var snapshotResolver = CreateSnapshotResolver(documentFilePath, addToMiscellaneous: true);
 
         // Act
@@ -163,7 +160,7 @@ public class SnapshotResolverTest : LanguageServerTestBase
     public void TryResolveAllProjects_MiscellaneousOwnerProjectWithOthers_ReturnsTrue()
     {
         // Arrange
-        var documentFilePath = Path.Join(TempDirectory.Instance.DirectoryPath, "file.cshtml");
+        var documentFilePath = Path.Combine(TempDirectory.Instance.DirectoryPath, "file.cshtml");
         documentFilePath = FilePathNormalizer.Normalize(documentFilePath);
 
         var snapshotManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
@@ -247,7 +244,7 @@ public class SnapshotResolverTest : LanguageServerTestBase
         else
         {
             var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(filePath);
-            var projectSnapshot = TestProjectSnapshot.Create(Path.Join(projectDirectory, "proj.csproj"));
+            var projectSnapshot = TestProjectSnapshot.Create(Path.Combine(projectDirectory, "proj.csproj"));
 
             snapshotManager.ProjectAdded(projectSnapshot.HostProject);
             snapshotManager.CreateAndAddDocument(projectSnapshot, filePath);

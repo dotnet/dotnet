@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,20 +13,11 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
 [DebuggerDisplay("{GetDebuggerDisplay(), nq}")]
-internal abstract partial class SyntaxNode
+internal abstract partial class SyntaxNode(GreenNode green, SyntaxNode parent, int position)
 {
-    public SyntaxNode(GreenNode green, SyntaxNode parent, int position)
-    {
-        Green = green;
-        Parent = parent;
-        Position = position;
-    }
-
-    internal GreenNode Green { get; }
-
-    public SyntaxNode Parent { get; }
-
-    public int Position { get; }
+    internal GreenNode Green { get; } = green;
+    public SyntaxNode Parent { get; } = parent;
+    public int Position { get; } = position;
 
     public int EndPosition => Position + FullWidth;
 
@@ -40,7 +29,7 @@ internal abstract partial class SyntaxNode
 
     public int SpanStart => Position + Green.GetLeadingTriviaWidth();
 
-    public TextSpan FullSpan => new TextSpan(Position, Green.FullWidth);
+    public TextSpan FullSpan => new(Position, Green.FullWidth);
 
     public TextSpan Span
     {
@@ -73,21 +62,9 @@ internal abstract partial class SyntaxNode
 
     public bool IsTrivia => Green.IsTrivia;
 
-    public bool HasLeadingTrivia
-    {
-        get
-        {
-            return GetLeadingTrivia().Count > 0;
-        }
-    }
+    public bool HasLeadingTrivia => GetLeadingTrivia().Count > 0;
 
-    public bool HasTrailingTrivia
-    {
-        get
-        {
-            return GetTrailingTrivia().Count > 0;
-        }
-    }
+    public bool HasTrailingTrivia => GetTrailingTrivia().Count > 0;
 
     public bool ContainsDiagnostics => Green.ContainsDiagnostics;
 
@@ -99,11 +76,11 @@ internal abstract partial class SyntaxNode
 
     public abstract void Accept(SyntaxVisitor visitor);
 
-    internal abstract SyntaxNode GetNodeSlot(int index);
+    internal abstract SyntaxNode? GetNodeSlot(int index);
 
-    internal abstract SyntaxNode GetCachedSlot(int index);
+    internal abstract SyntaxNode? GetCachedSlot(int index);
 
-    internal SyntaxNode GetRed(ref SyntaxNode field, int slot)
+    internal SyntaxNode? GetRed(ref SyntaxNode? field, int slot)
     {
         var result = field;
 
@@ -121,7 +98,7 @@ internal abstract partial class SyntaxNode
     }
 
     // Special case of above function where slot = 0, does not need GetChildPosition
-    internal SyntaxNode GetRedAtZero(ref SyntaxNode field)
+    internal SyntaxNode? GetRedAtZero(ref SyntaxNode? field)
     {
         var result = field;
 
@@ -138,7 +115,8 @@ internal abstract partial class SyntaxNode
         return result;
     }
 
-    protected T GetRed<T>(ref T field, int slot) where T : SyntaxNode
+    protected T? GetRed<T>(ref T field, int slot)
+        where T : SyntaxNode
     {
         var result = field;
 
@@ -156,7 +134,8 @@ internal abstract partial class SyntaxNode
     }
 
     // special case of above function where slot = 0, does not need GetChildPosition
-    protected T GetRedAtZero<T>(ref T field) where T : SyntaxNode
+    protected T? GetRedAtZero<T>(ref T field)
+        where T : SyntaxNode
     {
         var result = field;
 
@@ -173,7 +152,7 @@ internal abstract partial class SyntaxNode
         return result;
     }
 
-    internal SyntaxNode GetRedElement(ref SyntaxNode element, int slot)
+    internal SyntaxNode? GetRedElement(ref SyntaxNode? element, int slot)
     {
         Debug.Assert(IsList);
 
@@ -215,18 +194,18 @@ internal abstract partial class SyntaxNode
     public virtual SyntaxTriviaList GetLeadingTrivia()
     {
         var firstToken = GetFirstToken();
-        return firstToken != null ? firstToken.GetLeadingTrivia() : default(SyntaxTriviaList);
+        return firstToken != null ? firstToken.GetLeadingTrivia() : default;
     }
 
     public virtual SyntaxTriviaList GetTrailingTrivia()
     {
         var lastToken = GetLastToken();
-        return lastToken != null ? lastToken.GetTrailingTrivia() : default(SyntaxTriviaList);
+        return lastToken != null ? lastToken.GetTrailingTrivia() : default;
     }
 
     internal SyntaxList<SyntaxToken> GetTokens()
     {
-        var tokens = SyntaxListBuilder<SyntaxToken>.Create();
+        using var _ = SyntaxListBuilderPool.GetPooledBuilder<SyntaxToken>(out var tokens);
 
         AddTokens(this, tokens);
 
@@ -243,9 +222,7 @@ internal abstract partial class SyntaxNode
 
             for (var i = 0; i < current.SlotCount; i++)
             {
-                var child = current.GetNodeSlot(i);
-
-                if (child != null)
+                if (current.GetNodeSlot(i) is { } child)
                 {
                     AddTokens(child, tokens);
                 }
@@ -257,7 +234,7 @@ internal abstract partial class SyntaxNode
     /// Gets the first token of the tree rooted by this node. Skips zero-width tokens.
     /// </summary>
     /// <returns>The first token or <c>default(SyntaxToken)</c> if it doesn't exist.</returns>
-    public SyntaxToken GetFirstToken(bool includeZeroWidth = false)
+    public SyntaxToken? GetFirstToken(bool includeZeroWidth = false)
     {
         return SyntaxNavigator.GetFirstToken(this, includeZeroWidth);
     }
@@ -266,7 +243,7 @@ internal abstract partial class SyntaxNode
     /// Gets the last token of the tree rooted by this node. Skips zero-width tokens.
     /// </summary>
     /// <returns>The last token or <c>default(SyntaxToken)</c> if it doesn't exist.</returns>
-    public SyntaxToken GetLastToken(bool includeZeroWidth = false)
+    public SyntaxToken? GetLastToken(bool includeZeroWidth = false)
     {
         return SyntaxNavigator.GetLastToken(this, includeZeroWidth);
     }
@@ -300,7 +277,6 @@ internal abstract partial class SyntaxNode
         }
     }
 
-#nullable enable
     /// <summary>
     /// Gets the first node of type TNode that matches the predicate.
     /// </summary>
@@ -309,21 +285,20 @@ internal abstract partial class SyntaxNode
     {
         for (var node = this; node != null; node = node.Parent)
         {
-            if (node is TNode tnode && (predicate == null || predicate(tnode)))
+            if (node is TNode typedNode && (predicate == null || predicate(typedNode)))
             {
-                return tnode;
+                return typedNode;
             }
         }
 
         return default;
     }
-#nullable disable
 
     /// <summary>
     /// Gets a list of descendant nodes in prefix document order.
     /// </summary>
     /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
-    public IEnumerable<SyntaxNode> DescendantNodes(Func<SyntaxNode, bool> descendIntoChildren = null)
+    public IEnumerable<SyntaxNode> DescendantNodes(Func<SyntaxNode, bool>? descendIntoChildren = null)
     {
         return DescendantNodesImpl(FullSpan, descendIntoChildren, includeSelf: false);
     }
@@ -332,14 +307,14 @@ internal abstract partial class SyntaxNode
     /// Gets a list of descendant nodes (including this node) in prefix document order.
     /// </summary>
     /// <param name="descendIntoChildren">An optional function that determines if the search descends into the argument node's children.</param>
-    public IEnumerable<SyntaxNode> DescendantNodesAndSelf(Func<SyntaxNode, bool> descendIntoChildren = null)
+    public IEnumerable<SyntaxNode> DescendantNodesAndSelf(Func<SyntaxNode, bool>? descendIntoChildren = null)
     {
         return DescendantNodesImpl(FullSpan, descendIntoChildren, includeSelf: true);
     }
 
     protected internal SyntaxNode ReplaceCore<TNode>(
-        IEnumerable<TNode> nodes = null,
-        Func<TNode, TNode, SyntaxNode> computeReplacementNode = null)
+        IEnumerable<TNode>? nodes = null,
+        Func<TNode, TNode, SyntaxNode>? computeReplacementNode = null)
         where TNode : SyntaxNode
     {
         return SyntaxReplacer.Replace(this, nodes, computeReplacementNode);
@@ -380,7 +355,6 @@ internal abstract partial class SyntaxNode
         return Green.IsEquivalentTo(other.Green);
     }
 
-#nullable enable
     /// <summary>
     /// Finds a descendant token of this node whose span includes the supplied position.
     /// </summary>
@@ -424,7 +398,7 @@ internal abstract partial class SyntaxNode
 
             if (!curNode.IsToken)
             {
-                curNode = ChildSyntaxList.ChildThatContainsPosition(curNode, position, out var nodeIndexInParent);
+                curNode = ChildSyntaxList.ChildThatContainsPosition(curNode, position, out _);
             }
             else
             {
@@ -500,7 +474,6 @@ internal abstract partial class SyntaxNode
             }
         }
     }
-#nullable disable
 
     public override string ToString()
     {

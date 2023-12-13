@@ -19,9 +19,9 @@ internal class FormattingContentValidationPass : FormattingPassBase
 
     public FormattingContentValidationPass(
         IRazorDocumentMappingService documentMappingService,
-        ClientNotifierServiceBase server,
+        IClientConnection clientConnection,
         ILoggerFactory loggerFactory)
-        : base(documentMappingService, server)
+        : base(documentMappingService, clientConnection)
     {
         if (loggerFactory is null)
         {
@@ -56,6 +56,21 @@ internal class FormattingContentValidationPass : FormattingPassBase
         {
             // Looks like we removed some non-whitespace content as part of formatting. Oops.
             // Discard this formatting result.
+
+            _logger.LogWarning("{value}", SR.Format_operation_changed_nonwhitespace);
+
+            foreach (var edit in edits)
+            {
+                if (edit.NewText.Any(c => !char.IsWhiteSpace(c)))
+                {
+                    _logger.LogWarning("{value}", SR.FormatEdit_at_adds(edit.Range.ToDisplayString(), edit.NewText));
+                }
+                else if (text.GetSubText(edit.Range.ToTextSpan(text)) is { } subText &&
+                    subText.GetFirstNonWhitespaceOffset(span: null, out _) is not null)
+                {
+                    _logger.LogWarning("{value}", SR.FormatEdit_at_deletes(edit.Range.ToDisplayString(), subText.ToString()));
+                }
+            }
 
             if (DebugAssertsEnabled)
             {

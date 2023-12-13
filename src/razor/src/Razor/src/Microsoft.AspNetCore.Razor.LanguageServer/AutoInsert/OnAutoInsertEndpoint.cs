@@ -33,11 +33,11 @@ internal class OnAutoInsertEndpoint : AbstractRazorDelegatingEndpoint<VSInternal
     public OnAutoInsertEndpoint(
         LanguageServerFeatureOptions languageServerFeatureOptions,
         IRazorDocumentMappingService documentMappingService,
-        ClientNotifierServiceBase languageServer,
+        IClientConnection clientConnection,
         IEnumerable<IOnAutoInsertProvider> onAutoInsertProvider,
         IOptionsMonitor<RazorLSPOptions> optionsMonitor,
         ILoggerFactory loggerFactory)
-        : base(languageServerFeatureOptions, documentMappingService, languageServer, loggerFactory.CreateLogger<OnAutoInsertEndpoint>())
+        : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.CreateLogger<OnAutoInsertEndpoint>())
     {
         _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
         _optionsMonitor = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));

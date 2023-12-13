@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Newtonsoft.Json.Linq;
@@ -23,7 +23,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 public class ExtractToCodeBehindCodeActionResolverTest : LanguageServerTestBase
 {
-    private readonly DocumentContextFactory _emptyDocumentContextFactory;
+    private readonly IDocumentContextFactory _emptyDocumentContextFactory;
     private readonly TestLanguageServer _languageServer;
 
     public ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOutput)

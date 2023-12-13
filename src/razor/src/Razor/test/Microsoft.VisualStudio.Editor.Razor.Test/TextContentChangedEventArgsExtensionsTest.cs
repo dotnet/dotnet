@@ -5,19 +5,14 @@
 
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.VisualStudio.Test;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Text;
 
-public class TextContentChangedEventArgsExtensionsTest : ToolingTestBase
+public class TextContentChangedEventArgsExtensionsTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    public TextContentChangedEventArgsExtensionsTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void TextChangeOccurred_NoChanges_ReturnsFalse()
     {

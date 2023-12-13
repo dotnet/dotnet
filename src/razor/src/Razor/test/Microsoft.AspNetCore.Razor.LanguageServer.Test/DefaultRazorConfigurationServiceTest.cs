@@ -5,7 +5,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Newtonsoft.Json.Linq;
@@ -14,13 +14,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
+public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    public DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task GetLatestOptionsAsync_ReturnsExpectedOptions()
     {
@@ -227,20 +222,20 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
         Assert.Equal(expectedOptions, options);
     }
 
-    private static ClientNotifierServiceBase GetLanguageServer<IResult>(IResult result, bool shouldThrow = false)
+    private static IClientConnection GetLanguageServer<IResult>(IResult result, bool shouldThrow = false)
     {
-        var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
+        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
 
         if (shouldThrow)
         {
         }
         else
         {
-            languageServer
+            clientConnection
                 .Setup(l => l.SendRequestAsync<ConfigurationParams, IResult>("workspace/configuration", It.IsAny<ConfigurationParams>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(result);
         }
 
-        return languageServer.Object;
+        return clientConnection.Object;
     }
 }

@@ -49,7 +49,7 @@ namespace __Blazor.Test.TestComponent
     #line hidden
     internal static class TypeInference
     {
-        public static void CreateMyComponent_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0, int __seq1, System.Action<global::Test.MyComponent<TItem>> __arg1)
+        public static void CreateMyComponent_0<TItem>(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder, int seq, int __seq0, TItem __arg0, int __seq1, global::System.Action<global::Test.MyComponent<TItem>> __arg1)
         {
         __builder.OpenComponent<global::Test.MyComponent<TItem>>(seq);
         __builder.AddComponentParameter(__seq0, "Item", __arg0);

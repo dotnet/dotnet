@@ -5,9 +5,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.Test;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
 using Xunit;

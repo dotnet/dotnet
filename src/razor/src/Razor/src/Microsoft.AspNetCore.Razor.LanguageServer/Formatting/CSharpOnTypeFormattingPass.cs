@@ -34,10 +34,10 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
 
     public CSharpOnTypeFormattingPass(
         IRazorDocumentMappingService documentMappingService,
-        ClientNotifierServiceBase server,
+        IClientConnection clientConnection,
         IOptionsMonitor<RazorLSPOptions> optionsMonitor,
         ILoggerFactory loggerFactory)
-        : base(documentMappingService, server)
+        : base(documentMappingService, clientConnection)
     {
         if (loggerFactory is null)
         {

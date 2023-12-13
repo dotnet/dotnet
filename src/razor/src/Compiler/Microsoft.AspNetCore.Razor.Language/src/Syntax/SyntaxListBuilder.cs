@@ -1,27 +1,42 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
-internal class SyntaxListBuilder
+internal class SyntaxListBuilder(int initialCapacity)
 {
-    private ArrayElement<GreenNode>[] _nodes;
+    private ArrayElement<GreenNode>[] _nodes = new ArrayElement<GreenNode>[initialCapacity];
+
+    public int Capacity => _nodes.Length;
+
+    public void SetCapacityIfLarger(int newCapacity)
+    {
+        if (newCapacity > _nodes.Length)
+        {
+            Array.Resize(ref _nodes, newCapacity);
+        }
+    }
 
     public int Count { get; private set; }
 
-    public SyntaxListBuilder(int size)
-    {
-        _nodes = new ArrayElement<GreenNode>[size];
-    }
-
     public void Clear()
     {
+        Array.Clear(_nodes, 0, Count);
         Count = 0;
+    }
+
+    internal void ClearInternal()
+    {
+        if (_nodes.Length > DefaultPool.MaximumObjectSize)
+        {
+            Array.Resize(ref _nodes, DefaultPool.MaximumObjectSize);
+        }
+
+        Clear();
     }
 
     public void Add(SyntaxNode item)
@@ -36,7 +51,7 @@ internal class SyntaxListBuilder
             throw new ArgumentNullException(nameof(item));
         }
 
-        if (_nodes == null || Count >= _nodes.Length)
+        if (Count >= _nodes.Length)
         {
             Grow(Count == 0 ? 8 : _nodes.Length * 2);
         }
@@ -51,7 +66,7 @@ internal class SyntaxListBuilder
 
     public void AddRange(SyntaxNode[] items, int offset, int length)
     {
-        if (_nodes == null || Count + length > _nodes.Length)
+        if (Count + length > _nodes.Length)
         {
             Grow(Count + length);
         }
@@ -85,7 +100,7 @@ internal class SyntaxListBuilder
 
     public void AddRange(SyntaxList<SyntaxNode> list, int offset, int count)
     {
-        if (_nodes == null || Count + count > _nodes.Length)
+        if (Count + count > _nodes.Length)
         {
             Grow(Count + count);
         }
@@ -93,7 +108,7 @@ internal class SyntaxListBuilder
         var dst = Count;
         for (int i = offset, limit = offset + count; i < limit; i++)
         {
-            _nodes[dst].Value = list.ItemInternal(i).Green;
+            _nodes[dst].Value = list.ItemInternal(i)!.Green;
             dst++;
         }
 
@@ -112,11 +127,9 @@ internal class SyntaxListBuilder
         AddRange(new SyntaxList<SyntaxNode>(list.Node), offset, count);
     }
 
-    private void Grow(int size)
+    private void Grow(int newSize)
     {
-        var tmp = new ArrayElement<GreenNode>[size];
-        Array.Copy(_nodes, tmp, _nodes.Length);
-        _nodes = tmp;
+        Array.Resize(ref _nodes, newSize);
     }
 
     public bool Any(SyntaxKind kind)
@@ -132,7 +145,7 @@ internal class SyntaxListBuilder
         return false;
     }
 
-    internal GreenNode ToListNode()
+    internal GreenNode? ToListNode()
     {
         switch (Count)
         {
@@ -159,7 +172,7 @@ internal class SyntaxListBuilder
     {
         if (builder == null)
         {
-            return default(SyntaxList<SyntaxNode>);
+            return default;
         }
 
         return builder.ToList();
@@ -168,6 +181,6 @@ internal class SyntaxListBuilder
     internal void RemoveLast()
     {
         Count -= 1;
-        _nodes[Count] = default(ArrayElement<GreenNode>);
+        _nodes[Count] = default;
     }
 }

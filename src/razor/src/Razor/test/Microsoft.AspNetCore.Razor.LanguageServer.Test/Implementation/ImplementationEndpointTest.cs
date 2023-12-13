@@ -17,13 +17,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Implementation;
 
-public class ImplementationEndpointTest : SingleServerDelegatingEndpointTestBase
+public class ImplementationEndpointTest(ITestOutputHelper testOutput) : SingleServerDelegatingEndpointTestBase(testOutput)
 {
-    public ImplementationEndpointTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task Handle_SingleServer_CSharp_Method()
     {
@@ -98,10 +93,10 @@ public class ImplementationEndpointTest : SingleServerDelegatingEndpointTestBase
         var codeDocument = CreateCodeDocument(output);
         var razorFilePath = "C:/path/to/file.razor";
 
-        await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var endpoint = new ImplementationEndpoint(
-            LanguageServerFeatureOptions, DocumentMappingService, LanguageServer, LoggerFactory);
+            LanguageServerFeatureOptions, DocumentMappingService, languageServer, LoggerFactory);
 
         codeDocument.GetSourceText().GetLineAndOffset(cursorPosition, out var line, out var offset);
         var request = new TextDocumentPositionParams

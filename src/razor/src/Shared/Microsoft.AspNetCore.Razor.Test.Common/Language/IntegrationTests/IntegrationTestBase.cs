@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
@@ -22,13 +22,8 @@ using Xunit.Sdk;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
-[InitializeTestFile]
-// These tests must be run serially due to the test specific FileName static var.
-[Collection("IntegrationTestSerialRuns")]
 public abstract class IntegrationTestBase
 {
-    private static readonly AsyncLocal<string> _fileName = new AsyncLocal<string>();
-
     // UTF-8 with BOM
     private static readonly Encoding _baselineEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true);
 
@@ -111,16 +106,9 @@ public abstract class IntegrationTestBase
 
     protected string TestProjectRoot { get; }
 
-    // Used by the test framework to set the 'base' name for test files.
-    public static string FileName
+    public virtual string GetTestFileName(string? testName)
     {
-        get
-        {
-            var value = _fileName.Value;
-            Assert.NotNull(value);
-            return value;
-        }
-        set { _fileName.Value = value; }
+        return $"TestFiles/IntegrationTests/{this.GetType().Name}/{testName}";
     }
 
     public string FileExtension { get; set; } = ".cshtml";
@@ -136,17 +124,17 @@ public abstract class IntegrationTestBase
         return syntaxTree;
     }
 
-    protected RazorProjectItem AddProjectItemFromText(string text, string filePath = "_ViewImports.cshtml")
+    protected RazorProjectItem AddProjectItemFromText(string text, string filePath = "_ViewImports.cshtml", [CallerMemberName]string testName = "")
     {
-        var projectItem = CreateProjectItemFromText(text, filePath);
+        var projectItem = CreateProjectItemFromText(text, filePath, GetTestFileName(testName));
         FileSystem.Add(projectItem);
         return projectItem;
     }
 
-    private RazorProjectItem CreateProjectItemFromText(string text, string filePath, string? cssScope = null)
+    private RazorProjectItem CreateProjectItemFromText(string text, string filePath, string testFileName, string? cssScope = null)
     {
         // Consider the file path to be relative to the 'FileName' of the test.
-        var workingDirectory = Path.GetDirectoryName(FileName);
+        var workingDirectory = Path.GetDirectoryName(testFileName);
         Assert.NotNull(workingDirectory);
 
         // Since these paths are used in baselines, we normalize them to windows style. We
@@ -178,16 +166,12 @@ public abstract class IntegrationTestBase
         return projectItem;
     }
 
-    protected RazorProjectItem CreateProjectItemFromFile(string? filePath = null, string? fileKind = null)
+    protected RazorProjectItem CreateProjectItemFromFile(string? filePath = null, string? fileKind = null, [CallerMemberName]string? testName = "")
     {
-        if (FileName == null)
-        {
-            var message = $"{nameof(CreateProjectItemFromFile)} should only be called from an integration test, ({nameof(FileName)} is null).";
-            throw new InvalidOperationException(message);
-        }
+        var fileName = GetTestFileName(testName);
 
-        var suffixIndex = FileName.LastIndexOf("_", StringComparison.Ordinal);
-        var normalizedFileName = suffixIndex == -1 ? FileName : FileName[..suffixIndex];
+        var suffixIndex = fileName.LastIndexOf("_", StringComparison.Ordinal);
+        var normalizedFileName = suffixIndex == -1 ? fileName : fileName[..suffixIndex];
         var sourceFileName = Path.ChangeExtension(normalizedFileName, FileExtension);
         var testFile = TestFile.Create(sourceFileName, GetType().GetTypeInfo().Assembly);
         if (!testFile.Exists())
@@ -197,7 +181,7 @@ public abstract class IntegrationTestBase
         var fileContent = testFile.ReadAllText();
         var normalizedContent = NormalizeNewLines(fileContent);
 
-        var workingDirectory = Path.GetDirectoryName(FileName);
+        var workingDirectory = Path.GetDirectoryName(fileName);
         var fullPath = sourceFileName;
 
         // Normalize to forward-slash - these strings end up in the baselines.
@@ -224,9 +208,9 @@ public abstract class IntegrationTestBase
         return projectItem;
     }
 
-    protected CompiledCSharpCode CompileToCSharp(string text, string path = "test.cshtml", bool? designTime = null, string? cssScope = null)
+    protected CompiledCSharpCode CompileToCSharp(string text, string path = "test.cshtml", bool? designTime = null, string? cssScope = null, [CallerMemberName]string testName = "")
     {
-        var projectItem = CreateProjectItemFromText(text, path, cssScope);
+        var projectItem = CreateProjectItemFromText(text, path, GetTestFileName(testName), cssScope);
         return CompileToCSharp(projectItem, designTime);
     }
 
@@ -348,15 +332,9 @@ public abstract class IntegrationTestBase
         });
     }
 
-    protected void AssertDocumentNodeMatchesBaseline(DocumentIntermediateNode document)
+    protected void AssertDocumentNodeMatchesBaseline(DocumentIntermediateNode document, [CallerMemberName]string testName = "")
     {
-        if (FileName == null)
-        {
-            var message = $"{nameof(AssertDocumentNodeMatchesBaseline)} should only be called from an integration test ({nameof(FileName)} is null).";
-            throw new InvalidOperationException(message);
-        }
-
-        var baselineFileName = Path.ChangeExtension(FileName, ".ir.txt");
+        var baselineFileName = Path.ChangeExtension(GetTestFileName(testName), ".ir.txt");
 
         if (GenerateBaselines)
         {
@@ -375,15 +353,9 @@ public abstract class IntegrationTestBase
         IntermediateNodeVerifier.Verify(document, baseline);
     }
 
-    internal void AssertHtmlDocumentMatchesBaseline(RazorHtmlDocument htmlDocument)
+    internal void AssertHtmlDocumentMatchesBaseline(RazorHtmlDocument htmlDocument, [CallerMemberName] string testName = "")
     {
-        if (FileName == null)
-        {
-            var message = $"{nameof(AssertHtmlDocumentMatchesBaseline)} should only be called from an integration test ({nameof(FileName)} is null).";
-            throw new InvalidOperationException(message);
-        }
-
-        var baselineFileName = Path.ChangeExtension(FileName, ".codegen.html");
+        var baselineFileName = Path.ChangeExtension(GetTestFileName(testName), ".codegen.html");
 
         if (GenerateBaselines)
         {
@@ -405,16 +377,11 @@ public abstract class IntegrationTestBase
         Assert.Equal(baseline, actual);
     }
 
-    protected void AssertCSharpDocumentMatchesBaseline(RazorCSharpDocument cSharpDocument)
+    protected void AssertCSharpDocumentMatchesBaseline(RazorCSharpDocument cSharpDocument, [CallerMemberName] string testName = "")
     {
-        if (FileName == null)
-        {
-            var message = $"{nameof(AssertCSharpDocumentMatchesBaseline)} should only be called from an integration test ({nameof(FileName)} is null).";
-            throw new InvalidOperationException(message);
-        }
-
-        var baselineFileName = Path.ChangeExtension(FileName, ".codegen.cs");
-        var baselineDiagnosticsFileName = Path.ChangeExtension(FileName, ".diagnostics.txt");
+        var fileName = GetTestFileName(testName);
+        var baselineFileName = Path.ChangeExtension(fileName, ".codegen.cs");
+        var baselineDiagnosticsFileName = Path.ChangeExtension(fileName, ".diagnostics.txt");
 
         if (GenerateBaselines)
         {
@@ -458,18 +425,12 @@ public abstract class IntegrationTestBase
         Assert.Equal(baselineDiagnostics, actualDiagnostics);
     }
 
-    protected void AssertSourceMappingsMatchBaseline(RazorCodeDocument codeDocument)
+    protected void AssertSourceMappingsMatchBaseline(RazorCodeDocument codeDocument, [CallerMemberName] string testName = "")
     {
-        if (FileName == null)
-        {
-            var message = $"{nameof(AssertSourceMappingsMatchBaseline)} should only be called from an integration test ({nameof(FileName)} is null).";
-            throw new InvalidOperationException(message);
-        }
-
         var csharpDocument = codeDocument.GetCSharpDocument();
         Assert.NotNull(csharpDocument);
 
-        var baselineFileName = Path.ChangeExtension(FileName, ".mappings.txt");
+        var baselineFileName = Path.ChangeExtension(GetTestFileName(testName), ".mappings.txt");
         var serializedMappings = SourceMappingsSerializer.Serialize(csharpDocument, codeDocument.Source);
 
         if (GenerateBaselines)
@@ -554,18 +515,12 @@ public abstract class IntegrationTestBase
         }
     }
 
-    protected void AssertHtmlSourceMappingsMatchBaseline(RazorCodeDocument codeDocument)
+    protected void AssertHtmlSourceMappingsMatchBaseline(RazorCodeDocument codeDocument, [CallerMemberName] string testName = "")
     {
-        if (FileName == null)
-        {
-            var message = $"{nameof(AssertHtmlSourceMappingsMatchBaseline)} should only be called from an integration test ({nameof(FileName)} is null).";
-            throw new InvalidOperationException(message);
-        }
-
         var htmlDocument = codeDocument.GetHtmlDocument();
         Assert.NotNull(htmlDocument);
 
-        var baselineFileName = Path.ChangeExtension(FileName, ".html.mappings.txt");
+        var baselineFileName = Path.ChangeExtension(GetTestFileName(testName), ".html.mappings.txt");
         var serializedMappings = SourceMappingsSerializer.Serialize(htmlDocument, codeDocument.Source);
 
         if (GenerateBaselines)
@@ -611,12 +566,6 @@ public abstract class IntegrationTestBase
 
     protected void AssertLinePragmas(RazorCodeDocument codeDocument, bool designTime)
     {
-        if (FileName == null)
-        {
-            var message = $"{nameof(AssertSourceMappingsMatchBaseline)} should only be called from an integration test. ({nameof(FileName)} is null).";
-            throw new InvalidOperationException(message);
-        }
-
         var csharpDocument = codeDocument.GetCSharpDocument();
         Assert.NotNull(csharpDocument);
         var linePragmas = csharpDocument.LinePragmas;

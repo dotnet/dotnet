@@ -17,7 +17,7 @@ internal abstract class TelemetryReporter : ITelemetryReporter
 {
     protected ImmutableArray<TelemetrySession> TelemetrySessions { get; set; }
 
-    protected TelemetryReporter(ImmutableArray<TelemetrySession> telemetrySessions)
+    protected TelemetryReporter(ImmutableArray<TelemetrySession> telemetrySessions = default)
     {
         // Get the DefaultSession for telemetry. This is set by VS with
         // TelemetryService.SetDefaultSession and provides the correct

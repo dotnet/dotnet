@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <!-- Only include .NET Framework files when building for .NET Framework -->
+  <ItemGroup Condition="'$(TargetFramework)' != 'net472'">
+    <Compile Remove="**\*.NetFx.cs" />
+    <Compile Remove="**\NetFx\**\*.*" />
+    <Compile Remove="**\*_NetFx\**\*.*" />
+
+    <None Include="**\*.NetFx.cs" />
+    <None Include="**\NetFx\**\*.*" />
+    <None Include="**\*_NetFx\**\*.*" />
+  </ItemGroup>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
+</Project>

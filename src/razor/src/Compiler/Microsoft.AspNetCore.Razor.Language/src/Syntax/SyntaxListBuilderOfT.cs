@@ -1,80 +1,71 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal readonly struct SyntaxListBuilder<TNode>
     where TNode : SyntaxNode
 {
-    private readonly SyntaxListBuilder _builder;
-
-    public SyntaxListBuilder(int size)
-        : this(new SyntaxListBuilder(size))
-    {
-    }
-
-    public static SyntaxListBuilder<TNode> Create()
-    {
-        return new SyntaxListBuilder<TNode>(8);
-    }
+    internal readonly SyntaxListBuilder Builder;
 
     internal SyntaxListBuilder(SyntaxListBuilder builder)
     {
-        _builder = builder;
+        Builder = builder;
     }
 
-    public bool IsNull
-    {
-        get
-        {
-            return _builder == null;
-        }
-    }
+    public bool IsNull => Builder == null;
 
-    public int Count
-    {
-        get
-        {
-            return _builder.Count;
-        }
-    }
+    public int Capacity => Builder.Capacity;
+
+    public void SetCapacityIfLarger(int newCapacity)
+        => Builder.SetCapacityIfLarger(newCapacity);
+
+    public int Count => Builder.Count;
 
     public void Clear()
     {
-        _builder.Clear();
+        Builder.Clear();
+    }
+
+    internal void ClearInternal()
+    {
+        Builder.ClearInternal();
     }
 
     public SyntaxListBuilder<TNode> Add(TNode node)
     {
-        _builder.Add(node);
+        Builder.Add(node);
         return this;
     }
 
     public void AddRange(TNode[] items, int offset, int length)
     {
-        _builder.AddRange(items, offset, length);
+        Builder.AddRange(items, offset, length);
     }
 
     public void AddRange(SyntaxList<TNode> nodes)
     {
-        _builder.AddRange(nodes);
+        Builder.AddRange(nodes);
     }
 
     public void AddRange(SyntaxList<TNode> nodes, int offset, int length)
     {
-        _builder.AddRange(nodes, offset, length);
+        Builder.AddRange(nodes, offset, length);
     }
 
     public bool Any(SyntaxKind kind)
     {
-        return _builder.Any(kind);
+        return Builder.Any(kind);
     }
 
     public SyntaxList<TNode> ToList()
     {
-        return _builder.ToList();
+        return Builder.ToList();
+    }
+
+    public SyntaxList<TNode> ToList(SyntaxNode parent)
+    {
+        return Builder.ToList(parent);
     }
 
     public SyntaxList<TNode> Consume()
@@ -86,16 +77,16 @@ internal readonly struct SyntaxListBuilder<TNode>
 
     public static implicit operator SyntaxListBuilder(SyntaxListBuilder<TNode> builder)
     {
-        return builder._builder;
+        return builder.Builder;
     }
 
     public static implicit operator SyntaxList<TNode>(SyntaxListBuilder<TNode> builder)
     {
-        if (builder._builder != null)
+        if (builder.Builder != null)
         {
             return builder.ToList();
         }
 
-        return default(SyntaxList<TNode>);
+        return default;
     }
 }

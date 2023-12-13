@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
@@ -538,7 +539,8 @@ internal static class CodeWriterExtensions
             return NullDisposable.Default;
         }
 
-        return new LinePragmaWriter(writer, span.Value, context, 0, false);
+        var sourceSpan = RemapFilePathIfNecessary(span.Value, context);
+        return new LinePragmaWriter(writer, sourceSpan, context, 0, false);
     }
 
     public static IDisposable BuildEnhancedLinePragma(this CodeWriter writer, SourceSpan? span, CodeRenderingContext context, int characterOffset = 0)
@@ -549,7 +551,22 @@ internal static class CodeWriterExtensions
             return NullDisposable.Default;
         }
 
-        return new LinePragmaWriter(writer, span.Value, context, characterOffset, useEnhancedLinePragma: true);
+        var sourceSpan = RemapFilePathIfNecessary(span.Value, context);
+        return new LinePragmaWriter(writer, sourceSpan, context, characterOffset, useEnhancedLinePragma: true);
+    }
+
+    private static SourceSpan RemapFilePathIfNecessary(SourceSpan sourceSpan, CodeRenderingContext context)
+    {
+        if (context.Options.RemapLinePragmaPathsOnWindows && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            // ISSUE: https://github.com/dotnet/razor/issues/9108
+            // The razor tooling normalizes paths to be forward slash based, regardless of OS.
+            // If you try and use the line pragma in the design time docs to map back to the original file it will fail,
+            // as the path isn't actually valid on windows. As a workaround we apply a simple heuristic to switch the
+            // paths back when writing out the design time paths.
+            sourceSpan = new SourceSpan(sourceSpan.FilePath.Replace("/", "\\"), sourceSpan.AbsoluteIndex, sourceSpan.LineIndex, sourceSpan.CharacterIndex, sourceSpan.Length);
+        }
+        return sourceSpan;
     }
 
     private static void WriteVerbatimStringLiteral(CodeWriter writer, ReadOnlyMemory<char> literal)
