@@ -7,6 +7,8 @@
     <TargetFramework>net472</TargetFramework>
     <DefineConstants>$(DefineConstants),CODE_STYLE</DefineConstants>
     <IsShipping>false</IsShipping>
+    <!-- Test support project. Currently excluded from VBPOC -->
+    <ExcludeFromVerticalBuild>true</ExcludeFromVerticalBuild>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\..\EditorFeatures\DiagnosticsTestUtilities\CodeActions\AbstractCodeActionOrUserDiagnosticTest.cs" Link="TestFramework\AbstractCodeActionOrUserDiagnosticTest.cs" />

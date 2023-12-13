@@ -11,6 +11,9 @@
 
     <!-- Disable CA1825 (Avoid unnecessary zero-length array allocations. Use Array.Empty<X>() instead) as Array.Empty not available in one of the targets for this shared project -->
     <NoWarn>$(NoWarn);CA1825</NoWarn>
+
+    <!-- Test support project. Currently excluded from VBPOC -->
+    <ExcludeFromVerticalBuild>true</ExcludeFromVerticalBuild>
   </PropertyGroup>
   <ItemGroup Label="File References">
     <Reference Include="Microsoft.CSharp" />

@@ -8,6 +8,8 @@
     <IsShipping>false</IsShipping>
     <NoWarn>$(NoWarn),CA2007</NoWarn>
     <UseWpf>true</UseWpf>
+    <!-- Test support project. Currently excluded from VBPOC -->
+    <ExcludeFromVerticalBuild>true</ExcludeFromVerticalBuild>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="$(BenchmarkDotNetVersion)" />

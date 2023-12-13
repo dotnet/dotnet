@@ -8,6 +8,8 @@
     <IsShipping>false</IsShipping>
     <IsPackable>true</IsPackable>
     <PackageId>Microsoft.CodeAnalysis.Test.Utilities</PackageId>
+    <!-- Test support project. Currently excluded from VBPOC -->
+    <ExcludeFromVerticalBuild>true</ExcludeFromVerticalBuild>
     <PackageDescription>This is an internal package for testing. Not meant for external or production uses. The API can and will break at our discretion.</PackageDescription>
   </PropertyGroup>
   <ItemGroup>

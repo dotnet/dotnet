@@ -3,9 +3,15 @@
   <PropertyGroup>
     <LogVerbosityOptOut>true</LogVerbosityOptOut>
 
+    <!-- Roslyn's build.cmd adds -build automatically. On non-windows, use the default -->
+    <BuildActions Condition="'$(OS)' == 'Windows_NT'">$(FlagParameterPrefix)restore</BuildActions>
+    <BuildActions Condition="'$(OS)' == 'Windows_NT'">$(BuildActions) $(FlagParameterPrefix)pack</BuildActions>
+    <BuildActions Condition="'$(OS)' == 'Windows_NT'">$(BuildActions) $(FlagParameterPrefix)publish</BuildActions>
+
     <!-- Use the repo root build script -->
     <BuildScript>$(ProjectDirectory)build$(ShellExtension)</BuildScript>
 
+    <BuildArgs Condition="'$(OS)' == 'Windows_NT'">$(BuildArgs) $(FlagParameterPrefix)msbuildEngine dotnet</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:TreatWarningsAsErrors=false</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:ApplyPartialNgenOptimization=false</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:EnablePartialNgenOptimization=false</BuildArgs>
@@ -13,14 +19,13 @@
     <!-- UsingToolMicrosoftNetCompilers=false introduces a prebuilt so we'll have to turn back on after our bootstrap SDK has native integer support -->
     <!-- issue: https://github.com/dotnet/source-build/issues/1719 -->
     <BuildArgs>$(BuildArgs) /p:UsingToolMicrosoftNetCompilers=false</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:RepoRoot=$(ProjectDirectory)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="command-line-api" />
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildFromSource)' == 'true'" />
-    <RepositoryReference Include="runtime" />
+    <!-- <RepositoryReference Include="runtime" /> -->
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">

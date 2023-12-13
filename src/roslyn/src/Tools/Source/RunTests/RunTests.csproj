@@ -6,6 +6,8 @@
     <TargetFramework>net7.0</TargetFramework>
     <SignAssembly>false</SignAssembly>
     <IsShipping>false</IsShipping>
+    <!-- Test support project. Currently excluded from VBPOC -->
+    <ExcludeFromVerticalBuild>true</ExcludeFromVerticalBuild>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutableVersion)" />

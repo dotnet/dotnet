@@ -20,6 +20,9 @@
     <ToolsetPackagesDir>$(RepoRoot)build\ToolsetPackages\</ToolsetPackagesDir>
     <UseSharedCompilation>true</UseSharedCompilation>
 
+    <!-- Temporary VBPOC warning disable while we update the SDK. -->
+    <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
+
     <Features>strict</Features>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

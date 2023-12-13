@@ -9,6 +9,8 @@
     <IsShipping>false</IsShipping>
     <LangVersion>11</LangVersion>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <!-- Test project. Currently excluded from VBPOC -->
+    <ExcludeFromVerticalBuild>true</ExcludeFromVerticalBuild>
   </PropertyGroup>
 
   <ItemGroup>
