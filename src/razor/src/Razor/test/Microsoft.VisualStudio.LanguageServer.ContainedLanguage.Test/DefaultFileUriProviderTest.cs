@@ -5,7 +5,7 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.VisualStudio.Test;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.VisualStudio.Text;
 using Moq;
 using Xunit;
@@ -13,15 +13,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 
-public class DefaultFileUriProviderTest : ToolingTestBase
+public class DefaultFileUriProviderTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    private readonly ITextBuffer _textBuffer;
-
-    public DefaultFileUriProviderTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        _textBuffer = new TestTextBuffer(StringTextSnapshot.Empty);
-    }
+    private readonly ITextBuffer _textBuffer = new TestTextBuffer(StringTextSnapshot.Empty);
 
     [Fact]
     public void AddOrUpdate_Adds()

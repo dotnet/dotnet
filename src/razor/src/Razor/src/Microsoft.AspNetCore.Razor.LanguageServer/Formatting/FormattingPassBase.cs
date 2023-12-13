@@ -16,16 +16,16 @@ internal abstract class FormattingPassBase : IFormattingPass
 
     public FormattingPassBase(
         IRazorDocumentMappingService documentMappingService,
-        ClientNotifierServiceBase server)
+        IClientConnection clientConnection)
     {
         if (documentMappingService is null)
         {
             throw new ArgumentNullException(nameof(documentMappingService));
         }
 
-        if (server is null)
+        if (clientConnection is null)
         {
-            throw new ArgumentNullException(nameof(server));
+            throw new ArgumentNullException(nameof(clientConnection));
         }
 
         DocumentMappingService = documentMappingService;

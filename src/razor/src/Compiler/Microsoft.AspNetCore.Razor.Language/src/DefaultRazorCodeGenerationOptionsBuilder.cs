@@ -62,7 +62,8 @@ internal class DefaultRazorCodeGenerationOptionsBuilder : RazorCodeGenerationOpt
             SupportLocalizedComponentNames,
             UseEnhancedLinePragma,
             SuppressUniqueIds,
-            SuppressAddComponentParameter)
+            SuppressAddComponentParameter,
+            RemapLinePragmaPathsOnWindows)
         {
             SuppressMetadataSourceChecksumAttributes = SuppressMetadataSourceChecksumAttributes,
         };

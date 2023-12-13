@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using FluentAssertions;
+using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.Packaging;
@@ -236,7 +237,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 Assert.True(result.ExitCode == 0, result.AllOutput);
                 var resolver = new VersionFolderPathResolver(pathContext.UserPackagesFolder);
                 var nupkg = NupkgMetadataFileFormat.Read(resolver.GetNupkgMetadataPath(packageX.Id, NuGetVersion.Parse(packageX.Version)), NullLogger.Instance);
-                Assert.Contains($"Installed x 1.0.0 from {pathContext.PackageSource} with content hash {nupkg.ContentHash}.", result.AllOutput);
+                Assert.Contains($"Installed x 1.0.0 from {pathContext.PackageSource} to {Path.Combine(resolver.RootPath, resolver.GetPackageDirectory(packageX.Id, NuGetVersion.Parse(packageX.Version)))} with content hash {nupkg.ContentHash}.", result.AllOutput);
                 Assert.Contains(configAPath, result.AllOutput);
             }
         }
@@ -295,7 +296,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 Assert.True(result.ExitCode == 0, result.AllOutput);
                 var resolver = new VersionFolderPathResolver(pathContext.UserPackagesFolder);
                 var nupkg = NupkgMetadataFileFormat.Read(resolver.GetNupkgMetadataPath(packageX.Id, NuGetVersion.Parse(packageX.Version)), NullLogger.Instance);
-                Assert.Contains($"Installed x 1.0.0 from {pathContext.PackageSource} with content hash {nupkg.ContentHash}.", result.AllOutput);
+                Assert.Contains($"Installed x 1.0.0 from {pathContext.PackageSource} to {Path.Combine(resolver.RootPath, resolver.GetPackageDirectory(packageX.Id, NuGetVersion.Parse(packageX.Version)))} with content hash {nupkg.ContentHash}.", result.AllOutput);
                 Assert.Contains(configAPath, result.AllOutput);
             }
         }
@@ -851,6 +852,43 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 // Assert
                 result.ExitCode.Should().Be(0, result.AllOutput);
+            }
+        }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void MsbuildRestore_WithUnsupportedProjects_WarnsOrLogsMessage(bool restoreUseStaticGraphEvaluation)
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                // Set up solution, project, and packages
+                var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+
+                var net461 = NuGetFramework.Parse("net472");
+                var project = new SimpleTestProjectContext("b", ProjectStyle.PackageReference, pathContext.SolutionRoot);
+
+                solution.Projects.Add(project);
+                solution.Create(pathContext.SolutionRoot);
+
+                File.WriteAllText(
+                   project.ProjectPath,
+                   @"<Project />");
+
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={restoreUseStaticGraphEvaluation} {solution.SolutionPath}", ignoreExitCode: true);
+
+                // Assert
+                result.ExitCode.Should().Be(0, result.AllOutput);
+                if (restoreUseStaticGraphEvaluation)
+                {
+
+                    result.AllOutput.Should().Contain(MSBuildRestoreUtility.GetMessageForUnsupportedProject(project.ProjectPath).Message);
+                }
+                else
+                {
+                    result.AllOutput.Should().Contain(MSBuildRestoreUtility.GetWarningForUnsupportedProject(project.ProjectPath).Message);
+                }
             }
         }
 

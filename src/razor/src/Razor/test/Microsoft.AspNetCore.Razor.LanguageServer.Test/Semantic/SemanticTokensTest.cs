@@ -7,21 +7,24 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -32,9 +35,9 @@ using Xunit.Abstractions;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
 [UseExportProvider]
-public class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelperServiceTestBase(testOutput)
+public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelperServiceTestBase(testOutput)
 {
-    private readonly Mock<ClientNotifierServiceBase> _languageServer = new(MockBehavior.Strict);
+    private readonly Mock<IClientConnection> _clientConnection = new(MockBehavior.Strict);
     private static readonly string s_projectPath = TestProject.GetProjectDirectory(typeof(TagHelperServiceTestBase), layer: TestProject.Layer.Tooling);
 
     private static readonly VSInternalServerCapabilities s_semanticTokensServerCapabilities = new()
@@ -45,6 +48,15 @@ public class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelperService
             Range = true
         }
     };
+
+    private static Regex s_matchNewLines = MyRegex();
+
+#if NET
+    [GeneratedRegex("\r\n")]
+    private static partial Regex MyRegex();
+#else
+    private static Regex MyRegex() => new Regex("\r\n|\r|\n");
+#endif
 
 #if GENERATE_BASELINES
     private bool GenerateBaselines { get; set; } = true;
@@ -851,11 +863,14 @@ public class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelperService
     public void GetMappedCSharpRanges_MinimalRangeVsSmallDisjointRanges_DisjointRangesAreSmaller(bool precise)
     {
         var documentText = """
-            @using System
-            @functions {
-                Action<object> abc = @<span></span>;
-            }
+            @[|using System|]
+            @functions {[|
+                Action<object> abc = |]@<span></span>[|;
+            |]}
             """;
+
+        TestFileMarkupParser.GetSpans(documentText, out documentText,
+            out ImmutableArray<TextSpan> spans);
 
         var codeDocument = CreateCodeDocument(documentText, isRazorFile: true, DefaultTagHelpers);
         var csharpSourceText = codeDocument.GetCSharpSourceText();
@@ -863,19 +878,19 @@ public class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelperService
 
         if (precise)
         {
-            var expectedCsharpRangeLengths = new int[] { 12, 27, 3 };
             Assert.True(RazorSemanticTokensInfoService.TryGetSortedCSharpRanges(codeDocument, razorRange, out var csharpRanges));
-            Assert.Equal(3, csharpRanges.Length);
+            Assert.Equal(spans.Length, csharpRanges.Length);
             for (var i = 0; i < csharpRanges.Length; i++)
             {
                 var csharpRange = csharpRanges[i];
                 var textSpan = csharpRange.ToTextSpan(csharpSourceText);
-                Assert.Equal(expectedCsharpRangeLengths[i], textSpan.Length);
+                Assert.Equal(spans[i].Length, textSpan.Length);
             }
         }
         else
         {
-            var expectedCsharpRangeLength = 970;
+            // Note that the expected lengths are different on Windows vs. Unix.
+            var expectedCsharpRangeLength = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? 970 : 938;
             Assert.True(RazorSemanticTokensInfoService.TryGetMinimalCSharpRange(codeDocument, razorRange, out var csharpRange));
             var textSpan = csharpRange.ToTextSpan(csharpSourceText);
             Assert.Equal(expectedCsharpRangeLength, textSpan.Length);
@@ -916,6 +931,7 @@ public class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelperService
         int? documentVersion)
     {
         var document = CreateCodeDocument(documentText, isRazorFile, tagHelpers);
+        var random = new Random();
 
         var projectSnapshot = new Mock<IProjectSnapshot>(MockBehavior.Strict);
         projectSnapshot
@@ -928,7 +944,7 @@ public class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelperService
             .ReturnsAsync(document);
 
         documentContext.SetupGet(d => d.Version)
-            .Returns(documentVersion ?? Random.Shared.Next());
+            .Returns(documentVersion ?? random.Next());
 
         documentContext.Setup(d => d.Project)
             .Returns(projectSnapshot.Object);
@@ -949,14 +965,14 @@ public class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelperService
         bool serverSupportsPreciseRanges,
         bool precise)
     {
-        _languageServer
+        _clientConnection
             .Setup(l => l.SendRequestAsync<SemanticTokensParams, ProvideSemanticTokensResponse?>(
                 CustomMessageNames.RazorProvideSemanticTokensRangeEndpoint,
                 It.IsAny<SemanticTokensParams>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(csharpTokens);
 
-        _languageServer
+        _clientConnection
             .Setup(l => l.SendRequestAsync<SemanticTokensParams, ProvideSemanticTokensResponse?>(
                 CustomMessageNames.RazorProvidePreciseRangeSemanticTokensEndpoint,
                 It.IsAny<SemanticTokensParams>(),
@@ -991,7 +1007,7 @@ public class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelperService
             MockBehavior.Strict);
 
         return new RazorSemanticTokensInfoService(
-            _languageServer.Object,
+            _clientConnection.Object,
             documentMappingService,
             optionsMonitor,
             featureOptions,
@@ -1005,7 +1021,11 @@ public class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelperService
         var csharpSourceText = codeDocument.GetCSharpSourceText();
 
         await using var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
-            csharpSourceText, csharpDocumentUri, s_semanticTokensServerCapabilities, SpanMappingService, DisposalToken);
+            csharpSourceText,
+            csharpDocumentUri,
+            s_semanticTokensServerCapabilities,
+            SpanMappingService,
+            DisposalToken);
 
         var razorRange = GetRange(documentText);
         var csharpRanges = GetMappedCSharpRanges(codeDocument, razorRange, precise);
@@ -1037,13 +1057,13 @@ public class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelperService
 
     private void VerifyTimesLanguageServerCalled(bool serverSupportsPreciseRanges, bool precise)
     {
-        _languageServer
+        _clientConnection
             .Verify(l => l.SendRequestAsync<SemanticTokensParams, ProvideSemanticTokensResponse?>(
                 CustomMessageNames.RazorProvidePreciseRangeSemanticTokensEndpoint,
                 It.IsAny<SemanticTokensParams>(),
                 It.IsAny<CancellationToken>()), Times.Exactly(precise ? 1 : 0));
 
-        _languageServer
+        _clientConnection
             .Verify(l => l.SendRequestAsync<SemanticTokensParams, ProvideSemanticTokensResponse?>(
                 CustomMessageNames.RazorProvideSemanticTokensRangeEndpoint,
                 It.IsAny<SemanticTokensParams>(),
@@ -1091,7 +1111,14 @@ public class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelperService
             return string.Empty;
         }
 
-        return semanticFile.ReadAllText();
+        var baselineContents = semanticFile.ReadAllText();
+
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            baselineContents = s_matchNewLines.Replace(baselineContents, "\n");
+        }
+
+        return baselineContents;
     }
 
     private Range[]? GetMappedCSharpRanges(RazorCodeDocument codeDocument, Range razorRange, bool precise)
@@ -1184,9 +1211,9 @@ public class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelperService
         return builder.ToString();
     }
 
-    private class TestDocumentContextFactory(VersionedDocumentContext? documentContext = null) : DocumentContextFactory
+    private class TestDocumentContextFactory(VersionedDocumentContext? documentContext = null) : IDocumentContextFactory
     {
-        protected override DocumentContext? TryCreateCore(Uri documentUri, VSProjectContext? projectContext, bool versioned)
+        public DocumentContext? TryCreate(Uri documentUri, VSProjectContext? projectContext, bool versioned)
         {
             return documentContext;
         }

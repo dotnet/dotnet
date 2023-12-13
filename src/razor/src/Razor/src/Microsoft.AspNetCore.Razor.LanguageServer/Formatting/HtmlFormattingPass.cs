@@ -26,11 +26,11 @@ internal class HtmlFormattingPass : FormattingPassBase
 
     public HtmlFormattingPass(
         IRazorDocumentMappingService documentMappingService,
-        ClientNotifierServiceBase server,
-        DocumentVersionCache documentVersionCache,
+        IClientConnection clientConnection,
+        IDocumentVersionCache documentVersionCache,
         IOptionsMonitor<RazorLSPOptions> optionsMonitor,
         ILoggerFactory loggerFactory)
-        : base(documentMappingService, server)
+        : base(documentMappingService, clientConnection)
     {
         if (loggerFactory is null)
         {
@@ -39,7 +39,7 @@ internal class HtmlFormattingPass : FormattingPassBase
 
         _logger = loggerFactory.CreateLogger<HtmlFormattingPass>();
 
-        HtmlFormatter = new HtmlFormatter(server, documentVersionCache);
+        HtmlFormatter = new HtmlFormatter(clientConnection, documentVersionCache);
         _optionsMonitor = optionsMonitor;
     }
 

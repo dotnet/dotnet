@@ -15,14 +15,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
 internal class HtmlFormatter
 {
-    private readonly DocumentVersionCache _documentVersionCache;
-    private readonly ClientNotifierServiceBase _server;
+    private readonly IDocumentVersionCache _documentVersionCache;
+    private readonly IClientConnection _clientConnection;
 
     public HtmlFormatter(
-        ClientNotifierServiceBase languageServer,
-        DocumentVersionCache documentVersionCache)
+        IClientConnection clientConnection,
+        IDocumentVersionCache documentVersionCache)
     {
-        _server = languageServer;
+        _clientConnection = clientConnection;
         _documentVersionCache = documentVersionCache;
     }
 
@@ -50,7 +50,7 @@ internal class HtmlFormatter
             Options = context.Options
         };
 
-        var result = await _server.SendRequestAsync<DocumentFormattingParams, RazorDocumentFormattingResponse?>(
+        var result = await _clientConnection.SendRequestAsync<DocumentFormattingParams, RazorDocumentFormattingResponse?>(
             CustomMessageNames.RazorHtmlFormattingEndpoint,
             @params,
             cancellationToken).ConfigureAwait(false);
@@ -77,7 +77,7 @@ internal class HtmlFormatter
             HostDocumentVersion = documentVersion.Value,
         };
 
-        var result = await _server.SendRequestAsync<RazorDocumentOnTypeFormattingParams, RazorDocumentFormattingResponse?>(
+        var result = await _clientConnection.SendRequestAsync<RazorDocumentOnTypeFormattingParams, RazorDocumentFormattingResponse?>(
             CustomMessageNames.RazorHtmlOnTypeFormattingEndpoint,
             @params,
             cancellationToken).ConfigureAwait(false);

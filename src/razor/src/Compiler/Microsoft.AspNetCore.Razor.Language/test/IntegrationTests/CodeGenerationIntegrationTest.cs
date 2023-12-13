@@ -6,1002 +6,275 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
-using Xunit;
+using Microsoft.AspNetCore.Razor.Test.Common;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
-public class CodeGenerationIntegrationTest : IntegrationTestBase
+public class CodeGenerationIntegrationTest(bool designTime = false)
+    : IntegrationTestBase(layer: TestProject.Layer.Compiler, generateBaselines: null)
 {
-    public CodeGenerationIntegrationTest()
-        : base(layer: TestProject.Layer.Compiler, generateBaselines: null)
-    {
-    }
-
-    #region Runtime
-    [Fact]
-    public void SingleLineControlFlowStatements_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void CSharp8_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void IncompleteDirectives_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void CSharp7_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void UnfinishedExpressionInCode_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void Templates_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void Markup_InCodeBlocks_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void Markup_InCodeBlocksWithTagHelper_Runtime()
-    {
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void StringLiterals_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void SimpleUnspacedIf_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void Sections_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void RazorComments_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void ParserError_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void OpenedIf_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void NullConditionalExpressions_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void NoLinePragmas_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void NestedCSharp_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void NestedCodeBlocks_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void MarkupInCodeBlock_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void Instrumented_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void InlineBlocks_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void Inherits_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void Usings_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void ImplicitExpressionAtEOF_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void ImplicitExpression_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void HtmlCommentWithQuote_Double_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void HtmlCommentWithQuote_Single_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void HiddenSpansInCode_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void FunctionsBlock_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void FunctionsBlockMinimal_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void ExpressionsInCode_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void ExplicitExpressionWithMarkup_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void ExplicitExpressionAtEOF_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void ExplicitExpression_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void EmptyImplicitExpressionInCode_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void EmptyImplicitExpression_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void EmptyExplicitExpression_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void EmptyCodeBlock_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void ConditionalAttributes_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void CodeBlockWithTextElement_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void CodeBlockAtEOF_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void CodeBlock_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void Blocks_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void Await_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void Tags_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void SimpleTagHelpers_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void TagHelpersWithBoundAttributes_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void TagHelpersWithPrefix_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void NestedTagHelpers_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void SingleTagHelper_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void SingleTagHelperWithNewlineBeforeAttributes_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void TagHelpersWithWeirdlySpacedAttributes_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void IncompleteTagHelper_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void BasicTagHelpers_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void BasicTagHelpers_Prefixed_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void BasicTagHelpers_RemoveTagHelper_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void CssSelectorTagHelperAttributes_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.CssSelectorTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void ComplexTagHelpers_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void EmptyAttributeTagHelpers_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void EscapedTagHelpers_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void DuplicateTargetTagHelper_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DuplicateTargetTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void AttributeTargetingTagHelpers_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.AttributeTargetingTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void PrefixedAttributeTagHelpers_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.PrefixedAttributeTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void DuplicateAttributeTagHelpers_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void DynamicAttributeTagHelpers_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DynamicAttributeTagHelpers_Descriptors);
-    }
-
-    [Fact]
-    public void TransitionsInTagHelperAttributes_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void MinimizedTagHelpers_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.MinimizedTagHelpers_Descriptors);
-    }
-
-    [Fact]
-    public void NestedScriptTagTagHelpers_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void SymbolBoundAttributes_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.SymbolBoundTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void EnumTagHelpers_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.EnumTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void SingleLineControlFlowStatements() => RunTest();
 
-    [Fact]
-    public void TagHelpersInSection_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.TagHelpersInSectionDescriptors);
-    }
-
-    [Fact]
-    public void TagHelpersWithTemplate_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void TagHelpersWithDataDashAttributes_Runtime()
-    {
-        // Arrange, Act & Assert
-        RunRuntimeTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
-    }
-
-    [Fact]
-    public void Implements_Runtime()
-    {
-        RunTimeTest();
-    }
-
-    [Fact]
-    public void AttributeDirective_Runtime()
-    {
-        RunTimeTest();
-    }
+    [IntegrationTestFact]
+    public void CSharp8() => RunTest();
 
-    [Fact]
-    public void SwitchExpression_RecursivePattern_Runtime()
-    {
-        RunTimeTest();
-    }
+    [IntegrationTestFact]
+    public void IncompleteDirectives() => RunTest();
 
-    #endregion
+    [IntegrationTestFact]
+    public void CSharp7() => RunTest();
 
-    #region DesignTime
-    [Fact]
-    public void SingleLineControlFlowStatements_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void UnfinishedExpressionInCode() => RunTest();
 
-    [Fact]
-    public void CSharp8_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void Templates() => RunTest();
 
-    [Fact]
-    public void IncompleteDirectives_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void Markup_InCodeBlocks() => RunTest();
 
-    [Fact]
-    public void CSharp7_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void Markup_InCodeBlocksWithTagHelper() => RunTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
 
-    [Fact]
-    public void UnfinishedExpressionInCode_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void StringLiterals() => RunTest();
 
-    [Fact]
-    public void Templates_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void SimpleUnspacedIf() => RunTest();
 
-    [Fact]
-    public void Markup_InCodeBlocks_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void Sections() => RunTest();
 
-    [Fact]
-    public void Markup_InCodeBlocksWithTagHelper_DesignTime()
-    {
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void RazorComments() => RunTest();
 
-    [Fact]
-    public void StringLiterals_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void ParserError() => RunTest();
 
-    [Fact]
-    public void SimpleUnspacedIf_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void OpenedIf() => RunTest();
 
-    [Fact]
-    public void Sections_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void NullConditionalExpressions() => RunTest();
 
-    [Fact]
-    public void RazorComments_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void NoLinePragmas() => RunTest();
 
-    [Fact]
-    public void ParserError_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void NestedCSharp() => RunTest();
 
-    [Fact]
-    public void OpenedIf_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void NestedCodeBlocks() => RunTest();
 
-    [Fact]
-    public void NullConditionalExpressions_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void MarkupInCodeBlock() => RunTest();
 
-    [Fact]
-    public void NoLinePragmas_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void Instrumented() => RunTest();
 
-    [Fact]
-    public void NestedCSharp_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void InlineBlocks() => RunTest();
 
-    [Fact]
-    public void NestedCodeBlocks_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void Inherits() => RunTest();
 
-    [Fact]
-    public void MarkupInCodeBlock_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void Usings() => RunTest();
 
-    [Fact]
-    public void Instrumented_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void ImplicitExpressionAtEOF() => RunTest();
 
-    [Fact]
-    public void InlineBlocks_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void ImplicitExpression() => RunTest();
 
-    [Fact]
-    public void Inherits_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void HtmlCommentWithQuote_Double() => RunTest();
 
-    [Fact]
-    public void Usings_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void HtmlCommentWithQuote_Single() => RunTest();
 
-    [Fact]
-    public void ImplicitExpressionAtEOF_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void HiddenSpansInCode() => RunTest();
 
-    [Fact]
-    public void ImplicitExpression_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void FunctionsBlock() => RunTest();
 
-    [Fact]
-    public void HtmlCommentWithQuote_Double_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void FunctionsBlockMinimal() => RunTest();
 
-    [Fact]
-    public void HtmlCommentWithQuote_Single_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void ExpressionsInCode() => RunTest();
 
-    [Fact]
-    public void HiddenSpansInCode_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void ExplicitExpressionWithMarkup() => RunTest();
 
-    [Fact]
-    public void FunctionsBlock_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void ExplicitExpressionAtEOF() => RunTest();
 
-    [Fact]
-    public void FunctionsBlockMinimal_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void ExplicitExpression() => RunTest();
 
-    [Fact]
-    public void ExpressionsInCode_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void EmptyImplicitExpressionInCode() => RunTest();
 
-    [Fact]
-    public void ExplicitExpressionWithMarkup_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void EmptyImplicitExpression() => RunTest();
 
-    [Fact]
-    public void ExplicitExpressionAtEOF_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void EmptyExplicitExpression() => RunTest();
 
-    [Fact]
-    public void ExplicitExpression_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void EmptyCodeBlock() => RunTest();
 
-    [Fact]
-    public void EmptyImplicitExpressionInCode_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void ConditionalAttributes() => RunTest();
 
-    [Fact]
-    public void EmptyImplicitExpression_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void CodeBlockWithTextElement() => RunTest();
 
-    [Fact]
-    public void EmptyExplicitExpression_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void CodeBlockAtEOF() => RunTest();
 
-    [Fact]
-    public void EmptyCodeBlock_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void CodeBlock() => RunTest();
 
-    [Fact]
-    public void DesignTime_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void Blocks() => RunTest();
 
-    [Fact]
-    public void ConditionalAttributes_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void Await() => RunTest();
 
-    [Fact]
-    public void CodeBlockWithTextElement_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void Tags() => RunTest();
 
-    [Fact]
-    public void CodeBlockAtEOF_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void SimpleTagHelpers() => RunTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
 
-    [Fact]
-    public void CodeBlock_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void TagHelpersWithBoundAttributes() => RunTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
 
-    [Fact]
-    public void Blocks_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void TagHelpersWithPrefix() => RunTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
 
-    [Fact]
-    public void Await_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void NestedTagHelpers() => RunTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
 
-    [Fact]
-    public void Tags_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void SingleTagHelper() => RunTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
 
-    [Fact]
-    public void AddTagHelperDirective_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void SingleTagHelperWithNewlineBeforeAttributes() => RunTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
 
-    [Fact]
-    public void RemoveTagHelperDirective_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void TagHelpersWithWeirdlySpacedAttributes() => RunTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
 
-    [Fact]
-    public void SimpleTagHelpers_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void IncompleteTagHelper() => RunTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
 
-    [Fact]
-    public void TagHelpersWithBoundAttributes_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void BasicTagHelpers() => RunTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
 
-    [Fact]
-    public void TagHelpersWithPrefix_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void BasicTagHelpers_Prefixed() => RunTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
 
-    [Fact]
-    public void NestedTagHelpers_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void BasicTagHelpers_RemoveTagHelper() => RunTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
 
-    [Fact]
-    public void SingleTagHelper_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void CssSelectorTagHelperAttributes() => RunTagHelpersTest(TestTagHelperDescriptors.CssSelectorTagHelperDescriptors);
 
-    [Fact]
-    public void SingleTagHelperWithNewlineBeforeAttributes_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void ComplexTagHelpers() => RunTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
 
-    [Fact]
-    public void TagHelpersWithWeirdlySpacedAttributes_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void EmptyAttributeTagHelpers() => RunTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
 
-    [Fact]
-    public void IncompleteTagHelper_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void EscapedTagHelpers() => RunTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
 
-    [Fact]
-    public void BasicTagHelpers_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void DuplicateTargetTagHelper() => RunTagHelpersTest(TestTagHelperDescriptors.DuplicateTargetTagHelperDescriptors);
 
-    [Fact]
-    public void BasicTagHelpers_Prefixed_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void AttributeTargetingTagHelpers() => RunTagHelpersTest(TestTagHelperDescriptors.AttributeTargetingTagHelperDescriptors);
 
-    [Fact]
-    public void ComplexTagHelpers_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void PrefixedAttributeTagHelpers() => RunTagHelpersTest(TestTagHelperDescriptors.PrefixedAttributeTagHelperDescriptors);
 
-    [Fact]
-    public void EmptyAttributeTagHelpers_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void DuplicateAttributeTagHelpers() => RunTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
 
-    [Fact]
-    public void EscapedTagHelpers_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void DynamicAttributeTagHelpers() => RunTagHelpersTest(TestTagHelperDescriptors.DynamicAttributeTagHelpers_Descriptors);
 
-    [Fact]
-    public void DuplicateTargetTagHelper_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.DuplicateTargetTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void TransitionsInTagHelperAttributes() => RunTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
 
-    [Fact]
-    public void AttributeTargetingTagHelpers_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.AttributeTargetingTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void MinimizedTagHelpers() => RunTagHelpersTest(TestTagHelperDescriptors.MinimizedTagHelpers_Descriptors);
 
-    [Fact]
-    public void PrefixedAttributeTagHelpers_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.PrefixedAttributeTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void NestedScriptTagTagHelpers() => RunTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
 
-    [Fact]
-    public void DuplicateAttributeTagHelpers_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void SymbolBoundAttributes() => RunTagHelpersTest(TestTagHelperDescriptors.SymbolBoundTagHelperDescriptors);
 
-    [Fact]
-    public void DynamicAttributeTagHelpers_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.DynamicAttributeTagHelpers_Descriptors);
-    }
+    [IntegrationTestFact]
+    public void EnumTagHelpers() => RunTagHelpersTest(TestTagHelperDescriptors.EnumTagHelperDescriptors);
 
-    [Fact]
-    public void TransitionsInTagHelperAttributes_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void TagHelpersInSection() => RunTagHelpersTest(TestTagHelperDescriptors.TagHelpersInSectionDescriptors);
 
-    [Fact]
-    public void MinimizedTagHelpers_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.MinimizedTagHelpers_Descriptors);
-    }
+    [IntegrationTestFact]
+    public void TagHelpersWithTemplate() => RunTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
 
-    [Fact]
-    public void NestedScriptTagTagHelpers_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.DefaultPAndInputTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void TagHelpersWithDataDashAttributes() => RunTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
 
-    [Fact]
-    public void SymbolBoundAttributes_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.SymbolBoundTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void Implements() => RunTest();
 
-    [Fact]
-    public void EnumTagHelpers_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.EnumTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void AttributeDirective() => RunTest();
 
-    [Fact]
-    public void TagHelpersInSection_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.TagHelpersInSectionDescriptors);
-    }
+    [IntegrationTestFact]
+    public void SwitchExpression_RecursivePattern() => RunTest();
 
-    [Fact]
-    public void TagHelpersWithTemplate_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public new void DesignTime() => RunTest();
 
-    [Fact]
-    public void TagHelpersWithDataDashAttributes_DesignTime()
-    {
-        // Arrange, Act & Assert
-        RunDesignTimeTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
-    }
+    [IntegrationTestFact]
+    public void RemoveTagHelperDirective() => RunTest();
 
-    [Fact]
-    public void Implements_DesignTime()
-    {
-        DesignTimeTest();
-    }
+    [IntegrationTestFact]
+    public void AddTagHelperDirective() => RunTest();
 
-    [Fact]
-    public void AttributeDirective_DesignTime()
+    public override string GetTestFileName(string testName)
     {
-        DesignTimeTest();
+        return base.GetTestFileName(testName) + (designTime ? "_DesignTime" : "_Runtime");
     }
 
-    [Fact]
-    public void SwitchExpression_RecursivePattern_DesignTime()
+    private void RunTest([CallerMemberName] string testName = "")
     {
-        DesignTimeTest();
+        if (designTime)
+        {
+            DesignTimeTest(testName);
+        }
+        else
+        {
+            RunTimeTest(testName);
+        }
     }
-
-    #endregion
 
-    private void DesignTimeTest()
+    private void DesignTimeTest(string testName)
     {
         // Arrange
         var projectEngine = CreateProjectEngine(builder =>
         {
-            builder.ConfigureDocumentClassifier();
+            builder.ConfigureDocumentClassifier(GetTestFileName(testName));
 
             // Some of these tests use templates
             builder.AddTargetExtension(new TemplateTargetExtension());
@@ -1009,26 +282,26 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             SectionDirective.Register(builder);
         });
 
-        var projectItem = CreateProjectItemFromFile();
+        var projectItem = CreateProjectItemFromFile(testName: testName);
 
         // Act
         var codeDocument = projectEngine.ProcessDesignTime(projectItem);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(codeDocument.GetDocumentIntermediateNode());
-        AssertHtmlDocumentMatchesBaseline(codeDocument.GetHtmlDocument());
-        AssertCSharpDocumentMatchesBaseline(codeDocument.GetCSharpDocument());
-        AssertSourceMappingsMatchBaseline(codeDocument);
-        AssertHtmlSourceMappingsMatchBaseline(codeDocument);
+        AssertDocumentNodeMatchesBaseline(codeDocument.GetDocumentIntermediateNode(), testName);
+        AssertHtmlDocumentMatchesBaseline(codeDocument.GetHtmlDocument(), testName);
+        AssertCSharpDocumentMatchesBaseline(codeDocument.GetCSharpDocument(), testName);
+        AssertSourceMappingsMatchBaseline(codeDocument, testName);
+        AssertHtmlSourceMappingsMatchBaseline(codeDocument, testName);
         AssertLinePragmas(codeDocument, designTime: true);
     }
 
-    private void RunTimeTest()
+    private void RunTimeTest(string testName)
     {
         // Arrange
         var projectEngine = CreateProjectEngine(builder =>
         {
-            builder.ConfigureDocumentClassifier();
+            builder.ConfigureDocumentClassifier(GetTestFileName(testName));
 
             // Some of these tests use templates
             builder.AddTargetExtension(new TemplateTargetExtension());
@@ -1036,23 +309,35 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             SectionDirective.Register(builder);
         });
 
-        var projectItem = CreateProjectItemFromFile();
+        var projectItem = CreateProjectItemFromFile(testName: testName);
 
         // Act
         var codeDocument = projectEngine.Process(projectItem);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(codeDocument.GetDocumentIntermediateNode());
-        AssertCSharpDocumentMatchesBaseline(codeDocument.GetCSharpDocument());
+        AssertDocumentNodeMatchesBaseline(codeDocument.GetDocumentIntermediateNode(), testName);
+        AssertCSharpDocumentMatchesBaseline(codeDocument.GetCSharpDocument(), testName);
         AssertLinePragmas(codeDocument, designTime: false);
     }
 
-    private void RunRuntimeTagHelpersTest(IEnumerable<TagHelperDescriptor> descriptors)
+    private void RunTagHelpersTest(IEnumerable<TagHelperDescriptor> descriptors, [CallerMemberName] string testName = "")
+    {
+        if (designTime)
+        {
+            RunDesignTimeTagHelpersTest(descriptors, testName);
+        }
+        else
+        {
+            RunRuntimeTagHelpersTest(descriptors, testName);
+        }
+    }
+
+    private void RunRuntimeTagHelpersTest(IEnumerable<TagHelperDescriptor> descriptors, string testName)
     {
         // Arrange
         var projectEngine = CreateProjectEngine(builder =>
         {
-            builder.ConfigureDocumentClassifier();
+            builder.ConfigureDocumentClassifier(GetTestFileName(testName));
 
             // Some of these tests use templates
             builder.AddTargetExtension(new TemplateTargetExtension());
@@ -1060,23 +345,23 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             SectionDirective.Register(builder);
         });
 
-        var projectItem = CreateProjectItemFromFile();
+        var projectItem = CreateProjectItemFromFile(testName: testName);
         var imports = GetImports(projectEngine, projectItem);
 
         // Act
         var codeDocument = projectEngine.Process(RazorSourceDocument.ReadFrom(projectItem), FileKinds.Legacy, imports, descriptors.ToList());
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(codeDocument.GetDocumentIntermediateNode());
-        AssertCSharpDocumentMatchesBaseline(codeDocument.GetCSharpDocument());
+        AssertDocumentNodeMatchesBaseline(codeDocument.GetDocumentIntermediateNode(), testName);
+        AssertCSharpDocumentMatchesBaseline(codeDocument.GetCSharpDocument(), testName);
     }
 
-    private void RunDesignTimeTagHelpersTest(IEnumerable<TagHelperDescriptor> descriptors)
+    private void RunDesignTimeTagHelpersTest(IEnumerable<TagHelperDescriptor> descriptors, string testName)
     {
         // Arrange
         var projectEngine = CreateProjectEngine(builder =>
         {
-            builder.ConfigureDocumentClassifier();
+            builder.ConfigureDocumentClassifier(GetTestFileName(testName));
 
             // Some of these tests use templates
             builder.AddTargetExtension(new TemplateTargetExtension());
@@ -1084,18 +369,18 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             SectionDirective.Register(builder);
         });
 
-        var projectItem = CreateProjectItemFromFile();
+        var projectItem = CreateProjectItemFromFile(testName: testName);
         var imports = GetImports(projectEngine, projectItem);
 
         // Act
         var codeDocument = projectEngine.ProcessDesignTime(RazorSourceDocument.ReadFrom(projectItem), FileKinds.Legacy, imports, descriptors.ToList());
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(codeDocument.GetDocumentIntermediateNode());
-        AssertCSharpDocumentMatchesBaseline(codeDocument.GetCSharpDocument());
-        AssertHtmlDocumentMatchesBaseline(codeDocument.GetHtmlDocument());
-        AssertHtmlSourceMappingsMatchBaseline(codeDocument);
-        AssertSourceMappingsMatchBaseline(codeDocument);
+        AssertDocumentNodeMatchesBaseline(codeDocument.GetDocumentIntermediateNode(), testName);
+        AssertCSharpDocumentMatchesBaseline(codeDocument.GetCSharpDocument(), testName);
+        AssertHtmlDocumentMatchesBaseline(codeDocument.GetHtmlDocument(), testName);
+        AssertHtmlSourceMappingsMatchBaseline(codeDocument, testName);
+        AssertSourceMappingsMatchBaseline(codeDocument, testName);
     }
 
     private static ImmutableArray<RazorSourceDocument> GetImports(RazorProjectEngine projectEngine, RazorProjectItem projectItem)

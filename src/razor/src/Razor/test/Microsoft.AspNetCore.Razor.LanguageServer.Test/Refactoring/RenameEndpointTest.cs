@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.CSharp;
@@ -38,7 +39,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Refactoring;
 public class RenameEndpointTest : LanguageServerTestBase
 {
     private readonly RenameEndpoint _endpoint;
-    private DocumentContextFactory _documentContextFactory;
+    private IDocumentContextFactory _documentContextFactory;
 
     public RenameEndpointTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -487,8 +488,8 @@ public class RenameEndpointTest : LanguageServerTestBase
 
         var delegatedEdit = new WorkspaceEdit();
 
-        var languageServerMock = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
-        languageServerMock
+        var clientConnectionMock = new Mock<IClientConnection>(MockBehavior.Strict);
+        clientConnectionMock
             .Setup(c => c.SendRequestAsync<IDelegatedParams, WorkspaceEdit>(CustomMessageNames.RazorRenameEndpointName, It.IsAny<DelegatedRenameParams>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(delegatedEdit);
 
@@ -504,7 +505,7 @@ public class RenameEndpointTest : LanguageServerTestBase
         var projectedIndex = 1;
         documentMappingServiceMock.Setup(c => c.TryMapToGeneratedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex)).Returns(true);
 
-        var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, languageServerMock.Object);
+        var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, clientConnectionMock.Object);
 
         var uri = new Uri("file:///c:/Second/ComponentWithParam.razor");
         var request = new RenameParams
@@ -533,13 +534,13 @@ public class RenameEndpointTest : LanguageServerTestBase
         // Arrange
         var languageServerFeatureOptions = Mock.Of<LanguageServerFeatureOptions>(
             options => options.SupportsFileManipulation == true && options.SingleServerSupport == true && options.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false, MockBehavior.Strict);
-        var languageServerMock = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
+        var clientConnectionMock = new Mock<IClientConnection>(MockBehavior.Strict);
         var documentMappingServiceMock = new Mock<IRazorDocumentMappingService>(MockBehavior.Strict);
         documentMappingServiceMock
             .Setup(c => c.GetLanguageKind(It.IsAny<RazorCodeDocument>(), It.IsAny<int>(), It.IsAny<bool>()))
             .Returns(RazorLanguageKind.Razor);
 
-        var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, languageServerMock.Object);
+        var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, clientConnectionMock.Object);
 
         var request = new RenameParams
         {
@@ -607,7 +608,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             .FirstOrDefault(n => n is NamespaceDeclarationIntermediateNode);
         namespaceNode.Content = rootNamespaceName;
 
-        var sourceText = SourceText.From(new string(item.Content));
+        var sourceText = SourceText.From(item.Content);
         var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, LanguageVersion.Default);
         var projectSnapshot = TestProjectSnapshot.Create("C:/project.csproj", projectWorkspaceState);
         var snapshot = Mock.Of<IDocumentSnapshot>(d =>
@@ -622,7 +623,7 @@ public class RenameEndpointTest : LanguageServerTestBase
         return documentSnapshot;
     }
 
-    private RenameEndpoint CreateEndpoint(LanguageServerFeatureOptions languageServerFeatureOptions = null, IRazorDocumentMappingService documentMappingService = null, ClientNotifierServiceBase languageServer = null)
+    private RenameEndpoint CreateEndpoint(LanguageServerFeatureOptions languageServerFeatureOptions = null, IRazorDocumentMappingService documentMappingService = null, IClientConnection clientConnection = null)
     {
         using var _ = ArrayBuilderPool<TagHelperDescriptor>.GetPooledObject(out var builder);
         builder.AddRange(CreateRazorComponentTagHelperDescriptors("First", "First.Components", "Component1"));
@@ -697,8 +698,6 @@ public class RenameEndpointTest : LanguageServerTestBase
         var projectSnapshotManager = Mock.Of<ProjectSnapshotManagerBase>(p => p.GetProjects() == new[] { firstProject, secondProject }.ToImmutableArray(), MockBehavior.Strict);
         var projectSnapshotManagerAccessor = new TestProjectSnapshotManagerAccessor(projectSnapshotManager);
 
-        var projectSnapshotManagerDispatcher = new LSPProjectSnapshotManagerDispatcher(LoggerFactory);
-
         var searchEngine = new DefaultRazorComponentSearchEngine(projectSnapshotManagerAccessor, LoggerFactory);
         languageServerFeatureOptions ??= Mock.Of<LanguageServerFeatureOptions>(
             options => options.SupportsFileManipulation == true && options.SingleServerSupport == false && options.ReturnCodeActionAndRenamePathsWithPrefixedSlash == false, MockBehavior.Strict);
@@ -714,22 +713,22 @@ public class RenameEndpointTest : LanguageServerTestBase
             .Returns(true);
         documentMappingService ??= documentMappingServiceMock.Object;
 
-        languageServer ??= Mock.Of<ClientNotifierServiceBase>(MockBehavior.Strict);
+        clientConnection ??= Mock.Of<IClientConnection>(MockBehavior.Strict);
 
         var endpoint = new RenameEndpoint(
-            projectSnapshotManagerDispatcher,
+            Dispatcher,
             _documentContextFactory,
             searchEngine,
             projectSnapshotManagerAccessor,
             languageServerFeatureOptions,
             documentMappingService,
-            languageServer,
+            clientConnection,
             LoggerFactory);
 
         return endpoint;
     }
 
-    private class TestDocumentContextFactory : DocumentContextFactory
+    private class TestDocumentContextFactory : IDocumentContextFactory
     {
         private readonly ImmutableDictionary<string, DocumentContext> _pathToContextMap;
 
@@ -738,7 +737,7 @@ public class RenameEndpointTest : LanguageServerTestBase
             _pathToContextMap = pathToContextMap.ToImmutableDictionary(kvp => FilePathNormalizer.Normalize(kvp.Key), kvp => kvp.Value);
         }
 
-        protected override DocumentContext TryCreateCore(Uri documentUri, VSProjectContext projectContext, bool versioned)
+        public DocumentContext TryCreate(Uri documentUri, VSProjectContext projectContext, bool versioned)
         {
             var path = FilePathNormalizer.Normalize(documentUri.AbsolutePath);
             _pathToContextMap.TryGetValue(path, out var context);

@@ -549,7 +549,7 @@ namespace NuGet.Packaging
 
                             File.Move(tempNupkgMetadataPath, nupkgMetadataFilePath);
 
-                            logger.LogInformation(StringFormatter.Log_InstalledPackage(packageIdentity.Id, packageIdentity.Version.OriginalVersion, source, contentHash));
+                            logger.LogInformation(StringFormatter.Log_InstalledPackage(packageIdentity.Id, packageIdentity.Version.OriginalVersion, source, contentHash, targetPath));
 
                             packageExtractionTelemetryEvent.SetResult(NuGetOperationStatus.Succeeded);
                             return true;
@@ -816,7 +816,7 @@ namespace NuGet.Packaging
 
                             File.Move(tempNupkgMetadataFilePath, nupkgMetadataFilePath);
 
-                            logger.LogInformation(StringFormatter.Log_InstalledPackage(packageIdentity.Id, packageIdentity.Version.OriginalVersion, packageDownloader.Source, contentHash));
+                            logger.LogInformation(StringFormatter.Log_InstalledPackage(packageIdentity.Id, packageIdentity.Version.OriginalVersion, packageDownloader.Source, contentHash, targetPath));
 
                             packageExtractionTelemetryEvent.SetResult(NuGetOperationStatus.Succeeded);
                             return true;

@@ -11,7 +11,7 @@ internal class DefaultRazorDirectiveClassifierPhase : RazorEnginePhaseBase, IRaz
 {
     public IRazorDirectiveClassifierPass[] Passes { get; private set; }
 
-    protected override void OnIntialized()
+    protected override void OnInitialized()
     {
         Passes = Engine.Features.OfType<IRazorDirectiveClassifierPass>().OrderBy(p => p.Order).ToArray();
     }

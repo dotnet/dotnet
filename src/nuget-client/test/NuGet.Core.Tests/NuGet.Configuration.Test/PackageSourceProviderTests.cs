@@ -2271,6 +2271,34 @@ namespace NuGet.Configuration.Test
             Assert.Equal(subscribeToEvent, eventRun);
         }
 
+        [Fact]
+        public void GetPackageSourceBySource_TwoSourcesWithSameUrl_ReturnsFirstSource()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            const string sourceUrl = "https://contoso.test/nuget/index.json";
+            const string contents = $@"<configuration>
+  <packageSources>
+    <add key=""s1"" value=""{sourceUrl}"" />
+    <add key=""s2"" value=""{sourceUrl}"" />
+  </packageSources>
+</configuration>
+";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+            var machineDefaultSources = Array.Empty<PackageSource>();
+
+            // Act
+            PackageSourceProvider psp = new PackageSourceProvider(settings, machineDefaultSources);
+            PackageSource source = psp.GetPackageSourceBySource(sourceUrl);
+
+            // Assert
+            source.Name.Should().Be("s1");
+        }
+
         private string CreateNuGetConfigContent(string enabledReplacement = "", string disabledReplacement = "", string activeSourceReplacement = "")
         {
             var nugetConfigBaseString = new StringBuilder();

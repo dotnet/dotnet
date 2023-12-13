@@ -5,11 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
-internal class TestLanguageServer : ClientNotifierServiceBase
+internal class TestLanguageServer : IClientConnection
 {
     private readonly IReadOnlyDictionary<string, Func<object?, Task<object>>> _requestResponseFactory;
 
@@ -18,19 +17,17 @@ internal class TestLanguageServer : ClientNotifierServiceBase
         _requestResponseFactory = requestResponseFactory;
     }
 
-    public override Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken) => Task.CompletedTask;
-
-    public override Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
+    public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public override Task SendNotificationAsync(string method, CancellationToken cancellationToken)
+    public Task SendNotificationAsync(string method, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public override async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
+    public async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
     {
         if (!_requestResponseFactory.TryGetValue(method, out var factory))
         {

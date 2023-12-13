@@ -37,6 +37,12 @@ $ErrorActionPreference = 'Stop'
 
 Trace-Log "Configuring NuGet.Client build environment"
 
+if ($env:CI -eq "true") {
+    [Environment]::SetEnvironmentVariable("NUGET_PACKAGES", $null, "Machine")
+} else {
+    $Env:NUGET_PACKAGES=""
+}
+
 $BuildErrors = @()
 
 if ($ProcDump -eq $true -Or $env:CI -eq "true")

@@ -37,9 +37,9 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
         RazorComponentSearchEngine componentSearchEngine,
         IRazorDocumentMappingService documentMappingService,
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        ClientNotifierServiceBase languageServer,
+        IClientConnection clientConnection,
         ILoggerFactory loggerFactory)
-        : base(languageServerFeatureOptions, documentMappingService, languageServer, loggerFactory.CreateLogger<DefinitionEndpoint>())
+        : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.CreateLogger<DefinitionEndpoint>())
     {
         _componentSearchEngine = componentSearchEngine ?? throw new ArgumentNullException(nameof(componentSearchEngine));
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));

@@ -8,13 +8,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-public class AddUsingsCodeActionProviderFactoryTest : ToolingTestBase
+public class AddUsingsCodeActionProviderFactoryTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    public AddUsingsCodeActionProviderFactoryTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void GetNamespaceFromFQN_Invalid_ReturnsEmpty()
     {

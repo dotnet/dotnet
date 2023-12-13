@@ -9,6 +9,9 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Moq;
@@ -29,11 +32,11 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
     public BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _documents = new HostDocument[]
-        {
+        _documents =
+        [
             TestProjectData.SomeProjectFile1,
             TestProjectData.AnotherProjectFile1,
-        };
+        ];
 
         _hostProject1 = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
         _hostProject2 = new HostProject(TestProjectData.AnotherProject.FilePath, TestProjectData.AnotherProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.AnotherProject.RootNamespace);

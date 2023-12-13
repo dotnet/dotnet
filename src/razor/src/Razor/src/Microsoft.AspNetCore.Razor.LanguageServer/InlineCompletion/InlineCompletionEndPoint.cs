@@ -31,7 +31,7 @@ internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternal
         "propfull", "propg", "sim", "struct", "svm", "switch", "try", "tryf", "unchecked", "unsafe", "using", "while");
 
     private readonly IRazorDocumentMappingService _documentMappingService;
-    private readonly ClientNotifierServiceBase _languageServer;
+    private readonly IClientConnection _clientConnection;
     private readonly AdhocWorkspaceFactory _adhocWorkspaceFactory;
 
     public bool MutatesSolutionState => false;
@@ -39,11 +39,11 @@ internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternal
     [ImportingConstructor]
     public InlineCompletionEndpoint(
         IRazorDocumentMappingService documentMappingService,
-        ClientNotifierServiceBase languageServer,
+        IClientConnection clientConnection,
         AdhocWorkspaceFactory adhocWorkspaceFactory)
     {
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
-        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
         _adhocWorkspaceFactory = adhocWorkspaceFactory ?? throw new ArgumentNullException(nameof(adhocWorkspaceFactory));
     }
 
@@ -105,7 +105,7 @@ internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternal
         };
 
         request.Position = projectedPosition;
-        var list = await _languageServer.SendRequestAsync<RazorInlineCompletionRequest, VSInternalInlineCompletionList?>(
+        var list = await _clientConnection.SendRequestAsync<RazorInlineCompletionRequest, VSInternalInlineCompletionList?>(
             CustomMessageNames.RazorInlineCompletionEndpoint,
             razorRequest,
             cancellationToken).ConfigureAwait(false);

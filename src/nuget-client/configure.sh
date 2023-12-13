@@ -50,6 +50,7 @@ fi
 export DOTNET_ROOT="$CLI_DIR"
 export DOTNET_MULTILEVEL_LOOKUP="0"
 export "PATH=$CLI_DIR:$PATH"
+export NUGET_PACKAGES=
 
 if [ "$CI" == "true" ]; then
     echo "##vso[task.setvariable variable=DOTNET_ROOT;isOutput=false;issecret=false;]$CLI_DIR"

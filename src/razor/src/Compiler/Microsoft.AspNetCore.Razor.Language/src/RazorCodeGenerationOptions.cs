@@ -24,7 +24,8 @@ public abstract class RazorCodeGenerationOptions
             supportLocalizedComponentNames: false,
             useEnhancedLinePragma: true,
             suppressUniqueIds: null,
-            suppressAddComponentParameter: false);
+            suppressAddComponentParameter: false,
+            remapLinePragmaPathsOnWindows: false);
     }
 
     public static RazorCodeGenerationOptions CreateDesignTimeDefault()
@@ -42,7 +43,8 @@ public abstract class RazorCodeGenerationOptions
             supportLocalizedComponentNames: false,
             useEnhancedLinePragma: true,
             suppressUniqueIds: null,
-            suppressAddComponentParameter: false);
+            suppressAddComponentParameter: false,
+            remapLinePragmaPathsOnWindows: true);
     }
 
     public static RazorCodeGenerationOptions Create(Action<RazorCodeGenerationOptionsBuilder> configure)
@@ -160,4 +162,9 @@ public abstract class RazorCodeGenerationOptions
     /// Determines whether RenderTreeBuilder.AddComponentParameter should not be used.
     /// </summary>
     internal bool SuppressAddComponentParameter { get; private protected init; }
+
+    /// <summary>
+    /// Determines if the file paths emitted as part of line pragmas should be mapped back to a valid path on windows.
+    /// </summary>
+    public bool RemapLinePragmaPathsOnWindows { get; private protected init; }
 }

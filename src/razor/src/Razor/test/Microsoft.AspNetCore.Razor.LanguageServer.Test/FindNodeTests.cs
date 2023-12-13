@@ -1,7 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
@@ -9,16 +11,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
-public class FindNodeTests
+public class FindNodeTests(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    private readonly ITestOutputHelper _outputHelper;
-
-    public FindNodeTests(ITestOutputHelper outputHelper)
-    {
-        _outputHelper = outputHelper;
-    }
-
-    const string FetchDataContents = """
+    private const string FetchDataContents = """
             @page "/fetchdata"
             @using BlazorApp.Data
             @inject WeatherForecastService ForecastService
@@ -67,6 +62,10 @@ public class FindNodeTests
                 }
             }
             """;
+
+    private static readonly string s_fetchDataContents = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+        ? FetchDataContents
+        : FetchDataContents.Replace("\n", "\r\n");
 
     [Theory]
     [InlineData(0, 1, SyntaxKind.CSharpTransition, false)]
@@ -246,7 +245,7 @@ public class FindNodeTests
     [InlineData(944, 1162, SyntaxKind.MarkupTextLiteral, true)]
     [InlineData(0, 1162, SyntaxKind.MarkupBlock, false)]
     internal void Test_On_FetchData(int start, int end, SyntaxKind kind, bool includeWhitespace)
-        => Verify(FetchDataContents, start, end, kind, includeWhitespace, innermostForTie: true);
+        => Verify(s_fetchDataContents, start, end, kind, includeWhitespace, innermostForTie: true);
 
     private static void Verify(string input, int start, int end, SyntaxKind kind, bool includeWhitespace, bool innermostForTie)
     {

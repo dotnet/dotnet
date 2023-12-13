@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -171,6 +172,19 @@ internal class RazorProjectInfoPublisher : IProjectSnapshotChangeTrigger
                 }
 
                 break;
+            case ProjectChangeKind.DocumentChanged:
+                // DocumentChanged normally isn't a great trigger for publishing, given that it happens while a user types
+                // but for a brand new project, its possible this DocumentChanged actually represents a DocumentOpen, and
+                // it could be the first one, so its important to publish if there is no project configuration file present
+                if (ProjectWorkspacePublishable(args) &&
+                    _projectConfigurationFilePathStore.TryGet(args.ProjectKey, out var configurationFilePath) &&
+                    !FileExists(configurationFilePath))
+                {
+                    ImmediatePublish(args.Newer!);
+                }
+
+                break;
+
             case ProjectChangeKind.DocumentRemoved:
             case ProjectChangeKind.DocumentAdded:
 
@@ -194,6 +208,10 @@ internal class RazorProjectInfoPublisher : IProjectSnapshotChangeTrigger
 
             case ProjectChangeKind.ProjectRemoved:
                 RemovePublishingData(args.Older!);
+                break;
+
+            default:
+                Debug.Fail("A new ProjectChangeKind has been added that the RazorProjectInfoPublisher doesn't know how to deal with");
                 break;
         }
 

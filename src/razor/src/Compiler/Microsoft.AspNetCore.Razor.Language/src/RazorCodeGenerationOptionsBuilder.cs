@@ -95,6 +95,11 @@ public abstract class RazorCodeGenerationOptionsBuilder
     /// </summary>
     internal bool SuppressAddComponentParameter { get; set; }
 
+    /// <summary>
+    /// Determines if the file paths emitted as part of line pragmas should be mapped back to a valid path on windows.
+    /// </summary>
+    internal bool RemapLinePragmaPathsOnWindows { get; set; }
+
     public abstract RazorCodeGenerationOptions Build();
 
     public virtual void SetDesignTime(bool designTime)

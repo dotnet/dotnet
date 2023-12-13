@@ -5,6 +5,7 @@
 
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Moq;
@@ -13,13 +14,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public class RazorTextViewConnectionListenerTest : ProjectSnapshotManagerDispatcherTestBase
+public class RazorTextViewConnectionListenerTest(ITestOutputHelper testOutput) : ProjectSnapshotManagerDispatcherTestBase(testOutput)
 {
-    public RazorTextViewConnectionListenerTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [UIFact]
     public void SubjectBuffersConnected_CallsRazorDocumentManager_OnTextViewOpened()
     {

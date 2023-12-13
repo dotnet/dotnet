@@ -22,7 +22,7 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
 {
     private IRazorSemanticTokensInfoService RazorSemanticTokenService { get; set; }
 
-    private DocumentVersionCache VersionCache { get; set; }
+    private IDocumentVersionCache VersionCache { get; set; }
 
     private VersionedDocumentContext DocumentContext { get; set; }
 
@@ -137,7 +137,7 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
     {
         var languageServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
         RazorSemanticTokenService = languageServer.GetRequiredService<IRazorSemanticTokensInfoService>();
-        VersionCache = languageServer.GetRequiredService<DocumentVersionCache>();
+        VersionCache = languageServer.GetRequiredService<IDocumentVersionCache>();
         ProjectSnapshotManagerDispatcher = languageServer.GetRequiredService<ProjectSnapshotManagerDispatcher>();
     }
 }

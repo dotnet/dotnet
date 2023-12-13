@@ -1,0 +1,71 @@
+﻿Document - 
+    NamespaceDeclaration -  - Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
+        ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_BasicTagHelpers_RemoveTagHelper_DesignTime -  - 
+            DefaultTagHelperRuntime - 
+            FieldDeclaration -  - private - global::TestNamespace.PTagHelper - __TestNamespace_PTagHelper
+            FieldDeclaration -  - private - global::TestNamespace.InputTagHelper - __TestNamespace_InputTagHelper
+            FieldDeclaration -  - private - global::TestNamespace.InputTagHelper2 - __TestNamespace_InputTagHelper2
+            DesignTimeDirective - 
+                DirectiveToken - (14:0,14 [17] BasicTagHelpers_RemoveTagHelper.cshtml) - "*, TestAssembly"
+                DirectiveToken - (50:1,17 [20] BasicTagHelpers_RemoveTagHelper.cshtml) - "doesntmatter, nice"
+            CSharpCode - 
+                IntermediateToken -  - CSharp - #pragma warning disable 0414
+            CSharpCode - 
+                IntermediateToken -  - CSharp - private static object __o = null;
+            CSharpCode - 
+                IntermediateToken -  - CSharp - #pragma warning restore 0414
+            MethodDeclaration -  - public async - System.Threading.Tasks.Task - ExecuteAsync
+                HtmlContent - (31:0,31 [2] BasicTagHelpers_RemoveTagHelper.cshtml)
+                    LazyIntermediateToken - (31:0,31 [2] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - \n
+                HtmlContent - (70:1,37 [51] BasicTagHelpers_RemoveTagHelper.cshtml)
+                    LazyIntermediateToken - (70:1,37 [4] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - \n\n
+                    LazyIntermediateToken - (74:3,0 [4] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - <div
+                    LazyIntermediateToken - (78:3,4 [36] BasicTagHelpers_RemoveTagHelper.cshtml) - Html -  class="randomNonTagHelperAttribute"
+                    LazyIntermediateToken - (114:3,40 [1] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - >
+                    LazyIntermediateToken - (115:3,41 [6] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - \n    
+                TagHelper - (121:4,4 [130] BasicTagHelpers_RemoveTagHelper.cshtml) - p - TagMode.StartTagAndEndTag
+                    DefaultTagHelperBody - 
+                        HtmlContent - (144:4,27 [10] BasicTagHelpers_RemoveTagHelper.cshtml)
+                            LazyIntermediateToken - (144:4,27 [10] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - \n        
+                        TagHelper - (154:5,8 [7] BasicTagHelpers_RemoveTagHelper.cshtml) - p - TagMode.StartTagAndEndTag
+                            DefaultTagHelperBody - 
+                            DefaultTagHelperCreate -  - TestNamespace.PTagHelper
+                            DefaultTagHelperExecute - 
+                        HtmlContent - (161:5,15 [10] BasicTagHelpers_RemoveTagHelper.cshtml)
+                            LazyIntermediateToken - (161:5,15 [10] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - \n        
+                        TagHelper - (171:6,8 [21] BasicTagHelpers_RemoveTagHelper.cshtml) - input - TagMode.SelfClosing
+                            DefaultTagHelperBody - 
+                            DefaultTagHelperCreate -  - TestNamespace.InputTagHelper
+                            DefaultTagHelperCreate -  - TestNamespace.InputTagHelper2
+                            DefaultTagHelperProperty - (184:6,21 [4] BasicTagHelpers_RemoveTagHelper.cshtml) - type - string TestNamespace.InputTagHelper.Type - HtmlAttributeValueStyle.DoubleQuotes
+                                HtmlContent - (184:6,21 [4] BasicTagHelpers_RemoveTagHelper.cshtml)
+                                    LazyIntermediateToken - (184:6,21 [4] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - text
+                            DefaultTagHelperProperty - (184:6,21 [4] BasicTagHelpers_RemoveTagHelper.cshtml) - type - string TestNamespace.InputTagHelper2.Type - HtmlAttributeValueStyle.DoubleQuotes
+                                HtmlContent - (184:6,21 [4] BasicTagHelpers_RemoveTagHelper.cshtml)
+                                    LazyIntermediateToken - (184:6,21 [4] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - text
+                            DefaultTagHelperExecute - 
+                        HtmlContent - (192:6,29 [10] BasicTagHelpers_RemoveTagHelper.cshtml)
+                            LazyIntermediateToken - (192:6,29 [10] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - \n        
+                        TagHelper - (202:7,8 [39] BasicTagHelpers_RemoveTagHelper.cshtml) - input - TagMode.SelfClosing
+                            DefaultTagHelperBody - 
+                            DefaultTagHelperCreate -  - TestNamespace.InputTagHelper
+                            DefaultTagHelperCreate -  - TestNamespace.InputTagHelper2
+                            DefaultTagHelperProperty - (215:7,21 [8] BasicTagHelpers_RemoveTagHelper.cshtml) - type - string TestNamespace.InputTagHelper.Type - HtmlAttributeValueStyle.DoubleQuotes
+                                HtmlContent - (215:7,21 [8] BasicTagHelpers_RemoveTagHelper.cshtml)
+                                    LazyIntermediateToken - (215:7,21 [8] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - checkbox
+                            DefaultTagHelperProperty - (215:7,21 [8] BasicTagHelpers_RemoveTagHelper.cshtml) - type - string TestNamespace.InputTagHelper2.Type - HtmlAttributeValueStyle.DoubleQuotes
+                                HtmlContent - (215:7,21 [8] BasicTagHelpers_RemoveTagHelper.cshtml)
+                                    LazyIntermediateToken - (215:7,21 [8] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - checkbox
+                            DefaultTagHelperProperty - (234:7,40 [4] BasicTagHelpers_RemoveTagHelper.cshtml) - checked - bool TestNamespace.InputTagHelper2.Checked - HtmlAttributeValueStyle.DoubleQuotes
+                                LazyIntermediateToken - (234:7,40 [4] BasicTagHelpers_RemoveTagHelper.cshtml) - CSharp - true
+                            DefaultTagHelperExecute - 
+                        HtmlContent - (241:7,47 [6] BasicTagHelpers_RemoveTagHelper.cshtml)
+                            LazyIntermediateToken - (241:7,47 [6] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - \n    
+                    DefaultTagHelperCreate -  - TestNamespace.PTagHelper
+                    DefaultTagHelperHtmlAttribute -  - class - HtmlAttributeValueStyle.DoubleQuotes
+                        HtmlContent - (131:4,14 [11] BasicTagHelpers_RemoveTagHelper.cshtml)
+                            LazyIntermediateToken - (131:4,14 [11] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - Hello World
+                    DefaultTagHelperExecute - 
+                HtmlContent - (251:8,8 [8] BasicTagHelpers_RemoveTagHelper.cshtml)
+                    LazyIntermediateToken - (251:8,8 [2] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - \n
+                    LazyIntermediateToken - (253:9,0 [6] BasicTagHelpers_RemoveTagHelper.cshtml) - Html - </div>

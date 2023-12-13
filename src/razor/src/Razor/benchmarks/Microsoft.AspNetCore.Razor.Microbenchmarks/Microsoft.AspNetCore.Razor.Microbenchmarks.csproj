@@ -32,16 +32,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\test\Microsoft.CodeAnalysis.Razor.Workspaces.Test.Common\TestServices.cs">
+    <Compile Include="..\..\test\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Workspaces\TestServices.cs">
       <Link>TestServices\%(FileName)%(Extension)</Link>
     </Compile>
-    <Compile Include="..\..\test\Microsoft.CodeAnalysis.Razor.Workspaces.Test.Common\TestWorkspace.cs">
+    <Compile Include="..\..\test\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Workspaces\TestWorkspace.cs">
       <Link>TestServices\%(FileName)%(Extension)</Link>
     </Compile>
-    <Compile Include="..\..\test\Microsoft.CodeAnalysis.Razor.Workspaces.Test.Common\TestLanguageServices.cs">
+    <Compile Include="..\..\test\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Workspaces\TestLanguageServices.cs">
       <Link>TestServices\%(FileName)%(Extension)</Link>
     </Compile>
-    <Compile Include="..\..\test\Microsoft.CodeAnalysis.Razor.Workspaces.Test.Common\TestWorkspaceServices.cs">
+    <Compile Include="..\..\test\Microsoft.AspNetCore.Razor.Test.Common.Tooling\Workspaces\TestWorkspaceServices.cs">
       <Link>TestServices\%(FileName)%(Extension)</Link>
     </Compile>
 

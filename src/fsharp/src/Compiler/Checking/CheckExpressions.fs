@@ -1090,14 +1090,14 @@ let PublishValueDefnPrim (cenv: cenv) env (vspec: Val) =
     UpdateAccModuleOrNamespaceType cenv env (fun _ mty ->
         mty.AddVal vspec)
 
-let PublishValueDefn (cenv: cenv) env declKind (vspec: Val) =
+let PublishValueDefnMaybeInclCompilerGenerated (cenv: cenv) env inclCompilerGenerated declKind (vspec: Val) =
     let g = cenv.g
     let isNamespace =
         let kind = (GetCurrAccumulatedModuleOrNamespaceType env).ModuleOrNamespaceKind
         match kind with
         | Namespace _ -> true
         | _ -> false
-    
+
     if (declKind = ModuleOrMemberBinding) &&
        isNamespace &&
        (Option.isNone vspec.MemberInfo) then
@@ -1116,9 +1116,9 @@ let PublishValueDefn (cenv: cenv) env declKind (vspec: Val) =
 
     match vspec.MemberInfo with
     | Some _ when
-        (not vspec.IsCompilerGenerated &&
+        ((not vspec.IsCompilerGenerated || inclCompilerGenerated) &&
          // Extrinsic extensions don't get added to the tcaug
-         not (declKind = ExtrinsicExtensionBinding)) ->
+         declKind <> ExtrinsicExtensionBinding) ->
          // // Static initializers don't get published to the tcaug
          // not (memberInfo.MemberFlags.MemberKind = SynMemberKind.ClassConstructor)) ->
 
@@ -1127,6 +1127,9 @@ let PublishValueDefn (cenv: cenv) env declKind (vspec: Val) =
         tcaug.tcaug_adhoc <- NameMultiMap.add vspec.LogicalName vref tcaug.tcaug_adhoc
         tcaug.tcaug_adhoc_list.Add (ValRefIsExplicitImpl g vref, vref)
     | _ -> ()
+
+let PublishValueDefn cenv env declKind vspec =
+    PublishValueDefnMaybeInclCompilerGenerated cenv env false declKind vspec
 
 let CombineVisibilityAttribs vis1 vis2 m =
     match vis1 with
@@ -1223,10 +1226,11 @@ let CheckRequiredProperties (g:TcGlobals) (env: TcEnv) (cenv: TcFileState) (minf
             let setterPropNames =
                 finalAssignedItemSetters
                 |> List.choose (function | AssignedItemSetter(_, AssignedPropSetter (_, pinfo, _, _), _) -> Some pinfo.PropertyName  | _ -> None)
+                |> Set.ofList
 
             let missingProps =
                 requiredProps
-                |> List.filter (fun pinfo -> not (List.contains pinfo.PropertyName setterPropNames))
+                |> List.filter (fun pinfo -> not (Set.contains pinfo.PropertyName setterPropNames))
             if missingProps.Length > 0 then
                 let details = NicePrint.multiLineStringOfPropInfos g cenv.amap mMethExpr env.DisplayEnv missingProps
                 errorR(Error(FSComp.SR.tcMissingRequiredMembers details, mMethExpr))
@@ -2354,7 +2358,7 @@ module BindingNormalization =
         NormalizedBindingPat(SynPat.InstanceMember(thisId, memberId, toolId, vis, m), PushMultiplePatternsToRhs cenv true args rhsExpr, valSynData, typars)
 
     let private NormalizeStaticMemberBinding (cenv: cenv) (memberFlags: SynMemberFlags) valSynData id vis typars args m rhsExpr =
-        let (SynValData(valInfo = valSynInfo; thisIdOpt = thisIdOpt; transformedFromProperty = tp)) = valSynData
+        let (SynValData(valInfo = valSynInfo; thisIdOpt = thisIdOpt)) = valSynData
         if memberFlags.IsInstance then
             // instance method without adhoc "this" argument
             error(Error(FSComp.SR.tcInstanceMemberRequiresTarget(), m))
@@ -2368,7 +2372,7 @@ module BindingNormalization =
         // static property: these transformed into methods taking one "unit" argument
         | [], SynMemberKind.Member ->
             let memberFlags = {memberFlags with MemberKind = SynMemberKind.PropertyGet}
-            let valSynData = SynValData(Some memberFlags, valSynInfo, thisIdOpt, tp)
+            let valSynData = SynValData(Some memberFlags, valSynInfo, thisIdOpt)
             NormalizedBindingPat(mkSynPatVar vis id,
                                  PushOnePatternToRhs cenv true (SynPat.Const(SynConst.Unit, m)) rhsExpr,
                                  valSynData,
@@ -2376,7 +2380,7 @@ module BindingNormalization =
         | _ -> MakeNormalizedStaticOrValBinding cenv ValOrMemberBinding id vis typars args rhsExpr valSynData
 
     let private NormalizeInstanceMemberBinding (cenv: cenv) (memberFlags: SynMemberFlags) valSynData thisId memberId (toolId: Ident option) vis typars args m rhsExpr =
-        let (SynValData(_, valSynInfo, thisIdOpt, tap)) = valSynData
+        let (SynValData(_, valSynInfo, thisIdOpt)) = valSynData
 
         if not memberFlags.IsInstance then
             // static method with adhoc "this" argument
@@ -2400,7 +2404,7 @@ module BindingNormalization =
                 (SynPat.InstanceMember(thisId, memberId, toolId, vis, m),
                  PushOnePatternToRhs cenv true (SynPat.Const(SynConst.Unit, m)) rhsExpr,
                  // Update the member info to record that this is a SynMemberKind.PropertyGet
-                 SynValData(Some memberFlags, valSynInfo, thisIdOpt, tap),
+                 SynValData(Some memberFlags, valSynInfo, thisIdOpt),
                  typars)
 
         | _ ->
@@ -2511,10 +2515,10 @@ module EventDeclarationNormalization =
         | _ -> error(BadEventTransformation m)
 
     let private ConvertSynData m valSynData =
-        let (SynValData(memberFlagsOpt, valSynInfo, thisIdOpt, tap)) = valSynData
+        let (SynValData(memberFlagsOpt, valSynInfo, thisIdOpt)) = valSynData
         let memberFlagsOpt = ConvertMemberFlagsOpt m memberFlagsOpt
         let valSynInfo = ConvertSynInfo m valSynInfo
-        SynValData(memberFlagsOpt, valSynInfo, thisIdOpt, tap)
+        SynValData(memberFlagsOpt, valSynInfo, thisIdOpt)
 
     let rec private RenameBindingPattern f declPattern =
         match declPattern with
@@ -3811,6 +3815,13 @@ type DelayedItem =
   /// Represents the valueExpr in "item <- valueExpr", also "item.[indexerArgs] <- valueExpr" etc.
   | DelayedSet of SynExpr * range
 
+module DelayedItem =
+    let maybeAppliedArgForPreferExtensionOverProperty delayed = 
+        match delayed with
+        | [] -> None
+        | DelayedItem.DelayedApp(argExpr=argExpr) :: _ -> Some argExpr
+        | _ -> None
+
 let MakeDelayedSet(e: SynExpr, m) =
     // We have longId <- e. Wrap 'e' in another pair of parentheses to ensure it's never interpreted as
     // a named argument, e.g. for "el.Checked <- (el = el2)"
@@ -4767,7 +4778,7 @@ and TcStaticConstantParameter (cenv: cenv) (env: TcEnv) tpenv kind (StripParenTy
             | SynConst.Double n when typeEquiv g g.float_ty kind -> record(g.float_ty); box (n: double)
             | SynConst.Char n when typeEquiv g g.char_ty kind -> record(g.char_ty); box (n: char)
             | SynConst.String (s, _, _)
-            | SynConst.SourceIdentifier (_, s, _) when s <> null && typeEquiv g g.string_ty kind -> record(g.string_ty); box (s: string)
+            | SynConst.SourceIdentifier (_, s, _) when (not (isNull s)) && typeEquiv g g.string_ty kind -> record(g.string_ty); box (s: string)
             | SynConst.Bool b when typeEquiv g g.bool_ty kind -> record(g.bool_ty); box (b: bool)
             | _ -> fail()
         v, tpenv
@@ -5577,9 +5588,13 @@ and TcExprUndelayed (cenv: cenv) (overallTy: OverallTy) env tpenv (synExpr: SynE
         CallExprHasTypeSink cenv.tcSink (m, env.NameEnv, overallTy.Commit, env.AccessRights)
         TcConstExpr cenv overallTy env m tpenv synConst
     | SynExpr.DotLambda (synExpr, m, trivia) ->
-        if env.NameEnv.eUnqualifiedItems |> Map.containsKey "_arg1"
-        then
+        match env.NameEnv.eUnqualifiedItems |> Map.tryFind "_arg1" with        
+        // Compiler-generated _arg items can have more forms, the real underscore will be 1-character wide
+        | Some (Item.Value(valRef)) when valRef.Range.StartColumn+1 = valRef.Range.EndColumn ->
             warning(Error(FSComp.SR.tcAmbiguousDiscardDotLambda(), trivia.UnderscoreRange))
+        | Some _ -> ()
+        | None -> ()
+            
         let unaryArg = mkSynId trivia.UnderscoreRange (cenv.synArgNameGenerator.New())
         let svar = mkSynCompGenSimplePatVar unaryArg
         let pushedExpr = pushUnaryArg synExpr unaryArg
@@ -5708,7 +5723,7 @@ and TcExprUndelayed (cenv: cenv) (overallTy: OverallTy) env tpenv (synExpr: SynE
         cenv.TcArrayOrListComputedExpression cenv env overallTy tpenv (isArray, comp)  m
 
     | SynExpr.LetOrUse _ ->
-        TcLinearExprs (TcExprThatCanBeCtorBody cenv) cenv env overallTy tpenv false synExpr (fun x -> x)
+        TcLinearExprs (TcExprThatCanBeCtorBody cenv) cenv env overallTy tpenv false synExpr id
 
     | SynExpr.TryWith (synBodyExpr, synWithClauses, mTryToLast, spTry, spWith, trivia) ->
         TcExprTryWith cenv overallTy env tpenv (synBodyExpr, synWithClauses, trivia.WithToEndRange, mTryToLast, spTry, spWith)
@@ -5740,7 +5755,7 @@ and TcExprUndelayed (cenv: cenv) (overallTy: OverallTy) env tpenv (synExpr: SynE
         TcStmtThatCantBeCtorBody cenv env tpenv synInnerExpr
 
     | SynExpr.IfThenElse _ ->
-        TcLinearExprs (TcExprThatCanBeCtorBody cenv) cenv env overallTy tpenv false synExpr (fun x -> x)
+        TcLinearExprs (TcExprThatCanBeCtorBody cenv) cenv env overallTy tpenv false synExpr id
 
     // This is for internal use in the libraries only
     | SynExpr.LibraryOnlyStaticOptimization (constraints, expr2, expr3, m) ->
@@ -6081,7 +6096,7 @@ and TcExprJoinIn (cenv: cenv) overallTy env tpenv (synExpr1, mInToken, synExpr2,
 
 and TcExprSequential (cenv: cenv) overallTy env tpenv (synExpr, _sp, dir, synExpr1, synExpr2, m) =
     if dir then
-        TcLinearExprs (TcExprThatCanBeCtorBody cenv) cenv env overallTy tpenv false synExpr (fun x -> x)
+        TcLinearExprs (TcExprThatCanBeCtorBody cenv) cenv env overallTy tpenv false synExpr id
     else
         // Constructors using "new (...) = <ctor-expr> then <expr>"
         let env = { env with eIsControlFlow = true }
@@ -7033,6 +7048,10 @@ and TcObjectExpr (cenv: cenv) env tpenv (objTy, realObjTy, argopt, binds, extraI
         // 2. check usage conditions
         overridesAndVirts |> List.iter (fun (m, implTy, dispatchSlots, dispatchSlotsKeyed, availPriorOverrides, overrides) ->
             let overrideSpecs = overrides |> List.map fst
+            let hasStaticMembers = dispatchSlots |> List.exists (fun reqdSlot -> not reqdSlot.MethodInfo.IsInstance)
+
+            if hasStaticMembers then
+                errorR(Error(FSComp.SR.chkStaticMembersOnObjectExpressions(), mObjTy))
 
             DispatchSlotChecking.CheckOverridesAreAllUsedOnce (env.DisplayEnv, g, cenv.infoReader, true, implTy, dispatchSlotsKeyed, availPriorOverrides, overrideSpecs)
 
@@ -8115,7 +8134,7 @@ and TcNameOfExpr (cenv: cenv) env tpenv (synArg: SynExpr) =
             // However we don't commit for a type names - nameof allows 'naked' type names and thus all type name
             // resolutions are checked separately in the next step.
             let typeNameResInfo = GetLongIdentTypeNameInfo delayed
-            let nameResolutionResult = ResolveLongIdentAsExprAndComputeRange cenv.tcSink cenv.nameResolver (rangeOfLid longId) ad env.eNameResEnv typeNameResInfo longId
+            let nameResolutionResult = ResolveLongIdentAsExprAndComputeRange cenv.tcSink cenv.nameResolver (rangeOfLid longId) ad env.eNameResEnv typeNameResInfo longId None
             let resolvesAsExpr =
                 match nameResolutionResult with
                 | Result (_, item, _, _, _ as res)
@@ -8326,7 +8345,8 @@ and TcLongIdentThen (cenv: cenv) (overallTy: OverallTy) env tpenv (SynLongIdent(
     let ad = env.eAccessRights
     let typeNameResInfo = GetLongIdentTypeNameInfo delayed
     let nameResolutionResult =
-        ResolveLongIdentAsExprAndComputeRange cenv.tcSink cenv.nameResolver (rangeOfLid longId) ad env.eNameResEnv typeNameResInfo longId
+        let maybeAppliedArgExpr = DelayedItem.maybeAppliedArgForPreferExtensionOverProperty delayed
+        ResolveLongIdentAsExprAndComputeRange cenv.tcSink cenv.nameResolver (rangeOfLid longId) ad env.eNameResEnv typeNameResInfo longId maybeAppliedArgExpr
         |> ForceRaise
     TcItemThen cenv overallTy env tpenv nameResolutionResult None delayed
 
@@ -8578,7 +8598,7 @@ and TcTypeItemThen (cenv: cenv) overallTy env nm ty tpenv mItem tinstEnclosing d
         let item = Item.Types(nm, [ty])
         CallNameResolutionSink cenv.tcSink (mExprAndTypeArgs, env.NameEnv, item, emptyTyparInst, ItemOccurence.Use, env.eAccessRights)
         let typeNameResInfo = GetLongIdentTypeNameInfo otherDelayed
-        let item, mItem, rest, afterResolution = ResolveExprDotLongIdentAndComputeRange cenv.tcSink cenv.nameResolver (unionRanges mExprAndTypeArgs mLongId) ad env.eNameResEnv ty longId typeNameResInfo IgnoreOverrides true
+        let item, mItem, rest, afterResolution = ResolveExprDotLongIdentAndComputeRange cenv.tcSink cenv.nameResolver (unionRanges mExprAndTypeArgs mLongId) ad env.eNameResEnv ty longId typeNameResInfo IgnoreOverrides true None
         TcItemThen cenv overallTy env tpenv ((argsOfAppTy g ty), item, mItem, rest, afterResolution) None otherDelayed
 
     | DelayedTypeApp(tyargs, _mTypeArgs, mExprAndTypeArgs) :: _delayed' ->
@@ -9142,8 +9162,9 @@ and TcLookupThen cenv overallTy env tpenv mObjExpr objExpr objExprTy longId dela
     // Canonicalize inference problem prior to '.' lookup on variable types
     if isTyparTy g objExprTy then
         CanonicalizePartialInferenceProblem cenv.css env.DisplayEnv mExprAndLongId (freeInTypeLeftToRight g false objExprTy)
-
-    let item, mItem, rest, afterResolution = ResolveExprDotLongIdentAndComputeRange cenv.tcSink cenv.nameResolver mExprAndLongId ad env.NameEnv objExprTy longId TypeNameResolutionInfo.Default findFlag false
+    
+    let maybeAppliedArgExpr = DelayedItem.maybeAppliedArgForPreferExtensionOverProperty delayed
+    let item, mItem, rest, afterResolution = ResolveExprDotLongIdentAndComputeRange cenv.tcSink cenv.nameResolver mExprAndLongId ad env.NameEnv objExprTy longId TypeNameResolutionInfo.Default findFlag false maybeAppliedArgExpr
     TcLookupItemThen cenv overallTy env tpenv mObjExpr objExpr objExprTy delayed item mItem rest afterResolution
 
 and TcLookupItemThen cenv overallTy env tpenv mObjExpr objExpr objExprTy delayed item mItem rest afterResolution =
@@ -9424,7 +9445,8 @@ and GetNewInferenceTypeForMethodArg (cenv: cenv) env tpenv x =
         GetNewInferenceTypeForMethodArg cenv env tpenv a
     | SynExpr.AddressOf (true, a, _, m) ->
         mkByrefTyWithInference g (GetNewInferenceTypeForMethodArg cenv env tpenv a) (NewByRefKindInferenceType g m)
-    | SynExpr.Lambda (body = a) ->
+    | SynExpr.Lambda (body = a) 
+    | SynExpr.DotLambda (expr = a) ->
         mkFunTy g (NewInferenceType g) (GetNewInferenceTypeForMethodArg cenv env tpenv a)
     | SynExpr.Quote (_, raw, a, _, _) ->
         if raw then mkRawQuotedExprTy g
@@ -10553,8 +10575,8 @@ and TcNormalizedBinding declKind (cenv: cenv) env tpenv overallTy safeThisValOpt
                 match rotRetSynAttrs with
                 | [] -> valSynData
                 | {Range=mHead} :: _ ->
-                let (SynValData(valMf, SynValInfo(args, SynArgInfo(attrs, opt, retId)), valId, tap)) = valSynData
-                SynValData(valMf, SynValInfo(args, SynArgInfo({Attributes=rotRetSynAttrs; Range=mHead} :: attrs, opt, retId)), valId, tap)
+                let (SynValData(valMf, SynValInfo(args, SynArgInfo(attrs, opt, retId)), valId)) = valSynData
+                SynValData(valMf, SynValInfo(args, SynArgInfo({Attributes=rotRetSynAttrs; Range=mHead} :: attrs, opt, retId)), valId)
             retAttribs, valAttribs, valSynData
 
         let isVolatile = HasFSharpAttribute g g.attrib_VolatileFieldAttribute valAttribs     
@@ -11036,7 +11058,7 @@ and TcLetBinding (cenv: cenv) isUse env containerInfo declKind tpenv (synBinds, 
     let lazyFreeInEnv = lazy (GeneralizationHelpers.ComputeUngeneralizableTypars env)
 
     // Generalize the bindings...
-    (((fun x -> x), env, tpenv), checkedBinds) ||> List.fold (fun (buildExpr, env, tpenv) tbinfo ->
+    ((id, env, tpenv), checkedBinds) ||> List.fold (fun (buildExpr, env, tpenv) tbinfo ->
         let (CheckedBindingInfo(inlineFlag, attrs, xmlDoc, tcPatPhase2, explicitTyparInfo, nameToPrelimValSchemeMap, rhsExpr, _, tauTy, m, debugPoint, _, literalValue, isFixed)) = tbinfo
         let enclosingDeclaredTypars = []
         let (ExplicitTyparInfo(_, declaredTypars, canInferTypars)) = explicitTyparInfo
@@ -11547,7 +11569,6 @@ and AnalyzeRecursiveInstanceMemberDecl
         thisId,
         memberId: Ident,
         toolId: Ident option,
-        isTransformedProperty: bool,
         bindingAttribs,
         vis2,
         tcrefContainerInfo,
@@ -11606,12 +11627,11 @@ and AnalyzeRecursiveInstanceMemberDecl
              | None -> None
 
          let memberInfo = MakeMemberDataAndMangledNameForMemberVal(g, tcref, isExtrinsic, bindingAttribs, optInferredImplSlotTys, memberFlags, valSynInfo, memberId, false)
-         // This line factored in the 'get' or 'set' as the identifier for a property declaration using "with get () = ... and set v = ..."
+         // We used to factored in the 'get' or 'set' as the identifier for a property declaration using "with get () = ... and set v = ..."
          // It has been removed from FSharp.Compiler.Service because we want the property name to be the location of
          // the definition of these symbols.
          //
          // See https://github.com/fsharp/FSharp.Compiler.Service/issues/79.
-         let memberId = match toolId with Some tid when isTransformedProperty -> ident(memberId.idText, tid.idRange) | _ -> memberId
 
          envinner, tpenv, memberId, toolId, Some memberInfo, vis, vis2, None, enclosingDeclaredTypars, baseValOpt, explicitTyparInfo, bindingRhs, declaredTypars
      | _ ->
@@ -11626,7 +11646,6 @@ and AnalyzeRecursiveDecl
          declaredTypars,
          thisIdOpt,
          valSynInfo,
-         isTransformedProperty,
          explicitTyparInfo,
          newslotsOK,
          overridesOK,
@@ -11671,7 +11690,7 @@ and AnalyzeRecursiveDecl
             AnalyzeRecursiveInstanceMemberDecl
                 (cenv, envinner, tpenv, declKind,
                  synTyparDecls, valSynInfo, explicitTyparInfo, newslotsOK,
-                 overridesOK, vis1, thisId, memberId, toolId, isTransformedProperty,
+                 overridesOK, vis1, thisId, memberId, toolId,
                  bindingAttribs, vis2, tcrefContainerInfo,
                  memberFlagsOpt, ty, bindingRhs, mBinding)
 
@@ -11701,7 +11720,7 @@ and AnalyzeAndMakeAndPublishRecursiveValue
     // Pull apart the inputs
     let (NormalizedBinding(vis1, bindingKind, isInline, isMutable, bindingSynAttribs, bindingXmlDoc, synTyparDecls, valSynData, declPattern, bindingRhs, mBinding, debugPoint)) = binding
     let (NormalizedBindingRhs(_, _, bindingExpr)) = bindingRhs
-    let (SynValData(memberFlagsOpt, valSynInfo, thisIdOpt, transformedFromProperty)) = valSynData
+    let (SynValData(memberFlagsOpt, valSynInfo, thisIdOpt)) = valSynData
     let (ContainerInfo(altActualParent, tcrefContainerInfo)) = containerInfo
 
     let attrTgt = declKind.AllowedAttribTargets memberFlagsOpt
@@ -11725,7 +11744,7 @@ and AnalyzeAndMakeAndPublishRecursiveValue
     let envinner, tpenv, bindingId, toolIdOpt, memberInfoOpt, vis, vis2, safeThisValOpt, enclosingDeclaredTypars, baseValOpt, explicitTyparInfo, bindingRhs, declaredTypars =
 
         AnalyzeRecursiveDecl (cenv, envinner, tpenv, declKind, synTyparDecls, declaredTypars, thisIdOpt, valSynInfo,
-                              transformedFromProperty.IsSome, explicitTyparInfo,
+                              explicitTyparInfo,
                               newslotsOK, overridesOK, vis1, declPattern, bindingAttribs, tcrefContainerInfo,
                               memberFlagsOpt, ty, bindingRhs, mBinding)
 
@@ -12301,7 +12320,7 @@ and TcLetrecBindings overridesOK (cenv: cenv) env tpenv (binds, bindsm, scopem) 
              bindsWithoutLaziness
              //(fun
              (fun doBindings bindings -> doBindings bindings)
-             (fun bindings -> bindings)
+             id
              (fun doBindings bindings -> [doBindings bindings])
              bindsm
         List.concat results

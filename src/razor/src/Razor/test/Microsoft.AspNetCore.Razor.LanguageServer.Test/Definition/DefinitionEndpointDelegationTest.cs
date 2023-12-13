@@ -23,13 +23,8 @@ using DefinitionResult = Microsoft.VisualStudio.LanguageServer.Protocol.SumType<
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
 
-public class DefinitionEndpointDelegationTest : SingleServerDelegatingEndpointTestBase
+public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : SingleServerDelegatingEndpointTestBase(testOutput)
 {
-    public DefinitionEndpointDelegationTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task Handle_SingleServer_CSharp_Method()
     {
@@ -95,7 +90,14 @@ public class DefinitionEndpointDelegationTest : SingleServerDelegatingEndpointTe
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
         Assert.EndsWith("String.cs", location.Uri.ToString());
+
+        // Note: The location is in a generated C# "metadata-as-source" file, which has a different
+        // number of using directives in .NET Framework vs. .NET Core. So, the line numbers are different.
+#if NETFRAMEWORK
+        Assert.Equal(24, location.Range.Start.Line);
+#else
         Assert.Equal(21, location.Range.Start.Line);
+#endif
     }
 
     [Theory]
@@ -225,18 +227,18 @@ public class DefinitionEndpointDelegationTest : SingleServerDelegatingEndpointTe
 
     private async Task<DefinitionResult?> GetDefinitionResultAsync(RazorCodeDocument codeDocument, string razorFilePath, int cursorPosition, IEnumerable<(string filePath, string contents)>? additionalRazorDocuments = null)
     {
-        await CreateLanguageServerAsync(codeDocument, razorFilePath, additionalRazorDocuments);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath, additionalRazorDocuments);
 
         var projectSnapshotManager = Mock.Of<ProjectSnapshotManagerBase>(p => p.GetProjects() == new[] { Mock.Of<IProjectSnapshot>(MockBehavior.Strict) }.ToImmutableArray(), MockBehavior.Strict);
         var projectSnapshotManagerAccessor = new TestProjectSnapshotManagerAccessor(projectSnapshotManager);
-        var projectSnapshotManagerDispatcher = new LSPProjectSnapshotManagerDispatcher(LoggerFactory);
+
         var searchEngine = new DefaultRazorComponentSearchEngine(projectSnapshotManagerAccessor, LoggerFactory);
 
         var razorUri = new Uri(razorFilePath);
         var documentContext = DocumentContextFactory.TryCreateForOpenDocument(razorUri);
         var requestContext = CreateRazorRequestContext(documentContext);
 
-        var endpoint = new DefinitionEndpoint(searchEngine, DocumentMappingService, LanguageServerFeatureOptions, LanguageServer, LoggerFactory);
+        var endpoint = new DefinitionEndpoint(searchEngine, DocumentMappingService, LanguageServerFeatureOptions, languageServer, LoggerFactory);
 
         codeDocument.GetSourceText().GetLineAndOffset(cursorPosition, out var line, out var offset);
         var request = new TextDocumentPositionParams

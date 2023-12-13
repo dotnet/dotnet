@@ -21,7 +21,7 @@ public class ExtensibleDirectiveTest : IntegrationTestBase
         // Arrange
         var engine = CreateProjectEngine(builder =>
         {
-            builder.ConfigureDocumentClassifier();
+            builder.ConfigureDocumentClassifier(GetTestFileName(nameof(NamespaceToken)));
 
             builder.AddDirective(DirectiveDescriptor.CreateDirective("custom", DirectiveKind.SingleLine, b => b.AddNamespaceToken()));
         });

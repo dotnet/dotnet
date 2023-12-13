@@ -10,12 +10,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.ProjectContexts;
 
-public class ProjectContextsEndpointTest : SingleServerDelegatingEndpointTestBase
+public class ProjectContextsEndpointTest(ITestOutputHelper testOutput) : SingleServerDelegatingEndpointTestBase(testOutput)
 {
-    public ProjectContextsEndpointTest(ITestOutputHelper testOutput) : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task GetProjectContexts_ReturnsExpected()
     {
@@ -26,9 +22,9 @@ public class ProjectContextsEndpointTest : SingleServerDelegatingEndpointTestBas
         var codeDocument = CreateCodeDocument(input);
         var razorFilePath = "C:/path/to/file.razor";
 
-        await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
-        var endpoint = new ProjectContextsEndpoint(LanguageServer);
+        var endpoint = new ProjectContextsEndpoint(languageServer);
 
         var request = new VSGetProjectContextsParams()
         {

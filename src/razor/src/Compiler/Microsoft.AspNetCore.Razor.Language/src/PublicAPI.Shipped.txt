@@ -647,7 +647,6 @@
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetCssScope(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> string
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetDocumentIntermediateNode(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> Microsoft.AspNetCore.Razor.Language.Intermediate.DocumentIntermediateNode
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetFileKind(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> string
-~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetImportSyntaxTrees(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree>
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetParserOptions(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> Microsoft.AspNetCore.Razor.Language.RazorParserOptions
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetSyntaxTree(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetTagHelperContext(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> Microsoft.AspNetCore.Razor.Language.TagHelperDocumentContext
@@ -656,7 +655,6 @@
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetCssScope(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, string cssScope) -> void
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetDocumentIntermediateNode(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, Microsoft.AspNetCore.Razor.Language.Intermediate.DocumentIntermediateNode documentNode) -> void
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetFileKind(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, string fileKind) -> void
-~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetImportSyntaxTrees(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree> syntaxTrees) -> void
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetParserOptions(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, Microsoft.AspNetCore.Razor.Language.RazorParserOptions parserOptions) -> void
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetSyntaxTree(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree syntaxTree) -> void
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetTagHelperContext(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, Microsoft.AspNetCore.Razor.Language.TagHelperDocumentContext context) -> void
@@ -1251,7 +1249,6 @@ virtual Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptionsBuilder.Su
 virtual Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptionsBuilder.UseEnhancedLinePragma.get -> bool
 virtual Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptionsBuilder.UseEnhancedLinePragma.set -> void
 virtual Microsoft.AspNetCore.Razor.Language.RazorEngineFeatureBase.OnInitialized() -> void
-virtual Microsoft.AspNetCore.Razor.Language.RazorEnginePhaseBase.OnIntialized() -> void
 virtual Microsoft.AspNetCore.Razor.Language.RazorProjectEngineFeatureBase.OnInitialized() -> void
 virtual Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorProviderContext.ExcludeHidden.get -> bool
 virtual Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorProviderContext.ExcludeHidden.set -> void

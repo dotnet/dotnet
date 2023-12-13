@@ -2,6 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+#if !NET
+using System.Collections.Generic;
+#endif
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,13 +19,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 
-public class CSharpDiagnosticsEndToEndTest : SingleServerDelegatingEndpointTestBase
+public class CSharpDiagnosticsEndToEndTest(ITestOutputHelper testOutput) : SingleServerDelegatingEndpointTestBase(testOutput)
 {
-    public CSharpDiagnosticsEndToEndTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task Handle()
     {
@@ -63,12 +61,12 @@ public class CSharpDiagnosticsEndToEndTest : SingleServerDelegatingEndpointTestB
         var sourceText = codeDocument.GetSourceText();
         var razorFilePath = "file://C:/path/test.razor";
         var uri = new Uri(razorFilePath);
-        await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var requestContext = new RazorRequestContext(documentContext, Logger, null!);
 
         var translateDiagnosticsService = new RazorTranslateDiagnosticsService(DocumentMappingService, LoggerFactory);
-        var diagnosticsEndPoint = new DocumentPullDiagnosticsEndpoint(LanguageServerFeatureOptions, translateDiagnosticsService, LanguageServer, telemetryReporter: null);
+        var diagnosticsEndPoint = new DocumentPullDiagnosticsEndpoint(LanguageServerFeatureOptions, translateDiagnosticsService, languageServer, telemetryReporter: null);
 
         var diagnosticsRequest = new VSInternalDocumentDiagnosticsParams
         {

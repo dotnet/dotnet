@@ -20,14 +20,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 /// </summary>
 internal sealed class UnformattedRemappingCSharpCodeActionResolver : CSharpCodeActionResolver
 {
-    private readonly DocumentContextFactory _documentContextFactory;
+    private readonly IDocumentContextFactory _documentContextFactory;
     private readonly IRazorDocumentMappingService _documentMappingService;
 
     public UnformattedRemappingCSharpCodeActionResolver(
-        DocumentContextFactory documentContextFactory,
-        ClientNotifierServiceBase languageServer,
+        IDocumentContextFactory documentContextFactory,
+        IClientConnection clientConnection,
         IRazorDocumentMappingService documentMappingService)
-        : base(languageServer)
+        : base(clientConnection)
     {
         _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));

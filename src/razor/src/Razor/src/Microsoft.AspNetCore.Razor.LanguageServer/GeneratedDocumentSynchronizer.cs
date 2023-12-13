@@ -11,12 +11,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal class GeneratedDocumentSynchronizer : DocumentProcessedListener
 {
     private readonly GeneratedDocumentPublisher _publisher;
-    private readonly DocumentVersionCache _documentVersionCache;
+    private readonly IDocumentVersionCache _documentVersionCache;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
 
     public GeneratedDocumentSynchronizer(
         GeneratedDocumentPublisher publisher,
-        DocumentVersionCache documentVersionCache,
+        IDocumentVersionCache documentVersionCache,
         ProjectSnapshotManagerDispatcher dispatcher)
     {
         _publisher = publisher;

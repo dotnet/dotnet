@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.DocumentSymbol;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -15,12 +16,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.DocumentSymbols;
 
-public class DocumentSymbolEndpointTest : SingleServerDelegatingEndpointTestBase
+public class DocumentSymbolEndpointTest(ITestOutputHelper testOutput) : SingleServerDelegatingEndpointTestBase(testOutput)
 {
-    public DocumentSymbolEndpointTest(ITestOutputHelper testOutput) : base(testOutput)
-    {
-    }
-
     [Fact]
     public Task DocumentSymbols_CSharpMethods()
         => VerifyDocumentSymbolsAsync(
@@ -54,11 +51,11 @@ public class DocumentSymbolEndpointTest : SingleServerDelegatingEndpointTestBase
         var codeDocument = CreateCodeDocument(input);
         var razorFilePath = "C:/path/to/file.razor";
 
-        await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         // This test requires the SingleServerSupport to be disabled
         Assert.False(TestLanguageServerFeatureOptions.Instance.SingleServerSupport);
-        var endpoint = new DocumentSymbolEndpoint(LanguageServer, DocumentMappingService, TestLanguageServerFeatureOptions.Instance);
+        var endpoint = new DocumentSymbolEndpoint(languageServer, DocumentMappingService, TestLanguageServerFeatureOptions.Instance);
 
         var serverCapabilities = new VSInternalServerCapabilities();
         var clientCapabilities = new VSInternalClientCapabilities();
@@ -74,9 +71,9 @@ public class DocumentSymbolEndpointTest : SingleServerDelegatingEndpointTestBase
         var codeDocument = CreateCodeDocument(input);
         var razorFilePath = "C:/path/to/file.razor";
 
-        await CreateLanguageServerAsync(codeDocument, razorFilePath);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
-        var endpoint = new DocumentSymbolEndpoint(LanguageServer, DocumentMappingService, TestLanguageServerFeatureOptions.Instance);
+        var endpoint = new DocumentSymbolEndpoint(languageServer, DocumentMappingService, TestLanguageServerFeatureOptions.Instance);
 
         var request = new DocumentSymbolParams()
         {

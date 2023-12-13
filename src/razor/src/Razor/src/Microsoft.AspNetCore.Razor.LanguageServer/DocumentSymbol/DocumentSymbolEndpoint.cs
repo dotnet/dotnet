@@ -18,16 +18,16 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSymbol;
 [LanguageServerEndpoint(Methods.TextDocumentDocumentSymbolName)]
 internal class DocumentSymbolEndpoint : IRazorRequestHandler<DocumentSymbolParams, SymbolInformation[]>, ICapabilitiesProvider
 {
-    private readonly ClientNotifierServiceBase _languageServer;
+    private readonly IClientConnection _clientConnection;
     private readonly IRazorDocumentMappingService _documentMappingService;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
 
     public DocumentSymbolEndpoint(
-        ClientNotifierServiceBase languageServer,
+        IClientConnection clientConnection,
         IRazorDocumentMappingService documentMappingService,
         LanguageServerFeatureOptions languageServerFeatureOptions)
     {
-        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
         _languageServerFeatureOptions = languageServerFeatureOptions;
     }
@@ -62,7 +62,7 @@ internal class DocumentSymbolEndpoint : IRazorRequestHandler<DocumentSymbolParam
         var documentContext = context.GetRequiredDocumentContext();
         var delegatedParams = new DelegatedDocumentSymbolParams(documentContext.Identifier);
 
-        var symbolInformations = await _languageServer.SendRequestAsync<DelegatedDocumentSymbolParams, SymbolInformation[]?>(
+        var symbolInformations = await _clientConnection.SendRequestAsync<DelegatedDocumentSymbolParams, SymbolInformation[]?>(
             CustomMessageNames.RazorDocumentSymbolEndpoint,
             delegatedParams,
             cancellationToken).ConfigureAwait(false);

@@ -11,7 +11,7 @@ internal class DefaultRazorDocumentClassifierPhase : RazorEnginePhaseBase, IRazo
 {
     public IRazorDocumentClassifierPass[] Passes { get; private set; }
 
-    protected override void OnIntialized()
+    protected override void OnInitialized()
     {
         Passes = Engine.Features.OfType<IRazorDocumentClassifierPass>().OrderBy(p => p.Order).ToArray();
     }

@@ -2,10 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -148,7 +145,7 @@ internal class ClassifiedSpanVisitor : SyntaxWalker
     {
         WriteBlock(node, BlockKindInternal.Tag, n =>
         {
-            var children = GetRewrittenMarkupStartTagChildren(node);
+            var children = SyntaxUtilities.GetRewrittenMarkupStartTagChildren(node, includeEditHandler: true);
             foreach (var child in children)
             {
                 Visit(child);
@@ -160,7 +157,7 @@ internal class ClassifiedSpanVisitor : SyntaxWalker
     {
         WriteBlock(node, BlockKindInternal.Tag, n =>
         {
-            var children = GetRewrittenMarkupEndTagChildren(node);
+            var children = SyntaxUtilities.GetRewrittenMarkupEndTagChildren(node, includeEditHandler: true);
             foreach (var child in children)
             {
                 Visit(child);
@@ -341,101 +338,5 @@ internal class ClassifiedSpanVisitor : SyntaxWalker
 
         var span = new ClassifiedSpanInternal(spanSource, blockSource, kind, _currentBlockKind, acceptedCharacters.Value);
         _spans.Add(span);
-    }
-
-    private static SyntaxList<RazorSyntaxNode> GetRewrittenMarkupStartTagChildren(MarkupStartTagSyntax node)
-    {
-        // Rewrites the children of the start tag to look like the legacy syntax tree.
-        if (node.IsMarkupTransition)
-        {
-            var tokens = node.DescendantNodes().Where(n => n is SyntaxToken token && !token.IsMissing).Cast<SyntaxToken>().ToArray();
-            var tokenBuilder = SyntaxListBuilder<SyntaxToken>.Create();
-            tokenBuilder.AddRange(tokens, 0, tokens.Length);
-            var markupTransition = SyntaxFactory.MarkupTransition(tokenBuilder.ToList(), node.ChunkGenerator).Green.CreateRed(node, node.Position);
-            var editHandler = node.GetEditHandler();
-            if (editHandler != null)
-            {
-                markupTransition = markupTransition.WithEditHandler(editHandler);
-            }
-
-            var builder = new SyntaxListBuilder(1);
-            builder.Add(markupTransition);
-            return new SyntaxList<RazorSyntaxNode>(builder.ToListNode().CreateRed(node, node.Position));
-        }
-
-        SpanEditHandler? latestEditHandler = null;
-        var children = node.LegacyChildren;
-        var newChildren = new SyntaxListBuilder(children.Count);
-        var literals = new List<MarkupTextLiteralSyntax>();
-        foreach (var child in children)
-        {
-            if (child is MarkupTextLiteralSyntax literal)
-            {
-                literals.Add(literal);
-                latestEditHandler = literal.GetEditHandler() ?? latestEditHandler;
-            }
-            else if (child is MarkupMiscAttributeContentSyntax miscContent)
-            {
-                foreach (var contentChild in miscContent.Children)
-                {
-                    if (contentChild is MarkupTextLiteralSyntax contentLiteral)
-                    {
-                        literals.Add(contentLiteral);
-                        latestEditHandler = contentLiteral.GetEditHandler() ?? latestEditHandler;
-                    }
-                    else
-                    {
-                        // Pop stack
-                        AddLiteralIfExists();
-                        newChildren.Add(contentChild);
-                    }
-                }
-            }
-            else
-            {
-                AddLiteralIfExists();
-                newChildren.Add(child);
-            }
-        }
-
-        AddLiteralIfExists();
-
-        return new SyntaxList<RazorSyntaxNode>(newChildren.ToListNode().CreateRed(node, node.Position));
-
-        void AddLiteralIfExists()
-        {
-            if (literals.Count > 0)
-            {
-                var mergedLiteral = SyntaxUtilities.MergeTextLiterals(literals.ToArray());
-                Debug.Assert(mergedLiteral != null);
-                mergedLiteral = mergedLiteral!.WithEditHandler(latestEditHandler);
-                literals.Clear();
-                latestEditHandler = null;
-                newChildren.Add(mergedLiteral);
-            }
-        }
-    }
-
-    private static SyntaxList<RazorSyntaxNode> GetRewrittenMarkupEndTagChildren(MarkupEndTagSyntax node)
-    {
-        // Rewrites the children of the end tag to look like the legacy syntax tree.
-        if (node.IsMarkupTransition)
-        {
-            var tokens = node.DescendantNodes().Where(n => n is SyntaxToken token && !token.IsMissing).Cast<SyntaxToken>().ToArray();
-            var tokenBuilder = SyntaxListBuilder<SyntaxToken>.Create();
-            tokenBuilder.AddRange(tokens, 0, tokens.Length);
-            var markupTransition = SyntaxFactory.MarkupTransition(tokenBuilder.ToList(), node.ChunkGenerator).Green.CreateRed(node, node.Position);
-            var editHandler = node.GetEditHandler();
-            if (editHandler != null)
-            {
-                markupTransition = markupTransition.WithEditHandler(editHandler);
-            }
-
-            var builder = new SyntaxListBuilder(1);
-            builder.Add(markupTransition);
-            return new SyntaxList<RazorSyntaxNode>(builder.ToListNode().CreateRed(node, node.Position));
-        }
-
-        return node.LegacyChildren;
     }
 }

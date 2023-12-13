@@ -5,7 +5,8 @@
 
 using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Moq;
 using Xunit;
@@ -27,9 +28,7 @@ public class DefaultImportDocumentManagerIntegrationTest : ProjectSnapshotManage
         _directoryPath = Path.GetDirectoryName(_projectPath);
 
         _fileSystem = RazorProjectFileSystem.Create(Path.GetDirectoryName(_projectPath));
-        _projectEngine = RazorProjectEngine.Create(FallbackRazorConfiguration.MVC_2_1, _fileSystem, b =>
-            // These tests rely on MVC's import behavior.
-            Microsoft.AspNetCore.Mvc.Razor.Extensions.RazorExtensions.Register(b));
+        _projectEngine = RazorProjectEngine.Create(FallbackRazorConfiguration.MVC_2_1, _fileSystem, AspNetCore.Mvc.Razor.Extensions.RazorExtensions.Register);
     }
 
     [UIFact]

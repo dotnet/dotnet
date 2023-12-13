@@ -6,7 +6,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -31,7 +30,7 @@ public static class RazorProjectEngineBuilderExtensions
         return builder;
     }
 
-    public static RazorProjectEngineBuilder ConfigureDocumentClassifier(this RazorProjectEngineBuilder builder)
+    public static RazorProjectEngineBuilder ConfigureDocumentClassifier(this RazorProjectEngineBuilder builder, string testFileName)
     {
         var feature = builder.Features.OfType<DefaultDocumentClassifierPassFeature>().FirstOrDefault();
         if (feature == null)
@@ -51,7 +50,7 @@ public static class RazorProjectEngineBuilderExtensions
 
         feature.ConfigureClass.Add((RazorCodeDocument codeDocument, ClassDeclarationIntermediateNode node) =>
         {
-            node.ClassName = IntegrationTestBase.FileName.Replace('/', '_');
+            node.ClassName = testFileName.Replace('/', '_');
             node.Modifiers.Clear();
             node.Modifiers.Add("public");
         });

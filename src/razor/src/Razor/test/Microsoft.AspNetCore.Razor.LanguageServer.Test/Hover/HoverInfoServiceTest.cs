@@ -14,10 +14,9 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -36,13 +35,8 @@ using static Microsoft.AspNetCore.Razor.LanguageServer.Tooltip.DefaultVSLSPTagHe
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test.Hover;
 
 [UseExportProvider]
-public class HoverInfoServiceTest : TagHelperServiceTestBase
+public class HoverInfoServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTestBase(testOutput)
 {
-    public HoverInfoServiceTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     private static VSInternalClientCapabilities CreateMarkDownCapabilities()
         => CreateCapabilities(MarkupKind.Markdown);
 
@@ -655,8 +649,8 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
 
         var delegatedHover = new VSInternalHover();
 
-        var languageServerMock = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
-        languageServerMock
+        var clientConnectionMock = new Mock<IClientConnection>(MockBehavior.Strict);
+        clientConnectionMock
             .Setup(c => c.SendRequestAsync<IDelegatedParams, VSInternalHover>(CustomMessageNames.RazorHoverEndpointName, It.IsAny<DelegatedPositionParams>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(delegatedHover);
 
@@ -676,7 +670,7 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
             c => c.TryMapToGeneratedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
             .Returns(true);
 
-        var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, languageServerMock.Object);
+        var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, clientConnectionMock.Object);
 
         var request = new TextDocumentPositionParams
         {
@@ -770,10 +764,10 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
     {
         // Arrange
         var input = """
-                @addTagHelper *, Test$$Assembly
+            @addTagHelper *, Test$$Assembly
 
-                <test1></test1>
-                """;
+            <test1></test1>
+            """;
 
         // Act
         var result = await GetResultFromSingleServerEndpointAsync(input);
@@ -787,10 +781,15 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
         var rawContainer = (ContainerElement)result.RawContent;
         var embeddedContainerElement = (ContainerElement)rawContainer.Elements.Single();
 
+        if (embeddedContainerElement.Elements.FirstOrDefault() is ContainerElement headerContainer)
+        {
+            embeddedContainerElement = headerContainer;
+        }
+
         var classifiedText = (ClassifiedTextElement)embeddedContainerElement.Elements.ElementAt(1);
         var text = string.Join("", classifiedText.Runs.Select(r => r.Text));
         // Hover info is for a string
-        Assert.StartsWith("Represents text as a sequence of UTF-16", text);
+        Assert.StartsWith("class System.String", text);
     }
 
     private async Task<VSInternalHover> GetResultFromSingleServerEndpointAsync(string input)
@@ -879,7 +878,7 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
 
     private HoverEndpoint CreateEndpoint(LanguageServerFeatureOptions languageServerFeatureOptions = null,
         IRazorDocumentMappingService documentMappingService = null,
-        ClientNotifierServiceBase languageServer = null)
+        IClientConnection clientConnection = null)
     {
 
         languageServerFeatureOptions ??= Mock.Of<LanguageServerFeatureOptions>(options => options.SupportsFileManipulation == true && options.SingleServerSupport == false, MockBehavior.Strict);
@@ -890,13 +889,13 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
             .Returns(Protocol.RazorLanguageKind.Html);
         documentMappingService ??= documentMappingServiceMock.Object;
 
-        languageServer ??= Mock.Of<ClientNotifierServiceBase>(MockBehavior.Strict);
+        clientConnection ??= Mock.Of<IClientConnection>(MockBehavior.Strict);
 
         var endpoint = new HoverEndpoint(
             GetHoverInfoService(),
             languageServerFeatureOptions,
             documentMappingService,
-            languageServer,
+            clientConnection,
             LoggerFactory);
 
         return endpoint;
@@ -910,7 +909,7 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
         return new HoverInfoService(TagHelperFactsService, lspTagHelperTooltipFactory, vsLspTagHelperTooltipFactory, HtmlFactsService);
     }
 
-    private class HoverLanguageServer : ClientNotifierServiceBase
+    private class HoverLanguageServer : IClientConnection
     {
         private readonly CSharpTestLspServer _csharpServer;
         private readonly Uri _csharpDocumentUri;
@@ -926,22 +925,17 @@ public class HoverInfoServiceTest : TagHelperServiceTestBase
             _cancellationToken = cancellationToken;
         }
 
-        public override Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
-
-        public override Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
+        public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public override Task SendNotificationAsync(string method, CancellationToken cancellationToken)
+        public Task SendNotificationAsync(string method, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public override async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
+        public async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
         {
             Assert.Equal(CustomMessageNames.RazorHoverEndpointName, method);
             var hoverParams = Assert.IsType<DelegatedPositionParams>(@params);

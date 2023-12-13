@@ -20,14 +20,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 [LanguageServerEndpoint(LanguageServerConstants.RazorWrapWithTagEndpoint)]
 internal class WrapWithTagEndpoint : IRazorRequestHandler<WrapWithTagParams, WrapWithTagResponse?>
 {
-    private readonly ClientNotifierServiceBase _languageServer;
+    private readonly IClientConnection _clientConnection;
     private readonly IRazorDocumentMappingService _razorDocumentMappingService;
 
     public WrapWithTagEndpoint(
-        ClientNotifierServiceBase languageServer,
+        IClientConnection clientConnection,
         IRazorDocumentMappingService razorDocumentMappingService)
     {
-        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
         _razorDocumentMappingService = razorDocumentMappingService ?? throw new ArgumentNullException(nameof(razorDocumentMappingService));
     }
 
@@ -110,7 +110,7 @@ internal class WrapWithTagEndpoint : IRazorRequestHandler<WrapWithTagParams, Wra
         };
         var parameter = new DelegatedWrapWithTagParams(versioned, request);
 
-        var htmlResponse = await _languageServer.SendRequestAsync<DelegatedWrapWithTagParams, WrapWithTagResponse>(
+        var htmlResponse = await _clientConnection.SendRequestAsync<DelegatedWrapWithTagParams, WrapWithTagResponse>(
             LanguageServerConstants.RazorWrapWithTagEndpoint,
             parameter,
             cancellationToken).ConfigureAwait(false);

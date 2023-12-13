@@ -41,6 +41,7 @@ type ILPlatform =
 type ILSourceDocument =
     static member Create:
         language: ILGuid option * vendor: ILGuid option * documentType: ILGuid option * file: string -> ILSourceDocument
+
     member Language: ILGuid option
     member Vendor: ILGuid option
     member DocumentType: ILGuid option
@@ -50,6 +51,7 @@ type ILSourceDocument =
 type internal ILDebugPoint =
     static member Create:
         document: ILSourceDocument * line: int * column: int * endLine: int * endColumn: int -> ILDebugPoint
+
     member Document: ILSourceDocument
     member Line: int
     member Column: int
@@ -1988,6 +1990,7 @@ val internal mkILNonGenericStaticMethSpecInTy: ILType * string * ILType list * I
 
 /// Construct references to constructors.
 val internal mkILCtorMethSpecForTy: ILType * ILType list -> ILMethodSpec
+val internal mkILNonGenericCtorMethSpec: ILTypeRef * ILType list -> ILMethodSpec
 
 /// Construct references to fields.
 val internal mkILFieldRef: ILTypeRef * string * ILType -> ILFieldRef

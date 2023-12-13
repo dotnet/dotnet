@@ -1,7 +1,1 @@
-<Project>
-  <Target Name="_EmscriptenCacheSdkOverrideWasmCachePath" BeforeTargets="_PrepareForWasmBuildNative" Condition="'$(WasmBuildNative)' == 'true'">
-    <PropertyGroup>
-      <WasmCachePath Condition="'$(WasmCachePath)' == ''">$(EmscriptenCacheSdkCacheDir)</WasmCachePath>
-    </PropertyGroup>
-  </Target>
-</Project>
+<Project />

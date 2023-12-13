@@ -2189,7 +2189,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
         // Find the last token of this node and return its immediate non-list parent.
         var red = node.CreateRed();
-        Syntax.SyntaxNode last = red.GetLastToken();
+        Syntax.SyntaxNode? last = red.GetLastToken();
         if (last == null)
         {
             return null;

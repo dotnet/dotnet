@@ -125,7 +125,7 @@ internal static class TagHelperParseTreeRewriter
                         }
 
                         // This tag contains a body and/or an end tag which needs to be moved to the parent.
-                        var rewrittenNodes = SyntaxListBuilder<RazorSyntaxNode>.Create();
+                        using var _ = SyntaxListBuilderPool.GetPooledBuilder<RazorSyntaxNode>(out var rewrittenNodes);
                         rewrittenNodes.Add(rewrittenTagHelper);
                         var rewrittenBody = VisitList(node.Body);
                         rewrittenNodes.AddRange(rewrittenBody);

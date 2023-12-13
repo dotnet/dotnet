@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal class LspLogger : IRazorLogger
 {
     private readonly LogLevel _logLevel;
-    private ClientNotifierServiceBase? _serviceBase;
+    private IClientConnection? _clientConnection;
 
     public LspLogger(Trace trace)
     {
@@ -25,9 +25,9 @@ internal class LspLogger : IRazorLogger
         _logLevel = logLevel;
     }
 
-    public void Initialize(ClientNotifierServiceBase serviceBase)
+    public void Initialize(IClientConnection clientConnection)
     {
-        _serviceBase = serviceBase;
+        _clientConnection = clientConnection;
     }
 
     public IDisposable BeginScope<TState>(TState state)
@@ -69,12 +69,12 @@ internal class LspLogger : IRazorLogger
             Message = message,
         };
 
-        if (_serviceBase is null)
+        if (_clientConnection is null)
         {
-            throw new InvalidOperationException($"Tried to log before {nameof(ClientNotifierServiceBase)} was set.");
+            throw new InvalidOperationException($"Tried to log before {nameof(IClientConnection)} was set.");
         }
 
-        _ = _serviceBase.SendNotificationAsync(Methods.WindowLogMessageName, @params, CancellationToken.None);
+        _ = _clientConnection.SendNotificationAsync(Methods.WindowLogMessageName, @params, CancellationToken.None);
     }
 
     // Not doing anything for now.

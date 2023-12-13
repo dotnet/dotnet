@@ -28,18 +28,18 @@ internal sealed class ExtractToCodeBehindCodeActionResolver : IRazorCodeActionRe
 {
     private static readonly Workspace s_workspace = new AdhocWorkspace();
 
-    private readonly DocumentContextFactory _documentContextFactory;
+    private readonly IDocumentContextFactory _documentContextFactory;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly ClientNotifierServiceBase _languageServer;
+    private readonly IClientConnection _clientConnection;
 
     public ExtractToCodeBehindCodeActionResolver(
-        DocumentContextFactory documentContextFactory,
+        IDocumentContextFactory documentContextFactory,
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        ClientNotifierServiceBase languageServer)
+        IClientConnection clientConnection)
     {
         _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
         _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
     }
 
     public string Action => LanguageServerConstants.CodeActions.ExtractToCodeBehindAction;
@@ -218,7 +218,7 @@ internal sealed class ExtractToCodeBehindCodeActionResolver : IRazorCodeActionRe
             },
             Contents = newFileContent
         };
-        var fixedContent = await _languageServer.SendRequestAsync<FormatNewFileParams, string?>(CustomMessageNames.RazorFormatNewFileEndpointName, parameters, cancellationToken).ConfigureAwait(false);
+        var fixedContent = await _clientConnection.SendRequestAsync<FormatNewFileParams, string?>(CustomMessageNames.RazorFormatNewFileEndpointName, parameters, cancellationToken).ConfigureAwait(false);
 
         if (fixedContent is null)
         {

@@ -10,9 +10,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class TestClient : ClientNotifierServiceBase
+internal class TestClient : IClientConnection
 {
-    public TestClient( )
+    public TestClient()
     {
     }
 
@@ -36,14 +36,14 @@ internal class TestClient : ClientNotifierServiceBase
         throw new NotImplementedException();
     }
 
-    public override Task SendNotificationAsync(string methodName, CancellationToken cancellationToken)
+    public Task SendNotificationAsync(string methodName, CancellationToken cancellationToken)
     {
         _requests.Add(new RequestPair(methodName, Params: null));
 
         return Task.CompletedTask;
     }
 
-    public override Task SendNotificationAsync<TParams>(string methodName, TParams @params, CancellationToken cancellationToken)
+    public Task SendNotificationAsync<TParams>(string methodName, TParams @params, CancellationToken cancellationToken)
     {
         if (@params is UpdateBufferRequest updateRequest)
         {
@@ -57,15 +57,10 @@ internal class TestClient : ClientNotifierServiceBase
         return Task.CompletedTask;
     }
 
-    public override Task<TResponse> SendRequestAsync<TParams, TResponse>(string methodName, TParams @params, CancellationToken cancellationToken)
+    public Task<TResponse> SendRequestAsync<TParams, TResponse>(string methodName, TParams @params, CancellationToken cancellationToken)
     {
         _requests.Add(new RequestPair(methodName, @params));
         return Task.FromResult<TResponse>(default!);
-    }
-
-    public override Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
     }
 
     internal record RequestPair(string Method, object? Params);

@@ -40,19 +40,19 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
 internal sealed class MapCodeEndpoint : IRazorDocumentlessRequestHandler<LSP.MapCodeParams, LSP.WorkspaceEdit?>
 {
     private readonly IRazorDocumentMappingService _documentMappingService;
-    private readonly DocumentContextFactory _documentContextFactory;
-    private readonly ClientNotifierServiceBase _languageServer;
+    private readonly IDocumentContextFactory _documentContextFactory;
+    private readonly IClientConnection _clientConnection;
     private readonly FilePathService _filePathService;
 
     public MapCodeEndpoint(
         IRazorDocumentMappingService documentMappingService,
-        DocumentContextFactory documentContextFactory,
-        ClientNotifierServiceBase languageServer,
+        IDocumentContextFactory documentContextFactory,
+        IClientConnection clientConnection,
         FilePathService filePathService)
     {
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
         _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
-        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
         _filePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
     }
 
@@ -324,7 +324,7 @@ internal sealed class MapCodeEndpoint : IRazorDocumentlessRequestHandler<LSP.Map
         LSP.WorkspaceEdit? edits = null;
         try
         {
-            edits = await _languageServer.SendRequestAsync<DelegatedMapCodeParams, LSP.WorkspaceEdit?>(
+            edits = await _clientConnection.SendRequestAsync<DelegatedMapCodeParams, LSP.WorkspaceEdit?>(
                 CustomMessageNames.RazorMapCodeEndpoint,
                 delegatedRequest,
                 cancellationToken).ConfigureAwait(false);

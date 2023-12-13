@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.Language.Intellisense;

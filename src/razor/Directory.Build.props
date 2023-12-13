@@ -77,7 +77,6 @@
       <PropertyGroup>
         <DefaultNetCoreTargetFramework>net8.0</DefaultNetCoreTargetFramework>
         <DefaultNetCoreTargetFrameworks>$(DefaultNetCoreTargetFramework);net7.0</DefaultNetCoreTargetFrameworks>
-        <DefaultNetCoreWindowsTargetFrameworks>net8.0-windows;net7.0-windows</DefaultNetCoreWindowsTargetFrameworks>
       </PropertyGroup>
     </Otherwise>
   </Choose>

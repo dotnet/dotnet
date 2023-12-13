@@ -205,8 +205,9 @@ public class ProcDumpDumper : ICrashDumper, IHangDumper
             // But not all versions of procdump have that parameter (definitely not the one we are getting from the Procdump 0.0.1 nuget package), and it works reliably.
             // What was not reliable before was that we sent the message and immediately killed procdump, that caused testhost to crash occasionally, because procdump was not detached,
             // and killing the process when it is not detached takes the observed process with it.
-            new Win32NamedEvent($"Procdump-{targetProcessId}").Set();
-            EqtTrace.Info($"ProcDumpDumper.DetachFromTargetProcess: Cancel event was sent to Procdump.");
+            var eventName = $"ProcDump-{targetProcessId}";
+            new Win32NamedEvent(eventName).Set();
+            EqtTrace.Info($"ProcDumpDumper.DetachFromTargetProcess: Cancel event '{eventName}' was sent to Procdump.");
 
             var sw = Stopwatch.StartNew();
             var exited = _procDumpProcess.WaitForExit(_timeout);

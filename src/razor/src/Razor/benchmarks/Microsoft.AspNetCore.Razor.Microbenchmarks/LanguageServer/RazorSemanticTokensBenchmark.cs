@@ -26,7 +26,7 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
 {
     private IRazorSemanticTokensInfoService RazorSemanticTokenService { get; set; }
 
-    private DocumentVersionCache VersionCache { get; set; }
+    private IDocumentVersionCache VersionCache { get; set; }
 
     private Uri DocumentUri => DocumentContext.Uri;
 
@@ -124,19 +124,19 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
     {
         var languageServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
         RazorSemanticTokenService = languageServer.GetRequiredService<IRazorSemanticTokensInfoService>();
-        VersionCache = languageServer.GetRequiredService<DocumentVersionCache>();
+        VersionCache = languageServer.GetRequiredService<IDocumentVersionCache>();
         ProjectSnapshotManagerDispatcher = languageServer.GetRequiredService<ProjectSnapshotManagerDispatcher>();
     }
 
     internal class TestRazorSemanticTokensInfoService : RazorSemanticTokensInfoService
     {
         public TestRazorSemanticTokensInfoService(
-            ClientNotifierServiceBase languageServer,
+            IClientConnection clientConnection,
             LanguageServerFeatureOptions languageServerFeatureOptions,
             IRazorDocumentMappingService documentMappingService,
             RazorLSPOptionsMonitor razorLSPOptionsMonitor,
             ILoggerFactory loggerFactory)
-            : base(languageServer, documentMappingService, razorLSPOptionsMonitor, languageServerFeatureOptions, loggerFactory)
+            : base(clientConnection, documentMappingService, razorLSPOptionsMonitor, languageServerFeatureOptions, loggerFactory)
         {
         }
 

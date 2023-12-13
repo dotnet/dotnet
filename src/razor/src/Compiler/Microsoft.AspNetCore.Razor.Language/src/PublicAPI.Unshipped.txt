@@ -144,6 +144,7 @@ Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
 Microsoft.AspNetCore.Razor.Language.RazorCodeDocument.Imports.get -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.Language.RazorSourceDocument!>
 Microsoft.AspNetCore.Razor.Language.RazorCodeDocument.Items.get -> Microsoft.AspNetCore.Razor.Language.ItemCollection!
 Microsoft.AspNetCore.Razor.Language.RazorCodeDocument.Source.get -> Microsoft.AspNetCore.Razor.Language.RazorSourceDocument!
+Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions.RemapLinePragmaPathsOnWindows.get -> bool
 Microsoft.AspNetCore.Razor.Language.RazorDiagnostic.Equals(Microsoft.AspNetCore.Razor.Language.RazorDiagnostic? other) -> bool
 Microsoft.AspNetCore.Razor.Language.RazorDiagnostic.GetMessage() -> string!
 Microsoft.AspNetCore.Razor.Language.RazorDiagnostic.GetMessage(System.IFormatProvider? formatProvider) -> string!
@@ -344,6 +345,7 @@ static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.Create(str
 static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.GetPooledInstance(string! kind, string! name, string! assemblyName, out Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder! builder) -> Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.PooledBuilder
 static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.GetPooledInstance(string! name, string! assemblyName, out Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder! builder) -> Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilder.PooledBuilder
 static readonly Microsoft.AspNetCore.Razor.Language.MetadataCollection.Empty -> Microsoft.AspNetCore.Razor.Language.MetadataCollection!
+virtual Microsoft.AspNetCore.Razor.Language.RazorEnginePhaseBase.OnInitialized() -> void
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.CodeDocument.get -> Microsoft.AspNetCore.Razor.Language.RazorCodeDocument
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.SourceMappings.get -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.Language.SourceMapping>
 ~Microsoft.AspNetCore.Razor.Language.RazorParserOptions.Directives.get -> System.Collections.Generic.IReadOnlyCollection<Microsoft.AspNetCore.Razor.Language.DirectiveDescriptor>
@@ -359,7 +361,9 @@ static readonly Microsoft.AspNetCore.Razor.Language.MetadataCollection.Empty -> 
 ~static Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptorExtensions.GetGloballyQualifiedTypeName(this Microsoft.AspNetCore.Razor.Language.BoundAttributeDescriptor attribute) -> string
 ~static Microsoft.AspNetCore.Razor.Language.DirectiveDescriptorBuilderExtensions.AddIdentifierOrExpression(this Microsoft.AspNetCore.Razor.Language.IDirectiveDescriptorBuilder builder, string name, string description) -> Microsoft.AspNetCore.Razor.Language.IDirectiveDescriptorBuilder
 ~static Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeExtensions.IsDesignTimePropertyAccessHelper(this Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNode tagHelper) -> bool
+~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetImportSyntaxTrees(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree>
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetPreTagHelperSyntaxTree(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree
+~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetImportSyntaxTrees(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree> syntaxTrees) -> void
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetPreTagHelperSyntaxTree(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree syntaxTree) -> void
 ~static Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.Create(Microsoft.AspNetCore.Razor.Language.RazorCodeDocument codeDocument, string generatedCode, Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions options, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorDiagnostic> diagnostics) -> Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument
 ~static Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument.Create(Microsoft.AspNetCore.Razor.Language.RazorCodeDocument codeDocument, string generatedCode, Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions options, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.RazorDiagnostic> diagnostics, System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.Language.SourceMapping> sourceMappings, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.CodeGeneration.LinePragma> linePragmas) -> Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument
