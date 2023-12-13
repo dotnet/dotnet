@@ -54,6 +54,8 @@
 
     <ArtifactsDir Condition="'$(ArtifactsDir)' == ''">$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'artifacts'))</ArtifactsDir>
     <RepositoryEngineeringDir>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'eng'))</RepositoryEngineeringDir>
+
+    <NetCurrent>net8.0</NetCurrent>
   </PropertyGroup>
 
   <PropertyGroup>

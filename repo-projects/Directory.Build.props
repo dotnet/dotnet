@@ -124,6 +124,7 @@
   <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
     <EnvironmentVariables Include="DotNetBuildFromSource=true" />
     <EnvironmentVariables Include="DotNetBuildOffline=true" />
+    <EnvironmentVariables Include="_OverrideArcadeInitializeBuildToolFramework=$(NetCurrent)" />
   </ItemGroup>
   <ItemGroup Condition="'$(DotNetBuildVertical)' == 'true'">
     <EnvironmentVariables Include="DotNetBuildVertical=true" />
@@ -132,7 +133,6 @@
   <ItemGroup>
     <EnvironmentVariables Include="DotNetPackageVersionPropsPath=$(PackageVersionPropsPath)" />
     <EnvironmentVariables Include="_InitializeToolset=$(SourceBuiltSdksDir)Microsoft.DotNet.Arcade.Sdk/tools/Build.proj" Condition="'$(UseBootstrapArcade)' != 'true'" />
-    <EnvironmentVariables Include="_OverrideArcadeInitializeBuildToolFramework=$(NetCurrent)" />
     <!-- https://github.com/dotnet/source-build/issues/3081 -->
     <EnvironmentVariables Include="CheckEolTargetFramework=false" />
   </ItemGroup>
@@ -187,8 +187,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ArcadeSdkOverride Include="Microsoft.DotNet.Arcade.Sdk" Group="ARCADE" Version="$(arcadeOutputPackageVersion)"/>
-    <ArcadeBootstrapSdkOverride Include="Microsoft.DotNet.Arcade.Sdk" Group="ARCADE" Version="$(ArcadeBootstrapVersion)" Location="$(ArcadeBootstrapDir)microsoft.dotnet.arcade.sdk/$(ArcadeBootstrapVersion)" />
+    <ArcadeSdkOverride Include="Microsoft.DotNet.Arcade.Sdk" Group="ARCADE" Version="$(ArcadeSdkVersion)"/>
+    <ArcadeBootstrapSdkOverride Include="Microsoft.DotNet.Arcade.Sdk" Group="ARCADE" Version="$(ArcadeSdkVersion)" Location="$(ArcadeBootstrapDir)microsoft.dotnet.arcade.sdk/$(ArcadeBootstrapVersion)" />
     <ArcadePackagingOverride Include="Microsoft.DotNet.Build.Tasks.Packaging" Group="ARCADE_PACKAGING" Version="$(arcadeOutputPackageVersion)"/>
     <ArcadeTargetFrameworkOverride Include="Microsoft.DotNet.Build.Tasks.TargetFramework" Group="ARCADE_TGT_FX" Version="$(arcadeOutputPackageVersion)"/>
     <ArcadeSharedFrameworkSdkOverride Include="Microsoft.DotNet.SharedFramework.Sdk" Group="ARCADE_SHARED_FX_SDK" Version="$(arcadeOutputPackageVersion)"/>

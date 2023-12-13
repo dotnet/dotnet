@@ -4,6 +4,11 @@
     <BuildCommand Condition="'$(BuildCommand)' == '' and '$(SkipRepoBuild)' != 'true'">$(BuildScript) $(BuildActions) $(BuildArgs)</BuildCommand>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <ArcadeSdkVersion Condition="'$(UseBootstrapArcade)' == 'true'">$(ArcadeBootstrapVersion)</ArcadeSdkVersion>
+    <ArcadeSdkVersion Condition="'$(UseBootstrapArcade)' != 'true'">$(arcadeOutputPackageVersion)</ArcadeSdkVersion>
+  </PropertyGroup>
+
   <ItemGroup>
     <EnvironmentVariables Include="LatestCommit=$(GitCommitHash)" />
     <EnvironmentVariables Include="OfficialBuildId=$(OfficialBuildId)" />
@@ -39,7 +44,7 @@
   <!-- TODO: Remove this target when Arcade targets .NET 9: https://github.com/dotnet/source-build/issues/3743. -->
   <Target Name="UpdateBuildToolFramework"
           BeforeTargets="Build"
-          Condition="'$(EngCommonToolsShFile)' != ''"
+          Condition="'$(EngCommonToolsShFile)' != '' and '$(DotNetBuildFromSource)' == 'true'"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(RepoCompletedSemaphorePath)UpdateBuildToolFramework.complete" >
 
@@ -117,16 +122,22 @@
   <Target Name="UpdateGlobalJsonVersions"
           BeforeTargets="Build"
           Condition="'$(GlobalJsonFile)' != ''"
-          Inputs="$(MSBuildProjectFullPath)"
+          Inputs="$(MSBuildProjectFullPath);$(MSBuildThisFileFullPath)"
           Outputs="$(RepoCompletedSemaphorePath)UpdateGlobalJsonVersions.complete">
     <ItemGroup>
-      <_PossibleCliVersionJsonPath Include="sdk.version" />
-      <_PossibleCliVersionJsonPath Include="tools.dotnet" />
+      <_PossibleCliVersionJsonPath Include="sdk:version" />
+      <_PossibleCliVersionJsonPath Include="tools:dotnet" />
     </ItemGroup>
 
     <UpdateJson JsonFilePath="$(GlobalJsonFile)"
                 PathToAttribute="%(_PossibleCliVersionJsonPath.Identity)"
                 NewAttributeValue="$(NETCoreSdkVersion)"
+                SkipUpdateIfMissingKey="true" />
+    
+    <!-- Make all repositories use the same Arcade.Sdk version -->
+    <UpdateJson JsonFilePath="$(GlobalJsonFile)"
+                PathToAttribute="msbuild-sdks:Microsoft.DotNet.Arcade.Sdk"
+                NewAttributeValue="$(ArcadeSdkVersion)"
                 SkipUpdateIfMissingKey="true" />
 
     <Touch Files="$(RepoCompletedSemaphorePath)UpdateGlobalJsonVersions.complete" AlwaysCreate="true" />
