@@ -1,5 +1,5 @@
 ﻿# dotnet/dotnet - Home of the .NET VMR
-Test
+
 This repository is a **Virtual Monolithic Repository (VMR)** which includes all the source code and infrastructure needed to build the .NET SDK.
 
 What this means:
