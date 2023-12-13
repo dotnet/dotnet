@@ -6,14 +6,11 @@ Param(
 . $PSScriptRoot\eng\common\tools.ps1
 
 # Initialize toolset
-
 $LogDateStamp = Get-Date -Format "MMddHHmmss"
-
 InitializeToolset
+$nodeReuse=$false
 
 try {
-  $nodeReuse=$false
-
   MSBuild "$PSScriptRoot/build.proj" `
       /bl:"$PSScriptRoot/artifacts/log/Debug/Build_$LogDateStamp.binlog" `
       /flp:"LogFile=$PSScriptRoot/artifacts/logs/Build_$LogDateStamp.log" `
