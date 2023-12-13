@@ -676,8 +676,14 @@ function Read-ArcadeSdkVersion() {
 }
 
 function InitializeToolset() {
-  if (Test-Path variable:global:_ToolsetBuildProj) {
-    return $global:_ToolsetBuildProj
+  # For Unified Build PoC/Source-build support, check whether the environment variable is
+  # set. If it is, then use this as the toolset build project.
+  if ($env:_InitializeToolset -ne $null) {
+    return $global:_InitializeToolset = $env:_InitializeToolset
+  }
+
+  if (Test-Path variable:global:_InitializeToolset) {
+    return $global:_InitializeToolset
   }
 
   $nugetCache = GetNuGetPackageCachePath
@@ -688,7 +694,7 @@ function InitializeToolset() {
   if (Test-Path $toolsetLocationFile) {
     $path = Get-Content $toolsetLocationFile -TotalCount 1
     if (Test-Path $path) {
-      return $global:_ToolsetBuildProj = $path
+      return $global:_InitializeToolset = $path
     }
   }
 
@@ -711,7 +717,7 @@ function InitializeToolset() {
     throw "Invalid toolset path: $path"
   }
 
-  return $global:_ToolsetBuildProj = $path
+  return $global:_InitializeToolset = $path
 }
 
 function ExitWithExitCode([int] $exitCode) {
