@@ -117,6 +117,9 @@
 
     <EnvironmentVariables Include="SourceRoot=$(ProjectDirectory)" />
     <EnvironmentVariables Include="DotNetBuildFromSourceFlavor=Product" />
+
+    <!-- TODO: Remove workaround to not produce symbol packages -->
+    <EnvironmentVariables Include="SymbolsIntermediateNupkgCategory=X" Condition="'$(DotNetBuildFromSource)' != 'true'" />
   </ItemGroup>
 
   <!-- VBPOC - I'm not sure about this. Some of this may be needed for VB, but I'm not sure why some pieces like
