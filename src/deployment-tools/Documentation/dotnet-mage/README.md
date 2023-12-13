@@ -2,9 +2,7 @@
 
 dotnet-mage (previously also known as Mage.NET) is the open-sourced version of the familiar .NET FX tool Mage.
 
-It is available at Nuget.org. Latest version `https://www.nuget.org/packages/Microsoft.DotNet.Mage/7.0.0`
-
-First version of the tool (`https://www.nuget.org/packages/Microsoft.DotNet.Mage/5.0.0-rc.2.20513.1`) had a different tool name 'mage.net' - if you are using that version, you would need to modify the commands listed in this document accordingly - use 'mage.net' instead of 'dotnet mage'.
+It is available at Nuget.org. Latest version `https://www.nuget.org/packages/Microsoft.DotNet.Mage/8.0.0`
 
 dotnet-mage supports all existing command-line options of the old Mage tool, with few exceptions:
 - no support for partial trust
@@ -22,17 +20,17 @@ Adds Launcher to target directory and sets binary to be launched.
 Example:
 `-AddLauncher myapp.dll -TargetDirectory bin/release`
 
-Launcher is required for all .NET 7, .NET 6, .NET 5 (and .NET Core 3.1) apps in ClickOnce.
+Launcher is required for all .NET 8, .NET 7, .NET 6, .NET 5 (and .NET Core 3.1) apps in ClickOnce.
 
 You can obtain all command-line options by running `dotnet mage` or for verbose help `dotnet mage -help verbose`.
 
 ## Prerequisites for using this tool
 
-* [Install .NET 7 SDK](https://dotnet.microsoft.com/download/dotnet/7.0)
+* [Install .NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 
 * Install dotnet-mage global tool:
 
-`dotnet tool install --global microsoft.dotnet.mage --version 7.0.0`
+`dotnet tool install --global microsoft.dotnet.mage --version 8.0.0`
 
 dotnet-mage is fully supported on Windows (we are gathering feedback about scenarios for dotnet-mage usage on Linux build agents).
 
@@ -45,7 +43,7 @@ dotnet-mage is fully supported on Windows (we are gathering feedback about scena
 
 ## Example steps
 
-Suppose that we have copied project output to a sub-folder `files` and our .NET 7 application entry point is `myapp.exe`
+Suppose that we have copied project output to a sub-folder `files` and our .NET 8 application entry point is `myapp.exe`
 
 * Add Launcher
 
