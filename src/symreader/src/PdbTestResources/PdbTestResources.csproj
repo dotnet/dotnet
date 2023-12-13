@@ -3,6 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsShipping>false</IsShipping>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromVerticalBuild>true</ExcludeFromVerticalBuild>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Resources\**\*.cs" />
