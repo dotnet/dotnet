@@ -23,7 +23,8 @@ namespace Microsoft.DotNet.Build.Tasks
         [Required]
         public string PathToAttribute { get; set; }
 
-        [Required]
+        // New attribute value. May be null. If null,
+        // the token is removed.
         public string NewAttributeValue { get; set; }
 
         public bool SkipUpdateIfMissingKey { get; set; }
@@ -64,7 +65,14 @@ namespace Microsoft.DotNet.Build.Tasks
 
             if (path.Length == 1) 
             {
-                jsonObj[pathItem] = newValue;
+                if (newValue == null)
+                {
+                    jsonObj[pathItem].Parent.Remove();
+                }
+                else
+                {
+                    jsonObj[pathItem] = newValue;
+                }
                 return;
             }
 

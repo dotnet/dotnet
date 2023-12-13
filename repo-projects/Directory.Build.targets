@@ -140,6 +140,11 @@
                 NewAttributeValue="$(ArcadeSdkVersion)"
                 SkipUpdateIfMissingKey="true" />
 
+    <!-- VB PoC, remove the global runtimes until https://github.com/dotnet/arcade/issues/14283 is resolved. -->
+    <UpdateJson JsonFilePath="$(GlobalJsonFile)"
+                PathToAttribute="tools:runtimes"
+                SkipUpdateIfMissingKey="true" />
+
     <Touch Files="$(RepoCompletedSemaphorePath)UpdateGlobalJsonVersions.complete" AlwaysCreate="true" />
   </Target>
 
