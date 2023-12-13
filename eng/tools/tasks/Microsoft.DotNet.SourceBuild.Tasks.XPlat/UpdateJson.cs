@@ -30,14 +30,17 @@ namespace Microsoft.DotNet.Build.Tasks
 
         public override bool Execute()
         {
+            // Using a character that isn't allowed in the package id
+            const char Delimiter = ':';
+
             string json = File.ReadAllText(JsonFilePath);
             string newLineChars = FileUtilities.DetectNewLineChars(json);
             JObject jsonObj = JObject.Parse(json);
 
-            string[] escapedPathToAttributeParts = PathToAttribute.Replace("\\.", "\x1F").Split('.');
+            string[] escapedPathToAttributeParts = PathToAttribute.Split(Delimiter);
             for (int i = 0; i < escapedPathToAttributeParts.Length; ++i)
             {
-                escapedPathToAttributeParts[i] = escapedPathToAttributeParts[i].Replace("\x1F", ".");
+                escapedPathToAttributeParts[i] = escapedPathToAttributeParts[i];
             }
             UpdateAttribute(jsonObj, escapedPathToAttributeParts, NewAttributeValue);
 
