@@ -3,7 +3,6 @@ Param(
   [Parameter(ValueFromRemainingArguments=$true)][String[]]$properties
 )
 
-
 . $PSScriptRoot\eng\common\tools.ps1
 
 # Initialize toolset
@@ -12,17 +11,13 @@ $LogDateStamp = Get-Date -Format "MMddHHmmss"
 
 InitializeToolset
 
-# Build the init-tools project so that we get the xplat tasks, specifically
-# the msbuild SDK resolver required to force the rest of the repos to use the right arcade SDK.
-
 try {
   $nodeReuse=$false
 
   MSBuild "$PSScriptRoot/build.proj" `
       /bl:"$PSScriptRoot/artifacts/log/Debug/Build_$LogDateStamp.binlog" `
       /flp:"LogFile=$PSScriptRoot/artifacts/logs/Build_$LogDateStamp.log" `
-      /flp:v=detailed `
-      /p:DotNetBuildVertical=true
+      /flp:v=detailed
 }
 catch {
   Write-Host $_.ScriptStackTrace
