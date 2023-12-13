@@ -1,9 +1,7 @@
 <Project>
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
-  <PropertyGroup>
-    <BuildCommand>$(StandardSourceBuildCommand) $(StandardSourceBuildArgs)</BuildCommand>
-  </PropertyGroup>
+  <!-- Aspire has root build scripts but those aren't necessary to invoke here. -->
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
