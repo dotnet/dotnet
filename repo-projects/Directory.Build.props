@@ -156,6 +156,7 @@
   </ItemGroup>
 
   <PropertyGroup>
+    <!-- By default, use the eng/common/build.cmd/sh script -->
     <BuildScript>$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'common', 'build$(ShellExtension)'))</BuildScript>
 
     <BuildActions>$(FlagParameterPrefix)restore</BuildActions>
