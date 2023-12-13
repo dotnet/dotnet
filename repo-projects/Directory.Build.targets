@@ -1,7 +1,7 @@
 <Project InitialTargets="SetNuGetPackagesEnvironment;PrepareOutput">
 
   <PropertyGroup>
-    <BuildCommand Condition="'$(BuildCommand)' == ''">$(BuildActions) $(BuildArgs)</BuildCommand>
+    <BuildCommand Condition="'$(BuildCommand)' == ''">$(BuildScript) $(BuildActions) $(BuildArgs)</BuildCommand>
   </PropertyGroup>
 
   <ItemGroup>
