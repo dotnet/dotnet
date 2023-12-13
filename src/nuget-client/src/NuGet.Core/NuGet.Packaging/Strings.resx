@@ -139,11 +139,12 @@
     <value>Null or empty package id</value>
   </data>
   <data name="Log_InstalledPackage" xml:space="preserve">
-    <value>Installed {0} {1} from {2} with content hash {3}.</value>
+    <value>Installed {0} {1} from {2} to {3} with content hash {4}.</value>
     <comment>0 - package id
 1 - package version
 2 - package source
-3 - hex byte string, representing content hash</comment>
+3 - package installed path
+4 - hex byte string, representing content hash</comment>
   </data>
   <data name="FailToLoadPackagesConfig" xml:space="preserve">
     <value>Fail to load packages.config as XML file. Please check it. </value>

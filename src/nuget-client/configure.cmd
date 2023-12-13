@@ -1,4 +1,5 @@
 @echo off
+SET NUGET_PACKAGES=
 powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -Command "%~dpn0.ps1" -SkipDotnetInfo %*
 IF ERRORLEVEL 1 (
   EXIT /B %ERRORLEVEL%

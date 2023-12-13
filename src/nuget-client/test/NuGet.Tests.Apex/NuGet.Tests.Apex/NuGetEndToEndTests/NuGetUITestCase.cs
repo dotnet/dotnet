@@ -2,7 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Test.Apex.VisualStudio.Solution;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NuGet.Test.Utility;
@@ -845,6 +847,86 @@ namespace NuGet.Tests.Apex
             CommonUtility.AssertPackageReferenceDoesNotExist(VisualStudio, project, transitivePackageName, Logger);
             uiwindow.AssertPackageNameAndType(TestPackageName, NuGet.VisualStudio.PackageLevel.TopLevel);
             uiwindow.AssertPackageNameAndType(transitivePackageName, NuGet.VisualStudio.PackageLevel.Transitive);
+        }
+
+        [TestMethod]
+        [DataRow(ProjectTemplate.NetCoreConsoleApp)]
+        [DataRow(ProjectTemplate.ConsoleApplication)]
+        [Timeout(DefaultTimeout)]
+        public async Task VerifyRestorePackageByRestoreNuGetPackagesContextMenu(ProjectTemplate projectTemplate)
+        {
+            // Arrange
+            string packageFolderPath;
+            string installedPackageFolderPath;
+
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
+
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
+
+            var solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            var project = solutionService.AddProject(ProjectLanguage.CSharp, projectTemplate, "TestProject");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
+
+            var uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
+            solutionService.Build();
+
+            if (projectTemplate.Equals(ProjectTemplate.NetCoreConsoleApp))
+            {
+                packageFolderPath = _pathContext.UserPackagesFolder;
+                installedPackageFolderPath = Path.Combine(packageFolderPath, TestPackageName);
+            }
+            else
+            {
+                packageFolderPath = _pathContext.PackagesV2;
+                installedPackageFolderPath = Path.Combine(packageFolderPath, "Contoso.A.1.0.0");
+            }
+
+            Directory.Exists(installedPackageFolderPath).Should().BeTrue();
+
+            // Act
+            Directory.Delete(packageFolderPath, true);
+            Directory.Exists(packageFolderPath).Should().BeFalse();
+            CommonUtility.RestoreNuGetPackages(VisualStudio, Logger);
+
+            // Assert
+            CommonUtility.WaitForDirectoryExists(installedPackageFolderPath);
+        }
+
+        [DataTestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task VerifyRestorePackageByBuilding()
+        {
+            // Arrange
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
+
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
+
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, ProjectTargetFramework.V48, "TestProject");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
+
+            var packageFolderPath = _pathContext.PackagesV2;
+            var installedPackageFolderPath = Path.Combine(packageFolderPath, "Contoso.A.1.0.0");
+            Directory.Exists(installedPackageFolderPath).Should().BeTrue();
+
+            // Act
+            Directory.Delete(packageFolderPath, true);
+            Directory.Exists(packageFolderPath).Should().BeFalse();
+            solutionService.Build();
+
+            // Assert
+            Directory.Exists(installedPackageFolderPath).Should().BeTrue();
         }
     }
 }
