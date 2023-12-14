@@ -1,6 +1,6 @@
 [CmdletBinding(PositionalBinding=$false)]
 Param(
-  [string][Alias('c')]$configuration = "Debug",
+  [string][Alias('c')]$configuration = "Release",
   [Parameter(ValueFromRemainingArguments=$true)][String[]]$properties
 )
 
