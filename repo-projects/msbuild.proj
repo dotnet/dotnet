@@ -6,8 +6,6 @@
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)v $(LogVerbosity)</BuildArgs>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildArgs>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)warnAsError $(ArcadeFalseBoolBuildArg)</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:DisableNerdbankVersioning=true</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:DotNetCoreSdkDir=$(DotNetRoot)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,42 +14,8 @@
     <RepositoryReference Include="roslyn" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
-    <UseSourceBuiltSdkOverride Include="@(ArcadeSdkOverride)" />
-    <UseSourceBuiltSdkOverride Include="@(CentralVersionsSdkOverride)" />
-  </ItemGroup>
-
-  <!--
-    The CentralPackageVersions SDK isn't actually source-built. We get it as a text-only prebuilt,
-    but the NuGet resolver seems flaky so we're using our resolver instead. We only have access to
-    the nupkg ahead of time when building, so only enable this workaround then.
-  -->
   <ItemGroup>
-    <CentralPackageVersionsSdkOverride Include="Microsoft.Build.CentralPackageVersions" Group="CENTRAL_PACKAGE_VERSIONS" />
+    <UseSourceBuiltSdkOverride Include="@(ArcadeSdkOverride)" />
   </ItemGroup>
-
-  <Target Name="ExtractCentralPackageVersionsSdkPackage"
-          BeforeTargets="SetSourceBuiltSdkOverrides"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(RepoCompletedSemaphorePath)ExtractCentralPackageVersionsSdkPackage.complete">
-    <ItemGroup>
-      <_CentralVersionsToolPackage
-        Include="$(ReferencePackagesDir)%(CentralPackageVersionsSdkOverride.Identity)*.nupkg"
-        Id="%(CentralPackageVersionsSdkOverride.Identity)" />
-    </ItemGroup>
-
-    <PropertyGroup>
-      <CentralVersionsSdkDir>$(SourceBuiltSdksDir)%(_CentralVersionsToolPackage.Id)/</CentralVersionsSdkDir>
-    </PropertyGroup>
-
-    <Message Importance="High" Text="Setting up SDK package for UseSourceBuiltSdkOverride: %(_CentralVersionsToolPackage.Filename)" />
-
-    <ZipFileExtractToDirectory
-      SourceArchive="@(_CentralVersionsToolPackage)"
-      DestinationDirectory="$(CentralVersionsSdkDir)"
-      OverwriteDestination="true" />
- 
-    <Touch Files="$(RepoCompletedSemaphorePath)ExtractCentralPackageVersionsSdkPackage.complete" AlwaysCreate="true" />
-  </Target>
 
 </Project>
