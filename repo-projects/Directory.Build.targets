@@ -334,7 +334,9 @@
   <Target Name="CopyInnerBuildRestoredPackages"
           AfterTargets="Package">
     <ItemGroup>
-      <_InnerPackageCacheFiles Include="$(ProjectDirectory)artifacts/source-build/self/package-cache/**/*" />
+      <!-- TODO: Remove after https://github.com/dotnet/arcade/pull/14292 is consumed. -->
+      <_InnerPackageCacheFiles Condition="'$(RepositoryName)' == 'arcade'" Include="$(ProjectDirectory)artifacts/source-build/self/package-cache/**/*" />
+      <_InnerPackageCacheFiles Condition="'$(RepositoryName)' != 'arcade'" Include="$(ProjectDirectory)artifacts/sb/s/package-cache/**/*" />
     </ItemGroup>
 
     <Copy SourceFiles="@(_InnerPackageCacheFiles)"
