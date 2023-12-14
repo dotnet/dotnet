@@ -815,7 +815,7 @@ function MSBuild-Core() {
 
   $buildTool = InitializeBuildTool
 
-    $cmdArgs = "$($buildTool.Command) /m /nologo /clp:Summary /v:$verbosity /nr:$nodeReuse /p:ContinuousIntegrationBuild=$ci"
+  $cmdArgs = "$($buildTool.Command) /m /nologo /clp:Summary /v:$verbosity /nr:$nodeReuse /p:ContinuousIntegrationBuild=$ci"
 
   if ($warnAsError) {
     $cmdArgs += ' /warnaserror /p:TreatWarningsAsErrors=true'
@@ -824,23 +824,17 @@ function MSBuild-Core() {
     $cmdArgs += ' /p:TreatWarningsAsErrors=false'
   }
 
-  $arcadeToolArgs = $cmdArgs
-
   foreach ($arg in $args) {
     if ($null -ne $arg -and $arg.Trim() -ne "") {
       if ($arg.EndsWith('\')) {
         $arg = $arg + "\"
       }
-      $quotArg = " `"$arg`""
-      $cmdArgs += $quotArg
-      if (-not $arg.StartsWith("/bl:")) {
-        $arcadeToolArgs += $quotArg
-      }
+      $cmdArgs += " `"$arg`""
     }
   }
 
   # Be sure quote the path in case there are spaces in the dotnet installation location.
-  $env:ARCADE_BUILD_TOOL_COMMAND = "`"$($buildTool.Path)`" $arcadeToolArgs"
+  $env:ARCADE_BUILD_TOOL_COMMAND = "`"$($buildTool.Path)`" $cmdArgs"
 
   $exitCode = Exec-Process $buildTool.Path $cmdArgs
 
