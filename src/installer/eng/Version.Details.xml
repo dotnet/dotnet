@@ -245,9 +245,9 @@
       <Sha>229464299759d6667e8b907d9c321d31a8dcc123</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.ScenarioTests.SdkTemplateTests" Version="8.0.0-preview.23424.2">
+    <Dependency Name="Microsoft.DotNet.ScenarioTests.SdkTemplateTests" Version="9.0.0-preview.23613.1">
       <Uri>https://github.com/dotnet/scenario-tests</Uri>
-      <Sha>8af694a5e3986a27ccfee1a638ba311c7e9bc55d</Sha>
+      <Sha>0589a90cb11bb1daf9c05f20c1dc2d78c49075f2</Sha>
       <SourceBuild RepoName="scenario-tests" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>
