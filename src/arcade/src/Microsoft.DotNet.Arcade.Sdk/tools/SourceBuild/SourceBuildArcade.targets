@@ -1,6 +1,19 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
+  <!-- OS invariant helper properties for use in the repo's SourceBuild.props file and here. -->
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+    <ArchiveExtension>.zip</ArchiveExtension>
+    <FlagParameterPrefix>-</FlagParameterPrefix>
+    <ArcadeFalseBoolBuildArg>0</ArcadeFalseBoolBuildArg>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
+    <ArchiveExtension>.tar.gz</ArchiveExtension>
+    <FlagParameterPrefix>--</FlagParameterPrefix>
+    <ArcadeFalseBoolBuildArg>false</ArcadeFalseBoolBuildArg>
+  </PropertyGroup>
+
   <!-- Repo extensibility point. -->
   <Import Project="$(RepositoryEngineeringDir)SourceBuild.props" Condition="Exists('$(RepositoryEngineeringDir)SourceBuild.props')" />
 
@@ -67,7 +80,7 @@
 
   <!--
     Get the list of nupkg contents, categorized into supplemental categories if necessary. By
-    default, all non-symbol-package nupkg files and tar.gz files in
+    default, all non-symbol-package nupkg files and archive files in
     'artifacts/packages/{configuration}' are packed in the intermediate nupkg.
 
     To configure this, add a target to eng/SourceBuild.props with
@@ -81,7 +94,7 @@
     <ItemGroup Condition="'$(EnableDefaultSourceBuildIntermediateItems)' == 'true'">
       <!-- Catch-all: anything not in a category gets packed in the 'main' intermediate nupkg. -->
       <IntermediateNupkgArtifactFile Include="$(CurrentRepoSourceBuildArtifactsPackagesDir)**\*.nupkg" />
-      <IntermediateNupkgArtifactFile Include="$(CurrentRepoSourceBuildArtifactsPackagesDir)**\*.tar.gz" />
+      <IntermediateNupkgArtifactFile Include="$(CurrentRepoSourceBuildArtifactsPackagesDir)**\*$(ArchiveExtension)" />
       <!-- Don't pack any symbol packages: not needed for downstream source-build CI. -->
       <IntermediateNupkgArtifactFile Remove="$(CurrentRepoSourceBuildArtifactsPackagesDir)**\*.symbols.nupkg" />
     </ItemGroup>
