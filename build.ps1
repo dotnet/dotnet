@@ -1,5 +1,6 @@
 [CmdletBinding(PositionalBinding=$false)]
 Param(
+  [string][Alias('c')]$configuration = "Debug",
   [Parameter(ValueFromRemainingArguments=$true)][String[]]$properties
 )
 
@@ -19,6 +20,7 @@ try {
       /bl:"$PSScriptRoot/artifacts/log/Debug/Build_$LogDateStamp.binlog" `
       /flp:"LogFile=$PSScriptRoot/artifacts/logs/Build_$LogDateStamp.log" `
       /flp:v=detailed `
+      /p:Configuration=$configuration `
       @properties
 }
 catch {

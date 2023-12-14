@@ -172,7 +172,6 @@
     <BuildArgs>$(FlagParameterPrefix)ci</BuildArgs>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)configuration $(Configuration)</BuildArgs>
     <BuildArgs>$(BuildArgs) -bl</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:CopyWipIntoInnerSourceBuildRepo=true</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:CopySrcInsteadOfClone=true</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:DotNetPackageVersionPropsPath="$(PackageVersionPropsPath)"</BuildArgs>
   </PropertyGroup>
@@ -186,7 +185,7 @@
     <BuildArgs>$(BuildArgs) /p:DotNetBuildOffline=true</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PrebuiltSourceBuiltPackagesPath)"</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:SourceBuildUseMonoRuntime=$(SourceBuildUseMonoRuntime)</BuildArgs>
+    <BuildArgs Condition="'$(SourceBuildUseMonoRuntime)' == 'true'">$(BuildArgs) /p:SourceBuildUseMonoRuntime=$(SourceBuildUseMonoRuntime)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
