@@ -21,7 +21,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
         _testOutputHelper = outputHelper;
         _sdkHelper = new DotNetSdkHelper(outputHelper, _scenarioTestInput.DotNetRoot, _scenarioTestInput.SdkVersion);
     }
-
+    
     [Theory]
     [MemberData(nameof(GetLanguages))]
     public void VerifyConsoleTemplateComplex(DotNetLanguage language)
@@ -142,36 +142,100 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
         newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
     }
     
-    /*
     [Theory]
-    [MemberData(nameof(GetAllLanguagesWithDownlevelFrameworks))]
-    [Trait("Category", "Downlevel")]
-    public void VerifyDownlevelFrameworksInConsoleTemplate(DotNetLanguage language, string frameworks)
+    [Trait("Category", "MultiTFM")]
+    [Trait("Category", "Offline")]
+    [MemberData(nameof(GetLanguages))]
+    public void VerifyMultiTFMInConsoleTemplate(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(
-            nameof(SdkTemplateTests), language, _scenarioTestInput.TargetRid, DotNetSdkTemplate.Console,
-            DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.PublishComplex | DotNetSdkActions.PublishR2R);
-        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot, framework: "-f " + frameworks);
+            nameof(SdkTemplateTests) + "MultiTFM", language, _scenarioTestInput.TargetRid, DotNetSdkTemplate.Console,
+            DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.Publish);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot, GetFrameworks);
     }
 
     [Theory]
-    [InlineData("net6.0")]
-    [InlineData("net7.0")]
-    [Trait("Category", "Downlevel")]
-    public void VerifyDownLevelFrameworksInWebAppTemplate(string frameworks)
+    [InlineData(DotNetLanguage.CSharp)]
+    [InlineData(DotNetLanguage.FSharp)]
+    public void VerifyMVCTemplate(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(
-            nameof(SdkTemplateTest), DotNetLanguage.CSharp, _scenarioTestInput.TargetRid, DotNetSdkTemplate.WebApp,
-            DotNetSdkActions.Test | DotNetSdkActions.Run | DotNetSdkActions.PublishComplex);
-        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot, framework: "-f " + frameworks);
+            nameof(SdkTemplateTest), language, _scenarioTestInput.TargetRid, DotNetSdkTemplate.Mvc,
+            DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.Publish);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
+    }
+
+    [Theory]
+    [InlineData(DotNetLanguage.CSharp)]
+    [InlineData(DotNetLanguage.FSharp)]
+    public void VerifyWebAPITemplate(DotNetLanguage language)
+    {
+        var newTest = new SdkTemplateTest(
+            nameof(SdkTemplateTest), language, _scenarioTestInput.TargetRid, DotNetSdkTemplate.WebApi,
+            DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.Publish);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
+    }
+
+    [Theory]
+    [InlineData(DotNetLanguage.CSharp)]
+    [InlineData(DotNetLanguage.FSharp)]
+    public void VerifyWebTemplate(DotNetLanguage language)
+    {
+        var newTest = new SdkTemplateTest(
+            nameof(SdkTemplateTest), language, _scenarioTestInput.TargetRid, DotNetSdkTemplate.Web,
+            DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.Publish);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
+    }
+
+    [Theory]
+    [InlineData(DotNetLanguage.CSharp)]
+    public void VerifyBlazorWasmTemplate(DotNetLanguage language)
+    {
+        var newTest = new SdkTemplateTest(
+            nameof(SdkTemplateTest), language, _scenarioTestInput.TargetRid, DotNetSdkTemplate.BlazorWasm,
+            DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.Publish);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot);
+    }
+
+    [Fact]
+    [Trait("Category", "Offline")]
+    public void VerifyPreMadeSolution()
+    {
+        var newTest = new SdkTemplateTest(
+            nameof(SdkTemplateTest), DotNetLanguage.CSharp, _scenarioTestInput.TargetRid, DotNetSdkTemplate.Console,
+            DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.Publish);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot, PreMadeSolution: "SampleProject");
+    }
+
+    /*
+     * v-masche note: Requires ASP.NET runtimes for .NET6 and .NET7. To be enabled if we decide to 
+     * download that as part of the build like we do the normal .NET runtimes
+    [Fact]
+    [Trait("Category", "MultiTFM")]
+    public void VerifyMultiTFMInWebAppTemplate()
+    {
+        var newTest = new SdkTemplateTest(
+            nameof(SdkTemplateTest) + "MultiTFM", DotNetLanguage.CSharp, _scenarioTestInput.TargetRid, DotNetSdkTemplate.WebApp,
+            DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.Publish);
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot, GetFrameworks);
+    }
+
+    //v-masche note: Still in progress.
+    [Theory]
+    [Trait("Category", "Offline")]
+    [Trait("Category", "InProgress")]
+    [MemberData(nameof(GetLanguages))]
+    public void VerifyDuplicateReferenceFailuresInConsoleTemplate(DotNetLanguage language)
+    {
+        var newTest = new SdkTemplateTest(
+            nameof(SdkTemplateTests) + "DupeRef", language, _scenarioTestInput.TargetRid, DotNetSdkTemplate.Console,
+            DotNetSdkActions.Build | DotNetSdkActions.Run | DotNetSdkActions.Publish);
+        string[] GetDupeArray = { "net8.0", "net8.0" };
+        newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot, GetDupeArray);
     }*/
+
+    private static string[] GetFrameworks = { "net8.0", "net7.0", "net6.0" };
     
     private static IEnumerable<object[]> GetLanguages() => Enum.GetValues<DotNetLanguage>().Select(lang => new object[] { lang });
 
-    /*
-    private static string[] AllDownLevelFrameworks = new string[] { "net6.0", "net7.0" };
-
-    private static IEnumerable<object[]> GetAllLanguagesWithDownlevelFrameworks() 
-        => Enum.GetValues<DotNetLanguage>().
-        SelectMany(lang => AllDownLevelFrameworks.Select(tfm => new object[] { lang, tfm }));*/
 }

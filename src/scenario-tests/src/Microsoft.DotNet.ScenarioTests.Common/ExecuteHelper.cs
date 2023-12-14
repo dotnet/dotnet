@@ -64,6 +64,11 @@ public static class ExecuteHelper
             outputHelper.WriteLine($"Killing: {fileName} {args}");
             process.Kill(true);
             process.WaitForExit();
+            ProcessStartInfo startInfo = process.StartInfo;
+            string msg = $" {startInfo.FileName} {startInfo.Arguments} timed out after " +
+                $"{millisecondTimeout} milliseconds" +
+                $"{Environment.NewLine}Exit code: {process.ExitCode}";
+            throw new InvalidOperationException(msg);
         }
 
         string output = stdOutput.ToString().Trim();
