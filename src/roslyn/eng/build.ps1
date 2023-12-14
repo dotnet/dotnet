@@ -745,9 +745,6 @@ try {
     if ($testVsi) {
       Setup-IntegrationTestRun
     }
-
-    $global:_DotNetInstallDir = Join-Path $RepoRoot ".dotnet"
-    InstallDotNetSdk $global:_DotNetInstallDir $GlobalJson.tools.dotnet
   }
 
   if ($restore) {

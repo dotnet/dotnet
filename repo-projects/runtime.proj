@@ -38,7 +38,7 @@
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildFromSource)' == 'true'" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
+  <ItemGroup>
     <UseSourceBuiltSdkOverride Include="@(ArcadePackagingOverride)" />
     <UseSourceBuiltSdkOverride Include="@(ArcadeTargetFrameworkOverride)" />
     <UseSourceBuiltSdkOverride Include="@(ArcadeSharedFrameworkSdkOverride)" />
