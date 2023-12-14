@@ -7,8 +7,6 @@
 
   <ItemGroup>
     <BuiltSdkPackageOverride Include="@(ArcadeSdkOverride)" />
-    <BuiltSdkPackageOverride Include="@(ArcadePackagingOverride)" />
-    <BuiltSdkPackageOverride Include="@(ArcadeTargetFrameworkOverride)" />
     <BuiltSdkPackageOverride Include="@(ArcadeSharedFrameworkSdkOverride)" />
 
     <EnvironmentVariables Include="UsingToolMicrosoftNetCompilers=false" />
