@@ -162,11 +162,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@0a0217f](https://github.com/dotnet/arcade/commit/0a0217fe0cdd3654105d1c46be4e43eeae9c163e)*
+*[dotnet/arcade@1f6c5ac](https://github.com/dotnet/arcade/commit/1f6c5acef9bdf9d4bf1eded044eeec0d7d19560d)*
 - `src/aspire`  
 *[_git/dotnet-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspire/commit/48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@459a488](https://github.com/dotnet/aspnetcore/commit/459a4884bf3ccd1f50ada2244a6c2da6a939ae0d)*
+*[dotnet/aspnetcore@15194b0](https://github.com/dotnet/aspnetcore/commit/15194b0a34157cdaf7c0e6e0813929aff2356986)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@b3a9ba2](https://github.com/google/googletest/commit/b3a9ba2b8e975550799838332803d468797ae2e1)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -186,7 +186,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@bb83216](https://github.com/dotnet/fsharp/commit/bb832169d6b799a62962452212010e66c3fecacf)*
 - `src/installer`  
-*[dotnet/installer@c56fb02](https://github.com/dotnet/installer/commit/c56fb02646de176ae5546f983e0d597f29eaf2cf)*
+*[dotnet/installer@3479aae](https://github.com/dotnet/installer/commit/3479aaef8de41447818e33e1980bb6098b959c0b)*
 - `src/msbuild`  
 *[dotnet/msbuild@2f3d376](https://github.com/dotnet/msbuild/commit/2f3d37672a69142a13a62856b09034a915bedc70)*
 - `src/nuget-client`  
@@ -204,7 +204,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@0589a90](https://github.com/dotnet/scenario-tests/commit/0589a90cb11bb1daf9c05f20c1dc2d78c49075f2)*
 - `src/sdk`  
-*[dotnet/sdk@6ad1cd1](https://github.com/dotnet/sdk/commit/6ad1cd1de740d3332af31bd57afef0070b7a3329)*
+*[dotnet/sdk@bc9da06](https://github.com/dotnet/sdk/commit/bc9da06d9512a3db932bf638cab8f8e3f5b5aea9)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@bc55508](https://github.com/dotnet/source-build-externals/commit/bc555088c6b4862ad0b93fbc245ef0628e661256)*
     - `src/source-build-externals/src/abstractions-xunit`  
