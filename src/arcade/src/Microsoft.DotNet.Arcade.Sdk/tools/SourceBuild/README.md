@@ -25,7 +25,7 @@ call an inner build after some setup. The targets work roughly like this:
 * Run `./build.sh /p:ArcadeBuildFromSource=true`
   * Run `dotnet msbuild ... Build.proj /p:ArcadeBuildFromSource=true`
     * [Hook] Before **Outer Execute**:
-      * Clone the source into `artifacts/source-build/self/src`
+      * Clone the source into `artifacts/sb/src`
       * Assemble a build command by appending to the `dotnet msbuild` call.
       * Run `dotnet msbuild ... Build.proj /p:ArcadeBuildFromSource=true ... /p:ArcadeInnerBuildFromSource=true`
         * [Hook] Before **Inner Execute**:
