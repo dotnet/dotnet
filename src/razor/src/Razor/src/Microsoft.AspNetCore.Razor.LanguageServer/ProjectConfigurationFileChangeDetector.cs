@@ -76,6 +76,42 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
             return;
         }
 
+        // We expect to monitor the obj\<Configuration>\<TargetFramework> folder, but we are not responsible for creating it
+        // and in some circumstances we can get called before it exists. In those cases we add a short delay and try again.
+        // It doesn't matter if we don't start monitoring immediately because a) the folder doesn't exist, so there is nothing
+        // to monitor anyway and b) this must be a new project, and there is a natural user delay before they start opening .razor
+        // files etc.
+
+        var retryCount = 0;
+        try
+        {
+            while (!Directory.Exists(workspaceDirectory) && retryCount < 5)
+            {
+                _logger.LogInformation("Workspace directory '{path}' does not exist yet! Delaying on retry number {count}", workspaceDirectory, retryCount + 1);
+                await Task.Delay(500, cancellationToken).ConfigureAwait(false);
+                retryCount++;
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        catch (Exception ex)
+        {
+            // Directory.Exists will throw on things like long paths
+            _logger.LogError(ex, "Failed validating that file watcher would be successful for '{path}'", workspaceDirectory);
+
+            // No point continuing because the FileSystemWatcher constructor would just throw too.
+            return;
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            // Client cancelled connection, no need to setup any file watchers. Server is about to tear down.
+            return;
+        }
+
+        _logger.LogInformation("Starting configuration file change detector for '{workspaceDirectory}'", workspaceDirectory);
         _watcher = new RazorFileSystemWatcher(workspaceDirectory, _options.ProjectConfigurationFileName)
         {
             NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.CreationTime,

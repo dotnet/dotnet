@@ -716,6 +716,8 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
             AutoClosingTags: true,
             insertSpaces,
             tabSize,
+            AutoShowCompletion: true,
+            AutoListParams: true,
             FormatOnType: true,
             AutoInsertAttributeQuotes: true,
             ColorBackground: false,

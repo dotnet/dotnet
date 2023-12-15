@@ -74,6 +74,19 @@ internal class ClientSettingsManager : EditorSettingsManager, IClientSettingsMan
         }
     }
 
+    public void Update(ClientCompletionSettings updatedSettings)
+    {
+        if (updatedSettings is null)
+        {
+            throw new ArgumentNullException(nameof(updatedSettings));
+        }
+
+        lock (_settingsUpdateLock)
+        {
+            UpdateSettings_NoLock(_settings with { ClientCompletionSettings = updatedSettings });
+        }
+    }
+
     public ClientSettings GetClientSettings() => _settings;
 
     public void Update(ClientAdvancedSettings advancedSettings)

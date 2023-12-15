@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
@@ -35,6 +36,28 @@ public class SignatureHelpEndpointTest(ITestOutputHelper testOutput) : SingleSer
                 """;
 
         await VerifySignatureHelpAsync(input, "string M1(int i)");
+    }
+
+    [Fact]
+    public async Task Handle_SingleServerWithAutoListParamsDisabled_ReturnNull()
+    {
+        var input = """
+                <div></div>
+
+                @{
+                    string M1(int i) => throw new NotImplementedException();
+
+                    void Act()
+                    {
+                        M1($$);
+                    }
+                }
+                """;
+
+        var context = new SignatureHelpContext() { TriggerKind = SignatureHelpTriggerKind.TriggerCharacter };
+        var optionsMonitor = GetOptionsMonitor(autoListParams: false);
+
+        await VerifySignatureHelpWithContextAndOptionsAsync(input, optionsMonitor, context);
     }
 
     [Fact]
@@ -64,7 +87,12 @@ public class SignatureHelpEndpointTest(ITestOutputHelper testOutput) : SingleSer
         await VerifySignatureHelpAsync(input);
     }
 
-    private async Task VerifySignatureHelpAsync(string input, params string[] signatures)
+    private Task VerifySignatureHelpAsync(string input, params string[] signatures)
+    {
+        return VerifySignatureHelpWithContextAndOptionsAsync(input, optionsMonitor: null, signatureHelpContext: null, signatures);
+    }
+
+    private async Task VerifySignatureHelpWithContextAndOptionsAsync(string input, IOptionsMonitor<RazorLSPOptions> optionsMonitor = null, SignatureHelpContext signatureHelpContext = null, params string[] signatures)
     {
         // Arrange
         TestFileMarkupParser.GetPositionAndSpans(input, out var output, out int cursorPosition, out ImmutableArray<TextSpan> _);
@@ -73,8 +101,9 @@ public class SignatureHelpEndpointTest(ITestOutputHelper testOutput) : SingleSer
 
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
+        optionsMonitor ??= GetOptionsMonitor();
         var endpoint = new SignatureHelpEndpoint(
-            LanguageServerFeatureOptions, DocumentMappingService, languageServer, LoggerFactory);
+            LanguageServerFeatureOptions, DocumentMappingService, languageServer, optionsMonitor, LoggerFactory);
 
         codeDocument.GetSourceText().GetLineAndOffset(cursorPosition, out var line, out var offset);
         var request = new SignatureHelpParams
@@ -83,7 +112,8 @@ public class SignatureHelpEndpointTest(ITestOutputHelper testOutput) : SingleSer
             {
                 Uri = new Uri(razorFilePath)
             },
-            Position = new Position(line, offset)
+            Position = new Position(line, offset),
+            Context = signatureHelpContext
         };
 
         var documentContext = DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument);
