@@ -2,7 +2,7 @@
 <Project>
 
   <PropertyGroup>
-    <GenFacadesTargetAssemblyPath Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net8.0\Microsoft.DotNet.GenFacades.dll</GenFacadesTargetAssemblyPath>
+    <GenFacadesTargetAssemblyPath Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net9.0\Microsoft.DotNet.GenFacades.dll</GenFacadesTargetAssemblyPath>
     <GenFacadesTargetAssemblyPath Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net472\Microsoft.DotNet.GenFacades.dll</GenFacadesTargetAssemblyPath>
   </PropertyGroup>
 
