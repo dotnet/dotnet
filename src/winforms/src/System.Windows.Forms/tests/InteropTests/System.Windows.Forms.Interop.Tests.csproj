@@ -8,7 +8,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <Import Project="ProjectReference.targets" Sdk="Microsoft.DotNet.CMake.Sdk" />
+  <!-- https://github.com/dotnet/arcade/issues/14295 -->
+  <Import Project="ProjectReference.targets" Sdk="Microsoft.DotNet.CMake.Sdk" Condition="'$(DotNetBuildVertical)' != 'true'" />
 
   <ItemGroup>
     <PackageReference Include="Moq" Version="$(MoqPackageVersion)" />

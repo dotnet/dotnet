@@ -33,6 +33,9 @@
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildFromSource)' == 'true'" />
     <RepositoryReference Include="runtime" />
     <RepositoryReference Include="roslyn" />
+    <!-- This should be conditionalized based on a reasonable filtering mechanism. 
+         https://github.com/dotnet/source-build/issues/3682. Good enough for the PoC. -->
+    <RepositoryReference Include="winforms" Condition="'$(OS)' == 'Windows_NT'" />
     <RepositoryReference Include="xdt" />
     <RepositoryReference Include="msbuild" />
     <RepositoryReference Include="roslyn-analyzers" />
