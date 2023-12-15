@@ -167,6 +167,11 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
                 settings = settings with { ClientSpaceSettings = ClientSpaceSettings.Default };
             }
 
+            if (settings.ClientCompletionSettings is null)
+            {
+                settings = settings with { ClientCompletionSettings = ClientCompletionSettings.Default };
+            }
+
             if (settings.AdvancedSettings is null)
             {
                 settings = settings with { AdvancedSettings = ClientAdvancedSettings.Default };

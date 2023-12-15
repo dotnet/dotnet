@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.Telemetry;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Test.Shared;
 
-internal class TestTelemetryReporter : TelemetryReporter
+internal class TestTelemetryReporter : VSTelemetryReporter
 {
     public List<TelemetryEvent> Events { get; } = [];
 

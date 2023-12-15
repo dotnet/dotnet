@@ -5,6 +5,7 @@ using System;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.VisualStudio.Editor.Razor.Test.Shared;
 using Microsoft.VisualStudio.Telemetry;
+using StreamJsonRpc;
 using Xunit;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Test;
@@ -236,6 +237,49 @@ public class TelemetryReporterTests
                 Assert.Equal(p3Value, p3.Value);
 
                 Assert.Equal(100, e1.Properties["dotnet.razor.p4"]);
+            });
+    }
+
+    [Fact]
+    public void HandleRIEWithInnerException()
+    {
+        var reporter = new TestTelemetryReporter();
+
+        var ae = new ApplicationException("expectedText");
+        var rie = new RemoteInvocationException("a", 0, ae);
+
+        reporter.ReportFault(rie, rie.Message);
+
+        Assert.Collection(reporter.Events,
+            e1 =>
+            {
+                Assert.Equal(TelemetrySeverity.High, e1.Severity);
+                Assert.Equal("dotnet/razor/fault", e1.Name);
+                // faultEvent doesn't expose any interesting properties,
+                // like the ExceptionObject, or the resulting Description,
+                // or really anything we would explicitly want to verify against.
+                Assert.IsType<FaultEvent>(e1);
+            });
+    }
+
+    [Fact]
+    public void HandleRIEWithNoInnerException()
+    {
+        var reporter = new TestTelemetryReporter();
+
+        var rie = new RemoteInvocationException("a", 0, errorData:null);
+
+        reporter.ReportFault(rie, rie.Message);
+
+        Assert.Collection(reporter.Events,
+            e1 =>
+            {
+                Assert.Equal(TelemetrySeverity.High, e1.Severity);
+                Assert.Equal("dotnet/razor/fault", e1.Name);
+                // faultEvent doesn't expose any interesting properties,
+                // like the ExceptionObject, or the resulting Description,
+                // or really anything we would explicitly want to verify against.
+                Assert.IsType<FaultEvent>(e1);
             });
     }
 

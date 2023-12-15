@@ -12,17 +12,39 @@ internal record RazorLSPOptions(
     bool AutoClosingTags,
     bool InsertSpaces,
     int TabSize,
+    bool AutoShowCompletion,
+    bool AutoListParams,
     bool FormatOnType,
     bool AutoInsertAttributeQuotes,
     bool ColorBackground,
     bool CommitElementsWithSpace)
 {
     public RazorLSPOptions(Trace trace, bool enableFormatting, bool autoClosingTags, bool commitElementsWithSpace, ClientSettings settings)
-        : this(trace, enableFormatting, autoClosingTags, !settings.ClientSpaceSettings.IndentWithTabs, settings.ClientSpaceSettings.IndentSize, settings.AdvancedSettings.FormatOnType, settings.AdvancedSettings.AutoInsertAttributeQuotes, settings.AdvancedSettings.ColorBackground, commitElementsWithSpace)
+        : this(trace,
+              enableFormatting,
+              autoClosingTags,
+              !settings.ClientSpaceSettings.IndentWithTabs,
+              settings.ClientSpaceSettings.IndentSize,
+              settings.ClientCompletionSettings.AutoShowCompletion,
+              settings.ClientCompletionSettings.AutoListParams,
+              settings.AdvancedSettings.FormatOnType,
+              settings.AdvancedSettings.AutoInsertAttributeQuotes,
+              settings.AdvancedSettings.ColorBackground,
+              commitElementsWithSpace)
     {
     }
 
-    public readonly static RazorLSPOptions Default = new(Trace: default, EnableFormatting: true, AutoClosingTags: true, InsertSpaces: true, TabSize: 4, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CommitElementsWithSpace: true);
+    public readonly static RazorLSPOptions Default = new(Trace: default,
+                                                         EnableFormatting: true,
+                                                         AutoClosingTags: true,
+                                                         AutoListParams:true,
+                                                         InsertSpaces: true,
+                                                         TabSize: 4,
+                                                         AutoShowCompletion: true,
+                                                         FormatOnType: true,
+                                                         AutoInsertAttributeQuotes: true,
+                                                         ColorBackground: false,
+                                                         CommitElementsWithSpace: true);
 
     public LogLevel MinLogLevel => GetLogLevelForTrace(Trace);
 

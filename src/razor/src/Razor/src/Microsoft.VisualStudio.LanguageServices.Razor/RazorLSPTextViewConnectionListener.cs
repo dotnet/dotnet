@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.Razor.Editor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
@@ -218,11 +219,12 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
 
         // Retrieve current space/tabs settings from from Tools->Options and update options in
         // the actual editor.
-        var settings = UpdateRazorEditorOptions(_textManager, optionsTracker);
+        (ClientSpaceSettings ClientSpaceSettings, ClientCompletionSettings ClientCompletionSettings) settings = UpdateRazorEditorOptions(_textManager, optionsTracker);
 
         // Keep track of accurate settings on the client side so we can easily retrieve the
         // options later when the server sends us a workspace/configuration request.
-        _editorSettingsManager.Update(settings);
+        _editorSettingsManager.Update(settings.ClientSpaceSettings);
+        _editorSettingsManager.Update(settings.ClientCompletionSettings);
     }
 
     private static void InitializeRazorTextViewOptions(IVsTextManager4 textManager, RazorEditorOptionsTracker optionsTracker)
@@ -252,6 +254,9 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
         optionsTracker.ViewOptions.SetOptionValue(DefaultTextViewOptions.BraceCompletionEnabledOptionName, Convert.ToBoolean(langPrefs3[0].fBraceCompletion));
         optionsTracker.ViewOptions.SetOptionValue(DefaultTextViewOptions.CutOrCopyBlankLineIfNoSelectionName, Convert.ToBoolean(langPrefs3[0].fCutCopyBlanks));
 
+        // Completion options
+        optionsTracker.ViewOptions.SetOptionValue(DefaultLanguageOptions.ShowCompletionOnTypeCharName, Convert.ToBoolean(langPrefs3[0].fAutoListMembers));
+
         // Scroll bar options
         optionsTracker.ViewOptions.SetOptionValue(DefaultTextViewHostOptions.HorizontalScrollBarName, Convert.ToBoolean(langPrefs3[0].fShowHorizontalScrollBar));
         optionsTracker.ViewOptions.SetOptionValue(DefaultTextViewHostOptions.VerticalScrollBarName, Convert.ToBoolean(langPrefs3[0].fShowVerticalScrollBar));
@@ -265,7 +270,7 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
         optionsTracker.ViewOptions.SetOptionValue(DefaultTextViewHostOptions.PreviewSizeOptionName, (int)langPrefs3[0].uOverviewWidth);
     }
 
-    private static ClientSpaceSettings UpdateRazorEditorOptions(IVsTextManager4 textManager, RazorEditorOptionsTracker optionsTracker)
+    private static (ClientSpaceSettings, ClientCompletionSettings) UpdateRazorEditorOptions(IVsTextManager4 textManager, RazorEditorOptionsTracker optionsTracker)
     {
         var insertSpaces = true;
         var tabSize = 4;
@@ -273,12 +278,16 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
         var langPrefs3 = new LANGPREFERENCES3[] { new LANGPREFERENCES3() { guidLang = RazorVisualStudioWindowsConstants.RazorLanguageServiceGuid } };
         if (VSConstants.S_OK != textManager.GetUserPreferences4(null, langPrefs3, null))
         {
-            return new ClientSpaceSettings(IndentWithTabs: !insertSpaces, tabSize);
+            return (new ClientSpaceSettings(IndentWithTabs: !insertSpaces, tabSize), ClientCompletionSettings.Default);
         }
 
         // Tabs options
         insertSpaces = !Convert.ToBoolean(langPrefs3[0].fInsertTabs);
         tabSize = (int)langPrefs3[0].uTabSize;
+
+        // Completion options
+        var autoShowCompletion = Convert.ToBoolean(langPrefs3[0].fAutoListMembers);
+        var autoListParams = Convert.ToBoolean(langPrefs3[0].fAutoListParams);
 
         optionsTracker.ViewOptions.SetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId, insertSpaces);
         optionsTracker.ViewOptions.SetOptionValue(DefaultOptions.TabSizeOptionId, tabSize);
@@ -289,7 +298,7 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
         optionsTracker.BufferOptions.SetOptionValue(DefaultOptions.ConvertTabsToSpacesOptionId, insertSpaces);
         optionsTracker.BufferOptions.SetOptionValue(DefaultOptions.TabSizeOptionId, tabSize);
 
-        return new ClientSpaceSettings(IndentWithTabs: !insertSpaces, tabSize);
+        return (new ClientSpaceSettings(IndentWithTabs: !insertSpaces, tabSize), new ClientCompletionSettings(autoShowCompletion, autoListParams));
     }
 
     private class RazorLSPTextViewFilter : IOleCommandTarget, IVsTextViewFilter

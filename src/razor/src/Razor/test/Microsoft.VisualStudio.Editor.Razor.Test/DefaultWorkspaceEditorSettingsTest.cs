@@ -22,7 +22,7 @@ public class DefaultWorkspaceEditorSettingsTest : ProjectSnapshotManagerDispatch
     public void InitialSettingsAreEditorSettingsManagerDefault()
     {
         // Arrange
-        var settings = new ClientSettings(new ClientSpaceSettings(true, 123), ClientAdvancedSettings.Default);
+        var settings = new ClientSettings(new ClientSpaceSettings(true, 123), ClientCompletionSettings.Default, ClientAdvancedSettings.Default);
         var editorSettingsManager = Mock.Of<IClientSettingsManager>(m => m.GetClientSettings() == settings, MockBehavior.Strict);
 
         // Act
