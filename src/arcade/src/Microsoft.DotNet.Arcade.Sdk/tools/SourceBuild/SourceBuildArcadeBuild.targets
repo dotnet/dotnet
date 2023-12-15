@@ -15,6 +15,9 @@
     <CleanInnerSourceBuildRepoRoot Condition="'$(CleanInnerSourceBuildRepoRoot)' == ''">true</CleanInnerSourceBuildRepoRoot>
 
     <FullAssemblySigningSupported Condition="'$(FullAssemblySigningSupported)' == ''">false</FullAssemblySigningSupported>
+
+    <_DirSeparatorEscapedCharForExecArg Condition="'$(OS)' == 'Windows_NT'">\</_DirSeparatorEscapedCharForExecArg>
+    <_DirSeparatorEscapedCharForExecArg Condition="'$(OS)' != 'Windows_NT'" />
   </PropertyGroup>
 
   <Target Name="ExecuteWithSourceBuiltTooling"
@@ -76,20 +79,19 @@
       <InnerBuildArgs Condition="'$(ArcadeBuildFromSource)' == 'true'">$(InnerBuildArgs) /p:DotNetBuildFromSource=true</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(ArcadeBuildVertical)' == 'true'">$(InnerBuildArgs) /p:DotNetBuildVertical=true</InnerBuildArgs>
       <!-- Use a fresh clone of the repo so that source-build modifications are isolated. -->
-      <InnerBuildArgs>$(InnerBuildArgs) /p:RepoRoot=$(InnerSourceBuildRepoRoot)</InnerBuildArgs>
+      <InnerBuildArgs>$(InnerBuildArgs) /p:RepoRoot="$(InnerSourceBuildRepoRoot)$(_DirSeparatorEscapedCharForExecArg)"</InnerBuildArgs>
       <!-- Override the artifacts dir to cleanly separate the inner build from outer build. -->
-      <InnerBuildArgs>$(InnerBuildArgs) /p:ArtifactsDir=$(CurrentRepoSourceBuildArtifactsDir)</InnerBuildArgs>
+      <InnerBuildArgs>$(InnerBuildArgs) /p:ArtifactsDir="$(CurrentRepoSourceBuildArtifactsDir)$(_DirSeparatorEscapedCharForExecArg)"</InnerBuildArgs>
       <!-- Set a custom binlog location to avoid clashing over the currenly specified file. -->
-      <InnerBuildArgs>$(InnerBuildArgs) /bl:$(CurrentRepoSourceBuildBinlogFile)</InnerBuildArgs>
+      <InnerBuildArgs>$(InnerBuildArgs) /bl:"$(CurrentRepoSourceBuildBinlogFile)"</InnerBuildArgs>
       <!-- Flow ContinuousIntegrationBuild to the inner build. -->
       <InnerBuildArgs Condition="'$(ContinuousIntegrationBuild)' == 'true'">$(InnerBuildArgs) /p:ContinuousIntegrationBuild=true</InnerBuildArgs>
 
       <!-- The inner build needs to reference the overall output dir for nupkg transport etc. -->
-      <InnerBuildArgs>$(InnerBuildArgs) /p:SourceBuildOutputDir=$(SourceBuildOutputDir)</InnerBuildArgs>
-      <InnerBuildArgs>$(InnerBuildArgs) /p:SourceBuiltBlobFeedDir=$(SourceBuiltBlobFeedDir)</InnerBuildArgs>
+      <InnerBuildArgs>$(InnerBuildArgs) /p:SourceBuildOutputDir="$(SourceBuildOutputDir)$(_DirSeparatorEscapedCharForExecArg)"</InnerBuildArgs>
 
       <InnerBuildArgs Condition="'$(ArcadeBuildVertical)' != 'true'">$(InnerBuildArgs) /p:DotNetBuildOffline=true</InnerBuildArgs>
-      <InnerBuildArgs Condition=" '$(DotNetPackageVersionPropsPath)' != '' ">$(InnerBuildArgs) /p:DotNetPackageVersionPropsPath=$(DotNetPackageVersionPropsPath)</InnerBuildArgs>
+      <InnerBuildArgs Condition="'$(DotNetPackageVersionPropsPath)' != ''">$(InnerBuildArgs) /p:DotNetPackageVersionPropsPath="$(DotNetPackageVersionPropsPath)"</InnerBuildArgs>
 
       <InnerBuildArgs>$(InnerBuildArgs) /p:FullAssemblySigningSupported=$(FullAssemblySigningSupported)</InnerBuildArgs>
     </PropertyGroup>
@@ -144,8 +146,8 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="$([MSBuild]::IsOSPlatform(Windows))">
-      <_GitCloneToDirArgs>$(_GitCloneToDirArgs) -Source '$(RepoRoot)'</_GitCloneToDirArgs>
-      <_GitCloneToDirArgs>$(_GitCloneToDirArgs) -Dest '$(InnerSourceBuildRepoRoot)'</_GitCloneToDirArgs>
+      <_GitCloneToDirArgs>$(_GitCloneToDirArgs) -Source "$(RepoRoot)$(_DirSeparatorEscapedCharForExecArg)"</_GitCloneToDirArgs>
+      <_GitCloneToDirArgs>$(_GitCloneToDirArgs) -Dest "$(InnerSourceBuildRepoRoot)$(_DirSeparatorEscapedCharForExecArg)"</_GitCloneToDirArgs>
       <_GitCloneToDirArgs Condition="'$(CopyWipIntoInnerSourceBuildRepo)' == 'true'">$(_GitCloneToDirArgs) -CopyWip</_GitCloneToDirArgs>
       <_GitCloneToDirArgs Condition="'$(CleanInnerSourceBuildRepoRoot)' == 'true'">$(_GitCloneToDirArgs) -Clean</_GitCloneToDirArgs>
 
@@ -153,8 +155,8 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="!$([MSBuild]::IsOSPlatform(Windows))">
-      <_GitCloneToDirArgs>$(_GitCloneToDirArgs) --source &quot;$(RepoRoot)&quot;</_GitCloneToDirArgs>
-      <_GitCloneToDirArgs>$(_GitCloneToDirArgs) --dest &quot;$(InnerSourceBuildRepoRoot)&quot;</_GitCloneToDirArgs>
+      <_GitCloneToDirArgs>$(_GitCloneToDirArgs) --source "$(RepoRoot)"</_GitCloneToDirArgs>
+      <_GitCloneToDirArgs>$(_GitCloneToDirArgs) --dest "$(InnerSourceBuildRepoRoot)"</_GitCloneToDirArgs>
       <_GitCloneToDirArgs Condition="'$(CopyWipIntoInnerSourceBuildRepo)' == 'true'">$(_GitCloneToDirArgs) --copy-wip</_GitCloneToDirArgs>
       <_GitCloneToDirArgs Condition="'$(CleanInnerSourceBuildRepoRoot)' == 'true'">$(_GitCloneToDirArgs) --clean</_GitCloneToDirArgs>
 

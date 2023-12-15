@@ -72,7 +72,13 @@ namespace Xunit
 		/// <param name="expected">The expected value</param>
 		/// <param name="actual">The value to be compared against</param>
 		/// <exception cref="EqualException">Thrown when the objects are not equal</exception>
-		public static void Equal<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] T>(
+		public static void Equal<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.Interfaces
+					| DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 #if XUNIT_NULLABLE
 			[AllowNull] T expected,
 			[AllowNull] T actual) =>
@@ -89,7 +95,13 @@ namespace Xunit
 		/// <param name="expected">The expected value</param>
 		/// <param name="actual">The value to be compared against</param>
 		/// <param name="comparer">The comparer used to compare the two objects</param>
-		public static void Equal<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] T>(
+		public static void Equal<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.Interfaces
+					| DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 #if XUNIT_NULLABLE
 			[AllowNull] T expected,
 			[AllowNull] T actual,
@@ -108,7 +120,13 @@ namespace Xunit
 		/// <param name="actual">The value to be compared against</param>
 		/// <param name="comparer">The comparer used to compare the two objects</param>
 		/// <exception cref="EqualException">Thrown when the objects are not equal</exception>
-		public static void Equal<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] T>(
+		public static void Equal<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.Interfaces
+					| DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 #if XUNIT_NULLABLE
 			[AllowNull] T expected,
 			[AllowNull] T actual,
@@ -231,25 +249,13 @@ namespace Xunit
 					}
 
 #if XUNIT_NULLABLE
-					string? collectionDisplay = null;
+					string? collectionDisplay = GetCollectionDisplay(expected, actual);
 #else
-					string collectionDisplay = null;
+					string collectionDisplay = GetCollectionDisplay(expected, actual);
 #endif
 
 					var expectedType = expected?.GetType();
-					var expectedTypeDefinition = SafeGetGenericTypeDefinition(expectedType);
-					var expectedInterfaceTypeDefinitions = expectedType?.GetTypeInfo().ImplementedInterfaces.Where(i => i.GetTypeInfo().IsGenericType).Select(i => i.GetGenericTypeDefinition());
-
 					var actualType = actual?.GetType();
-					var actualTypeDefinition = SafeGetGenericTypeDefinition(actualType);
-					var actualInterfaceTypeDefinitions = actualType?.GetTypeInfo().ImplementedInterfaces.Where(i => i.GetTypeInfo().IsGenericType).Select(i => i.GetGenericTypeDefinition());
-
-					if (expectedTypeDefinition == typeofDictionary && actualTypeDefinition == typeofDictionary)
-						collectionDisplay = "Dictionaries";
-					else if (expectedTypeDefinition == typeofHashSet && actualTypeDefinition == typeofHashSet)
-						collectionDisplay = "HashSets";
-					else if (expectedInterfaceTypeDefinitions != null && actualInterfaceTypeDefinitions != null && expectedInterfaceTypeDefinitions.Contains(typeofSet) && actualInterfaceTypeDefinitions.Contains(typeofSet))
-						collectionDisplay = "Sets";
 
 					if (expectedType != actualType)
 					{
@@ -275,6 +281,39 @@ namespace Xunit
 				expectedTracker?.Dispose();
 				actualTracker?.Dispose();
 			}
+		}
+
+		[DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ISet<>))]
+		[DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(Dictionary<,>))]
+		[DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(HashSet<>))]
+		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2072", Justification = "We only check for the types listed above.")]
+		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2075", Justification = "We only check for the types listed above.")]
+#if XUNIT_NULLABLE
+		private static string? GetCollectionDisplay(object? expected, object? actual)
+#else
+		private static string GetCollectionDisplay(object expected, object actual)
+#endif
+		{
+#if XUNIT_NULLABLE
+			string? collectionDisplay = null;
+#else
+			string collectionDisplay = null;
+#endif
+			var expectedType = expected?.GetType();
+			var actualType = actual?.GetType();
+			var expectedTypeDefinition = SafeGetGenericTypeDefinition(expectedType);
+			var expectedInterfaceTypeDefinitions = expectedType?.GetTypeInfo().ImplementedInterfaces.Where(i => i.GetTypeInfo().IsGenericType).Select(i => i.GetGenericTypeDefinition());
+
+			var actualTypeDefinition = SafeGetGenericTypeDefinition(actualType);
+			var actualInterfaceTypeDefinitions = actualType?.GetTypeInfo().ImplementedInterfaces.Where(i => i.GetTypeInfo().IsGenericType).Select(i => i.GetGenericTypeDefinition());
+
+			if (expectedTypeDefinition == typeofDictionary && actualTypeDefinition == typeofDictionary)
+				collectionDisplay = "Dictionaries";
+			else if (expectedTypeDefinition == typeofHashSet && actualTypeDefinition == typeofHashSet)
+				collectionDisplay = "HashSets";
+			else if (expectedInterfaceTypeDefinitions != null && actualInterfaceTypeDefinitions != null && expectedInterfaceTypeDefinitions.Contains(typeofSet) && actualInterfaceTypeDefinitions.Contains(typeofSet))
+				collectionDisplay = "Sets";
+			return collectionDisplay;
 		}
 
 		/// <summary>
@@ -546,7 +585,12 @@ namespace Xunit
 		/// <param name="expected">The expected object</param>
 		/// <param name="actual">The actual object</param>
 		/// <exception cref="NotEqualException">Thrown when the objects are equal</exception>
-		public static void NotEqual<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] T>(
+		public static void NotEqual<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces |
+				DynamicallyAccessedMemberTypes.PublicFields |
+				DynamicallyAccessedMemberTypes.NonPublicFields |
+				DynamicallyAccessedMemberTypes.PublicProperties |
+				DynamicallyAccessedMemberTypes.NonPublicProperties |
+				DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 #if XUNIT_NULLABLE
 			[AllowNull] T expected,
 			[AllowNull] T actual) =>
@@ -563,7 +607,12 @@ namespace Xunit
 		/// <param name="expected">The expected object</param>
 		/// <param name="actual">The actual object</param>
 		/// <param name="comparer">The comparer used to examine the objects</param>
-		public static void NotEqual<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] T>(
+		public static void NotEqual<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces |
+				DynamicallyAccessedMemberTypes.PublicFields |
+				DynamicallyAccessedMemberTypes.NonPublicFields |
+				DynamicallyAccessedMemberTypes.PublicProperties |
+				DynamicallyAccessedMemberTypes.NonPublicProperties |
+				DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 #if XUNIT_NULLABLE
 			[AllowNull] T expected,
 			[AllowNull] T actual,
@@ -582,7 +631,12 @@ namespace Xunit
 		/// <param name="actual">The actual object</param>
 		/// <param name="comparer">The comparer used to examine the objects</param>
 		public static void NotEqual<
-			[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] T>(
+			[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces |
+				DynamicallyAccessedMemberTypes.PublicFields |
+				DynamicallyAccessedMemberTypes.NonPublicFields |
+				DynamicallyAccessedMemberTypes.PublicProperties |
+				DynamicallyAccessedMemberTypes.NonPublicProperties |
+				DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 #if XUNIT_NULLABLE
 			[AllowNull] T expected,
 			[AllowNull] T actual,
@@ -701,25 +755,13 @@ namespace Xunit
 					}
 
 #if XUNIT_NULLABLE
-					string? collectionDisplay = null;
+					string? collectionDisplay = GetCollectionDisplay(expected, actual);
 #else
-					string collectionDisplay = null;
+					string collectionDisplay = GetCollectionDisplay(expected, actual);
 #endif
 
 					var expectedType = expected?.GetType();
-					var expectedTypeDefinition = SafeGetGenericTypeDefinition(expectedType);
-					var expectedInterfaceTypeDefinitions = expectedType?.GetTypeInfo().ImplementedInterfaces.Where(i => i.GetTypeInfo().IsGenericType).Select(i => i.GetGenericTypeDefinition());
-
 					var actualType = actual?.GetType();
-					var actualTypeDefinition = SafeGetGenericTypeDefinition(actualType);
-					var actualInterfaceTypeDefinitions = actualType?.GetTypeInfo().ImplementedInterfaces.Where(i => i.GetTypeInfo().IsGenericType).Select(i => i.GetGenericTypeDefinition());
-
-					if (expectedTypeDefinition == typeofDictionary && actualTypeDefinition == typeofDictionary)
-						collectionDisplay = "Dictionaries";
-					else if (expectedTypeDefinition == typeofHashSet && actualTypeDefinition == typeofHashSet)
-						collectionDisplay = "HashSets";
-					else if (expectedInterfaceTypeDefinitions != null && actualInterfaceTypeDefinitions != null && expectedInterfaceTypeDefinitions.Contains(typeofSet) && actualInterfaceTypeDefinitions.Contains(typeofSet))
-						collectionDisplay = "Sets";
 
 					if (expectedType != actualType)
 					{
@@ -919,7 +961,12 @@ namespace Xunit
 		/// <typeparam name="T">The type of the objects to be compared</typeparam>
 		/// <param name="expected">The expected object</param>
 		/// <param name="actual">The actual object</param>
-		public static void NotStrictEqual<T>(
+		public static void NotStrictEqual<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 #if XUNIT_NULLABLE
 			[AllowNull] T expected,
 			[AllowNull] T actual)
@@ -943,7 +990,12 @@ namespace Xunit
 		/// <typeparam name="T">The type of the objects to be compared</typeparam>
 		/// <param name="expected">The expected value</param>
 		/// <param name="actual">The value to be compared against</param>
-		public static void StrictEqual<T>(
+		public static void StrictEqual<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 #if XUNIT_NULLABLE
 			[AllowNull] T expected,
 			[AllowNull] T actual)

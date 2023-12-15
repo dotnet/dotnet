@@ -7,6 +7,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Xunit
 {
@@ -52,10 +53,12 @@ namespace Xunit
 		/// </summary>
 		/// <param name="type">The potentially generic type</param>
 		/// <returns>The generic type definition, when <paramref name="type"/> is generic; <c>null</c>, otherwise.</returns>
+		[return: DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+		[UnconditionalSuppressMessage("Trimmability", "IL2073", Justification = "The interfaces on a generic type definition won't be trimmed if they're preserved for an instantation.")]
 #if XUNIT_NULLABLE
-		static Type? SafeGetGenericTypeDefinition(Type? type)
+		static Type? SafeGetGenericTypeDefinition([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] Type? type)
 #else
-		static Type SafeGetGenericTypeDefinition(Type type)
+		static Type SafeGetGenericTypeDefinition([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] Type type)
 #endif
 		{
 			if (type == null)

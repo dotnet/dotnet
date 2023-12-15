@@ -85,9 +85,12 @@
 
     Repos can select a different intermediate nupkg by defining 'SymbolsIntermediateNupkgCategory'
     property in eng/SourceBuild.props.
+
+    Conditioning out for Windows as the tar execution below doesn't work cross-plat.
   -->
   <Target Name="GetSymbolsArchive"
-    Condition="'$(SupplementalIntermediateNupkgCategory)' == '$(SymbolsIntermediateNupkgCategory)'">
+    Condition="'$(SupplementalIntermediateNupkgCategory)' == '$(SymbolsIntermediateNupkgCategory)' and
+               '$(OS)' != 'Windows_NT'">
     <PropertyGroup>
       <SymbolsRoot>$(CurrentRepoSourceBuildArtifactsDir)</SymbolsRoot>
       <!-- Fall back to repo root for source-build-externals or repos that don't have the regular SymbolsRoot as defined above -->
@@ -97,7 +100,7 @@
       <SymbolsList>$(SymbolsArchiveLocation)\symbols.lst</SymbolsList>
       <SymbolsArchivePrefix>Symbols.</SymbolsArchivePrefix>
       <SymbolsArchiveSuffix>.$(Version).$(TargetRid)</SymbolsArchiveSuffix>
-      <SymbolsArchiveName>$(SymbolsArchiveLocation)$(SymbolsArchivePrefix)$(GitHubRepositoryName)$(SymbolsArchiveSuffix).tar.gz</SymbolsArchiveName>
+      <SymbolsArchiveName>$(SymbolsArchiveLocation)$(SymbolsArchivePrefix)$(GitHubRepositoryName)$(SymbolsArchiveSuffix)$(ArchiveExtension)</SymbolsArchiveName>
     </PropertyGroup>
 
     <ItemGroup>

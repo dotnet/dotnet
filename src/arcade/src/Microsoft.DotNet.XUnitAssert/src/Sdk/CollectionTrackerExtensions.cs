@@ -96,7 +96,12 @@ namespace Xunit.Sdk
 		/// <param name="enumerable">The enumerable to be wrapped</param>
 #if XUNIT_NULLABLE
 		[return: NotNullIfNotNull("enumerable")]
-		public static CollectionTracker<T>? AsTracker<T>(this IEnumerable<T>? enumerable) =>
+		public static CollectionTracker<T>? AsTracker<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(this IEnumerable<T>? enumerable) =>
 #else
 		public static CollectionTracker<T> AsTracker<T>(this IEnumerable<T> enumerable) =>
 #endif

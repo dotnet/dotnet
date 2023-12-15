@@ -5,8 +5,8 @@ A Target Framework Moniker (TFM) is the name of the API surface area that a proj
 ## Problem
 
 .NET's product is made up of a wide variety of repositories. Each of these repositories has a number of projects that specify a desired set of target frameworks. This set is largely determined by the *union* of consumers of the component. Where does the component need to run? For instance:
-- A library like `System.Text.Json` may multi-target to `netstandard2.0`, `net472`, and `net8.0` because it ships on nuget.org and is intended for consumption by .NET Framework customers in addition to .NET Core customers, as well as downstream components which may be targeting older .NET Core TFMs.
-- SDK components may only target `net8.0` because they ship in-box with the .NET 8 runtime.
+- A library like `System.Text.Json` may multi-target to `netstandard2.0`, `net472`, and `net9.0` because it ships on nuget.org and is intended for consumption by .NET Framework customers in addition to .NET Core customers, as well as downstream components which may be targeting older .NET Core TFMs.
+- SDK components may only target `net9.0` because they ship in-box with the .NET 9 runtime.
 - .NET tooling components (roslyn, fsharp, etc.) may multi-target to `net7.0` and `net4*` because they will run within Visual Studio (which runs on Framework) as well as different .NET SDK bands that may cross major version boundaries of .NET (`7.0.2xx` and `8.0.1xx`). `net7` represents a common surface area that *should* work well if rolled forward onto .NET 8.
 
 While this flexiblity is useful, it does present a significant challenge for .NET distro maintainers. Targeting frameworks other the one currently being built ultimately requires the reference assemblies for that framework. Most Linux distributions disallow internet access while building, so those targeting packs cannot come from the internet. Source-build provides a mechanism for creating these references assemblies during the build, via the [source-build-reference-packages](https://github.com/dotnet/source-build-reference-packages) repository. These are assembled early in the build. There are major downsides to these reference packages:
@@ -20,7 +20,7 @@ We can significantly reduce the dependence on reference packages, especially the
 - The set of frameworks targeted by a project is currently driven by **all** possible consumers not built within the same repository.
 - When building a specific product (NuGet package, SDK layout, etc.), the set of required input frameworks is usually a subset of the available input frameworks.
 
-Because .NET uses a distributed, many-repository based development model, producing repositories lack information about any specific consumer, and so must produce assets that target any possible use case. In plainer terms, let's say that we have a single repository with 2 projects. One is a non-packable library project that targets `net462`, `net472`, and `net8.0`. The other is a console exe targeting just `net8.0`, which references the library project. When building and publishing the console exe, there is no need to build the `net462` and `net472` assets. Now, let's say we split those projects into two repositories. The library project now must become packable to be referenced in the downstream console project. It also has no way to know that the `net4*` assets are useless. It must build them all.
+Because .NET uses a distributed, many-repository based development model, producing repositories lack information about any specific consumer, and so must produce assets that target any possible use case. In plainer terms, let's say that we have a single repository with 2 projects. One is a non-packable library project that targets `net462`, `net472`, and `net9.0`. The other is a console exe targeting just `net9.0`, which references the library project. When building and publishing the console exe, there is no need to build the `net462` and `net472` assets. Now, let's say we split those projects into two repositories. The library project now must become packable to be referenced in the downstream console project. It also has no way to know that the `net4*` assets are useless. It must build them all.
 
 Unified Build/source-build builds all input repositories required to produce the assets shipped by .NET distro maintainers, the consumer side of the build **is** known. RedHat ships a RedHat-targeted SDK and packages to its consumers. Microsoft ships packages to nuget.org, SDKs to VS, etc. Roslyn ships packages to nuget.org, VS, and the SDK. When building for a specific consumer in the VMR, a producer should be able to avoid building (trim away) away TFMs that are not used. Practically, this means that an organization should be able to only target TFMs that meet their end-customer's needs.
 
@@ -46,16 +46,7 @@ Any solution must meet the following requirements:
 
 To enable latest-targeting, Arcade will introduce a new property file called `TargetFrameworkDefaults.props`. This approach takes direct inspiration from current approaches in runtime and other repositories.
 
-```
-<Project>
-  <PropertyGroup>
-    <NetCurrent>net8.0</NetCurrent>
-    <NetSupported>$(NetCurrent);net7.0;net6.0</NetSupported>
-  </PropertyGroup>
-</Project>
-```
-
-Initially, this file will contain only one property, the currrent major version of .NET. If additional properties are needed (minimum version, newest framework versions, etc.), they can be added. This file is imported in `Settings.props` within the Arcade SDK. These properties are then used as desired within repositories' project, property files, etc. For example, a project might do the following:
+This file is imported in `Settings.props` within the Arcade SDK. These properties are then used as desired within repositories' project, property files, etc. For example, a project might do the following:
 
 ```
 Microsoft.FileProviders.Composite.csproj
