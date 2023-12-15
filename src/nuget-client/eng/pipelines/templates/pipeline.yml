@@ -152,6 +152,7 @@ stages:
       VsTargetMajorVersion: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.VsTargetMajorVersion']]
       BuildRTM: "false"
       SemanticVersion: $[stageDependencies.Initialize.GetSemanticVersion.outputs['setsemanticversion.SemanticVersion']]
+      NUGET_PACKAGES:
     pool:
       name: VSEngSS-MicroBuild2022-1ES
     steps:
@@ -174,6 +175,7 @@ stages:
       VsTargetChannelForTests: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.VsTargetChannelForTests']]
       VsTargetMajorVersion: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.VsTargetMajorVersion']]
       BuildRTM: "true"
+      NUGET_PACKAGES:
     pool:
       name: VSEngSS-MicroBuild2022-1ES
     steps:
@@ -222,6 +224,7 @@ stages:
       FullVstsBuildNumber: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.FullVstsBuildNumber']]
        # Set MSBuildEnableWorkloadResolver to work around https://github.com/dotnet/sdk/issues/17461
       MSBuildEnableWorkloadResolver: false
+      NUGET_PACKAGES:
     condition: "and(succeeded(), ne(variables['RunFunctionalTestsOnWindows'], 'false'))"
     pool:
       name: VSEngSS-MicroBuild2022-1ES
@@ -243,6 +246,7 @@ stages:
       # Set MSBuildEnableWorkloadResolver to work around https://github.com/dotnet/sdk/issues/17461
       MSBuildEnableWorkloadResolver: false
       DOTNET_NUGET_SIGNATURE_VERIFICATION: true
+      NUGET_PACKAGES:
     condition: "and(succeeded(), ne(variables['RunTestsOnLinux'], 'false'))"
     pool:
       vmImage: ubuntu-latest
@@ -265,6 +269,7 @@ stages:
       MSBUILDDISABLENODEREUSE: 1
       # Set MSBuildEnableWorkloadResolver to work around https://github.com/dotnet/sdk/issues/17461
       MSBuildEnableWorkloadResolver: false
+      NUGET_PACKAGES:
     condition: "and(succeeded(), ne(variables['RunTestsOnMac'], 'false'))"
     pool:
       vmImage: macos-latest
@@ -286,6 +291,7 @@ stages:
     variables:
       BuildNumber: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.BuildNumber']]
       FullVstsBuildNumber: $[stageDependencies.Initialize.Initialize_Build.outputs['updatebuildnumber.FullVstsBuildNumber']]
+      NUGET_PACKAGES:
     pool:
       vmImage: windows-latest
     steps:
@@ -306,6 +312,7 @@ stages:
       MSBuildEnableWorkloadResolver: false
       TestRunDisplayName: "Mono Tests"
       TestRunCommandLineArguments: "--mono-tests"
+      NUGET_PACKAGES:
     pool:
       vmImage: macos-latest
     steps:

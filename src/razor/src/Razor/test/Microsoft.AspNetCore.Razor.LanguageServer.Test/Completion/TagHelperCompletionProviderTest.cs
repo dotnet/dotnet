@@ -20,13 +20,8 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
-public class TagHelperCompletionProviderTest : TagHelperServiceTestBase
+public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : TagHelperServiceTestBase(testOutput)
 {
-    public TagHelperCompletionProviderTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     private TagHelperCompletionProvider CreateTagHelperCompletionProvider()
         => new(RazorTagHelperCompletionService, HtmlFactsService, TagHelperFactsService, TestRazorLSPOptionsMonitor.Create());
 

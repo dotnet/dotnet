@@ -122,7 +122,7 @@
 
     <file src="net462\Newtonsoft.Json.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
 
-    <file src="net462\System*.dll" exclude="net462\System.Buffers.dll;net462\System.ComponentModel.Composition.dll;net462\System.Memory.dll;net462\System.Numerics.Vectors.dll;net462\System.Runtime.CompilerServices.Unsafe.dll;net462\System.Threading.Tasks.Extensions.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
+    <file src="net462\System*.dll" exclude="net462\System.Buffers.dll;net462\System.ComponentModel.Composition.dll;net462\System.Memory.dll;net462\System.Numerics.Vectors.dll;net462\System.Runtime.CompilerServices.Unsafe.dll;net462\System.Threading.Tasks.Extensions.dll;net462\System.Diagnostics.DiagnosticSource.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
     <file src="net462\netstandard.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
     <file src="net462\Microsoft.Win32.Primitives.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
 

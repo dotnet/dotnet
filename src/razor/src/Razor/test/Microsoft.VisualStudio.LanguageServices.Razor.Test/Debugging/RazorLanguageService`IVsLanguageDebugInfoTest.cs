@@ -7,10 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Debugging;
-using Microsoft.VisualStudio.Test;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Utilities;
@@ -22,15 +22,9 @@ using Range = Microsoft.VisualStudio.LanguageServer.Protocol.Range;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
-public class RazorLanguageService_IVsLanguageDebugInfoTest : ToolingTestBase
+public class RazorLanguageService_IVsLanguageDebugInfoTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    private readonly TextSpan[] _textSpans;
-
-    public RazorLanguageService_IVsLanguageDebugInfoTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        _textSpans = new[] { new TextSpan() };
-    }
+    private readonly TextSpan[] _textSpans = [new TextSpan()];
 
     [Fact]
     public void ValidateBreakpointLocation_CanNotGetBackingTextBuffer_ReturnsNotImpl()

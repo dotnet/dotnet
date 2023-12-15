@@ -11,9 +11,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.Test;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Moq;
@@ -34,7 +36,7 @@ public class DefaultVisualStudioRazorParserIntegrationTest : ProjectSnapshotMana
     public DefaultVisualStudioRazorParserIntegrationTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _workspace = CodeAnalysis.TestWorkspace.Create();
+        _workspace = TestWorkspace.Create();
         AddDisposable(_workspace);
 
         _projectSnapshot = new EphemeralProjectSnapshot(_workspace.Services, TestProjectPath);

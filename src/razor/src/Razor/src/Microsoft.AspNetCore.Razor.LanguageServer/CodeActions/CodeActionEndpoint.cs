@@ -36,7 +36,7 @@ internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionPara
     private readonly IEnumerable<ICSharpCodeActionProvider> _csharpCodeActionProviders;
     private readonly IEnumerable<IHtmlCodeActionProvider> _htmlCodeActionProviders;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly ClientNotifierServiceBase _languageServer;
+    private readonly IClientConnection _clientConnection;
     private readonly ITelemetryReporter? _telemetryReporter;
 
     internal bool _supportsCodeActionResolve = false;
@@ -50,7 +50,7 @@ internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionPara
         IEnumerable<IRazorCodeActionProvider> razorCodeActionProviders,
         IEnumerable<ICSharpCodeActionProvider> csharpCodeActionProviders,
         IEnumerable<IHtmlCodeActionProvider> htmlCodeActionProviders,
-        ClientNotifierServiceBase languageServer,
+        IClientConnection clientConnection,
         LanguageServerFeatureOptions languageServerFeatureOptions,
         ITelemetryReporter? telemetryReporter)
     {
@@ -58,7 +58,7 @@ internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionPara
         _razorCodeActionProviders = razorCodeActionProviders ?? throw new ArgumentNullException(nameof(razorCodeActionProviders));
         _csharpCodeActionProviders = csharpCodeActionProviders ?? throw new ArgumentNullException(nameof(csharpCodeActionProviders));
         _htmlCodeActionProviders = htmlCodeActionProviders ?? throw new ArgumentNullException(nameof(htmlCodeActionProviders));
-        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
         _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
         _telemetryReporter = telemetryReporter;
 
@@ -308,7 +308,7 @@ internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionPara
 
         try
         {
-            return await _languageServer.SendRequestAsync<DelegatedCodeActionParams, RazorVSInternalCodeAction[]>(CustomMessageNames.RazorProvideCodeActionsEndpoint, delegatedParams, cancellationToken).ConfigureAwait(false);
+            return await _clientConnection.SendRequestAsync<DelegatedCodeActionParams, RazorVSInternalCodeAction[]>(CustomMessageNames.RazorProvideCodeActionsEndpoint, delegatedParams, cancellationToken).ConfigureAwait(false);
         }
         catch (RemoteInvocationException e)
         {

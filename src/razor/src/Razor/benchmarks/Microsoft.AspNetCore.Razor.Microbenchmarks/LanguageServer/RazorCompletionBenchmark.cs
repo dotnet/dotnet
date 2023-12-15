@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.AspNetCore.Razor.Microbenchmarks.Serialization;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -38,12 +39,14 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
         var lspServices = languageServer.GetLspServices();
         var responseRewriters = lspServices.GetRequiredServices<DelegatedCompletionResponseRewriter>();
         var documentMappingService = lspServices.GetRequiredService<IRazorDocumentMappingService>();
-        var clientNotifierServiceBase = lspServices.GetRequiredService<ClientNotifierServiceBase>();
+        var clientConnection = lspServices.GetRequiredService<IClientConnection>();
         var completionListCache = lspServices.GetRequiredService<CompletionListCache>();
 
-        var delegatedCompletionListProvider = new TestDelegatedCompletionListProvider(responseRewriters, documentMappingService, clientNotifierServiceBase, completionListCache);
+        var delegatedCompletionListProvider = new TestDelegatedCompletionListProvider(responseRewriters, documentMappingService, clientConnection, completionListCache);
         var completionListProvider = new CompletionListProvider(razorCompletionListProvider, delegatedCompletionListProvider);
-        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, telemetryReporter: null);
+        var optionsMonitor = new BenchmarkOptionsMonitor<RazorLSPOptions>(RazorLSPOptions.Default);
+
+        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, telemetryReporter: null, optionsMonitor);
 
         var clientCapabilities = new VSInternalClientCapabilities
         {
@@ -142,8 +145,8 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
 
     private class TestDelegatedCompletionListProvider : DelegatedCompletionListProvider
     {
-        public TestDelegatedCompletionListProvider(IEnumerable<DelegatedCompletionResponseRewriter> responseRewriters, IRazorDocumentMappingService documentMappingService, ClientNotifierServiceBase languageServer, CompletionListCache completionListCache)
-            : base(responseRewriters, documentMappingService, languageServer, completionListCache)
+        public TestDelegatedCompletionListProvider(IEnumerable<DelegatedCompletionResponseRewriter> responseRewriters, IRazorDocumentMappingService documentMappingService, IClientConnection clientConnection, CompletionListCache completionListCache)
+            : base(responseRewriters, documentMappingService, clientConnection, completionListCache)
         {
         }
 

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Immutable;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json;
 using LSP = Microsoft.VisualStudio.LanguageServer.Protocol;
 
@@ -31,16 +32,30 @@ namespace Microsoft.CodeAnalysis.LanguageServer.Handler.CodeActions
 
         public LSP.TextDocumentIdentifier TextDocument { get; }
 
+        public string[] CodeActionPath { get; }
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string[]? FixAllFlavors { get; }
 
-        public CodeActionResolveData(string uniqueIdentifier, ImmutableArray<string> customTags, LSP.Range range, LSP.TextDocumentIdentifier textDocument, string[]? fixAllFlavors)
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public ImmutableArray<CodeAction>? NestedCodeActions { get; }
+
+        public CodeActionResolveData(
+            string uniqueIdentifier,
+            ImmutableArray<string> customTags,
+            LSP.Range range,
+            LSP.TextDocumentIdentifier textDocument,
+            string[] codeActionPath,
+            string[]? fixAllFlavors,
+            ImmutableArray<CodeAction>? nestedCodeActions)
         {
             UniqueIdentifier = uniqueIdentifier;
             CustomTags = customTags;
             Range = range;
             TextDocument = textDocument;
+            CodeActionPath = codeActionPath;
             FixAllFlavors = fixAllFlavors;
+            NestedCodeActions = nestedCodeActions;
         }
     }
 }

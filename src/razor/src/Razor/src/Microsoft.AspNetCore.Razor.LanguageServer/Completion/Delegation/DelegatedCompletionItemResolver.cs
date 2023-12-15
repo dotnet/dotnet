@@ -14,18 +14,18 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
 internal class DelegatedCompletionItemResolver : CompletionItemResolver
 {
-    private readonly DocumentContextFactory _documentContextFactory;
+    private readonly IDocumentContextFactory _documentContextFactory;
     private readonly IRazorFormattingService _formattingService;
-    private readonly ClientNotifierServiceBase _languageServer;
+    private readonly IClientConnection _clientConnection;
 
     public DelegatedCompletionItemResolver(
-        DocumentContextFactory documentContextFactory,
+        IDocumentContextFactory documentContextFactory,
         IRazorFormattingService formattingService,
-        ClientNotifierServiceBase languageServer)
+        IClientConnection clientConnection)
     {
         _documentContextFactory = documentContextFactory;
         _formattingService = formattingService;
-        _languageServer = languageServer;
+        _clientConnection = clientConnection;
     }
 
     public override async Task<VSInternalCompletionItem?> ResolveAsync(
@@ -64,7 +64,7 @@ internal class DelegatedCompletionItemResolver : CompletionItemResolver
             delegatedParams.Identifier,
             item,
             delegatedParams.ProjectedKind);
-        var resolvedCompletionItem = await _languageServer.SendRequestAsync<DelegatedCompletionItemResolveParams, VSInternalCompletionItem?>(Common.LanguageServerConstants.RazorCompletionResolveEndpointName, delegatedResolveParams, cancellationToken).ConfigureAwait(false);
+        var resolvedCompletionItem = await _clientConnection.SendRequestAsync<DelegatedCompletionItemResolveParams, VSInternalCompletionItem?>(Common.LanguageServerConstants.RazorCompletionResolveEndpointName, delegatedResolveParams, cancellationToken).ConfigureAwait(false);
 
         if (resolvedCompletionItem is not null)
         {
@@ -104,7 +104,7 @@ internal class DelegatedCompletionItemResolver : CompletionItemResolver
             return resolvedCompletionItem;
         }
 
-        var formattingOptions = await _languageServer.SendRequestAsync<TextDocumentIdentifierAndVersion, FormattingOptions?>(Common.LanguageServerConstants.RazorGetFormattingOptionsEndpointName, documentContext.Identifier, cancellationToken).ConfigureAwait(false);
+        var formattingOptions = await _clientConnection.SendRequestAsync<TextDocumentIdentifierAndVersion, FormattingOptions?>(Common.LanguageServerConstants.RazorGetFormattingOptionsEndpointName, documentContext.Identifier, cancellationToken).ConfigureAwait(false);
         if (formattingOptions is null)
         {
             return resolvedCompletionItem;

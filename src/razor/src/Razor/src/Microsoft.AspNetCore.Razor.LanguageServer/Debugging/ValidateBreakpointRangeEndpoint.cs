@@ -23,9 +23,9 @@ internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint
     public ValidateBreakpointRangeEndpoint(
         IRazorDocumentMappingService documentMappingService,
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        ClientNotifierServiceBase languageServer,
+        IClientConnection clientConnection,
         ILoggerFactory loggerFactory)
-        : base(languageServerFeatureOptions, documentMappingService, languageServer, loggerFactory.CreateLogger<ValidateBreakpointRangeEndpoint>())
+        : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.CreateLogger<ValidateBreakpointRangeEndpoint>())
     {
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     }

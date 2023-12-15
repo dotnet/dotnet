@@ -30,17 +30,17 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
     private readonly IRazorDocumentMappingService _documentMappingService;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly RazorLSPOptionsMonitor _razorLSPOptionsMonitor;
-    private readonly ClientNotifierServiceBase _languageServer;
+    private readonly IClientConnection _clientConnection;
     private readonly ILogger _logger;
 
     public RazorSemanticTokensInfoService(
-        ClientNotifierServiceBase languageServer,
+        IClientConnection clientConnection,
         IRazorDocumentMappingService documentMappingService,
         RazorLSPOptionsMonitor razorLSPOptionsMonitor,
         LanguageServerFeatureOptions languageServerFeatureOptions,
         ILoggerFactory loggerFactory)
     {
-        _languageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
         _razorLSPOptionsMonitor = razorLSPOptionsMonitor ?? throw new ArgumentNullException(nameof(razorLSPOptionsMonitor));
         _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
@@ -406,7 +406,7 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
 
     private async Task<ProvideSemanticTokensResponse?> GetCsharpResponseAsync(ProvideSemanticTokensRangesParams parameter, string lspMethodName, CancellationToken cancellationToken)
     {
-        return await _languageServer.SendRequestAsync<ProvideSemanticTokensRangesParams, ProvideSemanticTokensResponse>(
+        return await _clientConnection.SendRequestAsync<ProvideSemanticTokensRangesParams, ProvideSemanticTokensResponse>(
             lspMethodName,
             parameter,
             cancellationToken).ConfigureAwait(false);

@@ -11,8 +11,13 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 [TestClass]
 public class DotnetTestTests : AcceptanceTestBase
 {
+    private static string GetFinalVersion(string version)
+    {
+        var end = version.IndexOf("-release");
+        return (end >= 0) ? version.Substring(0, end) : version;
+    }
+
     [TestMethod]
-    [Ignore("TODO: Re-enable when https://github.com/microsoft/vstest/issues/4014 is fixed")]
     // patched dotnet is not published on non-windows systems
     [TestCategory("Windows-Review")]
     [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
@@ -24,13 +29,12 @@ public class DotnetTestTests : AcceptanceTestBase
         InvokeDotnetTest($@"{projectPath} --logger:""Console;Verbosity=normal"" /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}");
 
         // ensure our dev version is used
-        StdOutputContains("-dev");
+        StdOutputContains(GetFinalVersion(IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion));
         ValidateSummaryStatus(1, 1, 1);
         ExitCodeEquals(1);
     }
 
     [TestMethod]
-    [Ignore("TODO: Re-enable when https://github.com/microsoft/vstest/issues/4014 is fixed")]
     // patched dotnet is not published on non-windows systems
     [TestCategory("Windows-Review")]
     [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
@@ -42,13 +46,12 @@ public class DotnetTestTests : AcceptanceTestBase
         InvokeDotnetTest($@"{assemblyPath} --logger:""Console;Verbosity=normal""");
 
         // ensure our dev version is used
-        StdOutputContains("-dev");
+        StdOutputContains(GetFinalVersion(IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion));
         ValidateSummaryStatus(1, 1, 1);
         ExitCodeEquals(1);
     }
 
     [TestMethod]
-    [Ignore("TODO: Re-enable when https://github.com/microsoft/vstest/issues/4014 is fixed")]
     // patched dotnet is not published on non-windows systems
     [TestCategory("Windows-Review")]
     [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
@@ -57,7 +60,7 @@ public class DotnetTestTests : AcceptanceTestBase
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
         var projectPath = GetIsolatedTestAsset("ParametrizedTestProject.csproj");
-        InvokeDotnetTest($@"{projectPath} --logger:""Console;Verbosity=normal"" -- TestRunParameters.Parameter(name =\""weburl\"", value=\""http://localhost//def\"")");
+        InvokeDotnetTest($@"{projectPath} --logger:""Console;Verbosity=normal"" /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion} -- TestRunParameters.Parameter(name =\""weburl\"", value=\""http://localhost//def\"")");
 
         ValidateSummaryStatus(1, 0, 0);
         ExitCodeEquals(0);

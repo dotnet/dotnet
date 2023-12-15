@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Testing;
@@ -311,7 +311,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         var codeDocument = CreateCodeDocument(output, filePath: razorFilePath);
         var csharpSourceText = codeDocument.GetCSharpSourceText();
         var csharpDocumentUri = new Uri(razorFilePath + "__virtual.g.cs");
-        var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
+        await using var csharpServer = await CSharpTestLspServerHelpers.CreateCSharpLspServerAsync(
             csharpSourceText, csharpDocumentUri, new VSInternalServerCapabilities(), razorSpanMappingService: null, DisposalToken);
         await csharpServer.OpenDocumentAsync(csharpDocumentUri, csharpSourceText.ToString());
 
@@ -367,7 +367,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         AssertEx.EqualOrDiff(expectedCode, actualCode.ToString());
     }
 
-    private class MapCodeServer : ClientNotifierServiceBase
+    private class MapCodeServer : IClientConnection
     {
         private readonly CSharpTestLspServer _csharpServer;
         private readonly Uri _csharpDocumentUri;
@@ -378,22 +378,17 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
             _csharpDocumentUri = csharpDocumentUri;
         }
 
-        public override Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
-
-        public override Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
+        public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public override Task SendNotificationAsync(string method, CancellationToken cancellationToken)
+        public Task SendNotificationAsync(string method, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public override async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
+        public async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
         {
             Assert.Equal(CustomMessageNames.RazorMapCodeEndpoint, method);
             var delegatedMapCodeParams = Assert.IsType<DelegatedMapCodeParams>(@params);

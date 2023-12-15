@@ -1,10 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
 
@@ -18,7 +17,8 @@ internal class TestAdhocWorkspaceFactory : AdhocWorkspaceFactory
     {
     }
 
-    public override AdhocWorkspace Create() => Create(Enumerable.Empty<IWorkspaceService>());
+    public override AdhocWorkspace Create()
+        => Create(Enumerable.Empty<IWorkspaceService>());
 
     public override AdhocWorkspace Create(IEnumerable<IWorkspaceService> workspaceServices)
     {

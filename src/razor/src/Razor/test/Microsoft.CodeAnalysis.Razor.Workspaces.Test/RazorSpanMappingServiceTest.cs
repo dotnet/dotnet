@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -15,17 +17,10 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-public class RazorSpanMappingServiceTest : WorkspaceTestBase
+public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : WorkspaceTestBase(testOutput)
 {
-    private readonly HostProject _hostProject;
-    private readonly HostDocument _hostDocument;
-
-    public RazorSpanMappingServiceTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        _hostProject = TestProjectData.SomeProject;
-        _hostDocument = TestProjectData.SomeProjectFile1;
-    }
+    private readonly HostProject _hostProject = TestProjectData.SomeProject;
+    private readonly HostDocument _hostDocument = TestProjectData.SomeProjectFile1;
 
     protected override void ConfigureWorkspaceServices(List<IWorkspaceService> services)
     {

@@ -4,7 +4,7 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.VisualStudio.Text;
@@ -67,7 +67,7 @@ public class DefaultRazorEditorFactoryServiceTest : ToolingTestBase
     public void TryInitializeTextBuffer_WorkspaceAccessorCanNotAccessWorkspace_ReturnsFalse()
     {
         // Arrange
-        Workspace workspace = null;
+        CodeAnalysis.Workspace workspace = null;
         var workspaceAccessor = new Mock<VisualStudioWorkspaceAccessor>(MockBehavior.Strict);
         workspaceAccessor.Setup(provider => provider.TryGetWorkspace(It.IsAny<ITextBuffer>(), out workspace))
             .Returns(false);
@@ -277,7 +277,7 @@ public class DefaultRazorEditorFactoryServiceTest : ToolingTestBase
             smartIndenterFactory
         });
 
-        Workspace workspace = TestWorkspace.Create(services);
+        CodeAnalysis.Workspace workspace = TestWorkspace.Create(services);
         var workspaceAccessor = new Mock<VisualStudioWorkspaceAccessor>(MockBehavior.Strict);
         workspaceAccessor.Setup(p => p.TryGetWorkspace(It.IsAny<ITextBuffer>(), out workspace))
             .Returns(true);

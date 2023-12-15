@@ -13,7 +13,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 
-public class HtmlCommitCharacterResponseRewriterTest(ITestOutputHelper testOutput) : ResponseRewriterTestBase(new HtmlCommitCharacterResponseRewriter(TestRazorLSPOptionsMonitor.Create()), testOutput)
+public class HtmlCommitCharacterResponseRewriterTest(ITestOutputHelper testOutput)
+    : ResponseRewriterTestBase(new HtmlCommitCharacterResponseRewriter(TestRazorLSPOptionsMonitor.Create()), testOutput)
 {
     [Theory]
     [CombinatorialData]

@@ -6,6 +6,10 @@
     <!-- Keep TFMs in sync with Microsoft.DotNet.XliffTasks.csproj -->
     <XliffTasksDirectory Condition="'$(MSBuildRuntimeType)' == 'Core'">$(XliffTasksBaseOutputDirectory)$(NetCurrent)\</XliffTasksDirectory>
     <XliffTasksDirectory Condition="'$(MSBuildRuntimeType)' != 'Core'">$(XliffTasksBaseOutputDirectory)$(NetFrameworkToolCurrent)\</XliffTasksDirectory>
+    <!-- XliffTasks tasks should be invoked out-of-proc in this repository to avoid assembly lock issues. -->
+    <XliffTasksTaskFactory>TaskHostFactory</XliffTasksTaskFactory>
+    <!-- Make sure that the XliffTasks P2P is built before xliff targets are invoked. -->
+    <GetXlfSourcesDependsOnTargets>ResolveProjectReferences</GetXlfSourcesDependsOnTargets>
   </PropertyGroup>
 
   <!-- Props and targets files get automatically imported when referencing XliffTasks via a PackageReference,

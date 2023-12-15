@@ -17,14 +17,14 @@ internal class DefaultWorkspaceSemanticTokensRefreshPublisher : WorkspaceSemanti
     private static readonly TimeSpan s_debounceTimeSpan = TimeSpan.FromMilliseconds(250);
 
     private readonly IInitializeManager<InitializeParams, InitializeResult> _settingsManager;
-    private readonly ClientNotifierServiceBase _notifierService;
+    private readonly IClientConnection _clientConnection;
     private readonly BatchingWorkQueue _workQueue;
 
     private bool _isColoringBackground;
 
     public DefaultWorkspaceSemanticTokensRefreshPublisher(
         IInitializeManager<InitializeParams, InitializeResult> settingsManager,
-        ClientNotifierServiceBase clientNotifier,
+        IClientConnection clientConnection,
         IErrorReporter errorReporter,
         RazorLSPOptionsMonitor razorLSPOptionsMonitor)
     {
@@ -39,7 +39,7 @@ internal class DefaultWorkspaceSemanticTokensRefreshPublisher : WorkspaceSemanti
         }
 
         _settingsManager = settingsManager;
-        _notifierService = clientNotifier;
+        _clientConnection = clientConnection;
         _workQueue = new BatchingWorkQueue(s_debounceTimeSpan, StringComparer.Ordinal, errorReporter: errorReporter);
 
         _isColoringBackground = razorLSPOptionsMonitor.CurrentValue.ColorBackground;
@@ -63,7 +63,7 @@ internal class DefaultWorkspaceSemanticTokensRefreshPublisher : WorkspaceSemanti
 
         if (useWorkspaceRefresh)
         {
-            var workItem = new SemanticTokensRefreshWorkItem(_notifierService);
+            var workItem = new SemanticTokensRefreshWorkItem(_clientConnection);
             _workQueue.Enqueue(WorkspaceSemanticTokensRefreshKey, workItem);
         }
     }
@@ -75,16 +75,16 @@ internal class DefaultWorkspaceSemanticTokensRefreshPublisher : WorkspaceSemanti
 
     private class SemanticTokensRefreshWorkItem : BatchableWorkItem
     {
-        private readonly ClientNotifierServiceBase _languageServer;
+        private readonly IClientConnection _clientConnection;
 
-        public SemanticTokensRefreshWorkItem(ClientNotifierServiceBase languageServer)
+        public SemanticTokensRefreshWorkItem(IClientConnection clientConnection)
         {
-            _languageServer = languageServer;
+            _clientConnection = clientConnection;
         }
 
         public override ValueTask ProcessAsync(CancellationToken cancellationToken)
         {
-            var task = _languageServer.SendNotificationAsync(Methods.WorkspaceSemanticTokensRefreshName, cancellationToken);
+            var task = _clientConnection.SendNotificationAsync(Methods.WorkspaceSemanticTokensRefreshName, cancellationToken);
 
             return new ValueTask(task);
         }

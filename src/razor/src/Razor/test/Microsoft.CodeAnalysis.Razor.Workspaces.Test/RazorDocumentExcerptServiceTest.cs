@@ -5,6 +5,8 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Host;
@@ -14,13 +16,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-public class RazorDocumentExcerptServiceTest : DocumentExcerptServiceTestBase
+public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : DocumentExcerptServiceTestBase(testOutput)
 {
-    public RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     protected override void ConfigureWorkspaceServices(List<IWorkspaceService> services)
     {
         services.Add(new TestTagHelperResolver());

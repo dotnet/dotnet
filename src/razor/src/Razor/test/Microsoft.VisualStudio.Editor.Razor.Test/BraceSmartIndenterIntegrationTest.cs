@@ -6,7 +6,7 @@
 using System;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
-using Microsoft.VisualStudio.Test;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.VisualStudio.Text;
 using Moq;
 using Xunit;
@@ -14,13 +14,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public class BraceSmartIndenterIntegrationTest : BraceSmartIndenterTestBase
+public class BraceSmartIndenterIntegrationTest(ITestOutputHelper testOutput) : BraceSmartIndenterTestBase(testOutput)
 {
-    public BraceSmartIndenterIntegrationTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [UIFact]
     public void TextBuffer_OnPostChanged_IndentsInbetweenBraces_BaseIndentation()
     {

@@ -4,14 +4,15 @@
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.CodeAnalysis.Razor.TestProjectData;
+using static Microsoft.AspNetCore.Razor.Test.Common.TestProjectData;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces.Test.ProjectSystem;
 

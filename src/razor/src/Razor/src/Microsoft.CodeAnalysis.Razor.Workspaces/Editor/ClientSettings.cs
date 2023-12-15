@@ -12,10 +12,16 @@ namespace Microsoft.CodeAnalysis.Razor.Editor;
 /// settings back to the server.
 /// </summary>
 /// <param name="ClientSpaceSettings"></param>
+/// <param name="ClientCompletionSettings"></param>
 /// <param name="AdvancedSettings"></param>
-internal record ClientSettings(ClientSpaceSettings ClientSpaceSettings, ClientAdvancedSettings AdvancedSettings)
+internal record ClientSettings(ClientSpaceSettings ClientSpaceSettings, ClientCompletionSettings ClientCompletionSettings, ClientAdvancedSettings AdvancedSettings)
 {
-    public static readonly ClientSettings Default = new(ClientSpaceSettings.Default, ClientAdvancedSettings.Default);
+    public static readonly ClientSettings Default = new(ClientSpaceSettings.Default, ClientCompletionSettings.Default, ClientAdvancedSettings.Default);
+}
+
+internal sealed record ClientCompletionSettings(bool AutoShowCompletion, bool AutoListParams)
+{
+    public static readonly ClientCompletionSettings Default = new(AutoShowCompletion: true, AutoListParams: true);
 }
 
 internal sealed record ClientSpaceSettings(bool IndentWithTabs, int IndentSize)

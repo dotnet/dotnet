@@ -28,7 +28,7 @@ internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestC
         var textDocumentHandler = queueItem.MethodHandler as ITextDocumentIdentifierHandler;
 
         Uri? uri = null;
-        var documentContextFactory = _lspServices.GetRequiredService<DocumentContextFactory>();
+        var documentContextFactory = _lspServices.GetRequiredService<IDocumentContextFactory>();
         if (textDocumentHandler is not null)
         {
             if (textDocumentHandler is ITextDocumentIdentifierHandler<TRequestParams, TextDocumentIdentifier> tdiHandler)

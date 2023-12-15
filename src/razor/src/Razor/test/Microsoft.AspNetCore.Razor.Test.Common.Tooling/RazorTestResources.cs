@@ -22,8 +22,8 @@ internal static class RazorTestResources
 
     private static string GetResourceName(string name, string? folder)
         => folder is not null
-            ? $"{typeof(RazorTestResources).Namespace}.Tooling.Resources.{folder}.{name}"
-            : $"{typeof(RazorTestResources).Namespace}.Tooling.Resources.{name}";
+            ? $"{typeof(RazorTestResources).Namespace}.Resources.{folder}.{name}"
+            : $"{typeof(RazorTestResources).Namespace}.Resources.{name}";
 
     private static Stream GetResourceStream(string name, string? folder = null)
     {

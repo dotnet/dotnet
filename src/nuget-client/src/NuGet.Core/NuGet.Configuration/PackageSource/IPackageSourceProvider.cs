@@ -28,6 +28,7 @@ namespace NuGet.Configuration
         /// <param name="source">Url of source to be searched for</param>
         /// <returns>PackageSource that matches the given source. Null if none was found</returns>
         /// <throws>ArgumentException when <paramref name="source"/> is null or empty.</throws>
+        /// <remarks>There may be multiple sources that match a given url. This method will return the first.</remarks>
         PackageSource GetPackageSourceBySource(string source);
 
         /// <summary>

@@ -4,12 +4,14 @@
 #nullable disable
 
 using System.Collections.Immutable;
+using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -359,8 +361,11 @@ There is no xml, but I got you this < and the >.
         var tagHelpers = ImmutableArray.Create(builder.Build());
         var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.Default);
 
-        var razorFilePath = @"C:\path\to\file.razor";
-        var project = TestProjectSnapshot.Create(@"C:\path\to\project.csproj", documentFilePaths: new[] { razorFilePath }, projectWorkspaceState);
+        var baseDirectory = PathUtilities.CreateRootedPath("path", "to");
+        var razorFilePath = Path.Combine(baseDirectory, "file.razor");
+        var projectFilePath = Path.Combine(baseDirectory, "project.csproj");
+
+        var project = TestProjectSnapshot.Create(projectFilePath, documentFilePaths: [razorFilePath], projectWorkspaceState);
 
         var snapshotResolver = new TestSnapshotResolver(razorFilePath, project);
         var service = new TestTagHelperToolTipFactory(snapshotResolver);
@@ -380,18 +385,22 @@ There is no xml, but I got you this < and the >.
         var tagHelpers = ImmutableArray.Create(builder.Build());
         var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.Default);
 
-        var razorFilePath = @"C:\path\to\file.razor";
+        var baseDirectory = PathUtilities.CreateRootedPath("path", "to");
+        var razorFilePath = Path.Combine(baseDirectory, "file.razor");
+        var projectFilePath = Path.Combine(baseDirectory, "project.csproj");
+        var baseIntermediateOutputPath = Path.Combine(baseDirectory, "obj");
+
         var project1 = TestProjectSnapshot.Create(
-            @"C:\path\to\project.csproj",
-            @"C:\path\to\obj\1",
-            documentFilePaths: new[] { razorFilePath },
+            projectFilePath,
+            Path.Combine(baseIntermediateOutputPath, "1"),
+            documentFilePaths: [razorFilePath],
             RazorConfiguration.Default,
             projectWorkspaceState);
 
         var project2 = TestProjectSnapshot.Create(
-           @"C:\path\to\project.csproj",
-           @"C:\path\to\obj\2",
-           documentFilePaths: new[] { razorFilePath },
+           projectFilePath,
+           Path.Combine(baseIntermediateOutputPath, "2"),
+           documentFilePaths: [razorFilePath],
            RazorConfiguration.Default,
            projectWorkspaceState);
 
@@ -413,19 +422,23 @@ There is no xml, but I got you this < and the >.
         var tagHelpers = ImmutableArray.Create(builder.Build());
         var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.Default);
 
-        var razorFilePath = @"C:\path\to\file.razor";
+        var baseDirectory = PathUtilities.CreateRootedPath("path", "to");
+        var razorFilePath = Path.Combine(baseDirectory, "file.razor");
+        var projectFilePath = Path.Combine(baseDirectory, "project.csproj");
+        var baseIntermediateOutputPath = Path.Combine(baseDirectory, "obj");
+
         var project1 = TestProjectSnapshot.Create(
-            @"C:\path\to\project.csproj",
-            @"C:\path\to\obj\1",
-            documentFilePaths: new[] { razorFilePath },
+            projectFilePath,
+            Path.Combine(baseIntermediateOutputPath, "1"),
+            documentFilePaths: [razorFilePath],
             RazorConfiguration.Default,
             projectWorkspaceState,
             displayName: "project1");
 
         var project2 = TestProjectSnapshot.Create(
-           @"C:\path\to\project.csproj",
-           @"C:\path\to\obj\2",
-           documentFilePaths: new[] { razorFilePath },
+           projectFilePath,
+           Path.Combine(baseIntermediateOutputPath, "2"),
+           documentFilePaths: [razorFilePath],
            RazorConfiguration.Default,
            projectWorkspaceState: null,
             displayName: "project2");
@@ -445,19 +458,23 @@ There is no xml, but I got you this < and the >.
     [Fact]
     public void GetAvailableProjects_NotAvailableInAnyProject_ReturnsText()
     {
-        var razorFilePath = @"C:\path\to\file.razor";
+        var baseDirectory = PathUtilities.CreateRootedPath("path", "to");
+        var razorFilePath = Path.Combine(baseDirectory, "file.razor");
+        var projectFilePath = Path.Combine(baseDirectory, "project.csproj");
+        var baseIntermediateOutputPath = Path.Combine(baseDirectory, "obj");
+
         var project1 = TestProjectSnapshot.Create(
-            @"C:\path\to\project.csproj",
-            @"C:\path\to\obj\1",
-            documentFilePaths: new[] { razorFilePath },
+            projectFilePath,
+            Path.Combine(baseIntermediateOutputPath, "1"),
+            documentFilePaths: [razorFilePath],
             RazorConfiguration.Default,
             projectWorkspaceState: null,
             displayName: "project1");
 
         var project2 = TestProjectSnapshot.Create(
-           @"C:\path\to\project.csproj",
-           @"C:\path\to\obj\2",
-           documentFilePaths: new[] { razorFilePath },
+           projectFilePath,
+           Path.Combine(baseIntermediateOutputPath, "2"),
+           documentFilePaths: [razorFilePath],
            RazorConfiguration.Default,
            projectWorkspaceState: null,
            displayName: "project2");

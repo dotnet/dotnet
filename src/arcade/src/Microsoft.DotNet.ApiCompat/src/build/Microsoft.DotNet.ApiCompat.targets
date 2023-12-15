@@ -2,7 +2,7 @@
 <Project>
 
   <PropertyGroup>
-    <ApiCompatAssembly Condition="'$(MSBuildRuntimeType)' == 'core'">$(MSBuildThisFileDirectory)..\tools\net8.0\Microsoft.DotNet.ApiCompat.dll</ApiCompatAssembly>
+    <ApiCompatAssembly Condition="'$(MSBuildRuntimeType)' == 'core'">$(MSBuildThisFileDirectory)..\tools\net9.0\Microsoft.DotNet.ApiCompat.dll</ApiCompatAssembly>
     <ApiCompatAssembly Condition="'$(MSBuildRuntimeType)' != 'core'">$(MSBuildThisFileDirectory)..\tools\net472\Microsoft.DotNet.ApiCompat.exe</ApiCompatAssembly>
 
     <!-- By default, run API Compat if this package is referenced. -->

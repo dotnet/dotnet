@@ -13,13 +13,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.LinkedEditingRange;
 
-public class LinkedEditingRangeEndpointTest : TagHelperServiceTestBase
+public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceTestBase(testOutput)
 {
-    public LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task Handle_DocumentNotFound_ReturnsNull()
     {

@@ -130,4 +130,9 @@ internal static class RangeExtensions
 
         return result;
     }
+
+    public static string ToDisplayString(this Range range)
+    {
+        return $"({range.Start.Line}, {range.Start.Character})-({range.End.Line}, {range.End.Character})";
+    }
 }

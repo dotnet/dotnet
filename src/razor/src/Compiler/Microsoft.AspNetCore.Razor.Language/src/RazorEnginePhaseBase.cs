@@ -23,7 +23,7 @@ public abstract class RazorEnginePhaseBase : IRazorEnginePhase
             }
 
             _engine = value;
-            OnIntialized();
+            OnInitialized();
         }
     }
 
@@ -79,7 +79,7 @@ public abstract class RazorEnginePhaseBase : IRazorEnginePhase
         }
     }
 
-    protected virtual void OnIntialized()
+    protected virtual void OnInitialized()
     {
     }
 

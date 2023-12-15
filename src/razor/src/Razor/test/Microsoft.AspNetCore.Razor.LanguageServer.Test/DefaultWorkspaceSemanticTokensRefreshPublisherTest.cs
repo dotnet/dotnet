@@ -2,28 +2,23 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class DefaultWorkspaceSemanticTokensRefreshPublisherTest : LanguageServerTestBase
+public class DefaultWorkspaceSemanticTokensRefreshPublisherTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    public DefaultWorkspaceSemanticTokensRefreshPublisherTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void PublishWorkspaceChanged_DoesNotSendWorkspaceRefreshRequest_WhenNotSupported()
     {

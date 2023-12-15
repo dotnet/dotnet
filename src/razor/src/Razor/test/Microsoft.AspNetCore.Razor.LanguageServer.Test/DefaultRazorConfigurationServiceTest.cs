@@ -5,7 +5,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Newtonsoft.Json.Linq;
@@ -14,19 +14,14 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
+public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    public DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task GetLatestOptionsAsync_ReturnsExpectedOptions()
     {
         // Arrange
         var expectedOptions = new RazorLSPOptions(
-            Trace.Messages, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CommitElementsWithSpace: false);
+            Trace.Messages, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CommitElementsWithSpace: false);
         var razorJsonString =
             """
 
@@ -98,7 +93,7 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
     {
         // Arrange - purposely choosing options opposite of default
         var expectedOptions = new RazorLSPOptions(
-            Trace.Verbose, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CommitElementsWithSpace: false);
+            Trace.Verbose, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CommitElementsWithSpace: false);
         var razorJsonString = """
             {
               "trace": "Verbose",
@@ -135,7 +130,7 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
     {
         // Arrange - purposely choosing options opposite of default
         var expectedOptions = new RazorLSPOptions(
-            Trace.Off, EnableFormatting: true, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, FormatOnType: false, AutoInsertAttributeQuotes: false, ColorBackground: false, CommitElementsWithSpace: false);
+            Trace.Off, EnableFormatting: true, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, AutoShowCompletion: true, AutoListParams: true, FormatOnType: false, AutoInsertAttributeQuotes: false, ColorBackground: false, CommitElementsWithSpace: false);
         var razorJsonString = """
             {
             }
@@ -227,20 +222,20 @@ public class DefaultRazorConfigurationServiceTest : LanguageServerTestBase
         Assert.Equal(expectedOptions, options);
     }
 
-    private static ClientNotifierServiceBase GetLanguageServer<IResult>(IResult result, bool shouldThrow = false)
+    private static IClientConnection GetLanguageServer<IResult>(IResult result, bool shouldThrow = false)
     {
-        var languageServer = new Mock<ClientNotifierServiceBase>(MockBehavior.Strict);
+        var clientConnection = new Mock<IClientConnection>(MockBehavior.Strict);
 
         if (shouldThrow)
         {
         }
         else
         {
-            languageServer
+            clientConnection
                 .Setup(l => l.SendRequestAsync<ConfigurationParams, IResult>("workspace/configuration", It.IsAny<ConfigurationParams>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(result);
         }
 
-        return languageServer.Object;
+        return clientConnection.Object;
     }
 }

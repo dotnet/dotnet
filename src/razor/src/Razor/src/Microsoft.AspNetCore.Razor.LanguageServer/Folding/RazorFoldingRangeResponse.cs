@@ -6,4 +6,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 
-internal sealed record RazorFoldingRangeResponse(ImmutableArray<FoldingRange> HtmlRanges, ImmutableArray<FoldingRange> CSharpRanges);
+internal sealed record RazorFoldingRangeResponse(ImmutableArray<FoldingRange> HtmlRanges, ImmutableArray<FoldingRange> CSharpRanges)
+{
+    public static readonly RazorFoldingRangeResponse Empty = new(ImmutableArray<FoldingRange>.Empty, ImmutableArray<FoldingRange>.Empty);
+}

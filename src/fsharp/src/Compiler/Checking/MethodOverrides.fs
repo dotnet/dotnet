@@ -379,8 +379,9 @@ module DispatchSlotChecking =
                     // error reporting path
                     let compiledSig = CompiledSigOfMeth g amap m dispatchSlot
                     
-                    let noimpl() = 
-                        missingOverloadImplementation.Add((isReqdTyInterface, lazy NicePrint.stringOfMethInfo infoReader m denv dispatchSlot))
+                    let noimpl() =
+                        if dispatchSlot.IsInstance then
+                            missingOverloadImplementation.Add((isReqdTyInterface, lazy NicePrint.stringOfMethInfo infoReader m denv dispatchSlot))
                     
                     match overrides |> List.filter (IsPartialMatch g dispatchSlot compiledSig) with 
                     | [] -> 
@@ -438,10 +439,7 @@ module DispatchSlotChecking =
                 // check any of the missing overrides has isReqdTyInterface flag set
                 // in which case we use the message "with suggestion"
                 missingOverloadImplementation 
-                |> Seq.map fst 
-                |> Seq.filter id 
-                |> Seq.isEmpty
-                |> not
+                |> Seq.exists fst 
 
             if missingOverloadImplementation.Count = 1 then
                 // only one missing override, we have specific message for that
@@ -454,8 +452,7 @@ module DispatchSlotChecking =
                 let signatures = 
                     (missingOverloadImplementation 
                     |> Seq.truncate maxDisplayedOverrides 
-                    |> Seq.map snd 
-                    |> Seq.map (fun signature -> System.Environment.NewLine + "\t'" + signature.Value + "'")
+                    |> Seq.map (snd >> fun signature -> System.Environment.NewLine + "\t'" + signature.Value + "'")
                     |> String.concat "") + System.Environment.NewLine 
                 
                 // we have specific message if the list is truncated
@@ -756,7 +753,7 @@ module DispatchSlotChecking =
                 GetIntrinsicPropInfosOfType infoReader None ad AllowMultiIntfInstantiations.Yes IgnoreOverrides reqdTyRange reqdTy 
                 |> List.filter isRelevantRequiredProperty
                 
-            let dispatchSlots = dispatchSlotSet |> List.map snd |> List.concat
+            let dispatchSlots = dispatchSlotSet |> List.collect snd
             let dispatchSlotsKeyed = dispatchSlots |> NameMultiMap.initBy (fun reqdSlot -> reqdSlot.MethodInfo.LogicalName) 
             yield SlotImplSet(dispatchSlots, dispatchSlotsKeyed, availPriorOverrides, reqdProperties) ]
 
@@ -904,12 +901,12 @@ let FinalTypeDefinitionChecksAtEndOfInferenceScope (infoReader: InfoReader, nenv
        not tycon.IsFSharpInterfaceTycon
      then
         (* Warn when we're doing this for class types *)
-        if AugmentWithHashCompare.TyconIsCandidateForAugmentationWithEquals g tycon then
+        if AugmentTypeDefinitions.TyconIsCandidateForAugmentationWithEquals g tycon then
             warning(Error(FSComp.SR.typrelTypeImplementsIComparableShouldOverrideObjectEquals(tycon.DisplayName), tycon.Range))
         else
             warning(Error(FSComp.SR.typrelTypeImplementsIComparableDefaultObjectEqualsProvided(tycon.DisplayName), tycon.Range))
 
-    AugmentWithHashCompare.CheckAugmentationAttribs isImplementation g amap tycon
+    AugmentTypeDefinitions.CheckAugmentationAttribs isImplementation g amap tycon
     // Check some conditions about generic comparison and hashing. We can only check this condition after we've done the augmentation 
     if isImplementation 
 #if !NO_TYPEPROVIDERS

@@ -718,48 +718,8 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
         if (componentNode.TypeInferenceNode == null)
         {
-            context.CodeWriter.Write("((global::");
-            context.CodeWriter.Write(componentNode.Component.GetTypeNamespace());
-            context.CodeWriter.Write(".");
-            context.CodeWriter.Write(componentNode.Component.GetTypeNameIdentifier());
-            if (componentNode.Component.IsGenericTypedComponent())
-            {
-                // If there are generic type components, but no type inference node, then it means
-                // the user specified the type parameters, so we can use them directly
-                context.CodeWriter.Write("<");
-
-                var i = 0;
-                foreach (var typeArgumentNode in componentNode.Children.OfType<ComponentTypeArgumentIntermediateNode>())
-                {
-                    if (i++ > 0)
-                    {
-                        context.CodeWriter.Write(", ");
-                    }
-
-                    writeTypeArgument(typeArgumentNode.Children);
-
-                    void writeTypeArgument(IntermediateNodeCollection typeArgumentComponents)
-                    {
-                        foreach (var typeArgumentNodeComponent in typeArgumentComponents)
-                        {
-                            switch (typeArgumentNodeComponent)
-                            {
-                                case IntermediateToken { IsCSharp: true } token:
-                                    context.CodeWriter.Write(token.Content);
-                                    break;
-                                case CSharpExpressionIntermediateNode cSharpExpression:
-                                    writeTypeArgument(cSharpExpression.Children);
-                                    break;
-                                default:
-                                    // As per WriteComponentTypeArgument, we expect every token to be C#, but check just in case
-                                    Debug.Fail($"Unexpected non-C# content in a generic type parameter: '{typeArgumentNodeComponent}'");
-                                    break;
-                            }
-                        }
-                    }
-                }
-                context.CodeWriter.Write(">");
-            }
+            context.CodeWriter.Write("((");
+            TypeNameHelper.WriteGloballyQualifiedName(context.CodeWriter, componentNode.TypeName);
             context.CodeWriter.Write(")default)");
         }
         else

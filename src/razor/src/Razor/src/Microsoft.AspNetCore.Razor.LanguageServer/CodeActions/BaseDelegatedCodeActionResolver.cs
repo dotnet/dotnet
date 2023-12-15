@@ -13,11 +13,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 internal abstract class BaseDelegatedCodeActionResolver : ICodeActionResolver
 {
-    protected readonly ClientNotifierServiceBase LanguageServer;
+    protected readonly IClientConnection ClientConnection;
 
-    public BaseDelegatedCodeActionResolver(ClientNotifierServiceBase languageServer)
+    public BaseDelegatedCodeActionResolver(IClientConnection clientConnection)
     {
-        LanguageServer = languageServer ?? throw new ArgumentNullException(nameof(languageServer));
+        ClientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
     }
 
     public abstract string Action { get; }
@@ -28,7 +28,7 @@ internal abstract class BaseDelegatedCodeActionResolver : ICodeActionResolver
     {
         var resolveCodeActionParams = new RazorResolveCodeActionParams(razorFileIdentifier, hostDocumentVersion, languageKind, codeAction);
 
-        var resolvedCodeAction = await LanguageServer.SendRequestAsync<RazorResolveCodeActionParams, CodeAction?>(
+        var resolvedCodeAction = await ClientConnection.SendRequestAsync<RazorResolveCodeActionParams, CodeAction?>(
             CustomMessageNames.RazorResolveCodeActionsEndpoint,
             resolveCodeActionParams,
             cancellationToken).ConfigureAwait(false);

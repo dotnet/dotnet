@@ -3,7 +3,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
@@ -13,7 +13,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
 {
-    private readonly DefaultDocumentVersionCache _cache;
+    private readonly DocumentVersionCache _cache;
     private readonly GeneratedDocumentSynchronizer _synchronizer;
     private readonly TestGeneratedDocumentPublisher _publisher;
     private readonly IDocumentSnapshot _document;
@@ -22,7 +22,7 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
     public GeneratedDocumentSynchronizerTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _cache = new DefaultDocumentVersionCache();
+        _cache = new DocumentVersionCache();
         _publisher = new TestGeneratedDocumentPublisher();
         _synchronizer = new GeneratedDocumentSynchronizer(_publisher, _cache, Dispatcher);
         _document = TestDocumentSnapshot.Create("C:/path/to/file.razor");

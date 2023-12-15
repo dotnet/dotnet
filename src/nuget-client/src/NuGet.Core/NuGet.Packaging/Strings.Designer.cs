@@ -781,7 +781,7 @@ namespace NuGet.Packaging {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Installed {0} {1} from {2} with content hash {3}..
+        ///   Looks up a localized string similar to Installed {0} {1} from {2} to {3} with content hash {4}..
         /// </summary>
         internal static string Log_InstalledPackage {
             get {

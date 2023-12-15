@@ -5,26 +5,23 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
-public class RazorCompletionEndpointTest : LanguageServerTestBase
+public class RazorCompletionEndpointTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    public RazorCompletionEndpointTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task Handle_NoDocumentContext_NoCompletionItems()
     {
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
-        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, telemetryReporter: null);
+        var optionsMonitor = GetOptionsMonitor();
+        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, telemetryReporter: null, optionsMonitor);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()
@@ -41,5 +38,41 @@ public class RazorCompletionEndpointTest : LanguageServerTestBase
 
         // Assert
         Assert.Null(completionList);
+    }
+
+    [Fact]
+    public async Task Handle_AutoShowCompletionDisabled_NoCompletionItems()
+    {
+        // Arrange
+        var codeDocument = CreateCodeDocument();
+        var documentPath = "C:/path/to/document.cshtml";
+        var uri = new Uri(documentPath);
+        var documentContext = CreateDocumentContext(uri, codeDocument);
+        var optionsMonitor = GetOptionsMonitor(autoShowCompletion: false);
+        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, telemetryReporter: null, optionsMonitor);
+        var request = new CompletionParams()
+        {
+            TextDocument = new TextDocumentIdentifier()
+            {
+                Uri = uri
+            },
+            Position = new Position(0, 1),
+            Context = new VSInternalCompletionContext() { InvokeKind = VSInternalCompletionInvokeKind.Typing },
+        };
+        var requestContext = CreateRazorRequestContext(documentContext);
+
+        // Act
+        var completionList = await Task.Run(() => completionEndpoint.HandleRequestAsync(request, requestContext, default));
+
+        // Assert
+        Assert.Null(completionList);
+    }
+
+    private static RazorCodeDocument CreateCodeDocument()
+    {
+        return CreateCodeDocument("""
+
+            @{ }
+            """);
     }
 }

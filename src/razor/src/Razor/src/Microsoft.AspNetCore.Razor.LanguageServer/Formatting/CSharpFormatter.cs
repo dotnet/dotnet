@@ -22,24 +22,24 @@ internal class CSharpFormatter
     private const string MarkerId = "RazorMarker";
 
     private readonly IRazorDocumentMappingService _documentMappingService;
-    private readonly ClientNotifierServiceBase _server;
+    private readonly IClientConnection _clientConnection;
 
     public CSharpFormatter(
         IRazorDocumentMappingService documentMappingService,
-        ClientNotifierServiceBase languageServer)
+        IClientConnection clientConnection)
     {
         if (documentMappingService is null)
         {
             throw new ArgumentNullException(nameof(documentMappingService));
         }
 
-        if (languageServer is null)
+        if (clientConnection is null)
         {
-            throw new ArgumentNullException(nameof(languageServer));
+            throw new ArgumentNullException(nameof(clientConnection));
         }
 
         _documentMappingService = documentMappingService;
-        _server = languageServer;
+        _clientConnection = clientConnection;
     }
 
     public async Task<TextEdit[]> FormatAsync(FormattingContext context, Range rangeToFormat, CancellationToken cancellationToken)

@@ -58,7 +58,7 @@ let (|JoinRelation|_|) cenv env (expr: SynExpr) =
 
     let isOpName opName vref s =
         (s = opName) &&
-        match ResolveExprLongIdent cenv.tcSink cenv.nameResolver m ad env.eNameResEnv TypeNameResolutionInfo.Default [ident(opName, m)] with
+        match ResolveExprLongIdent cenv.tcSink cenv.nameResolver m ad env.eNameResEnv TypeNameResolutionInfo.Default [ident(opName, m)] None with
         | Result (_, Item.Value vref2, []) -> valRefEq cenv.g vref vref2
         | _ -> false
 
@@ -2245,7 +2245,11 @@ let TcSequenceExpressionEntry (cenv: cenv) env (overallTy: OverallTy) tpenv (has
     let validateObjectSequenceOrRecordExpression = not implicitYieldEnabled
 
     match comp with 
-    | SynExpr.New _ -> 
+    | SynExpr.New _ ->
+        try
+            TcExprUndelayed cenv overallTy env tpenv comp |> ignore
+        with RecoverableException e ->
+            errorRecovery e m
         errorR(Error(FSComp.SR.tcInvalidObjectExpressionSyntaxForm(), m))
     | SimpleSemicolonSequence cenv false _ when validateObjectSequenceOrRecordExpression ->
         errorR(Error(FSComp.SR.tcInvalidObjectSequenceOrRecordExpression(), m))

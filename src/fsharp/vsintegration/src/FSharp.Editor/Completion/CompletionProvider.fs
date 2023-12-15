@@ -29,7 +29,8 @@ type internal FSharpCompletionProvider
     (
         workspace: Workspace,
         serviceProvider: SVsServiceProvider,
-        assemblyContentProvider: AssemblyContentProvider
+        assemblyContentProvider: AssemblyContentProvider,
+        editorOptions: EditorOptions
     ) =
 
     inherit FSharpCompletionProviderBase()
@@ -121,9 +122,8 @@ type internal FSharpCompletionProvider
                 Char.IsLetterOrDigit(sourceText.[triggerPosition]) || triggerChar = '.'
             elif not (trigger = CompletionTriggerKind.Insertion) then
                 false
-            else
-            // Do not trigger completion if it's not single dot, i.e. range expression
-            if
+            else if
+                // Do not trigger completion if it's not single dot, i.e. range expression
                 not intelliSenseOptions.ShowAfterCharIsTyped
                 && triggerPosition > 0
                 && sourceText.[triggerPosition - 1] = '.'
@@ -385,7 +385,16 @@ type internal FSharpCompletionProvider
             let documentation = List()
             let collector = RoslynHelpers.CollectTaggedText documentation
             // mix main description and xmldoc by using one collector
-            XmlDocumentation.BuildDataTipText(documentationBuilder, collector, collector, collector, collector, collector, description)
+            XmlDocumentation.BuildDataTipText(
+                documentationBuilder,
+                collector,
+                collector,
+                collector,
+                collector,
+                collector,
+                description,
+                editorOptions.QuickInfo.ShowRemarks
+            )
 
             Task.FromResult(CompletionDescription.Create(documentation.ToImmutableArray()))
         | _ ->

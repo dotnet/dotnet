@@ -172,11 +172,11 @@ public class DocumentSpellCheckEndpointTest(ITestOutputHelper testOutput) : Sing
         var sourceText = codeDocument.GetSourceText();
         var razorFilePath = "file://C:/path/test.razor";
         var uri = new Uri(razorFilePath);
-        await CreateLanguageServerAsync(codeDocument, razorFilePath, additionalRazorDocuments);
+        var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath, additionalRazorDocuments);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var requestContext = new RazorRequestContext(documentContext, Logger, null!);
 
-        var endpoint = new DocumentSpellCheckEndpoint(DocumentMappingService, LanguageServerFeatureOptions, LanguageServer);
+        var endpoint = new DocumentSpellCheckEndpoint(DocumentMappingService, LanguageServerFeatureOptions, languageServer);
 
         var request = new VSInternalDocumentSpellCheckableParams
         {
@@ -210,9 +210,9 @@ public class DocumentSpellCheckEndpointTest(ITestOutputHelper testOutput) : Sing
         absoluteRanges.Reverse();
 
         var actual = testInput;
-        foreach (var range in absoluteRanges)
+        foreach (var (start, end) in absoluteRanges)
         {
-            actual = actual.Insert(range.End, "|]").Insert(range.Start, "[|");
+            actual = actual.Insert(end, "|]").Insert(start, "[|");
         }
 
         AssertEx.EqualOrDiff(originalInput, actual);

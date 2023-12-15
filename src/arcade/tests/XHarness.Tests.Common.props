@@ -7,7 +7,7 @@
    -->
 
   <PropertyGroup>
-    <MicrosoftDotNetHelixSdkTasksAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)../artifacts/bin/Microsoft.DotNet.Helix.Sdk/$(Configuration)/net8.0/publish/Microsoft.DotNet.Helix.Sdk.dll</MicrosoftDotNetHelixSdkTasksAssembly>
+    <MicrosoftDotNetHelixSdkTasksAssembly Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)../artifacts/bin/Microsoft.DotNet.Helix.Sdk/$(Configuration)/net9.0/publish/Microsoft.DotNet.Helix.Sdk.dll</MicrosoftDotNetHelixSdkTasksAssembly>
     <MicrosoftDotNetHelixSdkTasksAssembly Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)../artifacts/bin/Microsoft.DotNet.Helix.Sdk/$(Configuration)/net472/publish/Microsoft.DotNet.Helix.Sdk.dll</MicrosoftDotNetHelixSdkTasksAssembly>
   </PropertyGroup>
 

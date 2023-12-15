@@ -8,23 +8,16 @@ using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
-using Microsoft.AspNetCore.Razor.LanguageServer.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-public class AddUsingsCodeActionResolverTest : LanguageServerTestBase
+public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    private readonly DocumentContextFactory _emptyDocumentContextFactory;
-
-    public AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        _emptyDocumentContextFactory = new TestDocumentContextFactory();
-    }
+    private readonly IDocumentContextFactory _emptyDocumentContextFactory = new TestDocumentContextFactory();
 
     [Fact]
     public async Task Handle_MissingFile()

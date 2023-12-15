@@ -78,6 +78,7 @@
     <Compile Include="Conformance\GeneratedEqualityHashingComparison\IComparison\IComparison.fs" />
     <Compile Include="Conformance\Expressions\ApplicationExpressions\BasicApplication\BasicApplication.fs" />
     <Compile Include="Conformance\Expressions\BindingExpressions\BindingExpressions.fs" />
+    <Compile Include="Conformance\Expressions\ObjectExpressions\ObjectExpressions.fs" />
     <Compile Include="Conformance\Expressions\ControlFlowExpressions\PatternMatching\PatternMatching.fs" />
     <Compile Include="Conformance\Expressions\ControlFlowExpressions\SequenceIteration\SequenceIteration.fs" />
     <Compile Include="Conformance\Expressions\ControlFlowExpressions\Type-relatedExpressions\Type-relatedExpressions.fs" />
@@ -208,6 +209,7 @@
     <Compile Include="Language\DynamicAssignmentOperatorTests.fs" />
     <Compile Include="Language\CastingTests.fs" />
     <Compile Include="Language\NameofTests.fs" />
+    <Compile Include="Language\DiscriminatedUnionTests.fs" />
     <Compile Include="Language\DotLambdaTests.fs" />
     <Compile Include="Language\FixedBindings\FixedBindings.fs" />
     <Compile Include="Language\ExtensionMethodTests.fs" />
@@ -243,6 +245,7 @@
     <Compile Include="TypeChecks\Graph\GraphProcessingTests.fs" />
     <Compile Include="TypeChecks\TyparNameTests.fs" />
     <Compile Include="TypeChecks\CheckTypeTests.fs" />
+    <Compile Include="TypeChecks\TypeExtensions\PropertyShadowingTests.fs" />
     <Compile Include="CompilerOptions\fsc\checked\checked.fs" />
     <Compile Include="CompilerOptions\fsc\cliversion.fs" />
     <Compile Include="CompilerOptions\fsc\codepage\codepage.fs" />

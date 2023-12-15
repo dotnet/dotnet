@@ -69,6 +69,7 @@ internal class RemoteProjectSnapshotProjectEngineFactory : DefaultProjectSnapsho
             // We don't need to explicitly subscribe to options changing because this method will be run on every parse.
             options.IndentSize = _optionsMonitor.CurrentValue.TabSize;
             options.IndentWithTabs = !_optionsMonitor.CurrentValue.InsertSpaces;
+            options.RemapLinePragmaPathsOnWindows = true;
         }
     }
 }

@@ -185,7 +185,7 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         }
     }
 
-    private class ClientNotifierService : ClientNotifierServiceBase
+    private class ClientNotifierService : IClientConnection
     {
         private readonly object _diagnostics;
 
@@ -194,22 +194,17 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
             _diagnostics = diagnostics;
         }
 
-        public override Task OnInitializedAsync(VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
-
-        public override Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
+        public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public override Task SendNotificationAsync(string method, CancellationToken cancellationToken)
+        public Task SendNotificationAsync(string method, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
+        public Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
         {
             return Task.FromResult((TResponse)_diagnostics);
         }

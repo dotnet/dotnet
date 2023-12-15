@@ -8,12 +8,16 @@
     <BaseInnerSourceBuildCommand Condition="'$(OS)' == 'Windows_NT'">.\build.cmd</BaseInnerSourceBuildCommand>
     <BaseInnerSourceBuildCommand Condition="'$(OS)' != 'Windows_NT'">./build.sh</BaseInnerSourceBuildCommand>
 
+    <_hostRid>$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)</_hostRid>
     <!-- TargetRid names what gets built. -->
-    <TargetRid Condition="'$(TargetRid)' == ''">$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)</TargetRid>
+    <TargetRid Condition="'$(TargetRid)' == ''">$(_hostRid)</TargetRid>
 
     <!-- Split e.g. 'fedora.33-x64' into 'fedora.33' and 'x64'. -->
     <_targetRidPlatformIndex>$(TargetRid.LastIndexOf('-'))</_targetRidPlatformIndex>
     <TargetArch>$(TargetRid.Substring($(_targetRidPlatformIndex)).TrimStart('-'))</TargetArch>
+
+    <_hostRidPlatformIndex>$(_hostRid.LastIndexOf('-'))</_hostRidPlatformIndex>
+    <_hostArch>$(_hostRid.Substring($(_hostRidPlatformIndex)).TrimStart('-'))</_hostArch>
 
     <LogVerbosity Condition="'$(LogVerbosity)' == ''">minimal</LogVerbosity>
   </PropertyGroup>
@@ -25,15 +29,15 @@
            This allows to build the repository using './build.sh <args> /p:DotNetBuildFromSource=true'.
            Properties that control flags from source-build, and the expected output for source-build should be added to this file. -->
       <InnerBuildArgs>$(InnerBuildArgs) $(FlagParameterPrefix)arch $(TargetArch)</InnerBuildArgs>
+      <InnerBuildArgs Condition=" '$(TargetArch)' != '$(_hostArch)' ">$(InnerBuildArgs) $(FlagParameterPrefix)cross</InnerBuildArgs>
       <InnerBuildArgs>$(InnerBuildArgs) $(FlagParameterPrefix)configuration $(Configuration)</InnerBuildArgs>
       <InnerBuildArgs>$(InnerBuildArgs) $(FlagParameterPrefix)allconfigurations</InnerBuildArgs>
       <InnerBuildArgs>$(InnerBuildArgs) $(FlagParameterPrefix)verbosity $(LogVerbosity)</InnerBuildArgs>
-      <InnerBuildArgs>$(InnerBuildArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</InnerBuildArgs>
-      <InnerBuildArgs>$(InnerBuildArgs) $(FlagParameterPrefix)warnAsError $(ArcadeFalseBoolBuildArg)</InnerBuildArgs>
+      <InnerBuildArgs>$(InnerBuildArgs) $(FlagParameterPrefix)nodereuse false</InnerBuildArgs>
+      <InnerBuildArgs>$(InnerBuildArgs) $(FlagParameterPrefix)warnAsError false</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(SourceBuildUseMonoRuntime)' == 'true'">$(InnerBuildArgs) $(FlagParameterPrefix)usemonoruntime</InnerBuildArgs>
       <!-- TODO: This parameter is only available on the Unix script. Intentional? -->
-      <InnerBuildArgs Condition="'$(OS)' != 'Windows_NT'">$(InnerBuildArgs) $(FlagParameterPrefix)outputrid $(TargetRid)</InnerBuildArgs>
-
+      <InnerBuildArgs Condition="'$(OS)' != 'Windows_NT'">$(InnerBuildArgs) --outputrid $(TargetRid)</InnerBuildArgs>
       <!-- PackageOS and ToolsOS control the rids of prebuilts consumed by the build.
            They are set to RuntimeOS so they match with the build SDK rid. -->
       <InnerBuildArgs Condition="'$(RuntimeOS)' != ''">$(InnerBuildArgs) /p:PackageOS=$(RuntimeOS) /p:ToolsOS=$(RuntimeOS)</InnerBuildArgs>
@@ -47,6 +51,7 @@
       <InnerBuildArgs Condition="'$(OfficialBuildId)' != ''">$(InnerBuildArgs) /p:OfficialBuildId=$(OfficialBuildId)</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(ContinuousIntegrationBuild)' != ''">$(InnerBuildArgs) /p:ContinuousIntegrationBuild=$(ContinuousIntegrationBuild)</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(PortableBuild)' != ''">$(InnerBuildArgs) /p:PortableBuild=$(PortableBuild)</InnerBuildArgs>
+      <InnerBuildArgs Condition="'$(DotnetBuildVertical)' != ''">$(InnerBuildArgs) /p:DotnetBuildVertical=$(DotnetBuildVertical)</InnerBuildArgs>
     </PropertyGroup>
   </Target>
 
@@ -69,7 +74,7 @@
       <IntermediateNupkgArtifactFile
         Include="$(CurrentRepoSourceBuildArtifactsPackagesDir)Shipping\Microsoft.NETCore.App.Crossgen2.*.nupkg"
         Category="Crossgen2Pack" />
-        
+
         <IntermediateNupkgArtifactFile
         Include="$(CurrentRepoSourceBuildArtifactsPackagesDir)Shipping\dotnet-crossgen2-*.$(ArchiveExtension)"
         Category="Crossgen2Archive" />

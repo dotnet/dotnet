@@ -604,8 +604,16 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
 
         void AddRange(SemanticRange semanticRange)
         {
-            var linePositionSpan = semanticRange.AsLinePositionSpan();
-            if (linePositionSpan.Start == linePositionSpan.End)
+            // If the end is before the start, well that's no good!
+            if (semanticRange.EndLine < semanticRange.StartLine)
+            {
+                return;
+            }
+
+            // If the end is before the start, that's still no good, but I'm separating out this check
+            // to make it clear that it also checks for equality: No point classifying 0-length ranges.
+            if (semanticRange.EndLine == semanticRange.StartLine &&
+                semanticRange.EndCharacter <= semanticRange.StartCharacter)
             {
                 return;
             }

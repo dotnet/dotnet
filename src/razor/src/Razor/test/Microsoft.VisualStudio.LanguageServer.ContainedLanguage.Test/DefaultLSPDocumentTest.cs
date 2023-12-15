@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.VisualStudio.Test;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 using Moq;

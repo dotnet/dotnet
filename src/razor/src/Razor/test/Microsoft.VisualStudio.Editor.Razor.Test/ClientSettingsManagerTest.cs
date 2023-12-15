@@ -5,21 +5,16 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.CodeAnalysis.Razor.Editor;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public class ClientSettingsManagerTest : ProjectSnapshotManagerDispatcherTestBase
+public class ClientSettingsManagerTest(ITestOutputHelper testOutput) : ProjectSnapshotManagerDispatcherTestBase(testOutput)
 {
-    private readonly IEnumerable<ClientSettingsChangedTrigger> _editorSettingsChangeTriggers;
-
-    public ClientSettingsManagerTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        _editorSettingsChangeTriggers = Array.Empty<ClientSettingsChangedTrigger>();
-    }
+    private readonly IEnumerable<ClientSettingsChangedTrigger> _editorSettingsChangeTriggers = Array.Empty<ClientSettingsChangedTrigger>();
 
     [Fact]
     public void ChangeTriggersGetInitialized()

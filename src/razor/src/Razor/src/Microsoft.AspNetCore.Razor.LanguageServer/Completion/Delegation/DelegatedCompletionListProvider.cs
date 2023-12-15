@@ -25,18 +25,18 @@ internal class DelegatedCompletionListProvider
 
     private readonly ImmutableArray<DelegatedCompletionResponseRewriter> _responseRewriters;
     private readonly IRazorDocumentMappingService _documentMappingService;
-    private readonly ClientNotifierServiceBase _languageServer;
+    private readonly IClientConnection _clientConnection;
     private readonly CompletionListCache _completionListCache;
 
     public DelegatedCompletionListProvider(
         IEnumerable<DelegatedCompletionResponseRewriter> responseRewriters,
         IRazorDocumentMappingService documentMappingService,
-        ClientNotifierServiceBase languageServer,
+        IClientConnection clientConnection,
         CompletionListCache completionListCache)
     {
         _responseRewriters = responseRewriters.OrderBy(rewriter => rewriter.Order).ToImmutableArray();
         _documentMappingService = documentMappingService;
-        _languageServer = languageServer;
+        _clientConnection = clientConnection;
         _completionListCache = completionListCache;
     }
 
@@ -78,7 +78,7 @@ internal class DelegatedCompletionListProvider
             provisionalTextEdit,
             correlationId);
 
-        var delegatedResponse = await _languageServer.SendRequestAsync<DelegatedCompletionParams, VSInternalCompletionList?>(
+        var delegatedResponse = await _clientConnection.SendRequestAsync<DelegatedCompletionParams, VSInternalCompletionList?>(
             LanguageServerConstants.RazorCompletionEndpointName,
             delegatedParams,
             cancellationToken).ConfigureAwait(false);

@@ -1,1 +1,2 @@
 #nullable enable
+~static NuGet.Commands.MSBuildRestoreUtility.GetMessageForUnsupportedProject(string path) -> NuGet.Common.RestoreLogMessage

@@ -7,22 +7,16 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
-using Microsoft.VisualStudio.Test;
-using Microsoft.VisualStudio.Text;
+using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-public class RazorSyntaxTreePartialParserTest : ToolingParserTestBase
+public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : ToolingParserTestBase(testOutput)
 {
     private const string NewLine = "\r\n";
-
-    public RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
 
     protected override bool EnableSpanEditHandlers => true;
 

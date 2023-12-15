@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Testing;
@@ -20,13 +20,8 @@ using LanguageServerSR = Microsoft.AspNetCore.Razor.LanguageServer.Resources.SR;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
-public class ComponentAccessibilityCodeActionProviderTest : LanguageServerTestBase
+public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    public ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task Handle_NoTagName_DoesNotProvideLightBulb()
     {

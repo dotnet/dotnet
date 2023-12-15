@@ -2,11 +2,11 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Telemetry;
+using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.Telemetry;
 
@@ -14,38 +14,55 @@ namespace Microsoft.AspNetCore.Razor.Telemetry;
 [Export(typeof(ITelemetryReporter))]
 internal class VSTelemetryReporter : TelemetryReporter
 {
-    private readonly IEnumerable<IFaultExceptionHandler> _faultExceptionHandlers;
     private readonly ILogger? _logger;
 
     [ImportingConstructor]
     public VSTelemetryReporter(
-        [Import(AllowDefault = true)] ILoggerFactory? loggerFactory = null,
-        [ImportMany] IEnumerable<IFaultExceptionHandler>? faultExceptionHandlers = null)
+        [Import(AllowDefault = true)] ILoggerFactory? loggerFactory = null)
             // Get the DefaultSession for telemetry. This is set by VS with
             // TelemetryService.SetDefaultSession and provides the correct
             // appinsights keys etc
             : base(ImmutableArray.Create(TelemetryService.DefaultSession))
     {
-        _faultExceptionHandlers = faultExceptionHandlers ?? Array.Empty<IFaultExceptionHandler>();
         _logger = loggerFactory?.CreateLogger<VSTelemetryReporter>();
     }
 
     protected override bool HandleException(Exception exception, string? message, params object?[] @params)
     {
-        var handled = false;
-        foreach (var handler in _faultExceptionHandlers)
+        if (exception is RemoteInvocationException remoteInvocationException)
         {
-            if (handler.HandleException(this, exception, message, @params))
+            if (ReportRemoteInvocationException(remoteInvocationException, @params))
             {
-                // This behavior means that each handler still gets a chance
-                // to respond to the exception. There's no real reason for this other
-                // than best guess. When it was added, there was only one handler but
-                // it was intended to be easy to add more.
-                handled = true;
+                return true;
             }
         }
 
-        return handled;
+        return false;
+    }
+
+    private bool ReportRemoteInvocationException(RemoteInvocationException remoteInvocationException, object?[] @params)
+    {
+        if (remoteInvocationException.InnerException is Exception innerException)
+        {
+            // innerException might be an OperationCancelled or Aggregate, use the full ReportFault to unwrap it consistently.
+            ReportFault(innerException, "RIE: " + remoteInvocationException.Message);
+            return true;
+        }
+        else if (@params.Length < 2)
+        {
+            // RIE has '2' extra pieces of data to report via @params, if we don't have those, then we unwrap and call one more time.
+            // If we have both, though, we want the core code of ReportFault to do the reporting.
+            ReportFault(
+                remoteInvocationException,
+                remoteInvocationException.Message,
+                remoteInvocationException.ErrorCode,
+                remoteInvocationException.DeserializedErrorData);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     protected override void LogTrace(string? message, params object?[] args)

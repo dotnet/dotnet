@@ -27,7 +27,13 @@ namespace Xunit.Sdk
 	/// Default implementation of <see cref="IEqualityComparer{T}"/> used by the xUnit.net equality assertions.
 	/// </summary>
 	/// <typeparam name="T">The type that is being compared.</typeparam>
-	sealed class AssertEqualityComparer<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] T> : IEqualityComparer<T>
+	sealed class AssertEqualityComparer<
+			[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces |
+				DynamicallyAccessedMemberTypes.PublicFields |
+				DynamicallyAccessedMemberTypes.NonPublicFields |
+				DynamicallyAccessedMemberTypes.PublicProperties |
+				DynamicallyAccessedMemberTypes.NonPublicProperties |
+				DynamicallyAccessedMemberTypes.PublicMethods)] T> : IEqualityComparer<T>
 	{
 		internal static readonly IEqualityComparer DefaultInnerComparer = new AssertEqualityComparerAdapter<object>(new AssertEqualityComparer<object>());
 
@@ -86,10 +92,9 @@ namespace Xunit.Sdk
 			if (equatable != null)
 				return equatable.Equals(y);
 
+#if !XUNIT_AOT
 			var xType = x.GetType();
 			var yType = y.GetType();
-
-#if !XUNIT_AOT
 			var xTypeInfo = xType.GetTypeInfo();
 
 			// Implements IEquatable<typeof(y)>?
@@ -180,14 +185,12 @@ namespace Xunit.Sdk
 			}
 
 			// Special case KeyValuePair<K,V>
-			if (xType.IsConstructedGenericType &&
-				xType.GetGenericTypeDefinition() == typeKeyValuePair &&
-				yType.IsConstructedGenericType &&
-				yType.GetGenericTypeDefinition() == typeKeyValuePair)
+			if (typeof(T).IsConstructedGenericType &&
+				typeof(T).GetGenericTypeDefinition() == typeKeyValuePair)
 			{
 				return
-					innerComparer.Value.Equals(xType.GetRuntimeProperty("Key")?.GetValue(x), yType.GetRuntimeProperty("Key")?.GetValue(y)) &&
-					innerComparer.Value.Equals(xType.GetRuntimeProperty("Value")?.GetValue(x), yType.GetRuntimeProperty("Value")?.GetValue(y));
+					innerComparer.Value.Equals(typeof(T).GetRuntimeProperty("Key")?.GetValue(x), typeof(T).GetRuntimeProperty("Key")?.GetValue(y)) &&
+					innerComparer.Value.Equals(typeof(T).GetRuntimeProperty("Value")?.GetValue(x), typeof(T).GetRuntimeProperty("Value")?.GetValue(y));
 			}
 
 			// Last case, rely on object.Equals
@@ -306,7 +309,13 @@ namespace Xunit.Sdk
 #endif // XUNIT_AOT
 			}
 
-			bool EqualsGeneric<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] U>(
+			bool EqualsGeneric<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.Interfaces
+					| DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] U>(
 				U x,
 				U y) =>
 					new AssertEqualityComparer<U>(innerComparer: innerComparer).Equals(x, y);

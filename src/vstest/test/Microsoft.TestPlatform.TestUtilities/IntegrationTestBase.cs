@@ -199,7 +199,18 @@ public class IntegrationTestBase
 
         if (arguments.Contains(".csproj"))
         {
-            arguments += $@" -p:VsTestConsolePath=""{vstestConsolePath}""";
+            var consolePathParameter = $@" -p:VsTestConsolePath=""{vstestConsolePath}""";
+            var position = arguments.IndexOf(" -- ");
+            if (position == -1)
+            {
+                // Add at the end.
+                arguments += consolePathParameter; ;
+            }
+            else
+            {
+                // Insert before inline runsettings.
+                arguments = arguments.Insert(position, consolePathParameter);
+            }
         }
 
         // This is used in dotnet/sdk to determine path to vstest.console:

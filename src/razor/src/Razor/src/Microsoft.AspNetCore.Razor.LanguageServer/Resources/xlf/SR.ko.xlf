@@ -7,14 +7,39 @@
         <target state="translated">Blazor 지시문 특성</target>
         <note />
       </trans-unit>
+      <trans-unit id="Changes">
+        <source>Changes:</source>
+        <target state="new">Changes:</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Create_Component_FromTag_Title">
         <source>Create component from tag</source>
         <target state="translated">태그에서 구성 요소 만들기</target>
         <note />
       </trans-unit>
+      <trans-unit id="Diagnostics_after">
+        <source>Diagnostics after:</source>
+        <target state="new">Diagnostics after:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Diagnostics_before">
+        <source>Diagnostics before:</source>
+        <target state="new">Diagnostics before:</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Document_Not_Found">
         <source>Document {0} was not found.</source>
         <target state="translated">문서 {0}을(를) 찾을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Edit_at_adds">
+        <source>Edit at {0} adds the non-whitespace content '{1}'.</source>
+        <target state="new">Edit at {0} adds the non-whitespace content '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Edit_at_deletes">
+        <source>Edit at {0} deletes the non-whitespace content '{1}'.</source>
+        <target state="new">Edit at {0} deletes the non-whitespace content '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExtractTo_CodeBehind_Title">
@@ -25,6 +50,16 @@
       <trans-unit id="File_Externally_Modified">
         <source>File was externally modified: {0}</source>
         <target state="translated">{0}의 파일이 외부에서 수정되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Format_operation_changed_diagnostics">
+        <source>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</source>
+        <target state="new">A format operation is being abandoned because it would introduce or remove one of more diagnostics.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Format_operation_changed_nonwhitespace">
+        <source>A format operation is being abandoned because it would add or delete non-whitespace content.</source>
+        <target state="new">A format operation is being abandoned because it would add or delete non-whitespace content.</target>
         <note />
       </trans-unit>
       <trans-unit id="Generate_Async_Event_Handler_Title">

@@ -4,7 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
@@ -12,13 +12,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 
-public class DocumentDidCloseEndpointTest : LanguageServerTestBase
+public class DocumentDidCloseEndpointTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    public DocumentDidCloseEndpointTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     // This is more of an integration test to validate that all the pieces work together
     [Fact]
     public async Task Handle_DidCloseTextDocument_ClosesDocument()

@@ -33,7 +33,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 
 internal static class IServiceCollectionExtensions
 {
-    public static void AddLifeCycleServices(this IServiceCollection services, RazorLanguageServer razorLanguageServer, ClientNotifierServiceBase serverManager, ILspServerActivationTracker? lspServerActivationTracker)
+    public static void AddLifeCycleServices(this IServiceCollection services, RazorLanguageServer razorLanguageServer, ClientConnection serverManager, ILspServerActivationTracker? lspServerActivationTracker)
     {
         services.AddHandler<RazorInitializeEndpoint>();
         services.AddHandler<RazorInitializedEndpoint>();
@@ -193,11 +193,11 @@ internal static class IServiceCollectionExtensions
     {
         services.AddSingleton<GeneratedDocumentPublisher, DefaultGeneratedDocumentPublisher>();
         services.AddSingleton<IProjectSnapshotChangeTrigger>((services) => services.GetRequiredService<GeneratedDocumentPublisher>());
-        services.AddSingleton<DocumentContextFactory, DefaultDocumentContextFactory>();
-        services.AddSingleton(sp => new Lazy<DocumentContextFactory>(sp.GetRequiredService<DocumentContextFactory>));
+        services.AddSingleton<IDocumentContextFactory, DocumentContextFactory>();
+        services.AddSingleton(sp => new Lazy<IDocumentContextFactory>(sp.GetRequiredService<IDocumentContextFactory>));
 
-        services.AddSingleton<DocumentVersionCache, DefaultDocumentVersionCache>();
-        services.AddSingleton<IProjectSnapshotChangeTrigger>((services) => services.GetRequiredService<DocumentVersionCache>());
+        services.AddSingleton<IDocumentVersionCache, DocumentVersionCache>();
+        services.AddSingleton((services) => (IProjectSnapshotChangeTrigger)services.GetRequiredService<IDocumentVersionCache>());
 
         services.AddSingleton<RemoteTextLoaderFactory, DefaultRemoteTextLoaderFactory>();
         services.AddSingleton<ISnapshotResolver, SnapshotResolver>();

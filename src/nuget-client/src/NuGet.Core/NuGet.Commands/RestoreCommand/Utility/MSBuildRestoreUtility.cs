@@ -423,6 +423,15 @@ namespace NuGet.Commands
             return message;
         }
 
+        public static RestoreLogMessage GetMessageForUnsupportedProject(string path)
+        {
+            var text = string.Format(CultureInfo.CurrentCulture, Strings.UnsupportedProject, path);
+            var message = new RestoreLogMessage(LogLevel.Information, text);
+            message.FilePath = path;
+
+            return message;
+        }
+
         private static IEnumerable<TargetFrameworkInformation> GetTargetFrameworkInformation(string filePath, ProjectStyle restoreType, IEnumerable<IMSBuildItem> items)
         {
             var uniqueIds = new HashSet<string>();

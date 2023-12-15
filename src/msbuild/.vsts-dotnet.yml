@@ -94,6 +94,8 @@ stages:
       value: 'int.main'
     - name: VisualStudio.DropName
       value: Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
+    - name: NUGET_PACKAGES
+      value:
 
     steps:
     - task: NuGetToolInstaller@0
@@ -311,4 +313,5 @@ stages:
         -TsaRepositoryName "dotnet-msbuild"
         -TsaCodebaseName "dotnet-msbuild"
         -TsaPublish $True
+        -CrScanAdditionalRunConfigParams @("SuppressionsPath < $(Build.SourcesDirectory)\eng\CredScanSuppressions.json")
         -PoliCheckAdditionalRunConfigParams @("UserExclusionPath < $(Build.SourcesDirectory)\eng\policheck_exclusions.xml")'

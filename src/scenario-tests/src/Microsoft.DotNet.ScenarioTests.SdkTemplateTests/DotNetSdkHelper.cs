@@ -5,6 +5,8 @@
 using Microsoft.DotNet.ScenarioTests.Common;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Xml.XPath;
+using System.Xml;
 using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.ScenarioTests.SdkTemplateTests;
@@ -103,7 +105,7 @@ internal class DotNetSdkHelper
         return projectDirectory;
     }
 
-    public void ExecutePublish(string projectDirectory, bool? selfContained = null, string? rid = null, bool trimmed = false, bool readyToRun = false)
+    public void ExecutePublish(string projectDirectory, bool? selfContained = null, string? rid = null, bool trimmed = false, bool readyToRun = false, string[]? frameworks = null)
     {
         string options = string.Empty;
         string binlogDifferentiator = string.Empty;
@@ -132,20 +134,49 @@ internal class DotNetSdkHelper
             }
         }
 
-        ExecuteCmd(
-            args: $"publish {options} {GetBinLogOption(projectDirectory, "publish", binlogDifferentiator)}",
-            workingDirectory: projectDirectory);
+        if (frameworks != null)
+        {
+            foreach (var item in frameworks)
+            {
+                ExecuteCmd(
+                args: $"publish {options} {GetBinLogOption(projectDirectory, "publish", binlogDifferentiator)} --framework " + item,
+                workingDirectory: projectDirectory);
+            }
+        }
+        else
+        {
+            ExecuteCmd(
+                args: $"publish {options} {GetBinLogOption(projectDirectory, "publish", binlogDifferentiator)}",
+                workingDirectory: projectDirectory);
+        }
     }
 
-    public void ExecuteRun(string projectDirectory) =>
-        ExecuteCmd($"run {GetBinLogOption(projectDirectory, "run")}", projectDirectory);
+    public void ExecuteRun(string projectDirectory, string[]? frameworks = null)
+    {
+        if (frameworks != null)
+        {
+            foreach (var item in frameworks)
+            {
+                ExecuteCmd($"run {GetBinLogOption(projectDirectory, "run")} --framework " + item, projectDirectory);
+            }
+        }
+        else
+        {
+            ExecuteCmd($"run {GetBinLogOption(projectDirectory, "run")}", projectDirectory);
+        }
+    }
 
     public void ExecuteRunWeb(string projectDirectory)
     {
+        //checks what Process.Kill() will return based. Windows this is -1, Mac and Linux this appears 
+        //to be process based. Currently 137
+        int exitCode = OperatingSystemFinder.IsWindowsPlatform() ? -1 : 137;
+
         ExecuteCmd(
             $"run {GetBinLogOption(projectDirectory, "run")}",
             projectDirectory,
             additionalProcessConfigCallback: processConfigCallback,
+            expectedExitCode: exitCode,
             millisecondTimeout: 30000);
 
         void processConfigCallback(Process process)
@@ -154,19 +185,34 @@ internal class DotNetSdkHelper
             {
                 if (e.Data?.Contains("Application started. Press Ctrl+C to shut down.") ?? false)
                 {
-                    ExecuteHelper.ExecuteProcessValidateExitCode("kill", $"-s TERM {process.Id}", OutputHelper);
+                    process.Kill();
+                    process.WaitForExit();
                 }
             });
         }
     }
 
-    public void ExecuteRunUIApp(string projectDirectory)
+    public void ExecuteRunUIApp(string projectDirectory, string[]? frameworks = null)
     {
-        ExecuteCmd(
-            $"run {GetBinLogOption(projectDirectory, "run")}",
-            projectDirectory,
-            additionalProcessConfigCallback: processConfigCallback,
-            millisecondTimeout: 30000);
+        if (frameworks != null)
+        {
+            foreach (var item in frameworks)
+            {
+                ExecuteCmd(
+                $"run {GetBinLogOption(projectDirectory, "run")} --framework " + item,
+                projectDirectory,
+                additionalProcessConfigCallback: processConfigCallback,
+                millisecondTimeout: 30000);
+            }
+        }
+        else
+        {
+            ExecuteCmd(
+                $"run {GetBinLogOption(projectDirectory, "run")}",
+                projectDirectory,
+                additionalProcessConfigCallback: processConfigCallback,
+                millisecondTimeout: 30000);
+        }
 
         [DllImport("Kernel32.dll")]
         static extern bool TerminateProcess(IntPtr process, uint uExit);
@@ -214,5 +260,83 @@ internal class DotNetSdkHelper
         //Very hacky fix to grab class library path assuming Console referencing Classlib
         string classDirectory = projectDirectory.Replace("Console", "ClassLib");
         ExecuteCmd($"add reference {classDirectory}", projectDirectory);
+    }
+
+    public void ExecuteAddMultiTFM(string projectName, string projectDirectory, DotNetLanguage language, string[] frameworks)
+    {
+        string extension;
+        switch (language)
+        {
+            case DotNetLanguage.CSharp:
+                extension = ".csproj";
+                break;
+            case DotNetLanguage.FSharp:
+                extension = ".fsproj";
+                break;
+            case DotNetLanguage.VB:
+                extension = ".vbproj";
+                break;
+            default:
+                extension = ".csproj";
+                break;
+        }
+        string framework = "";
+        foreach (var item in frameworks)
+        {
+            framework += item + ";";
+        }
+
+        XmlDocument document = new XmlDocument();
+        projectDirectory = Path.Combine(projectDirectory, projectName + extension);
+        document.Load(projectDirectory);
+        if (document.HasChildNodes)
+        {
+            try
+            {
+                if (document.FirstChild != null) {
+                    XmlNode root = document.FirstChild;
+                    XmlNode? oldNode = root.SelectSingleNode(".//TargetFramework");
+                    XmlNode newNode = document.CreateElement("TargetFrameworks");
+                    newNode.InnerXml = framework;
+                    if (oldNode != null && oldNode.ParentNode != null)
+                    {
+                        oldNode.ParentNode.InsertBefore(newNode, oldNode);
+                        oldNode.ParentNode.RemoveChild(oldNode);
+                    }
+                    document.Save(projectDirectory);
+                }
+            }
+            catch (XPathException e)
+            {
+                Console.WriteLine("Unable to find node");
+                Console.WriteLine(e.Message);
+                throw;
+            }
+        }
+    }
+
+    internal void CopyHelper(string projectDirectory, string existing, bool recursive)
+    {
+        var sourceDirectory = new DirectoryInfo(existing);
+        if (!sourceDirectory.Exists)
+        {
+            throw new DirectoryNotFoundException($"Existing Directory not found: {existing}");
+        }
+        DirectoryInfo[] directoryInfo = sourceDirectory.GetDirectories();
+        Directory.CreateDirectory(projectDirectory);
+        foreach (var file in sourceDirectory.GetFiles())
+        {
+            string targetPath = Path.Combine(projectDirectory, file.Name);
+            file.CopyTo(targetPath);
+            Console.WriteLine($"Copying {file.Name} to {targetPath}");
+        }
+        if (recursive)
+        {
+            foreach (var directory in directoryInfo)
+            {
+                string newProjectDirectory = Path.Combine(projectDirectory, directory.Name);
+                CopyHelper(newProjectDirectory, directory.FullName, recursive);
+            }
+        }
     }
 }
