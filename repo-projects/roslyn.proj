@@ -13,6 +13,11 @@
 
     <!-- roslyn by default builds with desktop msbuild (xcopy-msbuild) -->
     <BuildArgs Condition="'$(OS)' == 'Windows_NT'">$(BuildArgs) $(FlagParameterPrefix)msbuildEngine dotnet</BuildArgs>
+    <BuildArgs Condition="'$(OS)' == 'Windows_NT'">$(BuildArgs) $(FlagParameterPrefix)officialBuildId $(OfficialBuildId)</BuildArgs>
+    <BuildArgs Condition="'$(OS)' == 'Windows_NT'">$(BuildArgs) $(FlagParameterPrefix)officialSkipTests true</BuildArgs>
+    <BuildArgs Condition="'$(OS)' == 'Windows_NT'">$(BuildArgs) $(FlagParameterPrefix)officialSkipApplyOptimizationData true</BuildArgs>
+    <BuildArgs Condition="'$(OS)' == 'Windows_NT'">$(BuildArgs) $(FlagParameterPrefix)officialSourceBranchName placeholder</BuildArgs>
+    <BuildArgs Condition="'$(OS)' == 'Windows_NT'">$(BuildArgs) $(FlagParameterPrefix)officialVisualStudioDropAccessToken placeholder</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:TreatWarningsAsErrors=false</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:ApplyPartialNgenOptimization=false</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:EnablePartialNgenOptimization=false</BuildArgs>
