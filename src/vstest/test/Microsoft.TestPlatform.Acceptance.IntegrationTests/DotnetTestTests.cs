@@ -11,6 +11,12 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 [TestClass]
 public class DotnetTestTests : AcceptanceTestBase
 {
+    private static string GetFinalVersion(string version)
+    {
+        var end = version.IndexOf("-release");
+        return (end >= 0) ? version.Substring(0, end) : version;
+    }
+
     [TestMethod]
     // patched dotnet is not published on non-windows systems
     [TestCategory("Windows-Review")]
@@ -23,7 +29,7 @@ public class DotnetTestTests : AcceptanceTestBase
         InvokeDotnetTest($@"{projectPath} --logger:""Console;Verbosity=normal"" /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}");
 
         // ensure our dev version is used
-        StdOutputContains(IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion);
+        StdOutputContains(GetFinalVersion(IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion));
         ValidateSummaryStatus(1, 1, 1);
         ExitCodeEquals(1);
     }
@@ -40,7 +46,7 @@ public class DotnetTestTests : AcceptanceTestBase
         InvokeDotnetTest($@"{assemblyPath} --logger:""Console;Verbosity=normal""");
 
         // ensure our dev version is used
-        StdOutputContains(IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion);
+        StdOutputContains(GetFinalVersion(IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion));
         ValidateSummaryStatus(1, 1, 1);
         ExitCodeEquals(1);
     }
