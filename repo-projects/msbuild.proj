@@ -6,6 +6,9 @@
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)v $(LogVerbosity)</BuildArgs>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildArgs>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)warnAsError $(ArcadeFalseBoolBuildArg)</BuildArgs>
+
+    <!-- msbuild by default builds with desktop msbuild (xcopy-msbuild) -->
+    <BuildArgs Condition="'$(OS)' == 'Windows_NT'">$(BuildArgs) $(FlagParameterPrefix)msbuildEngine dotnet</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
