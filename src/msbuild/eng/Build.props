@@ -3,6 +3,7 @@
 <Project>
 
   <PropertyGroup>
+    <!-- Static graph restore throws a NullReferenceException when using the ExcludeFromBuild* infrastructure. -->
     <RestoreUseStaticGraphEvaluation Condition="'$(DotNetBuildFromSource)' != 'true' and '$(DotNetBuildVertical)' != 'true'">true</RestoreUseStaticGraphEvaluation>
   </PropertyGroup>
 
