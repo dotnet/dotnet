@@ -28,7 +28,7 @@
       <!-- Add some other potential top-level project directories for a more specific report. -->
       <ProjectDirectories Include="$(CurrentRepoSourceBuildSourceDir)" />
       <!-- Finally, scan entire source-build, in case project.assets.json ends up in an unexpected place. -->
-      <ProjectDirectories Include="$(SourceBuildSelfDir)" />
+      <ProjectDirectories Include="$(SourceBuildOutputDir)" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -43,7 +43,7 @@
       PlatformsRuntimeJsonFiles="@(PlatformsRuntimeJsonFiles)"
       TargetRid="$(TargetRid)"
       ProjectDirectories="@(ProjectDirectories)"
-      RootDir="$(SourceBuildSelfDir)"
+      RootDir="$(SourceBuildOutputDir)"
       IgnoredProjectAssetsJsonFiles="@(IgnoredProjectAssetsJsonFiles)"
       DataFile="$(PackageReportDataFile)"
       ProjectAssetsJsonArchiveFile="$(ProjectAssetsJsonArchiveFile)" />

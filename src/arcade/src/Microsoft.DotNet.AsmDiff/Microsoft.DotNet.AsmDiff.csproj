@@ -8,8 +8,6 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-asmdiff</ToolCommandName>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
-    <!-- Vertical PoC - in-tree use of the tool causes some race? -->
-    <ExcludeFromVerticalBuild>true</ExcludeFromVerticalBuild>
     <StrongNameKeyId>Open</StrongNameKeyId>
     <UsingToolXliff>true</UsingToolXliff>
     <!-- Use xliff localization. -->

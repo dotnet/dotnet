@@ -6,6 +6,7 @@
 #endif
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Xunit.Sdk
@@ -30,7 +31,12 @@ namespace Xunit.Sdk
 		/// </summary>
 		/// <param name="type">The inner type of the value</param>
 		/// <param name="actual">The actual non-<c>null</c> value</param>
-		public static Exception ForNonNullStruct<T>(
+		public static Exception ForNonNullStruct<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 			Type type,
 			T? actual)
 				where T : struct =>
@@ -50,7 +56,14 @@ namespace Xunit.Sdk
 		/// when the given value was unexpectedly not null.
 		/// </summary>
 		/// <param name="actual">The actual non-<c>null</c> value</param>
-		public static NullException ForNonNullValue(object actual) =>
+		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2019:Mismatched constraints",
+						Justification = "Assert.GuardArgumentNotNull returns the same type passed in, so the annotations on the T type parameter will work")]
+		public static NullException ForNonNullValue<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(T actual) =>
 			new NullException(
 				string.Format(
 					CultureInfo.CurrentCulture,

@@ -133,12 +133,32 @@ namespace Xunit.Sdk
 			return builder.ToString();
 		}
 
+#if XUNIT_NULLABLE
+		public static string Format(Type? value)
+#else
+		public static string Format(Type value)
+#endif
+		{
+			if (value is null)
+				return "null";
+
+			return string.Format(CultureInfo.CurrentCulture, "typeof({0})", FormatTypeName(value, fullTypeName: true));
+		}
+
 		/// <summary>
 		/// Formats a value for display.
 		/// </summary>
 		/// <param name="value">The value to be formatted</param>
 		/// <param name="depth">The optional printing depth (1 indicates a top-level value)</param>
-		public static string Format<T>(T value, int depth = 1)
+		[DynamicDependency("ToString", typeof(object))]
+		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2072", Justification = "We can't easily annotate callers of this type to require them to preserve the ToString method as we need to use the runtime type. We also can't preserve all of the properties and fields for the complex type printing, but any members that are trimmed aren't used and thus don't contribute to the asserts.")]
+		public static string Format<
+			[DynamicallyAccessedMembers(
+				DynamicallyAccessedMemberTypes.PublicFields |
+				DynamicallyAccessedMemberTypes.NonPublicFields |
+				DynamicallyAccessedMemberTypes.PublicProperties |
+				DynamicallyAccessedMemberTypes.NonPublicProperties |
+				DynamicallyAccessedMemberTypes.PublicMethods)] T>(T value, int depth = 1)
 		{
 			if (value == null)
 				return "null";
@@ -436,9 +456,12 @@ namespace Xunit.Sdk
 			return result + arraySuffix;
 		}
 
+		[DynamicDependency(DynamicallyAccessedMemberTypes.PublicProperties, typeof(KeyValuePair<,>))]
+		[DynamicDependency("ToString", typeof(object))]
+		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2070", Justification = "We can't easily annotate callers of this type to require them to preserve properties for the one type we need or the ToString method as we need to use the runtime type")]
 		static string FormatValueTypeValue(
 			object value,
-			[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] TypeInfo typeInfo)
+			TypeInfo typeInfo)
 		{
 			if (typeInfo.IsGenericType && typeInfo.GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
 			{
@@ -451,6 +474,8 @@ namespace Xunit.Sdk
 			return Convert.ToString(value, CultureInfo.CurrentCulture) ?? "null";
 		}
 
+		[DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ISet<>))]
+		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2075", Justification = "We can't easily annotate callers of this type to require them to preserve interfaces, so just preserve the one interface that's checked for.")]
 #if XUNIT_NULLABLE
 		internal static Type? GetSetElementType(object? obj)
 #else

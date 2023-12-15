@@ -10,21 +10,21 @@
 
   <PropertyGroup>
     <!-- The TFM of the major release of .NET that the Arcade SDK aligns with. -->
-    <NetCurrent>net8.0</NetCurrent>
+    <NetCurrent>net9.0</NetCurrent>
 
     <!-- The previously released version of .NET.
          Undefined when NetMinimum and NetPrevious are identical. -->
-    <NetPrevious>net7.0</NetPrevious>
+    <NetPrevious />
 
     <!-- Lowest supported version of .NET at the time of the release of NetCurrent.
-         E.g. net6.0 when NetCurrent is net8.0. -->
-    <NetMinimum>net6.0</NetMinimum>
+         E.g. net8.0 when NetCurrent is net9.0. -->
+    <NetMinimum>net8.0</NetMinimum>
 
     <!-- The TFM of the latest version of .NET Framework. -->
     <NetFrameworkCurrent>net481</NetFrameworkCurrent>
 
     <!-- Lowest supported version of .NET Framework the time of the release of NetCurrent.
-         E.g. if NetCurrent is net8.0, then NetFrameworkMinimum is net462. -->
+         E.g. if NetCurrent is net9.0, then NetFrameworkMinimum is net462. -->
     <NetFrameworkMinimum>net462</NetFrameworkMinimum>
   </PropertyGroup>
 
@@ -32,7 +32,7 @@
     <!-- The current version of .NET that tools (i.e. msbuild) target.
          MSBuild tasks and tools should use this version to target the latest TFM that is supported by tooling.
          Identical with NetCurrent when building from source. -->
-    <NetToolCurrent Condition="'$(DotNetBuildFromSource)' != 'true'">net8.0</NetToolCurrent>
+    <NetToolCurrent Condition="'$(DotNetBuildFromSource)' != 'true'">net9.0</NetToolCurrent>
     <NetToolCurrent Condition="'$(DotNetBuildFromSource)' == 'true'">$(NetCurrent)</NetToolCurrent>
 
     <!-- Lowest version of .NET at the time of the release of NetCurrent that is supported by tooling.

@@ -5,6 +5,7 @@
 #endif
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Xunit.Sdk;
 
@@ -132,7 +133,12 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="ContainsException">Thrown when the sub-span is not present inside the span</exception>
-		public static void Contains<T>(
+		public static void Contains<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 			Span<T> expectedSubSpan,
 			Span<T> actualSpan)
 				where T : IEquatable<T> =>
@@ -144,7 +150,12 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="ContainsException">Thrown when the sub-span is not present inside the span</exception>
-		public static void Contains<T>(
+		public static void Contains<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 			Span<T> expectedSubSpan,
 			ReadOnlySpan<T> actualSpan)
 				where T : IEquatable<T> =>
@@ -156,7 +167,12 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="ContainsException">Thrown when the sub-span is not present inside the span</exception>
-		public static void Contains<T>(
+		public static void Contains<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 			ReadOnlySpan<T> expectedSubSpan,
 			Span<T> actualSpan)
 				where T : IEquatable<T> =>
@@ -168,7 +184,12 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="ContainsException">Thrown when the sub-span is not present inside the span</exception>
-		public static void Contains<T>(
+		public static void Contains<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 			ReadOnlySpan<T> expectedSubSpan,
 			ReadOnlySpan<T> actualSpan)
 				where T : IEquatable<T>
@@ -286,7 +307,12 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected not to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="DoesNotContainException">Thrown when the sub-span is present inside the span</exception>
-		public static void DoesNotContain<T>(
+		public static void DoesNotContain<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 			Span<T> expectedSubSpan,
 			Span<T> actualSpan)
 				where T : IEquatable<T> =>
@@ -298,7 +324,12 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected not to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="DoesNotContainException">Thrown when the sub-span is present inside the span</exception>
-		public static void DoesNotContain<T>(
+		public static void DoesNotContain<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 			Span<T> expectedSubSpan,
 			ReadOnlySpan<T> actualSpan)
 				where T : IEquatable<T> =>
@@ -310,7 +341,12 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected not to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="DoesNotContainException">Thrown when the sub-span is present inside the span</exception>
-		public static void DoesNotContain<T>(
+		public static void DoesNotContain<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 			ReadOnlySpan<T> expectedSubSpan,
 			Span<T> actualSpan)
 				where T : IEquatable<T> =>
@@ -322,7 +358,12 @@ namespace Xunit
 		/// <param name="expectedSubSpan">The sub-span expected not to be in the span</param>
 		/// <param name="actualSpan">The span to be inspected</param>
 		/// <exception cref="DoesNotContainException">Thrown when the sub-span is present inside the span</exception>
-		public static void DoesNotContain<T>(
+		public static void DoesNotContain<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T>(
 			ReadOnlySpan<T> expectedSubSpan,
 			ReadOnlySpan<T> actualSpan)
 				where T : IEquatable<T>

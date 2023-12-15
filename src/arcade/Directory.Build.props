@@ -10,6 +10,12 @@
     <DebugSymbols>true</DebugSymbols>
     <LangVersion>Latest</LangVersion>
 
+    <!-- Remove when Arcade.Sdk updated TFMs to net9.0. -->
+    <NetCurrent>net9.0</NetCurrent>
+    <NetPrevious />
+    <NetMinimum>net8.0</NetMinimum>
+    <NetToolCurrent>$(NetCurrent)</NetToolCurrent>
+
     <!--
       Tools and packages produced by this repository support infrastructure and are not shipping on NuGet or via any other official channel.
     -->

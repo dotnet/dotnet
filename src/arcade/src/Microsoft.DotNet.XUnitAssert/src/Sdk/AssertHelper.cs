@@ -49,7 +49,7 @@ namespace Xunit.Internal
 		const string fileSystemInfoFqn = "System.IO.FileSystemInfo, System.Runtime";
 #if XUNIT_NULLABLE
 		static readonly Lazy<TypeInfo?> fileSystemInfoTypeInfo = new Lazy<TypeInfo?>(() => Type.GetType(fileSystemInfoFqn)?.GetTypeInfo());
-		static readonly Lazy<PropertyInfo?> fileSystemInfoFullNameProperty = new Lazy<PropertyInfo?>(() => fileSystemInfoTypeInfo.Value?.GetDeclaredProperty("FullName"));
+		static readonly Lazy<PropertyInfo?> fileSystemInfoFullNameProperty = new Lazy<PropertyInfo?>(() => Type.GetType(fileSystemInfoFqn)?.GetTypeInfo().GetDeclaredProperty("FullName"));
 #else
 		static readonly Lazy<TypeInfo> fileSystemInfoTypeInfo = new Lazy<TypeInfo>(() => GetTypeInfo(fileSystemInfoFqn)?.GetTypeInfo());
 		static readonly Lazy<PropertyInfo> fileSystemInfoFullNameProperty = new Lazy<PropertyInfo>(() => fileSystemInfoTypeInfo.Value?.GetDeclaredProperty("FullName"));
@@ -85,10 +85,19 @@ namespace Xunit.Internal
 #endif
 		});
 
+		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2111: Method 'lambda expression' with parameters or return value with `DynamicallyAccessedMembersAttribute` is accessed via reflection. Trimmer can't guarantee availability of the requirements of the method.", Justification = "The lambda will only be called by the value in the type parameter, which has the same requirements.")]
 #if XUNIT_NULLABLE
-		static Dictionary<string, Func<object?, object?>> GetGettersForType(Type type) =>
+		static Dictionary<string, Func<object?, object?>> GetGettersForType([DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties)] Type type) =>
 #else
-		static Dictionary<string, Func<object, object>> GetGettersForType(Type type) =>
+		static Dictionary<string, Func<object, object>> GetGettersForType([DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties)] Type type) =>
 #endif
 			gettersByType.GetOrAdd(type,
 				([DynamicallyAccessedMembers(
@@ -234,13 +243,31 @@ namespace Xunit.Internal
 		}
 
 #if XUNIT_NULLABLE
-		static EquivalentException? VerifyEquivalence(
-			object? expected,
-			object? actual,
+		static EquivalentException? VerifyEquivalence<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties)] T,
+			[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties)] U>(
+			T? expected,
+			U? actual,
 #else
-		static EquivalentException VerifyEquivalence(
-			object expected,
-			object actual,
+		static EquivalentException VerifyEquivalence<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties)] T,
+			[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties)] U>(
+			T expected,
+			U actual,
 #endif
 			bool strict,
 			string prefix,
@@ -449,6 +476,7 @@ namespace Xunit.Internal
 			return result ? null : EquivalentException.ForMemberValueMismatch(expected, actual, prefix);
 		}
 
+		[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2072", Justification = "We need to use the runtime type for getting the getters as we can't recursively preserve them. Any members that are trimmed were not touched by the test and likely are not important for equivalence.")]
 #if XUNIT_NULLABLE
 		static EquivalentException? VerifyEquivalenceReference(
 #else

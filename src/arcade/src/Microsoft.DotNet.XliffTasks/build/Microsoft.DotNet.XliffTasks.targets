@@ -2,18 +2,19 @@
 <Project>
 
   <PropertyGroup>
-    <XliffTasksDirectory Condition="'$(XliffTasksDirectory)' == '' and '$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net8.0\</XliffTasksDirectory>
+    <XliffTasksDirectory Condition="'$(XliffTasksDirectory)' == '' and '$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net9.0\</XliffTasksDirectory>
     <XliffTasksDirectory Condition="'$(XliffTasksDirectory)' == '' and '$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net472\</XliffTasksDirectory>
     <XliffTasksAssembly>$(XliffTasksDirectory)Microsoft.DotNet.XliffTasks.dll</XliffTasksAssembly>
+    <XliffTasksTaskFactory Condition="'$(XliffTasksTaskFactory)' == ''">AssemblyTaskFactory</XliffTasksTaskFactory>
   </PropertyGroup>
 
-  <UsingTask TaskName="GatherXlf" AssemblyFile="$(XliffTasksAssembly)" Condition="'$(XliffTasksAssembly)' != ''" />
-  <UsingTask TaskName="GatherTranslatedSource" AssemblyFile="$(XliffTasksAssembly)" Condition="'$(XliffTasksAssembly)' != ''" />
-  <UsingTask TaskName="TransformTemplates" AssemblyFile="$(XliffTasksAssembly)" Condition="'$(XliffTasksAssembly)' != ''" />
-  <UsingTask TaskName="TranslateSource" AssemblyFile="$(XliffTasksAssembly)" Condition="'$(XliffTasksAssembly)' != ''" />
-  <UsingTask TaskName="UpdateXlf" AssemblyFile="$(XliffTasksAssembly)" Condition="'$(XliffTasksAssembly)' != ''" />
-  <UsingTask TaskName="SortXlf" AssemblyFile="$(XliffTasksAssembly)" Condition="'$(XliffTasksAssembly)' != ''" />
-  <UsingTask TaskName="EnsureAllResourcesTranslated" AssemblyFile="$(XliffTasksAssembly)" Condition="'$(XliffTasksAssembly)' != ''" />
+  <UsingTask TaskName="GatherXlf" AssemblyFile="$(XliffTasksAssembly)" TaskFactory="$(XliffTasksTaskFactory)" Condition="'$(XliffTasksAssembly)' != ''" />
+  <UsingTask TaskName="GatherTranslatedSource" AssemblyFile="$(XliffTasksAssembly)" TaskFactory="$(XliffTasksTaskFactory)" Condition="'$(XliffTasksAssembly)' != ''" />
+  <UsingTask TaskName="TransformTemplates" AssemblyFile="$(XliffTasksAssembly)" TaskFactory="$(XliffTasksTaskFactory)" Condition="'$(XliffTasksAssembly)' != ''" />
+  <UsingTask TaskName="TranslateSource" AssemblyFile="$(XliffTasksAssembly)" TaskFactory="$(XliffTasksTaskFactory)" Condition="'$(XliffTasksAssembly)' != ''" />
+  <UsingTask TaskName="UpdateXlf" AssemblyFile="$(XliffTasksAssembly)" TaskFactory="$(XliffTasksTaskFactory)" Condition="'$(XliffTasksAssembly)' != ''" />
+  <UsingTask TaskName="SortXlf" AssemblyFile="$(XliffTasksAssembly)" TaskFactory="$(XliffTasksTaskFactory)" Condition="'$(XliffTasksAssembly)' != ''" />
+  <UsingTask TaskName="EnsureAllResourcesTranslated" AssemblyFile="$(XliffTasksAssembly)" TaskFactory="$(XliffTasksTaskFactory)" Condition="'$(XliffTasksAssembly)' != ''" />
 
   <!--
     Note that .xlf files are source files, not build outputs. We therefore cannot use their modification time
@@ -92,7 +93,7 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="GetXlfSources" Returns="@(XlfSource)">
+  <Target Name="GetXlfSources" Returns="@(XlfSource)" DependsOnTargets="$(GetXlfSourcesDependsOnTargets)">
     <ItemGroup>
       <EmbeddedResource Update="@(EmbeddedResource)">
         <XlfInput Condition="'%(EmbeddedResource.XlfInput)' == '' and '%(EmbeddedResource.Extension)' == '.resx'">true</XlfInput>

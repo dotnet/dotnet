@@ -410,7 +410,12 @@ namespace Xunit.Sdk
 #else
 	public
 #endif
-	sealed class CollectionTracker<T> : CollectionTracker, IEnumerable<T>
+	sealed class CollectionTracker<[DynamicallyAccessedMembers(
+					DynamicallyAccessedMemberTypes.PublicFields
+					| DynamicallyAccessedMemberTypes.NonPublicFields
+					| DynamicallyAccessedMemberTypes.PublicProperties
+					| DynamicallyAccessedMemberTypes.NonPublicProperties
+					| DynamicallyAccessedMemberTypes.PublicMethods)] T> : CollectionTracker, IEnumerable<T>
 	{
 		const int MAX_ENUMERABLE_LENGTH_HALF = ArgumentFormatter.MAX_ENUMERABLE_LENGTH / 2;
 
