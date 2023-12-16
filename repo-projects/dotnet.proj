@@ -36,10 +36,10 @@
     <!-- This should be conditionalized based on a reasonable filtering mechanism. 
          https://github.com/dotnet/source-build/issues/3682. Good enough for the PoC. -->
     <RepositoryReference Include="windowsdesktop" Condition="'$(OS)' == 'Windows_NT'" />
+    <RepositoryReference Include="aspnetcore" />
     <RepositoryReference Include="xdt" />
     <RepositoryReference Include="msbuild" />
     <RepositoryReference Include="roslyn-analyzers" />
-    <RepositoryReference Include="aspnetcore" />
     <RepositoryReference Include="razor" />
     <RepositoryReference Include="deployment-tools" />
     <RepositoryReference Include="format" />
