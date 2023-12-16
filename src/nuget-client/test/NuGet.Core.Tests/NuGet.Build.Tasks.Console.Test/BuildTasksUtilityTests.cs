@@ -2,10 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
+using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Test.Utility;
+using Test.Utility;
 using Xunit;
 
 namespace NuGet.Build.Tasks.Console.Test
@@ -130,6 +133,31 @@ namespace NuGet.Build.Tasks.Console.Test
                 // Assert
                 effectiveSources.Should().BeEquivalentTo(new[] { Path.Combine(startupDirectory, relativePath) });
             }
+        }
+
+        [Theory]
+        [InlineData("0", "false", 0)]
+        [InlineData("0", "true", 0)]
+        [InlineData("false", "false", 0)]
+        [InlineData("false", "true", 0)]
+        [InlineData(" 2 ", "false", 0)]
+        [InlineData(" 2 ", "true", 2)]
+        [InlineData("true", "false", 0)]
+        [InlineData("true", "true", 1)]
+        [InlineData(" 1 ", "false", 0)]
+        [InlineData(" 1 ", "true", 1)]
+        [InlineData("", "false", 0)]
+        [InlineData("", "true", 1)]
+        [InlineData(null, "false", 0)]
+        [InlineData(null, "true", 1)]
+        public void GetFilesToEmbedInBinlogValue_WithValue_ReturnsExpectedValue(string value, string binaryLoggerEnabled, int expected)
+        {
+            IEnvironmentVariableReader environmentVariableReader = new TestEnvironmentVariableReader(new Dictionary<string, string>
+            {
+                ["MSBUILDBINARYLOGGERENABLED"] = binaryLoggerEnabled
+            });
+
+            BuildTasksUtility.GetFilesToEmbedInBinlogValue(value, environmentVariableReader).Should().Be(expected);
         }
     }
 }

@@ -208,6 +208,11 @@ namespace NuGet.VisualStudio.Implementation.Test.Extensibility
             }
 
             protected override List<PackageReference> GetCollectionCopy(List<PackageReference> collection) => new(collection);
+
+            public override Task<bool> UninstallPackageAsync(string packageId, BuildIntegratedInstallationContext installationContext, CancellationToken token)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

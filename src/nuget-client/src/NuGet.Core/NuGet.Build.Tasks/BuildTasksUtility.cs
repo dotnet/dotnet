@@ -755,5 +755,47 @@ namespace NuGet.Build.Tasks
 
             return null;
         }
+
+        /// <summary>
+        /// Gets an integer indicating what files should be embedded in the MSBuild binary log based on the user-specified value:
+        ///  - "0" or "false" = Do not embed any files
+        ///  - "2" = Embed dgspec, project.assets.json, g.props, and g.targets
+        /// Any other value embeds project.assets.json, g.props, and g.targets
+        /// </summary>
+        /// <param name="value">The user supplied value indicating what files to embed in the binary log.</param>
+        /// <returns>An integer representing what to embed in the binary log.</returns>
+        public static int GetFilesToEmbedInBinlogValue(string value)
+        {
+            return GetFilesToEmbedInBinlogValue(value, EnvironmentVariableWrapper.Instance);
+        }
+
+        internal static int GetFilesToEmbedInBinlogValue(string value, IEnvironmentVariableReader environmentVariableReader)
+        {
+            if (!string.Equals(environmentVariableReader.GetEnvironmentVariable("MSBUILDBINARYLOGGERENABLED"), bool.TrueString, StringComparison.OrdinalIgnoreCase))
+            {
+                return 0;
+            }
+
+            if (value == null)
+            {
+                return 1;
+            }
+
+            string trimmed = value.Trim();
+
+            if (string.Equals(bool.FalseString, trimmed, StringComparison.OrdinalIgnoreCase) || string.Equals("0", trimmed, StringComparison.OrdinalIgnoreCase))
+            {
+                return 0;
+            }
+
+            if (string.Equals("2", trimmed, StringComparison.OrdinalIgnoreCase))
+            {
+                return 2;
+            }
+
+            return 1;
+        }
+
     }
 }
+

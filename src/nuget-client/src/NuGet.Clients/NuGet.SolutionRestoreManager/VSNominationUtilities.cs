@@ -297,6 +297,11 @@ namespace NuGet.SolutionRestoreManager
             return GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.CentralPackageVersionOverrideEnabled, (value) => value.EqualsFalse());
         }
 
+        internal static bool IsCentralPackageFloatingVersionsEnabled(IEnumerable tfms)
+        {
+            return GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.CentralPackageFloatingVersionsEnabled, MSBuildStringUtility.IsTrue);
+        }
+
         internal static bool IsCentralPackageTransitivePinningEnabled(IEnumerable tfms)
         {
             return GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.CentralPackageTransitivePinningEnabled, MSBuildStringUtility.IsTrue);
@@ -369,7 +374,23 @@ namespace NuGet.SolutionRestoreManager
             string propertyName,
             Func<string, TValue> valueFactory)
         {
-            return GetNonEvaluatedPropertyOrNull(values, propertyName, valueFactory).SingleOrDefault();
+            var distinctValues = GetNonEvaluatedPropertyOrNull(values, propertyName, valueFactory).ToList();
+
+            if (distinctValues.Count == 0)
+            {
+                return default(TValue);
+            }
+            else if (distinctValues.Count == 1)
+            {
+                return distinctValues[0];
+            }
+            else
+            {
+                distinctValues.Sort();
+                var distinctValueStrings = string.Join(", ", distinctValues);
+                var message = string.Format(CultureInfo.CurrentCulture, Resources.PropertyDoesNotHaveSingleValue, propertyName, distinctValueStrings);
+                throw new InvalidOperationException(message);
+            }
         }
 
         /// <summary>

@@ -16,12 +16,21 @@ namespace NuGet.ProjectManagement
         public BuildIntegratedInstallationContext(
             IEnumerable<NuGetFramework> successfulFrameworks,
             IEnumerable<NuGetFramework> unsucessfulFrameworks,
-            IDictionary<NuGetFramework, string> originalFrameworks)
+            IDictionary<NuGetFramework, string> originalFrameworks,
+            bool areAllPackagesConditional)
         {
             SuccessfulFrameworks = successfulFrameworks;
             UnsuccessfulFrameworks = unsucessfulFrameworks;
             OriginalFrameworks = originalFrameworks;
+            AreAllPackagesConditional = areAllPackagesConditional;
         }
+
+        public BuildIntegratedInstallationContext(
+            IEnumerable<NuGetFramework> successfulFrameworks,
+            IEnumerable<NuGetFramework> unsucessfulFrameworks,
+            IDictionary<NuGetFramework, string> originalFrameworks)
+            : this(successfulFrameworks, unsucessfulFrameworks, originalFrameworks, areAllPackagesConditional: false)
+        { }
 
         /// <summary>
         /// Shows the frameworks for which a preview restore operation was successful. Only use it
@@ -40,6 +49,13 @@ namespace NuGet.ProjectManagement
         /// framework evaluation depends on the target framework string matching exactly.
         /// </summary>
         public IDictionary<NuGetFramework, string> OriginalFrameworks { get; }
+
+        /// <summary>
+        /// Indicates that all packages are suspected to be conditionally installed. In particular, a package is installed to all frameworks, but it is expected to use the conditional updating/unisntalling APIs.
+        /// Indicators of packages being conditional is that a package contains different versions in different frameworks.
+        /// This value is only relevant when <see cref="UnsuccessfulFrameworks"/> is empty, and <see cref="SuccessfulFrameworks"/> contains all frameworks.
+        /// </summary>
+        public bool AreAllPackagesConditional { get; }
 
         /// <summary>
         /// Define transitive behavior for each package dependency for the current project.

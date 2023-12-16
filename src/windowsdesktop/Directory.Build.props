@@ -22,11 +22,6 @@
 
     <!-- Platform detection -->
     <TargetArchitecture  Condition="'$(TargetArchitecture)' == ''">x64</TargetArchitecture>
-
-    <!-- Revert when arcade updates its Net* properties for 9.0 -->
-    <NetCurrent>net9.0</NetCurrent>
-    <NetMinimum>net8.0</NetMinimum>
-    <NetPrevious />
   </PropertyGroup>
 
 </Project>

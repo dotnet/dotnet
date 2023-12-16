@@ -66,7 +66,9 @@ public class AuditUtilityTests
         var exception2 = new AggregateException(new HttpRequestException("401"));
         context.WithVulnerabilityProvider().WithException(exception2);
 
-        context.WithRestoreTarget();
+        context.PackagesDependencyProvider.Package("pkga", "1.0.0");
+
+        context.WithRestoreTarget().DependsOn("pkga", "1.0.0");
 
         // Act
         _ = await context.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
@@ -85,7 +87,9 @@ public class AuditUtilityTests
     {
         // Arrange
         var context = new AuditTestContext();
-        context.WithRestoreTarget();
+        context.WithRestoreTarget().DependsOn("pkga", "1.0.0");
+
+        context.PackagesDependencyProvider.Package("pkga", "1.0.0");
 
         // Act
         var auditUtility = await context.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
@@ -100,6 +104,24 @@ public class AuditUtilityTests
     }
 
     [Fact]
+    public async Task Check_RestoreWithNoPackages_DoesNotFetchVulnerabilityInfoResources()
+    {
+        // Arrange
+        var context = new AuditTestContext();
+        context.WithRestoreTarget()
+            .DependsOn("classlib", "1.0.0");
+        context.ProjectDependencyProvider.Package("classlib", "1.0.0", LibraryType.Project);
+
+        var vulnProvider = context.WithVulnerabilityProvider();
+
+        // Act
+        var result = await context.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
+
+        // Assert
+        vulnProvider.Mock.Verify(p => p.GetVulnerabilityInformationAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
     public async Task Check_ProjectWithoutVulnerablePackages_NoWarnings()
     {
         // Arrange
@@ -108,7 +130,9 @@ public class AuditUtilityTests
         var packageVulnerabilities = context.WithVulnerabilityProvider().WithPackageVulnerability("SomePackage");
         packageVulnerabilities.Add(new PackageVulnerabilityInfo(CveUrl, PackageVulnerabilitySeverity.Moderate, UpToV2));
 
-        context.WithRestoreTarget();
+        context.PackagesDependencyProvider.Package("pkga", "1.0.0");
+
+        context.WithRestoreTarget().DependsOn("pkga", "1.0.0");
 
         // Act
         var auditUtil = await context.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
@@ -485,7 +509,7 @@ public class AuditUtilityTests
             var vulnProviders = CreateVulnerabilityInformationProviders(_vulnerabilityProviders);
 
             var audit = new AuditUtility(restoreAuditProperties, ProjectFullPath, graphs, vulnProviders, Log);
-            await audit.CheckPackageVulnerabilitiesAsync(CancellationToken.None);
+            await audit.CheckPackageVulnerabilitiesAsync(cancellationToken);
 
             return audit;
 
@@ -519,13 +543,7 @@ public class AuditUtilityTests
 
             foreach (var provider in providers)
             {
-                List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>? knownVulnerabilities =
-                    provider.KnownVulnerabilities is not null ? new() { provider.KnownVulnerabilities } : null;
-                GetVulnerabilityInfoResult getVulnerabilityInfoResult = new(knownVulnerabilities, provider.Exceptions);
-                var vulnProvider = new Mock<IVulnerabilityInformationProvider>();
-                vulnProvider.Setup(p => p.GetVulnerabilityInformationAsync(It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult<GetVulnerabilityInfoResult?>(getVulnerabilityInfoResult));
-                result.Add(vulnProvider.Object);
+                result.Add(provider.Mock.Object);
             }
 
             return result;
@@ -536,6 +554,27 @@ public class AuditUtilityTests
     {
         public Dictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>? KnownVulnerabilities { get; private set; }
         public AggregateException? Exceptions { get; private set; }
+        public Mock<IVulnerabilityInformationProvider> Mock { get; }
+
+        public VulnerabilityProviderTestContext()
+        {
+            Mock = new Mock<IVulnerabilityInformationProvider>();
+            Mock.Setup(p => p.GetVulnerabilityInformationAsync(It.IsAny<CancellationToken>()))
+                .Returns(CreateVulnerabilityInformationResult);
+        }
+
+        private Task<GetVulnerabilityInfoResult?> CreateVulnerabilityInformationResult()
+        {
+            if (Exceptions is null && KnownVulnerabilities is null)
+            {
+                return Task.FromResult<GetVulnerabilityInfoResult?>(null);
+            }
+
+            List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>? knownVulnerabilities =
+                KnownVulnerabilities is not null ? new() { KnownVulnerabilities } : null;
+            GetVulnerabilityInfoResult getVulnerabilityInfoResult = new(knownVulnerabilities, Exceptions);
+            return Task.FromResult<GetVulnerabilityInfoResult?>(getVulnerabilityInfoResult);
+        }
 
         public List<PackageVulnerabilityInfo> WithPackageVulnerability(string packageId)
         {

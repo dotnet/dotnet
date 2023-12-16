@@ -14,6 +14,7 @@ using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
+using NuGet.LibraryModel;
 using NuGet.PackageManagement.Utility;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -3102,7 +3103,7 @@ namespace NuGet.PackageManagement
                         NuGetProjectActionType.Uninstall => originalPackageSpec,
                         _ => throw new InvalidOperationException("Unknown NuGetProjectActionType"),
                     };
-                    BuildIntegratedInstallationContext installationContext = CreateInstallationContextForPackageId(action.PackageIdentity.Id, referencePackageSpec, unsuccessfulFrameworks, originalFrameworks);
+                    BuildIntegratedInstallationContext installationContext = CreateInstallationContextForPackageId(action.PackageIdentity.Id, referencePackageSpec, originalPackageSpec, unsuccessfulFrameworks, originalFrameworks);
                     projectActionsAndInstallationContexts.Add((action, installationContext));
                 }
 
@@ -3196,13 +3197,13 @@ namespace NuGet.PackageManagement
         /// The "successful" frameworks are the ones that contain the package and are not part of the failed list.
         /// The "unsuccessful" frameworks are the ones that never had the package or are part of the unsuccessful list.
         /// </summary>>
-        internal static BuildIntegratedInstallationContext CreateInstallationContextForPackageId(string packageIdentityId, PackageSpec packageSpec, List<NuGetFramework> unsuccessfulFrameworks, Dictionary<NuGetFramework, string> originalFrameworks)
+        internal static BuildIntegratedInstallationContext CreateInstallationContextForPackageId(string packageIdentityId, PackageSpec packageSpec, PackageSpec originalPackageSpec, List<NuGetFramework> unsuccessfulFrameworks, Dictionary<NuGetFramework, string> originalFrameworks)
         {
             var frameworksWithResultingPackage = packageSpec
-                                .TargetFrameworks
-                                .Where(e => e.Dependencies.Any(a => a.Name == packageIdentityId))
-                                .Select(e => e.FrameworkName)
-                                .Distinct();
+                .TargetFrameworks
+                .Where(e => e.Dependencies.Any(a => a.Name == packageIdentityId))
+                .Select(e => e.FrameworkName)
+                .Distinct();
 
             var frameworksWithoutResultingPackage = packageSpec
                 .TargetFrameworks
@@ -3214,10 +3215,32 @@ namespace NuGet.PackageManagement
                 .Except(unsuccessfulFrameworks)
                 .ToList();
 
+            var areAllPackagesConditional = DoesPackageAppearWithDifferentVersions(packageIdentityId, originalPackageSpec);
+
             return new BuildIntegratedInstallationContext(
                 successfulFrameworksWithPackage,
                 unsuccessfulFrameworks.Union(frameworksWithoutResultingPackage).Distinct(),
-                originalFrameworks);
+                originalFrameworks,
+                areAllPackagesConditional);
+        }
+
+        private static bool DoesPackageAppearWithDifferentVersions(string packageIdentityId, PackageSpec packageSpec)
+        {
+            HashSet<VersionRange> versions = default;
+
+            foreach (var framework in packageSpec.TargetFrameworks)
+            {
+                foreach (var dependency in framework.Dependencies)
+                {
+                    if (dependency.Name == packageIdentityId)
+                    {
+                        versions ??= new();
+                        versions.Add(dependency.LibraryRange.VersionRange);
+                        break;
+                    }
+                }
+            }
+            return versions?.Count > 1;
         }
 
         /// <summary>
@@ -3337,8 +3360,8 @@ namespace NuGet.PackageManagement
                     else if (originalAction.NuGetProjectActionType == NuGetProjectActionType.Uninstall)
                     {
                         await buildIntegratedProject.UninstallPackageAsync(
-                            originalAction.PackageIdentity,
-                            nuGetProjectContext: nuGetProjectContext,
+                            originalAction.PackageIdentity.Id,
+                            installationContext,
                             token: token);
                     }
                 }
