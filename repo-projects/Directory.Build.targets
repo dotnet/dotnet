@@ -41,20 +41,6 @@
     <MSBuild Projects="@(_DependentProject)" Targets="Build" BuildInParallel="$(BuildInParallel)" StopOnFirstFailure="true" />
   </Target>
 
-  <!-- TODO: Remove this target when Arcade targets .NET 9: https://github.com/dotnet/source-build/issues/3743. -->
-  <Target Name="UpdateBuildToolFramework"
-          BeforeTargets="Build"
-          Condition="'$(EngCommonToolsShFile)' != '' and '$(DotNetBuildFromSource)' == 'true'"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(RepoCompletedSemaphorePath)UpdateBuildToolFramework.complete" >
-
-    <ReplaceTextInFile InputFile="$(EngCommonToolsShFile)"
-                       OldText="_InitializeBuildToolFramework=&quot;net8.0&quot;"
-                       NewText="_InitializeBuildToolFramework=&quot;net9.0&quot;" />
-
-    <Touch Files="$(RepoCompletedSemaphorePath)UpdateBuildToolFramework.complete" AlwaysCreate="true" />
-  </Target>
-
   <!-- Update NuGet feeds in the repo -->
   <Target Name="UpdateNuGetConfig"
           BeforeTargets="Build"
@@ -219,6 +205,18 @@
     <Message Importance="High" Text="$(RepositoryName) using package version properties saved at $(CurrentSourceBuiltPackageVersionPropsPath) and $(PreviouslySourceBuiltPackageVersionPropsPath)" />
 
     <Touch Files="$(RepoCompletedSemaphorePath)CreateBuildInputProps.complete" AlwaysCreate="true" />
+  </Target>
+
+  <Target Name="UpdateEngCommonFiles"
+          Condition="'$(UpdateEngCommonFiles)' == 'true'"
+          BeforeTargets="Build">
+    <ItemGroup>
+      <OrchestratorEngCommonFile Include="$(RepositoryEngineeringDir)common\**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(OrchestratorEngCommonFile)"
+          DestinationFolder="$(ProjectDirectory)eng\common\%(RecursiveDir)"
+          SkipUnchangedFiles="true" />
   </Target>
 
   <Target Name="Build"
