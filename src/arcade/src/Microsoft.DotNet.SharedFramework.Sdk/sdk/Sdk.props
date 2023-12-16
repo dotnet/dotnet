@@ -9,7 +9,7 @@
   -->
 
   <PropertyGroup Condition="'$(DotNetSharedFrameworkTaskDir)' == ''">
-    <DotNetSharedFrameworkTaskDir Condition="'$(MSBuildRuntimeType)' == 'core'">$(MSBuildThisFileDirectory)../tools/net8.0/</DotNetSharedFrameworkTaskDir>
+    <DotNetSharedFrameworkTaskDir Condition="'$(MSBuildRuntimeType)' == 'core'">$(MSBuildThisFileDirectory)../tools/net9.0/</DotNetSharedFrameworkTaskDir>
     <DotNetSharedFrameworkTaskDir Condition="'$(MSBuildRuntimeType)' != 'core'">$(MSBuildThisFileDirectory)../tools/net472/</DotNetSharedFrameworkTaskDir>
   </PropertyGroup>
 
