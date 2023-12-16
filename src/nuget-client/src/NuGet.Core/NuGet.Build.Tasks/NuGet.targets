@@ -177,7 +177,8 @@ Copyright (c) .NET Foundation. All rights reserved.
       HideWarningsAndErrors="$(HideWarningsAndErrors)"
       Interactive="$(NuGetInteractive)"
       RestoreForceEvaluate="$(RestoreForceEvaluate)"
-      RestorePackagesConfig="$(RestorePackagesConfig)">
+      RestorePackagesConfig="$(RestorePackagesConfig)"
+      EmbedFilesInBinlog="$(RestoreEmbedFilesInBinlog)">
       <Output TaskParameter="EmbedInBinlog" ItemName="EmbedInBinlog" />
     </RestoreTask>
   </Target>
@@ -862,6 +863,7 @@ Copyright (c) .NET Foundation. All rights reserved.
         <NuGetLockFilePath>$(NuGetLockFilePath)</NuGetLockFilePath>
         <RestoreLockedMode>$(RestoreLockedMode)</RestoreLockedMode>
         <_CentralPackageVersionsEnabled>$(_CentralPackageVersionsEnabled)</_CentralPackageVersionsEnabled>
+        <CentralPackageFloatingVersionsEnabled>$(CentralPackageFloatingVersionsEnabled)</CentralPackageFloatingVersionsEnabled>
         <CentralPackageVersionOverrideEnabled>$(CentralPackageVersionOverrideEnabled)</CentralPackageVersionOverrideEnabled>
         <CentralPackageTransitivePinningEnabled>$(CentralPackageTransitivePinningEnabled)</CentralPackageTransitivePinningEnabled>
         <NuGetAudit>$(NuGetAudit)</NuGetAudit>

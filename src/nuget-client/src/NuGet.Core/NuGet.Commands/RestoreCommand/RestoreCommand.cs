@@ -598,12 +598,17 @@ namespace NuGet.Commands
                 await _logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1010, string.Format(CultureInfo.CurrentCulture, Strings.Error_CentralPackageVersions_MissingPackageVersion, string.Join(";", packageReferencedDependenciesWithoutCentralVersionDefined.Select(d => d.Name)))));
                 return false;
             }
-            var floatingVersionDependencies = _request.Project.TargetFrameworks.SelectMany(tfm => tfm.CentralPackageVersions.Values).Where(cpv => cpv.VersionRange.IsFloating);
-            if (floatingVersionDependencies.Any())
+
+            if (!restoreRequest.Project.RestoreMetadata.CentralPackageFloatingVersionsEnabled)
             {
-                await _logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1011, Strings.Error_CentralPackageVersions_FloatingVersionsAreNotAllowed));
-                return false;
+                var floatingVersionDependencies = _request.Project.TargetFrameworks.SelectMany(tfm => tfm.CentralPackageVersions.Values).Where(cpv => cpv.VersionRange.IsFloating);
+                if (floatingVersionDependencies.Any())
+                {
+                    await _logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1011, Strings.Error_CentralPackageVersions_FloatingVersionsAreNotAllowed));
+                    return false;
+                }
             }
+
             return true;
         }
 

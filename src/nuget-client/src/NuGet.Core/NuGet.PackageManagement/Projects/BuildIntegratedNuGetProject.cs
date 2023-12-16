@@ -78,5 +78,10 @@ namespace NuGet.ProjectManagement.Projects
         {
             throw new NotImplementedException("This API should not be called for BuildIntegratedNuGetProject.");
         }
+
+        public abstract Task<bool> UninstallPackageAsync(
+            string packageId,
+            BuildIntegratedInstallationContext installationContext,
+            CancellationToken token);
     }
 }

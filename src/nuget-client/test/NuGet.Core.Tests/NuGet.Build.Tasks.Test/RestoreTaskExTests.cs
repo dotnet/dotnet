@@ -25,6 +25,70 @@ namespace NuGet.Build.Tasks.Test
             }
         }
 
+        [Theory]
+        [InlineData("something", true)]
+        [InlineData("  ", false)]
+        [InlineData(null, false)]
+        public void GetCommandLineArguments_WhenEmbedFilesInBinlogSpecified_CorrectValuesReturned(string embedFilesInBinlogValue, bool expectedToBeSet)
+        {
+            using (var testDirectory = TestDirectory.Create())
+            {
+                string msbuildBinPath = Path.Combine(testDirectory, "MSBuild", "Current", "Bin");
+                string projectPath = Path.Combine(testDirectory, "src", "project1", "project1.csproj");
+
+                var globalProperties = new Dictionary<string, string>();
+
+                var buildEngine = new TestBuildEngine(globalProperties);
+
+                using (var task = new RestoreTaskEx
+                {
+                    BuildEngine = buildEngine,
+                    DisableParallel = true,
+                    Force = true,
+                    ForceEvaluate = true,
+                    HideWarningsAndErrors = true,
+                    IgnoreFailedSources = true,
+                    Interactive = true,
+                    MSBuildBinPath = msbuildBinPath,
+                    NoCache = true,
+                    NoHttpCache = true,
+                    ProjectFullPath = projectPath,
+                    Recursive = true,
+                    RestorePackagesConfig = true,
+                    MSBuildStartupDirectory = testDirectory,
+                    EmbedFilesInBinlog = embedFilesInBinlogValue
+                })
+                {
+                    string arguments = task.GetCommandLineArguments(globalProperties);
+
+                    arguments.Should().Be(StaticGraphRestoreTaskBase.CreateArgumentString(GetExpectedArguments(msbuildBinPath, projectPath)));
+                }
+            }
+
+            IEnumerable<string> GetExpectedArguments(string msbuildBinPath, string projectPath)
+            {
+#if IS_CORECLR
+                yield return Path.ChangeExtension(typeof(RestoreTaskEx).Assembly.Location, ".Console.dll");
+#endif
+                if (expectedToBeSet)
+                {
+                    yield return "Recursive=True;CleanupAssetsForUnsupportedProjects=True;DisableParallel=True;Force=True;ForceEvaluate=True;HideWarningsAndErrors=True;IgnoreFailedSources=True;Interactive=True;NoCache=True;NoHttpCache=True;RestorePackagesConfig=True;EmbedFilesInBinlog=" + embedFilesInBinlogValue.ToString();
+                }
+                else
+                {
+                    yield return "Recursive=True;CleanupAssetsForUnsupportedProjects=True;DisableParallel=True;Force=True;ForceEvaluate=True;HideWarningsAndErrors=True;IgnoreFailedSources=True;Interactive=True;NoCache=True;NoHttpCache=True;RestorePackagesConfig=True";
+                }
+#if IS_CORECLR
+                yield return Path.Combine(msbuildBinPath, "MSBuild.dll");
+#else
+                yield return Path.Combine(msbuildBinPath, "MSBuild.exe");
+#endif
+                yield return projectPath;
+
+                yield return $"";
+            }
+        }
+
         [Fact]
         public void GetCommandLineArguments_WhenOptionsSpecified_CorrectValuesReturned()
         {

@@ -65,6 +65,12 @@ namespace NuGet.Commands.Restore.Utility
 
         public async Task CheckPackageVulnerabilitiesAsync(CancellationToken cancellationToken)
         {
+            // Performance: Early exit if restore graph does not contain any packages.
+            if (!HasPackages())
+            {
+                return;
+            }
+
             Stopwatch stopwatch = Stopwatch.StartNew();
             GetVulnerabilityInfoResult? allVulnerabilityData = await GetAllVulnerabilityDataAsync(cancellationToken);
             stopwatch.Stop();
@@ -84,6 +90,18 @@ namespace NuGet.Commands.Restore.Utility
             if (allVulnerabilityData.KnownVulnerabilities is not null)
             {
                 CheckPackageVulnerabilities(allVulnerabilityData.KnownVulnerabilities);
+            }
+
+            bool HasPackages()
+            {
+                foreach (RestoreTargetGraph graph in _targetGraphs)
+                {
+                    if (graph.Flattened.Any(r => r.Key.Type == LibraryType.Package))
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
 
             bool AnyVulnerabilityDataFound(IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>? knownVulnerabilities)

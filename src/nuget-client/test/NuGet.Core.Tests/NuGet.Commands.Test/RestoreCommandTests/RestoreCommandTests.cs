@@ -1984,12 +1984,21 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             }
         }
 
-        [Fact]
-        public async Task RestoreCommand_CentralVersion_ErrorWhenFloatingCentralVersions()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task RestoreCommand_CentralVersion_ErrorWhenFloatingCentralVersions(bool enabled)
         {
             // Arrange
             using (var pathContext = new SimpleTestPathContext())
             {
+                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    PackageSaveMode.Defaultv3,
+                    new SimpleTestPackageContext("foo", "1.0.0"));
+
+                using var context = new SourceCacheContext();
+
                 var projectName = "TestProject";
                 var projectPath = Path.Combine(pathContext.SolutionRoot, projectName);
                 var outputPath = Path.Combine(projectPath, "obj");
@@ -2005,23 +2014,27 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                     new List<LibraryDependency>() { packageRefDependecyFoo },
                     new List<CentralPackageVersion>() { centralVersionFoo });
 
-                var packageSpec = new PackageSpec(new List<TargetFrameworkInformation>() { tfi });
-                packageSpec.RestoreMetadata = new ProjectRestoreMetadata()
+                var packageSpec = new PackageSpec(new List<TargetFrameworkInformation>() { tfi })
                 {
-                    ProjectUniqueName = projectName,
-                    CentralPackageVersionsEnabled = true,
-                    ProjectStyle = ProjectStyle.PackageReference,
-                    OutputPath = outputPath,
+                    FilePath = projectPath,
+                    Name = projectName,
+                    RestoreMetadata = new ProjectRestoreMetadata()
+                    {
+                        ProjectUniqueName = projectName,
+                        CentralPackageVersionsEnabled = true,
+                        CentralPackageFloatingVersionsEnabled = enabled,
+                        ProjectStyle = ProjectStyle.PackageReference,
+                        OutputPath = outputPath,
+                    }
                 };
-                packageSpec.FilePath = projectPath;
 
                 var dgspec = new DependencyGraphSpec();
                 dgspec.AddProject(packageSpec);
 
-                var sources = new List<PackageSource>();
+                var sources = new List<PackageSource> { new PackageSource(pathContext.PackageSource) };
                 var logger = new TestLogger();
 
-                var request = new TestRestoreRequest(dgspec.GetProjectSpec(projectName), sources, "", logger)
+                var request = new TestRestoreRequest(packageSpec, sources, "", logger)
                 {
                     LockFilePath = Path.Combine(projectPath, "project.assets.json"),
                     ProjectStyle = ProjectStyle.PackageReference
@@ -2032,13 +2045,19 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 var result = await restoreCommand.ExecuteAsync();
 
                 // Assert
-                Assert.False(result.Success);
-                Assert.Equal(1, logger.ErrorMessages.Count);
-                logger.ErrorMessages.TryDequeue(out var errorMessage);
-                Assert.True(errorMessage.Contains("Centrally defined floating package versions are not allowed."));
-                var messagesForNU1011 = result.LockFile.LogMessages.Where(m => m.Code == NuGetLogCode.NU1011);
-                Assert.Equal(1, messagesForNU1011.Count());
-
+                if (enabled)
+                {
+                    Assert.True(result.Success);
+                }
+                else
+                {
+                    Assert.False(result.Success);
+                    Assert.Equal(1, logger.ErrorMessages.Count);
+                    logger.ErrorMessages.TryDequeue(out var errorMessage);
+                    Assert.True(errorMessage.Contains("Centrally defined floating package versions are not allowed."));
+                    var messagesForNU1011 = result.LockFile.LogMessages.Where(m => m.Code == NuGetLogCode.NU1011);
+                    Assert.Equal(1, messagesForNU1011.Count());
+                }
             }
         }
 

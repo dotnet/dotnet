@@ -190,4 +190,7 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
   <data name="SolutionIsNotSaved" xml:space="preserve">
     <value>Solution is not saved. Please save your solution before managing NuGet packages.</value>
   </data>
+  <data name="PropertyDoesNotHaveSingleValue" xml:space="preserve">
+    <value>The property {0} was expected to have a single value across all target frameworks, but instead had the following values: {1}</value>
+  </data>
 </root>

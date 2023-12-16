@@ -1,1 +1,6 @@
 #nullable enable
+~const NuGet.ProjectManagement.ProjectBuildProperties.CentralPackageFloatingVersionsEnabled = "CentralPackageFloatingVersionsEnabled" -> string
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.AreAllPackagesConditional.get -> bool
+~abstract NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.UninstallPackageAsync(string packageId, NuGet.ProjectManagement.BuildIntegratedInstallationContext installationContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+~NuGet.ProjectManagement.BuildIntegratedInstallationContext.BuildIntegratedInstallationContext(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> successfulFrameworks, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> unsucessfulFrameworks, System.Collections.Generic.IDictionary<NuGet.Frameworks.NuGetFramework, string> originalFrameworks, bool areAllPackagesConditional) -> void
+~override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.UninstallPackageAsync(string packageId, NuGet.ProjectManagement.BuildIntegratedInstallationContext installationContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>

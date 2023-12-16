@@ -64,6 +64,11 @@ namespace NuGet.Build.Tasks
         /// </summary>
         public bool RestorePackagesConfig { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether to embed files produced by restore in the MSBuild binary logger.
+        /// </summary>
+        public string EmbedFilesInBinlog { get; set; }
+
         protected override string DebugEnvironmentVariableName => "DEBUG_RESTORE_TASK_EX";
 
         protected override Dictionary<string, string> GetOptions()
@@ -80,6 +85,10 @@ namespace NuGet.Build.Tasks
             options[nameof(NoCache)] = NoCache.ToString();
             options[nameof(NoHttpCache)] = NoHttpCache.ToString();
             options[nameof(RestorePackagesConfig)] = RestorePackagesConfig.ToString();
+            if (!string.IsNullOrWhiteSpace(EmbedFilesInBinlog))
+            {
+                options[nameof(EmbedFilesInBinlog)] = EmbedFilesInBinlog;
+            }
 
             return options;
         }

@@ -348,6 +348,7 @@ namespace NuGet.SolutionRestoreManager
                     CacheFilePath = NoOpRestoreUtilities.GetProjectCacheFilePath(cacheRoot: outputPath),
                     RestoreLockProperties = VSNominationUtilities.GetRestoreLockProperties(TargetFrameworks),
                     CentralPackageVersionsEnabled = cpvmEnabled,
+                    CentralPackageFloatingVersionsEnabled = VSNominationUtilities.IsCentralPackageFloatingVersionsEnabled(TargetFrameworks),
                     CentralPackageVersionOverrideDisabled = VSNominationUtilities.IsCentralPackageVersionOverrideDisabled(TargetFrameworks),
                     CentralPackageTransitivePinningEnabled = VSNominationUtilities.IsCentralPackageTransitivePinningEnabled(TargetFrameworks),
                     RestoreAuditProperties = VSNominationUtilities.GetRestoreAuditProperties(TargetFrameworks),

@@ -2996,6 +2996,48 @@ namespace NuGet.ProjectModel.Test
             Assert.Equal(expectedValue, packageSpec.RestoreMetadata.CentralPackageVersionsEnabled);
         }
 
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData(true, true)]
+        [InlineData(false, false)]
+        public void GetPackageSpec_WhenCentralPackageFloatingVersionsEnabledValueIsValid_ReturnsCentralPackageFloatingVersionsEnabled(
+            bool? value,
+            bool expectedValue)
+        {
+            var json = $"{{\"restore\":{{\"centralPackageFloatingVersionsEnabled\":{(value.HasValue ? value.ToString().ToLowerInvariant() : "null")}}}}}";
+            PackageSpec packageSpec = GetPackageSpec(json);
+
+            Assert.Equal(expectedValue, packageSpec.RestoreMetadata.CentralPackageFloatingVersionsEnabled);
+        }
+
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData(true, true)]
+        [InlineData(false, false)]
+        public void GetPackageSpec_WhenCentralPackageVersionOverrideDisabledValueIsValid_ReturnsCentralPackageVersionOverrideDisabled(
+            bool? value,
+            bool expectedValue)
+        {
+            var json = $"{{\"restore\":{{\"centralPackageVersionOverrideDisabled\":{(value.HasValue ? value.ToString().ToLowerInvariant() : "null")}}}}}";
+            PackageSpec packageSpec = GetPackageSpec(json);
+
+            Assert.Equal(expectedValue, packageSpec.RestoreMetadata.CentralPackageVersionOverrideDisabled);
+        }
+
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData(true, true)]
+        [InlineData(false, false)]
+        public void GetPackageSpec_WhenCentralPackageTransitivePinningEnabledValueIsValid_ReturnsCentralPackageTransitivePinningEnabled(
+            bool? value,
+            bool expectedValue)
+        {
+            var json = $"{{\"restore\":{{\"CentralPackageTransitivePinningEnabled\":{(value.HasValue ? value.ToString().ToLowerInvariant() : "null")}}}}}";
+            PackageSpec packageSpec = GetPackageSpec(json);
+
+            Assert.Equal(expectedValue, packageSpec.RestoreMetadata.CentralPackageTransitivePinningEnabled);
+        }
+
         [Fact]
         public void GetPackageSpec_WhenSourcesValueIsEmptyObject_ReturnsEmptySources()
         {

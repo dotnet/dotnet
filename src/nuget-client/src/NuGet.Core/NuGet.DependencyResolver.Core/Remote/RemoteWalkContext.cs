@@ -73,7 +73,21 @@ namespace NuGet.DependencyResolver
                     return Array.Empty<IRemoteDependencyProvider>();
                 }
 
-                return RemoteLibraryProviders.Where(p => sources.Contains(p.Source.Name)).AsList();
+                // PERF: Avoid Linq in hot paths.
+                var filteredLibraryProviders = new List<IRemoteDependencyProvider>(sources.Count);
+                for (int i = 0; i < RemoteLibraryProviders.Count; ++i)
+                {
+                    var current = RemoteLibraryProviders[i];
+                    for (int j = 0; j < sources.Count; ++j)
+                    {
+                        if (StringComparer.Ordinal.Equals(sources[j], current.Source.Name))
+                        {
+                            filteredLibraryProviders.Add(current);
+                            break;
+                        }
+                    }
+                }
+                return filteredLibraryProviders;
             }
             return RemoteLibraryProviders;
         }
