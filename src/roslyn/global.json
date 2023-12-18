@@ -1,11 +1,11 @@
 {
   "sdk": {
-    "version": "9.0.100-alpha.1.23615.4",
+    "version": "8.0.100",
     "allowPrerelease": false,
     "rollForward": "disable"
   },
   "tools": {
-    "dotnet": "9.0.100-alpha.1.23615.4",
+    "dotnet": "8.0.100",
     "vs": {
       "version": "17.8.0"
     },

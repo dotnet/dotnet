@@ -1,6 +1,12 @@
 {
   "tools": {
-    "dotnet": "9.0.100-alpha.1.23615.4",
+    "dotnet": "7.0.100",
+    "runtimes": {
+      "dotnet": [
+        "5.0.17",
+        "6.0.7"
+      ]
+    },
     "xcopy-msbuild": "17.4.1"
   },
   "msbuild-sdks": {
