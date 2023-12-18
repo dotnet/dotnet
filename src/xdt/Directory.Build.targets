@@ -1,5 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <!-- Leave this file here, even if it's empty. It stops chaining imports. -->
+
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+    <!-- Upgrade the NETStandard.Library transitive xunit dependency to avoid transitive 1.x NS dependencies. -->
+    <PackageReference Include="NETStandard.Library" Version="$(NETStandardLibraryVersion)" Condition="'$(TargetFrameworkIdentifier)' != '.NETStandard'" />
+  </ItemGroup>
+
 </Project>

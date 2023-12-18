@@ -1,3 +1,6 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
 using System;
 using System.IO;
 using System.Text;
@@ -5,7 +8,7 @@ using System.Collections.Generic;
 using Xunit;
 using System.Reflection;
 using System.Xml;
-using Microsoft.Web.XmlTransform.Test.Properties;
+using Microsoft.Web.XmlTransform.Tests.Properties;
 
 namespace Microsoft.Web.XmlTransform.Test
 {
@@ -43,7 +46,7 @@ namespace Microsoft.Web.XmlTransform.Test
             Assert.DoesNotContain("debug=\"true\"", content);
 
             List<string> lines = new List<string>(File.ReadLines(destFile));
-            //sanity verify the line format is not lost (otherwsie we will have only one long line)
+            //sanity verify the line format is not lost (otherwise we will have only one long line)
             Assert.True(lines.Count > 10);
 
             //be nice 

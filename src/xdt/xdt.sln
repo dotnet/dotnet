@@ -5,11 +5,11 @@ VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F12A74E7-82BA-467A-B873-9719971D3108}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D472681E-64B2-4C82-A52E-CD9D8930EA60}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D472681E-64B2-4C82-A52E-CD9D8930EA60}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Web.XmlTransform", "src\Microsoft.Web.XmlTransform\Microsoft.Web.XmlTransform.csproj", "{E5C5B841-7F7D-4736-B467-1EEAA9DB44AB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Web.XmlTransform.Test", "test\Microsoft.Web.XmlTransform.Test\Microsoft.Web.XmlTransform.Test.csproj", "{0460A8EC-E9A8-41A7-9284-90D009AC96DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Web.XmlTransform.Tests", "tests\Microsoft.Web.XmlTransform.Tests\Microsoft.Web.XmlTransform.Tests.csproj", "{0460A8EC-E9A8-41A7-9284-90D009AC96DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

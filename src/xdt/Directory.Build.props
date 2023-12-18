@@ -1,26 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project>
+
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
-  <PropertyGroup Condition="'$(CopyrightMicrosoft)' != ''">
-    <Copyright>$(CopyrightMicrosoft)</Copyright>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-  </PropertyGroup>
-  
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)eng\WebSdk.snk</AssemblyOriginatorKeyFile>
-    <LangVersion>7.3</LangVersion>
+    <Copyright>$(CopyrightMicrosoft)</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <AssemblyOriginatorKeyFile>$(RepositoryEngineeringDir)WebSdk.snk</AssemblyOriginatorKeyFile>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Label="Package and Assembly Metadata">
+  <PropertyGroup>
     <Product>Microsoft ASP.NET Core</Product>
+    <Authors>Microsoft</Authors>
+    <Title>Microsoft Xml Document Transformation</Title>
+    <Description>Microsoft Xml Document Transformation (XDT) enables transformig XML files. This is the same technology used to transform web.config files for Visual Studio web projects.</Description>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://github.com/dotnet/xdt</PackageProjectUrl>
+    <PackageTags>Microsoft Xdt XmlDocumentTransform XmlTransform</PackageTags>
+    <RepositoryUrl>https://github.com/dotnet/xdt</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
-  <PropertyGroup Label="Warning Suppressions">
-    <!--
-      Suppress a warning about upcoming deprecation of PackageLicenseUrl. When embedding licenses are supported,
-      replace PackageLicenseUrl with PackageLicenseExpression.
-    -->
-    <NoWarn>$(NoWarn);NU5125</NoWarn>
-  </PropertyGroup>
 </Project>
