@@ -26,16 +26,16 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
     private const byte FlagAreaNotSet = 0x00;
     private const byte FlagDataArea = 0x01;
     private const byte FlagErrorArea = 0x02;
-    internal const byte IconMarginWidth = 4;      // 4 pixels of margin on the left and right of icons
-    internal const byte IconMarginHeight = 4;     // 4 pixels of margin on the top and bottom of icons
+    private protected const byte IconMarginWidth = 4;      // 4 pixels of margin on the left and right of icons
+    private protected const byte IconMarginHeight = 4;     // 4 pixels of margin on the top and bottom of icons
     private const byte IconsWidth = 12;           // all icons are 12 pixels wide - make sure that it stays that way
     private const byte IconsHeight = 11;          // all icons are 11 pixels tall - make sure that it stays that way
 
     private static bool s_isScalingInitialized;
-    internal static byte s_iconsWidth = IconsWidth;
-    internal static byte s_iconsHeight = IconsHeight;
+    private protected static byte s_iconsWidth = IconsWidth;
+    private protected static byte s_iconsHeight = IconsHeight;
 
-    internal static readonly int s_propCellValue = PropertyStore.CreateKey();
+    private protected static readonly int s_propCellValue = PropertyStore.CreateKey();
     private static readonly int s_propCellContextMenuStrip = PropertyStore.CreateKey();
     private static readonly int s_propCellErrorText = PropertyStore.CreateKey();
     private static readonly int s_propCellStyle = PropertyStore.CreateKey();
@@ -65,27 +65,20 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
     {
         if (!s_isScalingInitialized)
         {
-            if (DpiHelper.IsScalingRequired)
-            {
-                s_iconsWidth = (byte)DpiHelper.LogicalToDeviceUnitsX(IconsWidth);
-                s_iconsHeight = (byte)DpiHelper.LogicalToDeviceUnitsY(IconsHeight);
-            }
-
+            s_iconsWidth = (byte)ScaleHelper.ScaleToInitialSystemDpi(IconsWidth);
+            s_iconsHeight = (byte)ScaleHelper.ScaleToInitialSystemDpi(IconsHeight);
             s_isScalingInitialized = true;
         }
 
         Properties = new PropertyStore();
         State = DataGridViewElementStates.None;
-        _nonEmptyNeighbors = new List<Rectangle>();
+        _nonEmptyNeighbors = [];
         _useDefaultToolTipText = true;
     }
 
     // NOTE: currently this finalizer is unneeded (empty). See https://github.com/dotnet/winforms/issues/6858.
     // All classes that are not need to be finalized must be checked in DataGridViewElement() constructor. Consider to modify it if needed.
-    ~DataGridViewCell()
-    {
-        Dispose(false);
-    }
+    ~DataGridViewCell() => Dispose(disposing: false);
 
     [Browsable(false)]
     public AccessibleObject AccessibilityObject
@@ -1327,21 +1320,8 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
         }
     }
 
-    private static Bitmap GetBitmap(string bitmapName)
-    {
-        Bitmap b = DpiHelper.GetBitmapFromIcon(typeof(DataGridViewCell), bitmapName);
-        if (DpiHelper.IsScalingRequired)
-        {
-            Bitmap scaledBitmap = DpiHelper.CreateResizedBitmap(b, new Size(s_iconsWidth, s_iconsHeight));
-            if (scaledBitmap is not null)
-            {
-                b.Dispose();
-                b = scaledBitmap;
-            }
-        }
-
-        return b;
-    }
+    private static Bitmap GetBitmap(string bitmapName) =>
+        ScaleHelper.GetIconResourceAsBitmap(typeof(DataGridViewCell), bitmapName, new Size(s_iconsWidth, s_iconsHeight));
 
     protected virtual object? GetClipboardContent(
         int rowIndex,
@@ -2971,9 +2951,14 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
     protected virtual void OnMouseDown(DataGridViewCellMouseEventArgs e)
     {
     }
-#nullable disable
+
     internal void OnMouseDownInternal(DataGridViewCellMouseEventArgs e)
     {
+        if (DataGridView is null)
+        {
+            return;
+        }
+
         DataGridView.CellMouseDownInContentBounds = GetContentBounds(e.RowIndex).Contains(e.X, e.Y);
 
         if (((ColumnIndex < 0 || e.RowIndex < 0) && DataGridView.ApplyVisualStylesToHeaderCells) ||
@@ -3071,6 +3056,11 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
 
     internal void OnMouseUpInternal(DataGridViewCellMouseEventArgs e)
     {
+        if (DataGridView is null)
+        {
+            return;
+        }
+
         int x = e.X;
         int y = e.Y;
 
@@ -3085,7 +3075,7 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
             DataGridView.OnCommonCellContentClick(e.ColumnIndex, e.RowIndex, e.Clicks > 1);
         }
 
-        if (DataGridView is not null && e.ColumnIndex < DataGridView.Columns.Count && e.RowIndex < DataGridView.Rows.Count)
+        if (e.ColumnIndex < DataGridView.Columns.Count && e.RowIndex < DataGridView.Rows.Count)
         {
             OnMouseUp(e);
         }
@@ -3108,43 +3098,46 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
         base.OnDataGridViewChanged();
     }
 
-    protected virtual void Paint(Graphics graphics,
+    protected virtual void Paint(
+        Graphics graphics,
         Rectangle clipBounds,
         Rectangle cellBounds,
         int rowIndex,
         DataGridViewElementStates cellState,
-        object value,
-        object formattedValue,
-        string errorText,
+        object? value,
+        object? formattedValue,
+        string? errorText,
         DataGridViewCellStyle cellStyle,
         DataGridViewAdvancedBorderStyle advancedBorderStyle,
         DataGridViewPaintParts paintParts)
     {
     }
 
-    internal void PaintInternal(Graphics graphics,
+    internal void PaintInternal(
+        Graphics graphics,
         Rectangle clipBounds,
         Rectangle cellBounds,
         int rowIndex,
         DataGridViewElementStates cellState,
-        object value,
-        object formattedValue,
-        string errorText,
+        object? value,
+        object? formattedValue,
+        string? errorText,
         DataGridViewCellStyle cellStyle,
         DataGridViewAdvancedBorderStyle advancedBorderStyle,
         DataGridViewPaintParts paintParts)
     {
-        Paint(graphics,
-              clipBounds,
-              cellBounds,
-              rowIndex,
-              cellState,
-              value,
-              formattedValue,
-              errorText,
-              cellStyle,
-              advancedBorderStyle,
-              paintParts);
+        Paint(
+            graphics,
+            clipBounds,
+            cellBounds,
+            rowIndex,
+            cellState,
+            value,
+            formattedValue,
+            errorText,
+            cellStyle,
+            advancedBorderStyle,
+            paintParts);
     }
 
     internal static bool PaintBackground(DataGridViewPaintParts paintParts)
@@ -3562,7 +3555,11 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
         return (paintParts & DataGridViewPaintParts.ContentForeground) != 0;
     }
 
-    protected virtual void PaintErrorIcon(Graphics graphics, Rectangle clipBounds, Rectangle cellValueBounds, string errorText)
+    protected virtual void PaintErrorIcon(
+        Graphics graphics,
+        Rectangle clipBounds,
+        Rectangle cellValueBounds,
+        string? errorText)
     {
         ArgumentNullException.ThrowIfNull(graphics);
 
@@ -3591,7 +3588,13 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
         }
     }
 
-    internal void PaintErrorIcon(Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Rectangle cellBounds, Rectangle cellValueBounds, string errorText)
+    internal void PaintErrorIcon(
+        Graphics graphics,
+        DataGridViewCellStyle cellStyle,
+        int rowIndex,
+        Rectangle cellBounds,
+        Rectangle cellValueBounds,
+        string? errorText)
     {
         if (!string.IsNullOrEmpty(errorText) &&
             cellValueBounds.Width >= IconMarginWidth * 2 + s_iconsWidth &&
@@ -3617,7 +3620,8 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
         return (paintParts & DataGridViewPaintParts.Focus) != 0;
     }
 
-    internal static void PaintPadding(Graphics graphics,
+    internal static void PaintPadding(
+        Graphics graphics,
         Rectangle bounds,
         DataGridViewCellStyle cellStyle,
         Brush br,
@@ -3669,11 +3673,16 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
         Debug.Assert(DataGridView is not null);
         DataGridView dataGridView = DataGridView;
         int columnIndex = ColumnIndex;
-        object formattedValue, value = GetValue(rowIndex);
+        object? formattedValue;
+        object? value = GetValue(rowIndex);
         string errorText = GetErrorText(rowIndex);
         if (columnIndex > -1 && rowIndex > -1)
         {
-            formattedValue = GetEditedFormattedValue(value, rowIndex, ref cellStyle, DataGridViewDataErrorContexts.Formatting | DataGridViewDataErrorContexts.Display);
+            formattedValue = GetEditedFormattedValue(
+                value,
+                rowIndex,
+                ref cellStyle,
+                DataGridViewDataErrorContexts.Formatting | DataGridViewDataErrorContexts.Display);
         }
         else
         {
@@ -3682,7 +3691,8 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
         }
 
         DataGridViewCellPaintingEventArgs dgvcpe = dataGridView.CellPaintingEventArgs;
-        dgvcpe.SetProperties(graphics,
+        dgvcpe.SetProperties(
+            graphics,
             clipBounds,
             cellBounds,
             rowIndex,
@@ -3700,32 +3710,40 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
             return;
         }
 
-        Paint(graphics,
-              clipBounds,
-              cellBounds,
-              rowIndex,
-              cellState,
-              value,
-              formattedValue,
-              errorText,
-              cellStyle,
-              advancedBorderStyle,
-              paintParts);
+        Paint(
+            graphics,
+            clipBounds,
+            cellBounds,
+            rowIndex,
+            cellState,
+            value,
+            formattedValue,
+            errorText,
+            cellStyle,
+            advancedBorderStyle,
+            paintParts);
     }
 
-    public virtual object ParseFormattedValue(object formattedValue,
-                                              DataGridViewCellStyle cellStyle,
-                                              TypeConverter formattedValueTypeConverter,
-                                              TypeConverter valueTypeConverter)
+    public virtual object? ParseFormattedValue(
+        object? formattedValue,
+        DataGridViewCellStyle cellStyle,
+        TypeConverter? formattedValueTypeConverter,
+        TypeConverter? valueTypeConverter)
     {
-        return ParseFormattedValueInternal(ValueType, formattedValue, cellStyle, formattedValueTypeConverter, valueTypeConverter);
+        return ParseFormattedValueInternal(
+            ValueType!,
+            formattedValue,
+            cellStyle,
+            formattedValueTypeConverter,
+            valueTypeConverter);
     }
 
-    internal object ParseFormattedValueInternal(Type valueType,
-                                                object formattedValue,
-                                                DataGridViewCellStyle cellStyle,
-                                                TypeConverter formattedValueTypeConverter,
-                                                TypeConverter valueTypeConverter)
+    internal object? ParseFormattedValueInternal(
+        Type valueType,
+        object? formattedValue,
+        DataGridViewCellStyle cellStyle,
+        TypeConverter? formattedValueTypeConverter,
+        TypeConverter? valueTypeConverter)
     {
         ArgumentNullException.ThrowIfNull(cellStyle);
 
@@ -3745,14 +3763,15 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
             throw new ArgumentException(SR.DataGridViewCell_FormattedValueHasWrongType, nameof(formattedValue));
         }
 
-        return Formatter.ParseObject(formattedValue,
-                                     valueType,
-                                     FormattedValueType,
-                                     valueTypeConverter ?? ValueTypeConverter,
-                                     formattedValueTypeConverter ?? FormattedValueTypeConverter,
-                                     cellStyle.FormatProvider,
-                                     cellStyle.NullValue,
-                                     cellStyle.IsDataSourceNullValueDefault ? Formatter.GetDefaultDataSourceNullValue(valueType) : cellStyle.DataSourceNullValue);
+        return Formatter.ParseObject(
+            formattedValue,
+            valueType,
+            FormattedValueType,
+            valueTypeConverter ?? ValueTypeConverter,
+            formattedValueTypeConverter ?? FormattedValueTypeConverter,
+            cellStyle.FormatProvider,
+            cellStyle.NullValue,
+            cellStyle.IsDataSourceNullValueDefault ? Formatter.GetDefaultDataSourceNullValue(valueType) : cellStyle.DataSourceNullValue);
     }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3767,47 +3786,54 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
         bool isFirstDisplayedColumn,
         bool isFirstDisplayedRow)
     {
-        Rectangle editingControlBounds = PositionEditingPanel(cellBounds,
-                                                              cellClip,
-                                                              cellStyle,
-                                                              singleVerticalBorderAdded,
-                                                              singleHorizontalBorderAdded,
-                                                              isFirstDisplayedColumn,
-                                                              isFirstDisplayedRow);
-        if (setLocation)
-        {
-            DataGridView.EditingControl.Location = new Point(editingControlBounds.X, editingControlBounds.Y);
-        }
+        Rectangle editingControlBounds = PositionEditingPanel(
+            cellBounds,
+            cellClip,
+            cellStyle,
+            singleVerticalBorderAdded,
+            singleHorizontalBorderAdded,
+            isFirstDisplayedColumn,
+            isFirstDisplayedRow);
 
-        if (setSize)
+        if (DataGridView?.EditingControl is not null)
         {
-            DataGridView.EditingControl.Size = new Size(editingControlBounds.Width, editingControlBounds.Height);
+            if (setLocation)
+            {
+                DataGridView.EditingControl.Location = new Point(editingControlBounds.X, editingControlBounds.Y);
+            }
+
+            if (setSize)
+            {
+                DataGridView.EditingControl.Size = new Size(editingControlBounds.Width, editingControlBounds.Height);
+            }
         }
     }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     // Positions the editing panel and returns the normal bounds of the editing control, within the editing panel.
-    public virtual Rectangle PositionEditingPanel(Rectangle cellBounds,
-                                                  Rectangle cellClip,
-                                                  DataGridViewCellStyle cellStyle,
-                                                  bool singleVerticalBorderAdded,
-                                                  bool singleHorizontalBorderAdded,
-                                                  bool isFirstDisplayedColumn,
-                                                  bool isFirstDisplayedRow)
+    public virtual Rectangle PositionEditingPanel(
+        Rectangle cellBounds,
+        Rectangle cellClip,
+        DataGridViewCellStyle cellStyle,
+        bool singleVerticalBorderAdded,
+        bool singleHorizontalBorderAdded,
+        bool isFirstDisplayedColumn,
+        bool isFirstDisplayedRow)
     {
         if (DataGridView is null)
         {
             throw new InvalidOperationException();
         }
 
-        DataGridViewAdvancedBorderStyle dataGridViewAdvancedBorderStylePlaceholder = new(), dgvabsEffective;
+        DataGridViewAdvancedBorderStyle dataGridViewAdvancedBorderStylePlaceholder = new();
 
-        dgvabsEffective = AdjustCellBorderStyle(DataGridView.AdvancedCellBorderStyle,
-                                                dataGridViewAdvancedBorderStylePlaceholder,
-                                                singleVerticalBorderAdded,
-                                                singleHorizontalBorderAdded,
-                                                isFirstDisplayedColumn,
-                                                isFirstDisplayedRow);
+        DataGridViewAdvancedBorderStyle dgvabsEffective = AdjustCellBorderStyle(
+            DataGridView.AdvancedCellBorderStyle,
+            dataGridViewAdvancedBorderStylePlaceholder,
+            singleVerticalBorderAdded,
+            singleHorizontalBorderAdded,
+            isFirstDisplayedColumn,
+            isFirstDisplayedRow);
 
         Rectangle borderAndPaddingWidths = BorderWidths(dgvabsEffective);
         borderAndPaddingWidths.X += cellStyle.Padding.Left;
@@ -3879,10 +3905,10 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
         Properties.SetObject(s_propCellAccessibilityObject, null);
     }
 
-    protected virtual bool SetValue(int rowIndex, object value)
+    protected virtual bool SetValue(int rowIndex, object? value)
     {
-        object originalValue = null;
-        DataGridView dataGridView = DataGridView;
+        object? originalValue = null;
+        DataGridView? dataGridView = DataGridView;
         if (dataGridView is not null && !dataGridView.InSortOperation)
         {
             originalValue = GetValue(rowIndex);
@@ -3890,12 +3916,12 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
 
         if (dataGridView is not null && OwningColumn is not null && OwningColumn.IsDataBound)
         {
-            DataGridView.DataGridViewDataConnection dataConnection = dataGridView.DataConnection;
+            DataGridView.DataGridViewDataConnection? dataConnection = dataGridView.DataConnection;
             if (dataConnection is null)
             {
                 return false;
             }
-            else if (dataConnection.CurrencyManager.Count <= rowIndex)
+            else if ((dataConnection.CurrencyManager?.Count ?? 0) <= rowIndex)
             {
                 if (value is not null || Properties.ContainsObject(s_propCellValue))
                 {
@@ -3953,7 +3979,7 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
             !dataGridView.InSortOperation &&
             ((originalValue is null && value is not null) ||
              (originalValue is not null && value is null) ||
-             (originalValue is not null && !value.Equals(originalValue))))
+             (originalValue is not null && !originalValue.Equals(value))))
         {
             RaiseCellValueChanged(new DataGridViewCellEventArgs(ColumnIndex, rowIndex));
         }
@@ -3961,7 +3987,7 @@ public abstract partial class DataGridViewCell : DataGridViewElement, ICloneable
         return true;
     }
 
-    internal bool SetValueInternal(int rowIndex, object value)
+    internal bool SetValueInternal(int rowIndex, object? value)
     {
         return SetValue(rowIndex, value);
     }

@@ -1,1 +1,3 @@
 #nullable enable
+NuGet.ProjectModel.ProjectRestoreMetadata.CentralPackageFloatingVersionsEnabled.get -> bool
+NuGet.ProjectModel.ProjectRestoreMetadata.CentralPackageFloatingVersionsEnabled.set -> void

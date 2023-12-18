@@ -1,2 +1,3 @@
 #nullable enable
+~static NuGet.Commands.MSBuildRestoreUtility.GetCentralPackageManagementSettings(NuGet.Commands.IMSBuildItem projectSpecItem, NuGet.ProjectModel.ProjectStyle? projectStyle) -> (bool IsEnabled, bool IsVersionOverrideDisabled, bool IsCentralPackageTransitivePinningEnabled, bool isCentralPackageFloatingVersionsEnabled)
 ~static NuGet.Commands.MSBuildRestoreUtility.GetMessageForUnsupportedProject(string path) -> NuGet.Common.RestoreLogMessage

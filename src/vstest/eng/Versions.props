@@ -46,6 +46,7 @@
     <SystemReflectionMetadataVersion>1.6.0</SystemReflectionMetadataVersion>
     <SystemUriVersion>4.3.2</SystemUriVersion>
     <TestPlatformExternalsVersion>17.7.33819.109</TestPlatformExternalsVersion>
+    <MicrosoftInternalTestPlatformExtensions>17.9.34413.20</MicrosoftInternalTestPlatformExtensions>
     <TestPlatformMSDiaVersion>17.7.33819.109</TestPlatformMSDiaVersion>
   </PropertyGroup>
   <PropertyGroup Label="VSTest test settings">

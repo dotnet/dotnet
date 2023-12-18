@@ -226,6 +226,15 @@ namespace NuGet.SolutionRestoreManager {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The property {0} was expected to have a single value across all target frameworks, but instead had the following values: {1}.
+        /// </summary>
+        internal static string PropertyDoesNotHaveSingleValue {
+            get {
+                return ResourceManager.GetString("PropertyDoesNotHaveSingleValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;globalPackagesFolder&apos; from nuget.config file or the environment variable is &apos;{0}&apos;, a relative path and the solution is not saved. Please save your solution or configure a &apos;globalPackagesFolder&apos; which is a full path..
         /// </summary>
         internal static string RelativeGlobalPackagesFolder {

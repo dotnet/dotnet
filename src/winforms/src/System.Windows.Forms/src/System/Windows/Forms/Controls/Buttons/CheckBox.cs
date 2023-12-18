@@ -11,8 +11,7 @@ using Windows.Win32.UI.Accessibility;
 namespace System.Windows.Forms;
 
 /// <summary>
-///  Represents a Windows
-///  check box.
+///  Represents a Windows check box.
 /// </summary>
 [DefaultProperty(nameof(Checked))]
 [DefaultEvent(nameof(CheckedChanged))]
@@ -21,20 +20,17 @@ namespace System.Windows.Forms;
 [SRDescription(nameof(SR.DescriptionCheckBox))]
 public partial class CheckBox : ButtonBase
 {
-    private static readonly object EVENT_CHECKEDCHANGED = new();
-    private static readonly object EVENT_CHECKSTATECHANGED = new();
-    private static readonly object EVENT_APPEARANCECHANGED = new();
+    private static readonly object s_checkedChangedEvent = new();
+    private static readonly object s_checkStateChangedEvent = new();
+    private static readonly object s_appearanceChangedEvent = new();
     private const ContentAlignment AnyRight = ContentAlignment.TopRight | ContentAlignment.MiddleRight | ContentAlignment.BottomRight;
 
     private ContentAlignment _checkAlign = ContentAlignment.MiddleLeft;
     private CheckState _checkState;
     private Appearance _appearance;
 
-    private const int FlatSystemStylePaddingWidth = 25;
-    private const int FlatSystemStyleMinimumHeight = 13;
-
-    internal int _flatSystemStylePaddingWidth = FlatSystemStylePaddingWidth;
-    internal int _flatSystemStyleMinimumHeight = FlatSystemStyleMinimumHeight;
+    private int _flatSystemStylePaddingWidth;
+    private int _flatSystemStyleMinimumHeight;
 
     // A flag indicating if UIA StateChanged event needs to be triggered,
     // to avoid double-triggering when Checked value changes.
@@ -45,16 +41,8 @@ public partial class CheckBox : ButtonBase
     /// </summary>
     public CheckBox() : base()
     {
-        if (DpiHelper.IsScalingRequirementMet)
-        {
-            _flatSystemStylePaddingWidth = LogicalToDeviceUnits(FlatSystemStylePaddingWidth);
-            _flatSystemStyleMinimumHeight = LogicalToDeviceUnits(FlatSystemStyleMinimumHeight);
-        }
-
         // Checkboxes shouldn't respond to right clicks, so we need to do all our own click logic
-        SetStyle(ControlStyles.StandardClick |
-                 ControlStyles.StandardDoubleClick, false);
-
+        SetStyle(ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
         SetAutoSizeMode(AutoSizeMode.GrowAndShrink);
 
         AutoCheck = true;
@@ -64,9 +52,7 @@ public partial class CheckBox : ButtonBase
     private bool AccObjDoDefaultAction { get; set; }
 
     /// <summary>
-    ///  Gets
-    ///  or sets the value that determines the appearance of a
-    ///  check box control.
+    ///  Gets or sets the value that determines the appearance of a check box control.
     /// </summary>
     [DefaultValue(Appearance.Normal)]
     [Localizable(true)]
@@ -74,32 +60,29 @@ public partial class CheckBox : ButtonBase
     [SRDescription(nameof(SR.CheckBoxAppearanceDescr))]
     public Appearance Appearance
     {
-        get
-        {
-            return _appearance;
-        }
-
+        get => _appearance;
         set
         {
-            // valid values are 0x0 to 0x1
             SourceGenerated.EnumValidator.Validate(value);
 
-            if (_appearance != value)
+            if (_appearance == value)
             {
-                using (LayoutTransaction.CreateTransactionIf(AutoSize, ParentInternal, this, PropertyNames.Appearance))
-                {
-                    _appearance = value;
-                    if (OwnerDraw)
-                    {
-                        Refresh();
-                    }
-                    else
-                    {
-                        UpdateStyles();
-                    }
+                return;
+            }
 
-                    OnAppearanceChanged(EventArgs.Empty);
+            using (LayoutTransaction.CreateTransactionIf(AutoSize, ParentInternal, this, PropertyNames.Appearance))
+            {
+                _appearance = value;
+                if (OwnerDraw)
+                {
+                    Refresh();
                 }
+                else
+                {
+                    UpdateStyles();
+                }
+
+                OnAppearanceChanged(EventArgs.Empty);
             }
         }
     }
@@ -108,14 +91,13 @@ public partial class CheckBox : ButtonBase
     [SRDescription(nameof(SR.CheckBoxOnAppearanceChangedDescr))]
     public event EventHandler? AppearanceChanged
     {
-        add => Events.AddHandler(EVENT_APPEARANCECHANGED, value);
-        remove => Events.RemoveHandler(EVENT_APPEARANCECHANGED, value);
+        add => Events.AddHandler(s_appearanceChangedEvent, value);
+        remove => Events.RemoveHandler(s_appearanceChangedEvent, value);
     }
 
     /// <summary>
     ///  Gets or sets a value indicating whether the <see cref="Checked"/> or <see cref="CheckState"/>
-    ///  value and the check box's appearance are automatically
-    ///  changed when it is clicked.
+    ///  value and the check box's appearance are automatically changed when it is clicked.
     /// </summary>
     [DefaultValue(true)]
     [SRCategory(nameof(SR.CatBehavior))]
@@ -123,9 +105,7 @@ public partial class CheckBox : ButtonBase
     public bool AutoCheck { get; set; }
 
     /// <summary>
-    ///  Gets or sets
-    ///  the horizontal and vertical alignment of a check box on a check box
-    ///  control.
+    ///  Gets or sets the horizontal and vertical alignment of a check box on a check box control.
     /// </summary>
     [Bindable(true)]
     [Localizable(true)]
@@ -134,35 +114,31 @@ public partial class CheckBox : ButtonBase
     [SRDescription(nameof(SR.CheckBoxCheckAlignDescr))]
     public ContentAlignment CheckAlign
     {
-        get
-        {
-            return _checkAlign;
-        }
+        get => _checkAlign;
         set
         {
             SourceGenerated.EnumValidator.Validate(value);
 
-            if (_checkAlign != value)
+            if (_checkAlign == value)
             {
-                _checkAlign = value;
-                LayoutTransaction.DoLayoutIf(AutoSize, ParentInternal, this, PropertyNames.CheckAlign);
-                if (OwnerDraw)
-                {
-                    Invalidate();
-                }
-                else
-                {
-                    UpdateStyles();
-                }
+                return;
+            }
+
+            _checkAlign = value;
+            LayoutTransaction.DoLayoutIf(AutoSize, ParentInternal, this, PropertyNames.CheckAlign);
+            if (OwnerDraw)
+            {
+                Invalidate();
+            }
+            else
+            {
+                UpdateStyles();
             }
         }
     }
 
     /// <summary>
-    ///  Gets
-    ///  or sets a value indicating whether the
-    ///  check box
-    ///  is checked.
+    ///  Gets or sets a value indicating whether the check box is checked.
     /// </summary>
     [Bindable(true),
     SettingsBindable(true)]
@@ -172,11 +148,7 @@ public partial class CheckBox : ButtonBase
     [SRDescription(nameof(SR.CheckBoxCheckedDescr))]
     public bool Checked
     {
-        get
-        {
-            return _checkState != CheckState.Unchecked;
-        }
-
+        get => _checkState != CheckState.Unchecked;
         set
         {
             if (value != Checked)
@@ -187,8 +159,7 @@ public partial class CheckBox : ButtonBase
     }
 
     /// <summary>
-    ///  Gets
-    ///  or sets a value indicating whether the check box is checked.
+    ///  Gets or sets a value indicating whether the check box is checked.
     /// </summary>
     [Bindable(true)]
     [SRCategory(nameof(SR.CatAppearance))]
@@ -197,38 +168,35 @@ public partial class CheckBox : ButtonBase
     [SRDescription(nameof(SR.CheckBoxCheckStateDescr))]
     public CheckState CheckState
     {
-        get
-        {
-            return _checkState;
-        }
-
+        get => _checkState;
         set
         {
-            // valid values are 0-2 inclusive.
             SourceGenerated.EnumValidator.Validate(value);
 
-            if (_checkState != value)
+            if (_checkState == value)
             {
-                bool oldChecked = Checked;
-
-                _checkState = value;
-
-                if (IsHandleCreated)
-                {
-                    PInvoke.SendMessage(this, PInvoke.BM_SETCHECK, (WPARAM)(int)_checkState);
-                }
-
-                bool checkedChanged = oldChecked != Checked;
-
-                if (checkedChanged)
-                {
-                    OnCheckedChanged(EventArgs.Empty);
-                }
-
-                _notifyAccessibilityStateChangedNeeded = !checkedChanged;
-                OnCheckStateChanged(EventArgs.Empty);
-                _notifyAccessibilityStateChangedNeeded = false;
+                return;
             }
+
+            bool oldChecked = Checked;
+
+            _checkState = value;
+
+            if (IsHandleCreated)
+            {
+                PInvoke.SendMessage(this, PInvoke.BM_SETCHECK, (WPARAM)(int)_checkState);
+            }
+
+            bool checkedChanged = oldChecked != Checked;
+
+            if (checkedChanged)
+            {
+                OnCheckedChanged(EventArgs.Empty);
+            }
+
+            _notifyAccessibilityStateChangedNeeded = !checkedChanged;
+            OnCheckStateChanged(EventArgs.Empty);
+            _notifyAccessibilityStateChangedNeeded = false;
         }
     }
 
@@ -282,28 +250,28 @@ public partial class CheckBox : ButtonBase
 
     protected override Size DefaultSize => new(104, 24);
 
-    /// <summary>
-    ///  When overridden in a derived class, handles rescaling of any magic numbers used in control painting.
-    ///  For CheckBox controls, scale the width of the system-style padding, and height of the box.
-    ///  Must call the base class method to get the current DPI values. This method is invoked only when
-    ///  Application opts-in into the Per-monitor V2 support, targets .NETFX 4.7 and has
-    ///  EnableDpiChangedMessageHandling and EnableDpiChangedHighDpiImprovements config switches turned on.
-    /// </summary>
-    /// <param name="deviceDpiOld">Old DPI value</param>
-    /// <param name="deviceDpiNew">New DPI value</param>
     protected override void RescaleConstantsForDpi(int deviceDpiOld, int deviceDpiNew)
     {
         base.RescaleConstantsForDpi(deviceDpiOld, deviceDpiNew);
+        ScaleConstants();
+    }
 
-        _flatSystemStylePaddingWidth = LogicalToDeviceUnits(FlatSystemStylePaddingWidth);
-        _flatSystemStyleMinimumHeight = LogicalToDeviceUnits(FlatSystemStyleMinimumHeight);
+    private protected override void InitializeConstantsForInitialDpi(int initialDpi) => ScaleConstants();
+
+    private void ScaleConstants()
+    {
+        const int LogicalFlatSystemStylePaddingWidth = 25;
+        const int LogicalFlatSystemStyleMinimumHeight = 13;
+
+        _flatSystemStylePaddingWidth = LogicalToDeviceUnits(LogicalFlatSystemStylePaddingWidth);
+        _flatSystemStyleMinimumHeight = LogicalToDeviceUnits(LogicalFlatSystemStyleMinimumHeight);
     }
 
     internal override Size GetPreferredSizeCore(Size proposedConstraints)
     {
         if (Appearance == Appearance.Button)
         {
-            ButtonStandardAdapter adapter = new ButtonStandardAdapter(this);
+            ButtonStandardAdapter adapter = new(this);
             return adapter.GetPreferredSizeCore(proposedConstraints);
         }
 
@@ -315,7 +283,9 @@ public partial class CheckBox : ButtonBase
         Size textSize = TextRenderer.MeasureText(Text, Font);
         Size size = SizeFromClientSize(textSize);
         size.Width += _flatSystemStylePaddingWidth;
-        size.Height = Math.Max(size.Height + 5, _flatSystemStyleMinimumHeight); // ensure minimum height to avoid truncation of check-box or text
+
+        // Ensure minimum height to avoid truncation of check-box or text
+        size.Height = Math.Max(size.Height + 5, _flatSystemStyleMinimumHeight);
         return size + Padding.Size;
     }
 
@@ -327,19 +297,15 @@ public partial class CheckBox : ButtonBase
             {
                 return base.OverChangeRectangle;
             }
+            else if (FlatStyle == FlatStyle.Standard)
+            {
+                // Return an out of bounds rectangle to avoid invalidation.
+                return new Rectangle(-1, -1, 1, 1);
+            }
             else
             {
-                if (FlatStyle == FlatStyle.Standard)
-                {
-                    // this Rectangle will cause no Invalidation
-                    // can't use Rectangle.Empty because it will cause Invalidate(ClientRectangle)
-                    return new Rectangle(-1, -1, 1, 1);
-                }
-                else
-                {
-                    // Popup mouseover rectangle is actually bigger than GetCheckmarkRectangle
-                    return Adapter.CommonLayout().Layout().CheckBounds;
-                }
+                // Popup mouseover rectangle is actually bigger than GetCheckmarkRectangle
+                return Adapter.CommonLayout().Layout().CheckBounds;
             }
         }
     }
@@ -363,8 +329,7 @@ public partial class CheckBox : ButtonBase
     internal override bool SupportsUiaProviders => true;
 
     /// <summary>
-    ///  Gets or sets a value indicating the alignment of the
-    ///  text on the checkbox control.
+    ///  Gets or sets a value indicating the alignment of the text on the checkbox control.
     /// </summary>
     [Localizable(true)]
     [DefaultValue(ContentAlignment.MiddleLeft)]
@@ -375,8 +340,7 @@ public partial class CheckBox : ButtonBase
     }
 
     /// <summary>
-    ///  Gets or sets a value indicating
-    ///  whether the check box will allow three check states rather than two.
+    ///  Gets or sets a value indicating whether the check box will allow three check states rather than two.
     /// </summary>
     [DefaultValue(false)]
     [SRCategory(nameof(SR.CatBehavior))]
@@ -384,56 +348,43 @@ public partial class CheckBox : ButtonBase
     public bool ThreeState { get; set; }
 
     /// <summary>
-    ///  Occurs when the
-    ///  value of the <see cref="Checked"/>
-    ///  property changes.
+    ///  Occurs when the value of the <see cref="Checked"/> property changes.
     /// </summary>
     [SRDescription(nameof(SR.CheckBoxOnCheckedChangedDescr))]
     public event EventHandler? CheckedChanged
     {
-        add => Events.AddHandler(EVENT_CHECKEDCHANGED, value);
-        remove => Events.RemoveHandler(EVENT_CHECKEDCHANGED, value);
+        add => Events.AddHandler(s_checkedChangedEvent, value);
+        remove => Events.RemoveHandler(s_checkedChangedEvent, value);
     }
 
     /// <summary>
-    ///  Occurs when the
-    ///  value of the <see cref="CheckState"/>
-    ///  property changes.
+    ///  Occurs when the value of the <see cref="CheckState"/> property changes.
     /// </summary>
     [SRDescription(nameof(SR.CheckBoxOnCheckStateChangedDescr))]
     public event EventHandler? CheckStateChanged
     {
-        add => Events.AddHandler(EVENT_CHECKSTATECHANGED, value);
-        remove => Events.RemoveHandler(EVENT_CHECKSTATECHANGED, value);
+        add => Events.AddHandler(s_checkStateChangedEvent, value);
+        remove => Events.RemoveHandler(s_checkStateChangedEvent, value);
     }
 
-    /// <summary>
-    ///  Constructs the new instance of the accessibility object for this control. Subclasses
-    ///  should not call base.CreateAccessibilityObject.
-    /// </summary>
-    protected override AccessibleObject CreateAccessibilityInstance()
-    {
-        return new CheckBoxAccessibleObject(this);
-    }
+    protected override AccessibleObject CreateAccessibilityInstance() => new CheckBoxAccessibleObject(this);
 
     protected virtual void OnAppearanceChanged(EventArgs e)
     {
-        if (Events[EVENT_APPEARANCECHANGED] is EventHandler eh)
+        if (Events[s_appearanceChangedEvent] is EventHandler eh)
         {
             eh(this, e);
         }
     }
 
     /// <summary>
-    ///  Raises the <see cref="CheckedChanged"/>
-    ///  event.
+    ///  Raises the <see cref="CheckedChanged"/>  event.
     /// </summary>
     protected virtual void OnCheckedChanged(EventArgs e)
     {
-        // accessibility stuff
         NotifyAccessibilityStateChanged();
 
-        ((EventHandler?)Events[EVENT_CHECKEDCHANGED])?.Invoke(this, e);
+        ((EventHandler?)Events[s_checkedChangedEvent])?.Invoke(this, e);
     }
 
     /// <summary>
@@ -451,7 +402,7 @@ public partial class CheckBox : ButtonBase
             NotifyAccessibilityStateChanged();
         }
 
-        ((EventHandler?)Events[EVENT_CHECKSTATECHANGED])?.Invoke(this, e);
+        ((EventHandler?)Events[s_checkStateChangedEvent])?.Invoke(this, e);
     }
 
     private void NotifyAccessibilityStateChanged()
@@ -479,12 +430,6 @@ public partial class CheckBox : ButtonBase
         }
     }
 
-    /// <summary>
-    ///  Fires the event indicating that the control has been clicked.
-    ///  Inheriting controls should use this in favour of actually listening to
-    ///  the event, but should not forget to call base.onClicked() to
-    ///  ensure that the event is still fired for external listeners.
-    /// </summary>
     protected override void OnClick(EventArgs e)
     {
         if (AutoCheck)
@@ -499,9 +444,8 @@ public partial class CheckBox : ButtonBase
                     {
                         CheckState = CheckState.Indeterminate;
 
-                        // If the check box is clicked as a result of AccObj::DoDefaultAction
-                        // then the native check box does not fire OBJ_STATE_CHANGE event when going to Indeterminate state.
-                        // So the WinForms layer fires the OBJ_STATE_CHANGE event.
+                        // If the check box is clicked as a result of AccObj::DoDefaultAction then the native check box
+                        // does not fire OBJ_STATE_CHANGE event when going to Indeterminate state and we need to.
                         if (AccObjDoDefaultAction)
                         {
                             AccessibilityNotifyClients(AccessibleEvents.StateChange, -1);
@@ -523,8 +467,7 @@ public partial class CheckBox : ButtonBase
     }
 
     /// <summary>
-    ///  We override this to ensure that the control's click values are set up
-    ///  correctly.
+    ///  We override this to ensure that the control's click values are set up correctly.
     /// </summary>
     protected override void OnHandleCreated(EventArgs e)
     {
@@ -563,20 +506,11 @@ public partial class CheckBox : ButtonBase
         base.OnMouseUp(mevent);
     }
 
-    internal override ButtonBaseAdapter CreateFlatAdapter()
-    {
-        return new CheckBoxFlatAdapter(this);
-    }
+    internal override ButtonBaseAdapter CreateFlatAdapter() => new CheckBoxFlatAdapter(this);
 
-    internal override ButtonBaseAdapter CreatePopupAdapter()
-    {
-        return new CheckBoxPopupAdapter(this);
-    }
+    internal override ButtonBaseAdapter CreatePopupAdapter() => new CheckBoxPopupAdapter(this);
 
-    internal override ButtonBaseAdapter CreateStandardAdapter()
-    {
-        return new CheckBoxStandardAdapter(this);
-    }
+    internal override ButtonBaseAdapter CreateStandardAdapter() => new CheckBoxStandardAdapter(this);
 
     /// <summary>
     ///  Overridden to handle mnemonics properly.
@@ -601,15 +535,5 @@ public partial class CheckBox : ButtonBase
         return false;
     }
 
-    /// <summary>
-    ///  Provides some interesting information for the CheckBox control in
-    ///  String form.
-    /// </summary>
-    public override string ToString()
-    {
-        string s = base.ToString();
-        // We shouldn't need to convert the enum to int
-        int checkState = (int)CheckState;
-        return $"{s}, CheckState: {checkState}";
-    }
+    public override string ToString() => $"{base.ToString()}, CheckState: {(int)CheckState}";
 }

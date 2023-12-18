@@ -839,6 +839,48 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Fact]
+        public async Task DifferingPackageIdsFailsWithUsableErrorMessage()
+        {
+            var cps = NewCpsProject("{ }");
+            var projectFullPath = cps.ProjectFullPath;
+            var pri = cps.Builder
+                .WithTargetFrameworkInfo(
+                    new VsTargetFrameworkInfo2(
+                        "netcoreapp1.0",
+                        Enumerable.Empty<IVsReferenceItem>(),
+                        Enumerable.Empty<IVsReferenceItem>(),
+                        Enumerable.Empty<IVsReferenceItem>(),
+                        Enumerable.Empty<IVsReferenceItem>(),
+                        new[] { new VsProjectProperty("PackageId", "PackageId.netcoreapp1.0") }))
+                .WithTargetFrameworkInfo(
+                    new VsTargetFrameworkInfo2(
+                        "net46",
+                        Enumerable.Empty<IVsReferenceItem>(),
+                        Enumerable.Empty<IVsReferenceItem>(),
+                        Enumerable.Empty<IVsReferenceItem>(),
+                        Enumerable.Empty<IVsReferenceItem>(),
+                        new[] { new VsProjectProperty("PackageId", "PackageId.net46") }))
+                .ProjectRestoreInfo2;
+
+            var cache = Mock.Of<IProjectSystemCache>();
+            var restoreWorker = Mock.Of<ISolutionRestoreWorker>();
+            var vsSolution2 = Mock.Of<IVsSolution2>();
+            var asyncLazySolution2 = new Microsoft.VisualStudio.Threading.AsyncLazy<IVsSolution2>(() => Task.FromResult(vsSolution2));
+            var telemetryProvider = Mock.Of<INuGetTelemetryProvider>();
+
+            var service = new VsSolutionRestoreService(
+                cache, restoreWorker, NuGet.Common.NullLogger.Instance, asyncLazySolution2, telemetryProvider);
+
+            // Act
+            var additionalMessages = await CaptureAdditionalMessagesAsync(projectFullPath, pri);
+
+            // Assert
+            var additionalMessage = Assert.Single(additionalMessages);
+            Assert.Equal(NuGetLogCode.NU1105, additionalMessage.Code);
+            Assert.Contains(string.Format(CultureInfo.CurrentCulture, Resources.PropertyDoesNotHaveSingleValue, "PackageId", "PackageId.net46, PackageId.netcoreapp1.0"), additionalMessage.Message);
+        }
+
+        [Fact]
         public async Task NominateProjectAsync_VerifySourcesAreCombinedAcrossFrameworks()
         {
             var cps = NewCpsProject(@"{ }");
@@ -1840,22 +1882,7 @@ namespace NuGet.SolutionRestoreManager.Test
         {
             // Arrange
             const string projectFullPath = @"f:\project\project.csproj";
-            IReadOnlyList<IAssetsLogMessage> additionalMessages = null;
-
-            var cache = CreateDefaultIProjectSystemCacheMock(projectFullPath);
-            cache.Setup(x => x.AddProjectRestoreInfo(
-                    It.IsAny<ProjectNames>(),
-                    It.IsAny<DependencyGraphSpec>(),
-                    It.IsAny<IReadOnlyList<IAssetsLogMessage>>()))
-                .Callback<ProjectNames, DependencyGraphSpec, IReadOnlyList<IAssetsLogMessage>>((_, __, callbackAdditionalMessages) =>
-                {
-                    additionalMessages = callbackAdditionalMessages;
-                })
-                .Returns(true);
-
             var restoreWorker = CreateDefaultISolutionRestoreWorkerMock();
-
-            var logger = new Mock<ILogger>();
 
             var emptyReferenceItems = Array.Empty<VsReferenceItem>();
             var projectRestoreInfo = new VsProjectRestoreInfo2(@"f:\project\",
@@ -1871,14 +1898,11 @@ namespace NuGet.SolutionRestoreManager.Test
                 }));
 
             // Act
-            var result = await NominateProjectAsync(projectFullPath, projectRestoreInfo, CancellationToken.None, cache: cache, restoreWorker: restoreWorker, logger: logger);
+            var additionalMessages = await CaptureAdditionalMessagesAsync(projectFullPath, projectRestoreInfo, restoreWorker: restoreWorker);
 
             // Assert
-            Assert.True(result);
-            logger.Verify(l => l.LogError(It.IsAny<string>()), Times.Never);
-            Assert.NotNull(additionalMessages);
-            Assert.Equal(1, additionalMessages.Count);
-            Assert.Equal(NuGetLogCode.NU1105, additionalMessages[0].Code);
+            var additionalMessage = Assert.Single(additionalMessages);
+            Assert.Equal(NuGetLogCode.NU1105, additionalMessage.Code);
             restoreWorker.Verify(rw => rw.ScheduleRestoreAsync(It.IsAny<SolutionRestoreRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -1887,21 +1911,6 @@ namespace NuGet.SolutionRestoreManager.Test
         {
             // Arrange
             const string projectFullPath = @"f:\project\project.csproj";
-
-            IReadOnlyList<IAssetsLogMessage> additionalMessages = null;
-
-            var cache = CreateDefaultIProjectSystemCacheMock(projectFullPath);
-            cache.Setup(x => x.AddProjectRestoreInfo(
-                    It.IsAny<ProjectNames>(),
-                    It.IsAny<DependencyGraphSpec>(),
-                    It.IsAny<IReadOnlyList<IAssetsLogMessage>>()))
-                .Callback<ProjectNames, DependencyGraphSpec, IReadOnlyList<IAssetsLogMessage>>((_, __, callbackAdditionalMessages) =>
-                {
-                    additionalMessages = callbackAdditionalMessages;
-                })
-                .Returns(true);
-
-            var logger = new Mock<ILogger>();
 
             var restoreWorker = CreateDefaultISolutionRestoreWorkerMock();
 
@@ -1925,14 +1934,11 @@ namespace NuGet.SolutionRestoreManager.Test
                 }));
 
             // Act
-            var result = await NominateProjectAsync(projectFullPath, projectRestoreInfo, CancellationToken.None, cache: cache, restoreWorker: restoreWorker, logger: logger);
+            var additionalMessages = await CaptureAdditionalMessagesAsync(projectFullPath, projectRestoreInfo, restoreWorker);
 
             // Assert
-            Assert.True(result);
-            logger.Verify(l => l.LogError(It.IsAny<string>()), Times.Never);
-            Assert.NotNull(additionalMessages);
-            Assert.Equal(1, additionalMessages.Count);
-            Assert.Equal(NuGetLogCode.NU1105, additionalMessages[0].Code);
+            var additionalMessage = Assert.Single(additionalMessages);
+            Assert.Equal(NuGetLogCode.NU1105, additionalMessage.Code);
             restoreWorker.Verify(rw => rw.ScheduleRestoreAsync(It.IsAny<SolutionRestoreRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -1967,7 +1973,7 @@ namespace NuGet.SolutionRestoreManager.Test
         public void ToPackageSpec_CentralVersions_AreAddedToThePackageSpecIfCPVMIsEnabled()
         {
             // Arrange
-            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "prjectC", Guid.NewGuid().ToString());
+            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
             var emptyReferenceItems = Array.Empty<VsReferenceItem>();
 
             var targetFrameworks = new VsTargetFrameworkInfo3[] { new VsTargetFrameworkInfo3(
@@ -2009,7 +2015,7 @@ namespace NuGet.SolutionRestoreManager.Test
         public void ToPackageSpec_CentralVersions_CPVMIsEnabled_NoPackageVersions()
         {
             // Arrange
-            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "prjectC", Guid.NewGuid().ToString());
+            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
             var emptyReferenceItems = Array.Empty<VsReferenceItem>();
 
             var targetFrameworks = new VsTargetFrameworkInfo3[] { new VsTargetFrameworkInfo3(
@@ -2042,7 +2048,7 @@ namespace NuGet.SolutionRestoreManager.Test
         public void ToPackageSpec_CentralVersions_AreNotAddedToThePackageSpecIfCPVMIsNotEnabled(string packRefVersion, string managePackageVersionsCentrally)
         {
             // Arrange
-            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "prjectC", Guid.NewGuid().ToString());
+            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
             var emptyReferenceItems = Array.Empty<VsReferenceItem>();
             var packageReferenceProperties = packRefVersion == null ?
                 new VsReferenceProperties() :
@@ -2090,7 +2096,7 @@ namespace NuGet.SolutionRestoreManager.Test
         public void ToPackageSpec_CentralVersionOverride_CanBeDisabled(string isCentralPackageVersionOverrideEnabled, bool expected)
         {
             // Arrange
-            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "prjectC", Guid.NewGuid().ToString());
+            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
             var emptyReferenceItems = Array.Empty<VsReferenceItem>();
 
             var targetFrameworks = new VsTargetFrameworkInfo3[] { new VsTargetFrameworkInfo3(
@@ -2151,7 +2157,7 @@ namespace NuGet.SolutionRestoreManager.Test
         public void ToPackageSpec_TransitiveDependencyPinning_CanBeEnabled(string CentralPackageTransitivePinningEnabled, bool expected)
         {
             // Arrange
-            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "prjectC", Guid.NewGuid().ToString());
+            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
             var emptyReferenceItems = Array.Empty<VsReferenceItem>();
 
             var targetFrameworks = new VsTargetFrameworkInfo3[] { new VsTargetFrameworkInfo3(
@@ -2180,6 +2186,49 @@ namespace NuGet.SolutionRestoreManager.Test
             else
             {
                 Assert.False(result.RestoreMetadata.CentralPackageTransitivePinningEnabled);
+            }
+        }
+
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData("", false)]
+        [InlineData(" ", false)]
+        [InlineData("invalid", false)]
+        [InlineData("false", false)]
+        [InlineData("true", true)]
+        [InlineData("           true    ", true)]
+        public void ToPackageSpec_CentralPackageFloatingVersions_CanBeEnabled(string centralPackageFloatingVersionsEnabled, bool expected)
+        {
+            // Arrange
+            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
+            var emptyReferenceItems = Array.Empty<VsReferenceItem>();
+
+            var targetFrameworks = new VsTargetFrameworkInfo3[] { new VsTargetFrameworkInfo3(
+                targetFrameworkMoniker: CommonFrameworks.NetStandard20.ToString(),
+                packageReferences: new[] { new VsReferenceItem("foo", new VsReferenceProperties()) },
+                projectReferences: emptyReferenceItems,
+                packageDownloads: emptyReferenceItems,
+                frameworkReferences: emptyReferenceItems,
+                projectProperties: ProjectRestoreInfoBuilder.GetTargetFrameworkProperties(CommonFrameworks.NetStandard20).Concat(new VsProjectProperty[]
+                {
+                    new VsProjectProperty(ProjectBuildProperties.ManagePackageVersionsCentrally, "true"),
+                    new VsProjectProperty(ProjectBuildProperties.CentralPackageFloatingVersionsEnabled, centralPackageFloatingVersionsEnabled),
+                }),
+                centralPackageVersions: Array.Empty<IVsReferenceItem>())
+            };
+
+            // Act
+            PackageSpec result = VsSolutionRestoreService.ToPackageSpec(projectName, targetFrameworks, CommonFrameworks.NetStandard20.ToString(), string.Empty);
+
+            // Assert
+
+            if (expected)
+            {
+                Assert.True(result.RestoreMetadata.CentralPackageFloatingVersionsEnabled);
+            }
+            else
+            {
+                Assert.False(result.RestoreMetadata.CentralPackageFloatingVersionsEnabled);
             }
         }
 
@@ -2233,7 +2282,7 @@ namespace NuGet.SolutionRestoreManager.Test
         public void ToPackageSpec_TargetFrameworkWithAlias_DefinesAliasCorrectly()
         {
             // Arrange
-            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "prjectC", Guid.NewGuid().ToString());
+            ProjectNames projectName = new ProjectNames(@"f:\project\project.csproj", "project", "project.csproj", "projectC", Guid.NewGuid().ToString());
             var emptyReferenceItems = Array.Empty<VsReferenceItem>();
             var packageReferenceProperties = new VsReferenceProperties();
 
@@ -2445,6 +2494,35 @@ namespace NuGet.SolutionRestoreManager.Test
             Assert.True(result, "Project restore nomination should succeed.");
 
             return capturedRestoreSpec;
+        }
+
+        private async Task<IReadOnlyList<IAssetsLogMessage>> CaptureAdditionalMessagesAsync(
+            string projectFullPath,
+            IVsProjectRestoreInfo2 pri,
+            Mock<ISolutionRestoreWorker> restoreWorker = null)
+        {
+            IReadOnlyList<IAssetsLogMessage> additionalMessages = null;
+
+            var cache = CreateDefaultIProjectSystemCacheMock(projectFullPath);
+
+            cache
+                .Setup(x => x.AddProjectRestoreInfo(
+                    It.IsAny<ProjectNames>(),
+                    It.IsAny<DependencyGraphSpec>(),
+                    It.IsAny<IReadOnlyList<IAssetsLogMessage>>()))
+                .Callback<ProjectNames, DependencyGraphSpec, IReadOnlyList<IAssetsLogMessage>>(
+                    (_, _, am) => { additionalMessages = am; })
+                .Returns(true);
+
+            var logger = new Mock<ILogger>();
+
+            // Act
+            var result = await NominateProjectAsync(projectFullPath, pri, CancellationToken.None, cache: cache, restoreWorker, logger);
+
+            Assert.True(result, "Project restore nomination should succeed.");
+            logger.Verify(l => l.LogError(It.IsAny<string>()), Times.Never);
+
+            return additionalMessages;
         }
 
         private async Task<DependencyGraphSpec> CaptureNominateResultAsync(

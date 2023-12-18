@@ -384,5 +384,10 @@ namespace NuGet.ProjectManagement.Projects
         {
             return TaskResult.Null<string>();
         }
+
+        public override Task<bool> UninstallPackageAsync(string packageId, BuildIntegratedInstallationContext installationContext, CancellationToken token)
+        {
+            return RemoveDependencyAsync(packageId, null, token);
+        }
     }
 }

@@ -223,11 +223,15 @@ namespace NuGet.PackageManagement.VisualStudio
             container.AddFromFileCopy(fullPath);
         }
 
-        public override async Task<bool> UninstallPackageAsync(
+        public override Task<bool> UninstallPackageAsync(
             PackageIdentity packageIdentity, INuGetProjectContext _, CancellationToken token)
         {
-            await ProjectServices.References.RemovePackageReferenceAsync(packageIdentity.Id);
+            return UninstallPackageAsync(packageIdentity.Id);
+        }
 
+        private async Task<bool> UninstallPackageAsync(string id)
+        {
+            await ProjectServices.References.RemovePackageReferenceAsync(id);
             return true;
         }
 
@@ -459,6 +463,7 @@ namespace NuGet.PackageManagement.VisualStudio
                         MSBuildStringUtility.IsTrue(GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.RestoreLockedMode))),
                     CentralPackageVersionsEnabled = isCpvmEnabled,
                     CentralPackageVersionOverrideDisabled = GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.CentralPackageVersionOverrideEnabled).EqualsFalse(),
+                    CentralPackageFloatingVersionsEnabled = MSBuildStringUtility.IsTrue(_vsProjectAdapter.BuildProperties.GetPropertyValue(ProjectBuildProperties.CentralPackageFloatingVersionsEnabled)),
                     CentralPackageTransitivePinningEnabled = MSBuildStringUtility.IsTrue(GetPropertySafe(_vsProjectAdapter.BuildProperties, ProjectBuildProperties.CentralPackageTransitivePinningEnabled)),
                     RestoreAuditProperties = auditProperties,
                 }
@@ -522,5 +527,11 @@ namespace NuGet.PackageManagement.VisualStudio
 
         /// <inheritdoc/>
         protected override Dictionary<string, ProjectInstalledPackage> GetCollectionCopy(Dictionary<string, ProjectInstalledPackage> collection) => new(collection);
+
+        public override Task<bool> UninstallPackageAsync(string packageId, BuildIntegratedInstallationContext _, CancellationToken token)
+        {
+            if (string.IsNullOrEmpty(packageId)) throw new ArgumentException(string.Format(Strings.Argument_Cannot_Be_Null_Or_Empty, nameof(packageId)));
+            return UninstallPackageAsync(packageId);
+        }
     }
 }

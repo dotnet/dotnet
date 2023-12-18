@@ -40,7 +40,7 @@ stages:
       displayName: Publish Test Results
       inputs:
         testResultsFormat: 'xUnit'
-        testResultsFiles: '**/artifacts/TestResults/Debug/*.xml'
+        testResultsFiles: '**/artifacts/TestResults/Release/*.xml'
         testRunTitle: 'Linux_SBRP_tests'
       condition: always()
 
@@ -67,7 +67,7 @@ stages:
       displayName: Publish Test Results
       inputs:
         testResultsFormat: 'xUnit'
-        testResultsFiles: '**/artifacts/TestResults/Debug/*.xml'
+        testResultsFiles: '**/artifacts/TestResults/Release/*.xml'
         testRunTitle: 'Windows_SBRP_tests'
       condition: always()
 

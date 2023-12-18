@@ -87,6 +87,7 @@ namespace NuGet.PackageManagement.Test
             installationContext.UnsuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
             installationContext.SuccessfulFrameworks.Should().HaveCount(1);
             installationContext.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
+            installationContext.AreAllPackagesConditional.Should().BeFalse();
 
             var assetsFile = buildIntegratedAction.RestoreResult.LockFile;
             assetsFile.Libraries.Should().HaveCount(1);
@@ -163,6 +164,7 @@ namespace NuGet.PackageManagement.Test
             installationContext.UnsuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
             installationContext.SuccessfulFrameworks.Should().HaveCount(1);
             installationContext.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
+            installationContext.AreAllPackagesConditional.Should().BeFalse();
 
             var assetsFile = buildIntegratedAction.RestoreResult.LockFile;
             assetsFile.Libraries.Should().HaveCount(1);
@@ -240,6 +242,7 @@ namespace NuGet.PackageManagement.Test
             installationContext.SuccessfulFrameworks.Should().HaveCount(2);
             installationContext.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
             installationContext.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
+            installationContext.AreAllPackagesConditional.Should().BeFalse();
 
             var assetsFile = buildIntegratedAction.RestoreResult.LockFile;
             assetsFile.Libraries.Should().HaveCount(1);
@@ -326,6 +329,7 @@ namespace NuGet.PackageManagement.Test
             installationContextA.SuccessfulFrameworks.Should().HaveCount(1);
             installationContextA.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
             installationContextA.UnsuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
+            installationContextA.AreAllPackagesConditional.Should().BeFalse();
 
             (var originalActionB, var installationContextB) = buildIntegratedAction.ActionAndContextList[1];
             originalActionB.PackageIdentity.Should().Be(b200);
@@ -335,6 +339,7 @@ namespace NuGet.PackageManagement.Test
             installationContextB.SuccessfulFrameworks.Should().HaveCount(1);
             installationContextB.UnsuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
             installationContextB.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
+            installationContextB.AreAllPackagesConditional.Should().BeFalse();
 
             var assetsFile = buildIntegratedAction.RestoreResult.LockFile;
             assetsFile.Libraries.Should().HaveCount(2);
@@ -350,6 +355,245 @@ namespace NuGet.PackageManagement.Test
             net50Target.Libraries.Should().HaveCount(1);
             net50Target.Libraries[0].Name.Should().Be(b200.Id);
             net50Target.Libraries[0].Version.Should().Be(b200.Version);
+        }
+
+        [Fact]
+        public async Task PreviewUpdatePackagesAsync_WithMultiTargettedPackageReferenceProjectAndConditionalPackageInAllFrameworks_ConsolidatesPackageVersions()
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = new();
+            using var solutionManager = new TestSolutionManager(pathContext);
+            SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
+            var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
+            var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
+
+            string referenceSpec = @"
+                {
+                    ""frameworks"": {
+                        ""net472"": {
+                            ""dependencies"": {
+                                ""A"" : ""1.0.0""
+                            }
+                        },
+                        ""net5.0"": {
+                            ""dependencies"": {
+                                ""A"" : ""2.0.0""
+                            }
+                        }
+                    }
+                }";
+            NuGetProject buildIntegratedProject = CreateBuildIntegratedProjectAndAddToSolutionManager(solutionManager, settings, referenceSpec);
+
+            var packageID = "A";
+            var a100 = new PackageIdentity(packageID, new NuGetVersion(1, 0, 0));
+            var a200 = new PackageIdentity(packageID, new NuGetVersion(2, 0, 0));
+            var after = new PackageIdentity(packageID, new NuGetVersion(3, 0, 0));
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource,
+                a100,
+                a200,
+                after);
+
+            // Main Act
+            var result = (await nuGetPackageManager.PreviewUpdatePackagesAsync(
+                packageID,
+                new List<NuGetProject> { buildIntegratedProject },
+                new ResolutionContext(DependencyBehavior.Lowest, false, false, VersionConstraints.None),
+                new TestNuGetProjectContext(),
+                sourceRepositoryProvider.GetRepositories(),
+                sourceRepositoryProvider.GetRepositories(),
+                CancellationToken.None)).ToList();
+
+            // Assert
+            result.Should().HaveCount(1);
+            result[0].NuGetProjectActionType.Should().Be(NuGetProjectActionType.Install);
+            result[0].PackageIdentity.Should().Be(after);
+            var buildIntegratedAction = (BuildIntegratedProjectAction)result[0];
+            buildIntegratedAction.RestoreResult.Success.Should().BeTrue(because: string.Join(",", buildIntegratedAction.RestoreResult.LogMessages.Select(e => e.Message)));
+
+            buildIntegratedAction.OriginalLockFile.Libraries.Should().HaveCount(2);
+            buildIntegratedAction.OriginalLockFile.Libraries[0].Name.Should().Be(a100.Id);
+            buildIntegratedAction.OriginalLockFile.Libraries[0].Version.Should().Be(a100.Version);
+            buildIntegratedAction.OriginalLockFile.Libraries[1].Name.Should().Be(a200.Id);
+            buildIntegratedAction.OriginalLockFile.Libraries[1].Version.Should().Be(a200.Version);
+
+            buildIntegratedAction.ActionAndContextList.Should().HaveCount(1);
+            (var originalAction, var installationContext) = buildIntegratedAction.ActionAndContextList[0];
+            originalAction.PackageIdentity.Should().Be(after);
+            originalAction.NuGetProjectActionType.Should().Be(NuGetProjectActionType.Install);
+            installationContext.Should().NotBeNull();
+            installationContext.UnsuccessfulFrameworks.Should().HaveCount(0);
+            installationContext.SuccessfulFrameworks.Should().HaveCount(2);
+            installationContext.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
+            installationContext.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
+            installationContext.AreAllPackagesConditional.Should().BeTrue();
+
+            var assetsFile = buildIntegratedAction.RestoreResult.LockFile;
+            assetsFile.Libraries.Should().HaveCount(1);
+            assetsFile.Libraries[0].Name.Should().Be(after.Id);
+            assetsFile.Libraries[0].Version.Should().Be(after.Version);
+            assetsFile.Targets.Should().HaveCount(2);
+            var net472Target = assetsFile.Targets.Single(e => e.TargetFramework.Equals(NuGetFramework.Parse("net472")));
+            var net50Target = assetsFile.Targets.Single(e => e.TargetFramework.Equals(NuGetFramework.Parse("net50")));
+            net472Target.Libraries.Should().HaveCount(1);
+            net472Target.Libraries[0].Name.Should().Be(after.Id);
+            net472Target.Libraries[0].Version.Should().Be(after.Version);
+            net50Target.Libraries.Should().HaveCount(1);
+            net50Target.Libraries[0].Name.Should().Be(after.Id);
+            net50Target.Libraries[0].Version.Should().Be(after.Version);
+        }
+
+        [Fact]
+        public async Task UninstallPackage_WithMultiTargettedPackageReferenceProject_RemovesAllConditionalPackages()
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = new();
+            using var solutionManager = new TestSolutionManager(pathContext);
+            SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
+            var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
+            var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
+
+            string referenceSpec = @"
+                {
+                    ""frameworks"": {
+                        ""net472"": {
+                            ""dependencies"": {
+                                ""A"" : ""1.0.0""
+                            }
+                        },
+                        ""net5.0"": {
+                            ""dependencies"": {
+                                ""A"" : ""2.0.0""
+                            }
+                        }
+                    }
+                }";
+            NuGetProject buildIntegratedProject = CreateBuildIntegratedProjectAndAddToSolutionManager(solutionManager, settings, referenceSpec);
+
+            var packageA = "A";
+            var a100 = new PackageIdentity(packageA, new NuGetVersion(1, 0, 0));
+            var a200 = new PackageIdentity(packageA, new NuGetVersion(2, 0, 0));
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource,
+                a100,
+                a200);
+
+            // Main Act
+            var result = (await nuGetPackageManager.PreviewProjectsUninstallPackageAsync(
+               new List<NuGetProject> { buildIntegratedProject },
+               packageA,
+               new UninstallationContext(),
+               new TestNuGetProjectContext(),
+               CancellationToken.None)).ToList();
+
+            // Assert
+            result.Should().HaveCount(1);
+
+            result[0].NuGetProjectActionType.Should().Be(NuGetProjectActionType.Uninstall);
+            result[0].PackageIdentity.Should().Be(a100);
+            var buildIntegratedAction = (BuildIntegratedProjectAction)result[0];
+            buildIntegratedAction.RestoreResult.Success.Should().BeTrue(because: string.Join(",", buildIntegratedAction.RestoreResult.LogMessages.Select(e => e.Message)));
+
+            buildIntegratedAction.OriginalLockFile.Libraries[0].Name.Should().Be(a100.Id);
+            buildIntegratedAction.OriginalLockFile.Libraries[0].Version.Should().Be(a100.Version);
+            buildIntegratedAction.OriginalLockFile.Libraries[1].Name.Should().Be(a200.Id);
+            buildIntegratedAction.OriginalLockFile.Libraries[1].Version.Should().Be(a200.Version);
+
+            buildIntegratedAction.ActionAndContextList.Should().HaveCount(1);
+            (var originalActionA100, var installationContextA100) = buildIntegratedAction.ActionAndContextList[0];
+            originalActionA100.PackageIdentity.Should().Be(a100);
+            originalActionA100.NuGetProjectActionType.Should().Be(NuGetProjectActionType.Uninstall);
+            installationContextA100.Should().NotBeNull();
+            installationContextA100.UnsuccessfulFrameworks.Should().HaveCount(0);
+            installationContextA100.SuccessfulFrameworks.Should().HaveCount(2);
+            installationContextA100.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
+            installationContextA100.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
+            installationContextA100.AreAllPackagesConditional.Should().BeTrue();
+
+            var assetsFile = buildIntegratedAction.RestoreResult.LockFile;
+            assetsFile.Libraries.Should().HaveCount(0);
+            var net472Target = assetsFile.Targets.Single(e => e.TargetFramework.Equals(NuGetFramework.Parse("net472")));
+            var net50Target = assetsFile.Targets.Single(e => e.TargetFramework.Equals(NuGetFramework.Parse("net50")));
+            net472Target.Libraries.Should().HaveCount(0);
+            net50Target.Libraries.Should().HaveCount(0);
+        }
+
+
+        [Fact]
+        public async Task UninstallPackage_WithMultiTargettedPackageReferenceProject_RemovesConditionalPackages()
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = new();
+            using var solutionManager = new TestSolutionManager(pathContext);
+            SourceRepositoryProvider sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(pathContext.PackageSource));
+            var settings = Settings.LoadDefaultSettings(solutionManager.SolutionDirectory);
+            var nuGetPackageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, solutionManager, new TestDeleteOnRestartManager());
+
+            string referenceSpec = @"
+                {
+                    ""frameworks"": {
+                        ""net472"": {
+                            ""dependencies"": {
+                                ""A"" : ""1.0.0""
+                            }
+                        },
+                        ""net5.0"": {
+                            ""dependencies"": {
+                                ""B"" : ""1.0.0""
+                            }
+                        }
+                    }
+                }";
+            NuGetProject buildIntegratedProject = CreateBuildIntegratedProjectAndAddToSolutionManager(solutionManager, settings, referenceSpec);
+
+            var packageA = "A";
+            var packageB = "B";
+            var a100 = new PackageIdentity(packageA, new NuGetVersion(1, 0, 0));
+            var b100 = new PackageIdentity(packageB, new NuGetVersion(1, 0, 0));
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource,
+                a100,
+                b100);
+
+            // Main Act
+            var result = (await nuGetPackageManager.PreviewProjectsUninstallPackageAsync(
+               new List<NuGetProject> { buildIntegratedProject },
+               packageA,
+               new UninstallationContext(),
+               new TestNuGetProjectContext(),
+               CancellationToken.None)).ToList();
+
+            // Assert
+            result.Should().HaveCount(1);
+
+            result[0].NuGetProjectActionType.Should().Be(NuGetProjectActionType.Uninstall);
+            result[0].PackageIdentity.Should().Be(a100);
+            var buildIntegratedAction = (BuildIntegratedProjectAction)result[0];
+            buildIntegratedAction.RestoreResult.Success.Should().BeTrue(because: string.Join(",", buildIntegratedAction.RestoreResult.LogMessages.Select(e => e.Message)));
+
+            buildIntegratedAction.OriginalLockFile.Libraries[0].Name.Should().Be(a100.Id);
+            buildIntegratedAction.OriginalLockFile.Libraries[0].Version.Should().Be(a100.Version);
+            buildIntegratedAction.OriginalLockFile.Libraries[1].Name.Should().Be(b100.Id);
+            buildIntegratedAction.OriginalLockFile.Libraries[1].Version.Should().Be(b100.Version);
+
+            buildIntegratedAction.ActionAndContextList.Should().HaveCount(1);
+            (var originalActionA, var installationContextA) = buildIntegratedAction.ActionAndContextList[0];
+            originalActionA.PackageIdentity.Should().Be(a100);
+            originalActionA.NuGetProjectActionType.Should().Be(NuGetProjectActionType.Uninstall);
+            installationContextA.Should().NotBeNull();
+            installationContextA.UnsuccessfulFrameworks.Should().HaveCount(1);
+            installationContextA.SuccessfulFrameworks.Should().HaveCount(1);
+            installationContextA.SuccessfulFrameworks.Should().Contain(CommonFrameworks.Net472);
+            installationContextA.UnsuccessfulFrameworks.Should().Contain(CommonFrameworks.Net50);
+            installationContextA.AreAllPackagesConditional.Should().BeFalse();
+
+            var assetsFile = buildIntegratedAction.RestoreResult.LockFile;
+            assetsFile.Libraries.Should().HaveCount(1);
+            assetsFile.Libraries[0].Name.Should().Be(b100.Id);
+            assetsFile.Libraries[0].Version.Should().Be(b100.Version);
+            var net472Target = assetsFile.Targets.Single(e => e.TargetFramework.Equals(NuGetFramework.Parse("net472")));
+            var net50Target = assetsFile.Targets.Single(e => e.TargetFramework.Equals(NuGetFramework.Parse("net50")));
+            net472Target.Libraries.Should().HaveCount(0);
+            net50Target.Libraries.Should().HaveCount(1);
+            net50Target.Libraries[0].Name.Should().Be(b100.Id);
+            net50Target.Libraries[0].Version.Should().Be(b100.Version);
         }
 
         private static NuGetProject CreateBuildIntegratedProjectAndAddToSolutionManager(TestSolutionManager solutionManager, ISettings settings, string referenceSpec)

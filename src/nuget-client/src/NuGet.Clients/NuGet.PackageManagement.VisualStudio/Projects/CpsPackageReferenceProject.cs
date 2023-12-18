@@ -358,10 +358,48 @@ namespace NuGet.PackageManagement.VisualStudio
                 propertyValue);
         }
 
-        public override async Task<bool> UninstallPackageAsync(PackageIdentity packageIdentity, INuGetProjectContext nuGetProjectContext, CancellationToken token)
+        public override Task<bool> UninstallPackageAsync(PackageIdentity packageIdentity, INuGetProjectContext nuGetProjectContext, CancellationToken token)
         {
-            var configuredProject = await _unconfiguredProject.GetSuggestedConfiguredProjectAsync();
-            await configuredProject?.Services.PackageReferences.RemoveAsync(packageIdentity.Id);
+            throw new InvalidOperationException("For CPSPackageReferenceProject, the uninstall method that can handle conditional targeting must be called instead.");
+        }
+
+        public override async Task<bool> UninstallPackageAsync(string packageId, BuildIntegratedInstallationContext installationContext, CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+            if (string.IsNullOrEmpty(packageId)) throw new ArgumentException(string.Format(Strings.Argument_Cannot_Be_Null_Or_Empty, nameof(packageId)));
+            if (installationContext == null) throw new ArgumentNullException(nameof(installationContext));
+
+            if (installationContext.SuccessfulFrameworks.Any() && installationContext.UnsuccessfulFrameworks.Any())
+            {
+                var conditionalService = _unconfiguredProject
+                    .Services
+                    .ExportProvider
+                    .GetExportedValue<IConditionalPackageReferencesService>();
+
+                if (conditionalService == null)
+                {
+                    throw new InvalidOperationException(string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.UnableToGetCPSPackageInstallationService,
+                        ProjectFullPath));
+                }
+
+                foreach (var framework in installationContext.SuccessfulFrameworks)
+                {
+                    string originalFramework;
+                    if (!installationContext.OriginalFrameworks.TryGetValue(framework, out originalFramework))
+                    {
+                        originalFramework = framework.GetShortFolderName();
+                    }
+                    await conditionalService.RemoveAsync(packageId, TargetFrameworkCondition, originalFramework);
+                }
+            }
+            else
+            {
+                var configuredProject = await _unconfiguredProject.GetSuggestedConfiguredProjectAsync();
+
+                await configuredProject?.Services.PackageReferences.RemoveAsync(packageId);
+            }
             return true;
         }
 

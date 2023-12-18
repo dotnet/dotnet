@@ -226,6 +226,16 @@ namespace Test.Utility
             return true;
         }
 
+        public override async Task<bool> UninstallPackageAsync(
+            string packageId,
+            BuildIntegratedInstallationContext installationContext,
+            CancellationToken token)
+        {
+            await ProjectServices.References.RemovePackageReferenceAsync(packageId);
+
+            return true;
+        }
+
         public override Task<string> GetCacheFilePathAsync()
         {
             return base.GetCacheFilePathAsync();

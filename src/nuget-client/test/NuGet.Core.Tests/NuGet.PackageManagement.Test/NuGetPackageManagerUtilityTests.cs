@@ -40,7 +40,7 @@ namespace NuGet.PackageManagement.Test
             var originalPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\", referenceSpec);
 
             // Act
-            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, unsuccessfulFrameworks: new(), originalFrameworks);
+            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new(), originalFrameworks);
 
             // Assert
             buildIntegrationInstallationContext.OriginalFrameworks.Should().Equal(originalFrameworks);
@@ -48,6 +48,7 @@ namespace NuGet.PackageManagement.Test
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().HaveCount(0);
             buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50);
             buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
+            buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeFalse();
         }
 
         [Fact]
@@ -79,7 +80,7 @@ namespace NuGet.PackageManagement.Test
             var originalPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\", referenceSpec);
 
             // Act
-            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, unsuccessfulFrameworks: new(), originalFrameworks);
+            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new(), originalFrameworks);
 
             // Assert
             buildIntegrationInstallationContext.OriginalFrameworks.Should().Equal(originalFrameworks);
@@ -87,6 +88,7 @@ namespace NuGet.PackageManagement.Test
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().HaveCount(1);
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50);
             buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
+            buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeFalse();
         }
 
         [Fact]
@@ -117,7 +119,7 @@ namespace NuGet.PackageManagement.Test
             var originalPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\", referenceSpec);
 
             // Act
-            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, unsuccessfulFrameworks: new() { FrameworkConstants.CommonFrameworks.Net472 }, originalFrameworks);
+            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new() { FrameworkConstants.CommonFrameworks.Net472 }, originalFrameworks);
 
             // Assert
             buildIntegrationInstallationContext.OriginalFrameworks.Should().Equal(originalFrameworks);
@@ -125,6 +127,7 @@ namespace NuGet.PackageManagement.Test
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().HaveCount(2);
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50);
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
+            buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeFalse();
         }
 
         [Fact]
@@ -156,7 +159,7 @@ namespace NuGet.PackageManagement.Test
             var originalPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\", referenceSpec);
 
             // Act
-            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, unsuccessfulFrameworks: new() { FrameworkConstants.CommonFrameworks.Net50 }, originalFrameworks);
+            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new() { FrameworkConstants.CommonFrameworks.Net50 }, originalFrameworks);
 
             // Assert
             buildIntegrationInstallationContext.OriginalFrameworks.Should().Equal(originalFrameworks);
@@ -164,6 +167,106 @@ namespace NuGet.PackageManagement.Test
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().HaveCount(1);
             buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50);
             buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
+            buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CreateInstallationContextForPackageId_WithConsolidatingVersions_ReturnsCorrectValue()
+        {
+            // Arrange
+            string referenceSpec = @"
+                {
+                    ""frameworks"": {
+                        ""net472"": {
+                            ""dependencies"": {
+                                ""a"" : ""2.0.0"",
+                                ""b"" : ""1.0.0"" 
+                            }
+                        },
+                        ""net5.0"": {
+                            ""dependencies"": {
+                                ""a"" : ""1.0.0"",
+                            }
+                        }
+                    }
+                }";
+            Dictionary<NuGetFramework, string> originalFrameworks = new()
+            {
+                { FrameworkConstants.CommonFrameworks.Net472, "net472" },
+                { FrameworkConstants.CommonFrameworks.Net50, "net50" }
+            };
+
+            var originalPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\", referenceSpec);
+
+            // Act
+            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", originalPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new(), originalFrameworks);
+
+            // Assert
+            buildIntegrationInstallationContext.OriginalFrameworks.Should().Equal(originalFrameworks);
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().HaveCount(2);
+            buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().HaveCount(0);
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50);
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
+            buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeTrue();
+        }
+
+        [Fact]
+        public void CreateInstallationContextForPackageId_WithConsolidatingVersionsWithOriginalPackageSpecForDetectingConditionalPackages_ReturnsCorrectValue()
+        {
+            // Arrange
+
+            var originalPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\",
+                @"
+                {
+                    ""frameworks"": {
+                        ""net472"": {
+                            ""dependencies"": {
+                                ""a"" : ""2.0.0"",
+                                ""b"" : ""1.0.0"" 
+                            }
+                        },
+                        ""net5.0"": {
+                            ""dependencies"": {
+                                ""a"" : ""1.0.0"",
+                            }
+                        }
+                    }
+                }");
+
+            string referenceSpec = @"
+                {
+                    ""frameworks"": {
+                        ""net472"": {
+                            ""dependencies"": {
+                                ""a"" : ""2.0.0"",
+                                ""b"" : ""1.0.0"" 
+                            }
+                        },
+                        ""net5.0"": {
+                            ""dependencies"": {
+                                ""a"" : ""2.0.0"",
+                            }
+                        }
+                    }
+                }";
+            Dictionary<NuGetFramework, string> originalFrameworks = new()
+            {
+                { FrameworkConstants.CommonFrameworks.Net472, "net472" },
+                { FrameworkConstants.CommonFrameworks.Net50, "net50" }
+            };
+
+            var resultingPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\", referenceSpec);
+
+            // Act
+            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "a", resultingPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new(), originalFrameworks);
+
+            // Assert
+            buildIntegrationInstallationContext.OriginalFrameworks.Should().Equal(originalFrameworks);
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().HaveCount(2);
+            buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().HaveCount(0);
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net50);
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
+            buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeTrue();
         }
     }
 }

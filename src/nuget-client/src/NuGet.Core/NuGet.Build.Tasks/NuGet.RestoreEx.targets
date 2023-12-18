@@ -33,7 +33,8 @@ Copyright (c) .NET Foundation. All rights reserved.
         SolutionPath="$(SolutionPath)"
         ProcessFileName="$(NuGetConsoleProcessFileName)"
         SerializeGlobalProperties="$(RestoreSerializeGlobalProperties)"
-        MSBuildStartupDirectory="$(MSBuildStartupDirectory)">
+        MSBuildStartupDirectory="$(MSBuildStartupDirectory)"
+        EmbedFilesInBinlog="$(RestoreEmbedFilesInBinlog)">
       <Output TaskParameter="EmbedInBinlog" ItemName="EmbedInBinlog" />
     </RestoreTaskEx>
   </Target>

@@ -88,6 +88,14 @@ namespace NuGet.Build.Tasks
         [Output]
         public ITaskItem[] EmbedInBinlog { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether to embed files produced by restore in the MSBuild binary logger.
+        /// 0 = Nothing
+        /// 1 = Assets file, g.props, and g.targets
+        /// 2 = dgspec, assets file, g.props, and g.targets
+        /// </summary>
+        public string EmbedFilesInBinlog { get; set; }
+
         public override bool Execute()
         {
 #if DEBUG
@@ -188,7 +196,10 @@ namespace NuGet.Build.Tasks
         /// <returns>If the MSBuildBinaryLoggerEnabled environment variable is set, returns the paths to NuGet files to embed in the binlog, otherwise returns <see cref="Array.Empty{T}" />.</returns>
         private ITaskItem[] GetFilesToEmbedInBinlog(DependencyGraphSpec dependencyGraphSpec)
         {
-            if (!string.Equals(Environment.GetEnvironmentVariable("MSBUILDBINARYLOGGERENABLED"), bool.TrueString, StringComparison.OrdinalIgnoreCase))
+            // Determines what the user wants embedded in the binary log where 0 or false disables embedding anything, 2 embeds everything, and 1 or true embeds just the assets file, g.props, and g.targets.
+            int embedInBinlogSelection = BuildTasksUtility.GetFilesToEmbedInBinlogValue(EmbedFilesInBinlog);
+
+            if (embedInBinlogSelection == 0)
             {
                 return Array.Empty<ITaskItem>();
             }
@@ -202,9 +213,14 @@ namespace NuGet.Build.Tasks
                 if (project.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference)
                 {
                     restoredProjectOutputPaths.Add(new TaskItem(Path.Combine(project.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName)));
-                    restoredProjectOutputPaths.Add(new TaskItem(Path.Combine(project.RestoreMetadata.OutputPath, DependencyGraphSpec.GetDGSpecFileName(Path.GetFileName(project.RestoreMetadata.ProjectPath)))));
                     restoredProjectOutputPaths.Add(new TaskItem(BuildAssetsUtils.GetMSBuildFilePathForPackageReferenceStyleProject(project, BuildAssetsUtils.PropsExtension)));
                     restoredProjectOutputPaths.Add(new TaskItem(BuildAssetsUtils.GetMSBuildFilePathForPackageReferenceStyleProject(project, BuildAssetsUtils.TargetsExtension)));
+
+                    // Only include the dgspec if the user wants everything embedded in the binlog.
+                    if (embedInBinlogSelection == 2)
+                    {
+                        restoredProjectOutputPaths.Add(new TaskItem(Path.Combine(project.RestoreMetadata.OutputPath, DependencyGraphSpec.GetDGSpecFileName(Path.GetFileName(project.RestoreMetadata.ProjectPath)))));
+                    }
                 }
                 else if (project.RestoreMetadata.ProjectStyle == ProjectStyle.PackagesConfig)
                 {
