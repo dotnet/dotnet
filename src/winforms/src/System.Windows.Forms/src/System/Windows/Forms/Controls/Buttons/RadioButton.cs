@@ -11,9 +11,7 @@ using Windows.Win32.UI.Accessibility;
 namespace System.Windows.Forms;
 
 /// <summary>
-///  Encapsulates a
-///  standard
-///  Windows radio button (option button).
+///  Encapsulates a standard Windows radio button (option button).
 /// </summary>
 [DefaultProperty(nameof(Checked))]
 [DefaultEvent(nameof(CheckedChanged))]
@@ -23,33 +21,26 @@ namespace System.Windows.Forms;
 [SRDescription(nameof(SR.DescriptionRadioButton))]
 public partial class RadioButton : ButtonBase
 {
-    private static readonly object EVENT_CHECKEDCHANGED = new();
+    private static readonly object s_checkedChangedEvent = new();
+    private static readonly object s_appearanceChangeEvent = new();
+
     private const ContentAlignment AnyRight = ContentAlignment.TopRight | ContentAlignment.MiddleRight | ContentAlignment.BottomRight;
 
-    // Used to see if we need to iterate through the autochecked items and modify their tabstops.
-    private bool _firstfocus = true;
+    // Used to see if we need to iterate through the auto checked items and modify their tab stops.
+    private bool _firstFocus = true;
     private bool _isChecked;
     private bool _autoCheck = true;
     private ContentAlignment _checkAlign = ContentAlignment.MiddleLeft;
     private Appearance _appearance = Appearance.Normal;
-
-    private const int FlatSystemStylePaddingWidth = 24;
-    private const int FlatSystemStyleMinimumHeight = 13;
-
-    internal int _flatSystemStylePaddingWidth = FlatSystemStylePaddingWidth;
-    internal int _flatSystemStyleMinimumHeight = FlatSystemStyleMinimumHeight;
+    private int _flatSystemStylePaddingWidth;
+    private int _flatSystemStyleMinimumHeight;
 
     /// <summary>
-    ///  Initializes a new instance of the <see cref="RadioButton"/>
-    ///  class.
+    ///  Initializes a new instance of the <see cref="RadioButton"/> class.
     /// </summary>
     public RadioButton() : base()
     {
-        if (DpiHelper.IsScalingRequirementMet)
-        {
-            _flatSystemStylePaddingWidth = LogicalToDeviceUnits(FlatSystemStylePaddingWidth);
-            _flatSystemStyleMinimumHeight = LogicalToDeviceUnits(FlatSystemStyleMinimumHeight);
-        }
+        ScaleConstants();
 
         // Radio buttons shouldn't respond to right clicks, so we need to do all our own click logic
         SetStyle(ControlStyles.StandardClick, false);
@@ -60,8 +51,7 @@ public partial class RadioButton : ButtonBase
     }
 
     /// <summary>
-    ///  Gets or sets a value indicating whether the <see cref="Checked"/>
-    ///  value and the appearance of
+    ///  Gets or sets a value indicating whether the <see cref="Checked"/> value and the appearance of
     ///  the control automatically change when the control is clicked.
     /// </summary>
     [DefaultValue(true)]
@@ -69,11 +59,7 @@ public partial class RadioButton : ButtonBase
     [SRDescription(nameof(SR.RadioButtonAutoCheckDescr))]
     public bool AutoCheck
     {
-        get
-        {
-            return _autoCheck;
-        }
-
+        get => _autoCheck;
         set
         {
             if (_autoCheck != value)
@@ -85,9 +71,7 @@ public partial class RadioButton : ButtonBase
     }
 
     /// <summary>
-    ///  Gets or sets the appearance of the radio
-    ///  button
-    ///  control is drawn.
+    ///  Gets or sets the appearance of the radio button control is drawn.
     /// </summary>
     [DefaultValue(Appearance.Normal)]
     [SRCategory(nameof(SR.CatAppearance))]
@@ -95,16 +79,11 @@ public partial class RadioButton : ButtonBase
     [SRDescription(nameof(SR.RadioButtonAppearanceDescr))]
     public Appearance Appearance
     {
-        get
-        {
-            return _appearance;
-        }
-
+        get => _appearance;
         set
         {
             if (_appearance != value)
             {
-                // valid values are 0x0 to 0x1
                 SourceGenerated.EnumValidator.Validate(value);
 
                 using (LayoutTransaction.CreateTransactionIf(AutoSize, ParentInternal, this, PropertyNames.Appearance))
@@ -125,21 +104,16 @@ public partial class RadioButton : ButtonBase
         }
     }
 
-    private static readonly object EVENT_APPEARANCECHANGED = new();
-
     [SRCategory(nameof(SR.CatPropertyChanged))]
     [SRDescription(nameof(SR.RadioButtonOnAppearanceChangedDescr))]
     public event EventHandler? AppearanceChanged
     {
-        add => Events.AddHandler(EVENT_APPEARANCECHANGED, value);
-
-        remove => Events.RemoveHandler(EVENT_APPEARANCECHANGED, value);
+        add => Events.AddHandler(s_appearanceChangeEvent, value);
+        remove => Events.RemoveHandler(s_appearanceChangeEvent, value);
     }
 
     /// <summary>
-    ///  Gets or
-    ///  sets the location of the check box portion of the
-    ///  radio button control.
+    ///  Gets or sets the location of the check box portion of the radio button control.
     /// </summary>
     [Localizable(true)]
     [SRCategory(nameof(SR.CatAppearance))]
@@ -147,10 +121,7 @@ public partial class RadioButton : ButtonBase
     [SRDescription(nameof(SR.RadioButtonCheckAlignDescr))]
     public ContentAlignment CheckAlign
     {
-        get
-        {
-            return _checkAlign;
-        }
+        get => _checkAlign;
         set
         {
             SourceGenerated.EnumValidator.Validate(value);
@@ -168,8 +139,7 @@ public partial class RadioButton : ButtonBase
     }
 
     /// <summary>
-    ///  Gets or sets a value indicating whether the
-    ///  control is checked or not.
+    ///  Gets or sets a value indicating whether the control is checked or not.
     /// </summary>
     [Bindable(true),
     SettingsBindable(true)]
@@ -178,11 +148,7 @@ public partial class RadioButton : ButtonBase
     [SRDescription(nameof(SR.RadioButtonCheckedDescr))]
     public bool Checked
     {
-        get
-        {
-            return _isChecked;
-        }
-
+        get => _isChecked;
         set
         {
             if (_isChecked != value)
@@ -196,7 +162,7 @@ public partial class RadioButton : ButtonBase
 
                 Invalidate();
                 Update();
-                PerformAutoUpdates(false);
+                PerformAutoUpdates(tabbedInto: false);
                 OnCheckedChanged(EventArgs.Empty);
             }
         }
@@ -264,12 +230,18 @@ public partial class RadioButton : ButtonBase
     protected override void RescaleConstantsForDpi(int deviceDpiOld, int deviceDpiNew)
     {
         base.RescaleConstantsForDpi(deviceDpiOld, deviceDpiNew);
+        ScaleConstants();
+    }
 
-        if (DpiHelper.IsScalingRequirementMet)
-        {
-            _flatSystemStylePaddingWidth = LogicalToDeviceUnits(FlatSystemStylePaddingWidth);
-            _flatSystemStyleMinimumHeight = LogicalToDeviceUnits(FlatSystemStyleMinimumHeight);
-        }
+    private protected override void InitializeConstantsForInitialDpi(int initialDpi)
+        => ScaleConstants();
+
+    private void ScaleConstants()
+    {
+        const int LogicalFlatSystemStylePaddingWidth = 24;
+        const int LogicalFlatSystemStyleMinimumHeight = 13;
+        _flatSystemStylePaddingWidth = LogicalToDeviceUnits(LogicalFlatSystemStylePaddingWidth);
+        _flatSystemStyleMinimumHeight = LogicalToDeviceUnits(LogicalFlatSystemStyleMinimumHeight);
     }
 
     internal override Size GetPreferredSizeCore(Size proposedConstraints)
@@ -282,7 +254,12 @@ public partial class RadioButton : ButtonBase
         Size textSize = TextRenderer.MeasureText(Text, Font);
         Size size = SizeFromClientSize(textSize);
         size.Width += _flatSystemStylePaddingWidth;
-        size.Height = DpiHelper.IsScalingRequirementMet ? Math.Max(size.Height + 5, _flatSystemStyleMinimumHeight) : size.Height + 5; // ensure minimum height to avoid truncation of RadioButton circle or text
+
+        // Ensure minimum height to avoid truncation of RadioButton circle or text.
+        size.Height = ScaleHelper.IsScalingRequirementMet
+            ? Math.Max(size.Height + 5, _flatSystemStyleMinimumHeight)
+            : size.Height + 5;
+
         return size;
     }
 
@@ -294,29 +271,10 @@ public partial class RadioButton : ButtonBase
             {
                 return base.OverChangeRectangle;
             }
-            else
+            else if (FlatStyle == FlatStyle.Standard)
             {
-                if (FlatStyle == FlatStyle.Standard)
-                {
-                    // this Rectangle will cause no Invalidation
-                    // can't use Rectangle.Empty because it will cause Invalidate(ClientRectangle)
-                    return new Rectangle(-1, -1, 1, 1);
-                }
-                else
-                {
-                    return Adapter.CommonLayout().Layout().CheckBounds;
-                }
-            }
-        }
-    }
-
-    internal override Rectangle DownChangeRectangle
-    {
-        get
-        {
-            if (Appearance == Appearance.Button || FlatStyle == FlatStyle.System)
-            {
-                return base.DownChangeRectangle;
+                // Return an out of bounds rectangle to avoid invalidation.
+                return new Rectangle(-1, -1, 1, 1);
             }
             else
             {
@@ -324,6 +282,11 @@ public partial class RadioButton : ButtonBase
             }
         }
     }
+
+    internal override Rectangle DownChangeRectangle =>
+        Appearance == Appearance.Button || FlatStyle == FlatStyle.System
+                ? base.DownChangeRectangle
+                : Adapter.CommonLayout().Layout().CheckBounds;
 
     internal override bool SupportsUiaProviders => true;
 
@@ -354,18 +317,11 @@ public partial class RadioButton : ButtonBase
     [SRDescription(nameof(SR.RadioButtonOnCheckedChangedDescr))]
     public event EventHandler? CheckedChanged
     {
-        add => Events.AddHandler(EVENT_CHECKEDCHANGED, value);
-        remove => Events.RemoveHandler(EVENT_CHECKEDCHANGED, value);
+        add => Events.AddHandler(s_checkedChangedEvent, value);
+        remove => Events.RemoveHandler(s_checkedChangedEvent, value);
     }
 
-    /// <summary>
-    ///  Constructs the new instance of the accessibility object for this control. Subclasses
-    ///  should not call base.CreateAccessibilityObject.
-    /// </summary>
-    protected override AccessibleObject CreateAccessibilityInstance()
-    {
-        return new RadioButtonAccessibleObject(this);
-    }
+    protected override AccessibleObject CreateAccessibilityInstance() => new RadioButtonAccessibleObject(this);
 
     protected override void OnHandleCreated(EventArgs e)
     {
@@ -378,8 +334,7 @@ public partial class RadioButton : ButtonBase
     }
 
     /// <summary>
-    ///  Raises the <see cref="CheckBox.CheckedChanged"/>
-    ///  event.
+    ///  Raises the <see cref="CheckBox.CheckedChanged"/> event.
     /// </summary>
     protected virtual void OnCheckedChanged(EventArgs e)
     {
@@ -395,12 +350,9 @@ public partial class RadioButton : ButtonBase
             AccessibilityObject.RaiseAutomationEvent(UIA_EVENT_ID.UIA_AutomationPropertyChangedEventId);
         }
 
-        ((EventHandler?)Events[EVENT_CHECKEDCHANGED])?.Invoke(this, e);
+        ((EventHandler?)Events[s_checkedChangedEvent])?.Invoke(this, e);
     }
 
-    /// <summary>
-    ///  We override this to implement the autoCheck functionality.
-    /// </summary>
     protected override void OnClick(EventArgs e)
     {
         if (_autoCheck)
@@ -413,14 +365,13 @@ public partial class RadioButton : ButtonBase
 
     protected override void OnEnter(EventArgs e)
     {
-        // Just like the Win32 RadioButton, fire a click if the
-        // user arrows onto the control..
+        // Just like the Win32 RadioButton, fire a click if the user arrows onto the control.
         if (MouseButtons == MouseButtons.None)
         {
             if (PInvoke.GetKeyState((int)Keys.Tab) >= 0)
             {
-                // We enter the radioButton by using arrow keys
-                // Paint in raised state...
+                // Entered the radio button by using arrow keys.
+                // Paint in raised state.
                 ResetFlagsandPaint();
                 if (!ValidationCancelled)
                 {
@@ -429,11 +380,10 @@ public partial class RadioButton : ButtonBase
             }
             else
             {
-                // we enter the radioButton by pressing Tab
+                // Entered the radio button by pressing Tab
                 PerformAutoUpdates(true);
-                // reset the TabStop so we can come back later
-                // notice that PerformAutoUpdates will set the
-                // TabStop of this button to false
+
+                // Reset the TabStop so we can come back later. PerformAutoUpdates will set TabStop to false.
                 TabStop = true;
             }
         }
@@ -443,84 +393,72 @@ public partial class RadioButton : ButtonBase
 
     private void PerformAutoUpdates(bool tabbedInto)
     {
-        if (_autoCheck)
+        if (!_autoCheck)
         {
-            if (_firstfocus)
-            {
-                WipeTabStops(tabbedInto);
-            }
+            return;
+        }
 
-            TabStop = _isChecked;
-            if (_isChecked)
+        if (_firstFocus)
+        {
+            WipeTabStops(tabbedInto);
+        }
+
+        TabStop = _isChecked;
+        if (!_isChecked || ParentInternal is not { } parent)
+        {
+            return;
+        }
+
+        ControlCollection children = parent.Controls;
+        for (int i = 0; i < children.Count; i++)
+        {
+            if (children[i] is RadioButton radioButton
+                && radioButton != this
+                && radioButton.AutoCheck
+                && radioButton.Checked)
             {
-                Control? parent = ParentInternal;
-                if (parent is not null)
-                {
-                    ControlCollection children = parent.Controls;
-                    for (int i = 0; i < children.Count; i++)
-                    {
-                        Control ctl = children[i];
-                        if (ctl != this && ctl is RadioButton radioButton)
-                        {
-                            RadioButton button = radioButton;
-                            if (button._autoCheck && button.Checked)
-                            {
-                                PropertyDescriptor? propDesc = TypeDescriptor.GetProperties(this)["Checked"];
-                                propDesc?.SetValue(button, false);
-                            }
-                        }
-                    }
-                }
+                radioButton.Checked = false;
             }
         }
     }
 
     /// <summary>
-    ///  Removes tabstops from all radio buttons, other than the one that currently has the focus.
+    ///  Removes tab stops from all radio buttons, other than the one that currently has the focus.
     /// </summary>
     private void WipeTabStops(bool tabbedInto)
     {
-        Control? parent = ParentInternal;
-        if (parent is not null)
+        if (ParentInternal is not { } parent)
         {
-            ControlCollection children = parent.Controls;
-            for (int i = 0; i < children.Count; i++)
-            {
-                Control ctl = children[i];
-                if (ctl is RadioButton button)
-                {
-                    if (!tabbedInto)
-                    {
-                        button._firstfocus = false;
-                    }
+            return;
+        }
 
-                    if (button._autoCheck)
-                    {
-                        button.TabStop = false;
-                    }
+        ControlCollection children = parent.Controls;
+        for (int i = 0; i < children.Count; i++)
+        {
+            if (children[i] is RadioButton button)
+            {
+                if (!tabbedInto)
+                {
+                    button._firstFocus = false;
+                }
+
+                if (button._autoCheck)
+                {
+                    button.TabStop = false;
                 }
             }
         }
     }
 
-    internal override ButtonBaseAdapter CreateFlatAdapter()
-    {
-        return new RadioButtonFlatAdapter(this);
-    }
+    internal override ButtonBaseAdapter CreateFlatAdapter() => new RadioButtonFlatAdapter(this);
 
-    internal override ButtonBaseAdapter CreatePopupAdapter()
-    {
-        return new RadioButtonPopupAdapter(this);
-    }
+    internal override ButtonBaseAdapter CreatePopupAdapter() => new RadioButtonPopupAdapter(this);
 
-    internal override ButtonBaseAdapter CreateStandardAdapter()
-    {
-        return new RadioButtonStandardAdapter(this);
-    }
+    internal override ButtonBaseAdapter CreateStandardAdapter() => new RadioButtonStandardAdapter(this);
 
     private void OnAppearanceChanged(EventArgs e)
     {
-        if (Events[EVENT_APPEARANCECHANGED] is EventHandler eh)
+        if (Events[s_appearanceChangeEvent] is EventHandler eh)
         {
             eh(this, e);
         }
@@ -582,12 +520,5 @@ public partial class RadioButton : ButtonBase
         return false;
     }
 
-    /// <summary>
-    ///  Returns a string representation for this control.
-    /// </summary>
-    public override string ToString()
-    {
-        string s = base.ToString();
-        return $"{s}, Checked: {Checked}";
-    }
+    public override string ToString() => $"{base.ToString()}, Checked: {Checked}";
 }

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
@@ -22,10 +23,16 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 // The intention of this class is to temporarily exist as a snapshot in time for our pre-existing completion experience.
 // It will eventually be removed in favor of the non-Legacy variant at which point we'll also remove the feature flag
 // for this legacy version.
-internal class LegacyRazorCompletionEndpoint : IVSCompletionEndpoint
+internal class LegacyRazorCompletionEndpoint(
+    IRazorCompletionFactsService completionFactsService,
+    CompletionListCache completionListCache,
+    HtmlFactsService htmlFactsService)
+    : IVSCompletionEndpoint
 {
-    private readonly IRazorCompletionFactsService _completionFactsService;
-    private readonly CompletionListCache _completionListCache;
+    private readonly IRazorCompletionFactsService _completionFactsService = completionFactsService ?? throw new ArgumentNullException(nameof(completionFactsService));
+    private readonly CompletionListCache _completionListCache = completionListCache ?? throw new ArgumentNullException(nameof(completionListCache));
+    private readonly HtmlFactsService _htmlFactsService = htmlFactsService ?? throw new ArgumentNullException(nameof(htmlFactsService));
+
     private static readonly Command s_retriggerCompletionCommand = new()
     {
         CommandIdentifier = "editor.action.triggerSuggest",
@@ -34,12 +41,6 @@ internal class LegacyRazorCompletionEndpoint : IVSCompletionEndpoint
     private VSInternalClientCapabilities? _clientCapabilities;
 
     public bool MutatesSolutionState => false;
-
-    public LegacyRazorCompletionEndpoint(IRazorCompletionFactsService completionFactsService, CompletionListCache completionListCache)
-    {
-        _completionFactsService = completionFactsService ?? throw new ArgumentNullException(nameof(completionFactsService));
-        _completionListCache = completionListCache ?? throw new ArgumentNullException(nameof(completionListCache));
-    }
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
@@ -91,6 +92,7 @@ internal class LegacyRazorCompletionEndpoint : IVSCompletionEndpoint
         };
         var completionOptions = new RazorCompletionOptions(SnippetsSupported: true);
         var owner = syntaxTree.Root.FindInnermostNode(hostDocumentIndex, includeWhitespace: true, walkMarkersBack: true);
+        owner = RazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, hostDocumentIndex, _htmlFactsService);
         var completionContext = new RazorCompletionContext(hostDocumentIndex, owner, syntaxTree, tagHelperDocumentContext, reason, completionOptions);
 
         var razorCompletionItems = _completionFactsService.GetCompletionItems(completionContext);

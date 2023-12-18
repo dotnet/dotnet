@@ -64,12 +64,12 @@ public partial class DataGridViewComboBoxCell : DataGridViewCell
         _flags = DataGridViewComboBoxCellFlags.CellAutoComplete;
         if (!s_isScalingInitialized)
         {
-            if (DpiHelper.IsScalingRequired)
+            if (ScaleHelper.IsScalingRequired)
             {
-                s_offset2X = DpiHelper.LogicalToDeviceUnitsX(Offset2Pixels);
-                s_offset2Y = DpiHelper.LogicalToDeviceUnitsY(Offset2Pixels);
-                s_nonXPTriangleWidth = (byte)DpiHelper.LogicalToDeviceUnitsX(NonXPTriangleWidth);
-                s_nonXPTriangleHeight = (byte)DpiHelper.LogicalToDeviceUnitsY(NonXPTriangleHeight);
+                s_offset2X = ScaleHelper.ScaleToInitialSystemDpi(Offset2Pixels);
+                s_offset2Y = ScaleHelper.ScaleToInitialSystemDpi(Offset2Pixels);
+                s_nonXPTriangleWidth = (byte)ScaleHelper.ScaleToInitialSystemDpi(NonXPTriangleWidth);
+                s_nonXPTriangleHeight = (byte)ScaleHelper.ScaleToInitialSystemDpi(NonXPTriangleHeight);
             }
 
             s_isScalingInitialized = true;
@@ -1676,7 +1676,7 @@ public partial class DataGridViewComboBoxCell : DataGridViewCell
     ///  We use the display value and DisplayMember to look up the item in the
     ///  ComboBox datasource. We then use ValueMember to get the value.
     /// </summary>
-    private bool LookupValue(object formattedValue, out object? value)
+    private bool LookupValue(object? formattedValue, out object? value)
     {
         if (formattedValue is null)
         {
@@ -2507,7 +2507,7 @@ public partial class DataGridViewComboBoxCell : DataGridViewCell
                 cellStyle,
                 formattedValueTypeConverter,
                 DisplayTypeConverter);
-            object originalValue = value;
+            object? originalValue = value;
             if (!LookupValue(originalValue, out value))
             {
                 if (originalValue == System.DBNull.Value)
