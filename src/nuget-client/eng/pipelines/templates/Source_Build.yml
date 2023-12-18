@@ -12,7 +12,7 @@ steps:
   condition: "or(failed(), eq(variables['System.debug'], 'true'))"
   continueOnError: true
   inputs:
-    PathToPublish: "artifacts/source-build/self/log/source-build.binlog"
+    PathToPublish: "artifacts/sb/log/source-build.binlog"
     ArtifactName: "Source-build log"
     ArtifactType: Container
 
