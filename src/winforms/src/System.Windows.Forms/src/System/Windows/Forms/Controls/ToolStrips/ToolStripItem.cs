@@ -18,12 +18,13 @@ namespace System.Windows.Forms;
 [DefaultEvent(nameof(Click))]
 [ToolboxItem(false)]
 [DefaultProperty(nameof(Text))]
-public abstract partial class ToolStripItem : BindableComponent,
-                          ICommandBindingTargetProvider,
-                          IDropTarget,
-                          ISupportOleDropSource,
-                          IArrangedElement,
-                          IKeyboardToolTip
+public abstract partial class ToolStripItem :
+    BindableComponent,
+    ICommandBindingTargetProvider,
+    IDropTarget,
+    ISupportOleDropSource,
+    IArrangedElement,
+    IKeyboardToolTip
 {
 #if DEBUG
     internal static readonly TraceSwitch s_mouseDebugging = new("MouseDebugging", "Debug ToolStripItem mouse debugging code");
@@ -49,10 +50,8 @@ public abstract partial class ToolStripItem : BindableComponent,
     private ToolStripItemImageScaling _imageScaling = ToolStripItemImageScaling.SizeToFit;
     private Size _cachedTextSize;
 
-    private static readonly Padding s_defaultMargin = new(0, 1, 0, 2);
-    private static readonly Padding s_defaultStatusStripMargin = new(0, 2, 0, 0);
-    private Padding _scaledDefaultMargin = s_defaultMargin;
-    private Padding _scaledDefaultStatusStripMargin = s_defaultStatusStripMargin;
+    private Padding _defaultMargin;
+    private Padding _defaultStatusStripMargin;
 
     private ToolStripItemDisplayStyle _displayStyle = ToolStripItemDisplayStyle.ImageAndText;
 
@@ -90,6 +89,7 @@ public abstract partial class ToolStripItem : BindableComponent,
     internal static readonly object s_ownerChangedEvent = new();
     internal static readonly object s_paintEvent = new();
     internal static readonly object s_textChangedEvent = new();
+    internal static readonly object s_selectedChangedEvent = new();
 
     internal static readonly object s_commandChangedEvent = new();
     internal static readonly object s_commandParameterChangedEvent = new();
@@ -147,16 +147,12 @@ public abstract partial class ToolStripItem : BindableComponent,
     private static readonly int s_stateDisposing = BitVector32.CreateMask(s_stateUseAmbientMargin);
 
     private long _lastClickTime;
-    private int _deviceDpi = DpiHelper.DeviceDpi;
+    private int _deviceDpi = ScaleHelper.InitialSystemDpi;
     internal Font _defaultFont = ToolStripManager.DefaultFont;
 
     protected ToolStripItem()
     {
-        if (DpiHelper.IsScalingRequirementMet)
-        {
-            _scaledDefaultMargin = DpiHelper.LogicalToDeviceUnits(s_defaultMargin);
-            _scaledDefaultStatusStripMargin = DpiHelper.LogicalToDeviceUnits(s_defaultStatusStripMargin);
-        }
+        ScaleConstants(ScaleHelper.InitialSystemDpi);
 
         _state[s_stateEnabled | s_stateAutoSize | s_stateVisible | s_stateConstructing | s_stateSupportsItemClick | s_stateInvalidMirroredImage | s_stateMouseDownAndUpMustBeInSameItem | s_stateUseAmbientMargin] = true;
         _state[s_stateAllowDrop | s_stateMouseDownAndNoDrag | s_stateSupportsRightClick | s_statePressed | s_stateSelected | s_stateDisposed | s_stateDoubleClickEnabled | s_stateRightToLeftAutoMirrorImage | s_stateSupportsSpaceKey] = false;
@@ -319,7 +315,7 @@ public abstract partial class ToolStripItem : BindableComponent,
     /// <summary>
     ///  Determines if this item can be dragged.
     ///  This is EXACTLY like Control.AllowDrop - setting this to true WILL call
-    ///  the droptarget handlers. The ToolStripDropTargetManager is the one that
+    ///  the dropTarget handlers. The ToolStripDropTargetManager is the one that
     ///  handles the routing of DropTarget events to the ToolStripItem's IDropTarget
     ///  methods.
     /// </summary>
@@ -688,10 +684,10 @@ public abstract partial class ToolStripItem : BindableComponent,
         {
             if (Owner is not null && Owner is StatusStrip)
             {
-                return _scaledDefaultStatusStripMargin;
+                return _defaultStatusStripMargin;
             }
 
-            return _scaledDefaultMargin;
+            return _defaultMargin;
         }
     }
 
@@ -707,8 +703,8 @@ public abstract partial class ToolStripItem : BindableComponent,
     /// </summary>
     protected virtual Size DefaultSize
     {
-        get => DpiHelper.IsPerMonitorV2Awareness ?
-                DpiHelper.LogicalToDeviceUnits(new Size(23, 23), DeviceDpi) :
+        get => ScaleHelper.IsThreadPerMonitorV2Aware ?
+                ScaleHelper.ScaleToDpi(new Size(23, 23), DeviceDpi) :
                 new Size(23, 23);
     }
 
@@ -850,6 +846,7 @@ public abstract partial class ToolStripItem : BindableComponent,
                     if (wasSelected)
                     {
                         KeyboardToolTipStateMachine.Instance.NotifyAboutLostFocus(this);
+                        OnSelectedChanged(EventArgs.Empty);
                     }
                 }
 
@@ -949,7 +946,7 @@ public abstract partial class ToolStripItem : BindableComponent,
                 return font;
             }
 
-            return DpiHelper.IsPerMonitorV2Awareness ? _defaultFont : ToolStripManager.DefaultFont;
+            return ScaleHelper.IsThreadPerMonitorV2Aware ? _defaultFont : ToolStripManager.DefaultFont;
         }
         set
         {
@@ -1434,7 +1431,7 @@ public abstract partial class ToolStripItem : BindableComponent,
 
     /// <summary>
     ///  Name of this control. The designer will set this to the same
-    ///  as the programatic Id "(name)" of the control. The name can be
+    ///  as the programmatic Id "(name)" of the control. The name can be
     ///  used as a key into the ControlCollection.
     /// </summary>
     [Browsable(false)]
@@ -1454,7 +1451,7 @@ public abstract partial class ToolStripItem : BindableComponent,
     }
 
     /// <summary>
-    ///  The owner of this ToolStripItem. The owner is essentially a backpointer to
+    ///  The owner of this ToolStripItem. The owner is essentially a backPointer to
     ///  the ToolStrip who contains this item in it's item collection. Handy for getting
     ///  to things such as the ImageList, which would be defined on the ToolStrip.
     /// </summary>
@@ -1475,7 +1472,7 @@ public abstract partial class ToolStripItem : BindableComponent,
     }
 
     /// <summary>
-    ///  Returns the "parent" item on the preceeding menu which has spawned this item.
+    ///  Returns the "parent" item on the preceding menu which has spawned this item.
     ///  e.g. File->Open  the OwnerItem of Open is File.
     /// </summary>
     [Browsable(false)]
@@ -1823,6 +1820,18 @@ public abstract partial class ToolStripItem : BindableComponent,
         => CanSelect && !DesignMode && (_state[s_stateSelected] ||
             (ParentInternal is not null && ParentInternal.IsSelectionSuspended &&
              ParentInternal.LastMouseDownedItem == this));
+
+    /// <summary>
+    ///  Occurs when selected item changed.
+    /// </summary>
+    [SRDescription(nameof(SR.ToolStripItemSelectedChangedDescr))]
+    public event EventHandler? SelectedChanged
+    {
+        add => Events.AddHandler(s_selectedChangedEvent, value);
+        remove => Events.RemoveHandler(s_selectedChangedEvent, value);
+    }
+
+    protected virtual void OnSelectedChanged(EventArgs e) => RaiseEvent(s_selectedChangedEvent, e);
 
     protected internal virtual bool ShowKeyboardCues
         => DesignMode || ToolStripManager.ShowMenuFocusCues;
@@ -2227,7 +2236,7 @@ public abstract partial class ToolStripItem : BindableComponent,
                 iwdata.SetData(data);
             }
 
-            dataObject = (IComDataObject)iwdata;
+            dataObject = iwdata;
         }
 
         DROPEFFECT finalEffect;
@@ -2570,9 +2579,15 @@ public abstract partial class ToolStripItem : BindableComponent,
     {
         if (_state[s_stateMouseDownAndNoDrag] || _state[s_statePressed] || _state[s_stateSelected])
         {
+            bool wasSelected = _state[s_stateSelected];
             _state[s_stateMouseDownAndNoDrag | s_statePressed | s_stateSelected] = false;
 
             KeyboardToolTipStateMachine.Instance.NotifyAboutLostFocus(this);
+
+            if (wasSelected)
+            {
+                OnSelectedChanged(EventArgs.Empty);
+            }
 
             Invalidate();
         }
@@ -3177,14 +3192,16 @@ public abstract partial class ToolStripItem : BindableComponent,
     {
         ToolStripManager.CurrentDpi = newDpi;
         _defaultFont = ToolStripManager.DefaultFont;
-        _scaledDefaultMargin = DpiHelper.LogicalToDeviceUnits(s_defaultMargin, _deviceDpi);
-        _scaledDefaultStatusStripMargin = DpiHelper.LogicalToDeviceUnits(s_defaultStatusStripMargin, _deviceDpi);
+        ScaleConstants(newDpi);
     }
 
-    public void Select()
+    private void ScaleConstants(int dpi)
     {
-        Select(forceRaiseAccessibilityFocusChanged: false);
+        _defaultMargin = ScaleHelper.ScaleToDpi(new Padding(0, 1, 0, 2), dpi);
+        _defaultStatusStripMargin = ScaleHelper.ScaleToDpi(new Padding(0, 2, 0, 0), dpi);
     }
+
+    public void Select() => Select(forceRaiseAccessibilityFocusChanged: false);
 
     internal void Select(bool forceRaiseAccessibilityFocusChanged)
     {
@@ -3231,6 +3248,8 @@ public abstract partial class ToolStripItem : BindableComponent,
             }
 
             KeyboardToolTipStateMachine.Instance.NotifyAboutGotFocus(this);
+
+            OnSelectedChanged(EventArgs.Empty);
 
             forceRaiseAccessibilityFocusChanged = true;
         }
@@ -3624,6 +3643,8 @@ public abstract partial class ToolStripItem : BindableComponent,
 
                 KeyboardToolTipStateMachine.Instance.NotifyAboutLostFocus(this);
             }
+
+            OnSelectedChanged(EventArgs.Empty);
         }
     }
 

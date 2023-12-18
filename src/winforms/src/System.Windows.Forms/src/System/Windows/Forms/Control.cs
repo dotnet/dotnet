@@ -11,7 +11,6 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms.Automation;
 using System.Windows.Forms.Layout;
 using System.Windows.Forms.Primitives;
-using Microsoft.Win32;
 using Windows.Win32.System.Ole;
 using Windows.Win32.UI.Accessibility;
 using Windows.Win32.UI.Input.KeyboardAndMouse;
@@ -376,7 +375,7 @@ public unsafe partial class Control :
         Properties = new PropertyStore();
 
         // Initialize Dpi to the value on the primary screen, we will have the correct value when the Handle is created.
-        _deviceDpi = _oldDeviceDpi = DpiHelper.DeviceDpi;
+        _deviceDpi = _oldDeviceDpi = ScaleHelper.InitialSystemDpi;
         _window = new ControlNativeWindow(this);
         RequiredScalingEnabled = true;
         RequiredScaling = BoundsSpecified.All;
@@ -384,17 +383,25 @@ public unsafe partial class Control :
 
         _state = States.Visible | States.Enabled | States.TabStop | States.CausesValidation;
         _extendedState = ExtendedStates.InterestedInUserPreferenceChanged;
-        SetStyle(ControlStyles.AllPaintingInWmPaint |
-                 ControlStyles.UserPaint |
-                 ControlStyles.StandardClick |
-                 ControlStyles.StandardDoubleClick |
-                 ControlStyles.UseTextForAccessibility |
-                 ControlStyles.Selectable, true);
+
+        SetStyle(
+            ControlStyles.AllPaintingInWmPaint
+                | ControlStyles.UserPaint
+                | ControlStyles.StandardClick
+                | ControlStyles.StandardDoubleClick
+                | ControlStyles.UseTextForAccessibility
+                | ControlStyles.Selectable,
+            true);
 
         // We baked the "default default" margin and min size into CommonProperties
         // so that in the common case the PropertyStore would be empty.  If, however,
         // someone overrides these Default* methods, we need to write the default
         // value into the PropertyStore in the ctor.
+
+        // Changing the order of property accesses here can break existing code as these are all virtual properties.
+        // Try to keep observable state for Control unchanged in this constructor to avoid nasty subtle bugs.
+
+        InitializeConstantsForInitialDpi(_deviceDpi);
 
         if (DefaultMargin != CommonProperties.DefaultMargin)
         {
@@ -1828,7 +1835,7 @@ public unsafe partial class Control :
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int DeviceDpi
         // deviceDpi may change in WmDpiChangedBeforeParent in PmV2 scenarios, so we can't cache statically.
-        => DpiHelper.IsPerMonitorV2Awareness ? _deviceDpi : DpiHelper.DeviceDpi;
+        => ScaleHelper.IsThreadPerMonitorV2Aware ? _deviceDpi : ScaleHelper.InitialSystemDpi;
 
     // The color to use when drawing disabled text.  Normally we use BackColor,
     // but that obviously won't work if we're transparent.
@@ -2084,7 +2091,7 @@ public unsafe partial class Control :
                 return;
             }
 
-            if (DpiHelper.IsPerMonitorV2Awareness)
+            if (ScaleHelper.IsThreadPerMonitorV2Aware)
             {
                 // Reset the ScaledControlFont value when the font is being set explicitly, in order to keep it
                 // in sync when the application is moved between monitors with different Dpi settings.
@@ -2109,8 +2116,9 @@ public unsafe partial class Control :
 
     internal Font GetScaledFont(Font font, int newDpi, int oldDpi)
     {
-        Debug.Assert(PInvoke.AreDpiAwarenessContextsEqualInternal(DpiAwarenessContext, DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2),
-            $"Fonts need to be cached only for PerMonitorV2 mode applications : {DpiHelper.IsPerMonitorV2Awareness} : {DpiAwarenessContext}");
+        Debug.Assert(
+            PInvoke.AreDpiAwarenessContextsEqualInternal(DpiAwarenessContext, DPI_AWARENESS_CONTEXT.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2),
+            $"Fonts need to be cached only for PerMonitorV2 mode applications : {ScaleHelper.IsThreadPerMonitorV2Aware} : {DpiAwarenessContext}");
 
         _dpiFonts ??= new Dictionary<int, Font>
         {
@@ -3716,12 +3724,21 @@ public unsafe partial class Control :
 
     /// <summary>
     ///  Determines whether to use compatible text rendering engine (GDI+) or not (GDI).
-    ///  This property overwrites the UseCompatibleTextRenderingDefault switch when set programmatically.
-    ///  Exposed publicly only by controls that support GDI text rendering (Label, LinkLabel and some others).
-    ///  Observe that this property is NOT virtual (to allow for caching the property value - see LinkLabel)
-    ///  and should be used by controls that support it only (see SupportsUseCompatibleTextRendering).
     /// </summary>
-    internal bool UseCompatibleTextRenderingInt
+    /// <remarks>
+    ///  <para>
+    ///   This property overrides <see cref="UseCompatibleTextRenderingDefault"/>.
+    ///  </para>
+    ///  <para>
+    ///   Exposed publicly only by controls that support GDI text rendering (<see cref="Label"/>, <see cref="LinkLabel"/>
+    ///   and some others).
+    ///  </para>
+    ///  <para>
+    ///   Observe that this property is NOT virtual (to allow for caching the property value - see <see cref="LinkLabel"/>)
+    ///   and should be used by controls that support it only (see <see cref="SupportsUseCompatibleTextRendering"/>).
+    ///  </para>
+    /// </remarks>
+    internal bool UseCompatibleTextRenderingInternal
     {
         get
         {
@@ -3738,9 +3755,10 @@ public unsafe partial class Control :
         }
         set
         {
-            if (SupportsUseCompatibleTextRendering && UseCompatibleTextRenderingInt != value)
+            if (SupportsUseCompatibleTextRendering && UseCompatibleTextRenderingInternal != value)
             {
                 Properties.SetInteger(s_useCompatibleTextRenderingProperty, value ? 1 : 0);
+
                 // Update the preferred size cache since we will be rendering text using a different engine.
                 LayoutTransaction.DoLayoutIf(AutoSize, ParentInternal, this, PropertyNames.UseCompatibleTextRendering);
                 Invalidate();
@@ -3750,9 +3768,13 @@ public unsafe partial class Control :
 
     /// <summary>
     ///  Determines whether the control supports rendering text using GDI+ and GDI.
-    ///  This is provided for container controls (PropertyGrid) to iterate through its children to set
-    ///  UseCompatibleTextRendering to the same value if the child control supports it.
     /// </summary>
+    /// <remarks>
+    ///  <para>
+    ///   This is provided for container controls (PropertyGrid) to iterate through its children to set
+    ///   <see cref="UseCompatibleTextRenderingInternal"/> to the same value if the child control supports it.
+    ///  </para>
+    /// </remarks>
     internal virtual bool SupportsUseCompatibleTextRendering => false;
 
     private ControlVersionInfo VersionInfo
@@ -5393,10 +5415,7 @@ public unsafe partial class Control :
         }
     }
 
-    protected bool GetTopLevel()
-    {
-        return (_state & States.TopLevel) != 0;
-    }
+    protected bool GetTopLevel() => (_state & States.TopLevel) != 0;
 
     /// <summary>
     ///  Used by AxHost to fire the CreateHandle event.
@@ -6779,31 +6798,11 @@ public unsafe partial class Control :
         return parentControl is ContainerControl;
     }
 
-    private void ListenToUserPreferenceChanged(bool listen)
-    {
-        if (GetExtendedState(ExtendedStates.ListeningToUserPreferenceChanged))
-        {
-            if (!listen)
-            {
-                SetExtendedState(ExtendedStates.ListeningToUserPreferenceChanged, false);
-                SystemEvents.UserPreferenceChanged -= new UserPreferenceChangedEventHandler(UserPreferenceChanged);
-            }
-        }
-        else if (listen)
-        {
-            SetExtendedState(ExtendedStates.ListeningToUserPreferenceChanged, true);
-            SystemEvents.UserPreferenceChanged += new UserPreferenceChangedEventHandler(UserPreferenceChanged);
-        }
-    }
-
     /// <summary>
-    ///  Transforms an integer coordinate from logical to device units
-    ///  by scaling it for the current Dpi and rounding down to the nearest integer value.
+    ///  Transforms an integer coordinate from logical to device units by scaling it for the current DPI
+    ///  and rounding down to the nearest integer value.
     /// </summary>
-    public int LogicalToDeviceUnits(int value)
-    {
-        return DpiHelper.LogicalToDeviceUnits(value, DeviceDpi);
-    }
+    public int LogicalToDeviceUnits(int value) => ScaleHelper.ScaleToDpi(value, DeviceDpi);
 
     /// <summary>
     ///  Transforms size from logical to device units by scaling it for the current
@@ -6811,10 +6810,7 @@ public unsafe partial class Control :
     /// </summary>
     /// <param name="value"> size to be scaled</param>
     /// <returns> scaled size</returns>
-    public Size LogicalToDeviceUnits(Size value)
-    {
-        return DpiHelper.LogicalToDeviceUnits(value, DeviceDpi);
-    }
+    public Size LogicalToDeviceUnits(Size value) => ScaleHelper.ScaleToDpi(value, DeviceDpi);
 
     /// <summary>
     ///  Create a new bitmap scaled for the device units. When displayed on the device,
@@ -6824,7 +6820,12 @@ public unsafe partial class Control :
     /// <param name="logicalBitmap">The image to scale from logical units to device units</param>
     public void ScaleBitmapLogicalToDevice(ref Bitmap logicalBitmap)
     {
-        DpiHelper.ScaleBitmapLogicalToDevice(ref logicalBitmap, DeviceDpi);
+        if (logicalBitmap is null)
+        {
+            return;
+        }
+
+        logicalBitmap = ScaleHelper.ScaleToDpi(logicalBitmap, DeviceDpi, disposeBitmap: true);
     }
 
     private protected void AdjustWindowRectExForControlDpi(ref RECT rect, WINDOW_STYLE style, bool bMenu, WINDOW_EX_STYLE exStyle)
@@ -6834,7 +6835,7 @@ public unsafe partial class Control :
 
     private static void AdjustWindowRectExForDpi(ref RECT rect, WINDOW_STYLE style, bool bMenu, WINDOW_EX_STYLE exStyle, int dpi)
     {
-        if ((DpiHelper.IsPerMonitorV2Awareness || DpiHelper.IsScalingRequired) && OsVersion.IsWindows10_1703OrGreater())
+        if ((ScaleHelper.IsThreadPerMonitorV2Aware || ScaleHelper.IsScalingRequired) && OsVersion.IsWindows10_1703OrGreater())
         {
             PInvoke.AdjustWindowRectExForDpi(ref rect, style, bMenu, exStyle, (uint)dpi);
         }
@@ -7805,12 +7806,6 @@ public unsafe partial class Control :
                 SetExtendedState(ExtendedStates.HaveInvoked, true);
                 SetExtendedState(ExtendedStates.SetScrollPosition, false);
             }
-
-            // Listen to UserPreferenceChanged if the control is top level and interested in the notification.
-            if (GetExtendedState(ExtendedStates.InterestedInUserPreferenceChanged))
-            {
-                ListenToUserPreferenceChanged(GetTopLevel());
-            }
         }
 
         ((EventHandler?)Events[s_handleCreatedEvent])?.Invoke(this, e);
@@ -7952,8 +7947,6 @@ public unsafe partial class Control :
                     }
                 }
             }
-
-            ListenToUserPreferenceChanged(listen: false);
         }
 
         // this code is important -- it is critical that we stash away
@@ -8555,10 +8548,25 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  Is invoked when the control handle is created or right before the top level parent receives WM_DPICHANGED message.
-    ///  This method is an opportunity to rescale any constant sizes, glyphs or bitmaps before re-painting.
-    ///  The derived class can choose to not call the base class implementation.
+    ///  This is called in the <see cref="Control"/> constructor before calculating the initial <see cref="Size"/>.
+    ///  This gives a chance to initialize fields that will be used in calls to sizing related virtuals such as
+    ///  <see cref="DefaultSize"/>, etc. The real size cannot be calculated until the handle is created as Windows
+    ///  can have their own DPI setting. When the handle is created, <see cref="RescaleConstantsForDpi(int, int)"/>
+    ///  is called.
     /// </summary>
+    private protected virtual void InitializeConstantsForInitialDpi(int initialDpi) { }
+
+    /// <summary>
+    ///  Invoked when the control handle is created and right before the top level parent control receives a
+    ///  WM_DPICHANGED message.
+    /// </summary>
+    /// <remarks>
+    ///  <para>
+    ///   This method is an opportunity to rescale any constant sizes, glyphs or bitmaps before re-painting.
+    ///  </para>
+    /// </remarks>
+    /// <param name="deviceDpiOld">The DPI value prior to the change.</param>
+    /// <param name="deviceDpiNew">The DPI value after the change.</param>
     [Browsable(true)]
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     protected virtual void RescaleConstantsForDpi(int deviceDpiOld, int deviceDpiNew)
@@ -10243,24 +10251,15 @@ public unsafe partial class Control :
                     // Update window font before scaling, as controls often use font metrics during scaling.
                     if (causedByFontChanged)
                     {
-                        control.UpdateWindowFontIfNeeded();
+                        if (ScaleHelper.IsScalingRequirementMet && !GetStyle(ControlStyles.UserPaint) && !IsFontSet())
+                        {
+                            SetWindowFont();
+                        }
                     }
 
                     control.Scale(includedFactor, excludedFactor, requestingControl, causedByFontChanged);
                 }
             }
-        }
-    }
-
-    /// <summary>
-    ///  Calls SetWindowFont if DpiHelper.IsPerMonitorV2Awareness is true,
-    ///  control uses default or inherited font and is not user-painted.
-    /// </summary>
-    internal void UpdateWindowFontIfNeeded()
-    {
-        if (DpiHelper.IsScalingRequirementMet && !GetStyle(ControlStyles.UserPaint) && !IsFontSet())
-        {
-            SetWindowFont();
         }
     }
 
@@ -10418,7 +10417,7 @@ public unsafe partial class Control :
         Size scaledSize = LayoutUtils.IntersectSizes(rawScaledBounds.Size, maximumSize);
         scaledSize = LayoutUtils.UnionSizes(scaledSize, minSize);
 
-        if (DpiHelper.IsScalingRequirementMet
+        if (ScaleHelper.IsScalingRequirementMet
             && ParentInternal is { } parent
             && (parent.LayoutEngine == DefaultLayout.Instance))
         {
@@ -10952,12 +10951,6 @@ public unsafe partial class Control :
             }
 
             SetState(States.TopLevel, value);
-            // make sure the handle is created before hooking, otherwise a toplevel control that never
-            // creates its handle will leak.
-            if (IsHandleCreated && GetExtendedState(ExtendedStates.InterestedInUserPreferenceChanged))
-            {
-                ListenToUserPreferenceChanged(value);
-            }
 
             UpdateStyles();
             SetParentHandle(default);
@@ -11717,16 +11710,6 @@ public unsafe partial class Control :
                 | SET_WINDOW_POS_FLAGS.SWP_NOZORDER);
 
         Invalidate(true);
-    }
-
-    private void UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs pref)
-    {
-        if (pref.Category == UserPreferenceCategory.Color)
-        {
-            s_defaultFont = null;
-            Application.ScaleDefaultFont(DpiHelper.GetTextScaleFactor());
-            OnSystemColorsChanged(EventArgs.Empty);
-        }
     }
 
     // Give a chance for derived controls to do what they want, just before we resize.
@@ -12893,10 +12876,23 @@ public unsafe partial class Control :
     }
 
     /// <summary>
-    ///  Base wndProc. All messages are sent to wndProc after getting filtered
-    ///  through the preProcessMessage function. Inheriting controls should
-    ///  call base.wndProc for any messages that they don't handle.
+    ///  Processes Windows messages.
     /// </summary>
+    /// <remarks>
+    ///  <para>
+    ///   All messages are sent to the <see cref="WndProc(ref Message)"/> method after getting filtered through the
+    ///   <see cref="PreProcessMessage(ref Message)"/> method.
+    ///  </para>
+    ///  <para>
+    ///   The <see cref="WndProc(ref Message)"/> method corresponds exactly to the Windows <c>WindowProc</c>
+    ///   function. For more information about processing Windows messages see the
+    ///   <see href="https://go.microsoft.com/fwlink/?LinkId=181565">WindowProc function</see>.
+    ///  </para>
+    /// </remarks>
+    /// <notesToInheritors>
+    ///  Inheriting controls should call the base class's <see cref="WndProc(ref Message)"/> method to process any
+    ///  messages that they do not handle.
+    /// </notesToInheritors>
     protected virtual void WndProc(ref Message m)
     {
         // Inlined code from GetStyle(...) to ensure no perf hit for a method call.
@@ -13222,6 +13218,41 @@ public unsafe partial class Control :
 
             case PInvoke.WM_PARENTNOTIFY:
                 WmParentNotify(ref m);
+                break;
+
+            case PInvoke.WM_SETTINGCHANGE:
+                if (GetExtendedState(ExtendedStates.InterestedInUserPreferenceChanged) && GetTopLevel())
+                {
+                    SYSTEM_PARAMETERS_INFO_ACTION action = (SYSTEM_PARAMETERS_INFO_ACTION)(uint)m.WParamInternal;
+
+                    // Left here for debugging purposes.
+                    string? text = m.LParamInternal == 0 ? null : new((char*)m.LParamInternal);
+
+                    if (action is SYSTEM_PARAMETERS_INFO_ACTION.SPI_SETNONCLIENTMETRICS && m.LParamInternal == 0)
+                    {
+                        // Text scaling needs refreshed. This can happen when changing Accessibility->Text Size.
+                        //
+                        // SPI_SETNONCLIENTMETRICS is sent multiple times, once with no LParam, then twice with
+                        // "WindowMetrics". Common controls listen to both SPI_SETNONCLIENTMETRICS and
+                        // SPI_SETICONTITLELOGFONT. Waiting for SPI_SETICONTITLELOGFONT has some sort of timing issue
+                        // where layout doesn't always update correctly.
+                        //
+                        // Historically we reset the font on WM_SYSCOLORCHANGE, which does come through before any
+                        // of the WM_SETTINGCHANGE messages. SPI_SETNONCLIENTMETRICS seems more correct.
+
+                        s_defaultFont = null;
+                        Application.ScaleDefaultFont();
+                    }
+                }
+
+                break;
+
+            case PInvoke.WM_SYSCOLORCHANGE:
+                if (GetExtendedState(ExtendedStates.InterestedInUserPreferenceChanged) && GetTopLevel())
+                {
+                    OnSystemColorsChanged(EventArgs.Empty);
+                }
+
                 break;
 
             case PInvoke.WM_EXITMENULOOP:
