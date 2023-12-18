@@ -148,7 +148,7 @@ internal class RazorCompletionListProvider(
                         FilterText = razorCompletionItem.DisplayText,
                         SortText = razorCompletionItem.SortText,
                         InsertTextFormat = insertTextFormat,
-                        Kind = razorCompletionItem.IsSnippet ? CompletionItemKind.Snippet : CompletionItemKind.Struct, // TODO: Make separate CompletionItemKind for razor directives. See https://github.com/dotnet/razor-tooling/issues/6504 and https://github.com/dotnet/razor-tooling/issues/6505
+                        Kind = razorCompletionItem.IsSnippet ? CompletionItemKind.Snippet : CompletionItemKind.Keyword,
                     };
 
                     directiveCompletionItem.UseCommitCharactersFrom(razorCompletionItem, clientCapabilities);
