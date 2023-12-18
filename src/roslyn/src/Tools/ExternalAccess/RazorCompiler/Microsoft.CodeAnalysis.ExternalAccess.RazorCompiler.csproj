@@ -8,6 +8,7 @@
 
     <!-- Used by Razor source generator which is included in source build. -->
     <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
+    <ExcludeFromVerticalBuild>false</ExcludeFromVerticalBuild>
 
     <!-- NuGet -->
     <IsPackable>true</IsPackable>

@@ -14,6 +14,7 @@
     </PackageDescription>
     <!-- Referenced by dotnet/aspnetcore and included in SDK. Requires source build -->
     <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
+    <ExcludeFromVerticalBuild>false</ExcludeFromVerticalBuild>
   </PropertyGroup>
 
   <ItemGroup>
