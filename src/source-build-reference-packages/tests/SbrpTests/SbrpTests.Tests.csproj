@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NuGet.Packaging" Version="$(NuGetPackagingVersion)" />
+    <PackageReference Include="Xunit.SkippableFact" Version="$(XunitSkippableFactVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="SbrpTests.RepoRoot">
+      <Value>$(RepoRoot)</Value>
+    </RuntimeHostConfigurationOption>
+
+    <RuntimeHostConfigurationOption Include="SbrpTests.Configuration">
+      <Value>$(Configuration)</Value>
+    </RuntimeHostConfigurationOption>
+
+    <RuntimeHostConfigurationOption Include="SbrpTests.ArtifactsDir">
+      <Value>$(ArtifactsDir)</Value>
+    </RuntimeHostConfigurationOption>
+  </ItemGroup>
+
+</Project>
