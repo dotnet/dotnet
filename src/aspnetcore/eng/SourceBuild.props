@@ -8,9 +8,11 @@
     <SourceBuildTargetFrameworkFilter>netstandard2.0%3bnetstandard2.1%3bnetcoreapp2.1%3bnetcoreapp3.1%3bnet5.0%3bnet6.0%3bnet7.0%3bnet8.0%3bnet9.0</SourceBuildTargetFrameworkFilter>
   </PropertyGroup>
 
+  <!-- Only run this target in strict source build mode. -->
   <Target Name="PrepareGlobalJsonForSourceBuild"
           AfterTargets="PrepareInnerSourceBuildRepoRoot"
-          BeforeTargets="RunInnerSourceBuildCommand">
+          BeforeTargets="RunInnerSourceBuildCommand"
+          Condition="'$(ArcadeBuildFromSource)' == 'true'">
     <Exec
       Command="./eng/scripts/prepare-sourcebuild-globaljson.sh"
       WorkingDirectory="$(InnerSourceBuildRepoRoot)" />
@@ -32,7 +34,7 @@
     Build RepoTasks - this is normally triggered via the build script but the inner ArPow source-build is run via msbuild
   -->
   <Target Name="BuildRepoTasks"
-          Condition="'$(ArcadeInnerBuildFromSource)' == 'true'"
+          Condition="'$(ArcadeInnerBuildFromSource)' == 'true' and '$(ArcadeBuildFromSource)' == 'true'"
           BeforeTargets="Execute">
 
     <!-- If the alternative runtime location and key are present, pass those through -->
