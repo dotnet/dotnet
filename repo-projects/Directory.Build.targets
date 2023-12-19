@@ -262,7 +262,9 @@
   </Target>
 
   <Target Name="ExtractIntermediatePackages"
-          AfterTargets="Package">
+          AfterTargets="Package"
+          Inputs="$(MSBuildProjectFullPath)"
+          Outputs="$(RepoCompletedSemaphorePath)IntermediateExtraction.complete">
     <ItemGroup>
       <_BuiltIntermediatePackages Condition="'$(PackagesOutput)' != ''" Include="$(PackagesOutput)/Microsoft.SourceBuild.Intermediate.*.nupkg" Exclude="$(PackagesOutput)/*.symbols.nupkg"/>
       <_BuiltIntermediatePackages Condition="'@(PackagesOutputList)' != ''" Include="%(PackagesOutputList.Identity)/Microsoft.SourceBuild.Intermediate.*.nupkg" Exclude="%(PackagesOutputList.Identity)/*.symbols.nupkg"/>
@@ -314,6 +316,8 @@
     <RemoveDir
       Condition="Exists('$(SourceBuiltPackagesPath)extractArtifacts/')"
       Directories="$(SourceBuiltPackagesPath)extractArtifacts/" />
+
+    <Touch Files="$(RepoCompletedSemaphorePath)IntermediateExtraction.complete" AlwaysCreate="true" />
   </Target>
 
   <!-- Copy restored packages from inner build to ensure they're included in the
