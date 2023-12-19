@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
@@ -22,8 +23,8 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
 
     public Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
     {
-        var nameNotExistDiagnostics = context.Request.Context.Diagnostics.Where(d => d.Code == "CS0103");
-        if (!nameNotExistDiagnostics.Any())
+        var nameNotExistDiagnostics = context.Request.Context.Diagnostics.Any(d => d.Code == "CS0103");
+        if (!nameNotExistDiagnostics)
         {
             return s_emptyResult;
         }
@@ -71,6 +72,31 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
         if (commonParent is not MarkupTagHelperDirectiveAttributeSyntax markupTagHelperDirectiveAttribute)
         {
             return false;
+        }
+
+        // MarkupTagHelperElement > MarkupTagHelperStartTag > MarkupTagHelperDirectiveAttribute 
+        var tagHelperElement = commonParent.Parent.Parent as MarkupTagHelperElementSyntax;
+        if (tagHelperElement is null)
+        {
+            return false;
+        }
+
+        foreach (var tagHelperDescriptor in tagHelperElement.TagHelperInfo.BindingResult.Descriptors)
+        {
+            foreach (var attribute in tagHelperDescriptor.BoundAttributes)
+            {
+                if (attribute.Name == markupTagHelperDirectiveAttribute.TagHelperAttributeInfo.Name)
+                {
+                    // We found the attribute that matches the directive attribute, now we need to check if the
+                    // tag helper it's bound to is an event handler. This filters out things like @ref and @rendermode
+                    if (!tagHelperDescriptor.IsEventHandlerTagHelper())
+                    {
+                        return false;
+                    }
+
+                    break;
+                }
+            }
         }
 
         if (markupTagHelperDirectiveAttribute.TagHelperAttributeInfo.ParameterName is not null)

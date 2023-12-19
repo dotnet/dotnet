@@ -34,6 +34,7 @@ internal class SyntaxListBuilder(int initialCapacity)
         if (_nodes.Length > DefaultPool.MaximumObjectSize)
         {
             Array.Resize(ref _nodes, DefaultPool.MaximumObjectSize);
+            Count = DefaultPool.MaximumObjectSize;
         }
 
         Clear();

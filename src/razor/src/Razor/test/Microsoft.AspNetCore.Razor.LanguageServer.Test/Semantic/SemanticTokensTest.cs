@@ -921,7 +921,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         var tokens = await service.GetSemanticTokensAsync(new() { Uri = documentContext.Uri }, range, documentContext, TestRazorSemanticTokensLegend.Instance, Guid.Empty, DisposalToken);
 
         var sourceText = await documentContext.GetSourceTextAsync(DisposalToken);
-        AssertSemanticTokensMatchesBaseline(sourceText, tokens?.Data, precise, testName.AssumeNotNull());
+        AssertSemanticTokensMatchesBaseline(sourceText, tokens?.Data, testName.AssumeNotNull());
     }
 
     private static VersionedDocumentContext CreateDocumentContext(
@@ -1084,10 +1084,9 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         return range;
     }
 
-    private void AssertSemanticTokensMatchesBaseline(SourceText sourceText, int[]? actualSemanticTokens, bool precise, string testName)
+    private void AssertSemanticTokensMatchesBaseline(SourceText sourceText, int[]? actualSemanticTokens, string testName)
     {
-        var folderName = precise ? "Precise" : "Normal";
-        var fileName = $"Semantic\\TestFiles\\{folderName}\\{testName}";
+        var fileName = $"Semantic\\TestFiles\\{testName}";
 
         var baselineFileName = Path.ChangeExtension(fileName, ".semantic.txt");
 

@@ -194,7 +194,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/commit/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@f07a2d9](https://github.com/dotnet/razor/commit/f07a2d99c17d64415cabac359aec7466ebaeac90)*
+*[dotnet/razor@d7b8030](https://github.com/dotnet/razor/commit/d7b803092d76cb734b6ce23781137a227de9fe11)*
 - `src/roslyn`  
 *[dotnet/roslyn@95f4a35](https://github.com/dotnet/roslyn/commit/95f4a35aad5cdff67d9b48c87c3aa1c0b0b6f495)*
 - `src/roslyn-analyzers`  
