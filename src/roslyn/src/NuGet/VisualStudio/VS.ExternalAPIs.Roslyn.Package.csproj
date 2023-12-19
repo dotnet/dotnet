@@ -13,6 +13,9 @@
     <PackageDescription>CoreXT package for the VS build</PackageDescription>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_GetFilesToPackage</TargetsForTfmSpecificContentInPackage>
 
+    <!-- Work around missing project dependencies. VS features not needed at this time. -->
+    <ExcludeFromVerticalBuild>true</ExcludeFromVerticalBuild>
+
     <!--
       Suppress NuGet warning: 
       "The assembly '...' is not inside the 'lib' folder and hence it won't be added as a reference when the package is installed into a project."
