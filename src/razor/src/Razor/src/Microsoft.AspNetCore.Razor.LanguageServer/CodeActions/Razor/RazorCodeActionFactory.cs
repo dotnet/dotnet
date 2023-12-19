@@ -18,13 +18,13 @@ internal static class RazorCodeActionFactory
     private readonly static Guid s_generateMethodTelemetryId = new("c14fa003-c752-45fc-bb29-3a123ae5ecef");
     private readonly static Guid s_generateAsyncMethodTelemetryId = new("9058ca47-98e2-4f11-bf7c-a16a444dd939");
 
-    public static RazorVSInternalCodeAction CreateAddComponentUsing(string @namespace, RazorCodeActionResolutionParams resolutionParams)
+    public static RazorVSInternalCodeAction CreateAddComponentUsing(string @namespace, string? newTagName, RazorCodeActionResolutionParams resolutionParams)
     {
         var title = $"@using {@namespace}";
         var data = JToken.FromObject(resolutionParams);
         var codeAction = new RazorVSInternalCodeAction
         {
-            Title = title,
+            Title = newTagName is null ? title : $"{newTagName} - {title}",
             Data = data,
             TelemetryId = s_addComponentUsingTelemetryId,
         };

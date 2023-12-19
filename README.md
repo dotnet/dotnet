@@ -166,27 +166,27 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[_git/dotnet-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspire/commit/48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@889b89f](https://github.com/dotnet/aspnetcore/commit/889b89f6000b60ac6310c152f799e90a3f1ee245)*
+*[dotnet/aspnetcore@640e122](https://github.com/dotnet/aspnetcore/commit/640e12221629f0cf5226370bb48064203491e11e)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@530d5c8](https://github.com/google/googletest/commit/530d5c8c84abd2a46f38583ee817743c9b3a42b4)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
     *[aspnet/MessagePack-CSharp@ecc4e18](https://github.com/aspnet/MessagePack-CSharp/commit/ecc4e18ad7a0c7db51cd7e3d2997a291ed01444d)*
 - `src/cecil`  
-*[dotnet/cecil@758bd2a](https://github.com/dotnet/cecil/commit/758bd2af139fcae0460284e63765384d3c199388)*
+*[dotnet/cecil@02026e5](https://github.com/dotnet/cecil/commit/02026e5c1b054958851d2711fefa1b37027cab23)*
 - `src/command-line-api`  
 *[dotnet/command-line-api@a045dd5](https://github.com/dotnet/command-line-api/commit/a045dd54a4c44723c215d992288160eb1401bb7f)*
 - `src/deployment-tools`  
-*[dotnet/deployment-tools@0d6c22d](https://github.com/dotnet/deployment-tools/commit/0d6c22d227b318fb253c967e1ac041b8e68e7e7d)*
+*[dotnet/deployment-tools@fdef093](https://github.com/dotnet/deployment-tools/commit/fdef0932d9953ee12367c8dac9ef638b573d4f42)*
 - `src/diagnostics`  
 *[dotnet/diagnostics@5ce78f6](https://github.com/dotnet/diagnostics/commit/5ce78f66d89ea529e459abddb129ab36cb5bd936)*
 - `src/emsdk`  
-*[dotnet/emsdk@e5721f8](https://github.com/dotnet/emsdk/commit/e5721f8f058db60052ff7298d1a5acd69347b5db)*
+*[dotnet/emsdk@13ad074](https://github.com/dotnet/emsdk/commit/13ad0749b943e56246a8c40aea3e58648dfa0996)*
 - `src/format`  
-*[dotnet/format@f198eb6](https://github.com/dotnet/format/commit/f198eb6e5f04a5f6f66f58b6229300b015c6304b)*
+*[dotnet/format@2c2d58c](https://github.com/dotnet/format/commit/2c2d58cb25064036f853d76e7b6aff7bb7d38401)*
 - `src/fsharp`  
 *[dotnet/fsharp@7aa5ff6](https://github.com/dotnet/fsharp/commit/7aa5ff65041954475ad6d0a3bd7205ae7dde4a42)*
 - `src/installer`  
-*[dotnet/installer@fe03723](https://github.com/dotnet/installer/commit/fe0372302bf926c0a4903a57fd27f417bbc0986f)*
+*[dotnet/installer@4ce2206](https://github.com/dotnet/installer/commit/4ce220694eee1df9dbd0a848adfb6e6a8c1a03d1)*
 - `src/msbuild`  
 *[dotnet/msbuild@abc2f46](https://github.com/dotnet/msbuild/commit/abc2f4620f6749289cafeed7c9a9a80eaeb38e28)*
 - `src/nuget-client`  
@@ -194,17 +194,17 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/commit/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@f07a2d9](https://github.com/dotnet/razor/commit/f07a2d99c17d64415cabac359aec7466ebaeac90)*
+*[dotnet/razor@d7b8030](https://github.com/dotnet/razor/commit/d7b803092d76cb734b6ce23781137a227de9fe11)*
 - `src/roslyn`  
-*[dotnet/roslyn@6a1cfc2](https://github.com/dotnet/roslyn/commit/6a1cfc22d6b40c4e0fe5ac98a77a251c987a7c51)*
+*[dotnet/roslyn@95f4a35](https://github.com/dotnet/roslyn/commit/95f4a35aad5cdff67d9b48c87c3aa1c0b0b6f495)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@5dc99c6](https://github.com/dotnet/roslyn-analyzers/commit/5dc99c6249a4cf845fbdcc367641c1b32347b85a)*
 - `src/runtime`  
-*[dotnet/runtime@7bb99e9](https://github.com/dotnet/runtime/commit/7bb99e9f58d7bbaac53e7cf48c8ca1a9d17e216e)*
+*[dotnet/runtime@c282395](https://github.com/dotnet/runtime/commit/c282395b63c1757d4f4c1dc2e236680cfe2e7f96)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@0589a90](https://github.com/dotnet/scenario-tests/commit/0589a90cb11bb1daf9c05f20c1dc2d78c49075f2)*
 - `src/sdk`  
-*[dotnet/sdk@6ced0bc](https://github.com/dotnet/sdk/commit/6ced0bc9a370d3b2ed9fe3350a19cd86aa94d184)*
+*[dotnet/sdk@7a23eb7](https://github.com/dotnet/sdk/commit/7a23eb71c9afea23d3261eba01368a394329bcd3)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@bc55508](https://github.com/dotnet/source-build-externals/commit/bc555088c6b4862ad0b93fbc245ef0628e661256)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -238,17 +238,17 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@aa31e33](https://github.com/dotnet/symreader/commit/aa31e333b952f53910dc6bd08d80596eaaf89360)*
 - `src/templating`  
-*[dotnet/templating@650a9ea](https://github.com/dotnet/templating/commit/650a9eaf349c6a66c1c70d9f6e0102987e1c1859)*
+*[dotnet/templating@8a752a9](https://github.com/dotnet/templating/commit/8a752a910b425687201aa0e8d7c789ccafff054c)*
 - `src/test-templates`  
 *[dotnet/test-templates@ec54b2c](https://github.com/dotnet/test-templates/commit/ec54b2c1553db0a544ef0e8595be2318fc12e08d)*
 - `src/vstest`  
 *[microsoft/vstest@37a9284](https://github.com/microsoft/vstest/commit/37a9284cea77fefcdf1f9b023bdb1eaed080e3d8)*
 - `src/windowsdesktop`  
-*[dotnet/windowsdesktop@418db42](https://github.com/dotnet/windowsdesktop/commit/418db4267f07091b065fd5065b24207876bcc89f)*
+*[dotnet/windowsdesktop@303604b](https://github.com/dotnet/windowsdesktop/commit/303604bac4454ea8aaa7440c91b9f7884717d92f)*
 - `src/winforms`  
-*[dotnet/winforms@338ec5b](https://github.com/dotnet/winforms/commit/338ec5bd57538304c4cf372c4389b7c9c57cbecd)*
+*[dotnet/winforms@bbfb138](https://github.com/dotnet/winforms/commit/bbfb1383bf849d887b4b7d3e566c745756437fd1)*
 - `src/wpf`  
-*[dotnet/wpf@4fc9cd4](https://github.com/dotnet/wpf/commit/4fc9cd4d737f87b4b0604c80961a32aab47feb0b)*
+*[dotnet/wpf@f3f1756](https://github.com/dotnet/wpf/commit/f3f1756e8f4808a8e0c3ff56f07aecb1b156e5c2)*
 - `src/xdt`  
 *[dotnet/xdt@6d4a367](https://github.com/dotnet/xdt/commit/6d4a3674dd97b2be18b3ded0d52ea18d04fde4cc)*
 - `src/xliff-tasks`  

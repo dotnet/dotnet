@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
 
@@ -65,10 +66,10 @@ internal sealed class AddUsingsCodeActionResolver : IRazorCodeActionResolver
         }
 
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = actionParams.Uri };
-        return CreateAddUsingWorkspaceEdit(actionParams.Namespace, codeDocument, codeDocumentIdentifier);
+        return CreateAddUsingWorkspaceEdit(actionParams.Namespace, actionParams.AdditionalEdit, codeDocument, codeDocumentIdentifier);
     }
 
-    internal static WorkspaceEdit CreateAddUsingWorkspaceEdit(string @namespace, RazorCodeDocument codeDocument, OptionalVersionedTextDocumentIdentifier codeDocumentIdentifier)
+    internal static WorkspaceEdit CreateAddUsingWorkspaceEdit(string @namespace, TextDocumentEdit? additionalEdit, RazorCodeDocument codeDocument, OptionalVersionedTextDocumentIdentifier codeDocumentIdentifier)
     {
         /* The heuristic is as follows:
          *
@@ -85,7 +86,15 @@ internal sealed class AddUsingsCodeActionResolver : IRazorCodeActionResolver
          * that now I can come up with a more sophisticated heuristic (something along the lines of checking if
          * there's already an ordering, etc.).
          */
-        var documentChanges = new List<TextDocumentEdit>();
+        using var _ = ListPool<TextDocumentEdit>.GetPooledObject(out var documentChanges);
+
+        // Need to add the additional edit first, as the actual usings go at the top of the file, and would
+        // change the ranges needed in the additional edit if they went in first
+        if (additionalEdit is not null)
+        {
+            documentChanges.Add(additionalEdit);
+        }
+
         var usingDirectives = FindUsingDirectives(codeDocument);
         if (usingDirectives.Count > 0)
         {

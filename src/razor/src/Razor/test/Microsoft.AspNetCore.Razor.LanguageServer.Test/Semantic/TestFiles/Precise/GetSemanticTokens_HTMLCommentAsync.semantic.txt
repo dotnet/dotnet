@@ -1,7 +1,0 @@
-//line,characterPos,length,tokenType,modifier,text
-0 0 1 razorTransition 0 [@]
-0 1 12 razorDirective 0 [addTagHelper]
-0 13 15 string 0 [*, TestAssembly]
-1 0 4 markupCommentPunctuation 0 [<!--]
-0 4 22 markupComment 0 [ comment with comma's ]
-0 22 3 markupCommentPunctuation 0 [-->]
