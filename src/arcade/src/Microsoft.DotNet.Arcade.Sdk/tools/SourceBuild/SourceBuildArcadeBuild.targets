@@ -133,7 +133,7 @@
     access to the git data, this also makes it easy to see what changes the source-build infra has
     made, for diagnosis or exploratory purposes.
   -->
-  <Target Name="CloneInnerSourceBuildRepoRoot" Condition=" '$(CopySrcInsteadOfClone)' != 'true' ">
+  <Target Name="CloneInnerSourceBuildRepoRoot" Condition=" '$(CopySrcInsteadOfClone)' != 'true'">
     <PropertyGroup>
       <!--
         By default, copy WIP. WIP copy helps with local machine dev work. Don't copy WIP if this is
@@ -145,22 +145,24 @@
       <_GitCloneToDirArgs />
     </PropertyGroup>
 
-    <PropertyGroup Condition="$([MSBuild]::IsOSPlatform(Windows))">
+    <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
       <_GitCloneToDirArgs>$(_GitCloneToDirArgs) -Source "$(RepoRoot)$(_DirSeparatorEscapedCharForExecArg)"</_GitCloneToDirArgs>
       <_GitCloneToDirArgs>$(_GitCloneToDirArgs) -Dest "$(InnerSourceBuildRepoRoot)$(_DirSeparatorEscapedCharForExecArg)"</_GitCloneToDirArgs>
       <_GitCloneToDirArgs Condition="'$(CopyWipIntoInnerSourceBuildRepo)' == 'true'">$(_GitCloneToDirArgs) -CopyWip</_GitCloneToDirArgs>
       <_GitCloneToDirArgs Condition="'$(CleanInnerSourceBuildRepoRoot)' == 'true'">$(_GitCloneToDirArgs) -Clean</_GitCloneToDirArgs>
 
-      <_GitCloneToDirScriptCommand>powershell -ExecutionPolicy Unrestricted -NoProfile -command "&amp; $(MSBuildThisFileDirectory)git-clone-to-dir.ps1 $(_GitCloneToDirArgs)"</_GitCloneToDirScriptCommand>
+      <_GitCloneToDirScriptFile>$(MSBuildThisFileDirectory)git-clone-to-dir.ps1</_GitCloneToDirScriptFile>
+      <_GitCloneToDirScriptCommand>powershell -ExecutionPolicy Unrestricted -NoProfile -command "&amp; $(_GitCloneToDirScriptFile) $(_GitCloneToDirArgs)"</_GitCloneToDirScriptCommand>
     </PropertyGroup>
 
-    <PropertyGroup Condition="!$([MSBuild]::IsOSPlatform(Windows))">
+    <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
       <_GitCloneToDirArgs>$(_GitCloneToDirArgs) --source "$(RepoRoot)"</_GitCloneToDirArgs>
       <_GitCloneToDirArgs>$(_GitCloneToDirArgs) --dest "$(InnerSourceBuildRepoRoot)"</_GitCloneToDirArgs>
       <_GitCloneToDirArgs Condition="'$(CopyWipIntoInnerSourceBuildRepo)' == 'true'">$(_GitCloneToDirArgs) --copy-wip</_GitCloneToDirArgs>
       <_GitCloneToDirArgs Condition="'$(CleanInnerSourceBuildRepoRoot)' == 'true'">$(_GitCloneToDirArgs) --clean</_GitCloneToDirArgs>
 
-      <_GitCloneToDirScriptCommand>$(MSBuildThisFileDirectory)git-clone-to-dir.sh $(_GitCloneToDirArgs)</_GitCloneToDirScriptCommand>
+      <_GitCloneToDirScriptFile>$(MSBuildThisFileDirectory)git-clone-to-dir.sh</_GitCloneToDirScriptFile>
+      <_GitCloneToDirScriptCommand>$(_GitCloneToDirScriptFile) $(_GitCloneToDirArgs)</_GitCloneToDirScriptCommand>
     </PropertyGroup>
 
     <Exec Command="$(_GitCloneToDirScriptCommand)" />
@@ -199,9 +201,12 @@
       <_GitSubmoduleCloneArgs Condition="'$(CleanInnerSourceBuildRepoRoot)' == 'true'">$(_GitSubmoduleCloneArgs) --clean</_GitSubmoduleCloneArgs>
     </PropertyGroup>
 
+    <Error Text="Submodule cloning not available on Windows at this time"
+           Condition="'$(CloneSubmodulesToInnerSourceBuildRepo)' == 'true' and '$(OS)' == 'Windows_NT'" />
+
     <Exec
       Condition="'$(CloneSubmodulesToInnerSourceBuildRepo)' == 'true'"
-      Command="git submodule foreach --recursive '$(_gitCloneToDirScriptFile) $(_GitSubmoduleCloneArgs)'"
+      Command="git submodule foreach --recursive '$(_GitCloneToDirScriptFile) $(_GitSubmoduleCloneArgs)'"
       WorkingDirectory="$(RepoRoot)" />
   </Target>
 

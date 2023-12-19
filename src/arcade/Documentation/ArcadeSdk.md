@@ -907,7 +907,7 @@ Available values are listed in [StrongName.targets](https://github.com/dotnet/ar
 
 `IsShipping-` properties are project properties that determine which (if any) assets produced by the project are _shipping_. An asset is considered _shipping_ if it is intended to be delivered to customers via an official channel. This channel can be NuGet.org, an official installer, etc. Setting this flag to `true` does not guarantee that the asset will actually ship in the next release of the product. It might be decided after the build is complete that although the artifact is ready for shipping it won't be shipped this release cycle.
 
-By default all assets produced by a project are considered _shipping_. Set `IsShipping` to `false` if none of the assets produced by the project are _shipping_. Test projects (`IsTestProject` is `true`) set `IsShipping` to `false` automatically.
+By default all assets produced by a project are considered _shipping_. Set `IsShipping` to `false` if none of the assets produced by the project are _shipping_. Test projects (`IsTestProject` is `true`) and test utility projects (`IsTestUtilityProject` is `true`) set `IsShipping` to `false` automatically.
 
 Setting `IsShipping` property is sufficient for most projects. Projects that produce both _shipping_ and _non-shipping_ assets need a finer grained control. Set `IsShippingAssembly`, `IsShippingPackage` or `IsShippingVsix` to `false` if the assembly, package, or VSIX produced by the project is not _shipping_, respectively. 
 
@@ -950,6 +950,10 @@ Properties that define TargetFramework for use by projects so their targeting ea
 - NetPrevious - The previously released version of .NET (e.g. this would be net7 if NetCurrent is net8)
 - NetMinimum - Lowest supported version of .NET the time of the release of NetCurrent. E.g. if NetCurrent is net8, then NetMinimum is net6
 - NetFrameworkMinimum - Lowest supported version of .NET Framework the time of the release of NetCurrent. E.g. if NetCurrent is net8, then NetFrameworkMinimum is net462
+
+### `IsTestUtilityProject` (bool)
+
+Set to `true` to indicate that the project is a test utility project. Such are projects that offer utilities to run tests. Example: `Microsoft.DotNet.XUnitExtensions.csproj` in Arcade. This makes are mark them as non-shipping and excluded from source build.
 
 ### `SkipTests` (bool)
 
