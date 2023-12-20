@@ -427,6 +427,10 @@ internal class WorkspaceProjectStateChangeDetector : IProjectSnapshotChangeTrigg
                 }
 
                 break;
+
+            case ProjectChangeKind.ProjectRemoved:
+                // No-op. We don't need to recompute tag helpers if the project is being removed
+                break;
         }
     }
 
