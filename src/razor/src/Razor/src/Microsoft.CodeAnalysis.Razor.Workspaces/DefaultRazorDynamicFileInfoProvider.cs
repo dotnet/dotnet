@@ -299,7 +299,11 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
     {
         if (args.SolutionIsClosing)
         {
-            _entries.Clear();
+            if (_entries.Count > 0)
+            {
+                _entries.Clear();
+            }
+
             return;
         }
 

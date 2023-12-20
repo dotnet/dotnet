@@ -84,13 +84,13 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
         _projectManager.Changed += ProjectManager_Changed;
     }
 
-    // Internal for testing.
-    internal void ProjectManager_Changed(object? sender, ProjectChangeEventArgs e)
+    private void ProjectManager_Changed(object? sender, ProjectChangeEventArgs e)
     {
         ProjectManager_ChangedAsync(e, CancellationToken.None).Forget();
     }
 
-    private async Task ProjectManager_ChangedAsync(ProjectChangeEventArgs e, CancellationToken cancellationToken)
+    // Internal for testing.
+    internal async Task ProjectManager_ChangedAsync(ProjectChangeEventArgs e, CancellationToken cancellationToken)
     {
         try
         {
@@ -121,16 +121,20 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
 
                 case ProjectChangeKind.DocumentRemoved:
                     {
-                        // Need to run this even if the solution is closing because document dispose cleans up file watchers etc.
-
-                        // TryGetDocument and Dispose need to be run on the UI thread
                         await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
 
-                        if (DocumentManager.TryGetDocument(
-                            new DocumentKey(e.ProjectKey, e.DocumentFilePath.AssumeNotNull()), out var document))
+                        RemoveAndDisposeDocument_RunOnUIThread(e.ProjectKey, e.DocumentFilePath.AssumeNotNull());
+
+                        break;
+                    }
+
+                case ProjectChangeKind.ProjectRemoved:
+                    {
+                        await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
+
+                        foreach (var documentFilePath in e.Older.AssumeNotNull().DocumentFilePaths)
                         {
-                            // This class 'owns' the document entry so it's safe for us to dispose it.
-                            document.Dispose();
+                            RemoveAndDisposeDocument_RunOnUIThread(e.ProjectKey, documentFilePath.AssumeNotNull());
                         }
 
                         break;
@@ -145,6 +149,15 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
                 Stack trace:
                 {ex.StackTrace}
                 """);
+        }
+
+        void RemoveAndDisposeDocument_RunOnUIThread(ProjectKey projectKey, string documentFilePath)
+        {
+            if (DocumentManager.TryGetDocument(new DocumentKey(projectKey, documentFilePath), out var document))
+            {
+                // This class 'owns' the document entry so it's safe for us to dispose it.
+                document.Dispose();
+            }
         }
     }
 
