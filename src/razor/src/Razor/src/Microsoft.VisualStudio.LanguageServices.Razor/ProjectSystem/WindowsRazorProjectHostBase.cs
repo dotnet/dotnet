@@ -291,8 +291,6 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
 
     protected void UninitializeProjectUnsafe(ProjectKey projectKey)
     {
-        ClearDocumentsUnsafe(projectKey);
-
         var projectManager = GetProjectManager();
         var current = projectManager.GetLoadedProject(projectKey);
         if (current is not null)
@@ -332,26 +330,6 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
     {
         var projectManager = GetProjectManager();
         projectManager.DocumentRemoved(projectKey, document);
-    }
-
-    private void ClearDocumentsUnsafe(ProjectKey projectKey)
-    {
-        var projectManager = GetProjectManager();
-        var current = projectManager.GetLoadedProject(projectKey);
-
-        if (current is null)
-        {
-            return;
-        }
-
-        foreach (var documentFilePath in current.DocumentFilePaths)
-        {
-            var documentSnapshot = current.GetDocument(documentFilePath);
-            Assumes.NotNull(documentSnapshot);
-            // TODO: The creation of the HostProject here is silly
-            var hostDocument = new HostDocument(documentSnapshot.FilePath.AssumeNotNull(), documentSnapshot.TargetPath.AssumeNotNull(), documentSnapshot.FileKind);
-            projectManager.DocumentRemoved(projectKey, hostDocument);
-        }
     }
 
     private async Task ExecuteWithLockAsync(Func<Task> func)

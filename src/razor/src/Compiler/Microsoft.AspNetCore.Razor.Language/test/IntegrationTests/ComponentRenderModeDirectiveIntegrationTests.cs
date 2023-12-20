@@ -128,9 +128,9 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
 
         var assemblyResult = CompileToAssembly(compilationResult, throwOnFailure: false);
         assemblyResult.Diagnostics.Verify(
-            // x:\dir\subdir\Test\TestComponent.cshtml(1,3): error CS0103: The name 'rendermode' does not exist in the current context
+            // x:\dir\subdir\Test\TestComponent.cshtml(1,2): error CS0103: The name 'rendermode' does not exist in the current context
             // __builder.AddContent(0, rendermode);
-            Diagnostic(ErrorCode.ERR_NameNotInContext, "rendermode").WithArguments("rendermode").WithLocation(1, 3)
+            Diagnostic(ErrorCode.ERR_NameNotInContext, "rendermode").WithArguments("rendermode").WithLocation(1, 2)
             );
     }
 

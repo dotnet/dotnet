@@ -1,5 +1,0 @@
-//line,characterPos,length,tokenType,modifier,text
-0 0 1 razorTransition 0 [@]
-0 1 4 razorDirective 0 [code]
-0 5 1 razorTransition 0 [{]
-0 1 1 razorTransition 0 [}]

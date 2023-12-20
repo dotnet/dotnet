@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -47,7 +48,10 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
 
         // Find start tag. We allow this code action to work from anywhere in the start tag, which includes
         // embedded C#, so we just have to traverse up the tree to find a start tag if there is one.
-        var startTag = (MarkupStartTagSyntax?)node.FirstAncestorOrSelf<SyntaxNode>(n => n is MarkupStartTagSyntax);
+        // We also check for tag helper start tags here, because an invalid start tag with a valid tag helper
+        // anywhere in it  would otherwise not match. We rely on the IsTagUnknown method below, to ensure we
+        // only offer on actual potential component tags (because it checks for the compiler diagnostic)
+        var startTag = (IStartTagSyntaxNode?)node.FirstAncestorOrSelf<SyntaxNode>(n => n is IStartTagSyntaxNode);
         if (startTag is null)
         {
             return s_emptyResult;
@@ -81,7 +85,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         return Task.FromResult<IReadOnlyList<RazorVSInternalCodeAction>?>(codeActions.ToArray());
     }
 
-    private static bool IsApplicableTag(MarkupStartTagSyntax startTag)
+    private static bool IsApplicableTag(IStartTagSyntaxNode startTag)
     {
         if (startTag.Name.FullWidth == 0)
         {
@@ -92,7 +96,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         return true;
     }
 
-    private void AddCreateComponentFromTag(RazorCodeActionContext context, MarkupStartTagSyntax startTag, List<RazorVSInternalCodeAction> container)
+    private void AddCreateComponentFromTag(RazorCodeActionContext context, IStartTagSyntaxNode startTag, List<RazorVSInternalCodeAction> container)
     {
         if (context is null)
         {
@@ -133,8 +137,25 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         container.Add(codeAction);
     }
 
-    private void AddComponentAccessFromTag(RazorCodeActionContext context, MarkupStartTagSyntax startTag, List<RazorVSInternalCodeAction> container)
+    private void AddComponentAccessFromTag(RazorCodeActionContext context, IStartTagSyntaxNode startTag, List<RazorVSInternalCodeAction> container)
     {
+        var haveAddedNonQualifiedFix = false;
+
+        // First see if there are any components that match in name, but not case, without qualification
+        foreach (var t in context.CodeDocument.GetTagHelperContext().TagHelpers)
+        {
+            if (t.TagMatchingRules is [{ CaseSensitive: true } rule] &&
+                rule.TagName.Equals(startTag.Name.Content, StringComparison.OrdinalIgnoreCase) &&
+                rule.TagName != startTag.Name.Content)
+            {
+                var renameTagWorkspaceEdit = CreateRenameTagEdit(context, startTag, rule.TagName);
+                var fixCasingCodeAction = RazorCodeActionFactory.CreateFullyQualifyComponent(rule.TagName, renameTagWorkspaceEdit);
+                container.Add(fixCasingCodeAction);
+                haveAddedNonQualifiedFix = true;
+                break;
+            }
+        }
+
         var matching = FindMatchingTagHelpers(context, startTag);
 
         // For all the matches, add options for add @using and fully qualify
@@ -145,25 +166,47 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
                 continue;
             }
 
-            // if fqn contains a generic typeparam, we should strip it out. Otherwise, replacing tag name will leave generic parameters in razor code, which are illegal
-            // e.g. <Component /> -> <Component<T> />
-            var fullyQualifiedName = DefaultRazorComponentSearchEngine.RemoveGenericContent(tagHelperPair._short.Name.AsMemory()).ToString();
-
-            // Insert @using
-            if (AddUsingsCodeActionProviderHelper.TryCreateAddUsingResolutionParams(fullyQualifiedName, context.Request.TextDocument.Uri, out var @namespace, out var resolutionParams))
+            // If they have a typo, eg <CounTer /> and we've offered them <Counter /> above, then it would be odd to offer
+            // them <BlazorApp.Pages.Counter /> as well. We will offer them <BlazorApp.MisTypedPages.CounTer /> though, if it
+            // exists.
+            if (!haveAddedNonQualifiedFix || !tagHelperPair._caseInsensitiveMatch)
             {
-                var addUsingCodeAction = RazorCodeActionFactory.CreateAddComponentUsing(@namespace, resolutionParams);
-                container.Add(addUsingCodeAction);
-            }
+                // if fqn contains a generic typeparam, we should strip it out. Otherwise, replacing tag name will leave generic parameters in razor code, which are illegal
+                // e.g. <Component /> -> <Component<T> />
+                var fullyQualifiedName = DefaultRazorComponentSearchEngine.RemoveGenericContent(tagHelperPair._short.Name.AsMemory()).ToString();
 
-            // Fully qualify
-            var renameTagWorkspaceEdit = CreateRenameTagEdit(context, startTag, fullyQualifiedName);
-            var fullyQualifiedCodeAction = RazorCodeActionFactory.CreateFullyQualifyComponent(fullyQualifiedName, renameTagWorkspaceEdit);
-            container.Add(fullyQualifiedCodeAction);
+                // If the match was case insensitive, then see if we can work out a new tag name to use as part of adding a using statement
+                TextDocumentEdit? additionalEdit = null;
+                string? newTagName = null;
+                if (tagHelperPair._caseInsensitiveMatch)
+                {
+                    newTagName = tagHelperPair._short.TagMatchingRules.FirstOrDefault()?.TagName;
+                    if (newTagName is not null)
+                    {
+                        additionalEdit = CreateRenameTagEdit(context, startTag, newTagName).DocumentChanges!.Value.First().First.AssumeNotNull();
+                    }
+                }
+
+                // We only want to add a using statement if this was a case sensitive match, or if we were able to determine a new tag
+                // name to give the tag.
+                if (!tagHelperPair._caseInsensitiveMatch || newTagName is not null)
+                {
+                    if (AddUsingsCodeActionProviderHelper.TryCreateAddUsingResolutionParams(fullyQualifiedName, context.Request.TextDocument.Uri, additionalEdit, out var @namespace, out var resolutionParams))
+                    {
+                        var addUsingCodeAction = RazorCodeActionFactory.CreateAddComponentUsing(@namespace, newTagName, resolutionParams);
+                        container.Add(addUsingCodeAction);
+                    }
+                }
+
+                // Fully qualify
+                var renameTagWorkspaceEdit = CreateRenameTagEdit(context, startTag, fullyQualifiedName);
+                var fullyQualifiedCodeAction = RazorCodeActionFactory.CreateFullyQualifyComponent(fullyQualifiedName, renameTagWorkspaceEdit);
+                container.Add(fullyQualifiedCodeAction);
+            }
         }
     }
 
-    private List<TagHelperPair> FindMatchingTagHelpers(RazorCodeActionContext context, MarkupStartTagSyntax startTag)
+    private List<TagHelperPair> FindMatchingTagHelpers(RazorCodeActionContext context, IStartTagSyntaxNode startTag)
     {
         // Get all data necessary for matching
         var tagName = startTag.Name.Content;
@@ -184,9 +227,9 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
 
         foreach (var tagHelper in context.DocumentSnapshot.Project.TagHelpers)
         {
-            if (tagHelper.TagMatchingRules.All(rule => TagHelperMatchingConventions.SatisfiesRule(tagName.AsSpan(), parentTagName.AsSpan(), attributes, rule)))
+            if (SatisfiesRules(tagHelper.TagMatchingRules, tagName.AsSpan(), parentTagName.AsSpan(), attributes, out var caseInsensitiveMatch))
             {
-                matching.Add(tagHelper.Name, new TagHelperPair(@short: tagHelper));
+                matching.Add(tagHelper.Name, new TagHelperPair(@short: tagHelper, caseInsensitiveMatch));
             }
         }
 
@@ -205,7 +248,44 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         return new List<TagHelperPair>(matching.Values);
     }
 
-    private static WorkspaceEdit CreateRenameTagEdit(RazorCodeActionContext context, MarkupStartTagSyntax startTag, string newTagName)
+    private bool SatisfiesRules(ImmutableArray<TagMatchingRuleDescriptor> tagMatchingRules, ReadOnlySpan<char> tagNameWithoutPrefix, ReadOnlySpan<char> parentTagNameWithoutPrefix, ImmutableArray<KeyValuePair<string, string>> tagAttributes, out bool caseInsensitiveMatch)
+    {
+        caseInsensitiveMatch = false;
+
+        foreach (var rule in tagMatchingRules)
+        {
+            // We have to match parent tag and attributes regardless, so check them first and exit early if there is a fail
+            if (!TagHelperMatchingConventions.SatisfiesParentTag(parentTagNameWithoutPrefix, rule) ||
+               !TagHelperMatchingConventions.SatisfiesAttributes(tagAttributes, rule))
+            {
+                return false;
+            }
+
+            // Tag helpers that target catch-all will come back as satisfying the rule, but we don't want to use them for the code action
+            // so we have to check that ourselves
+            if (rule.TagName is null or TagHelperMatchingConventions.ElementCatchAllName)
+            {
+                return false;
+            }
+            else if (TagHelperMatchingConventions.SatisfiesTagName(tagNameWithoutPrefix, rule))
+            {
+                // Nothing to do, just loop around to the next rule
+            }
+            else if (TagHelperMatchingConventions.SatisfiesTagName(tagNameWithoutPrefix, rule, StringComparison.OrdinalIgnoreCase))
+            {
+                // Because the code action will be fixing the casing of the tag, we don't need all the rules to be consistent.
+                caseInsensitiveMatch = true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static WorkspaceEdit CreateRenameTagEdit(RazorCodeActionContext context, IStartTagSyntaxNode startTag, string newTagName)
     {
         using var _ = ListPool<TextEdit>.GetPooledObject(out var textEdits);
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = context.Request.TextDocument.Uri };
@@ -243,7 +323,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         };
     }
 
-    private static bool IsTagUnknown(MarkupStartTagSyntax startTag, RazorCodeActionContext context)
+    private static bool IsTagUnknown(IStartTagSyntaxNode startTag, RazorCodeActionContext context)
     {
         foreach (var diagnostic in context.CodeDocument.GetCSharpDocument().Diagnostics)
         {
@@ -264,13 +344,14 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
 
     private class TagHelperPair
     {
-        public TagHelperDescriptor _short;
+        public readonly TagHelperDescriptor _short;
+        public readonly bool _caseInsensitiveMatch;
         public TagHelperDescriptor? _fullyQualified = null;
 
-        public TagHelperPair(TagHelperDescriptor @short, TagHelperDescriptor? fullyQualified = null)
+        public TagHelperPair(TagHelperDescriptor @short, bool caseInsensitiveMatch)
         {
             _short = @short;
-            _fullyQualified = fullyQualified;
+            _caseInsensitiveMatch = caseInsensitiveMatch;
         }
     }
 }

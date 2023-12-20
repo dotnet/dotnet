@@ -100,6 +100,14 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
             attribute.TypeName = typeof(string).FullName;
         });
 
+        var textComponent = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "TextTagHelper", "TestAssembly");
+        textComponent.TagMatchingRule(rule => rule.TagName = "Text");
+        textComponent.SetMetadata(
+            TypeName("Text"),
+            TypeNamespace("System"),
+            TypeNameIdentifier("Text"),
+            new(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch));
+
         var directiveAttribute1 = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "TestDirectiveAttribute", "TestAssembly");
         directiveAttribute1.TagMatchingRule(rule =>
         {
@@ -235,6 +243,7 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
             builder1WithRequiredParent.Build(),
             builder2.Build(),
             builder3.Build(),
+            textComponent.Build(),
             directiveAttribute1.Build(),
             directiveAttribute2.Build(),
             directiveAttribute3.Build(),

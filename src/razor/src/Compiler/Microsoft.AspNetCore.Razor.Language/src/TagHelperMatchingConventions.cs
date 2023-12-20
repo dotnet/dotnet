@@ -25,7 +25,7 @@ internal static class TagHelperMatchingConventions
                SatisfiesAttributes(tagAttributes, rule);
     }
 
-    public static bool SatisfiesTagName(ReadOnlySpan<char> tagNameWithoutPrefix, TagMatchingRuleDescriptor rule)
+    public static bool SatisfiesTagName(ReadOnlySpan<char> tagNameWithoutPrefix, TagMatchingRuleDescriptor rule, StringComparison? comparisonOverride = null)
     {
         if (tagNameWithoutPrefix.IsEmpty)
         {
@@ -39,7 +39,7 @@ internal static class TagHelperMatchingConventions
         }
 
         if (rule.TagName is not (null or ElementCatchAllName) &&
-            !tagNameWithoutPrefix.Equals(rule.TagName.AsSpan(), rule.GetComparison()))
+            !tagNameWithoutPrefix.Equals(rule.TagName.AsSpan(), comparisonOverride ?? rule.GetComparison()))
         {
             return false;
         }
@@ -86,10 +86,10 @@ internal static class TagHelperMatchingConventions
     {
         return SatisfiesBoundAttributeName(name.AsSpan(), descriptor) ||
                SatisfiesBoundAttributeIndexer(name.AsSpan(), descriptor) ||
-               GetSatifyingBoundAttributeWithParameter(name, descriptor, descriptor.Parameters) is not null;
+               GetSatisfyingBoundAttributeWithParameter(name, descriptor, descriptor.Parameters) is not null;
     }
 
-    private static BoundAttributeParameterDescriptor? GetSatifyingBoundAttributeWithParameter(
+    private static BoundAttributeParameterDescriptor? GetSatisfyingBoundAttributeWithParameter(
         string name,
         BoundAttributeDescriptor descriptor,
         ImmutableArray<BoundAttributeParameterDescriptor> boundAttributeParameters)
@@ -190,7 +190,7 @@ internal static class TagHelperMatchingConventions
         // First, check if we have a bound attribute descriptor that matches the parameter if it exists.
         foreach (var attribute in descriptor.BoundAttributes)
         {
-            boundAttributeParameter = GetSatifyingBoundAttributeWithParameter(name, attribute, attribute.Parameters);
+            boundAttributeParameter = GetSatisfyingBoundAttributeWithParameter(name, attribute, attribute.Parameters);
 
             if (boundAttributeParameter != null)
             {

@@ -210,7 +210,13 @@ jobs:
         echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk /vmr/.dotnet"
       fi
 
-      docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh $customPrepArgs
+      # Only use Docker stuff on Linux
+      if [[ -n "${{ parameters.container }}" ]]; then
+        docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh $customPrepArgs
+      else
+        cd $(sourcesPath)
+        ./prep.sh $customPrepArgs
+      fi
     displayName: Prep the Build
 
   - script: |
@@ -218,7 +224,7 @@ jobs:
       df -h
 
       # Allows Arcade to have access to the commit for the build
-      customRunArgs="-e BUILD_SOURCEVERSION"
+      customEnvVars="BUILD_SOURCEVERSION=$BUILD_SOURCEVERSION"
       customBuildArgs=
       if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
         customBuildArgs='--online'
@@ -239,20 +245,38 @@ jobs:
         customBuildArgs="$customBuildArgs --use-mono-runtime"
       fi
 
-      if [[ ! -z '${{ parameters.crossRootFs }}' || ! -z '${{ parameters.targetRid }}' ]]; then
+      if [[ -n "${{ parameters.container }}" ]]; then
+        useDocker=true
+      fi
+
+      if [[ ! -z '${{ parameters.targetRid }}' ]]; then
         extraBuildProperties="--"
+        customEnvVars="$customEnvVars CROSSCOMPILE=1"
+        extraBuildProperties="$extraBuildProperties /p:PortableBuild=true /p:DotNetBuildVertical=true"
       fi
 
       if [[ ! -z '${{ parameters.crossRootFs }}' ]]; then
-        customRunArgs="$customRunArgs -e CROSSCOMPILE=1 -e ROOTFS_DIR=${{ parameters.crossRootFs}}"
-        extraBuildProperties="$extraBuildProperties /p:PortableBuild=true /p:DotNetBuildVertical=true"
+        customEnvVars="$customEnvVars ROOTFS_DIR=${{ parameters.crossRootFs}}"
       fi
 
       if [[ ! -z '${{ parameters.targetRid }}' ]]; then
         extraBuildProperties="$extraBuildProperties /p:OverrideTargetRid=${{ parameters.targetRid }}"
       fi
 
-      docker run --rm -v "$(sourcesPath):/vmr" -w /vmr $customRunArgs ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) $customBuildArgs $extraBuildProperties
+      # Only use Docker stuff on Linux
+      if [[ "$useDocker" == "true" ]]; then
+        for envVar in $customEnvVars; do
+          customEnvVarsWithDockerSyntax="$customEnvVarsWithDockerSyntax -e $envVar"
+        done
+        docker run --rm -v "$(sourcesPath):/vmr" -w /vmr $customEnvVarsWithDockerSyntax ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) $customBuildArgs $extraBuildProperties
+      else
+        for envVar in $customEnvVars; do
+          customEnvVarsWithBashSyntax="$customEnvVarsWithBashSyntax export $envVar;"
+        done
+        cd $(sourcesPath)
+        eval $customEnvVarsWithBashSyntax
+        ./build.sh --clean-while-building $(additionalBuildArgs) $customBuildArgs $extraBuildProperties
+      fi
     displayName: Build
 
   # Don't run tests if overriding RID, we don't support that for now

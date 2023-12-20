@@ -34,6 +34,10 @@ parameters:
     name: NetCore-Public-XL
     demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
 
+  # Mac
+  poolMac:
+    vmImage: 'macos-12'
+
 stages:
 - stage: VMR_PoC_Build
   displayName: VMR PoC-Build
@@ -105,3 +109,39 @@ stages:
       withPreviousSDK: false             # 🚫
       crossRootFs: '/crossrootfs/arm64'  # 📝
       targetRid: 'linux-arm64'           # 📝
+
+  - template: ../jobs/vmr-build.yml
+    parameters:
+      # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
+      buildName: OSXCrossX64_Online_MsftSdk
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      vmrBranch: ${{ variables.VmrBranch }}
+      architecture: x64
+      pool:
+        vmImage: ${{ parameters.poolMac.vmImage }}
+      container: ''
+      buildFromArchive: false            # 🚫
+      enablePoison: false                # 🚫
+      excludeOmniSharpTests: true        # ✅
+      runOnline: true                    # ✅
+      useMonoRuntime: true               # ✅
+      withPreviousSDK: false             # 🚫
+      targetRid: 'osx-x64'               # 📝
+
+  - template: ../jobs/vmr-build.yml
+    parameters:
+      # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
+      buildName: OSXCrossArm64_Online_MsftSdk
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      vmrBranch: ${{ variables.VmrBranch }}
+      architecture: x64
+      pool:
+        vmImage: ${{ parameters.poolMac.vmImage }}
+      container: ''
+      buildFromArchive: false            # 🚫
+      enablePoison: false                # 🚫
+      excludeOmniSharpTests: true        # ✅
+      runOnline: true                    # ✅
+      useMonoRuntime: true               # ✅
+      withPreviousSDK: false             # 🚫
+      targetRid: 'osx-arm64'             # 📝

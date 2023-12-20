@@ -94,7 +94,8 @@ function highlight () {
   echo "${COLOR_CYAN}$FAILURE_PREFIX${1//${COLOR_RESET}/${COLOR_CYAN}}${COLOR_CLEAR}"
 }
 
-installer_dir=$(realpath "$scriptroot/../")
+# realpath is not available in macOS 12, try horrible-but-portable workaround
+installer_dir=$(cd "$scriptroot/../"; pwd -P)
 
 tmp_dir=''
 vmr_dir=''
@@ -238,7 +239,8 @@ set -e
 highlight 'Installing .NET, preparing the tooling..'
 source "$scriptroot/common/tools.sh"
 InitializeDotNetCli true
-dotnet=$(realpath "$scriptroot/../.dotnet/dotnet")
+dotnetDir=$( cd $scriptroot/../.dotnet/; pwd -P )
+dotnet=$dotnetDir/dotnet
 "$dotnet" tool restore
 
 highlight "Starting the synchronization of '$repository'.."

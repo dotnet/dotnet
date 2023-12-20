@@ -44,7 +44,7 @@ public class AddUsingsCodeActionProviderFactoryTest(ITestOutputHelper testOutput
         var docUri = new Uri("c:/path");
 
         // Act
-        var result = AddUsingsCodeActionProviderHelper.TryCreateAddUsingResolutionParams(fqn, docUri, out var @namespace, out var resolutionParams);
+        var result = AddUsingsCodeActionProviderHelper.TryCreateAddUsingResolutionParams(fqn, docUri, additionalEdit: null, out var @namespace, out var resolutionParams);
 
         // Assert
         Assert.True(result);

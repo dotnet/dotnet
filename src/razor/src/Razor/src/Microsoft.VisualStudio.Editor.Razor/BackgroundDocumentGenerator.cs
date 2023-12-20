@@ -375,7 +375,7 @@ internal class BackgroundDocumentGenerator : IProjectSnapshotChangeTrigger
 
             case ProjectChangeKind.ProjectRemoved:
                 {
-                    // ignore
+                    // No-op. We don't need to compile anything if the project is being removed
                     break;
                 }
 

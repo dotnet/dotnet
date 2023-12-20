@@ -8,6 +8,7 @@ using System.Composition;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
@@ -96,6 +97,14 @@ internal sealed class HoverInfoService : IHoverInfoService
         if (_htmlFactsService.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes, closingForwardSlashOrCloseAngleToken: out _) &&
             containingTagNameToken.Span.IntersectsWith(location.AbsoluteIndex))
         {
+            if (owner is MarkupStartTagSyntax or MarkupEndTagSyntax &&
+                containingTagNameToken.Content.Equals(SyntaxConstants.TextTagName, StringComparison.OrdinalIgnoreCase))
+            {
+                // It's possible for there to be a <Text> component that is in scope, and would be found by the GetTagHelperBinding
+                // call below, but a text tag, regardless of casing, inside C# code, is always just a text tag, not a component.
+                return null;
+            }
+
             // Hovering over HTML tag name
             var ancestors = owner.Ancestors().Where(n => n.SpanStart != ownerStart);
             var (parentTag, parentIsTagHelper) = _tagHelperFactsService.GetNearestAncestorTagInfo(ancestors);
