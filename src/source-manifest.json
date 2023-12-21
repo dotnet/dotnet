@@ -67,10 +67,10 @@
       "commitSha": "4c41df46be695cfe21a8f7ab584944c3c057b280"
     },
     {
-      "packageVersion": "17.10.0-preview-23615-03",
+      "packageVersion": "17.10.0-preview-23619-02",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "abc2f4620f6749289cafeed7c9a9a80eaeb38e28"
+      "commitSha": "5cf78584f998e524374758c5798b7054bf2595e9"
     },
     {
       "packageVersion": "6.9.0-preview.1.64",
