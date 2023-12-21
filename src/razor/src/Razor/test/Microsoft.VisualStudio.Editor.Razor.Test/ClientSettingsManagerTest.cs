@@ -150,5 +150,9 @@ public class ClientSettingsManagerTest(ITestOutputHelper testOutput) : ProjectSn
         {
             return _settings;
         }
+
+        public void Dispose()
+        {
+        }
     }
 }

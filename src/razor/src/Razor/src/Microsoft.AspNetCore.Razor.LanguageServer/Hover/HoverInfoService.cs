@@ -121,6 +121,11 @@ internal sealed class HoverInfoService : IHoverInfoService
                 // No matching tagHelpers, it's just HTML
                 return null;
             }
+            else if (binding.IsAttributeMatch)
+            {
+                // Hovered over a HTML tag name but the binding matches an attribute
+                return null;
+            }
             else
             {
                 Debug.Assert(binding.Descriptors.Any());

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
@@ -261,6 +262,61 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
         Assert.Null(delegatedParameters.ProvisionalTextEdit);
     }
 
+    [Theory]
+    [InlineData("$$", true)]
+    [InlineData("<$$", true)]
+    [InlineData(">$$", true)]
+    [InlineData("$$<", true)]
+    [InlineData("$$>", false)] // This is the only case that returns false but should return true. It's unlikely a user will type this, but it's complex to solve. Consider this a known and acceptable bug.
+    [InlineData("<div>$$</div>", true)]
+    [InlineData("$$<div></div>", true)]
+    [InlineData("<div></div>$$", true)]
+    [InlineData("<$$div></div>", false)]
+    [InlineData("<div$$></div>", false)]
+    [InlineData("<div class=\"$$\"></div>", false)]
+    [InlineData("<div><$$/div>", false)]
+    [InlineData("<div></div$$>", false)]
+    public async Task ShouldIncludeSnippets(string input, bool shouldIncludeSnippets)
+    {
+        var clientConnection = new TestClientConnection();
+
+        TestFileMarkupParser.GetPosition(input, out var code, out var cursorPosition);
+        var codeDocument = CreateCodeDocument(code);
+        var documentContext = TestDocumentContext.From("C:/path/to/file.cshtml", codeDocument, hostDocumentVersion: 1337);
+
+        var documentMappingService = new TestDocumentMappingService()
+        {
+            LanguageKind = RazorLanguageKind.Html,
+            GeneratedPosition = new LinePosition(0, cursorPosition)
+        };
+
+        var completionProvider = new DelegatedCompletionListProvider(
+            Array.Empty<DelegatedCompletionResponseRewriter>(),
+            documentMappingService,
+            clientConnection,
+            new CompletionListCache());
+
+        var requestSent = false;
+        clientConnection.RequestSent += (s, o) =>
+        {
+            requestSent = true;
+
+            var @params = Assert.IsType<DelegatedCompletionParams>(o);
+            Assert.Equal(shouldIncludeSnippets, @params.ShouldIncludeSnippets);
+        };
+
+        var completionContext = new VSInternalCompletionContext()
+        {
+            InvokeKind = VSInternalCompletionInvokeKind.Typing,
+            TriggerKind = CompletionTriggerKind.TriggerCharacter,
+            TriggerCharacter = ".",
+        };
+
+        await completionProvider.GetCompletionListAsync(cursorPosition, completionContext, documentContext, _clientCapabilities, correlationId: Guid.Empty, DisposalToken);
+
+        Assert.True(requestSent);
+    }
+
     private class TestResponseRewriter : DelegatedCompletionResponseRewriter
     {
         private readonly int _order;
@@ -319,5 +375,30 @@ public class DelegatedCompletionListProviderTest : LanguageServerTestBase
             absoluteIndex: cursorPosition, completionContext, documentContext, _clientCapabilities, correlationId: Guid.Empty, cancellationToken: DisposalToken);
 
         return completionList;
+    }
+
+    private class TestClientConnection(object response = null) : IClientConnection
+    {
+        public event EventHandler<object> NotificationSent;
+        public event EventHandler<object> RequestSent;
+
+        private object _response = response;
+
+        public Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
+        {
+            NotificationSent?.Invoke(this, @params);
+            return Task.CompletedTask;
+        }
+
+        public Task SendNotificationAsync(string method, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
+        {
+            RequestSent?.Invoke(this, @params);
+            return Task.FromResult((TResponse)_response);
+        }
     }
 }

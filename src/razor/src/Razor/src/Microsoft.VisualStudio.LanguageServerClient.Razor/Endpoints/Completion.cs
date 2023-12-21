@@ -309,6 +309,11 @@ internal partial class RazorCustomMessageTarget
 
     private void AddSnippetCompletions(DelegatedCompletionParams request, ref PooledArrayBuilder<CompletionItem> builder)
     {
+        if (!request.ShouldIncludeSnippets)
+        {
+            return;
+        }
+
         // Temporary fix: snippets are broken in CSharp. We're investigating
         // but this is very disruptive. This quick fix unblocks things.
         // TODO: Add an option to enable this. 

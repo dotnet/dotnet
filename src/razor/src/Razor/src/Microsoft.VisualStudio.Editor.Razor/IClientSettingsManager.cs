@@ -19,7 +19,7 @@ internal interface IClientSettingsManager
     ClientSettings GetClientSettings();
 }
 
-internal interface IAdvancedSettingsStorage
+internal interface IAdvancedSettingsStorage : IDisposable
 {
     ClientAdvancedSettings GetAdvancedSettings();
 
