@@ -316,15 +316,15 @@ namespace NuGet.CommandLine.Test
         /// <param name="directory">The directory of the created file.</param>
         /// <param name="fileName">The name of the created file.</param>
         /// <param name="fileContent">The content of the created file.</param>
-        public static void CreateFile(string directory, string fileName, string fileContent)
+        public static string CreateFile(string directory, string fileName, string fileContent)
         {
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
+            var fileInfo = new FileInfo(Path.Combine(directory, fileName));
 
-            var fileFullName = Path.Combine(directory, fileName);
-            CreateFile(fileFullName, fileContent);
+            fileInfo.Directory.Create();
+
+            CreateFile(fileInfo.FullName, fileContent);
+
+            return fileInfo.FullName;
         }
 
         public static void CreateFile(string fileFullName, string fileContent)
