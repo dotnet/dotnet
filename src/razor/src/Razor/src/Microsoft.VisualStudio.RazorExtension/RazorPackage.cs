@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
@@ -47,6 +48,8 @@ internal sealed class RazorPackage : AsyncPackage
     internal static readonly Guid GuidSyntaxVisualizerMenuCmdSet = new Guid(GuidSyntaxVisualizerMenuCmdSetString);
     internal const uint CmdIDRazorSyntaxVisualizer = 0x101;
 
+    private OptionsStorage? _optionsStorage = null;
+
     protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
@@ -76,16 +79,23 @@ internal sealed class RazorPackage : AsyncPackage
             mcs.AddCommand(menuToolWin);
         }
 
-        CreateSnippetService();
+        var componentModel = (IComponentModel)GetGlobalService(typeof(SComponentModel));
+        _optionsStorage = componentModel.GetService<OptionsStorage>();
+        CreateSnippetService(componentModel);
     }
 
-    private SnippetService CreateSnippetService()
+    protected override void Dispose(bool disposing)
     {
-        var componentModel = (IComponentModel)GetGlobalService(typeof(SComponentModel));
+        base.Dispose(disposing);
+        _optionsStorage?.Dispose();
+        _optionsStorage = null;
+    }
+
+    private SnippetService CreateSnippetService(IComponentModel componentModel)
+    {
         var joinableTaskContext = componentModel.GetService<JoinableTaskContext>();
         var cache = componentModel.GetService<SnippetCache>();
-        var optionsStorage = componentModel.GetService<OptionsStorage>();
-        return new SnippetService(joinableTaskContext.Factory, this, cache, optionsStorage);
+        return new SnippetService(joinableTaskContext.Factory, this, cache, _optionsStorage.AssumeNotNull());
     }
 
     /// <summary>

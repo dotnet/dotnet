@@ -126,4 +126,11 @@ internal static class RazorSyntaxFacts
 
         return null;
     }
+
+    public static bool IsAnyStartTag(SyntaxNode n)
+        => n.Kind is SyntaxKind.MarkupStartTag or SyntaxKind.MarkupTagHelperStartTag;
+            
+
+    public static bool IsAnyEndTag(SyntaxNode n)
+        => n.Kind is SyntaxKind.MarkupEndTag or SyntaxKind.MarkupTagHelperEndTag;
 }

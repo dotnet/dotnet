@@ -9,6 +9,9 @@ using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Settings;
+using Microsoft.Internal.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Utilities.UnifiedSettings;
+using System.Linq;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Options;
 
@@ -19,49 +22,43 @@ internal class OptionsStorage : IAdvancedSettingsStorage
 {
     private readonly WritableSettingsStore _writableSettingsStore;
     private readonly ITelemetryReporter _telemetryReporter;
-
-    private const string Collection = "Razor";
-    private const string FormatOnTypeName = "FormatOnType";
-    private const string AutoClosingTagsName = "AutoClosingTags";
-    private const string AutoInsertAttributeQuotesName = "AutoInsertAttributeQuotes";
-    private const string ColorBackgroundName = "ColorBackground";
-    private const string CommitElementsWithSpaceName = "CommitElementsWithSpace";
-    private const string SnippetsName = "Snippets";
+    private readonly ISettingsReader _unifiedSettingsReader;
+    private readonly IDisposable _unifiedSettingsSubscription;
 
     public bool FormatOnType
     {
-        get => GetBool(FormatOnTypeName, defaultValue: true);
-        set => SetBool(FormatOnTypeName, value);
+        get => GetBool(SettingsNames.FormatOnType.LegacyName, defaultValue: true);
+        set => SetBool(SettingsNames.FormatOnType.LegacyName, value);
     }
 
     public bool AutoClosingTags
     {
-        get => GetBool(AutoClosingTagsName, defaultValue: true);
-        set => SetBool(AutoClosingTagsName, value);
+        get => GetBool(SettingsNames.AutoClosingTags.LegacyName, defaultValue: true);
+        set => SetBool(SettingsNames.AutoClosingTags.LegacyName, value);
     }
 
     public bool AutoInsertAttributeQuotes
     {
-        get => GetBool(AutoInsertAttributeQuotesName, defaultValue: true);
-        set => SetBool(AutoInsertAttributeQuotesName, value);
+        get => GetBool(SettingsNames.AutoInsertAttributeQuotes.LegacyName, defaultValue: true);
+        set => SetBool(SettingsNames.AutoInsertAttributeQuotes.LegacyName, value);
     }
 
     public bool ColorBackground
     {
-        get => GetBool(ColorBackgroundName, defaultValue: false);
-        set => SetBool(ColorBackgroundName, value);
+        get => GetBool(SettingsNames.ColorBackground.LegacyName, defaultValue: false);
+        set => SetBool(SettingsNames.ColorBackground.LegacyName, value);
     }
 
     public bool CommitElementsWithSpace
     {
-        get => GetBool(CommitElementsWithSpaceName, defaultValue: true);
-        set => SetBool(CommitElementsWithSpaceName, value);
+        get => GetBool(SettingsNames.CommitElementsWithSpace.LegacyName, defaultValue: true);
+        set => SetBool(SettingsNames.CommitElementsWithSpace.LegacyName, value);
     }
 
     public SnippetSetting Snippets
     {
-        get => (SnippetSetting)GetInt(SnippetsName, (int)SnippetSetting.All);
-        set => SetInt(SnippetsName, (int)value);
+        get => (SnippetSetting)GetInt(SettingsNames.Snippets.LegacyName, (int)SnippetSetting.All);
+        set => SetInt(SettingsNames.Snippets.LegacyName, (int)value);
     }
 
     [ImportingConstructor]
@@ -70,8 +67,12 @@ internal class OptionsStorage : IAdvancedSettingsStorage
         var shellSettingsManager = new ShellSettingsManager(vsServiceProvider);
         _writableSettingsStore = shellSettingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
 
-        _writableSettingsStore.CreateCollection(Collection);
+        _writableSettingsStore.CreateCollection(SettingsNames.LegacyCollection);
         _telemetryReporter = telemetryReporter;
+
+        var settingsManager = vsServiceProvider.GetService<SVsUnifiedSettingsManager, Utilities.UnifiedSettings.ISettingsManager>();
+        _unifiedSettingsReader = settingsManager.GetReader();
+        _unifiedSettingsSubscription = _unifiedSettingsReader.SubscribeToChanges(OnUnifiedSettingsChanged, SettingsNames.AllSettings.Select(s => s.UnifiedName).ToArray());
     }
 
     public event EventHandler<ClientAdvancedSettingsChangedEventArgs>? Changed;
@@ -80,9 +81,9 @@ internal class OptionsStorage : IAdvancedSettingsStorage
 
     public bool GetBool(string name, bool defaultValue)
     {
-        if (_writableSettingsStore.PropertyExists(Collection, name))
+        if (_writableSettingsStore.PropertyExists(SettingsNames.LegacyCollection, name))
         {
-            return _writableSettingsStore.GetBoolean(Collection, name);
+            return _writableSettingsStore.GetBoolean(SettingsNames.LegacyCollection, name);
         }
 
         return defaultValue;
@@ -90,7 +91,7 @@ internal class OptionsStorage : IAdvancedSettingsStorage
 
     public void SetBool(string name, bool value)
     {
-        _writableSettingsStore.SetBoolean(Collection, name, value);
+        _writableSettingsStore.SetBoolean(SettingsNames.LegacyCollection, name, value);
         _telemetryReporter.ReportEvent("OptionChanged", Severity.Normal, new Property(name, value));
 
         NotifyChange();
@@ -98,9 +99,9 @@ internal class OptionsStorage : IAdvancedSettingsStorage
 
     public int GetInt(string name, int defaultValue)
     {
-        if (_writableSettingsStore.PropertyExists(Collection, name))
+        if (_writableSettingsStore.PropertyExists(SettingsNames.LegacyCollection, name))
         {
-            return _writableSettingsStore.GetInt32(Collection, name);
+            return _writableSettingsStore.GetInt32(SettingsNames.LegacyCollection, name);
         }
 
         return defaultValue;
@@ -108,7 +109,7 @@ internal class OptionsStorage : IAdvancedSettingsStorage
 
     public void SetInt(string name, int value)
     {
-        _writableSettingsStore.SetInt32(Collection, name, value);
+        _writableSettingsStore.SetInt32(SettingsNames.LegacyCollection, name, value);
         _telemetryReporter.ReportEvent("OptionChanged", Severity.Normal, new Property(name, value));
 
         NotifyChange();
@@ -117,5 +118,15 @@ internal class OptionsStorage : IAdvancedSettingsStorage
     private void NotifyChange()
     {
         Changed?.Invoke(this, new ClientAdvancedSettingsChangedEventArgs(GetAdvancedSettings()));
+    }
+
+    private void OnUnifiedSettingsChanged(SettingsUpdate update)
+    {
+        NotifyChange();
+    }
+
+    public void Dispose()
+    {
+        _unifiedSettingsSubscription.Dispose();
     }
 }

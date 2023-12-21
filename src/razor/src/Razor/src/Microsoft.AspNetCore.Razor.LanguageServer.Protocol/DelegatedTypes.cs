@@ -47,6 +47,7 @@ internal record DelegatedCompletionParams(
     RazorLanguageKind ProjectedKind,
     VSInternalCompletionContext Context,
     TextEdit? ProvisionalTextEdit,
+    bool ShouldIncludeSnippets,
     Guid CorrelationId) : IDelegatedParams;
 
 internal record DelegatedMapCodeParams(
