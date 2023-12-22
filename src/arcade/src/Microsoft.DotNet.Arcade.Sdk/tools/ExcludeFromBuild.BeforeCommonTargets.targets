@@ -26,6 +26,13 @@
           where the BeforeCommonTargets hook is not used (see https://github.com/dotnet/arcade/issues/2676).
           In that case, Sdk.targets imports it explicitly. -->
 
+  <PropertyGroup Condition="'$(IsTestProject)' == 'true' or '$(IsTestUtilityProject)' == 'true'">
+    <!-- Exclude test projects from source-build by default -->
+    <ExcludeFromSourceBuild Condition="'$(ExcludeFromSourceBuild)' == ''">true</ExcludeFromSourceBuild>
+    <!-- Vertical Build PoC. Exclude test projects. -->
+    <ExcludeFromVerticalBuild Condition="'$(ExcludeFromVerticalBuild)' == ''">true</ExcludeFromVerticalBuild>
+  </PropertyGroup>
+
   <!--
     If a project specifies ExcludeFromSourceBuild=true or ExcludeFromVerticalBuild=true during a source build/vertical
     build suppress all targets and emulate a no-op (empty common targets like Restore, Build, Pack, etc.).
