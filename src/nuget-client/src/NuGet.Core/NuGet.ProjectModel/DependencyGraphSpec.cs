@@ -253,8 +253,7 @@ namespace NuGet.ProjectModel
                         case "projects":
                             jsonReader.ReadObject(projectsPropertyName =>
                             {
-                                PackageSpec packageSpec = JsonPackageSpecReader.GetPackageSpec(jsonReader, path);
-
+                                PackageSpec packageSpec = JsonPackageSpecReader.GetPackageSpec(jsonReader, name: null, path, EnvironmentVariableWrapper.Instance);
                                 dgspec._projects.Add(projectsPropertyName, packageSpec);
                             });
                             break;
@@ -308,7 +307,7 @@ namespace NuGet.ProjectModel
             }
         }
 
-        private void Write(RuntimeModel.IObjectWriter writer, bool hashing, Action<PackageSpec, RuntimeModel.IObjectWriter, bool> writeAction)
+        private void Write(RuntimeModel.IObjectWriter writer, bool hashing, Action<PackageSpec, RuntimeModel.IObjectWriter, bool, IEnvironmentVariableReader> writeAction)
         {
             writer.WriteObjectStart();
             writer.WriteNameValue("format", Version);
@@ -332,7 +331,7 @@ namespace NuGet.ProjectModel
                 var project = pair.Value;
 
                 writer.WriteObjectStart(project.RestoreMetadata.ProjectUniqueName);
-                writeAction.Invoke(project, writer, hashing);
+                writeAction.Invoke(project, writer, hashing, EnvironmentVariableWrapper.Instance);
                 writer.WriteObjectEnd();
             }
 

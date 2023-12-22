@@ -33,6 +33,7 @@ namespace NuGet.Credentials.Test
         public string ProxyPassword { get; }
         public bool PluginLaunched { get; }
         public bool CanShowDialog { get; }
+        public bool MessageCodeNotFound { get; }
 
         internal TestExpectation(
             IEnumerable<OperationClaim> operationClaims,
@@ -45,7 +46,8 @@ namespace NuGet.Credentials.Test
             string proxyUsername = null,
             string proxyPassword = null,
             bool pluginLaunched = true,
-            bool canShowDialog = true)
+            bool canShowDialog = true,
+            bool messageCodeNotFound = false)
         {
             OperationClaims = operationClaims;
             ClientConnectionOptions = connectionOptions;
@@ -58,6 +60,7 @@ namespace NuGet.Credentials.Test
             ProxyUsername = proxyUsername;
             PluginLaunched = pluginLaunched;
             CanShowDialog = canShowDialog;
+            MessageCodeNotFound = messageCodeNotFound;
         }
     }
 
@@ -139,6 +142,21 @@ namespace NuGet.Credentials.Test
                         It.Is<GetAuthenticationCredentialsRequest>(e => e.Uri.Equals(expectations.Uri) && e.CanShowDialog.Equals(expectations.CanShowDialog)),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new GetAuthenticationCredentialsResponse(expectations.AuthenticationUsername, expectations.AuthenticationPassword, message: null, authenticationTypes: null, responseCode: MessageResponseCode.Success));
+            }
+
+            if (_expectations.MessageCodeNotFound)
+            {
+                _connection.Setup(x => x.SendRequestAndReceiveResponseAsync<SetLogLevelRequest, SetLogLevelResponse>(
+                        It.Is<MessageMethod>(m => m == MessageMethod.SetLogLevel),
+                        It.IsAny<SetLogLevelRequest>(),
+                        It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(new SetLogLevelResponse(MessageResponseCode.Success));
+
+                _connection.Setup(x => x.SendRequestAndReceiveResponseAsync<GetAuthenticationCredentialsRequest, GetAuthenticationCredentialsResponse>(
+                        It.Is<MessageMethod>(m => m == MessageMethod.GetAuthenticationCredentials),
+                        It.Is<GetAuthenticationCredentialsRequest>(e => e.Uri.Equals(expectations.Uri) && e.CanShowDialog.Equals(expectations.CanShowDialog)),
+                        It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(new GetAuthenticationCredentialsResponse(expectations.AuthenticationUsername, expectations.AuthenticationPassword, message: null, authenticationTypes: null, responseCode: MessageResponseCode.NotFound));
             }
 
             PluginManager = new PluginManager(

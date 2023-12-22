@@ -353,6 +353,55 @@ namespace NuGet.Protocol.Tests
         }
 
         [Fact]
+        public async Task SendAsync_WhenCredentialServiceReturnsNullThenTheHandlerAllowsRetriesUpToMaxAuthRetriesValue_Returns401Async()
+        {
+            // Arrange
+            var packageSource = new PackageSource("http://package.source.test");
+            var clientHandler = new HttpClientHandler();
+
+            var credentialService = Mock.Of<ICredentialService>();
+
+            int retryCount = 0;
+            var innerHandler = new LambdaMessageHandler(
+                _ =>
+                {
+                    retryCount++;
+                    return new HttpResponseMessage(HttpStatusCode.Unauthorized);
+                });
+
+            var handler = new HttpSourceAuthenticationHandler(packageSource, clientHandler, credentialService)
+            {
+                InnerHandler = innerHandler
+            };
+
+            using (var client = new HttpClient(handler))
+            {
+                for (int i = 0; i < HttpSourceAuthenticationHandler.MaxAuthRetries + 1; i++)
+                {
+                    // Act
+                    var response = await client.SendAsync(request: new HttpRequestMessage(HttpMethod.Get, "http://foo"), CancellationToken.None);
+
+                    // Assert
+                    Assert.NotNull(response);
+                    Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+                }
+            }
+
+            // Assert
+            Assert.Equal(HttpSourceAuthenticationHandler.MaxAuthRetries + 1, retryCount);
+
+            Mock.Get(credentialService)
+                .Verify(
+                    x => x.GetCredentialsAsync(
+                        packageSource.SourceUri,
+                        It.IsAny<IWebProxy>(),
+                        CredentialRequestType.Unauthorized,
+                        It.IsAny<string>(),
+                        It.IsAny<CancellationToken>()),
+                    Times.Exactly(HttpSourceAuthenticationHandler.MaxAuthRetries));
+        }
+
+        [Fact]
         public async Task SendAsync_WhenCredentialServiceThrows_Returns401()
         {
             // Arrange
