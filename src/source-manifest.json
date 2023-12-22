@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.23620.1",
+      "packageVersion": "9.0.0-beta.23620.7",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "17dff488fa9de3f27edf2e42516d06d538ed3625"
+      "commitSha": "c0c425d9b85b125bbaf59581639355f1d2b99149"
     },
     {
       "packageVersion": "8.0.0-preview.1.23557.2",
@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "69c37da6c57b5948a90f2f88be716f6e6bcdfccc"
+      "commitSha": "5fc08a8fe76c562e91e23e84b39640f2ed019a9a"
     },
     {
       "packageVersion": "17.10.0-preview-23619-02",
@@ -85,10 +85,10 @@
       "commitSha": "1276dc52e56d73457eec6ae3241444d9ae408ac9"
     },
     {
-      "packageVersion": "4.9.0-3.23619.3",
+      "packageVersion": "4.9.0-3.23620.1",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "0caa9d162683c44645ccc6e1645ce4a01acfd8dc"
+      "commitSha": "67ef2fb7409e0ab54ac627d6ac525069172ed494"
     },
     {
       "packageVersion": "3.11.0-beta1.23615.1",
@@ -97,10 +97,10 @@
       "commitSha": "5dc99c6249a4cf845fbdcc367641c1b32347b85a"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.23619.7",
+      "packageVersion": "9.0.0-alpha.1.23621.3",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "6f4f268d0b46fa5dbcee46b7220919defb148127"
+      "commitSha": "817b4ee1f0c6add28bafd5ddcdcd74edf43b81f9"
     },
     {
       "packageVersion": "9.0.0-preview.23613.1",
@@ -109,10 +109,10 @@
       "commitSha": "0589a90cb11bb1daf9c05f20c1dc2d78c49075f2"
     },
     {
-      "packageVersion": "9.0.100-alpha.1.23620.10",
+      "packageVersion": "9.0.100-alpha.1.23621.4",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "a3ea16aa44c593c8ec082b4ec83736b96c15ad55"
+      "commitSha": "b81a00ccfb5fcbfc90b810107f08e8a30febf86a"
     },
     {
       "packageVersion": "9.0.0-alpha.1.23611.2",
@@ -127,10 +127,10 @@
       "commitSha": "c49c1f4e461b4b57d6d3449671942786bf8fcbb6"
     },
     {
-      "packageVersion": "9.0.0-beta.23618.2",
+      "packageVersion": "9.0.0-beta.23619.2",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "bf2139a11751220e21b5a88c8cacc4e0b26dc225"
+      "commitSha": "43bb06e32486db1ceed8aa8765c75540a416296d"
     },
     {
       "packageVersion": "2.1.0-beta.23608.1",
