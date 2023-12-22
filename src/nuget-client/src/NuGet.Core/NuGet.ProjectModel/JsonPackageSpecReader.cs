@@ -60,7 +60,7 @@ namespace NuGet.ProjectModel
             using (var streamReader = new StreamReader(stream))
             using (var jsonReader = new JsonTextReader(streamReader))
             {
-                return GetPackageSpec(jsonReader, name, packageSpecPath, snapshotValue);
+                return GetPackageSpec(jsonReader, name, packageSpecPath, EnvironmentVariableWrapper.Instance, snapshotValue);
             }
         }
 
@@ -70,16 +70,11 @@ namespace NuGet.ProjectModel
             using (var stringReader = new StringReader(rawPackageSpec.ToString()))
             using (var jsonReader = new JsonTextReader(stringReader))
             {
-                return GetPackageSpec(jsonReader, name, packageSpecPath, snapshotValue);
+                return GetPackageSpec(jsonReader, name, packageSpecPath, EnvironmentVariableWrapper.Instance, snapshotValue);
             }
         }
 
-        internal static PackageSpec GetPackageSpec(JsonTextReader jsonReader, string packageSpecPath)
-        {
-            return GetPackageSpec(jsonReader, name: null, packageSpecPath, snapshotValue: null);
-        }
-
-        private static PackageSpec GetPackageSpec(JsonTextReader jsonReader, string name, string packageSpecPath, string snapshotValue)
+        internal static PackageSpec GetPackageSpec(JsonTextReader jsonReader, string name, string packageSpecPath, IEnvironmentVariableReader environmentVariableReader, string snapshotValue = null)
         {
             var packageSpec = new PackageSpec();
 
@@ -156,7 +151,7 @@ namespace NuGet.ProjectModel
 #pragma warning restore CS0612 // Type or member is obsolete
 
                     case "restore":
-                        ReadMSBuildMetadata(jsonReader, packageSpec);
+                        ReadMSBuildMetadata(jsonReader, packageSpec, environmentVariableReader);
                         break;
 
                     case "runtimes":
@@ -899,7 +894,7 @@ namespace NuGet.ProjectModel
             }
         }
 
-        private static void ReadMSBuildMetadata(JsonTextReader jsonReader, PackageSpec packageSpec)
+        private static void ReadMSBuildMetadata(JsonTextReader jsonReader, PackageSpec packageSpec, IEnvironmentVariableReader environmentVariableReader)
         {
             var centralPackageVersionsManagementEnabled = false;
             var centralPackageFloatingVersionsEnabled = false;
@@ -927,6 +922,8 @@ namespace NuGet.ProjectModel
             var validateRuntimeAssets = false;
             WarningProperties warningProperties = null;
             RestoreAuditProperties auditProperties = null;
+            bool useMacros = MSBuildStringUtility.IsTrue(environmentVariableReader.GetEnvironmentVariable(MacroStringsUtility.NUGET_ENABLE_EXPERIMENTAL_MACROS));
+            var userSettingsDirectory = NuGetEnvironment.GetFolderPath(NuGetFolderPath.UserSettingsDirectory);
 
             jsonReader.ReadObject(propertyName =>
             {
@@ -950,6 +947,7 @@ namespace NuGet.ProjectModel
 
                     case "configFilePaths":
                         configFilePaths = jsonReader.ReadStringArrayAsList();
+                        ExtractMacros(configFilePaths, userSettingsDirectory, useMacros);
                         break;
 
                     case "crossTargeting":
@@ -958,6 +956,7 @@ namespace NuGet.ProjectModel
 
                     case "fallbackFolders":
                         fallbackFolders = jsonReader.ReadStringArrayAsList();
+                        ExtractMacros(fallbackFolders, userSettingsDirectory, useMacros);
                         break;
 
                     case "files":
@@ -990,7 +989,7 @@ namespace NuGet.ProjectModel
                         break;
 
                     case "packagesPath":
-                        packagesPath = jsonReader.ReadNextTokenAsString();
+                        packagesPath = ExtractMacro(jsonReader.ReadNextTokenAsString(), userSettingsDirectory, useMacros);
                         break;
 
                     case "projectJsonPath":
@@ -1016,7 +1015,7 @@ namespace NuGet.ProjectModel
                         break;
 
                     case "projectUniqueName":
-                        projectUniqueName = jsonReader.ReadNextTokenAsString();
+                        projectUniqueName = ExtractMacro(jsonReader.ReadNextTokenAsString(), userSettingsDirectory, useMacros);
                         break;
 
                     case "restoreLockProperties":
@@ -1203,6 +1202,23 @@ namespace NuGet.ProjectModel
             }
 
             packageSpec.RestoreMetadata = msbuildMetadata;
+        }
+
+        private static string ExtractMacro(string value, string userSettingsDirectory, bool useMacros)
+        {
+            if (useMacros)
+            {
+                return MacroStringsUtility.ExtractMacro(value, userSettingsDirectory, MacroStringsUtility.UserMacro);
+            }
+            return value;
+        }
+
+        private static void ExtractMacros(List<string> paths, string userSettingsDirectory, bool useMacros)
+        {
+            if (useMacros)
+            {
+                MacroStringsUtility.ExtractMacros(paths, userSettingsDirectory, MacroStringsUtility.UserMacro);
+            }
         }
 
         private static bool ReadNextTokenAsBoolOrFalse(JsonTextReader jsonReader, string filePath)

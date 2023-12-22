@@ -186,11 +186,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@0c48954](https://github.com/dotnet/fsharp/commit/0c489541068f311e23b582410c1df3ff86f1d526)*
 - `src/installer`  
-*[dotnet/installer@5fc08a8](https://github.com/dotnet/installer/commit/5fc08a8fe76c562e91e23e84b39640f2ed019a9a)*
+*[dotnet/installer@2d1e861](https://github.com/dotnet/installer/commit/2d1e8610baca9bd57e6ff3a8fea2fdf793f185b0)*
 - `src/msbuild`  
 *[dotnet/msbuild@5cf7858](https://github.com/dotnet/msbuild/commit/5cf78584f998e524374758c5798b7054bf2595e9)*
 - `src/nuget-client`  
-*[nuget/nuget.client@cabdb98](https://github.com/nuget/nuget.client/commit/cabdb9886f3bc99c7a342ccc1661d393b14a0d1d)*
+*[nuget/nuget.client@95f6e0c](https://github.com/nuget/nuget.client/commit/95f6e0c8b7bd627862a08dcf60f43397f42723ca)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/commit/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
@@ -204,7 +204,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@0589a90](https://github.com/dotnet/scenario-tests/commit/0589a90cb11bb1daf9c05f20c1dc2d78c49075f2)*
 - `src/sdk`  
-*[dotnet/sdk@b81a00c](https://github.com/dotnet/sdk/commit/b81a00ccfb5fcbfc90b810107f08e8a30febf86a)*
+*[dotnet/sdk@b829be3](https://github.com/dotnet/sdk/commit/b829be3d17e0427c8f26ed2fbf9c2b73426f9c54)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@bc55508](https://github.com/dotnet/source-build-externals/commit/bc555088c6b4862ad0b93fbc245ef0628e661256)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -242,7 +242,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/test-templates`  
 *[dotnet/test-templates@ec54b2c](https://github.com/dotnet/test-templates/commit/ec54b2c1553db0a544ef0e8595be2318fc12e08d)*
 - `src/vstest`  
-*[microsoft/vstest@37a9284](https://github.com/microsoft/vstest/commit/37a9284cea77fefcdf1f9b023bdb1eaed080e3d8)*
+*[microsoft/vstest@f33b3e4](https://github.com/microsoft/vstest/commit/f33b3e4ec550c48607057bf051574c048d3ef7b6)*
 - `src/windowsdesktop`  
 *[dotnet/windowsdesktop@5a03532](https://github.com/dotnet/windowsdesktop/commit/5a03532e727957d135370ee3ed6f01dbf5a46b69)*
 - `src/winforms`  
