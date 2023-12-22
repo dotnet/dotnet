@@ -256,17 +256,11 @@ namespace NuGet.Protocol
                 promptCredentials = await _credentialService
                     .GetCredentialsAsync(_packageSource.SourceUri, proxy, type, message, token);
 
-                if (promptCredentials == null)
-                {
-                    // If this is the case, this means none of the credential providers were able to
-                    // handle the credential request or no credentials were available for the
-                    // endpoint.
-                    authState.Block();
-                }
-                else
-                {
-                    authState.Increment();
-                }
+                // If promptCredentials == null means none of the credential providers were able to
+                // handle the credential request or no credentials were available for the
+                // endpoint, a retry might fix the issue so we increment the authState.
+
+                authState.Increment();
             }
             catch (OperationCanceledException)
             {

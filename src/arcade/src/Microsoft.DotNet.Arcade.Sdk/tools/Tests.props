@@ -33,15 +33,4 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkVersion)" IsImplicitlyDefined="true" />
   </ItemGroup>
 
-  <!-- The IsTestUtilityProject property is supposed to be set manually for test utility projects, there's no auto-detection. -->
-  <PropertyGroup Condition="'$(IsTestProject)' == 'true' or '$(IsTestUtilityProject)' == 'true'">
-    <!-- Treat test assemblies as non-shipping (do not publish or sign them). -->
-    <IsShipping Condition="'$(IsShipping)' == ''">false</IsShipping>
-
-    <!-- exclude test projects from source-build by default -->
-    <ExcludeFromSourceBuild Condition="'$(ExcludeFromSourceBuild)' == ''">true</ExcludeFromSourceBuild>
-    <!-- Vertical Build PoC. Exclude test projects. -->
-    <ExcludeFromVerticalBuild Condition="'$(ExcludeFromVerticalBuild)' == ''">true</ExcludeFromVerticalBuild>
-  </PropertyGroup>
-
 </Project>

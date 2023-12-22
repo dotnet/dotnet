@@ -28,10 +28,10 @@ namespace NuGet.ProjectModel
         /// <param name="writer">An <c>NuGet.Common.IObjectWriter</c> instance.</param>
         public static void Write(PackageSpec packageSpec, IObjectWriter writer)
         {
-            Write(packageSpec, writer, hashing: false);
+            Write(packageSpec, writer, hashing: false, EnvironmentVariableWrapper.Instance);
         }
 
-        internal static void Write(PackageSpec packageSpec, IObjectWriter writer, bool hashing)
+        internal static void Write(PackageSpec packageSpec, IObjectWriter writer, bool hashing, IEnvironmentVariableReader environmentVariableReader)
         {
             if (packageSpec == null)
             {
@@ -59,7 +59,7 @@ namespace NuGet.ProjectModel
             SetDictionaryValue(writer, "packInclude", packageSpec.PackInclude);
             SetPackOptions(writer, packageSpec);
 #pragma warning restore CS0612 // Type or member is obsolete
-            SetMSBuildMetadata(writer, packageSpec);
+            SetMSBuildMetadata(writer, packageSpec, environmentVariableReader);
 #pragma warning disable CS0612 // Type or member is obsolete
             SetDictionaryValues(writer, "scripts", packageSpec.Scripts);
 #pragma warning restore CS0612 // Type or member is obsolete
@@ -123,7 +123,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// This method sets the msbuild metadata that's important for restore. Ensures that frameworks regardless of which way they're stores in the metadata(full name or short tfm name) are written out the same.
         /// </summary>
-        private static void SetMSBuildMetadata(IObjectWriter writer, PackageSpec packageSpec)
+        private static void SetMSBuildMetadata(IObjectWriter writer, PackageSpec packageSpec, IEnvironmentVariableReader environmentVariableReader)
         {
             var msbuildMetadata = packageSpec.RestoreMetadata;
 
@@ -132,13 +132,16 @@ namespace NuGet.ProjectModel
                 return;
             }
 
+            bool useMacros = MSBuildStringUtility.IsTrue(environmentVariableReader.GetEnvironmentVariable(MacroStringsUtility.NUGET_ENABLE_EXPERIMENTAL_MACROS));
+            var userSettingsDirectory = NuGetEnvironment.GetFolderPath(NuGetFolderPath.UserSettingsDirectory);
+
             writer.WriteObjectStart(JsonPackageSpecReader.RestoreOptions);
 
             SetValue(writer, "projectUniqueName", msbuildMetadata.ProjectUniqueName);
             SetValue(writer, "projectName", msbuildMetadata.ProjectName);
             SetValue(writer, "projectPath", msbuildMetadata.ProjectPath);
             SetValue(writer, "projectJsonPath", msbuildMetadata.ProjectJsonPath);
-            SetValue(writer, "packagesPath", msbuildMetadata.PackagesPath);
+            SetValue(writer, "packagesPath", ApplyMacro(msbuildMetadata.PackagesPath, userSettingsDirectory, useMacros));
             SetValue(writer, "outputPath", msbuildMetadata.OutputPath);
 
             if (msbuildMetadata.ProjectStyle != ProjectStyle.Unknown)
@@ -148,8 +151,22 @@ namespace NuGet.ProjectModel
 
             WriteMetadataBooleans(writer, msbuildMetadata);
 
-            SetArrayValue(writer, "fallbackFolders", msbuildMetadata.FallbackFolders);
-            SetArrayValue(writer, "configFilePaths", msbuildMetadata.ConfigFilePaths);
+            if (useMacros)
+            {
+                var fallbackFolderCopy = msbuildMetadata.FallbackFolders.ToList();
+                var configFilePathsCopy = msbuildMetadata.ConfigFilePaths.ToList();
+                MacroStringsUtility.ApplyMacros(fallbackFolderCopy, userSettingsDirectory, MacroStringsUtility.UserMacro, PathUtility.GetStringComparisonBasedOnOS());
+                MacroStringsUtility.ApplyMacros(configFilePathsCopy, userSettingsDirectory, MacroStringsUtility.UserMacro, PathUtility.GetStringComparisonBasedOnOS());
+
+                SetArrayValue(writer, "fallbackFolders", fallbackFolderCopy);
+                SetArrayValue(writer, "configFilePaths", configFilePathsCopy);
+            }
+            else
+            {
+                SetArrayValue(writer, "fallbackFolders", msbuildMetadata.FallbackFolders);
+                SetArrayValue(writer, "configFilePaths", msbuildMetadata.ConfigFilePaths);
+            }
+
             // This need to stay the original strings because the nuget.g.targets have conditional imports based on the original framework name
             SetArrayValue(writer, "originalTargetFrameworks", msbuildMetadata.OriginalTargetFrameworks.OrderBy(c => c, StringComparer.Ordinal));
 
@@ -167,6 +184,15 @@ namespace NuGet.ProjectModel
             }
 
             writer.WriteObjectEnd();
+        }
+
+        private static string ApplyMacro(string value, string userSettingsDirectory, bool useMacros)
+        {
+            if (useMacros)
+            {
+                return MacroStringsUtility.ApplyMacro(value, userSettingsDirectory, MacroStringsUtility.UserMacro, PathUtility.GetStringComparisonBasedOnOS());
+            }
+            return value;
         }
 
         private static void WriteMetadataBooleans(IObjectWriter writer, ProjectRestoreMetadata msbuildMetadata)
