@@ -14,6 +14,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 public class CompilationFailedException : XunitException
 {
     public CompilationFailedException(Compilation compilation, Diagnostic[] diagnostics)
+        : base(userMessage: "Compilation failed")
     {
         Compilation = compilation;
         Diagnostics = diagnostics;

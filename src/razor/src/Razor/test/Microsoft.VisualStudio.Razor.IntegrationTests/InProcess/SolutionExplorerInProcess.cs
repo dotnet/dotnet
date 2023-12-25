@@ -301,7 +301,7 @@ internal partial class SolutionExplorerInProcess
         var project = solution.Projects.Cast<EnvDTE.Project>().FirstOrDefault(x => x.Name == projectName);
         if (project is null)
         {
-            Assert.True(false, $"{projectName} doesn't exist, had {string.Join(",", solution.Projects.Cast<EnvDTE.Project>().Select(p => p.Name))}");
+            Assert.Fail($"{projectName} doesn't exist, had {string.Join(",", solution.Projects.Cast<EnvDTE.Project>().Select(p => p.Name))}");
             throw new NotImplementedException("Prevent null fallthrough");
         }
 

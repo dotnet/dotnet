@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.Composition;
 using System.Diagnostics;
 using System.Threading;
@@ -22,6 +23,7 @@ internal class VisualStudioWindowsLogHubTraceProvider : RazorLogHubTraceProvider
 
     private readonly SemaphoreSlim _initializationSemaphore;
     private IServiceBroker? _serviceBroker = null;
+    private TraceSource? _traceSource;
 
     public VisualStudioWindowsLogHubTraceProvider()
     {
@@ -40,9 +42,14 @@ internal class VisualStudioWindowsLogHubTraceProvider : RazorLogHubTraceProvider
             serviceId: new ServiceMoniker($"Razor.{logIdentifier}"));
 
         using var traceConfig = await LogHub.TraceConfiguration.CreateTraceConfigurationInstanceAsync(_serviceBroker!, ownsServiceBroker: true, cancellationToken).ConfigureAwait(false);
-        var traceSource = await traceConfig.RegisterLogSourceAsync(logId, s_logOptions, cancellationToken).ConfigureAwait(false);
+        _traceSource = await traceConfig.RegisterLogSourceAsync(logId, s_logOptions, cancellationToken).ConfigureAwait(false);
 
-        return traceSource;
+        return _traceSource;
+    }
+
+    public override TraceSource GetTraceSource()
+    {
+        return _traceSource ?? throw new InvalidOperationException("Trace source requested before it was initialized.");
     }
 
     public async Task<bool> TryInitializeServiceBrokerAsync(CancellationToken cancellationToken)

@@ -5,6 +5,7 @@ using System;
 using System.Composition;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Editor;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
@@ -61,6 +62,12 @@ internal class OptionsStorage : IAdvancedSettingsStorage
         set => SetInt(SettingsNames.Snippets.LegacyName, (int)value);
     }
 
+    public LogLevel LogLevel
+    {
+        get => (LogLevel)GetInt(SettingsNames.LogLevel.LegacyName, (int)LogLevel.Warning);
+        set => SetInt(SettingsNames.LogLevel.LegacyName, (int)value);
+    }
+
     [ImportingConstructor]
     public OptionsStorage(SVsServiceProvider vsServiceProvider, ITelemetryReporter telemetryReporter)
     {
@@ -77,7 +84,7 @@ internal class OptionsStorage : IAdvancedSettingsStorage
 
     public event EventHandler<ClientAdvancedSettingsChangedEventArgs>? Changed;
 
-    public ClientAdvancedSettings GetAdvancedSettings() => new(FormatOnType, AutoClosingTags, AutoInsertAttributeQuotes, ColorBackground, CommitElementsWithSpace, Snippets);
+    public ClientAdvancedSettings GetAdvancedSettings() => new(FormatOnType, AutoClosingTags, AutoInsertAttributeQuotes, ColorBackground, CommitElementsWithSpace, Snippets, LogLevel);
 
     public bool GetBool(string name, bool defaultValue)
     {

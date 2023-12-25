@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Internal.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
@@ -23,14 +24,15 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
     private const string UseLegacyASPNETCoreEditorSetting = "TextEditor.HTML.Specific.UseLegacyASPNETCoreRazorEditor";
 
     private readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
+    private ILogger? _testLogger;
 
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
 
-        await TestServices.Output.SetupIntegrationTestLoggerAsync(_testOutputHelper, ControlledHangMitigatingCancellationToken);
+        _testLogger = await TestServices.Output.SetupIntegrationTestLoggerAsync(_testOutputHelper, ControlledHangMitigatingCancellationToken);
 
-        await TestServices.Output.LogStatusAsync("#### Razor integration test initialize.", ControlledHangMitigatingCancellationToken);
+        _testLogger.LogInformation("#### Razor integration test initialize.");
 
         VisualStudioLogging.AddCustomLoggers();
 
@@ -69,7 +71,7 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
         // Close the file we opened, just in case, so the test can start with a clean slate
         await TestServices.Editor.CloseCodeFileAsync(RazorProjectConstants.BlazorProjectName, RazorProjectConstants.IndexRazorFile, saveFile: false, ControlledHangMitigatingCancellationToken);
 
-        await TestServices.Output.LogStatusAsync("#### Razor integration test initialize finished.", ControlledHangMitigatingCancellationToken);
+        _testLogger.LogInformation("#### Razor integration test initialize finished.");
     }
 
     private async Task<string> CreateAndOpenBlazorProjectAsync(CancellationToken cancellationToken)
@@ -100,9 +102,9 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
 
     public override async Task DisposeAsync()
     {
-        await TestServices.Output.LogStatusAsync("#### Razor integration test dispose.", ControlledHangMitigatingCancellationToken);
+        _testLogger!.LogInformation("#### Razor integration test dispose.");
 
-        await TestServices.Output.ClearIntegrationTestLoggerAsync(ControlledHangMitigatingCancellationToken);
+        TestServices.Output.ClearIntegrationTestLogger();
 
         await base.DisposeAsync();
     }

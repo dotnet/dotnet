@@ -21,12 +21,11 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
     {
         // Arrange
         var expectedOptions = new RazorLSPOptions(
-            Trace.Messages, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CommitElementsWithSpace: false);
+            EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CommitElementsWithSpace: false);
         var razorJsonString =
             """
 
             {
-              "trace": "Messages",
               "format": {
                 "enable": "false"
               }
@@ -93,10 +92,9 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
     {
         // Arrange - purposely choosing options opposite of default
         var expectedOptions = new RazorLSPOptions(
-            Trace.Verbose, EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CommitElementsWithSpace: false);
+            EnableFormatting: false, AutoClosingTags: false, InsertSpaces: true, TabSize: 4, AutoShowCompletion: true, AutoListParams: true, FormatOnType: true, AutoInsertAttributeQuotes: true, ColorBackground: false, CommitElementsWithSpace: false);
         var razorJsonString = """
             {
-              "trace": "Verbose",
               "format": {
                 "enable": "false"
               }
@@ -130,7 +128,7 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
     {
         // Arrange - purposely choosing options opposite of default
         var expectedOptions = new RazorLSPOptions(
-            Trace.Off, EnableFormatting: true, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, AutoShowCompletion: true, AutoListParams: true, FormatOnType: false, AutoInsertAttributeQuotes: false, ColorBackground: false, CommitElementsWithSpace: false);
+            EnableFormatting: true, AutoClosingTags: false, InsertSpaces: false, TabSize: 8, AutoShowCompletion: true, AutoListParams: true, FormatOnType: false, AutoInsertAttributeQuotes: false, ColorBackground: false, CommitElementsWithSpace: false);
         var razorJsonString = """
             {
             }
@@ -176,7 +174,6 @@ public class DefaultRazorConfigurationServiceTest(ITestOutputHelper testOutput) 
         var expectedOptions = RazorLSPOptions.Default with { CommitElementsWithSpace = false};
         var razorJsonString = @"
 {
-  ""trace"": 0,
   ""format"": {
     ""enable"": ""fals""
   }

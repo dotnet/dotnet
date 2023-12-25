@@ -11,9 +11,7 @@ variables:
 - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
   value: true
 - name: LogLevel
-  value: 'Verbose'
-- name: RAZOR_TRACE
-  value: 'Verbose'
+  value: 'All'
 - name: RAZOR_RUN_CONDITIONAL_IDE_TESTS
   value: 'true'
 

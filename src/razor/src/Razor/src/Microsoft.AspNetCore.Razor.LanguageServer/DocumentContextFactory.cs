@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
@@ -19,13 +20,13 @@ internal sealed class DocumentContextFactory(
     ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
     ISnapshotResolver snapshotResolver,
     IDocumentVersionCache documentVersionCache,
-    ILoggerFactory loggerFactory)
+    IRazorLoggerFactory loggerFactory)
     : IDocumentContextFactory
 {
     private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
     private readonly ISnapshotResolver _snapshotResolver = snapshotResolver;
     private readonly IDocumentVersionCache _documentVersionCache = documentVersionCache;
-    private readonly ILogger _logger = loggerFactory.CreateLogger<IDocumentContextFactory>();
+    private readonly ILogger _logger = loggerFactory.CreateLogger<DocumentContextFactory>();
 
     public DocumentContext? TryCreate(Uri documentUri, VSProjectContext? projectContext, bool versioned)
     {

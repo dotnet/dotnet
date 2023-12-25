@@ -30,9 +30,7 @@ variables:
 - name: __VSNeverShowWhatsNew
   value: 1
 - name: LogLevel
-  value: 'Verbose'
-- name: RAZOR_TRACE
-  value: 'Verbose'
+  value: 'All'
 
 stages:
 - template: \stages\visual-studio\agent.yml@DartLabTemplates

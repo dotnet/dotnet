@@ -5,9 +5,9 @@ using System;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.Editor.Razor.Logging;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -15,30 +15,16 @@ using Microsoft.VisualStudio.Threading;
 namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
 
 [Shared]
-[Export(typeof(IOutputWindowLogger))]
-internal class OutputWindowLogger : IOutputWindowLogger, IDisposable
+[Export(typeof(IRazorLoggerProvider))]
+[method: ImportingConstructor]
+internal class OutputWindowLoggerProvider(IClientSettingsManager clientSettingsManager, JoinableTaskContext joinableTaskContext) : IRazorLoggerProvider
 {
-#if DEBUG
-    private const LogLevel MinimumLogLevel = LogLevel.Debug;
-#else
-    private const LogLevel MinimumLogLevel = LogLevel.Warning;
-#endif
+    private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
+    private readonly OutputPane _outputPane = new OutputPane(joinableTaskContext);
 
-    private readonly OutputPane _outputPane;
-
-    private ILogger? _testLogger;
-
-    [ImportingConstructor]
-    public OutputWindowLogger(JoinableTaskContext joinableTaskContext)
+    public ILogger CreateLogger(string categoryName)
     {
-        _outputPane = new OutputPane(joinableTaskContext);
-    }
-
-    public IDisposable BeginScope<TState>(TState state) => Scope.Instance;
-
-    public void SetTestLogger(ILogger? testLogger)
-    {
-        _testLogger = testLogger;
+        return new OutputPaneLogger(categoryName, _outputPane, _clientSettingsManager);
     }
 
     public void Dispose()
@@ -46,21 +32,38 @@ internal class OutputWindowLogger : IOutputWindowLogger, IDisposable
         _outputPane.Dispose();
     }
 
-    public bool IsEnabled(LogLevel logLevel)
+    private class OutputPaneLogger : ILogger
     {
-        return logLevel >= MinimumLogLevel;
-    }
+        private readonly string _categoryName;
+        private readonly OutputPane _outputPane;
+        private readonly IClientSettingsManager _clientSettingsManager;
 
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
-    {
-        _testLogger?.Log(logLevel, eventId, state, exception, formatter);
-
-        if (IsEnabled(logLevel))
+        public OutputPaneLogger(string categoryName, OutputPane outputPane, IClientSettingsManager clientSettingsManager)
         {
-            _outputPane.WriteLine(DateTime.Now.ToString("h:mm:ss.fff ") + formatter(state, exception));
-            if (exception is not null)
+            _categoryName = categoryName;
+            _outputPane = outputPane;
+            _clientSettingsManager = clientSettingsManager;
+        }
+
+        public IDisposable BeginScope<TState>(TState state)
+        {
+            return Scope.Instance;
+        }
+
+        public bool IsEnabled(LogLevel logLevel)
+        {
+            return logLevel >= _clientSettingsManager.GetClientSettings().AdvancedSettings.LogLevel;
+        }
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        {
+            if (IsEnabled(logLevel))
             {
-                _outputPane.WriteLine(exception.ToString());
+                _outputPane.WriteLine($"{DateTime.Now:h:mm:ss.fff} [{_categoryName}] {formatter(state, exception)}");
+                if (exception is not null)
+                {
+                    _outputPane.WriteLine(exception.ToString());
+                }
             }
         }
     }

@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.SignatureHelp;
 using Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,21 +35,24 @@ using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
+internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
 {
     private readonly JsonRpc _jsonRpc;
+    private readonly IRazorLoggerFactory _loggerFactory;
     private readonly LanguageServerFeatureOptions? _featureOptions;
     private readonly ProjectSnapshotManagerDispatcher? _projectSnapshotManagerDispatcher;
     private readonly Action<IServiceCollection>? _configureServer;
     private readonly RazorLSPOptions _lspOptions;
     private readonly ILspServerActivationTracker? _lspServerActivationTracker;
     private readonly ITelemetryReporter _telemetryReporter;
+    private readonly ClientConnection _clientConnection;
 
     // Cached for testing
     private IHandlerProvider? _handlerProvider;
 
     public RazorLanguageServer(
         JsonRpc jsonRpc,
+        IRazorLoggerFactory loggerFactory,
         ILspLogger logger,
         ProjectSnapshotManagerDispatcher? projectSnapshotManagerDispatcher,
         LanguageServerFeatureOptions? featureOptions,
@@ -59,12 +63,19 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
         : base(jsonRpc, logger)
     {
         _jsonRpc = jsonRpc;
+        _loggerFactory = loggerFactory;
         _featureOptions = featureOptions;
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
         _configureServer = configureServer;
         _lspOptions = lspOptions ?? RazorLSPOptions.Default;
         _lspServerActivationTracker = lspServerActivationTracker;
         _telemetryReporter = telemetryReporter;
+
+        _clientConnection = new ClientConnection(_jsonRpc);
+        if (_logger is LspLogger lspLogger)
+        {
+            lspLogger.Initialize(_clientConnection);
+        }
 
         Initialize();
     }
@@ -81,20 +92,20 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
     protected override ILspServices ConstructLspServices()
     {
         var services = new ServiceCollection()
-            .AddOptions()
-            .AddLogging();
+            .AddOptions();
+
+        var loggerFactoryWrapper = new LoggerFactoryWrapper(_loggerFactory);
+        // Wrap the logger factory so that we can add [LSP] to the start of all the categories
+        services.AddSingleton<IRazorLoggerFactory>(loggerFactoryWrapper);
+        // Just in case anything in CLaSP tries to resolve ILoggerFactory
+        services.AddSingleton<ILoggerFactory>(loggerFactoryWrapper);
 
         if (_configureServer is not null)
         {
             _configureServer(services);
         }
 
-        var clientConnection = new ClientConnection(_jsonRpc);
-        services.AddSingleton<IClientConnection>(clientConnection);
-        if (_logger is LspLogger lspLogger)
-        {
-            lspLogger.Initialize(clientConnection);
-        }
+        services.AddSingleton<IClientConnection>(_clientConnection);
 
         if (_logger is LoggerAdapter adapter)
         {
@@ -139,7 +150,7 @@ internal class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
 
         services.AddSingleton<FilePathService>();
 
-        services.AddLifeCycleServices(this, clientConnection, _lspServerActivationTracker);
+        services.AddLifeCycleServices(this, _clientConnection, _lspServerActivationTracker);
 
         services.AddDiagnosticServices();
         services.AddSemanticTokensServices();

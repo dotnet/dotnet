@@ -4,6 +4,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis.Razor.Editor;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.Options;
 using Microsoft.VisualStudio.Shell;
@@ -22,6 +23,7 @@ internal class AdvancedOptionPage : DialogPage
     private bool? _colorBackground;
     private bool? _commitElementsWithSpace;
     private SnippetSetting? _snippets;
+    private LogLevel? _logLevel;
 
     public AdvancedOptionPage()
     {
@@ -88,6 +90,15 @@ internal class AdvancedOptionPage : DialogPage
         set => _snippets = value;
     }
 
+    [LocCategory(nameof(VSPackage.Other))]
+    [LocDescription(nameof(VSPackage.Setting_LogLevelDescription))]
+    [LocDisplayName(nameof(VSPackage.Setting_LogLevelDisplayName))]
+    public LogLevel LogLevel
+    {
+        get => _logLevel ?? (LogLevel)_optionsStorage.Value.LogLevel;
+        set => _logLevel = value;
+    }
+
     protected override void OnApply(PageApplyEventArgs e)
     {
         if (_formatOnType is not null)
@@ -119,6 +130,11 @@ internal class AdvancedOptionPage : DialogPage
         {
             _optionsStorage.Value.Snippets = snippets;
         }
+
+        if (_logLevel is LogLevel logLevel)
+        {
+            _optionsStorage.Value.LogLevel = logLevel;
+        }
     }
 
     protected override void OnClosed(EventArgs e)
@@ -129,5 +145,6 @@ internal class AdvancedOptionPage : DialogPage
         _colorBackground = null;
         _commitElementsWithSpace = null;
         _snippets = null;
+        _logLevel = null;
     }
 }

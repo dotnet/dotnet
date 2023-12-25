@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
@@ -18,11 +19,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
 {
     private readonly ProjectSnapshotManager _projectSnapshotManager;
-    private readonly ILogger<DefaultRazorComponentSearchEngine> _logger;
+    private readonly ILogger _logger;
 
     public DefaultRazorComponentSearchEngine(
         ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
     {
         if (loggerFactory is null)
         {

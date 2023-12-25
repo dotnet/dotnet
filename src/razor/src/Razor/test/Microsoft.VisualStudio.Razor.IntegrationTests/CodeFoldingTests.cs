@@ -58,7 +58,7 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
                     var extraLineText = PrintLines(extraLines, textView);
                     var lineText = PrintLines(foldableLines, textView);
 
-                    Assert.False(true, $"Extra Lines: {extraLineText}Expected Lines: {lineText}");
+                    Assert.Fail($"Extra Lines: {extraLineText}Expected Lines: {lineText}");
                 }
 
                 return;
@@ -74,7 +74,7 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
             var lines = spans.Select(s => ConvertToLineNumbers(s, textView)).ToImmutableArray();
             var linesText = PrintLines(lines, textView);
 
-            Assert.False(true, $"Missing Lines: {missingSpanText}Actual Lines: {linesText}");
+            Assert.Fail($"Missing Lines: {missingSpanText}Actual Lines: {linesText}");
         }
 
         Assert.Empty(missingLines);
