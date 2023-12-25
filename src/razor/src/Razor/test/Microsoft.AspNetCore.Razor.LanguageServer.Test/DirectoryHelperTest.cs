@@ -73,7 +73,7 @@ public class DirectoryHelperTest(ITestOutputHelper testOutput) : TagHelperServic
             {
                 if (results is null)
                 {
-                    Assert.True(false, "Tried to walk a directory which should have been ignored");
+                    Assert.Fail("Tried to walk a directory which should have been ignored");
                 }
 
                 if (results.Any(s => s.Equals("LONGPATH")))
@@ -96,7 +96,7 @@ public class DirectoryHelperTest(ITestOutputHelper testOutput) : TagHelperServic
             {
                 if (results is null)
                 {
-                    Assert.True(false, "Tried to walk a directory which should have been ignored");
+                    Assert.Fail("Tried to walk a directory which should have been ignored");
                 }
 
                 if (results.Any(s => s.Equals("LONGPATH")))

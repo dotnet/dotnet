@@ -405,7 +405,7 @@ internal static class Extensions
     {
         if (expectedOutput.Length == 1 && string.IsNullOrWhiteSpace(expectedOutput[0]))
         {
-            Assert.True(false, GenerateExpectedPageOutput(result));
+            Assert.Fail(GenerateExpectedPageOutput(result));
         }
         else
         {

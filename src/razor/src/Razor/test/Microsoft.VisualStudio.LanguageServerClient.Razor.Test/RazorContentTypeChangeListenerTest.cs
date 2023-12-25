@@ -15,7 +15,6 @@ using Microsoft.VisualStudio.Utilities;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
@@ -73,7 +72,7 @@ public class RazorContentTypeChangeListenerTest : ToolingTestBase
         // Arrange
         var lspDocumentManager = new Mock<TrackingLSPDocumentManager>(MockBehavior.Strict);
         lspDocumentManager.Setup(manager => manager.TrackDocument(It.IsAny<ITextBuffer>()))
-            .Throws<XunitException>();
+            .Throws<Exception>();
         var featureDetector = Mock.Of<LSPEditorFeatureDetector>(detector => detector.IsRemoteClient() == true, MockBehavior.Strict);
         var listener = CreateListener(lspDocumentManager.Object, featureDetector);
 
@@ -105,9 +104,9 @@ public class RazorContentTypeChangeListenerTest : ToolingTestBase
         // Arrange
         var lspDocumentManager = new Mock<TrackingLSPDocumentManager>(MockBehavior.Strict);
         lspDocumentManager.Setup(manager => manager.TrackDocument(It.IsAny<ITextBuffer>()))
-            .Throws<XunitException>();
+            .Throws<Exception>();
         lspDocumentManager.Setup(manager => manager.UntrackDocument(It.IsAny<ITextBuffer>()))
-            .Throws<XunitException>();
+            .Throws<Exception>();
         var listener = CreateListener(lspDocumentManager.Object);
         var args = new TextDocumentFileActionEventArgs("C:/path/to/file.razor", DateTime.UtcNow, fileActionType);
 
@@ -121,9 +120,9 @@ public class RazorContentTypeChangeListenerTest : ToolingTestBase
         // Arrange
         var lspDocumentManager = new Mock<TrackingLSPDocumentManager>(MockBehavior.Strict);
         lspDocumentManager.Setup(manager => manager.TrackDocument(It.IsAny<ITextBuffer>()))
-            .Throws<XunitException>();
+            .Throws<Exception>();
         lspDocumentManager.Setup(manager => manager.UntrackDocument(It.IsAny<ITextBuffer>()))
-            .Throws<XunitException>();
+            .Throws<Exception>();
         var listener = CreateListener(lspDocumentManager.Object);
         var args = new TextDocumentFileActionEventArgs("C:/path/to/file.razor", DateTime.UtcNow, FileActionTypes.DocumentRenamed);
 
@@ -137,9 +136,9 @@ public class RazorContentTypeChangeListenerTest : ToolingTestBase
         // Arrange
         var lspDocumentManager = new Mock<TrackingLSPDocumentManager>(MockBehavior.Strict);
         lspDocumentManager.Setup(manager => manager.TrackDocument(It.IsAny<ITextBuffer>()))
-            .Throws<XunitException>();
+            .Throws<Exception>();
         lspDocumentManager.Setup(manager => manager.UntrackDocument(It.IsAny<ITextBuffer>()))
-            .Throws<XunitException>();
+            .Throws<Exception>();
         var listener = CreateListener(lspDocumentManager.Object);
         var args = new TextDocumentFileActionEventArgs("C:/path/to/file.razor", DateTime.UtcNow, FileActionTypes.DocumentRenamed);
         var textDocument = new Mock<ITextDocument>(MockBehavior.Strict).Object;

@@ -16,6 +16,7 @@ internal static class SettingsNames
     public static readonly Setting ColorBackground = new("ColorBackground", UnifiedCollection + ".colorBackground");
     public static readonly Setting CommitElementsWithSpace = new("CommitElementsWithSpace", UnifiedCollection + ".commitCharactersWithSpace");
     public static readonly Setting Snippets = new("Snippets", UnifiedCollection + ".snippets");
+    public static readonly Setting LogLevel = new("LogLevel", UnifiedCollection + ".logLevel");
 
     public static readonly Setting[] AllSettings =
     [
@@ -25,5 +26,6 @@ internal static class SettingsNames
         ColorBackground,
         CommitElementsWithSpace,
         Snippets,
+        LogLevel,
     ];
 }

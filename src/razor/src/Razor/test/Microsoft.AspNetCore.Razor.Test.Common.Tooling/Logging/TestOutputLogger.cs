@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.Logging;
 
@@ -14,17 +13,17 @@ public partial class TestOutputLogger : ILogger
     [ThreadStatic]
     private static StringBuilder? g_builder;
 
-    private readonly ITestOutputHelper _testOutput;
+    private readonly TestOutputLoggerProvider _provider;
 
     public string? CategoryName { get; }
     public LogLevel LogLevel { get; }
 
     public TestOutputLogger(
-        ITestOutputHelper testOutput,
+        TestOutputLoggerProvider provider,
         string? categoryName = null,
         LogLevel logLevel = LogLevel.Trace)
     {
-        _testOutput = testOutput ?? throw new ArgumentNullException(nameof(testOutput));
+        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
         CategoryName = categoryName;
         LogLevel = logLevel;
     }
@@ -37,7 +36,7 @@ public partial class TestOutputLogger : ILogger
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
-        if (!IsEnabled(logLevel))
+        if (!IsEnabled(logLevel) || _provider.TestOutputHelper is null)
         {
             return;
         }
@@ -57,8 +56,8 @@ public partial class TestOutputLogger : ILogger
 
         if (CategoryName is { } categoryName)
         {
-            builder.Append(categoryName);
-            isFirstLine = false;
+            builder.Append($"[{categoryName}] ");
+            isFirstLine = lines.Length == 1;
         }
 
         foreach (var line in lines)
@@ -78,7 +77,7 @@ public partial class TestOutputLogger : ILogger
 
         try
         {
-            _testOutput.WriteLine(finalMessage);
+            _provider.TestOutputHelper.WriteLine(finalMessage);
         }
         catch (Exception ex)
         {

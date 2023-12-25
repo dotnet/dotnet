@@ -8,10 +8,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Debugging;
@@ -21,27 +21,26 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Debugging;
 internal class DefaultLSPProximityExpressionsProvider : LSPProximityExpressionsProvider
 {
     private readonly LSPRequestInvoker _requestInvoker;
-    private readonly HTMLCSharpLanguageServerLogHubLoggerProvider _loggerProvider;
 
-    private ILogger? _logHubLogger = null;
+    private readonly ILogger _logger;
 
     [ImportingConstructor]
     public DefaultLSPProximityExpressionsProvider(
         LSPRequestInvoker requestInvoker,
-        HTMLCSharpLanguageServerLogHubLoggerProvider loggerProvider)
+        IRazorLoggerFactory loggerFactory)
     {
         if (requestInvoker is null)
         {
             throw new ArgumentNullException(nameof(requestInvoker));
         }
 
-        if (loggerProvider is null)
+        if (loggerFactory is null)
         {
-            throw new ArgumentNullException(nameof(loggerProvider));
+            throw new ArgumentNullException(nameof(loggerFactory));
         }
 
         _requestInvoker = requestInvoker;
-        _loggerProvider = loggerProvider;
+        _logger = loggerFactory.CreateLogger<DefaultLSPProximityExpressionsProvider>();
     }
 
     public async override Task<IReadOnlyList<string>?> GetProximityExpressionsAsync(LSPDocumentSnapshot documentSnapshot, Position position, CancellationToken cancellationToken)
@@ -55,11 +54,6 @@ internal class DefaultLSPProximityExpressionsProvider : LSPProximityExpressionsP
         {
             throw new ArgumentNullException(nameof(position));
         }
-
-        // We initialize the logger here instead of the constructor as the breakpoint span provider is constructed
-        // *before* the language server. Thus, the log hub has yet to be initialized, thus we would be unable to
-        // create the logger at that time.
-        await InitializeLogHubAsync(cancellationToken).ConfigureAwait(false);
 
         var proximityExpressionsParams = new RazorProximityExpressionsParams()
         {
@@ -78,23 +72,11 @@ internal class DefaultLSPProximityExpressionsProvider : LSPProximityExpressionsP
         var languageResponse = response?.Response;
         if (languageResponse is null)
         {
-            _logHubLogger?.LogInformation("The proximity expressions could not be resolved.");
+            _logger.LogInformation("The proximity expressions could not be resolved.");
             return null;
         }
 
         return languageResponse.Expressions;
-    }
-
-    private async Task InitializeLogHubAsync(CancellationToken cancellationToken)
-    {
-        if (_logHubLogger is null)
-        {
-            await _loggerProvider.InitializeLoggerAsync(cancellationToken);
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            _logHubLogger = _loggerProvider.CreateLogger(nameof(DefaultLSPBreakpointSpanProvider));
-        }
     }
 
     private static bool CheckRazorProximityExpressionsCapability(JToken token)

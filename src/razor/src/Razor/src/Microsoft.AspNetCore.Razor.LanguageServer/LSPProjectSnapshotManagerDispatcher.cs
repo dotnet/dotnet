@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
 
@@ -11,9 +12,9 @@ internal class LSPProjectSnapshotManagerDispatcher : ProjectSnapshotManagerDispa
 {
     private const string ThreadName = "Razor." + nameof(LSPProjectSnapshotManagerDispatcher);
 
-    private readonly ILogger<LSPProjectSnapshotManagerDispatcher> _logger;
+    private readonly ILogger _logger;
 
-    public LSPProjectSnapshotManagerDispatcher(ILoggerFactory loggerFactory) : base(ThreadName)
+    public LSPProjectSnapshotManagerDispatcher(IRazorLoggerFactory loggerFactory) : base(ThreadName)
     {
         if (loggerFactory is null)
         {

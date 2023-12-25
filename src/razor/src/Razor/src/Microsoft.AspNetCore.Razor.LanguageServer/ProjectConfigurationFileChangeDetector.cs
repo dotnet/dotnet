@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
 
@@ -33,7 +34,7 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
         ProjectSnapshotManagerDispatcher dispatcher,
         IEnumerable<IProjectConfigurationFileChangeListener> listeners,
         LanguageServerFeatureOptions options,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
     {
         if (loggerFactory is null)
         {

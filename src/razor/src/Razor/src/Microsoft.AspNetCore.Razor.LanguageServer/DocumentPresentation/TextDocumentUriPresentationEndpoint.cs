@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -31,7 +32,7 @@ internal class TextDocumentUriPresentationEndpoint : AbstractTextDocumentPresent
         FilePathService filePathService,
         IDocumentContextFactory documentContextFactory,
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
         : base(razorDocumentMappingService, clientConnection, filePathService)
     {
         _razorComponentSearchEngine = razorComponentSearchEngine ?? throw new ArgumentNullException(nameof(razorComponentSearchEngine));

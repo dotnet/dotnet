@@ -438,6 +438,7 @@ public class RazorIntegrationTestBase
     private class CompilationFailedException : XunitException
     {
         public CompilationFailedException(Compilation compilation, ImmutableArray<Diagnostic> diagnostics = default)
+            : base(userMessage: "Compilation failed")
         {
             Compilation = compilation;
             Diagnostics = diagnostics.NullToEmpty();

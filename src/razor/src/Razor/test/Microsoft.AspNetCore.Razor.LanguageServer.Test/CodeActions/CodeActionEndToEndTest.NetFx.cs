@@ -711,7 +711,6 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
             """;
 
         var razorLSPOptions = new RazorLSPOptions(
-            Trace: default,
             EnableFormatting: true,
             AutoClosingTags: true,
             insertSpaces,

@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.Extensions.Logging;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
@@ -104,7 +104,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
         public TestRazorCompletionListProvider(
             VSInternalCompletionList completionList,
             IEnumerable<string> triggerCharacters,
-            ILoggerFactory loggerFactory)
+            IRazorLoggerFactory loggerFactory)
             : base(completionFactsService: null, htmlFactsService: null, completionListCache: null, loggerFactory)
         {
             _completionList = completionList;

@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging;
@@ -36,7 +37,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
         IRazorDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
         IOptionsMonitor<RazorLSPOptions> optionsMonitor,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
         : base(documentMappingService, clientConnection)
     {
         if (loggerFactory is null)

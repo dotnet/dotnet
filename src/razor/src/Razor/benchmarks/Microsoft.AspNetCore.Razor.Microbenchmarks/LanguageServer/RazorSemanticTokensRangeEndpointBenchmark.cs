@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer;
@@ -155,7 +155,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
             LanguageServerFeatureOptions languageServerFeatureOptions,
             IRazorDocumentMappingService documentMappingService,
             RazorLSPOptionsMonitor razorLSPOptionsMonitor,
-            ILoggerFactory loggerFactory)
+            IRazorLoggerFactory loggerFactory)
             : base(clientConnection, documentMappingService, razorLSPOptionsMonitor, languageServerFeatureOptions, loggerFactory)
         {
         }

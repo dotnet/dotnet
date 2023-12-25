@@ -3,12 +3,12 @@
 
 #nullable disable
 
+using System;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.VisualStudio.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
@@ -50,7 +50,7 @@ public class DefaultProjectPathProviderTest : ToolingTestBase
             .Returns(true);
         var projectService = new Mock<TextBufferProjectService>(MockBehavior.Strict);
         projectService.Setup(service => service.GetHostProject(It.IsAny<ITextBuffer>()))
-            .Throws<XunitException>();
+            .Throws<Exception>();
         var projectPathProvider = new DefaultProjectPathProvider(projectService.Object, liveShareProjectPathProvider.Object);
         var textBuffer = Mock.Of<ITextBuffer>(MockBehavior.Strict);
 

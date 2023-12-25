@@ -4,6 +4,7 @@
 using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.Extensions.Logging;
 
@@ -13,7 +14,7 @@ internal class LanguageServerErrorReporter : IErrorReporter
 {
     private readonly ILogger _logger;
 
-    public LanguageServerErrorReporter(ILoggerFactory loggerFactory)
+    public LanguageServerErrorReporter(IRazorLoggerFactory loggerFactory)
     {
         if (loggerFactory is null)
         {

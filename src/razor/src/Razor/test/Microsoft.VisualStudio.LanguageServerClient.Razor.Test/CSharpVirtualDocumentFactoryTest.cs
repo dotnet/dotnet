@@ -11,9 +11,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.Editor.Razor.Logging;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
@@ -70,7 +68,7 @@ public class CSharpVirtualDocumentFactoryTest : ToolingTestBase
         var uri = new Uri("C:/path/to/file.razor");
         var uriProvider = Mock.Of<FileUriProvider>(provider => provider.GetOrCreate(It.IsAny<ITextBuffer>()) == uri, MockBehavior.Strict);
         var projectSnapshotManagerAccessor = Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict);
-        var factory = new CSharpVirtualDocumentFactory(_contentTypeRegistryService, _textBufferFactoryService, TextDocumentFactoryService, uriProvider, _filePathService, projectSnapshotManagerAccessor, TestLanguageServerFeatureOptions.Instance, new TestOutputWindowLogger(), telemetryReporter: null);
+        var factory = new CSharpVirtualDocumentFactory(_contentTypeRegistryService, _textBufferFactoryService, TextDocumentFactoryService, uriProvider, _filePathService, projectSnapshotManagerAccessor, TestLanguageServerFeatureOptions.Instance, LoggerFactory, telemetryReporter: null);
 
         // Act
         var result = factory.TryCreateMultipleFor(_nonRazorLSPBuffer, out var virtualDocuments);
@@ -93,7 +91,7 @@ public class CSharpVirtualDocumentFactoryTest : ToolingTestBase
         projectSnapshotManager.CreateAndAddDocument(project, @"C:\path\to\file.razor");
         var projectSnapshotManagerAccessor = Mock.Of<ProjectSnapshotManagerAccessor>(a => a.Instance == projectSnapshotManager, MockBehavior.Strict);
 
-        var factory = new CSharpVirtualDocumentFactory(_contentTypeRegistryService, _textBufferFactoryService, TextDocumentFactoryService, uriProvider, _filePathService, projectSnapshotManagerAccessor, TestLanguageServerFeatureOptions.Instance, new TestOutputWindowLogger(), telemetryReporter: null);
+        var factory = new CSharpVirtualDocumentFactory(_contentTypeRegistryService, _textBufferFactoryService, TextDocumentFactoryService, uriProvider, _filePathService, projectSnapshotManagerAccessor, TestLanguageServerFeatureOptions.Instance, LoggerFactory, telemetryReporter: null);
 
         // Act
         var result = factory.TryCreateMultipleFor(_razorLSPBuffer, out var virtualDocuments);
@@ -123,7 +121,7 @@ public class CSharpVirtualDocumentFactoryTest : ToolingTestBase
 
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
         var filePathService = new FilePathService(languageServerFeatureOptions);
-        var factory = new CSharpVirtualDocumentFactory(_contentTypeRegistryService, _textBufferFactoryService, TextDocumentFactoryService, uriProvider, filePathService, projectSnapshotManagerAccessor, languageServerFeatureOptions, new TestOutputWindowLogger(), telemetryReporter: null);
+        var factory = new CSharpVirtualDocumentFactory(_contentTypeRegistryService, _textBufferFactoryService, TextDocumentFactoryService, uriProvider, filePathService, projectSnapshotManagerAccessor, languageServerFeatureOptions, LoggerFactory, telemetryReporter: null);
 
         // Act
         var result = factory.TryCreateMultipleFor(_razorLSPBuffer, out var virtualDocuments);
@@ -134,27 +132,6 @@ public class CSharpVirtualDocumentFactoryTest : ToolingTestBase
         Assert.Collection(virtualDocuments,
             item => Assert.Equal("C:/path/to/file.razor.ooJmNcWMKXNlf5MK.ide.g.cs", item.Uri.OriginalString),
             item => Assert.Equal("C:/path/to/file.razor.jGYrFHvWEciJi85y.ide.g.cs", item.Uri.OriginalString));
-    }
-
-    private class TestOutputWindowLogger : IOutputWindowLogger
-    {
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            return null;
-        }
-
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            return false;
-        }
-
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
-        {
-        }
-
-        public void SetTestLogger(ILogger testOutputLogger)
-        {
-        }
     }
 
     private class TestDispatcher : ProjectSnapshotManagerDispatcher

@@ -14,10 +14,10 @@ using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 
@@ -146,7 +146,7 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         return razorDocumentMappingService.Object;
     }
 
-    private ILoggerFactory BuildLoggerFactory() => Mock.Of<ILoggerFactory>(
+    private IRazorLoggerFactory BuildLoggerFactory() => Mock.Of<IRazorLoggerFactory>(
         r => r.CreateLogger(
             It.IsAny<string>()) == new NoopLogger(),
         MockBehavior.Strict);

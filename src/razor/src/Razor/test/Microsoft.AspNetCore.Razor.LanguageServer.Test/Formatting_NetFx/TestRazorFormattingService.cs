@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 
@@ -20,7 +20,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 internal static class TestRazorFormattingService
 {
     public static async Task<IRazorFormattingService> CreateWithFullSupportAsync(
-        ILoggerFactory loggerFactory,
+        IRazorLoggerFactory loggerFactory,
         ProjectSnapshotManagerDispatcher dispatcher,
         RazorCodeDocument? codeDocument = null,
         IDocumentSnapshot? documentSnapshot = null,

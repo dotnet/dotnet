@@ -22,7 +22,8 @@ After doing either of the above running the `Microsoft.VisualStudio.RazorExtensi
 
 ### How do I view the logs?
 
-Logs are off by default. If you'd like to adjust that set the `RAZOR_TRACE` environment variable to `Verbose`, `Messages` or `Off` depending on your needs.
+Logs are written to the %temp%\vslogs folder, in `.svclog` files with "Razor" in the name. You can increase logging here by passing `/log` on the command line when launching VS, or by setting an environment variable called `LogLevel` to `All`.
+Logs are also written to the "Razor Logger Output" category of the Output Window in VS. You can increase logging here by changing the "Log Level" option in Tools, Options, Text Editor, Razor, Advanced.
 
 ### Opening a project results in my Razor file saying "waiting for IntelliSense to initialize", why does it never stop?
 

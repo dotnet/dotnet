@@ -8,11 +8,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
-using Microsoft.VisualStudio.Editor.Razor.Logging;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
@@ -35,7 +35,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
     private readonly FilePathService _filePathService;
     private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly IOutputWindowLogger _logger;
+    private readonly ILogger _logger;
     private readonly ITelemetryReporter _telemetryReporter;
 
     [ImportingConstructor]
@@ -47,7 +47,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
         FilePathService filePathService,
         ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        IOutputWindowLogger logger,
+        IRazorLoggerFactory loggerFactory,
         ITelemetryReporter telemetryReporter)
         : base(contentTypeRegistry, textBufferFactory, textDocumentFactory, fileUriProvider)
     {
@@ -55,7 +55,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
         _filePathService = filePathService;
         _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
         _languageServerFeatureOptions = languageServerFeatureOptions;
-        _logger = logger;
+        _logger = loggerFactory.CreateLogger<CSharpVirtualDocumentFactory>();
         _telemetryReporter = telemetryReporter;
     }
 

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
@@ -31,7 +32,7 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly IClientConnection _clientConnection;
     private readonly Dictionary<string, IDocumentSnapshot> _work;
-    private readonly ILogger<RazorDiagnosticsPublisher> _logger;
+    private readonly ILogger _logger;
     private ProjectSnapshotManager? _projectManager;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly Lazy<RazorTranslateDiagnosticsService> _razorTranslateDiagnosticsService;
@@ -43,7 +44,7 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
         LanguageServerFeatureOptions languageServerFeatureOptions,
         Lazy<RazorTranslateDiagnosticsService> razorTranslateDiagnosticsService,
         Lazy<IDocumentContextFactory> documentContextFactory,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
     {
         if (projectSnapshotManagerDispatcher is null)
         {

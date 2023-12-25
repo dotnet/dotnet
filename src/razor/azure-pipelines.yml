@@ -13,9 +13,7 @@ variables:
 - name: Codeql.Enabled
   value: true
 - name: LogLevel
-  value: 'Verbose'
-- name: RAZOR_TRACE
-  value: 'Verbose'
+  value: 'All'
 - name: RunIntegrationTests
   value: false
 - ${{ if ne(variables['System.TeamProject'], 'public') }}:

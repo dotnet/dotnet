@@ -11,10 +11,10 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
@@ -537,7 +537,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
             LanguageServerFeatureOptions options,
             RazorTranslateDiagnosticsService razorTranslateDiagnosticsService,
             IDocumentContextFactory documentContextFactory,
-            ILoggerFactory loggerFactory)
+            IRazorLoggerFactory loggerFactory)
             : base(dispatcher, clientConnection, options,
                   new Lazy<RazorTranslateDiagnosticsService>(() => razorTranslateDiagnosticsService),
                   new Lazy<IDocumentContextFactory>(() => documentContextFactory),

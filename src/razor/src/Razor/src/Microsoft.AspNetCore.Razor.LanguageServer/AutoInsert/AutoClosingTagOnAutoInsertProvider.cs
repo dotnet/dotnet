@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -40,9 +41,9 @@ internal sealed class AutoClosingTagOnAutoInsertProvider : IOnAutoInsertProvider
     private static readonly ImmutableHashSet<string> s_voidElementsCaseSensitive = s_voidElements.WithComparer(StringComparer.Ordinal);
 
     private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
-    private readonly ILogger<IOnAutoInsertProvider> _logger;
+    private readonly ILogger _logger;
 
-    public AutoClosingTagOnAutoInsertProvider(IOptionsMonitor<RazorLSPOptions> optionsMonitor, ILoggerFactory loggerFactory)
+    public AutoClosingTagOnAutoInsertProvider(IOptionsMonitor<RazorLSPOptions> optionsMonitor, IRazorLoggerFactory loggerFactory)
     {
         if (optionsMonitor is null)
         {

@@ -144,6 +144,9 @@
   <data name="Formatting" xml:space="preserve">
     <value>Formatting</value>
   </data>
+  <data name="Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
   <data name="RazorSyntaxVisualizer" xml:space="preserve">
     <value>Razor Syntax Visualizer</value>
   </data>
@@ -176,6 +179,33 @@
   </data>
   <data name="Setting_FormattingOnTypeDisplayName" xml:space="preserve">
     <value>Format On Type</value>
+  </data>
+  <data name="Setting_LogLevelCritical" xml:space="preserve">
+    <value>Critical</value>
+  </data>
+  <data name="Setting_LogLevelDebug" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="Setting_LogLevelDescription" xml:space="preserve">
+    <value>Sets the level of logging to show in the Razor Logger Output catregory of the Output Window.</value>
+  </data>
+  <data name="Setting_LogLevelDisplayName" xml:space="preserve">
+    <value>Output Window Log Level</value>
+  </data>
+  <data name="Setting_LogLevelError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Setting_LogLevelInformation" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="Setting_LogLevelNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Setting_LogLevelTrace" xml:space="preserve">
+    <value>Trace</value>
+  </data>
+  <data name="Setting_LogLevelWarning" xml:space="preserve">
+    <value>Warning</value>
   </data>
   <data name="Setting_SnippetsAll" xml:space="preserve">
     <value>All</value>

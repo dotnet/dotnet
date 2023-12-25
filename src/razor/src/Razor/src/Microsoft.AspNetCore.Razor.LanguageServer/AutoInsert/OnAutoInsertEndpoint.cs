@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
@@ -36,7 +37,7 @@ internal class OnAutoInsertEndpoint : AbstractRazorDelegatingEndpoint<VSInternal
         IClientConnection clientConnection,
         IEnumerable<IOnAutoInsertProvider> onAutoInsertProvider,
         IOptionsMonitor<RazorLSPOptions> optionsMonitor,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
         : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.CreateLogger<OnAutoInsertEndpoint>())
     {
         _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));

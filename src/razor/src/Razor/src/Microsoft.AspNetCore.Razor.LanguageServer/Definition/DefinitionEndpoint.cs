@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
@@ -38,7 +39,7 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
         IRazorDocumentMappingService documentMappingService,
         LanguageServerFeatureOptions languageServerFeatureOptions,
         IClientConnection clientConnection,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
         : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.CreateLogger<DefinitionEndpoint>())
     {
         _componentSearchEngine = componentSearchEngine ?? throw new ArgumentNullException(nameof(componentSearchEngine));

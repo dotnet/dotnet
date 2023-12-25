@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
@@ -21,7 +22,7 @@ internal sealed class SignatureHelpEndpoint(
         IRazorDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
         IOptionsMonitor<RazorLSPOptions> optionsMonitor,
-        ILoggerFactory loggerProvider)
+        IRazorLoggerFactory loggerProvider)
     : AbstractRazorDelegatingEndpoint<SignatureHelpParams, LS.SignatureHelp?>(
         languageServerFeatureOptions,
         documentMappingService,

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
@@ -24,7 +25,7 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
     private readonly WorkspaceDirectoryPathResolver _workspaceDirectoryPathResolver;
     private readonly IEnumerable<IProjectConfigurationFileChangeListener> _listeners;
     private readonly LanguageServerFeatureOptions _options;
-    private readonly ILoggerFactory _loggerFactory;
+    private readonly IRazorLoggerFactory _loggerFactory;
     private readonly ILogger _logger;
     private readonly ConcurrentDictionary<string, (string ConfigurationDirectory, IFileChangeDetector Detector)> _outputPathMonitors;
     private readonly object _disposeLock;
@@ -37,7 +38,7 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
         WorkspaceDirectoryPathResolver workspaceDirectoryPathResolver,
         IEnumerable<IProjectConfigurationFileChangeListener> listeners,
         LanguageServerFeatureOptions options,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
     {
         if (options is null)
         {
