@@ -29,8 +29,8 @@
     <nugetclientOutputPackageVersion>6.9.0-preview.1.69</nugetclientOutputPackageVersion>
     <razorGitCommitHash>8936658e03082f5530c0461467151072e8151c39</razorGitCommitHash>
     <razorOutputPackageVersion>7.0.0-preview.23621.6</razorOutputPackageVersion>
-    <roslynanalyzersGitCommitHash>5dc99c6249a4cf845fbdcc367641c1b32347b85a</roslynanalyzersGitCommitHash>
-    <roslynanalyzersOutputPackageVersion>3.11.0-beta1.23615.1</roslynanalyzersOutputPackageVersion>
+    <roslynanalyzersGitCommitHash>6d82a8c1be937faa0e4bea4279dca64f28e265b3</roslynanalyzersGitCommitHash>
+    <roslynanalyzersOutputPackageVersion>3.11.0-beta1.23627.2</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>072cbffda581a3bf26dac3bc5feb9fdcb0f5ff13</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.9.0-3.23627.3</roslynOutputPackageVersion>
     <runtimeGitCommitHash>8121f82d7d46118eef03a99eecbde64d8021cec7</runtimeGitCommitHash>
