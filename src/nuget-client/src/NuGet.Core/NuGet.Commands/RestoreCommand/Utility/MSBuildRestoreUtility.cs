@@ -1075,10 +1075,11 @@ namespace NuGet.Commands
         {
             if (!projectStyle.HasValue || (projectStyle.Value == ProjectStyle.PackageReference))
             {
-                return (IsPropertyTrue(projectSpecItem, "_CentralPackageVersionsEnabled") && projectStyle == ProjectStyle.PackageReference,
-                IsPropertyFalse(projectSpecItem, "CentralPackageVersionOverrideEnabled"),
-                IsPropertyTrue(projectSpecItem, "CentralPackageTransitivePinningEnabled"),
-                IsPropertyTrue(projectSpecItem, "CentralPackageFloatingVersionsEnabled"));
+                bool isEnabled = IsPropertyTrue(projectSpecItem, "_CentralPackageVersionsEnabled");
+                bool isVersionOverrideDisabled = IsPropertyFalse(projectSpecItem, "CentralPackageVersionOverrideEnabled");
+                bool isCentralPackageTransitivePinningEnabled = IsPropertyTrue(projectSpecItem, "CentralPackageTransitivePinningEnabled");
+                bool isCentralPackageFloatingVersionsEnabled = IsPropertyTrue(projectSpecItem, "CentralPackageFloatingVersionsEnabled");
+                return (isEnabled, isVersionOverrideDisabled, isCentralPackageTransitivePinningEnabled, isCentralPackageFloatingVersionsEnabled);
             }
 
             return (false, false, false, false);

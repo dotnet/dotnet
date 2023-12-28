@@ -12,6 +12,7 @@ using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.Packaging;
+using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
@@ -1320,6 +1321,58 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             result.Success.Should().BeTrue(because: result.AllOutput);
             result.Output.Should().Contain("PackageReferences = `PackageA` / ``, `PackageB` / ``");
             result.Output.Should().Contain("PackageVersions = `PackageA` / `1.2.3`, `PackageB` / `4.5.6`");
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task MsbuildRestore_LegacyCsprojWithCpm_GlobalPackageReferencesAreProcessed(bool useStaticGraphRestore)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            // If CPM is not correctly enabled, then NuGet will see PackageReferences without a Version.
+            // By default, this is not an error condition, just a warning, but it will be limited to stable versions.
+            // By using a SemVer prerelease version, we ensure that restore always fails if CPM is not enabled (NU1103).
+            var packageX = new SimpleTestPackageContext()
+            {
+                Id = "x",
+                Version = "1.0.0-rc.1"
+            };
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageX);
+
+            var projectA = SimpleTestProjectContext.CreateLegacyPackageReference("a",
+                pathContext.SolutionRoot,
+                FrameworkConstants.CommonFrameworks.Net472);
+            // Since we're using CPM, add a PackageReference without a Version.
+            projectA.AddPackageToAllFrameworks(new SimpleTestPackageContext()
+            {
+                Id = packageX.Id,
+                Version = null
+            });
+
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+            var directoryPackagesProps = $@"<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include=""{packageX.Id}"" Version=""{packageX.Version}"" />
+    </ItemGroup>
+</Project>";
+            var directoryPackagesPropsPath = Path.Combine(pathContext.SolutionRoot, "Directory.Packages.props");
+            File.WriteAllText(directoryPackagesPropsPath, directoryPackagesProps);
+
+            // Act
+            CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore} {projectA.ProjectPath}", ignoreExitCode: true);
+
+            // Assert
+            result.Success.Should().BeTrue(because: result.AllOutput);
+            var packagePath = Path.Combine(pathContext.UserPackagesFolder, packageX.Id, packageX.Version, PackagingCoreConstants.NupkgMetadataFileExtension);
+            File.Exists(packagePath).Should().BeTrue();
         }
     }
 }
