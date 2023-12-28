@@ -86,28 +86,28 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/sdk -->
-    <MicrosoftDotNetCommonItemTemplatesPackageVersion>9.0.100-alpha.1.23627.1</MicrosoftDotNetCommonItemTemplatesPackageVersion>
-    <MicrosoftNETSdkPackageVersion>9.0.100-alpha.1.23627.1</MicrosoftNETSdkPackageVersion>
-    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>9.0.100-alpha.1.23627.1</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
+    <MicrosoftDotNetCommonItemTemplatesPackageVersion>9.0.100-alpha.1.23627.3</MicrosoftDotNetCommonItemTemplatesPackageVersion>
+    <MicrosoftNETSdkPackageVersion>9.0.100-alpha.1.23627.3</MicrosoftNETSdkPackageVersion>
+    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>9.0.100-alpha.1.23627.3</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
     <MicrosoftNETBuildExtensionsPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETBuildExtensionsPackageVersion>
     <MicrosoftDotnetToolsetInternalPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetToolsetInternalPackageVersion>
     <MicrosoftDotnetTemplateLocatorPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetTemplateLocatorPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/roslyn -->
-    <MicrosoftNetCompilersToolsetPackageVersion>4.9.0-3.23621.4</MicrosoftNetCompilersToolsetPackageVersion>
+    <MicrosoftNetCompilersToolsetPackageVersion>4.9.0-3.23627.3</MicrosoftNetCompilersToolsetPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/corefx -->
-    <MicrosoftNETCorePlatformsPackageVersion>9.0.0-alpha.1.23621.6</MicrosoftNETCorePlatformsPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>9.0.0-alpha.1.23627.5</MicrosoftNETCorePlatformsPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/core-setup -->
-    <VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>9.0.0-alpha.1.23621.6</VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>
-    <VSRedistCommonNetCoreTargetingPackx6490PackageVersion>9.0.0-alpha.1.23621.6</VSRedistCommonNetCoreTargetingPackx6490PackageVersion>
-    <MicrosoftNETCoreAppRuntimewinx64PackageVersion>9.0.0-alpha.1.23621.6</MicrosoftNETCoreAppRuntimewinx64PackageVersion>
-    <MicrosoftNETCoreAppHostwinx64PackageVersion>9.0.0-alpha.1.23621.6</MicrosoftNETCoreAppHostwinx64PackageVersion>
-    <MicrosoftNETCoreAppRefPackageVersion>9.0.0-alpha.1.23621.6</MicrosoftNETCoreAppRefPackageVersion>
+    <VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>9.0.0-alpha.1.23627.5</VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>
+    <VSRedistCommonNetCoreTargetingPackx6490PackageVersion>9.0.0-alpha.1.23627.5</VSRedistCommonNetCoreTargetingPackx6490PackageVersion>
+    <MicrosoftNETCoreAppRuntimewinx64PackageVersion>9.0.0-alpha.1.23627.5</MicrosoftNETCoreAppRuntimewinx64PackageVersion>
+    <MicrosoftNETCoreAppHostwinx64PackageVersion>9.0.0-alpha.1.23627.5</MicrosoftNETCoreAppHostwinx64PackageVersion>
+    <MicrosoftNETCoreAppRefPackageVersion>9.0.0-alpha.1.23627.5</MicrosoftNETCoreAppRefPackageVersion>
     <MicrosoftNETCoreDotNetHostResolverPackageVersion>8.0.0-rc.1.23414.4</MicrosoftNETCoreDotNetHostResolverPackageVersion>
     <NETStandardLibraryRefPackageVersion>2.1.0</NETStandardLibraryRefPackageVersion>
   </PropertyGroup>
@@ -128,7 +128,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/NuGet/NuGet.Client -->
-    <NuGetBuildTasksPackageVersion>6.9.0-preview.1.67</NuGetBuildTasksPackageVersion>
+    <NuGetBuildTasksPackageVersion>6.9.0-preview.1.69</NuGetBuildTasksPackageVersion>
   </PropertyGroup>
   <!-- Dependencies from https://github.com/dotnet/deployment-tools -->
   <PropertyGroup>
