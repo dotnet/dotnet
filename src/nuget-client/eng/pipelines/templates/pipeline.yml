@@ -322,19 +322,13 @@ stages:
     - Build_Insertable
     testExecutionJobTimeoutInMinutes: 100
     bootstrapperUrl: $(VsBootstrapperUrl)
-    baseBuildDrop: $(VsBaseBuildDrop)
     runSettingsURI:  https://vsdrop.corp.microsoft.com/file/v1/RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildId);NuGet.Tests.Apex.runsettings
     DartLabEnvironment: ${{parameters.DartLabEnvironment}}
     variables:
     - name: VsBootstrapperUrl
       value: $[stageDependencies.Build_Insertable.Build_and_UnitTest_NonRTM.outputs['vsbootstrapper.bootstrapperUrl']]
-    - name: VsBaseBuildDrop
-      value: $[stageDependencies.Build_Insertable.Build_and_UnitTest_NonRTM.outputs['setbasebuilddrop.BaseBuildDrop']]
-    - name: QBuildSessionId
-      value: $[stageDependencies.Build_Insertable.Build_and_UnitTest_NonRTM.outputs['setcloudbuildsessionid.QBuildSessionId']]
     - name: GitHubStatusName
       value: End_To_End_Tests_On_Windows Part1
-    QBuildSessionId: $(QBuildSessionId)
     part: "InstallPackageTest.ps1,UninstallPackageTest.ps1,UpdatePackageTest.ps1"
     testMachineCleanUpStrategy: ${{parameters.E2EPart1AgentCleanup}}
 
@@ -349,19 +343,13 @@ stages:
     - Build_Insertable
     testExecutionJobTimeoutInMinutes: 100
     bootstrapperUrl: $(VsBootstrapperUrl)
-    baseBuildDrop: $(VsBaseBuildDrop)
     runSettingsURI:  https://vsdrop.corp.microsoft.com/file/v1/RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildId);NuGet.Tests.Apex.runsettings
     DartLabEnvironment: ${{parameters.DartLabEnvironment}}
     variables:
     - name: VsBootstrapperUrl
       value: $[stageDependencies.Build_Insertable.Build_and_UnitTest_NonRTM.outputs['vsbootstrapper.bootstrapperUrl']]
-    - name: VsBaseBuildDrop
-      value: $[stageDependencies.Build_Insertable.Build_and_UnitTest_NonRTM.outputs['setbasebuilddrop.BaseBuildDrop']]
-    - name: QBuildSessionId
-      value: $[stageDependencies.Build_Insertable.Build_and_UnitTest_NonRTM.outputs['setcloudbuildsessionid.QBuildSessionId']]
     - name: GitHubStatusName
       value: End_To_End_Tests_On_Windows Part2
-    QBuildSessionId: $(QBuildSessionId)
     part: "A-TopDownloadedPackages.ps1,BuildIntegratedTest.ps1,ExecuteInitScriptTest.ps1,FindPackageTest.ps1,GetPackageTest.ps1,GetProjectTest.ps1,LegacyPackageRefProjectTest.ps1,NativeProjectTest.ps1,NetCoreProjectTest.ps1,PackTest.ps1,ProjectRetargeting.ps1,ServicesTest.ps1,Settings.ps1,SyncPackageTest.ps1,TabExpansionTest.ps1,UniversalWindowsProjectTest.ps1"
     testMachineCleanUpStrategy: ${{parameters.E2EPart2AgentCleanup}}
 
@@ -375,10 +363,6 @@ stages:
     variables:
       - name: VsBootstrapperUrl
         value: $[stageDependencies.Build_Insertable.Build_and_UnitTest_NonRTM.outputs['vsbootstrapper.bootstrapperUrl']]
-      - name: VsBaseBuildDrop
-        value: $[stageDependencies.Build_Insertable.Build_and_UnitTest_NonRTM.outputs['setbasebuilddrop.BaseBuildDrop']]
-      - name: QBuildSessionId
-        value: $[stageDependencies.Build_Insertable.Build_and_UnitTest_NonRTM.outputs['setcloudbuildsessionid.QBuildSessionId']]
       - name: GitHubStatusName
         value: Apex Tests On Windows
     isOfficialBuild: ${{parameters.isOfficialBuild}}
@@ -386,6 +370,4 @@ stages:
     dartLabEnvironment: ${{parameters.DartLabEnvironment}}
     testExecutionJobTimeoutInMinutes: 150
     bootstrapperUrl: $(VsBootstrapperUrl)
-    baseBuildDrop: $(VsBaseBuildDrop)
-    QBuildSessionId: $(QBuildSessionId)
     testMachineCleanUpStrategy: ${{parameters.ApexAgentCleanup}}
