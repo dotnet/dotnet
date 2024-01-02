@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging;
@@ -29,7 +30,7 @@ internal class HtmlFormattingPass : FormattingPassBase
         IClientConnection clientConnection,
         IDocumentVersionCache documentVersionCache,
         IOptionsMonitor<RazorLSPOptions> optionsMonitor,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
         : base(documentMappingService, clientConnection)
     {
         if (loggerFactory is null)

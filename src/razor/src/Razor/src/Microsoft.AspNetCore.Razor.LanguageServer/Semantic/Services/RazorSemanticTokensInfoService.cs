@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic.Models;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
@@ -38,7 +39,7 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
         IRazorDocumentMappingService documentMappingService,
         RazorLSPOptionsMonitor razorLSPOptionsMonitor,
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
     {
         _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));

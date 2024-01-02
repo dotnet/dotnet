@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
@@ -28,22 +29,16 @@ using SyntaxKind = Microsoft.AspNetCore.Razor.Language.SyntaxKind;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
 
 [LanguageServerEndpoint(Methods.TextDocumentDefinitionName)]
-internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, DefinitionResult?>, ICapabilitiesProvider
+internal sealed class DefinitionEndpoint(
+    RazorComponentSearchEngine componentSearchEngine,
+    IRazorDocumentMappingService documentMappingService,
+    LanguageServerFeatureOptions languageServerFeatureOptions,
+    IClientConnection clientConnection,
+    IRazorLoggerFactory loggerFactory)
+    : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, DefinitionResult?>(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.CreateLogger<DefinitionEndpoint>()), ICapabilitiesProvider
 {
-    private readonly RazorComponentSearchEngine _componentSearchEngine;
-    private readonly IRazorDocumentMappingService _documentMappingService;
-
-    public DefinitionEndpoint(
-        RazorComponentSearchEngine componentSearchEngine,
-        IRazorDocumentMappingService documentMappingService,
-        LanguageServerFeatureOptions languageServerFeatureOptions,
-        IClientConnection clientConnection,
-        ILoggerFactory loggerFactory)
-        : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.CreateLogger<DefinitionEndpoint>())
-    {
-        _componentSearchEngine = componentSearchEngine ?? throw new ArgumentNullException(nameof(componentSearchEngine));
-        _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
-    }
+    private readonly RazorComponentSearchEngine _componentSearchEngine = componentSearchEngine ?? throw new ArgumentNullException(nameof(componentSearchEngine));
+    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
 
     protected override bool PreferCSharpOverHtmlIfPossible => true;
 
@@ -58,35 +53,35 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
 
     protected async override Task<DefinitionResult?> TryHandleAsync(TextDocumentPositionParams request, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
     {
-        requestContext.Logger.LogInformation("Starting go-to-def endpoint request.");
+        Logger.LogInformation("Starting go-to-def endpoint request.");
         var documentContext = requestContext.GetRequiredDocumentContext();
 
         if (!FileKinds.IsComponent(documentContext.FileKind))
         {
-            requestContext.Logger.LogInformation("FileKind '{fileKind}' is not a component type.", documentContext.FileKind);
+            Logger.LogInformation("FileKind '{fileKind}' is not a component type.", documentContext.FileKind);
             return default;
         }
 
         // If single server support is on, then we ignore attributes, as they are better handled by delegating to Roslyn
-        var (originTagDescriptor, attributeDescriptor) = await GetOriginTagHelperBindingAsync(documentContext, positionInfo.HostDocumentIndex, SingleServerSupport, requestContext.Logger, cancellationToken).ConfigureAwait(false);
+        var (originTagDescriptor, attributeDescriptor) = await GetOriginTagHelperBindingAsync(documentContext, positionInfo.HostDocumentIndex, SingleServerSupport, Logger, cancellationToken).ConfigureAwait(false);
         if (originTagDescriptor is null)
         {
-            requestContext.Logger.LogInformation("Origin TagHelper descriptor is null.");
+            Logger.LogInformation("Origin TagHelper descriptor is null.");
             return default;
         }
 
         var originComponentDocumentSnapshot = await _componentSearchEngine.TryLocateComponentAsync(originTagDescriptor).ConfigureAwait(false);
         if (originComponentDocumentSnapshot is null)
         {
-            requestContext.Logger.LogInformation("Origin TagHelper document snapshot is null.");
+            Logger.LogInformation("Origin TagHelper document snapshot is null.");
             return default;
         }
 
         var originComponentDocumentFilePath = originComponentDocumentSnapshot.FilePath.AssumeNotNull();
 
-        requestContext.Logger.LogInformation("Definition found at file path: {filePath}", originComponentDocumentFilePath);
+        Logger.LogInformation("Definition found at file path: {filePath}", originComponentDocumentFilePath);
 
-        var range = await GetNavigateRangeAsync(originComponentDocumentSnapshot, attributeDescriptor, requestContext.Logger, cancellationToken).ConfigureAwait(false);
+        var range = await GetNavigateRangeAsync(originComponentDocumentSnapshot, attributeDescriptor, cancellationToken).ConfigureAwait(false);
 
         var originComponentUri = new UriBuilder
         {
@@ -181,8 +176,8 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
         if (!ignoreAttributes && node is MarkupTagHelperStartTagSyntax startTag)
         {
             // Include attributes where the end index also matches, since GetSyntaxNodeAsync will consider that the start tag but we behave
-            // as if the user wants to go to the attribute definitiion.
-            // ie: <Componet attribute$$></Component>
+            // as if the user wants to go to the attribute definition.
+            // ie: <Component attribute$$></Component>
             var selectedAttribute = startTag.Attributes.FirstOrDefault(a => a.Span.Contains(absoluteIndex) || a.Span.End == absoluteIndex);
 
             // If we're on an attribute then just validate against the attribute name
@@ -236,14 +231,14 @@ internal sealed class DefinitionEndpoint : AbstractRazorDelegatingEndpoint<TextD
         };
     }
 
-    private async Task<Range> GetNavigateRangeAsync(IDocumentSnapshot documentSnapshot, BoundAttributeDescriptor? attributeDescriptor, ILogger logger, CancellationToken cancellationToken)
+    private async Task<Range> GetNavigateRangeAsync(IDocumentSnapshot documentSnapshot, BoundAttributeDescriptor? attributeDescriptor, CancellationToken cancellationToken)
     {
         if (attributeDescriptor is not null)
         {
-            logger.LogInformation("Attempting to get definition from an attribute directly.");
+            Logger.LogInformation("Attempting to get definition from an attribute directly.");
 
             var originCodeDocument = await documentSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
-            var range = await TryGetPropertyRangeAsync(originCodeDocument, attributeDescriptor.GetPropertyName(), _documentMappingService, logger, cancellationToken).ConfigureAwait(false);
+            var range = await TryGetPropertyRangeAsync(originCodeDocument, attributeDescriptor.GetPropertyName(), _documentMappingService, Logger, cancellationToken).ConfigureAwait(false);
 
             if (range is not null)
             {

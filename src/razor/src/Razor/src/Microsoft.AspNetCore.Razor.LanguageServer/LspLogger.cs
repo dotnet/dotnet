@@ -8,25 +8,19 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class LspLogger : IRazorLogger
+/// <summary>
+/// ILogger implementation that logs via the window/logMessage LSP method
+/// </summary>
+internal class LspLogger : ILogger
 {
     private readonly LogLevel _logLevel;
-    private IClientConnection? _clientConnection;
+    private readonly string _categoryName;
+    private IClientConnection _clientConnection;
 
-    public LspLogger(Trace trace)
+    public LspLogger(string categoryName, LogLevel logLevel, IClientConnection clientConnection)
     {
-        var logLevel = trace switch
-        {
-            Trace.Off => LogLevel.None,
-            Trace.Messages => LogLevel.Information,
-            Trace.Verbose => LogLevel.Trace,
-            _ => throw new NotImplementedException(),
-        };
         _logLevel = logLevel;
-    }
-
-    public void Initialize(IClientConnection clientConnection)
-    {
+        _categoryName = categoryName;
         _clientConnection = clientConnection;
     }
 
@@ -37,12 +31,12 @@ internal class LspLogger : IRazorLogger
 
     public bool IsEnabled(LogLevel logLevel)
     {
-        return true;
+        return logLevel >= _logLevel;
     }
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
-        if (logLevel is LogLevel.None)
+        if (!IsEnabled(logLevel))
         {
             return;
         }
@@ -66,7 +60,7 @@ internal class LspLogger : IRazorLogger
         var @params = new LogMessageParams
         {
             MessageType = messageType,
-            Message = message,
+            Message = $"[{_categoryName}] {message}",
         };
 
         if (_clientConnection is null)
@@ -76,38 +70,6 @@ internal class LspLogger : IRazorLogger
 
         _ = _clientConnection.SendNotificationAsync(Methods.WindowLogMessageName, @params, CancellationToken.None);
     }
-
-    // Not doing anything for now.
-    public void LogStartContext(string message, params object[] @params)
-    {
-    }
-
-    // Not doing anything for now.
-    public void LogEndContext(string message, params object[] @params)
-    {
-    }
-
-    public void LogError(string message, params object[] @params)
-    {
-#pragma warning disable CA2254 // Template should be a static expression
-        ((ILogger)this).LogError(message, @params);
-    }
-
-    public void LogException(Exception exception, string? message = null, params object[] @params)
-    {
-        ((ILogger)this).LogError(exception, message, @params);
-    }
-
-    public void LogInformation(string message, params object[] @params)
-    {
-        ((ILogger)this).LogInformation(message, @params);
-    }
-
-    public void LogWarning(string message, params object[] @params)
-    {
-        ((ILogger)this).LogWarning(message, @params);
-    }
-#pragma warning restore CA2254 // Template should be a static expression
 
     private class Disposable : IDisposable
     {

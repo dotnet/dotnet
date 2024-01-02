@@ -29,10 +29,10 @@ public class InterceptionMiddleLayerTest : ToolingTestBase
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public void Ctor_EmptyLanguageName_Throws(string languageName)
+    public void Ctor_EmptyLanguageName_Throws(string? languageName)
     {
         var fakeInterceptorManager = Mock.Of<InterceptorManager>(MockBehavior.Strict);
-        Assert.Throws<ArgumentException>(() => new InterceptionMiddleLayer(fakeInterceptorManager, languageName));
+        Assert.Throws<ArgumentException>(() => new InterceptionMiddleLayer(fakeInterceptorManager, languageName!));
     }
 
     [Theory]

@@ -8,22 +8,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
 [LanguageServerEndpoint(LspEndpointName)]
-internal sealed class SemanticTokensRangeEndpoint : IRazorRequestHandler<SemanticTokensRangeParams, SemanticTokens?>, ICapabilitiesProvider
+internal sealed class SemanticTokensRangeEndpoint(IRazorLoggerFactory loggerFactory, ITelemetryReporter? telemetryReporter)
+    : IRazorRequestHandler<SemanticTokensRangeParams, SemanticTokens?>, ICapabilitiesProvider
 {
-    public const string LspEndpointName = Methods.TextDocumentSemanticTokensRangeName;
-    private RazorSemanticTokensLegend? _razorSemanticTokensLegend;
-    private readonly ITelemetryReporter? _telemetryReporter;
+    private const string LspEndpointName = Methods.TextDocumentSemanticTokensRangeName;
 
-    public SemanticTokensRangeEndpoint(ITelemetryReporter? telemetryReporter)
-    {
-        _telemetryReporter = telemetryReporter;
-    }
+    private readonly ILogger _logger = loggerFactory.CreateLogger<SemanticTokensRangeEndpoint>();
+    private readonly ITelemetryReporter? _telemetryReporter = telemetryReporter;
+
+    private RazorSemanticTokensLegend? _razorSemanticTokensLegend;
 
     public bool MutatesSolutionState { get; } = false;
 
@@ -59,7 +60,7 @@ internal sealed class SemanticTokensRangeEndpoint : IRazorRequestHandler<Semanti
         var semanticTokens = await semanticTokensInfoService.GetSemanticTokensAsync(request.TextDocument, request.Range, documentContext, _razorSemanticTokensLegend.AssumeNotNull(), correlationId, cancellationToken).ConfigureAwait(false);
         var amount = semanticTokens is null ? "no" : (semanticTokens.Data.Length / 5).ToString(Thread.CurrentThread.CurrentCulture);
 
-        requestContext.Logger.LogInformation("Returned {amount} semantic tokens for range ({startLine},{startChar})-({endLine},{endChar}) in {request.TextDocument.Uri}.", amount, request.Range.Start.Line, request.Range.Start.Character, request.Range.End.Line, request.Range.End.Character, request.TextDocument.Uri);
+        _logger.LogInformation("Returned {amount} semantic tokens for range ({startLine},{startChar})-({endLine},{endChar}) in {request.TextDocument.Uri}.", amount, request.Range.Start.Line, request.Range.Start.Character, request.Range.End.Line, request.Range.End.Character, request.TextDocument.Uri);
 
         if (semanticTokens is not null)
         {

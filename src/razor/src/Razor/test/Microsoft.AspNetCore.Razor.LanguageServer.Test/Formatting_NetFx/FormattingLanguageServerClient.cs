@@ -15,8 +15,8 @@ using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
@@ -25,10 +25,10 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-internal class FormattingLanguageServerClient(ILoggerFactory loggerFactory) : IClientConnection
+internal class FormattingLanguageServerClient(IRazorLoggerFactory loggerFactory) : IClientConnection
 {
     private readonly Dictionary<string, RazorCodeDocument> _documents = [];
-    private readonly ILoggerFactory _loggerFactory = loggerFactory;
+    private readonly IRazorLoggerFactory _loggerFactory = loggerFactory;
 
     public InitializeResult ServerSettings
         => throw new NotImplementedException();
@@ -106,7 +106,7 @@ internal class FormattingLanguageServerClient(ILoggerFactory loggerFactory) : IC
 
         var textBufferFactoryService = (ITextBufferFactoryService3)exportProvider.GetExportedValue<ITextBufferFactoryService>();
         var bufferManager = WebTools.BufferManager.New(contentTypeService, textBufferFactoryService, []);
-        var logger = _loggerFactory.CreateLogger(GetType()).ToRazorLogger();
+        var logger = new ClaspLoggingBridge(_loggerFactory);
         var applyFormatEditsHandler = WebTools.ApplyFormatEditsHandler.New(textBufferFactoryService, bufferManager, logger);
 
         // Make sure the buffer manager knows about the source document

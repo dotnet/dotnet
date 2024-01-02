@@ -7,10 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Debugging;
@@ -20,27 +20,25 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Debugging;
 internal class DefaultLSPBreakpointSpanProvider : LSPBreakpointSpanProvider
 {
     private readonly LSPRequestInvoker _requestInvoker;
-    private readonly HTMLCSharpLanguageServerLogHubLoggerProvider _loggerProvider;
-
-    private ILogger? _logHubLogger = null;
+    private readonly ILogger _logger;
 
     [ImportingConstructor]
     public DefaultLSPBreakpointSpanProvider(
         LSPRequestInvoker requestInvoker,
-        HTMLCSharpLanguageServerLogHubLoggerProvider loggerProvider)
+        IRazorLoggerFactory loggerFactory)
     {
         if (requestInvoker is null)
         {
             throw new ArgumentNullException(nameof(requestInvoker));
         }
 
-        if (loggerProvider is null)
+        if (loggerFactory is null)
         {
-            throw new ArgumentNullException(nameof(loggerProvider));
+            throw new ArgumentNullException(nameof(loggerFactory));
         }
 
         _requestInvoker = requestInvoker;
-        _loggerProvider = loggerProvider;
+        _logger = loggerFactory.CreateLogger<DefaultLSPBreakpointSpanProvider>();
     }
 
     public async override Task<Range?> GetBreakpointSpanAsync(LSPDocumentSnapshot documentSnapshot, Position position, CancellationToken cancellationToken)
@@ -54,11 +52,6 @@ internal class DefaultLSPBreakpointSpanProvider : LSPBreakpointSpanProvider
         {
             throw new ArgumentNullException(nameof(position));
         }
-
-        // We initialize the logger here instead of the constructor as the breakpoint span provider is constructed
-        // *before* the language server. Thus, the log hub has yet to be initialized, thus we would be unable to
-        // create the logger at that time.
-        await InitializeLogHubAsync(cancellationToken).ConfigureAwait(false);
 
         var languageQueryParams = new RazorBreakpointSpanParams()
         {
@@ -77,23 +70,11 @@ internal class DefaultLSPBreakpointSpanProvider : LSPBreakpointSpanProvider
         var languageResponse = response?.Response;
         if (languageResponse is null)
         {
-            _logHubLogger?.LogInformation("The breakpoint position could not be mapped to a valid range.");
+            _logger.LogInformation("The breakpoint position could not be mapped to a valid range.");
             return null;
         }
 
         return languageResponse.Range;
-    }
-
-    private async Task InitializeLogHubAsync(CancellationToken cancellationToken)
-    {
-        if (_logHubLogger is null)
-        {
-            await _loggerProvider.InitializeLoggerAsync(cancellationToken);
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            _logHubLogger = _loggerProvider.CreateLogger(nameof(DefaultLSPBreakpointSpanProvider));
-        }
     }
 
     private static bool CheckRazorBreakpointSpanCapability(JToken token)

@@ -48,14 +48,15 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Test.Utilities" Version="$(MicrosoftCodeAnalysisTestUtilitiesPackageVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="$(MicrosoftCodeAnalysisWorkspacesCommonPackageVersion)" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Copilot" Version="$(MicrosoftVisualStudioCopilotVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Text.Data" Version="$(MicrosoftVisualStudioTextDataPackageVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Text.Implementation" Version="$(MicrosoftVisualStudioTextImplementationPackageVersion)" NoWarn="NU1701" />
     <PackageReference Include="Microsoft.VisualStudio.Text.Logic" Version="$(MicrosoftVisualStudioTextLogicPackageVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Threading" Version="$(MicrosoftVisualStudioThreadingPackageVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Validation" Version="$(MicrosoftVisualStudioValidationPackageVersion)" />
     <PackageReference Include="Moq" Version="$(MoqPackageVersion)" />
-    <PackageReference Include="xunit.analyzers" Version="$(XunitAnalyzersPackageVersion)" />
-    <PackageReference Include="xunit.extensibility.execution" Version="$(XunitExtensibilityExecutionPackageVersion)" />
+    <PackageReference Include="xunit.analyzers" Version="$(XUnitAnalyzersVersion)" />
+    <PackageReference Include="xunit.extensibility.execution" Version="$(XunitExtensibilityExecutionVersion)" />
     <PackageReference Include="Xunit.Combinatorial" Version="$(XunitCombinatorialPackageVersion)" />
     <PackageReference Include="Xunit.StaFact" Version="$(XunitStaFactVersion)" />
   </ItemGroup>

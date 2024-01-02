@@ -283,3 +283,18 @@ secrets:
       name: dn-bot-ceapex-package-r
       organizations: ceapex
       scopes: packaging
+
+  # Token used for installing the Guardian CLI from the securitytools AzDO org
+  # The PAT is in the Guardian service connections in dnceng and devdiv:
+  # https://devdiv.visualstudio.com/DevDiv/_settings/adminservices?resourceId=e002c3af-b8a4-4ebe-816b-d4908648a66a
+  # https://dev.azure.com/dnceng/internal/_settings/adminservices?resourceId=d2604fd5-04f1-4957-afe3-3d3ea81a665b
+  dn-bot-securitytools-packaging-r:
+    type: azure-devops-access-token
+    parameters:
+      domainAccountName: dn-bot
+      domainAccountSecret:
+          location: helixkv
+          name: dn-bot-account-redmond
+      name: dn-bot-securitytools-packaging-r
+      organizations: securitytools
+      scopes: packaging

@@ -14,6 +14,8 @@
       if available for the kind of artifact they operate on.
   -->
   <PropertyGroup>
+    <!-- Treat test assemblies as non-shipping (do not publish or sign them). -->
+    <IsShipping Condition="'$(IsShipping)' == '' and ('$(IsTestProject)' == 'true' or '$(IsTestUtilityProject)' == 'true')">false</IsShipping>
     <IsShipping Condition="'$(IsShipping)' == ''">true</IsShipping>
 
     <IsShippingAssembly Condition="'$(IsShippingAssembly)' == ''">$(IsShipping)</IsShippingAssembly>

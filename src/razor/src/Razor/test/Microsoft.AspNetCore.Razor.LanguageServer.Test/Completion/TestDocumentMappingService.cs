@@ -14,6 +14,9 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 internal class TestDocumentMappingService : IRazorDocumentMappingService
 {
     public RazorLanguageKind LanguageKind { get; set; }
+    public LinePosition? GeneratedPosition { get; set; }
+    public int GeneratedIndex { get; set; }
+
     public TextEdit[] GetHostDocumentEdits(IRazorGeneratedDocument generatedDocument, TextEdit[] generatedDocumentEdits)
         => Array.Empty<TextEdit>();
 
@@ -37,7 +40,16 @@ internal class TestDocumentMappingService : IRazorDocumentMappingService
 
     public bool TryMapToGeneratedDocumentPosition(IRazorGeneratedDocument generatedDocument, int hostDocumentIndex, out LinePosition generatedPosition, out int generatedIndex)
     {
-        throw new NotImplementedException();
+        if (GeneratedPosition is null)
+        {
+            generatedPosition = default;
+            generatedIndex = default;
+            return false;
+        }
+
+        generatedPosition = GeneratedPosition.Value;
+        generatedIndex = GeneratedIndex;
+        return true;
     }
 
     public bool TryMapToGeneratedDocumentRange(IRazorGeneratedDocument generatedDocument, LinePositionSpan hostDocumentRange, out LinePositionSpan generatedDocumentRange)

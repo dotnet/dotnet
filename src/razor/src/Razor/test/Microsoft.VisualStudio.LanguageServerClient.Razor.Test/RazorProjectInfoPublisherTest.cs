@@ -544,7 +544,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
-                Assert.True(false, "Serialization should not have been atempted because there is no ProjectWorkspaceState.");
+                Assert.Fail("Serialization should not have been atempted because there is no ProjectWorkspaceState.");
                 serializationSuccessful = true;
             })
         {

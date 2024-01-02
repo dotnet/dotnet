@@ -22,17 +22,18 @@ internal class VisualStudioWindowsLogHubTraceProvider : RazorLogHubTraceProvider
 
     private readonly SemaphoreSlim _initializationSemaphore;
     private IServiceBroker? _serviceBroker = null;
+    private TraceSource? _traceSource;
 
     public VisualStudioWindowsLogHubTraceProvider()
     {
         _initializationSemaphore = new SemaphoreSlim(initialCount: 1, maxCount: 1);
     }
 
-    public override async Task<TraceSource?> InitializeTraceAsync(string logIdentifier, int logHubSessionId, CancellationToken cancellationToken)
+    public override async Task InitializeTraceAsync(string logIdentifier, int logHubSessionId, CancellationToken cancellationToken)
     {
         if ((await TryInitializeServiceBrokerAsync(cancellationToken).ConfigureAwait(false)) is false)
         {
-            return null;
+            return;
         }
 
         var logId = new LogId(
@@ -40,12 +41,15 @@ internal class VisualStudioWindowsLogHubTraceProvider : RazorLogHubTraceProvider
             serviceId: new ServiceMoniker($"Razor.{logIdentifier}"));
 
         using var traceConfig = await LogHub.TraceConfiguration.CreateTraceConfigurationInstanceAsync(_serviceBroker!, ownsServiceBroker: true, cancellationToken).ConfigureAwait(false);
-        var traceSource = await traceConfig.RegisterLogSourceAsync(logId, s_logOptions, cancellationToken).ConfigureAwait(false);
-
-        return traceSource;
+        _traceSource = await traceConfig.RegisterLogSourceAsync(logId, s_logOptions, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<bool> TryInitializeServiceBrokerAsync(CancellationToken cancellationToken)
+    public override TraceSource? TryGetTraceSource()
+    {
+        return _traceSource;
+    }
+
+    private async Task<bool> TryInitializeServiceBrokerAsync(CancellationToken cancellationToken)
     {
         await _initializationSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try

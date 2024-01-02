@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -32,7 +33,7 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
         IEnumerable<IRazorCodeActionResolver> razorCodeActionResolvers,
         IEnumerable<CSharpCodeActionResolver> csharpCodeActionResolvers,
         IEnumerable<HtmlCodeActionResolver> htmlCodeActionResolvers,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
     {
         if (razorCodeActionResolvers is null)
         {

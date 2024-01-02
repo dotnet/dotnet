@@ -3,10 +3,6 @@
 
 using System;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.ComponentModelHost;
-using Microsoft.VisualStudio.Editor.Razor.Logging;
-using Microsoft.VisualStudio.Shell;
 using Xunit.Sdk;
 
 namespace Microsoft.VisualStudio.Razor.IntegrationTests;
@@ -16,18 +12,18 @@ public class LogIntegrationTestAttribute : BeforeAfterTestAttribute
 {
     public override void Before(MethodInfo methodUnderTest)
     {
-        GetLogger().LogInformation("#### Integration test start: {method}", methodUnderTest.Name);
+        // GetLogger(methodUnderTest.Name).LogInformation("#### Integration test start.");
     }
 
     public override void After(MethodInfo methodUnderTest)
     {
-        GetLogger().LogInformation("#### Integration test end: {method}", methodUnderTest.Name);
+        // GetLogger(methodUnderTest.Name).LogInformation("#### Integration test end.");
     }
 
-    private static IOutputWindowLogger GetLogger()
-    {
-        var componentModel = ServiceProvider.GlobalProvider.GetService<SComponentModel, IComponentModel>();
-        var logger = componentModel.GetService<IOutputWindowLogger>();
-        return logger;
-    }
+    // private static ILogger GetLogger(string testName)
+    // {
+    //     var componentModel = ServiceProvider.GlobalProvider.GetService<SComponentModel, IComponentModel>();
+    //     var loggerFactory = componentModel.GetService<IRazorLoggerFactory>();
+    //     return loggerFactory.CreateLogger(testName);
+    // }
 }

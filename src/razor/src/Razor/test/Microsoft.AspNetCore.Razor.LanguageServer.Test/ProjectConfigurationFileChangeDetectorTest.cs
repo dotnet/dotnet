@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor;
-using Microsoft.Extensions.Logging;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -83,7 +83,7 @@ public class ProjectConfigurationFileChangeDetectorTest : LanguageServerTestBase
             ProjectSnapshotManagerDispatcher dispatcher,
             IEnumerable<IProjectConfigurationFileChangeListener> listeners,
             IReadOnlyList<string> existingConfigurationFiles,
-            ILoggerFactory loggerFactory)
+            IRazorLoggerFactory loggerFactory)
             : base(dispatcher, listeners, TestLanguageServerFeatureOptions.Instance, loggerFactory)
         {
             _cancellationTokenSource = cancellationTokenSource;

@@ -46,15 +46,15 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
         IClientConnection clientConnection,
         IRazorFormattingService razorFormattingService,
         RazorLSPOptionsMonitor? optionsMonitor = null)
-            => new[]
-            {
+            =>
+            [
                 new GenerateMethodCodeActionResolver(
                     new GenerateMethodResolverDocumentContextFactory(filePath, codeDocument),
                     optionsMonitor ?? TestRazorLSPOptionsMonitor.Create(),
                     clientConnection,
                     new RazorDocumentMappingService(FilePathService, new TestDocumentContextFactory(), LoggerFactory),
                     razorFormattingService)
-            };
+            ];
 
     #region CSharp CodeAction Tests
 
@@ -625,7 +625,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
         var uri = new Uri(razorFilePath);
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
-        var requestContext = new RazorRequestContext(documentContext, Logger, null!);
+        var requestContext = new RazorRequestContext(documentContext, null!, "lsp/method", uri:null);
 
         var result = await GetCodeActionsAsync(
             uri,
@@ -664,7 +664,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
         var uri = new Uri(razorFilePath);
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
-        var requestContext = new RazorRequestContext(documentContext, Logger, null!);
+        var requestContext = new RazorRequestContext(documentContext, null!, "lsp/method", uri: null);
 
         var result = await GetCodeActionsAsync(
             uri,
@@ -711,7 +711,6 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
             """;
 
         var razorLSPOptions = new RazorLSPOptions(
-            Trace: default,
             EnableFormatting: true,
             AutoClosingTags: true,
             insertSpaces,
@@ -949,7 +948,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
         var uri = new Uri(razorFilePath);
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
-        var requestContext = new RazorRequestContext(documentContext, Logger, null!);
+        var requestContext = new RazorRequestContext(documentContext, null!, "lsp/method", uri: null);
         File.Create(codeBehindFilePath).Close();
         try
         {
@@ -1033,7 +1032,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
         var uri = new Uri(razorFilePath);
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
-        var requestContext = new RazorRequestContext(documentContext, Logger, null!);
+        var requestContext = new RazorRequestContext(documentContext, null!, "lsp/method", uri: null);
 
         var result = await GetCodeActionsAsync(
             uri,
@@ -1099,6 +1098,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
             htmlCodeActionProviders: [],
             clientConnection,
             LanguageServerFeatureOptions.AssumeNotNull(),
+            LoggerFactory,
             telemetryReporter: null);
 
         // Call GetRegistration, so the endpoint knows we support resolve

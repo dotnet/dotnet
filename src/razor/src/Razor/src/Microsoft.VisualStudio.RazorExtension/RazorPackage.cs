@@ -5,11 +5,14 @@ using System;
 using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Debugging;
+using Microsoft.VisualStudio.Editor.Razor.Logging;
 using Microsoft.VisualStudio.Editor.Razor.Snippets;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.Options;
 using Microsoft.VisualStudio.LanguageServices.Razor;
@@ -47,6 +50,8 @@ internal sealed class RazorPackage : AsyncPackage
     internal static readonly Guid GuidSyntaxVisualizerMenuCmdSet = new Guid(GuidSyntaxVisualizerMenuCmdSetString);
     internal const uint CmdIDRazorSyntaxVisualizer = 0x101;
 
+    private OptionsStorage? _optionsStorage = null;
+
     protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
     {
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
@@ -76,16 +81,29 @@ internal sealed class RazorPackage : AsyncPackage
             mcs.AddCommand(menuToolWin);
         }
 
-        CreateSnippetService();
+        var componentModel = (IComponentModel)GetGlobalService(typeof(SComponentModel));
+        _optionsStorage = componentModel.GetService<OptionsStorage>();
+        CreateSnippetService(componentModel);
+
+        // LogHub can be initialized off the UI thread
+        await TaskScheduler.Default;
+
+        var traceProvider = componentModel.GetService<RazorLogHubTraceProvider>();
+        await traceProvider.InitializeTraceAsync("Razor", 1, cancellationToken);
     }
 
-    private SnippetService CreateSnippetService()
+    protected override void Dispose(bool disposing)
     {
-        var componentModel = (IComponentModel)GetGlobalService(typeof(SComponentModel));
+        base.Dispose(disposing);
+        _optionsStorage?.Dispose();
+        _optionsStorage = null;
+    }
+
+    private SnippetService CreateSnippetService(IComponentModel componentModel)
+    {
         var joinableTaskContext = componentModel.GetService<JoinableTaskContext>();
         var cache = componentModel.GetService<SnippetCache>();
-        var optionsStorage = componentModel.GetService<OptionsStorage>();
-        return new SnippetService(joinableTaskContext.Factory, this, cache, optionsStorage);
+        return new SnippetService(joinableTaskContext.Factory, this, cache, _optionsStorage.AssumeNotNull());
     }
 
     /// <summary>

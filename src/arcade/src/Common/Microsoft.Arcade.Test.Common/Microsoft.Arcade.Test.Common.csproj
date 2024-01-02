@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
-    <IsTestProject>true</IsTestProject>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <IsTestUtilityProject>true</IsTestUtilityProject>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Tasks.Core" />
+    <PackageReference Include="xunit" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">

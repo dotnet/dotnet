@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
@@ -21,28 +22,21 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
 
 [LanguageServerEndpoint(VSInternalMethods.OnAutoInsertName)]
-internal class OnAutoInsertEndpoint : AbstractRazorDelegatingEndpoint<VSInternalDocumentOnAutoInsertParams, VSInternalDocumentOnAutoInsertResponseItem?>, ICapabilitiesProvider
+internal class OnAutoInsertEndpoint(
+    LanguageServerFeatureOptions languageServerFeatureOptions,
+    IRazorDocumentMappingService documentMappingService,
+    IClientConnection clientConnection,
+    IEnumerable<IOnAutoInsertProvider> onAutoInsertProvider,
+    IOptionsMonitor<RazorLSPOptions> optionsMonitor,
+    IRazorLoggerFactory loggerFactory)
+    : AbstractRazorDelegatingEndpoint<VSInternalDocumentOnAutoInsertParams, VSInternalDocumentOnAutoInsertResponseItem?>(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.CreateLogger<OnAutoInsertEndpoint>()), ICapabilitiesProvider
 {
     private static readonly HashSet<string> s_htmlAllowedTriggerCharacters = new(StringComparer.Ordinal) { "=", };
     private static readonly HashSet<string> s_cSharpAllowedTriggerCharacters = new(StringComparer.Ordinal) { "'", "/", "\n" };
 
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
-    private readonly IReadOnlyList<IOnAutoInsertProvider> _onAutoInsertProviders;
-
-    public OnAutoInsertEndpoint(
-        LanguageServerFeatureOptions languageServerFeatureOptions,
-        IRazorDocumentMappingService documentMappingService,
-        IClientConnection clientConnection,
-        IEnumerable<IOnAutoInsertProvider> onAutoInsertProvider,
-        IOptionsMonitor<RazorLSPOptions> optionsMonitor,
-        ILoggerFactory loggerFactory)
-        : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.CreateLogger<OnAutoInsertEndpoint>())
-    {
-        _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        _optionsMonitor = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));
-        _onAutoInsertProviders = onAutoInsertProvider?.ToList() ?? throw new ArgumentNullException(nameof(onAutoInsertProvider));
-    }
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
+    private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));
+    private readonly IReadOnlyList<IOnAutoInsertProvider> _onAutoInsertProviders = onAutoInsertProvider?.ToList() ?? throw new ArgumentNullException(nameof(onAutoInsertProvider));
 
     protected override string CustomMessageTarget => CustomMessageNames.RazorOnAutoInsertEndpointName;
 
@@ -154,7 +148,7 @@ internal class OnAutoInsertEndpoint : AbstractRazorDelegatingEndpoint<VSInternal
             // having to restart VS. Not the worst compromise (hopefully!)
             if (!_optionsMonitor.CurrentValue.FormatOnType)
             {
-                requestContext.Logger.LogInformation("Formatting on type disabled, so auto insert is a no-op for C#.");
+                Logger.LogInformation("Formatting on type disabled, so auto insert is a no-op for C#.");
                 return Task.FromResult<IDelegatedParams?>(null);
             }
         }

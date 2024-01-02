@@ -178,7 +178,7 @@ public class RazorSemanticTokensTests(ITestOutputHelper testOutputHelper) : Abst
 
                 if (classificationStr is null)
                 {
-                    Assert.True(false, "Tried to write layered classifications without Semantic layer");
+                    Assert.Fail("Tried to write layered classifications without Semantic layer");
                     throw new Exception();
                 }
             }

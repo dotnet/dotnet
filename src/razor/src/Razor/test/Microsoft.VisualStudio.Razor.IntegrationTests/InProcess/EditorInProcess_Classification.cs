@@ -110,8 +110,7 @@ internal partial class EditorInProcess
                 Assert.Equal(expectedClassification.Span, actualClassification.Span);
                 Assert.Equal(expectedClassification.ClassificationType.Classification, actualClassification.ClassificationType.Classification);
 
-                Assert.True(false,
-                    $"i: {i}" +
+                Assert.Fail($"i: {i}" +
                     $"expected: {expectedClassification.Span} {expectedClassification.ClassificationType.Classification} " +
                     $"actual: {actualClassification.Span} {actualClassification.ClassificationType.Classification}");
             }

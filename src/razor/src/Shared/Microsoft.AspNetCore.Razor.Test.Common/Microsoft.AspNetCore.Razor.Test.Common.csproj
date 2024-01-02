@@ -17,7 +17,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelVersion)" />
     <PackageReference Include="DiffPlex" Version="$(DiffPlexVersion)" />
 
-    <PackageReference Include="xunit.assert" Version="$(XunitAssertVersion)" PrivateAssets="all" />
+    <PackageReference Include="xunit.assert" Version="$(XunitVersion)" PrivateAssets="all" />
     <PackageReference Include="xunit.extensibility.execution" Version="$(XunitExtensibilityExecutionVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.Test.Utilities" Version="$(MicrosoftCodeAnalysisTestUtilitiesPackageVersion)" />
   </ItemGroup>

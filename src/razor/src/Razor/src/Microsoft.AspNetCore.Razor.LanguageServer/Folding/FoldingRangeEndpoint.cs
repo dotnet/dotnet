@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
@@ -33,7 +34,7 @@ internal sealed class FoldingRangeEndpoint : IRazorRequestHandler<FoldingRangePa
         IRazorDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
         IEnumerable<IRazorFoldingRangeProvider> foldingRangeProviders,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
     {
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
         _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));

@@ -3,11 +3,12 @@
 
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.Telemetry;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Test.Shared;
 
-internal class TestTelemetryReporter : VSTelemetryReporter
+internal class TestTelemetryReporter(IRazorLoggerFactory loggerFactory) : VSTelemetryReporter(loggerFactory)
 {
     public List<TelemetryEvent> Events { get; } = [];
 

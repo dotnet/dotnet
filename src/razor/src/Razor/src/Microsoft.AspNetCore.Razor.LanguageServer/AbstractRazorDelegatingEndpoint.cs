@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -110,7 +111,7 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
             return default;
         }
 
-        var positionInfo = await DocumentPositionInfoStrategy.TryGetPositionInfoAsync(_documentMappingService, documentContext, request.Position, requestContext.Logger, cancellationToken).ConfigureAwait(false);
+        var positionInfo = await DocumentPositionInfoStrategy.TryGetPositionInfoAsync(_documentMappingService, documentContext, request.Position, Logger, cancellationToken).ConfigureAwait(false);
         if (positionInfo is null)
         {
             return default;
@@ -166,7 +167,8 @@ internal abstract class AbstractRazorDelegatingEndpoint<TRequest, TResponse> : I
         }
         catch (RemoteInvocationException e)
         {
-            requestContext.Logger.LogException(e);
+            Logger.LogError(e, "Error calling delegate server for {method}", CustomMessageTarget);
+            requestContext.GetRequiredService<ITelemetryReporter>().ReportFault(e, "Error calling delegate server for {method}", CustomMessageTarget);
             throw;
         }
 

@@ -58,7 +58,7 @@ steps:
     --repository "installer:${{ parameters.targetRef }}"
     --recursive
     --remote "installer:$(pwd)"
-    --readme-template $(Agent.BuildDirectory)/installer/src/VirtualMonoRepo/README.template.md
+    --component-template $(Agent.BuildDirectory)/installer/src/VirtualMonoRepo/Component.template.md
     --tpn-template $(Agent.BuildDirectory)/installer/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt
     --debug
     ||

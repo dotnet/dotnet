@@ -4,8 +4,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using FluentAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.RuntimeModel;
 
@@ -13,6 +16,37 @@ namespace NuGet.ProjectModel.Test
 {
     public static class PackageSpecTestUtility
     {
+        public static PackageSpec GetPackageSpec(string json, IEnvironmentVariableReader environmentReader)
+        {
+            var ms = new MemoryStream(Encoding.UTF8.GetBytes(json));
+            var streamReader = new StreamReader(ms);
+            var jsonReader = new JsonTextReader(streamReader);
+            return JsonPackageSpecReader.GetPackageSpec(jsonReader, "project", "project.json", environmentReader);
+        }
+
+        public static PackageSpec RoundTripJson(string json, IEnvironmentVariableReader environmentReader)
+        {
+            var packageSpec = GetPackageSpec(json, environmentReader);
+
+            using var stringWriter = new StringWriter();
+            using var jsonWriter = new JsonTextWriter(stringWriter);
+            using var writer = new JsonObjectWriter(jsonWriter);
+            writer.WriteObjectStart();
+
+            PackageSpecWriter.Write(packageSpec, writer, hashing: false, environmentReader);
+
+            writer.WriteObjectEnd();
+            var result = stringWriter.ToString();
+
+            var parsedResult = JObject.Parse(result).ToString();
+            var parsedExpected = JObject.Parse(json).ToString();
+
+            parsedResult.Should().Be(parsedExpected);
+
+            return packageSpec;
+        }
+
+
         public static PackageSpec RoundTrip(this PackageSpec spec)
         {
             using (var jsonWriter = new JTokenWriter())

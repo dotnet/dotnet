@@ -5,29 +5,23 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class RazorConfigurationEndpoint : IDidChangeConfigurationEndpoint, IOnInitialized
+internal class RazorConfigurationEndpoint(RazorLSPOptionsMonitor optionsMonitor, IRazorLoggerFactory loggerFactory)
+    : IDidChangeConfigurationEndpoint, IOnInitialized
 {
-    private readonly RazorLSPOptionsMonitor _optionsMonitor;
-
-    public RazorConfigurationEndpoint(RazorLSPOptionsMonitor optionsMonitor)
-    {
-        if (optionsMonitor is null)
-        {
-            throw new ArgumentNullException(nameof(optionsMonitor));
-        }
-
-        _optionsMonitor = optionsMonitor;
-    }
+    private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));
+    private readonly ILogger _logger = loggerFactory.CreateLogger<RazorConfigurationEndpoint>();
 
     public bool MutatesSolutionState => true;
 
     public async Task HandleNotificationAsync(DidChangeConfigurationParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        requestContext.Logger.LogInformation("Settings changed. Updating the server.");
+        _logger.LogInformation("Settings changed. Updating the server.");
 
         await _optionsMonitor.UpdateAsync(cancellationToken).ConfigureAwait(false);
     }

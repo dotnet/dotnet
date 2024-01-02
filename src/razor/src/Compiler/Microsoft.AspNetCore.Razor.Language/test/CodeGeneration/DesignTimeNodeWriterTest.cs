@@ -457,7 +457,7 @@ Render Children
             ignoreLineEndingDifferences: true);
     }
 
-    [OSSkipConditionTheory(new[] { "Linux", "osx" })]
+    [OSSkipConditionTheory(new[] { "Linux", "OSX" })]
     [InlineData(@"test.cshtml",                     @"test.cshtml")]
     [InlineData(@"pages/test.cshtml",               @"pages\test.cshtml")]
     [InlineData(@"pages\test.cshtml",               @"pages\test.cshtml")]
@@ -504,7 +504,7 @@ Render Children
             ignoreLineEndingDifferences: true);
     }
 
-    [OSSkipConditionTheory(new[] { "Linux", "osx" })]
+    [OSSkipConditionTheory(new[] { "Linux", "OSX" })]
     [InlineData(@"test.cshtml",                     @"test.cshtml")]
     [InlineData(@"pages/test.cshtml",               @"pages\test.cshtml")]
     [InlineData(@"pages\test.cshtml",               @"pages\test.cshtml")]
@@ -540,7 +540,7 @@ Render Children
             $"""
 
             #nullable restore
-            #line (1,0)-(1,0) 6 "{expectedFileName}"
+            #line (1,1)-(1,1) 6 "{expectedFileName}"
             Write(i++);
 
             #line default

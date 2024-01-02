@@ -4,9 +4,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common.Logging;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.Editor.Razor.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.Razor.IntegrationTests.Extensions;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -20,22 +19,33 @@ internal partial class OutputInProcess
 {
     private const string RazorPaneName = "Razor Logger Output";
 
-    public async Task SetupIntegrationTestLoggerAsync(ITestOutputHelper testOutputHelper, CancellationToken cancellationToken)
+    // private TestOutputLoggerProvider? _testLoggerProvider;
+
+#pragma warning disable IDE0060 // Remove unused parameter
+    public Task<ILogger> SetupIntegrationTestLoggerAsync(ITestOutputHelper testOutputHelper, CancellationToken cancellationToken)
+#pragma warning restore IDE0060 // Remove unused parameter
     {
-        var logger = await TestServices.Shell.GetComponentModelServiceAsync<IOutputWindowLogger>(cancellationToken);
-        logger.SetTestLogger(new TestOutputLogger(testOutputHelper));
+        return Task.FromResult<ILogger>(NullLogger.Instance);
+
+        // var logger = await TestServices.Shell.GetComponentModelServiceAsync<IRazorLoggerFactory>(cancellationToken);
+
+        // // We can't remove logging providers, so we just keep track of ours so we can make sure it points to the right test output helper
+        // if (_testLoggerProvider is null)
+        // {
+        //     _testLoggerProvider = new TestOutputLoggerProvider(testOutputHelper);
+        //     logger.AddLoggerProvider(_testLoggerProvider);
+        // }
+        // else
+        // {
+        //     _testLoggerProvider.SetTestOutputHelper(testOutputHelper);
+        // }
+
+        // return logger.CreateLogger(GetType().Name);
     }
 
-    public async Task ClearIntegrationTestLoggerAsync(CancellationToken cancellationToken)
+    public void ClearIntegrationTestLogger()
     {
-        var logger = await TestServices.Shell.GetComponentModelServiceAsync<IOutputWindowLogger>(cancellationToken);
-        logger.SetTestLogger(null);
-    }
-
-    public async Task LogStatusAsync(string message, CancellationToken cancellationToken)
-    {
-        var logger = await TestServices.Shell.GetComponentModelServiceAsync<IOutputWindowLogger>(cancellationToken);
-        logger.LogInformation(message);
+        // _testLoggerProvider?.SetTestOutputHelper(null);
     }
 
     public async Task<bool> HasErrorsAsync(CancellationToken cancellationToken)

@@ -6,23 +6,20 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestContext>
+internal class RazorRequestContextFactory(ILspServices lspServices) : IRequestContextFactory<RazorRequestContext>
 {
-    private readonly ILspServices _lspServices;
-
-    public RazorRequestContextFactory(ILspServices lspServices)
-    {
-        _lspServices = lspServices;
-    }
+    private readonly ILspServices _lspServices = lspServices;
 
     public Task<RazorRequestContext> CreateRequestContextAsync<TRequestParams>(IQueueItem<RazorRequestContext> queueItem, TRequestParams @params, CancellationToken cancellationToken)
     {
-        var logger = _lspServices.GetRequiredService<LoggerAdapter>();
+        var logger = _lspServices.GetRequiredService<IRazorLoggerFactory>().CreateLogger<RazorRequestContextFactory>();
 
         VersionedDocumentContext? documentContext = null;
         var textDocumentHandler = queueItem.MethodHandler as ITextDocumentIdentifierHandler;
@@ -59,11 +56,7 @@ internal class RazorRequestContextFactory : IRequestContextFactory<RazorRequestC
             }
         }
 
-        var requestContext = new RazorRequestContext(documentContext, logger, _lspServices
-#if DEBUG
-            , queueItem.MethodName, uri
-#endif
-            );
+        var requestContext = new RazorRequestContext(documentContext, _lspServices, queueItem.MethodName, uri);
 
         return Task.FromResult(requestContext);
     }

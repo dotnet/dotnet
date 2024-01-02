@@ -32,6 +32,11 @@
         <target state="translated">Formátování</target>
         <note />
       </trans-unit>
+      <trans-unit id="Other">
+        <source>Other</source>
+        <target state="translated">Jiné</target>
+        <note />
+      </trans-unit>
       <trans-unit id="RazorSyntaxVisualizer">
         <source>Razor Syntax Visualizer</source>
         <target state="translated">Razor Syntax Visualizer</target>
@@ -85,6 +90,51 @@
       <trans-unit id="Setting_FormattingOnTypeDisplayName">
         <source>Format On Type</source>
         <target state="translated">Formátovat při psaní</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelCritical">
+        <source>Critical</source>
+        <target state="translated">Kritická</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelDebug">
+        <source>Debug</source>
+        <target state="translated">Ladit</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelDescription">
+        <source>Sets the level of logging to show in the Razor Logger Output catregory of the Output Window.</source>
+        <target state="translated">Nastaví úroveň protokolování, která se zobrazí v kategorii výstupu nástroje Razor Logger okno Výstup.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelDisplayName">
+        <source>Output Window Log Level</source>
+        <target state="translated">Úroveň protokolu okna Výstup</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelError">
+        <source>Error</source>
+        <target state="translated">Chyba</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelInformation">
+        <source>Information</source>
+        <target state="translated">Informace</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelNone">
+        <source>None</source>
+        <target state="translated">Žádné</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelTrace">
+        <source>Trace</source>
+        <target state="translated">Trasování</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelWarning">
+        <source>Warning</source>
+        <target state="translated">Upozornění</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_SnippetsAll">

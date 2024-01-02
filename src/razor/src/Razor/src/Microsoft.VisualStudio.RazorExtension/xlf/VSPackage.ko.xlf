@@ -32,6 +32,11 @@
         <target state="translated">서식</target>
         <note />
       </trans-unit>
+      <trans-unit id="Other">
+        <source>Other</source>
+        <target state="translated">기타</target>
+        <note />
+      </trans-unit>
       <trans-unit id="RazorSyntaxVisualizer">
         <source>Razor Syntax Visualizer</source>
         <target state="translated">Razor Syntax Visualizer</target>
@@ -85,6 +90,51 @@
       <trans-unit id="Setting_FormattingOnTypeDisplayName">
         <source>Format On Type</source>
         <target state="translated">형식의 서식</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelCritical">
+        <source>Critical</source>
+        <target state="translated">위험</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelDebug">
+        <source>Debug</source>
+        <target state="translated">디버그</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelDescription">
+        <source>Sets the level of logging to show in the Razor Logger Output catregory of the Output Window.</source>
+        <target state="translated">출력 창의 Razor 로거 출력 범주에 표시할 로깅 수준을 설정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelDisplayName">
+        <source>Output Window Log Level</source>
+        <target state="translated">출력 창 로그 수준</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelError">
+        <source>Error</source>
+        <target state="translated">오류</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelInformation">
+        <source>Information</source>
+        <target state="translated">정보</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelNone">
+        <source>None</source>
+        <target state="translated">없음</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelTrace">
+        <source>Trace</source>
+        <target state="translated">추적</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelWarning">
+        <source>Warning</source>
+        <target state="translated">경고</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_SnippetsAll">

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -23,7 +24,7 @@ internal class RazorTranslateDiagnosticsEndpoint : IRazorRequestHandler<RazorDia
 
     public RazorTranslateDiagnosticsEndpoint(
         RazorTranslateDiagnosticsService translateDiagnosticsService,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
     {
         if (loggerFactory is null)
         {

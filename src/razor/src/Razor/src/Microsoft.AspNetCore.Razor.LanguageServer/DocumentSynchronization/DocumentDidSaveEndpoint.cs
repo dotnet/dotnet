@@ -5,14 +5,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 
 [LanguageServerEndpoint(Methods.TextDocumentDidSaveName)]
-internal class DocumentDidSaveEndpoint : IRazorNotificationHandler<DidSaveTextDocumentParams>, ITextDocumentIdentifierHandler<DidSaveTextDocumentParams, TextDocumentIdentifier>
+internal class DocumentDidSaveEndpoint(IRazorLoggerFactory loggerFactory)
+    : IRazorNotificationHandler<DidSaveTextDocumentParams>, ITextDocumentIdentifierHandler<DidSaveTextDocumentParams, TextDocumentIdentifier>
 {
+    private readonly ILogger _logger = loggerFactory.CreateLogger<DocumentDidSaveEndpoint>();
+
     public bool MutatesSolutionState => false;
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(DidSaveTextDocumentParams request)
@@ -22,7 +27,7 @@ internal class DocumentDidSaveEndpoint : IRazorNotificationHandler<DidSaveTextDo
 
     public Task HandleNotificationAsync(DidSaveTextDocumentParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        requestContext.Logger.LogInformation($"Saved Document {request.TextDocument.Uri.GetAbsoluteOrUNCPath()}");
+        _logger.LogInformation("Saved Document {document}", request.TextDocument.Uri.GetAbsoluteOrUNCPath());
 
         return Task.CompletedTask;
     }

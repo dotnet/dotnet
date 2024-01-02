@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Editor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json;
@@ -17,7 +18,7 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
     private readonly IClientConnection _clientConnection;
     private readonly ILogger _logger;
 
-    public DefaultRazorConfigurationService(IClientConnection clientConnection, ILoggerFactory loggerFactory)
+    public DefaultRazorConfigurationService(IClientConnection clientConnection, IRazorLoggerFactory loggerFactory)
     {
         if (clientConnection is null)
         {
@@ -94,14 +95,13 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         }
         else
         {
-            ExtractVSCodeOptions(result, out var trace, out var enableFormatting, out var autoClosingTags, out var commitElementsWithSpace);
-            return new RazorLSPOptions(trace, enableFormatting, autoClosingTags, commitElementsWithSpace, ClientSettings.Default);
+            ExtractVSCodeOptions(result, out var enableFormatting, out var autoClosingTags, out var commitElementsWithSpace);
+            return new RazorLSPOptions(enableFormatting, autoClosingTags, commitElementsWithSpace, ClientSettings.Default);
         }
     }
 
     private void ExtractVSCodeOptions(
         JObject[] result,
-        out Trace trace,
         out bool enableFormatting,
         out bool autoClosingTags,
         out bool commitElementsWithSpace)
@@ -109,7 +109,6 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         var razor = result[0];
         var html = result[1];
 
-        trace = RazorLSPOptions.Default.Trace;
         enableFormatting = RazorLSPOptions.Default.EnableFormatting;
         autoClosingTags = RazorLSPOptions.Default.AutoClosingTags;
         // Deliberately not using the "default" here because we want a different default for VS Code, as
@@ -118,11 +117,6 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
 
         if (razor != null)
         {
-            if (razor.TryGetValue("trace", out var parsedTrace))
-            {
-                trace = GetObjectOrDefault(parsedTrace, trace);
-            }
-
             if (razor.TryGetValue("format", out var parsedFormat))
             {
                 if (parsedFormat is JObject jObject &&

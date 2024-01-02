@@ -210,6 +210,10 @@ namespace NuGet.Credentials
 
                 taskResponse = new CredentialResponse(result);
             }
+            else if (credentialResponse.ResponseCode == MessageResponseCode.NotFound)
+            {
+                taskResponse = new CredentialResponse(CredentialStatus.UserCanceled);
+            }
             else
             {
                 taskResponse = new CredentialResponse(CredentialStatus.ProviderNotApplicable);

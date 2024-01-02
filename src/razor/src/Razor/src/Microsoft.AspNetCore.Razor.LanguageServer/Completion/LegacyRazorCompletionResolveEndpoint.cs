@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text.Adornments;
@@ -39,7 +40,7 @@ internal class LegacyRazorCompletionResolveEndpoint : IVSCompletionResolveEndpoi
         LSPTagHelperTooltipFactory lspTagHelperTooltipFactory,
         VSLSPTagHelperTooltipFactory vsLspTagHelperTooltipFactory,
         CompletionListCache completionListCache,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
     {
         if (lspTagHelperTooltipFactory is null)
         {

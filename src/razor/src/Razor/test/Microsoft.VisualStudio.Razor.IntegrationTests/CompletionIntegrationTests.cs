@@ -2,11 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.Language.Intellisense.AsyncCompletion;
-using Microsoft.VisualStudio.Language.Intellisense.AsyncCompletion.Data;
-using Microsoft.VisualStudio.Text.Editor;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -15,6 +12,8 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
 public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
+    private static readonly TimeSpan SnippetTimeout = TimeSpan.FromSeconds(10);
+
     [IdeFact]
     public async Task SnippetCompletion_Html()
     {
@@ -46,8 +45,6 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         TestServices.Input.Send("{ENTER}");
         TestServices.Input.Send("d");
         TestServices.Input.Send("d");
-
-        
 
         await CommitCompletionAndVerifyAsync("""
 @page "Test"
@@ -98,7 +95,7 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
 
         // Wait until completion comes up before validating
         // that space does not commit
-        await WaitForCompletionSessionAsync(textView);
+        await TestServices.Editor.WaitForCompletionSessionAsync(HangMitigatingCancellationToken);
 
         TestServices.Input.Send(" ");
 
@@ -140,8 +137,49 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         TestServices.Input.Send("{DELETE}");
 
         // Make sure completion doesn't come up for 15 seconds
-        var completionSession = await WaitForCompletionSessionAsync(textView, TimeSpan.FromSeconds(15));
+        var completionSession = await TestServices.Editor.WaitForCompletionSessionAsync(SnippetTimeout, HangMitigatingCancellationToken);
         Assert.Null(completionSession);
+    }
+
+    [IdeTheory]
+    [InlineData("<PageTitle")]
+    [InlineData("</PageTitle")]
+    [InlineData("<div")]
+    [InlineData("</div")]
+    [WorkItem("https://github.com/dotnet/razor/issues/9427")]
+    public async Task Snippets_DoNotTrigger_InsideTag(string tag)
+    {
+        await TestServices.SolutionExplorer.AddFileAsync(
+            RazorProjectConstants.BlazorProjectName,
+            "Test.razor",
+            """
+            @page "Test"
+
+            <PageTitle>Test</PageTitle>
+
+            <div></div>
+            """,
+            open: true,
+            ControlledHangMitigatingCancellationToken);
+
+        var textView = await TestServices.Editor.GetActiveTextViewAsync(HangMitigatingCancellationToken);
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync(tag, charsOffset: 1, ControlledHangMitigatingCancellationToken);
+        TestServices.Input.Send(" ");
+        TestServices.Input.Send("dd");
+
+        // Make sure completion doesn't come up for 15 seconds
+        var completionSession = await TestServices.Editor.WaitForCompletionSessionAsync(SnippetTimeout, HangMitigatingCancellationToken);
+        var items = completionSession?.GetComputedItems(HangMitigatingCancellationToken);
+
+        if (items is null)
+        {
+            // No items to check, we're good
+            return;
+        }
+
+        Assert.DoesNotContain("dd", items.Items.Select(i => i.DisplayText));
     }
 
     [IdeFact, WorkItem("https://github.com/dotnet/razor/issues/9346")]
@@ -168,6 +206,9 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
 
         await TestServices.Editor.PlaceCaretAsync("@MyEnum.", charsOffset: 1, ControlledHangMitigatingCancellationToken);
+
+        await Task.Delay(500, HangMitigatingCancellationToken);
+
         TestServices.Input.Send("O");
 
         await CommitCompletionAndVerifyAsync("""
@@ -186,37 +227,16 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
 
     private async Task CommitCompletionAndVerifyAsync(string expected)
     {
-        var textView = await TestServices.Editor.GetActiveTextViewAsync(HangMitigatingCancellationToken);
-        var session = await WaitForCompletionSessionAsync(textView);
+        var session = await TestServices.Editor.WaitForCompletionSessionAsync(HangMitigatingCancellationToken);
 
         Assert.NotNull(session);
         Assert.True(session.CommitIfUnique(HangMitigatingCancellationToken));
 
+        var textView = await TestServices.Editor.GetActiveTextViewAsync(HangMitigatingCancellationToken);
         var text = textView.TextBuffer.CurrentSnapshot.GetText();
 
         // Snippets may have slight whitespace differences due to line endings. These
         // tests allow for it as long as the content is correct
         AssertEx.AssertEqualToleratingWhitespaceDifferences(expected, text);
-    }
-
-    private async Task<IAsyncCompletionSession?> WaitForCompletionSessionAsync(IWpfTextView textView, TimeSpan? timeOut = null)
-    {
-        var stopWatch = Stopwatch.StartNew();
-        var asyncCompletion = await TestServices.Shell.GetComponentModelServiceAsync<IAsyncCompletionBroker>(HangMitigatingCancellationToken);
-        var session = asyncCompletion.TriggerCompletion(textView, new CompletionTrigger(CompletionTriggerReason.Insertion, textView.TextSnapshot), textView.Caret.Position.BufferPosition, HangMitigatingCancellationToken);
-
-        // Loop until completion comes up
-        while (session is null || session.IsDismissed)
-        {
-            if (timeOut is not null && stopWatch.ElapsedMilliseconds >= timeOut.Value.TotalMilliseconds)
-            {
-                return null;
-            }
-
-            await Task.Delay(TimeSpan.FromSeconds(1), HangMitigatingCancellationToken);
-            session = asyncCompletion.TriggerCompletion(textView, new CompletionTrigger(CompletionTriggerReason.Insertion, textView.TextSnapshot), textView.Caret.Position.BufferPosition, HangMitigatingCancellationToken);
-        }
-
-        return session;
     }
 }

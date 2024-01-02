@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 #nullable disable
@@ -12,9 +12,11 @@ using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -28,7 +30,8 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
     {
         var (_, serverStream) = FullDuplexStream.CreatePair();
         Logger = new NoopLogger();
-        RazorLanguageServer = RazorLanguageServerWrapper.Create(serverStream, serverStream, Logger, NoOpTelemetryReporter.Instance, configure: (collection) =>
+        var razorLoggerFactory = new RazorLoggerFactory([new NoopLoggerProvider()]);
+        RazorLanguageServer = RazorLanguageServerWrapper.Create(serverStream, serverStream, razorLoggerFactory, NoOpTelemetryReporter.Instance, configure: (collection) =>
         {
             collection.AddSingleton<IOnInitialized, NoopClientNotifierService>();
             collection.AddSingleton<IClientConnection, NoopClientNotifierService>();
@@ -47,7 +50,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
 
     private protected RazorLanguageServerWrapper RazorLanguageServer { get; }
 
-    private protected IRazorLogger Logger { get; }
+    private protected NoopLogger Logger { get; }
 
     internal IDocumentSnapshot GetDocumentSnapshot(string projectFilePath, string filePath, string targetPath)
     {
@@ -93,7 +96,19 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
         }
     }
 
-    internal class NoopLogger : IRazorLogger
+    internal class NoopLoggerProvider : IRazorLoggerProvider
+    {
+        public ILogger CreateLogger(string categoryName)
+        {
+            return new NoopLogger();
+        }
+
+        public void Dispose()
+        {
+        }
+    }
+
+    internal class NoopLogger : ILogger, ILspLogger
     {
         public IDisposable BeginScope<TState>(TState state)
         {

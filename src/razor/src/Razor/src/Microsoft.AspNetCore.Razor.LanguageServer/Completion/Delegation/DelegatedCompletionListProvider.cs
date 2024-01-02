@@ -7,6 +7,8 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -70,12 +72,15 @@ internal class DelegatedCompletionListProvider
 
         completionContext = RewriteContext(completionContext, positionInfo.LanguageKind);
 
+        var shouldIncludeSnippets = await ShouldIncludeSnippetsAsync(documentContext, absoluteIndex, cancellationToken).ConfigureAwait(false);
+
         var delegatedParams = new DelegatedCompletionParams(
             documentContext.Identifier,
             positionInfo.Position,
             positionInfo.LanguageKind,
             completionContext,
             provisionalTextEdit,
+            shouldIncludeSnippets,
             correlationId);
 
         var delegatedResponse = await _clientConnection.SendRequestAsync<DelegatedCompletionParams, VSInternalCompletionList?>(
@@ -110,6 +115,30 @@ internal class DelegatedCompletionListProvider
         rewrittenResponse.SetResultId(resultId, completionCapability);
 
         return rewrittenResponse;
+    }
+
+    private async Task<bool> ShouldIncludeSnippetsAsync(VersionedDocumentContext documentContext, int absoluteIndex, CancellationToken cancellationToken)
+    {
+        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+        var tree = codeDocument.GetSyntaxTree();
+
+        var token = tree.Root.FindToken(absoluteIndex, includeWhitespace: false);
+        var node = token.Parent;
+        var startOrEndTag = node?.FirstAncestorOrSelf<SyntaxNode>(n => RazorSyntaxFacts.IsAnyStartTag(n) || RazorSyntaxFacts.IsAnyEndTag(n));
+
+        if (startOrEndTag is null)
+        {
+            return token.Kind is not (SyntaxKind.OpenAngle or SyntaxKind.CloseAngle);
+        }
+
+        if (startOrEndTag.Span.Start == absoluteIndex)
+        {
+            // We're at the start of the tag, we should include snippets. This is the case for things like $$<div></div> or <div>$$</div>, since the
+            // index is right associative to the token when using FindToken.
+            return true;
+        }
+
+        return !startOrEndTag.Span.Contains(absoluteIndex);
     }
 
     private static VSInternalCompletionContext RewriteContext(VSInternalCompletionContext context, RazorLanguageKind languageKind)

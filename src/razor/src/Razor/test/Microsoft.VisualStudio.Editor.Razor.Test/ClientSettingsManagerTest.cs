@@ -82,7 +82,7 @@ public class ClientSettingsManagerTest(ITestOutputHelper testOutput) : ProjectSn
         var manager = new ClientSettingsManager(_editorSettingsChangeTriggers);
         var called = false;
         manager.Changed += (caller, args) => called = true;
-        var settings = new ClientAdvancedSettings(FormatOnType: false, AutoClosingTags: true, AutoInsertAttributeQuotes: true, ColorBackground: true, CommitElementsWithSpace: false, SnippetSetting: default);
+        var settings = new ClientAdvancedSettings(FormatOnType: false, AutoClosingTags: true, AutoInsertAttributeQuotes: true, ColorBackground: true, CommitElementsWithSpace: false, SnippetSetting: default, LogLevel: default);
 
         // Act
         manager.Update(settings);
@@ -149,6 +149,10 @@ public class ClientSettingsManagerTest(ITestOutputHelper testOutput) : ProjectSn
         public ClientAdvancedSettings GetAdvancedSettings()
         {
             return _settings;
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

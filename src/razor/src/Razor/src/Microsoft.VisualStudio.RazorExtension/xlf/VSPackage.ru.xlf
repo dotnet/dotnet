@@ -32,6 +32,11 @@
         <target state="translated">Форматирование</target>
         <note />
       </trans-unit>
+      <trans-unit id="Other">
+        <source>Other</source>
+        <target state="translated">Другое</target>
+        <note />
+      </trans-unit>
       <trans-unit id="RazorSyntaxVisualizer">
         <source>Razor Syntax Visualizer</source>
         <target state="translated">Razor Syntax Visualizer</target>
@@ -85,6 +90,51 @@
       <trans-unit id="Setting_FormattingOnTypeDisplayName">
         <source>Format On Type</source>
         <target state="translated">Форматировать по типу</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelCritical">
+        <source>Critical</source>
+        <target state="translated">Критический</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelDebug">
+        <source>Debug</source>
+        <target state="translated">Отладка</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelDescription">
+        <source>Sets the level of logging to show in the Razor Logger Output catregory of the Output Window.</source>
+        <target state="translated">Задает уровень ведения журнала для отображения в категории "Выходные данные средства ведения журнала Razor" в окне вывода.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelDisplayName">
+        <source>Output Window Log Level</source>
+        <target state="translated">Уровень ведения журнала для окна вывода</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelError">
+        <source>Error</source>
+        <target state="translated">Ошибка</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelInformation">
+        <source>Information</source>
+        <target state="translated">Информация</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelNone">
+        <source>None</source>
+        <target state="translated">Нет</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelTrace">
+        <source>Trace</source>
+        <target state="translated">Трассировка</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Setting_LogLevelWarning">
+        <source>Warning</source>
+        <target state="translated">Предупреждение</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_SnippetsAll">

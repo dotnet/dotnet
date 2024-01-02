@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using TextSpan = Microsoft.CodeAnalysis.Text.TextSpan;
@@ -22,7 +23,7 @@ internal class CSharpFormattingPass : CSharpFormattingPassBase
     public CSharpFormattingPass(
         IRazorDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
-        ILoggerFactory loggerFactory)
+        IRazorLoggerFactory loggerFactory)
         : base(documentMappingService, clientConnection)
     {
         if (loggerFactory is null)

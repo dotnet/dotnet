@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
@@ -17,15 +18,15 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 internal class SnapshotResolver : ISnapshotResolver
 {
     private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
-    private readonly ILogger<SnapshotResolver> _logger;
+    private readonly ILogger _logger;
 
     // Internal for testing
     internal readonly HostProject MiscellaneousHostProject;
 
-    public SnapshotResolver(ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor, ILoggerFactory loggerFactory)
+    public SnapshotResolver(ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor, IRazorLoggerFactory loggerFactory)
     {
         _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor ?? throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
-        _logger = loggerFactory?.CreateLogger<SnapshotResolver>() ?? throw new ArgumentNullException(nameof(loggerFactory));
+        _logger = loggerFactory.CreateLogger<SnapshotResolver>() ?? throw new ArgumentNullException(nameof(loggerFactory));
 
         var miscellaneousProjectPath = Path.Combine(TempDirectory.Instance.DirectoryPath, "__MISC_RAZOR_PROJECT__");
         var normalizedPath = FilePathNormalizer.Normalize(miscellaneousProjectPath);
