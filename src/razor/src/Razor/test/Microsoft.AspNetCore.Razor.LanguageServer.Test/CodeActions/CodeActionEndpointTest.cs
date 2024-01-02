@@ -60,6 +60,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             _clientConnection,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -95,6 +96,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             _clientConnection,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -128,6 +130,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             _clientConnection,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -163,6 +166,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             _clientConnection,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -202,6 +206,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             languageServer,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -239,6 +244,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             _clientConnection,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -283,6 +289,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             languageServer,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -327,6 +334,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             languageServer,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -364,6 +372,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             _clientConnection,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -408,6 +417,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             languageServer,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -447,6 +457,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             _clientConnection,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = true
@@ -498,6 +509,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             languageServer,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = true
@@ -549,6 +561,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             _clientConnection,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -596,6 +609,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             _clientConnection,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -637,6 +651,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             _clientConnection,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -681,6 +696,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             _clientConnection,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -698,7 +714,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
         Assert.NotNull(context);
 
         // Act
-        var results = await codeActionEndpoint.GetCodeActionsFromLanguageServerAsync(RazorLanguageKind.CSharp, documentContext, context, Guid.Empty, Logger, cancellationToken: default);
+        var results = await codeActionEndpoint.GetCodeActionsFromLanguageServerAsync(RazorLanguageKind.CSharp, documentContext, context, Guid.Empty, cancellationToken: default);
 
         // Assert
         Assert.Empty(results);
@@ -724,6 +740,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
             Array.Empty<IHtmlCodeActionProvider>(),
             languageServer,
             _languageServerFeatureOptions,
+            LoggerFactory,
             telemetryReporter: null)
         {
             _supportsCodeActionResolve = false
@@ -744,7 +761,7 @@ public class CodeActionEndpointTest : LanguageServerTestBase
         Assert.NotNull(context);
 
         // Act
-        var results = await codeActionEndpoint.GetCodeActionsFromLanguageServerAsync(RazorLanguageKind.CSharp, documentContext, context, Guid.Empty, Logger, cancellationToken: default);
+        var results = await codeActionEndpoint.GetCodeActionsFromLanguageServerAsync(RazorLanguageKind.CSharp, documentContext, context, Guid.Empty, cancellationToken: default);
 
         // Assert
         var result = Assert.Single(results);

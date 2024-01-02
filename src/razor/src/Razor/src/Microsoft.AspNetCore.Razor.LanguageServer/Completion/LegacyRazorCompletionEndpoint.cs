@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Completion;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
@@ -26,12 +27,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 internal class LegacyRazorCompletionEndpoint(
     IRazorCompletionFactsService completionFactsService,
     CompletionListCache completionListCache,
-    HtmlFactsService htmlFactsService)
+    HtmlFactsService htmlFactsService,
+    IRazorLoggerFactory loggerFactory)
     : IVSCompletionEndpoint
 {
     private readonly IRazorCompletionFactsService _completionFactsService = completionFactsService ?? throw new ArgumentNullException(nameof(completionFactsService));
     private readonly CompletionListCache _completionListCache = completionListCache ?? throw new ArgumentNullException(nameof(completionListCache));
     private readonly HtmlFactsService _htmlFactsService = htmlFactsService ?? throw new ArgumentNullException(nameof(htmlFactsService));
+    private readonly ILogger _logger = loggerFactory.CreateLogger<LegacyRazorCompletionEndpoint>();
 
     private static readonly Command s_retriggerCompletionCommand = new()
     {
@@ -49,8 +52,8 @@ internal class LegacyRazorCompletionEndpoint(
         serverCapabilities.CompletionProvider = new CompletionOptions()
         {
             ResolveProvider = true,
-            TriggerCharacters = new[] { "@", "<", ":" },
-            AllCommitCharacters = new[] { ":", ">", " ", "=" },
+            TriggerCharacters = ["@", "<", ":"],
+            AllCommitCharacters = [":", ">", " ", "="],
         };
     }
 
@@ -78,7 +81,7 @@ internal class LegacyRazorCompletionEndpoint(
         var tagHelperDocumentContext = codeDocument.GetTagHelperContext();
 
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        if (!request.Position.TryGetAbsoluteIndex(sourceText, requestContext.Logger, out var hostDocumentIndex))
+        if (!request.Position.TryGetAbsoluteIndex(sourceText, _logger, out var hostDocumentIndex))
         {
             return null;
         }
@@ -97,7 +100,7 @@ internal class LegacyRazorCompletionEndpoint(
 
         var razorCompletionItems = _completionFactsService.GetCompletionItems(completionContext);
 
-        requestContext.Logger.LogTrace("Resolved {razorCompletionItemsCount} completion items.", razorCompletionItems.Length);
+        _logger.LogTrace("Resolved {razorCompletionItemsCount} completion items.", razorCompletionItems.Length);
 
         var completionList = CreateLSPCompletionList(razorCompletionItems);
         var completionCapability = _clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;

@@ -100,19 +100,14 @@ internal class RazorLanguageServerClient(
 
         await EnsureCleanedUpServerAsync().ConfigureAwait(false);
 
-        // Initialize Logging Infrastructure
-        var traceSource = _traceProvider.GetTraceSource();
+        var traceSource = _traceProvider.TryGetTraceSource();
 
-        // We're creating this logger on behalf of the language server, so use its type name
-        var logger = _razorLoggerFactory.CreateLogger<RazorLanguageServer>();
-        var razorLogger = new LoggerAdapter(logger, _telemetryReporter, traceSource);
         var lspOptions = RazorLSPOptions.From(_clientSettingsManager.GetClientSettings());
 
         _server = RazorLanguageServerWrapper.Create(
             serverStream,
             serverStream,
             _razorLoggerFactory,
-            razorLogger,
             _telemetryReporter,
             _projectSnapshotManagerDispatcher,
             ConfigureLanguageServer,

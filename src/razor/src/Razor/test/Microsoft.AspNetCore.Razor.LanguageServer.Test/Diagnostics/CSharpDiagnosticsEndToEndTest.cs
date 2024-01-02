@@ -63,7 +63,7 @@ public class CSharpDiagnosticsEndToEndTest(ITestOutputHelper testOutput) : Singl
         var uri = new Uri(razorFilePath);
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
-        var requestContext = new RazorRequestContext(documentContext, Logger, null!);
+        var requestContext = new RazorRequestContext(documentContext, null!, "lsp/method", uri: null);
 
         var translateDiagnosticsService = new RazorTranslateDiagnosticsService(DocumentMappingService, LoggerFactory);
         var diagnosticsEndPoint = new DocumentPullDiagnosticsEndpoint(LanguageServerFeatureOptions, translateDiagnosticsService, languageServer, telemetryReporter: null);

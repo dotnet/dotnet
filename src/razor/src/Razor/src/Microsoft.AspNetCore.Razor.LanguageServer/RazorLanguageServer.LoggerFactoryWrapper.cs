@@ -8,7 +8,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal partial class RazorLanguageServer
 {
-    private class LoggerFactoryWrapper : ILoggerFactory, IRazorLoggerFactory
+    /// <summary>
+    /// Very small wrapper around the <see cref="IRazorLoggerFactory"/> to add a prefix to the category name, so we can tell in the logs
+    /// whether things are coming from the VS side, the LSP side, of our code. This is only temporary and will be removed when we move
+    /// to cohosting as there will only be one side.
+    /// </summary>
+    private class LoggerFactoryWrapper : IRazorLoggerFactory
     {
         private IRazorLoggerFactory _loggerFactory;
 
@@ -20,11 +25,6 @@ internal partial class RazorLanguageServer
         public void AddLoggerProvider(IRazorLoggerProvider provider)
         {
             _loggerFactory.AddLoggerProvider(provider);
-        }
-
-        public void AddProvider(ILoggerProvider provider)
-        {
-            _loggerFactory.AddLoggerProvider(new RazorLoggerProviderWrapper(provider));
         }
 
         public ILogger CreateLogger(string categoryName)

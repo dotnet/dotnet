@@ -37,7 +37,6 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
         Stream input,
         Stream output,
         IRazorLoggerFactory loggerFactory,
-        IRazorLogger razorLogger,
         ITelemetryReporter telemetryReporter,
         ProjectSnapshotManagerDispatcher? projectSnapshotManagerDispatcher = null,
         Action<IServiceCollection>? configure = null,
@@ -48,7 +47,7 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
     {
         var jsonRpc = CreateJsonRpc(input, output);
 
-        // This ensures each request is a separate activity in loghub
+        // This ensures each request is a separate activity in LogHub
         jsonRpc.ActivityTracingStrategy = new CorrelationManagerTracingStrategy
         {
             TraceSource = traceSource
@@ -57,7 +56,6 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
         var server = new RazorLanguageServer(
             jsonRpc,
             loggerFactory,
-            razorLogger,
             projectSnapshotManagerDispatcher,
             featureOptions,
             configure,

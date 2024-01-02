@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 #nullable disable
@@ -16,6 +16,7 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -30,7 +31,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
         var (_, serverStream) = FullDuplexStream.CreatePair();
         Logger = new NoopLogger();
         var razorLoggerFactory = new RazorLoggerFactory([new NoopLoggerProvider()]);
-        RazorLanguageServer = RazorLanguageServerWrapper.Create(serverStream, serverStream, razorLoggerFactory, Logger, NoOpTelemetryReporter.Instance, configure: (collection) =>
+        RazorLanguageServer = RazorLanguageServerWrapper.Create(serverStream, serverStream, razorLoggerFactory, NoOpTelemetryReporter.Instance, configure: (collection) =>
         {
             collection.AddSingleton<IOnInitialized, NoopClientNotifierService>();
             collection.AddSingleton<IClientConnection, NoopClientNotifierService>();
@@ -49,7 +50,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
 
     private protected RazorLanguageServerWrapper RazorLanguageServer { get; }
 
-    private protected IRazorLogger Logger { get; }
+    private protected NoopLogger Logger { get; }
 
     internal IDocumentSnapshot GetDocumentSnapshot(string projectFilePath, string filePath, string targetPath)
     {
@@ -107,7 +108,7 @@ public class RazorLanguageServerBenchmarkBase : ProjectSnapshotManagerBenchmarkB
         }
     }
 
-    internal class NoopLogger : IRazorLogger
+    internal class NoopLogger : ILogger, ILspLogger
     {
         public IDisposable BeginScope<TState>(TState state)
         {

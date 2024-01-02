@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -16,36 +15,33 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.InlineCompletion;
 
 [LanguageServerEndpoint(VSInternalMethods.TextDocumentInlineCompletionName)]
-internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternalInlineCompletionRequest, VSInternalInlineCompletionList?>, ICapabilitiesProvider
+internal sealed class InlineCompletionEndpoint(
+    IRazorDocumentMappingService documentMappingService,
+    IClientConnection clientConnection,
+    AdhocWorkspaceFactory adhocWorkspaceFactory,
+    IRazorLoggerFactory loggerFactory)
+    : IRazorRequestHandler<VSInternalInlineCompletionRequest, VSInternalInlineCompletionList?>, ICapabilitiesProvider
 {
     private static readonly ImmutableHashSet<string> s_cSharpKeywords = ImmutableHashSet.Create(
         "~", "Attribute", "checked", "class", "ctor", "cw", "do", "else", "enum", "equals", "Exception", "for", "foreach", "forr",
         "if", "indexer", "interface", "invoke", "iterator", "iterindex", "lock", "mbox", "namespace", "#if", "#region", "prop",
         "propfull", "propg", "sim", "struct", "svm", "switch", "try", "tryf", "unchecked", "unsafe", "using", "while");
 
-    private readonly IRazorDocumentMappingService _documentMappingService;
-    private readonly IClientConnection _clientConnection;
-    private readonly AdhocWorkspaceFactory _adhocWorkspaceFactory;
+    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
+    private readonly IClientConnection _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
+    private readonly AdhocWorkspaceFactory _adhocWorkspaceFactory = adhocWorkspaceFactory ?? throw new ArgumentNullException(nameof(adhocWorkspaceFactory));
+    private readonly ILogger _logger = loggerFactory.CreateLogger<InlineCompletionEndpoint>();
 
     public bool MutatesSolutionState => false;
-
-    [ImportingConstructor]
-    public InlineCompletionEndpoint(
-        IRazorDocumentMappingService documentMappingService,
-        IClientConnection clientConnection,
-        AdhocWorkspaceFactory adhocWorkspaceFactory)
-    {
-        _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
-        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-        _adhocWorkspaceFactory = adhocWorkspaceFactory ?? throw new ArgumentNullException(nameof(adhocWorkspaceFactory));
-    }
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
@@ -67,7 +63,7 @@ internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternal
             throw new ArgumentNullException(nameof(request));
         }
 
-        requestContext.Logger.LogInformation("Starting request for {textDocumentUri} at {position}.", request.TextDocument.Uri, request.Position);
+        _logger.LogInformation("Starting request for {textDocumentUri} at {position}.", request.TextDocument.Uri, request.Position);
 
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
@@ -91,7 +87,7 @@ internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternal
         if (languageKind != RazorLanguageKind.CSharp ||
             !_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out Position? projectedPosition, out _))
         {
-            requestContext.Logger.LogInformation("Unsupported location for {textDocumentUri}.", request.TextDocument.Uri);
+            _logger.LogInformation("Unsupported location for {textDocumentUri}.", request.TextDocument.Uri);
             return null;
         }
 
@@ -111,7 +107,7 @@ internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternal
             cancellationToken).ConfigureAwait(false);
         if (list is null || !list.Items.Any())
         {
-            requestContext.Logger.LogInformation("Did not get any inline completions from delegation.");
+            _logger.LogInformation("Did not get any inline completions from delegation.");
             return null;
         }
 
@@ -123,7 +119,7 @@ internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternal
 
             if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), range, out var rangeInRazorDoc))
             {
-                requestContext.Logger.LogWarning("Could not remap projected range {range} to razor document", range);
+                _logger.LogWarning("Could not remap projected range {range} to razor document", range);
                 continue;
             }
 
@@ -145,11 +141,11 @@ internal sealed class InlineCompletionEndpoint : IRazorRequestHandler<VSInternal
 
         if (items.Count == 0)
         {
-            requestContext.Logger.LogInformation("Could not format / map the items from delegation.");
+            _logger.LogInformation("Could not format / map the items from delegation.");
             return null;
         }
 
-        requestContext.Logger.LogInformation("Returning {itemsCount} items.", items.Count);
+        _logger.LogInformation("Returning {itemsCount} items.", items.Count);
         return new VSInternalInlineCompletionList
         {
             Items = items.ToArray()

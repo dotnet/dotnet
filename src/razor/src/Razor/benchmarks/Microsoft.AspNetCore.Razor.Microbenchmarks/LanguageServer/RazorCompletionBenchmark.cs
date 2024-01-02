@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.Microbenchmarks.Serialization;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -41,12 +42,13 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
         var documentMappingService = lspServices.GetRequiredService<IRazorDocumentMappingService>();
         var clientConnection = lspServices.GetRequiredService<IClientConnection>();
         var completionListCache = lspServices.GetRequiredService<CompletionListCache>();
+        var loggerFactory = lspServices.GetRequiredService<IRazorLoggerFactory>();
 
         var delegatedCompletionListProvider = new TestDelegatedCompletionListProvider(responseRewriters, documentMappingService, clientConnection, completionListCache);
         var completionListProvider = new CompletionListProvider(razorCompletionListProvider, delegatedCompletionListProvider);
         var optionsMonitor = new BenchmarkOptionsMonitor<RazorLSPOptions>(RazorLSPOptions.Default);
 
-        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, telemetryReporter: null, optionsMonitor);
+        CompletionEndpoint = new RazorCompletionEndpoint(completionListProvider, telemetryReporter: null, optionsMonitor, loggerFactory);
 
         var clientCapabilities = new VSInternalClientCapabilities
         {
@@ -78,7 +80,7 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
         RazorPosition = ToPosition(razorCodeActionIndex);
 
         var documentContext = new VersionedDocumentContext(DocumentUri, DocumentSnapshot, projectContext: null, 1);
-        RazorRequestContext = new RazorRequestContext(documentContext, Logger, languageServer.GetLspServices());
+        RazorRequestContext = new RazorRequestContext(documentContext, languageServer.GetLspServices(), "lsp/method", uri: null);
 
         Position ToPosition(int index)
         {

@@ -17,14 +17,19 @@ namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
 [Shared]
 [Export(typeof(IRazorLoggerProvider))]
 [method: ImportingConstructor]
-internal class OutputWindowLoggerProvider(IClientSettingsManager clientSettingsManager, JoinableTaskContext joinableTaskContext) : IRazorLoggerProvider
+internal class OutputWindowLoggerProvider(
+    // Anything this class imports would have a circular dependency if they tried to log anything,
+    // or used anything that does logging, so make sure everything of ours is imported lazily
+    Lazy<IClientSettingsManager> clientSettingsManager,
+    JoinableTaskContext joinableTaskContext)
+    : IRazorLoggerProvider
 {
-    private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
+    private readonly Lazy<IClientSettingsManager> _clientSettingsManager = clientSettingsManager;
     private readonly OutputPane _outputPane = new OutputPane(joinableTaskContext);
 
     public ILogger CreateLogger(string categoryName)
     {
-        return new OutputPaneLogger(categoryName, _outputPane, _clientSettingsManager);
+        return new OutputPaneLogger(categoryName, _outputPane, _clientSettingsManager.Value);
     }
 
     public void Dispose()

@@ -77,19 +77,23 @@ public class Program
 
         var devKitTelemetryReporter = await TryGetTelemetryReporterAsync(telemetryLevel, sessionId, telemetryExtensionPath).ConfigureAwait(true);
 
-        // Client connection will be initialized by the language server when it creates the connection
-        var logger = new LspLogger("LSP", logLevel, clientConnection: null);
-        var loggerFactory = new RazorLoggerFactory([new LoggerProvider(logLevel, logger)]);
+        // Have to create a logger factory to give to the server, but can't create any logger providers until we have
+        // a server.
+        var loggerFactory = new RazorLoggerFactory([]);
 
         var server = RazorLanguageServerWrapper.Create(
             Console.OpenStandardInput(),
             Console.OpenStandardOutput(),
             loggerFactory,
-            logger,
             devKitTelemetryReporter ?? NoOpTelemetryReporter.Instance,
             featureOptions: languageServerFeatureOptions);
 
-        logger.LogInformation("Razor Language Server started successfully.");
+        // Now we have a server, and hence a connection, we have somewhere to log
+        var clientConnection = server.GetRequiredService<IClientConnection>();
+        var loggerProvider = new LoggerProvider(logLevel, clientConnection);
+        loggerFactory.AddLoggerProvider(loggerProvider);
+
+        loggerFactory.CreateLogger("RZLS").LogInformation("Razor Language Server started successfully.");
 
         await server.WaitForExitAsync().ConfigureAwait(true);
     }

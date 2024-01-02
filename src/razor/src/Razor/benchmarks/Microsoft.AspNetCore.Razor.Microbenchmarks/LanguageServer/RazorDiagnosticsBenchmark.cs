@@ -80,7 +80,7 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         documentContext.Setup(r => r.Uri).Returns(It.IsAny<Uri>());
         documentContext.Setup(r => r.Version).Returns(It.IsAny<int>());
         documentContext.Setup(r => r.GetSourceTextAsync(It.IsAny<CancellationToken>())).ReturnsAsync(It.IsAny<SourceText>());
-        RazorRequestContext = new RazorRequestContext(documentContext.Object, Logger, null!);
+        RazorRequestContext = new RazorRequestContext(documentContext.Object, null!, "lsp/method", uri: null);
         VersionedDocumentContext = documentContext.Object;
 
         var loggerFactory = BuildLoggerFactory();

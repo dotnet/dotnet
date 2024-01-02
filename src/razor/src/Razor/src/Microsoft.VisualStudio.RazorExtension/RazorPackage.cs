@@ -5,12 +5,14 @@ using System;
 using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Debugging;
+using Microsoft.VisualStudio.Editor.Razor.Logging;
 using Microsoft.VisualStudio.Editor.Razor.Snippets;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.Options;
 using Microsoft.VisualStudio.LanguageServices.Razor;
@@ -82,6 +84,12 @@ internal sealed class RazorPackage : AsyncPackage
         var componentModel = (IComponentModel)GetGlobalService(typeof(SComponentModel));
         _optionsStorage = componentModel.GetService<OptionsStorage>();
         CreateSnippetService(componentModel);
+
+        // LogHub can be initialized off the UI thread
+        await TaskScheduler.Default;
+
+        var traceProvider = componentModel.GetService<RazorLogHubTraceProvider>();
+        await traceProvider.InitializeTraceAsync("Razor", 1, cancellationToken);
     }
 
     protected override void Dispose(bool disposing)

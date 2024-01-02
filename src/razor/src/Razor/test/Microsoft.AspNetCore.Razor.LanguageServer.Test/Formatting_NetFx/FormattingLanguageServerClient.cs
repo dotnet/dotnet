@@ -106,7 +106,7 @@ internal class FormattingLanguageServerClient(IRazorLoggerFactory loggerFactory)
 
         var textBufferFactoryService = (ITextBufferFactoryService3)exportProvider.GetExportedValue<ITextBufferFactoryService>();
         var bufferManager = WebTools.BufferManager.New(contentTypeService, textBufferFactoryService, []);
-        var logger = _loggerFactory.CreateLogger(GetType().Name).ToRazorLogger();
+        var logger = new ClaspLoggingBridge(_loggerFactory);
         var applyFormatEditsHandler = WebTools.ApplyFormatEditsHandler.New(textBufferFactoryService, bufferManager, logger);
 
         // Make sure the buffer manager knows about the source document

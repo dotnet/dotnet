@@ -21,7 +21,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
     public void ApplyContentChanges_SingleChange()
     {
         // Arrange
-        var endpoint = new DocumentDidChangeEndpoint(Dispatcher, _projectService);
+        var endpoint = new DocumentDidChangeEndpoint(Dispatcher, _projectService, LoggerFactory);
         var sourceText = SourceText.From("Hello World");
         var change = new TextDocumentContentChangeEvent()
         {
@@ -35,7 +35,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
         };
 
         // Act
-        var result = endpoint.ApplyContentChanges(new[] { change }, sourceText, Logger);
+        var result = endpoint.ApplyContentChanges(new[] { change }, sourceText);
 
         // Assert
         Assert.Equal("Hello! World", result.ToString());
@@ -45,7 +45,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
     public void ApplyContentChanges_MultipleChanges()
     {
         // Arrange
-        var endpoint = new DocumentDidChangeEndpoint(Dispatcher, _projectService);
+        var endpoint = new DocumentDidChangeEndpoint(Dispatcher, _projectService, LoggerFactory);
         var sourceText = SourceText.From("Hello World");
         var changes = new[] {
             new TextDocumentContentChangeEvent()
@@ -90,7 +90,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
         };
 
         // Act
-        var result = endpoint.ApplyContentChanges(changes, sourceText, Logger);
+        var result = endpoint.ApplyContentChanges(changes, sourceText);
 
         // Assert
         Assert.Equal(@"Hi!
@@ -115,7 +115,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
                 Assert.Equal(documentPath.OriginalString, path);
                 Assert.Equal(1337, version);
             });
-        var endpoint = new DocumentDidChangeEndpoint(Dispatcher, projectService.Object);
+        var endpoint = new DocumentDidChangeEndpoint(Dispatcher, projectService.Object, LoggerFactory);
         var change = new TextDocumentContentChangeEvent()
         {
             Range = new Range

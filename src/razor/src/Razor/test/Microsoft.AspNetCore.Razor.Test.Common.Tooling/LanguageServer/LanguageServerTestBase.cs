@@ -53,7 +53,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
     {
         lspServices ??= new Mock<ILspServices>(MockBehavior.Strict).Object;
 
-        var requestContext = new RazorRequestContext(documentContext, Logger, lspServices);
+        var requestContext = new RazorRequestContext(documentContext, lspServices, "lsp/method", uri: null);
 
         return requestContext;
     }

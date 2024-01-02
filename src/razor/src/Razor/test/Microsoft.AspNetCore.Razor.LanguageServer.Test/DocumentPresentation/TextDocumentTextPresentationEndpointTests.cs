@@ -39,7 +39,8 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
         var endpoint = new TextDocumentTextPresentationEndpoint(
             documentMappingService,
             clientConnection.Object,
-            FilePathService);
+            FilePathService,
+            LoggerFactory);
 
         var parameters = new TextPresentationParams()
         {
@@ -86,7 +87,8 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
         var endpoint = new TextDocumentTextPresentationEndpoint(
             documentMappingService,
             clientConnection.Object,
-            FilePathService);
+            FilePathService,
+            LoggerFactory);
 
         var parameters = new TextPresentationParams()
         {
@@ -130,7 +132,8 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
         var endpoint = new TextDocumentTextPresentationEndpoint(
             documentMappingService,
             clientConnection.Object,
-            FilePathService);
+            FilePathService,
+            LoggerFactory);
 
         var parameters = new TextPresentationParams()
         {
@@ -175,7 +178,8 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
         var endpoint = new TextDocumentTextPresentationEndpoint(
             documentMappingService,
             clientConnection.Object,
-            FilePathService);
+            FilePathService,
+            LoggerFactory);
 
         var parameters = new TextPresentationParams()
         {

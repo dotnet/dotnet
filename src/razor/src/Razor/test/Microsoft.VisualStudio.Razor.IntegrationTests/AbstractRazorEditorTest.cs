@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -25,6 +26,12 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
 
     private readonly ITestOutputHelper _testOutputHelper = testOutputHelper;
     private ILogger? _testLogger;
+
+    protected virtual bool ComponentClassificationExpected => true;
+
+    protected virtual string TargetFramework => "net8.0";
+
+    protected virtual string TargetFrameworkElement => $"""<TargetFramework>{TargetFramework}</TargetFramework>""";
 
     public override async Task InitializeAsync()
     {
@@ -59,7 +66,11 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
         EnsureMEFCompositionSuccessForRazor();
 
         await TestServices.Editor.PlaceCaretAsync("</PageTitle>", charsOffset: 1, ControlledHangMitigatingCancellationToken);
-        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken, count: 3);
+
+        if (ComponentClassificationExpected)
+        {
+            await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken, count: 3);
+        }
 
         // Making a code change gets us flowing new generated code versions around the system
         // which seems to have a positive effect on Web Tools in particular. Given the relatively
@@ -87,12 +98,32 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
         using var zip = new ZipArchive(zipStream);
         zip.ExtractToDirectory(solutionPath);
 
-        var slnFile = Directory.EnumerateFiles(solutionPath, "*.sln").First();
-        var projectFile = Directory.EnumerateFiles(solutionPath, "*.csproj", SearchOption.AllDirectories).First();
+        var slnFile = Directory.EnumerateFiles(solutionPath, "*.sln").Single();
+        var projectFile = Directory.EnumerateFiles(solutionPath, "*.csproj", SearchOption.AllDirectories).Single();
+
+        PrepareProjectForFirstOpen(projectFile);
 
         await TestServices.SolutionExplorer.OpenSolutionAsync(slnFile, cancellationToken);
 
         return projectFile;
+    }
+
+    protected virtual void PrepareProjectForFirstOpen(string projectFileName)
+    {
+        var sb = new StringBuilder();
+        foreach (var line in File.ReadAllLines(projectFileName))
+        {
+            if (line.Contains("<TargetFramework"))
+            {
+                sb.AppendLine(TargetFrameworkElement);
+            }
+            else
+            {
+                sb.AppendLine(line);
+            }
+        }
+
+        File.WriteAllText(projectFileName, sb.ToString());
     }
 
     private static string CreateTemporaryPath()
