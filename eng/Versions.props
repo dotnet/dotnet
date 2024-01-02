@@ -4,6 +4,7 @@
     <VersionPrefix>0.1.0</VersionPrefix>
     <PreReleaseVersionLabel>alpha.1</PreReleaseVersionLabel>
   </PropertyGroup>
+
   <PropertyGroup>
     <!--
       Building .NET from source depends on several archives, depending on the branch's current
