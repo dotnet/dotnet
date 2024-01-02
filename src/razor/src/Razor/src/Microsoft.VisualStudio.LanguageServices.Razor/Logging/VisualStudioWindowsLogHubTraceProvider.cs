@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Composition;
 using System.Diagnostics;
 using System.Threading;
@@ -30,11 +29,11 @@ internal class VisualStudioWindowsLogHubTraceProvider : RazorLogHubTraceProvider
         _initializationSemaphore = new SemaphoreSlim(initialCount: 1, maxCount: 1);
     }
 
-    public override async Task<TraceSource?> InitializeTraceAsync(string logIdentifier, int logHubSessionId, CancellationToken cancellationToken)
+    public override async Task InitializeTraceAsync(string logIdentifier, int logHubSessionId, CancellationToken cancellationToken)
     {
         if ((await TryInitializeServiceBrokerAsync(cancellationToken).ConfigureAwait(false)) is false)
         {
-            return null;
+            return;
         }
 
         var logId = new LogId(
@@ -43,16 +42,14 @@ internal class VisualStudioWindowsLogHubTraceProvider : RazorLogHubTraceProvider
 
         using var traceConfig = await LogHub.TraceConfiguration.CreateTraceConfigurationInstanceAsync(_serviceBroker!, ownsServiceBroker: true, cancellationToken).ConfigureAwait(false);
         _traceSource = await traceConfig.RegisterLogSourceAsync(logId, s_logOptions, cancellationToken).ConfigureAwait(false);
+    }
 
+    public override TraceSource? TryGetTraceSource()
+    {
         return _traceSource;
     }
 
-    public override TraceSource GetTraceSource()
-    {
-        return _traceSource ?? throw new InvalidOperationException("Trace source requested before it was initialized.");
-    }
-
-    public async Task<bool> TryInitializeServiceBrokerAsync(CancellationToken cancellationToken)
+    private async Task<bool> TryInitializeServiceBrokerAsync(CancellationToken cancellationToken)
     {
         await _initializationSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try

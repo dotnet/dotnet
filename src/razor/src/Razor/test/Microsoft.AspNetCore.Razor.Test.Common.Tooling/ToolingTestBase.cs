@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Logging;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -25,7 +24,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Common;
 ///   test thread as the main thread.</item>
 ///   <item>A <see cref="CancellationToken"/> that signals when the test has finished running
 ///   and xUnit disposes the test class.</item>
-///   <item>An <see cref="ILoggerFactory"/> implementation that writes to an xUnit
+///   <item>An <see cref="IRazorLoggerFactory"/> implementation that writes to an xUnit
 ///   <see cref="ITestOutputHelper"/>.</item>
 ///   <item>An easy way to register <see cref="IDisposable"/> objects that should be disposed
 ///   when the test completes.</item>
@@ -69,17 +68,17 @@ public abstract partial class ToolingTestBase : IAsyncLifetime
     protected CancellationToken DisposalToken { get; }
 
     /// <summary>
-    ///  An <see cref="ILoggerFactory"/> that creates <see cref="ILogger"/> instances that
+    ///  An <see cref="IRazorLoggerFactory"/> that creates <see cref="ILogger"/> instances that
     ///  write to xUnit's <see cref="ITestOutputHelper"/> for the currently running test.
     /// </summary>
     internal IRazorLoggerFactory LoggerFactory { get; }
 
-    private IRazorLogger? _logger;
+    private ILogger? _logger;
 
     /// <summary>
-    ///  An <see cref="IRazorLogger"/> for the currently running test.
+    ///  An <see cref="ILogger"/> for the currently running test.
     /// </summary>
-    private protected IRazorLogger Logger => _logger ??= LoggerFactory.CreateLogger(GetType().Name).ToRazorLogger();
+    private protected ILogger Logger => _logger ??= LoggerFactory.CreateLogger(GetType().Name);
 
     private protected IErrorReporter ErrorReporter => _errorReporter ??= new TestErrorReporter(Logger);
 

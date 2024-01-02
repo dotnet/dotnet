@@ -26,7 +26,7 @@ public class RazorLanguageServerTest : ToolingTestBase
     public async Task LocaleIsSetCorrectly()
     {
         var (clientStream, serverStream) = FullDuplexStream.CreatePair();
-        using var server = RazorLanguageServerWrapper.Create(serverStream, serverStream, LoggerFactory, Logger, NoOpTelemetryReporter.Instance);
+        using var server = RazorLanguageServerWrapper.Create(serverStream, serverStream, LoggerFactory, NoOpTelemetryReporter.Instance);
 
         var innerServer = server.GetInnerLanguageServerForTesting();
         innerServer.Initialize();
@@ -54,7 +54,7 @@ public class RazorLanguageServerTest : ToolingTestBase
     public void AllHandlersRegisteredAsync()
     {
         var (clientStream, serverStream) = FullDuplexStream.CreatePair();
-        using var server = RazorLanguageServerWrapper.Create(serverStream, serverStream, LoggerFactory, Logger, NoOpTelemetryReporter.Instance);
+        using var server = RazorLanguageServerWrapper.Create(serverStream, serverStream, LoggerFactory, NoOpTelemetryReporter.Instance);
 
         var innerServer = server.GetInnerLanguageServerForTesting();
         var handlerProvider = innerServer.GetTestAccessor().GetHandlerProvider();

@@ -351,7 +351,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         var codeDocument = CreateCodeDocument("@");
         codeDocument.SetUnsupported();
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache, _htmlFactsService);
+        var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache, _htmlFactsService, LoggerFactory);
         completionEndpoint.ApplyCapabilities(new(), _clientCapabilities);
         var request = new CompletionParams()
         {
@@ -380,7 +380,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         var documentPath = new Uri("C:/path/to/document.cshtml");
         var codeDocument = CreateCodeDocument("@");
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache, _htmlFactsService);
+        var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache, _htmlFactsService, LoggerFactory);
         completionEndpoint.ApplyCapabilities(new(), _clientCapabilities);
         var request = new CompletionParams()
         {
@@ -423,7 +423,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         var codeDocument = CreateCodeDocument("@in");
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache, _htmlFactsService);
+        var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache, _htmlFactsService, LoggerFactory);
         completionEndpoint.ApplyCapabilities(new(), _clientCapabilities);
         var request = new CompletionParams()
         {
@@ -466,7 +466,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         var codeDocument = CreateCodeDocument("@inje");
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache, _htmlFactsService);
+        var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache, _htmlFactsService, LoggerFactory);
         completionEndpoint.ApplyCapabilities(new(), _clientCapabilities);
         var request = new CompletionParams()
         {
@@ -503,7 +503,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         var codeDocument = CreateCodeDocument("@inje");
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache, _htmlFactsService);
+        var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache, _htmlFactsService, LoggerFactory);
         completionEndpoint.ApplyCapabilities(new(), _clientCapabilities);
         var request = new CompletionParams()
         {
@@ -547,7 +547,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         var codeDocument = CreateCodeDocument("<");
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache, _htmlFactsService);
+        var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache, _htmlFactsService, LoggerFactory);
         completionEndpoint.ApplyCapabilities(new(), _clientCapabilities);
         var request = new CompletionParams()
         {
@@ -587,7 +587,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         var codeDocument = CreateCodeDocument("<test  ");
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache, _htmlFactsService);
+        var completionEndpoint = new LegacyRazorCompletionEndpoint(_completionFactsService, _completionListCache, _htmlFactsService, LoggerFactory);
         completionEndpoint.ApplyCapabilities(new(), _clientCapabilities);
         var request = new CompletionParams()
         {

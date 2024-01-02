@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
@@ -23,18 +24,23 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
     private readonly IRazorDocumentMappingService _razorDocumentMappingService;
     private readonly IClientConnection _clientConnection;
     private readonly FilePathService _filePathService;
+    private readonly ILogger _logger;
 
     protected AbstractTextDocumentPresentationEndpointBase(
         IRazorDocumentMappingService razorDocumentMappingService,
         IClientConnection clientConnection,
-        FilePathService filePathService)
+        FilePathService filePathService,
+        ILogger logger)
     {
         _razorDocumentMappingService = razorDocumentMappingService ?? throw new ArgumentNullException(nameof(razorDocumentMappingService));
         _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
         _filePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public abstract string EndpointName { get; }
+
+    protected ILogger Logger => _logger;
 
     public bool MutatesSolutionState => false;
 
@@ -59,12 +65,12 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         if (codeDocument.IsUnsupported())
         {
-            requestContext.Logger.LogWarning("Failed to retrieve generated output for document {request.TextDocument.Uri}.", request.TextDocument.Uri);
+            _logger.LogWarning("Failed to retrieve generated output for document {request.TextDocument.Uri}.", request.TextDocument.Uri);
             return null;
         }
 
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        if (request.Range.Start.TryGetAbsoluteIndex(sourceText, requestContext.Logger, out var hostDocumentIndex) != true)
+        if (request.Range.Start.TryGetAbsoluteIndex(sourceText, _logger, out var hostDocumentIndex) != true)
         {
             return null;
         }
@@ -79,7 +85,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams> : 
 
         if (languageKind is not (RazorLanguageKind.CSharp or RazorLanguageKind.Html))
         {
-            requestContext.Logger.LogInformation("Unsupported language {languageKind}.", languageKind);
+            _logger.LogInformation("Unsupported language {languageKind}.", languageKind);
             return null;
         }
 

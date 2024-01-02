@@ -94,47 +94,47 @@
       </trans-unit>
       <trans-unit id="Setting_LogLevelCritical">
         <source>Critical</source>
-        <target state="new">Critical</target>
+        <target state="translated">Critique</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelDebug">
         <source>Debug</source>
-        <target state="new">Debug</target>
+        <target state="translated">Déboguer</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelDescription">
         <source>Sets the level of logging to show in the Razor Logger Output catregory of the Output Window.</source>
-        <target state="new">Sets the level of logging to show in the Razor Logger Output catregory of the Output Window.</target>
+        <target state="translated">Définit le niveau de journalisation à afficher dans la catégorie Sortie Razor Logger de la fenêtre de sortie.</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelDisplayName">
         <source>Output Window Log Level</source>
-        <target state="new">Output Window Log Level</target>
+        <target state="translated">Fenêtre Sortie niveau du journal</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelError">
         <source>Error</source>
-        <target state="new">Error</target>
+        <target state="translated">Erreur</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelInformation">
         <source>Information</source>
-        <target state="new">Information</target>
+        <target state="translated">Informations</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelNone">
         <source>None</source>
-        <target state="new">None</target>
+        <target state="translated">Aucun</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelTrace">
         <source>Trace</source>
-        <target state="new">Trace</target>
+        <target state="translated">Tracer</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_LogLevelWarning">
         <source>Warning</source>
-        <target state="new">Warning</target>
+        <target state="translated">Avertissement</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_SnippetsAll">

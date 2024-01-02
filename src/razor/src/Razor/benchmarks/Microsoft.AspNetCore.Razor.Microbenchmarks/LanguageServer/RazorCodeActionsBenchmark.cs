@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
@@ -53,6 +54,7 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
             htmlCodeActionProviders: languageServer.GetRequiredService<IEnumerable<IHtmlCodeActionProvider>>(),
             clientConnection: languageServer.GetRequiredService<IClientConnection>(),
             languageServerFeatureOptions: languageServer.GetRequiredService<LanguageServerFeatureOptions>(),
+            loggerFactory: languageServer.GetRequiredService<IRazorLoggerFactory>(),
             telemetryReporter: null);
 
         var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");
@@ -86,7 +88,7 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
         // Need a root namespace for the Extract to Code Behind light bulb to be happy
         codeDocument.SetCodeGenerationOptions(RazorCodeGenerationOptions.Create(c => c.RootNamespace = "Root.Namespace"));
 
-        RazorRequestContext = new RazorRequestContext(documentContext, Logger, languageServer.GetLspServices());
+        RazorRequestContext = new RazorRequestContext(documentContext, languageServer.GetLspServices(), "lsp/method", uri: null);
 
         Range ToRange(int index)
         {

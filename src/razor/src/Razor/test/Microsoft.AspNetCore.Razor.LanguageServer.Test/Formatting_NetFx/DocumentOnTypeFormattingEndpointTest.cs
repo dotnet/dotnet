@@ -26,7 +26,7 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
 
         var optionsMonitor = GetOptionsMonitor(enableFormatting: false);
         var endpoint = new DocumentOnTypeFormattingEndpoint(
-            formattingService, documentMappingService, optionsMonitor);
+            formattingService, documentMappingService, optionsMonitor, LoggerFactory);
         var @params = new DocumentOnTypeFormattingParams { TextDocument = new TextDocumentIdentifier { Uri = uri, } };
         var requestContext = CreateRazorRequestContext(documentContext: null);
 
@@ -55,7 +55,7 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
 
         var optionsMonitor = GetOptionsMonitor(enableFormatting: true);
         var endpoint = new DocumentOnTypeFormattingEndpoint(
-            formattingService, documentMappingService, optionsMonitor);
+            formattingService, documentMappingService, optionsMonitor, LoggerFactory);
         var @params = new DocumentOnTypeFormattingParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
@@ -90,7 +90,7 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
 
         var optionsMonitor = GetOptionsMonitor(enableFormatting: true);
         var endpoint = new DocumentOnTypeFormattingEndpoint(
-            formattingService, documentMappingService, optionsMonitor);
+            formattingService, documentMappingService, optionsMonitor, LoggerFactory);
         var @params = new DocumentOnTypeFormattingParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
@@ -126,7 +126,7 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
         documentMappingService.Setup(s => s.GetLanguageKind(codeDocument, 17, false)).Returns(RazorLanguageKind.Html);
         var optionsMonitor = GetOptionsMonitor(enableFormatting: true);
         var endpoint = new DocumentOnTypeFormattingEndpoint(
-            formattingService, documentMappingService.Object, optionsMonitor);
+            formattingService, documentMappingService.Object, optionsMonitor, LoggerFactory);
         var @params = new DocumentOnTypeFormattingParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
@@ -162,7 +162,7 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
         documentMappingService.Setup(s => s.GetLanguageKind(codeDocument, 17, false)).Returns(RazorLanguageKind.Razor);
         var optionsMonitor = GetOptionsMonitor(enableFormatting: true);
         var endpoint = new DocumentOnTypeFormattingEndpoint(
-            formattingService, documentMappingService.Object, optionsMonitor);
+            formattingService, documentMappingService.Object, optionsMonitor, LoggerFactory);
         var @params = new DocumentOnTypeFormattingParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },
@@ -197,7 +197,7 @@ public class DocumentOnTypeFormattingEndpointTest(ITestOutputHelper testOutput) 
 
         var optionsMonitor = GetOptionsMonitor(enableFormatting: true);
         var endpoint = new DocumentOnTypeFormattingEndpoint(
-            formattingService, documentMappingService, optionsMonitor);
+            formattingService, documentMappingService, optionsMonitor, LoggerFactory);
         var @params = new DocumentOnTypeFormattingParams()
         {
             TextDocument = new TextDocumentIdentifier { Uri = uri, },

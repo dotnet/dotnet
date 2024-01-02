@@ -11,25 +11,24 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 
 [LanguageServerEndpoint(LanguageServerConstants.RazorWrapWithTagEndpoint)]
-internal class WrapWithTagEndpoint : IRazorRequestHandler<WrapWithTagParams, WrapWithTagResponse?>
+internal class WrapWithTagEndpoint(
+    IClientConnection clientConnection,
+    IRazorDocumentMappingService razorDocumentMappingService,
+    IRazorLoggerFactory loggerFactory)
+    : IRazorRequestHandler<WrapWithTagParams, WrapWithTagResponse?>
 {
-    private readonly IClientConnection _clientConnection;
-    private readonly IRazorDocumentMappingService _razorDocumentMappingService;
-
-    public WrapWithTagEndpoint(
-        IClientConnection clientConnection,
-        IRazorDocumentMappingService razorDocumentMappingService)
-    {
-        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-        _razorDocumentMappingService = razorDocumentMappingService ?? throw new ArgumentNullException(nameof(razorDocumentMappingService));
-    }
+    private readonly IClientConnection _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
+    private readonly IRazorDocumentMappingService _razorDocumentMappingService = razorDocumentMappingService ?? throw new ArgumentNullException(nameof(razorDocumentMappingService));
+    private readonly ILogger _logger = loggerFactory.CreateLogger<WrapWithTagEndpoint>();
 
     public bool MutatesSolutionState => false;
 
@@ -43,7 +42,7 @@ internal class WrapWithTagEndpoint : IRazorRequestHandler<WrapWithTagParams, Wra
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            requestContext.Logger.LogWarning("Failed to find document {textDocumentUri}.", request.TextDocument.Uri);
+            _logger.LogWarning("Failed to find document {textDocumentUri}.", request.TextDocument.Uri);
             return null;
         }
 
@@ -52,12 +51,12 @@ internal class WrapWithTagEndpoint : IRazorRequestHandler<WrapWithTagParams, Wra
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         if (codeDocument.IsUnsupported())
         {
-            requestContext.Logger.LogWarning("Failed to retrieve generated output for document {textDocumentUri}.", request.TextDocument.Uri);
+            _logger.LogWarning("Failed to retrieve generated output for document {textDocumentUri}.", request.TextDocument.Uri);
             return null;
         }
 
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        if (request.Range?.Start.TryGetAbsoluteIndex(sourceText, requestContext.Logger, out var hostDocumentIndex) != true)
+        if (request.Range?.Start.TryGetAbsoluteIndex(sourceText, _logger, out var hostDocumentIndex) != true)
         {
             return null;
         }
@@ -97,7 +96,7 @@ internal class WrapWithTagEndpoint : IRazorRequestHandler<WrapWithTagParams, Wra
 
         if (languageKind is not RazorLanguageKind.Html)
         {
-            requestContext.Logger.LogInformation("Unsupported language {languageKind:G}.", languageKind);
+            _logger.LogInformation("Unsupported language {languageKind:G}.", languageKind);
             return null;
         }
 

@@ -283,7 +283,7 @@ stages:
                 artifactName: VSSetupArtifacts
                 targetPath: '$(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)'
 
-            - task: NuGetAuthenticate@0
+            - task: NuGetAuthenticate@1
               displayName: 'NuGet Authenticate to dotnet-tools and test-tools feeds'
 
             - task: NuGetCommand@2

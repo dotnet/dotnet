@@ -21,7 +21,7 @@ public class RazorCompletionEndpointTest(ITestOutputHelper testOutput) : Languag
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
         var optionsMonitor = GetOptionsMonitor();
-        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, telemetryReporter: null, optionsMonitor);
+        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, telemetryReporter: null, optionsMonitor, LoggerFactory);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()
@@ -49,7 +49,7 @@ public class RazorCompletionEndpointTest(ITestOutputHelper testOutput) : Languag
         var uri = new Uri(documentPath);
         var documentContext = CreateDocumentContext(uri, codeDocument);
         var optionsMonitor = GetOptionsMonitor(autoShowCompletion: false);
-        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, telemetryReporter: null, optionsMonitor);
+        var completionEndpoint = new RazorCompletionEndpoint(completionListProvider: null, telemetryReporter: null, optionsMonitor, LoggerFactory);
         var request = new CompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()

@@ -4,9 +4,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common.Logging;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.Razor.IntegrationTests.Extensions;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -20,29 +19,33 @@ internal partial class OutputInProcess
 {
     private const string RazorPaneName = "Razor Logger Output";
 
-    private TestOutputLoggerProvider? _testLoggerProvider;
+    // private TestOutputLoggerProvider? _testLoggerProvider;
 
-    public async Task<ILogger> SetupIntegrationTestLoggerAsync(ITestOutputHelper testOutputHelper, CancellationToken cancellationToken)
+#pragma warning disable IDE0060 // Remove unused parameter
+    public Task<ILogger> SetupIntegrationTestLoggerAsync(ITestOutputHelper testOutputHelper, CancellationToken cancellationToken)
+#pragma warning restore IDE0060 // Remove unused parameter
     {
-        var logger = await TestServices.Shell.GetComponentModelServiceAsync<IRazorLoggerFactory>(cancellationToken);
+        return Task.FromResult<ILogger>(NullLogger.Instance);
 
-        // We can't remove logging providers, so we just keep track of ours so we can make sure it points to the right test output helper
-        if (_testLoggerProvider is null)
-        {
-            _testLoggerProvider = new TestOutputLoggerProvider(testOutputHelper);
-            logger.AddLoggerProvider(_testLoggerProvider);
-        }
-        else
-        {
-            _testLoggerProvider.SetTestOutputHelper(testOutputHelper);
-        }
+        // var logger = await TestServices.Shell.GetComponentModelServiceAsync<IRazorLoggerFactory>(cancellationToken);
 
-        return logger.CreateLogger(GetType().Name);
+        // // We can't remove logging providers, so we just keep track of ours so we can make sure it points to the right test output helper
+        // if (_testLoggerProvider is null)
+        // {
+        //     _testLoggerProvider = new TestOutputLoggerProvider(testOutputHelper);
+        //     logger.AddLoggerProvider(_testLoggerProvider);
+        // }
+        // else
+        // {
+        //     _testLoggerProvider.SetTestOutputHelper(testOutputHelper);
+        // }
+
+        // return logger.CreateLogger(GetType().Name);
     }
 
     public void ClearIntegrationTestLogger()
     {
-        _testLoggerProvider?.SetTestOutputHelper(null);
+        // _testLoggerProvider?.SetTestOutputHelper(null);
     }
 
     public async Task<bool> HasErrorsAsync(CancellationToken cancellationToken)

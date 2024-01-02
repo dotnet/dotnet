@@ -52,7 +52,6 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
             clientConnection.Object,
             FilePathService,
             documentContextFactory,
-            Dispatcher,
             LoggerFactory);
 
         var parameters = new UriPresentationParams()
@@ -112,7 +111,6 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
             clientConnection.Object,
             FilePathService,
             documentContextFactory,
-            Dispatcher,
             LoggerFactory);
 
         var parameters = new UriPresentationParams()
@@ -180,7 +178,6 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
             clientConnection.Object,
             FilePathService,
             documentContextFactory,
-            Dispatcher,
             LoggerFactory);
 
         var parameters = new UriPresentationParams()
@@ -244,7 +241,6 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
             clientConnection.Object,
             FilePathService,
             documentContextFactory,
-            Dispatcher,
             LoggerFactory);
 
         var parameters = new UriPresentationParams()
@@ -300,7 +296,6 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
             clientConnection.Object,
             FilePathService,
             documentContextFactory,
-            Dispatcher,
             LoggerFactory);
 
         var parameters = new UriPresentationParams()
@@ -359,7 +354,6 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
             clientConnection.Object,
             FilePathService,
             documentContextFactory,
-            Dispatcher,
             LoggerFactory);
 
         var parameters = new UriPresentationParams()
@@ -423,7 +417,6 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
             clientConnection.Object,
             FilePathService,
             documentContextFactory,
-            Dispatcher,
             LoggerFactory);
 
         var parameters = new UriPresentationParams()
@@ -483,7 +476,6 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
             clientConnection.Object,
             FilePathService,
             documentContextFactory,
-            Dispatcher,
             LoggerFactory);
 
         var parameters = new UriPresentationParams()
@@ -534,7 +526,6 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
             clientConnection.Object,
             FilePathService,
             documentContextFactory,
-            Dispatcher,
             LoggerFactory);
 
         var parameters = new UriPresentationParams()
@@ -586,7 +577,6 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
             clientConnection.Object,
             FilePathService,
             documentContextFactory,
-            Dispatcher,
             LoggerFactory);
 
         var parameters = new UriPresentationParams()
@@ -637,7 +627,6 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
             clientConnection.Object,
             FilePathService,
             documentContextFactory,
-            Dispatcher,
             LoggerFactory);
 
         var parameters = new UriPresentationParams()

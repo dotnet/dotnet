@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
@@ -16,20 +17,17 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 
 [LanguageServerEndpoint(Methods.TextDocumentDidChangeName)]
-internal class DocumentDidChangeEndpoint : IRazorNotificationHandler<DidChangeTextDocumentParams>, ITextDocumentIdentifierHandler<DidChangeTextDocumentParams, TextDocumentIdentifier>, ICapabilitiesProvider
+internal class DocumentDidChangeEndpoint(
+    ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
+    RazorProjectService razorProjectService,
+    IRazorLoggerFactory loggerFactory)
+    : IRazorNotificationHandler<DidChangeTextDocumentParams>, ITextDocumentIdentifierHandler<DidChangeTextDocumentParams, TextDocumentIdentifier>, ICapabilitiesProvider
 {
     public bool MutatesSolutionState => true;
 
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
-    private readonly RazorProjectService _projectService;
-
-    public DocumentDidChangeEndpoint(
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-        RazorProjectService razorProjectService)
-    {
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
-        _projectService = razorProjectService;
-    }
+    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
+    private readonly RazorProjectService _projectService = razorProjectService;
+    private readonly ILogger _logger = loggerFactory.CreateLogger<DocumentDidChangeEndpoint>();
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
@@ -56,7 +54,7 @@ internal class DocumentDidChangeEndpoint : IRazorNotificationHandler<DidChangeTe
         var documentContext = requestContext.GetRequiredDocumentContext();
 
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        sourceText = ApplyContentChanges(request.ContentChanges, sourceText, requestContext.Logger);
+        sourceText = ApplyContentChanges(request.ContentChanges, sourceText);
 
         await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
             () => _projectService.UpdateDocument(documentContext.FilePath, sourceText, request.TextDocument.Version),
@@ -64,7 +62,7 @@ internal class DocumentDidChangeEndpoint : IRazorNotificationHandler<DidChangeTe
     }
 
     // Internal for testing
-    internal SourceText ApplyContentChanges(IEnumerable<TextDocumentContentChangeEvent> contentChanges, SourceText sourceText, ILogger logger)
+    internal SourceText ApplyContentChanges(IEnumerable<TextDocumentContentChangeEvent> contentChanges, SourceText sourceText)
     {
         foreach (var change in contentChanges)
         {
@@ -81,7 +79,7 @@ internal class DocumentDidChangeEndpoint : IRazorNotificationHandler<DidChangeTe
             var textSpan = new TextSpan(startPosition, change.RangeLength ?? endPosition - startPosition);
             var textChange = new TextChange(textSpan, change.Text);
 
-            logger.LogInformation("Applying {textChange}", textChange);
+            _logger.LogInformation("Applying {textChange}", textChange);
 
             // If there happens to be multiple text changes we generate a new source text for each one. Due to the
             // differences in VSCode and Roslyn's representation we can't pass in all changes simultaneously because

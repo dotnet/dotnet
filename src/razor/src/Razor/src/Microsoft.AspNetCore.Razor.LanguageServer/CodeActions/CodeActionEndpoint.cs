@@ -17,10 +17,12 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
 using StreamJsonRpc;
@@ -28,42 +30,33 @@ using StreamJsonRpc;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 [LanguageServerEndpoint(LspEndpointName)]
-internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionParams, SumType<Command, CodeAction>[]?>, ICapabilitiesProvider
+internal sealed class CodeActionEndpoint(
+    IRazorDocumentMappingService documentMappingService,
+    IEnumerable<IRazorCodeActionProvider> razorCodeActionProviders,
+    IEnumerable<ICSharpCodeActionProvider> csharpCodeActionProviders,
+    IEnumerable<IHtmlCodeActionProvider> htmlCodeActionProviders,
+    IClientConnection clientConnection,
+    LanguageServerFeatureOptions languageServerFeatureOptions,
+    IRazorLoggerFactory loggerFactory,
+    ITelemetryReporter? telemetryReporter)
+    : IRazorRequestHandler<VSCodeActionParams, SumType<Command, CodeAction>[]?>, ICapabilitiesProvider
 {
-    public const string LspEndpointName = Methods.TextDocumentCodeActionName;
-    private readonly IRazorDocumentMappingService _documentMappingService;
-    private readonly IEnumerable<IRazorCodeActionProvider> _razorCodeActionProviders;
-    private readonly IEnumerable<ICSharpCodeActionProvider> _csharpCodeActionProviders;
-    private readonly IEnumerable<IHtmlCodeActionProvider> _htmlCodeActionProviders;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly IClientConnection _clientConnection;
-    private readonly ITelemetryReporter? _telemetryReporter;
+    private const string LspEndpointName = Methods.TextDocumentCodeActionName;
+
+    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
+    private readonly IEnumerable<IRazorCodeActionProvider> _razorCodeActionProviders = razorCodeActionProviders ?? throw new ArgumentNullException(nameof(razorCodeActionProviders));
+    private readonly IEnumerable<ICSharpCodeActionProvider> _csharpCodeActionProviders = csharpCodeActionProviders ?? throw new ArgumentNullException(nameof(csharpCodeActionProviders));
+    private readonly IEnumerable<IHtmlCodeActionProvider> _htmlCodeActionProviders = htmlCodeActionProviders ?? throw new ArgumentNullException(nameof(htmlCodeActionProviders));
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
+    private readonly IClientConnection _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
+    private readonly ILogger _logger = loggerFactory.CreateLogger<CodeActionEndpoint>();
+    private readonly ITelemetryReporter? _telemetryReporter = telemetryReporter;
 
     internal bool _supportsCodeActionResolve = false;
 
-    private readonly ImmutableHashSet<string> _allAvailableCodeActionNames;
+    private readonly ImmutableHashSet<string> _allAvailableCodeActionNames = GetAllAvailableCodeActionNames();
 
     public bool MutatesSolutionState { get; } = false;
-
-    public CodeActionEndpoint(
-        IRazorDocumentMappingService documentMappingService,
-        IEnumerable<IRazorCodeActionProvider> razorCodeActionProviders,
-        IEnumerable<ICSharpCodeActionProvider> csharpCodeActionProviders,
-        IEnumerable<IHtmlCodeActionProvider> htmlCodeActionProviders,
-        IClientConnection clientConnection,
-        LanguageServerFeatureOptions languageServerFeatureOptions,
-        ITelemetryReporter? telemetryReporter)
-    {
-        _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
-        _razorCodeActionProviders = razorCodeActionProviders ?? throw new ArgumentNullException(nameof(razorCodeActionProviders));
-        _csharpCodeActionProviders = csharpCodeActionProviders ?? throw new ArgumentNullException(nameof(csharpCodeActionProviders));
-        _htmlCodeActionProviders = htmlCodeActionProviders ?? throw new ArgumentNullException(nameof(htmlCodeActionProviders));
-        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-        _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        _telemetryReporter = telemetryReporter;
-
-        _allAvailableCodeActionNames = GetAllAvailableCodeActionNames();
-    }
 
     public async Task<SumType<Command, CodeAction>[]?> HandleRequestAsync(VSCodeActionParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
@@ -92,7 +85,7 @@ internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionPara
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var delegatedCodeActions = await GetDelegatedCodeActionsAsync(documentContext, razorCodeActionContext, correlationId, requestContext.Logger, cancellationToken).ConfigureAwait(false);
+        var delegatedCodeActions = await GetDelegatedCodeActionsAsync(documentContext, razorCodeActionContext, correlationId, cancellationToken).ConfigureAwait(false);
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -192,7 +185,7 @@ internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionPara
         return context;
     }
 
-    private async Task<ImmutableArray<RazorVSInternalCodeAction>> GetDelegatedCodeActionsAsync(VersionedDocumentContext documentContext, RazorCodeActionContext context, Guid correlationId, IRazorLogger logger, CancellationToken cancellationToken)
+    private async Task<ImmutableArray<RazorVSInternalCodeAction>> GetDelegatedCodeActionsAsync(VersionedDocumentContext documentContext, RazorCodeActionContext context, Guid correlationId, CancellationToken cancellationToken)
     {
         var languageKind = _documentMappingService.GetLanguageKind(context.CodeDocument, context.Location.AbsoluteIndex, rightAssociative: false);
 
@@ -202,7 +195,7 @@ internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionPara
             return ImmutableArray<RazorVSInternalCodeAction>.Empty;
         }
 
-        var codeActions = await GetCodeActionsFromLanguageServerAsync(languageKind, documentContext, context, correlationId, logger, cancellationToken).ConfigureAwait(false);
+        var codeActions = await GetCodeActionsFromLanguageServerAsync(languageKind, documentContext, context, correlationId, cancellationToken).ConfigureAwait(false);
         if (codeActions is not [_, ..])
         {
             return ImmutableArray<RazorVSInternalCodeAction>.Empty;
@@ -274,7 +267,7 @@ internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionPara
     }
 
     // Internal for testing
-    internal async Task<RazorVSInternalCodeAction[]> GetCodeActionsFromLanguageServerAsync(RazorLanguageKind languageKind, VersionedDocumentContext documentContext, RazorCodeActionContext context, Guid correlationId, IRazorLogger logger, CancellationToken cancellationToken)
+    internal async Task<RazorVSInternalCodeAction[]> GetCodeActionsFromLanguageServerAsync(RazorLanguageKind languageKind, VersionedDocumentContext documentContext, RazorCodeActionContext context, Guid correlationId, CancellationToken cancellationToken)
     {
         if (languageKind == RazorLanguageKind.CSharp)
         {
@@ -312,7 +305,8 @@ internal sealed class CodeActionEndpoint : IRazorRequestHandler<VSCodeActionPara
         }
         catch (RemoteInvocationException e)
         {
-            logger.LogException(e, "Error getting code actions from delegate language server for {languageKind}", languageKind);
+            _telemetryReporter?.ReportFault(e, "Error getting code actions from delegate language server for {languageKind}", languageKind);
+            _logger.LogError(e, "Error getting code actions from delegate language server for {languageKind}", languageKind);
             return Array.Empty<RazorVSInternalCodeAction>();
         }
     }

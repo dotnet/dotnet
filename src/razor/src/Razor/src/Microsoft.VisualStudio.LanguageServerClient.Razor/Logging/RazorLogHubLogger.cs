@@ -3,19 +3,21 @@
 
 using System;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.Editor.Razor.Logging;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Logging;
 
 internal sealed class RazorLogHubLogger : ILogger
 {
     private string _categoryName;
-    private RazorLogHubLoggerProvider _razorLogHubLoggerProvider;
+    private RazorLogHubTraceProvider _traceProvider;
 
-    public RazorLogHubLogger(string categoryName, RazorLogHubLoggerProvider razorLogHubLoggerProvider)
+    public RazorLogHubLogger(string categoryName, RazorLogHubTraceProvider traceProvider)
     {
         _categoryName = categoryName;
-        _razorLogHubLoggerProvider = razorLogHubLoggerProvider;
+        _traceProvider = traceProvider;
     }
 
     public IDisposable BeginScope<TState>(TState state) => Scope.Instance;
@@ -27,22 +29,46 @@ internal sealed class RazorLogHubLogger : ILogger
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
+        var traceSource = _traceProvider.TryGetTraceSource();
+        if (traceSource is null)
+        {
+            // We can't log if there is no trace source to log to
+            return;
+        }
+
         var formattedResult = formatter(state, exception);
 
         switch (logLevel)
         {
+            // We separate out Information because we want to check for specific log messages set from CLaSP
+            case LogLevel.Information:
+                // The category for start and stop will only ever be "CLaSP" so no point logging it
+                if (formattedResult.StartsWith(ClaspLoggingBridge.LogStartContextMarker))
+                {
+                    traceSource.TraceEvent(TraceEventType.Start, id: 0, "{0}", formattedResult);
+                }
+                else if (formattedResult.StartsWith(ClaspLoggingBridge.LogEndContextMarker))
+                {
+                    traceSource.TraceEvent(TraceEventType.Stop, id: 0, "{0}", formattedResult);
+                }
+                else
+                {
+                    traceSource.TraceEvent(TraceEventType.Information, id: 0, "[{0}] {1}", _categoryName, formattedResult);
+                }
+
+                break;
+
             case LogLevel.Trace:
             case LogLevel.Debug:
-            case LogLevel.Information:
             case LogLevel.None:
-                _razorLogHubLoggerProvider.Queue(TraceEventType.Information, "[{0}] {1}", _categoryName, formattedResult);
+                traceSource.TraceEvent(TraceEventType.Information, id: 0, "[{0}] {1}", _categoryName, formattedResult);
                 break;
             case LogLevel.Warning:
-                _razorLogHubLoggerProvider.Queue(TraceEventType.Warning, "[{0}] {1}", _categoryName, formattedResult);
+                traceSource.TraceEvent(TraceEventType.Warning, id: 0, "[{0}] {1}", _categoryName, formattedResult);
                 break;
             case LogLevel.Error:
             case LogLevel.Critical:
-                _razorLogHubLoggerProvider.Queue(TraceEventType.Error, "[{0}] {1} {2}", _categoryName, formattedResult, exception!);
+                traceSource.TraceEvent(TraceEventType.Error, id: 0, "[{0}] {1} {2}", _categoryName, formattedResult, exception!);
                 break;
         }
     }

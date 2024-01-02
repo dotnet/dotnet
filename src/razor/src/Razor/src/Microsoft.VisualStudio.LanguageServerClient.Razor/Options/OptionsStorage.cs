@@ -22,7 +22,7 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Options;
 internal class OptionsStorage : IAdvancedSettingsStorage
 {
     private readonly WritableSettingsStore _writableSettingsStore;
-    private readonly ITelemetryReporter _telemetryReporter;
+    private readonly Lazy<ITelemetryReporter> _telemetryReporter;
     private readonly ISettingsReader _unifiedSettingsReader;
     private readonly IDisposable _unifiedSettingsSubscription;
 
@@ -69,7 +69,7 @@ internal class OptionsStorage : IAdvancedSettingsStorage
     }
 
     [ImportingConstructor]
-    public OptionsStorage(SVsServiceProvider vsServiceProvider, ITelemetryReporter telemetryReporter)
+    public OptionsStorage(SVsServiceProvider vsServiceProvider, Lazy<ITelemetryReporter> telemetryReporter)
     {
         var shellSettingsManager = new ShellSettingsManager(vsServiceProvider);
         _writableSettingsStore = shellSettingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
@@ -99,7 +99,7 @@ internal class OptionsStorage : IAdvancedSettingsStorage
     public void SetBool(string name, bool value)
     {
         _writableSettingsStore.SetBoolean(SettingsNames.LegacyCollection, name, value);
-        _telemetryReporter.ReportEvent("OptionChanged", Severity.Normal, new Property(name, value));
+        _telemetryReporter.Value.ReportEvent("OptionChanged", Severity.Normal, new Property(name, value));
 
         NotifyChange();
     }
@@ -117,7 +117,7 @@ internal class OptionsStorage : IAdvancedSettingsStorage
     public void SetInt(string name, int value)
     {
         _writableSettingsStore.SetInt32(SettingsNames.LegacyCollection, name, value);
-        _telemetryReporter.ReportEvent("OptionChanged", Severity.Normal, new Property(name, value));
+        _telemetryReporter.Value.ReportEvent("OptionChanged", Severity.Normal, new Property(name, value));
 
         NotifyChange();
     }

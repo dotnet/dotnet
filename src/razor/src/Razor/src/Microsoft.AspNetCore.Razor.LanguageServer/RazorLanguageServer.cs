@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
 using Microsoft.AspNetCore.Razor.LanguageServer.ColorPresentation;
 using Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
@@ -29,7 +28,6 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
 using StreamJsonRpc;
 
@@ -53,14 +51,13 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
     public RazorLanguageServer(
         JsonRpc jsonRpc,
         IRazorLoggerFactory loggerFactory,
-        ILspLogger logger,
         ProjectSnapshotManagerDispatcher? projectSnapshotManagerDispatcher,
         LanguageServerFeatureOptions? featureOptions,
         Action<IServiceCollection>? configureServer,
         RazorLSPOptions? lspOptions,
         ILspServerActivationTracker? lspServerActivationTracker,
         ITelemetryReporter telemetryReporter)
-        : base(jsonRpc, logger)
+        : base(jsonRpc, CreateILspLogger(loggerFactory, telemetryReporter))
     {
         _jsonRpc = jsonRpc;
         _loggerFactory = loggerFactory;
@@ -72,12 +69,13 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
         _telemetryReporter = telemetryReporter;
 
         _clientConnection = new ClientConnection(_jsonRpc);
-        if (_logger is LspLogger lspLogger)
-        {
-            lspLogger.Initialize(_clientConnection);
-        }
 
         Initialize();
+    }
+
+    private static ILspLogger CreateILspLogger(IRazorLoggerFactory loggerFactory, ITelemetryReporter telemetryReporter)
+    {
+        return new ClaspLoggingBridge(loggerFactory, telemetryReporter);
     }
 
     protected override IRequestExecutionQueue<RazorRequestContext> ConstructRequestExecutionQueue()
@@ -97,8 +95,6 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
         var loggerFactoryWrapper = new LoggerFactoryWrapper(_loggerFactory);
         // Wrap the logger factory so that we can add [LSP] to the start of all the categories
         services.AddSingleton<IRazorLoggerFactory>(loggerFactoryWrapper);
-        // Just in case anything in CLaSP tries to resolve ILoggerFactory
-        services.AddSingleton<ILoggerFactory>(loggerFactoryWrapper);
 
         if (_configureServer is not null)
         {
@@ -107,30 +103,8 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
 
         services.AddSingleton<IClientConnection>(_clientConnection);
 
-        if (_logger is LoggerAdapter adapter)
-        {
-            services.AddSingleton<LoggerAdapter>(adapter);
-        }
-        else
-        {
-            services.AddSingleton<LoggerAdapter>(static (provider) =>
-            {
-                var loggers = provider.GetServices<ILogger>();
-                if (!loggers.Any())
-                {
-                    throw new InvalidOperationException("No loggers were registered");
-                }
-
-                var telemetryReporter = provider.GetRequiredService<ITelemetryReporter>();
-                return new LoggerAdapter(loggers, telemetryReporter);
-            });
-        }
-
+        // Add the logger as a service in case anything in CLaSP pulls it out to do logging
         services.AddSingleton<ILspLogger>(_logger);
-        if (_logger is ILogger iLogger)
-        {
-            services.AddSingleton<ILogger>(iLogger);
-        }
 
         services.AddSingleton<IErrorReporter, LanguageServerErrorReporter>();
 
