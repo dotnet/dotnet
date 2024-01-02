@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
-    <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
     <IsPackable>true</IsPackable>
     <PackTasks>false</PackTasks>
     <Description>Targets for producing an archive of file outputs.</Description>
