@@ -13,4 +13,8 @@
     <!-- <RepositoryReference Include="wpf" Condition="'$(OS)' == 'Windows_NT'" /> -->
   </ItemGroup>
 
+  <ItemGroup>
+    <UseSourceBuiltSdkOverride Include="@(ArcadeSharedFrameworkSdkOverride)" />
+  </ItemGroup>
+
 </Project>

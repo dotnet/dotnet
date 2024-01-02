@@ -17,8 +17,4 @@
     <RepositoryReference Include="roslyn" />
   </ItemGroup>
 
-  <ItemGroup>
-    <UseSourceBuiltSdkOverride Include="@(ArcadeSdkOverride)" />
-  </ItemGroup>
-
 </Project>
