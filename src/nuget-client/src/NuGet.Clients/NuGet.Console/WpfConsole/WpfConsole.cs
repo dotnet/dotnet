@@ -746,6 +746,12 @@ namespace NuGetConsole.Implementation.Console
                 {
                     disposable.Dispose();
                 }
+
+                if (_view is not null)
+                {
+                    _view.CloseView();
+                    _view = null;
+                }
             }
         }
 
