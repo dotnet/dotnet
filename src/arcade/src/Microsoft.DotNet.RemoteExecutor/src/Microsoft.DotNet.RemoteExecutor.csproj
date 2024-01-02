@@ -5,7 +5,7 @@
     <!-- The assembly is used as both a library and an executable. -->
     <OutputType>Exe</OutputType>
     <Description>This package provides support for running tests out-of-process.</Description>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <IsTestUtilityProject>true</IsTestUtilityProject>
     <IsPackable>true</IsPackable>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);PackBuildOutputs</TargetsForTfmSpecificContentInPackage>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

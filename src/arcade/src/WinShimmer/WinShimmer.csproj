@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>$(NetFrameworkToolCurrent)</TargetFramework>
     <OutputType>Exe</OutputType>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
   </PropertyGroup>
 
   <ItemGroup>

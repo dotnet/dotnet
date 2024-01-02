@@ -6,7 +6,6 @@
     <PackageDescription>Arcade SDK build tasks for Visual Studio profile guided optimization training</PackageDescription>
     <PackageTags>Roslyn Build Task OptProf Optimization Training</PackageTags>
     <DevelopmentDependency>true</DevelopmentDependency>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
   </PropertyGroup>
 
   <ItemGroup>
