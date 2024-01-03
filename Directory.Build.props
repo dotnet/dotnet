@@ -7,6 +7,32 @@
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" Condition="'$(SkipArcadeSdkImport)' != 'true'" />
 
+  <!-- Init basic Arcade props, if the project importing this file doesn't use Arcade. -->
+  <PropertyGroup Condition="'$(_SuppressSdkImports)' == 'true' or '$(SkipArcadeSdkImport)' == 'true'">
+    <RepoRoot Condition="'$(RepoRoot)' == ''">$([MSBuild]::NormalizeDirectory('$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'global.json'))'))</RepoRoot>
+
+    <!-- Respect environment variable for the .NET install directory if set; otherwise, use the repo default location -->
+    <DotNetRoot Condition="'$(DOTNET_INSTALL_DIR)' != ''">$(DOTNET_INSTALL_DIR)</DotNetRoot>
+    <DotNetRoot Condition="'$(DotNetRoot)' != ''">$([MSBuild]::NormalizeDirectory('$(DotNetRoot)'))</DotNetRoot>
+    <DotNetRoot Condition="'$(DotNetRoot)' == ''">$([MSBuild]::NormalizeDirectory('$(RepoRoot)', '.dotnet'))</DotNetRoot>
+
+    <!-- Let the exec task find dotnet on PATH -->
+    <DotNetRoot Condition="!Exists($(DotNetRoot))"/>
+
+    <DotNetTool Condition="'$(OS)' == 'Windows_NT'">$(DotNetRoot)dotnet.exe</DotNetTool>
+    <DotNetTool Condition="'$(OS)' != 'Windows_NT'">$(DotNetRoot)dotnet</DotNetTool>
+
+    <ArtifactsDir Condition="'$(ArtifactsDir)' == ''">$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'artifacts'))</ArtifactsDir>
+    <RepositoryEngineeringDir>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'eng'))</RepositoryEngineeringDir>
+
+    <!-- Keep in sync with NetCurrent in the Arcade.Sdk's TargetFrameworkDefaults.props file. -->
+    <NetCurrent>net9.0</NetCurrent>
+  </PropertyGroup>
+
+  <!-- Manually import the Versions.props file when the Arcade SDK isn't used. -->
+  <Import Project="$(RepositoryEngineeringDir)Versions.props"
+          Condition="'$(_SuppressSdkImports)' == 'true' or '$(SkipArcadeSdkImport)' == 'true'" />
+
   <PropertyGroup>
     <!-- Fake, for SDK. -->
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -33,28 +59,6 @@
 
     <TargetPlatform>$(Platform)</TargetPlatform>
     <TargetPlatform Condition="'$(OverrideTargetRid)' != ''">$(OverrideTargetRid.Substring($(OverrideTargetRid.LastIndexOf('-'))).TrimStart('-'))</TargetPlatform>
-  </PropertyGroup>
-
-  <!-- Init basic Arcade props, if the project importing this file doesn't use Arcade. -->
-  <PropertyGroup Condition="'$(_SuppressSdkImports)' == 'true' or '$(SkipArcadeSdkImport)' == 'true'">
-    <RepoRoot Condition="'$(RepoRoot)' == ''">$([MSBuild]::NormalizeDirectory('$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'global.json'))'))</RepoRoot>
-
-    <!-- Respect environment variable for the .NET install directory if set; otherwise, use the repo default location -->
-    <DotNetRoot Condition="'$(DOTNET_INSTALL_DIR)' != ''">$(DOTNET_INSTALL_DIR)</DotNetRoot>
-    <DotNetRoot Condition="'$(DotNetRoot)' != ''">$([MSBuild]::NormalizeDirectory('$(DotNetRoot)'))</DotNetRoot>
-    <DotNetRoot Condition="'$(DotNetRoot)' == ''">$([MSBuild]::NormalizeDirectory('$(RepoRoot)', '.dotnet'))</DotNetRoot>
-
-    <!-- Let the exec task find dotnet on PATH -->
-    <DotNetRoot Condition="!Exists($(DotNetRoot))"/>
-
-    <DotNetTool Condition="'$(OS)' == 'Windows_NT'">$(DotNetRoot)dotnet.exe</DotNetTool>
-    <DotNetTool Condition="'$(OS)' != 'Windows_NT'">$(DotNetRoot)dotnet</DotNetTool>
-
-    <ArtifactsDir Condition="'$(ArtifactsDir)' == ''">$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'artifacts'))</ArtifactsDir>
-    <RepositoryEngineeringDir>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'eng'))</RepositoryEngineeringDir>
-
-    <!-- Keep in sync with NetCurrent in the Arcade.Sdk's TargetFrameworkDefaults.props file. -->
-    <NetCurrent>net9.0</NetCurrent>
   </PropertyGroup>
 
   <PropertyGroup>

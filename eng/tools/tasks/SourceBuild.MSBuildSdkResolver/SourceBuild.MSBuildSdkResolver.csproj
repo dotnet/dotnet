@@ -11,10 +11,10 @@
   </Target>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" Version="15.7.179" />
-    <PackageReference Include="Microsoft.Build.Framework" Version="15.7.179" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.7.179" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.7.179" />
+    <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
+    <PackageReference Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildVersion)" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildVersion)" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildVersion)" />
   </ItemGroup>
 
 </Project>

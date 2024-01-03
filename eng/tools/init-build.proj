@@ -47,24 +47,6 @@
     </Touch>
   </Target>
 
-  <!-- Build msbuild tasks. -->
-  <Target Name="BuildXPlatTasks"
-          DependsOnTargets="UnpackTarballs"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BaseIntermediateOutputPath)BuildXPlatTasks.complete">
-    <MSBuild Projects="tasks\Microsoft.DotNet.SourceBuild.Tasks.XPlat\Microsoft.DotNet.SourceBuild.Tasks.XPlat.csproj"
-             Targets="Restore"
-             Properties="MSBuildRestoreSessionId=$([System.Guid]::NewGuid())" />
-
-    <MSBuild Projects="tasks\Microsoft.DotNet.SourceBuild.Tasks.XPlat\Microsoft.DotNet.SourceBuild.Tasks.XPlat.csproj"
-             Targets="Build" />
-
-    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
-    <Touch Files="$(BaseIntermediateOutputPath)BuildXPlatTasks.complete" AlwaysCreate="true">
-      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
-    </Touch>
-  </Target>
-
   <!-- Build the custom msbuild sdk resolver. -->
   <Target Name="BuildMSBuildSdkResolver"
           DependsOnTargets="UnpackTarballs"
@@ -83,9 +65,27 @@
     </Touch>
   </Target>
 
+  <!-- Build msbuild tasks. -->
+  <Target Name="BuildXPlatTasks"
+          DependsOnTargets="UnpackTarballs;BuildMSBuildSdkResolver"
+          Inputs="$(MSBuildProjectFullPath)"
+          Outputs="$(BaseIntermediateOutputPath)BuildXPlatTasks.complete">
+    <MSBuild Projects="tasks\Microsoft.DotNet.SourceBuild.Tasks.XPlat\Microsoft.DotNet.SourceBuild.Tasks.XPlat.csproj"
+             Targets="Restore"
+             Properties="MSBuildRestoreSessionId=$([System.Guid]::NewGuid())" />
+
+    <MSBuild Projects="tasks\Microsoft.DotNet.SourceBuild.Tasks.XPlat\Microsoft.DotNet.SourceBuild.Tasks.XPlat.csproj"
+             Targets="Build" />
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)BuildXPlatTasks.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
+  </Target>
+
   <!-- Build msbuild tasks for the poisoning feature. -->
   <Target Name="BuildLeakDetection"
-          DependsOnTargets="ExtractToolPackage"
+          DependsOnTargets="ExtractToolPackage;BuildMSBuildSdkResolver"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)BuildLeakDetection.complete"
           Condition="'$(EnablePoison)' == 'true'">

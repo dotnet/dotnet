@@ -1,4 +1,5 @@
 <Project>
+
   <!-- Repo Version Information -->
   <PropertyGroup>
     <VersionPrefix>0.1.0</VersionPrefix>
@@ -26,5 +27,8 @@
     <PrivateSourceBuiltSdkVersion>9.0.100-alpha.1.23603.1</PrivateSourceBuiltSdkVersion>
     <PrivateSourceBuiltArtifactsVersion>9.0.100-alpha.1.23603.1</PrivateSourceBuiltArtifactsVersion>
     <PrivateSourceBuiltPrebuiltsVersion>0.1.0-9.0.100-6</PrivateSourceBuiltPrebuiltsVersion>
+    <!-- msbuild -->
+    <MicrosoftBuildVersion>15.7.179</MicrosoftBuildVersion>
   </PropertyGroup>
+
 </Project>
