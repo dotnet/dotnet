@@ -7,9 +7,7 @@
     <AssemblyName>Microsoft.CodeAnalysis.ExpressionEvaluator.ExpressionCompiler.Utilities</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <TargetFramework>net472</TargetFramework>
-    <IsShipping>false</IsShipping>
-    <!-- Test support project. Currently excluded from VBPOC -->
-    <ExcludeFromVerticalBuild>true</ExcludeFromVerticalBuild>
+    <IsTestUtilityProject>true</IsTestUtilityProject>
   </PropertyGroup>
   <ItemGroup Label="File References">
     <Reference Include="System" />

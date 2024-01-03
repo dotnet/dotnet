@@ -9,9 +9,7 @@
     <TargetFrameworks>net7.0;net472</TargetFrameworks>
     <NoStdLib>true</NoStdLib>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <IsShipping>false</IsShipping>
-    <!-- Test support project. Currently excluded from VBPOC -->
-    <ExcludeFromVerticalBuild>true</ExcludeFromVerticalBuild>
+    <IsTestUtilityProject>true</IsTestUtilityProject>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Test\PdbUtilities\Roslyn.Test.PdbUtilities.csproj" />

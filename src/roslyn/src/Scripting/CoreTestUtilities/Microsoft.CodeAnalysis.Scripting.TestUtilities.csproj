@@ -6,10 +6,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <TargetFrameworks>net472;net7.0</TargetFrameworks>
     <NoStdLib>true</NoStdLib>
-    <IsShipping>false</IsShipping>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
-    <!-- Test support project. Currently excluded from VBPOC -->
-    <ExcludeFromVerticalBuild>true</ExcludeFromVerticalBuild>
+    <IsTestUtilityProject>true</IsTestUtilityProject>
   </PropertyGroup>
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\..\Compilers\Core\Portable\Microsoft.CodeAnalysis.csproj" />
