@@ -237,13 +237,7 @@ if [[ $arcadeSdkLine =~ $versionPattern ]]; then
   export SOURCE_BUILT_SDK_DIR_ARCADE=$packagesRestoredDir/ArcadeBootstrapPackage/microsoft.dotnet.arcade.sdk/$ARCADE_BOOTSTRAP_VERSION
 fi
 
-sourceLinkLine=$(grep -m 1 'MicrosoftSourceLinkCommonVersion' "$packageVersionsPath")
-versionPattern="<MicrosoftSourceLinkCommonVersion>(.*)</MicrosoftSourceLinkCommonVersion>"
-if [[ $sourceLinkLine =~ $versionPattern ]]; then
-  export SOURCE_LINK_BOOTSTRAP_VERSION=${BASH_REMATCH[1]}
-fi
-
-echo "Found bootstrap SDK $SDK_VERSION, bootstrap Arcade $ARCADE_BOOTSTRAP_VERSION, bootstrap SourceLink $SOURCE_LINK_BOOTSTRAP_VERSION"
+echo "Found bootstrap SDK $SDK_VERSION, bootstrap Arcade $ARCADE_BOOTSTRAP_VERSION"
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export NUGET_PACKAGES=$packagesRestoredDir/
@@ -264,7 +258,7 @@ else
   # Bootstrap NetCurrent by deriving it from the installed .NET CLI version.
   netCurrent="$($CLI_ROOT/dotnet --version | while IFS='.' read major minor _; do echo "net$major.$minor"; done)"
 
-  "$CLI_ROOT/dotnet" msbuild "$SCRIPT_ROOT/eng/tools/init-build.proj" -p:NetCurrent=$netCurrent -bl:"$SCRIPT_ROOT/artifacts/log/Debug/BuildXPlatTasks_$LogDateStamp.binlog" -flp:LogFile="$SCRIPT_ROOT/artifacts/logs/BuildXPlatTasks_$LogDateStamp.log" -t:PrepareOfflineLocalTools ${MSBUILD_ARGUMENTS[@]} "$@"
+  "$CLI_ROOT/dotnet" msbuild "$SCRIPT_ROOT/eng/tools/init-build.proj" -p:NetCurrent=$netCurrent -bl:"$SCRIPT_ROOT/artifacts/log/Debug/BuildXPlatTasks_$LogDateStamp.binlog" -flp:LogFile="$SCRIPT_ROOT/artifacts/logs/BuildXPlatTasks_$LogDateStamp.log" -t:ExtractToolPackage,BuildMSBuildSdkResolver ${MSBUILD_ARGUMENTS[@]} "$@"
 
   # kill off the MSBuild server so that on future invocations we pick up our custom SDK Resolver
   "$CLI_ROOT/dotnet" build-server shutdown

@@ -5,6 +5,7 @@
   <PropertyGroup>
     <!-- Build all tasks as AnyCPU to match NuGet DLLs in the SDK: avoid warnings. -->
     <Platform>AnyCPU</Platform>
+    <RestoreSources Condition="'$(DotNetBuildFromSource)' == 'true'">$(ReferencePackagesDir);$(PrebuiltPackagesPath);$(PrebuiltSourceBuiltPackagesPath)</RestoreSources>
   </PropertyGroup>
 
   <!--
