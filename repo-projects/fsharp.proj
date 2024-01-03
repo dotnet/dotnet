@@ -24,12 +24,4 @@
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildFromSource)' == 'true'" />
   </ItemGroup>
 
-  <Target Name="SetArcadeSdkDir"
-          BeforeTargets="Build"
-          Condition="'$(DotNetBuildFromSource)' == 'true'">
-    <ItemGroup>
-      <EnvironmentVariables Include="ArcadeSdkDir=$(SourceBuiltSdksDir)%(UseSourceBuiltSdkOverride.Identity)/" />
-    </ItemGroup>
-  </Target>
-
 </Project>
