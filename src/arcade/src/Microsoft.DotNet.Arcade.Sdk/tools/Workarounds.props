@@ -26,4 +26,5 @@
     <DeterministicSourcePaths>false</DeterministicSourcePaths>
     <EnableXlfLocalization>false</EnableXlfLocalization>
   </PropertyGroup>
+
 </Project>

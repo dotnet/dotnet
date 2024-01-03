@@ -1,5 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <ItemGroup>
     <!--
       This is intended to hold information about the certificates used for signing.
@@ -75,4 +76,5 @@
 
   <!-- Allow repository to customize signing configuration -->
   <Import Project="$(RepositoryEngineeringDir)Signing.props" Condition="Exists('$(RepositoryEngineeringDir)Signing.props')" />
+
 </Project>

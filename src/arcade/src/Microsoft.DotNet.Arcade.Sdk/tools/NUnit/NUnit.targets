@@ -1,5 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.TestPlatform" Version="$(MicrosoftTestPlatformVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true"/>
     <PackageReference Include="NUnit" Version="$(NUnitVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true"/>
@@ -7,4 +8,5 @@
   </ItemGroup>
 
   <Import Project="..\VSTest.targets"/>
+
 </Project>

@@ -1,5 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <Import Project="$(_ArcadeOverriddenCustomBeforeMicrosoftCommonTargets)" Condition="Exists('$(_ArcadeOverriddenCustomBeforeMicrosoftCommonTargets)')"/>
 
   <PropertyGroup>
@@ -13,4 +14,5 @@
        This is done at this point because we need to exclude the import of some standard Microsoft restore targets (NuGet)
        that are loaded before the import of Arcade's Sdk.targets. See info in ExcludeFromBuild -->
   <Import Project="ExcludeFromBuild.BeforeCommonTargets.targets"/>
+
 </Project>

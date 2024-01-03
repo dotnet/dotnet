@@ -18,7 +18,7 @@ tab_width = 2
 indent_size = 2
 tab_width = 2
 
-[*.{cs}]
+[*.cs]
 indent_size = 4
 tab_width = 4
 
@@ -164,5 +164,6 @@ dotnet_code_quality.CA1802.api_surface = private, internal
 dotnet_code_quality.CA1822.api_surface = private, internal
 dotnet_code_quality.CA2208.api_surface = public
 
-# License header
+# IDE0073: The file header is missing or not located at the top of the file
 file_header_template = Licensed to the .NET Foundation under one or more agreements.\nThe .NET Foundation licenses this file to you under the MIT license.
+dotnet_diagnostic.IDE0073.severity = error

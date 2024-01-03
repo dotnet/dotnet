@@ -1,7 +1,10 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <PropertyGroup>
     <_InstallerTargetsImported>true</_InstallerTargetsImported>
   </PropertyGroup>
+
   <Target Name="GetInstallerGenerationFlags" DependsOnTargets="_GetTargetOSArchInfo">
     <!-- Filter the installer generation/build flags for the current build machine. -->
     <PropertyGroup>
@@ -531,4 +534,5 @@
   <PropertyGroup>
     <BuildDependsOn>$(BuildDependsOn);_GetSkipInstallerBuildProps;GenerateInstallers</BuildDependsOn>
   </PropertyGroup>
+
 </Project>

@@ -74,4 +74,5 @@
       <EmbeddedResourceSGResx Include="@(EmbeddedResourceSG->WithMetadataValue('Generator', 'MSBuild:_GenerateResxSource'))" />
     </ItemGroup>
   </Target>
+
 </Project>

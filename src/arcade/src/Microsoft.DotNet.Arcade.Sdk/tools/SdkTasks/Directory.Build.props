@@ -1,5 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project TreatAsLocalProperty="RepoRoot">
+
   <PropertyGroup>
     <RepoRoot>$([System.IO.Path]::GetFullPath('$(RepoRoot)/'))</RepoRoot>
   </PropertyGroup>
@@ -7,4 +8,5 @@
   <Import Project="../Directory.Build.props" />
   <Import Project="../RepoLayout.props"/>
   <Import Project="Versions.props"/>
+
 </Project>

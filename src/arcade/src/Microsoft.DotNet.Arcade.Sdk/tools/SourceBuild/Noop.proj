@@ -1,11 +1,11 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
-<!--
-  This project does nothing when run. It can be used as a ProjectToBuild: this makes ProjectToBuild
-  non-empty to avoid the default behavior of finding projects to build in the root, but still not do
-  anything. Used during source-build to no-op the entire default "outer" Arcade build.
--->
 <Project>
 
+  <!--
+    This project does nothing when run. It can be used as a ProjectToBuild: this makes ProjectToBuild
+    non-empty to avoid the default behavior of finding projects to build in the root, but still not do
+    anything. Used during source-build to no-op the entire default "outer" Arcade build.
+  -->
   <Target Name="Restore" />
   <Target Name="Build" />
   <Target Name="Pack" />
