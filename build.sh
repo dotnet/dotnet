@@ -27,7 +27,8 @@ function print_help () {
 }
 
 # TODO: Make it possible to invoke this script for non source build use cases
-MSBUILD_ARGUMENTS=("-flp:v=detailed -p:DotNetBuildFromSource=true")
+MSBUILD_ARGUMENTS=("-flp:v=detailed")
+MSBUILD_ARGUMENTS+=("/p:DotNetBuildFromSource=true")
 CUSTOM_PACKAGES_DIR=''
 alternateTarget=false
 runningSmokeTests=false
