@@ -1,5 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <PropertyGroup>
     <ArcadeVisualStudioBuildTasksAssembly>$(NuGetPackageRoot)microsoft.dotnet.build.tasks.visualstudio\$(MicrosoftDotNetBuildTasksVisualStudioVersion)\tools\net472\Microsoft.DotNet.Build.Tasks.VisualStudio.dll</ArcadeVisualStudioBuildTasksAssembly>
   </PropertyGroup>
@@ -16,4 +17,5 @@
     <BuildForLiveUnitTesting>false</BuildForLiveUnitTesting>
     <DeployExtension>false</DeployExtension>
   </PropertyGroup>
+
 </Project>

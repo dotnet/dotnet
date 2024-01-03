@@ -56,4 +56,5 @@
          These are not available in certain circumstances, like linux source build. -->
     <ImportWindowsDesktopTargets Condition="'$(_SuppressAllTargets)' == 'true'">false</ImportWindowsDesktopTargets>
   </PropertyGroup>
+
 </Project>

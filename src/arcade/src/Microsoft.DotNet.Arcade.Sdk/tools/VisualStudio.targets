@@ -1,5 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <!-- 
     Initialize VsixVersion. The project may specify 3-part prefix if it's different from VersionPrefix.
   -->
@@ -41,4 +42,5 @@
     a no-op. However they dont check for that and that's a bug.
   -->
   <Import Project="VisualStudio.VsixBuild.targets" Condition="'$(DesignTimeBuild)' != 'true' and '$(BuildingForLiveUnitTesting)' != 'true'"/>
+
 </Project>

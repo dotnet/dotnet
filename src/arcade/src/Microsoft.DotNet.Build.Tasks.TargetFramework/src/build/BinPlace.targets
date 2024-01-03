@@ -1,5 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <UsingTask TaskName="ChooseBestTargetFrameworksTask" AssemblyFile="$(DotNetBuildTasksTargetFrameworkAssembly)" />
 
   <PropertyGroup>
@@ -147,4 +148,5 @@
     <!-- Write new list of current files back to disk. -->
     <WriteLinesToFile File="$(IntermediateOutputPath)$(CleanFile)" Lines="@(_CleanAdditionalDirectoriesUniqueRemainingFileWrites)" Overwrite="true" />
   </Target>
+
 </Project>

@@ -1,5 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project DefaultTargets="Build">
+
   <!--
     Import this file to suppress all targets while allowing the project to participate in the build.
     Workaround for https://github.com/dotnet/sdk/issues/2071.

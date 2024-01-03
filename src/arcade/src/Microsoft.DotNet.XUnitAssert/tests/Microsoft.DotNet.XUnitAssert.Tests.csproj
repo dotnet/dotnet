@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <!-- Baseline analyzer warnings. These warnings are present in the upstream xunit.assert tests. -->
     <NoWarn>$(NoWarn);xUnit2000;xUnit2003;xUnit2005;xUnit2007;xUnit2011;xUnit2015;xUnit2017</NoWarn>
+    <NoWarn>$(NoWarn);IDE0073</NoWarn>
     <UseDotNetXUnitAssert>true</UseDotNetXUnitAssert>
   </PropertyGroup>
 

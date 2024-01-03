@@ -1,5 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <PropertyGroup>
     <_XHarnessPackageName>Microsoft.DotNet.XHarness.CLI</_XHarnessPackageName>
     <!-- MicrosoftDotNetXHarnessCLIVersion comes from eng\Versions.props -->
@@ -12,4 +13,5 @@
     <!-- Needed for app signing and tied to certificates installed in Helix machines -->
     <XHarnessAppleProvisioningProfileUrl>https://netcorenativeassets.blob.core.windows.net/resource-packages/external/macos/signing/NET_Apple_Development_{PLATFORM}.mobileprovision</XHarnessAppleProvisioningProfileUrl>
   </PropertyGroup>
+
 </Project>

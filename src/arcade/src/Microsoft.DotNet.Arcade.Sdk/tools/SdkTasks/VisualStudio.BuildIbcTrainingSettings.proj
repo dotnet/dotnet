@@ -1,5 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project DefaultTargets="Execute">
+
   <!--
     Required parameters:
       VisualStudioDropName                  Product drop name, e.g. 'Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)'
@@ -42,4 +43,5 @@
              Query="/RunSettings/SessionConfiguration"
              Value="$(_SessionConfiguration)" />
   </Target>
+
 </Project>

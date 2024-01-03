@@ -75,4 +75,5 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Feed" Version="$(MicrosoftDotNetBuildTasksFeedVersion)" />
   </ItemGroup>
+
 </Project>

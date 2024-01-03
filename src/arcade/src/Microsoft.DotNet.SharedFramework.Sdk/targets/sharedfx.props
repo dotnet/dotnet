@@ -1,5 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <PropertyGroup>
     <LicenseFile Condition="'$(LicenseFile)' == ''">$(RepoRoot)LICENSE.TXT</LicenseFile>
     <GetSharedFrameworkFilesForReadyToRunDependsOn>
@@ -18,4 +19,5 @@
 
   <!-- Stub out the CreatePackageOverrides target. Each repo uses their own implementation. -->
   <Target Name="CreatePackageOverrides" />
+
 </Project>

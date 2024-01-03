@@ -172,4 +172,5 @@
     <EnsureAllResourcesTranslated Sources="@(XlfSource)"
                                   Languages="$(XlfLanguages)" />
   </Target>
+
 </Project>

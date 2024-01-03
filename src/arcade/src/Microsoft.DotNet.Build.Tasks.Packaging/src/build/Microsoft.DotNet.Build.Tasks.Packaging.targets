@@ -1,8 +1,11 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <PropertyGroup>
     <ImportPackagingTargets Condition="'$(ImportPackagingTargets)' == '' AND '$(MSBuildProjectExtension)' == '.pkgproj'">true</ImportPackagingTargets>
   </PropertyGroup>
   <Import Project="Packaging.common.targets"/>
   <Import Project="Packaging.targets" Condition="'$(ImportPackagingTargets)' == 'true'" />
   <Import Project="PackageLibs.targets"/>
+
 </Project>
