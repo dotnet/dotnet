@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "10ff4d7337ea17856eaa985bacbff82188bde372"
+      "commitSha": "206c0c932da00de29b376a2c41dfc32df6caffbc"
     },
     {
       "packageVersion": "17.10.0-preview-23621-05",
@@ -133,10 +133,10 @@
       "commitSha": "ecd8aa3a3b36eda57831027b55947c7c23c99479"
     },
     {
-      "packageVersion": "2.1.0-beta.23608.1",
+      "packageVersion": "2.1.0-beta.23615.1",
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
-      "commitSha": "aa31e333b952f53910dc6bd08d80596eaaf89360"
+      "commitSha": "236d6c586677394a698d79fb2ff8e60bcc41ab0c"
     },
     {
       "packageVersion": "9.0.100-alpha.24052.11",
