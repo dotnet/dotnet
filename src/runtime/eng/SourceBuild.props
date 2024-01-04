@@ -51,7 +51,7 @@
       <InnerBuildArgs Condition="'$(OfficialBuildId)' != ''">$(InnerBuildArgs) /p:OfficialBuildId=$(OfficialBuildId)</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(ContinuousIntegrationBuild)' != ''">$(InnerBuildArgs) /p:ContinuousIntegrationBuild=$(ContinuousIntegrationBuild)</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(PortableBuild)' != ''">$(InnerBuildArgs) /p:PortableBuild=$(PortableBuild)</InnerBuildArgs>
-      <InnerBuildArgs Condition="'$(DotnetBuildVertical)' != ''">$(InnerBuildArgs) /p:DotnetBuildVertical=$(DotnetBuildVertical)</InnerBuildArgs>
+      <InnerBuildArgs Condition="'$(DotNetBuildVertical)' != ''">$(InnerBuildArgs) /p:DotNetBuildVertical=$(DotNetBuildVertical)</InnerBuildArgs>
     </PropertyGroup>
   </Target>
 
