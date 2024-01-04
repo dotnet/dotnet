@@ -36,7 +36,7 @@
 
     <MakeDir Directories="$(SourceBuildReferencePackagesDestination)" />
     <Unzip SourceFiles="@(SourceBuildReferencePackagesIntermediatePackage)"
-           DestinationFolder="$(SourceBuildReferencePackagesDestination)extractArtifacts/"
+           DestinationFolder="$(SourceBuildReferencePackagesDestination)extractArtifacts"
            SkipUnchangedFiles="true"
            Condition="'@(SourceBuildReferencePackagesIntermediatePackage)' != ''" />
 

@@ -120,7 +120,7 @@
            DestinationFolder="$(ArcadeBootstrapPackageDir)microsoft.dotnet.arcade.sdk/$(ARCADE_BOOTSTRAP_VERSION)/"
            SkipUnchangedFiles="true" />
 
-    <!-- TODO: When unpacking, this executable file has the wrong permissions on
+    <!-- When unpacking, this executable file has the wrong permissions on
          non-windows systems: https://github.com/NuGet/Home/issues/13121. -->
     <Exec Command="chmod 755 git-clone-to-dir.sh"
       WorkingDirectory="$(ArcadeBootstrapPackageDir)microsoft.dotnet.arcade.sdk/$(ARCADE_BOOTSTRAP_VERSION)/tools/SourceBuild/" />

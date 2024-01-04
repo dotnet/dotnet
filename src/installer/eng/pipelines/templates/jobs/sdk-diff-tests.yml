@@ -38,7 +38,7 @@ jobs:
       
       echo "Dotnet-dotnet build: https://dev.azure.com/dnceng/internal/_build/results?buildId=$dotnet_dotnet_build&view=results"
 
-      installer_sha=$(az pipelines build tag list --organization '$(AZDO_ORG)' --project '$(AZDO_PROJECT)' --build-id $dotnet_dotnet_build --output tsv | sed "s,installer-,,g")
+      installer_sha=$(az pipelines build tag list --organization '$(AZDO_ORG)' --project '$(AZDO_PROJECT)' --build-id $dotnet_dotnet_build --output tsv | sed "s,installer ,,g")
       installer_build=$(az pipelines runs list --organization '$(AZDO_ORG)' --project '$(AZDO_PROJECT)' --pipeline-ids '$(INSTALLER_OFFICIAL_CI_PIPELINE_ID)' --query "[?sourceVersion == '$installer_sha'].id" --output tsv)
       if [[ -z "$installer_build" ]]; then
         echo "Could not find a build of installer for commit '$installer_sha'"

@@ -1,4 +1,6 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <PropertyGroup>
     <PackageLicenseFile Condition="'$(PackageLicenseExpression)' == ''">$([System.IO.Path]::GetFileName('$(LicenseFile)'))</PackageLicenseFile>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -622,4 +624,5 @@
   <PropertyGroup>
     <BuildDependsOn>$(BuildDependsOn);_GetSkipBuildProps;_CreateNuGetPackage</BuildDependsOn>
   </PropertyGroup>
+
 </Project>

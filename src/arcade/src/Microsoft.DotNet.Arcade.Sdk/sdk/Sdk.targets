@@ -1,5 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <!--
     Some projects do not import Common targets, so BeforeCommonTargets.targets doesn't get imported. 
     (https://github.com/dotnet/arcade/issues/2676).
@@ -25,4 +26,5 @@
 
   <Import Project="..\tools\Imports.targets" Condition="!$(_SuppressSdkImports) and !$(_SuppressAllTargets)" />
   <Import Project="..\tools\Empty.targets" Condition="!$(_SuppressSdkImports) and $(_SuppressAllTargets)"/>
+
 </Project>

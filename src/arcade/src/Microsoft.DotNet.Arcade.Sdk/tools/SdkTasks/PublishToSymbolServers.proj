@@ -1,5 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Execute">
+
   <!--
     This MSBuild file is intended to be used as the body of the default 
     publishing release pipeline. The release pipeline will use this file
@@ -113,4 +114,5 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.SymbolUploader.Build.Task" Version="$(MicrosoftSymbolUploaderBuildTaskVersion)" />
   </ItemGroup>
+
 </Project>

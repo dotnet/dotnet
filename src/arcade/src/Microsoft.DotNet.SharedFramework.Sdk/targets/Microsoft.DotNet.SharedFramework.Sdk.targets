@@ -1,4 +1,6 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <!-- Required by Common.Targets but not used by packaging projects. -->
   <Target Name="CreateManifestResourceNames" />
   <Target Name="CoreCompile">
@@ -6,7 +8,6 @@
       <IntermediateAssembly Remove="@(IntermediateAssembly)" />
     </ItemGroup>
   </Target>
-
 
   <Target Name="_GetCurrentProjectServicingConfiguration">
     <ItemGroup>
@@ -108,4 +109,5 @@
   <Import Project="$(MSBuildThisFileDirectory)sharedfx.targets" />
   
   <Import Project="windows/wix.targets" />
+
 </Project>

@@ -111,4 +111,5 @@
   <PropertyGroup>
     <IbcOptimizationDataDir Condition="'$(UsingToolVisualStudioIbcTraining)' == 'true'">$(ArtifactsDir)ibc\</IbcOptimizationDataDir>
   </PropertyGroup>
+
 </Project>
