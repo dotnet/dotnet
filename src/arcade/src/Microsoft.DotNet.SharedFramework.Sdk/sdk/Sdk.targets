@@ -19,4 +19,5 @@
 
   <Import Condition="'$(_DispatchMultiRidBuild)' == 'true'" Project="$(DotNetSharedFrameworkMSBuildDir)Microsoft.DotNet.SharedFramework.Sdk.MultiRid.targets" />
   <Import Condition="'$(_DispatchMultiRidBuild)' != 'true'" Project="$(DotNetSharedFrameworkMSBuildDir)Microsoft.DotNet.SharedFramework.Sdk.targets" />
+
 </Project>

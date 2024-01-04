@@ -1,9 +1,10 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <!-- Repositories using the arcade SDK can stay up to date with their target framework more easily using the properties in this file.
 
        Examples:
-       <TargetFrameworks>$(NetCurrent)</TargetFrameworks>
+       <TargetFramework>$(NetCurrent)</TargetFramework>
        <TargetFrameworks>$(NetCurrent);$(NetFrameworkCurrent)</TargetFrameworks>
        <TargetFrameworks>$(NetCurrent);$(NetMinimum);netstandard2.0;$(NetFrameworkMinimum)</TargetFrameworks>
   -->

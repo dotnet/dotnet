@@ -1,8 +1,10 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project DefaultTargets="Build">
+
   <!--
     Set this file as property NuGetRestoreTargets to avoid msbuild attempting a restore in static graph mode. It probes
     for _IsProjectRestoreSupported to determine whether restore should be performed, rather than evaluating the target, because
     it assumes that this target will always return true.
   -->
+
 </Project>

@@ -1,4 +1,6 @@
-<Project>    
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
   <Target Name="GetBundleGenerationFlags" DependsOnTargets="_GetTargetOSArchInfo" Condition="'$(SkipInstallerBuild)' != 'true'">
     <Error
       Text="Unable to build a bundle installer for a non-Windows, non-macOS platform."
@@ -163,4 +165,5 @@
   <PropertyGroup>
     <BuildDependsOn>$(BuildDependsOn);_GetSkipInstallerBuildProps;GenerateBundles</BuildDependsOn>
   </PropertyGroup>
+
 </Project>

@@ -1,6 +1,7 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <Import Project="$(MSBuildThisFileDirectory)*/*.props"/>
 
   <PropertyGroup>

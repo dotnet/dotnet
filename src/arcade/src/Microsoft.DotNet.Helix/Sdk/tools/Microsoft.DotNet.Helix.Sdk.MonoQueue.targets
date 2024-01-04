@@ -1,4 +1,6 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
+
   <PropertyGroup>
     <!-- Helix Queues which do not exist (deprecation, typos, or purposful removal for use reduction) will error by default. 
          For users that do not want this to break builds (such as in release branch testing) this property allows to downgrade 
@@ -82,4 +84,5 @@
     DependsOnTargets="$(TestDependsOn)"
     Returns="@(SentJob)">
   </Target>
+
 </Project>
