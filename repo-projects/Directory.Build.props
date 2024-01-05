@@ -64,9 +64,6 @@
   <ItemGroup>
     <EnvironmentVariables Include="DotNetRestorePackagesPath=$(PackagesDir)" />
 
-    <!-- Ensure the SDK (Core-SDK/Installer) doesn't add an online source. -->
-    <EnvironmentVariables Include="AddDotnetfeedProjectSource=false" />
-
     <!-- Arcade tools.sh picks up DotNetCoreSdkDir, but we can pass DOTNET_INSTALL_DIR directly. -->
     <EnvironmentVariables Include="DOTNET_INSTALL_DIR=$(DotNetRoot)" />
     <EnvironmentVariables Include="DOTNET_PATH=$(DotNetRoot)" />
@@ -75,6 +72,9 @@
     <!-- _InitializeDotNetCli is used by websdk and templating to decide whether to init the SDK -->
     <EnvironmentVariables Include="_InitializeDotNetCli=$(DotNetRoot)" />
     <EnvironmentVariables Include="_DotNetInstallDir=$(DotNetRoot)" />
+
+    <EnvironmentVariables Include="_InitializeToolset=$(SourceBuiltSdksDir)Microsoft.DotNet.Arcade.Sdk/tools/Build.proj"
+                          Condition="'$(UseBootstrapArcade)' != 'true'" />
 
     <EnvironmentVariables Include="DotNetUseShippingVersions=true" />
 
@@ -114,19 +114,10 @@
   </ItemGroup>
 
   <!-- VBPOC - I'm not sure about this. Some of this may be needed for VB, but I'm not sure why some pieces like
-       DotNetBuildFromSource are in there for source-build at all. A lot of these are also passed through props. Why? -->
-  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
-    <EnvironmentVariables Include="DotNetBuildFromSource=true" />
-    <EnvironmentVariables Include="DotNetBuildOffline=true" />
-    <EnvironmentVariables Include="_OverrideArcadeInitializeBuildToolFramework=$(NetCurrent)" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(DotNetBuildVertical)' == 'true'">
-    <EnvironmentVariables Include="DotNetBuildVertical=true" />
-  </ItemGroup>
-
+       DotNetBuildFromSource are in there for source-build at all. -->
   <ItemGroup>
-    <EnvironmentVariables Include="DotNetPackageVersionPropsPath=$(PackageVersionPropsPath)" />
-    <EnvironmentVariables Include="_InitializeToolset=$(SourceBuiltSdksDir)Microsoft.DotNet.Arcade.Sdk/tools/Build.proj" Condition="'$(UseBootstrapArcade)' != 'true'" />
+    <EnvironmentVariables Include="DotNetBuildFromSource=true" Condition="'$(DotNetBuildFromSource)' == 'true'" />
+    <EnvironmentVariables Include="DotNetBuildVertical=true" Condition="'$(DotNetBuildVertical)' == 'true'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(EnableExtraDebugging)' == 'true'">
@@ -164,15 +155,11 @@
     <BuildArgs>$(BuildArgs) /p:CopySrcInsteadOfClone=true</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:DotNetPackageVersionPropsPath="$(PackageVersionPropsPath)"</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:CrossBuild=$(CrossBuild)</BuildArgs>
-  </PropertyGroup>
-  
-  <PropertyGroup Condition="'$(DotNetBuildVertical)' == 'true'">
-    <BuildArgs>$(BuildArgs) /p:ArcadeBuildVertical=true</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildVertical)' == 'true'">$(BuildArgs) /p:ArcadeBuildVertical=true</BuildArgs>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
     <BuildArgs>$(BuildArgs) /p:ArcadeBuildFromSource=true</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:DotNetBuildOffline=true</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PrebuiltSourceBuiltPackagesPath)"</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</BuildArgs>
     <BuildArgs Condition="'$(SourceBuildUseMonoRuntime)' == 'true'">$(BuildArgs) /p:SourceBuildUseMonoRuntime=$(SourceBuildUseMonoRuntime)</BuildArgs>
