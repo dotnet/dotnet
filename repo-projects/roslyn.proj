@@ -34,7 +34,7 @@
     <!-- <RepositoryReference Include="runtime" /> -->
   </ItemGroup>
 
-  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
+  <ItemGroup>
     <UseSourceBuiltSdkOverride Include="@(WindowsDesktopSdkOverride)" />
   </ItemGroup>
 

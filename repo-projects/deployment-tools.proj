@@ -3,6 +3,10 @@
   <!-- TODO: Should we invoke the root build scripts instead? -->
 
   <ItemGroup>
+    <EnvironmentVariables Include="LatestCommit=$(GitCommitHash)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <RepositoryReference Include="runtime" />
   </ItemGroup>
 
