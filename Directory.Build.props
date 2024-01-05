@@ -3,6 +3,7 @@
   <PropertyGroup>
     <_SuppressSdkImports Condition="'$(DotNetBuildFromSource)' == 'true'">true</_SuppressSdkImports>
     <Configuration Condition="$(Configuration) == ''">Release</Configuration>
+    <NetCurrent Condition="'$(SkipArcadeSdkImport)' == 'true'">net9.0</NetCurrent>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" Condition="'$(SkipArcadeSdkImport)' != 'true'" />
