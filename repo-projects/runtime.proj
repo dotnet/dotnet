@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UseSourceBuiltSdkOverride Include="@(ArcadeSharedFrameworkSdkOverride)" />
+    <SourceBuiltSdkOverride Include="@(ArcadeSharedFrameworkSdkOverride)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">

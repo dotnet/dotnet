@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UseSourceBuiltSdkOverride Include="@(ArcadeSharedFrameworkSdkOverride)" />
+    <SourceBuiltSdkOverride Include="@(ArcadeSharedFrameworkSdkOverride)" />
   </ItemGroup>
 
 </Project>

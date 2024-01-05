@@ -173,11 +173,11 @@
   <ItemGroup>
     <!-- The Arcade SDK is automatically registered while the others are opt-in for the repo projects. -->
     <ArcadeSdkOverride Include="Microsoft.DotNet.Arcade.Sdk" Group="ARCADE" Version="$(arcadeOutputPackageVersion)" />
-    <UseSourceBuiltSdkOverride Include="@(ArcadeSdkOverride)" Condition="'$(UseBootstrapArcade)' != 'true'" />
-    <UseSourceBuiltSdkOverride Include="@(ArcadeSdkOverride)"
-                               Version="$(ArcadeBootstrapVersion)"
-                               Location="$(ArcadeBootstrapPackageDir)microsoft.dotnet.arcade.sdk/$(ArcadeBootstrapVersion)"
-                               Condition="'$(UseBootstrapArcade)' == 'true'" />
+    <SourceBuiltSdkOverride Include="@(ArcadeSdkOverride)" Condition="'$(UseBootstrapArcade)' != 'true'" />
+    <SourceBuiltSdkOverride Include="@(ArcadeSdkOverride)"
+                            Version="$(ArcadeBootstrapVersion)"
+                            Location="$(ArcadeBootstrapPackageDir)microsoft.dotnet.arcade.sdk/$(ArcadeBootstrapVersion)"
+                            Condition="'$(UseBootstrapArcade)' == 'true'" />
 
     <ArcadeSharedFrameworkSdkOverride Include="Microsoft.DotNet.SharedFramework.Sdk" Group="ARCADE_SHARED_FX_SDK" Version="$(arcadeOutputPackageVersion)" />
     <WindowsDesktopSdkOverride Include="Microsoft.Net.Sdk.WindowsDesktop" Group="WINDOWS_DESKTOP" Location="$(ToolsDir)EmptySdk" Condition="'$(DotNetBuildFromSource)' == 'true'" />

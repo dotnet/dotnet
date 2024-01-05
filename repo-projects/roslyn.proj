@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UseSourceBuiltSdkOverride Include="@(WindowsDesktopSdkOverride)" />
+    <SourceBuiltSdkOverride Include="@(WindowsDesktopSdkOverride)" Condition="'$(DotNetBuildFromSource)' == 'true'" />
   </ItemGroup>
 
 </Project>
