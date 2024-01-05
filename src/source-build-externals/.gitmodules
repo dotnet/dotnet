@@ -16,8 +16,11 @@
 [submodule "src/azure-activedirectory-identitymodel-extensions-for-dotnet"]
 	path = src/azure-activedirectory-identitymodel-extensions-for-dotnet
 	url = https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git
-[submodule "src/docker-creds-provider"]
-	path = src/docker-creds-provider
+[submodule "src/docker-creds-provider-2.2.0"]
+	path = src/docker-creds-provider-2.2.0
+	url = https://github.com/mthalman/docker-creds-provider
+[submodule "src/docker-creds-provider-2.2.1"]
+	path = src/docker-creds-provider-2.2.1
 	url = https://github.com/mthalman/docker-creds-provider
 [submodule "xunit"]
 	path = src/xunit
