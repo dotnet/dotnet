@@ -1,0 +1,26 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.props, $(MSBuildThisFileDirectory)..))" />
+
+  <PropertyGroup>
+    <!-- Build all tasks as AnyCPU to match NuGet DLLs in the SDK: avoid warnings. -->
+    <Platform>AnyCPU</Platform>
+    <!--
+      Do not import the Arcade SDK for the local tooling projects. This lets us
+      build them with just the .NET SDK, simplifying the build.
+    -->
+    <SkipArcadeSdkImport>true</SkipArcadeSdkImport>
+  </PropertyGroup>
+
+  <!--
+    Use some assemblies from the SDK, instead of package references. This ensures they match what's
+    found when the task is loaded by the SDK's MSBuild.
+  -->
+  <ItemGroup>
+    <SdkAssembly Include="$(SdkReferenceDir)Newtonsoft.Json.dll" />
+
+    <SdkAssemblyReference
+      Include="@(SdkAssembly -> '%(FileName)')"
+      HintPath="$(SdkReferenceDir)%(Identity).dll" />
+  </ItemGroup>
+
+</Project>

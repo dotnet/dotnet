@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@0c48954](https://github.com/dotnet/fsharp/tree/0c489541068f311e23b582410c1df3ff86f1d526)*
 - `src/installer`  
-*[dotnet/installer@fb4ec09](https://github.com/dotnet/installer/tree/fb4ec09b1e9530f69c4bf5fe402117dc72de0baf)*
+*[dotnet/installer@10c3b78](https://github.com/dotnet/installer/tree/10c3b7818b358e5b1c265a3073f7621ba0620cd8)*
 - `src/msbuild`  
 *[dotnet/msbuild@bbe185f](https://github.com/dotnet/msbuild/tree/bbe185f58bf8bfc60ad3bd60e7fa3876decdea0f)*
 - `src/nuget-client`  
@@ -52,7 +52,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@997bb1f](https://github.com/dotnet/sdk/tree/997bb1f507871fccdab00a4fa8c9b694d364da7a)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@63e4253](https://github.com/dotnet/source-build-externals/tree/63e4253ef37427fe51ee50b3225c1504889651df)*
+*[dotnet/source-build-externals@8263b54](https://github.com/dotnet/source-build-externals/tree/8263b543a5ceb0cd864cdb9e9011f1289c0dd246)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
@@ -61,14 +61,18 @@ To enable full offline source-building of the VMR, we have no other choice than 
     *[AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet@bb354ce](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/tree/bb354ceabed19189245e075abb864f327b6c14ad)*
     - `src/source-build-externals/src/cssparser`  
     *[dotnet/cssparser@0d59611](https://github.com/dotnet/cssparser/tree/0d59611784841735a7778a67aa6e9d8d000c861f)*
-    - `src/source-build-externals/src/docker-creds-provider`  
+    - `src/source-build-externals/src/docker-creds-provider-2.2.0`  
     *[mthalman/docker-creds-provider@5701f66](https://github.com/mthalman/docker-creds-provider/tree/5701f6667c1fbd805684857baaa860383bbdfed7)*
+    - `src/source-build-externals/src/docker-creds-provider-2.2.1`  
+    *[mthalman/docker-creds-provider@b381eaf](https://github.com/mthalman/docker-creds-provider/tree/b381eafbeecb1039f5839fc98ef45e7b3e52dee9)*
     - `src/source-build-externals/src/humanizer`  
     *[Humanizr/Humanizer@3ebc38d](https://github.com/Humanizr/Humanizer/tree/3ebc38de585fc641a04b0e78ed69468453b0f8a1)*
     - `src/source-build-externals/src/MSBuildLocator`  
     *[microsoft/MSBuildLocator@e0281df](https://github.com/microsoft/MSBuildLocator/tree/e0281df33274ac3c3e22acc9b07dcb4b31d57dc0)*
     - `src/source-build-externals/src/newtonsoft-json`  
     *[JamesNK/Newtonsoft.Json@0a2e291](https://github.com/JamesNK/Newtonsoft.Json/tree/0a2e291c0d9c0c7675d445703e51750363a549ef)*
+    - `src/source-build-externals/src/spectre-console`  
+    *[spectreconsole/spectre.console@7397169](https://github.com/spectreconsole/spectre.console/tree/7397169a2757dc3657598bdea4ac222c0f283425)*
     - `src/source-build-externals/src/xunit`  
     *[xunit/xunit@f110e5b](https://github.com/xunit/xunit/tree/f110e5bee5dfd4c08339587c9c3df9292fcb597c)*
     - `src/source-build-externals/src/xunit/src/xunit.assert/Asserts`  

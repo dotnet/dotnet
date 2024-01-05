@@ -1,0 +1,41 @@
+<Project>
+    <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  
+    <PropertyGroup>
+      <PackagesOutput>$(ProjectDirectory)/src/Spectre.Console/bin/$(Configuration)/</PackagesOutput>
+      <SpectreConsolePackageVersion>0.48.0</SpectreConsolePackageVersion>
+
+      <!-- Defining this ensures global.json gets rewritten to target the current SDK version -->
+      <GlobalJsonFile>$(ProjectDirectory)/global.json</GlobalJsonFile>
+    </PropertyGroup>
+  
+    <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+  
+    <Target Name="RepoBuild">
+      <PropertyGroup>
+        <BuildCommandArgs>$(ProjectDirectory)/src/Spectre.Console/Spectre.Console.csproj</BuildCommandArgs>
+        <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
+        <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
+        <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
+        <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(SpectreConsolePackageVersion)</BuildCommandArgs>
+        <BuildCommandArgs>$(BuildCommandArgs) /p:TargetFrameworks=$(NetCurrent)</BuildCommandArgs>
+      </PropertyGroup>
+  
+      <Exec Command="$(DotnetToolCommand) restore /bl:restore.binlog $(BuildCommandArgs)"
+            EnvironmentVariables="@(EnvironmentVariables)"
+            WorkingDirectory="$(ProjectDirectory)"
+            IgnoreStandardErrorWarningFormat="true" />
+  
+      <Exec Command="$(DotnetToolCommand) build /bl:build.binlog $(BuildCommandArgs)"
+            EnvironmentVariables="@(EnvironmentVariables)"
+            WorkingDirectory="$(ProjectDirectory)"
+            IgnoreStandardErrorWarningFormat="true" />
+  
+      <Exec Command="$(DotnetToolCommand) pack /bl:pack.binlog $(BuildCommandArgs)"
+            EnvironmentVariables="@(EnvironmentVariables)"
+            WorkingDirectory="$(ProjectDirectory)"
+            IgnoreStandardErrorWarningFormat="true" />
+    </Target>
+  
+  </Project>
+  
