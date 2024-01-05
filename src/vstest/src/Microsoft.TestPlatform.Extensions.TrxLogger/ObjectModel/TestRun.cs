@@ -30,7 +30,7 @@ internal sealed class TestRun
     //
     // The summary parsing code is in XmlTestReader.ReadTestRunSummary.
     [StoreXmlSimpleField("@id")]
-    private Guid _id;
+    private readonly Guid _id;
 
     [StoreXmlSimpleField("@name")]
     private string _name;
