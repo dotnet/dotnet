@@ -1,0 +1,122 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Publish
+
+on:
+  push:
+    tags:
+      - '*'
+    branches:
+      - main
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+
+  ###################################################
+  # BUILD
+  ###################################################
+
+  build:
+    name: Build
+    if: |
+      (!startsWith(github.event.head_commit.message, 'skip-ci') 
+      && !startsWith(github.event.head_commit.message, 'chore:'))
+      || startsWith(github.ref, 'refs/tags/')
+    strategy:
+      matrix:
+        kind: ['linux', 'windows', 'macOS']
+        include:
+          - kind: linux
+            os: ubuntu-latest
+          - kind: windows
+            os: windows-latest
+          - kind: macOS
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+
+      - name: Build
+        shell: bash
+        run: |
+          dotnet tool restore
+          dotnet cake
+
+  ###################################################
+  # DOCS
+  ###################################################
+
+  documentation:
+    name: Publish Documentation
+    needs: [build]
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: npm-${{ hashFiles('package-lock.json') }}
+        restore-keys: npm-
+
+    - name: Publish Documentation
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NETLIFY_ACCESS_TOKEN: ${{ secrets.NETLIFY_ACCESS_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      run: |
+        cd docs
+        dotnet tool restore
+        dotnet run --configuration Release -- deploy
+
+  ###################################################
+  # PUBLISH
+  ###################################################
+
+  publish:
+    name: Publish NuGet Packages
+    needs: [build]
+    if: "!contains(github.event.head_commit.message, 'skip-ci') || startsWith(github.ref, 'refs/tags/')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
+
+      - name: Publish
+        shell: bash
+        run: |
+          dotnet tool restore
+          dotnet cake --target="publish" \
+            --nuget-key="${{secrets.NUGET_API_KEY}}" \
+            --github-key="${{secrets.GITHUB_TOKEN}}"

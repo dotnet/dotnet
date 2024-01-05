@@ -30,6 +30,10 @@
     <PatchesDir>$(ProjectDir)patches/</PatchesDir>
     <!-- if we're not currently building,  Visual Studio will still set this -->
     <SDK_VERSION Condition="'$(SDK_VERSION)' == ''">$(NETCoreSdkVersion)</SDK_VERSION>
+    <XPlatTasksDir>$(MSBuildThisFileDirectory)eng/tasks/Microsoft.DotNet.SourceBuild.Tasks.XPlat/</XPlatTasksDir>
+    <XPlatTasksBinDir>$(XPlatTasksDir)bin/$(Configuration)/</XPlatTasksBinDir>
+    <XPlatSourceBuildTasksAssembly>$(XPlatTasksBinDir)Microsoft.DotNet.SourceBuild.Tasks.XPlat.dll</XPlatSourceBuildTasksAssembly>
+    <SdkReferenceDir>$(DotNetCliToolDir)sdk/$(SDK_VERSION)/</SdkReferenceDir>
   </PropertyGroup>
 
   <!--

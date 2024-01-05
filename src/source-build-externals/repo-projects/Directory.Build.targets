@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.SourceBuild.AddSourceToNuGetConfig" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+  <UsingTask TaskName="UpdateJson" AssemblyFile="$(XPlatSourceBuildTasksAssembly)" />
 
   <Target Name="BuildRepoReferences" Condition="'@(RepositoryReference)' != '' and '$(SkipRepoReferences)' != 'true'">
     <Message Importance="High" Text="Building dependencies [@(RepositoryReference)] needed by '$(RepositoryName)'." />

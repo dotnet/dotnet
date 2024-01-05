@@ -1,0 +1,33 @@
+From ad9eef0f848288b6fdc23c93e6e90f367d62c361 Mon Sep 17 00:00:00 2001
+From: baronfel <chusk3@gmail.com>
+Date: Mon, 18 Dec 2023 14:09:06 -0600
+Subject: [PATCH] wip
+
+---
+ src/Directory.Build.props | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/Directory.Build.props b/src/Directory.Build.props
+index 6bf853f..59c8130 100644
+--- a/src/Directory.Build.props
++++ b/src/Directory.Build.props
+@@ -31,7 +31,7 @@
+     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+   </PropertyGroup>
+   
+-  <ItemGroup Label="Package References">
++  <!-- <ItemGroup Label="Package References">
+     <PackageReference Include="MinVer" PrivateAssets="All" Version="4.2.0" />
+     <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" Version="1.1.1" />
+     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435">
+@@ -40,5 +40,5 @@
+     <PackageReference Include="Roslynator.Analyzers" Version="4.1.2">
+       <PrivateAssets>All</PrivateAssets>
+     </PackageReference>
+-  </ItemGroup>
++  </ItemGroup> -->
+ </Project>
+\ No newline at end of file
+-- 
+2.40.1
+
