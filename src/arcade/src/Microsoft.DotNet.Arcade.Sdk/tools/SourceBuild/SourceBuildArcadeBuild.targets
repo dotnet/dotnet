@@ -90,7 +90,6 @@
       <!-- The inner build needs to reference the overall output dir for nupkg transport etc. -->
       <InnerBuildArgs>$(InnerBuildArgs) /p:SourceBuildOutputDir="$(SourceBuildOutputDir)$(_DirSeparatorEscapedCharForExecArg)"</InnerBuildArgs>
 
-      <InnerBuildArgs Condition="'$(ArcadeBuildVertical)' != 'true'">$(InnerBuildArgs) /p:DotNetBuildOffline=true</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(DotNetPackageVersionPropsPath)' != ''">$(InnerBuildArgs) /p:DotNetPackageVersionPropsPath="$(DotNetPackageVersionPropsPath)"</InnerBuildArgs>
 
       <InnerBuildArgs>$(InnerBuildArgs) /p:FullAssemblySigningSupported=$(FullAssemblySigningSupported)</InnerBuildArgs>
