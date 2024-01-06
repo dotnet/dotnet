@@ -11,7 +11,6 @@
 
   <Target Name="PrepareOutput"
           BeforeTargets="Build">
-    <MakeDir Directories="$(CompletedSemaphorePath)" />
     <MakeDir Directories="$(OutputPath)" />
     <MakeDir Directories="$(LoggingDir)" />
     <MakeDir Directories="$(IntermediatePath)" />

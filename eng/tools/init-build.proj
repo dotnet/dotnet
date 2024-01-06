@@ -16,7 +16,7 @@
   <Target Name="UnpackTarballs"
           Condition="'$(DotNetBuildFromSource)' == 'true'"
           Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(CompletedSemaphorePath)UnpackTarballs.complete" >
+          Outputs="$(BaseIntermediateOutputPath)UnpackTarballs.complete" >
     <MakeDir Directories="$(PrebuiltSourceBuiltPackagesPath)" Condition="'$(CustomPrebuiltSourceBuiltPackagesPath)' == ''" />
     <Exec Command="tar -xzf $(ExternalTarballsDir)$(SourceBuiltArtifactsTarballName).*$(TarBallExtension)"
           WorkingDirectory="$(PrebuiltSourceBuiltPackagesPath)"

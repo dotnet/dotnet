@@ -100,9 +100,6 @@
     <OutputPath>$([MSBuild]::NormalizeDirectory('$(BaseOutputPath)', '$(TargetPlatform)', '$(Configuration)'))</OutputPath>
     <IntermediatePath>$([MSBuild]::NormalizeDirectory('$(BaseIntermediatePath)', '$(TargetPlatform)', '$(Configuration)'))</IntermediatePath>
 
-    <!-- Semaphore path for incremental builds -->
-    <CompletedSemaphorePath>$([MSBuild]::NormalizeDirectory('$(BaseIntermediatePath)', 'semaphores'))</CompletedSemaphorePath>
-
     <LocalNuGetPackagesRoot>$([MSBuild]::NormalizeDirectory('$(IntermediatePath)', 'nuget-packages'))</LocalNuGetPackagesRoot>
     <SourceBuiltBlobFeedDir>$([MSBuild]::NormalizeDirectory('$(IntermediatePath)', 'blob-feed'))</SourceBuiltBlobFeedDir>
     <SourceBuiltPackagesPath>$([MSBuild]::NormalizeDirectory('$(SourceBuiltBlobFeedDir)', 'packages'))</SourceBuiltPackagesPath>

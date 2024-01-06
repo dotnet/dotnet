@@ -20,9 +20,6 @@
 
     <PackagesOutput>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts', 'packages', '$(Configuration)', 'NonShipping'))</PackagesOutput>
 
-    <!-- Repo specific semaphore path for incremental build -->
-    <RepoCompletedSemaphorePath>$([MSBuild]::NormalizeDirectory('$(CompletedSemaphorePath)', '$(RepositoryName)'))</RepoCompletedSemaphorePath>
-
     <!-- Paths to the version props files -->
     <CurrentSourceBuiltPackageVersionPropsPath>$(IntermediatePath)PackageVersions.$(RepositoryName).Current.props</CurrentSourceBuiltPackageVersionPropsPath>
     <PreviouslySourceBuiltPackageVersionPropsPath>$(IntermediatePath)PackageVersions.$(RepositoryName).Previous.props</PreviouslySourceBuiltPackageVersionPropsPath>

@@ -6,18 +6,16 @@
 
   <!-- Copies the output assets of the builds to the output path. -->
   <Target Name="CopyBinariesToBinFolder"
-          AfterTargets="Build"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(CompletedSemaphorePath)CopyBinariesToBinFolder.complete">
+          AfterTargets="Build">
     <ItemGroup>
-      <BinariesToCopy Include="$(SourceBuiltAssetsDir)*.*" Exclude="$(SourceBuiltAssetsDir)*.nupkg;$(SourceBuiltAssetsDir)*.requires_nupkg_signing" />
+      <BinariesToCopy Include="$(SourceBuiltAssetsDir)*.*"
+                      Exclude="$(SourceBuiltAssetsDir)*.nupkg;$(SourceBuiltAssetsDir)*.requires_nupkg_signing" />
     </ItemGroup>
 
     <Copy SourceFiles="@(BinariesToCopy)"
           DestinationFolder="$(OutputPath)"
+          SkipUnchangedFiles="true"
           Condition="'@(BinariesToCopy)'!=''" />
-
-    <Touch Files="$(CompletedSemaphorePath)CopyBinariesToBinFolder.complete" AlwaysCreate="true" />
   </Target>
 
   <!-- After building, generate a prebuilt usage report. -->
@@ -112,7 +110,8 @@
     XMLs based on the info put in artifacts/.
   -->
   <Target Name="RewritePrebuiltUsageReport">
-    <MSBuild Projects="$(RepoProjectsDir)$(RootRepo).proj" Targets="ReportPrebuiltUsage" />
+    <MSBuild Projects="$(RepoProjectsDir)$(RootRepo).proj"
+             Targets="ReportPrebuiltUsage" />
   </Target>
 
   <UsingTask AssemblyFile="$(LeakDetectionTasksAssembly)" TaskName="CheckForPoison" Condition="'$(EnablePoison)' == 'true'" />
@@ -120,7 +119,7 @@
           AfterTargets="Build"
           Condition="'$(EnablePoison)' == 'true'"
           Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(CompletedSemaphorePath)ReportPoisonUsage.complete" >
+          Outputs="$(BaseIntermediateOutputPath)ReportPoisonUsage.complete" >
     <ItemGroup>
       <FinalCliTarball Include="$(SourceBuiltTarBallPath)**/*$(TarBallExtension)" />
     </ItemGroup>
@@ -138,19 +137,26 @@
                     PoisonReportOutputFilePath="$(PoisonUsageReportFile)"
                     NonShippingPackagesListFiles="@(NonShippingPackagesList)" />
 
-    <Touch Files="$(CompletedSemaphorePath)ReportPoisonUsage.complete" AlwaysCreate="true" />
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Done checking for poison." />
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)ReportPoisonUsage.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
   </Target>
 
   <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="WriteUsageBurndownData" />
   <Target Name="GeneratePrebuiltBurndownData"
           Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(CompletedSemaphorePath)GeneratePrebuiltBurndownData.complete" >
+          Outputs="$(BaseIntermediateOutputPath)GeneratePrebuiltBurndownData.complete" >
     <WriteUsageBurndownData RootDirectory="$(RepoRoot)"
                             PrebuiltBaselineFile="$(BaselineDataFile)"
                             OutputFilePath="$(PrebuiltBurndownDataFile)" />
 
-    <Touch Files="$(CompletedSemaphorePath)GeneratePrebuiltBurndownData.complete" AlwaysCreate="true" />
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)GeneratePrebuiltBurndownData.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
   </Target>
 
   <Target Name="RunSmokeTest">
