@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <DeterministicBuildOptOut>true</DeterministicBuildOptOut>
-    <!-- https://github.com/dotnet/source-build/issues/3814 -->
-    <NoWarn>$(NoWarn),IDE0044</NoWarn>
 
     <BuildArgs>$(BuildArgs) /p:SemanticVersioningV1=true</BuildArgs>
   </PropertyGroup>

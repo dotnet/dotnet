@@ -1,29 +1,22 @@
 {
   "private": true,
+  "name": "microsoft.components.customelements",
   "scripts": {
-    "preclean": "yarn install --mutex network --frozen-lockfile || yarn install --mutex network --frozen-lockfile",
-    "clean": "node node_modules/rimraf/bin.js ./dist/Debug ./dist/Release",
-    "prebuild": "yarn run clean && yarn install --mutex network --frozen-lockfile || yarn install --mutex network --frozen-lockfile",
-    "build": "yarn run build:debug && yarn run build:production",
-    "build:debug": "node node_modules/webpack-cli/bin/cli.js --mode development --config ./webpack.config.js",
-    "build:production": "node node_modules/webpack-cli/bin/cli.js --mode production --config ./webpack.config.js"
+    "clean": "rimraf ./dist/Debug ./dist/Release",
+    "prebuild": "npm run clean",
+    "build": "npm run build:debug && npm run build:production",
+    "build:debug": "rollup -c --environment development --forceExit",
+    "build:production": "rollup -c --environment production --forceExit"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.0",
-    "@babel/preset-env": "^7.15.0",
-    "@typescript-eslint/eslint-plugin": "^5.26.0",
-    "@typescript-eslint/parser": "^5.26.0",
-    "eslint": "^8.16.0",
-    "inspectpack": "^4.7.1",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.5",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.5",
     "rimraf": "^3.0.2",
-    "terser": "^5.14.2",
-    "ts-loader": "^9.2.5",
-    "typescript": "^4.4.2",
-    "webpack": "^5.72.1",
-    "webpack-cli": "^4.9.2"
-  },
-  "resolutions": {
-    "ansi-regex": "5.0.1",
-    "minimist": ">=1.2.6"
+    "rollup": "^4.9.2",
+    "rollup-plugin-filesize": "^10.0.0",
+    "typescript": "^5.3.3"
   }
 }
