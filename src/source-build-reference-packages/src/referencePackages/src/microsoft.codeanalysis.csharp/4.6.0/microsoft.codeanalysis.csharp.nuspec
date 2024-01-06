@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.CodeAnalysis.CSharp</id>
+    <version>4.6.0</version>
+    <authors>Microsoft</authors>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://github.com/dotnet/roslyn</projectUrl>
+    <description>.NET Compiler Platform ("Roslyn") support for C#, Microsoft.CodeAnalysis.CSharp.dll.
+    
+      More details at https://aka.ms/roslyn-packages
+      This package was built from the source at https://github.com/dotnet/roslyn/commit/c3cc1d0ceeab1a65da0217e403851a1e8a30086a.</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <tags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Parser Scanner Lexer Emit CodeGeneration Metadata IL Compilation Scripting Syntax Semantics</tags>
+    <serviceable>true</serviceable>
+    <repository type="git" url="https://github.com/dotnet/roslyn" commit="c3cc1d0ceeab1a65da0217e403851a1e8a30086a" />
+    <dependencies>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Microsoft.CodeAnalysis.Common" version="[4.6.0, 4.6.0]" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>
