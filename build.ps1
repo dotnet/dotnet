@@ -20,6 +20,7 @@ try {
       /bl:"$PSScriptRoot\artifacts\log\$configuration\Build_$LogDateStamp.binlog" `
       /flp:"LogFile=$PSScriptRoot\artifacts\log\$configuration\Build_$LogDateStamp.log" `
       /flp:v=detailed `
+      --tl:off `
       /p:Configuration=$configuration `
       @properties
 }
