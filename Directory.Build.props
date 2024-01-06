@@ -104,6 +104,8 @@
     <SourceBuiltBlobFeedDir>$([MSBuild]::NormalizeDirectory('$(IntermediatePath)', 'blob-feed'))</SourceBuiltBlobFeedDir>
     <SourceBuiltPackagesPath>$([MSBuild]::NormalizeDirectory('$(SourceBuiltBlobFeedDir)', 'packages'))</SourceBuiltPackagesPath>
 
+    <SourceBuiltSdksDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'source-built-sdks'))</SourceBuiltSdksDir>
+
     <SourceBuiltAssetsDir>$(SourceBuiltBlobFeedDir)assets/</SourceBuiltAssetsDir>
     <PrebuiltPackagesPath>$(PrereqsPackagesDir)prebuilt/</PrebuiltPackagesPath>
     <PreviouslyRestoredPackagesPath>$(PrereqsPackagesDir)previouslyRestored/</PreviouslyRestoredPackagesPath>
@@ -222,10 +224,6 @@
     <ExtraPackageVersionPropsPackageInfo Include="MicrosoftAspNetCoreAppRuntimeVersion" Version="%24(MicrosoftAspNetCoreAppRefPackageVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="MicrosoftNETCoreAppCrossgen2Version" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <SourceBuiltSdksDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'source-built-sdks'))</SourceBuiltSdksDir>
-  </PropertyGroup>
 
   <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
     <!-- While the tarball infrastructure currently only supports non Windows, these properties
