@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <OutputPath>$([System.IO.Path]::GetDirectoryName('$(LeakDetectionTasksAssembly)'))</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

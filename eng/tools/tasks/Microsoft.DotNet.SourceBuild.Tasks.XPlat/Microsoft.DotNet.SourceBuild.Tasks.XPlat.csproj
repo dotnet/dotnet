@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetCurrent)</TargetFramework>
-    <OutputPath>$([System.IO.Path]::GetDirectoryName('$(XPlatSourceBuildTasksAssembly)'))</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

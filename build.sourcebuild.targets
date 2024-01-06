@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <SkipErrorOnPrebuilts>true</SkipErrorOnPrebuilts>
+    <SmokeTestsDir>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'test', 'Microsoft.DotNet.SourceBuild.SmokeTests'))</SmokeTestsDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(EnablePoison)' == 'true'">
+    <PoisonUsageReportFile>$(PackageReportDir)poison-usage.xml</PoisonUsageReportFile>
   </PropertyGroup>
 
   <!-- Copies the output assets of the builds to the output path. -->
@@ -13,7 +18,7 @@
     </ItemGroup>
 
     <Copy SourceFiles="@(BinariesToCopy)"
-          DestinationFolder="$(OutputPath)"
+          DestinationFolder="$(CollapsedOutputPath)"
           SkipUnchangedFiles="true"
           Condition="'@(BinariesToCopy)'!=''" />
   </Target>
@@ -28,7 +33,7 @@
   <Target Name="DiscoverSymbolsTarballs"
           AfterTargets="Build">
     <ItemGroup>
-      <SymbolsTarball Include="$(OutputPath)Symbols.*.tar.gz" />
+      <SymbolsTarball Include="$(CollapsedOutputPath)Symbols.*$(ArchiveExtension)" />
     </ItemGroup>
   </Target>
 
@@ -59,7 +64,7 @@
             DiscoverSymbolsTarballs;
             ExtractSymbolsTarballs">
     <PropertyGroup>
-      <UnifiedSymbolsTarball>$(OutputPath)dotnet-symbols-all-$(MicrosoftSourceBuildIntermediateInstallerVersion)-$(TargetRid).tar.gz</UnifiedSymbolsTarball>
+      <UnifiedSymbolsTarball>$(CollapsedOutputPath)dotnet-symbols-all-$(MicrosoftSourceBuildIntermediateInstallerVersion)-$(TargetRid)$(ArchiveExtension)</UnifiedSymbolsTarball>
     </PropertyGroup>
 
     <Exec Command="tar --numeric-owner -czf $(UnifiedSymbolsTarball) *"
@@ -74,19 +79,19 @@
           AfterTargets="Build"
           DependsOnTargets="RepackageSymbols">
     <ItemGroup>
-      <SdkTarballItem Include="$(OutputPath)dotnet-sdk-*$(TarBallExtension)" />
+      <SdkTarballItem Include="$(CollapsedOutputPath)dotnet-sdk-*$(ArchiveExtension)" />
     </ItemGroup>
 
     <PropertyGroup>
       <SdkSymbolsLayout>$(ArtifactsTmpDir)SdkSymbols</SdkSymbolsLayout>
-      <SdkSymbolsTarball>$(OutputPath)dotnet-symbols-sdk-$(MicrosoftSourceBuildIntermediateInstallerVersion)-$(TargetRid).tar.gz</SdkSymbolsTarball>
+      <SdkSymbolsTarball>$(CollapsedOutputPath)dotnet-symbols-sdk-$(MicrosoftSourceBuildIntermediateInstallerVersion)-$(TargetRid)$(ArchiveExtension)</SdkSymbolsTarball>
       <SdkLayout>$(ArtifactsTmpDir)Sdk</SdkLayout>
       <SdkTarball>%(SdkTarballItem.Identity)</SdkTarball>
     </PropertyGroup>
 
     <MakeDir Directories="$(SdkLayout)" />
     <Exec Command="tar -xzf $(SdkTarball) -C $(SdkLayout)"
-          WorkingDirectory="$(OutputPath)" />
+          WorkingDirectory="$(CollapsedOutputPath)" />
 
     <CreateSdkSymbolsLayout SdkLayoutPath="$(SdkLayout)"
                             AllSymbolsPath="$(UnifiedSymbolsLayout)"
@@ -121,7 +126,7 @@
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)ReportPoisonUsage.complete" >
     <ItemGroup>
-      <FinalCliTarball Include="$(SourceBuiltTarBallPath)**/*$(TarBallExtension)" />
+      <FinalCliTarball Include="$(CollapsedOutputPath)**/*$(ArchiveExtension)" />
     </ItemGroup>
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Checking @(FinalCliTarball) for poisoned files." />
@@ -149,6 +154,10 @@
   <Target Name="GeneratePrebuiltBurndownData"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)GeneratePrebuiltBurndownData.complete" >
+    <PropertyGroup>
+      <PrebuiltBurndownDataFile>$(PackageReportDir)PrebuiltBurndownData.csv</PrebuiltBurndownDataFile>
+    </PropertyGroup>
+
     <WriteUsageBurndownData RootDirectory="$(RepoRoot)"
                             PrebuiltBaselineFile="$(BaselineDataFile)"
                             OutputFilePath="$(PrebuiltBurndownDataFile)" />
@@ -161,8 +170,8 @@
 
   <Target Name="RunSmokeTest">
     <ItemGroup>
-      <SdkTarballItem Include="$(SourceBuiltTarBallPath)**/dotnet-sdk*$(TarBallExtension)" />
-      <SourceBuiltArtifactsItem Include="$(SourceBuiltTarBallPath)**/Private.SourceBuilt.Artifacts.*$(TarBallExtension)" />
+      <SdkTarballItem Include="$(CollapsedOutputPath)**/dotnet-sdk*$(ArchiveExtension)" />
+      <SourceBuiltArtifactsItem Include="$(CollapsedOutputPath)**/Private.SourceBuilt.Artifacts.*$(ArchiveExtension)" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -208,7 +217,7 @@
           DependsOnTargets="DetermineMicrosoftSourceBuildIntermediateInstallerVersion"
           Condition="'@(SmokeTestsPrereqs->Count())' != '0'">
     <PropertyGroup>
-      <SmokeTestPrereqsTarballName>$(OutputPath)dotnet-smoke-test-prereqs.$(MicrosoftSourceBuildIntermediateInstallerVersion).$(TargetRid).tar.gz</SmokeTestPrereqsTarballName>
+      <SmokeTestPrereqsTarballName>$(CollapsedOutputPath)dotnet-smoke-test-prereqs.$(MicrosoftSourceBuildIntermediateInstallerVersion).$(TargetRid)$(ArchiveExtension)</SmokeTestPrereqsTarballName>
       <SmokeTestsPrereqPackagesDir>$(SmokeTestsArtifactsDir)prereq-packages/</SmokeTestsPrereqPackagesDir>
     </PropertyGroup>
 
@@ -241,7 +250,7 @@
           DependsOnTargets="DetermineMicrosoftSourceBuildIntermediateInstallerVersion"
           Condition="'@(PrebuiltFile->Count())' != '0'">
     <PropertyGroup>
-      <TarballFilePath>$(OutputPath)$(SourceBuiltPrebuiltsTarballName).$(MicrosoftSourceBuildIntermediateInstallerVersion).$(TargetRid).tar.gz</TarballFilePath>
+      <TarballFilePath>$(CollapsedOutputPath)$(SourceBuiltPrebuiltsTarballName).$(MicrosoftSourceBuildIntermediateInstallerVersion).$(TargetRid)$(ArchiveExtension)</TarballFilePath>
       <TarballWorkingDir>$(ResultingPrebuiltPackagesDir)</TarballWorkingDir>
     </PropertyGroup>
 

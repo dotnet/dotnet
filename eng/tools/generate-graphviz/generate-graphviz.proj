@@ -21,8 +21,8 @@
     </ItemGroup>
 
     <PropertyGroup>
-      <GraphVizFile>$(BaseIntermediatePath)graphviz.dot</GraphVizFile>
-      <GraphVizPngFile>$(BaseIntermediatePath)graphviz.png</GraphVizPngFile>
+      <GraphVizFile>$(BaseIntermediateOutputPath)graphviz.dot</GraphVizFile>
+      <GraphVizPngFile>$(BaseIntermediateOutputPath)graphviz.png</GraphVizPngFile>
       <GraphVizContent>digraph {
 graph [ dpi = 150 ]
 @(RepoLink -> '%(Text)')

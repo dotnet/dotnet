@@ -10,28 +10,24 @@
   <Import Project="$(GitInfoRepoPropsFile)" Condition="Exists('$(GitInfoRepoPropsFile)')" />
 
   <PropertyGroup>
-    <SourceDirectory Condition="'$(SourceDirectory)' == ''">$(RepositoryName)</SourceDirectory>
-    <ProjectDirectory Condition="'$(ProjectDirectory)' == ''">$([MSBuild]::NormalizeDirectory('$(SubmoduleDirectory)', '$(SourceDirectory)'))</ProjectDirectory>
-
-    <!-- MinimalConsoleLogOutput determines if the repository build should be logged to a separate file or directly to the console. -->
-    <RepoConsoleLogFile>$(LoggingDir)$(RepositoryName).log</RepoConsoleLogFile>
-    <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == '' and '$(ContinuousIntegrationBuild)' == 'true'">true</MinimalConsoleLogOutput>
-    <RedirectRepoOutputToLog Condition="'$(MinimalConsoleLogOutput)' == 'true'">&gt;&gt; $(RepoConsoleLogFile) 2&gt;&amp;1</RedirectRepoOutputToLog>
-
+    <ProjectDirectory>$([MSBuild]::NormalizeDirectory('$(SrcDir)', '$(RepositoryName)'))</ProjectDirectory>
     <PackagesOutput>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts', 'packages', '$(Configuration)', 'NonShipping'))</PackagesOutput>
 
     <!-- Paths to the version props files -->
-    <CurrentSourceBuiltPackageVersionPropsPath>$(IntermediatePath)PackageVersions.$(RepositoryName).Current.props</CurrentSourceBuiltPackageVersionPropsPath>
-    <PreviouslySourceBuiltPackageVersionPropsPath>$(IntermediatePath)PackageVersions.$(RepositoryName).Previous.props</PreviouslySourceBuiltPackageVersionPropsPath>
-    <SnapshotPackageVersionPropsPath>$(IntermediatePath)PackageVersions.$(RepositoryName).Snapshot.props</SnapshotPackageVersionPropsPath>
+    <PackageVersionPropsPath>$(CollapsedIntermediatePath)PackageVersions.$(RepositoryName).props</PackageVersionPropsPath>
+    <CurrentSourceBuiltPackageVersionPropsPath>$(CollapsedIntermediatePath)PackageVersions.$(RepositoryName).Current.props</CurrentSourceBuiltPackageVersionPropsPath>
+    <PreviouslySourceBuiltPackageVersionPropsPath>$(CollapsedIntermediatePath)PackageVersions.$(RepositoryName).Previous.props</PreviouslySourceBuiltPackageVersionPropsPath>
+    <SnapshotPackageVersionPropsPath>$(CollapsedIntermediatePath)PackageVersions.$(RepositoryName).Snapshot.props</SnapshotPackageVersionPropsPath>
     <PackageVersionPropsFlowType>DependenciesOnly</PackageVersionPropsFlowType>
 
-    <EngCommonToolsShFile Condition="Exists('$(ProjectDirectory)eng/common/tools.sh')">$(ProjectDirectory)eng/common/tools.sh</EngCommonToolsShFile>
     <GlobalJsonFile Condition="'$(GlobalJsonFile)' == '' and Exists('$(ProjectDirectory)global.json')">$(ProjectDirectory)global.json</GlobalJsonFile>
     <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)NuGet.config')">$(ProjectDirectory)NuGet.config</NuGetConfigFile>
     <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)NuGet.Config')">$(ProjectDirectory)NuGet.Config</NuGetConfigFile>
 
-    <PackageVersionPropsPath>$(IntermediatePath)PackageVersions.$(RepositoryName).props</PackageVersionPropsPath>
+    <SourceBuiltSdksDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'source-built-sdks'))</SourceBuiltSdksDir>
+
+    <!-- Set the bootstrap version to the VMR's version if empty. (no bootstrap set). -->
+    <ArcadeBootstrapVersion>$([MSBuild]::ValueOrDefault('$(ARCADE_BOOTSTRAP_VERSION)', '$(ArcadeSdkVersion)'))</ArcadeBootstrapVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
@@ -44,12 +40,36 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <GitCommitDateNoDashes>$(GitCommitDate.Replace('-', ''))</GitCommitDateNoDashes>
+    <!-- By default, use the eng/common/build.cmd/sh script -->
+    <BuildScript>$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'common', 'build$(ShellExtension)'))</BuildScript>
+
+    <BuildActions>$(FlagParameterPrefix)restore</BuildActions>
+    <BuildActions>$(BuildActions) $(FlagParameterPrefix)build</BuildActions>
+    <BuildActions>$(BuildActions) $(FlagParameterPrefix)pack</BuildActions>
+    <BuildActions>$(BuildActions) $(FlagParameterPrefix)publish</BuildActions>
+
+    <BuildArgs>$(FlagParameterPrefix)ci</BuildArgs>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)configuration $(Configuration)</BuildArgs>
+    <BuildArgs>$(BuildArgs) -bl</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:CopySrcInsteadOfClone=true</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:DotNetPackageVersionPropsPath="$(PackageVersionPropsPath)"</BuildArgs>
+    <BuildArgs Condition="'$(CrossBuild)' == 'true'">$(BuildArgs) /p:CrossBuild=$(CrossBuild)</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildVertical)' == 'true'">$(BuildArgs) /p:ArcadeBuildVertical=true</BuildArgs>
   </PropertyGroup>
 
-  <!-- A human-readable description of what's building and why. -->
-  <PropertyGroup>
-    <ProjectBuildReason>'$(RepositoryName)'</ProjectBuildReason>
+  <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
+    <BuildArgs>$(BuildArgs) /p:ArcadeBuildFromSource=true</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PrebuiltSourceBuiltPackagesPath)"</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</BuildArgs>
+    <BuildArgs Condition="'$(SourceBuildUseMonoRuntime)' == 'true'">$(BuildArgs) /p:SourceBuildUseMonoRuntime=$(SourceBuildUseMonoRuntime)</BuildArgs>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(EnableExtraDebugging)' == 'true'">
+    <MSBuildDebugPathTargetDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'msbuild-debug'))</MSBuildDebugPathTargetDir>
+    <RoslynDebugPathTargetDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'roslyn-debug'))</RoslynDebugPathTargetDir>
+
+    <AspNetRazorBuildServerLogDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'aspnet-debug'))</AspNetRazorBuildServerLogDir>
+    <AspNetRazorBuildServerLogFile>$(AspNetRazorBuildServerLogDir)razor-build-server.log</AspNetRazorBuildServerLogFile>
   </PropertyGroup>
 
   <!-- Cross-build property setting from OverrideTargetRid -->
@@ -138,36 +158,6 @@
     <!--ASP.NET dev server request logs -->
     <EnvironmentVariables Include="RAZORBUILDSERVER_LOG=$(AspNetRazorBuildServerLogFile)" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <!-- By default, use the eng/common/build.cmd/sh script -->
-    <BuildScript>$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'common', 'build$(ShellExtension)'))</BuildScript>
-
-    <BuildActions>$(FlagParameterPrefix)restore</BuildActions>
-    <BuildActions>$(BuildActions) $(FlagParameterPrefix)build</BuildActions>
-    <BuildActions>$(BuildActions) $(FlagParameterPrefix)pack</BuildActions>
-    <BuildActions>$(BuildActions) $(FlagParameterPrefix)publish</BuildActions>
-
-    <BuildArgs>$(FlagParameterPrefix)ci</BuildArgs>
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)configuration $(Configuration)</BuildArgs>
-    <BuildArgs>$(BuildArgs) -bl</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:CopySrcInsteadOfClone=true</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:DotNetPackageVersionPropsPath="$(PackageVersionPropsPath)"</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:CrossBuild=$(CrossBuild)</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildVertical)' == 'true'">$(BuildArgs) /p:ArcadeBuildVertical=true</BuildArgs>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
-    <BuildArgs>$(BuildArgs) /p:ArcadeBuildFromSource=true</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PrebuiltSourceBuiltPackagesPath)"</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</BuildArgs>
-    <BuildArgs Condition="'$(SourceBuildUseMonoRuntime)' == 'true'">$(BuildArgs) /p:SourceBuildUseMonoRuntime=$(SourceBuildUseMonoRuntime)</BuildArgs>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!-- Set the bootstrap version to the VMR's version if empty. (no bootstrap set). -->
-    <ArcadeBootstrapVersion>$([MSBuild]::ValueOrDefault('$(ARCADE_BOOTSTRAP_VERSION)', '$(ArcadeSdkVersion)'))</ArcadeBootstrapVersion>
-  </PropertyGroup>
 
   <ItemGroup>
     <!-- The Arcade SDK is automatically registered while the others are opt-in for the repo projects. -->

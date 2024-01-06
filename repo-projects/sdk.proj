@@ -4,15 +4,15 @@
     <LogVerbosityOptOut>true</LogVerbosityOptOut>
 
     <OverrideTargetRid>$(TargetRid)</OverrideTargetRid>
-    <OverrideTargetRid Condition="'$(TargetOS)' == 'OSX'">osx-$(Platform)</OverrideTargetRid>
-    <OverrideTargetRid Condition="'$(TargetOS)' == 'FreeBSD'">freebsd-$(Platform)</OverrideTargetRid>
-    <OverrideTargetRid Condition="'$(TargetOS)' == 'Windows_NT'">win-$(Platform)</OverrideTargetRid>
+    <OverrideTargetRid Condition="'$(TargetOS)' == 'osx'">osx-$(TargetArchitecture)</OverrideTargetRid>
+    <OverrideTargetRid Condition="'$(TargetOS)' == 'freebsd'">freebsd-$(TargetArchitecture)</OverrideTargetRid>
+    <OverrideTargetRid Condition="'$(TargetOS)' == 'windows'">win-$(TargetArchitecture)</OverrideTargetRid>
 
     <!-- Propagate RID set in source-build to sdk repo -->
     <_platformIndex>$(NETCoreSdkPortableRuntimeIdentifier.LastIndexOf('-'))</_platformIndex>
     <_baseOS>$(NETCoreSdkPortableRuntimeIdentifier.Substring(0, $(_platformIndex)))</_baseOS>
     <_baseOS Condition="'$(OverrideTargetOS)' != ''">$(OverrideTargetOS)</_baseOS>
-    <_targetPortableArch>$(Platform)</_targetPortableArch>
+    <_targetPortableArch>$(TargetArchitecture)</_targetPortableArch>
     <_targetPortableArch Condition="'$(OverrideTargetArch)' != ''">$(OverrideTargetArch)</_targetPortableArch>
 
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildArgs>

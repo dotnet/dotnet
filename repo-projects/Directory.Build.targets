@@ -4,6 +4,14 @@
 
   <PropertyGroup>
     <BuildCommand Condition="'$(BuildCommand)' == '' and '$(SkipRepoBuild)' != 'true'">$(BuildScript) $(BuildActions) $(BuildArgs)</BuildCommand>
+
+    <!-- MinimalConsoleLogOutput determines if the repository build should be logged to a separate file or directly to the console. -->
+    <RepoConsoleLogFile>$(ArtifactsLogDir)$(RepositoryName).log</RepoConsoleLogFile>
+    <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == '' and '$(ContinuousIntegrationBuild)' == 'true'">true</MinimalConsoleLogOutput>
+
+    <PackageReportDataFile>$(PackageReportDir)prebuilt-usage.xml</PackageReportDataFile>
+    <ProjectAssetsJsonArchiveFile>$(PackageReportDir)all-project-assets-json-files.zip</ProjectAssetsJsonArchiveFile>
+    <ProdConManifestFile>$(PackageReportDir)prodcon-build.xml</ProdConManifestFile>
   </PropertyGroup>
 
   <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="AddSourceToNuGetConfig" />
@@ -213,14 +221,14 @@
           Outputs="$(BaseIntermediateOutputPath)Build.complete">
     <Exec Command="$(DotnetTool) build-server shutdown" />
 
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(ProjectBuildReason)" />
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(RepositoryName)" />
     <Message Importance="High" Text="Running command:" />
     <Message Importance="High" Text="  $(BuildCommand)" Condition="'$(BuildCommand)' != ''" />
     <Message Importance="High" Text="  Log: $(RepoConsoleLogFile)" Condition="'$(MinimalConsoleLogOutput)' == 'true'" />
     <Message Importance="High" Text="  With Environment Variables:" />
     <Message Importance="High" Text="    %(EnvironmentVariables.Identity)" />
     <CallTarget Targets="RepoBuild" />
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(ProjectBuildReason)...done" />
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(RepositoryName)...done" />
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)Build.complete" AlwaysCreate="true">
@@ -238,9 +246,18 @@
           Condition=" '$(CleanWhileBuilding)' == 'true' and '$(OS)' != 'Windows_NT'" />
 
     <PropertyGroup>
-      <FullCommand Condition="'$(LogVerbosityOptOut)' != 'true'">$(BuildCommand) /v:$(LogVerbosity) $(RedirectRepoOutputToLog)</FullCommand>
-      <FullCommand Condition="'$(LogVerbosityOptOut)' == 'true'">$(BuildCommand) $(RedirectRepoOutputToLog)</FullCommand>
+      <FullCommand>$(BuildCommand)</FullCommand>
+      <FullCommand Condition="'$(LogVerbosityOptOut)' != 'true'">$(FullCommand) /v:$(LogVerbosity)</FullCommand>
+      <FullCommand Condition="'$(MinimalConsoleLogOutput)' == 'true'">$(FullCommand) &gt;&gt; $(RepoConsoleLogFile) 2&gt;&amp;1</FullCommand>
     </PropertyGroup>
+
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(RepoConsoleLogFile)'))" />
+
+    <!-- Create directories for extra debugging. -->
+    <MakeDir Directories="$(MSBuildDebugPathTargetDir);
+                          $(RoslynDebugPathTargetDir);
+                          $(AspNetRazorBuildServerLogDir)"
+             Condition="'$(EnableExtraDebugging)' == 'true'" />
 
     <Exec Command="$(FullCommand)"
           WorkingDirectory="$(ProjectDirectory)"
@@ -293,7 +310,7 @@
     </ItemGroup>
 
     <!-- Copy lists of NonShipping packages to prebuilt-report dir -->
-    <Copy SourceFiles="@(NonShippingPackageLists)" DestinationFolder="$(PackageReportDir)packagelists/" />
+    <Copy SourceFiles="@(NonShippingPackageLists)" DestinationFolder="$(PackageListsDir)" />
 
     <!-- Building SBRP: At this point the References directory contains the previously-source-built SBRPs,
          clear it before moving the current SBRPs.  This ensures n-1 SBRPs aren't required to build the product repos. -->
@@ -384,7 +401,7 @@
 
   <Target Name="CleanupRepo"
           AfterTargets="RemoveBuiltPackagesFromCache"
-          Condition="'$(CleanWhileBuilding)' == 'true and Exists('$(ProjectDirectory)artifacts')">
+          Condition="'$(CleanWhileBuilding)' == 'true' and Exists('$(ProjectDirectory)artifacts')">
     <Message Text="DirSize After Building $(RepositoryName)" Importance="High" Condition="'$(OS)' != 'Windows_NT'" />
     <Exec Command="df -h $(RepoRoot)" Condition="'$(OS)' != 'Windows_NT'" />
 
@@ -513,7 +530,7 @@
           Outputs="$(BaseIntermediateOutputPath)WritePrebuiltUsageData.complete">
     <!-- Save the PVP snapshot of each build step to be evaluated while building the report. -->
     <ItemGroup>
-      <PackageVersionPropsSnapshotFiles Include="$(IntermediatePath)PackageVersions.*.Snapshot.props" />
+      <PackageVersionPropsSnapshotFiles Include="$(CollapsedIntermediatePath)PackageVersions.*.Snapshot.props" />
     </ItemGroup>
     <Copy SourceFiles="@(PackageVersionPropsSnapshotFiles)" DestinationFolder="$(PackageReportDir)snapshots/" />
 
@@ -533,14 +550,14 @@
       <PlatformsRuntimeJsonFiles Include="$(PackagesDir)microsoft.netcore.platforms/*/PortableRuntimeIdentifierGraph.json" />
 
       <!-- Add some other potential top-level project directories for a more specific report. -->
-      <ProjectDirectories Include="$(SourceBuiltSdksDir);$(TasksDir);$(BaseIntermediatePath)" />
+      <ProjectDirectories Include="$(SourceBuiltSdksDir);$(TasksDir);$(ArtifactsObjDir)" />
       <!-- Finally, scan entire source-build, in case project.assets.json ends up in an unexpected place. -->
       <ProjectDirectories Include="$(RepoRoot)" />
     </ItemGroup>
 
     <ItemGroup>
       <!-- This file is a resource tracked by Git, not generated by restore. Ignore false positive. -->
-      <IgnoredProjectAssetsJsonFiles Include="$(SubmoduleDirectory)*nuget-client*/**/test/NuGet.Core.Tests/NuGet.Build.Tasks.Pack.Test/compiler/resources/project.assets.json"/>
+      <IgnoredProjectAssetsJsonFiles Include="$(SrcDir)*nuget-client*/**/test/NuGet.Core.Tests/NuGet.Build.Tasks.Pack.Test/compiler/resources/project.assets.json"/>
     </ItemGroup>
 
     <WritePackageUsageData

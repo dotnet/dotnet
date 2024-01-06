@@ -2,7 +2,6 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <ProjectDirectory>$(SubmoduleDirectory)$(RepositoryName)/</ProjectDirectory>
     <SkipEnsurePackagesCreated>true</SkipEnsurePackagesCreated>
     <IncludedPackageVersionPropsFile>$(CurrentSourceBuiltPackageVersionPropsPath)</IncludedPackageVersionPropsFile>
     <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
@@ -54,7 +53,7 @@
       Directories="$(SourceBuildReferencePackagesDestination)extractArtifacts/" />
 
     <PropertyGroup>
-      <SourceBuiltTarballName>$(OutputPath)$(SourceBuiltArtifactsTarballName).$(MicrosoftSourceBuildIntermediateInstallerVersion).$(TargetRid).tar.gz</SourceBuiltTarballName>
+      <SourceBuiltTarballName>$(CollapsedOutputPath)$(SourceBuiltArtifactsTarballName).$(MicrosoftSourceBuildIntermediateInstallerVersion).$(TargetRid)$(ArchiveExtension)</SourceBuiltTarballName>
       <SourceBuiltVersionFileName>.version</SourceBuiltVersionFileName>
     </PropertyGroup>
 
