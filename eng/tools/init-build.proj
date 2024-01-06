@@ -104,6 +104,11 @@
 
   <Target Name="GenerateRootFs"
           Condition="'$(OS)' != 'Windows_NT'">
+    <PropertyGroup>
+      <ArmEnvironmentVariables Condition="'$(ArmEnvironmentVariables)' == ''">ROOTFS_DIR=$(BaseIntermediatePath)crossrootfs/arm</ArmEnvironmentVariables>
+      <ArmEnvironmentVariables Condition="'$(Platform)' == 'armel'">ROOTFS_DIR=$(BaseIntermediatePath)crossrootfs/armel</ArmEnvironmentVariables>
+    </PropertyGroup>
+
     <Exec Command="$(ArmEnvironmentVariables) $(RepoRoot)cross/build-rootfs.sh"
           Condition="$(Platform.Contains('arm')) AND '$(Platform)' != 'armel' AND '$(BuildArchitecture)' != 'arm64' AND '$(BuildArchitecture)' != 'arm'" />
     <Exec Command="$(ArmEnvironmentVariables) $(RepoRoot)cross/armel/tizen-build-rootfs.sh"
