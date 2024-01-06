@@ -16,9 +16,9 @@ $nodeReuse=$false
 $env:NUGET_PACKAGES="$PSScriptRoot/.packages"
 
 try {
-  MSBuild "$PSScriptRoot/build.proj" `
-      /bl:"$PSScriptRoot/artifacts/log/Debug/Build_$LogDateStamp.binlog" `
-      /flp:"LogFile=$PSScriptRoot/artifacts/logs/Build_$LogDateStamp.log" `
+  MSBuild "$PSScriptRoot\build.proj" `
+      /bl:"$PSScriptRoot\artifacts\log\$configuration\Build_$LogDateStamp.binlog" `
+      /flp:"LogFile=$PSScriptRoot\artifacts\log\$configuration\Build_$LogDateStamp.log" `
       /flp:v=detailed `
       /p:Configuration=$configuration `
       @properties
