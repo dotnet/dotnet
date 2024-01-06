@@ -1,4 +1,4 @@
-<Project InitialTargets="SetNuGetPackagesEnvironment">
+<Project>
 
   <ItemGroup>
     <EnvironmentVariables Include="LatestCommit=$(GitCommitHash)" />
@@ -512,18 +512,6 @@
           IgnoreStandardErrorWarningFormat="true" />
   </Target>
 
-  <Target Name="SetNuGetPackagesEnvironment" Condition="'$(ArchiveDownloadedPackages)' == 'true'">
-    <PropertyGroup>
-      <LocalNuGetPackagesRootForRepository>$(LocalNuGetPackagesRoot)$(RepositoryName)/</LocalNuGetPackagesRootForRepository>
-    </PropertyGroup>
-
-    <MakeDir Directories="$(LocalNuGetPackagesRootForRepository)" />
-
-    <ItemGroup>
-      <EnvironmentVariables Include="NUGET_PACKAGES=$(LocalNuGetPackagesRootForRepository)" />
-    </ItemGroup>
-  </Target>
-
   <Target Name="SetSourceBuiltSdkOverrides"
           BeforeTargets="Build"
           Condition="'@(UseSourceBuiltSdkOverride)' != ''">
@@ -652,7 +640,6 @@
   </Target>
 
   <Target Name="GetProjectDirectory" Outputs="$(ProjectDirectory)" />
-  <Target Name="GetOfficialBuildId" Outputs="$(OfficialBuildId)" />
   <Target Name="GetRepositoryReferences" Outputs="@(RepositoryReference)" />
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets, $(MSBuildThisFileDirectory)..))" />
