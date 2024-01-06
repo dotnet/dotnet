@@ -224,7 +224,6 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <ArcadeOverridesDir>$([MSBuild]::NormalizeDirectory('$(RepositoryEngineeringDir)', 'arcade-overrides'))</ArcadeOverridesDir>
     <SourceBuiltSdksDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'source-built-sdks'))</SourceBuiltSdksDir>
   </PropertyGroup>
 
