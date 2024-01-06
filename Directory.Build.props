@@ -143,8 +143,6 @@
     <ArchiveArtifactsTextFileName>archiveArtifacts.txt</ArchiveArtifactsTextFileName>
     <ArchiveArtifactsTextFile>$(ExternalTarballsDir)$(ArchiveArtifactsTextFileName)</ArchiveArtifactsTextFile>
     <BaselineDataFile>$(ToolsDir)prebuilt-baseline.xml</BaselineDataFile>
-    <!--Exclude tests that are failing for test enabled projects like - corefx -->
-    <TestExclusionsDir>$(RepoRoot)test/exclusions/</TestExclusionsDir>
     <SmokeTestsDir>$(RepoRoot)test/Microsoft.DotNet.SourceBuild.SmokeTests/</SmokeTestsDir>
   </PropertyGroup>
 
