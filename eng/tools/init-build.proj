@@ -125,16 +125,6 @@
     <Exec Command="chmod 755 git-clone-to-dir.sh"
       WorkingDirectory="$(ArcadeBootstrapPackageDir)microsoft.dotnet.arcade.sdk/$(ARCADE_BOOTSTRAP_VERSION)/tools/SourceBuild/" />
 
-    <!-- Allow overriding of Arcade targets for SourceBuild to enable quicker
-         dev turnaround for Preview 6 -->
-    <ItemGroup>
-      <OverrideArcadeFiles Include="$(ArcadeOverridesDir)**/*" />
-    </ItemGroup>
-
-    <Copy
-      SourceFiles="@(OverrideArcadeFiles)"
-      DestinationFiles="$(ArcadeBootstrapPackageDir)microsoft.dotnet.arcade.sdk/$(ARCADE_BOOTSTRAP_VERSION)/tools/SourceBuild/%(RecursiveDir)%(Filename)%(Extension)" />
-
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)ExtractToolPackage.complete" AlwaysCreate="true">
       <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />

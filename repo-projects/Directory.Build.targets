@@ -1,4 +1,4 @@
-<Project InitialTargets="SetNuGetPackagesEnvironment;PrepareOutput">
+<Project InitialTargets="PrepareOutput">
 
   <PropertyGroup>
     <BuildCommand Condition="'$(BuildCommand)' == '' and '$(SkipRepoBuild)' != 'true'">$(BuildScript) $(BuildActions) $(BuildArgs)</BuildCommand>
@@ -16,17 +16,6 @@
 
   <Target Name="PrepareOutput">
     <MakeDir Directories="$(RepoCompletedSemaphorePath)" />
-  </Target>
-
-  <!-- SkipRepoReferences is a developer innerloop switch to skip building dependencies. -->
-  <Target Name="BuildRepoReferences"
-          Condition="'@(RepositoryReference)' != '' and '$(SkipRepoReferences)' != 'true'">
-    <Message Importance="High" Text="Building dependencies [@(RepositoryReference)] needed by '$(RepositoryName)'." />
-    <ItemGroup>
-      <_DependentProject Include="@(RepositoryReference -> '%(Identity).proj')" />
-    </ItemGroup>
-
-    <MSBuild Projects="@(_DependentProject)" Targets="Build" BuildInParallel="$(BuildInParallel)" StopOnFirstFailure="true" />
   </Target>
 
   <!-- Update NuGet feeds in the repo -->
@@ -123,17 +112,10 @@
           BeforeTargets="Build"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(RepoCompletedSemaphorePath)CreateBuildInputProps.complete">
-
     <ItemGroup>
       <_CurrentSourceBuiltPackages Include="$(SourceBuiltPackagesPath)*.nupkg"
                                    Exclude="$(SourceBuiltPackagesPath)*.symbols.nupkg" />
-
-      <!-- TODO: Remove Remove System.Drawing.Common exclusion once previous source-build artifacts have been updated to no longer include it.
-           System.Drawing.Common is excluded in response to https://github.com/dotnet/runtime/pull/83356 in order to avoid rebuilts and 
-           bootstrap issues as a result.  This wouldn't be an in the future once Runtime onboards to the per repo pvp feature
-           (https://github.com/dotnet/source-build/issues/3043). -->
-      <_PreviouslyBuiltSourceBuiltPackages Include="$(PrebuiltSourceBuiltPackagesPath)*.nupkg" 
-                                           Exclude="$(PrebuiltSourceBuiltPackagesPath)System.Drawing.Common*.nupkg" />
+      <_PreviouslyBuiltSourceBuiltPackages Include="$(PrebuiltSourceBuiltPackagesPath)*.nupkg" />
     </ItemGroup>
 
     <Error Condition="'$(PackageVersionPropsFlowType)' != 'AllPackages' and '$(PackageVersionPropsFlowType)' != 'DependenciesOnly'"
@@ -172,8 +154,8 @@
     <!-- Write a single file that contains imports for both the current and previously built packages -->
     <PropertyGroup>
       <PackageVersionsPropsContents>
-        <![CDATA[<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+        <![CDATA[
+<Project>
   <Import Project="$(PreviouslySourceBuiltPackageVersionPropsPath)" />
   <Import Project="$(CurrentSourceBuiltPackageVersionPropsPath)" />
 </Project>
@@ -190,6 +172,7 @@
     <Touch Files="$(RepoCompletedSemaphorePath)CreateBuildInputProps.complete" AlwaysCreate="true" />
   </Target>
 
+  <!-- Opt-in target to update eng/common files in all repos. -->
   <Target Name="UpdateEngCommonFiles"
           Condition="'$(UpdateEngCommonFiles)' == 'true'"
           BeforeTargets="Build">
@@ -202,11 +185,25 @@
           SkipUnchangedFiles="true" />
   </Target>
 
+  <!-- SkipRepoReferences is a developer innerloop switch to skip building dependencies. -->
+  <Target Name="BuildRepoReferences"
+          Condition="'@(RepositoryReference)' != '' and '$(SkipRepoReferences)' != 'true'">
+    <Message Importance="High" Text="Building dependencies [@(RepositoryReference)] needed by '$(RepositoryName)'." />
+
+    <ItemGroup>
+      <_DependentProject Include="@(RepositoryReference -> '%(Identity).proj')" />
+    </ItemGroup>
+
+    <MSBuild Projects="@(_DependentProject)"
+             Targets="Build"
+             BuildInParallel="$(BuildInParallel)"
+             StopOnFirstFailure="true" />
+  </Target>
+
   <Target Name="Build"
           DependsOnTargets="BuildRepoReferences"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(RepoCompletedSemaphorePath)Build.complete">
-
     <Exec Command="$(DotnetTool) build-server shutdown" />
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(ProjectBuildReason)" />
@@ -224,14 +221,15 @@
 
   <Target Name="RepoBuild"
           Condition="'$(SkipRepoBuild)' != 'true'">
+    <Message Text="DirSize Before Building $(RepositoryName)" Importance="High"
+             Condition=" '$(CleanWhileBuilding)' == 'true' and '$(OS)' != 'Windows_NT'" />
+    <Exec Command="df -h $(RepoRoot)"
+          Condition=" '$(CleanWhileBuilding)' == 'true' and '$(OS)' != 'Windows_NT'" />
+
     <PropertyGroup>
       <FullCommand Condition="'$(LogVerbosityOptOut)' != 'true'">$(BuildCommand) /v:$(LogVerbosity) $(RedirectRepoOutputToLog)</FullCommand>
       <FullCommand Condition="'$(LogVerbosityOptOut)' == 'true'">$(BuildCommand) $(RedirectRepoOutputToLog)</FullCommand>
     </PropertyGroup>
-
-    <ItemGroup>
-      <EnvironmentVariables Condition="'$(NUGET_PACKAGES)'!=''" Include="NUGET_PACKAGES=$(NUGET_PACKAGES)" />
-    </ItemGroup>
 
     <Exec Command="$(FullCommand)"
           WorkingDirectory="$(ProjectDirectory)"
@@ -346,11 +344,10 @@
           DependsOnTargets="GatherBuiltPackages"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(RepoCompletedSemaphorePath)RemoveBuiltPackagesFromCache.complete">
-
     <ItemGroup>
-        <!-- Excluding Arcade here will keep it in the cache, because that's where we're running from.
-             Subsequent projects will get Arcade from eng/source-built-sdks. -->
-        <PackagePaths Include="@(_BuiltPackages)" Exclude="$(PackagesOutput)/Microsoft.DotNet.Arcade.Sdk.*.nupkg" />
+      <!-- Excluding Arcade here will keep it in the cache, because that's where we're running from.
+           Subsequent projects will get Arcade from eng/source-built-sdks. -->
+      <PackagePaths Include="@(_BuiltPackages)" Exclude="$(PackagesOutput)/Microsoft.DotNet.Arcade.Sdk.*.nupkg" />
     </ItemGroup>
 
     <ReadNuGetPackageInfos PackagePaths="@(PackagePaths)">
@@ -364,59 +361,48 @@
       <_FilesToCopy Include="$(PackagesDir)$([System.String]::copy('%(_BuiltPackageInfos.PackageId)').ToLower())/%(_BuiltPackageInfos.PackageVersion)/**/*.nupkg" />
       <_FilesToDelete Include="$(PackagesDir)$([System.String]::copy('%(_BuiltPackageInfos.PackageId)').ToLower())/%(_BuiltPackageInfos.PackageVersion)/**/*.*" />
     </ItemGroup>
+
     <Copy SourceFiles="@(_FilesToCopy)" DestinationFolder="$(PreviouslyRestoredPackagesPath)$(RepositoryName)/" />
     <Delete Files="@(_FilesToDelete)" />
 
     <Touch Files="$(RepoCompletedSemaphorePath)RemoveBuiltPackagesFromCache.complete" AlwaysCreate="true" />
   </Target>
 
-  <!-- Track disk space -->
-  <Target Name="DisplayDirSizeBeforeBuild"
-          BeforeTargets="Build"
-          Condition=" '$(CleanWhileBuilding)' == 'true' and '$(OS)' != 'Windows_NT'">
-    <Message Text="DirSize Before Building $(RepositoryName)" Importance="High" />
-    <Exec Command="df -h $(RepoRoot)" />
-  </Target>
-  <Target Name="DisplayDirSizeAfterBuild"
-          AfterTargets="Build"
-          BeforeTargets="CleanupRepo"
-          Condition=" '$(CleanWhileBuilding)' == 'true' and '$(OS)' != 'Windows_NT'">
-    <Message Text="DirSize After Building $(RepositoryName)" Importance="High" />
-    <Exec Command="df -h $(RepoRoot)" />
-  </Target>
-  <Target Name="DisplayDirSizeAfterClean"
-          AfterTargets="CleanupRepo"
-          Condition=" '$(CleanWhileBuilding)' == 'true' and '$(OS)' != 'Windows_NT'">
-    <Message Text="DirSize After CleanupRepo $(RepositoryName)" Importance="High" />
-    <Exec Command="df -h $(RepoRoot)" />
-  </Target>
-
-  <Target Name="CleanupRepo" 
+  <Target Name="CleanupRepo"
           AfterTargets="RemoveBuiltPackagesFromCache"
-          Condition="'$(CleanWhileBuilding)' == 'true'">
+          Condition="'$(CleanWhileBuilding)' == 'true and Exists('$(ProjectDirectory)artifacts')">
+    <Message Text="DirSize After Building $(RepositoryName)" Importance="High" Condition="'$(OS)' != 'Windows_NT'" />
+    <Exec Command="df -h $(RepoRoot)" Condition="'$(OS)' != 'Windows_NT'" />
+
     <!-- Make a copy of the build logs & project.assets.json files -->
     <PropertyGroup>
       <BuildLogsDir>$(ProjectDirectory)artifacts/buildLogs</BuildLogsDir>
       <BuildObjDir>$(ProjectDirectory)artifacts/buildObj</BuildObjDir>
     </PropertyGroup>
+
     <ItemGroup>
       <LogFilesToCopy Include="$(ProjectDirectory)artifacts/**/*.log" />
       <LogFilesToCopy Include="$(ProjectDirectory)artifacts/**/*.binlog" />
       <ObjFilesToCopy Include="$(ProjectDirectory)artifacts/**/project.assets.json" />
     </ItemGroup>
-    <MakeDir Directories="$(BuildLogsDir)" Condition="Exists('$(ProjectDirectory)artifacts')"/>
-    <MakeDir Directories="$(BuildObjDir)" Condition="Exists('$(ProjectDirectory)artifacts')"/>
-    <Copy SourceFiles="@(LogFilesToCopy)" DestinationFolder="$(BuildLogsDir)/%(RecursiveDir)" Condition="Exists('$(BuildLogsDir)') AND '@(LogFilesToCopy)' != '' " />
-    <Copy SourceFiles="@(ObjFilesToCopy)" DestinationFolder="$(BuildObjDir)/%(RecursiveDir)" Condition="Exists('$(BuildObjDir)') AND '@(ObjFilesToCopy)' != '' " />
+
+    <MakeDir Directories="$(BuildLogsDir)" Condition="'@(LogFilesToCopy)' != ''"/>
+    <Copy SourceFiles="@(LogFilesToCopy)" DestinationFolder="$(BuildLogsDir)/%(RecursiveDir)" Condition="'@(LogFilesToCopy)' != ''" />
+
+    <MakeDir Directories="$(BuildObjDir)" Condition="'@(ObjFilesToCopy)' != ''"/>
+    <Copy SourceFiles="@(ObjFilesToCopy)" DestinationFolder="$(BuildObjDir)/%(RecursiveDir)" Condition="'@(ObjFilesToCopy)' != ''" />
 
     <!-- Cleanup everything else -->
     <ItemGroup>
-      <DirsToDelete Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDirectory)artifacts/&quot;))" Condition="Exists('$(ProjectDirectory)artifacts')" />
+      <DirsToDelete Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDirectory)artifacts/&quot;))" />
       <DirsToDelete Remove="$(BuildLogsDir)" />
       <DirsToDelete Remove="$(BuildObjDir)" />
     </ItemGroup>
 
     <RemoveDir Directories="@(DirsToDelete)" />
+
+    <Message Text="DirSize After CleanupRepo $(RepositoryName)" Importance="High" Condition="'$(OS)' != 'Windows_NT'" />
+    <Exec Command="df -h $(RepoRoot)" Condition="'$(OS)' != 'Windows_NT'" />
   </Target>
 
   <Target Name="ExtractToolPackage"
@@ -454,21 +440,6 @@
       Condition=" '%(_ToolPackage.Id)' == 'Microsoft.DotNet.Arcade.Sdk' and !$([MSBuild]::IsOSPlatform(Windows))"
       WorkingDirectory="$(SourceBuiltSdksDir)%(_ToolPackage.Id)/tools/SourceBuild/" />
 
-    <!-- Allow overriding of Arcade targets for SourceBuild to enable quicker
-         dev turnaround for Preview 6 -->
-    <PropertyGroup>
-      <ArcadeSDKToolPackagePath></ArcadeSDKToolPackagePath>
-      <ArcadeSDKToolPackagePath Condition=" '%(_ToolPackage.Id)' == 'Microsoft.DotNet.Arcade.Sdk' ">$(SourceBuiltSdksDir)%(_ToolPackage.Id)/</ArcadeSDKToolPackagePath>
-    </PropertyGroup>
-    <ItemGroup>
-      <OverrideArcadeFiles Include="$(ArcadeOverridesDir)**/*" />
-    </ItemGroup>
-
-    <Copy
-      Condition=" '$(ArcadeSDKToolPackagePath))' != '' "
-      SourceFiles="@(OverrideArcadeFiles)"
-      DestinationFiles="$(ArcadeSDKToolPackagePath)tools/SourceBuild/%(RecursiveDir)%(Filename)%(Extension)" />
-
     <Touch Files="$(RepoCompletedSemaphorePath)ExtractToolPackage.complete" AlwaysCreate="true" />
   </Target>
 
@@ -503,19 +474,6 @@
     <Message Importance="High" Text="  -> %(_JustSourceBuiltPackageInfos.PackageId) %(_JustSourceBuiltPackageInfos.PackageVersion)" />
 
     <Touch Files="$(RepoCompletedSemaphorePath)EnsurePackagesCreated.complete" AlwaysCreate="true" />
-  </Target>
-
-  <Target Name="SetNuGetPackagesEnvironment"
-          Condition="'$(ArchiveDownloadedPackages)' == 'true'">
-    <PropertyGroup>
-      <LocalNuGetPackagesRootForRepository>$(LocalNuGetPackagesRoot)$(RepositoryName)/</LocalNuGetPackagesRootForRepository>
-    </PropertyGroup>
-
-    <MakeDir Directories="$(LocalNuGetPackagesRootForRepository)" />
-
-    <ItemGroup>
-      <EnvironmentVariables Include="NUGET_PACKAGES=$(LocalNuGetPackagesRootForRepository)" />
-    </ItemGroup>
   </Target>
 
   <Target Name="SetSourceBuiltSdkOverrides"
