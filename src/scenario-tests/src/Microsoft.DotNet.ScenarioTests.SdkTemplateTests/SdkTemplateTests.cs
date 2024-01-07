@@ -234,7 +234,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
         newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot, GetDupeArray);
     }*/
 
-    private static string[] GetFrameworks = { "net8.0", "net7.0", "net6.0" };
+    private static string[] GetFrameworks = { "net9.0", "net8.0", "net7.0", "net6.0" };
     
     private static IEnumerable<object[]> GetLanguages() => Enum.GetValues<DotNetLanguage>().Select(lang => new object[] { lang });
 
