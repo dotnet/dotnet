@@ -33,7 +33,6 @@
       <SourceBuildReferencePackagesIntermediatePackage Include="$(SourceBuiltPackagesPath)$(SBRPIntermediateWildcard)"/>
     </ItemGroup>
 
-    <MakeDir Directories="$(SourceBuildReferencePackagesDestination)" />
     <Unzip SourceFiles="@(SourceBuildReferencePackagesIntermediatePackage)"
            DestinationFolder="$(SourceBuildReferencePackagesDestination)extractArtifacts"
            SkipUnchangedFiles="true"

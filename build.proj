@@ -9,18 +9,8 @@
     <Message Text="Build Environment: $(TargetArchitecture) $(Configuration) $(TargetOS) $(TargetRid)" Importance="high" />
   </Target>
 
-  <Target Name="PrepareOutput"
-          BeforeTargets="Build">
-    <MakeDir Directories="$(CollapsedOutputPath)" />
-    <MakeDir Directories="$(CollapsedIntermediatePath)" />
-    <MakeDir Directories="$(SourceBuiltBlobFeedDir)" />
-    <MakeDir Directories="$(SourceBuiltPackagesPath)" />
-    <MakeDir Directories="$(SourceBuiltAssetsDir)" />
-  </Target>
-
   <Target Name="InitBuild"
-          BeforeTargets="Build"
-          DependsOnTargets="PrepareOutput">
+          BeforeTargets="Build">
     <MSBuild Projects="$(ToolsDir)init-build.proj" />
   </Target>
 

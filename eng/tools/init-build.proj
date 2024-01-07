@@ -38,7 +38,6 @@
           Condition="'@(SourceBuiltPrebuiltsTarballFile)' != ''" />
 
     <!-- Copy SBRP packages to reference packages location -->
-    <MakeDir Directories="$(ReferencePackagesDir)" />
     <ItemGroup>
       <UnpackedSourceBuildReferencePackages Include="$(PrebuiltSourceBuiltPackagesPath)SourceBuildReferencePackages/*"/>
     </ItemGroup>

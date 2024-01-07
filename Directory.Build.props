@@ -155,11 +155,10 @@
     <CollapsedOutputPath>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', '$(TargetArchitecture)', '$(Configuration)'))</CollapsedOutputPath>
     <CollapsedIntermediatePath>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', '$(TargetArchitecture)', '$(Configuration)'))</CollapsedIntermediatePath>
 
-    <LocalNuGetPackagesRoot>$([MSBuild]::NormalizeDirectory('$(CollapsedIntermediatePath)', 'nuget-packages'))</LocalNuGetPackagesRoot>
     <SourceBuiltBlobFeedDir>$([MSBuild]::NormalizeDirectory('$(CollapsedIntermediatePath)', 'blob-feed'))</SourceBuiltBlobFeedDir>
     <SourceBuiltPackagesPath>$([MSBuild]::NormalizeDirectory('$(SourceBuiltBlobFeedDir)', 'packages'))</SourceBuiltPackagesPath>
-
     <SourceBuiltAssetsDir>$([MSBuild]::NormalizeDirectory('$(SourceBuiltBlobFeedDir)', 'assets'))</SourceBuiltAssetsDir>
+
     <PrebuiltPackagesPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'prebuilt'))</PrebuiltPackagesPath>
     <PreviouslyRestoredPackagesPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'previouslyRestored'))</PreviouslyRestoredPackagesPath>
     <PrebuiltSourceBuiltPackagesPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'previously-source-built'))</PrebuiltSourceBuiltPackagesPath>

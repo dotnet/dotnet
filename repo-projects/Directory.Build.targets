@@ -291,9 +291,9 @@
     </ItemGroup>
 
     <PropertyGroup Condition="'@(_BuiltIntermediatePackages)' != ''">
-        <_NupkgDestinationPath>$(SourceBuiltPackagesPath)</_NupkgDestinationPath>
-        <!-- SBRP packages unpack into the Reference packages directory instead of into blob-feed packages -->
-        <_NupkgDestinationPath Condition="$([System.String]::Copy(%(_BuiltIntermediatePackages.Identity)).Contains('source-build-reference-packages'))">$(ReferencePackagesDir)</_NupkgDestinationPath>
+      <_NupkgDestinationPath>$(SourceBuiltPackagesPath)</_NupkgDestinationPath>
+      <!-- SBRP packages unpack into the Reference packages directory instead of into blob-feed packages -->
+      <_NupkgDestinationPath Condition="$([System.String]::Copy(%(_BuiltIntermediatePackages.Identity)).Contains('source-build-reference-packages'))">$(ReferencePackagesDir)</_NupkgDestinationPath>
     </PropertyGroup>
 
     <Unzip SourceFiles="@(_BuiltIntermediatePackages)"
@@ -407,8 +407,8 @@
 
     <!-- Make a copy of the build logs & project.assets.json files -->
     <PropertyGroup>
-      <BuildLogsDir>$(ProjectDirectory)artifacts/buildLogs</BuildLogsDir>
-      <BuildObjDir>$(ProjectDirectory)artifacts/buildObj</BuildObjDir>
+      <BuildLogsDir>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts', 'buildLogs'))</BuildLogsDir>
+      <BuildObjDir>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts', 'buildObj'))</BuildObjDir>
     </PropertyGroup>
 
     <ItemGroup>
@@ -417,11 +417,8 @@
       <ObjFilesToCopy Include="$(ProjectDirectory)artifacts/**/project.assets.json" />
     </ItemGroup>
 
-    <MakeDir Directories="$(BuildLogsDir)" Condition="'@(LogFilesToCopy)' != ''"/>
-    <Copy SourceFiles="@(LogFilesToCopy)" DestinationFolder="$(BuildLogsDir)/%(RecursiveDir)" Condition="'@(LogFilesToCopy)' != ''" />
-
-    <MakeDir Directories="$(BuildObjDir)" Condition="'@(ObjFilesToCopy)' != ''"/>
-    <Copy SourceFiles="@(ObjFilesToCopy)" DestinationFolder="$(BuildObjDir)/%(RecursiveDir)" Condition="'@(ObjFilesToCopy)' != ''" />
+    <Copy SourceFiles="@(LogFilesToCopy)" DestinationFolder="$(BuildLogsDir)%(RecursiveDir)" Condition="'@(LogFilesToCopy)' != ''" />
+    <Copy SourceFiles="@(ObjFilesToCopy)" DestinationFolder="$(BuildObjDir)%(RecursiveDir)" Condition="'@(ObjFilesToCopy)' != ''" />
 
     <!-- Cleanup everything else -->
     <ItemGroup>
@@ -535,7 +532,6 @@
     <Copy SourceFiles="@(PackageVersionPropsSnapshotFiles)" DestinationFolder="$(PackageReportDir)snapshots/" />
 
     <ItemGroup>
-      <AllRestoredPackageFiles Include="$(LocalNuGetPackagesRoot)**/*.nupkg" />
       <AllRestoredPackageFiles Include="$(PackagesDir)**/*.nupkg" />
 
       <!-- Only contains packages when building. -->
@@ -546,7 +542,6 @@
       <ReferencePackageFiles Include="$(ReferencePackagesDir)**/*.nupkg" />
 
       <!-- Check all RIDs from all restored Microsoft.NETCore.Platforms packages. -->
-      <PlatformsRuntimeJsonFiles Include="$(LocalNuGetPackagesRoot)*/microsoft.netcore.platforms/*/PortableRuntimeIdentifierGraph.json" />
       <PlatformsRuntimeJsonFiles Include="$(PackagesDir)microsoft.netcore.platforms/*/PortableRuntimeIdentifierGraph.json" />
 
       <!-- Add some other potential top-level project directories for a more specific report. -->
