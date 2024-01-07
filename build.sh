@@ -122,6 +122,8 @@ while :; do
   shift
 done
 
+MSBUILD_ARGUMENTS+=("/p:Configuration=$configuration")
+
 # For build purposes, we need to make sure we have all the SourceLink information
 if [ "$alternateTarget" != "true" ]; then
   GIT_DIR="$SCRIPT_ROOT/.git"
@@ -259,12 +261,12 @@ LogDateStamp=$(date +"%m%d%H%M%S")
 
 if [ "$alternateTarget" == "true" ]; then
   export NUGET_PACKAGES=$NUGET_PACKAGES/smoke-tests
-  "$CLI_ROOT/dotnet" msbuild "$SCRIPT_ROOT/build.proj" -bl:"$SCRIPT_ROOT/artifacts/log/$configuration/BuildTests_$LogDateStamp.binlog" -flp:"LogFile=$SCRIPT_ROOT/artifacts/logs/BuildTests_$LogDateStamp.log" -clp:v=m ${MSBUILD_ARGUMENTS[@]} "$@"
+  "$CLI_ROOT/dotnet" msbuild "$SCRIPT_ROOT/build.proj" -bl:"$SCRIPT_ROOT/artifacts/log/$configuration/BuildTests_$LogDateStamp.binlog" -flp:"LogFile=$SCRIPT_ROOT/artifacts/log/BuildTests_$LogDateStamp.log" -clp:v=m ${MSBUILD_ARGUMENTS[@]} "$@"
 else
-  "$CLI_ROOT/dotnet" msbuild "$SCRIPT_ROOT/eng/tools/init-build.proj" -bl:"$SCRIPT_ROOT/artifacts/log/$configuration/BuildMSBuildSdkResolver_$LogDateStamp.binlog" -flp:LogFile="$SCRIPT_ROOT/artifacts/logs/BuildMSBuildSdkResolver_$LogDateStamp.log" -t:ExtractToolPackage,BuildMSBuildSdkResolver ${MSBUILD_ARGUMENTS[@]} "$@"
+  "$CLI_ROOT/dotnet" msbuild "$SCRIPT_ROOT/eng/tools/init-build.proj" -bl:"$SCRIPT_ROOT/artifacts/log/$configuration/BuildMSBuildSdkResolver_$LogDateStamp.binlog" -flp:LogFile="$SCRIPT_ROOT/artifacts/log/BuildMSBuildSdkResolver_$LogDateStamp.log" -t:ExtractToolPackage,BuildMSBuildSdkResolver ${MSBUILD_ARGUMENTS[@]} "$@"
 
   # kill off the MSBuild server so that on future invocations we pick up our custom SDK Resolver
   "$CLI_ROOT/dotnet" build-server shutdown
 
-  "$CLI_ROOT/dotnet" msbuild "$SCRIPT_ROOT/build.proj" -bl:"$SCRIPT_ROOT/artifacts/log/$configuration/Build_$LogDateStamp.binlog" -flp:"LogFile=$SCRIPT_ROOT/artifacts/logs/Build_$LogDateStamp.log" ${MSBUILD_ARGUMENTS[@]} "$@"
+  "$CLI_ROOT/dotnet" msbuild "$SCRIPT_ROOT/build.proj" -bl:"$SCRIPT_ROOT/artifacts/log/$configuration/Build_$LogDateStamp.binlog" -flp:"LogFile=$SCRIPT_ROOT/artifacts/log/Build_$LogDateStamp.log" ${MSBUILD_ARGUMENTS[@]} "$@"
 fi
