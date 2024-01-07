@@ -49,7 +49,7 @@
       <!-- We need to flow FullAssemblySigningSupported even when building repo tasks because they use full signing -->
       <InnerBuildEnv Condition="'$(FullAssemblySigningSupported)' != ''" Include="FullAssemblySigningSupported=$(FullAssemblySigningSupported)" />
       <InnerBuildEnv Include="DotNetBuildFromSource=$(ArcadeBuildFromSource)" />
-      <InnerBuildEnv Include="DotNetBuildVertical=$(ArcadeBuildFromSource)" />
+      <InnerBuildEnv Include="DotNetBuildVertical=$(ArcadeBuildVertical)" />
     </ItemGroup>
 
     <!-- Call the build.sh script to build the repo tasks. Set IgnoreStandardErrorWarningFormat

@@ -5,8 +5,8 @@
   <PropertyGroup>
     <GitHubRepositoryName>runtime</GitHubRepositoryName>
 
-    <BaseInnerSourceBuildCommand Condition="'$(OS)' == 'Windows_NT'">.\build.cmd</BaseInnerSourceBuildCommand>
-    <BaseInnerSourceBuildCommand Condition="'$(OS)' != 'Windows_NT'">./build.sh</BaseInnerSourceBuildCommand>
+    <BaseInnerSourceBuildCommand Condition="'$(OS)' == 'Windows_NT'">build.cmd</BaseInnerSourceBuildCommand>
+    <BaseInnerSourceBuildCommand Condition="'$(OS)' != 'Windows_NT'">build.sh</BaseInnerSourceBuildCommand>
 
     <_hostRid>$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)</_hostRid>
     <!-- TargetRid names what gets built. -->
@@ -47,11 +47,11 @@
 
       <!-- This prop needs to be passed to the inner build manually as the BaseInnerSourceBuildCommand gets overriden above -->
       <InnerBuildArgs Condition="'$(ArcadeBuildFromSource)' == 'true'">$(InnerBuildArgs) /p:ArcadeBuildFromSource=true</InnerBuildArgs>
-      <InnerBuildArgs Condition="'$(ArcadeBuildVertical)' == 'true'">$(InnerBuildArgs) /p:ArcadeBuildVertical=true</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(OfficialBuildId)' != ''">$(InnerBuildArgs) /p:OfficialBuildId=$(OfficialBuildId)</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(ContinuousIntegrationBuild)' != ''">$(InnerBuildArgs) /p:ContinuousIntegrationBuild=$(ContinuousIntegrationBuild)</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(PortableBuild)' != ''">$(InnerBuildArgs) /p:PortableBuild=$(PortableBuild)</InnerBuildArgs>
-      <InnerBuildArgs Condition="'$(DotNetBuildVertical)' != ''">$(InnerBuildArgs) /p:DotNetBuildVertical=$(DotNetBuildVertical)</InnerBuildArgs>
+      <InnerBuildArgs Condition="'$(DotNetBuildVertical)' == 'true'">$(InnerBuildArgs) /p:DotNetBuildVertical=true</InnerBuildArgs>
+      <InnerBuildArgs Condition="'$(ArcadeBuildVertical)' == 'true'">$(InnerBuildArgs) /p:ArcadeBuildVertical=true</InnerBuildArgs>
     </PropertyGroup>
   </Target>
 
