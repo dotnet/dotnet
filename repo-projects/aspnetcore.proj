@@ -29,7 +29,7 @@
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildFromSource)' == 'true'" />
     <RepositoryReference Include="runtime" />
-    <!-- <RepositoryReference Include="msbuild" /> -->
+    <RepositoryReference Include="msbuild" />
     <RepositoryReference Include="roslyn" />
     <RepositoryReference Include="roslyn-analyzers" />
   </ItemGroup>
