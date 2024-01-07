@@ -1,5 +1,4 @@
-<Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk">
 
   <!-- Aspire has root build scripts but those aren't necessary to invoke here. -->
 
@@ -7,5 +6,4 @@
     <RepositoryReference Include="arcade" />
   </ItemGroup>
 
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>
