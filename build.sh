@@ -27,10 +27,11 @@ function print_help () {
     sed -n '/^### /,/^$/p' "$source" | cut -b 5-
 }
 
-# TODO: Make it possible to invoke this script for non source build use cases
 MSBUILD_ARGUMENTS=("-flp:v=detailed")
 MSBUILD_ARGUMENTS=("--tl:off")
+# TODO: Make it possible to invoke this script for non source build use cases
 MSBUILD_ARGUMENTS+=("/p:DotNetBuildFromSource=true")
+MSBUILD_ARGUMENTS+=("/p:DotNetBuildVertical=false")
 CUSTOM_PACKAGES_DIR=''
 alternateTarget=false
 runningSmokeTests=false
