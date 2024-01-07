@@ -5,8 +5,8 @@
   <PropertyGroup>
     <GitHubRepositoryName>runtime</GitHubRepositoryName>
 
-    <BaseInnerSourceBuildCommand Condition="'$(OS)' == 'Windows_NT'">build.cmd</BaseInnerSourceBuildCommand>
-    <BaseInnerSourceBuildCommand Condition="'$(OS)' != 'Windows_NT'">build.sh</BaseInnerSourceBuildCommand>
+    <BaseInnerSourceBuildCommand Condition="'$(OS)' == 'Windows_NT'">.\build.cmd</BaseInnerSourceBuildCommand>
+    <BaseInnerSourceBuildCommand Condition="'$(OS)' != 'Windows_NT'">./build.sh</BaseInnerSourceBuildCommand>
 
     <_hostRid>$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)</_hostRid>
     <!-- TargetRid names what gets built. -->
