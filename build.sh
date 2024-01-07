@@ -4,12 +4,13 @@
 ###
 ### Options:
 ###   --clean-while-building       Cleans each repo after building (reduces disk space usage)
+###   --configuration              Build configuration [Default: Release]
 ###   --online                     Build using online sources
 ###   --poison                     Build with poisoning checks
+###   --release-manifest <FILE>    A JSON file, an alternative source of Source Link metadata
 ###   --run-smoke-test             Don't build; run smoke tests
 ###   --source-repository <URL>    Source Link repository URL, required when building from tarball
 ###   --source-version <SHA>       Source Link revision, required when building from tarball
-###   --release-manifest <FILE>    A JSON file, an alternative source of Source Link metadata
 ###   --use-mono-runtime           Output uses the mono runtime
 ###   --with-packages <DIR>        Use the specified directory of previously-built packages
 ###   --with-sdk <DIR>             Use the SDK in the specified directory for bootstrapping
@@ -42,6 +43,7 @@ CUSTOM_SDK_DIR=''
 sourceRepository=''
 sourceVersion=''
 releaseManifest=''
+configuration='Release'
 
 while :; do
   if [ $# -le 0 ]; then
@@ -52,6 +54,9 @@ while :; do
   case $lowerI in
     --clean-while-building)
       MSBUILD_ARGUMENTS+=( "-p:CleanWhileBuilding=true")
+      ;;
+    --configuration)
+      configuration="$2"
       ;;
     --online)
       MSBUILD_ARGUMENTS+=( "-p:BuildWithOnlineSources=true")
@@ -254,12 +259,12 @@ LogDateStamp=$(date +"%m%d%H%M%S")
 
 if [ "$alternateTarget" == "true" ]; then
   export NUGET_PACKAGES=$NUGET_PACKAGES/smoke-tests
-  "$CLI_ROOT/dotnet" msbuild "$SCRIPT_ROOT/build.proj" -bl:"$SCRIPT_ROOT/artifacts/log/Debug/BuildTests_$LogDateStamp.binlog" -flp:"LogFile=$SCRIPT_ROOT/artifacts/logs/BuildTests_$LogDateStamp.log" -clp:v=m ${MSBUILD_ARGUMENTS[@]} "$@"
+  "$CLI_ROOT/dotnet" msbuild "$SCRIPT_ROOT/build.proj" -bl:"$SCRIPT_ROOT/artifacts/log/$configuration/BuildTests_$LogDateStamp.binlog" -flp:"LogFile=$SCRIPT_ROOT/artifacts/logs/BuildTests_$LogDateStamp.log" -clp:v=m ${MSBUILD_ARGUMENTS[@]} "$@"
 else
-  "$CLI_ROOT/dotnet" msbuild "$SCRIPT_ROOT/eng/tools/init-build.proj" -bl:"$SCRIPT_ROOT/artifacts/log/Debug/BuildMSBuildSdkResolver_$LogDateStamp.binlog" -flp:LogFile="$SCRIPT_ROOT/artifacts/logs/BuildMSBuildSdkResolver_$LogDateStamp.log" -t:ExtractToolPackage,BuildMSBuildSdkResolver ${MSBUILD_ARGUMENTS[@]} "$@"
+  "$CLI_ROOT/dotnet" msbuild "$SCRIPT_ROOT/eng/tools/init-build.proj" -bl:"$SCRIPT_ROOT/artifacts/log/$configuration/BuildMSBuildSdkResolver_$LogDateStamp.binlog" -flp:LogFile="$SCRIPT_ROOT/artifacts/logs/BuildMSBuildSdkResolver_$LogDateStamp.log" -t:ExtractToolPackage,BuildMSBuildSdkResolver ${MSBUILD_ARGUMENTS[@]} "$@"
 
   # kill off the MSBuild server so that on future invocations we pick up our custom SDK Resolver
   "$CLI_ROOT/dotnet" build-server shutdown
 
-  "$CLI_ROOT/dotnet" msbuild "$SCRIPT_ROOT/build.proj" -bl:"$SCRIPT_ROOT/artifacts/log/Debug/Build_$LogDateStamp.binlog" -flp:"LogFile=$SCRIPT_ROOT/artifacts/logs/Build_$LogDateStamp.log" ${MSBUILD_ARGUMENTS[@]} "$@"
+  "$CLI_ROOT/dotnet" msbuild "$SCRIPT_ROOT/build.proj" -bl:"$SCRIPT_ROOT/artifacts/log/$configuration/Build_$LogDateStamp.binlog" -flp:"LogFile=$SCRIPT_ROOT/artifacts/logs/Build_$LogDateStamp.log" ${MSBUILD_ARGUMENTS[@]} "$@"
 fi
