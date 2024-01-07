@@ -37,6 +37,7 @@
     <RepositoryReference Include="format" />
     <RepositoryReference Include="deployment-tools" />
     <RepositoryReference Include="razor" />
+    <RepositoryReference Include="windowsdesktop" />
   </ItemGroup>
 
 </Project>
