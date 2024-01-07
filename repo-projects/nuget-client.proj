@@ -5,7 +5,7 @@
     <DeterministicBuildOptOut>true</DeterministicBuildOptOut>
 
     <!-- Call into a custom build script as nuget-client doesn't use Arcade infra. -->
-    <BuildScript>$(ProjectDirectory)eng/source-build/build$(ShellExtension)</BuildScript>
+    <BuildScript>$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'source-build', 'build$(ShellExtension)'))</BuildScript>
   </PropertyGroup>
 
   <ItemGroup>

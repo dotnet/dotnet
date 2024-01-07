@@ -11,8 +11,4 @@
     <RepositoryReference Include="command-line-api" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
-    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftSourceLinkVersion" Version="$(SOURCE_LINK_BOOTSTRAP_VERSION)" />
-  </ItemGroup>
-
 </Project>
