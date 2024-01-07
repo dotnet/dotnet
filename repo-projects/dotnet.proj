@@ -1,16 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <SkipEnsurePackagesCreated>true</SkipEnsurePackagesCreated>
-
-    <!--
-      The default PackageVersionPropsFlowType behavior (DependenciesOnly) triggers logic that looks for a Version.Details.xml file.
-      Setting the type to AllPackages will skip that logic.
-    -->
-    <PackageVersionPropsFlowType>AllPackages</PackageVersionPropsFlowType>
-
     <!-- This is a wrapper project that doesn't build anything. -->
-    <SkipRepoBuild>true</SkipRepoBuild>
+    <IsUtilityProject>true</IsUtilityProject>
   </PropertyGroup>
 
   <!-- This project file serves a couple of purpose.
