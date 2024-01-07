@@ -255,7 +255,8 @@
       <FullCommand Condition="'$(MinimalConsoleLogOutput)' == 'true'">$(FullCommand) &gt;&gt; $(RepoConsoleLogFile) 2&gt;&amp;1</FullCommand>
     </PropertyGroup>
 
-    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(RepoConsoleLogFile)'))" />
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(RepoConsoleLogFile)'));
+                          $(SourceBuiltPackagesPath)" />
 
     <!-- Create directories for extra debugging. -->
     <MakeDir Directories="$(MSBuildDebugPathTargetDir);
