@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <arcadeGitCommitHash>574b28f9639dbd60738c6662d44f47b4abf5bba1</arcadeGitCommitHash>
-    <arcadeOutputPackageVersion>9.0.0-beta.24054.2</arcadeOutputPackageVersion>
+    <arcadeGitCommitHash>bab85ba4579526962b0dbb0aa4db625c50da8859</arcadeGitCommitHash>
+    <arcadeOutputPackageVersion>9.0.0-beta.24055.2</arcadeOutputPackageVersion>
     <aspireGitCommitHash>48e42f59d64d84b404e904996a9ed61f2a17a569</aspireGitCommitHash>
     <aspireOutputPackageVersion>8.0.0-preview.1.23557.2</aspireOutputPackageVersion>
     <aspnetcoreGitCommitHash>0ecd2d98c1e44638b83a1dd7bc66dabe53a0de3f</aspnetcoreGitCommitHash>
@@ -21,7 +21,7 @@
     <formatOutputPackageVersion>9.0.461803</formatOutputPackageVersion>
     <fsharpGitCommitHash>0c489541068f311e23b582410c1df3ff86f1d526</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.200-beta.23618.1</fsharpOutputPackageVersion>
-    <installerGitCommitHash>ca1439c8ae7f38b51cd0d2c70ba1f747ebf9e035</installerGitCommitHash>
+    <installerGitCommitHash>10a89561fdfd7c45911a0f3f017b556066b6ca89</installerGitCommitHash>
     <installerOutputPackageVersion>9.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>7f5b7a942e7efb44f59a2451b13795972539521d</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.10.0-preview-24054-02</msbuildOutputPackageVersion>
@@ -35,8 +35,8 @@
     <roslynOutputPackageVersion>4.9.0-3.24053.1</roslynOutputPackageVersion>
     <runtimeGitCommitHash>9325d3836d1f8af309855a4d82170d5a43f10122</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>9.0.0-alpha.1.24054.18</runtimeOutputPackageVersion>
-    <scenariotestsGitCommitHash>0589a90cb11bb1daf9c05f20c1dc2d78c49075f2</scenariotestsGitCommitHash>
-    <scenariotestsOutputPackageVersion>9.0.0-preview.23613.1</scenariotestsOutputPackageVersion>
+    <scenariotestsGitCommitHash>bfde902a10d7b672f4fc7e844198ede405dbb9c6</scenariotestsGitCommitHash>
+    <scenariotestsOutputPackageVersion>9.0.0-preview.24057.2</scenariotestsOutputPackageVersion>
     <sdkGitCommitHash>ad13b9d4da70a0fbbd6c84edef2c8d367e80cbc8</sdkGitCommitHash>
     <sdkOutputPackageVersion>9.0.100-alpha.1.24055.5</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>8263b543a5ceb0cd864cdb9e9011f1289c0dd246</sourcebuildexternalsGitCommitHash>

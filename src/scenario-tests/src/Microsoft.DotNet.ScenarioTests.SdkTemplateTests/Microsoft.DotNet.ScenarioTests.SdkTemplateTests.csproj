@@ -5,9 +5,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
   <ItemGroup>
-	<None Include="..\..\test\resources\**"
-		CopyToOutputDirectory="Always" />
+    <None Include="..\..\test\resources\**"
+          CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>
