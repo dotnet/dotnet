@@ -58,7 +58,7 @@
   <!-- Update NuGet feeds in the repo -->
   <Target Name="UpdateNuGetConfig"
           BeforeTargets="Build"
-          Condition="'$(NuGetConfigFile)' != '' or '@(NuGetConfigFiles)' != ''"
+          Condition="'$(NuGetConfigFile)' != ''"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete">
     <PropertyGroup>
@@ -74,7 +74,7 @@
       <ReferencePackagesNuGetSourceName>reference-packages</ReferencePackagesNuGetSourceName>
       <SourceBuildSources>$(SourceBuildSources);$(PrebuiltNuGetSourceName);$(PreviouslySourceBuiltNuGetSourceName);$(ReferencePackagesNuGetSourceName)</SourceBuildSources>
     </PropertyGroup>
-
+    
     <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
       <!-- When not building source-only, repositories lagging behind on the .NET SDK (e.g. tooling repos)
           that need to utilize a VS-aligned version for development purposes may not have the latest product
@@ -91,13 +91,8 @@
       <NetSdkSupportingFeed>https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v3/index.json</NetSdkSupportingFeed>
     </PropertyGroup>
 
-    <!-- Update the detected or manually specified NuGetConfigFile, but also allow multiple. -->
-    <ItemGroup>
-      <NuGetConfigFiles Include="$(NuGetConfigFile)" />
-    </ItemGroup>
-
     <RemoveInternetSourcesFromNuGetConfig
-      NuGetConfigFile="%(NuGetConfigFiles.Identity)"
+      NuGetConfigFile="$(NuGetConfigFile)"
       BuildWithOnlineFeeds="$(DotNetBuildWithOnlineFeeds)"
       KeepFeedPrefixes="@(KeepFeedPrefixes)"
       Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
@@ -106,27 +101,27 @@
       <SourceBuiltRepoPackagesPath Include="@(RepositoryReference->'$(SourceBuiltBasePackagesPath)%(Identity)')" />
     </ItemGroup>
 
-    <AddSourceToNuGetConfig NuGetConfigFile="%(NuGetConfigFiles.Identity)"
+    <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(PrebuiltNuGetSourceName)"
                             SourcePath="$(PrebuiltPackagesPath)"
                             Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
 
-    <AddSourceToNuGetConfig NuGetConfigFile="%(NuGetConfigFiles.Identity)"
+    <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(PreviouslySourceBuiltNuGetSourceName)"
                             SourcePath="$(PrebuiltSourceBuiltPackagesPath)"
                             Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
 
-    <AddSourceToNuGetConfig NuGetConfigFile="%(NuGetConfigFiles.Identity)"
+    <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(ReferencePackagesNuGetSourceName)"
                             SourcePath="$(ReferencePackagesDir)"
                             Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
 
-    <AddSourceToNuGetConfig NuGetConfigFile="%(NuGetConfigFiles.Identity)"
+    <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(SourceBuiltNuGetSourceName)"
                             SourcePath="%(SourceBuiltRepoPackagesPath.Identity)"
                             Condition=" '@(SourceBuiltRepoPackagesPath)' != '' " />
 
-    <AddSourceToNuGetConfig NuGetConfigFile="%(NuGetConfigFiles.Identity)"
+    <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(ExtraSourcesNuGetSourceName)"
                             SourcePath="$(ExtraRestoreSourcePath)"
                             Condition="'$(ExtraRestoreSourcePath)' != ''" />
@@ -138,7 +133,7 @@
                             Condition="'$(AddNetSdkSupportingFeed)' == 'true'" />
 
     <UpdateNuGetConfigPackageSourcesMappings
-      NuGetConfigFile="%(NuGetConfigFiles.Identity)"
+      NuGetConfigFile="$(NuGetConfigFile)"
       BuildWithOnlineFeeds="$(DotNetBuildWithOnlineFeeds)"
       SourceBuildSources="$(SourceBuildSources)" />
 
