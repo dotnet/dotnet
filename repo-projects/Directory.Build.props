@@ -89,9 +89,10 @@
     <!-- _InitializeDotNetCli is used by websdk and templating to decide whether to init the SDK -->
     <EnvironmentVariables Include="_InitializeDotNetCli=$(DotNetRoot)" />
     <EnvironmentVariables Include="_DotNetInstallDir=$(DotNetRoot)" />
-
     <EnvironmentVariables Include="_InitializeToolset=$(SourceBuiltSdksDir)Microsoft.DotNet.Arcade.Sdk/tools/Build.proj"
                           Condition="'$(UseBootstrapArcade)' != 'true'" />
+    <!-- TODO: Remove when all repos use a consistent set of eng/common files: https://github.com/dotnet/source-build/issues/3710. -->
+    <EnvironmentVariables Include="_OverrideArcadeInitializeBuildToolFramework=$(NetCurrent)" />
 
     <EnvironmentVariables Include="DotNetUseShippingVersions=true" />
 

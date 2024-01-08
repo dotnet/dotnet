@@ -16,6 +16,9 @@
     <PackageReportDataFile>$(PackageReportDir)prebuilt-usage.xml</PackageReportDataFile>
     <ProjectAssetsJsonArchiveFile>$(PackageReportDir)all-project-assets-json-files.zip</ProjectAssetsJsonArchiveFile>
     <ProdConManifestFile>$(PackageReportDir)prodcon-build.xml</ProdConManifestFile>
+
+    <EngCommonToolsFile Condition="'$(OS)' == 'Windows_NT'">$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'common', 'tools.ps1'))</EngCommonToolsFile>
+    <EngCommonToolsFile Condition="'$(OS)' != 'Windows_NT'">$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'eng', 'common', 'tools.sh'))</EngCommonToolsFile>
   </PropertyGroup>
 
   <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="AddSourceToNuGetConfig" />
@@ -27,6 +30,36 @@
   <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="WritePackageVersionsProps" />
   <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="WritePackageUsageData" />
   <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="WriteUsageReports" />
+
+  <!-- TODO: Remove when all repos have this patch in their eng/common files:
+       https://github.com/dotnet/arcade/pull/14181#issuecomment-1880723465. -->
+  <Target Name="UpdateBuildToolFramework"
+          BeforeTargets="Build"
+          Condition="Exists('$(EngCommonToolsFile)')"
+          Inputs="$(MSBuildProjectFullPath)"
+          Outputs="$(BaseIntermediateOutputPath)UpdateBuildToolFramework.complete" >
+
+      <PropertyGroup>
+        <EngCommonToolsContent>$([System.IO.File]::ReadAllText('$(EngCommonToolsFile)'))</EngCommonToolsContent>
+
+        <EngCommonToolsMatchValue Condition="'$(OS)' == 'Windows_NT'">Framework = 'net8.0'</EngCommonToolsMatchValue>
+        <EngCommonToolsReplaceValue Condition="'$(OS)' == 'Windows_NT'">Framework = '$(NetCurrent)'</EngCommonToolsReplaceValue>
+
+        <EngCommonToolsMatchValue Condition="'$(OS)' != 'Windows_NT'">_InitializeBuildToolFramework="net8.0"</EngCommonToolsMatchValue>
+        <EngCommonToolsReplaceValue Condition="'$(OS)' != 'Windows_NT'">_InitializeBuildToolFramework="$(NetCurrent)"</EngCommonToolsReplaceValue>
+      </PropertyGroup>
+
+      <WriteLinesToFile
+          File="$(EngCommonToolsFile)"
+          Lines="$(EngCommonToolsContent.Replace('$(EngCommonToolsMatchValue)','$(EngCommonToolsReplaceValue)'))"
+          Overwrite="true"
+          Condition="$(EngCommonToolsContent.Contains('$(EngCommonToolsMatchValue)'))" />
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)UpdateBuildToolFramework.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
+  </Target>
 
   <!-- Update NuGet feeds in the repo -->
   <Target Name="UpdateNuGetConfig"
