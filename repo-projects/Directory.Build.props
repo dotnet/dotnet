@@ -29,6 +29,7 @@
     <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)NuGet.Config')">$(ProjectDirectory)NuGet.Config</NuGetConfigFile>
 
     <SourceBuiltSdksDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'source-built-sdks'))</SourceBuiltSdksDir>
+    <SourceBuiltPackagesPath>$(SourceBuiltBasePackagesPath)$(RepositoryName)/</SourceBuiltPackagesPath>
 
     <!-- Set the bootstrap version to the VMR's version if empty. (no bootstrap set). -->
     <ArcadeBootstrapVersion>$([MSBuild]::ValueOrDefault('$(ARCADE_BOOTSTRAP_VERSION)', '$(ArcadeSdkVersion)'))</ArcadeBootstrapVersion>
