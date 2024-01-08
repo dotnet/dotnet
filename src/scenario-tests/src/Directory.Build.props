@@ -28,4 +28,5 @@
     <PackageReference Include="xunit.extensibility.execution" Version="$(XunitVersion)" />
     <PackageReference Include="xunit.runner.utility" Version="$(XunitVersion)" />
   </ItemGroup>
+
 </Project>

@@ -8,7 +8,10 @@
       <!-- Dotnet root typically ends in a \. Trim this to avoid issues with Exec -->
       <TestArgs>--dotnet-root "$(DotNetRoot.TrimEnd('\'))"</TestArgs>
       <TestArgs>$(TestArgs) --sdk-version $(NETCoreSdkVersion)</TestArgs>
+      <TestArgs>$(TestArgs) --test-root "$(ArtifactsObjDir)generatedtests"</TestArgs>
     </PropertyGroup>
+
     <Exec Command='"$(DotNetTool)" "$(TargetPath)" $(TestArgs)' />
   </Target>
+
 </Project>
