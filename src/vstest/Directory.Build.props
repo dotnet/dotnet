@@ -18,7 +18,7 @@
       new iteration to the goal number. This is also used to version the local packages. This version needs to be statically
       readable when we read the file as xml, don't move it to a .props file, unless you change the build server process
     -->
-    <TPVersionPrefix>17.8.0</TPVersionPrefix>
+    <TPVersionPrefix>17.10.0</TPVersionPrefix>
     <!--
         Versioning is defined from the build script. Use a default dev build if it's not defined.
         Sets the AssemblyVersion, AssemblyFileVersion and AssemblyInformationalVersion
@@ -80,6 +80,8 @@
     <DebugType>embedded</DebugType>
     <!-- Default to all packages generating a corresponding symbol package -->
     <IncludeSymbols>true</IncludeSymbols>
+    <!-- Workaround for AD0001 in analyzers with .NET 9. See https://github.com/dotnet/arcade/issues/14311 -->
+    <BuildWithNetFrameworkHostedCompiler>true</BuildWithNetFrameworkHostedCompiler>
   </PropertyGroup>
 
   <!-- Sign config -->

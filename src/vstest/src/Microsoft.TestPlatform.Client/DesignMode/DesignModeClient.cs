@@ -40,11 +40,12 @@ public class DesignModeClient : IDesignModeClient
 {
     private readonly ICommunicationManager _communicationManager;
     private readonly IDataSerializer _dataSerializer;
-
     private readonly ProtocolConfig _protocolConfig = Constants.DefaultProtocolConfig;
     private readonly IEnvironment _platformEnvironment;
     private readonly TestSessionMessageLogger _testSessionMessageLogger;
     private readonly object _lockObject = new();
+    private readonly bool _isForwardingOutput;
+
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Part of the public API.")]
     [SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Part of the public API")]
     protected Action<Message>? onCustomTestHostLaunchAckReceived;
@@ -655,7 +656,6 @@ public class DesignModeClient : IDesignModeClient
     #region IDisposable Support
 
     private bool _isDisposed; // To detect redundant calls
-    private bool _isForwardingOutput;
 
     protected virtual void Dispose(bool disposing)
     {

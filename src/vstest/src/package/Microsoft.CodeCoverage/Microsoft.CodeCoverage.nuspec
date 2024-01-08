@@ -22,6 +22,7 @@
     <file src="net462\Microsoft.CodeCoverage.Core\Microsoft.CodeCoverage.Core.dll" target="build\netstandard2.0\" />
     <file src="net462\Microsoft.CodeCoverage.Interprocess\Microsoft.CodeCoverage.Interprocess.dll" target="build\netstandard2.0\" />
     <file src="net462\Microsoft.CodeCoverage.Instrumentation\Microsoft.CodeCoverage.Instrumentation.dll" target="build\netstandard2.0\" />
+    <file src="net462\Microsoft.CodeCoverage.Instrumentation.Core\Microsoft.CodeCoverage.Instrumentation.Core.dll" target="build\netstandard2.0\" />
     <file src="net462\Microsoft.CodeCoverage.Instrumentation\Mono.Cecil.dll" target="build\netstandard2.0\" />
     <file src="net462\Microsoft.CodeCoverage.Instrumentation\Mono.Cecil.Pdb.dll" target="build\netstandard2.0\" />
     <file src="net462\Microsoft.CodeCoverage.Instrumentation\Mono.Cecil.Rocks.dll" target="build\netstandard2.0\" />

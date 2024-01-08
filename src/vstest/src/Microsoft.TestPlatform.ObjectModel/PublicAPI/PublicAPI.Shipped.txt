@@ -1,4 +1,11 @@
 ﻿#nullable enable
+~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.CannotBeNullOrEmpty.get -> string
+~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.Culture.get -> System.Globalization.CultureInfo
+~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.Culture.set -> void
+~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.DisplayChosenSettings.get -> string
+~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.MalformedRunSettingsFile.get -> string
+~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.NoMatchingSourcesFound.get -> string
+~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.SourceIncompatible.get -> string
 abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestLoggerEvents.DiscoveredTests -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.DiscoveredTestsEventArgs!>?
 abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestLoggerEvents.DiscoveryComplete -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.DiscoveryCompleteEventArgs!>?
 abstract Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestLoggerEvents.DiscoveryMessage -> System.EventHandler<Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestRunMessageEventArgs!>?
@@ -112,8 +119,8 @@ Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture.AnyCPU = 4 -> Micro
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture.ARM = 3 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture.ARM64 = 5 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture.Default = 0 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture
-Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture.S390x = 6 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture.Ppc64le = 7 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture.S390x = 6 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture.X64 = 2 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture.X86 = 1 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture
 Microsoft.VisualStudio.TestPlatform.ObjectModel.AttachmentSet
@@ -490,6 +497,8 @@ Microsoft.VisualStudio.TestPlatform.ObjectModel.DefaultExecutorUriAttribute
 Microsoft.VisualStudio.TestPlatform.ObjectModel.DefaultExecutorUriAttribute.DefaultExecutorUriAttribute(string! executorUri) -> void
 Microsoft.VisualStudio.TestPlatform.ObjectModel.DefaultExecutorUriAttribute.ExecutorUri.get -> string!
 Microsoft.VisualStudio.TestPlatform.ObjectModel.DefaultLoggerParameterNames
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DirectoryBasedTestDiscovererAttribute
+Microsoft.VisualStudio.TestPlatform.ObjectModel.DirectoryBasedTestDiscovererAttribute.DirectoryBasedTestDiscovererAttribute() -> void
 Microsoft.VisualStudio.TestPlatform.ObjectModel.EditorAttachDebuggerPayload
 Microsoft.VisualStudio.TestPlatform.ObjectModel.EditorAttachDebuggerPayload.EditorAttachDebuggerPayload() -> void
 Microsoft.VisualStudio.TestPlatform.ObjectModel.EditorAttachDebuggerPayload.ProcessID.get -> int
@@ -506,7 +515,9 @@ Microsoft.VisualStudio.TestPlatform.ObjectModel.FileExtensionAttribute
 Microsoft.VisualStudio.TestPlatform.ObjectModel.FileExtensionAttribute.FileExtension.get -> string!
 Microsoft.VisualStudio.TestPlatform.ObjectModel.FileExtensionAttribute.FileExtensionAttribute(string! fileExtension) -> void
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Framework
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Framework.FrameworkName.get -> string!
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Framework.Name.get -> string!
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Framework.ShortName.get -> string?
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Framework.Version.get -> string!
 Microsoft.VisualStudio.TestPlatform.ObjectModel.FrameworkVersion
 Microsoft.VisualStudio.TestPlatform.ObjectModel.FrameworkVersion.Framework35 = 1 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.FrameworkVersion
@@ -959,14 +970,4 @@ static readonly Microsoft.VisualStudio.TestPlatform.ObjectModel.UapConstants.Uap
 virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.TestObject.Properties.get -> System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProperty!>!
 virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.TestObject.ProtectedGetPropertyValue(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProperty! property, object? defaultValue) -> object?
 virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.TestObject.ProtectedSetPropertyValue(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProperty! property, object? value) -> void
-~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.CannotBeNullOrEmpty.get -> string
-~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.Culture.get -> System.Globalization.CultureInfo
-~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.Culture.set -> void
-~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.DisplayChosenSettings.get -> string
-~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.MalformedRunSettingsFile.get -> string
-~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.NoMatchingSourcesFound.get -> string
-~static Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources.CommonResources.SourceIncompatible.get -> string
-Microsoft.VisualStudio.TestPlatform.ObjectModel.DirectoryBasedTestDiscovererAttribute
-Microsoft.VisualStudio.TestPlatform.ObjectModel.DirectoryBasedTestDiscovererAttribute.DirectoryBasedTestDiscovererAttribute() -> void
-Microsoft.VisualStudio.TestPlatform.ObjectModel.Framework.FrameworkName.get -> string!
-Microsoft.VisualStudio.TestPlatform.ObjectModel.Framework.ShortName.get -> string?
+virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateValueCallback.Invoke(object? value) -> bool
