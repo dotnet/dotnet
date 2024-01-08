@@ -26,7 +26,7 @@ public partial class ProcessHelper : IProcessHelper
     private readonly Process _currentProcess = Process.GetCurrentProcess();
 
 #if !NET5_0_OR_GREATER
-    private IEnvironment _environment;
+    private readonly IEnvironment _environment;
 #endif
 
     /// <summary>

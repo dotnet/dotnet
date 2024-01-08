@@ -22,6 +22,7 @@
     <PackageReference Include="Microsoft.CodeCoverage.Core" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.CodeCoverage.Interprocess" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.CodeCoverage.Instrumentation" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.CodeCoverage.Instrumentation.Core" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Internal.CodeCoverage" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VisualStudio.TraceDataCollector" Version="$(MicrosoftInternalCodeCoverageVersion)" PrivateAssets="All" GeneratePathProperty="true" />
   </ItemGroup>
@@ -31,6 +32,7 @@
       <MicrosoftCodeCoverageCore Include="$(PkgMicrosoft_CodeCoverage_Core)\lib\netstandard2.0\**\*"></MicrosoftCodeCoverageCore>
       <MicrosoftCodeCoverageInterprocess Include="$(PkgMicrosoft_CodeCoverage_Interprocess)\lib\netstandard2.0\**\*"></MicrosoftCodeCoverageInterprocess>
       <MicrosoftCodeCoverageInstrumentation Include="$(PkgMicrosoft_CodeCoverage_Instrumentation)\lib\netstandard2.0\**\*"></MicrosoftCodeCoverageInstrumentation>
+      <MicrosoftCodeCoverageInstrumentationCore Include="$(PkgMicrosoft_CodeCoverage_Instrumentation_Core)\lib\netstandard2.0\**\*"></MicrosoftCodeCoverageInstrumentationCore>
       <MicrosoftInternalCodeCoverage Include="$(PkgMicrosoft_Internal_CodeCoverage)\contentFiles\any\any\**\*"></MicrosoftInternalCodeCoverage>
       <MicrosoftVisualStudioTraceDataCollector Include="$(PkgMicrosoft_VisualStudio_TraceDataCollector)\lib\netstandard2.0\**\*"></MicrosoftVisualStudioTraceDataCollector>
     </ItemGroup>
@@ -38,6 +40,7 @@
     <Copy SourceFiles="@(MicrosoftCodeCoverageCore)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.Core\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftCodeCoverageInterprocess)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.Interprocess\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftCodeCoverageInstrumentation)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.Instrumentation\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(MicrosoftCodeCoverageInstrumentationCore)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.Instrumentation.Core\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftInternalCodeCoverage)" DestinationFiles="$(OutDir)\Microsoft.Internal.CodeCoverage\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftVisualStudioTraceDataCollector)" DestinationFiles="$(OutDir)\Microsoft.VisualStudio.TraceDataCollector\%(RecursiveDir)%(Filename)%(Extension)" />
   </Target>
