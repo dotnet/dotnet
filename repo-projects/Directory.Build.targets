@@ -72,7 +72,7 @@
       <PrebuiltNuGetSourceName>prebuilt</PrebuiltNuGetSourceName>
       <PreviouslySourceBuiltNuGetSourceName>previously-source-built</PreviouslySourceBuiltNuGetSourceName>
       <ReferencePackagesNuGetSourceName>reference-packages</ReferencePackagesNuGetSourceName>
-      <SourceBuildSources>$(SourceBuildSources);$(PrebuiltNuGetSourceName);$(PreviouslySourceBuiltNuGetSourceName);$(ReferencePackagesNuGetSourceName)</SourceBuildSources>
+      <SourceBuiltNuGetSourceName>source-built</SourceBuiltNuGetSourceName>
     </PropertyGroup>
     
     <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
@@ -91,15 +91,23 @@
       <NetSdkSupportingFeed>https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v3/index.json</NetSdkSupportingFeed>
     </PropertyGroup>
 
+    <ItemGroup>
+      <RepositoryReferenceInfo Include="@(RepositoryReference)">
+        <SourceName>$(SourceBuiltNuGetSourceName)-%(Identity)</SourceName>
+        <PackagesPath>$(SourceBuiltBasePackagesPath)%(Identity)</PackagesPath>
+      </RepositoryReferenceInfo>
+      <RepoSourceNames Include="@(RepositoryReferenceInfo->'%(SourceName)')">
+    </ItemGroup>
+
+    <ItemGroup>
+      <SourceBuildSources Include="$(PrebuiltNuGetSourceName);$(PreviouslySourceBuiltNuGetSourceName);$(ReferencePackagesNuGetSourceName);@(RepoSourceNames)" />
+    </ItemGroup>
+
     <RemoveInternetSourcesFromNuGetConfig
       NuGetConfigFile="$(NuGetConfigFile)"
       BuildWithOnlineFeeds="$(DotNetBuildWithOnlineFeeds)"
       KeepFeedPrefixes="@(KeepFeedPrefixes)"
       Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
-    
-    <ItemGroup>
-      <SourceBuiltRepoPackagesPath Include="@(RepositoryReference->'$(SourceBuiltBasePackagesPath)%(Identity)')" />
-    </ItemGroup>
 
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(PrebuiltNuGetSourceName)"
@@ -117,9 +125,9 @@
                             Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
 
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
-                            SourceName="$(SourceBuiltNuGetSourceName)"
-                            SourcePath="%(SourceBuiltRepoPackagesPath.Identity)"
-                            Condition=" '@(SourceBuiltRepoPackagesPath)' != '' " />
+                            SourceName="%(RepositoryReferenceInfo.SourceName)"
+                            SourcePath="%(RepositoryReferenceInfo.PackagesPath)"
+                            Condition=" '@(RepositoryReferenceInfo)' != '' " />
 
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(ExtraSourcesNuGetSourceName)"
@@ -135,7 +143,7 @@
     <UpdateNuGetConfigPackageSourcesMappings
       NuGetConfigFile="$(NuGetConfigFile)"
       BuildWithOnlineFeeds="$(DotNetBuildWithOnlineFeeds)"
-      SourceBuildSources="$(SourceBuildSources)" />
+      SourceBuildSources="@(SourceBuildSources)" />
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete" AlwaysCreate="true">
