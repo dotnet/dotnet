@@ -8,7 +8,6 @@
     <RepositoryReference Include="symreader" />
     <RepositoryReference Include="command-line-api" />
     <RepositoryReference Include="sourcelink" />
-    <RepositoryReference Include="xliff-tasks" />
   </ItemGroup>
 
 </Project>

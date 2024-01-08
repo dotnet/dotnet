@@ -13,7 +13,6 @@
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="roslyn" />
-    <RepositoryReference Include="xliff-tasks" />
     <RepositoryReference Include="sourcelink" />
   </ItemGroup>
 

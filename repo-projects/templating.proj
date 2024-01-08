@@ -13,7 +13,6 @@
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     <RepositoryReference Include="nuget-client" />
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="xliff-tasks" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="xliff-tasks" />
     <RepositoryReference Include="source-build-reference-packages" Condition="'$(DotNetBuildFromSource)' == 'true'" />
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildFromSource)' == 'true'" />
   </ItemGroup>
