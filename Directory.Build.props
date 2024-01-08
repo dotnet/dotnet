@@ -38,7 +38,7 @@
   <PropertyGroup Label="CalculateRID">
     <!-- Use current machine distro RID if set. Otherwise, fall back to RuntimeInformation.RuntimeIdentifier -->
     <BuildRid>$(__DistroRid)</BuildRid>
-    <BuildRid>$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)</BuildRid>
+    <BuildRid Condition="'$(BuildRid)' == ''">$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)</BuildRid>
 
     <HostRid Condition="'$(HostRid)' == ''">$(BuildRid)</HostRid>
     <TargetRid Condition="'$(TargetRid)' == ''">$(BuildRid)</TargetRid>
@@ -110,7 +110,7 @@
     <!-- Builds from the VMR are by definition vertical builds. -->
     <DotNetBuildVertical Condition="'$(DotNetBuildVertical)' == ''">true</DotNetBuildVertical>
     <!-- By default, the VMR builds with online sources. -->
-    <BuildWithOnlineSources Condition="'$(BuildWithOnlineSources)' == ''">true</BuildWithOnlineSources>
+    <BuildWithOnlineSources Condition="'$(BuildWithOnlineSources)' == '' and '$(DotNetBuildVertical)' == 'true'">true</BuildWithOnlineSources>
   </PropertyGroup>
 
   <PropertyGroup>
