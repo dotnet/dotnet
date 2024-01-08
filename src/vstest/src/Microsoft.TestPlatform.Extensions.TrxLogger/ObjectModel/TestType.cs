@@ -13,7 +13,7 @@ namespace Microsoft.TestPlatform.Extensions.TrxLogger.ObjectModel;
 internal sealed class TestType : IXmlTestStore
 {
     [StoreXmlSimpleField(".")]
-    private readonly Guid _typeId;
+    private Guid _typeId;
 
     public TestType(Guid id)
     {

@@ -655,7 +655,7 @@ public class DesignModeClient : IDesignModeClient
     #region IDisposable Support
 
     private bool _isDisposed; // To detect redundant calls
-    private readonly bool _isForwardingOutput;
+    private bool _isForwardingOutput;
 
     protected virtual void Dispose(bool disposing)
     {
