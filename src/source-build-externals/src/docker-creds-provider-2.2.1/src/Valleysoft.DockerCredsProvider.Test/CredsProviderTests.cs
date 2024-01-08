@@ -31,7 +31,7 @@ public class CredsProviderTests
         string credsStore = "desktop";
         string credsStoreBinary = $"docker-credential-{credsStore}";
         string username = "testuser";
-        string password = "password";
+        string password = "<CREDENTIAL_PLACEHOLDER>";
         string pathRoot = "/a";
 
         string dockerConfigContent =
@@ -174,7 +174,7 @@ public class CredsProviderTests
             "config.json");
 
         string username = "testuser";
-        string password = "testpass";
+        string password = "<CREDENTIAL_PLACEHOLDER>";
 
         string encodedCreds = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
 
@@ -207,7 +207,7 @@ public class CredsProviderTests
             "config.json");
 
         string username = "testuser";
-        string password = "testpass";
+        string password = "<CREDENTIAL_PLACEHOLDER>";
 
         string encodedCreds = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
 
@@ -237,7 +237,7 @@ public class CredsProviderTests
             "config.json");
 
         string username = String.Empty;
-        string password = "testpass";
+        string password = "<CREDENTIAL_PLACEHOLDER>";
 
         string encodedCreds = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
 
@@ -268,7 +268,7 @@ public class CredsProviderTests
             "config.json");
 
         string username = "testuser";
-        string password = "";
+        string password = string.Empty;
 
         string encodedCreds = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
 
@@ -299,7 +299,7 @@ public class CredsProviderTests
             "config.json");
 
         string username = "testuser";
-        string password = "testpassword";
+        string password = "<CREDENTIAL_PLACEHOLDER>";
 
         string encodedCreds = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}{password}"));
 
@@ -421,7 +421,7 @@ public class CredsProviderTests
         envMock.Setup(e => e.GetEnvironmentVariable("DOCKER_CONFIG")).Returns(tempPath);
 
         string username = "foo";
-        string password = "bar";
+        string password = "<CREDENTIAL_PLACEHOLDER>";
 
         string encodedCreds = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
 
@@ -440,7 +440,7 @@ public class CredsProviderTests
 
         var creds = await CredsProvider.GetCredentialsAsync("dummyRegistry.io", fileSystemMock.Object, Mock.Of<ProcessService>(), envMock.Object);
         Assert.Equal("foo", creds.Username);
-        Assert.Equal("bar", creds.Password);
+        Assert.Equal(password, creds.Password);
     }
 
     [Fact]
@@ -672,7 +672,7 @@ public class CredsProviderTests
             "config.json");
 
         string username = "testuser";
-        string password = "testpass";
+        string password = "<CREDENTIAL_PLACEHOLDER>";
 
         string encodedCreds = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
 
