@@ -36,6 +36,7 @@
     <PackageReference Include="Microsoft.TestPlatform.QTools.Assets" Version="2.0.0" />
     <PackageReference Include="Procdump" Version="0.0.1" />
     <PackageReference Include="NuGet.Versioning" Version="6.1.0" />
+    <PackageReference Include="Microsoft.CodeCoverage.Core" Version="$(MicrosoftInternalCodeCoverageVersion)" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <PackageReference Include="Microsoft.Internal.CodeCoverage" Version="$(MicrosoftInternalCodeCoverageVersion)" />

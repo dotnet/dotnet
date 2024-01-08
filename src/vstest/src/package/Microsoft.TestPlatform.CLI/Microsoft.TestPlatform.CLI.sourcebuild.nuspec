@@ -43,6 +43,7 @@
     <file src="$TesthostRuntimeconfig$\testhost-5.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfm$" />
     <file src="$TesthostRuntimeconfig$\testhost-6.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfm$" />
     <file src="$TesthostRuntimeconfig$\testhost-7.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfm$" />
+    <file src="$TesthostRuntimeconfig$\testhost-8.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfm$" />
     <file src="$TesthostRuntimeconfig$\testhost-latest.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfm$" />
     <file src="$SourceBuildTfm$\testhost.dll" target="contentFiles\any\$SourceBuildTfm$" />
     <file src="$SourceBuildTfm$\testhost.deps.json" target="contentFiles\any\$SourceBuildTfm$" />

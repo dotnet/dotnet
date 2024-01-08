@@ -36,17 +36,18 @@ Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IAssemblyRes
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IAssemblyResolver.AssemblyResolve -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.AssemblyResolveEventHandler?
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IEnvironment
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IEnvironment.Architecture.get -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
-Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IEnvironment.ProcessorCount.get -> int
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IEnvironment.Exit(int exitcode) -> void
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IEnvironment.GetCurrentManagedThreadId() -> int
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IEnvironment.OperatingSystem.get -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformOperatingSystem
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IEnvironment.OperatingSystemVersion.get -> string!
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IEnvironment.ProcessorCount.get -> int
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.GetCurrentProcessArchitecture() -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.GetCurrentProcessFileName() -> string?
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.GetCurrentProcessId() -> int
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.GetCurrentProcessLocation() -> string!
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.GetNativeDllDirectory() -> string!
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.GetProcessArchitecture(int processId) -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.GetProcessHandle(int processId) -> nint
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.GetProcessId(object? process) -> int
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.GetProcessName(int processId) -> string!
@@ -66,8 +67,8 @@ Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformApartmentState.
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture.ARM = 2 -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture.ARM64 = 3 -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
-Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture.S390x = 4 -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture.Ppc64le = 5 -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture.S390x = 4 -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture.X64 = 1 -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture.X86 = 0 -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyExtensions
@@ -78,16 +79,15 @@ Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyLoadCon
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyResolver
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyResolver.AssemblyResolve -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.AssemblyResolveEventHandler?
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyResolver.Dispose() -> void
-virtual Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyResolver.Dispose(bool disposing) -> void
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyResolver.PlatformAssemblyResolver() -> void
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformEnvironment
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformEnvironment.Architecture.get -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
-Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformEnvironment.ProcessorCount.get -> int
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformEnvironment.Exit(int exitcode) -> void
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformEnvironment.GetCurrentManagedThreadId() -> int
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformEnvironment.OperatingSystem.get -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformOperatingSystem
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformEnvironment.OperatingSystemVersion.get -> string!
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformEnvironment.PlatformEnvironment() -> void
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformEnvironment.ProcessorCount.get -> int
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformOperatingSystem
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformOperatingSystem.OSX = 2 -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformOperatingSystem
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformOperatingSystem.Unix = 1 -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformOperatingSystem
@@ -103,6 +103,7 @@ Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.GetCurren
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.GetCurrentProcessId() -> int
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.GetCurrentProcessLocation() -> string!
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.GetNativeDllDirectory() -> string!
+Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.GetProcessArchitecture(int processId) -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.GetProcessHandle(int processId) -> nint
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.GetProcessId(object? process) -> int
 Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.GetProcessName(int processId) -> string!
@@ -118,5 +119,5 @@ Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ThreadApartmentStateNot
 static Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.ErrorOnInitialization.get -> string?
 static Microsoft.VisualStudio.TestPlatform.ObjectModel.PlatformEqtTrace.ErrorOnInitialization.set -> void
 static Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyExtensions.GetAssemblyLocation(this System.Reflection.Assembly! assembly) -> string!
-Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.IProcessHelper.GetProcessArchitecture(int processId) -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
-Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.ProcessHelper.GetProcessArchitecture(int processId) -> Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformArchitecture
+virtual Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.AssemblyResolveEventHandler.Invoke(object? sender, Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces.AssemblyResolveEventArgs? args) -> System.Reflection.Assembly?
+virtual Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.PlatformAssemblyResolver.Dispose(bool disposing) -> void

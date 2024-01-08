@@ -242,6 +242,7 @@
 
     <file src="net472\Microsoft.CodeCoverage.Interprocess.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.CodeCoverage.Interprocess.dll" />
     <file src="net472\Microsoft.CodeCoverage.Instrumentation.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.CodeCoverage.Instrumentation.dll" />
+    <file src="net472\Microsoft.CodeCoverage.Instrumentation.Core.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.CodeCoverage.Instrumentation.Core.dll" />
     <file src="net472\Mono.Cecil.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Mono.Cecil.dll" />
     <file src="net472\Mono.Cecil.Pdb.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Mono.Cecil.Pdb.dll" />
     <file src="net472\Mono.Cecil.Rocks.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Mono.Cecil.Rocks.dll" />
@@ -539,6 +540,7 @@
     <file src="$TesthostRuntimeconfig$\testhost-5.0.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-5.0.runtimeconfig.json" />
     <file src="$TesthostRuntimeconfig$\testhost-6.0.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-6.0.runtimeconfig.json" />
     <file src="$TesthostRuntimeconfig$\testhost-7.0.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-7.0.runtimeconfig.json" />
+    <file src="$TesthostRuntimeconfig$\testhost-8.0.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-8.0.runtimeconfig.json" />
     <file src="$TesthostRuntimeconfig$\testhost-latest.runtimeconfig.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-latest.runtimeconfig.json" />
     <file src="netcoreapp3.1\testhost.deps.json" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost.deps.json" />
     <file src="netcoreapp3.1\testhost.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost.dll" />

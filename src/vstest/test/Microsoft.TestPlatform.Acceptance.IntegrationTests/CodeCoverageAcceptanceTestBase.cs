@@ -2,11 +2,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using System.Xml;
 
+using Microsoft.CodeCoverage.Core;
+using Microsoft.CodeCoverage.IO;
+using Microsoft.CodeCoverage.IO.Coverage;
 using Microsoft.TestPlatform.TestUtilities;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,11 +28,6 @@ public class CodeCoverageAcceptanceTestBase : AcceptanceTestBase
     {
         return Path.Combine(IntegrationTestEnvironment.PublishDirectory,
             $"Microsoft.CodeCoverage.{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}.nupkg", "build", "netstandard2.0");
-    }
-
-    protected static string GetCodeCoverageExePath()
-    {
-        return Path.Combine(GetNetStandardAdapterPath(), "CodeCoverage", "CodeCoverage.exe");
     }
 
     protected static XmlNode? GetModuleNode(XmlNode node, string name)
@@ -61,29 +59,9 @@ public class CodeCoverageAcceptanceTestBase : AcceptanceTestBase
             return coverage;
         }
 
-        var codeCoverageExe = GetCodeCoverageExePath();
+        CoverageFileUtilityV2 utility = new(new TpCoverageFileConfiguration());
         var output = Path.Combine(tempDirectory.Path, Guid.NewGuid().ToString() + ".xml");
-
-        var watch = new Stopwatch();
-
-        Console.WriteLine($"Starting {codeCoverageExe}");
-        watch.Start();
-        var analyze = Process.Start(new ProcessStartInfo
-        {
-            FileName = codeCoverageExe,
-            Arguments = $"analyze /include_skipped_functions /include_skipped_modules /output:\"{output}\" \"{coverageResult}\"",
-            RedirectStandardOutput = true,
-            UseShellExecute = false
-        });
-
-        string analysisOutput = analyze!.StandardOutput.ReadToEnd();
-
-        analyze.WaitForExit();
-        watch.Stop();
-        Console.WriteLine($"Total execution time: {watch.Elapsed.Duration()}");
-
-        Assert.IsTrue(0 == analyze.ExitCode, $"Code Coverage analyze failed: {analysisOutput}");
-
+        utility.ToXmlFileAsync(coverageResult, output, CancellationToken.None).Wait();
         coverage.Load(output);
         return coverage;
     }
@@ -125,5 +103,26 @@ public class CodeCoverageAcceptanceTestBase : AcceptanceTestBase
         Assert.IsTrue(string.IsNullOrEmpty(fileName) == false, "Coverage file name not found in trx file: {0}",
             trxFilePath);
         return Path.Combine(resultsDirectory, deploymentDir, "In", fileName);
+    }
+
+    internal class TpCoverageFileConfiguration : ICoverageFileConfiguration
+    {
+        public bool ReadModules => true;
+
+        public bool ReadSkippedModules => true;
+
+        public bool ReadSkippedFunctions => true;
+
+        public bool ReadSnapshotsData => true;
+
+        public bool GenerateCoverageBufferFiles => false;
+
+        public bool FixCoverageBuffersMismatch => false;
+
+        public int MaxDegreeOfParallelism => 2;
+
+        public bool SkipInvalidData => true;
+
+        public CoverageMergeOperation MergeOperation => CoverageMergeOperation.MergeToCobertura;
     }
 }
