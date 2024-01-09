@@ -14,12 +14,12 @@
     <!-- BuildActions includes -publish which is not supported by the aspnetcore build script. -->
     <BuildActions>$(FlagParameterPrefix)restore $(FlagParameterPrefix)build $(FlagParameterPrefix)pack</BuildActions>
     <!-- On Windows, build all for the VB PoC -->
-    <BuildActions Condition="'$(DotNetBuildVertical)' == 'true' and '$(OS)' == 'Windows_NT'">$(FlagParameterPrefix)restore $(FlagParameterPrefix)all $(FlagParameterPrefix)pack</BuildActions>
+    <BuildActions Condition="'$(DotNetBuildVertical)' == 'true' and '$(BuildOS)' == 'windows'">$(FlagParameterPrefix)restore $(FlagParameterPrefix)all $(FlagParameterPrefix)pack</BuildActions>
 
     <BuildArgs Condition="'$(OverrideTargetArch)' == ''">$(BuildArgs) $(FlagParameterPrefix)arch $(TargetArchitecture)</BuildArgs>
     <BuildArgs Condition="'$(OverrideTargetArch)' != ''">$(BuildArgs) $(FlagParameterPrefix)arch $(OverrideTargetArch)</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildVertical)' != 'true' or '$(OS)' != 'Windows_NT'">$(BuildArgs) $(FlagParameterPrefix)no-build-repo-tasks</BuildArgs>
-    <BuildArgs Condition="'$(DotNetBuildVertical)' != 'true' or '$(OS)' != 'Windows_NT'">$(BuildArgs) $(FlagParameterPrefix)no-build-nodejs</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildVertical)' != 'true' or '$(BuildOS)' != 'windows'">$(BuildArgs) $(FlagParameterPrefix)no-build-repo-tasks</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildVertical)' != 'true' or '$(BuildOS)' != 'windows'">$(BuildArgs) $(FlagParameterPrefix)no-build-nodejs</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:PortableBuild=$(_portableRidOverridden) /p:TargetRuntimeIdentifier=$(OverrideTargetRid)</BuildArgs>
 
     <LogVerbosityOptOut>true</LogVerbosityOptOut>

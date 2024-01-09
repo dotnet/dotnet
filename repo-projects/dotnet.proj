@@ -25,9 +25,7 @@
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildFromSource)' == 'true'" />
     <RepositoryReference Include="runtime" />
     <RepositoryReference Include="roslyn" />
-    <!-- This should be conditionalized based on a reasonable filtering mechanism. 
-         https://github.com/dotnet/source-build/issues/3682. Good enough for the PoC. -->
-    <RepositoryReference Include="windowsdesktop" Condition="'$(OS)' == 'Windows_NT'" />
+    <RepositoryReference Include="windowsdesktop" Condition="'$(TargetOS)' == 'windows'" />
     <RepositoryReference Include="aspnetcore" />
     <RepositoryReference Include="xdt" />
     <RepositoryReference Include="msbuild" />

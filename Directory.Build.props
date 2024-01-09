@@ -123,13 +123,13 @@
     <LogVerbosity Condition="'$(LogVerbosity)'==''">minimal</LogVerbosity>
     <BuildInParallel Condition="'$(BuildInParallel)'==''">false</BuildInParallel>
 
-    <ShellExtension Condition="'$(OS)' == 'Windows_NT'">.cmd</ShellExtension>
-    <ShellExtension Condition="'$(OS)' != 'Windows_NT'">.sh</ShellExtension>
+    <ShellExtension Condition="'$(BuildOS)' == 'windows'">.cmd</ShellExtension>
+    <ShellExtension Condition="'$(BuildOS)' != 'windows'">.sh</ShellExtension>
 
     <!-- While the tarball infrastructure currently only supports non Windows, these properties
          are already defined for more flexibility in the future. -->
-    <ArchiveExtension Condition="'$(OS)' == 'Windows_NT'">.zip</ArchiveExtension>
-    <ArchiveExtension Condition="'$(OS)' != 'Windows_NT'">.tar.gz</ArchiveExtension>
+    <ArchiveExtension Condition="'$(BuildOS)' == 'windows'">.zip</ArchiveExtension>
+    <ArchiveExtension Condition="'$(BuildOS)' != 'windows'">.tar.gz</ArchiveExtension>
   </PropertyGroup>
 
   <PropertyGroup>

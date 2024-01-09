@@ -17,8 +17,8 @@
     <ProjectAssetsJsonArchiveFile>$(PackageReportDir)all-project-assets-json-files.zip</ProjectAssetsJsonArchiveFile>
     <ProdConManifestFile>$(PackageReportDir)prodcon-build.xml</ProdConManifestFile>
 
-    <EngCommonToolsFile Condition="'$(OS)' == 'Windows_NT'">$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'common', 'tools.ps1'))</EngCommonToolsFile>
-    <EngCommonToolsFile Condition="'$(OS)' != 'Windows_NT'">$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'eng', 'common', 'tools.sh'))</EngCommonToolsFile>
+    <EngCommonToolsFile Condition="'$(BuildOS)' == 'windows'">$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'common', 'tools.ps1'))</EngCommonToolsFile>
+    <EngCommonToolsFile Condition="'$(BuildOS)' != 'windows'">$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'eng', 'common', 'tools.sh'))</EngCommonToolsFile>
   </PropertyGroup>
 
   <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="AddSourceToNuGetConfig" />
@@ -42,11 +42,11 @@
       <PropertyGroup>
         <EngCommonToolsContent>$([System.IO.File]::ReadAllText('$(EngCommonToolsFile)'))</EngCommonToolsContent>
 
-        <EngCommonToolsMatchValue Condition="'$(OS)' == 'Windows_NT'">Framework = 'net8.0'</EngCommonToolsMatchValue>
-        <EngCommonToolsReplaceValue Condition="'$(OS)' == 'Windows_NT'">Framework = '$(NetCurrent)'</EngCommonToolsReplaceValue>
+        <EngCommonToolsMatchValue Condition="'$(BuildOS)' == 'windows'">Framework = 'net8.0'</EngCommonToolsMatchValue>
+        <EngCommonToolsReplaceValue Condition="'$(BuildOS)' == 'windows'">Framework = '$(NetCurrent)'</EngCommonToolsReplaceValue>
 
-        <EngCommonToolsMatchValue Condition="'$(OS)' != 'Windows_NT'">_InitializeBuildToolFramework="net8.0"</EngCommonToolsMatchValue>
-        <EngCommonToolsReplaceValue Condition="'$(OS)' != 'Windows_NT'">_InitializeBuildToolFramework="$(NetCurrent)"</EngCommonToolsReplaceValue>
+        <EngCommonToolsMatchValue Condition="'$(BuildOS)' != 'windows'">_InitializeBuildToolFramework="net8.0"</EngCommonToolsMatchValue>
+        <EngCommonToolsReplaceValue Condition="'$(BuildOS)' != 'windows'">_InitializeBuildToolFramework="$(NetCurrent)"</EngCommonToolsReplaceValue>
       </PropertyGroup>
 
       <WriteLinesToFile
@@ -278,9 +278,9 @@
   <Target Name="RepoBuild"
           Condition="'$(BuildCommand)' != ''">
     <Message Text="DirSize Before Building $(RepositoryName)" Importance="High"
-             Condition=" '$(CleanWhileBuilding)' == 'true' and '$(OS)' != 'Windows_NT'" />
+             Condition=" '$(CleanWhileBuilding)' == 'true' and '$(BuildOS)' != 'windows'" />
     <Exec Command="df -h $(RepoRoot)"
-          Condition=" '$(CleanWhileBuilding)' == 'true' and '$(OS)' != 'Windows_NT'" />
+          Condition=" '$(CleanWhileBuilding)' == 'true' and '$(BuildOS)' != 'windows'" />
 
     <PropertyGroup>
       <FullCommand>$(BuildCommand)</FullCommand>
@@ -440,8 +440,8 @@
   <Target Name="CleanupRepo"
           AfterTargets="RemoveBuiltPackagesFromCache"
           Condition="'$(CleanWhileBuilding)' == 'true' and Exists('$(ProjectDirectory)artifacts')">
-    <Message Text="DirSize After Building $(RepositoryName)" Importance="High" Condition="'$(OS)' != 'Windows_NT'" />
-    <Exec Command="df -h $(RepoRoot)" Condition="'$(OS)' != 'Windows_NT'" />
+    <Message Text="DirSize After Building $(RepositoryName)" Importance="High" Condition="'$(BuildOS)' != 'windows'" />
+    <Exec Command="df -h $(RepoRoot)" Condition="'$(BuildOS)' != 'windows'" />
 
     <!-- Make a copy of the build logs & project.assets.json files -->
     <PropertyGroup>
@@ -467,8 +467,8 @@
 
     <RemoveDir Directories="@(DirsToDelete)" />
 
-    <Message Text="DirSize After CleanupRepo $(RepositoryName)" Importance="High" Condition="'$(OS)' != 'Windows_NT'" />
-    <Exec Command="df -h $(RepoRoot)" Condition="'$(OS)' != 'Windows_NT'" />
+    <Message Text="DirSize After CleanupRepo $(RepositoryName)" Importance="High" Condition="'$(BuildOS)' != 'windows'" />
+    <Exec Command="df -h $(RepoRoot)" Condition="'$(BuildOS)' != 'windows'" />
   </Target>
 
   <Target Name="ExtractToolPackage"
