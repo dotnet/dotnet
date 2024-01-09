@@ -3,6 +3,8 @@
   <PropertyGroup>
     <!-- This is a wrapper project that doesn't build anything. -->
     <IsUtilityProject>true</IsUtilityProject>
+    <!-- Need to set to false to calculate RepositoryCommit. -->
+    <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
   </PropertyGroup>
 
   <ItemGroup>
