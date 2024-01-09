@@ -108,7 +108,6 @@
     <MicrosoftNETCoreAppRuntimewinx64PackageVersion>9.0.0-alpha.1.24058.10</MicrosoftNETCoreAppRuntimewinx64PackageVersion>
     <MicrosoftNETCoreAppHostwinx64PackageVersion>9.0.0-alpha.1.24058.10</MicrosoftNETCoreAppHostwinx64PackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>9.0.0-alpha.1.24058.10</MicrosoftNETCoreAppRefPackageVersion>
-    <MicrosoftNETCoreDotNetHostResolverPackageVersion>8.0.0-rc.1.23414.4</MicrosoftNETCoreDotNetHostResolverPackageVersion>
     <NETStandardLibraryRefPackageVersion>2.1.0</NETStandardLibraryRefPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
@@ -247,7 +246,7 @@
     <VersionToolsVersion>2.2.0-beta.19072.10</VersionToolsVersion>
     <DotnetDebToolVersion>2.0.0</DotnetDebToolVersion>
     <MicrosoftNETTestSdkVersion>17.10.0-preview-24058-01</MicrosoftNETTestSdkVersion>
-    <MicrosoftExtensionsLoggingConsoleVersion>8.0.0-alpha.1.22557.12</MicrosoftExtensionsLoggingConsoleVersion>
+    <MicrosoftExtensionsLoggingConsoleVersion>9.0.0-alpha.1.24058.10</MicrosoftExtensionsLoggingConsoleVersion>
     <MicrosoftDotNetScenarioTestsSdkTemplateTestsVersion>9.0.0-preview.24057.2</MicrosoftDotNetScenarioTestsSdkTemplateTestsVersion>
   </PropertyGroup>
   <!-- Workload manifest package versions -->
