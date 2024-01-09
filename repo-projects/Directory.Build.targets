@@ -460,12 +460,14 @@
 
     <!-- Cleanup everything else -->
     <ItemGroup>
-      <DirsToDelete Include="$([System.IO.Directory]::GetDirectories(&quot;$(ProjectDirectory)artifacts/&quot;))" />
-      <DirsToDelete Remove="$(BuildLogsDir)" />
-      <DirsToDelete Remove="$(BuildObjDir)" />
+      <DirsToDelete Include="$([System.IO.Directory]::GetDirectories('$(ProjectDirectory)artifacts'))" />
+
+      <DirsToDeleteWithTrailingSeparator Include="$([MSBuild]::EnsureTrailingSlash('%(DirsToDelete.Identity)'))" />
+      <DirsToDeleteWithTrailingSeparator Remove="$(BuildLogsDir)" />
+      <DirsToDeleteWithTrailingSeparator Remove="$(BuildObjDir)" />
     </ItemGroup>
 
-    <RemoveDir Directories="@(DirsToDelete)" />
+    <RemoveDir Directories="@(DirsToDeleteWithTrailingSeparator)" />
 
     <Message Text="DirSize After CleanupRepo $(RepositoryName)" Importance="High" Condition="'$(BuildOS)' != 'windows'" />
     <Exec Command="df -h $(RepoRoot)" Condition="'$(BuildOS)' != 'windows'" />

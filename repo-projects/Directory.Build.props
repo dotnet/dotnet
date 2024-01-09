@@ -79,8 +79,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EnvironmentVariables Include="DotNetRestorePackagesPath=$(PackagesDir)" />
-
     <!-- Arcade tools.sh picks up DotNetCoreSdkDir, but we can pass DOTNET_INSTALL_DIR directly. -->
     <EnvironmentVariables Include="DOTNET_INSTALL_DIR=$(DotNetRoot)" />
     <EnvironmentVariables Include="DOTNET_PATH=$(DotNetRoot)" />
@@ -95,11 +93,8 @@
     <EnvironmentVariables Include="_OverrideArcadeInitializeBuildToolFramework=$(NetCurrent)" />
 
     <EnvironmentVariables Include="DotNetUseShippingVersions=true" />
-
     <EnvironmentVariables Include="PreReleaseVersionLabel=$(PreReleaseVersionLabel)" />
     <EnvironmentVariables Include="PackageVersionStamp=$(PreReleaseVersionLabel)" />
-
-    <EnvironmentVariables Include="NUGET_PACKAGES=$(NUGET_PACKAGES)" Condition="'$(NUGET_PACKAGES)' != ''" />
 
     <!-- We pass '-ci', but also apply ci mode via env var for edge cases. (E.g. misbehaving inner builds.) -->
     <EnvironmentVariables Include="ContinuousIntegrationBuild=true" />
