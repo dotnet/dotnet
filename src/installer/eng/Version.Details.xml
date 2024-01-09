@@ -106,22 +106,22 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>307b8f538d83a955d8f6dd909eee41a5555f2f4d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.6.0" Version="1.1.0-rc.23612.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.6.0" Version="1.1.0-rc.24058.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>ec54b2c1553db0a544ef0e8595be2318fc12e08d</Sha>
+      <Sha>416a1b0184b99ba67edf8991adc74517ec72cd89</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.7.0" Version="1.1.0-rc.23612.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.7.0" Version="1.1.0-rc.24058.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>ec54b2c1553db0a544ef0e8595be2318fc12e08d</Sha>
+      <Sha>416a1b0184b99ba67edf8991adc74517ec72cd89</Sha>
       <SourceBuild RepoName="test-templates" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.23612.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.24058.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>ec54b2c1553db0a544ef0e8595be2318fc12e08d</Sha>
+      <Sha>416a1b0184b99ba67edf8991adc74517ec72cd89</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rc.23612.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rc.24058.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>ec54b2c1553db0a544ef0e8595be2318fc12e08d</Sha>
+      <Sha>416a1b0184b99ba67edf8991adc74517ec72cd89</Sha>
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
     <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="9.0.0-alpha.1.24053.20" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">
