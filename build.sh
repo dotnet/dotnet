@@ -3,6 +3,7 @@
 ### Usage: $0 [options]
 ###
 ### Options:
+###   --ci                         Set when running on CI server
 ###   --clean-while-building       Cleans each repo after building (reduces disk space usage)
 ###   --configuration              Build configuration [Default: Release]
 ###   --online                     Build using online sources
@@ -53,6 +54,9 @@ while :; do
 
   lowerI="$(echo "$1" | awk '{print tolower($0)}')"
   case $lowerI in
+    --ci)
+      MSBUILD_ARGUMENTS+=( "-p:ContinuousIntegrationBuild=true")
+      ;;
     --clean-while-building)
       MSBUILD_ARGUMENTS+=( "-p:CleanWhileBuilding=true")
       ;;

@@ -225,9 +225,9 @@ jobs:
 
       # Allows Arcade to have access to the commit for the build
       customEnvVars="BUILD_SOURCEVERSION=$BUILD_SOURCEVERSION"
-      customBuildArgs=
+      customBuildArgs="--ci"
       if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
-        customBuildArgs='--online'
+        customBuildArgs="$customBuildArgs --online"
       else
         customRunArgs="$customRunArgs --network none"
       fi
