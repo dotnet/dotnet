@@ -37,7 +37,7 @@
     <RepositoryReference Include="format" />
     <RepositoryReference Include="deployment-tools" />
     <RepositoryReference Include="razor" />
-    <RepositoryReference Include="windowsdesktop" />
+    <RepositoryReference Include="windowsdesktop" Condition="'$(TargetOS)' == 'windows'" />
   </ItemGroup>
 
 </Project>
