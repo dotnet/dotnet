@@ -1,11 +1,9 @@
 <Project>
-
   <!-- Repo Version Information -->
   <PropertyGroup>
     <VersionPrefix>0.1.0</VersionPrefix>
     <PreReleaseVersionLabel>alpha.1</PreReleaseVersionLabel>
   </PropertyGroup>
-
   <PropertyGroup>
     <!--
       Building .NET from source depends on several archives, depending on the branch's current
@@ -30,5 +28,4 @@
     <!-- msbuild -->
     <MicrosoftBuildVersion>15.7.179</MicrosoftBuildVersion>
   </PropertyGroup>
-
 </Project>
