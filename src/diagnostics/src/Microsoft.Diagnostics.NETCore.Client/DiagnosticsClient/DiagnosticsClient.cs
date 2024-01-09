@@ -4,6 +4,7 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -18,6 +19,8 @@ namespace Microsoft.Diagnostics.NETCore.Client
     /// </summary>
     public sealed class DiagnosticsClient
     {
+        private const int DefaultCircularBufferMB = 256;
+
         private readonly IpcEndpoint _endpoint;
 
         public DiagnosticsClient(int processId) :
@@ -65,9 +68,10 @@ namespace Microsoft.Diagnostics.NETCore.Client
         /// <returns>
         /// An EventPipeSession object representing the EventPipe session that just started.
         /// </returns>
-        public EventPipeSession StartEventPipeSession(IEnumerable<EventPipeProvider> providers, bool requestRundown = true, int circularBufferMB = 256)
+        public EventPipeSession StartEventPipeSession(IEnumerable<EventPipeProvider> providers, bool requestRundown = true, int circularBufferMB = DefaultCircularBufferMB)
         {
-            return EventPipeSession.Start(_endpoint, providers, requestRundown, circularBufferMB);
+            EventPipeSessionConfiguration config = new(providers, circularBufferMB, requestRundown: requestRundown, requestStackwalk: true);
+            return EventPipeSession.Start(_endpoint, config);
         }
 
         /// <summary>
@@ -79,9 +83,10 @@ namespace Microsoft.Diagnostics.NETCore.Client
         /// <returns>
         /// An EventPipeSession object representing the EventPipe session that just started.
         /// </returns>
-        public EventPipeSession StartEventPipeSession(EventPipeProvider provider, bool requestRundown = true, int circularBufferMB = 256)
+        public EventPipeSession StartEventPipeSession(EventPipeProvider provider, bool requestRundown = true, int circularBufferMB = DefaultCircularBufferMB)
         {
-            return EventPipeSession.Start(_endpoint, new[] { provider }, requestRundown, circularBufferMB);
+            EventPipeSessionConfiguration config = new(new[] {provider}, circularBufferMB, requestRundown: requestRundown, requestStackwalk: true);
+            return EventPipeSession.Start(_endpoint, config);
         }
 
         /// <summary>
@@ -94,9 +99,11 @@ namespace Microsoft.Diagnostics.NETCore.Client
         /// <returns>
         /// An EventPipeSession object representing the EventPipe session that just started.
         /// </returns>
-        internal Task<EventPipeSession> StartEventPipeSessionAsync(IEnumerable<EventPipeProvider> providers, bool requestRundown, int circularBufferMB, CancellationToken token)
+        public Task<EventPipeSession> StartEventPipeSessionAsync(IEnumerable<EventPipeProvider> providers, bool requestRundown,
+            int circularBufferMB = DefaultCircularBufferMB, CancellationToken token = default)
         {
-            return EventPipeSession.StartAsync(_endpoint, providers, requestRundown, circularBufferMB, token);
+            EventPipeSessionConfiguration config = new(providers, circularBufferMB, requestRundown: requestRundown, requestStackwalk: true);
+            return EventPipeSession.StartAsync(_endpoint, config, token);
         }
 
         /// <summary>
@@ -109,9 +116,24 @@ namespace Microsoft.Diagnostics.NETCore.Client
         /// <returns>
         /// An EventPipeSession object representing the EventPipe session that just started.
         /// </returns>
-        internal Task<EventPipeSession> StartEventPipeSessionAsync(EventPipeProvider provider, bool requestRundown, int circularBufferMB, CancellationToken token)
+        public Task<EventPipeSession> StartEventPipeSessionAsync(EventPipeProvider provider, bool requestRundown,
+            int circularBufferMB = DefaultCircularBufferMB, CancellationToken token = default)
         {
-            return EventPipeSession.StartAsync(_endpoint, new[] { provider }, requestRundown, circularBufferMB, token);
+            EventPipeSessionConfiguration config = new(new[] {provider}, circularBufferMB, requestRundown: requestRundown, requestStackwalk: true);
+            return EventPipeSession.StartAsync(_endpoint, config, token);
+        }
+
+        /// <summary>
+        /// Start tracing the application and return an EventPipeSession object
+        /// </summary>
+        /// <param name="configuration">Configuration of this EventPipeSession</param>
+        /// <param name="token">The token to monitor for cancellation requests.</param>
+        /// <returns>
+        /// An EventPipeSession object representing the EventPipe session that just started.
+        /// </returns>
+        public Task<EventPipeSession> StartEventPipeSessionAsync(EventPipeSessionConfiguration configuration, CancellationToken token)
+        {
+            return EventPipeSession.StartAsync(_endpoint, configuration, token);
         }
 
         /// <summary>
@@ -297,6 +319,55 @@ namespace Microsoft.Diagnostics.NETCore.Client
             return await helper.ReadEnvironmentAsync(response.Continuation, token).ConfigureAwait(false);
         }
 
+        internal void ApplyStartupHook(string startupHookPath)
+        {
+            IpcMessage message = CreateApplyStartupHookMessage(startupHookPath);
+            IpcMessage response = IpcClient.SendMessage(_endpoint, message);
+            ValidateResponseMessage(response, nameof(ApplyStartupHook));
+        }
+
+        internal async Task ApplyStartupHookAsync(string startupHookPath, CancellationToken token)
+        {
+            IpcMessage message = CreateApplyStartupHookMessage(startupHookPath);
+            IpcMessage response = await IpcClient.SendMessageAsync(_endpoint, message, token).ConfigureAwait(false);
+            ValidateResponseMessage(response, nameof(ApplyStartupHookAsync));
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        public void EnablePerfMap(PerfMapType type)
+        {
+            IpcMessage request = CreateEnablePerfMapMessage(type);
+            IpcMessage response = IpcClient.SendMessage(_endpoint, request);
+            ValidateResponseMessage(response, nameof(EnablePerfMap));
+        }
+
+        internal async Task EnablePerfMapAsync(PerfMapType type, CancellationToken token)
+        {
+            IpcMessage request = CreateEnablePerfMapMessage(type);
+            IpcMessage response = await IpcClient.SendMessageAsync(_endpoint, request, token).ConfigureAwait(false);
+            ValidateResponseMessage(response, nameof(EnablePerfMapAsync));
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public void DisablePerfMap()
+        {
+            IpcMessage request = CreateDisablePerfMapMessage();
+            IpcMessage response = IpcClient.SendMessage(_endpoint, request);
+            ValidateResponseMessage(response, nameof(DisablePerfMap));
+        }
+
+        internal async Task DisablePerfMapAsync(CancellationToken token)
+        {
+            IpcMessage request = CreateDisablePerfMapMessage();
+            IpcMessage response = await IpcClient.SendMessageAsync(_endpoint, request, token).ConfigureAwait(false);
+            ValidateResponseMessage(response, nameof(DisablePerfMapAsync));
+        }
+
         /// <summary>
         /// Get all the active processes that can be attached to.
         /// </summary>
@@ -318,6 +389,15 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
                     string group = match.Groups[1].Value;
                     if (!int.TryParse(group, NumberStyles.Integer, CultureInfo.InvariantCulture, out int processId))
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        Process.GetProcessById(processId);
+                    }
+                    catch (ArgumentException)
                     {
                         continue;
                     }
@@ -345,8 +425,15 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
         internal ProcessInfo GetProcessInfo()
         {
+            // Attempt to get ProcessInfo v3
+            ProcessInfo processInfo = TryGetProcessInfo3();
+            if (null != processInfo)
+            {
+                return processInfo;
+            }
+
             // Attempt to get ProcessInfo v2
-            ProcessInfo processInfo = TryGetProcessInfo2();
+            processInfo = TryGetProcessInfo2();
             if (null != processInfo)
             {
                 return processInfo;
@@ -359,8 +446,15 @@ namespace Microsoft.Diagnostics.NETCore.Client
 
         internal async Task<ProcessInfo> GetProcessInfoAsync(CancellationToken token)
         {
+            // Attempt to get ProcessInfo v3
+            ProcessInfo processInfo = await TryGetProcessInfo3Async(token).ConfigureAwait(false);
+            if (null != processInfo)
+            {
+                return processInfo;
+            }
+
             // Attempt to get ProcessInfo v2
-            ProcessInfo processInfo = await TryGetProcessInfo2Async(token).ConfigureAwait(false);
+            processInfo = await TryGetProcessInfo2Async(token).ConfigureAwait(false);
             if (null != processInfo)
             {
                 return processInfo;
@@ -383,6 +477,20 @@ namespace Microsoft.Diagnostics.NETCore.Client
             IpcMessage request = CreateProcessInfo2Message();
             using IpcResponse response2 = await IpcClient.SendMessageGetContinuationAsync(_endpoint, request, token).ConfigureAwait(false);
             return TryGetProcessInfo2FromResponse(response2, nameof(GetProcessInfoAsync));
+        }
+
+        private ProcessInfo TryGetProcessInfo3()
+        {
+            IpcMessage request = CreateProcessInfo3Message();
+            using IpcResponse response2 = IpcClient.SendMessageGetContinuation(_endpoint, request);
+            return TryGetProcessInfo3FromResponse(response2, nameof(GetProcessInfo));
+        }
+
+        private async Task<ProcessInfo> TryGetProcessInfo3Async(CancellationToken token)
+        {
+            IpcMessage request = CreateProcessInfo3Message();
+            using IpcResponse response2 = await IpcClient.SendMessageGetContinuationAsync(_endpoint, request, token).ConfigureAwait(false);
+            return TryGetProcessInfo3FromResponse(response2, nameof(GetProcessInfoAsync));
         }
 
         private static byte[] SerializePayload<T>(T arg)
@@ -512,6 +620,11 @@ namespace Microsoft.Diagnostics.NETCore.Client
             return new IpcMessage(DiagnosticsServerCommandSet.Process, (byte)ProcessCommandId.GetProcessInfo2);
         }
 
+        private static IpcMessage CreateProcessInfo3Message()
+        {
+            return new IpcMessage(DiagnosticsServerCommandSet.Process, (byte)ProcessCommandId.GetProcessInfo3);
+        }
+
         private static IpcMessage CreateResumeRuntimeMessage()
         {
             return new IpcMessage(DiagnosticsServerCommandSet.Process, (byte)ProcessCommandId.ResumeRuntime);
@@ -566,6 +679,29 @@ namespace Microsoft.Diagnostics.NETCore.Client
             return new IpcMessage(DiagnosticsServerCommandSet.Dump, (byte)command, payload);
         }
 
+        private static IpcMessage CreateApplyStartupHookMessage(string startupHookPath)
+        {
+            if (string.IsNullOrEmpty(startupHookPath))
+            {
+                throw new ArgumentException($"{nameof(startupHookPath)} required");
+            }
+
+            byte[] serializedConfiguration = SerializePayload(startupHookPath);
+
+            return new IpcMessage(DiagnosticsServerCommandSet.Process, (byte)ProcessCommandId.ApplyStartupHook, serializedConfiguration);
+        }
+
+        private static IpcMessage CreateEnablePerfMapMessage(PerfMapType type)
+        {
+            byte[] payload = SerializePayload((uint)type);
+            return new IpcMessage(DiagnosticsServerCommandSet.Process, (byte)ProcessCommandId.EnablePerfMap, payload);
+        }
+
+        private static IpcMessage CreateDisablePerfMapMessage()
+        {
+            return new IpcMessage(DiagnosticsServerCommandSet.Process, (byte)ProcessCommandId.DisablePerfMap);
+        }
+
         private static ProcessInfo GetProcessInfoFromResponse(IpcResponse response, string operationName)
         {
             ValidateResponseMessage(response.Message, operationName);
@@ -581,6 +717,16 @@ namespace Microsoft.Diagnostics.NETCore.Client
             }
 
             return ProcessInfo.ParseV2(response.Message.Payload);
+        }
+
+        private static ProcessInfo TryGetProcessInfo3FromResponse(IpcResponse response, string operationName)
+        {
+            if (!ValidateResponseMessage(response.Message, operationName, ValidateResponseOptions.UnknownCommandReturnsFalse))
+            {
+                return null;
+            }
+
+            return ProcessInfo.ParseV3(response.Message.Payload);
         }
 
         internal static bool ValidateResponseMessage(IpcMessage responseMessage, string operationName, ValidateResponseOptions options = ValidateResponseOptions.None)

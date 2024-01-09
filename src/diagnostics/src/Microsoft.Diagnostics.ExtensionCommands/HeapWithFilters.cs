@@ -64,6 +64,11 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         public ulong MaximumObjectSize { get; set; }
 
         /// <summary>
+        /// Only enumerate object from this generation
+        /// </summary>
+        public Generation? Generation { get; set; }
+
+        /// <summary>
         /// The order in which to enumerate segments.  This also applies to object enumeration.
         /// </summary>
         public Func<IEnumerable<ClrSegment>, IOrderedEnumerable<ClrSegment>> SortSegments { get; set; }
@@ -80,19 +85,9 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             SortSubHeaps = (heap) => heap.OrderBy(heap => heap.Index);
         }
 
-        public void FilterBySegmentHex(string segmentStr)
+        public void FilterBySegmentHex(ulong segment)
         {
-            if (!ulong.TryParse(segmentStr, NumberStyles.HexNumber, null, out ulong segment))
-            {
-                throw new ArgumentException($"Invalid segment address: {segmentStr}");
-            }
-
-            if (ThrowIfNoMatchingGCRegions && !_heap.Segments.Any(seg => seg.Address == segment || seg.CommittedMemory.Contains(segment)))
-            {
-                throw new ArgumentException($"No segments match address: {segment:x}");
-            }
-
-            Segment = segment;
+            Segment = segment != 0 ? segment : null;
         }
 
         public void FilterByStringMemoryRange(string[] memoryRange, string commandName)
@@ -226,6 +221,11 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                 else
                 {
                     objs = segment.EnumerateObjects(carefully: true);
+                }
+
+                if (Generation is Generation generation)
+                {
+                    objs = objs.Where(obj => segment.GetGeneration(obj) == generation);
                 }
 
                 foreach (ClrObject obj in objs)

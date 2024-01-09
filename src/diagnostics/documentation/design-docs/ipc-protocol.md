@@ -370,7 +370,7 @@ enum class ProfilerCommandId : uint8_t
     AttachProfiler  = 0x01,
     // future
 }
-``` 
+```
 See: [Profiler Commands](#Profiler-Commands)
 
 ```c++
@@ -380,6 +380,10 @@ enum class ProcessCommandId : uint8_t
     ResumeRuntime      = 0x01,
     ProcessEnvironment = 0x02,
     ProcessInfo2       = 0x04,
+    EnablePerfMap      = 0x05,
+    DisablePerfMap     = 0x06,
+    ApplyStartupHook   = 0x07
+    ProcessInfo3       = 0x08,
     // future
 }
 ```
@@ -456,7 +460,7 @@ Payload
     array<provider_config> providers
 }
 
-provider_config 
+provider_config
 {
     ulong keywords,
     uint logLevel,
@@ -478,7 +482,7 @@ Followed by an Optional Continuation of a `nettrace` format stream of events.
 
 Command Code: `0x0203`
 
-The `CollectTracing2` Command is an extension of the `CollectTracing` command - its behavior is the same as `CollectTracing` command, except that it has another field that lets you specify whether rundown events should be fired by the runtime.
+The `CollectTracing2` command is an extension of the `CollectTracing` command - its behavior is the same as `CollectTracing` command, except that it has another field that lets you specify whether rundown events should be fired by the runtime.
 
 #### Inputs:
 
@@ -496,7 +500,7 @@ A `provider_config` is composed of the following data:
 * `string filter_data` (optional): Filter information
 
 > see ETW documentation for a more detailed explanation of Keywords, Filters, and Log Level.
-> 
+>
 #### Returns (as an IPC Message Payload):
 
 Header: `{ Magic; 28; 0xFF00; 0x0000; }`
@@ -516,7 +520,7 @@ Payload
     array<provider_config> providers
 }
 
-provider_config 
+provider_config
 {
     ulong keywords,
     uint logLevel,
@@ -534,7 +538,70 @@ Payload
 ```
 Followed by an Optional Continuation of a `nettrace` format stream of events.
 
-### `StopTracing` 
+### `CollectTracing3`
+
+Command Code: `0x0204`
+
+The `CollectTracing3` command is an extension of the `CollectTracing2` command - its behavior is the same as `CollectTracing2` command, except that it has another field that lets you specify whether the stackwalk should be made for each event.
+
+#### Inputs:
+
+Header: `{ Magic; Size; 0x0203; 0x0000 }`
+
+* `uint circularBufferMB`: The size of the circular buffer used for buffering event data while streaming
+* `uint format`: 0 for the legacy NetPerf format and 1 for the NetTrace format
+* `bool requestRundown`: Indicates whether rundown should be fired by the runtime.
+* `bool requestStackwalk`: Indicates whether stacktrace information should be recorded.
+* `array<provider_config> providers`: The providers to turn on for the streaming session
+
+A `provider_config` is composed of the following data:
+* `ulong keywords`: The keywords to turn on with this providers
+* `uint logLevel`: The level of information to turn on
+* `string provider_name`: The name of the provider
+* `string filter_data` (optional): Filter information
+
+> see ETW documentation for a more detailed explanation of Keywords, Filters, and Log Level.
+>
+#### Returns (as an IPC Message Payload):
+
+Header: `{ Magic; 28; 0xFF00; 0x0000; }`
+
+`CollectTracing2` returns:
+* `ulong sessionId`: the ID for the stream session starting on the current connection
+
+##### Details:
+
+Input:
+```
+Payload
+{
+    uint circularBufferMB,
+    uint format,
+    bool requestRundown,
+    bool requestStackwalk,
+    array<provider_config> providers
+}
+
+provider_config
+{
+    ulong keywords,
+    uint logLevel,
+    string provider_name,
+    string filter_data (optional)
+}
+```
+
+Returns:
+```c
+Payload
+{
+    ulong sessionId
+}
+```
+Followed by an Optional Continuation of a `nettrace` format stream of events.
+
+
+### `StopTracing`
 
 Command Code: `0x0201`
 
@@ -801,7 +868,7 @@ In the event of an [error](#Errors), the runtime will attempt to send an error m
 
 #### Inputs:
 
-Header: `{ Magic; Size; 0x0402; 0x0000 }`
+Header: `{ Magic; Size; 0x0404; 0x0000 }`
 
 There is no payload.
 
@@ -844,6 +911,192 @@ struct Payload
     LPCWSTR ClrProductVersion;
 }
 ```
+
+> Available since .NET 7.0
+
+### `EnablePerfMap`
+
+Command Code: `0x0405`
+
+The `EnablePerfMap` command instructs the runtime to start emitting perfmap or jitdump files for the process. These files are used by the perf tool to correlate jitted code addresses in a trace.
+
+In the event of an [error](#Errors), the runtime will attempt to send an error message and subsequently close the connection.
+
+#### Inputs:
+
+Header: `{ Magic; Size; 0x0405; 0x0000 }`
+
+Payload:
+* `uint32_t perfMapType`: the type of generation to enable
+
+#### Returns (as an IPC Message Payload):
+
+Header: `{ Magic; 28; 0xFF00; 0x0000; }`
+
+`EnablePerfMap` returns:
+* `int32 hresult`: The result of enabling the perfmap or jitdump files (`0` indicates success)
+
+##### Details:
+
+Inputs:
+```c++
+enum class PerfMapType
+{
+    DISABLED = 0,
+    ALL      = 1,
+    JITDUMP  = 2,
+    PERFMAP  = 3
+}
+
+struct Payload
+{
+    uint32_t perfMapType;
+}
+```
+
+Returns:
+```c
+Payload
+{
+    int32 hresult
+}
+```
+
+> Available since .NET 8.0
+
+### `DisablePerfMap`
+
+Command Code: `0x0406`
+
+The `DisablePerfMap` command instructs the runtime to stop emitting perfmap or jitdump files for the process. These files are used by the perf tool to correlate jitted code addresses in a trace.
+
+In the event of an [error](#Errors), the runtime will attempt to send an error message and subsequently close the connection.
+
+#### Inputs:
+
+Header: `{ Magic; Size; 0x0405; 0x0000 }`
+
+Payload: There is no payload with this command.
+
+#### Returns (as an IPC Message Payload):
+
+Header: `{ Magic; 28; 0xFF00; 0x0000; }`
+
+`DisablePerfMap` returns:
+* `int32 hresult`: The result of enabling the perfmap or jitdump files (`0` indicates success)
+
+##### Details:
+
+Returns:
+```c
+Payload
+{
+    int32 hresult
+}
+```
+
+> Available since .NET 8.0
+
+### `ApplyStartupHook`
+
+Command Code: `0x0407`
+
+The `ApplyStartupHook` command is used to provide a path to a managed assembly with a [startup hook](https://github.com/dotnet/runtime/blob/main/docs/design/features/host-startup-hook.md) to the runtime. During diagnostic suspension, the startup hook path will be added list of hooks that the runtime will execute once it has been resumed.
+
+In the event of an [error](#Errors), the runtime will attempt to send an error message and subsequently close the connection.
+
+#### Inputs:
+
+Header: `{ Magic; Size; 0x0407; 0x0000 }`
+
+* `string startupHookPath`: The path to the managed assembly that contains the startup hook implementation.
+
+#### Returns (as an IPC Message Payload):
+
+Header: `{ Magic; size; 0xFF00; 0x0000; }`
+
+`ApplyStartupHook` returns:
+* `int32 hresult`: The result of adding the startup hook (`0` indicates success)
+
+##### Details:
+
+Input:
+```
+Payload
+{
+    string startupHookPath
+}
+```
+
+Returns:
+```c++
+struct Payload
+{
+    int32 hresult
+}
+```
+
+> Available since .NET 8.0
+
+### `ProcessInfo3`
+
+Command Code: `0x0408`
+
+The `ProcessInfo3` command queries the runtime for some basic information about the process. The returned payload is versioned and fields will be added over time.
+
+In the event of an [error](#Errors), the runtime will attempt to send an error message and subsequently close the connection.
+
+#### Inputs:
+
+Header: `{ Magic; Size; 0x0408; 0x0000 }`
+
+There is no payload.
+
+#### Returns (as an IPC Message Payload):
+
+Header: `{ Magic; size; 0xFF00; 0x0000; }`
+
+Payload:
+* `uint32 version`: the version of the payload returned. Future versions can add new fields after the end of the current structure, but will never remove or change any field that has already been defined.
+* `uint64 processId`: the process id in the process's PID-space
+* `GUID runtimeCookie`: a 128-bit GUID that should be unique across PID-spaces
+* `string commandLine`: the command line that invoked the process
+  * Windows: will be the same as the output of `GetCommandLineW`
+  * Non-Windows: will be the fully qualified path of the executable in `argv[0]` followed by all arguments as the appear in `argv` separated by spaces, i.e., `/full/path/to/argv[0] argv[1] argv[2] ...`
+* `string OS`: the operating system that the process is running on
+  * macOS => `"macOS"`
+  * Windows => `"Windows"`
+  * Linux => `"Linux"`
+  * other => `"Unknown"`
+* `string arch`: the architecture of the process
+  * 32-bit => `"x86"`
+  * 64-bit => `"x64"`
+  * ARM32 => `"arm32"`
+  * ARM64 => `"arm64"`
+  * Other => `"Unknown"`
+* `string managedEntrypointAssemblyName`: the assembly name from the assembly identity of the entrypoint assembly of the process. This is the same value that is returned from executing `System.Reflection.Assembly.GetEntryAssembly().GetName().Name` in the target process.
+* `string clrProductVersion`: the product version of the CLR of the process; may contain prerelease label information e.g. `6.0.0-preview.6.#####`
+* `string runtimeIdentifier`: information to identify the platform this runtime targets, e.g. `linux_musl_arm`64, `linux_x64`, or `windows_x64` are all valid identifiers. See [.NET RID Catalog](https://learn.microsoft.com/en-us/dotnet/core/rid-catalog) for more information.
+
+##### Details:
+
+Returns:
+```c++
+struct Payload
+{
+    uint32_t Version;
+    uint64_t ProcessId;
+    LPCWSTR CommandLine;
+    LPCWSTR OS;
+    LPCWSTR Arch;
+    GUID RuntimeCookie;
+    LPCWSTR ManagedEntrypointAssemblyName;
+    LPCWSTR ClrProductVersion;
+    LPCWSTR RuntimeIdentifier;
+}
+```
+
+> Available since .NET 8.0
 
 ## Errors
 

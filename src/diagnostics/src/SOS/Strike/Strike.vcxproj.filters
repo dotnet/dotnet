@@ -32,6 +32,8 @@
     <ClCompile Include="platform\targetimpl.cpp">
       <Filter>platform</Filter>
     </ClCompile>
+    <ClCompile Include="managedcommands.cpp" />
+    <ClCompile Include="clrma.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data.h" />

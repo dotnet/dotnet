@@ -2,17 +2,17 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Microsoft.Diagnostics.DebugServices;
+using Microsoft.Diagnostics.ExtensionCommands.Output;
 using Microsoft.Diagnostics.Runtime;
-using static Microsoft.Diagnostics.ExtensionCommands.TableOutput;
+using static Microsoft.Diagnostics.ExtensionCommands.Output.ColumnKind;
 
 namespace Microsoft.Diagnostics.ExtensionCommands
 {
-    [Command(Name = "gcroot", Help = "Displays info about references (or roots) to an object at the specified address.")]
-    public class GCRootCommand : CommandBase
+    [Command(Name = "gcroot", Aliases = new[] { "GCRoot" }, Help = "Displays info about references (or roots) to an object at the specified address.")]
+    public class GCRootCommand : ClrRuntimeCommandBase
     {
         private StringBuilder _lineBuilder = new(64);
         private ClrRoot _lastRoot;
@@ -21,10 +21,10 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         public IMemoryService Memory { get; set; }
 
         [ServiceImport]
-        public ClrRuntime Runtime { get; set; }
+        public RootCacheService RootCache { get; set; }
 
         [ServiceImport]
-        public RootCacheService RootCache { get; set; }
+        public StaticVariableService StaticVariables { get; set; }
 
         [ServiceImport]
         public ManagedFileLineService FileLineService { get; set; }
@@ -37,6 +37,9 @@ namespace Microsoft.Diagnostics.ExtensionCommands
 
         [Argument(Name = "target")]
         public string TargetAddress { get; set; }
+
+        [Option(Name = "-limit", Help = "Limits the amount of roots to find")]
+        public int? Limit { get; set; }
 
         public override void Invoke()
         {
@@ -58,40 +61,57 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             });
 
             int count;
+            int limit = Limit ?? int.MaxValue;
+
             if (AsGCGeneration.HasValue)
             {
                 int gen = AsGCGeneration.Value;
+
+                ClrSegment seg = Runtime.Heap.GetSegmentByAddress(address);
+                if (seg is null)
+                {
+                    throw new DiagnosticsException($"Address {address:x} is not in the managed heap.");
+                }
+
+                Generation objectGen = seg.GetGeneration(address);
+                if (gen < (int)objectGen)
+                {
+                    Console.WriteLine($"Object {address:x} will survive this collection:");
+                    Console.WriteLine($"    gen({address:x}) = {objectGen} > {gen} = condemned generation.");
+                    return;
+                }
+
                 if (gen < 0 || gen > 1)
                 {
                     // If not gen0 or gen1, treat it as a normal !gcroot
                     if (NoStacks)
                     {
-                        count = PrintNonStackRoots(gcroot);
+                        count = PrintNonStackRoots(gcroot, limit);
                     }
                     else
                     {
-                        count = PrintAllRoots(gcroot);
+                        count = PrintAllRoots(gcroot, limit);
                     }
                 }
                 else
                 {
-                    count = PrintOlderGenerationRoots(gcroot, gen);
-                    count += PrintNonStackRoots(gcroot);
+                    count = PrintOlderGenerationRoots(gcroot, gen, limit);
+                    count += PrintNonStackRoots(gcroot, limit);
                 }
             }
             else if (NoStacks)
             {
-                count = PrintNonStackRoots(gcroot);
+                count = PrintNonStackRoots(gcroot, limit);
             }
             else
             {
-                count = PrintAllRoots(gcroot);
+                count = PrintAllRoots(gcroot, limit);
             }
 
             Console.WriteLine($"Found {count:n0} unique roots.");
         }
 
-        private int PrintOlderGenerationRoots(GCRoot gcroot, int gen)
+        private int PrintOlderGenerationRoots(GCRoot gcroot, int gen, int limit)
         {
             int count = 0;
 
@@ -110,6 +130,11 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                 ulong address = internalRootArray.Start;
                 while (internalRootArray.Contains(address))
                 {
+                    if (count >= limit)
+                    {
+                        break;
+                    }
+
                     Console.CancellationToken.ThrowIfCancellationRequested();
 
                     if (Memory.ReadPointer(address, out ulong objAddress))
@@ -127,7 +152,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                                 }
 
                                 Console.WriteLine($"    {objAddress:x}");
-                                PrintPath(Console, RootCache, Runtime.Heap, path);
+                                PrintPath(Console, RootCache, StaticVariables, Runtime.Heap, path);
                                 Console.WriteLine();
 
                                 count++;
@@ -152,11 +177,16 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             return count;
         }
 
-        private int PrintAllRoots(GCRoot gcroot)
+        private int PrintAllRoots(GCRoot gcroot, int limit)
         {
             int count = 0;
             foreach (ClrRoot root in RootCache.EnumerateRoots())
             {
+                if (count >= limit)
+                {
+                    break;
+                }
+
                 Console.CancellationToken.ThrowIfCancellationRequested();
                 GCRoot.ChainLink item = gcroot.FindPathFrom(root.Object);
                 if (item is not null)
@@ -169,11 +199,16 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             return count;
         }
 
-        private int PrintNonStackRoots(GCRoot gcroot)
+        private int PrintNonStackRoots(GCRoot gcroot, int limit)
         {
             int count = 0;
             foreach (ClrRoot root in RootCache.GetHandleRoots())
             {
+                if (count >= limit)
+                {
+                    break;
+                }
+
                 Console.CancellationToken.ThrowIfCancellationRequested();
                 GCRoot.ChainLink item = gcroot.FindPathFrom(root.Object);
                 if (item is not null)
@@ -185,6 +220,11 @@ namespace Microsoft.Diagnostics.ExtensionCommands
 
             foreach (ClrRoot root in RootCache.GetFinalizerQueueRoots())
             {
+                if (count >= limit)
+                {
+                    break;
+                }
+
                 Console.CancellationToken.ThrowIfCancellationRequested();
                 GCRoot.ChainLink item = gcroot.FindPathFrom(root.Object);
                 if (item is not null)
@@ -200,25 +240,73 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         private void PrintPath(ClrRoot root, GCRoot.ChainLink link)
         {
             PrintRoot(root);
-            PrintPath(Console, RootCache, Runtime.Heap, link);
+            PrintPath(Console, RootCache, StaticVariables, Runtime.Heap, link);
             Console.WriteLine();
         }
 
-        public static void PrintPath(IConsoleService console, RootCacheService rootCache, ClrHeap heap, GCRoot.ChainLink link)
+        public static void PrintPath(IConsoleService console, RootCacheService rootCache, StaticVariableService statics, ClrHeap heap, GCRoot.ChainLink link)
         {
-            TableOutput objectOutput = new(console, (2, ""), (16, "x16"))
+            Table objectOutput = new(console, Text.WithWidth(2), DumpObj, TypeName, Text)
             {
-                AlignLeft = true,
                 Indent = new(' ', 10)
             };
+
+            objectOutput.SetAlignment(Align.Left);
+
+            bool first = true;
+            bool isPossibleStatic = true;
+
+            ClrObject firstObj = default;
 
             ulong prevObj = 0;
             while (link != null)
             {
-                bool isDependentHandleLink = rootCache.IsDependentHandleLink(prevObj, link.Object);
                 ClrObject obj = heap.GetObject(link.Object);
 
-                objectOutput.WriteRow("->", obj.IsValid ? new DmlDumpObj(obj) : obj.Address, obj.Type?.Name ?? "<unknown type>", (isDependentHandleLink ? " (dependent handle)" : ""));
+                // Check whether this link is a dependent handle
+                string extraText = "";
+                bool isDependentHandleLink = rootCache.IsDependentHandleLink(prevObj, link.Object);
+                if (isDependentHandleLink)
+                {
+                    extraText = "(dependent handle)";
+                }
+
+                // Print static variable info.  In all versions of the runtime, static variables are stored in
+                // a pinned object array.  We check if the first link in the chain is an object[], and if so we
+                // check if the second object's address is the location of a static variable.  We could further
+                // narrow this by checking the root type, but that needlessly complicates this code...we can't
+                // get false positives or negatives here (as nothing points to static variable object[] other
+                // than the root).
+                if (first)
+                {
+                    firstObj = obj;
+                    isPossibleStatic = firstObj.IsValid && firstObj.IsArray && firstObj.Type.Name == "System.Object[]";
+                    first = false;
+                }
+                else if (isPossibleStatic)
+                {
+                    if (statics is not null && !isDependentHandleLink)
+                    {
+                        foreach (ClrReference reference in firstObj.EnumerateReferencesWithFields(carefully: false, considerDependantHandles: false))
+                        {
+                            if (reference.Object == obj)
+                            {
+                                ulong address = firstObj + (uint)reference.Offset;
+
+                                if (statics.TryGetStaticByAddress(address, out ClrStaticField field))
+                                {
+                                    extraText = $"(static variable: {field.Type?.Name ?? "Unknown"}.{field.Name})";
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    // only the first object[] in the chain is possible to be the static array
+                    isPossibleStatic = false;
+                }
+
+                objectOutput.WriteRow("->", obj, obj.Type, extraText);
 
                 prevObj = link.Object;
                 link = link.Next;
@@ -305,7 +393,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                 ClrHandleKind.SizedRef => "sized ref handle",
                 ClrHandleKind.WeakWinRT => "weak WinRT handle",
                 _ => handleKind.ToString()
-            }; ;
+            };
         }
 
         private string GetFrameOutput(ClrStackFrame currFrame)

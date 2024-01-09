@@ -24,7 +24,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/deployment-tools`  
 *[dotnet/deployment-tools@b4f8847](https://github.com/dotnet/deployment-tools/tree/b4f8847a36543b3274dc252534d0175de35bd16c)*
 - `src/diagnostics`  
-*[dotnet/diagnostics@5ce78f6](https://github.com/dotnet/diagnostics/tree/5ce78f66d89ea529e459abddb129ab36cb5bd936)*
+*[dotnet/diagnostics@dec7d6e](https://github.com/dotnet/diagnostics/tree/dec7d6e7a27cc6a46bad117800b7002a6f4c2f20)*
 - `src/emsdk`  
 *[dotnet/emsdk@5cda864](https://github.com/dotnet/emsdk/tree/5cda86493ac07dce11dcb04323d2b57eecff00b7)*
 - `src/format`  
@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@cc74185](https://github.com/dotnet/fsharp/tree/cc741852156e5f048e4e046061fa36477f8b92fb)*
 - `src/installer`  
-*[dotnet/installer@de96ee6](https://github.com/dotnet/installer/tree/de96ee60b3aaa290c817df7e21ee7cb38c1cf2dd)*
+*[dotnet/installer@db04b0d](https://github.com/dotnet/installer/tree/db04b0d4e2dd9817a08d92a8bdaa57aab4fb9bd7)*
 - `src/msbuild`  
 *[dotnet/msbuild@7f5b7a9](https://github.com/dotnet/msbuild/tree/7f5b7a942e7efb44f59a2451b13795972539521d)*
 - `src/nuget-client`  
@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@bfde902](https://github.com/dotnet/scenario-tests/tree/bfde902a10d7b672f4fc7e844198ede405dbb9c6)*
 - `src/sdk`  
-*[dotnet/sdk@4b6d1c2](https://github.com/dotnet/sdk/tree/4b6d1c2371ee0296df15c72dff4c7ea64315bfe6)*
+*[dotnet/sdk@1f9e0be](https://github.com/dotnet/sdk/tree/1f9e0bed698217e57ac3be3a09659385097c8283)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@2054f99](https://github.com/dotnet/source-build-externals/tree/2054f99a5685034a4ea4755b3cc2984fb2a5e4a8)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -92,7 +92,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/test-templates`  
 *[dotnet/test-templates@ec54b2c](https://github.com/dotnet/test-templates/tree/ec54b2c1553db0a544ef0e8595be2318fc12e08d)*
 - `src/vstest`  
-*[microsoft/vstest@db7c28e](https://github.com/microsoft/vstest/tree/db7c28e00e3fb7824f40620c487606e71c626a03)*
+*[microsoft/vstest@aef3d5f](https://github.com/microsoft/vstest/tree/aef3d5fbe837aef3f7cc54bba375b744db9ed8e6)*
 - `src/windowsdesktop`  
 *[dotnet/windowsdesktop@cd81338](https://github.com/dotnet/windowsdesktop/tree/cd813382efc14c011d79679a654d77f5743d7769)*
 - `src/winforms`  

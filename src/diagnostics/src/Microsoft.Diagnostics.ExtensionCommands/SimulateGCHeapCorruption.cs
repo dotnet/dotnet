@@ -5,22 +5,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Diagnostics.DebugServices;
+using Microsoft.Diagnostics.ExtensionCommands.Output;
 using Microsoft.Diagnostics.Runtime;
 
-using static Microsoft.Diagnostics.ExtensionCommands.TableOutput;
+using static Microsoft.Diagnostics.ExtensionCommands.Output.ColumnKind;
 
 namespace Microsoft.Diagnostics.ExtensionCommands
 {
     [DebugCommand(Name=nameof(SimulateGCHeapCorruption), Help = "Writes values to the GC heap in strategic places to simulate heap corruption.")]
-    public class SimulateGCHeapCorruption : CommandBase
+    public class SimulateGCHeapCorruption : ClrRuntimeCommandBase
     {
         private static readonly List<Change> _changes = new();
 
         [ServiceImport]
         public IMemoryService MemoryService { get; set; }
-
-        [ServiceImport]
-        public ClrRuntime Runtime { get; set; }
 
         [Argument]
         public string Command { get; set; }
@@ -59,12 +57,12 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             }
             else
             {
-                TableOutput output = new(Console, (12, "x12"), (12, "x12"), (16, "x"), (16, "x"), (0, ""));
-                output.WriteRow("Object", "ModifiedAddr", "Old Value", "New Value", "Expected Failure");
+                Table output = new(Console, DumpObj, Pointer, HexValue, HexValue, Text);
+                output.WriteHeader("Object", "ModifiedAddr", "Old Value", "New Value", "Expected Failure");
 
                 foreach (Change change in _changes)
                 {
-                    output.WriteRow(new DmlDumpObj(change.Object), change.AddressModified, change.OriginalValue.Reverse(), change.NewValue.Reverse(), change.ExpectedFailure);
+                    output.WriteRow(change.Object, change.AddressModified, change.OriginalValue.Reverse(), change.NewValue.Reverse(), change.ExpectedFailure);
                 }
             }
 
@@ -120,7 +118,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             ClrObject[] withRefs = FindObjectsWithReferences().Take(3).ToArray();
             if (withRefs.Length >= 1)
             {
-                (ulong Object, ulong FirstReference) entry = GetFirstReference(withRefs[0]);
+                (ClrObject Object, ulong FirstReference) entry = GetFirstReference(withRefs[0]);
                 WriteValue(ObjectCorruptionKind.InvalidObjectReference, entry.Object, entry.FirstReference, 0xcccccccc);
             }
             if (withRefs.Length >= 2)
@@ -128,13 +126,13 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                 ulong free = Runtime.Heap.EnumerateObjects().FirstOrDefault(f => f.IsFree);
                 if (free != 0)
                 {
-                    (ulong Object, ulong FirstReference) entry = GetFirstReference(withRefs[1]);
+                    (ClrObject Object, ulong FirstReference) entry = GetFirstReference(withRefs[1]);
                     WriteValue(ObjectCorruptionKind.FreeObjectReference, entry.Object, entry.FirstReference, free);
                 }
             }
             if (withRefs.Length >= 3)
             {
-                (ulong Object, ulong FirstReference) entry = GetFirstReference(withRefs[2]);
+                (ClrObject Object, ulong FirstReference) entry = GetFirstReference(withRefs[2]);
                 WriteValue(ObjectCorruptionKind.ObjectReferenceNotPointerAligned, entry.Object, entry.FirstReference, (byte)1);
             }
 
@@ -152,7 +150,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             List();
         }
 
-        private static (ulong Object, ulong FirstReference) GetFirstReference(ClrObject obj)
+        private static (ClrObject Object, ulong FirstReference) GetFirstReference(ClrObject obj)
         {
             return (obj, obj.EnumerateReferenceAddresses().First());
         }
@@ -217,7 +215,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             }
         }
 
-        private unsafe void WriteValue<T>(ObjectCorruptionKind kind, ulong obj, ulong address, T value)
+        private unsafe void WriteValue<T>(ObjectCorruptionKind kind, ClrObject obj, ulong address, T value)
             where T : unmanaged
         {
             byte[] old = new byte[sizeof(T)];
@@ -246,7 +244,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
 
         private sealed class Change
         {
-            public ulong Object { get; set; }
+            public ClrObject Object { get; set; }
             public ulong AddressModified { get; set; }
             public byte[] OriginalValue { get; set; }
             public byte[] NewValue { get; set; }

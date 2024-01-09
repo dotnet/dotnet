@@ -13,7 +13,7 @@ using Microsoft.Diagnostics.Runtime;
 namespace Microsoft.Diagnostics.DebugServices.Implementation
 {
     /// <summary>
-    /// ClrMD runtime service implementation
+    /// ClrMD runtime service implementation. This MUST never be disposable.
     /// </summary>
     [ServiceExport(Type = typeof(IDataReader), Scope = ServiceScope.Target)]
     public class DataReader : IDataReader
@@ -48,17 +48,17 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
 
         int IDataReader.ProcessId => unchecked((int)_target.ProcessId.GetValueOrDefault());
 
-        IEnumerable<ModuleInfo> IDataReader.EnumerateModules() => _modules ??= ModuleService.EnumerateModules().Select((module) => new DataReaderModule(module)).ToList();
+        IEnumerable<ModuleInfo> IDataReader.EnumerateModules() => _modules ??= ModuleService.EnumerateModules().Select((module) => new DataReaderModule(this, module)).ToList();
 
         bool IDataReader.GetThreadContext(uint threadId, uint contextFlags, Span<byte> context)
         {
             try
             {
                 byte[] registerContext = ThreadService.GetThreadFromId(threadId).GetThreadContext();
-                context = new Span<byte>(registerContext);
+                registerContext.AsSpan().Slice(0, context.Length).CopyTo(context);
                 return true;
             }
-            catch (DiagnosticsException ex)
+            catch (Exception ex) when (ex is DiagnosticsException or ArgumentException)
             {
                 Trace.TraceError($"GetThreadContext: {threadId} exception {ex.Message}");
             }
@@ -83,7 +83,7 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
 
         bool IMemoryReader.Read<T>(ulong address, out T value)
         {
-            Span<byte> buffer = stackalloc byte[Marshal.SizeOf<T>()];
+            Span<byte> buffer = stackalloc byte[Unsafe.SizeOf<T>()];
             if (((IMemoryReader)this).Read(address, buffer) == buffer.Length)
             {
                 value = Unsafe.As<byte, T>(ref MemoryMarshal.GetReference(buffer));
@@ -114,11 +114,14 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
 
         private sealed class DataReaderModule : ModuleInfo
         {
+            private readonly IDataReader _reader;
             private readonly IModule _module;
+            private IResourceNode _resourceRoot;
 
-            public DataReaderModule(IModule module)
+            public DataReaderModule(IDataReader reader, IModule module)
                 : base(module.ImageBase, module.FileName)
             {
+                _reader = reader;
                 _module = module;
             }
 
@@ -202,7 +205,7 @@ namespace Microsoft.Diagnostics.DebugServices.Implementation
                 return 0;
             }
 
-            public override IResourceNode ResourceRoot => base.ResourceRoot;
+            public override IResourceNode ResourceRoot => _resourceRoot ??= ModuleInfo.TryCreateResourceRoot(_reader, _module.ImageBase, _module.ImageSize, _module.IsFileLayout.GetValueOrDefault(false));
         }
     }
 }
