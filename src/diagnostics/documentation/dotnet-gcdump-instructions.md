@@ -1,3 +1,5 @@
+This documentation is now being maintained at [dotnet-gcdump](https://learn.microsoft.com/dotnet/core/diagnostics/dotnet-gcdump). This doc is no longer being updated.
+
 # Heap Analysis Tool (dotnet-gcdump)
 
 NOTE: This documentation page may contain information on some features that are still work-in-progress. For most up-to-date documentation on released version of `dotnet-gcdump`, please refer to [its official documentation](https://docs.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-gcdump) page.
@@ -48,7 +50,7 @@ Writing gcdump to 'C:\git\diagnostics\src\Tools\dotnet-gcdump\20191023_042913_24
 
 ## Viewing the gcdump captured from dotnet-gcdump
 
-On Windows, `.gcdump` files can be viewed in [PerfView](https://github.com/microsoft/perfview) for analysis or in Visual Studio. There is not currently a way of opening a `.gcdump` on non-Windows platforms.
+On Windows, `.gcdump` files can be viewed in [PerfView](https://github.com/microsoft/perfview) for analysis or in Visual Studio. On non-Windows platforms, [dotnet-heapview](https://github.com/1hub/dotnet-heapview) can be used as a simple viewer.
 
 You can collect multiple `.gcdump`s and open them simultaneously in Visual Studio to get a comparison experience.
 

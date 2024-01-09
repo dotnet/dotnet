@@ -29,9 +29,8 @@ namespace Microsoft.Diagnostics.DebugServices
         /// </summary>
         /// <param name="parent">search this provider if service isn't found in this instance or null</param>
         /// <param name="factories">service factories to initialize provider or null</param>
-        public ServiceContainer(IServiceProvider parent, Dictionary<Type, ServiceFactory> factories)
+        public ServiceContainer(IServiceProvider parent, Dictionary<Type, ServiceFactory> factories = null)
         {
-            Debug.Assert(factories != null);
             _parent = parent;
             _factories = factories;
             _instances = new Dictionary<Type, object>();
@@ -73,34 +72,22 @@ namespace Microsoft.Diagnostics.DebugServices
         }
 
         /// <summary>
-        /// Get the cached/instantiated service instance if one exists. Don't call the factory or parent to create.
-        /// </summary>
-        /// <param name="type">service type</param>
-        /// <param name="service">service instance (can be null)</param>
-        /// <returns>if true, found service</returns>
-        public bool TryGetCachedService(Type type, out object service)
-        {
-            Debug.Assert(type != null);
-            if (type == typeof(IServiceProvider))
-            {
-                service = this;
-                return true;
-            }
-            return _instances.TryGetValue(type, out service);
-        }
-
-        /// <summary>
         /// Returns the instance of the service or returns null if service doesn't exist
         /// </summary>
         /// <param name="type">service type</param>
         /// <returns>service instance or null</returns>
         public object GetService(Type type)
         {
-            if (TryGetCachedService(type, out object service))
+            Debug.Assert(type != null);
+            if (type == typeof(IServiceProvider))
+            {
+                return this;
+            }
+            if (_instances.TryGetValue(type, out object service))
             {
                 return service;
             }
-            if (_factories.TryGetValue(type, out ServiceFactory factory))
+            if (_factories != null && _factories.TryGetValue(type, out ServiceFactory factory))
             {
                 service = factory(this);
                 _instances.Add(type, service);

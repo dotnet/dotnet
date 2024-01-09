@@ -36,5 +36,20 @@ namespace Microsoft.Diagnostics.NETCore.Client
         {
             return shim.StartEventPipeSession(provider, DefaultPositiveVerificationTimeout);
         }
+
+        public static Task<EventPipeSession> StartEventPipeSession(this DiagnosticsClientApiShim shim, EventPipeSessionConfiguration config)
+        {
+            return shim.StartEventPipeSession(config, DefaultPositiveVerificationTimeout);
+        }
+
+        public static Task EnablePerfMap(this DiagnosticsClientApiShim shim, PerfMapType type)
+        {
+            return shim.EnablePerfMap(type, DefaultPositiveVerificationTimeout);
+        }
+
+        public static Task DisablePerfMap(this DiagnosticsClientApiShim shim)
+        {
+            return shim.DisablePerfMap(DefaultPositiveVerificationTimeout);
+        }
     }
 }
