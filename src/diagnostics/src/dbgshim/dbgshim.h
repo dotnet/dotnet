@@ -105,3 +105,13 @@ CreateDebuggingInterfaceFromVersion3(
     _In_ LPCWSTR szApplicationGroupId,
     _In_ ICLRDebuggingLibraryProvider3* pLibraryProvider,
     _Out_ IUnknown ** ppCordb);
+
+EXTERN_C HRESULT
+RegisterForRuntimeStartupRemotePort(
+    _In_ LPCWSTR szIp,
+    _In_ DWORD dwPort,
+    _In_ LPCWSTR szPlatform,
+    _In_ BOOL bIsServer,
+    _In_ LPCWSTR szMscordbiPath,
+    _In_ LPCWSTR szAssemblyBasePath,
+    _Out_ IUnknown ** ppCordb);

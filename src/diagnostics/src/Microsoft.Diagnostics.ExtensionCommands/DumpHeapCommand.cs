@@ -9,14 +9,11 @@ using Microsoft.Diagnostics.Runtime;
 
 namespace Microsoft.Diagnostics.ExtensionCommands
 {
-    [Command(Name = "dumpheap", Help = "Displays a list of all managed objects.")]
-    public class DumpHeapCommand : CommandBase
+    [Command(Name = "dumpheap", Aliases = new[] { "DumpHeap" }, Help = "Displays a list of all managed objects.")]
+    public class DumpHeapCommand : ClrRuntimeCommandBase
     {
         [ServiceImport]
         public IMemoryService MemoryService { get; set; }
-
-        [ServiceImport]
-        public ClrRuntime Runtime { get; set; }
 
         [ServiceImport]
         public LiveObjectService LiveObjects { get; set; }
@@ -62,6 +59,12 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         [Option(Name = "-thinlock")]
         public bool ThinLock { get; set; }
 
+        [Option(Name = "-gen")]
+        public string Generation { get; set; }
+
+        [Option(Name = "-ignoreGCState", Help = "Ignore the GC's marker that the heap is not walkable (will generate lots of false positive errors).")]
+        public bool IgnoreGCState { get; set; }
+
         [Argument(Help = "Optional memory ranges in the form of: [Start [End]]")]
         public string[] MemoryRange { get; set; }
 
@@ -72,6 +75,14 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             ParseArguments();
 
             IEnumerable<ClrObject> objectsToPrint = FilteredHeap.EnumerateFilteredObjects(Console.CancellationToken);
+
+            bool? liveObjectWarning = null;
+            if ((Live || Dead) && Short)
+            {
+                liveObjectWarning = LiveObjects.PrintWarning;
+                LiveObjects.PrintWarning = false;
+            }
+
             if (Live)
             {
                 objectsToPrint = objectsToPrint.Where(LiveObjects.IsLive);
@@ -148,10 +159,20 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             }
 
             DumpHeap.PrintHeap(objectsToPrint, displayKind, StatOnly, printFragmentation);
+
+            if (liveObjectWarning is bool original)
+            {
+                LiveObjects.PrintWarning = original;
+            }
         }
 
         private void ParseArguments()
         {
+            if (!Runtime.Heap.CanWalkHeap && !IgnoreGCState)
+            {
+                throw new DiagnosticsException("The GC heap is not in a valid state for traversal.  (Use -ignoreGCState to override.)");
+            }
+
             if (Live && Dead)
             {
                 Live = false;
@@ -176,9 +197,13 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                 FilteredHeap.GCHeap = GCHeap;
             }
 
-            if (!string.IsNullOrWhiteSpace(Segment))
+            if (TryParseAddress(Segment, out ulong segment))
             {
-                FilteredHeap.FilterBySegmentHex(Segment);
+                FilteredHeap.FilterBySegmentHex(segment);
+            }
+            else if (!string.IsNullOrWhiteSpace(Segment))
+            {
+                throw new DiagnosticsException($"Failed to parse segment '{Segment}'.");
             }
 
             if (MemoryRange is not null && MemoryRange.Length > 0)
@@ -212,6 +237,22 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             if (Strings)
             {
                 MethodTable = Runtime.Heap.StringType.MethodTable;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Generation))
+            {
+                Generation generation = Generation.ToLowerInvariant() switch
+                {
+                    "gen0" => Diagnostics.Runtime.Generation.Generation0,
+                    "gen1" => Diagnostics.Runtime.Generation.Generation1,
+                    "gen2" => Diagnostics.Runtime.Generation.Generation2,
+                    "loh" or "large" => Diagnostics.Runtime.Generation.Large,
+                    "poh" or "pinned" => Diagnostics.Runtime.Generation.Pinned,
+                    "foh" or "frozen" => Diagnostics.Runtime.Generation.Frozen,
+                    _ => throw new ArgumentException($"Unknown generation: {Generation}. Only gen0, gen1, gen2, loh (large), poh (pinned) and foh (frozen) are supported")
+                };
+
+                FilteredHeap.Generation = generation;
             }
 
             FilteredHeap.SortSegments = (seg) => seg.OrderBy(seg => seg.Start);

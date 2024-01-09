@@ -63,6 +63,17 @@ namespace Microsoft.Diagnostics.NETCore.Client
             }
         }
 
+        public async Task<EventPipeSession> StartEventPipeSession(EventPipeSessionConfiguration config, TimeSpan timeout)
+        {
+            if (_useAsync)
+            {
+                CancellationTokenSource cancellation = new(timeout);
+                return await _client.StartEventPipeSessionAsync(config, cancellation.Token).ConfigureAwait(false);
+            }
+
+            throw new NotSupportedException($"{nameof(StartEventPipeSession)} with config parameter is only supported on async path");
+        }
+
         public async Task<EventPipeSession> StartEventPipeSession(IEnumerable<EventPipeProvider> providers, TimeSpan timeout)
         {
             if (_useAsync)
@@ -86,6 +97,32 @@ namespace Microsoft.Diagnostics.NETCore.Client
             else
             {
                 return _client.StartEventPipeSession(provider);
+            }
+        }
+
+        public async Task EnablePerfMap(PerfMapType type, TimeSpan timeout)
+        {
+            if (_useAsync)
+            {
+                using CancellationTokenSource cancellation = new(timeout);
+                await _client.EnablePerfMapAsync(type, cancellation.Token).ConfigureAwait(false);
+            }
+            else
+            {
+                _client.EnablePerfMap(type);
+            }
+        }
+
+        public async Task DisablePerfMap(TimeSpan timeout)
+        {
+            if (_useAsync)
+            {
+                using CancellationTokenSource cancellation = new(timeout);
+                await _client.DisablePerfMapAsync(cancellation.Token).ConfigureAwait(false);
+            }
+            else
+            {
+                _client.DisablePerfMap();
             }
         }
     }

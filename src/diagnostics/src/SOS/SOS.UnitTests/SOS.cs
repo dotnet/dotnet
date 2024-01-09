@@ -225,7 +225,6 @@ public class SOS
         {
             throw new SkipTestException("This test validates POH behavior, which was introduced in .net 5");
         }
-
         await SOSTestHelpers.RunTest(
             config,
             debuggeeName: "GCPOH",
@@ -311,6 +310,17 @@ public class SOS
             testName: "SOS.StackTests");
     }
 
+    [SkippableTheory, MemberData(nameof(SOSTestHelpers.GetConfigurations), "TestName", "SOS.TestExtensions", MemberType = typeof(SOSTestHelpers))]
+    public async Task TestExtensions(TestConfiguration config)
+    {
+        await SOSTestHelpers.RunTest(
+            config,
+            debuggeeName: "LineNums",
+            scriptName: "TestExtensions.script",
+            Output,
+            testName: "SOS.TestExtensions");
+    }
+
     [SkippableTheory, MemberData(nameof(Configurations))]
     public async Task OtherCommands(TestConfiguration config)
     {
@@ -340,8 +350,7 @@ public class SOS
 
             // This debuggee needs the directory of the exes/dlls to load the SymbolTestDll assembly.
             await SOSTestHelpers.RunTest(
-                scriptName: "StackAndOtherTests.script",
-                new SOSRunner.TestInformation
+                scriptName: "StackAndOtherTests.script", new SOSRunner.TestInformation
                 {
                     TestConfiguration = currentConfig,
                     TestName = "SOS.StackAndOtherTests",
@@ -484,9 +493,13 @@ public class SOS
             }
             else
             {
-                // We should verify what python version this is. 2.7 is out of
-                // support for a while now, but we have old OS's.
-                program = "/usr/bin/python";
+                program = Environment.GetEnvironmentVariable("PYTHONPATH");
+                if (program == null)
+                {
+                    // We should verify what python version this is. 2.7 is out of
+                    // support for a while now, but we have old OS's.
+                    program = "/usr/bin/python";
+                }
                 if (!File.Exists(program))
                 {
                     throw new ArgumentException($"{program} does not exists");

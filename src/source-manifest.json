@@ -37,10 +37,10 @@
       "commitSha": "b4f8847a36543b3274dc252534d0175de35bd16c"
     },
     {
-      "packageVersion": "7.0.0-preview.23211.1",
+      "packageVersion": "8.0.0-preview.24054.1",
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "5ce78f66d89ea529e459abddb129ab36cb5bd936"
+      "commitSha": "dec7d6e7a27cc6a46bad117800b7002a6f4c2f20"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24053.1",

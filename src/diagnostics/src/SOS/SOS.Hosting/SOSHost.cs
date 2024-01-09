@@ -21,6 +21,17 @@ namespace SOS.Hosting
     [ServiceExport(Scope = ServiceScope.Target)]
     public sealed class SOSHost : IDisposable
     {
+       /// <summary>
+       /// Provides the native debugger's debug client instance
+       /// </summary>
+       public interface INativeDebugger
+       {
+            /// <summary>
+            /// Get the native SOS client for commands (IDebugClient under dbgeng, ILLDBServices under lldb)
+            /// </summary>
+            public IntPtr GetNativeClient();
+       }
+
         // This is what dbgeng/IDebuggerServices returns for non-PE modules that don't have a timestamp
         internal const uint InvalidTimeStamp = 0xFFFFFFFE;
         internal const uint InvalidChecksum = 0xFFFFFFFF;
@@ -45,57 +56,43 @@ namespace SOS.Hosting
         private readonly SOSLibrary _sosLibrary;
 #pragma warning restore
 
-        private readonly IntPtr _interface;
+        private readonly IntPtr _client;
         private readonly ulong _ignoreAddressBitsMask;
-        private bool _disposed;
 
         /// <summary>
         /// Create an instance of the hosting class. Has the lifetime of the target.
         /// </summary>
-        public SOSHost(ITarget target, IMemoryService memoryService)
+        public SOSHost(ITarget target, IMemoryService memoryService, [ServiceImport(Optional = true)] INativeDebugger nativeDebugger)
         {
-            Target = target ?? throw new DiagnosticsException("No target");
+            Target = target;
             MemoryService = memoryService;
             _ignoreAddressBitsMask = memoryService.SignExtensionMask();
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            // If running under a native debugger, use the client instance supplied by the debugger for commands
+            if (nativeDebugger != null)
             {
-                DebugClient debugClient = new(this);
-                _interface = debugClient.IDebugClient;
+                _client = nativeDebugger.GetNativeClient();
             }
             else
             {
-                LLDBServices lldbServices = new(this);
-                _interface = lldbServices.ILLDBServices;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    DebugClient debugClient = new(this);
+                    _client = debugClient.IDebugClient;
+                }
+                else
+                {
+                    LLDBServices lldbServices = new(this);
+                    _client = lldbServices.ILLDBServices;
+                }
             }
+            Debug.Assert(_client != IntPtr.Zero);
         }
 
         void IDisposable.Dispose()
         {
-            Trace.TraceInformation($"SOSHost.Dispose {_disposed}");
-            if (!_disposed)
-            {
-                _disposed = true;
-                ComWrapper.ReleaseWithCheck(_interface);
-            }
-        }
-
-        /// <summary>
-        /// Execute a SOS command.
-        /// </summary>
-        /// <param name="commandLine">command name and arguments</param>
-        public void ExecuteCommand(string commandLine)
-        {
-            string command = "Help";
-            string arguments = null;
-
-            if (commandLine != null)
-            {
-                int firstSpace = commandLine.IndexOf(' ');
-                command = firstSpace == -1 ? commandLine : commandLine.Substring(0, firstSpace);
-                arguments = firstSpace == -1 ? null : commandLine.Substring(firstSpace);
-            }
-            ExecuteCommand(command, arguments);
+            Trace.TraceInformation($"SOSHost.Dispose");
+            ComWrapper.ReleaseWithCheck(_client);
         }
 
         /// <summary>
@@ -103,14 +100,14 @@ namespace SOS.Hosting
         /// </summary>
         /// <param name="command">just the command name</param>
         /// <param name="arguments">the command arguments and options</param>
-        public void ExecuteCommand(string command, string arguments)
-        {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException("SOSHost instance disposed");
-            }
-            _sosLibrary.ExecuteCommand(_interface, command, arguments);
-        }
+        public void ExecuteCommand(string command, string arguments) => _sosLibrary.ExecuteCommand(_client, command, arguments);
+
+        /// <summary>
+        /// Get the detailed help text for a native SOS command.
+        /// </summary>
+        /// <param name="command">command name</param>
+        /// <returns>help text or null if not found or error</returns>
+        public string GetHelpText(string command) => _sosLibrary.GetHelpText(command);
 
         #region Reverse PInvoke Implementations
 
@@ -181,6 +178,9 @@ namespace SOS.Hosting
                     break;
                 case Architecture.Arm64:
                     *type = IMAGE_FILE_MACHINE.ARM64;
+                    break;
+                case (Architecture)9 /* Architecture.RiscV64 */:
+                    *type = IMAGE_FILE_MACHINE.RISCV64;
                     break;
                 default:
                     *type = IMAGE_FILE_MACHINE.UNKNOWN;
@@ -575,7 +575,7 @@ namespace SOS.Hosting
         internal int GetThreadContext(
             IntPtr self,
             IntPtr context,
-            uint contextSize)
+            int contextSize)
         {
             IThread thread = ContextService.GetCurrentThread();
             if (thread is not null)
@@ -589,7 +589,7 @@ namespace SOS.Hosting
             IntPtr self,
             uint threadId,
             uint contextFlags,
-            uint contextSize,
+            int contextSize,
             IntPtr context)
         {
             byte[] registerContext;
@@ -603,7 +603,7 @@ namespace SOS.Hosting
             }
             try
             {
-                Marshal.Copy(registerContext, 0, context, (int)contextSize);
+                Marshal.Copy(registerContext, 0, context, Math.Min(registerContext.Length, contextSize));
             }
             catch (Exception ex) when (ex is ArgumentOutOfRangeException or ArgumentNullException)
             {
@@ -615,7 +615,7 @@ namespace SOS.Hosting
         internal static int SetThreadContext(
             IntPtr self,
             IntPtr context,
-            uint contextSize)
+            int contextSize)
         {
             return DebugClient.NotImplemented;
         }

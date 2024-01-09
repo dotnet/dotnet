@@ -7,8 +7,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Microsoft.Diagnostics.DebugServices;
+using Microsoft.Diagnostics.ExtensionCommands.Output;
 using Microsoft.Diagnostics.Runtime;
 using static Microsoft.Diagnostics.ExtensionCommands.NativeAddressHelper;
+using static Microsoft.Diagnostics.ExtensionCommands.Output.ColumnKind;
 
 namespace Microsoft.Diagnostics.ExtensionCommands
 {
@@ -22,10 +24,10 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         public bool ShowAll { get; set; }
 
         [ServiceImport]
-        public ClrRuntime Runtime { get; set; }
+        public NativeAddressHelper AddressHelper { get; set; }
 
         [ServiceImport]
-        public NativeAddressHelper AddressHelper { get; set; }
+        public ClrRuntime Runtime { get; set; }
 
         private int Width
         {
@@ -55,6 +57,9 @@ namespace Microsoft.Diagnostics.ExtensionCommands
 
             PrintGCPointersToMemory(ShowAll, MemoryTypes);
         }
+
+        [FilterInvoke(Message = "The memory region service does not exists. This command is only supported under windbg/cdb debuggers.")]
+        public static bool FilterInvoke([ServiceImport(Optional = true)] ClrRuntime runtime, [ServiceImport(Optional = true)] NativeAddressHelper helper) => runtime != null && helper != null;
 
         public void PrintGCPointersToMemory(bool showAll, params string[] memoryTypes)
         {
@@ -99,6 +104,8 @@ namespace Microsoft.Diagnostics.ExtensionCommands
 
             foreach ((ClrSegment Segment, ulong Address, ulong Pointer, DescribedRegion MemoryRange) item in items)
             {
+                Console.CancellationToken.ThrowIfCancellationRequested();
+
                 if (!segmentLists.TryGetValue(item.Segment, out List<GCObjectToRange> list))
                 {
                     list = segmentLists[item.Segment] = new();
@@ -110,6 +117,8 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             Console.WriteLine("Resolving object names...");
             foreach (string type in memoryTypes)
             {
+                Console.CancellationToken.ThrowIfCancellationRequested();
+
                 WriteHeader($" {type} Regions ");
 
                 List<ulong> addressesNotInObjects = new();
@@ -119,6 +128,8 @@ namespace Microsoft.Diagnostics.ExtensionCommands
 
                 foreach (KeyValuePair<ClrSegment, List<GCObjectToRange>> segEntry in segmentLists)
                 {
+                    Console.CancellationToken.ThrowIfCancellationRequested();
+
                     ClrSegment seg = segEntry.Key;
                     List<GCObjectToRange> pointers = segEntry.Value;
                     pointers.Sort((x, y) => x.GCPointer.CompareTo(y.GCPointer));
@@ -133,6 +144,8 @@ namespace Microsoft.Diagnostics.ExtensionCommands
 
                         while (index < pointers.Count && pointers[index].GCPointer < obj.Address)
                         {
+                            Console.CancellationToken.ThrowIfCancellationRequested();
+
                             // If we "missed" the pointer then it's outside of an object range.
                             addressesNotInObjects.Add(pointers[index].GCPointer);
 
@@ -148,6 +161,8 @@ namespace Microsoft.Diagnostics.ExtensionCommands
 
                         while (index < pointers.Count && obj.Address <= pointers[index].GCPointer && pointers[index].GCPointer < obj.Address + obj.Size)
                         {
+                            Console.CancellationToken.ThrowIfCancellationRequested();
+
                             string typeName = obj.Type?.Name ?? $"<unknown_type>";
 
                             if (obj.IsFree)
@@ -195,20 +210,20 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                     {
                         Console.WriteLine($"All memory pointers:");
 
-                        IEnumerable<(ulong Pointer, ulong Size, ulong Object, string Type)> allPointers = unknownObjPointers.Select(unknown => (unknown.Pointer, 0ul, unknown.Object.Address, unknown.Object.Type?.Name ?? "<unknown_type>"));
-                        allPointers = allPointers.Concat(knownMemory.Values.Select(k => (k.Pointer, GetSize(sizeHints, k), k.Object.Address, k.Name)));
+                        IEnumerable<(ulong Pointer, ulong Size, ClrObject Object, ClrType Type)> allPointers = unknownObjPointers.Select(unknown => (unknown.Pointer, 0ul, unknown.Object, unknown.Object.Type));
+                        allPointers = allPointers.Concat(knownMemory.Values.Select(k => (k.Pointer, GetSize(sizeHints, k), k.Object, k.Object.Type)));
 
-                        TableOutput allOut = new(Console, (16, "x"), (16, "x"), (16, "x"))
-                        {
-                            Divider = " | "
-                        };
+                        using BorderedTable allOut = new(Console, Pointer, ByteCount, DumpObj, TypeName);
 
-                        allOut.WriteRowWithSpacing('-', "Pointer", "Size", "Object", "Type");
-                        foreach ((ulong Pointer, ulong Size, ulong Object, string Type) entry in allPointers)
+                        allOut.WriteHeader("Pointer", "Size", "Object", "Type");
+
+                        foreach ((ulong Pointer, ulong Size, ClrObject Object, ClrType Type) entry in allPointers)
                         {
+                            Console.CancellationToken.ThrowIfCancellationRequested();
+
                             if (entry.Size == 0)
                             {
-                                allOut.WriteRow(entry.Pointer, "", entry.Object, entry.Type);
+                                allOut.WriteRow(entry.Pointer, null, entry.Object, entry.Type);
                             }
                             else
                             {
@@ -225,38 +240,35 @@ namespace Microsoft.Diagnostics.ExtensionCommands
 
                         // totals
                         var knownMemorySummary = from known in knownMemory.Values
-                                                 group known by known.Name into g
-                                                 let Name = g.Key
+                                                 group known by known.Object.Type into g
+                                                 let Type = g.Key
                                                  let Count = g.Count()
                                                  let TotalSize = g.Sum(k => (long)GetSize(sizeHints, k))
-                                                 orderby TotalSize descending, Name ascending
+                                                 orderby TotalSize descending, Type.Name ascending
                                                  select new {
-                                                     Name,
+                                                     Type,
                                                      Count,
                                                      TotalSize,
                                                      Pointer = g.Select(p => p.Pointer).FindMostCommonPointer()
                                                  };
 
-                        int maxNameLen = Math.Min(80, knownMemory.Values.Max(r => r.Name.Length));
-
-                        TableOutput summary = new(Console, (-maxNameLen, ""), (8, "n0"), (12, "n0"), (12, "n0"), (12, "x"))
+                        Column typeNameColumn = TypeName.GetAppropriateWidth(knownMemory.Values.Select(r => r.Object.Type), 16);
+                        using (BorderedTable summary = new(Console, typeNameColumn, Integer, HumanReadableSize, ByteCount, Pointer))
                         {
-                            Divider = " | "
-                        };
+                            summary.WriteHeader("Type", "Count", "Size", "Size (bytes)", "RndPointer");
 
-                        summary.WriteRowWithSpacing('-', "Type", "Count", "Size", "Size (bytes)", "RndPointer");
+                            foreach (var item in knownMemorySummary)
+                            {
+                                Console.CancellationToken.ThrowIfCancellationRequested();
 
-                        foreach (var item in knownMemorySummary)
-                        {
-                            summary.WriteRow(item.Name, item.Count, item.TotalSize.ConvertToHumanReadable(), item.TotalSize, item.Pointer);
+                                summary.WriteRow(item.Type, item.Count, item.TotalSize, item.TotalSize, item.Pointer);
+                            }
+
+                            (int totalRegions, ulong totalBytes) = GetSizes(knownMemory, sizeHints);
+                            summary.WriteFooter("[TOTAL]", totalRegions, totalBytes, totalBytes);
                         }
 
-                        (int totalRegions, ulong totalBytes) = GetSizes(knownMemory, sizeHints);
-
-                        summary.WriteSpacer('-');
-                        summary.WriteRow("[TOTAL]", totalRegions, totalBytes.ConvertToHumanReadable(), totalBytes);
-
-                        Console.WriteLine("");
+                        Console.WriteLine();
                     }
 
 
@@ -277,17 +289,15 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                                               };
 
                         var unknownMem = unknownMemQuery.ToArray();
-                        int maxNameLen = Math.Min(80, unknownMem.Max(r => r.Name.Length));
 
-                        TableOutput summary = new(Console, (-maxNameLen, ""), (8, "n0"), (12, "x"))
-                        {
-                            Divider = " | "
-                        };
-
-                        summary.WriteRowWithSpacing('-', "Type", "Count", "RndPointer");
+                        Column typeNameColumn = TypeName.GetAppropriateWidth(unknownMem.Select(r => r.Name));
+                        using BorderedTable summary = new(Console, typeNameColumn, Integer, Pointer);
+                        summary.WriteHeader("Type", "Count", "RndPointer");
 
                         foreach (var item in unknownMem)
                         {
+                            Console.CancellationToken.ThrowIfCancellationRequested();
+
                             summary.WriteRow(item.Name, item.Count, item.Pointer);
                         }
                     }
@@ -349,12 +359,14 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             Console.WriteLine(header.PadRight(Width, '='));
         }
 
-        private static string CollapseGenerics(string typeName)
+        private string CollapseGenerics(string typeName)
         {
             StringBuilder result = new(typeName.Length + 16);
             int nest = 0;
             for (int i = 0; i < typeName.Length; i++)
             {
+                Console.CancellationToken.ThrowIfCancellationRequested();
+
                 if (typeName[i] == '<')
                 {
                     if (nest++ == 0)
@@ -419,7 +431,6 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             private const string ExternalMemoryBlock = "System.Reflection.Internal.ExternalMemoryBlock";
             private const string RuntimeParameterInfo = "System.Reflection.RuntimeParameterInfo";
 
-            public string Name => Object.Type?.Name ?? "<unknown_type>";
             public ClrObject Object { get; }
             public ulong Pointer { get; }
             public ulong Size { get; }
@@ -548,24 +559,22 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         }
 
         [HelpInvoke]
-        public void HelpInvoke()
-        {
-            WriteLine(
+        public static string GetDetailedHelp() =>
 @"-------------------------------------------------------------------------------
-!gctonative searches the GC heap for pointers to native memory.  This is used
+gctonative searches the GC heap for pointers to native memory.  This is used
 to help locate regions of native memory that are referenced (or possibly held
 alive) by objects on the GC heap.
 
-usage: !gctonative [--all] MADDRESS_TYPE_LIST
+usage: gctonative [--all] MADDRESS_TYPE_LIST
 
-Note: The MADDRESS_TYPE_LIST must be a memory type as printed by !maddress.
+Note: The MADDRESS_TYPE_LIST must be a memory type as printed by maddress.
 
 If --all is set, a full list of every pointer from the GC heap to the
 specified memory will be displayed instead of just a summary table.
 
 Sample Output:
 
-    0:000> !gctonative PAGE_READWRITE
+    0:000> gctonative PAGE_READWRITE
     Walking GC heap to find pointers...
     Resolving object names...
     ================================================ PAGE_READWRITE Regions ================================================
@@ -610,7 +619,6 @@ Sample Output:
     System.Net.Sockets.SocketAsyncEngine                                             |        1 | 7f059800edd0
     Microsoft.Extensions.Caching.Memory.CacheEntry                                   |        1 | 7f05241e0000
     System.Runtime.CompilerServices.AsyncTaskMethodBuilder<...>+AsyncStateMachine... |        1 | 7f0500000004
-");
-        }
+";
     }
 }

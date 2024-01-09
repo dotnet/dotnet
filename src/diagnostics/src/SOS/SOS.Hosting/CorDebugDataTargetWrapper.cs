@@ -107,6 +107,9 @@ namespace SOS.Hosting
                     case Architecture.Arm64:
                         platform = CorDebugPlatform.CORDB_PLATFORM_POSIX_ARM64;
                         break;
+                    case (Architecture)9 /* Architecture.RiscV64 */:
+                        platform = CorDebugPlatform.CORDB_PLATFORM_POSIX_RISCV64;
+                        break;
                     default:
                         return HResult.E_FAIL;
                 }
@@ -143,7 +146,7 @@ namespace SOS.Hosting
             IntPtr self,
             uint threadId,
             uint contextFlags,
-            uint contextSize,
+            int contextSize,
             IntPtr context)
         {
             byte[] registerContext;
@@ -157,7 +160,7 @@ namespace SOS.Hosting
             }
             try
             {
-                Marshal.Copy(registerContext, 0, context, (int)contextSize);
+                Marshal.Copy(registerContext, 0, context, Math.Min(registerContext.Length, contextSize));
             }
             catch (Exception ex) when (ex is ArgumentOutOfRangeException or ArgumentNullException)
             {
@@ -246,7 +249,7 @@ namespace SOS.Hosting
             [In] IntPtr self,
             [In] uint threadId,
             [In] uint contextFlags,
-            [In] uint contextSize,
+            [In] int contextSize,
             [Out] IntPtr context);
 
         #endregion

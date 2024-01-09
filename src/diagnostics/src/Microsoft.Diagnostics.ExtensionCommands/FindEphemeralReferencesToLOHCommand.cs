@@ -5,19 +5,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.Diagnostics.DebugServices;
+using Microsoft.Diagnostics.ExtensionCommands.Output;
 using Microsoft.Diagnostics.Runtime;
-using static Microsoft.Diagnostics.ExtensionCommands.TableOutput;
+using static Microsoft.Diagnostics.ExtensionCommands.Output.ColumnKind;
 
 namespace Microsoft.Diagnostics.ExtensionCommands
 {
     [Command(Name = "ephtoloh", Help = "Finds ephemeral objects which reference the large object heap.")]
-    public class FindEphemeralReferencesToLOHCommand : CommandBase
+    public class FindEphemeralReferencesToLOHCommand : ClrRuntimeCommandBase
     {
         // IComparer for binary search
         private readonly IComparer<(ClrObject, ClrObject)> _firstObjectComparer = Comparer<(ClrObject, ClrObject)>.Create((x, y) => x.Item1.Address.CompareTo(y.Item1.Address));
-
-        [ServiceImport]
-        public ClrRuntime Runtime { get; set; }
 
         public override void Invoke()
         {
@@ -28,7 +26,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                 Console.WriteLineWarning($"Walking {segments:n0} {gcSegKind}, this may take a moment...");
             }
 
-            TableOutput output = new(Console, (16, "x12"), (64, ""), (16, "x12"));
+            Table output = new(Console, DumpObj, TypeName.WithWidth(64), DumpObj, TypeName);
 
             // Ephemeral -> Large
             List<(ClrObject From, ClrObject To)> ephToLoh = FindEphemeralToLOH().OrderBy(i => i.From.Address).ThenBy(i => i.To.Address).ToList();
@@ -40,11 +38,11 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             {
                 Console.WriteLine("Ephemeral objects pointing to the Large objects:");
                 Console.WriteLine();
-                output.WriteRow("Ephemeral", "Ephemeral Type", "Large Object", "Large Object Type");
+                output.WriteHeader("Ephemeral", "Ephemeral Type", "Large Object", "Large Object Type");
 
                 foreach ((ClrObject from, ClrObject to) in ephToLoh)
                 {
-                    output.WriteRow(new DmlDumpObj(from), from.Type?.Name, new DmlDumpObj(to), to.Type?.Name);
+                    output.WriteRow(from, from.Type, to, to.Type);
                 }
 
                 Console.WriteLine();
@@ -60,11 +58,11 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             {
                 Console.WriteLine("Large objects pointing to Ephemeral objects:");
                 Console.WriteLine();
-                output.WriteRow("Ephemeral", "Ephemeral Type", "Large Object", "Large Object Type");
+                output.WriteHeader("Ephemeral", "Ephemeral Type", "Large Object", "Large Object Type");
 
                 foreach ((ClrObject from, ClrObject to) in lohToEph)
                 {
-                    output.WriteRow(new DmlDumpObj(from), from.Type?.Name, new DmlDumpObj(to), to.Type?.Name);
+                    output.WriteRow(from, from.Type, to, to.Type);
                 }
 
                 Console.WriteLine();
@@ -90,8 +88,8 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                     {
                         Console.WriteLine($"Ephemeral objects which point to Large objects which point to Ephemeral objects:");
                         Console.WriteLine();
-                        output = new(Console, (16, "x12"), (64, ""), (16, "x12"), (64, ""), (16, "x12"));
-                        output.WriteRow(new DmlDumpObj(from), from.Type?.Name, new DmlDumpObj(to), to.Type?.Name, new DmlDumpObj(ephEnd), ephEnd.Type?.Name);
+                        output = new(Console, DumpObj, TypeName.WithWidth(64), DumpObj, TypeName.WithWidth(64), DumpObj, TypeName);
+                        output.WriteRow(from, from.Type, to, to.Type, ephEnd, ephEnd.Type);
                     }
                 }
 
@@ -102,14 +100,6 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                 else
                 {
                     Console.WriteLine();
-                }
-            }
-
-            foreach ((ClrObject From, ClrObject To) item in ephToLoh)
-            {
-                if (lohToEph.Any(r => item.To.Address == r.From.Address))
-                {
-                    Console.WriteLine("error!");
                 }
             }
         }

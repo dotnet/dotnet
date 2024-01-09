@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Microsoft.Diagnostics.Monitoring.EventPipe;
 
 namespace Microsoft.Diagnostics.Tools.Counters.Exporters
 {
@@ -12,7 +13,7 @@ namespace Microsoft.Diagnostics.Tools.Counters.Exporters
     /// ConsoleWriter is an implementation of ICounterRenderer for rendering the counter values in real-time
     /// to the console. This is the renderer for the `dotnet-counters monitor` command.
     /// </summary>
-    public class ConsoleWriter : ICounterRenderer
+    internal class ConsoleWriter : ICounterRenderer
     {
         /// <summary>Information about an observed provider.</summary>
         private class ObservedProvider
@@ -28,8 +29,13 @@ namespace Microsoft.Diagnostics.Tools.Counters.Exporters
             public readonly CounterProvider KnownProvider;
         }
 
+        private interface ICounterRow
+        {
+            int Row { get; set; }
+        }
+
         /// <summary>Information about an observed counter.</summary>
-        private class ObservedCounter
+        private class ObservedCounter : ICounterRow
         {
             public ObservedCounter(string displayName) => DisplayName = displayName;
             public string DisplayName { get; } // Display name for this counter.
@@ -41,7 +47,7 @@ namespace Microsoft.Diagnostics.Tools.Counters.Exporters
             public double LastValue { get; set; }
         }
 
-        private class ObservedTagSet
+        private class ObservedTagSet : ICounterRow
         {
             public ObservedTagSet(string tags)
             {
@@ -128,6 +134,19 @@ namespace Microsoft.Diagnostics.Tools.Counters.Exporters
         {
             Clear();
 
+            // clear row data on all counters
+            foreach (ObservedProvider provider in _providers.Values)
+            {
+                foreach (ObservedCounter counter in provider.Counters.Values)
+                {
+                    counter.Row = -1;
+                    foreach (ObservedTagSet tagSet in counter.TagSets.Values)
+                    {
+                        tagSet.Row = -1;
+                    }
+                }
+            }
+
             _consoleWidth = Console.WindowWidth;
             _consoleHeight = Console.WindowHeight;
             _maxNameLength = Math.Max(Math.Min(80, _consoleWidth) - (CounterValueLength + Indent + 1), 0); // Truncate the name to prevent line wrapping as long as the console width is >= CounterValueLength + Indent + 1 characters
@@ -144,38 +163,67 @@ namespace Microsoft.Diagnostics.Tools.Counters.Exporters
                 Console.WriteLine(_errorText);
                 row += GetLineWrappedLines(_errorText);
             }
-            Console.WriteLine(); row++; // Blank line.
 
-            foreach (ObservedProvider provider in _providers.Values.OrderBy(p => p.KnownProvider == null).ThenBy(p => p.Name)) // Known providers first.
+            bool RenderRow(ref int row, string lineOutput = null, ICounterRow counterRow = null)
             {
-                Console.WriteLine($"[{provider.Name}]"); row++;
-
-                foreach (ObservedCounter counter in provider.Counters.Values.OrderBy(c => c.DisplayName))
+                if (row >= _consoleHeight + _topRow) // prevents from displaying more counters than vertical space available
                 {
+                    return false;
+                }
 
-                    string name = MakeFixedWidth($"{new string(' ', Indent)}{counter.DisplayName}", Indent + _maxNameLength);
-                    counter.Row = row++;
-                    if (counter.RenderValueInline)
+                if (lineOutput != null)
+                {
+                    Console.Write(lineOutput);
+                }
+
+                if (row < _consoleHeight + _topRow - 1) // prevents screen from scrolling due to newline on last line of console
+                {
+                    Console.WriteLine();
+                }
+
+                if (counterRow != null)
+                {
+                    counterRow.Row = row;
+                }
+
+                row++;
+
+                return true;
+            }
+
+            if (RenderRow(ref row)) // Blank line.
+            {
+                foreach (ObservedProvider provider in _providers.Values.OrderBy(p => p.KnownProvider == null).ThenBy(p => p.Name)) // Known providers first.
+                {
+                    if (!RenderRow(ref row, $"[{provider.Name}]"))
                     {
-                        if (row >= _consoleHeight) // prevents from displaying more counters than vertical space available
-                        {
-                            break;
-                        }
-                        Console.WriteLine($"{name} {FormatValue(counter.LastValue)}");
+                        break;
                     }
-                    else
+
+                    foreach (ObservedCounter counter in provider.Counters.Values.OrderBy(c => c.DisplayName))
                     {
-                        Console.WriteLine(name);
-                        foreach (ObservedTagSet tagSet in counter.TagSets.Values.OrderBy(t => t.Tags))
+                        string name = MakeFixedWidth($"{new string(' ', Indent)}{counter.DisplayName}", Indent + _maxNameLength);
+                        if (counter.RenderValueInline)
                         {
-                            if (row >= _consoleHeight)
+                            if (!RenderRow(ref row, $"{name} {FormatValue(counter.LastValue)}", counter))
                             {
                                 break;
                             }
-
-                            string tagName = MakeFixedWidth($"{new string(' ', 2 * Indent)}{tagSet.Tags}", Indent + _maxNameLength);
-                            Console.WriteLine($"{tagName} {FormatValue(tagSet.LastValue)}");
-                            tagSet.Row = row++;
+                        }
+                        else
+                        {
+                            if (!RenderRow(ref row, name, counter))
+                            {
+                                break;
+                            }
+                            foreach (ObservedTagSet tagSet in counter.TagSets.Values.OrderBy(t => t.Tags))
+                            {
+                                string tagName = MakeFixedWidth($"{new string(' ', 2 * Indent)}{tagSet.Tags}", Indent + _maxNameLength);
+                                if (!RenderRow(ref row, $"{tagName} {FormatValue(tagSet.LastValue)}", tagSet))
+                                {
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
@@ -210,9 +258,9 @@ namespace Microsoft.Diagnostics.Tools.Counters.Exporters
                     return;
                 }
 
-                string providerName = payload.ProviderName;
+                string providerName = payload.Provider;
                 string name = payload.Name;
-                string tags = payload.Tags;
+                string tags = payload.Metadata;
 
                 bool redraw = false;
                 if (!_providers.TryGetValue(providerName, out ObservedProvider provider))
@@ -223,7 +271,7 @@ namespace Microsoft.Diagnostics.Tools.Counters.Exporters
 
                 if (!provider.Counters.TryGetValue(name, out ObservedCounter counter))
                 {
-                    string displayName = payload.DisplayName;
+                    string displayName = payload.GetDisplay();
                     provider.Counters[name] = counter = new ObservedCounter(displayName);
                     _maxNameLength = Math.Max(_maxNameLength, displayName.Length);
                     if (tags != null)
@@ -253,6 +301,10 @@ namespace Microsoft.Diagnostics.Tools.Counters.Exporters
                 }
 
                 int row = counter.RenderValueInline ? counter.Row : tagSet.Row;
+                if (row < 0)
+                {
+                    return;
+                }
                 SetCursorPosition(Indent + _maxNameLength + 1, row);
                 Console.Write(FormatValue(payload.Value));
             }
@@ -262,9 +314,9 @@ namespace Microsoft.Diagnostics.Tools.Counters.Exporters
         {
             lock (_lock)
             {
-                string providerName = payload.ProviderName;
+                string providerName = payload.Provider;
                 string counterName = payload.Name;
-                string tags = payload.Tags;
+                string tags = payload.Metadata;
 
                 if (!_providers.TryGetValue(providerName, out ObservedProvider provider))
                 {

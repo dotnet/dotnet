@@ -49,8 +49,6 @@ namespace SOS.Extensions
 
             public string Name { get; }
 
-            public List<IField> Fields => throw new NotImplementedException();
-
             public bool TryGetField(string fieldName, out IField field)
             {
                 HResult hr = _moduleService._debuggerServices.GetFieldOffset(Module.ModuleIndex, _typeId, Name, fieldName, out uint offset);
@@ -86,7 +84,7 @@ namespace SOS.Extensions
             {
                 _moduleService = moduleService;
                 ModuleIndex = moduleIndex;
-                FileName = imageName;
+                FileName = imageName ?? string.Empty;
                 ImageBase = imageBase;
                 ImageSize = imageSize;
                 IndexFileSize = indexTimeStamp == InvalidTimeStamp ? null : indexFileSize;

@@ -17,7 +17,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
         private readonly ClrHeap _heap;
 
         [ServiceExport(Scope = ServiceScope.Runtime)]
-        public static ClrMDHelper Create([ServiceImport(Optional = true)] ClrRuntime clrRuntime)
+        public static ClrMDHelper TryCreate([ServiceImport(Optional = true)] ClrRuntime clrRuntime)
         {
             return clrRuntime != null ? new ClrMDHelper(clrRuntime) : null;
         }
@@ -851,37 +851,51 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             switch (generation)
             {
                 case GCGeneration.Generation0:
-                    start = segment.Generation0.Start;
-                    end = segment.Generation0.End;
-                    return start != end;
+                    if (segment.Kind == GCSegmentKind.Generation0 || segment.Kind == GCSegmentKind.Ephemeral)
+                    {
+                        start = segment.Generation0.Start;
+                        end = segment.Generation0.End;
+                    }
+                    break;
                 case GCGeneration.Generation1:
-                    start = segment.Generation1.Start;
-                    end = segment.Generation1.End;
-                    return start != end;
+                    if (segment.Kind == GCSegmentKind.Generation1 || segment.Kind == GCSegmentKind.Ephemeral)
+                    {
+                        start = segment.Generation1.Start;
+                        end = segment.Generation1.End;
+                    }
+                    break;
                 case GCGeneration.Generation2:
-                    if (segment.Kind != GCSegmentKind.Large && segment.Kind != GCSegmentKind.Large && segment.Kind != GCSegmentKind.Frozen)
+                    if (segment.Kind == GCSegmentKind.Generation2 || segment.Kind == GCSegmentKind.Ephemeral)
                     {
                         start = segment.Generation2.Start;
                         end = segment.Generation2.End;
                     }
-                    return start != end;
+                    break;
                 case GCGeneration.LargeObjectHeap:
                     if (segment.Kind == GCSegmentKind.Large)
                     {
                         start = segment.Start;
                         end = segment.End;
                     }
-                    return start != end;
+                    break;
                 case GCGeneration.PinnedObjectHeap:
-                    if (segment.Kind == GCSegmentKind.Pinned || segment.Kind == GCSegmentKind.Frozen)
+                    if (segment.Kind == GCSegmentKind.Pinned)
                     {
                         start = segment.Start;
                         end = segment.End;
                     }
-                    return start != end;
+                    break;
+                case GCGeneration.FrozenObjectHeap:
+                    if (segment.Kind == GCSegmentKind.Frozen)
+                    {
+                        start = segment.Start;
+                        end = segment.End;
+                    }
+                    break;
                 default:
                     return false;
             }
+            return start != end;
         }
 
         public IEnumerable<string> EnumerateConcurrentQueue(ulong address)
@@ -981,7 +995,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                         ClrType slotType = _heap.GetObjectType(slotEntry.ToUInt64());
                         if (slotType.IsString)
                         {
-                            yield return $"\"{new ClrObject(slotEntry.ToUInt64(), slotType).AsString()}\"";
+                            yield return $"\"{_heap.GetObject(slotEntry.ToUInt64(), slotType).AsString()}\"";
                         }
                         else
                         {
@@ -1092,7 +1106,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             }
         }
 
-        private static string DumpPropertyValue(ClrObject obj, string propertyName)
+        private string DumpPropertyValue(ClrObject obj, string propertyName)
         {
             const string defaultContent = "?";
 
@@ -1101,7 +1115,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             {
                 if (fieldType.IsString)
                 {
-                    return $"\"{new ClrObject(field.Address, fieldType).AsString()}\"";
+                    return $"\"{_heap.GetObject(field.Address, fieldType).AsString()}\"";
                 }
                 else if (fieldType.IsArray)
                 {

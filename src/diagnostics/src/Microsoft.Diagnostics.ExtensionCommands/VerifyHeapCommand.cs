@@ -1,24 +1,20 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using Microsoft.Diagnostics.DebugServices;
+using Microsoft.Diagnostics.ExtensionCommands.Output;
 using Microsoft.Diagnostics.Runtime;
-using static Microsoft.Diagnostics.ExtensionCommands.TableOutput;
+using static Microsoft.Diagnostics.ExtensionCommands.Output.ColumnKind;
 
 namespace Microsoft.Diagnostics.ExtensionCommands
 {
-    [Command(Name = CommandName, Help = "Searches the managed heap for memory corruption..")]
-    public class VerifyHeapCommand : CommandBase
+    [Command(Name = CommandName, Aliases = new[] { "VerifyHeap" }, Help = "Searches the managed heap for memory corruption..")]
+    public class VerifyHeapCommand : ClrRuntimeCommandBase
     {
         private const string CommandName = "verifyheap";
 
         private int _totalObjects;
-
-        [ServiceImport]
-        public ClrRuntime Runtime { get; set; }
 
         [ServiceImport]
         public IMemoryService MemoryService { get; set; }
@@ -28,6 +24,9 @@ namespace Microsoft.Diagnostics.ExtensionCommands
 
         [Option(Name = "-segment")]
         public string Segment { get; set; }
+
+        [Option(Name = "-ignoreGCState", Help = "Ignore the GC's marker that the heap is not walkable (will generate lots of false positive errors).")]
+        public bool IgnoreGCState { get; set; }
 
         [Argument(Help ="Optional memory ranges in the form of: [Start [End]]")]
         public string[] MemoryRange { get; set; }
@@ -40,14 +39,23 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                 filteredHeap.GCHeap = GCHeap;
             }
 
-            if (!string.IsNullOrWhiteSpace(Segment))
+            if (TryParseAddress(Segment, out ulong segment))
             {
-                filteredHeap.FilterBySegmentHex(Segment);
+                filteredHeap.FilterBySegmentHex(segment);
+            }
+            else if (!string.IsNullOrWhiteSpace(Segment))
+            {
+                throw new DiagnosticsException($"Failed to parse segment '{Segment}'.");
             }
 
             if (MemoryRange is not null)
             {
                 filteredHeap.FilterByStringMemoryRange(MemoryRange, CommandName);
+            }
+
+            if (!Runtime.Heap.CanWalkHeap && !IgnoreGCState)
+            {
+                throw new DiagnosticsException("The GC heap is not in a valid state for traversal.  (Use -ignoreGCState to override.)");
             }
 
             VerifyHeap(filteredHeap.EnumerateFilteredObjects(Console.CancellationToken), verifySyncTable: filteredHeap.HasFilters);
@@ -69,7 +77,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             objects = EnumerateWithCount(objects);
 
             int errors = 0;
-            TableOutput output = null;
+            Table output = null;
             ClrHeap heap = Runtime.Heap;
 
             // Verify heap
@@ -128,7 +136,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             }
         }
 
-        private void WriteError(ref TableOutput output, ClrHeap heap, ObjectCorruption corruption)
+        private void WriteError(ref Table output, ClrHeap heap, ObjectCorruption corruption)
         {
             string message = GetObjectCorruptionMessage(MemoryService, heap, corruption);
             WriteRow(ref output, heap, corruption, message);
@@ -145,14 +153,14 @@ namespace Microsoft.Diagnostics.ExtensionCommands
                 ObjectCorruptionKind.ObjectNotPointerAligned => $"Object {obj.Address:x} is not pointer aligned",
 
                 // Object failures
-                ObjectCorruptionKind.ObjectTooLarge => $"Object {obj.Address:x} is too large, size={obj.Size:x}, segmentEnd: {ValueWithError(heap.GetSegmentByAddress(obj)?.End)}",
+                ObjectCorruptionKind.ObjectTooLarge => $"Object {obj.Address:x} is too large, size={obj.Size:x}, segmentEnd: {heap.GetSegmentByAddress(obj)?.End.ToString("x") ?? "???"}",
                 ObjectCorruptionKind.InvalidMethodTable => $"Object {obj.Address:x} has an invalid method table {ReadPointerWithError(memory, obj):x}",
                 ObjectCorruptionKind.InvalidThinlock => $"Object {obj.Address:x} has an invalid thin lock",
                 ObjectCorruptionKind.SyncBlockMismatch => GetSyncBlockFailureMessage(corruption),
                 ObjectCorruptionKind.SyncBlockZero => GetSyncBlockFailureMessage(corruption),
 
                 // Object reference failures
-                ObjectCorruptionKind.ObjectReferenceNotPointerAligned => $"Object {obj.Address:x} has an unaligned member at {corruption.Offset:x}: is not pointer aligned",
+                ObjectCorruptionKind.ObjectReferenceNotPointerAligned => $"Object {obj.Address:x} has an unaligned member at offset {corruption.Offset:x}: is not pointer aligned",
                 ObjectCorruptionKind.InvalidObjectReference => $"Object {obj.Address:x} has a bad member at offset {corruption.Offset:x}: {ReadPointerWithError(memory, obj + (uint)corruption.Offset)}",
                 ObjectCorruptionKind.FreeObjectReference => $"Object {obj.Address:x} contains free object at offset {corruption.Offset:x}: {ReadPointerWithError(memory, obj + (uint)corruption.Offset)}",
 
@@ -167,42 +175,37 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             return message;
         }
 
-        private void WriteRow(ref TableOutput output, ClrHeap heap, ObjectCorruption corruption, string message)
+        private void WriteRow(ref Table output, ClrHeap heap, ObjectCorruption corruption, string message)
         {
             if (output is null)
             {
                 if (heap.IsServer)
                 {
-                    output = new(Console, (-4, ""), (-12, "x12"), (-12, "x12"), (32, ""), (0, ""))
-                    {
-                        AlignLeft = true,
-                    };
+                    output = new(Console, IntegerWithoutCommas.WithWidth(4), Pointer, ListNearObj, Column.ForEnum<ObjectCorruptionKind>(), Text);
+                    output.SetAlignment(Align.Left);
 
-                    output.WriteRow("Heap", "Segment", "Object", "Failure", "");
+                    output.WriteHeader("Heap", "Segment", "Object", "Failure", "Reason");
                 }
                 else
                 {
-                    output = new(Console, (-12, "x12"), (-12, "x12"), (22, ""), (0, ""))
-                    {
-                        AlignLeft = true,
-                    };
+                    output = new(Console, Pointer, ListNearObj, Column.ForEnum<ObjectCorruptionKind>(), Text);
+                    output.SetAlignment(Align.Left);
 
-                    output.WriteRow("Segment", "Object", "Failure", "");
+                    output.WriteHeader("Segment", "Object", "Failure", "Reason");
                 }
             }
 
-
             ClrSegment segment = heap.GetSegmentByAddress(corruption.Object);
 
-            object[] columns = new object[output.ColumnCount];
+            object[] columns = new object[output.Columns.Length];
             int i = 0;
             if (heap.IsServer)
             {
-                columns[i++] = ValueWithError(segment?.SubHeap.Index, format: "", error: "");
+                columns[i++] = (object)segment?.SubHeap.Index ?? "???";
             }
 
-            columns[i++] = ValueWithError(segment?.Address, format: "x12", error: "");
-            columns[i++] = new DmlExec(corruption.Object.Address, $"!ListNearObj {corruption.Object.Address:x}");
+            columns[i++] = (object)segment ?? "???";
+            columns[i++] = corruption.Object;
             columns[i++] = corruption.Kind;
             columns[i++] = message;
 
@@ -242,26 +245,6 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             }
 
             return result;
-        }
-
-        private static string ValueWithError(int? value, string format = "x", string error = "???")
-        {
-            if (value.HasValue)
-            {
-                return value.Value.ToString(format);
-            }
-
-            return error;
-        }
-
-        private static string ValueWithError(ulong? value, string format = "x", string error = "???")
-        {
-            if (value.HasValue)
-            {
-                return value.Value.ToString(format);
-            }
-
-            return error;
         }
 
         private static string ReadPointerWithError(IMemoryService memory, ulong address)

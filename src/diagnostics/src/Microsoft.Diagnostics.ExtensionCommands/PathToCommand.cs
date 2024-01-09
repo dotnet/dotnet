@@ -7,12 +7,9 @@ using Microsoft.Diagnostics.Runtime;
 
 namespace Microsoft.Diagnostics.ExtensionCommands
 {
-    [Command(Name ="pathto", Help = "Displays the GC path from <root> to <target>.")]
-    public class PathToCommand : CommandBase
+    [Command(Name ="pathto", Aliases = new[] { "PathTo" }, Help = "Displays the GC path from <root> to <target>.")]
+    public class PathToCommand : ClrRuntimeCommandBase
     {
-        [ServiceImport]
-        public ClrRuntime Runtime { get; set; }
-
         [ServiceImport]
         public RootCacheService RootCache { get; set; }
 
@@ -58,7 +55,7 @@ namespace Microsoft.Diagnostics.ExtensionCommands
             GCRoot.ChainLink path = gcroot.FindPathFrom(sourceObj);
             if (path is not null)
             {
-                GCRootCommand.PrintPath(Console, RootCache, heap, path);
+                GCRootCommand.PrintPath(Console, RootCache, null, heap, path);
             }
             else
             {
