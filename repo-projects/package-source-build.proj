@@ -57,6 +57,7 @@
       Lines="@(VersionFileContent)"
       Overwrite="true" />
 
+    <MakeDir Directories="$(CollapsedOutputPath)" />
     <Exec Command="tar --numeric-owner --exclude='Microsoft.SourceBuild.Intermediate.*.nupkg' -czf $(SourceBuiltTarballName) $(SourceBuiltVersionFileName) *.nupkg *.props SourceBuildReferencePackages/"
           WorkingDirectory="$(SourceBuiltPackagesPath)" />
 
