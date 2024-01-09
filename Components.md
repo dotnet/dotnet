@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[_git/dotnet-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspire/?version=GC48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@e175853](https://github.com/dotnet/aspnetcore/tree/e1758535a7f9922a61a919ebbc26be06f70fa5a1)*
+*[dotnet/aspnetcore@252ad5d](https://github.com/dotnet/aspnetcore/tree/252ad5d3be61ea4aa4bfb2453e0d22f52f56ad09)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@dddb219](https://github.com/google/googletest/tree/dddb219c3eb96d7f9200f09b0a381f016e6b4562)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@cc74185](https://github.com/dotnet/fsharp/tree/cc741852156e5f048e4e046061fa36477f8b92fb)*
 - `src/installer`  
-*[dotnet/installer@db04b0d](https://github.com/dotnet/installer/tree/db04b0d4e2dd9817a08d92a8bdaa57aab4fb9bd7)*
+*[dotnet/installer@3db83f4](https://github.com/dotnet/installer/tree/3db83f4b081680b24c5f20d99b35d167016aa3e5)*
 - `src/msbuild`  
 *[dotnet/msbuild@7f5b7a9](https://github.com/dotnet/msbuild/tree/7f5b7a942e7efb44f59a2451b13795972539521d)*
 - `src/nuget-client`  
@@ -46,11 +46,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@8a92037](https://github.com/dotnet/roslyn-analyzers/tree/8a92037d28baf58560622cb4685ecefdc828c2c8)*
 - `src/runtime`  
-*[dotnet/runtime@21b4a85](https://github.com/dotnet/runtime/tree/21b4a8585362c1bc12d545b63e62a0d9dd4e8673)*
+*[dotnet/runtime@1063fc2](https://github.com/dotnet/runtime/tree/1063fc278534a8b3e8f087fd3fe9c26dc03a9697)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@bfde902](https://github.com/dotnet/scenario-tests/tree/bfde902a10d7b672f4fc7e844198ede405dbb9c6)*
 - `src/sdk`  
-*[dotnet/sdk@1f9e0be](https://github.com/dotnet/sdk/tree/1f9e0bed698217e57ac3be3a09659385097c8283)*
+*[dotnet/sdk@6176125](https://github.com/dotnet/sdk/tree/61761254a0b6f1709138d39ef715c72979211938)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@2054f99](https://github.com/dotnet/source-build-externals/tree/2054f99a5685034a4ea4755b3cc2984fb2a5e4a8)*
     - `src/source-build-externals/src/abstractions-xunit`  
