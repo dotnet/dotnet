@@ -25,10 +25,10 @@
       "commitSha": "02026e5c1b054958851d2711fefa1b37027cab23"
     },
     {
-      "packageVersion": "0.1.440701",
+      "packageVersion": "0.1.505902",
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "a045dd54a4c44723c215d992288160eb1401bb7f"
+      "commitSha": "27035e88527f555a3806ae7d63af7501b41ea5d5"
     },
     {
       "packageVersion": "9.0.0-preview.1.24057.2",
@@ -49,10 +49,10 @@
       "commitSha": "5cda86493ac07dce11dcb04323d2b57eecff00b7"
     },
     {
-      "packageVersion": "9.0.461803",
+      "packageVersion": "9.0.505901",
       "path": "format",
       "remoteUri": "https://github.com/dotnet/format",
-      "commitSha": "2c2d58cb25064036f853d76e7b6aff7bb7d38401"
+      "commitSha": "f58bc29a159f43a71e6ac21fd2734f5d10807a72"
     },
     {
       "packageVersion": "8.0.200-beta.24055.2",
@@ -64,13 +64,13 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "1c52abdc4cdfab4cb2d18758e183e07dac73ebdc"
+      "commitSha": "4d8df4828d45e697480278cc25a2d6fec5f08ba2"
     },
     {
-      "packageVersion": "17.10.0-preview-24054-02",
+      "packageVersion": "17.10.0-preview-24059-01",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "7f5b7a942e7efb44f59a2451b13795972539521d"
+      "commitSha": "8215fb194d24cba1971476188ad97e5498fd2dfb"
     },
     {
       "packageVersion": "6.9.0-rc.74",
@@ -91,16 +91,16 @@
       "commitSha": "237fb52c683601ed639f1fdeaf38ceef0c768fbc"
     },
     {
-      "packageVersion": "3.11.0-beta1.24052.1",
+      "packageVersion": "3.11.0-beta1.24059.1",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "8a92037d28baf58560622cb4685ecefdc828c2c8"
+      "commitSha": "8847dee338fe9af77ada479a9c03cd1c08f7c1a9"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24058.10",
+      "packageVersion": "9.0.0-alpha.1.24059.2",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "b4ec422386bd358602c7693ff4ab28c96a806ec0"
+      "commitSha": "2874d26cb343fc55be295a628b3ee474e19ff95e"
     },
     {
       "packageVersion": "9.0.0-preview.24057.2",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-alpha.1.24059.1",
+      "packageVersion": "9.0.100-alpha.1.24059.29",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "d6bbcd8dd36b30316ad887435565e1234dc90f09"
+      "commitSha": "83b808f63ad5e19f4655778cb23e493292f8d757"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24058.1",
@@ -121,16 +121,16 @@
       "commitSha": "2054f99a5685034a4ea4755b3cc2984fb2a5e4a8"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24055.1",
+      "packageVersion": "9.0.0-alpha.1.24059.3",
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "ef691e3c401949dab9986a50d8288a6e489f72bb"
+      "commitSha": "f2c3fed62861b918dfe300f01b497551813a56df"
     },
     {
-      "packageVersion": "9.0.0-beta.24056.2",
+      "packageVersion": "9.0.0-beta.24058.2",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "a5904960b8d365b59cb69639ea1024ab17d80c1f"
+      "commitSha": "25edc3950d2ee5303ba1bad6583c1514b005c5f5"
     },
     {
       "packageVersion": "2.1.0-beta.23621.1",
@@ -139,10 +139,10 @@
       "commitSha": "6b058bf0b8942460db4f0ef953e8a0e44db0474c"
     },
     {
-      "packageVersion": "9.0.100-alpha.24057.1",
+      "packageVersion": "9.0.100-alpha.24059.1",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "51c8563c2b36b767013fa576c345d3f6e3734437"
+      "commitSha": "cfcab1045341753b3bf5b00d5f664b7ed0f60805"
     },
     {
       "packageVersion": "1.1.0-rc.24059.1",

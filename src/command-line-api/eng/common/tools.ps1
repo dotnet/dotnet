@@ -596,7 +596,15 @@ function InitializeBuildTool() {
       ExitWithExitCode 1
     }
     $dotnetPath = Join-Path $dotnetRoot (GetExecutableFileName 'dotnet')
-    $buildTool = @{ Path = $dotnetPath; Command = 'msbuild'; Tool = 'dotnet'; Framework = 'net9.0' }
+
+    # Use override if it exists - commonly set by source-build
+    if ($null -eq $env:_OverrideArcadeInitializeBuildToolFramework) {
+      $initializeBuildToolFramework="net8.0"
+    } else {
+      $initializeBuildToolFramework=$env:_OverrideArcadeInitializeBuildToolFramework
+    }
+
+    $buildTool = @{ Path = $dotnetPath; Command = 'msbuild'; Tool = 'dotnet'; Framework = $initializeBuildToolFramework }
   } elseif ($msbuildEngine -eq "vs") {
     try {
       $msbuildPath = InitializeVisualStudioMSBuild -install:$restore
@@ -764,10 +772,12 @@ function MSBuild() {
       # new scripts need to work with old packages, so we need to look for the old names/versions
       (Join-Path $basePath (Join-Path $buildTool.Framework 'Microsoft.DotNet.ArcadeLogging.dll')),
       (Join-Path $basePath (Join-Path $buildTool.Framework 'Microsoft.DotNet.Arcade.Sdk.dll')),
+      (Join-Path $basePath (Join-Path netcoreapp2.1 'Microsoft.DotNet.ArcadeLogging.dll')),
+      (Join-Path $basePath (Join-Path netcoreapp2.1 'Microsoft.DotNet.Arcade.Sdk.dll'))
+      (Join-Path $basePath (Join-Path netcoreapp3.1 'Microsoft.DotNet.ArcadeLogging.dll')),
+      (Join-Path $basePath (Join-Path netcoreapp3.1 'Microsoft.DotNet.Arcade.Sdk.dll'))
       (Join-Path $basePath (Join-Path net7.0 'Microsoft.DotNet.ArcadeLogging.dll')),
-      (Join-Path $basePath (Join-Path net7.0 'Microsoft.DotNet.Arcade.Sdk.dll')),
-      (Join-Path $basePath (Join-Path net8.0 'Microsoft.DotNet.ArcadeLogging.dll')),
-      (Join-Path $basePath (Join-Path net8.0 'Microsoft.DotNet.Arcade.Sdk.dll'))
+      (Join-Path $basePath (Join-Path net7.0 'Microsoft.DotNet.Arcade.Sdk.dll'))
     )
     $selectedPath = $null
     foreach ($path in $possiblePaths) {

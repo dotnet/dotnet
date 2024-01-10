@@ -126,4 +126,4 @@ steps:
 - task: ComponentGovernanceComponentDetection@0
   displayName: Component Detection (Exclude upstream cache)
   inputs:
-    ignoreDirectories: '$(Build.SourcesDirectory)/artifacts/sb/src/artifacts/obj/source-built-upstream-cache'
+    ignoreDirectories: '$(Build.SourcesDirectory)/artifacts/source-build/self/src/artifacts/obj/source-built-upstream-cache'
