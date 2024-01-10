@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -26,6 +28,23 @@ internal static class PositionExtensions
         }
 
         return sourceText.TryGetAbsoluteIndex(position.Line, position.Character, logger, out absoluteIndex);
+    }
+
+    
+    public static bool TryGetSourceLocation(
+        this Position position,
+        SourceText sourceText,
+        ILogger? logger,
+        [NotNullWhen(true)] out SourceLocation? sourceLocation)
+    {
+        if (!position.TryGetAbsoluteIndex(sourceText, logger, out var absoluteIndex))
+        {
+            sourceLocation = null;
+            return false;
+        }
+
+        sourceLocation = new SourceLocation(absoluteIndex, position.Line, position.Character);
+        return true;
     }
 
     public static int GetRequiredAbsoluteIndex(this Position position, SourceText sourceText, ILogger? logger)
@@ -66,6 +85,6 @@ internal static class PositionExtensions
             throw new ArgumentNullException(nameof(sourceText));
         }
 
-        return sourceText.TryGetAbsoluteIndex(position.Line, position.Character, out _);
+        return sourceText.TryGetAbsoluteIndex(position.Line, position.Character, logger: null, out _);
     }
 }

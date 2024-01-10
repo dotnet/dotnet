@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Composition;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic.Models;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -24,53 +26,83 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
+[Export(typeof(IRazorSemanticTokensInfoService)), Shared]
+[method: ImportingConstructor]
+internal class RazorSemanticTokensInfoService(
+    IRazorDocumentMappingService documentMappingService,
+    LanguageServerFeatureOptions languageServerFeatureOptions,
+    IRazorLoggerFactory loggerFactory,
+    ITelemetryReporter? telemetryReporter)
+    : IRazorSemanticTokensInfoService
 {
     private const int TokenSize = 5;
 
-    private readonly IRazorDocumentMappingService _documentMappingService;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly RazorLSPOptionsMonitor _razorLSPOptionsMonitor;
-    private readonly IClientConnection _clientConnection;
-    private readonly ILogger _logger;
+    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
+    private readonly ILogger _logger = loggerFactory.CreateLogger<RazorSemanticTokensInfoService>();
+    private readonly ITelemetryReporter? _telemetryReporter = telemetryReporter;
 
-    public RazorSemanticTokensInfoService(
-        IClientConnection clientConnection,
-        IRazorDocumentMappingService documentMappingService,
-        RazorLSPOptionsMonitor razorLSPOptionsMonitor,
-        LanguageServerFeatureOptions languageServerFeatureOptions,
-        IRazorLoggerFactory loggerFactory)
+    private RazorSemanticTokensLegend? _razorSemanticTokensLegend;
+
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-        _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
-        _razorLSPOptionsMonitor = razorLSPOptionsMonitor ?? throw new ArgumentNullException(nameof(razorLSPOptionsMonitor));
-        _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
+        _razorSemanticTokensLegend = new RazorSemanticTokensLegend(clientCapabilities);
 
-        if (loggerFactory is null)
+        serverCapabilities.SemanticTokensOptions = new SemanticTokensOptions
         {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _logger = loggerFactory.CreateLogger<RazorSemanticTokensInfoService>();
+            Full = false,
+            Legend = _razorSemanticTokensLegend.Legend,
+            Range = true,
+        };
     }
 
     public async Task<SemanticTokens?> GetSemanticTokensAsync(
+        IClientConnection clientConnection,
         TextDocumentIdentifier textDocumentIdentifier,
         Range range,
         VersionedDocumentContext documentContext,
-        RazorSemanticTokensLegend razorSemanticTokensLegend,
+        bool colorBackground,
+        CancellationToken cancellationToken)
+    {
+        _razorSemanticTokensLegend.AssumeNotNull();
+
+        var correlationId = Guid.NewGuid();
+        using var _ = _telemetryReporter?.TrackLspRequest(Methods.TextDocumentSemanticTokensRangeName, LanguageServerConstants.RazorLanguageServerName, correlationId);
+
+        var semanticTokens = await GetSemanticTokensAsync(clientConnection, textDocumentIdentifier, range, documentContext, correlationId, colorBackground, cancellationToken).ConfigureAwait(false);
+
+        var amount = semanticTokens is null ? "no" : (semanticTokens.Data.Length / TokenSize).ToString(Thread.CurrentThread.CurrentCulture);
+
+        _logger.LogInformation("Returned {amount} semantic tokens for range ({startLine},{startChar})-({endLine},{endChar}) in {request.TextDocument.Uri}.", amount, range.Start.Line, range.Start.Character, range.End.Line, range.End.Character, textDocumentIdentifier.Uri);
+
+        if (semanticTokens is not null)
+        {
+            Debug.Assert(semanticTokens.Data.Length % TokenSize == 0, $"Number of semantic token-ints should be divisible by {TokenSize}. Actual number: {semanticTokens.Data.Length}");
+            Debug.Assert(semanticTokens.Data.Length == 0 || semanticTokens.Data[0] >= 0, $"Line offset should not be negative.");
+        }
+
+        return semanticTokens;
+    }
+
+    private async Task<SemanticTokens?> GetSemanticTokensAsync(
+        IClientConnection clientConnection,
+        TextDocumentIdentifier textDocumentIdentifier,
+        Range range,
+        VersionedDocumentContext documentContext,
         Guid correlationId,
+        bool colorBackground,
         CancellationToken cancellationToken)
     {
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
         cancellationToken.ThrowIfCancellationRequested();
-        var razorSemanticRanges = TagHelperSemanticRangeVisitor.VisitAllNodes(codeDocument, range, razorSemanticTokensLegend, _razorLSPOptionsMonitor.CurrentValue.ColorBackground);
+
+        var razorSemanticRanges = TagHelperSemanticRangeVisitor.VisitAllNodes(codeDocument, range, _razorSemanticTokensLegend.AssumeNotNull(), colorBackground);
         ImmutableArray<SemanticRange>? csharpSemanticRangesResult = null;
 
         try
         {
-            csharpSemanticRangesResult = await GetCSharpSemanticRangesAsync(codeDocument, textDocumentIdentifier, range, razorSemanticTokensLegend, documentContext.Version, correlationId, cancellationToken).ConfigureAwait(false);
+            csharpSemanticRangesResult = await GetCSharpSemanticRangesAsync(clientConnection, codeDocument, textDocumentIdentifier, range, _razorSemanticTokensLegend, colorBackground, documentContext.Version, correlationId, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -133,10 +165,12 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
 
     // Internal and virtual for testing only
     internal virtual async Task<ImmutableArray<SemanticRange>?> GetCSharpSemanticRangesAsync(
+        IClientConnection clientConnection,
         RazorCodeDocument codeDocument,
         TextDocumentIdentifier textDocumentIdentifier,
         Range razorRange,
         RazorSemanticTokensLegend razorSemanticTokensLegend,
+        bool colorBackground,
         long documentVersion,
         Guid correlationId,
         CancellationToken cancellationToken,
@@ -171,7 +205,7 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
             csharpRanges = new Range[] { csharpRange };
         }
 
-        var csharpResponse = await GetMatchingCSharpResponseAsync(textDocumentIdentifier, documentVersion, csharpRanges, correlationId, cancellationToken).ConfigureAwait(false);
+        var csharpResponse = await GetMatchingCSharpResponseAsync(clientConnection, textDocumentIdentifier, documentVersion, csharpRanges, correlationId, cancellationToken).ConfigureAwait(false);
 
         // Indicates an issue with retrieving the C# response (e.g. no response or C# is out of sync with us).
         // Unrecoverable, return default to indicate no change. We've already queued up a refresh request in
@@ -184,7 +218,6 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
         using var _ = ArrayBuilderPool<SemanticRange>.GetPooledObject(out var razorRanges);
         razorRanges.SetCapacityIfLarger(csharpResponse.Length / TokenSize);
 
-        var colorBackground = _razorLSPOptionsMonitor.CurrentValue.ColorBackground;
         var textClassification = razorSemanticTokensLegend.MarkupTextLiteral;
         var razorSource = codeDocument.GetSourceText();
 
@@ -307,6 +340,7 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
     }
 
     private async Task<int[]?> GetMatchingCSharpResponseAsync(
+        IClientConnection clientConnection,
         TextDocumentIdentifier textDocumentIdentifier,
         long documentVersion,
         Range[] csharpRanges,
@@ -317,7 +351,7 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
         ProvideSemanticTokensResponse? csharpResponse;
         if (_languageServerFeatureOptions.UsePreciseSemanticTokenRanges)
         {
-            csharpResponse = await GetCsharpResponseAsync(parameter, CustomMessageNames.RazorProvidePreciseRangeSemanticTokensEndpoint, cancellationToken).ConfigureAwait(false);
+            csharpResponse = await GetCsharpResponseAsync(clientConnection, parameter, CustomMessageNames.RazorProvidePreciseRangeSemanticTokensEndpoint, cancellationToken).ConfigureAwait(false);
 
             // Likely the server doesn't support the new endpoint, fallback to the original one
             if (csharpResponse?.Tokens is null && csharpRanges.Length > 1)
@@ -334,12 +368,12 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
                     new[] { minimalRange },
                     parameter.CorrelationId);
 
-                csharpResponse = await GetCsharpResponseAsync(newParams, CustomMessageNames.RazorProvideSemanticTokensRangeEndpoint, cancellationToken).ConfigureAwait(false);
+                csharpResponse = await GetCsharpResponseAsync(clientConnection, newParams, CustomMessageNames.RazorProvideSemanticTokensRangeEndpoint, cancellationToken).ConfigureAwait(false);
             }
         }
         else
         {
-            csharpResponse = await GetCsharpResponseAsync(parameter, CustomMessageNames.RazorProvideSemanticTokensRangeEndpoint, cancellationToken).ConfigureAwait(false);
+            csharpResponse = await GetCsharpResponseAsync(clientConnection, parameter, CustomMessageNames.RazorProvideSemanticTokensRangeEndpoint, cancellationToken).ConfigureAwait(false);
         }
 
         if (csharpResponse is null)
@@ -405,12 +439,12 @@ internal class RazorSemanticTokensInfoService : IRazorSemanticTokensInfoService
         return true;
     }
 
-    private async Task<ProvideSemanticTokensResponse?> GetCsharpResponseAsync(ProvideSemanticTokensRangesParams parameter, string lspMethodName, CancellationToken cancellationToken)
+    private Task<ProvideSemanticTokensResponse?> GetCsharpResponseAsync(IClientConnection clientConnection, ProvideSemanticTokensRangesParams parameter, string lspMethodName, CancellationToken cancellationToken)
     {
-        return await _clientConnection.SendRequestAsync<ProvideSemanticTokensRangesParams, ProvideSemanticTokensResponse>(
+        return clientConnection.SendRequestAsync<ProvideSemanticTokensRangesParams, ProvideSemanticTokensResponse?>(
             lspMethodName,
             parameter,
-            cancellationToken).ConfigureAwait(false);
+            cancellationToken);
     }
 
     private static SemanticRange CSharpDataToSemanticRange(

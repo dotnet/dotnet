@@ -609,7 +609,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
 
     private static RazorCodeDocument CreateCodeDocument(string text)
     {
-        var codeDocument = TestRazorCodeDocument.CreateEmpty();
+        var codeDocument = TestRazorCodeDocument.Create(text);
         var sourceDocument = TestRazorSourceDocument.Create(text);
         var syntaxTree = RazorSyntaxTree.Parse(sourceDocument);
         codeDocument.SetSyntaxTree(syntaxTree);

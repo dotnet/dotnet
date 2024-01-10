@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Host;
@@ -36,7 +37,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
 ");
 
         var project = new ProjectSnapshot(
-            ProjectState.Create(Workspace.Services, _hostProject)
+            ProjectState.Create(ProjectEngineFactory, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var document = project.GetDocument(_hostDocument.FilePath);
@@ -68,7 +69,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
 ");
 
         var project = new ProjectSnapshot(
-            ProjectState.Create(Workspace.Services, _hostProject)
+            ProjectState.Create(ProjectEngineFactory, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var document = project.GetDocument(_hostDocument.FilePath);
@@ -101,7 +102,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
 ");
 
         var project = new ProjectSnapshot(
-            ProjectState.Create(Workspace.Services, _hostProject)
+            ProjectState.Create(ProjectEngineFactory, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var document = project.GetDocument(_hostDocument.FilePath);
@@ -133,7 +134,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
 ");
 
         var project = new ProjectSnapshot(
-            ProjectState.Create(Workspace.Services, _hostProject)
+            ProjectState.Create(ProjectEngineFactory, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var document = project.GetDocument(_hostDocument.FilePath);

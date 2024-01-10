@@ -62,3 +62,15 @@
 "Title"="Use precise semantic token ranges when requesting semantic token information on Razor files (requires restart)"
 "PreviewPaneChannels"="*"
 "VisibleToInternalUsersOnlyChannels"="*"
+
+[$RootKey$\FeatureFlags\Razor\LSP\UseRazorCohostServer]
+"Description"="Uses the Razor language server that is cohosted in Roslyn to provide some Razor tooling functionality."
+"Value"=dword:00000000
+"Title"="Use Roslyn Cohost server for Razor (requires restart)"
+"PreviewPaneChannels"="IntPreview,int.main"
+
+[$RootKey$\FeatureFlags\Razor\LSP\DisableRazorLanguageServer]
+"Description"="Disables the Razor Language Server so that only the Cohost server is active. This is probably a bad idea to turn on if you are not on the Razor Tooling team."
+"Value"=dword:00000000
+"Title"="Disable Razor Language Server (requires restart)"
+"PreviewPaneChannels"="IntPreview,int.main"

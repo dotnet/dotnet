@@ -2,9 +2,11 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
+
 internal static class TextDocumentExtensions
 {
     /// <summary>
@@ -15,4 +17,7 @@ internal static class TextDocumentExtensions
         textDocumentIdentifier.Uri = uri;
         return textDocumentIdentifier;
     }
+
+    public static RazorTextDocumentIdentifier ToRazorTextDocumentIdentifier(this TextDocumentIdentifier textDocumentIdentifier)
+        => new RazorTextDocumentIdentifier(textDocumentIdentifier.Uri, (textDocumentIdentifier as VSTextDocumentIdentifier)?.ProjectContext?.Id);
 }

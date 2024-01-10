@@ -940,8 +940,8 @@ public class RazorTranslateDiagnosticsEndpointTest : LanguageServerTestBase
             Kind = RazorLanguageKind.Html,
             Diagnostics = new[]
             {
-                new VSDiagnostic() { Range = new Range { Start = new Position(0, addTagHelper.Length + 20),End =  new Position(0, addTagHelper.Length + 25)} },
-                new VSDiagnostic() { Range = new Range { Start = new Position(0, addTagHelper.Length + 38),End =  new Position(0, addTagHelper.Length + 47)} }
+                new VSDiagnostic() { Range = new Range { Start = new Position(1, 20),End =  new Position(1, 25)} },
+                new VSDiagnostic() { Range = new Range { Start = new Position(1, 38),End =  new Position(1, 47)} }
             },
             RazorDocumentUri = documentPath,
         };

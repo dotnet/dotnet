@@ -17,13 +17,25 @@ internal sealed class ProjectWorkspaceState : IEquatable<ProjectWorkspaceState>
     public ImmutableArray<TagHelperDescriptor> TagHelpers { get; }
     public LanguageVersion CSharpLanguageVersion { get; }
 
-    public ProjectWorkspaceState(
+    private ProjectWorkspaceState(
         ImmutableArray<TagHelperDescriptor> tagHelpers,
         LanguageVersion csharpLanguageVersion)
     {
         TagHelpers = tagHelpers;
         CSharpLanguageVersion = csharpLanguageVersion;
     }
+
+    public static ProjectWorkspaceState Create(
+        ImmutableArray<TagHelperDescriptor> tagHelpers,
+        LanguageVersion csharpLanguageVersion = LanguageVersion.Default)
+        => tagHelpers.IsEmpty && csharpLanguageVersion == LanguageVersion.Default
+            ? Default
+            : new(tagHelpers, csharpLanguageVersion);
+
+    public static ProjectWorkspaceState Create(LanguageVersion csharpLanguageVersion)
+        => csharpLanguageVersion == LanguageVersion.Default
+            ? Default
+            : new(ImmutableArray<TagHelperDescriptor>.Empty, csharpLanguageVersion);
 
     public override bool Equals(object? obj)
         => obj is ProjectWorkspaceState other && Equals(other);

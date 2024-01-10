@@ -36,8 +36,8 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             new TagHelperDescriptor(FileKinds.Component, "Namespace.FileNameOther", "Assembly", "FileName", "FileName document", "FileName hint",
                 caseSensitive: false, tagMatchingRules: default, attributeDescriptors: default, allowedChildTags: default, metadata: null, diagnostics: default));
 
-        var initialProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.Preview));
-        var expectedProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, CodeAnalysis.CSharp.LanguageVersion.Preview));
+        var initialProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", ProjectWorkspaceState.Create(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.Preview));
+        var expectedProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", ProjectWorkspaceState.Create(CodeAnalysis.CSharp.LanguageVersion.Preview));
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
             projectConfigurationFilePathStore,
@@ -220,7 +220,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var projectConfigurationFilePathStore = new DefaultProjectConfigurationFilePathStore();
 
         var serializationSuccessful = false;
-        var projectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, CodeAnalysis.CSharp.LanguageVersion.CSharp7_3));
+        var projectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", ProjectWorkspaceState.Create(CodeAnalysis.CSharp.LanguageVersion.CSharp7_3));
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
             projectConfigurationFilePathStore,
@@ -255,8 +255,8 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var projectConfigurationFilePathStore = new DefaultProjectConfigurationFilePathStore();
 
         var serializationSuccessful = false;
-        var projectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, CodeAnalysis.CSharp.LanguageVersion.Default));
-        var changedProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, CodeAnalysis.CSharp.LanguageVersion.CSharp8));
+        var projectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", ProjectWorkspaceState.Default);
+        var changedProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", ProjectWorkspaceState.Create(CodeAnalysis.CSharp.LanguageVersion.CSharp8));
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var aboutToChange = false;
         var publisher = new TestRazorProjectInfoPublisher(
@@ -414,9 +414,10 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             new TagHelperDescriptor(FileKinds.Component, "Namespace.FileNameOther", "Assembly", "FileName", "FileName document", "FileName hint",
                 caseSensitive: false, tagMatchingRules: default, attributeDescriptors: default, allowedChildTags: default, metadata: null, diagnostics: default));
 
-        var secondSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.CSharp8), new string[]{
+        var secondSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", ProjectWorkspaceState.Create(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.CSharp8),
+        [
             "FileName.razor"
-        });
+        ]);
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
             projectConfigurationFilePathStore,
@@ -517,7 +518,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var projectFilePath = @"C:\path\to\project.csproj";
         var hostProject = new HostProject(projectFilePath, Path.Combine(Path.GetDirectoryName(projectFilePath), "obj"), RazorConfiguration.Default, "TestRootNamespace");
         projectConfigurationFilePathStore.Set(hostProject.Key, expectedConfigurationFilePath);
-        var projectWorkspaceState = new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, CodeAnalysis.CSharp.LanguageVersion.Default);
+        var projectWorkspaceState = ProjectWorkspaceState.Default;
 
         // Act
         await RunOnDispatcherThreadAsync(() =>
@@ -610,7 +611,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var projectFilePath = @"C:\path\to\project.csproj";
         var hostProject = new HostProject(projectFilePath, Path.Combine(Path.GetDirectoryName(projectFilePath), "obj"), RazorConfiguration.Default, "TestRootNamespace");
         projectConfigurationFilePathStore.Set(hostProject.Key, expectedConfigurationFilePath);
-        var projectWorkspaceState = new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, CodeAnalysis.CSharp.LanguageVersion.Default);
+        var projectWorkspaceState = ProjectWorkspaceState.Default;
 
         // Act
         await RunOnDispatcherThreadAsync(() =>

@@ -71,7 +71,7 @@ internal class DefaultProjectSnapshotProjectEngineFactory : ProjectSnapshotProje
             throw new ArgumentNullException(nameof(project));
         }
 
-        return SelectFactory(project.Configuration ?? s_defaultConfiguration, requireSerializable: false);
+        return SelectFactory(project.Configuration, requireSerializable: false);
     }
 
     public override IProjectEngineFactory FindSerializableFactory(IProjectSnapshot project)
@@ -81,7 +81,7 @@ internal class DefaultProjectSnapshotProjectEngineFactory : ProjectSnapshotProje
             throw new ArgumentNullException(nameof(project));
         }
 
-        return SelectFactory(project.Configuration ?? s_defaultConfiguration, requireSerializable: true);
+        return SelectFactory(project.Configuration, requireSerializable: true);
     }
 
     private IProjectEngineFactory SelectFactory(RazorConfiguration configuration, bool requireSerializable = false)

@@ -61,7 +61,7 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
 
         _projectManager = new TestProjectSnapshotManager(Enumerable.Empty<IProjectSnapshotChangeTrigger>(), Workspace, Dispatcher);
 
-        _projectWorkspaceStateWithTagHelpers = new ProjectWorkspaceState(_tagHelperResolver.TagHelpers, default);
+        _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create(_tagHelperResolver.TagHelpers);
 
         _sourceText = SourceText.From("Hello world");
     }

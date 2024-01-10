@@ -13,13 +13,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-public class SerializationTest : ToolingTestBase
+public class SerializationTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    public SerializationTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public void ProjectSnapshotHandleProxy_RoundTripsProperly()
     {
@@ -28,7 +23,7 @@ public class SerializationTest : ToolingTestBase
             TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build(),
             TagHelperDescriptorBuilder.Create("TestTagHelper2", "TestAssembly2").Build());
 
-        var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, default);
+        var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
         var expectedConfiguration = RazorConfiguration.Default;
         var expectedRootNamespace = "project";
         var handle = new ProjectSnapshotHandleProxy(new Uri("vsls://some/path/project.csproj"), new Uri("vsls://some/path/obj"), RazorConfiguration.Default, expectedRootNamespace, projectWorkspaceState);

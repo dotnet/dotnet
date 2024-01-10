@@ -62,7 +62,7 @@ public class ProjectSnapshotHandleSerializationTest(ITestOutputHelper testOutput
     {
         // Arrange
         var projectId = ProjectId.CreateNewId();
-        var expectedSnapshot = new ProjectSnapshotHandle(projectId, null, null);
+        var expectedSnapshot = new ProjectSnapshotHandle(projectId, RazorConfiguration.Default, null);
 
         // Act
         var bytes = MessagePackConvert.Serialize(expectedSnapshot, s_options);
@@ -71,7 +71,7 @@ public class ProjectSnapshotHandleSerializationTest(ITestOutputHelper testOutput
         // Assert
         Assert.NotNull(actualSnapshot);
         Assert.Equal(expectedSnapshot.ProjectId, actualSnapshot.ProjectId);
-        Assert.Null(actualSnapshot.Configuration);
+        Assert.NotNull(actualSnapshot.Configuration);
         Assert.Null(actualSnapshot.RootNamespace);
     }
 }

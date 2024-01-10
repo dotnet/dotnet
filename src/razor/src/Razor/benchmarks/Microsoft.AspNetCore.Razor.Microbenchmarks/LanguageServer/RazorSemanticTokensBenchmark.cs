@@ -38,8 +38,6 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
 
     private ProjectSnapshotManagerDispatcher ProjectSnapshotManagerDispatcher { get; set; }
 
-    private RazorSemanticTokensLegend SemanticTokensLegend { get; set; }
-
     private string PagesDirectory { get; set; }
 
     private string ProjectFilePath { get; set; }
@@ -81,8 +79,6 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
                 Character = text.Lines.Last().Span.Length - 1
             }
         };
-
-        SemanticTokensLegend = new RazorSemanticTokensLegend(new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = true });
     }
 
     [Benchmark(Description = "Razor Semantic Tokens Range Handling")]
@@ -94,11 +90,12 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
         };
         var cancellationToken = CancellationToken.None;
         var documentVersion = 1;
-        var correlationId = Guid.Empty;
 
         await UpdateDocumentAsync(documentVersion, DocumentSnapshot, cancellationToken).ConfigureAwait(false);
+
+        var clientConnection = RazorLanguageServer.GetRequiredService<IClientConnection>();
         await RazorSemanticTokenService.GetSemanticTokensAsync(
-            textDocumentIdentifier, Range, DocumentContext, SemanticTokensLegend, correlationId, cancellationToken).ConfigureAwait(false);
+            clientConnection, textDocumentIdentifier, Range, DocumentContext, colorBackground: false, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task UpdateDocumentAsync(int newVersion, IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
@@ -124,6 +121,7 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
     {
         var languageServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
         RazorSemanticTokenService = languageServer.GetRequiredService<IRazorSemanticTokensInfoService>();
+        RazorSemanticTokenService.ApplyCapabilities(new(), new VSInternalClientCapabilities { SupportsVisualStudioExtensions = true });
         VersionCache = languageServer.GetRequiredService<IDocumentVersionCache>();
         ProjectSnapshotManagerDispatcher = languageServer.GetRequiredService<ProjectSnapshotManagerDispatcher>();
     }
@@ -131,21 +129,21 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
     internal class TestRazorSemanticTokensInfoService : RazorSemanticTokensInfoService
     {
         public TestRazorSemanticTokensInfoService(
-            IClientConnection clientConnection,
             LanguageServerFeatureOptions languageServerFeatureOptions,
             IRazorDocumentMappingService documentMappingService,
-            RazorLSPOptionsMonitor razorLSPOptionsMonitor,
             IRazorLoggerFactory loggerFactory)
-            : base(clientConnection, documentMappingService, razorLSPOptionsMonitor, languageServerFeatureOptions, loggerFactory)
+            : base(documentMappingService, languageServerFeatureOptions, loggerFactory, telemetryReporter: null)
         {
         }
 
         // We can't get C# responses without significant amounts of extra work, so let's just shim it for now, any non-Null result is fine.
         internal override Task<ImmutableArray<SemanticRange>?> GetCSharpSemanticRangesAsync(
+            IClientConnection clientConnection,
             RazorCodeDocument codeDocument,
             TextDocumentIdentifier textDocumentIdentifier,
             Range razorRange,
             RazorSemanticTokensLegend razorSemanticTokensLegend,
+            bool colorBackground,
             long documentVersion,
             Guid correlationId,
             CancellationToken cancellationToken,

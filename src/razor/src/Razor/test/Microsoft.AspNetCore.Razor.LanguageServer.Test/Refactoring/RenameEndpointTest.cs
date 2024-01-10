@@ -609,7 +609,7 @@ public class RenameEndpointTest : LanguageServerTestBase
         namespaceNode.Content = rootNamespaceName;
 
         var sourceText = SourceText.From(item.Content);
-        var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, LanguageVersion.Default);
+        var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
         var projectSnapshot = TestProjectSnapshot.Create("C:/project.csproj", projectWorkspaceState);
         var snapshot = Mock.Of<IDocumentSnapshot>(d =>
             d.GetGeneratedOutputAsync() == Task.FromResult(codeDocument) &&

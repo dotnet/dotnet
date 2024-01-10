@@ -79,7 +79,7 @@ internal static partial class ObjectReaders
     public static ProjectSnapshotHandle ReadProjectSnapshotHandleFromProperties(JsonDataReader reader)
     {
         var projectIdString = reader.ReadNonNullString(nameof(ProjectSnapshotHandle.ProjectId));
-        var configuration = reader.ReadObjectOrNull(nameof(ProjectSnapshotHandle.Configuration), ReadConfigurationFromProperties);
+        var configuration = reader.ReadObjectOrNull(nameof(ProjectSnapshotHandle.Configuration), ReadConfigurationFromProperties) ?? RazorConfiguration.Default;
         var rootNamespace = reader.ReadStringOrNull(nameof(ProjectSnapshotHandle.RootNamespace));
 
         var projectId = ProjectId.CreateFromSerialized(Guid.Parse(projectIdString));
@@ -101,7 +101,7 @@ internal static partial class ObjectReaders
         var tagHelpers = reader.ReadImmutableArrayOrEmpty(nameof(ProjectWorkspaceState.TagHelpers), static r => ReadTagHelper(r, useCache: true));
         var csharpLanguageVersion = (LanguageVersion)reader.ReadInt32OrZero(nameof(ProjectWorkspaceState.CSharpLanguageVersion));
 
-        return new ProjectWorkspaceState(tagHelpers, csharpLanguageVersion);
+        return ProjectWorkspaceState.Create(tagHelpers, csharpLanguageVersion);
     }
 
     public static TagHelperDescriptor ReadTagHelper(JsonDataReader reader, bool useCache)
@@ -342,8 +342,8 @@ internal static partial class ObjectReaders
 
         var serializedFilePath = reader.ReadNonNullString(nameof(RazorProjectInfo.SerializedFilePath));
         var filePath = reader.ReadNonNullString(nameof(RazorProjectInfo.FilePath));
-        var configuration = reader.ReadObject(nameof(RazorProjectInfo.Configuration), ReadConfigurationFromProperties);
-        var projectWorkspaceState = reader.ReadObject(nameof(RazorProjectInfo.ProjectWorkspaceState), ReadProjectWorkspaceStateFromProperties);
+        var configuration = reader.ReadObject(nameof(RazorProjectInfo.Configuration), ReadConfigurationFromProperties) ?? RazorConfiguration.Default;
+        var projectWorkspaceState = reader.ReadObject(nameof(RazorProjectInfo.ProjectWorkspaceState), ReadProjectWorkspaceStateFromProperties) ?? ProjectWorkspaceState.Default;
         var rootNamespace = reader.ReadString(nameof(RazorProjectInfo.RootNamespace));
         var documents = reader.ReadImmutableArray(nameof(RazorProjectInfo.Documents), static r => r.ReadNonNullObject(ReadDocumentSnapshotHandleFromProperties));
 

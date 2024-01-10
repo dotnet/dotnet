@@ -19,6 +19,7 @@ using Moq;
 using Xunit;
 using Xunit.Abstractions;
 using RazorMapToDocumentRangesResponse = Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping.RazorMapToDocumentRangesResponse;
+using ServerRangeExtensions = Microsoft.AspNetCore.Razor.LanguageServer.Extensions.RangeExtensions;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
@@ -142,7 +143,7 @@ public class RazorLSPSpanMappingServiceTest : ToolingTestBase
     {
         // Arrange
         var sourceTextRazor = SourceText.From("");
-        var response = new RazorMapToDocumentRangesResponse { Ranges = new Range[] { Extensions.RangeExtensions.UndefinedRange } };
+        var response = new RazorMapToDocumentRangesResponse { Ranges = new Range[] { ServerRangeExtensions.UndefinedRange } };
 
         // Act
         var results = RazorLSPSpanMappingService.GetMappedSpanResults(_mockDocumentUri.LocalPath, sourceTextRazor, response);

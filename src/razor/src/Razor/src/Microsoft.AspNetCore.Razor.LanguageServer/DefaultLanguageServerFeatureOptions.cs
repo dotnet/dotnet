@@ -40,4 +40,8 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
     public override bool UsePreciseSemanticTokenRanges => false;
 
     public override bool MonitorWorkspaceFolderForConfigurationFiles => true;
+
+    public override bool UseRazorCohostServer => false;
+
+    public override bool DisableRazorLanguageServer => false;
 }

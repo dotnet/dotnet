@@ -22,8 +22,6 @@ internal partial class TagHelperResolverFactory
             Project workspaceProject,
             IProjectSnapshot projectSnapshot,
             CancellationToken cancellationToken)
-            => projectSnapshot.Configuration is not null
-                ? _resolver.GetTagHelpersAsync(workspaceProject, projectSnapshot.GetProjectEngine(), cancellationToken)
-                : new(ImmutableArray<TagHelperDescriptor>.Empty);
+            => _resolver.GetTagHelpersAsync(workspaceProject, projectSnapshot.GetProjectEngine(), cancellationToken);
     }
 }

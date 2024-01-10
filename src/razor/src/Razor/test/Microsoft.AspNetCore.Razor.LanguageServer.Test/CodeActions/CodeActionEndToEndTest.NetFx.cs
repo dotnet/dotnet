@@ -140,7 +140,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
         await ValidateCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.IntroduceVariable);
     }
 
-    [Fact]
+    [Fact(Skip = "https://github.com/dotnet/roslyn/issues/71335")]
     public async Task Handle_IntroduceLocal_All()
     {
         var input = """
@@ -1178,7 +1178,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
                 return null;
             }
 
-            var projectWorkspaceState = new ProjectWorkspaceState(_tagHelperDescriptors.ToImmutableArray(), LanguageVersion.Default);
+            var projectWorkspaceState = ProjectWorkspaceState.Create(_tagHelperDescriptors.ToImmutableArray());
             var testDocumentSnapshot = TestDocumentSnapshot.Create(FilePath, CodeDocument.GetSourceText().ToString(), CodeAnalysis.VersionStamp.Default, projectWorkspaceState);
             testDocumentSnapshot.With(CodeDocument);
 
