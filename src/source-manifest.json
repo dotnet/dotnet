@@ -64,13 +64,13 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "2d3bf4cff8c36b13b13852b6e4a2ea7428b8a4a1"
+      "commitSha": "bd1d6b4384ad2395f941d5142d11f7599c39c513"
     },
     {
-      "packageVersion": "17.8.3-preview-23519-04",
+      "packageVersion": "17.8.5-preview-24055-02",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22"
+      "commitSha": "b5265ef370a651f8c3458110b804e5cbf869eeb5"
     },
     {
       "packageVersion": "6.8.0-rc.122",
@@ -79,16 +79,16 @@
       "commitSha": "0dd5a1ea536201af94725353e4bc711d7560b246"
     },
     {
-      "packageVersion": "7.0.0-preview.23580.2",
+      "packageVersion": "7.0.0-preview.24052.1",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "8c7fb27bf8e8d4f9ff8080b624b35bca5e812e97"
+      "commitSha": "d135dd8d2ec1c2fbdee220e8656b308694e17a4b"
     },
     {
-      "packageVersion": "4.8.0-7.23572.1",
+      "packageVersion": "4.8.0-7.23614.11",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "7b75981cf3bd520b86ec4ed00ec156c8bc48e4eb"
+      "commitSha": "82a29fc43b3e0a9c53d6cc2be950e43765682170"
     },
     {
       "packageVersion": "3.11.0-beta1.23525.2",
@@ -103,10 +103,10 @@
       "commitSha": "bf5e279d9239bfef5bb1b8d6212f1b971c434606"
     },
     {
-      "packageVersion": "8.0.101-servicing.23617.7",
+      "packageVersion": "8.0.102-servicing.24060.23",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "e4b8a55b3346166a4e12b1160b844914248b3b8a"
+      "commitSha": "8533fc688e9b1ee8c8c47c1737effd3de13fbca0"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23577.6",
@@ -121,10 +121,10 @@
       "commitSha": "95f83e27806330fec09edd96e06bba3acabe3f35"
     },
     {
-      "packageVersion": "8.0.0-beta.23578.1",
+      "packageVersion": "8.0.0-beta.23615.1",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "f6b97c9ef635ad82b195a952ac0e0a969b9cf39c"
+      "commitSha": "94eaac3385cafff41094454966e1af1d1cf60f00"
     },
     {
       "packageVersion": "2.1.0-beta.23253.1",
@@ -133,10 +133,10 @@
       "commitSha": "2c8079e2e8e78c0cd11ac75a32014756136ecdb9"
     },
     {
-      "packageVersion": "8.0.101-servicing.23570.18",
+      "packageVersion": "8.0.102-servicing.24059.11",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "fbeda4751af816d3555ea4dff95dbb3a5da35543"
+      "commitSha": "cdb889e43cd7234cddfc2c871492ccbf5596e061"
     },
     {
       "packageVersion": "1.1.0-rc.23410.2",
