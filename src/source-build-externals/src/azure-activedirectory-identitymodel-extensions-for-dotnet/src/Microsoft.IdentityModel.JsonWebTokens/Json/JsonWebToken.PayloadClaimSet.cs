@@ -89,7 +89,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                     }
                     else if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Sub))
                     {
-                        _sub = JsonSerializerPrimitives.ReadString(ref reader, JwtRegisteredClaimNames.Sub, ClassName, true);
+                        _sub = JsonSerializerPrimitives.ReadStringOrNumberAsString(ref reader, JwtRegisteredClaimNames.Sub, ClassName, true);
                         claims[JwtRegisteredClaimNames.Sub] = _sub;
                     }
                     else

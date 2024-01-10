@@ -317,6 +317,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             else if (typeof(T) == typeof(Collection<object>))
                 return (T)(object)new Collection<object> { obj };
 
+            else if(typeof(T).IsEnum)
+            {
+                return (T)Enum.Parse(typeof(T), obj.ToString(), ignoreCase: true);
+            }
             else if (typeof(T) == typeof(DateTime))
             {
                 if (DateTime.TryParse(obj.ToString(), out DateTime value))
