@@ -20,6 +20,14 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
     public class SignedHttpRequestUtilityTests
     {
         [Fact]
+        public void SignedHttpRequestCtorTests()
+        {
+            var signedHttpRequestHandler = new SignedHttpRequestHandler();
+            Assert.NotNull(signedHttpRequestHandler);
+            Assert.Equal(TimeSpan.FromSeconds(10), signedHttpRequestHandler._defaultHttpClient.Timeout);
+        }
+
+        [Fact]
         public void CreateSignedHttpRequestHeader()
         {
             Assert.Throws<ArgumentNullException>(() => SignedHttpRequestUtilities.CreateSignedHttpRequestHeader(null));

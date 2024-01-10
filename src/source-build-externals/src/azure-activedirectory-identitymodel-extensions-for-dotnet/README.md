@@ -1,4 +1,4 @@
-# Azure Active Directory IdentityModel Extensions for .NET
+# IdentityModel Extensions for .NET
 
 [![Nuget](https://img.shields.io/nuget/v/Microsoft.IdentityModel.JsonWebTokens?label=Latest%20release)](https://www.nuget.org/packages/Microsoft.IdentityModel.JsonWebTokens/)
 
@@ -8,62 +8,36 @@ IdentityModel Extensions for .NET provide assemblies that are interesting for we
 
 You can find the release notes for each version [here](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/releases). Older versions can be found [here](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/wiki/Release-Notes).
 
-## Note about 6.28.0
-We delisted 6.28.0 as we found an edge case where a null reference could occur.
-Please use 6.28.1.
+## IdentityModel 7x
+
+We are excited to announce the release of [IdentityModel 7x](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/wiki/IdentityModel-7x), a major update to our popular .NET auth validation library. This new version introduces several improvements related to serialization and consistency in the API, which will provide a better user experience for developers, as well as full AOT compatibility on .NET, and huge perf improvements compared to 6x.
 
 ## Note about 6.x
 
-If you noticed, we bumped the release from 5.x to 6.x\
-We were maintaining two releases from two different branches.\
-dev - 6.x\
-dev5x - 5.x
+We bumped the release from 6.x to 7.x.
+We are maintaining two releases from two different branches.
+dev - 7.x
+dev6x - 6.x
 
-Internally at Microsoft we were quickly required to remove all 3rd party libraries as IdentityModel is all about securing resources.\
-Since there were some breaking changes, given the time-line we had to maintain two releases.
-
-Both of these branches were public and moved forward mostly in lock-step.\
-Once we finished our SignedHttpRequest functionality in the 6.x branch, we realized the delta between 5.x and 6.x was too large to maintain in both branches.\
-We decided now was the time to switch to a single release branch.\
-Since internally the versioning was at 6.4.2, we needed to release at 6.5.0.
-
-## There are some small breaking changes
-
-We built and tested ASP.NET core with 6.5.0 without issues.\
-We also upgraded in place existing applications to 6.5.0 without issues.\
-This of course does not mean you will not hit issues, but we took it seriously.
-
-Any questions or compatibility problems please open issues [here](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc).
-
-## Thank you for using our product
-
-The IdentityModel Team.
-
-## Usage
-
-IdentityModel Extensions for .NET 5 has now been released. If you are using IdentityModel Extensions with ASP.NET, the following combinations are supported:
-
-* **IdentityModel Extensions for .NET 5.x**, **ASP.NET Core 1.x**, **ASP.NET Core 2.x**, **Katana 4.x**
-* **IdentityModel Extensions for .NET 4.x**, **ASP.NET 4**, **Katana 3.x**
-All other combinations aren't supported.
-
-For more details see [Migration notes here](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/wiki/Migrating-from-Katana-(OWIN)-3.x-to-4.x)
+dev6x will be maintained until March 2024, at which point, you will need to move to 7x to continue to get the latest and greatest improvements and security updates.
 
 ## Samples and Documentation
 
 The scenarios supported by IdentityModel extensions for .NET are described in [Scenarios](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/wiki/scenarios). The libraries are in particular used part of ASP.NET security to validate tokens in ASP.NET Web Apps and Web APIs. To learn more about token validation, and find samples, see:
 
-- [Azure Active Directory with ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/azure-active-directory/?view=aspnetcore-2.1)
-- [Developing ASP.NET Apps with Azure Active Directory](https://docs.microsoft.com/en-us/aspnet/identity/overview/getting-started/developing-aspnet-apps-with-windows-azure-active-directory)
+- [Microsoft Entra ID with ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/azure-active-directory/?view=aspnetcore-2.1)
+- [Developing ASP.NET Apps with Microsoft Entra ID](https://docs.microsoft.com/en-us/aspnet/identity/overview/getting-started/developing-aspnet-apps-with-windows-azure-active-directory)
 - [Validating tokens](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/wiki/ValidatingTokens)
 - more generally, the library's [Wiki](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/wiki)
 - the [reference documentation](https://learn.microsoft.com/dotnet/api/microsoft.identitymodel.jsonwebtokens.jsonwebtokenhandler?view=msal-web-dotnet-latest)
 
 ## Community Help and Support
 
-We leverage [Stack Overflow](http://stackoverflow.com/) to work with the community on supporting Azure Active Directory and its SDKs, including this one! We highly recommend you ask your questions on Stack Overflow (we're all on there!) Also browse existing issues to see if someone has had your question before.
+We leverage [Stack Overflow](http://stackoverflow.com/) to work with the community on supporting Microsoft Entra and its SDKs, including this one! We highly recommend you ask your questions on Stack Overflow (we're all on there!) Also browse existing issues to see if someone has had your question before.
 
-We recommend you use the "adal" tag so we can see it! Here is the latest Q&A on Stack Overflow for IdentityModel: [https://stackoverflow.com/questions/tagged/identityModel](https://stackoverflow.com/questions/tagged/identityModel)
+We recommend you use the "identityModel" tag so we can see it! Here is the latest Q&A on Stack Overflow for IdentityModel: [https://stackoverflow.com/questions/tagged/identityModel](https://stackoverflow.com/questions/tagged/identityModel)
+
+Have a design proposal? Please submit [a design proposal](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/new?assignees=&labels=design-proposal&projects=&template=design_proposal.md) before starting work on a PR to ensure it means the goals/objectives of this library and it's priorities.
 
 ## Security Reporting
 

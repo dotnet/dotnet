@@ -111,17 +111,19 @@ jobs:
         **\bin\$(BuildConfiguration)\**\System.IdentityModel.Tokens.Jwt.pdb
       TargetFolder: '$(Build.ArtifactStagingDirectory)\ProductBinaries'
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@2
     displayName: 'Run PoliCheck'
     inputs:
       targetType: F
+      result: PoliCheck.xml
       optionsFC: 0
       optionsXS: 0
       optionsHMENABLE: 0
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@3
     displayName: 'Run CredScan'
     inputs:
+      outputFormat: pre
       suppressionsFile: 'build/credscan-exclusion.json'
       debugMode: false
 
@@ -129,25 +131,19 @@ jobs:
     displayName: 'Run Roslyn Analyzers'
     condition: eq(variables['TargetNet8'], 'False')
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-binskim.BinSkim@3
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-binskim.BinSkim@4
     displayName: 'Run BinSkim'
     inputs:
-      InputType: Basic
-      AnalyzeTarget: '$(Build.ArtifactStagingDirectory)\*.dll'
       AnalyzeSymPath: '$(Build.ArtifactStagingDirectory)\ProductBinaries'
       AnalyzeVerbose: true
       AnalyzeHashes: true
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
     displayName: 'Publish Security Analysis Logs'
     continueOnError: true
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-postanalysis.PostAnalysis@1
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-postanalysis.PostAnalysis@2
     displayName: 'Post SDL Analysis'
-    inputs:
-      BinSkim: true
-      CredScan: true
-      PoliCheck: true
     continueOnError: true
 
 
@@ -201,17 +197,12 @@ jobs:
       SymbolServerType: TeamServices
       TreatNotIndexedAsWarning: true
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@1
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@2
     displayName: 'TSA upload to Codebase: WILSON Stamp: Azure'
     inputs:
-      tsaVersion: TsaV2
-      codeBaseName: WILSON
-      uploadAPIScan: false
-      uploadFortifySCA: false
-      uploadFxCop: false
-      uploadModernCop: false
-      uploadPREfast: false
-      uploadTSLint: false
+      GdnPublishTsaOnboard: false 
+      GdnPublishTsaConfigFile: '$(Build.SourcesDirectory)/build/tsaConfig.json'
+    continueOnError: true
 
   - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
     displayName: 'Manifest Generator '

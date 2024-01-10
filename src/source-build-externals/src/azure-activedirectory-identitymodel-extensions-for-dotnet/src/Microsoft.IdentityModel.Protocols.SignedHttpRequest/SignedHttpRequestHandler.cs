@@ -37,7 +37,15 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
         };
 
         private readonly Uri _baseUriHelper = new Uri("http://localhost", UriKind.Absolute);
-        private readonly HttpClient _defaultHttpClient = new HttpClient();
+        internal readonly HttpClient _defaultHttpClient = new HttpClient();
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="SignedHttpRequestHandler"/>.
+        /// </summary>
+        public SignedHttpRequestHandler()
+        {
+            _defaultHttpClient.Timeout = TimeSpan.FromSeconds(10);
+        }
 
         #region SignedHttpRequest creation
         /// <summary>
@@ -1121,6 +1129,17 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
         /// <returns>A resolved PoP <see cref="SecurityKey"/>.</returns>
         internal virtual async Task<SecurityKey> ResolvePopKeyFromJkuAsync(string jkuSetUrl, Cnf cnf, SignedHttpRequestValidationContext signedHttpRequestValidationContext, CancellationToken cancellationToken)
         {
+            if (signedHttpRequestValidationContext.SignedHttpRequestValidationParameters.AllowResolvingPopKeyFromJku == false)
+            {
+                throw LogHelper.LogExceptionMessage(new SignedHttpRequestInvalidPopKeyException(LogHelper.FormatInvariant(LogMessages.IDX23037)));
+            }
+
+            if (!IsJkuUriInListOfAllowedDomains(jkuSetUrl, signedHttpRequestValidationContext))
+            {
+                var allowedDomains = string.Join(", ", signedHttpRequestValidationContext.SignedHttpRequestValidationParameters.AllowedDomainsForJkuRetrieval ?? new List<string>());
+                throw LogHelper.LogExceptionMessage(new SignedHttpRequestInvalidPopKeyException(LogHelper.FormatInvariant(LogMessages.IDX23038, jkuSetUrl, allowedDomains)));
+            }
+
             var popKeys = await GetPopKeysFromJkuAsync(jkuSetUrl, signedHttpRequestValidationContext, cancellationToken).ConfigureAwait(false);
 
             if (popKeys == null || popKeys.Count == 0)
@@ -1279,6 +1298,18 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
 
                 return absoluteUri;
             }
+        }
+
+        private static bool IsJkuUriInListOfAllowedDomains(string jkuSetUrl, SignedHttpRequestValidationContext signedHttpRequestValidationContext)
+        {
+            if (string.IsNullOrEmpty(jkuSetUrl))
+                return false;
+
+            if (signedHttpRequestValidationContext.SignedHttpRequestValidationParameters.AllowedDomainsForJkuRetrieval.Count == 0)
+                return false;
+
+            var uri = new Uri(jkuSetUrl, UriKind.RelativeOrAbsolute);
+            return signedHttpRequestValidationContext.SignedHttpRequestValidationParameters.AllowedDomainsForJkuRetrieval.Any(domain => uri.Host.EndsWith(domain, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>

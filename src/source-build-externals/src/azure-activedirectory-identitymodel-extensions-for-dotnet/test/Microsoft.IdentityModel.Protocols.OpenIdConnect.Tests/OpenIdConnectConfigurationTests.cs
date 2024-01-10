@@ -77,9 +77,11 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             Assert.NotNull(configuration.AcrValuesSupported);
             Assert.NotNull(configuration.ClaimsSupported);
             Assert.NotNull(configuration.ClaimsLocalesSupported);
+            Assert.False(configuration.ClaimsParameterSupported);
             Assert.NotNull(configuration.ClaimTypesSupported);
             Assert.NotNull(configuration.DisplayValuesSupported);
             Assert.NotNull(configuration.GrantTypesSupported);
+            Assert.False(configuration.HttpLogoutSupported);
             Assert.NotNull(configuration.IdTokenEncryptionAlgValuesSupported);
             Assert.NotNull(configuration.IdTokenEncryptionEncValuesSupported);
             Assert.NotNull(configuration.IdTokenSigningAlgValuesSupported);
@@ -88,8 +90,11 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             Assert.NotNull(configuration.RequestObjectEncryptionAlgValuesSupported);
             Assert.NotNull(configuration.RequestObjectEncryptionEncValuesSupported);
             Assert.NotNull(configuration.RequestObjectSigningAlgValuesSupported);
+            Assert.False(configuration.RequestParameterSupported);
             Assert.NotNull(configuration.ResponseModesSupported);
             Assert.NotNull(configuration.ResponseTypesSupported);
+            Assert.False(configuration.RequestUriParameterSupported);
+            Assert.False(configuration.RequireRequestUriRegistration);
             Assert.NotNull(configuration.ScopesSupported);
             Assert.NotNull(configuration.SigningKeys);
             Assert.NotNull(configuration.SubjectTypesSupported);
