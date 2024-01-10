@@ -87,20 +87,20 @@
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.101">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>db838b3e994dca38ead37ce90b6ba13285ac687c</Sha>
+      <Sha>e4b8a55b3346166a4e12b1160b844914248b3b8a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.101-servicing.23607.3">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.101-servicing.23617.7">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>db838b3e994dca38ead37ce90b6ba13285ac687c</Sha>
+      <Sha>e4b8a55b3346166a4e12b1160b844914248b3b8a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.101-servicing.23607.3">
+    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.101-servicing.23617.7">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>db838b3e994dca38ead37ce90b6ba13285ac687c</Sha>
+      <Sha>e4b8a55b3346166a4e12b1160b844914248b3b8a</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.101-servicing.23607.3">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.101-servicing.23617.7">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>db838b3e994dca38ead37ce90b6ba13285ac687c</Sha>
+      <Sha>e4b8a55b3346166a4e12b1160b844914248b3b8a</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.2.1" Version="1.0.2-beta4.22406.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
@@ -141,9 +141,9 @@
       <Sha>424e4b7cffb7656efd63f7a905a2498e39011104</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.8.0-release-23578-02" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.8.0-release-23615-02" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>3259862fadd5e784564e7d920a2d61a75f415a79</Sha>
+      <Sha>aa59400b11e1aeee2e8af48928dbd48748a8bef9</Sha>
       <SourceBuild RepoName="vstest" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="8.0.1" CoherentParentDependency="Microsoft.NET.Sdk">
