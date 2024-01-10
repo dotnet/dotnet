@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,13 +15,12 @@
     <ProjectReference Include="..\Microsoft.DotNet.SignTool\Microsoft.DotNet.SignTool.csproj" />
     <ProjectReference Include="..\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
 
-    <ProjectReference Include="..\Microsoft.DotNet.Tar\Microsoft.DotNet.Tar.csproj">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <SetTargetFramework>TargetFramework=$(NetCurrent)</SetTargetFramework>
-      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
-      <Private>false</Private>
-      <OutputItemType>_TarToolPath</OutputItemType>
-    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.DotNet.Tar\Microsoft.DotNet.Tar.csproj"
+                      ReferenceOutputAssembly="false"
+                      SetTargetFramework="TargetFramework=$(NetToolCurrent)"
+                      SkipGetTargetFrameworkProperties="true"
+                      Private="false"
+                      OutputItemType="_TarToolPath" />
   </ItemGroup>
 
   <ItemGroup>

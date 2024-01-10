@@ -1,0 +1,10 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory)\.., Directory.Build.props))\Directory.Build.props" />
+
+  <!-- Exclude SwaggerGenerator from source-build until we find a reason to use it. -->
+  <PropertyGroup>
+    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+  </PropertyGroup>
+
+</Project>

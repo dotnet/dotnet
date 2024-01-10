@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Formatting;
@@ -103,7 +104,7 @@ public class RazorDocumentOptionsServiceTest : WorkspaceTestBase
             Path.Combine(baseDirectory, "SomeProject", "File1.cshtml"), "File1.cshtml", FileKinds.Legacy);
 
         var project = new ProjectSnapshot(
-            ProjectState.Create(Workspace.Services, hostProject)
+            ProjectState.Create(ProjectEngineFactory, hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var documentSnapshot = project.GetDocument(hostDocument.FilePath);

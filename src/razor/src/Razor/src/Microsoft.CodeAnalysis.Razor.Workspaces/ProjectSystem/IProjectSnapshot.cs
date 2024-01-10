@@ -13,7 +13,7 @@ internal interface IProjectSnapshot
 {
     ProjectKey Key { get; }
 
-    RazorConfiguration? Configuration { get; }
+    RazorConfiguration Configuration { get; }
     IEnumerable<string> DocumentFilePaths { get; }
 
     /// <summary>
@@ -31,7 +31,7 @@ internal interface IProjectSnapshot
     VersionStamp Version { get; }
     LanguageVersion CSharpLanguageVersion { get; }
     ImmutableArray<TagHelperDescriptor> TagHelpers { get; }
-    ProjectWorkspaceState? ProjectWorkspaceState { get; }
+    ProjectWorkspaceState ProjectWorkspaceState { get; }
 
     RazorProjectEngine GetProjectEngine();
     IDocumentSnapshot? GetDocument(string filePath);

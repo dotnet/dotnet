@@ -39,7 +39,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// <summary>
         /// Gets or sets the function used to attempt decompression with.
         /// </summary>
-        public Func<byte[], string, string> DecompressionFunction { get; set; }
+        public Func<byte[], string, int, string> DecompressionFunction { get; set; }
 
         /// <summary>
         /// Gets or sets the encryption algorithm (Enc) of the token.
@@ -65,6 +65,15 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// Gets or sets the collection of <see cref="SecurityKey"/>s to attempt to decrypt with.
         /// </summary>
         public IEnumerable<SecurityKey> Keys { get; set; }
+
+        /// <summary>
+        /// Gets and sets the maximum deflate size in chars that will be processed.
+        /// </summary>
+        public int MaximumDeflateSize
+        {
+            get;
+            set;
+        } = TokenValidationParameters.DefaultMaximumTokenSizeInBytes;
 
         /// <summary>
         /// Gets or sets the 'value' of the 'zip' claim.

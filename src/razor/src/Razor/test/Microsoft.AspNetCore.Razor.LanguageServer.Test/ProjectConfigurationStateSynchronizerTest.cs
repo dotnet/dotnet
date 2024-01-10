@@ -55,7 +55,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
             RazorConfiguration.Default,
             rootNamespace: "TestRootNamespace",
             displayName: "project",
-            new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp5),
+            ProjectWorkspaceState.Create(LanguageVersion.CSharp5),
             ImmutableArray<DocumentSnapshotHandle>.Empty);
         var intermediateOutputPath = Path.GetDirectoryName(FilePathNormalizer.Normalize(projectInfo.SerializedFilePath));
         var projectKey = TestProjectKey.Create(intermediateOutputPath);
@@ -148,7 +148,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
             RazorConfiguration.Default,
             rootNamespace: "TestRootNamespace",
             displayName: "project",
-            new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp5),
+            ProjectWorkspaceState.Create(LanguageVersion.CSharp5),
             ImmutableArray<DocumentSnapshotHandle>.Empty);
         var intermediateOutputPath = Path.GetDirectoryName(FilePathNormalizer.Normalize(projectInfo.SerializedFilePath));
         var projectKey = TestProjectKey.Create(intermediateOutputPath);
@@ -196,7 +196,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
             RazorConfiguration.Default,
             rootNamespace: "TestRootNamespace",
             displayName: "project",
-            new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp5),
+            ProjectWorkspaceState.Create(LanguageVersion.CSharp5),
             ImmutableArray<DocumentSnapshotHandle>.Empty);
         var intermediateOutputPath = Path.GetDirectoryName(FilePathNormalizer.Normalize(projectInfo.SerializedFilePath));
         var projectKey = TestProjectKey.Create(intermediateOutputPath);
@@ -264,7 +264,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
             RazorConfiguration.Default,
             rootNamespace: "TestRootNamespace",
             displayName: "project",
-            new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp5),
+            ProjectWorkspaceState.Create(LanguageVersion.CSharp5),
             ImmutableArray<DocumentSnapshotHandle>.Empty);
         var intermediateOutputPath = Path.GetDirectoryName(FilePathNormalizer.Normalize(initialProjectInfo.SerializedFilePath));
         var projectKey = TestProjectKey.Create(intermediateOutputPath);
@@ -295,7 +295,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
                 Array.Empty<RazorExtension>()),
             rootNamespace: "TestRootNamespace2",
             displayName: "project",
-            new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp6),
+            ProjectWorkspaceState.Create(LanguageVersion.CSharp6),
             ImmutableArray<DocumentSnapshotHandle>.Empty);
         projectService
             .Setup(service => service.UpdateProject(
@@ -348,7 +348,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
             RazorConfiguration.Default,
             rootNamespace: "TestRootNamespace",
             displayName: "project",
-            new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp5),
+            ProjectWorkspaceState.Create(LanguageVersion.CSharp5),
             ImmutableArray<DocumentSnapshotHandle>.Empty);
         var intermediateOutputPath = Path.GetDirectoryName(FilePathNormalizer.Normalize(initialProjectInfo.SerializedFilePath));
         var projectKey = TestProjectKey.Create(intermediateOutputPath);
@@ -379,7 +379,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
                 Array.Empty<RazorExtension>()),
             rootNamespace: "TestRootNamespace2",
             displayName: "project",
-            new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp6),
+            ProjectWorkspaceState.Create(LanguageVersion.CSharp6),
             ImmutableArray<DocumentSnapshotHandle>.Empty);
 
         // This is the request that happens when the server is reset
@@ -463,7 +463,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
             RazorConfiguration.Default,
             rootNamespace: "TestRootNamespace",
             displayName: "project",
-            new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp5),
+            ProjectWorkspaceState.Create(LanguageVersion.CSharp5),
             ImmutableArray<DocumentSnapshotHandle>.Empty);
         var intermediateOutputPath = Path.GetDirectoryName(FilePathNormalizer.Normalize(projectInfo.SerializedFilePath));
         var projectKey = TestProjectKey.Create(intermediateOutputPath);

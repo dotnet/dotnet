@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <Title>Configuration system for cross-targeting projects.</Title>
     <PackageDescription>This package provides the following MSBuild tasks: ChooseBestTargetFrameworksTask and ChooseBestP2PTargetFrameworkTask.</PackageDescription>

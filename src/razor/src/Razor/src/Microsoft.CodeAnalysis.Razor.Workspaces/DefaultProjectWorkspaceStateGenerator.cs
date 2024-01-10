@@ -129,7 +129,7 @@ internal class DefaultProjectWorkspaceStateGenerator(ProjectSnapshotManagerDispa
         var telemetryId = Guid.NewGuid();
         _telemetryReporter.ReportEvent("taghelperresolve/begin", Severity.Normal,
             new Property("id", telemetryId),
-            new Property("tagHelperCount", projectSnapshot.ProjectWorkspaceState?.TagHelpers.Length ?? 0));
+            new Property("tagHelperCount", projectSnapshot.ProjectWorkspaceState.TagHelpers.Length));
 
         try
         {
@@ -182,7 +182,7 @@ internal class DefaultProjectWorkspaceStateGenerator(ProjectSnapshotManagerDispa
                         new Property("result", "success"),
                         new Property("tagHelperCount", tagHelpers.Length));
 
-                    workspaceState = new ProjectWorkspaceState(tagHelpers, csharpLanguageVersion);
+                    workspaceState = ProjectWorkspaceState.Create(tagHelpers, csharpLanguageVersion);
                 }
             }
             catch (OperationCanceledException)

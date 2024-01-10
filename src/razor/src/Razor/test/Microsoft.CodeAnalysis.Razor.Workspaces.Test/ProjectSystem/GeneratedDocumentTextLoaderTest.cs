@@ -5,6 +5,7 @@
 
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Text;
@@ -30,7 +31,7 @@ public class GeneratedDocumentTextLoaderTest : WorkspaceTestBase
     {
         // Arrange
         var project = new ProjectSnapshot(
-            ProjectState.Create(Workspace.Services, _hostProject)
+            ProjectState.Create(ProjectEngineFactory, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(SourceText.From(""), VersionStamp.Create()))));
 
         var document = project.GetDocument(_hostDocument.FilePath);

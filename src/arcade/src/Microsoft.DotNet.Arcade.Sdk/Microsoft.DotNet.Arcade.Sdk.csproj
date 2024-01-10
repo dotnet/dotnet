@@ -1,9 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
 
     <IsPackable>true</IsPackable>
     <!-- Generate package during Build, rather than Pack, so that it can be used during Test. -->
@@ -44,8 +43,6 @@
     <None Include="$(_GeneratedVersionFilePath)"
           Pack="true"
           PackagePath="tools\DefaultVersions.Generated.props" />
-    <Compile Remove="obj\**" />
-    <EmbeddedResource Remove="obj\**" />
   </ItemGroup>
 
   <ItemGroup>

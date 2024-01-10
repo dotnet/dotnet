@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -31,32 +30,24 @@ internal class DocumentState
     private VersionStamp? _version;
 
     public static DocumentState Create(
-        HostWorkspaceServices services,
         HostDocument hostDocument,
         Func<Task<TextAndVersion>>? loader)
     {
-        if (services is null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
         if (hostDocument is null)
         {
             throw new ArgumentNullException(nameof(hostDocument));
         }
 
-        return new DocumentState(services, hostDocument, null, null, loader);
+        return new DocumentState(hostDocument, null, null, loader);
     }
 
     // Internal for testing
     internal DocumentState(
-        HostWorkspaceServices services,
         HostDocument hostDocument,
         SourceText? text,
         VersionStamp? version,
         Func<Task<TextAndVersion>>? loader)
     {
-        Services = services;
         HostDocument = hostDocument;
         _sourceText = text;
         _version = version;
@@ -65,8 +56,6 @@ internal class DocumentState
     }
 
     public HostDocument HostDocument { get; }
-
-    public HostWorkspaceServices Services { get; }
 
     public bool IsGeneratedOutputResultAvailable => ComputedState.IsResultAvailable == true;
 
@@ -168,7 +157,7 @@ internal class DocumentState
 
     public virtual DocumentState WithConfigurationChange()
     {
-        var state = new DocumentState(Services, HostDocument, _sourceText, _version, _loader)
+        var state = new DocumentState(HostDocument, _sourceText, _version, _loader)
         {
             // The source could not have possibly changed.
             _sourceText = _sourceText,
@@ -183,7 +172,7 @@ internal class DocumentState
 
     public virtual DocumentState WithImportsChange()
     {
-        var state = new DocumentState(Services, HostDocument, _sourceText, _version, _loader)
+        var state = new DocumentState(HostDocument, _sourceText, _version, _loader)
         {
             // The source could not have possibly changed.
             _sourceText = _sourceText,
@@ -199,7 +188,7 @@ internal class DocumentState
 
     public virtual DocumentState WithProjectWorkspaceStateChange()
     {
-        var state = new DocumentState(Services, HostDocument, _sourceText, _version, _loader)
+        var state = new DocumentState(HostDocument, _sourceText, _version, _loader)
         {
             // The source could not have possibly changed.
             _sourceText = _sourceText,
@@ -222,7 +211,7 @@ internal class DocumentState
 
         // Do not cache the computed state
 
-        return new DocumentState(Services, HostDocument, sourceText, version, null);
+        return new DocumentState(HostDocument, sourceText, version, null);
     }
 
     public virtual DocumentState WithTextLoader(Func<Task<TextAndVersion>> loader)
@@ -234,7 +223,7 @@ internal class DocumentState
 
         // Do not cache the computed state
 
-        return new DocumentState(Services, HostDocument, null, null, loader);
+        return new DocumentState(HostDocument, null, null, loader);
     }
 
     private ImmutableArray<IDocumentSnapshot> GetImportsCore(ProjectSnapshot project)

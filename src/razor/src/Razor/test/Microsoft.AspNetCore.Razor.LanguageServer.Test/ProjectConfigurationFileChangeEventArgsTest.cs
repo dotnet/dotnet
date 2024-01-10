@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
@@ -25,10 +26,10 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
             .Returns(new RazorProjectInfo(
                 "/path/to/obj/project.razor.bin",
                 "c:/path/to/project.csproj",
-                configuration: null,
+                configuration: RazorConfiguration.Default,
                 rootNamespace: null,
                 displayName: "project",
-                projectWorkspaceState: null,
+                projectWorkspaceState: ProjectWorkspaceState.Default,
                 documents: ImmutableArray<DocumentSnapshotHandle>.Empty));
 
         var args = new ProjectConfigurationFileChangeEventArgs(
@@ -53,10 +54,10 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
         var projectInfo = new RazorProjectInfo(
             "/path/to/ORIGINAL/obj/project.razor.bin",
             "c:/path/to/project.csproj",
-            configuration: null,
+            configuration: RazorConfiguration.Default,
             rootNamespace: null,
             displayName: "project",
-            projectWorkspaceState: null,
+            projectWorkspaceState: ProjectWorkspaceState.Default,
             documents: ImmutableArray<DocumentSnapshotHandle>.Empty);
 
         deserializerMock
@@ -84,10 +85,10 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
         var projectInfo = new RazorProjectInfo(
             "/path/to/obj/project.razor.bin",
             "c:/path/to/project.csproj",
-            configuration: null,
+            configuration: RazorConfiguration.Default,
             rootNamespace: null,
             displayName: "project",
-            projectWorkspaceState: null,
+            projectWorkspaceState: ProjectWorkspaceState.Default,
             documents: ImmutableArray<DocumentSnapshotHandle>.Empty);
 
         deserializerMock

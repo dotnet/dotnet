@@ -3,7 +3,7 @@
   <Import Project="ResxWorkaround.props" />
 
   <PropertyGroup>
-    <TargetFramework>$(NetFrameworkToolCurrent)</TargetFramework>
+    <TargetFramework>$(NetFrameworkMinimum)</TargetFramework>
     <Platforms>x86</Platforms>
     <SignAssembly>false</SignAssembly>
     <RootNamespace>Microsoft.SignCheck</RootNamespace>

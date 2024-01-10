@@ -168,8 +168,11 @@
   <data name="Not_Available_In" xml:space="preserve">
     <value>Not available in</value>
   </data>
-  <data name="PositionIndex_Outside_Range" xml:space="preserve">
+  <data name="PositionLine_Outside_Range" xml:space="preserve">
     <value>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</value>
+  </data>
+  <data name="PositionCharacter_Outside_Range" xml:space="preserve">
+    <value>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</value>
   </data>
   <data name="ReTrigger_Completions_Title" xml:space="preserve">
     <value>"Re-trigger completions..."</value>

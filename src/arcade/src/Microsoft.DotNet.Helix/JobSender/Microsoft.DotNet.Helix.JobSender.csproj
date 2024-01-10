@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <!-- Treat this as a tooling library. -->
+    <TargetFrameworks>$(NetToolCurrent);netstandard2.0;$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <RootNamespace>Microsoft.DotNet.Helix.Client</RootNamespace>
     <Description>This package provides a simple API for constructing and sending jobs to the Helix Api</Description>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +16,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Microsoft.Arcade.Common\Microsoft.Arcade.Common.csproj" />
     <ProjectReference Include="..\Client\CSharp\Microsoft.DotNet.Helix.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <Reference Include="System.IO.Compression" />
   </ItemGroup>
 
   <ItemGroup>

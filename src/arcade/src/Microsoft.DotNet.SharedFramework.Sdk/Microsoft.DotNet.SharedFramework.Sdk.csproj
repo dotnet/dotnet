@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <Description>Common toolset for building shared frameworks and framework packs.</Description>
     <PackageType>MSBuildSdk</PackageType>

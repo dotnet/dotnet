@@ -30,7 +30,7 @@ public class SerializationTest : ToolingTestBase
         };
 
         _configuration = RazorConfiguration.Create(languageVersion, "Custom", extensions);
-        _projectWorkspaceState = new ProjectWorkspaceState(ImmutableArray.Create(
+        _projectWorkspaceState = ProjectWorkspaceState.Create(ImmutableArray.Create(
             TagHelperDescriptorBuilder.Create("Test", "TestAssembly").Build()),
             csharpLanguageVersion: LanguageVersion.LatestMajor);
     }

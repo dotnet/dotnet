@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
@@ -98,7 +99,7 @@ internal sealed class RazorLSPSpanMappingService : IRazorSpanMappingService
 
         foreach (var mappedRange in mappedResult.Ranges)
         {
-            if (RangeExtensions.IsUndefined(mappedRange))
+            if (mappedRange.IsUndefined())
             {
                 // Couldn't remap the range correctly. Add default placeholder to indicate to C# that there were issues.
                 results.Add(new RazorMappedSpanResult());

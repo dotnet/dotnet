@@ -73,3 +73,6 @@ foreach($project in $buildConfiguration.SelectNodes("root/projects/src/project")
 }
 
 WriteSectionFooter("updateAssemblyInfo.ps1")
+
+# Needed for testing build quality
+return "$assemblyVersion-$versionSuffix"

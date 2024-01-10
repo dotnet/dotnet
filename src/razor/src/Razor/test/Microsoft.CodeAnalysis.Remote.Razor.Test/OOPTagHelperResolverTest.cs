@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -24,7 +25,6 @@ public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
 {
     private readonly ProjectSnapshotProjectEngineFactory _engineFactory;
     private readonly Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>[] _customFactories;
-    private readonly IFallbackProjectEngineFactory _fallbackFactory;
     private readonly HostProject _hostProject_For_2_0;
     private readonly HostProject _hostProject_For_NonSerializableConfiguration;
     private readonly ProjectSnapshotManagerBase _projectManager;
@@ -37,10 +37,10 @@ public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
         _hostProject_For_2_0 = new HostProject("Test.csproj", "/obj", FallbackRazorConfiguration.MVC_2_0, rootNamespace: null);
         _hostProject_For_NonSerializableConfiguration = new HostProject(
             "Test.csproj", "/obj",
-            new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "Random-0.1", Array.Empty<RazorExtension>()), rootNamespace: null);
+            new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "Random-0.1", []), rootNamespace: null);
 
-        _customFactories = new Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>[]
-        {
+        _customFactories =
+        [
             new Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>(
                 () => Mock.Of<IProjectEngineFactory>(MockBehavior.Strict),
                 new ExportCustomProjectEngineFactoryAttribute("MVC-2.0") { SupportsSerialization = true, }),
@@ -49,18 +49,20 @@ public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
             new Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>(
                 () => Mock.Of<IProjectEngineFactory>(MockBehavior.Strict),
                 new ExportCustomProjectEngineFactoryAttribute("Test-2") { SupportsSerialization = false, }),
-        };
+        ];
 
-        _fallbackFactory = new FallbackProjectEngineFactory();
+        var fallbackFactory = new FallbackProjectEngineFactory();
 
-        _workspace = new AdhocWorkspace();
+        _engineFactory = new DefaultProjectSnapshotProjectEngineFactory(fallbackFactory, _customFactories);
+        var testServices = TestServices.Create([_engineFactory], []);
+
+        _workspace = new AdhocWorkspace(testServices);
         AddDisposable(_workspace);
 
         var info = ProjectInfo.Create(ProjectId.CreateNewId("Test"), VersionStamp.Default, "Test", "Test", LanguageNames.CSharp, filePath: "Test.csproj");
         _workspaceProject = _workspace.CurrentSolution.AddProject(info).GetProject(info.Id).AssumeNotNull();
 
         _projectManager = new TestProjectSnapshotManager(_workspace);
-        _engineFactory = new DefaultProjectSnapshotProjectEngineFactory(_fallbackFactory, _customFactories);
     }
 
     [Fact]

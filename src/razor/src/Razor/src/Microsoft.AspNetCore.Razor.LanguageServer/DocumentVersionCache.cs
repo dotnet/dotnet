@@ -3,13 +3,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal sealed class DocumentVersionCache : IDocumentVersionCache, IProjectSnapshotChangeTrigger
+// TODO: This has to be Shared for MEF to work, but this service was written assuming its lifetime was that of the language
+//       server, so it doesn't clean up after itself well. In the long run, this hopefully won't matter, as we can remove it
+//       but leaving this note here because you never know.
+[Export(typeof(IDocumentVersionCache)), Shared]
+[method: ImportingConstructor]
+internal sealed class DocumentVersionCache() : IDocumentVersionCache, IProjectSnapshotChangeTrigger
 {
     internal const int MaxDocumentTrackingCount = 20;
 

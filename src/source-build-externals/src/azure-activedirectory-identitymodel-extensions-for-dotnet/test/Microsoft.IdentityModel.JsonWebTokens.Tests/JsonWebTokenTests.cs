@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Json.Tests;
@@ -603,6 +604,131 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
+        [Theory, MemberData(nameof(GetPayloadSubClaimValueTheoryData), DisableDiscoveryEnumeration = true)]
+        public void GetPayloadSubClaimValue(GetPayloadValueTheoryData theoryData)
+        {
+            CompareContext context = TestUtilities.WriteHeader($"{this}.GetPayloadSubClaimValue", theoryData);
+            try
+            {
+                JsonWebToken jsonWebToken = new JsonWebToken(theoryData.Json);
+                string payload = Base64UrlEncoder.Decode(jsonWebToken.EncodedPayload);
+                MethodInfo method = typeof(JsonWebToken).GetMethod("GetPayloadValue");
+                MethodInfo generic = method.MakeGenericMethod(theoryData.PropertyType);
+                object[] parameters = new object[] { theoryData.PropertyName };
+                var retVal = generic.Invoke(jsonWebToken, parameters);
+
+                theoryData.ExpectedException.ProcessNoException(context);
+                IdentityComparer.AreEqual(retVal, theoryData.PropertyValue, context);
+            }
+            catch (Exception ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex.InnerException, context);
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        public static TheoryData<GetPayloadValueTheoryData> GetPayloadSubClaimValueTheoryData
+        {
+            get
+            {
+                var theoryData = new TheoryData<GetPayloadValueTheoryData>();
+                string[] stringArray = new string[] { "string1", "string2" };
+                object propertyValue = new Dictionary<string, string[]> { { "stringArray", stringArray } };
+
+                theoryData.Add(new GetPayloadValueTheoryData("SubjectAsString")
+                {
+                    PropertyName = "sub",
+                    PropertyType = typeof(string),
+                    PropertyValue = null,
+                    Json = JsonUtilities.CreateUnsignedToken("sub", null)
+                });
+                theoryData.Add(new GetPayloadValueTheoryData("SubjectAsBoolTrue")
+                {
+                    PropertyName = "sub",
+                    PropertyType = typeof(bool),
+                    PropertyValue = true,
+                    Json = JsonUtilities.CreateUnsignedToken("sub", true),
+                    ExpectedException = ExpectedException.JsonException("IDX11020:")
+                });
+                theoryData.Add(new GetPayloadValueTheoryData("SubjectAsBoolFalse")
+                {
+                    PropertyName = "sub",
+                    PropertyType = typeof(bool),
+                    PropertyValue = false,
+                    Json = JsonUtilities.CreateUnsignedToken("sub", false),
+                    ExpectedException = ExpectedException.JsonException("IDX11020:")
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("SubjectAsArray")
+                {
+                    PropertyName = "sub",
+                    PropertyType = typeof(string[]),
+                    PropertyValue = stringArray,
+                    Json = JsonUtilities.CreateUnsignedToken("sub", stringArray),
+                    ExpectedException = ExpectedException.JsonException("IDX11020:")
+                });
+                theoryData.Add(new GetPayloadValueTheoryData("SubjectAsObject")
+                {
+                    PropertyName = "sub",
+                    PropertyType = typeof(object),
+                    PropertyValue = propertyValue,
+                    Json = JsonUtilities.CreateUnsignedToken("sub", propertyValue),
+                    ExpectedException = ExpectedException.JsonException("IDX11020:")
+                });
+                theoryData.Add(new GetPayloadValueTheoryData("SubjectAsDouble")
+                {
+                    PropertyName = "sub",
+                    PropertyType = typeof(double),
+                    PropertyValue = 622.101,
+                    Json = JsonUtilities.CreateUnsignedToken("sub", 622.101)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("SubjectAsDecimal")
+                {
+                    PropertyName = "sub",
+                    PropertyType = typeof(decimal),
+                    PropertyValue = 422.101,
+                    Json = JsonUtilities.CreateUnsignedToken("sub", 422.101)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("SubjectAsFloat")
+                {
+                    PropertyName = "sub",
+                    PropertyType = typeof(float),
+                    PropertyValue = 42.1,
+                    Json = JsonUtilities.CreateUnsignedToken("sub", 42.1)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("SubjectAsInteger")
+                {
+                    PropertyName = "sub",
+                    PropertyType = typeof(int),
+                    PropertyValue = 42,
+                    Json = JsonUtilities.CreateUnsignedToken("sub", 42)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("SubjectAsUInt")
+                {
+                    PropertyName = "sub",
+                    PropertyType = typeof(uint),
+                    PropertyValue = 540,
+                    Json = JsonUtilities.CreateUnsignedToken("sub", 540)
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("SubjectAsUlong")
+                {
+                    PropertyName = "sub",
+                    PropertyType = typeof(ulong),
+                    PropertyValue = 642,
+                    Json = JsonUtilities.CreateUnsignedToken("sub", 642)
+                });
+
+                return theoryData;
+            }
+            
+        }
+
         // This test ensures that accessing claims from the payload works as expected.
         [Theory, MemberData(nameof(GetPayloadValueTheoryData), DisableDiscoveryEnumeration = true)]
         public void GetPayloadValue(GetPayloadValueTheoryData theoryData)
@@ -820,6 +946,22 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     PropertyType = typeof(string),
                     PropertyValue = "property",
                     Json = JsonUtilities.CreateUnsignedToken("string", "property")
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("enum")
+                {
+                    PropertyName = "enum",
+                    PropertyType = typeof(SampleEnum),
+                    PropertyValue = "Option1",
+                    Json = JsonUtilities.CreateUnsignedToken("enum", "option1")
+                });
+
+                theoryData.Add(new GetPayloadValueTheoryData("enum_caseinsensitive")
+                {
+                    PropertyName = "enum",
+                    PropertyType = typeof(SampleEnum),
+                    PropertyValue = "option1",
+                    Json = JsonUtilities.CreateUnsignedToken("enum", "option1")
                 });
                 #endregion
 
@@ -1498,5 +1640,11 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         public string Payload { get; set; }
 
         public string Header { get; set; }
+    }
+
+    public enum SampleEnum
+    {
+        Option1,
+        Option2
     }
 }

@@ -648,6 +648,33 @@ namespace Microsoft.IdentityModel.Tokens.Json
             return reader.GetString();
         }
 
+        /// <summary>
+        /// This method allows a JsonTokenType to be string or number but, it will always return it as a string.
+        /// </summary>
+        /// <param name="reader">The<see cref="Utf8JsonReader"/></param>
+        /// <param name="propertyName">The property name that is being read.</param>
+        /// <param name="className">The type that is being deserialized.</param>
+        /// <param name="read">If true reader.Read() will be called.</param>
+        /// <returns>Value from reader as string.</returns>
+        internal static string ReadStringOrNumberAsString(ref Utf8JsonReader reader, string propertyName, string className, bool read = false)
+        {
+            if (read)
+                reader.Read();
+
+            // returning null keeps the same logic as JsonSerialization.ReadObject
+            if (reader.TokenType == JsonTokenType.Null)
+                return null;
+
+            if (reader.TokenType == JsonTokenType.Number)
+                return ReadNumber(ref reader).ToString();
+
+            if (reader.TokenType != JsonTokenType.String)
+                throw LogHelper.LogExceptionMessage(
+                    CreateJsonReaderException(ref reader, "JsonTokenType.String or JsonTokenType.Number", className, propertyName));
+
+            return reader.GetString();
+        }
+
         internal static object ReadStringAsObject(ref Utf8JsonReader reader, string propertyName, string className, bool read = false)
         {
             if (read)
@@ -771,13 +798,13 @@ namespace Microsoft.IdentityModel.Tokens.Json
 
         /// <summary>
         /// This method is called when deserializing a property value as an object.
-        /// Normally we put the object into a Dictionary[string, object].
+        /// Normally, we put the object into a Dictionary[string, object].
         /// </summary>
-        /// <param name="reader">the <see cref="Utf8JsonReader"/></param>
-        /// <param name="propertyName">the property name that is being read</param>
-        /// <param name="className">the type that is being deserialized</param>
-        /// <param name="read">if true reader.Read() will be called.</param>
-        /// <returns></returns>
+        /// <param name="reader">The <see cref="Utf8JsonReader"/></param>
+        /// <param name="propertyName">The property name that is being read.</param>
+        /// <param name="className">The type that is being deserialized.</param>
+        /// <param name="read">If true reader.Read() will be called.</param>
+        /// <returns>Value from reader as an object.</returns>
         internal static object ReadPropertyValueAsObject(ref Utf8JsonReader reader, string propertyName, string className, bool read = false)
         {
             if (read)

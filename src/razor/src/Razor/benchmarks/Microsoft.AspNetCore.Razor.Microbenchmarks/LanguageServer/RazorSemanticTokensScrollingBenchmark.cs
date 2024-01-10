@@ -58,6 +58,7 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
         DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, projectContext: null, version: 1);
 
         SemanticTokensLegend = new RazorSemanticTokensLegend(new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = true });
+        RazorSemanticTokenService.ApplyCapabilities(new(), new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = true });
 
         var text = await DocumentSnapshot.GetTextAsync().ConfigureAwait(false);
         Range = new Range
@@ -85,12 +86,13 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
             Uri = DocumentUri
         };
         var cancellationToken = CancellationToken.None;
-        var correlationId = Guid.Empty;
         var documentVersion = 1;
 
         await UpdateDocumentAsync(documentVersion, DocumentSnapshot).ConfigureAwait(false);
 
         var documentLineCount = Range.End.Line;
+
+        var clientConnection = RazorLanguageServer.GetRequiredService<IClientConnection>();
 
         var lineCount = 0;
         while (lineCount != documentLineCount)
@@ -102,11 +104,11 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
                 End = new Position(newLineCount, 0)
             };
             await RazorSemanticTokenService!.GetSemanticTokensAsync(
+                clientConnection,
                 textDocumentIdentifier,
                 range,
                 DocumentContext,
-                SemanticTokensLegend,
-                correlationId,
+                colorBackground: false,
                 cancellationToken);
 
             lineCount = newLineCount;

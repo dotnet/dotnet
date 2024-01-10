@@ -26,21 +26,21 @@ internal partial class RazorCustomMessageTarget
 
         ConvertCSharpFocusLocationUris(request.FocusLocations);
 
-        var mappings = new MapCodeMapping()
+        var mappings = new VSInternalMapCodeMapping()
         {
             TextDocument = request.Identifier.TextDocumentIdentifier.WithUri(delegationDetails.Value.ProjectedUri),
             Contents = request.Contents,
             FocusLocations = request.FocusLocations
         };
 
-        var mapCodeParams = new MapCodeParams()
+        var mapCodeParams = new VSInternalMapCodeParams()
         {
             Mappings = [mappings]
         };
 
         var textBuffer = delegationDetails.Value.TextBuffer;
 
-        var response = await _requestInvoker.ReinvokeRequestOnServerAsync<MapCodeParams, WorkspaceEdit?>(
+        var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalMapCodeParams, WorkspaceEdit?>(
             textBuffer,
             MapperMethods.WorkspaceMapCodeName,
             delegationDetails.Value.LanguageServerName,
@@ -80,10 +80,8 @@ internal partial class RazorCustomMessageTarget
 
     private static bool SupportsMapCode(JToken token)
     {
-        var serverCapabilities = token.ToObject<VSInternalServerCapabilities>();
-
-        return serverCapabilities?.Experimental is JObject experimental
-            && experimental.TryGetValue(MapperMethods.WorkspaceMapCodeName, out var supportsMapCode)
+        return token is JObject obj
+            && obj.TryGetValue(MapperMethods.WorkspaceMapCodeName, out var supportsMapCode)
             && supportsMapCode.ToObject<bool>();
     }
 }

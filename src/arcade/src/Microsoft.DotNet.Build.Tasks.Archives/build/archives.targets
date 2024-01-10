@@ -1,6 +1,15 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
+  <PropertyGroup>
+    <BuildDependsOn>
+      $(BuildDependsOn);
+      _GetSkipArchivesBuildProps;
+      _CreateArchive;
+      _CreateSymbolsArchive
+    </BuildDependsOn>
+  </PropertyGroup>
+
   <Target Name="_GetCurrentProjectServicingConfiguration">
     <ItemGroup>
       <CurrentProjectServicingConfiguration
@@ -117,14 +126,5 @@
 
     <Message Text="$(_SymbolsOutputPathRoot) -> $(_DestinationFileName)" Importance="high" />
   </Target>
-
-  <PropertyGroup>
-    <BuildDependsOn>
-      $(BuildDependsOn);
-      _GetSkipArchivesBuildProps;
-      _CreateArchive;
-      _CreateSymbolsArchive
-    </BuildDependsOn>
-  </PropertyGroup>
 
 </Project>

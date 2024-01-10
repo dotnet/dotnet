@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(NetToolCurrent)</TargetFramework>
     <IsPackable>true</IsPackable>
     <PackTasks>false</PackTasks>
     <Description>Targets for producing an archive of file outputs.</Description>

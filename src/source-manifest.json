@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.24055.2",
+      "packageVersion": "9.0.0-beta.24060.1",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "bab85ba4579526962b0dbb0aa4db625c50da8859"
+      "commitSha": "e96d0e9f197ef2be216415e19ec927adfaefb82a"
     },
     {
       "packageVersion": "8.0.0-preview.1.23557.2",
@@ -37,10 +37,10 @@
       "commitSha": "b4f8847a36543b3274dc252534d0175de35bd16c"
     },
     {
-      "packageVersion": "8.0.0-preview.24054.1",
+      "packageVersion": "8.0.0-preview.24058.1",
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "dec7d6e7a27cc6a46bad117800b7002a6f4c2f20"
+      "commitSha": "9b4cfdfde85a1bcab1e87e78be8db99785ba3e1f"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24053.1",
@@ -64,13 +64,13 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "a7a73f8f2548bcd3ae505ffe39375f07552ce5e5"
+      "commitSha": "0b82a5aa64ad639184b1da058a7f11323d89a031"
     },
     {
-      "packageVersion": "17.10.0-preview-24059-01",
+      "packageVersion": "17.10.0-preview-24060-03",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "8215fb194d24cba1971476188ad97e5498fd2dfb"
+      "commitSha": "1725b247e8737804076c8ff3b09fcee02ecdf51e"
     },
     {
       "packageVersion": "6.9.0-rc.74",
@@ -79,10 +79,10 @@
       "commitSha": "e92be3915309e687044768de38933ac5fc4cb40c"
     },
     {
-      "packageVersion": "7.0.0-preview.24053.4",
+      "packageVersion": "7.0.0-preview.24060.2",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "df383360c34ada8889fdf18dc36d245f2938db66"
+      "commitSha": "70eb74af5c2bff152f5eeb76e6a69827ec097f32"
     },
     {
       "packageVersion": "4.9.0-3.24053.1",
@@ -97,10 +97,10 @@
       "commitSha": "8847dee338fe9af77ada479a9c03cd1c08f7c1a9"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24059.21",
+      "packageVersion": "9.0.0-alpha.1.24060.1",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "cc5f1df48e5e39a6fa5ab94ca4664aac3cc36898"
+      "commitSha": "e0ecb3a6af984e12f2ba67e63bf9eff9f09de47c"
     },
     {
       "packageVersion": "9.0.0-preview.24057.2",
@@ -109,16 +109,16 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-alpha.1.24060.2",
+      "packageVersion": "9.0.100-alpha.1.24060.11",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "bedb8ccb29ebda43103d0f1559106db704e15b52"
+      "commitSha": "4ee2ed3de45a4cae2571cabac89ea307230c3cce"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24058.1",
+      "packageVersion": "9.0.0-alpha.1.24059.3",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "2054f99a5685034a4ea4755b3cc2984fb2a5e4a8"
+      "commitSha": "6513a2c0cd7be2706742181af63d717a90cec5be"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24059.3",
@@ -151,16 +151,16 @@
       "commitSha": "7d2f2719628e6744f3172a2d48e0d1f600b360c0"
     },
     {
-      "packageVersion": "17.10.0-preview-24058-01",
+      "packageVersion": "17.10.0-preview-24059-03",
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "aef3d5fbe837aef3f7cc54bba375b744db9ed8e6"
+      "commitSha": "17723493fc8befbb889db2ff17b1ac98ba7b7c48"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24056.2",
+      "packageVersion": "9.0.0-alpha.1.24060.1",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "cd813382efc14c011d79679a654d77f5743d7769"
+      "commitSha": "4ec0ed9971f8974889e71c55a60c3876b8b67a61"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24053.20",
@@ -216,7 +216,7 @@
     {
       "path": "source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
       "remoteUri": "https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git",
-      "commitSha": "bb354ceabed19189245e075abb864f327b6c14ad"
+      "commitSha": "a607fa5e0005a6178cf1d2fed4fa0f8179cdb186"
     },
     {
       "path": "source-build-externals/src/cssparser",

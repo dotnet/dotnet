@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -125,10 +124,10 @@ internal class DefaultProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy
             return null;
         }
 
-        var projectWorkspaceState = new ProjectWorkspaceState(project.TagHelpers, project.CSharpLanguageVersion);
+        var projectWorkspaceState = ProjectWorkspaceState.Create(project.TagHelpers, project.CSharpLanguageVersion);
         var projectFilePath = _session.ConvertLocalPathToSharedUri(project.FilePath);
         var intermediateOutputPath = _session.ConvertLocalPathToSharedUri(project.IntermediateOutputPath);
-        var projectHandleProxy = new ProjectSnapshotHandleProxy(projectFilePath, intermediateOutputPath, project.Configuration.AssumeNotNull(), project.RootNamespace, projectWorkspaceState);
+        var projectHandleProxy = new ProjectSnapshotHandleProxy(projectFilePath, intermediateOutputPath, project.Configuration, project.RootNamespace, projectWorkspaceState);
         return projectHandleProxy;
     }
 

@@ -2,7 +2,7 @@
   
   <!-- Most of the code has been ported from https://devdiv.visualstudio.com/DevDiv/_git/CoreFxTools repo.-->
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(NetToolCurrent)</TargetFramework>
     <OutputType>Exe</OutputType>
     <IsPackable>true</IsPackable>
     <PackAsTool>true</PackAsTool>

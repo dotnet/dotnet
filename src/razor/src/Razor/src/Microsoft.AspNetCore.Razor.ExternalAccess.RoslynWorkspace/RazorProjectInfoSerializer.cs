@@ -85,7 +85,7 @@ internal static class RazorProjectInfoSerializer
         var resolver = new CompilationTagHelperResolver(NoOpTelemetryReporter.Instance);
         var tagHelpers = await resolver.GetTagHelpersAsync(project, engine, cancellationToken).ConfigureAwait(false);
 
-        var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, csharpLanguageVersion);
+        var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers, csharpLanguageVersion);
 
         var configurationFilePath = Path.Combine(intermediateOutputPath, configurationFileName);
 

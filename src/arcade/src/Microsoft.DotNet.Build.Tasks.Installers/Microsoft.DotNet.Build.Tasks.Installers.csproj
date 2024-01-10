@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsPackable>true</IsPackable>
     <Description>Installer task package</Description>
@@ -32,11 +32,6 @@
     <Compile Include="..\Common\Internal\AssemblyResolver.cs" />
     <Compile Include="..\Common\Internal\BuildTask.Desktop.cs" />
     <Reference Include="WindowsBase" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="obj\**" />
-    <EmbeddedResource Remove="obj\**" />
   </ItemGroup>
 
   <ItemGroup>

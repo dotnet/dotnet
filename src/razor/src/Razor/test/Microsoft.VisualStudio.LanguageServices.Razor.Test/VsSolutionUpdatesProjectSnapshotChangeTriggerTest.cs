@@ -8,6 +8,7 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
@@ -39,14 +40,24 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : ToolingTestBase
         _someProject = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
         _someOtherProject = new HostProject(TestProjectData.AnotherProject.FilePath, TestProjectData.AnotherProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, TestProjectData.AnotherProject.RootNamespace);
 
-        _workspace = TestWorkspace.Create(w => _someWorkspaceProject = w.AddProject(ProjectInfo.Create(
-                ProjectId.CreateNewId(),
-                VersionStamp.Create(),
-                "SomeProject",
-                "SomeProject",
-                LanguageNames.CSharp,
-                filePath: _someProject.FilePath).WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(Path.Combine(_someProject.IntermediateOutputPath, "SomeProject.dll")))));
+        var projectEngineFactory = Mock.Of<ProjectSnapshotProjectEngineFactory>(MockBehavior.Strict);
+        var testServices = TestServices.Create([projectEngineFactory], []);
 
+        _workspace = TestWorkspace.Create(testServices,
+            w =>
+            {
+                _someWorkspaceProject = w.AddProject(
+                    ProjectInfo.Create(
+                        ProjectId.CreateNewId(),
+                        VersionStamp.Create(),
+                        "SomeProject",
+                        "SomeProject",
+                        LanguageNames.CSharp,
+                        filePath: _someProject.FilePath)
+                    .WithCompilationOutputInfo(
+                        new CompilationOutputInfo()
+                            .WithAssemblyPath(Path.Combine(_someProject.IntermediateOutputPath, "SomeProject.dll"))));
+            });
         AddDisposable(_workspace);
     }
 
@@ -189,11 +200,17 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : ToolingTestBase
             .Returns(VSConstants.S_OK);
 
         var services = new Mock<IServiceProvider>(MockBehavior.Strict);
-        services.Setup(s => s.GetService(It.Is<Type>(f => f == typeof(SVsSolutionBuildManager)))).Returns(buildManager.Object);
+        services
+            .Setup(s => s.GetService(It.Is<Type>(f => f == typeof(SVsSolutionBuildManager))))
+            .Returns(buildManager.Object);
+
+        var projectEngineFactory = Mock.Of<ProjectSnapshotProjectEngineFactory>(MockBehavior.Strict);
+
         var projectSnapshot = new ProjectSnapshot(
             ProjectState.Create(
-                _workspace.Services,
-                new HostProject("/Some/Unknown/Path.csproj", "/Some/Unknown/obj", RazorConfiguration.Default, "Path")));
+                projectEngineFactory,
+                new HostProject("/Some/Unknown/Path.csproj", "/Some/Unknown/obj", RazorConfiguration.Default, "Path"),
+                ProjectWorkspaceState.Default));
         var expectedProjectPath = projectSnapshot.FilePath;
 
         var projectService = new Mock<TextBufferProjectService>(MockBehavior.Strict);

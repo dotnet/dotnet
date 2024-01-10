@@ -4,7 +4,7 @@
     <XliffTasksProjectDirectory>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'src', 'Microsoft.DotNet.XliffTasks'))</XliffTasksProjectDirectory>
     <XliffTasksBaseOutputDirectory>$(ArtifactsBinDir)Microsoft.DotNet.XliffTasks\$(Configuration)\</XliffTasksBaseOutputDirectory>
     <!-- Keep TFMs in sync with Microsoft.DotNet.XliffTasks.csproj -->
-    <XliffTasksDirectory Condition="'$(MSBuildRuntimeType)' == 'Core'">$(XliffTasksBaseOutputDirectory)$(NetCurrent)\</XliffTasksDirectory>
+    <XliffTasksDirectory Condition="'$(MSBuildRuntimeType)' == 'Core'">$(XliffTasksBaseOutputDirectory)$(NetToolCurrent)\</XliffTasksDirectory>
     <XliffTasksDirectory Condition="'$(MSBuildRuntimeType)' != 'Core'">$(XliffTasksBaseOutputDirectory)$(NetFrameworkToolCurrent)\</XliffTasksDirectory>
     <!-- XliffTasks tasks should be invoked out-of-proc in this repository to avoid assembly lock issues. -->
     <XliffTasksTaskFactory>TaskHostFactory</XliffTasksTaskFactory>
@@ -25,7 +25,7 @@
                       PrivateAssets="all"
                       Private="false">
       <!-- Keep TFMs in sync with Microsoft.DotNet.XliffTasks.csproj -->
-      <SetTargetFramework Condition="'$(MSBuildRuntimeType)' == 'Core'">TargetFramework=$(NetCurrent)</SetTargetFramework>
+      <SetTargetFramework Condition="'$(MSBuildRuntimeType)' == 'Core'">TargetFramework=$(NetToolCurrent)</SetTargetFramework>
       <SetTargetFramework Condition="'$(MSBuildRuntimeType)' != 'Core'">TargetFramework=$(NetFrameworkToolCurrent)</SetTargetFramework>
     </ProjectReference>
   </ItemGroup>

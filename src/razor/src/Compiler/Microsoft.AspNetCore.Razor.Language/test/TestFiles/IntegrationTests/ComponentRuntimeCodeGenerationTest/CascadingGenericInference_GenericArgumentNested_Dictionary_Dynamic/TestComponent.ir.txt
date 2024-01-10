@@ -1,0 +1,19 @@
+﻿Document - 
+    NamespaceDeclaration -  - Test
+        UsingDirective - (3:1,1 [22] ) - global::System
+        UsingDirective - (26:2,1 [42] ) - global::System.Collections.Generic
+        UsingDirective - (69:3,1 [27] ) - global::System.Linq
+        UsingDirective - (97:4,1 [38] ) - global::System.Threading.Tasks
+        UsingDirective - (136:5,1 [47] ) - global::Microsoft.AspNetCore.Components
+        ClassDeclaration -  - public partial - TestComponent - global::Microsoft.AspNetCore.Components.ComponentBase - 
+            MethodDeclaration -  - protected override - void - BuildRenderTree
+                Component - (0:0,0 [79] x:\dir\subdir\Test\TestComponent.cshtml) - Grid
+                    ComponentChildContent -  - ChildContent - context
+                        Component - (56:1,4 [14] x:\dir\subdir\Test\TestComponent.cshtml) - GridColumn
+                    ComponentAttribute - (12:0,12 [36] x:\dir\subdir\Test\TestComponent.cshtml) - Data - Data - AttributeStructure.DoubleQuotes
+                        CSharpExpression - (13:0,13 [35] x:\dir\subdir\Test\TestComponent.cshtml)
+                            LazyIntermediateToken - (14:0,14 [33] x:\dir\subdir\Test\TestComponent.cshtml) - CSharp - new Dictionary<dynamic, string>()
+    NamespaceDeclaration -  - __Blazor.Test.TestComponent
+        ClassDeclaration -  - internal static - TypeInference -  - 
+            ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateGrid_0
+            ComponentTypeInferenceMethod -  - __Blazor.Test.TestComponent.TypeInference - CreateGridColumn_1
