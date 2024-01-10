@@ -16,6 +16,10 @@
     <PackageReportDataFile>$(PackageReportDir)prebuilt-usage.xml</PackageReportDataFile>
     <ProjectAssetsJsonArchiveFile>$(PackageReportDir)all-project-assets-json-files.zip</ProjectAssetsJsonArchiveFile>
     <ProdConManifestFile>$(PackageReportDir)prodcon-build.xml</ProdConManifestFile>
+
+    <UpdateEngCommonFiles Condition="'$(UpdateEngCommonFiles)' == '' and '$(DotNetBuildVertical)' == 'true'">true</UpdateEngCommonFiles>
+    <!-- TODO: Remove when current builds of roslyn and aspire got ingested into installer. -->
+    <UpdateEngCommonFiles Condition="'$(UpdateEngCommonFiles)' == '' and '$(RepositoryName)' == 'roslyn' or '$(RepositoryName)' == 'aspire'">true</UpdateEngCommonFiles>
   </PropertyGroup>
 
   <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="AddSourceToNuGetConfig" />
@@ -124,7 +128,7 @@
 
   <!-- TODO: Remove when all repos use a consistent set of eng/common files: https://github.com/dotnet/source-build/issues/3710. -->
   <Target Name="UpdateEngCommonFiles"
-          Condition="'$(DotNetBuildVertical)' == 'true'"
+          Condition="'$(UpdateEngCommonFiles)' == 'true'"
           BeforeTargets="Build">
     <ItemGroup>
       <OrchestratorEngCommonFile Include="$(RepositoryEngineeringDir)common\**\*" />
