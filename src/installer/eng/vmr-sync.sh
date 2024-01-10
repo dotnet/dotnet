@@ -33,10 +33,10 @@
 ###   --debug
 ###       Optional. Turns on the most verbose logging for the VMR tooling
 ###
-###   --readme-template
-###       Optional. Template for VMRs README.md used for regenerating the file to list the newest versions of
+###   --component-template
+###       Optional. Template for VMRs Component.md used for regenerating the file to list the newest versions of
 ###       components.
-###       Defaults to src/VirtualMonoRepo/README.template.md
+###       Defaults to src/VirtualMonoRepo/Component.template.md
 ###
 ###   --recursive
 ###       Optional. Recursively synchronize all the source build dependencies (declared in Version.Details.xml)
@@ -103,7 +103,7 @@ repository=''
 additional_remotes=''
 recursive=false
 verbosity=verbose
-readme_template="$installer_dir/src/VirtualMonoRepo/README.template.md"
+readme_template="$installer_dir/src/VirtualMonoRepo/Component.template.md"
 tpn_template="$installer_dir/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt"
 azdev_pat=''
 
@@ -138,8 +138,8 @@ while [[ $# -gt 0 ]]; do
       additional_remotes="$additional_remotes $2"
       shift
       ;;
-    --readme-template)
-      readme_template=$2
+    --component-template)
+      component_template=$2
       shift
       ;;
     --tpn-template)
@@ -266,7 +266,7 @@ fi
   --$verbosity                               \
   $recursive_arg                             \
   $additional_remotes                        \
-  --readme-template "$readme_template"       \
+  --component-template "$component_template" \
   --tpn-template "$tpn_template"             \
   "$repository"
 
