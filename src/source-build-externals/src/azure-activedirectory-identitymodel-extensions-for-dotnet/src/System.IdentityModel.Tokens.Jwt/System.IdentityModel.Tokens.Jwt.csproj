@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <AssemblyName>System.IdentityModel.Tokens.Jwt</AssemblyName>
-    <Description>Includes types that provide support for creating, serializing and validating JSON Web Tokens.</Description>
+    <Description>Includes types that provide support for creating, serializing and validating JSON Web Tokens. As of IdentityModel 7x, this is a legacy tool that should be replaced with Microsoft.IdentityModel.JsonWebTokens.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>System.IdentityModel.Tokens.Jwt</PackageId>
     <PackageTags>.NET;Windows;Authentication;Identity;Json Web Token</PackageTags>
