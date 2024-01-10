@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <!-- Treat this as a tooling library. -->
+    <TargetFrameworks>$(NetToolCurrent);netstandard2.0;$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <Description>This package provides access to the Helix Api located at https://helix.dot.net/</Description>
     <SwaggerDocumentUri>https://helix.dot.net/api/openapi.json</SwaggerDocumentUri>
     <SwaggerClientName>HelixApi</SwaggerClientName>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
   </PropertyGroup>
 
   <ItemGroup>

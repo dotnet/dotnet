@@ -4,6 +4,7 @@
 using System.IO;
 
 #nullable enable
+
 namespace Microsoft.Arcade.Common
 {
     public class FileSystem : IFileSystem
@@ -28,8 +29,8 @@ namespace Microsoft.Arcade.Common
 
         public void WriteToFile(string path, string content)
         {
-            string dirPath = Path.GetDirectoryName(path);
-            Directory.CreateDirectory(dirPath);
+            string? dirPath = Path.GetDirectoryName(path);
+            Directory.CreateDirectory(dirPath!);
             File.WriteAllText(path, content);
         }
 

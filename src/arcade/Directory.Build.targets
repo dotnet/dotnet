@@ -11,7 +11,7 @@
                       ExcludeAssets="runtime"
                       VersionOverride="2.0.3"
                       Condition="'$(TargetFrameworkIdentifier)' != '.NETStandard' and
-                                 $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.0'))" />
+                                 '$(SkipNETStandardLibraryPackageAutoInclude)' != 'true'" />
   </ItemGroup>
 
 </Project>

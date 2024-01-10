@@ -12,6 +12,7 @@ namespace Xunit
     }
 }
 
+#if !NET
 namespace System.Diagnostics.CodeAnalysis
 {
     // This is a copy of the attribute from CoreLib. The attribute shipped in .NET 5.
@@ -43,3 +44,4 @@ namespace System.Diagnostics.CodeAnalysis
         All = ~None
     }
 }
+#endif

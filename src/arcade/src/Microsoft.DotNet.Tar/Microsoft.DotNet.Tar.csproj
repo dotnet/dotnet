@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsPackable>true</IsPackable>
@@ -10,8 +10,9 @@
     <DevelopmentDependency>false</DevelopmentDependency>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetCurrent)'">
+  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetToolCurrent)'">
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-tar</ToolCommandName>
   </PropertyGroup>
+
 </Project>
