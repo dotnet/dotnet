@@ -184,7 +184,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@424e4b7](https://github.com/dotnet/fsharp/commit/424e4b7cffb7656efd63f7a905a2498e39011104)*
 - `src/installer`  
-*[dotnet/installer@4fbf193](https://github.com/dotnet/installer/commit/4fbf19326dbefe6c1ff09d121a3e0c39e20dfa0f)*
+*[dotnet/installer@2d3bf4c](https://github.com/dotnet/installer/commit/2d3bf4cff8c36b13b13852b6e4a2ea7428b8a4a1)*
 - `src/msbuild`  
 *[dotnet/msbuild@195e7f5](https://github.com/dotnet/msbuild/commit/195e7f5a3a8e51c37d83cd9e54cb99dc3fc69c22)*
 - `src/nuget-client`  
@@ -200,7 +200,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@bf5e279](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/commit/bf5e279d9239bfef5bb1b8d6212f1b971c434606)*
 - `src/sdk`  
-*[_git/dotnet-sdk@db838b3](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/commit/db838b3e994dca38ead37ce90b6ba13285ac687c)*
+*[_git/dotnet-sdk@e4b8a55](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/commit/e4b8a55b3346166a4e12b1160b844914248b3b8a)*
 - `src/source-build-externals`  
 *[_git/dotnet-source-build-externals@0f0f1f0](https://dev.azure.com/dnceng/internal/_git/dotnet-source-build-externals/commit/0f0f1f0f33830f27ed0ff357145d2464b96b1a3e)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -238,7 +238,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/test-templates`  
 *[dotnet/test-templates@1e5f360](https://github.com/dotnet/test-templates/commit/1e5f3603af2277910aad946736ee23283e7f3e16)*
 - `src/vstest`  
-*[microsoft/vstest@3259862](https://github.com/microsoft/vstest/commit/3259862fadd5e784564e7d920a2d61a75f415a79)*
+*[microsoft/vstest@aa59400](https://github.com/microsoft/vstest/commit/aa59400b11e1aeee2e8af48928dbd48748a8bef9)*
 - `src/xdt`  
 *[dotnet/xdt@9a1c3e1](https://github.com/dotnet/xdt/commit/9a1c3e1b7f0c8763d4c96e593961a61a72679a7b)*
 - `src/xliff-tasks`  
