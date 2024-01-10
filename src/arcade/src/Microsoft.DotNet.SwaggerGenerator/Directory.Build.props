@@ -2,7 +2,7 @@
 
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory)\.., Directory.Build.props))\Directory.Build.props" />
 
-  <!-- Don't include VersionTools in source-build until we find a reason to use it. -->
+  <!-- Exclude SwaggerGenerator from source-build until we find a reason to use it. -->
   <PropertyGroup>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
   </PropertyGroup>

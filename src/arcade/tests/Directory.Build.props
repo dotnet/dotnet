@@ -1,0 +1,9 @@
+<Project>
+
+  <Import Project="..\Directory.Build.props" />
+
+  <PropertyGroup>
+    <SkipNETStandardLibraryPackageAutoInclude>true</SkipNETStandardLibraryPackageAutoInclude>
+  </PropertyGroup>
+
+</Project>

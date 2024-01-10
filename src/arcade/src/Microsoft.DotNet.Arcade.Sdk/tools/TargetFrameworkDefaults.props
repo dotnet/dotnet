@@ -38,7 +38,7 @@
 
     <!-- Lowest version of .NET at the time of the release of NetCurrent that is supported by tooling.
          Undefined when NetToolCurrent and NetToolMinimum are identical. -->
-    <NetToolMinimum>net6.0</NetToolMinimum>
+    <NetToolMinimum>net8.0</NetToolMinimum>
 
     <!-- The version of .NET Framework that tools (i.e. msbuild tasks) should target. -->
     <NetFrameworkToolCurrent>net472</NetFrameworkToolCurrent>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <TargetFramework>$(NetToolCurrent)</TargetFramework>
     <IsPackable>true</IsPackable>
     <Description>Common toolset for calling into CMake from MSBuild and easily reference native assets from managed projects.</Description>
     <PackageType>MSBuildSdk</PackageType>
