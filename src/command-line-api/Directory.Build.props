@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <Import Project="Sdk.props" 
-          Sdk="Microsoft.DotNet.Arcade.Sdk" 
+
+  <Import Project="Sdk.props"
+          Sdk="Microsoft.DotNet.Arcade.Sdk"
           Condition="'$(DisableArcade)' != '1'" />
 
   <PropertyGroup>
@@ -17,11 +17,6 @@
 
   <PropertyGroup Condition="'$(DotNetBuildFromSource)' != 'true'">
     <TargetFrameworkForNETSDK>net7.0</TargetFrameworkForNETSDK>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!-- This repo is currently on the .NET 5 APIs, but a build task in license validation during source build requires 6.0. -->
-    <SuppressLicenseValidation>true</SuppressLicenseValidation>
   </PropertyGroup>
 
 </Project>
