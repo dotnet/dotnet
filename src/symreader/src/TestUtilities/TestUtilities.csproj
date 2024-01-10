@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(NetCurrent);$(NetFrameworkMinimum)</TargetFrameworks>
-    <IsShipping>false</IsShipping>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <IsTestUtilityProject>true</IsTestUtilityProject>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit.assert" Version="$(XunitVersion)" />
