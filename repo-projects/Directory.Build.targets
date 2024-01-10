@@ -18,7 +18,7 @@
     <ProdConManifestFile>$(PackageReportDir)prodcon-build.xml</ProdConManifestFile>
 
     <EngCommonToolsFile Condition="'$(BuildOS)' == 'windows'">$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'common', 'tools.ps1'))</EngCommonToolsFile>
-    <EngCommonToolsFile Condition="'$(BuildOS)' != 'windows'">$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'eng', 'common', 'tools.sh'))</EngCommonToolsFile>
+    <EngCommonToolsFile Condition="'$(BuildOS)' != 'windows'">$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'common', 'tools.sh'))</EngCommonToolsFile>
   </PropertyGroup>
 
   <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="AddSourceToNuGetConfig" />
