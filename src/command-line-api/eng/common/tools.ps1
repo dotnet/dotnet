@@ -158,11 +158,16 @@ function InitializeDotNetCli([bool]$install, [bool]$createSdkLocationFile) {
   $env:DOTNET_MULTILEVEL_LOOKUP=0
 
   # Disable first run since we do not need all ASP.NET packages restored.
-  $env:DOTNET_NOLOGO=1
+  $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 
   # Disable telemetry on CI.
   if ($ci) {
     $env:DOTNET_CLI_TELEMETRY_OPTOUT=1
+  }
+
+  # Source Build uses DotNetCoreSdkDir variable
+  if ($env:DotNetCoreSdkDir -ne $null) {
+    $env:DOTNET_INSTALL_DIR = $env:DotNetCoreSdkDir
   }
 
   # Find the first path on %PATH% that contains the dotnet.exe
@@ -223,7 +228,7 @@ function InitializeDotNetCli([bool]$install, [bool]$createSdkLocationFile) {
   Write-PipelinePrependPath -Path $dotnetRoot
 
   Write-PipelineSetVariable -Name 'DOTNET_MULTILEVEL_LOOKUP' -Value '0'
-  Write-PipelineSetVariable -Name 'DOTNET_NOLOGO' -Value '1'
+  Write-PipelineSetVariable -Name 'DOTNET_SKIP_FIRST_TIME_EXPERIENCE' -Value '1'
 
   return $global:_DotNetInstallDir = $dotnetRoot
 }
@@ -679,14 +684,8 @@ function Read-ArcadeSdkVersion() {
 }
 
 function InitializeToolset() {
-  # For Unified Build/Source-build support, check whether the environment variable is
-  # set. If it is, then use this as the toolset build project.
-  if ($env:_InitializeToolset -ne $null) {
-    return $global:_InitializeToolset = $env:_InitializeToolset
-  }
-
-  if (Test-Path variable:global:_InitializeToolset) {
-    return $global:_InitializeToolset
+  if (Test-Path variable:global:_ToolsetBuildProj) {
+    return $global:_ToolsetBuildProj
   }
 
   $nugetCache = GetNuGetPackageCachePath
@@ -697,7 +696,7 @@ function InitializeToolset() {
   if (Test-Path $toolsetLocationFile) {
     $path = Get-Content $toolsetLocationFile -TotalCount 1
     if (Test-Path $path) {
-      return $global:_InitializeToolset = $path
+      return $global:_ToolsetBuildProj = $path
     }
   }
 
@@ -720,7 +719,7 @@ function InitializeToolset() {
     throw "Invalid toolset path: $path"
   }
 
-  return $global:_InitializeToolset = $path
+  return $global:_ToolsetBuildProj = $path
 }
 
 function ExitWithExitCode([int] $exitCode) {
@@ -836,8 +835,7 @@ function MSBuild-Core() {
     }
   }
 
-  # Be sure quote the path in case there are spaces in the dotnet installation location.
-  $env:ARCADE_BUILD_TOOL_COMMAND = "`"$($buildTool.Path)`" $cmdArgs"
+  $env:ARCADE_BUILD_TOOL_COMMAND = "$($buildTool.Path) $cmdArgs"
 
   $exitCode = Exec-Process $buildTool.Path $cmdArgs
 
