@@ -22,52 +22,6 @@
       Format:
       <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Options.5.0.0.csproj" />
     -->
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Frameworks.6.2.4.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Common.6.2.4.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Versioning.6.2.4.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Configuration.6.2.4.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Packaging.6.2.4.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Protocol.6.2.4.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Credentials.6.2.4.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.DependencyResolver.Core.6.2.4.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.ProjectModel.6.2.4.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Commands.6.2.4.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Frameworks.6.6.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Common.6.6.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Versioning.6.6.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Configuration.6.6.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Packaging.6.6.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Protocol.6.6.1.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Credentials.6.6.1.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.FileProviders.Abstractions.6.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.FileSystemGlobbing.6.0.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.LibraryModel.6.7.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.DependencyResolver.Core.6.7.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.ProjectModel.6.7.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Commands.6.7.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\targetPacks\ILsrc\**\8.0.0\Microsoft.NETCore.App.Ref.8.0.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Frameworks.6.8.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Common.6.8.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Versioning.6.8.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Configuration.6.8.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Packaging.6.8.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Protocol.6.8.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Credentials.6.8.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Bcl.AsyncInterfaces.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.DependencyInjection.Abstractions.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Extensions.Logging.Abstractions.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.IO.Hashing.8.0.0.csproj" />
-
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Collections.Immutable.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Reflection.Metadata.8.0.0.csproj" />
-    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Threading.Tasks.Dataflow.8.0.0.csproj" />
-
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.CodeAnalysis.Common.4.6.0.csproj" />
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.CodeAnalysis.CSharp.4.6.0.csproj" />
   </ItemGroup>
