@@ -1,17 +1,22 @@
-<Project Sdk="Microsoft.Build.Traversal">
+<Project>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
-  <ItemGroup>
-    <ProjectReference Include="$(RepoProjectsDir)$(RootRepo).proj" />
-  </ItemGroup>
+  <PropertyGroup>
+    <!-- Fake, to satisfy the SDK. -->
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
 
-  <Target Name="PrintBuildEnvironment"
-          BeforeTargets="Build">
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <Target Name="Build">
     <Message Text="Build Environment: $(TargetArchitecture) $(Configuration) $(TargetOS) $(TargetRid)" Importance="high" />
-  </Target>
 
-  <Target Name="InitBuild"
-          BeforeTargets="Build">
-    <MSBuild Projects="$(ToolsDir)init-build.proj" />
+    <MSBuild Projects="$(ToolsDir)init-build.proj;
+                       $(RepoProjectsDir)$(RootRepo).proj"
+             Targets="Build"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
   </Target>
 
   <Import Project="$(RepositoryEngineeringDir)build.sourcebuild.targets" Condition="'$(DotNetBuildFromSource)' == 'true'" />

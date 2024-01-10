@@ -5,6 +5,7 @@
   <PropertyGroup>
     <!-- Fake, to satisfy the SDK. -->
     <TargetFramework>netstandard2.0</TargetFramework>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
