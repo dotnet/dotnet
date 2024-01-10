@@ -155,6 +155,19 @@
     </Touch>
   </Target>
 
+  <!-- TODO: Remove when all repos use a consistent set of eng/common files: https://github.com/dotnet/source-build/issues/3710. -->
+  <Target Name="UpdateEngCommonFiles"
+          Condition="'$(DotNetBuildVertical)' == 'true'"
+          BeforeTargets="Build">
+    <ItemGroup>
+      <OrchestratorEngCommonFile Include="$(RepositoryEngineeringDir)common\**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(OrchestratorEngCommonFile)"
+          DestinationFolder="$(ProjectDirectory)eng\common\%(RecursiveDir)"
+          SkipUnchangedFiles="true" />
+  </Target>
+
   <!-- Before a repository builds, set up the version property files that override the repo's defaults.
        There are 3 files generated -->
   <Target Name="CreateBuildInputProps"
@@ -222,19 +235,6 @@
     <Touch Files="$(BaseIntermediateOutputPath)CreateBuildInputProps.complete" AlwaysCreate="true">
       <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
     </Touch>
-  </Target>
-
-  <!-- Opt-in target to update eng/common files in all repos. -->
-  <Target Name="UpdateEngCommonFiles"
-          Condition="'$(UpdateEngCommonFiles)' == 'true'"
-          BeforeTargets="Build">
-    <ItemGroup>
-      <OrchestratorEngCommonFile Include="$(RepositoryEngineeringDir)common\**\*" />
-    </ItemGroup>
-
-    <Copy SourceFiles="@(OrchestratorEngCommonFile)"
-          DestinationFolder="$(ProjectDirectory)eng\common\%(RecursiveDir)"
-          SkipUnchangedFiles="true" />
   </Target>
 
   <!-- SkipRepoReferences is a developer innerloop switch to skip building dependencies. -->
