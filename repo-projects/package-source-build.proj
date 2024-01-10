@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <RepositoryReference Include="arcade" />
+    <RepositoryReference Include="installer" />
   </ItemGroup>
 
   <Target Name="CustomRepoBuild"

@@ -10,6 +10,9 @@
   <Import Project="$(GitInfoRepoPropsFile)" Condition="Exists('$(GitInfoRepoPropsFile)')" />
 
   <PropertyGroup>
+    <!-- Fake, to satisfy the SDK. -->
+    <TargetFramework>netstandard2.0</TargetFramework>
+
     <ProjectDirectory>$([MSBuild]::NormalizeDirectory('$(SrcDir)', '$(RepositoryName)'))</ProjectDirectory>
     <PackagesOutput>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts', 'packages', '$(Configuration)', 'NonShipping'))</PackagesOutput>
 

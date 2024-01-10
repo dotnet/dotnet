@@ -19,4 +19,8 @@
     <BuildArgs>$(BuildArgs) /p:ForceBuildManifestOnly=true</BuildArgs>
   </PropertyGroup>
 
+  <ItemGroup>
+    <RepositoryReference Include="arcade" />
+  </ItemGroup>
+
 </Project>

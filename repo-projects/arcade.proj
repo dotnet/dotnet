@@ -6,12 +6,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <RepositoryReference Include="source-build-reference-packages" Condition="'$(DotNetBuildFromSource)' == 'true'" />
+  </ItemGroup>
+
+  <ItemGroup>
     <BuiltSdkPackageOverride Include="@(ArcadeSdkOverride)" />
     <BuiltSdkPackageOverride Include="@(ArcadeSharedFrameworkSdkOverride)" />
+  </ItemGroup>
 
+  <ItemGroup>
     <EnvironmentVariables Include="UsingToolMicrosoftNetCompilers=false" />
     <EnvironmentVariables Include="useInstalledDotNetCli=false" />
+  </ItemGroup>
 
+  <ItemGroup>
     <ExtraPackageVersionPropsPackageInfo Include="NuGetVersion" Version="%24(NuGetPackagingVersion)" />
   </ItemGroup>
 

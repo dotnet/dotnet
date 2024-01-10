@@ -4,7 +4,6 @@
     <LogVerbosityOptOut>true</LogVerbosityOptOut>
 
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)v $(LogVerbosity)</BuildArgs>
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildArgs>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)warnAsError $(ArcadeFalseBoolBuildArg)</BuildArgs>
 
     <!-- msbuild by default builds with desktop msbuild (xcopy-msbuild) -->

@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <RepositoryReference Include="arcade" />
     <RepositoryReference Include="nuget-client" />
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildFromSource)' == 'true'" />
   </ItemGroup>

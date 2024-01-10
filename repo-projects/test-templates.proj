@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <LogVerbosityOptOut>true</LogVerbosityOptOut>
-
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)nodereuse $(ArcadeFalseBoolBuildArg)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>

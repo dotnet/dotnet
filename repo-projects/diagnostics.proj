@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- TODO: Should we invoke the root build scripts instead? -->
+  <ItemGroup>
+    <RepositoryReference Include="arcade" />
+  </ItemGroup>
 
 </Project>

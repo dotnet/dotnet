@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <RepositoryReference Include="arcade" />
     <RepositoryReference Include="runtime" />
     <RepositoryReference Include="roslyn" />
   </ItemGroup>

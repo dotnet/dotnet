@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <RepositoryReference Include="arcade" />
     <RepositoryReference Include="roslyn" />
     <RepositoryReference Include="roslyn-analyzers" />
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildFromSource)' == 'true'" />

@@ -14,10 +14,6 @@
     <MSBuild Projects="$(ToolsDir)init-build.proj" />
   </Target>
 
-  <Target Name="Clean">
-    <RemoveDir Directories="$(ArtifactsDir)" />
-  </Target>
-
-  <Import Project="build.sourcebuild.targets" Condition="'$(DotNetBuildFromSource)' == 'true'" />
+  <Import Project="$(RepositoryEngineeringDir)build.sourcebuild.targets" Condition="'$(DotNetBuildFromSource)' == 'true'" />
 
 </Project>

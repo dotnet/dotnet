@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+  </PropertyGroup>
+
   <Target Name="GenerateGraphViz"
           AfterTargets="Build">
     <ItemGroup>
