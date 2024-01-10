@@ -69,7 +69,7 @@ More about [Channels, Branches, and Subscriptions](https://github.com/dotnet/arc
 
 Once you are part of the `arcade-contrib` team
 
-1. Go to https://maestro-prod.westus2.cloudapp.azure.com/
+1. Go to https://maestro.dot.net/
 2. Click "Sign in" in the upper right of the page
 3. Give consent to "DotNet Maestro"
 4. Click on your name and then on "Tokens"
