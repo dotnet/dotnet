@@ -18,7 +18,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=7.0.3</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=7.1.2</BuildCommandArgs>
 
       <PackCommandArgs>$(BuildCommandArgs) --output $(ProjectDirectory)pack</PackCommandArgs>
     </PropertyGroup>

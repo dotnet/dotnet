@@ -3,6 +3,7 @@
 
 using Microsoft.IdentityModel.Logging;
 using System;
+using System.Buffers;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -14,6 +15,8 @@ namespace Microsoft.IdentityModel.Tokens
     /// </summary>
     public class DeflateCompressionProvider : ICompressionProvider
     {
+        private int _maximumTokenSizeInBytes = TokenValidationParameters.DefaultMaximumTokenSizeInBytes;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DeflateCompressionProvider"/> class used to compress and decompress used the <see cref="CompressionAlgorithms.Deflate"/> algorithm.
         /// </summary>
@@ -42,6 +45,19 @@ namespace Microsoft.IdentityModel.Tokens
         public CompressionLevel CompressionLevel { get; private set; } = CompressionLevel.Optimal;
 
         /// <summary>
+        /// Gets and sets the maximum deflate size in chars that will be processed.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">'value' less than 1.</exception>
+        public int MaximumDeflateSize
+        {
+            get => _maximumTokenSizeInBytes;
+            set => _maximumTokenSizeInBytes = (value < 1) ?
+                throw LogHelper.LogExceptionMessage(
+                    new ArgumentOutOfRangeException(nameof(value),
+                        LogHelper.FormatInvariant(LogMessages.IDX10101, LogHelper.MarkAsNonPII(value)))) : value;
+        }
+
+        /// <summary>
         /// Decompress the value using DEFLATE algorithm.
         /// </summary>
         /// <param name="value">the bytes to decompress.</param>
@@ -51,15 +67,36 @@ namespace Microsoft.IdentityModel.Tokens
             if (value == null)
                 throw LogHelper.LogArgumentNullException(nameof(value));
 
-            using (var inputStream = new MemoryStream(value))
+            char[] chars = null;
+            try
             {
-                using (var deflateStream = new DeflateStream(inputStream, CompressionMode.Decompress))
+                chars = ArrayPool<char>.Shared.Rent(MaximumDeflateSize);
+                using (var inputStream = new MemoryStream(value))
                 {
-                    using (var reader = new StreamReader(deflateStream, Encoding.UTF8))
+                    using (var deflateStream = new DeflateStream(inputStream, CompressionMode.Decompress))
                     {
-                        return Encoding.UTF8.GetBytes(reader.ReadToEnd());
+                        using (var reader = new StreamReader(deflateStream, Encoding.UTF8))
+                        {
+                            // if there is one more char to read, then the token is too large.
+                            int bytesRead = reader.Read(chars, 0, MaximumDeflateSize);
+                            if (reader.Peek() != -1)
+                            {
+                                throw LogHelper.LogExceptionMessage(
+                                    new SecurityTokenDecompressionFailedException(
+                                        LogHelper.FormatInvariant(
+                                            LogMessages.IDX10816,
+                                            LogHelper.MarkAsNonPII(MaximumDeflateSize))));
+                            }
+
+                            return Encoding.UTF8.GetBytes(chars, 0, bytesRead);
+                        }
                     }
                 }
+            }
+            finally
+            {
+                if (chars != null)
+                    ArrayPool<char>.Shared.Return(chars);
             }
         }
 

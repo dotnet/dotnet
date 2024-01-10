@@ -1,13 +1,15 @@
-{"Registrations":[ 
+{
+  "Registrations": [
     {
-      "component": { 
-       "type": "git", 
-       "git": { 
-         "repositoryUrl": "https://github.com/JamesNK/Newtonsoft.Json", 
-         "commitHash": "509643a8952ce731e0207710c429ad6e67dc43db" 
-         }
-       }
+      "component": {
+        "type": "git",
+        "git": {
+          "repositoryUrl": "https://github.com/JamesNK/Newtonsoft.Json",
+          "commitHash": "509643a8952ce731e0207710c429ad6e67dc43db"
+        }
+      }
     }
- ],
- "Version": 1
+  ],
+  "Version": 1,
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
 }

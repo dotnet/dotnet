@@ -795,7 +795,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <summary>
         /// Gets or sets a boolean to control if the audience will be validated during token validation.
         /// </summary>
-        /// <remarks>Validation of the audience, mitigates forwarding attacks. For example, a site that receives a token, could not replay it to another side.
+        /// <remarks>Validation of the audience, mitigates forwarding attacks. For example, a site that receives a token, could not replay it to another site.
         /// A forwarded token would contain the audience of the original site.
         /// This boolean only applies to default audience validation. If <see cref="AudienceValidator"/> is set, it will be called regardless of whether this
         /// property is true or false.
