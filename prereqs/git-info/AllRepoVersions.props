@@ -21,10 +21,10 @@
     <formatOutputPackageVersion>9.0.505901</formatOutputPackageVersion>
     <fsharpGitCommitHash>cc741852156e5f048e4e046061fa36477f8b92fb</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.200-beta.24055.2</fsharpOutputPackageVersion>
-    <installerGitCommitHash>1acfcbf791194c4d979872581d626a076aac7253</installerGitCommitHash>
+    <installerGitCommitHash>0b82a5aa64ad639184b1da058a7f11323d89a031</installerGitCommitHash>
     <installerOutputPackageVersion>9.0.100</installerOutputPackageVersion>
-    <msbuildGitCommitHash>8215fb194d24cba1971476188ad97e5498fd2dfb</msbuildGitCommitHash>
-    <msbuildOutputPackageVersion>17.10.0-preview-24059-01</msbuildOutputPackageVersion>
+    <msbuildGitCommitHash>1725b247e8737804076c8ff3b09fcee02ecdf51e</msbuildGitCommitHash>
+    <msbuildOutputPackageVersion>17.10.0-preview-24060-03</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>e92be3915309e687044768de38933ac5fc4cb40c</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.9.0-rc.74</nugetclientOutputPackageVersion>
     <razorGitCommitHash>70eb74af5c2bff152f5eeb76e6a69827ec097f32</razorGitCommitHash>
@@ -37,8 +37,8 @@
     <runtimeOutputPackageVersion>9.0.0-alpha.1.24060.1</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>bfde902a10d7b672f4fc7e844198ede405dbb9c6</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24057.2</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>fa51ba1ddfaf85b11dd7a27a5ca5ebcccf186c46</sdkGitCommitHash>
-    <sdkOutputPackageVersion>9.0.100-alpha.1.24060.9</sdkOutputPackageVersion>
+    <sdkGitCommitHash>4ee2ed3de45a4cae2571cabac89ea307230c3cce</sdkGitCommitHash>
+    <sdkOutputPackageVersion>9.0.100-alpha.1.24060.11</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>6513a2c0cd7be2706742181af63d717a90cec5be</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24059.3</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>f2c3fed62861b918dfe300f01b497551813a56df</sourcebuildreferencepackagesGitCommitHash>
