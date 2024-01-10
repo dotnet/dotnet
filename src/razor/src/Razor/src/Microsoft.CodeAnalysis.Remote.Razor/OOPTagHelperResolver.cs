@@ -41,11 +41,6 @@ internal class OOPTagHelperResolver : ITagHelperResolver
         IProjectSnapshot projectSnapshot,
         CancellationToken cancellationToken)
     {
-        if (projectSnapshot.Configuration is null)
-        {
-            return ImmutableArray<TagHelperDescriptor>.Empty;
-        }
-
         // Not every custom factory supports the OOP host. Our priority system should work like this:
         //
         // 1. Use custom factory out of process

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
+using Microsoft.CodeAnalysis.Razor;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
@@ -16,6 +17,7 @@ public abstract class WorkspaceTestBase : ToolingTestBase
     private bool _initialized;
     private HostServices? _hostServices;
     private Workspace? _workspace;
+    private ProjectSnapshotProjectEngineFactory? _projectEngineFactory;
 
     protected WorkspaceTestBase(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -40,6 +42,15 @@ public abstract class WorkspaceTestBase : ToolingTestBase
         }
     }
 
+    private protected ProjectSnapshotProjectEngineFactory ProjectEngineFactory
+    {
+        get
+        {
+            EnsureInitialized();
+            return _projectEngineFactory;
+        }
+    }
+
     protected virtual void ConfigureWorkspaceServices(List<IWorkspaceService> services)
     {
     }
@@ -56,22 +67,25 @@ public abstract class WorkspaceTestBase : ToolingTestBase
     {
     }
 
-    [MemberNotNull(nameof(_hostServices), nameof(_workspace))]
+    [MemberNotNull(nameof(_hostServices), nameof(_workspace), nameof(_projectEngineFactory))]
     private void EnsureInitialized()
     {
         if (_initialized)
         {
             _hostServices.AssumeNotNull();
             _workspace.AssumeNotNull();
+            _projectEngineFactory.AssumeNotNull();
             return;
         }
 
+        _projectEngineFactory = new TestProjectSnapshotProjectEngineFactory()
+        {
+            Configure = ConfigureProjectEngine,
+        };
+
         var workspaceServices = new List<IWorkspaceService>()
         {
-            new TestProjectSnapshotProjectEngineFactory()
-            {
-                Configure = ConfigureProjectEngine,
-            },
+            _projectEngineFactory,
         };
         ConfigureWorkspaceServices(workspaceServices);
 

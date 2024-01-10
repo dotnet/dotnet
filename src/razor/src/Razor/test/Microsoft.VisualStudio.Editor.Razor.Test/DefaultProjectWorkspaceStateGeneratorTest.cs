@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -34,13 +35,15 @@ public class DefaultProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerD
     public DefaultProjectWorkspaceStateGeneratorTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
+        var projectEngineFactory = Mock.Of<ProjectSnapshotProjectEngineFactory>(MockBehavior.Strict);
+
         var tagHelperResolver = new TestTagHelperResolver()
         {
             TagHelpers = ImmutableArray.Create(TagHelperDescriptorBuilder.Create("ResolvableTagHelper", "TestAssembly").Build())
         };
 
         _resolvableTagHelpers = tagHelperResolver.TagHelpers;
-        var workspaceServices = new List<IWorkspaceService>() { tagHelperResolver };
+        var workspaceServices = new List<IWorkspaceService>() { tagHelperResolver, projectEngineFactory };
         var testServices = TestServices.Create(workspaceServices, Enumerable.Empty<ILanguageService>());
         _workspace = TestWorkspace.Create(testServices);
         AddDisposable(_workspace);
@@ -53,10 +56,10 @@ public class DefaultProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerD
             LanguageNames.CSharp,
             TestProjectData.SomeProject.FilePath));
         _workspaceProject = solution.GetProject(projectId);
-        _projectSnapshot = new ProjectSnapshot(ProjectState.Create(_workspace.Services, TestProjectData.SomeProject));
-        _projectWorkspaceStateWithTagHelpers = new ProjectWorkspaceState(ImmutableArray.Create(
-            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()),
-            csharpLanguageVersion: default);
+        _projectSnapshot = new ProjectSnapshot(
+            ProjectState.Create(projectEngineFactory, TestProjectData.SomeProject, ProjectWorkspaceState.Default));
+        _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create(ImmutableArray.Create(
+            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()));
     }
 
     [UIFact]

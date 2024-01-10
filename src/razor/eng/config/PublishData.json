@@ -8,7 +8,7 @@
       "vsBranch": "main",
       "vsMajorVersion": 17,
       "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[17.9P3]"
+      "insertionTitlePrefix": "[d17.10]"
     },
     "release/dev17.5": {
       "nugetKind": [
@@ -53,7 +53,7 @@
       ],
       "vsBranch": "rel/d17.9",
       "vsMajorVersion": 17,
-      "insertionTitlePrefix": "[17.9P2]"
+      "insertionTitlePrefix": "[17.9]"
     }
   }
 }

@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LiveShare.Razor.Test;
 using Microsoft.VisualStudio.Threading;
+using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,33 +21,29 @@ namespace Microsoft.VisualStudio.LiveShare.Razor.Host;
 
 public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDispatcherTestBase
 {
-    private readonly CodeAnalysis.Workspace _workspace;
     private readonly IProjectSnapshot _projectSnapshot1;
     private readonly IProjectSnapshot _projectSnapshot2;
 
     public DefaultProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _workspace = TestWorkspace.Create();
-        AddDisposable(_workspace);
+        var projectEngineFactory = Mock.Of<ProjectSnapshotProjectEngineFactory>(MockBehavior.Strict);
 
-        var projectWorkspaceState1 = new ProjectWorkspaceState(ImmutableArray.Create(
-            TagHelperDescriptorBuilder.Create("test1", "TestAssembly1").Build()),
-            csharpLanguageVersion: default);
+        var projectWorkspaceState1 = ProjectWorkspaceState.Create(ImmutableArray.Create(
+            TagHelperDescriptorBuilder.Create("test1", "TestAssembly1").Build()));
 
         _projectSnapshot1 = new ProjectSnapshot(
             ProjectState.Create(
-                _workspace.Services,
+                projectEngineFactory,
                 new HostProject("/host/path/to/project1.csproj", "/host/path/to/obj", RazorConfiguration.Default, "project1"),
                 projectWorkspaceState1));
 
-        var projectWorkspaceState2 = new ProjectWorkspaceState(ImmutableArray.Create(
-            TagHelperDescriptorBuilder.Create("test2", "TestAssembly2").Build()),
-            csharpLanguageVersion: default);
+        var projectWorkspaceState2 = ProjectWorkspaceState.Create(ImmutableArray.Create(
+            TagHelperDescriptorBuilder.Create("test2", "TestAssembly2").Build()));
 
         _projectSnapshot2 = new ProjectSnapshot(
             ProjectState.Create(
-                _workspace.Services,
+                projectEngineFactory,
                 new HostProject("/host/path/to/project2.csproj", "/host/path/to/obj", RazorConfiguration.Default, "project2"),
                 projectWorkspaceState2));
     }
@@ -196,13 +193,9 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
         Assert.Same(state1, state2);
     }
 
-    private class TestProjectSnapshotManager : ProjectSnapshotManager
+    private class TestProjectSnapshotManager(params IProjectSnapshot[] projects) : ProjectSnapshotManager
     {
-        private ImmutableArray<IProjectSnapshot> _projects;
-        public TestProjectSnapshotManager(params IProjectSnapshot[] projects)
-        {
-            _projects = projects.ToImmutableArray();
-        }
+        private ImmutableArray<IProjectSnapshot> _projects = projects.ToImmutableArray();
 
         public override ImmutableArray<IProjectSnapshot> GetProjects() => _projects;
 

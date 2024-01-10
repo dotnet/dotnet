@@ -359,7 +359,7 @@ There is no xml, but I got you this < and the >.
         var tagHelperTypeName = "TestNamespace.TestTagHelper";
         builder.Metadata(TypeName(tagHelperTypeName));
         var tagHelpers = ImmutableArray.Create(builder.Build());
-        var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.Default);
+        var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
 
         var baseDirectory = PathUtilities.CreateRootedPath("path", "to");
         var razorFilePath = Path.Combine(baseDirectory, "file.razor");
@@ -383,7 +383,7 @@ There is no xml, but I got you this < and the >.
         var tagHelperTypeName = "TestNamespace.TestTagHelper";
         builder.Metadata(TypeName(tagHelperTypeName));
         var tagHelpers = ImmutableArray.Create(builder.Build());
-        var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.Default);
+        var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
 
         var baseDirectory = PathUtilities.CreateRootedPath("path", "to");
         var razorFilePath = Path.Combine(baseDirectory, "file.razor");
@@ -420,7 +420,7 @@ There is no xml, but I got you this < and the >.
         var tagHelperTypeName = "TestNamespace.TestTagHelper";
         builder.Metadata(TypeName(tagHelperTypeName));
         var tagHelpers = ImmutableArray.Create(builder.Build());
-        var projectWorkspaceState = new ProjectWorkspaceState(tagHelpers, CodeAnalysis.CSharp.LanguageVersion.Default);
+        var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
 
         var baseDirectory = PathUtilities.CreateRootedPath("path", "to");
         var razorFilePath = Path.Combine(baseDirectory, "file.razor");

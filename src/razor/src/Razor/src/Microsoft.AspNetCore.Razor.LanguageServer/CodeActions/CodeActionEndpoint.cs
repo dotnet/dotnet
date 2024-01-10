@@ -20,7 +20,6 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -164,20 +163,16 @@ internal sealed class CodeActionEndpoint(
             request.Range = vsCodeActionContext.SelectionRange;
         }
 
-        var linePosition = new LinePosition(
-            request.Range.Start.Line,
-            request.Range.Start.Character);
-        var hostDocumentIndex = sourceText.Lines.GetPosition(linePosition);
-        var location = new SourceLocation(
-            hostDocumentIndex,
-            request.Range.Start.Line,
-            request.Range.Start.Character);
+        if (!request.Range.Start.TryGetSourceLocation(sourceText, _logger, out var location))
+        {
+            return null;
+        }
 
         var context = new RazorCodeActionContext(
             request,
             documentSnapshot,
             codeDocument,
-            location,
+            location.Value,
             sourceText,
             _languageServerFeatureOptions.SupportsFileManipulation,
             _supportsCodeActionResolve);

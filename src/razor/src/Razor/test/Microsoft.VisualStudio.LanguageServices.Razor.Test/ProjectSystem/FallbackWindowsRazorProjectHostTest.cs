@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
@@ -387,9 +388,9 @@ public class FallbackWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatc
         Assert.Same(FallbackRazorConfiguration.MVC_2_0, snapshot.Configuration);
 
         Assert.Collection(
-            snapshot.DocumentFilePaths,
-            filePath => Assert.Equal("C:\\Path\\Index.cshtml", filePath),
-            filePath => Assert.Equal("C:\\Path\\About.cshtml", filePath));
+            snapshot.DocumentFilePaths.OrderBy(d => d),
+            filePath => Assert.Equal("C:\\Path\\About.cshtml", filePath),
+            filePath => Assert.Equal("C:\\Path\\Index.cshtml", filePath));
 
         await Task.Run(async () => await host.DisposeAsync());
         Assert.Empty(_projectManager.GetProjects());

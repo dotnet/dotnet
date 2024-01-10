@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -73,11 +72,15 @@ internal class LinkedEditingRangeEndpoint : IRazorRequestHandler<LinkedEditingRa
         var syntaxTree = await documentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
 
         var location = await GetSourceLocation(request, documentContext, cancellationToken).ConfigureAwait(false);
+        if (location is not SourceLocation validLocation)
+        {
+            return null;
+        }
 
         // We only care if the user is within a TagHelper or HTML tag with a valid start and end tag.
-        if (TryGetNearestMarkupNameTokens(syntaxTree, location, out var startTagNameToken, out var endTagNameToken) &&
-            (startTagNameToken.Span.Contains(location.AbsoluteIndex) || endTagNameToken.Span.Contains(location.AbsoluteIndex) ||
-            startTagNameToken.Span.End == location.AbsoluteIndex || endTagNameToken.Span.End == location.AbsoluteIndex))
+        if (TryGetNearestMarkupNameTokens(syntaxTree, validLocation, out var startTagNameToken, out var endTagNameToken) &&
+            (startTagNameToken.Span.Contains(validLocation.AbsoluteIndex) || endTagNameToken.Span.Contains(validLocation.AbsoluteIndex) ||
+            startTagNameToken.Span.End == validLocation.AbsoluteIndex || endTagNameToken.Span.End == validLocation.AbsoluteIndex))
         {
             var startSpan = startTagNameToken.GetLinePositionSpan(codeDocument.Source);
             var endSpan = endTagNameToken.GetLinePositionSpan(codeDocument.Source);
@@ -93,17 +96,20 @@ internal class LinkedEditingRangeEndpoint : IRazorRequestHandler<LinkedEditingRa
         _logger.LogInformation("LinkedEditingRange request was null at {location} for {uri}", location, request.TextDocument.Uri);
         return null;
 
-        static async Task<SourceLocation> GetSourceLocation(
+        async Task<SourceLocation?> GetSourceLocation(
             LinkedEditingRangeParams request,
             DocumentContext documentContext,
             CancellationToken cancellationToken)
         {
             var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-            var linePosition = new LinePosition(request.Position.Line, request.Position.Character);
-            var hostDocumentIndex = sourceText.Lines.GetPosition(linePosition);
-            var location = new SourceLocation(hostDocumentIndex, request.Position.Line, request.Position.Character);
-
-            return location;
+            if (request.Position.TryGetSourceLocation(sourceText, _logger, out var location))
+            {
+                return location;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         static bool TryGetNearestMarkupNameTokens(

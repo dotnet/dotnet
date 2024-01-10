@@ -127,7 +127,7 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
         services.AddLifeCycleServices(this, _clientConnection, _lspServerActivationTracker);
 
         services.AddDiagnosticServices();
-        services.AddSemanticTokensServices();
+        services.AddSemanticTokensServices(featureOptions);
         services.AddDocumentManagementServices(featureOptions);
         services.AddCompletionServices(featureOptions);
         services.AddFormattingServices();
@@ -157,13 +157,13 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
         // Defaults: For when the caller hasn't provided them through the `configure` action.
         services.TryAddSingleton<HostServicesProvider, DefaultHostServicesProvider>();
 
-        AddHandlers(services);
+        AddHandlers(services, featureOptions);
 
         var lspServices = new LspServices(services);
 
         return lspServices;
 
-        static void AddHandlers(IServiceCollection services)
+        static void AddHandlers(IServiceCollection services, LanguageServerFeatureOptions featureOptions)
         {
             // Not calling AddHandler because we want to register this endpoint as an IOnInitialized too
             services.AddSingleton<RazorConfigurationEndpoint>();
@@ -182,7 +182,13 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
             services.AddHandler<WrapWithTagEndpoint>();
             services.AddHandler<RazorBreakpointSpanEndpoint>();
             services.AddHandler<RazorProximityExpressionsEndpoint>();
-            services.AddHandlerWithCapabilities<DocumentColorEndpoint>();
+
+            if (!featureOptions.UseRazorCohostServer)
+            {
+                services.AddHandlerWithCapabilities<DocumentColorEndpoint>();
+                services.AddSingleton<IDocumentColorService, DocumentColorService>();
+            }
+
             services.AddHandler<ColorPresentationEndpoint>();
             services.AddHandlerWithCapabilities<FoldingRangeEndpoint>();
             services.AddHandlerWithCapabilities<ValidateBreakpointRangeEndpoint>();

@@ -38,7 +38,7 @@ internal class TestProjectSnapshotManager : DefaultProjectSnapshotManager
 
     public TestDocumentSnapshot CreateAndAddDocument(ProjectSnapshot projectSnapshot, string filePath)
     {
-        var documentSnapshot = TestDocumentSnapshot.Create(Workspace, projectSnapshot, filePath);
+        var documentSnapshot = TestDocumentSnapshot.Create(projectSnapshot, filePath);
         DocumentAdded(projectSnapshot.Key, documentSnapshot.HostDocument, new DocumentSnapshotTextLoader(documentSnapshot));
 
         return documentSnapshot;

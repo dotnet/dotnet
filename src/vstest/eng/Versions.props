@@ -26,10 +26,10 @@
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>3.11.0-beta1.23525.2</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>3.11.0-beta1.23525.2</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <MicrosoftCodeCoverageIOVersion>17.7.0</MicrosoftCodeCoverageIOVersion>
-    <MicrosoftDiagnosticsNETCoreClientVersion>0.2.0-preview.24054.1</MicrosoftDiagnosticsNETCoreClientVersion>
+    <MicrosoftDiagnosticsNETCoreClientVersion>0.2.0-preview.24058.1</MicrosoftDiagnosticsNETCoreClientVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>3.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftFakesVersion>17.4.0-beta.22478.3</MicrosoftFakesVersion>
+    <MicrosoftFakesVersion>17.9.0-beta.24058.4</MicrosoftFakesVersion>
     <MicrosoftInternalCodeCoverageVersion>17.10.0-preview.24055.4</MicrosoftInternalCodeCoverageVersion>
     <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.6.33910.51</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
@@ -45,9 +45,9 @@
     <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
     <SystemReflectionMetadataVersion>1.6.0</SystemReflectionMetadataVersion>
     <SystemUriVersion>4.3.2</SystemUriVersion>
-    <TestPlatformExternalsVersion>17.7.33819.109</TestPlatformExternalsVersion>
-    <MicrosoftInternalTestPlatformExtensions>17.9.34413.20</MicrosoftInternalTestPlatformExtensions>
-    <TestPlatformMSDiaVersion>17.7.33819.109</TestPlatformMSDiaVersion>
+    <TestPlatformExternalsVersion>17.9.34508.126</TestPlatformExternalsVersion>
+    <MicrosoftInternalTestPlatformExtensions>17.9.34508.126</MicrosoftInternalTestPlatformExtensions>
+    <TestPlatformMSDiaVersion>17.9.34504.149</TestPlatformMSDiaVersion>
   </PropertyGroup>
   <PropertyGroup Label="VSTest test settings">
     <!-- Name of the elements must be in sync with test\Microsoft.TestPlatform.TestUtilities\IntegrationTestBase.cs -->

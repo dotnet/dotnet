@@ -10,13 +10,13 @@ namespace Microsoft.AspNetCore.Razor.Serialization;
 internal record ProjectSnapshotHandle
 {
     public ProjectId ProjectId { get; }
-    public RazorConfiguration? Configuration { get; }
+    public RazorConfiguration Configuration { get; }
     public string? RootNamespace { get; }
 
-    public ProjectSnapshotHandle(ProjectId projectId, RazorConfiguration? configuration, string? rootNamespace)
+    public ProjectSnapshotHandle(ProjectId projectId, RazorConfiguration configuration, string? rootNamespace)
     {
         ProjectId = projectId ?? throw new ArgumentNullException(nameof(projectId));
-        Configuration = configuration;
+        Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         RootNamespace = rootNamespace;
     }
 }

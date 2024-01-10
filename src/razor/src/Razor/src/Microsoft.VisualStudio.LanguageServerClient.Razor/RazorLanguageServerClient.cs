@@ -212,6 +212,11 @@ internal class RazorLanguageServerClient(
 
     private async Task ProjectConfigurationFilePathStore_ChangedAsync(ProjectConfigurationFilePathChangedEventArgs args, CancellationToken cancellationToken)
     {
+        if (_languageServerFeatureOptions.DisableRazorLanguageServer)
+        {
+            return;
+        }
+
         try
         {
             var parameter = new MonitorProjectConfigurationFilePathParams()
@@ -258,6 +263,12 @@ internal class RazorLanguageServerClient(
 
     public Task OnLoadedAsync()
     {
+        // If the user hasn't turned on the Cohost server, then don't disable the Razor server
+        if (_languageServerFeatureOptions.DisableRazorLanguageServer && _languageServerFeatureOptions.UseRazorCohostServer)
+        {
+            return Task.CompletedTask;
+        }
+
         return StartAsync.InvokeAsync(this, EventArgs.Empty);
     }
 

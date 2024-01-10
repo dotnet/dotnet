@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -23,60 +24,23 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
-internal class DefaultRazorProjectService : RazorProjectService
+[Export(typeof(RazorProjectService)), Shared]
+[method: ImportingConstructor]
+internal class DefaultRazorProjectService(
+    ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
+    RemoteTextLoaderFactory remoteTextLoaderFactory,
+    ISnapshotResolver snapshotResolver,
+    IDocumentVersionCache documentVersionCache,
+    ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+    IRazorLoggerFactory loggerFactory)
+    : RazorProjectService
 {
-    private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
-    private readonly RemoteTextLoaderFactory _remoteTextLoaderFactory;
-    private readonly ISnapshotResolver _snapshotResolver;
-    private readonly IDocumentVersionCache _documentVersionCache;
-    private readonly ILogger _logger;
-
-    public DefaultRazorProjectService(
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-        RemoteTextLoaderFactory remoteTextLoaderFactory,
-        ISnapshotResolver snapshotResolver,
-        IDocumentVersionCache documentVersionCache,
-        ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
-        IRazorLoggerFactory loggerFactory)
-    {
-        if (projectSnapshotManagerDispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-        }
-
-        if (remoteTextLoaderFactory is null)
-        {
-            throw new ArgumentNullException(nameof(remoteTextLoaderFactory));
-        }
-
-        if (snapshotResolver is null)
-        {
-            throw new ArgumentNullException(nameof(snapshotResolver));
-        }
-
-        if (documentVersionCache is null)
-        {
-            throw new ArgumentNullException(nameof(documentVersionCache));
-        }
-
-        if (projectSnapshotManagerAccessor is null)
-        {
-            throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
-        }
-
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
-        _remoteTextLoaderFactory = remoteTextLoaderFactory;
-        _snapshotResolver = snapshotResolver;
-        _documentVersionCache = documentVersionCache;
-        _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
-        _logger = loggerFactory.CreateLogger<DefaultRazorProjectService>();
-    }
+    private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor ?? throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
+    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
+    private readonly RemoteTextLoaderFactory _remoteTextLoaderFactory = remoteTextLoaderFactory ?? throw new ArgumentNullException(nameof(remoteTextLoaderFactory));
+    private readonly ISnapshotResolver _snapshotResolver = snapshotResolver ?? throw new ArgumentNullException(nameof(snapshotResolver));
+    private readonly IDocumentVersionCache _documentVersionCache = documentVersionCache ?? throw new ArgumentNullException(nameof(documentVersionCache));
+    private readonly ILogger _logger = loggerFactory.CreateLogger<DefaultRazorProjectService>();
 
     public override void AddDocument(string filePath)
     {

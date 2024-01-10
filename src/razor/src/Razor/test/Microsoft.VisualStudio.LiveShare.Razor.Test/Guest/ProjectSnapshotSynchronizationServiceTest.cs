@@ -34,9 +34,8 @@ public class ProjectSnapshotSynchronizationServiceTest : WorkspaceTestBase
 
         _projectSnapshotManager = new TestProjectSnapshotManager(Workspace, new TestProjectSnapshotManagerDispatcher());
 
-        _projectWorkspaceStateWithTagHelpers = new ProjectWorkspaceState(ImmutableArray.Create(
-            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()),
-            csharpLanguageVersion: default);
+        _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create(ImmutableArray.Create(
+            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()));
     }
 
     [Fact]

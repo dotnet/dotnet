@@ -318,14 +318,13 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
         var documentContextFactory = new TestDocumentContextFactory(razorFilePath, codeDocument, version: 1337);
         var languageServer = new MapCodeServer(csharpServer, csharpDocumentUri);
         var documentMappingService = new RazorDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
-        var filePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
 
-        var endpoint = new MapCodeEndpoint(documentMappingService, documentContextFactory, languageServer, filePathService);
+        var endpoint = new MapCodeEndpoint(documentMappingService, documentContextFactory, languageServer);
 
         var sourceText = codeDocument.GetSourceText();
         sourceText.GetLineAndOffset(cursorPosition, out var line, out var offset);
 
-        var mappings = new MapCodeMapping[]
+        var mappings = new VSInternalMapCodeMapping[]
         {
             new() {
                 TextDocument = new TextDocumentIdentifier
@@ -349,7 +348,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
                 Contents = codeToMap
             }
         };
-        var request = new MapCodeParams
+        var request = new VSInternalMapCodeParams
         {
             Mappings = mappings
         };
@@ -393,7 +392,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
             Assert.Equal(CustomMessageNames.RazorMapCodeEndpoint, method);
             var delegatedMapCodeParams = Assert.IsType<DelegatedMapCodeParams>(@params);
 
-            var mappings = new MapCodeMapping[]
+            var mappings = new VSInternalMapCodeMapping[]
             {
                 new() {
                     TextDocument = new TextDocumentIdentifier()
@@ -404,12 +403,12 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
                     FocusLocations = delegatedMapCodeParams.FocusLocations
                 }
             };
-            var mapCodeRequest = new MapCodeParams()
+            var mapCodeRequest = new VSInternalMapCodeParams()
             {
                 Mappings = mappings
             };
 
-            var result = await _csharpServer.ExecuteRequestAsync<MapCodeParams, WorkspaceEdit?>(
+            var result = await _csharpServer.ExecuteRequestAsync<VSInternalMapCodeParams, WorkspaceEdit?>(
                 MapperMethods.WorkspaceMapCodeName, mapCodeRequest, cancellationToken);
             if (result is null)
             {

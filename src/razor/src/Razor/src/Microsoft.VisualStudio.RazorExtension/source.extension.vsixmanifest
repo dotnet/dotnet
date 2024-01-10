@@ -50,6 +50,7 @@
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="System.Runtime.CompilerServices.Unsafe.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="System.Threading.Channels.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.AspNetCore.Razor.LanguageServer.dll" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="Microsoft.AspNetCore.Razor.LanguageServer.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.AspNetCore.Razor.LanguageSupport.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.AspNetCore.Razor.LanguageServer.Protocol.dll" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" Path="Microsoft.CodeAnalysis.Razor.Compiler.Language.dll" />

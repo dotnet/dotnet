@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging;
@@ -205,11 +206,26 @@ internal static class SourceTextExtensions
 
     public static bool TryGetAbsoluteIndex(this SourceText sourceText, int line, int character, out int absoluteIndex)
     {
+        return sourceText.TryGetAbsoluteIndex(line, character, logger: null, out absoluteIndex);
+    }
+
+    public static bool TryGetAbsoluteIndex(this SourceText sourceText, int line, int character, ILogger? logger, out int absoluteIndex)
+    {
         absoluteIndex = 0;
         var lineCount = sourceText.Lines.Count;
         if (line > lineCount ||
             (line == lineCount && character > 0))
         {
+            if (logger != null)
+            {
+#pragma warning disable CA2254 // Template should be a static expression.
+                // This is actually static, the compiler just doesn't know it.
+                var errorMessage = SR.FormatPositionLine_Outside_Range(line, nameof(sourceText), sourceText.Lines.Count);
+                logger?.LogError(errorMessage);
+#pragma warning restore CA2254 // Template should be a static expression
+                Debug.Fail(SR.FormatPositionLine_Outside_Range(line, nameof(sourceText), sourceText.Lines.Count));
+            }
+
             return false;
         }
 
@@ -220,22 +236,24 @@ internal static class SourceTextExtensions
         }
         else
         {
-            absoluteIndex = sourceText.Lines[line].Start + character;
-        }
-
-        return true;
-    }
-
-    public static bool TryGetAbsoluteIndex(this SourceText sourceText, int line, int character, ILogger? logger, out int absoluteIndex)
-    {
-        if (!TryGetAbsoluteIndex(sourceText, line, character, out absoluteIndex))
-        {
+            var sourceLine = sourceText.Lines[line];
+            var lineLengthIncludingLineBreak = sourceLine.SpanIncludingLineBreak.Length;
+            if (character > lineLengthIncludingLineBreak)
+            {
+                if (logger != null)
+                {
 #pragma warning disable CA2254 // Template should be a static expression.
-            // This is actually static, the compiler just doesn't know it.
-            logger?.LogError(SR.FormatPositionIndex_Outside_Range(line, nameof(sourceText), sourceText.Lines.Count));
+                    // This is actually static, the compiler just doesn't know it.
+                    var errorMessage = SR.FormatPositionCharacter_Outside_Range(character, nameof(sourceText), lineLengthIncludingLineBreak);
+                    logger?.LogError(errorMessage);
+                    Debug.Fail(errorMessage);
 #pragma warning restore CA2254 // Template should be a static expression
-            absoluteIndex = -1;
-            return false;
+                }
+
+                return false;
+            }
+
+            absoluteIndex = sourceLine.Start + character;
         }
 
         return true;

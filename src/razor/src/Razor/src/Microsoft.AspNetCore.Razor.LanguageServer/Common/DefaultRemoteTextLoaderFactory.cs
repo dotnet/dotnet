@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Composition;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,9 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
-internal class DefaultRemoteTextLoaderFactory : RemoteTextLoaderFactory
+[Export(typeof(RemoteTextLoaderFactory)), Shared]
+[method: ImportingConstructor]
+internal class DefaultRemoteTextLoaderFactory() : RemoteTextLoaderFactory
 {
     public override TextLoader Create(string filePath)
     {

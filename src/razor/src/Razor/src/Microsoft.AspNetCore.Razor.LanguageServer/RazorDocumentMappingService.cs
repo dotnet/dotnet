@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -22,21 +23,17 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal sealed class RazorDocumentMappingService : IRazorDocumentMappingService
-{
-    private readonly FilePathService _documentFilePathService;
-    private readonly IDocumentContextFactory _documentContextFactory;
-    private readonly ILogger _logger;
-
-    public RazorDocumentMappingService(
+[Export(typeof(IRazorDocumentMappingService)), Shared]
+[method: ImportingConstructor]
+internal sealed class RazorDocumentMappingService(
         FilePathService filePathService,
         IDocumentContextFactory documentContextFactory,
         IRazorLoggerFactory loggerFactory)
-    {
-        _documentFilePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
-        _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
-        _logger = loggerFactory?.CreateLogger<RazorDocumentMappingService>() ?? throw new ArgumentNullException(nameof(loggerFactory));
-    }
+         : IRazorDocumentMappingService
+{
+    private readonly FilePathService _documentFilePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
+    private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
+    private readonly ILogger _logger = loggerFactory.CreateLogger<RazorDocumentMappingService>();
 
     public TextEdit[] GetHostDocumentEdits(IRazorGeneratedDocument generatedDocument, TextEdit[] generatedDocumentEdits)
     {

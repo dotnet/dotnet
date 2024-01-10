@@ -44,7 +44,7 @@ internal class EphemeralProjectSnapshot : IProjectSnapshot
 
     public ProjectKey Key { get; }
 
-    public RazorConfiguration? Configuration => FallbackRazorConfiguration.Latest;
+    public RazorConfiguration Configuration => FallbackRazorConfiguration.Latest;
 
     public IEnumerable<string> DocumentFilePaths => Array.Empty<string>();
 
@@ -58,11 +58,11 @@ internal class EphemeralProjectSnapshot : IProjectSnapshot
 
     public VersionStamp Version => VersionStamp.Default;
 
-    public LanguageVersion CSharpLanguageVersion => LanguageVersion.Default;
+    public LanguageVersion CSharpLanguageVersion => ProjectWorkspaceState.CSharpLanguageVersion;
 
-    public ImmutableArray<TagHelperDescriptor> TagHelpers => ImmutableArray<TagHelperDescriptor>.Empty;
+    public ImmutableArray<TagHelperDescriptor> TagHelpers => ProjectWorkspaceState.TagHelpers;
 
-    public ProjectWorkspaceState? ProjectWorkspaceState => null;
+    public ProjectWorkspaceState ProjectWorkspaceState => ProjectWorkspaceState.Default;
 
     public IDocumentSnapshot? GetDocument(string filePath)
     {

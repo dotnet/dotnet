@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -15,7 +16,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
-internal class SnapshotResolver : ISnapshotResolver
+[Export(typeof(ISnapshotResolver)), Shared]
+internal sealed class SnapshotResolver : ISnapshotResolver
 {
     private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
     private readonly ILogger _logger;
@@ -23,10 +25,11 @@ internal class SnapshotResolver : ISnapshotResolver
     // Internal for testing
     internal readonly HostProject MiscellaneousHostProject;
 
+    [ImportingConstructor]
     public SnapshotResolver(ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor, IRazorLoggerFactory loggerFactory)
     {
         _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor ?? throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
-        _logger = loggerFactory.CreateLogger<SnapshotResolver>() ?? throw new ArgumentNullException(nameof(loggerFactory));
+        _logger = loggerFactory.CreateLogger<SnapshotResolver>();
 
         var miscellaneousProjectPath = Path.Combine(TempDirectory.Instance.DirectoryPath, "__MISC_RAZOR_PROJECT__");
         var normalizedPath = FilePathNormalizer.Normalize(miscellaneousProjectPath);

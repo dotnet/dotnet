@@ -9,7 +9,7 @@ namespace Microsoft.VisualStudio.LanguageServer.Protocol;
 internal static class MapperMethods
 {
     /// <summary>
-    /// Method name for 'workspace/mapCode'.
+    /// Method name for 'workspace/_vs_mapCode'.
     /// </summary>
-    public const string WorkspaceMapCodeName = "workspace/mapCode";
+    public const string WorkspaceMapCodeName = "workspace/_vs_mapCode";
 }

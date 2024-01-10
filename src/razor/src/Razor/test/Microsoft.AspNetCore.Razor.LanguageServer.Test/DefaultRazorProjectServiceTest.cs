@@ -38,7 +38,7 @@ public class DefaultRazorProjectServiceTest(ITestOutputHelper testOutput) : Lang
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var projectService = CreateProjectService(new TestSnapshotResolver(), projectManager);
-        var projectWorkspaceState = new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.LatestMajor);
+        var projectWorkspaceState = ProjectWorkspaceState.Create(LanguageVersion.LatestMajor);
 
         // Act
         await RunOnDispatcherThreadAsync(() =>

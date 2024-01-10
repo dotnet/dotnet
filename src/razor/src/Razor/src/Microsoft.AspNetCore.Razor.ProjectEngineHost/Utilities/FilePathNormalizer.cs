@@ -3,14 +3,27 @@
 
 using System;
 using System.Buffers;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.Extensions.Internal;
 
 namespace Microsoft.AspNetCore.Razor.Utilities;
 
 internal static class FilePathNormalizer
 {
+    private static Lazy<IEqualityComparer<string>> _lazyComparer = new Lazy<IEqualityComparer<string>>(() => new FilePathNormalizingComparer());
+    public static IEqualityComparer<string> Comparer => _lazyComparer.Value;
+
+    private class FilePathNormalizingComparer : IEqualityComparer<string>
+    {
+        public bool Equals(string? x, string? y) => FilePathNormalizer.FilePathsEquivalent(x, y);
+
+        public int GetHashCode([DisallowNull] string obj) => FilePathNormalizer.GetHashCode(obj);
+    }
+
     public static string NormalizeDirectory(string? directoryFilePath)
     {
         if (directoryFilePath.IsNullOrEmpty())
@@ -116,6 +129,28 @@ internal static class FilePathNormalizer
         var normalizedSpan2 = NormalizeCoreAndGetSpan(filePathSpan2, array2);
 
         return normalizedSpan1.Equals(normalizedSpan2, FilePathComparison.Instance);
+    }
+
+    public static int GetHashCode(string filePath)
+    {
+        if (filePath.Length == 0)
+        {
+            return filePath.GetHashCode();
+        }
+
+        var filePathSpan = filePath.AsSpanOrDefault();
+
+        using var _ = ArrayPool<char>.Shared.GetPooledArray(filePathSpan.Length, out var array1);
+        var normalizedSpan = NormalizeCoreAndGetSpan(filePathSpan, array1);
+
+        var hashCombiner = HashCodeCombiner.Start();
+
+        foreach (var ch in normalizedSpan)
+        {
+            hashCombiner.Add(ch);
+        }
+
+        return hashCombiner.CombinedHash;
     }
 
     private static ReadOnlySpan<char> NormalizeCoreAndGetSpan(ReadOnlySpan<char> source, Span<char> destination)

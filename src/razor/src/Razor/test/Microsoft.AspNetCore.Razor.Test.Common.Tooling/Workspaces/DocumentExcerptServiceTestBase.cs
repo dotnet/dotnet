@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -40,7 +41,7 @@ public abstract class DocumentExcerptServiceTestBase(ITestOutputHelper testOutpu
     private (IDocumentSnapshot primary, Document secondary) InitializeDocument(SourceText sourceText)
     {
         var project = new ProjectSnapshot(
-            ProjectState.Create(Workspace.Services, _hostProject)
+            ProjectState.Create(ProjectEngineFactory, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var primary = project.GetDocument(_hostDocument.FilePath).AssumeNotNull();

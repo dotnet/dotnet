@@ -140,8 +140,11 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             // not set the items. We won't be able to do type inference on this and so it will just be nonsense.
             foreach (var attribute in node.Attributes)
             {
-                if (attribute != null && TryFindGenericTypeNames(attribute.BoundAttribute, out var typeParameters))
+                if (attribute != null && TryFindGenericTypeNames(attribute.BoundAttribute, attribute.GloballyQualifiedTypeName, out var typeParameters))
                 {
+                    // Keep only type parameters defined by this component.
+                    typeParameters = typeParameters.Where(bindings.ContainsKey).ToArray();
+
                     var attributeValueIsLambda = _pass.TypeNameFeature.IsLambda(GetContent(attribute));
                     var provideCascadingGenericTypes = new CascadingGenericTypeParameter
                     {
@@ -239,7 +242,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             //     hardcoded as a RenderFragment<Something> and hence actually give type info.
             foreach (var attribute in node.ChildContents)
             {
-                if (TryFindGenericTypeNames(attribute.BoundAttribute, out var typeParameters))
+                if (TryFindGenericTypeNames(attribute.BoundAttribute, globallyQualifiedTypeName: null, out var typeParameters))
                 {
                     foreach (var typeName in typeParameters)
                     {
@@ -268,7 +271,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             CreateTypeInferenceMethod(documentNode, node, receivesCascadingGenericTypes);
         }
 
-        private bool TryFindGenericTypeNames(BoundAttributeDescriptor? boundAttribute, [NotNullWhen(true)] out IReadOnlyList<string>? typeParameters)
+        private bool TryFindGenericTypeNames(BoundAttributeDescriptor? boundAttribute, string? globallyQualifiedTypeName, [NotNullWhen(true)] out IReadOnlyList<string>? typeParameters)
         {
             if (boundAttribute == null)
             {
@@ -287,7 +290,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             // Two cases;
             // 1. name is a simple identifier like TItem
             // 2. name contains type parameters like Dictionary<string, TItem>
-            typeParameters = _pass.TypeNameFeature.ParseTypeParameters(boundAttribute.TypeName);
+            typeParameters = _pass.TypeNameFeature.ParseTypeParameters(globallyQualifiedTypeName ?? boundAttribute.TypeName);
             if (typeParameters.Count == 0)
             {
                 typeParameters = new[] { boundAttribute.TypeName };

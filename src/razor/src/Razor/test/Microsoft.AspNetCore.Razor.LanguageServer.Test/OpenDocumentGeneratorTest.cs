@@ -135,7 +135,7 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
 
             // Act
             projectManager.ProjectWorkspaceStateChanged(_hostProject1.Key,
-                new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp8));
+                ProjectWorkspaceState.Create(LanguageVersion.CSharp8));
         }, DisposalToken);
 
         // Assert
@@ -162,7 +162,7 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
 
             // Act
             projectManager.ProjectWorkspaceStateChanged(_hostProject1.Key,
-                new ProjectWorkspaceState(ImmutableArray<TagHelperDescriptor>.Empty, LanguageVersion.CSharp8));
+                ProjectWorkspaceState.Create(LanguageVersion.CSharp8));
         }, DisposalToken);
 
         // Assert

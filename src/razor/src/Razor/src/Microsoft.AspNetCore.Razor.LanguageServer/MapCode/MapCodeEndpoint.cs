@@ -19,12 +19,11 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
-using LSP = Microsoft.VisualStudio.LanguageServer.Protocol;
+using Location = Microsoft.VisualStudio.LanguageServer.Protocol.Location;
 using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
@@ -36,30 +35,20 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
 /// This class and its mapping heuristics will likely be constantly evolving as we receive
 /// more advanced inputs from the client.
 /// </remarks>
-[LanguageServerEndpoint(LSP.MapperMethods.WorkspaceMapCodeName)]
-internal sealed class MapCodeEndpoint : IRazorDocumentlessRequestHandler<LSP.MapCodeParams, LSP.WorkspaceEdit?>
+[LanguageServerEndpoint(MapperMethods.WorkspaceMapCodeName)]
+internal sealed class MapCodeEndpoint(
+    IRazorDocumentMappingService documentMappingService,
+    IDocumentContextFactory documentContextFactory,
+    IClientConnection clientConnection) : IRazorDocumentlessRequestHandler<VSInternalMapCodeParams, WorkspaceEdit?>
 {
-    private readonly IRazorDocumentMappingService _documentMappingService;
-    private readonly IDocumentContextFactory _documentContextFactory;
-    private readonly IClientConnection _clientConnection;
-    private readonly FilePathService _filePathService;
-
-    public MapCodeEndpoint(
-        IRazorDocumentMappingService documentMappingService,
-        IDocumentContextFactory documentContextFactory,
-        IClientConnection clientConnection,
-        FilePathService filePathService)
-    {
-        _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
-        _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
-        _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-        _filePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
-    }
+    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
+    private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
+    private readonly IClientConnection _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
 
     public bool MutatesSolutionState => false;
 
-    public async Task<LSP.WorkspaceEdit?> HandleRequestAsync(
-        LSP.MapCodeParams request,
+    public async Task<WorkspaceEdit?> HandleRequestAsync(
+        VSInternalMapCodeParams request,
         RazorRequestContext context,
         CancellationToken cancellationToken)
     {
@@ -114,7 +103,7 @@ internal sealed class MapCodeEndpoint : IRazorDocumentlessRequestHandler<LSP.Map
             }
         }
 
-        var workspaceEdits = new LSP.WorkspaceEdit
+        var workspaceEdits = new WorkspaceEdit
         {
             DocumentChanges = changes.ToArray()
         };
@@ -124,7 +113,7 @@ internal sealed class MapCodeEndpoint : IRazorDocumentlessRequestHandler<LSP.Map
 
     private async Task<bool> TryMapCodeAsync(
         RazorCodeDocument codeToMap,
-        LSP.Location[][] locations,
+        Location[][] locations,
         ImmutableArray<TextDocumentEdit>.Builder changes,
         VersionedDocumentContext documentContext,
         CancellationToken cancellationToken)
@@ -153,14 +142,14 @@ internal sealed class MapCodeEndpoint : IRazorDocumentlessRequestHandler<LSP.Map
     }
 
     private async Task<bool> TryMapCodeAsync(
-        LSP.Location[][] focusLocations,
+        Location[][] focusLocations,
         List<SyntaxNode> nodesToMap,
         ImmutableArray<TextDocumentEdit>.Builder changes,
         VersionedDocumentContext documentContext,
         CancellationToken cancellationToken)
     {
         var didCalculateCSharpFocusLocations = false;
-        var csharpFocusLocations = new LSP.Location[focusLocations.Length][];
+        var csharpFocusLocations = new Location[focusLocations.Length][];
 
         // We attempt to map the code using each focus location in order of priority.
         // The outer array is an ordered priority list (from highest to lowest priority),
@@ -225,7 +214,7 @@ internal sealed class MapCodeEndpoint : IRazorDocumentlessRequestHandler<LSP.Map
                     if (insertionSpan is not null)
                     {
                         var textSpan = new TextSpan(insertionSpan.Value, 0);
-                        var edit = new LSP.TextEdit { NewText = nodeToMap.ToFullString(), Range = textSpan.ToRange(sourceText) };
+                        var edit = new TextEdit { NewText = nodeToMap.ToFullString(), Range = textSpan.ToRange(sourceText) };
 
                         var textDocumentEdit = new TextDocumentEdit
                         {
@@ -311,7 +300,7 @@ internal sealed class MapCodeEndpoint : IRazorDocumentlessRequestHandler<LSP.Map
     private async Task<bool> TrySendCSharpDelegatedMappingRequestAsync(
         TextDocumentIdentifierAndVersion textDocumentIdentifier,
         SyntaxNode nodeToMap,
-        LSP.Location[][] focusLocations,
+        Location[][] focusLocations,
         ImmutableArray<TextDocumentEdit>.Builder changes,
         CancellationToken cancellationToken)
     {
@@ -321,10 +310,10 @@ internal sealed class MapCodeEndpoint : IRazorDocumentlessRequestHandler<LSP.Map
             [nodeToMap.ToFullString()],
             FocusLocations: focusLocations);
 
-        LSP.WorkspaceEdit? edits = null;
+        WorkspaceEdit? edits = null;
         try
         {
-            edits = await _clientConnection.SendRequestAsync<DelegatedMapCodeParams, LSP.WorkspaceEdit?>(
+            edits = await _clientConnection.SendRequestAsync<DelegatedMapCodeParams, WorkspaceEdit?>(
                 CustomMessageNames.RazorMapCodeEndpoint,
                 delegatedRequest,
                 cancellationToken).ConfigureAwait(false);
@@ -345,14 +334,14 @@ internal sealed class MapCodeEndpoint : IRazorDocumentlessRequestHandler<LSP.Map
         return success;
     }
 
-    private async Task<LSP.Location[][]> GetCSharpFocusLocationsAsync(LSP.Location[][] focusLocations, CancellationToken cancellationToken)
+    private async Task<Location[][]> GetCSharpFocusLocationsAsync(Location[][] focusLocations, CancellationToken cancellationToken)
     {
         // If the focus locations are in a C# context, map them to the C# document.
-        var csharpFocusLocations = new LSP.Location[focusLocations.Length][];
+        var csharpFocusLocations = new Location[focusLocations.Length][];
         for (var i = 0; i < focusLocations.Length; i++)
         {
             var locations = focusLocations[i];
-            var csharpLocations = new List<LSP.Location>();
+            var csharpLocations = new List<Location>();
             foreach (var potentialLocation in locations)
             {
                 if (potentialLocation is null)
@@ -373,7 +362,7 @@ internal sealed class MapCodeEndpoint : IRazorDocumentlessRequestHandler<LSP.Map
 
                 if (_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, hostDocumentRange, out var generatedDocumentRange))
                 {
-                    var csharpLocation = new LSP.Location
+                    var csharpLocation = new Location
                     {
                         // We convert the URI to the C# generated document URI later on in
                         // LanguageServer.Client since we're unable to retrieve it here.
@@ -393,7 +382,7 @@ internal sealed class MapCodeEndpoint : IRazorDocumentlessRequestHandler<LSP.Map
 
     // Map C# code back to Razor file
     private async Task<bool> TryHandleDelegatedResponseAsync(
-        LSP.WorkspaceEdit edits,
+        WorkspaceEdit edits,
         ImmutableArray<TextDocumentEdit>.Builder changes,
         CancellationToken cancellationToken)
     {
@@ -444,7 +433,7 @@ internal sealed class MapCodeEndpoint : IRazorDocumentlessRequestHandler<LSP.Map
                     return false;
                 }
 
-                var textEdit = new LSP.TextEdit
+                var textEdit = new TextEdit
                 {
                     Range = hostDocumentRange,
                     NewText = documentEdit.NewText

@@ -29,6 +29,9 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\**\*.*" />
+    <EmbeddedResource Include="..\..\..\Compiler\perf\Microbenchmarks\MSN.cshtml">
+      <Link>Resources\%(FileName)%(Extension)</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
