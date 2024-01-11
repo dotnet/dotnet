@@ -76,7 +76,7 @@ jobs:
     - name: EnableRichCodeNavigation
       value: 'true'
   # Retry signature validation up to three times, waiting 2 seconds between attempts.
-  # See https://learn.microsoft.com/nuget/reference/errors-and-warnings/nu3028#retry-untrusted-root-failures
+  # See https://learn.microsoft.com/en-us/nuget/reference/errors-and-warnings/nu3028#retry-untrusted-root-failures
   - name: NUGET_EXPERIMENTAL_CHAIN_BUILD_RETRY_POLICY
     value: 3,2000
   - ${{ each variable in parameters.variables }}:
@@ -136,7 +136,7 @@ jobs:
         condition: and(succeeded(), in(variables['_SignType'], 'real', 'test'), eq(variables['Agent.Os'], 'Windows_NT'))
 
   - ${{ if and(eq(parameters.runAsPublic, 'false'), eq(variables['System.TeamProject'], 'internal')) }}:
-    - task: NuGetAuthenticate@0
+    - task: NuGetAuthenticate@1
 
   - ${{ if and(ne(parameters.artifacts.download, 'false'), ne(parameters.artifacts.download, '')) }}:
     - task: DownloadPipelineArtifact@2

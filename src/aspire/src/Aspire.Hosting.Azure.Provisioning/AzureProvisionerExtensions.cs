@@ -7,11 +7,13 @@ using Aspire.Hosting.Azure.Data.Cosmos;
 using Aspire.Hosting.Azure.Provisioning;
 using Aspire.Hosting.Lifecycle;
 using Azure.ResourceManager;
+using Azure.ResourceManager.AppConfiguration;
 using Azure.ResourceManager.CosmosDB;
 using Azure.ResourceManager.KeyVault;
 using Azure.ResourceManager.Redis;
 using Azure.ResourceManager.Resources;
 using Azure.ResourceManager.ServiceBus;
+using Azure.ResourceManager.Sql;
 using Azure.ResourceManager.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -47,8 +49,14 @@ public static class AzureProvisionerExtensions
         builder.AddAzureProvisioner<AzureRedisResource, AzureRedisProvisioner>();
         builder.AddResourceEnumerator(resourceGroup => resourceGroup.GetAllRedis(), resource => resource.Data.Tags);
 
+        builder.AddAzureProvisioner<AzureAppConfigurationResource, AppConfigurationProvisioner>();
+        builder.AddResourceEnumerator(resourceGroup => resourceGroup.GetAppConfigurationStores(), resource => resource.Data.Tags);
+
         builder.AddAzureProvisioner<AzureCosmosDBResource, AzureCosmosDBProvisioner>();
         builder.AddResourceEnumerator(resourceGroup => resourceGroup.GetCosmosDBAccounts(), resource => resource.Data.Tags);
+
+        builder.AddAzureProvisioner<AzureSqlServerResource, SqlServerProvisioner>();
+        builder.AddResourceEnumerator(resourceGroup => resourceGroup.GetSqlServers(), resource => resource.Data.Tags);
 
         return builder;
     }

@@ -1,16 +1,12 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Diagnostics;
-using System.Text.Json.Nodes;
 using Aspire.Hosting.Azure.Data.Cosmos;
 using Azure;
-using Azure.Core;
-using Azure.ResourceManager;
 using Azure.ResourceManager.CosmosDB;
 using Azure.ResourceManager.CosmosDB.Models;
-using Azure.ResourceManager.Resources;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 
 namespace Aspire.Hosting.Azure.Provisioning;
@@ -29,24 +25,17 @@ internal sealed class AzureCosmosDBProvisioner(ILogger<AzureCosmosDBProvisioner>
     }
 
     public override async Task GetOrCreateResourceAsync(
-        ArmClient armClient,
-        SubscriptionResource subscription,
-        ResourceGroupResource resourceGroup,
-        Dictionary<string, ArmResource> resourceMap,
-        AzureLocation location,
         AzureCosmosDBResource resource,
-        Guid principalId,
-        JsonObject userSecrets,
+        ProvisioningContext context,
         CancellationToken cancellationToken)
     {
-
-        resourceMap.TryGetValue(resource.Name, out var azureResource);
+        context.ResourceMap.TryGetValue(resource.Name, out var azureResource);
 
         if (azureResource is not null && azureResource is not CosmosDBAccountResource)
         {
             logger.LogWarning("Resource {resourceName} is not a Cosmos DB resource. Deleting it.", resource.Name);
 
-            await armClient.GetGenericResource(azureResource.Id).DeleteAsync(WaitUntil.Started, cancellationToken).ConfigureAwait(false);
+            await context.ArmClient.GetGenericResource(azureResource.Id).DeleteAsync(WaitUntil.Started, cancellationToken).ConfigureAwait(false);
         }
 
         var cosmosResource = azureResource as CosmosDBAccountResource;
@@ -55,28 +44,27 @@ internal sealed class AzureCosmosDBProvisioner(ILogger<AzureCosmosDBProvisioner>
         {
             var cosmosDbName = Guid.NewGuid().ToString().Replace("-", string.Empty)[0..20];
 
-            logger.LogInformation("Creating CosmosDB {cosmosDbName} in {location}...", cosmosDbName, location);
+            logger.LogInformation("Creating CosmosDB {cosmosDbName} in {location}...", cosmosDbName, context.Location);
 
             var cosmosDbCreateOrUpdateContent = new CosmosDBAccountCreateOrUpdateContent(
-                location,
+                context.Location,
                 new CosmosDBAccountLocation[]
                 {
                     new CosmosDBAccountLocation()
                     {
-                        LocationName = location.Name,
+                        LocationName = context.Location.Name,
                         FailoverPriority = 0
                     }
                 }
                 );
             cosmosDbCreateOrUpdateContent.Tags.Add(AzureProvisioner.AspireResourceNameTag, resource.Name);
 
-            var sw = Stopwatch.StartNew();
-            
-            var operation = await resourceGroup.GetCosmosDBAccounts().CreateOrUpdateAsync(WaitUntil.Completed, cosmosDbName, cosmosDbCreateOrUpdateContent, cancellationToken).ConfigureAwait(false);
-            cosmosResource = operation.Value;
-            sw.Stop();
+            var sw = ValueStopwatch.StartNew();
 
-            logger.LogInformation("Cosmos DB {cosmosDbName} created in {elapsed}", cosmosResource.Data.Name, sw.Elapsed);
+            var operation = await context.ResourceGroup.GetCosmosDBAccounts().CreateOrUpdateAsync(WaitUntil.Completed, cosmosDbName, cosmosDbCreateOrUpdateContent, cancellationToken).ConfigureAwait(false);
+            cosmosResource = operation.Value;
+
+            logger.LogInformation("Cosmos DB {cosmosDbName} created in {elapsed}", cosmosResource.Data.Name, sw.GetElapsedTime());
         }
 
         // This must be an explicit call to get the keys
@@ -86,7 +74,7 @@ internal sealed class AzureCosmosDBProvisioner(ILogger<AzureCosmosDBProvisioner>
         // REVIEW: Do we need to use the port?
         resource.ConnectionString = $"AccountEndpoint={cosmosResource.Data.DocumentEndpoint};AccountKey={keys.PrimaryMasterKey};";
 
-        var connectionStrings = userSecrets.Prop("ConnectionStrings");
+        var connectionStrings = context.UserSecrets.Prop("ConnectionStrings");
         connectionStrings[resource.Name] = resource.ConnectionString;
     }
 }

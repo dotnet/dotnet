@@ -10,7 +10,7 @@ Registers [EntityFrameworkCore](https://learn.microsoft.com/ef/core/) [DbContext
 
 ### Install the package
 
-Install the .NET Aspire SQL Server EntityFrameworkCore SqlClient library with [NuGet][nuget]:
+Install the .NET Aspire SQL Server EntityFrameworkCore SqlClient library with [NuGet](https://www.nuget.org):
 
 ```dotnetcli
 dotnet add package Aspire.Microsoft.EntityFrameworkCore.SqlServer
@@ -90,10 +90,10 @@ Also you can pass the `Action<MicrosoftEntityFrameworkCoreSqlServerSettings> con
 
 ## AppHost extensions
 
-In your AppHost project, register a SqlServer container and consume the connection using the following methods:
+In your AppHost project, register a SqlServer database and consume the connection using the following methods:
 
 ```csharp
-var sql = builder.AddSqlServerContainer("sql").AddDatabase("sqldata");
+var sql = builder.AddSqlServer("sql").AddDatabase("sqldata");
 
 var myService = builder.AddProject<Projects.MyService>()
                        .WithReference(sql);

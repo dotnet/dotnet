@@ -10,7 +10,7 @@ Registers [EntityFrameworkCore](https://learn.microsoft.com/ef/core/) [DbContext
 
 ### Install the package
 
-Install the .NET Aspire PostgreSQL EntityFrameworkCore Npgsql library with [NuGet][nuget]:
+Install the .NET Aspire PostgreSQL EntityFrameworkCore Npgsql library with [NuGet](https://www.nuget.org):
 
 ```dotnetcli
 dotnet add package Aspire.Npgsql.EntityFrameworkCore.PostgreSQL
@@ -89,10 +89,10 @@ Also you can pass the `Action<NpgsqlEntityFrameworkCorePostgreSQLSettings> confi
 
 ## AppHost extensions
 
-In your AppHost project, register a Postgres container and consume the connection using the following methods:
+In your AppHost project, register a Postgres database and consume the connection using the following methods:
 
 ```csharp
-var postgresdb = builder.AddPostgresContainer("pg").AddDatabase("postgresdb");
+var postgresdb = builder.AddPostgres("pg").AddDatabase("postgresdb");
 
 var myService = builder.AddProject<Projects.MyService>()
                        .WithReference(postgresdb);

@@ -10,7 +10,7 @@ Registers [NpgsqlDataSource](https://www.npgsql.org/doc/api/Npgsql.NpgsqlDataSou
 
 ### Install the package
 
-Install the .NET Aspire PostgreSQL Npgsql library with [NuGet][nuget]:
+Install the .NET Aspire PostgreSQL Npgsql library with [NuGet](https://www.nuget.org):
 
 ```dotnetcli
 dotnet add package Aspire.Npgsql
@@ -84,10 +84,10 @@ Also you can pass the `Action<NpgsqlSettings> configureSettings` delegate to set
 
 ## AppHost extensions
 
-In your AppHost project, register a Postgres container and consume the connection using the following methods:
+In your AppHost project, register a Postgres database and consume the connection using the following methods:
 
 ```csharp
-var postgresdb = builder.AddPostgresContainer("pg").AddDatabase("postgresdb");
+var postgresdb = builder.AddPostgres("pg").AddDatabase("postgresdb");
 
 var myService = builder.AddProject<Projects.MyService>()
                        .WithReference(postgresdb);

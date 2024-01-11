@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 using k8s.Models;
 
@@ -22,7 +23,7 @@ internal sealed class ServiceSpec
 
     // The mode for address allocation
     [JsonPropertyName("addressAllocationMode")]
-    public string AddressAllocationMode = AddressAllocationModes.Localhost;
+    public string AddressAllocationMode { get; set; } = AddressAllocationModes.Localhost;
 }
 
 internal sealed class ServiceStatus : V1Status
@@ -62,6 +63,9 @@ internal static class AddressAllocationModes
 
     // Bind to "localhost", which is all loopback devices on the machine.
     public const string Localhost = "Localhost";
+
+    // Don't use a proxy, instead bind to the first Endpoint.
+    public const string Proxyless = "Proxyless";
 }
 
 internal sealed class Service : CustomResource<ServiceSpec, ServiceStatus>
@@ -84,6 +88,14 @@ internal sealed class Service : CustomResource<ServiceSpec, ServiceStatus>
     public int? AllocatedPort => Spec.Port ?? Status?.EffectivePort;
     public string? AllocatedAddress => Spec.Address ?? Status?.EffectiveAddress;
     public bool HasCompleteAddress => AllocatedPort > 0 && !string.IsNullOrEmpty(AllocatedAddress);
+
+    public bool UsesHttpProtocol([NotNullWhen(true)] out string? uriScheme)
+    {
+        uriScheme = null;
+        return Metadata.Annotations?.TryGetValue(UriSchemeAnnotation, out uriScheme) == true
+            && (string.Equals(uriScheme, "http", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(uriScheme, "https", StringComparison.OrdinalIgnoreCase));
+    }
 
     public void ApplyAddressInfoFrom(Service other)
     {
