@@ -47,7 +47,8 @@
       "src\\Shared\\Microsoft.AspNetCore.Razor.Test.Common\\Microsoft.AspNetCore.Razor.Test.Common.csproj",
       "src\\Shared\\Microsoft.AspNetCore.Razor.Test.ComponentShim\\Microsoft.AspNetCore.Razor.Test.ComponentShim.csproj",
       "src\\Shared\\Microsoft.AspNetCore.Razor.Utilities.Shared.Test\\Microsoft.AspNetCore.Razor.Utilities.Shared.Test.csproj",
-      "src\\Shared\\Microsoft.AspNetCore.Razor.Utilities.Shared\\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj"
+      "src\\Shared\\Microsoft.AspNetCore.Razor.Utilities.Shared\\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj",
+      "src\\Shared\\Microsoft.AspNetCore.Razor.Serialization.Json\\Microsoft.AspNetCore.Razor.Serialization.Json.shproj"
     ]
   }
 }
