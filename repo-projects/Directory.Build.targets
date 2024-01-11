@@ -17,9 +17,8 @@
     <ProjectAssetsJsonArchiveFile>$(PackageReportDir)all-project-assets-json-files.zip</ProjectAssetsJsonArchiveFile>
     <ProdConManifestFile>$(PackageReportDir)prodcon-build.xml</ProdConManifestFile>
 
-    <UpdateEngCommonFiles Condition="'$(UpdateEngCommonFiles)' == '' and '$(DotNetBuildVertical)' == 'true'">true</UpdateEngCommonFiles>
     <!-- TODO: Remove when current builds of roslyn and aspire got ingested into installer. -->
-    <UpdateEngCommonFiles Condition="'$(UpdateEngCommonFiles)' == '' and '$(RepositoryName)' == 'roslyn' or '$(RepositoryName)' == 'aspire'">true</UpdateEngCommonFiles>
+    <UpdateEngCommonFiles Condition="'$(UpdateEngCommonFiles)' == '' and ('$(RepositoryName)' == 'roslyn' or '$(RepositoryName)' == 'aspire')">true</UpdateEngCommonFiles>
   </PropertyGroup>
 
   <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="AddSourceToNuGetConfig" />
@@ -128,7 +127,7 @@
 
   <!-- TODO: Remove when all repos use a consistent set of eng/common files: https://github.com/dotnet/source-build/issues/3710. -->
   <Target Name="UpdateEngCommonFiles"
-          Condition="'$(UpdateEngCommonFiles)' == 'true'"
+          Condition="'$(UpdateEngCommonFiles)' == 'true' or '$(DotNetBuildVertical)' == 'true'"
           BeforeTargets="Build">
     <ItemGroup>
       <OrchestratorEngCommonFile Include="$(RepositoryEngineeringDir)common\**\*" />
@@ -411,10 +410,6 @@
   <Target Name="CleanupRepo"
           AfterTargets="RemoveBuiltPackagesFromCache"
           Condition="'$(CleanWhileBuilding)' == 'true' and Exists('$(ProjectDirectory)artifacts')">
-    <Message Text="DirSize After Building $(RepositoryName)" Importance="High" Condition="'$(BuildOS)' != 'windows'" />
-    <Exec Command="df -h $(RepoRoot)" Condition="'$(BuildOS)' != 'windows'" />
-
-    <!-- Make a copy of the build logs & project.assets.json files -->
     <PropertyGroup>
       <BuildLogsDir>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts', 'buildLogs'))</BuildLogsDir>
       <BuildObjDir>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts', 'buildObj'))</BuildObjDir>
@@ -426,10 +421,16 @@
       <ObjFilesToCopy Include="$(ProjectDirectory)artifacts/**/project.assets.json" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(LogFilesToCopy)" DestinationFolder="$(BuildLogsDir)%(RecursiveDir)" Condition="'@(LogFilesToCopy)' != ''" />
-    <Copy SourceFiles="@(ObjFilesToCopy)" DestinationFolder="$(BuildObjDir)%(RecursiveDir)" Condition="'@(ObjFilesToCopy)' != ''" />
+    <!-- Make a copy of the build logs & project.assets.json files -->
+    <Copy SourceFiles="@(LogFilesToCopy)"
+          DestinationFolder="$(BuildLogsDir)%(RecursiveDir)"
+          SkipUnchangedFiles="true"
+          Condition="'@(LogFilesToCopy)' != ''" />
+    <Copy SourceFiles="@(ObjFilesToCopy)"
+          DestinationFolder="$(BuildObjDir)%(RecursiveDir)"
+          SkipUnchangedFiles="true"
+          Condition="'@(ObjFilesToCopy)' != ''" />
 
-    <!-- Cleanup everything else -->
     <ItemGroup>
       <DirsToDelete Include="$([System.IO.Directory]::GetDirectories('$(ProjectDirectory)artifacts'))" />
 
@@ -438,10 +439,14 @@
       <DirsToDeleteWithTrailingSeparator Remove="$(BuildObjDir)" />
     </ItemGroup>
 
+    <Message Text="DirSize After Building $(RepositoryName)" Importance="High" Condition="'$(BuildOS)' != 'windows' and '@(DirsToDeleteWithTrailingSeparator)' != ''" />
+    <Exec Command="df -h $(RepoRoot)" Condition="'$(BuildOS)' != 'windows' and '@(DirsToDeleteWithTrailingSeparator)' != ''" />
+
+    <!-- Cleanup everything else -->
     <RemoveDir Directories="@(DirsToDeleteWithTrailingSeparator)" />
 
-    <Message Text="DirSize After CleanupRepo $(RepositoryName)" Importance="High" Condition="'$(BuildOS)' != 'windows'" />
-    <Exec Command="df -h $(RepoRoot)" Condition="'$(BuildOS)' != 'windows'" />
+    <Message Text="DirSize After CleanupRepo $(RepositoryName)" Importance="High" Condition="'$(BuildOS)' != 'windows'and '@(DirsToDeleteWithTrailingSeparator)' != ''" />
+    <Exec Command="df -h $(RepoRoot)" Condition="'$(BuildOS)' != 'windows'and '@(DirsToDeleteWithTrailingSeparator)' != ''" />
   </Target>
 
   <Target Name="ExtractToolPackage"
