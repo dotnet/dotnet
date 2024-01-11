@@ -5,6 +5,7 @@ using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Serialization.Json.Internal;
 using Microsoft.Extensions.ObjectPool;
 using Newtonsoft.Json;
 
@@ -365,7 +366,7 @@ internal partial class JsonDataReader
         if (_reader.TokenType == JsonToken.EndArray)
         {
             _reader.Read();
-            return Array.Empty<T>();
+            return [];
         }
 
         // Second special case, is this an array of one element?
@@ -374,7 +375,7 @@ internal partial class JsonDataReader
         if (_reader.TokenType == JsonToken.EndArray)
         {
             _reader.Read();
-            return new[] { firstElement };
+            return [firstElement];
         }
 
         // There's more than one element, so we need to acquire a pooled list to
@@ -393,7 +394,7 @@ internal partial class JsonDataReader
 
         _reader.Read();
 
-        return elements.ToArray();
+        return [.. elements];
     }
 
     public T[]? ReadArray<T>(string propertyName, ReadValue<T> readElement)
@@ -403,7 +404,7 @@ internal partial class JsonDataReader
     }
 
     public T[] ReadArrayOrEmpty<T>(string propertyName, ReadValue<T> readElement)
-        => TryReadPropertyName(propertyName) ? ReadArray(readElement) ?? Array.Empty<T>() : Array.Empty<T>();
+        => TryReadPropertyName(propertyName) ? ReadArray(readElement) ?? [] : [];
 
     public ImmutableArray<T> ReadImmutableArray<T>(ReadValue<T> readElement)
     {
