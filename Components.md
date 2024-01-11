@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[_git/dotnet-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspire/?version=GC48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@4ed8505](https://github.com/dotnet/aspnetcore/tree/4ed85056f57c8e64e471b21c8d46a3bbbe697378)*
+*[dotnet/aspnetcore@eb3ad9b](https://github.com/dotnet/aspnetcore/tree/eb3ad9beb9818f7c7f1b27707ffe08c8273a2dc5)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@dddb219](https://github.com/google/googletest/tree/dddb219c3eb96d7f9200f09b0a381f016e6b4562)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@b65db15](https://github.com/dotnet/fsharp/tree/b65db15f3262c439f81e6d02c0b8a6892a737e60)*
 - `src/installer`  
-*[dotnet/installer@374a28a](https://github.com/dotnet/installer/tree/374a28a36cc5bafe1917607e685c3d894eca2f91)*
+*[dotnet/installer@9aee1e1](https://github.com/dotnet/installer/tree/9aee1e1e0be51f20a31488828590389a62450088)*
 - `src/msbuild`  
 *[dotnet/msbuild@1725b24](https://github.com/dotnet/msbuild/tree/1725b247e8737804076c8ff3b09fcee02ecdf51e)*
 - `src/nuget-client`  
@@ -50,7 +50,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@bfde902](https://github.com/dotnet/scenario-tests/tree/bfde902a10d7b672f4fc7e844198ede405dbb9c6)*
 - `src/sdk`  
-*[dotnet/sdk@12c083f](https://github.com/dotnet/sdk/tree/12c083fc90700d3255cc021b665764876c5747fe)*
+*[dotnet/sdk@2b728f5](https://github.com/dotnet/sdk/tree/2b728f5335cd4f8d1f9f07e2c4e24e3e40e56054)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@6513a2c](https://github.com/dotnet/source-build-externals/tree/6513a2c0cd7be2706742181af63d717a90cec5be)*
     - `src/source-build-externals/src/abstractions-xunit`  
