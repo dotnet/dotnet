@@ -13,10 +13,10 @@
       "commitSha": "48e42f59d64d84b404e904996a9ed61f2a17a569"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24059.17",
+      "packageVersion": "9.0.0-alpha.1.24060.3",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "c53f7e474ba80124fb9134ebf23d1d626a19b458"
+      "commitSha": "6cfc445cba47c73001ff6d1b7599df3d2906d880"
     },
     {
       "packageVersion": "0.11.4-alpha.23617.1",
@@ -49,22 +49,22 @@
       "commitSha": "5cda86493ac07dce11dcb04323d2b57eecff00b7"
     },
     {
-      "packageVersion": "9.0.505901",
+      "packageVersion": "9.0.506001",
       "path": "format",
       "remoteUri": "https://github.com/dotnet/format",
-      "commitSha": "f58bc29a159f43a71e6ac21fd2734f5d10807a72"
+      "commitSha": "a58eac37fb292ac3e6670de015b57774edb50f86"
     },
     {
-      "packageVersion": "8.0.200-beta.24055.2",
+      "packageVersion": "8.0.200-beta.24060.2",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "cc741852156e5f048e4e046061fa36477f8b92fb"
+      "commitSha": "465f1c07f0ed13e05c1c584821037b48bea230c7"
     },
     {
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "0b82a5aa64ad639184b1da058a7f11323d89a031"
+      "commitSha": "f78f0b4d7660e4c686f82b2c2924520d1480ef35"
     },
     {
       "packageVersion": "17.10.0-preview-24060-03",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-alpha.1.24060.11",
+      "packageVersion": "9.0.100-alpha.1.24060.22",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "4ee2ed3de45a4cae2571cabac89ea307230c3cce"
+      "commitSha": "676cc4a9a8428441cfe3e7935fd70e30c9c6ae57"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24059.3",
@@ -157,10 +157,10 @@
       "commitSha": "17723493fc8befbb889db2ff17b1ac98ba7b7c48"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24060.1",
+      "packageVersion": "9.0.0-alpha.1.24060.2",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "4ec0ed9971f8974889e71c55a60c3876b8b67a61"
+      "commitSha": "1bdafaacbc6081b8d51c2945520fd6b534c32a5f"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24053.20",
@@ -181,10 +181,10 @@
       "commitSha": "676b9ddede4b3843bb41af274343e7eebd79169a"
     },
     {
-      "packageVersion": "1.0.0-beta.23426.1",
+      "packageVersion": "1.0.0-beta.23475.1",
       "path": "xliff-tasks",
       "remoteUri": "https://github.com/dotnet/xliff-tasks",
-      "commitSha": "194f32828726c3f1f63f79f3dc09b9e99c157b11"
+      "commitSha": "73f0850939d96131c28cf6ea6ee5aacb4da0083a"
     }
   ],
   "submodules": [
