@@ -10,7 +10,7 @@ Registers an [IConnectionMultiplexer](https://stackexchange.github.io/StackExcha
 
 ### Install the package
 
-Install the .NET Aspire StackExchange Redis library with [NuGet][nuget]:
+Install the .NET Aspire StackExchange Redis library with [NuGet](https://www.nuget.org):
 
 ```dotnetcli
 dotnet add package Aspire.StackExchange.Redis
@@ -98,10 +98,10 @@ builder.AddRedis("cache", configureOptions: options => options.ConnectTimeout = 
 
 ## AppHost extensions
 
-In your AppHost project, register a Redis container and consume the connection using the following methods:
+In your AppHost project, register a Redis server and consume the connection using the following methods:
 
 ```csharp
-var redis = builder.AddRedisContainer("cache");
+var redis = builder.AddRedis("cache");
 
 var myService = builder.AddProject<Projects.MyService>()
                        .WithReference(redis);

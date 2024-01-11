@@ -10,7 +10,7 @@ Registers 'Scoped' [Microsoft.Data.SqlClient.SqlConnection](https://learn.micros
 
 ### Install the package
 
-Install the .NET Aspire SQL Server SqlClient library with [NuGet][nuget]:
+Install the .NET Aspire SQL Server SqlClient library with [NuGet](https://www.nuget.org):
 
 ```dotnetcli
 dotnet add package Aspire.Microsoft.Data.SqlClient
@@ -88,10 +88,10 @@ Also you can pass the `Action<MicrosoftDataSqlClientSettings> configureSettings`
 
 ## AppHost extensions
 
-In your AppHost project, register a SqlServer container and consume the connection using the following methods:
+In your AppHost project, register a SqlServer database and consume the connection using the following methods:
 
 ```csharp
-var sql = builder.AddSqlServerContainer("sql").AddDatabase("sqldata");
+var sql = builder.AddSqlServer("sql").AddDatabase("sqldata");
 
 var myService = builder.AddProject<Projects.MyService>()
                        .WithReference(sql);
