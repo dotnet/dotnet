@@ -16,7 +16,7 @@ parameters:
 
   # The following parameters aren't expected to be passed in rather they are used for encapsulation
   # -----------------------------------------------------------------------------------------------
-  alpine317Container: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.17
+  alpine319Container: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.19-WithNode
   centOSStream8Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
   centOSStream9Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
   fedora39Container: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-39
@@ -112,15 +112,15 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
-        buildName: Alpine317_Offline_PreviousSourceBuiltSdk
+        buildName: Alpine319_Offline_PreviousSourceBuiltSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
-        artifactsRid: alpine.3.17-x64
+        artifactsRid: alpine.3.19-x64
         pool:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
-        container: ${{ parameters.alpine317Container }}
+        container: ${{ parameters.alpine319Container }}
         buildFromArchive: false            # 🚫
         enablePoison: true                 # ✅
         excludeOmniSharpTests: true        # ✅
@@ -133,15 +133,15 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
-        buildName: Alpine317_Online_MsftSdk
+        buildName: Alpine319_Online_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
-        artifactsRid: alpine.3.17-x64
+        artifactsRid: alpine.3.19-x64
         pool:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemands }}
-        container: ${{ parameters.alpine317Container }}
+        container: ${{ parameters.alpine319Container }}
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
         excludeOmniSharpTests: true        # ✅
