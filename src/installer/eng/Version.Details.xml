@@ -174,9 +174,9 @@
       <Sha>5cda86493ac07dce11dcb04323d2b57eecff00b7</Sha>
       <SourceBuild RepoName="emsdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk.Aspire.Manifest-8.0.100" Version="8.0.0-preview.1.23557.2">
-      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspire</Uri>
-      <Sha>48e42f59d64d84b404e904996a9ed61f2a17a569</Sha>
+    <Dependency Name="Microsoft.NET.Sdk.Aspire.Manifest-8.0.100" Version="8.0.0-preview.3.24060.4">
+      <Uri>https://github.com/dotnet/aspire</Uri>
+      <Sha>66a1dd77e4077592a587c1429c8814d1057dc474</Sha>
       <SourceBuild RepoName="aspire" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="2.0.0-preview.1.24057.2" CoherentParentDependency="Microsoft.NET.Sdk">
