@@ -49,10 +49,10 @@
       "commitSha": "5cda86493ac07dce11dcb04323d2b57eecff00b7"
     },
     {
-      "packageVersion": "9.0.505901",
+      "packageVersion": "9.0.506001",
       "path": "format",
       "remoteUri": "https://github.com/dotnet/format",
-      "commitSha": "f58bc29a159f43a71e6ac21fd2734f5d10807a72"
+      "commitSha": "a58eac37fb292ac3e6670de015b57774edb50f86"
     },
     {
       "packageVersion": "8.0.200-beta.24060.2",
