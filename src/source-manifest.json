@@ -55,16 +55,16 @@
       "commitSha": "a58eac37fb292ac3e6670de015b57774edb50f86"
     },
     {
-      "packageVersion": "8.0.200-beta.24060.2",
+      "packageVersion": "8.0.200-beta.24060.3",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "465f1c07f0ed13e05c1c584821037b48bea230c7"
+      "commitSha": "b65db15f3262c439f81e6d02c0b8a6892a737e60"
     },
     {
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "f78f0b4d7660e4c686f82b2c2924520d1480ef35"
+      "commitSha": "13e187a43f94c27c380b23551e59f39d38ab356a"
     },
     {
       "packageVersion": "17.10.0-preview-24060-03",
@@ -79,10 +79,10 @@
       "commitSha": "e92be3915309e687044768de38933ac5fc4cb40c"
     },
     {
-      "packageVersion": "7.0.0-preview.24060.2",
+      "packageVersion": "7.0.0-preview.24060.4",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "70eb74af5c2bff152f5eeb76e6a69827ec097f32"
+      "commitSha": "569c9c50f393066c853bc796f3b5c720b35e55aa"
     },
     {
       "packageVersion": "4.9.0-3.24053.1",
@@ -97,10 +97,10 @@
       "commitSha": "8847dee338fe9af77ada479a9c03cd1c08f7c1a9"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24060.1",
+      "packageVersion": "9.0.0-alpha.1.24060.9",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "e0ecb3a6af984e12f2ba67e63bf9eff9f09de47c"
+      "commitSha": "72db600a20d581fdc6776edce1863bcf8da0b1cd"
     },
     {
       "packageVersion": "9.0.0-preview.24057.2",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-alpha.1.24060.22",
+      "packageVersion": "9.0.100-alpha.1.24060.57",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "676cc4a9a8428441cfe3e7935fd70e30c9c6ae57"
+      "commitSha": "03a9fa96422e8ee4609d91a06c440507a318727c"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24059.3",

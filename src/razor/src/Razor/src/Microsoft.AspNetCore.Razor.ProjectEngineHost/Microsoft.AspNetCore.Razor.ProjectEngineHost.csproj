@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="$(MicrosoftCodeAnalysisWorkspacesCommonPackageVersion)" />
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonPackageVersion)" />
     <PackageReference Include="MessagePack" Version="$(MessagePackPackageVersion)" />
   </ItemGroup>
 

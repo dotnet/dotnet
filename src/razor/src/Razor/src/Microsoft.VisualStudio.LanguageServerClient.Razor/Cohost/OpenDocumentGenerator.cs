@@ -42,6 +42,11 @@ internal sealed class OpenDocumentGenerator(
 
     public void Initialize(ProjectSnapshotManagerBase projectManager)
     {
+        if (!_languageServerFeatureOptions.UseRazorCohostServer)
+        {
+            return;
+        }
+
         _projectManager = projectManager;
         _projectManager.Changed += ProjectManager_Changed;
     }
@@ -190,7 +195,7 @@ internal sealed class OpenDocumentGenerator(
                 {
                     // This is not ideal, but we need to re-use the existing snapshot version because our system uses the version
                     // of the text buffer, but a project change doesn't change the text buffer.
-                    // See https://github.com/dotnet/razor/issues/9197 for more info and some issues this causese
+                    // See https://github.com/dotnet/razor/issues/9197 for more info and some issues this causes
                     // This should all be moot eventually in Cohosting eventually anyway (ie, this whole file should be deleted)
                     _ = UpdateGeneratedDocumentsAsync(document, documentSnapshot.Version, CancellationToken.None);
                 }
