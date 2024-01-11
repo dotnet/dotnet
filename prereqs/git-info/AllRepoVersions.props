@@ -61,7 +61,7 @@
     <wpfOutputPackageVersion>9.0.0-alpha.1.24056.1</wpfOutputPackageVersion>
     <xdtGitCommitHash>676b9ddede4b3843bb41af274343e7eebd79169a</xdtGitCommitHash>
     <xdtOutputPackageVersion>9.0.0-preview.24051.2</xdtOutputPackageVersion>
-    <xlifftasksGitCommitHash>194f32828726c3f1f63f79f3dc09b9e99c157b11</xlifftasksGitCommitHash>
-    <xlifftasksOutputPackageVersion>1.0.0-beta.23426.1</xlifftasksOutputPackageVersion>
+    <xlifftasksGitCommitHash>73f0850939d96131c28cf6ea6ee5aacb4da0083a</xlifftasksGitCommitHash>
+    <xlifftasksOutputPackageVersion>1.0.0-beta.23475.1</xlifftasksOutputPackageVersion>
   </PropertyGroup>
 </Project>
