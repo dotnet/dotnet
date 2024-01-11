@@ -38,7 +38,7 @@ jobs:
 
 - template: templates/jobs/sdk-diff-tests.yml
   parameters:
-    buildName: Alpine319_Offline_MsftSdk
+    buildName: Alpine319_Online_MsftSdk
     targetRid: alpine.3.19-x64
     architecture: x64
     dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
