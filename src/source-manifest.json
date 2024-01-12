@@ -169,10 +169,10 @@
       "commitSha": "a83ef804bdc6fde593302ea0628c04171b2afac9"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24056.1",
+      "packageVersion": "9.0.0-alpha.1.24061.2",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "d1793bf46d221789df9bf3bcde00cba11690c868"
+      "commitSha": "793eb57cc75af91afad52eb77676c63f0001e49a"
     },
     {
       "packageVersion": "9.0.0-preview.24058.1",
