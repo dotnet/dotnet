@@ -1,4 +1,30 @@
 # dotnet/dotnet - Home of the .NET VMR
+sdfasdfasd
+fasdfasd
+fasdf
+asdf
+asdf
+asd
+fasd
+fa
+sdf
+as
+dfa
+sd
+fas
+df
+as
+df
+asd
+fas
+df
+asd
+f
+asd
+fas
+df
+asd
+fa
 
 This repository is a **Virtual Monolithic Repository (VMR)** which includes all the source code and infrastructure needed to build the .NET SDK.
 
