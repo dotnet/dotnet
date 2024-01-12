@@ -206,8 +206,8 @@
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)CreateBuildInputProps.complete">
     <ItemGroup>
-      <_CurrentSourceBuiltPackages Include="%(RepositoryReferenceInfo.PackagesPath)*.nupkg"
-                                   Exclude="%(RepositoryReferenceInfo.PackagesPath)*.symbols.nupkg" />
+      <_CurrentSourceBuiltPackages Include="@(RepositoryReferenceInfo->'%(PackagesPath)*.nupkg')"
+                                   Exclude="@(RepositoryReferenceInfo->'%(PackagesPath)*.symbols.nupkg')"/>
       <_PreviouslyBuiltSourceBuiltPackages Include="$(PrebuiltSourceBuiltPackagesPath)*.nupkg" />
     </ItemGroup>
 
