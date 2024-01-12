@@ -62,7 +62,7 @@
     <ItemGroup>
       <RepositoryReferenceInfo Include="@(RepositoryReference)">
         <SourceName>$(SourceBuiltNuGetSourceName)-%(Identity)</SourceName>
-        <PackagesPath>$(SourceBuiltBasePackagesPath)%(Identity)</PackagesPath>
+        <PackagesPath>$(SourceBuiltBasePackagesPath)%(Identity)/</PackagesPath>
       </RepositoryReferenceInfo>
       <RepoSourceNames Include="@(RepositoryReferenceInfo->'%(SourceName)')" />
     </ItemGroup>
