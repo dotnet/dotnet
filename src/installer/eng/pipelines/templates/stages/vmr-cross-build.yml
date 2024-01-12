@@ -93,10 +93,10 @@ stages:
   - template: ../jobs/vmr-build.yml
     parameters:
       # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
-      buildName: MarinerCrossArm64_Online_MsftSdk
+      buildName: MarinerCrossArm64_Online_MsftSdk_Mono
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       vmrBranch: ${{ variables.VmrBranch }}
-      architecture: x64
+      architecture: arm64
       pool:
         name: ${{ variables.defaultPoolName }}
         demands: ${{ variables.defaultPoolDemands }}
@@ -134,7 +134,7 @@ stages:
       buildName: OSXCrossArm64_Online_MsftSdk
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       vmrBranch: ${{ variables.VmrBranch }}
-      architecture: x64
+      architecture: arm64
       pool:
         vmImage: ${{ parameters.poolMac.vmImage }}
       container: ''
@@ -145,3 +145,23 @@ stages:
       useMonoRuntime: true               # ✅
       withPreviousSDK: false             # 🚫
       targetRid: 'osx-arm64'             # 📝
+
+  - template: ../jobs/vmr-build.yml
+    parameters:
+      # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
+      buildName: MarinerCrossArm64_Online_MsftSdk_CoreCLR
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      vmrBranch: ${{ variables.VmrBranch }}
+      architecture: arm64
+      pool:
+        name: ${{ variables.defaultPoolName }}
+        demands: ${{ variables.defaultPoolDemands }}
+      container: ${{ parameters.marinerArm64CrossContainer }}
+      buildFromArchive: false            # 🚫
+      enablePoison: false                # 🚫
+      excludeOmniSharpTests: true        # ✅
+      runOnline: true                    # ✅
+      useMonoRuntime: false              # 🚫
+      withPreviousSDK: false             # 🚫
+      crossRootFs: '/crossrootfs/arm64'  # 📝
+      targetRid: 'linux-arm64'           # 📝
