@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using static Interop;
 
@@ -122,17 +121,6 @@ internal sealed partial class DeviceContext : MarshalByRefObject, IDisposable
         // Note: All input params can be null but not at the same time.  See MSDN for information.
         IntPtr hdc = Gdi32.CreateDCW(driverName, deviceName, fileName, devMode);
         return new DeviceContext(hdc, DeviceContextType.NamedDevice);
-    }
-
-    /// <summary>
-    /// CreateIC creates a DeviceContext object wrapping an hdc created with the Win32 CreateIC function.
-    /// </summary>
-    public static DeviceContext CreateIC(string driverName, string deviceName, string? fileName, IntPtr devMode)
-    {
-        // Note: All input params can be null but not at the same time.  See MSDN for information.
-
-        IntPtr hdc = Gdi32.CreateICW(driverName, deviceName, fileName, devMode);
-        return new DeviceContext(hdc, DeviceContextType.Information);
     }
 
     /// <summary>

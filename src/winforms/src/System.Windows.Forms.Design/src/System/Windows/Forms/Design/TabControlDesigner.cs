@@ -9,7 +9,6 @@ using System.ComponentModel.Design;
 using System.Drawing.Design;
 using System.Drawing;
 using System.Windows.Forms.Design.Behavior;
-using static Interop;
 
 namespace System.Windows.Forms.Design;
 
@@ -170,8 +169,7 @@ internal class TabControlDesigner : ParentControlDesigner
                 cs.ComponentChanged -= new ComponentChangedEventHandler(OnComponentChanged);
             }
 
-            TabControl tabControl = Control as TabControl;
-            if (tabControl is not null)
+            if (HasComponent && Control is TabControl tabControl)
             {
                 tabControl.SelectedIndexChanged -= new EventHandler(OnTabSelectedIndexChanged);
                 tabControl.GotFocus -= new EventHandler(OnGotFocus);
