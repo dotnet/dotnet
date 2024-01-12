@@ -190,7 +190,7 @@ jobs:
       if [[ -n '${{ parameters.artifactsRid }}' ]]; then
         customPrepArgs="${customPrepArgs} --artifacts-rid ${{ parameters.artifactsRid }}"
       fi
-      
+
       if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
         # Source-built artifacts are from CentOS 8 Stream or Alpine 3.19. We want to download them without
         # downloading portable versions from the internet.
@@ -200,7 +200,7 @@ jobs:
         customPrepArgs="${customPrepArgs} --no-sdk --no-artifacts"
         prepSdk=false
       fi
-      
+
       if [[ "$prepSdk" == "false" ]]; then
         mkdir $(sourcesPath)/.dotnet
         previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
@@ -251,8 +251,10 @@ jobs:
 
       if [[ ! -z '${{ parameters.targetRid }}' ]]; then
         extraBuildProperties="--"
-        customEnvVars="$customEnvVars CROSSCOMPILE=1"
-        extraBuildProperties="$extraBuildProperties /p:PortableBuild=true /p:DotNetBuildVertical=true"
+        if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
+            customEnvVars="$customEnvVars CROSSCOMPILE=1"
+        fi
+        extraBuildProperties="$extraBuildProperties /p:PortableBuild=true /p:DotNetBuildVertical=true /p:CrossBuild=true"
       fi
 
       if [[ ! -z '${{ parameters.crossRootFs }}' ]]; then
