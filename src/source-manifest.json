@@ -19,10 +19,10 @@
       "commitSha": "a19c70eba3f89c7cbe9447f029b4c63322f47846"
     },
     {
-      "packageVersion": "0.11.4-alpha.23617.1",
+      "packageVersion": "0.11.4-alpha.24052.1",
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "02026e5c1b054958851d2711fefa1b37027cab23"
+      "commitSha": "81facb3f6009be2cdce70df30452bb75e9a8f993"
     },
     {
       "packageVersion": "0.1.505902",
@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "1b09cd5e87bedf9438f958716d3b89f9bad799f9"
+      "commitSha": "3ea0b6b9632340ead4036fbedee4597daac29a8d"
     },
     {
       "packageVersion": "17.10.0-preview-24060-03",
@@ -85,10 +85,10 @@
       "commitSha": "569c9c50f393066c853bc796f3b5c720b35e55aa"
     },
     {
-      "packageVersion": "4.9.0-3.24053.1",
+      "packageVersion": "4.10.0-1.24061.4",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "237fb52c683601ed639f1fdeaf38ceef0c768fbc"
+      "commitSha": "514b5364881b9a36a2630ab7c0160f8e642fc1b3"
     },
     {
       "packageVersion": "3.11.0-beta1.24061.1",
@@ -97,10 +97,10 @@
       "commitSha": "8d8ac7de5f76d08f457465027b67f805a4153899"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24061.8",
+      "packageVersion": "9.0.0-alpha.1.24061.26",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "8d1c3d9527f0efe03d1f8a98f5d08ba9de43c108"
+      "commitSha": "22ba7d607bb1d9caa0db9afcdc47eb5cef641fcb"
     },
     {
       "packageVersion": "9.0.0-preview.24057.2",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-alpha.1.24061.46",
+      "packageVersion": "9.0.100-alpha.1.24062.7",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "cad304b555a10f97cfea3f67bd20f809e724b871"
+      "commitSha": "231e921dd53cb4f57acfae42b5984e4103d6b557"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24059.3",
@@ -139,10 +139,10 @@
       "commitSha": "1194d0bd9b2a0257706a2635531948ceaa02e729"
     },
     {
-      "packageVersion": "9.0.100-alpha.24060.14",
+      "packageVersion": "9.0.100-alpha.24061.2",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "b88627cbe240db4bb211e7f6d5997f8d229e8a20"
+      "commitSha": "f00c168c37b6fcac873a44538835c067c851affd"
     },
     {
       "packageVersion": "1.1.0-rc.24059.1",
