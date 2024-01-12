@@ -1638,14 +1638,14 @@ internal abstract partial class GridEntry : GridItem, ITypeDescriptorContext
                 HWND hwnd)
             {
                 Color backgroundColor = ColorInversionNeededInHighContrast ? InvertColor(OwnerGrid.LineColor) : OwnerGrid.LineColor;
-                using PInvoke.CreateDcScope compatibleDC = new(default);
+                using CreateDcScope compatibleDC = new(default);
 
-                int planes = PInvoke.GetDeviceCaps(compatibleDC, GET_DEVICE_CAPS_INDEX.PLANES);
-                int bitsPixel = PInvoke.GetDeviceCaps(compatibleDC, GET_DEVICE_CAPS_INDEX.BITSPIXEL);
-                using HBITMAP compatibleBitmap = PInvoke.CreateBitmap(rectangle.Width, rectangle.Height, (uint)planes, (uint)bitsPixel, lpBits: null);
-                using PInvoke.SelectObjectScope targetBitmapSelection = new(compatibleDC, compatibleBitmap);
+                int planes = PInvokeCore.GetDeviceCaps(compatibleDC, GET_DEVICE_CAPS_INDEX.PLANES);
+                int bitsPixel = PInvokeCore.GetDeviceCaps(compatibleDC, GET_DEVICE_CAPS_INDEX.BITSPIXEL);
+                using HBITMAP compatibleBitmap = PInvokeCore.CreateBitmap(rectangle.Width, rectangle.Height, (uint)planes, (uint)bitsPixel, lpBits: null);
+                using SelectObjectScope targetBitmapSelection = new(compatibleDC, compatibleBitmap);
 
-                using PInvoke.CreateBrushScope brush = new(backgroundColor);
+                using CreateBrushScope brush = new(backgroundColor);
                 compatibleDC.HDC.FillRectangle(new Rectangle(0, 0, rectangle.Width, rectangle.Height), brush);
                 explorerTreeRenderer.DrawBackground(compatibleDC, new Rectangle(0, 0, rectangle.Width, rectangle.Height), hwnd);
 

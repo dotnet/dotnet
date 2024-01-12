@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Windows.Forms.Layout;
 using Moq;
 using System.Windows.Forms.TestUtilities;
-using static Interop;
 using IComDataObject = System.Runtime.InteropServices.ComTypes.IDataObject;
 
 namespace System.Windows.Forms.Tests;
@@ -2548,7 +2547,7 @@ public partial class ControlTests
         foreach (object[] testData in GetScaledBounds_TestData())
         {
             yield return new object[] { testData[0], testData[1], testData[2], testData[3], null };
-            yield return new object[] { testData[0], testData[1], testData[2], testData[3], new object() };
+            yield return new object[] { testData[0], testData[1], testData[2], testData[3], new() };
 
             Mock<IDesignerHost> mockNullDesignerHost = new(MockBehavior.Strict);
             mockNullDesignerHost
