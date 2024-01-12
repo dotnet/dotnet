@@ -48,7 +48,7 @@
 
     <MakeDir Directories="$(SharedOutputPath)" />
     <Exec Command="tar --numeric-owner --exclude='Microsoft.SourceBuild.Intermediate.*.nupkg' -czf $(SourceBuiltTarballName) $(SourceBuiltVersionFileName) *.nupkg *.props SourceBuildReferencePackages/"
-          WorkingDirectory="$(SourceBuiltPackagesPath)" />
+          WorkingDirectory="$(SourceBuiltBasePackagesPath)" />
 
     <Message Importance="High" Text="Packaged source-built artifacts to $(SourceBuiltTarballName)" />
   </Target>
