@@ -8,7 +8,6 @@
     <TargetFrameworks>$(NetCurrent);netstandard2.0</TargetFrameworks>
     <OutputType Condition="'$(TargetFramework)' != 'netstandard2.0'">Exe</OutputType>
     <RuntimeIdentifiers>$(RoslynPortableRuntimeIdentifiers)</RuntimeIdentifiers>
-    <IsShipping>false</IsShipping>
     <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
     <ExcludeFromVerticalBuild>false</ExcludeFromVerticalBuild>
   </PropertyGroup>
