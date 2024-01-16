@@ -6,7 +6,6 @@
     <RootNamespace>Roslyn.Test.PdbUtilities</RootNamespace>
     <TargetFrameworks>net6.0;net7.0;net472</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <IsShipping>false</IsShipping>
     <IsTestUtilityProject>true</IsTestUtilityProject>
   </PropertyGroup>
   <ItemGroup>
