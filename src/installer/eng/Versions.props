@@ -240,15 +240,6 @@
   <!-- Workload manifest package versions -->
   <PropertyGroup>
     <AspireFeatureBand>8.0.100</AspireFeatureBand>
-    <AspireWorkloadManifestVersion>8.0.0-preview.1.23551.7</AspireWorkloadManifestVersion>
-    <MauiFeatureBand>8.0.100-rc.2</MauiFeatureBand>
-    <MauiWorkloadManifestVersion>8.0.0-rc.2.9373</MauiWorkloadManifestVersion>
-    <XamarinAndroidWorkloadManifestVersion>34.0.0-rc.2.468</XamarinAndroidWorkloadManifestVersion>
-    <XamarinIOSWorkloadManifestVersion>16.4.8968-net8-rc2</XamarinIOSWorkloadManifestVersion>
-    <XamarinMacCatalystWorkloadManifestVersion>16.4.8968-net8-rc2</XamarinMacCatalystWorkloadManifestVersion>
-    <XamarinMacOSWorkloadManifestVersion>13.3.8968-net8-rc2</XamarinMacOSWorkloadManifestVersion>
-    <XamarinTvOSWorkloadManifestVersion>16.4.8968-net8-rc2</XamarinTvOSWorkloadManifestVersion>
-    <AspireFeatureBand>8.0.100</AspireFeatureBand>
     <AspireWorkloadManifestVersion>8.0.0-preview.1.23557.2</AspireWorkloadManifestVersion>
     <MauiFeatureBand>8.0.100</MauiFeatureBand>
     <MauiWorkloadManifestVersion>8.0.3</MauiWorkloadManifestVersion>
