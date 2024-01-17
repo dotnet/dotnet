@@ -57,6 +57,7 @@
     </Feature>
 
     <FeatureRef Id="F_DependencyProvider" />
+    <FeatureRef Id="F_RegistryKeys" />
 
     <WixVariable Id="WixUILicenseRtf" Value="$(var.EulaRtf)" />
     <UIRef Id="WixUI_Minimal"/>

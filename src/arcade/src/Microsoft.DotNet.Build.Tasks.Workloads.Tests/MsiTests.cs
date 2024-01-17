@@ -18,14 +18,26 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
     [Collection("6.0.200 Toolchain manifest tests")]
     public class MsiTests : TestBase
     {
-        private static ITaskItem BuildManifestMsi(string path, string msiVersion = "1.2.3", string platform = "x64")
+        private static ITaskItem BuildManifestMsi(string path, string msiVersion = "1.2.3", string platform = "x64", string msiOutputPath = null)
         {
             TaskItem packageItem = new(path);
             WorkloadManifestPackage pkg = new(packageItem, PackageRootDirectory, new Version(msiVersion));
             pkg.Extract();
             WorkloadManifestMsi msi = new(pkg, platform, new MockBuildEngine(), WixToolsetPath, BaseIntermediateOutputPath,
                 isSxS: true);
-            return msi.Build(MsiOutputPath);
+            return string.IsNullOrWhiteSpace(msiOutputPath) ? msi.Build(MsiOutputPath) : msi.Build(msiOutputPath);
+        }
+
+        [WindowsOnlyFact]
+        public void WorkloadManifestsIncludeInstallationRecords()
+        {
+            ITaskItem msi603 = BuildManifestMsi(Path.Combine(TestAssetsPath, "microsoft.net.workload.mono.toolchain.manifest-6.0.200.6.0.3.nupkg"), 
+                msiOutputPath: Path.Combine(MsiOutputPath, "mrec"));
+            string msiPath603 = msi603.GetMetadata(Metadata.FullPath);
+
+            MsiUtils.GetAllRegistryKeys(msiPath603).Should().Contain(r =>
+              r.Key == @"SOFTWARE\Microsoft\dotnet\InstalledManifests\x64\Microsoft.NET.Workload.Mono.ToolChain.Manifest-6.0.200\6.0.3"
+            );
         }
 
         [WindowsOnlyFact]

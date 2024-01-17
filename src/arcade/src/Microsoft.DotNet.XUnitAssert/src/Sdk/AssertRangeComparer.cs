@@ -18,7 +18,7 @@ namespace Xunit.Sdk
 	/// Default implementation of <see cref="IComparer{T}"/> used by the xUnit.net range assertions.
 	/// </summary>
 	/// <typeparam name="T">The type that is being compared.</typeparam>
-	sealed class AssertComparer<T> : IComparer<T>
+	sealed class AssertRangeComparer<T> : IComparer<T>
 		where T : IComparable
 	{
 		/// <inheritdoc/>

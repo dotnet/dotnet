@@ -7,7 +7,11 @@ public class RangeAssertsTests
 {
 	public class InRange
 	{
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public void DoubleNotWithinRange()
 		{
 			var ex = Record.Exception(() => Assert.InRange(1.50, .75, 1.25));
@@ -90,7 +94,11 @@ public class RangeAssertsTests
 			Assert.InRange(400.0, .75, 1.25, new DoubleComparer(-1));
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public void DoubleValueNotWithinRange()
 		{
 			var ex = Record.Exception(() => Assert.InRange(1.0, .75, 1.25, new DoubleComparer(1)));
@@ -121,8 +129,8 @@ public class RangeAssertsTests
 			Assert.IsType<NotInRangeException>(ex);
 			Assert.Equal(
 				"Assert.NotInRange() Failure: Value in range" + Environment.NewLine +
-				"Range:  (0.75 - 1.25)" + Environment.NewLine +
-				"Actual: 1",
+				$"Range:  ({0.75:G17} - {1.25:G17})" + Environment.NewLine +
+				$"Actual: {1:G17}",
 				ex.Message
 			);
 		}
@@ -178,8 +186,8 @@ public class RangeAssertsTests
 			Assert.IsType<NotInRangeException>(ex);
 			Assert.Equal(
 				"Assert.NotInRange() Failure: Value in range" + Environment.NewLine +
-				"Range:  (0.75 - 1.25)" + Environment.NewLine +
-				"Actual: 400",
+				$"Range:  ({0.75:G17} - {1.25:G17})" + Environment.NewLine +
+				$"Actual: {400:G17}",
 				ex.Message
 			);
 		}

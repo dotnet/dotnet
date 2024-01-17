@@ -10,7 +10,7 @@
     <IsTestUtilityProject>true</IsTestUtilityProject>
     <IsPackable>true</IsPackable>
     <PackageId>Microsoft.DotNet.XUnitConsoleRunner</PackageId>
-    <VersionPrefix>2.6.1</VersionPrefix>
+    <VersionPrefix>$(XUnitVersion)</VersionPrefix>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddBuildOutputToPackage</TargetsForTfmSpecificContentInPackage>
@@ -34,13 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Reference xunit.runner.reporters directly via PackageDownload+Reference to avoid its netstandard1.x dependencies. -->
-    <PackageDownload Include="xunit.runner.reporters" Version="[$(XUnitVersion)]" />
-    <Reference Include="$(NuGetPackageRoot)xunit.runner.reporters\$(XUnitVersion)\lib\netcoreapp1.0\xunit.runner.reporters.netcoreapp10.dll" />
-
-    <!-- Reference xunit.runner.utility directly via PackageDownload+Reference to avoid its netstandard1.x dependencies. -->
-    <PackageDownload Include="xunit.runner.utility" Version="[$(XUnitVersion)]" />
-    <Reference Include="$(NuGetPackageRoot)xunit.runner.utility\$(XUnitVersion)\lib\netcoreapp1.0\xunit.runner.utility.netcoreapp10.dll" />
+    <PackageReference Include="xunit.runner.reporters" />
   </ItemGroup>
 
   <!-- Publish publish build assets and include them in the package under the tools directory. -->

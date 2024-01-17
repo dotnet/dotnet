@@ -227,4 +227,5 @@ dotnet_diagnostic.CA1200.severity = none  # Avoid using cref tags with a prefix
 dotnet_diagnostic.CA1707.severity = none  # Remove the underscores from type name
 dotnet_diagnostic.CA1720.severity = none  # Identifier contains type name
 dotnet_diagnostic.CA1810.severity = none  # Do not use static constructors
+dotnet_diagnostic.CA1859.severity = none  # Use concrete types when possible for improved performance
 dotnet_diagnostic.CA2007.severity = none  # Consider calling ConfigureAwait on the awaited task

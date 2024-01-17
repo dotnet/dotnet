@@ -29,7 +29,7 @@
             PackSourceBuildTarball"
           Condition="
             ('$(ArcadeBuildFromSource)' == 'true' or '$(ArcadeBuildVertical)' == 'true') and
-            '$(ArcadeInnerBuildFromSource)' != 'true'"
+            '$(ArcadeInnerBuildFromSource)' != 'true' and '$(DotNetBuildInnerRepo)' != 'true'"
           BeforeTargets="Execute" />
 
   <!--
@@ -45,7 +45,7 @@
   <Target Name="HookExecuteInnerSourceBuild"
           Condition="
             ('$(ArcadeBuildFromSource)' == 'true' or '$(ArcadeBuildVertical)' == 'true') and
-            '$(ArcadeInnerBuildFromSource)' == 'true'"
+            ('$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildInnerRepo)' == 'true')"
           DependsOnTargets="ExecuteInnerSourceBuild"
           BeforeTargets="Execute"/>
 
@@ -75,7 +75,7 @@
   <Target Name="GetSourceBuildCommandConfiguration">
     <PropertyGroup>
       <!-- Track that this is the inner build to prevent infinite recursion. -->
-      <InnerBuildArgs>$(InnerBuildArgs) /p:ArcadeInnerBuildFromSource=true</InnerBuildArgs>
+      <InnerBuildArgs>$(InnerBuildArgs) /p:ArcadeInnerBuildFromSource=true /p:DotNetBuildInnerRepo=true</InnerBuildArgs>
       <!-- Turn on DotNetBuildFromSource or DotNetBuildVertical in the inner build -->
       <InnerBuildArgs Condition="'$(ArcadeBuildFromSource)' == 'true'">$(InnerBuildArgs) /p:DotNetBuildFromSource=true</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(ArcadeBuildVertical)' == 'true'">$(InnerBuildArgs) /p:DotNetBuildVertical=true</InnerBuildArgs>

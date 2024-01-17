@@ -14,7 +14,7 @@
   <Target Name="CollectSourceBuildIntermediateNupkgDependencies"
           Condition="
             '$(DotNetBuildFromSourceFlavor)' != 'Product' and
-            (('$(ArcadeBuildFromSource)' == 'true' and '$(ArcadeInnerBuildFromSource)' == 'true') or
+            (('$(ArcadeBuildFromSource)' == 'true' and ('$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildInnerRepo)' == 'true')) or
               '$(SetUpSourceBuildIntermediateNupkgCache)' == 'true')"
           DependsOnTargets="GetSourceBuildIntermediateNupkgNameConvention"
           BeforeTargets="CollectPackageReferences">
@@ -33,7 +33,7 @@
   <Target Name="SetUpSourceBuildIntermediateNupkgCache"
           Condition="
             '$(DotNetBuildFromSourceFlavor)' != 'Product' and
-            (('$(ArcadeBuildFromSource)' == 'true' and '$(ArcadeInnerBuildFromSource)' == 'true' and '@(SourceBuildIntermediateNupkgReference)' != '') or
+            (('$(ArcadeBuildFromSource)' == 'true' and ('$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildInnerRepo)' == 'true') and '@(SourceBuildIntermediateNupkgReference)' != '') or
               '$(SetUpSourceBuildIntermediateNupkgCache)' == 'true')"
           AfterTargets="Restore">
     <ItemGroup>

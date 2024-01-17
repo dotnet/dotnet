@@ -387,8 +387,8 @@ public class StringAssertsTests
 		[InlineData("", "\t", false, false, true, true)]
 		[InlineData("foobar", "foo bar", false, false, true, true)]
 		public void Success(
-			string value1,
-			string value2,
+			string? value1,
+			string? value2,
 			bool ignoreCase,
 			bool ignoreLineEndingDifferences,
 			bool ignoreWhiteSpaceDifferences,
@@ -429,14 +429,14 @@ public class StringAssertsTests
 		{
 			var message = "Assert.Equal() Failure: Strings differ";
 
-			if (expectedPointer != null)
+			if (expectedPointer is not null)
 				message += Environment.NewLine + "           " + expectedPointer;
 
 			message +=
 				Environment.NewLine + "Expected: " + ArgumentFormatter.Format(expected) +
 				Environment.NewLine + "Actual:   " + ArgumentFormatter.Format(actual);
 
-			if (actualPointer != null)
+			if (actualPointer is not null)
 				message += Environment.NewLine + "           " + actualPointer;
 
 			var ex = Record.Exception(

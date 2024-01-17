@@ -12,7 +12,7 @@
   <Import Project="$(MicrosoftDotNetSourceBuildTasksBuildDir)Microsoft.DotNet.SourceBuild.Tasks.props" />
 
   <Target Name="AfterSourceBuild"
-          Condition="'$(ArcadeInnerBuildFromSource)' != 'true'"
+          Condition="'$(ArcadeInnerBuildFromSource)' != 'true' and '$(DotNetBuildInnerRepo)' != 'true'"
           DependsOnTargets="
             ReportPrebuiltUsage;
             PackSourceBuildIntermediateNupkgs;
