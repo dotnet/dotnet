@@ -11,6 +11,7 @@
     <CurrentRepoSourceBuildBinlogFile>$([MSBuild]::NormalizePath('$(CurrentRepoSourceBuildArtifactsDir)', 'sourcebuild.binlog'))</CurrentRepoSourceBuildBinlogFile>
 
     <InnerSourceBuildRepoRoot Condition="'$(InnerSourceBuildRepoRoot)' == ''">$(CurrentRepoSourceBuildSourceDir)</InnerSourceBuildRepoRoot>
+    <InnerSourceBuildRepoRoot Condition="'$(UseInnerClone)' != 'true'">$(RepoRoot)</InnerSourceBuildRepoRoot>
 
     <CleanInnerSourceBuildRepoRoot Condition="'$(CleanInnerSourceBuildRepoRoot)' == ''">true</CleanInnerSourceBuildRepoRoot>
 
@@ -112,7 +113,7 @@
           DependsOnTargets="CopyInnerSourceBuildRepoRoot;CloneInnerSourceBuildRepoRoot">
   </Target>
 
-  <Target Name="CopyInnerSourceBuildRepoRoot" Condition=" '$(CopySrcInsteadOfClone)' == 'true' ">
+  <Target Name="CopyInnerSourceBuildRepoRoot" Condition=" '$(CopySrcInsteadOfClone)' == 'true' and '$(UseInnerClone)' == 'true' ">
     <ItemGroup>
       <SourceBuildFilesToCopy Include="$(RepoRoot)/**/*" />
       <SourceBuildFilesToCopy Include="$(RepoRoot)/**/.*" />
@@ -132,7 +133,7 @@
     access to the git data, this also makes it easy to see what changes the source-build infra has
     made, for diagnosis or exploratory purposes.
   -->
-  <Target Name="CloneInnerSourceBuildRepoRoot" Condition=" '$(CopySrcInsteadOfClone)' != 'true'">
+  <Target Name="CloneInnerSourceBuildRepoRoot" Condition=" '$(CopySrcInsteadOfClone)' != 'true' and '$(UseInnerClone)' == 'true' ">
     <PropertyGroup>
       <!--
         By default, copy WIP. WIP copy helps with local machine dev work. Don't copy WIP if this is

@@ -15,7 +15,8 @@
           Condition="'$(ArcadeInnerBuildFromSource)' != 'true'"
           DependsOnTargets="
             ReportPrebuiltUsage;
-            PackSourceBuildIntermediateNupkgs" />
+            PackSourceBuildIntermediateNupkgs;
+            CreateRepoManifest" />
 
   <Target Name="WritePrebuiltUsageData">
     <ItemGroup>
@@ -26,7 +27,7 @@
       <SourceBuiltPackageFiles Include="$(PreviouslySourceBuiltNupkgCacheDir)**/*.nupkg" Condition=" '$(PreviouslySourceBuiltNupkgCacheDir)' != '' " />
 
       <!-- Add some other potential top-level project directories for a more specific report. -->
-      <ProjectDirectories Include="$(CurrentRepoSourceBuildSourceDir)" />
+      <ProjectDirectories Include="$(CurrentRepoSourceBuildSourceDir)"  Condition="'$(UseInnerClone)' == 'true'" />
       <!-- Finally, scan entire source-build, in case project.assets.json ends up in an unexpected place. -->
       <ProjectDirectories Include="$(SourceBuildOutputDir)" />
     </ItemGroup>
@@ -118,10 +119,39 @@
   </Target>
 
   <!--
+    In VMR build we create repo manifest.
+    SB orchestrator will parse the manifest and copy the artifacts to the right locations.
+
+    This can be removed once we enable standard repo assets manifests and SB orchestrator
+    starts using it - https://github.com/dotnet/source-build/issues/3970
+  -->
+  <Target Name="CreateRepoManifest"
+          Condition="'$(DotNetBuildFromSourceFlavor)' == 'Product'"
+          DependsOnTargets="
+            GetCategorizedIntermediateNupkgContents;
+            CreateRepoSymbolsArchive">
+    <PropertyGroup>
+      <RepoManifestFile>$(ArtifactsDir)RepoManifest.xml</RepoManifestFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <RepoManifestLine Include='&lt;Build&gt;' />
+      <RepoManifestLine Include='&lt;Artifact Path="%(IntermediateNupkgFile.Identity)" /&gt;' />
+      <RepoManifestLine Include='&lt;/Build&gt;' />
+    </ItemGroup>
+
+    <WriteLinesToFile
+      File="$(RepoManifestFile)"
+      Lines="@(RepoManifestLine)"
+      Overwrite="true" />
+  </Target>
+
+  <!--
     Create source-build intermediate NuGet package and supplemental intermediate NuGet packages (if
     necessary) for dependency transport to downstream repos.
   -->
   <Target Name="PackSourceBuildIntermediateNupkgs"
+          Condition="'$(CreateIntermediatePackage)' == 'true'"
           DependsOnTargets="
             CopyIntermediateNupkgProjToProjectDirectory;
             GetLicenseFileForIntermediateNupkgPack;

@@ -53,6 +53,7 @@
   <Target Name="GetIntermediateNupkgArtifactFiles"
           DependsOnTargets="
             GetCategorizedIntermediateNupkgContents;
+            CreateRepoSymbolsArchive;
             GetSupplementalIntermediateNupkgManifest;
             GetSymbolsArchive;
             GetNonShippingNupkgList"
@@ -81,66 +82,23 @@
   </Target>
 
   <!--
-    Create symbols archive and include it in the main intermediate nupkg, by default.
+    Include symbols archive in the main intermediate nupkg, by default.
 
     Repos can select a different intermediate nupkg by defining 'SymbolsIntermediateNupkgCategory'
     property in eng/SourceBuild.props.
-
-    Conditioning out for Windows as the tar execution below doesn't work cross-plat.
   -->
   <Target Name="GetSymbolsArchive"
-    Condition="'$(SupplementalIntermediateNupkgCategory)' == '$(SymbolsIntermediateNupkgCategory)' and
-               '$(OS)' != 'Windows_NT'">
-    <PropertyGroup>
-      <SymbolsRoot>$(CurrentRepoSourceBuildArtifactsDir)</SymbolsRoot>
-      <!-- Fall back to repo root for source-build-externals or repos that don't have the regular SymbolsRoot as defined above -->
-      <SymbolsRoot Condition="!Exists('$(SymbolsRoot)') or '$(GitHubRepositoryName)' == 'source-build-externals'">$(RepoRoot)</SymbolsRoot>
-      <SymbolsArchiveLocation>$(CurrentRepoSourceBuildArtifactsPackagesDir)</SymbolsArchiveLocation>
-      <SymbolsArchiveLocation Condition="'$(GitHubRepositoryName)' == 'nuget-client'">$(PackageOutputPath)</SymbolsArchiveLocation>
-      <SymbolsList>$(SymbolsArchiveLocation)\symbols.lst</SymbolsList>
-      <SymbolsArchivePrefix>Symbols.</SymbolsArchivePrefix>
-      <SymbolsArchiveSuffix>.$(Version).$(TargetRid)</SymbolsArchiveSuffix>
-      <SymbolsArchiveName>$(SymbolsArchiveLocation)$(SymbolsArchivePrefix)$(GitHubRepositoryName)$(SymbolsArchiveSuffix)$(ArchiveExtension)</SymbolsArchiveName>
-    </PropertyGroup>
+    Condition="'$(SupplementalIntermediateNupkgCategory)' == '$(SymbolsIntermediateNupkgCategory)' and '$(SymbolsArchiveFile)' != ''">
 
-    <ItemGroup>
-      <AbsoluteSymbolPath Include="$(SymbolsRoot)\**\obj\**\*.pdb" />
-      <AbsoluteSymbolPath Update="@(AbsoluteSymbolPath)" Condition="'@(AbsoluteSymbolPath)' != ''">
-        <RelativePath>$([MSBuild]::MakeRelative($(SymbolsRoot), %(FullPath)))</RelativePath>
-      </AbsoluteSymbolPath>
+    <ItemGroup Condition="Exists($(SymbolsArchiveFile))">
+      <Content Include="$(SymbolsArchiveFile)" PackagePath="artifacts" />
     </ItemGroup>
-
-    <WriteLinesToFile
-      File="$(SymbolsList)"
-      Lines="@(AbsoluteSymbolPath->'%(RelativePath)')"
-      Overwrite="true"
-      Condition="'@(AbsoluteSymbolPath)' != ''" />
-
-    <Exec Command="tar --numeric-owner -czf $(SymbolsArchiveName) --files-from=$(SymbolsList)"
-          WorkingDirectory="$(SymbolsRoot)" Condition="Exists($(SymbolsList))" />
-    <Message Importance="High" Text="Packaged symbols to $(SymbolsArchiveName)" Condition="Exists($(SymbolsArchiveName))" />
-
-    <ItemGroup Condition="Exists($(SymbolsArchiveName))">
-      <Content Include="$(SymbolsArchiveName)" PackagePath="artifacts" />
-    </ItemGroup>
-
-    <Delete Files="$(SymbolsList)" Condition="Exists($(SymbolsList))" />
   </Target>
 
   <!-- Create a list of non-shipping packages and include it in the intermediate package. -->
   <Target Name="GetNonShippingNupkgList"
-          Condition="'@(IntermediateNonShippingNupkgFile)' != ''">
-    <PropertyGroup>
-      <!-- The prefix needs to match what's defined in tarball source-build infra. Consider using a single property, in the future. -->
-      <NonShippingPackagesListPrefix>NonShipping.Packages.</NonShippingPackagesListPrefix>
-      <NonShippingPackagesList>$(CurrentRepoSourceBuildArtifactsPackagesDir)$(NonShippingPackagesListPrefix)$(GitHubRepositoryName).lst</NonShippingPackagesList>
-    </PropertyGroup>
-
-    <WriteLinesToFile
-      File="$(NonShippingPackagesList)"
-      Lines="@(IntermediateNonShippingNupkgFile->'%(Filename)%(Extension)')"
-      Overwrite="true" />
-
+          Condition="'$(NonShippingPackagesList)' != ''"
+          DependsOnTargets="GetCategorizedIntermediateNupkgContents">
     <ItemGroup>
       <!-- The list of non-shipping packages goes into the "main" intermediate nupkg. -->
       <Content Include="$(NonShippingPackagesList)" PackagePath="." />
