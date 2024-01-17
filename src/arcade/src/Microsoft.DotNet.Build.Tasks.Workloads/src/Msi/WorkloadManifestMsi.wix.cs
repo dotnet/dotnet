@@ -105,7 +105,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             candle.AddSourceFiles(packageContentWxs,
                 EmbeddedTemplates.Extract("DependencyProvider.wxs", WixSourceDirectory),
                 EmbeddedTemplates.Extract("dotnethome_x64.wxs", WixSourceDirectory),
-                EmbeddedTemplates.Extract("ManifestProduct.wxs", WixSourceDirectory));
+                EmbeddedTemplates.Extract("ManifestProduct.wxs", WixSourceDirectory),
+                EmbeddedTemplates.Extract("Registry.wxs", WixSourceDirectory));
 
             if (IsSxS)
             {
@@ -142,6 +143,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
             candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.DependencyProviderKeyName, $"{providerKeyName}");
             candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.SourceDir, $"{packageDataDirectory}");
             candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.SdkFeatureBandVersion, $"{Package.SdkFeatureBand}");
+            candle.AddPreprocessorDefinition(PreprocessorDefinitionNames.InstallationRecordKey, $"InstalledManifests");
 
             // The temporary installer in the SDK (6.0) used lower invariants of the manifest ID.
             // We have to do the same to ensure the keypath generation produces stable GUIDs.

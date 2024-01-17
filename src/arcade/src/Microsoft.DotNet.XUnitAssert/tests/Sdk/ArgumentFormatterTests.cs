@@ -10,10 +10,14 @@ public class ArgumentFormatterTests
 {
 	public class SimpleValues
 	{
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void NullValue()
 		{
-			Assert.Equal("null", ArgumentFormatter.Format((object?)null));
+			Assert.Equal("null", ArgumentFormatter.Format(null));
 		}
 
 		// NOTE: It's important that this stays as MemberData
@@ -120,7 +124,11 @@ public class ArgumentFormatterTests
 			Assert.Equal(expected, ArgumentFormatter.Format(value));
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void FloatValue()
 		{
 			var floatPI = (float)Math.PI;
@@ -128,19 +136,31 @@ public class ArgumentFormatterTests
 			Assert.Equal(floatPI.ToString("G9"), ArgumentFormatter.Format(floatPI));
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void DoubleValue()
 		{
 			Assert.Equal(Math.PI.ToString("G17"), ArgumentFormatter.Format(Math.PI));
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void DecimalValue()
 		{
 			Assert.Equal(123.45M.ToString(), ArgumentFormatter.Format(123.45M));
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void DateTimeValue()
 		{
 			var now = DateTime.UtcNow;
@@ -148,7 +168,11 @@ public class ArgumentFormatterTests
 			Assert.Equal(now.ToString("o"), ArgumentFormatter.Format(now));
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void DateTimeOffsetValue()
 		{
 			var now = DateTimeOffset.UtcNow;
@@ -208,10 +232,16 @@ public class ArgumentFormatterTests
 			Value1 = 1
 		}
 
+#if XUNIT_AOT
 		[Theory]
-		[InlineData((NonFlagsEnum)0, "Value0")]
-		[InlineData((NonFlagsEnum)1, "Value1")]
-		[InlineData((NonFlagsEnum)42, "42")]
+#else
+		[CulturedTheory]
+#endif
+#pragma warning disable xUnit1010 // The value is not convertible to the method parameter type
+		[InlineData(0, "Value0")]
+		[InlineData(1, "Value1")]
+		[InlineData(42, "42")]
+#pragma warning restore xUnit1010 // The value is not convertible to the method parameter type
 		public static void NonFlags(NonFlagsEnum enumValue, string expected)
 		{
 			var actual = ArgumentFormatter.Format(enumValue);
@@ -227,12 +257,18 @@ public class ArgumentFormatterTests
 			Value2 = 2,
 		}
 
+#if XUNIT_AOT
 		[Theory]
-		[InlineData((FlagsEnum)0, "Nothing")]
-		[InlineData((FlagsEnum)1, "Value1")]
-		[InlineData((FlagsEnum)3, "Value1 | Value2")]
+#else
+		[CulturedTheory]
+#endif
+#pragma warning disable xUnit1010 // The value is not convertible to the method parameter type
+		[InlineData(0, "Nothing")]
+		[InlineData(1, "Value1")]
+		[InlineData(3, "Value1 | Value2")]
 		// This is expected, not "Value1 | Value2 | 4"
-		[InlineData((FlagsEnum)7, "7")]
+		[InlineData(7, "7")]
+#pragma warning restore xUnit1010 // The value is not convertible to the method parameter type
 		public static void Flags(FlagsEnum enumValue, string expected)
 		{
 			var actual = ArgumentFormatter.Format(enumValue);
@@ -243,7 +279,11 @@ public class ArgumentFormatterTests
 
 	public class KeyValuePair
 	{
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void KeyValuePairValue()
 		{
 			var kvp = new KeyValuePair<object, List<object>>(42, new() { 21.12M, "2600" });
@@ -256,13 +296,17 @@ public class ArgumentFormatterTests
 	public class Enumerables
 	{
 		// Both tracked and untracked should be the same
-		public static TheoryData<IEnumerable?> Collections = new()
+		public static TheoryData<IEnumerable> Collections = new()
 		{
 			new object[] { 1, 2.3M, "Hello, world!" },
 			new object[] { 1, 2.3M, "Hello, world!" }.AsTracker(),
 		};
 
+#if XUNIT_AOT
 		[Theory]
+#else
+		[CulturedTheory]
+#endif
 		[MemberData(nameof(Collections), DisableDiscoveryEnumeration = true)]
 		public static void EnumerableValue(IEnumerable collection)
 		{
@@ -271,7 +315,11 @@ public class ArgumentFormatterTests
 			Assert.Equal(expected, ArgumentFormatter.Format(collection));
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void DictionaryValue()
 		{
 			var value = new Dictionary<object, List<object>>
@@ -284,20 +332,28 @@ public class ArgumentFormatterTests
 			Assert.Equal(expected, ArgumentFormatter.Format(value));
 		}
 
-		public static TheoryData<IEnumerable?> LongCollections = new()
+		public static TheoryData<IEnumerable> LongCollections = new()
 		{
 			new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
 			new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }.AsTracker(),
 		};
 
+#if XUNIT_AOT
 		[Theory]
+#else
+		[CulturedTheory]
+#endif
 		[MemberData(nameof(LongCollections), DisableDiscoveryEnumeration = true)]
 		public static void OnlyFirstFewValuesOfEnumerableAreRendered(IEnumerable collection)
 		{
 			Assert.Equal($"[0, 1, 2, 3, 4, {ArgumentFormatter.Ellipsis}]", ArgumentFormatter.Format(collection));
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void EnumerablesAreRenderedWithMaximumDepthToPreventInfiniteRecursion()
 		{
 			var looping = new object[2];
@@ -310,7 +366,11 @@ public class ArgumentFormatterTests
 
 	public class ComplexTypes
 	{
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void ReturnsValuesInAlphabeticalOrder()
 		{
 			var expected = $"MyComplexType {{ MyPublicField = 42, MyPublicProperty = {21.12M} }}";
@@ -336,7 +396,11 @@ public class ArgumentFormatterTests
 			}
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void ComplexTypeInsideComplexType()
 		{
 			var expected = $"MyComplexTypeWrapper {{ c = 'A', s = \"Hello, world!\", t = MyComplexType {{ MyPublicField = 42, MyPublicProperty = {21.12M} }} }}";
@@ -351,13 +415,21 @@ public class ArgumentFormatterTests
 			public string s = "Hello, world!";
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void Empty()
 		{
 			Assert.Equal("Object { }", ArgumentFormatter.Format(new object()));
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void WithThrowingPropertyGetter()
 		{
 			Assert.Equal("ThrowingGetter { MyThrowingProperty = (throws NotImplementedException) }", ArgumentFormatter.Format(new ThrowingGetter()));
@@ -368,7 +440,11 @@ public class ArgumentFormatterTests
 			public string MyThrowingProperty { get { throw new NotImplementedException(); } }
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void LimitsOutputToFirstFewValues()
 		{
 			var expected = $@"Big {{ MyField1 = 42, MyField2 = ""Hello, world!"", MyProp1 = {21.12}, MyProp2 = typeof(ArgumentFormatterTests+ComplexTypes+Big), MyProp3 = 2014-04-17T07:45:23.0000000+00:00, {ArgumentFormatter.Ellipsis} }}";
@@ -399,7 +475,11 @@ public class ArgumentFormatterTests
 			}
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void TypesAreRenderedWithMaximumDepthToPreventInfiniteRecursion()
 		{
 			Assert.Equal($"Looping {{ Me = Looping {{ Me = Looping {{ {ArgumentFormatter.Ellipsis} }} }} }}", ArgumentFormatter.Format(new Looping()));

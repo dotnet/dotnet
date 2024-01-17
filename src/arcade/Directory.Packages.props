@@ -13,6 +13,11 @@
     <!-- Keep Microsoft.Data.Services.Client package version in sync with Microsoft.Data.OData -->
     <MicrosoftDataServicesClientVersion>5.8.4</MicrosoftDataServicesClientVersion>
     <MicrosoftSignedWixVersion>1.0.0-v3.14.0.5722</MicrosoftSignedWixVersion>
+    <!-- Overwrite XUnitVersion/XUnitAnalyzersVersion/XUnitAnalyzersVersion that comes from the Arcade SDK to be in sync as Arcade doesn't use a live Arcade SDK.
+         Keep in sync with DefaultVersions.props. -->
+    <XUnitVersion>2.6.6</XUnitVersion>
+    <XUnitAnalyzersVersion>1.10.0</XUnitAnalyzersVersion>
+    <XUnitRunnerVisualStudioVersion>2.5.6</XUnitRunnerVisualStudioVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -62,8 +67,8 @@
 
   <!-- external -->
   <ItemGroup>
-    <PackageVersion Include="Azure.Core" Version="1.35.0" />
-    <PackageVersion Include="Azure.Storage.Blobs" Version="12.18.0" />
+    <PackageVersion Include="Azure.Core" Version="1.36.0" />
+    <PackageVersion Include="Azure.Storage.Blobs" Version="12.19.1" />
     <PackageVersion Include="CommandLineParser" Version="2.5.0" />
     <PackageVersion Include="coverlet.collector" Version="1.0.1" />
     <PackageVersion Include="FluentAssertions" Version="5.10.3" />
@@ -89,6 +94,7 @@
     <PackageVersion Include="xunit.abstractions" Version="2.0.3" />
     <PackageVersion Include="xunit.extensibility.core" Version="$(XUnitVersion)" />
     <PackageVersion Include="xunit.extensibility.execution" Version="$(XUnitVersion)" />
+    <PackageVersion Include="xunit.runner.reporters" Version="$(XUnitVersion)" />
     <PackageVersion Include="nsubstitute" Version="5.1.0" />
   </ItemGroup>
 

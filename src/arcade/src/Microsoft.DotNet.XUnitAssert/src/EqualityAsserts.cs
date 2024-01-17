@@ -196,7 +196,15 @@ namespace Xunit
 					{
 						try
 						{
-							if (CollectionTracker.AreCollectionsEqual(expectedTracker, actualTracker, itemComparer, itemComparer == AssertEqualityComparer<T>.DefaultInnerComparer, out mismatchedIndex))
+							bool result;
+
+							// Call AssertEqualityComparer.Equals because it checks for IEquatable<> before using CollectionTracker
+							if (aec != null)
+								result = aec.Equals(expected, expectedTracker, actual, actualTracker, out mismatchedIndex);
+							else
+								result = CollectionTracker.AreCollectionsEqual(expectedTracker, actualTracker, itemComparer, itemComparer == AssertEqualityComparer<T>.DefaultInnerComparer, out mismatchedIndex);
+
+							if (result)
 								return;
 						}
 						catch (Exception ex)
@@ -709,7 +717,15 @@ namespace Xunit
 					{
 						try
 						{
-							if (!CollectionTracker.AreCollectionsEqual(expectedTracker, actualTracker, itemComparer, itemComparer == AssertEqualityComparer<T>.DefaultInnerComparer, out mismatchedIndex))
+							bool result;
+
+							// Call AssertEqualityComparer.Equals because it checks for IEquatable<> before using CollectionTracker
+							if (aec != null)
+								result = aec.Equals(expected, expectedTracker, actual, actualTracker, out mismatchedIndex);
+							else
+								result = CollectionTracker.AreCollectionsEqual(expectedTracker, actualTracker, itemComparer, itemComparer == AssertEqualityComparer<T>.DefaultInnerComparer, out mismatchedIndex);
+
+							if (!result)
 								return;
 
 							// For NotEqual that doesn't throw, pointers are irrelevant, because

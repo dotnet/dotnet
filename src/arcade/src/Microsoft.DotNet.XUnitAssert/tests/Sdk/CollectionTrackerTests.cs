@@ -154,7 +154,11 @@ public class CollectionTrackerTests
 			Assert.Equal($"[{ArgumentFormatter.Ellipsis}]", tracker.FormatStart(ArgumentFormatter.MAX_DEPTH));
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void Short()
 		{
 			var tracker = new object[] { 1, 2.3M, "Hello, world!" }.AsTracker();
@@ -162,7 +166,11 @@ public class CollectionTrackerTests
 			Assert.Equal($"[1, {2.3M}, \"Hello, world!\"]", tracker.FormatStart());
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void Long()
 		{
 			var tracker = new object[] { 1, 2.3M, "Hello, world!", 42, 2112, new object() }.AsTracker();
@@ -189,7 +197,11 @@ public class CollectionTrackerTests
 			Assert.Equal($"[{ArgumentFormatter.Ellipsis}]", CollectionTracker<object>.FormatStart(collection, ArgumentFormatter.MAX_DEPTH));
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void Short()
 		{
 			IEnumerable<object> collection = new object[] { 1, 2.3M, "Hello, world!" };
@@ -197,7 +209,11 @@ public class CollectionTrackerTests
 			Assert.Equal($"[1, {2.3M}, \"Hello, world!\"]", CollectionTracker<object>.FormatStart(collection));
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void Long()
 		{
 			IEnumerable<object> collection = new object[] { 1, 2.3M, "Hello, world!", 42, 2112, new object() };
@@ -225,7 +241,11 @@ public class CollectionTrackerTests
 			Assert.Equal($"[{ArgumentFormatter.Ellipsis}]", CollectionTracker<object>.FormatStart(span, ArgumentFormatter.MAX_DEPTH));
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void Short()
 		{
 			var span = new object[] { 1, 2.3M, "Hello, world!" }.AsSpan();
@@ -233,7 +253,11 @@ public class CollectionTrackerTests
 			Assert.Equal($"[1, {2.3M}, \"Hello, world!\"]", CollectionTracker<object>.FormatStart(span));
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public static void Long()
 		{
 			var span = new object[] { 1, 2.3M, "Hello, world!", 42, 2112, new object() }.AsSpan();

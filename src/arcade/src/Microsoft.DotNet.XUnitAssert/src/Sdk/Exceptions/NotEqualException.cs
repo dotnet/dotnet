@@ -79,6 +79,10 @@ namespace Xunit.Sdk
 			Assert.GuardArgumentNotNull(nameof(expected), expected);
 			Assert.GuardArgumentNotNull(nameof(actual), actual);
 
+			error = ArgumentFormatter.UnwrapException(error);
+			if (error is AssertEqualityComparer.OperationalFailureException)
+				return new NotEqualException("Assert.NotEqual() Failure: " + error.Message);
+
 			var message =
 				error == null
 					? string.Format(CultureInfo.CurrentCulture, "Assert.NotEqual() Failure: {0} are equal", collectionDisplay ?? "Collections")

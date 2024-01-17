@@ -43,7 +43,9 @@ public class BooleanAssertsTests
 		[Fact]
 		public static void UserSuppliedMessage()
 		{
-			var ex = Record.Exception(() => Assert.Fail("Custom User Message"));
+#pragma warning disable xUnit2020 // Do not use always-failing boolean assertions
+			var ex = Record.Exception(() => Assert.False(true, "Custom User Message"));
+#pragma warning restore xUnit2020 // Do not use always-failing boolean assertions
 
 			Assert.NotNull(ex);
 			Assert.Equal("Custom User Message", ex.Message);
@@ -89,7 +91,9 @@ public class BooleanAssertsTests
 		[Fact]
 		public static void UserSuppliedMessage()
 		{
-			var ex = Record.Exception(() => Assert.Fail("Custom User Message"));
+#pragma warning disable xUnit2020 // Do not use always-failing boolean assertions
+			var ex = Record.Exception(() => Assert.True(false, "Custom User Message"));
+#pragma warning restore xUnit2020 // Do not use always-failing boolean assertions
 
 			Assert.NotNull(ex);
 			Assert.Equal("Custom User Message", ex.Message);

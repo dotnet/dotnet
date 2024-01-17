@@ -557,8 +557,15 @@ namespace Xunit.Sdk
 			return value != null;
 		}
 
-		static Exception UnwrapException(Exception ex)
+#if XUNIT_NULLABLE
+		internal static Exception? UnwrapException(Exception? ex)
+#else
+		internal static Exception UnwrapException(Exception ex)
+#endif
 		{
+			if (ex == null)
+				return null;
+
 			while (true)
 			{
 				var tiex = ex as TargetInvocationException;

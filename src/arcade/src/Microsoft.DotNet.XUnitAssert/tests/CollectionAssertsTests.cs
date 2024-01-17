@@ -3,13 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using NSubstitute;
 using Xunit;
 using Xunit.Sdk;
-
-#if XUNIT_VALUETASK
-using System.Threading.Tasks;
-#endif
 
 public class CollectionAssertsTests
 {
@@ -65,19 +63,18 @@ public class CollectionAssertsTests
 		}
 	}
 
-#if XUNIT_VALUETASK
 	public class AllAsync
 	{
 		[Fact]
-		public static async ValueTask GuardClauses()
+		public static async Task GuardClauses()
 		{
 			await Assert.ThrowsAsync<ArgumentNullException>("collection", () => Assert.AllAsync<object>(null!, async _ => await Task.Yield()));
-			await Assert.ThrowsAsync<ArgumentNullException>("action", () => Assert.AllAsync(Array.Empty<object>(), (Func<object, ValueTask>)null!));
-			await Assert.ThrowsAsync<ArgumentNullException>("action", () => Assert.AllAsync(Array.Empty<object>(), (Func<object, int, ValueTask>)null!));
+			await Assert.ThrowsAsync<ArgumentNullException>("action", () => Assert.AllAsync(new object[0], (Func<object, Task>)null!));
+			await Assert.ThrowsAsync<ArgumentNullException>("action", () => Assert.AllAsync(new object[0], (Func<object, int, Task>)null!));
 		}
 
 		[Fact]
-		public static async ValueTask Success()
+		public static async Task Success()
 		{
 			var items = new[] { 1, 1, 1, 1, 1, 1 };
 
@@ -107,7 +104,7 @@ public class CollectionAssertsTests
 		}
 
 		[Fact]
-		public static async ValueTask ActionCanReceiveIndex()
+		public static async Task ActionCanReceiveIndex()
 		{
 			var items = new[] { 1, 1, 2, 2, 1, 1 };
 			var indices = new List<int>();
@@ -117,7 +114,6 @@ public class CollectionAssertsTests
 			Assert.Equal(new[] { 0, 1, 2, 3, 4, 5 }, indices);
 		}
 	}
-#endif
 
 	public class Collection
 	{
@@ -126,7 +122,9 @@ public class CollectionAssertsTests
 		{
 			var list = new List<int>();
 
+#pragma warning disable xUnit2011 // Do not use empty collection check
 			Assert.Collection(list);
+#pragma warning restore xUnit2011 // Do not use empty collection check
 		}
 
 		[Fact]
@@ -187,11 +185,10 @@ public class CollectionAssertsTests
 		}
 	}
 
-#if XUNIT_VALUETASK
 	public class CollectionAsync
 	{
 		[Fact]
-		public static async ValueTask EmptyCollection()
+		public static async Task EmptyCollection()
 		{
 			var list = new List<int>();
 
@@ -199,7 +196,7 @@ public class CollectionAssertsTests
 		}
 
 		[Fact]
-		public static async ValueTask MismatchedElementCountAsync()
+		public static async Task MismatchedElementCountAsync()
 		{
 			var list = new List<int>();
 
@@ -221,7 +218,7 @@ public class CollectionAssertsTests
 		}
 
 		[Fact]
-		public static async ValueTask NonEmptyCollectionAsync()
+		public static async Task NonEmptyCollectionAsync()
 		{
 			var list = new List<int> { 42, 2112 };
 
@@ -240,7 +237,7 @@ public class CollectionAssertsTests
 		}
 
 		[Fact]
-		public static async ValueTask MismatchedElementAsync()
+		public static async Task MismatchedElementAsync()
 		{
 			var list = new List<int> { 42, 2112 };
 
@@ -271,7 +268,6 @@ public class CollectionAssertsTests
 			);
 		}
 	}
-#endif
 
 	public class Contains
 	{
@@ -756,7 +752,7 @@ public class CollectionAssertsTests
 			{
 				string message = "Assert.Equal() Failure: Collections differ";
 
-				if (expectedPointer != null)
+				if (expectedPointer is not null)
 					message += Environment.NewLine + "           " + expectedPointer;
 
 				var (expectedType, actualType) = (expected, actual) switch
@@ -770,7 +766,7 @@ public class CollectionAssertsTests
 					Environment.NewLine + "Expected: " + expectedType + ArgumentFormatter.Format(expected) +
 					Environment.NewLine + "Actual:   " + actualType + ArgumentFormatter.Format(actual);
 
-				if (actualPointer != null)
+				if (actualPointer is not null)
 					message += Environment.NewLine + "           " + actualPointer;
 
 				var ex = Record.Exception(() => Assert.Equal(expected, actual));
@@ -831,14 +827,14 @@ public class CollectionAssertsTests
 			{
 				var message = "Assert.Equal() Failure: Collections differ";
 
-				if (expectedPointer != null)
+				if (expectedPointer is not null)
 					message += Environment.NewLine + "           " + expectedPointer;
 
 				message +=
 					Environment.NewLine + "Expected: " + expectedDisplay +
 					Environment.NewLine + "Actual:   " + actualDisplay;
 
-				if (actualPointer != null)
+				if (actualPointer is not null)
 					message += Environment.NewLine + "           " + actualPointer;
 
 				var ex = Record.Exception(() => Assert.Equal(expected, actual));
@@ -861,6 +857,63 @@ public class CollectionAssertsTests
 					"                 ↑ (pos 2, type System.Int64)",
 					ex.Message
 				);
+			}
+		}
+
+		public class ArraysWithComparer
+		{
+			// https://github.com/xunit/xunit/issues/2795
+			[Fact]
+			public void CollectionItemIsEnumerable()
+			{
+				var actual = new EnumerableItem[] { new(0), new(2) };
+				var expected = new EnumerableItem[] { new(1), new(3) };
+
+				Assert.Equal(expected, actual, new EnumerableItemComparer());
+			}
+
+			public class EnumerableItemComparer : IEqualityComparer<EnumerableItem>
+			{
+				public bool Equals(EnumerableItem? x, EnumerableItem? y) =>
+					x?.Value / 2 == y?.Value / 2;
+
+				public int GetHashCode(EnumerableItem obj) =>
+					throw new NotImplementedException();
+			}
+
+			public sealed class EnumerableItem : IEnumerable<string>
+			{
+				public int Value { get; }
+
+				public EnumerableItem(int value) => Value = value;
+
+				public IEnumerator<string> GetEnumerator() => Enumerable.Repeat("", Value).GetEnumerator();
+
+				IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+			}
+		}
+
+		public class ArraysWithFunc
+		{
+			// https://github.com/xunit/xunit/issues/2795
+			[Fact]
+			public void CollectionItemIsEnumerable()
+			{
+				var actual = new EnumerableItem[] { new(0), new(2) };
+				var expected = new EnumerableItem[] { new(1), new(3) };
+
+				Assert.Equal(expected, actual, (x, y) => x.Value / 2 == y.Value / 2);
+			}
+
+			public sealed class EnumerableItem : IEnumerable<string>
+			{
+				public int Value { get; }
+
+				public EnumerableItem(int value) => Value = value;
+
+				public IEnumerator<string> GetEnumerator() => Enumerable.Repeat("", Value).GetEnumerator();
+
+				IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 			}
 		}
 
@@ -925,17 +978,17 @@ public class CollectionAssertsTests
 				string actualDisplay,
 				string? actualPointer)
 			{
-				var actual = actualArray == null ? null : new List<int>(actualArray);
+				var actual = actualArray is null ? null : new List<int>(actualArray);
 				var message = "Assert.Equal() Failure: Collections differ";
 
-				if (expectedPointer != null)
+				if (expectedPointer is not null)
 					message += Environment.NewLine + "          " + expectedPointer;
 
 				message +=
 					Environment.NewLine + "Expected: " + expectedDisplay +
 					Environment.NewLine + "Actual:   " + actualDisplay;
 
-				if (actualPointer != null)
+				if (actualPointer is not null)
 					message += Environment.NewLine + "          " + actualPointer;
 
 				var ex = Record.Exception(() => Assert.Equal(expected, actual));
@@ -988,6 +1041,105 @@ public class CollectionAssertsTests
 
 				public int GetHashCode(int obj) => throw new NotImplementedException();
 			}
+
+			// https://github.com/xunit/xunit/issues/2795
+			[Fact]
+			public void CollectionItemIsEnumerable()
+			{
+				List<EnumerableItem> actual = new List<EnumerableItem> { new(0), new(2) };
+				List<EnumerableItem> expected = new List<EnumerableItem> { new(1), new(3) };
+
+				Assert.Equal(expected, actual, new EnumerableItemComparer());
+			}
+
+			public class EnumerableItemComparer : IEqualityComparer<EnumerableItem>
+			{
+				public bool Equals(EnumerableItem? x, EnumerableItem? y) =>
+					x?.Value / 2 == y?.Value / 2;
+
+				public int GetHashCode(EnumerableItem obj) =>
+					throw new NotImplementedException();
+			}
+
+			public sealed class EnumerableItem : IEnumerable<string>
+			{
+				public int Value { get; }
+
+				public EnumerableItem(int value) => Value = value;
+
+				public IEnumerator<string> GetEnumerator() => Enumerable.Repeat("", Value).GetEnumerator();
+
+				IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+			}
+
+			[Fact]
+			public void WithThrow_PrintsPointerWhereThrowOccurs_RecordsInnerException()
+			{
+				var ex = Record.Exception(() => Assert.Equal(new[] { 1, 2 }, new[] { 1, 3 }, new ThrowingComparer()));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Exception thrown during comparison" + Environment.NewLine +
+					"           ↓ (pos 0)" + Environment.NewLine +
+					"Expected: [1, 2]" + Environment.NewLine +
+					"Actual:   [1, 3]" + Environment.NewLine +
+					"           ↑ (pos 0)",
+					ex.Message
+				);
+				Assert.IsType<DivideByZeroException>(ex.InnerException);
+			}
+
+			public class ThrowingComparer : IEqualityComparer<int>
+			{
+				public bool Equals(int x, int y) =>
+					throw new DivideByZeroException();
+
+				public int GetHashCode(int obj) =>
+					throw new NotImplementedException();
+			}
+		}
+
+		public class CollectionsWithEquatable
+		{
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void Equal()
+			{
+				var expected = new[] { new EquatableObject { Char = 'a' } };
+				var actual = new[] { new EquatableObject { Char = 'a' } };
+
+				Assert.Equal(expected, actual);
+			}
+
+			[Fact]
+			public void NotEqual()
+			{
+				var expected = new[] { new EquatableObject { Char = 'a' } };
+				var actual = new[] { new EquatableObject { Char = 'b' } };
+
+				var ex = Record.Exception(() => Assert.Equal(expected, actual));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Collections differ" + Environment.NewLine +
+					"           ↓ (pos 0)" + Environment.NewLine +
+					"Expected: [EquatableObject { Char = 'a' }]" + Environment.NewLine +
+					"Actual:   [EquatableObject { Char = 'b' }]" + Environment.NewLine +
+					"           ↑ (pos 0)",
+					ex.Message
+				);
+			}
+
+			public class EquatableObject : IEquatable<EquatableObject>
+			{
+				public char Char { get; set; }
+
+				public bool Equals(EquatableObject? other) =>
+					other != null && other.Char == Char;
+			}
 		}
 
 		public class CollectionsWithFunc
@@ -1018,6 +1170,50 @@ public class CollectionAssertsTests
 				var actual = new List<int>(new int[] { 0, 0, 0, 0, 0 });
 
 				Assert.Equal(expected, actual, (x, y) => true);
+			}
+
+			// https://github.com/xunit/xunit/issues/2795
+			[Fact]
+			public void CollectionItemIsEnumerable()
+			{
+				List<EnumerableItem> actual = new List<EnumerableItem> { new(0), new(2) };
+				List<EnumerableItem> expected = new List<EnumerableItem> { new(1), new(3) };
+
+				Assert.Equal(expected, actual, (x, y) => x.Value / 2 == y.Value / 2);
+			}
+
+			public sealed class EnumerableItem : IEnumerable<string>
+			{
+				public int Value { get; }
+
+				public EnumerableItem(int value) => Value = value;
+
+				public IEnumerator<string> GetEnumerator() => Enumerable.Repeat("", Value).GetEnumerator();
+
+				IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+			}
+
+			[Fact]
+			public void WithThrow_PrintsPointerWhereThrowOccurs_RecordsInnerException()
+			{
+				var ex = Record.Exception(() =>
+					Assert.Equal(
+						new[] { 1, 2 },
+						new[] { 1, 3 },
+						(int e, int a) => throw new DivideByZeroException()
+					)
+				);
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Exception thrown during comparison" + Environment.NewLine +
+					"           ↓ (pos 0)" + Environment.NewLine +
+					"Expected: [1, 2]" + Environment.NewLine +
+					"Actual:   [1, 3]" + Environment.NewLine +
+					"           ↑ (pos 0)",
+					ex.Message
+				);
+				Assert.IsType<DivideByZeroException>(ex.InnerException);
 			}
 		}
 
@@ -1106,6 +1302,277 @@ public class CollectionAssertsTests
 					$"Actual:   [[\"a\"] = 1, [\"ba\"] = 2, [\"c\"] = 3, [\"d\"] = 4, [\"e\"] = 5, {ArgumentFormatter.Ellipsis}]",
 					ex.Message
 				);
+			}
+
+			[Fact]
+			public static void WithCollectionValues_Equal()
+			{
+				// Different concrete collection types in the value slot, per https://github.com/xunit/xunit/issues/2850
+				var expected = new Dictionary<string, IEnumerable<string>>
+				{
+					["toAddresses"] = new List<string> { "test1@example.com" },
+					["ccAddresses"] = new List<string> { "test2@example.com" },
+				};
+				var actual = new Dictionary<string, IEnumerable<string>>
+				{
+					["toAddresses"] = new string[] { "test1@example.com" },
+					["ccAddresses"] = new string[] { "test2@example.com" },
+				};
+
+				Assert.Equal(expected, actual);
+			}
+
+			[Fact]
+			public static void WithCollectionValues_NotEqual()
+			{
+				// Different concrete collection types in the value slot, per https://github.com/xunit/xunit/issues/2850
+				var expected = new Dictionary<string, IEnumerable<string>>
+				{
+					["toAddresses"] = new List<string> { "test1@example.com" },
+					["ccAddresses"] = new List<string> { "test2@example.com" },
+				};
+				var actual = new Dictionary<string, IEnumerable<string>>
+				{
+					["toAddresses"] = new string[] { "test1@example.com" },
+					["ccAddresses"] = new string[] { "test3@example.com" },
+				};
+
+				var ex = Record.Exception(() => Assert.Equal(expected, actual));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Dictionaries differ" + Environment.NewLine +
+					"Expected: [[\"toAddresses\"] = [\"test1@example.com\"], [\"ccAddresses\"] = [\"test2@example.com\"]]" + Environment.NewLine +
+					"Actual:   [[\"toAddresses\"] = [\"test1@example.com\"], [\"ccAddresses\"] = [\"test3@example.com\"]]",
+					ex.Message
+				);
+			}
+
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void EquatableValues_Equal()
+			{
+				var expected = new Dictionary<string, EquatableObject> { { "Key1", new() { Char = 'a' } } };
+				var actual = new Dictionary<string, EquatableObject> { { "Key1", new() { Char = 'a' } } };
+
+				Assert.Equal(expected, actual);
+			}
+
+			[Fact]
+			public void EquatableValues_NotEqual()
+			{
+				var expected = new Dictionary<string, EquatableObject> { { "Key1", new() { Char = 'a' } } };
+				var actual = new Dictionary<string, EquatableObject> { { "Key1", new() { Char = 'b' } } };
+
+				var ex = Record.Exception(() => Assert.Equal(expected, actual));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Dictionaries differ" + Environment.NewLine +
+					"Expected: [[\"Key1\"] = EquatableObject { Char = 'a' }]" + Environment.NewLine +
+					"Actual:   [[\"Key1\"] = EquatableObject { Char = 'b' }]",
+					ex.Message
+				);
+			}
+
+			public class EquatableObject : IEquatable<EquatableObject>
+			{
+				public char Char { get; set; }
+
+				public bool Equals(EquatableObject? other) =>
+					other != null && other.Char == Char;
+			}
+
+			[Fact]
+			public void ComplexEmbeddedValues_Equal()
+			{
+				var expected = new Dictionary<string, object>()
+				{
+					["key"] = new Dictionary<string, object>()
+					{
+						["key"] = new List<Dictionary<string, object>>()
+						{
+							new Dictionary<string, object>()
+							{
+								["key"] = new List<object> { "value" }
+							}
+						}
+					}
+				};
+				var actual = new Dictionary<string, object>()
+				{
+					["key"] = new Dictionary<string, object>()
+					{
+						["key"] = new List<Dictionary<string, object>>()
+						{
+							new Dictionary<string, object>()
+							{
+								["key"] = new List<object> { "value" }
+							}
+						}
+					}
+				};
+
+				Assert.Equal(expected, actual);
+			}
+
+			[Fact]
+			public void ComplexEmbeddedValues_NotEqual()
+			{
+				var expected = new Dictionary<string, object>()
+				{
+					["key"] = new Dictionary<string, object>()
+					{
+						["key"] = new List<Dictionary<string, object>>()
+						{
+							new Dictionary<string, object>()
+							{
+								["key"] = new List<object> { "value1" }
+							}
+						}
+					}
+				};
+				var actual = new Dictionary<string, object>()
+				{
+					["key"] = new Dictionary<string, object>()
+					{
+						["key"] = new List<Dictionary<string, object>>()
+						{
+							new Dictionary<string, object>()
+							{
+								["key"] = new List<object> { "value2" }
+							}
+						}
+					}
+				};
+
+				var ex = Record.Exception(() => Assert.Equal(expected, actual));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Dictionaries differ" + Environment.NewLine +
+					"Expected: [[\"key\"] = [[\"key\"] = [[[\"key\"] = [\"value1\"]]]]]" + Environment.NewLine +
+					"Actual:   [[\"key\"] = [[\"key\"] = [[[\"key\"] = [\"value2\"]]]]]",
+					ex.Message
+				);
+			}
+		}
+
+		public class Sets
+		{
+			[Fact]
+			public void Equal()
+			{
+				var expected = new HashSet<int> { 42, 2112 };
+				var actual = new HashSet<int> { 2112, 42 };
+
+				Assert.Equal(expected, actual);
+			}
+
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void Equal_WithInternalComparer()
+			{
+				var comparer = new BitArrayComparer();
+				var expected = new HashSet<BitArray>(comparer) { new BitArray(new[] { true, false }) };
+				var actual = new HashSet<BitArray>(comparer) { new BitArray(new[] { true, false }) };
+
+				Assert.Equal(expected, actual);
+			}
+
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void Equal_WithExternalComparer()
+			{
+				var expected = new HashSet<BitArray> { new BitArray(new[] { true, false }) };
+				var actual = new HashSet<BitArray> { new BitArray(new[] { true, false }) };
+
+				Assert.Equal(expected, actual, new BitArrayComparer());
+			}
+
+			[Fact]
+			public void NotEqual()
+			{
+				var expected = new HashSet<int> { 42, 2112 };
+				var actual = new HashSet<int> { 2600, 42 };
+
+				var ex = Record.Exception(() => Assert.Equal(expected, actual));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: HashSets differ" + Environment.NewLine +
+					"Expected: [42, 2112]" + Environment.NewLine +
+					"Actual:   [2600, 42]",
+					ex.Message
+				);
+			}
+
+			[Fact]
+			public void NotEqual_WithInternalComparer()
+			{
+				var comparer = new BitArrayComparer();
+				var expected = new HashSet<BitArray>(comparer) { new BitArray(new[] { true, false }) };
+				var actual = new HashSet<BitArray>(comparer) { new BitArray(new[] { true, true }) };
+
+				var ex = Record.Exception(() => Assert.Equal(expected, actual));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: HashSets differ" + Environment.NewLine +
+					"Expected: [[True, False]]" + Environment.NewLine +
+					"Actual:   [[True, True]]",
+					ex.Message
+				);
+			}
+
+			[Fact]
+			public void NotEqual_WithExternalComparer()
+			{
+				var expected = new HashSet<BitArray> { new BitArray(new[] { true, false }) };
+				var actual = new HashSet<BitArray> { new BitArray(new[] { true, true }) };
+
+				var ex = Record.Exception(() => Assert.Equal(expected, actual, new BitArrayComparer()));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: HashSets differ" + Environment.NewLine +
+					"Expected: [[True, False]]" + Environment.NewLine +
+					"Actual:   [[True, True]]",
+					ex.Message
+				);
+			}
+
+			public class BitArrayComparer : IEqualityComparer<BitArray>
+			{
+				public bool Equals(
+					BitArray? x,
+					BitArray? y) =>
+						ToBitString(x) == ToBitString(y);
+
+				public int GetHashCode(BitArray obj) =>
+					ToBitString(obj).GetHashCode();
+
+				static string ToBitString(BitArray? bitArray)
+				{
+					if (bitArray is null)
+						return string.Empty;
+
+					var sb = new StringBuilder(bitArray.Length);
+
+					for (int idx = 0; idx < bitArray.Length; ++idx)
+						sb.Append(bitArray[idx] ? '1' : '0');
+
+					return sb.ToString();
+				}
 			}
 		}
 	}
@@ -1304,6 +1771,73 @@ public class CollectionAssertsTests
 
 				public int GetHashCode(int obj) => throw new NotImplementedException();
 			}
+
+			[Fact]
+			public void WithThrow_PrintsPointerWhereThrowOccurs_RecordsInnerException()
+			{
+				var ex = Record.Exception(() => Assert.NotEqual(new[] { 1, 2 }, new[] { 1, 2 }, new ThrowingComparer()));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Exception thrown during comparison" + Environment.NewLine +
+					"               ↓ (pos 0)" + Environment.NewLine +
+					"Expected: Not [1, 2]" + Environment.NewLine +
+					"Actual:       [1, 2]" + Environment.NewLine +
+					"               ↑ (pos 0)",
+					ex.Message
+				);
+				Assert.IsType<DivideByZeroException>(ex.InnerException);
+			}
+
+			public class ThrowingComparer : IEqualityComparer<int>
+			{
+				public bool Equals(int x, int y) =>
+					throw new DivideByZeroException();
+
+				public int GetHashCode(int obj) =>
+					throw new NotImplementedException();
+			}
+		}
+
+		public class CollectionsWithEquatable
+		{
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void Equal()
+			{
+				var expected = new[] { new EquatableObject { Char = 'a' } };
+				var actual = new[] { new EquatableObject { Char = 'a' } };
+
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Collections are equal" + Environment.NewLine +
+					"Expected: Not [EquatableObject { Char = 'a' }]" + Environment.NewLine +
+					"Actual:       [EquatableObject { Char = 'a' }]",
+					ex.Message
+				);
+			}
+
+			[Fact]
+			public void NotEqual()
+			{
+				var expected = new[] { new EquatableObject { Char = 'a' } };
+				var actual = new[] { new EquatableObject { Char = 'b' } };
+
+				Assert.NotEqual(expected, actual);
+			}
+
+			public class EquatableObject : IEquatable<EquatableObject>
+			{
+				public char Char { get; set; }
+
+				public bool Equals(EquatableObject? other) =>
+					other != null && other.Char == Char;
+			}
 		}
 
 		public class CollectionsWithFunc
@@ -1332,6 +1866,29 @@ public class CollectionAssertsTests
 					"Actual:       List<int> [0, 0, 0, 0, 0]",
 					ex.Message
 				);
+			}
+
+			[Fact]
+			public void WithThrow_PrintsPointerWhereThrowOccurs_RecordsInnerException()
+			{
+				var ex = Record.Exception(() =>
+					Assert.NotEqual(
+						new[] { 1, 2 },
+						new[] { 1, 2 },
+						(int e, int a) => throw new DivideByZeroException()
+					)
+				);
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Exception thrown during comparison" + Environment.NewLine +
+					"               ↓ (pos 0)" + Environment.NewLine +
+					"Expected: Not [1, 2]" + Environment.NewLine +
+					"Actual:       [1, 2]" + Environment.NewLine +
+					"               ↑ (pos 0)",
+					ex.Message
+				);
+				Assert.IsType<DivideByZeroException>(ex.InnerException);
 			}
 		}
 
@@ -1412,6 +1969,277 @@ public class CollectionAssertsTests
 				};
 
 				Assert.NotEqual(expected, actual);
+			}
+
+			[Fact]
+			public static void WithCollectionValues_Equal()
+			{
+				// Different concrete collection types in the value slot, per https://github.com/xunit/xunit/issues/2850
+				var expected = new Dictionary<string, IEnumerable<string>>
+				{
+					["toAddresses"] = new List<string> { "test1@example.com" },
+					["ccAddresses"] = new List<string> { "test2@example.com" },
+				};
+				var actual = new Dictionary<string, IEnumerable<string>>
+				{
+					["toAddresses"] = new string[] { "test1@example.com" },
+					["ccAddresses"] = new string[] { "test2@example.com" },
+				};
+
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Dictionaries are equal" + Environment.NewLine +
+					"Expected: Not [[\"toAddresses\"] = [\"test1@example.com\"], [\"ccAddresses\"] = [\"test2@example.com\"]]" + Environment.NewLine +
+					"Actual:       [[\"toAddresses\"] = [\"test1@example.com\"], [\"ccAddresses\"] = [\"test2@example.com\"]]",
+					ex.Message
+				);
+			}
+
+			[Fact]
+			public static void WithCollectionValues_NotEqual()
+			{
+				// Different concrete collection types in the value slot, per https://github.com/xunit/xunit/issues/2850
+				var expected = new Dictionary<string, IEnumerable<string>>
+				{
+					["toAddresses"] = new List<string> { "test1@example.com" },
+					["ccAddresses"] = new List<string> { "test2@example.com" },
+				};
+				var actual = new Dictionary<string, IEnumerable<string>>
+				{
+					["toAddresses"] = new string[] { "test1@example.com" },
+					["ccAddresses"] = new string[] { "test3@example.com" },
+				};
+
+				Assert.NotEqual(expected, actual);
+			}
+
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void EquatableValues_Equal()
+			{
+				var expected = new Dictionary<string, EquatableObject> { { "Key1", new() { Char = 'a' } } };
+				var actual = new Dictionary<string, EquatableObject> { { "Key1", new() { Char = 'a' } } };
+
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Dictionaries are equal" + Environment.NewLine +
+					"Expected: Not [[\"Key1\"] = EquatableObject { Char = 'a' }]" + Environment.NewLine +
+					"Actual:       [[\"Key1\"] = EquatableObject { Char = 'a' }]",
+					ex.Message
+				);
+			}
+
+			[Fact]
+			public void EquatableValues_NotEqual()
+			{
+				var expected = new Dictionary<string, EquatableObject> { { "Key1", new() { Char = 'a' } } };
+				var actual = new Dictionary<string, EquatableObject> { { "Key1", new() { Char = 'b' } } };
+
+				Assert.NotEqual(expected, actual);
+			}
+
+			public class EquatableObject : IEquatable<EquatableObject>
+			{
+				public char Char { get; set; }
+
+				public bool Equals(EquatableObject? other) =>
+					other != null && other.Char == Char;
+			}
+
+			[Fact]
+			public void ComplexEmbeddedValues_Equal()
+			{
+				var expected = new Dictionary<string, object>()
+				{
+					["key"] = new Dictionary<string, object>()
+					{
+						["key"] = new List<Dictionary<string, object>>()
+						{
+							new Dictionary<string, object>()
+							{
+								["key"] = new List<object> { "value" }
+							}
+						}
+					}
+				};
+				var actual = new Dictionary<string, object>()
+				{
+					["key"] = new Dictionary<string, object>()
+					{
+						["key"] = new List<Dictionary<string, object>>()
+						{
+							new Dictionary<string, object>()
+							{
+								["key"] = new List<object> { "value" }
+							}
+						}
+					}
+				};
+
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Dictionaries are equal" + Environment.NewLine +
+					"Expected: Not [[\"key\"] = [[\"key\"] = [[[\"key\"] = [\"value\"]]]]]" + Environment.NewLine +
+					"Actual:       [[\"key\"] = [[\"key\"] = [[[\"key\"] = [\"value\"]]]]]",
+					ex.Message
+				);
+			}
+
+			[Fact]
+			public void ComplexEmbeddedValues_NotEqual()
+			{
+				var expected = new Dictionary<string, object>()
+				{
+					["key"] = new Dictionary<string, object>()
+					{
+						["key"] = new List<Dictionary<string, object>>()
+						{
+							new Dictionary<string, object>()
+							{
+								["key"] = new List<object> { "value1" }
+							}
+						}
+					}
+				};
+				var actual = new Dictionary<string, object>()
+				{
+					["key"] = new Dictionary<string, object>()
+					{
+						["key"] = new List<Dictionary<string, object>>()
+						{
+							new Dictionary<string, object>()
+							{
+								["key"] = new List<object> { "value2" }
+							}
+						}
+					}
+				};
+
+				Assert.NotEqual(expected, actual);
+			}
+		}
+
+		public class Sets
+		{
+			[Fact]
+			public void Equal()
+			{
+				var expected = new HashSet<int> { 42, 2112 };
+				var actual = new HashSet<int> { 2112, 42 };
+
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: HashSets are equal" + Environment.NewLine +
+					"Expected: Not [42, 2112]" + Environment.NewLine +
+					"Actual:       [2112, 42]",
+					ex.Message
+				);
+			}
+
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void Equal_WithInternalComparer()
+			{
+				var comparer = new BitArrayComparer();
+				var expected = new HashSet<BitArray>(comparer) { new BitArray(new[] { true, false }) };
+				var actual = new HashSet<BitArray>(comparer) { new BitArray(new[] { true, false }) };
+
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: HashSets are equal" + Environment.NewLine +
+					"Expected: Not [[True, False]]" + Environment.NewLine +
+					"Actual:       [[True, False]]",
+					ex.Message
+				);
+			}
+
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void Equal_WithExternalComparer()
+			{
+				var expected = new HashSet<BitArray> { new BitArray(new[] { true, false }) };
+				var actual = new HashSet<BitArray> { new BitArray(new[] { true, false }) };
+
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual, new BitArrayComparer()));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: HashSets are equal" + Environment.NewLine +
+					"Expected: Not [[True, False]]" + Environment.NewLine +
+					"Actual:       [[True, False]]",
+					ex.Message
+				);
+			}
+
+			[Fact]
+			public void NotEqual()
+			{
+				var expected = new HashSet<int> { 42, 2112 };
+				var actual = new HashSet<int> { 2600, 42 };
+
+				Assert.NotEqual(expected, actual);
+			}
+
+			[Fact]
+			public void NotEqual_WithInternalComparer()
+			{
+				var comparer = new BitArrayComparer();
+				var expected = new HashSet<BitArray>(comparer) { new BitArray(new[] { true, false }) };
+				var actual = new HashSet<BitArray>(comparer) { new BitArray(new[] { true, true }) };
+
+				Assert.NotEqual(expected, actual);
+			}
+
+			[Fact]
+			public void NotEqual_WithExternalComparer()
+			{
+				var expected = new HashSet<BitArray> { new BitArray(new[] { true, false }) };
+				var actual = new HashSet<BitArray> { new BitArray(new[] { true, true }) };
+
+				Assert.NotEqual(expected, actual, new BitArrayComparer());
+			}
+
+			public class BitArrayComparer : IEqualityComparer<BitArray>
+			{
+				public bool Equals(
+					BitArray? x,
+					BitArray? y) =>
+						ToBitString(x) == ToBitString(y);
+
+				public int GetHashCode(BitArray obj) =>
+					ToBitString(obj).GetHashCode();
+
+				static string ToBitString(BitArray? bitArray)
+				{
+					if (bitArray is null)
+						return string.Empty;
+
+					var sb = new StringBuilder(bitArray.Length);
+
+					for (int idx = 0; idx < bitArray.Length; ++idx)
+						sb.Append(bitArray[idx] ? '1' : '0');
+
+					return sb.ToString();
+				}
 			}
 		}
 	}
@@ -1609,6 +2437,31 @@ public class CollectionAssertsTests
 				ex.Message
 			);
 		}
+
+		[Fact]
+		public static void StringAsCollection_Match()
+		{
+			var collection = "H";
+
+			var value = Assert.Single(collection);
+
+			Assert.Equal('H', value);
+		}
+
+		[Fact]
+		public static void StringAsCollection_NoMatch()
+		{
+			var collection = "Hello";
+
+			var ex = Record.Exception(() => Assert.Single(collection));
+
+			Assert.IsType<SingleException>(ex);
+			Assert.Equal(
+				"Assert.Single() Failure: The collection contained 5 items" + Environment.NewLine +
+				"Collection: ['H', 'e', 'l', 'l', 'o']",
+				ex.Message
+			);
+		}
 	}
 
 	public class Single_Generic_WithPredicate
@@ -1679,6 +2532,32 @@ public class CollectionAssertsTests
 				ex.Message
 			);
 		}
+
+		[Fact]
+		public static void StringAsCollection_Match()
+		{
+			var collection = "H";
+
+			var value = Assert.Single(collection, c => c != 'Q');
+
+			Assert.Equal('H', value);
+		}
+
+		[Fact]
+		public static void StringAsCollection_NoMatch()
+		{
+			var collection = "H";
+
+			var ex = Record.Exception(() => Assert.Single(collection, c => c == 'Q'));
+
+			Assert.IsType<SingleException>(ex);
+			Assert.Equal(
+				"Assert.Single() Failure: The collection did not contain any matching items" + Environment.NewLine +
+				"Expected:   (predicate expression)" + Environment.NewLine +
+				"Collection: ['H']",
+				ex.Message
+			);
+		}
 	}
 
 	sealed class SpyEnumerator<T> : IEnumerable<T>, IEnumerator<T>
@@ -1696,7 +2575,7 @@ public class CollectionAssertsTests
 		object? IEnumerator.Current =>
 			GuardNotNull("Tried to get Current on a disposed enumerator", innerEnumerator).Current;
 
-		public bool IsDisposed => innerEnumerator == null;
+		public bool IsDisposed => innerEnumerator is null;
 
 		public IEnumerator<T> GetEnumerator() => this;
 
@@ -1719,7 +2598,7 @@ public class CollectionAssertsTests
 			[NotNull] T2? value)
 				where T2 : class
 		{
-			if (value == null)
+			if (value is null)
 				throw new InvalidOperationException(message);
 
 			return value;

@@ -178,7 +178,7 @@ namespace Xunit.ConsoleClient
         {
             var platform = System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription;
 
-            Console.WriteLine($"Microsoft.DotNet.XUnitConsoleRunner v2.5.0 ({IntPtr.Size * 8}-bit {platform})");
+            Console.WriteLine($"Microsoft.DotNet.XUnitConsoleRunner v{typeof(ConsoleRunner).Assembly.GetName().Version} ({IntPtr.Size * 8}-bit {platform})");
         }
 
         void PrintUsage(IReadOnlyList<IRunnerReporter> reporters)
@@ -388,6 +388,7 @@ namespace Xunit.ConsoleClient
 
                         reporterMessageHandler.OnMessage(new TestAssemblyExecutionStarting(assembly, executionOptions));
 
+#pragma warning disable CS0618 // Delegating*Sink types are marked obsolete, but we can't move to ExecutionSink yet: https://github.com/dotnet/arcade/issues/14375
                         IExecutionSink resultsSink = new DelegatingExecutionSummarySink(reporterMessageHandler, () => cancel, (path, summary) => completionMessages.TryAdd(path, summary));
                         if (assemblyElement != null)
                             resultsSink = new DelegatingXmlCreationSink(resultsSink, assemblyElement);
@@ -395,6 +396,7 @@ namespace Xunit.ConsoleClient
                             resultsSink = new DelegatingLongRunningTestDetectionSink(resultsSink, TimeSpan.FromSeconds(longRunningSeconds), MessageSinkWithTypesAdapter.Wrap(diagnosticMessageSink));
                         if (failSkips)
                             resultsSink = new DelegatingFailSkipSink(resultsSink);
+#pragma warning restore
 
                         controller.RunTests(filteredTestCases, resultsSink, executionOptions);
                         resultsSink.Finished.WaitOne();

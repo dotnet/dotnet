@@ -13,7 +13,7 @@
     template. Publish may need to be disabled in eng/SourceBuild.props.
   -->
   <Target Name="EnsureSourceBuildInnerBuildDoesNotPublish"
-          Condition="'$(ArcadeInnerBuildFromSource)' == 'true'"
+          Condition="'$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildInnerRepo)' == 'true'"
           BeforeTargets="
             Publish;
             PublishSymbols;

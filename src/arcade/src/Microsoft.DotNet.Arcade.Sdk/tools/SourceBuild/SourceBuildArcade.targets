@@ -18,9 +18,19 @@
   <Import Project="$(RepositoryEngineeringDir)SourceBuild.props" Condition="Exists('$(RepositoryEngineeringDir)SourceBuild.props')" />
 
   <PropertyGroup>
+    <!--
+      Do not use inner-clone in full product source-build, unless explicitly requested,
+      i.e. for specific repos, like source-build-externals.
+    -->
+    <UseInnerClone Condition="'$(UseInnerClone)' == '' and '$(DotNetBuildFromSourceFlavor)' != 'Product'">true</UseInnerClone>
+
+    <!-- Do not create intermediate package in full product source-build. -->
+    <CreateIntermediatePackage Condition="'$(DotNetBuildFromSourceFlavor)' != 'Product'">true</CreateIntermediatePackage>
+
     <!-- Prefer abbreviations to avoid long paths (breaks on Windows) -->
     <SourceBuildOutputDir Condition="'$(SourceBuildOutputDir)' == ''">$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'sb'))</SourceBuildOutputDir>
     <CurrentRepoSourceBuildSourceDir>$([MSBuild]::NormalizeDirectory('$(SourceBuildOutputDir)', 'src'))</CurrentRepoSourceBuildSourceDir>
+    <CurrentRepoSourceBuildSourceDir Condition="'$(UseInnerClone)' != 'true'">$(RepoRoot)</CurrentRepoSourceBuildSourceDir>
     <CurrentRepoSourceBuildPackageCache>$([MSBuild]::NormalizeDirectory('$(SourceBuildOutputDir)', 'package-cache'))</CurrentRepoSourceBuildPackageCache>
     <SourceBuildSelfPrebuiltReportDir>$([MSBuild]::NormalizeDirectory('$(SourceBuildOutputDir)', 'prebuilt-report'))</SourceBuildSelfPrebuiltReportDir>
 
@@ -28,6 +38,8 @@
       Keep artifacts/ inside source dir so that ancestor-based file lookups find the inner repo, not
       the outer repo. The inner repo global.json and NuGet.config files may have been modified by
       source-build, and we want projects inside the artifacts/ dir to respect that.
+
+      Inner-clone removal - in VMR use regular artifacts dir.
     -->
     <CurrentRepoSourceBuildArtifactsDir>$([MSBuild]::NormalizeDirectory('$(CurrentRepoSourceBuildSourceDir)', 'artifacts'))</CurrentRepoSourceBuildArtifactsDir>
     <CurrentRepoSourceBuildArtifactsPackagesDir>$([MSBuild]::NormalizeDirectory('$(CurrentRepoSourceBuildArtifactsDir)', 'packages', '$(Configuration)'))</CurrentRepoSourceBuildArtifactsPackagesDir>
@@ -106,8 +118,8 @@
     <ItemGroup>
       <IntermediateNupkgFile Include="@(IntermediateNupkgArtifactFile)" PackagePath="artifacts" />
 
-      <!-- Report goes into the 'main' intermediate nupkg. -->
-      <IntermediateNupkgFile Include="$(SourceBuildSelfPrebuiltReportDir)**\*" PackagePath="prebuilt-report" />
+      <!-- Report goes into the 'main' intermediate nupkg, if we're creating it. -->
+      <IntermediateNupkgFile Condition="'$(CreateIntermediatePackage)' == 'true'" Include="$(SourceBuildSelfPrebuiltReportDir)**\*" PackagePath="prebuilt-report" />
     </ItemGroup>
 
     <RemoveDuplicates Inputs="@(IntermediateNupkgFile)">
@@ -118,6 +130,61 @@
       <IntermediateNonShippingNupkgFile Include="@(IntermediatePackageFile)" Condition="$([System.Text.RegularExpressions.Regex]::Match(%(Identity),'[\\\\/]NonShipping[\\\\/]').Success)"/>
       <SupplementalIntermediateNupkgCategory Include="%(IntermediatePackageFile.Category)" />
     </ItemGroup>
+
+    <PropertyGroup>
+      <!-- The prefix needs to match what's defined in tarball source-build infra. Consider using a single property, in the future. -->
+      <NonShippingPackagesListPrefix>NonShipping.Packages.</NonShippingPackagesListPrefix>
+      <NonShippingPackagesList Condition="'@(IntermediateNonShippingNupkgFile)' != ''">$(CurrentRepoSourceBuildArtifactsPackagesDir)$(NonShippingPackagesListPrefix)$(GitHubRepositoryName).lst</NonShippingPackagesList>
+    </PropertyGroup>
+
+    <WriteLinesToFile
+      Condition="'$(NonShippingPackagesList)' != ''"
+      File="$(NonShippingPackagesList)"
+      Lines="@(IntermediateNonShippingNupkgFile->'%(Filename)%(Extension)')"
+      Overwrite="true" />
+  </Target>
+
+  <!--
+    Create symbols archive.
+
+    Conditioning out for Windows as the tar execution below doesn't work cross-plat.
+  -->
+  <Target Name="CreateRepoSymbolsArchive" Condition="'$(OS)' != 'Windows_NT'">
+    <PropertyGroup>
+      <SymbolsRoot>$(CurrentRepoSourceBuildArtifactsDir)</SymbolsRoot>
+      <!-- Fall back to repo root for source-build-externals or repos that don't have the regular SymbolsRoot as defined above -->
+      <SymbolsRoot Condition="!Exists('$(SymbolsRoot)') or '$(GitHubRepositoryName)' == 'source-build-externals'">$(RepoRoot)</SymbolsRoot>
+      <SymbolsArchiveLocation>$(CurrentRepoSourceBuildArtifactsPackagesDir)</SymbolsArchiveLocation>
+      <SymbolsArchiveLocation Condition="'$(GitHubRepositoryName)' == 'nuget-client' and '$(PackageOutputPath)' != ''">$([MSBuild]::EnsureTrailingSlash('$(PackageOutputPath)'))</SymbolsArchiveLocation>
+      <SymbolsList>$([MSBuild]::NormalizePath('$(SymbolsArchiveLocation)', 'symbols.lst'))</SymbolsList>
+      <SymbolsArchivePrefix>Symbols.</SymbolsArchivePrefix>
+      <!-- $(Version) and $(TargetRid) are only available when target is executed as part of intermediate package creation. -->
+      <SymbolsArchiveSuffix Condition="'$(CreateIntermediatePackage)' == 'true'">.$(Version).$(TargetRid)</SymbolsArchiveSuffix>
+      <SymbolsArchiveFile>$(SymbolsArchiveLocation)$(SymbolsArchivePrefix)$(GitHubRepositoryName)$(SymbolsArchiveSuffix)$(ArchiveExtension)</SymbolsArchiveFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <AbsoluteSymbolPath Include="$(SymbolsRoot)**\obj\**\*.pdb" />
+      <AbsoluteSymbolPath Condition="'@(AbsoluteSymbolPath)' != ''">
+        <RelativePath>$([MSBuild]::MakeRelative($(SymbolsRoot), %(FullPath)))</RelativePath>
+      </AbsoluteSymbolPath>
+    </ItemGroup>
+
+    <WriteLinesToFile
+      File="$(SymbolsList)"
+      Lines="@(AbsoluteSymbolPath->'%(RelativePath)')"
+      Overwrite="true"
+      Condition="'@(AbsoluteSymbolPath)' != ''" />
+
+    <Exec Command="tar --numeric-owner -czf $(SymbolsArchiveFile) --files-from=$(SymbolsList)"
+          WorkingDirectory="$(SymbolsRoot)" Condition="Exists($(SymbolsList))" />
+    <Message Importance="High" Text="Packaged symbols to $(SymbolsArchiveFile)" Condition="Exists($(SymbolsList))" />
+
+    <ItemGroup>
+      <IntermediateNupkgFile Include="$(SymbolsArchiveFile)" PackagePath="artifacts" Condition="Exists($(SymbolsArchiveFile)) and '$(CreateIntermediatePackage)' != 'true'" />
+    </ItemGroup>
+
+    <Delete Files="$(SymbolsList)" Condition="Exists($(SymbolsList))" />
   </Target>
 
 </Project>

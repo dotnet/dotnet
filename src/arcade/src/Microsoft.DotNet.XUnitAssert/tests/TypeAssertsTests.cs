@@ -2,7 +2,7 @@ using System;
 using Xunit;
 using Xunit.Sdk;
 
-#if NETFRAMEWORK && XUNIT_VALUETASK
+#if NETFRAMEWORK
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -80,6 +80,7 @@ public class TypeAssertsTests
 		}
 	}
 
+#pragma warning disable xUnit2007 // Do not use typeof expression to check the type
 	public class IsAssignableFrom_NonGeneric
 	{
 		[Fact]
@@ -147,6 +148,7 @@ public class TypeAssertsTests
 			);
 		}
 	}
+#pragma warning restore xUnit2007 // Do not use typeof expression to check the type
 
 	public class IsNotAssignableFrom_Generic
 	{
@@ -305,6 +307,7 @@ public class TypeAssertsTests
 		}
 	}
 
+#pragma warning disable xUnit2007 // Do not use typeof expression to check the type
 	public class IsNotType_NonGeneric
 	{
 		[Fact]
@@ -335,6 +338,7 @@ public class TypeAssertsTests
 			Assert.IsNotType(typeof(object), null);
 		}
 	}
+#pragma warning restore xUnit2007 // Do not use typeof expression to check the type
 
 	public class IsType_Generic : TypeAssertsTests
 	{
@@ -370,9 +374,9 @@ public class TypeAssertsTests
 			);
 		}
 
-#if NETFRAMEWORK && XUNIT_VALUETASK
+#if NETFRAMEWORK
 		[Fact]
-		public async ValueTask UnmatchedTypesWithIdenticalNamesShowAssemblies()
+		public async Task UnmatchedTypesWithIdenticalNamesShowAssemblies()
 		{
 			var dynamicAssembly = await CSharpDynamicAssembly.Create("namespace System.Xml { public class XmlException: Exception { } }");
 			var assembly = Assembly.LoadFile(dynamicAssembly.FileName);
@@ -407,6 +411,7 @@ public class TypeAssertsTests
 		}
 	}
 
+#pragma warning disable xUnit2007 // Do not use typeof expression to check the type
 	public class IsType_NonGeneric : TypeAssertsTests
 	{
 		[Fact]
@@ -431,9 +436,9 @@ public class TypeAssertsTests
 			);
 		}
 
-#if NETFRAMEWORK && XUNIT_VALUETASK
+#if NETFRAMEWORK
 		[Fact]
-		public async ValueTask UnmatchedTypesWithIdenticalNamesShowAssemblies()
+		public async Task UnmatchedTypesWithIdenticalNamesShowAssemblies()
 		{
 			var dynamicAssembly = await CSharpDynamicAssembly.Create("namespace System.Xml { public class XmlException: Exception { } }");
 			var assembly = Assembly.LoadFile(dynamicAssembly.FileName);
@@ -467,6 +472,7 @@ public class TypeAssertsTests
 			);
 		}
 	}
+#pragma warning restore xUnit2007 // Do not use typeof expression to check the type
 
 	class DisposableClass : IDisposable
 	{
@@ -474,7 +480,7 @@ public class TypeAssertsTests
 		{ }
 	}
 
-#if NETFRAMEWORK && XUNIT_VALUETASK
+#if NETFRAMEWORK
 	class CSharpDynamicAssembly : CSharpAcceptanceTestAssembly
 	{
 		public CSharpDynamicAssembly() :
@@ -484,10 +490,10 @@ public class TypeAssertsTests
 		protected override IEnumerable<string> GetStandardReferences() =>
 			new[] { "mscorlib.dll" };
 
-		public static async ValueTask<CSharpDynamicAssembly> Create(string code)
+		public static async Task<CSharpDynamicAssembly> Create(string code)
 		{
 			var assembly = new CSharpDynamicAssembly();
-			await assembly.Compile(new[] { code }, Array.Empty<string>());
+			await assembly.Compile(new[] { code });
 			return assembly;
 		}
 	}

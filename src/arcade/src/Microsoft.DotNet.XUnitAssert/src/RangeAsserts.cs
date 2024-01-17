@@ -31,7 +31,7 @@ namespace Xunit
 			T low,
 			T high)
 				where T : IComparable =>
-					InRange(actual, low, high, GetComparer<T>());
+					InRange(actual, low, high, GetRangeComparer<T>());
 
 		/// <summary>
 		/// Verifies that a value is within a given range, using a comparer.
@@ -70,7 +70,7 @@ namespace Xunit
 			T low,
 			T high)
 				where T : IComparable =>
-					NotInRange(actual, low, high, GetComparer<T>());
+					NotInRange(actual, low, high, GetRangeComparer<T>());
 
 		/// <summary>
 		/// Verifies that a value is not within a given range, using a comparer.

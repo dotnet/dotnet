@@ -11,6 +11,7 @@
     <CurrentRepoSourceBuildBinlogFile>$([MSBuild]::NormalizePath('$(CurrentRepoSourceBuildArtifactsDir)', 'sourcebuild.binlog'))</CurrentRepoSourceBuildBinlogFile>
 
     <InnerSourceBuildRepoRoot Condition="'$(InnerSourceBuildRepoRoot)' == ''">$(CurrentRepoSourceBuildSourceDir)</InnerSourceBuildRepoRoot>
+    <InnerSourceBuildRepoRoot Condition="'$(UseInnerClone)' != 'true'">$(RepoRoot)</InnerSourceBuildRepoRoot>
 
     <CleanInnerSourceBuildRepoRoot Condition="'$(CleanInnerSourceBuildRepoRoot)' == ''">true</CleanInnerSourceBuildRepoRoot>
 
@@ -28,7 +29,7 @@
             PackSourceBuildTarball"
           Condition="
             ('$(ArcadeBuildFromSource)' == 'true' or '$(ArcadeBuildVertical)' == 'true') and
-            '$(ArcadeInnerBuildFromSource)' != 'true'"
+            '$(ArcadeInnerBuildFromSource)' != 'true' and '$(DotNetBuildInnerRepo)' != 'true'"
           BeforeTargets="Execute" />
 
   <!--
@@ -44,7 +45,7 @@
   <Target Name="HookExecuteInnerSourceBuild"
           Condition="
             ('$(ArcadeBuildFromSource)' == 'true' or '$(ArcadeBuildVertical)' == 'true') and
-            '$(ArcadeInnerBuildFromSource)' == 'true'"
+            ('$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildInnerRepo)' == 'true')"
           DependsOnTargets="ExecuteInnerSourceBuild"
           BeforeTargets="Execute"/>
 
@@ -74,7 +75,7 @@
   <Target Name="GetSourceBuildCommandConfiguration">
     <PropertyGroup>
       <!-- Track that this is the inner build to prevent infinite recursion. -->
-      <InnerBuildArgs>$(InnerBuildArgs) /p:ArcadeInnerBuildFromSource=true</InnerBuildArgs>
+      <InnerBuildArgs>$(InnerBuildArgs) /p:ArcadeInnerBuildFromSource=true /p:DotNetBuildInnerRepo=true</InnerBuildArgs>
       <!-- Turn on DotNetBuildFromSource or DotNetBuildVertical in the inner build -->
       <InnerBuildArgs Condition="'$(ArcadeBuildFromSource)' == 'true'">$(InnerBuildArgs) /p:DotNetBuildFromSource=true</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(ArcadeBuildVertical)' == 'true'">$(InnerBuildArgs) /p:DotNetBuildVertical=true</InnerBuildArgs>
@@ -112,7 +113,7 @@
           DependsOnTargets="CopyInnerSourceBuildRepoRoot;CloneInnerSourceBuildRepoRoot">
   </Target>
 
-  <Target Name="CopyInnerSourceBuildRepoRoot" Condition=" '$(CopySrcInsteadOfClone)' == 'true' ">
+  <Target Name="CopyInnerSourceBuildRepoRoot" Condition=" '$(CopySrcInsteadOfClone)' == 'true' and '$(UseInnerClone)' == 'true' ">
     <ItemGroup>
       <SourceBuildFilesToCopy Include="$(RepoRoot)/**/*" />
       <SourceBuildFilesToCopy Include="$(RepoRoot)/**/.*" />
@@ -132,7 +133,7 @@
     access to the git data, this also makes it easy to see what changes the source-build infra has
     made, for diagnosis or exploratory purposes.
   -->
-  <Target Name="CloneInnerSourceBuildRepoRoot" Condition=" '$(CopySrcInsteadOfClone)' != 'true'">
+  <Target Name="CloneInnerSourceBuildRepoRoot" Condition=" '$(CopySrcInsteadOfClone)' != 'true' and '$(UseInnerClone)' == 'true' ">
     <PropertyGroup>
       <!--
         By default, copy WIP. WIP copy helps with local machine dev work. Don't copy WIP if this is

@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Xunit;
 using Xunit.Sdk;
 
@@ -98,6 +99,52 @@ public class EqualityAssertsTests
 
 				public int GetHashCode(T obj) => throw new NotImplementedException();
 			}
+
+			[Fact]
+			public void NonEnumerable_WithThrow_RecordsInnerException()
+			{
+				var ex = Record.Exception(() => Assert.Equal(42, 2112, new ThrowingIntComparer()));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Exception thrown during comparison" + Environment.NewLine +
+					"Expected: 42" + Environment.NewLine +
+					"Actual:   2112",
+					ex.Message
+				);
+				Assert.IsType<DivideByZeroException>(ex.InnerException);
+			}
+
+			public class ThrowingIntComparer : IEqualityComparer<int>
+			{
+				public bool Equals(int x, int y) =>
+					throw new DivideByZeroException();
+				public int GetHashCode(int obj) =>
+					throw new NotImplementedException();
+			}
+
+			[Fact]
+			public void Enumerable_WithThrow_RecordsInnerException()
+			{
+				var ex = Record.Exception(() => Assert.Equal(new[] { 1, 2 }, new[] { 1, 3 }, new ThrowingEnumerableComparer()));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Exception thrown during comparison" + Environment.NewLine +
+					"Expected: [1, 2]" + Environment.NewLine +
+					"Actual:   [1, 3]",
+					ex.Message
+				);
+				Assert.IsType<DivideByZeroException>(ex.InnerException);
+			}
+
+			public class ThrowingEnumerableComparer : IEqualityComparer<IEnumerable<int>>
+			{
+				public bool Equals(IEnumerable<int>? x, IEnumerable<int>? y) =>
+					throw new DivideByZeroException();
+				public int GetHashCode(IEnumerable<int> obj) =>
+					throw new NotImplementedException();
+			}
 		}
 
 		public class WithFunc
@@ -126,6 +173,42 @@ public class EqualityAssertsTests
 					"Actual:   42",
 					ex.Message
 				);
+			}
+
+			[Fact]
+			public void NonEnumerable_WithThrow_RecordsInnerException()
+			{
+				var ex = Record.Exception(() => Assert.Equal(42, 2112, (e, a) => throw new DivideByZeroException()));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Exception thrown during comparison" + Environment.NewLine +
+					"Expected: 42" + Environment.NewLine +
+					"Actual:   2112",
+					ex.Message
+				);
+				Assert.IsType<DivideByZeroException>(ex.InnerException);
+			}
+
+			[Fact]
+			public void Enumerable_WithThrow_RecordsInnerException()
+			{
+				var ex = Record.Exception(
+					() => Assert.Equal(
+						new[] { 1, 2 },
+						new[] { 1, 3 },
+						(IEnumerable<int> e, IEnumerable<int> a) => throw new DivideByZeroException()
+					)
+				);
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Exception thrown during comparison" + Environment.NewLine +
+					"Expected: [1, 2]" + Environment.NewLine +
+					"Actual:   [1, 3]",
+					ex.Message
+				);
+				Assert.IsType<DivideByZeroException>(ex.InnerException);
 			}
 		}
 
@@ -366,7 +449,11 @@ public class EqualityAssertsTests
 				assertFailure(() => Assert.Equal(expected, (object)actual));
 			}
 
+#if XUNIT_AOT
 			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
 			public void DifferentTypes_ImplicitImplementation_Equal()
 			{
 				object expected = new ImplicitIComparableExpected(1);
@@ -392,7 +479,11 @@ public class EqualityAssertsTests
 				);
 			}
 
+#if XUNIT_AOT
 			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
 			public void DifferentTypes_ExplicitImplementation_Equal()
 			{
 				object expected = new ExplicitIComparableActual(1);
@@ -583,7 +674,11 @@ public class EqualityAssertsTests
 				);
 			}
 
+#if XUNIT_AOT
 			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
 			public void DifferentTypes_ImplicitImplementation_Equal()
 			{
 				object expected = new ImplicitIEquatableExpected(1);
@@ -609,7 +704,11 @@ public class EqualityAssertsTests
 				);
 			}
 
+#if XUNIT_AOT
 			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
 			public void DifferentTypes_ExplicitImplementation_Equal()
 			{
 				object expected = new ExplicitIEquatableExpected(1);
@@ -638,7 +737,11 @@ public class EqualityAssertsTests
 
 		public class StructuralEquatable
 		{
-			[Fact(Skip = "Not supported on AOT")]
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
 			public void Equal()
 			{
 				var expected = new Tuple<StringWrapper>(new StringWrapper("a"));
@@ -964,6 +1067,53 @@ public class EqualityAssertsTests
 				public int GetHashCode([DisallowNull] IEnumerable obj) =>
 					throw new NotImplementedException();
 			}
+
+			[Fact]
+			public void CollectionWithIEquatable_Equal()
+			{
+				var expected = new EnumerableEquatable<int> { 42, 2112 };
+				var actual = new EnumerableEquatable<int> { 2112, 42 };
+
+				Assert.Equal(expected, actual);
+			}
+
+			[Fact]
+			public void CollectionWithIEquatable_NotEqual()
+			{
+				var expected = new EnumerableEquatable<int> { 42, 2112 };
+				var actual = new EnumerableEquatable<int> { 2112, 2600 };
+
+				var ex = Record.Exception(() => Assert.Equal(expected, actual));
+
+				Assert.IsType<EqualException>(ex);
+				// No pointers because it's relying on IEquatable<>
+				Assert.Equal(
+					"Assert.Equal() Failure: Collections differ" + Environment.NewLine +
+					"Expected: [42, 2112]" + Environment.NewLine +
+					"Actual:   [2112, 2600]",
+					ex.Message
+				);
+			}
+
+			public sealed class EnumerableEquatable<T> :
+				IEnumerable<T>, IEquatable<EnumerableEquatable<T>>
+			{
+				List<T> values = new();
+
+				public void Add(T value) => values.Add(value);
+
+				public bool Equals(EnumerableEquatable<T>? other)
+				{
+					if (other == null)
+						return false;
+
+					return !values.Except(other.values).Any() && !other.values.Except(values).Any();
+				}
+
+				public IEnumerator<T> GetEnumerator() => values.GetEnumerator();
+
+				IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+			}
 		}
 
 		public class Dictionaries
@@ -1034,6 +1184,32 @@ public class EqualityAssertsTests
 
 				assertFailure(() => Assert.Equal(expected, (IDictionary)actual));
 				assertFailure(() => Assert.Equal(expected, (object)actual));
+			}
+
+			[Fact]
+			public void NullValue_Equal()
+			{
+				var expected = new Dictionary<string, int?> { { "two", null } };
+				var actual = new Dictionary<string, int?> { { "two", null } };
+
+				Assert.Equal(expected, actual);
+			}
+
+			[Fact]
+			public void NullValue_NotEqual()
+			{
+				var expected = new Dictionary<string, int?> { { "two", null } };
+				var actual = new Dictionary<string, int?> { { "two", 1 } };
+
+				var ex = Record.Exception(() => Assert.Equal(expected, actual));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Dictionaries differ" + Environment.NewLine +
+					"Expected: [[\"two\"] = null]" + Environment.NewLine +
+					"Actual:   [[\"two\"] = 1]",
+					ex.Message
+				);
 			}
 		}
 
@@ -1131,9 +1307,11 @@ public class EqualityAssertsTests
 				var expected = new HashSet<string> { "bar", "foo" };
 				var actual = new SortedSet<string> { "foo", "bar" };
 
+				Assert.Equal(expected, actual);
 				Assert.Equal(expected, (ISet<string>)actual);
+#pragma warning disable xUnit2027
 				Assert.Equal(expected, (object)actual);
-
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -1152,6 +1330,27 @@ public class EqualityAssertsTests
 					ex.Message
 				);
 			}
+
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void ComparerFunc_Throws()
+			{
+				var expected = new HashSet<string> { "bar" };
+				var actual = new HashSet<string> { "baz" };
+
+#pragma warning disable xUnit2026
+				var ex = Record.Exception(() => Assert.Equal(expected, actual, (string l, string r) => true));
+#pragma warning restore xUnit2026
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: During comparison of two collections, GetHashCode was called, but only a comparison function was provided. This typically indicates trying to compare two sets with an item comparison function, which is not supported. For more information, see https://xunit.net/docs/hash-sets-vs-linear-containers",
+					ex.Message
+				);
+			}
 		}
 
 		public class Sets
@@ -1164,7 +1363,9 @@ public class EqualityAssertsTests
 
 				Assert.Equal(expected, actual);
 				Assert.Equal(expected, (ISet<string>)actual);
+#pragma warning disable xUnit2027
 				Assert.Equal(expected, (object)actual);
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -1188,7 +1389,9 @@ public class EqualityAssertsTests
 
 				assertFailure(() => Assert.Equal(expected, actual));
 				assertFailure(() => Assert.Equal(expected, (ISet<string>)actual));
+#pragma warning disable xUnit2027
 				assertFailure(() => Assert.Equal(expected, (object)actual));
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -1199,7 +1402,9 @@ public class EqualityAssertsTests
 
 				Assert.Equal(expected, actual);
 				Assert.Equal(expected, (ISet<string>)actual);
+#pragma warning disable xUnit2027
 				Assert.Equal(expected, (object)actual);
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -1223,7 +1428,9 @@ public class EqualityAssertsTests
 
 				assertFailure(() => Assert.Equal(expected, actual));
 				assertFailure(() => Assert.Equal(expected, (ISet<string>)actual));
+#pragma warning disable xUnit2027
 				assertFailure(() => Assert.Equal(expected, (object)actual));
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -1247,7 +1454,9 @@ public class EqualityAssertsTests
 
 				assertFailure(() => Assert.Equal(expected, actual));
 				assertFailure(() => Assert.Equal(expected, (ISet<string>)actual));
+#pragma warning disable xUnit2027
 				assertFailure(() => Assert.Equal(expected, (object)actual));
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -1258,7 +1467,9 @@ public class EqualityAssertsTests
 
 				Assert.Equal(expected, actual);
 				Assert.Equal(expected, (ISet<string>)actual);
+#pragma warning disable xUnit2027
 				Assert.Equal(expected, (object)actual);
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -1282,7 +1493,9 @@ public class EqualityAssertsTests
 
 				assertFailure(() => Assert.Equal(expected, actual));
 				assertFailure(() => Assert.Equal(expected, (ISet<string>)actual));
+#pragma warning disable xUnit2027
 				assertFailure(() => Assert.Equal(expected, (object)actual));
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -1293,7 +1506,9 @@ public class EqualityAssertsTests
 
 				Assert.Equal(expected, actual);
 				Assert.Equal(expected, (ISet<string>)actual);
+#pragma warning disable xUnit2027
 				Assert.Equal(expected, (object)actual);
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -1317,7 +1532,157 @@ public class EqualityAssertsTests
 
 				assertFailure(() => Assert.Equal(expected, actual));
 				assertFailure(() => Assert.Equal(expected, (ISet<string>)actual));
+#pragma warning disable xUnit2027
 				assertFailure(() => Assert.Equal(expected, (object)actual));
+#pragma warning restore xUnit2027
+			}
+
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void ComparerFunc_Throws()
+			{
+				var expected = new NonGenericSet { "bar" };
+				var actual = new HashSet<string> { "baz" };
+
+#pragma warning disable xUnit2026
+				var ex = Record.Exception(() => Assert.Equal(expected, actual, (string l, string r) => true));
+#pragma warning restore xUnit2026
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: During comparison of two collections, GetHashCode was called, but only a comparison function was provided. This typically indicates trying to compare two sets with an item comparison function, which is not supported. For more information, see https://xunit.net/docs/hash-sets-vs-linear-containers",
+					ex.Message
+				);
+			}
+		}
+
+		public class KeyValuePair
+		{
+			[Fact]
+			public void CollectionKeys_Equal()
+			{
+				// Different concrete collection types in the key slot, per https://github.com/xunit/xunit/issues/2850
+				var expected = new KeyValuePair<IEnumerable<string>, int>(new List<string> { "Key1", "Key2" }, 42);
+				var actual = new KeyValuePair<IEnumerable<string>, int>(new string[] { "Key1", "Key2" }, 42);
+
+				Assert.Equal(expected, actual);
+			}
+
+			[Fact]
+			public void CollectionKeys_NotEqual()
+			{
+				// Different concrete collection types in the key slot, per https://github.com/xunit/xunit/issues/2850
+				var expected = new KeyValuePair<IEnumerable<string>, int>(new List<string> { "Key1", "Key2" }, 42);
+				var actual = new KeyValuePair<IEnumerable<string>, int>(new string[] { "Key1", "Key3" }, 42);
+
+				var ex = Record.Exception(() => Assert.Equal(expected, actual));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Values differ" + Environment.NewLine +
+					"Expected: [[\"Key1\", \"Key2\"]] = 42" + Environment.NewLine +
+					"Actual:   [[\"Key1\", \"Key3\"]] = 42",
+					ex.Message
+				);
+			}
+
+			[Fact]
+			public void CollectionValues_Equal()
+			{
+				// Different concrete collection types in the value slot, per https://github.com/xunit/xunit/issues/2850
+				var expected = new KeyValuePair<string, IEnumerable<string>>("Key1", new List<string> { "Value1a", "Value1b" });
+				var actual = new KeyValuePair<string, IEnumerable<string>>("Key1", new string[] { "Value1a", "Value1b" });
+
+				Assert.Equal(expected, actual);
+			}
+
+			[Fact]
+			public void CollectionValues_NotEqual()
+			{
+				// Different concrete collection types in the value slot, per https://github.com/xunit/xunit/issues/2850
+				var expected = new KeyValuePair<string, IEnumerable<string>>("Key1", new List<string> { "Value1a", "Value1b" });
+				var actual = new KeyValuePair<string, IEnumerable<string>>("Key1", new string[] { "Value1a", "Value2a" });
+
+				var ex = Record.Exception(() => Assert.Equal(expected, actual));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Values differ" + Environment.NewLine +
+					"Expected: [\"Key1\"] = [\"Value1a\", \"Value1b\"]" + Environment.NewLine +
+					"Actual:   [\"Key1\"] = [\"Value1a\", \"Value2a\"]",
+					ex.Message
+				);
+			}
+
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void EquatableKeys_Equal()
+			{
+				var expected = new KeyValuePair<EquatableObject, int>(new() { Char = 'a' }, 42);
+				var actual = new KeyValuePair<EquatableObject, int>(new() { Char = 'a' }, 42);
+
+				Assert.Equal(expected, actual);
+			}
+
+			[Fact]
+			public void EquatableKeys_NotEqual()
+			{
+				var expected = new KeyValuePair<EquatableObject, int>(new() { Char = 'a' }, 42);
+				var actual = new KeyValuePair<EquatableObject, int>(new() { Char = 'b' }, 42);
+
+				var ex = Record.Exception(() => Assert.Equal(expected, actual));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Values differ" + Environment.NewLine +
+					"Expected: [EquatableObject { Char = 'a' }] = 42" + Environment.NewLine +
+					"Actual:   [EquatableObject { Char = 'b' }] = 42",
+					ex.Message
+				);
+			}
+
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void EquatableValues_Equal()
+			{
+				var expected = new KeyValuePair<string, EquatableObject>("Key1", new() { Char = 'a' });
+				var actual = new KeyValuePair<string, EquatableObject>("Key1", new() { Char = 'a' });
+
+				Assert.Equal(expected, actual);
+			}
+
+			[Fact]
+			public void EquatableValues_NotEqual()
+			{
+				var expected = new KeyValuePair<string, EquatableObject>("Key1", new() { Char = 'a' });
+				var actual = new KeyValuePair<string, EquatableObject>("Key1", new() { Char = 'b' });
+
+				var ex = Record.Exception(() => Assert.Equal(expected, actual));
+
+				Assert.IsType<EqualException>(ex);
+				Assert.Equal(
+					"Assert.Equal() Failure: Values differ" + Environment.NewLine +
+					"Expected: [\"Key1\"] = EquatableObject { Char = 'a' }" + Environment.NewLine +
+					"Actual:   [\"Key1\"] = EquatableObject { Char = 'b' }",
+					ex.Message
+				);
+			}
+
+			public class EquatableObject : IEquatable<EquatableObject>
+			{
+				public char Char { get; set; }
+
+				public bool Equals(EquatableObject? other) =>
+					other != null && other.Char == Char;
 			}
 		}
 
@@ -1365,7 +1730,11 @@ public class EqualityAssertsTests
 				Assert.Equal(expected, actual);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NotEqual()
 			{
 				var expected = new DateTime(2023, 2, 11, 15, 4, 0);
@@ -1396,7 +1765,11 @@ public class EqualityAssertsTests
 				Assert.Equal(date2, date1, precision);  // expected later than actual
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void OutOfRange()
 			{
 				var date1 = new DateTime(2023, 2, 11, 15, 4, 0);
@@ -1443,7 +1816,11 @@ public class EqualityAssertsTests
 				Assert.Equal(expected, actual);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NotEqual()
 			{
 				var expected = new DateTimeOffset(2023, 2, 11, 15, 4, 0, TimeSpan.Zero);
@@ -1472,7 +1849,11 @@ public class EqualityAssertsTests
 				Assert.Equal(expected, actual);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NotEqual()
 			{
 				var expected = new DateTimeOffset(2023, 2, 11, 15, 4, 0, TimeSpan.Zero);
@@ -1503,7 +1884,11 @@ public class EqualityAssertsTests
 				Assert.Equal(date2, date1, precision);  // expected later than actual
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void OutOfRange()
 			{
 				var date1 = new DateTimeOffset(2023, 2, 11, 15, 4, 0, TimeSpan.Zero);
@@ -1548,7 +1933,11 @@ public class EqualityAssertsTests
 				Assert.Equal(date2, date1, precision);  // expected later than actual
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void OutOfRange()
 			{
 				var date1 = new DateTimeOffset(2023, 2, 11, 15, 4, 0, TimeSpan.Zero);
@@ -1589,7 +1978,11 @@ public class EqualityAssertsTests
 			Assert.Equal(0.11111M, 0.11444M, 2);
 		}
 
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public void NotEqual()
 		{
 			var ex = Record.Exception(() => Assert.Equal(0.11111M, 0.11444M, 3));
@@ -1614,7 +2007,11 @@ public class EqualityAssertsTests
 				Assert.Equal(0.11111, 0.11444, 2);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NotEqual()
 			{
 				var ex = Record.Exception(() => Assert.Equal(0.11111, 0.11444, 3));
@@ -1637,7 +2034,11 @@ public class EqualityAssertsTests
 				Assert.Equal(10.565, 10.566, 2, MidpointRounding.AwayFromZero);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NotEqual()
 			{
 				var ex = Record.Exception(() => Assert.Equal(0.11113, 0.11115, 4, MidpointRounding.ToEven));
@@ -1670,7 +2071,11 @@ public class EqualityAssertsTests
 				Assert.Equal(10.566, 10.565, 0.01);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NotEqual()
 			{
 				var ex = Record.Exception(() => Assert.Equal(0.11113, 0.11115, 0.00001));
@@ -1690,7 +2095,11 @@ public class EqualityAssertsTests
 				Assert.Equal(double.NaN, double.NaN, 1000.0);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NaN_NotEqual()
 			{
 				var ex = Record.Exception(() => Assert.Equal(20210102.2208, double.NaN, 20000000.0));
@@ -1710,7 +2119,11 @@ public class EqualityAssertsTests
 				Assert.Equal(double.MinValue, double.MaxValue, double.PositiveInfinity);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void PositiveInfinity_NotEqual()
 			{
 				var ex = Record.Exception(() => Assert.Equal(double.PositiveInfinity, 77.7, 1.0));
@@ -1724,7 +2137,11 @@ public class EqualityAssertsTests
 				);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NegativeInfinity_NotEqual()
 			{
 				var ex = Record.Exception(() => Assert.Equal(0.0, double.NegativeInfinity, 1.0));
@@ -1750,7 +2167,11 @@ public class EqualityAssertsTests
 				Assert.Equal(0.11111f, 0.11444f, 2);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NotEqual()
 			{
 				var ex = Record.Exception(() => Assert.Equal(0.11111f, 0.11444f, 3));
@@ -1773,7 +2194,11 @@ public class EqualityAssertsTests
 				Assert.Equal(10.5655f, 10.5666f, 2, MidpointRounding.AwayFromZero);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NotEqual()
 			{
 				var ex = Record.Exception(() => Assert.Equal(0.111133f, 0.111155f, 4, MidpointRounding.ToEven));
@@ -1806,7 +2231,11 @@ public class EqualityAssertsTests
 				Assert.Equal(10.569f, 10.562f, 0.01f);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NotEqual()
 			{
 				var ex = Record.Exception(() => Assert.Equal(0.11113f, 0.11115f, 0.00001f));
@@ -1826,7 +2255,11 @@ public class EqualityAssertsTests
 				Assert.Equal(float.NaN, float.NaN, 1000.0f);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NaN_NotEqual()
 			{
 				var ex = Record.Exception(() => Assert.Equal(20210102.2208f, float.NaN, 20000000.0f));
@@ -1846,7 +2279,11 @@ public class EqualityAssertsTests
 				Assert.Equal(float.MinValue, float.MaxValue, float.PositiveInfinity);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void PositiveInfinity_NotEqual()
 			{
 				var ex = Record.Exception(() => Assert.Equal(float.PositiveInfinity, 77.7f, 1.0f));
@@ -1860,7 +2297,11 @@ public class EqualityAssertsTests
 				);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NegativeInfinity_NotEqual()
 			{
 				var ex = Record.Exception(() => Assert.Equal(0.0f, float.NegativeInfinity, 1.0f));
@@ -1942,6 +2383,75 @@ public class EqualityAssertsTests
 
 				public int GetHashCode(T obj) => throw new NotImplementedException();
 			}
+
+			[Fact]
+			public void NonEnumerable_WithThrow_RecordsInnerException()
+			{
+				var ex = Record.Exception(() => Assert.NotEqual(42, 42, new ThrowingIntComparer()));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Exception thrown during comparison" + Environment.NewLine +
+					"Expected: Not 42" + Environment.NewLine +
+					"Actual:       42",
+					ex.Message
+				);
+				Assert.IsType<DivideByZeroException>(ex.InnerException);
+			}
+
+			public class ThrowingIntComparer : IEqualityComparer<int>
+			{
+				public bool Equals(int x, int y) =>
+					throw new DivideByZeroException();
+				public int GetHashCode(int obj) =>
+					throw new NotImplementedException();
+			}
+
+			[Fact]
+			public void Enumerable_WithThrow_RecordsInnerException()
+			{
+				var ex = Record.Exception(() => Assert.NotEqual(new[] { 1, 2 }, new[] { 1, 2 }, new ThrowingEnumerableComparer()));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Exception thrown during comparison" + Environment.NewLine +
+					"Expected: Not [1, 2]" + Environment.NewLine +
+					"Actual:       [1, 2]",
+					ex.Message
+				);
+				Assert.IsType<DivideByZeroException>(ex.InnerException);
+			}
+
+			public class ThrowingEnumerableComparer : IEqualityComparer<IEnumerable<int>>
+			{
+				public bool Equals(IEnumerable<int>? x, IEnumerable<int>? y) =>
+					throw new DivideByZeroException();
+				public int GetHashCode(IEnumerable<int> obj) =>
+					throw new NotImplementedException();
+			}
+
+			[Fact]
+			public void Strings_WithThrow_RecordsInnerException()
+			{
+				var ex = Record.Exception(() => Assert.NotEqual("42", "42", new ThrowingStringComparer()));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Exception thrown during comparison" + Environment.NewLine +
+					"Expected: Not \"42\"" + Environment.NewLine +
+					"Actual:       \"42\"",
+					ex.Message
+				);
+				Assert.IsType<DivideByZeroException>(ex.InnerException);
+			}
+
+			public class ThrowingStringComparer : IEqualityComparer<string>
+			{
+				public bool Equals(string? x, string? y) =>
+					throw new DivideByZeroException();
+				public int GetHashCode(string obj) =>
+					throw new NotImplementedException();
+			}
 		}
 
 		public class WithFunc
@@ -1970,6 +2480,57 @@ public class EqualityAssertsTests
 			public void NotEqual()
 			{
 				Assert.NotEqual(42, 42, (x, y) => false);
+			}
+
+			[Fact]
+			public void NonEnumerable_WithThrow_RecordsInnerException()
+			{
+				var ex = Record.Exception(() => Assert.NotEqual(42, 42, (e, a) => throw new DivideByZeroException()));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Exception thrown during comparison" + Environment.NewLine +
+					"Expected: Not 42" + Environment.NewLine +
+					"Actual:       42",
+					ex.Message
+				);
+				Assert.IsType<DivideByZeroException>(ex.InnerException);
+			}
+
+			[Fact]
+			public void Enumerable_WithThrow_RecordsInnerException()
+			{
+				var ex = Record.Exception(
+					() => Assert.NotEqual(
+						new[] { 1, 2 },
+						new[] { 1, 2 },
+						(IEnumerable<int> e, IEnumerable<int> a) => throw new DivideByZeroException()
+					)
+				);
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Exception thrown during comparison" + Environment.NewLine +
+					"Expected: Not [1, 2]" + Environment.NewLine +
+					"Actual:       [1, 2]",
+					ex.Message
+				);
+				Assert.IsType<DivideByZeroException>(ex.InnerException);
+			}
+
+			[Fact]
+			public void Strings_WithThrow_RecordsInnerException()
+			{
+				var ex = Record.Exception(() => Assert.NotEqual("42", "42", (e, a) => throw new DivideByZeroException()));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Exception thrown during comparison" + Environment.NewLine +
+					"Expected: Not \"42\"" + Environment.NewLine +
+					"Actual:       \"42\"",
+					ex.Message
+				);
+				Assert.IsType<DivideByZeroException>(ex.InnerException);
 			}
 		}
 
@@ -2210,7 +2771,11 @@ public class EqualityAssertsTests
 				Assert.NotEqual(expected, (object)actual);
 			}
 
+#if XUNIT_AOT
 			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
 			public void DifferentTypes_ImplicitImplementation_Equal()
 			{
 				object expected = new ImplicitIComparableExpected(1);
@@ -2236,7 +2801,11 @@ public class EqualityAssertsTests
 				Assert.NotEqual(expected, actual);
 			}
 
+#if XUNIT_AOT
 			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
 			public void DifferentTypes_ExplicitImplementation_Equal()
 			{
 				object expected = new ExplicitIComparableActual(1);
@@ -2427,7 +2996,11 @@ public class EqualityAssertsTests
 				Assert.NotEqual(expected, actual);
 			}
 
+#if XUNIT_AOT
 			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
 			public void DifferentTypes_ImplicitImplementation_Equal()
 			{
 				object expected = new ImplicitIEquatableExpected(1);
@@ -2453,7 +3026,11 @@ public class EqualityAssertsTests
 				Assert.NotEqual(expected, actual);
 			}
 
+#if XUNIT_AOT
 			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
 			public void DifferentTypes_ExplicitImplementation_Equal()
 			{
 				object expected = new ExplicitIEquatableExpected(1);
@@ -2482,7 +3059,11 @@ public class EqualityAssertsTests
 
 		public class StructuralEquatable
 		{
+#if XUNIT_AOT
 			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
 			public void Equal()
 			{
 				var expected = new Tuple<StringWrapper>(new StringWrapper("a"));
@@ -2716,6 +3297,52 @@ public class EqualityAssertsTests
 
 				Assert.NotEqual(expected, actual);
 			}
+
+			[Fact]
+			public void CollectionWithIEquatable_Equal()
+			{
+				var expected = new EnumerableEquatable<int> { 42, 2112 };
+				var actual = new EnumerableEquatable<int> { 2112, 42 };
+
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Collections are equal" + Environment.NewLine +
+					"Expected: Not [42, 2112]" + Environment.NewLine +
+					"Actual:       [2112, 42]",
+					ex.Message
+				);
+			}
+
+			[Fact]
+			public void CollectionWithIEquatable_NotEqual()
+			{
+				var expected = new EnumerableEquatable<int> { 42, 2112 };
+				var actual = new EnumerableEquatable<int> { 2112, 2600 };
+
+				Assert.NotEqual(expected, actual);
+			}
+
+			public sealed class EnumerableEquatable<T> :
+				IEnumerable<T>, IEquatable<EnumerableEquatable<T>>
+			{
+				List<T> values = new();
+
+				public void Add(T value) => values.Add(value);
+
+				public bool Equals(EnumerableEquatable<T>? other)
+				{
+					if (other == null)
+						return false;
+
+					return !values.Except(other.values).Any() && !other.values.Except(values).Any();
+				}
+
+				public IEnumerator<T> GetEnumerator() => values.GetEnumerator();
+
+				IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+			}
 		}
 
 		public class Dictionaries
@@ -2786,6 +3413,32 @@ public class EqualityAssertsTests
 
 				Assert.NotEqual(expected, (IDictionary)actual);
 				Assert.NotEqual(expected, (object)actual);
+			}
+
+			[Fact]
+			public void NullValue_Equal()
+			{
+				var expected = new Dictionary<string, int?> { { "two", null } };
+				var actual = new Dictionary<string, int?> { { "two", null } };
+
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Dictionaries are equal" + Environment.NewLine +
+					"Expected: Not [[\"two\"] = null]" + Environment.NewLine +
+					"Actual:       [[\"two\"] = null]",
+					ex.Message
+				);
+			}
+
+			[Fact]
+			public void NullValue_NotEqual()
+			{
+				var expected = new Dictionary<string, int?> { { "two", null } };
+				var actual = new Dictionary<string, int?> { { "two", 1 } };
+
+				Assert.NotEqual(expected, actual);
 			}
 		}
 
@@ -2863,7 +3516,9 @@ public class EqualityAssertsTests
 				}
 
 				assertFailure(() => Assert.NotEqual(expected, (ISet<string>)actual));
+#pragma warning disable xUnit2027
 				assertFailure(() => Assert.NotEqual(expected, (object)actual));
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -2873,6 +3528,27 @@ public class EqualityAssertsTests
 				object actual = new HashSet<long> { 42L };
 
 				Assert.NotEqual(expected, actual);
+			}
+
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void ComparerFunc_Throws()
+			{
+				var expected = new HashSet<string> { "bar" };
+				var actual = new HashSet<string> { "baz" };
+
+#pragma warning disable xUnit2026
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual, (string l, string r) => false));
+#pragma warning restore xUnit2026
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: During comparison of two collections, GetHashCode was called, but only a comparison function was provided. This typically indicates trying to compare two sets with an item comparison function, which is not supported. For more information, see https://xunit.net/docs/hash-sets-vs-linear-containers",
+					ex.Message
+				);
 			}
 		}
 
@@ -2899,7 +3575,9 @@ public class EqualityAssertsTests
 
 				assertFailure(() => Assert.NotEqual(expected, actual));
 				assertFailure(() => Assert.NotEqual(expected, (ISet<string>)actual));
+#pragma warning disable xUnit2027
 				assertFailure(() => Assert.NotEqual(expected, (object)actual));
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -2910,7 +3588,9 @@ public class EqualityAssertsTests
 
 				Assert.NotEqual(expected, actual);
 				Assert.NotEqual(expected, (ISet<string>)actual);
+#pragma warning disable xUnit2027
 				Assert.NotEqual(expected, (object)actual);
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -2934,7 +3614,9 @@ public class EqualityAssertsTests
 
 				assertFailure(() => Assert.NotEqual(expected, actual));
 				assertFailure(() => Assert.NotEqual(expected, (ISet<string>)actual));
+#pragma warning disable xUnit2027
 				assertFailure(() => Assert.NotEqual(expected, (object)actual));
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -2945,7 +3627,9 @@ public class EqualityAssertsTests
 
 				Assert.NotEqual(expected, actual);
 				Assert.NotEqual(expected, (ISet<string>)actual);
+#pragma warning disable xUnit2027
 				Assert.NotEqual(expected, (object)actual);
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -2956,7 +3640,9 @@ public class EqualityAssertsTests
 
 				Assert.NotEqual(expected, actual);
 				Assert.NotEqual(expected, (ISet<string>)actual);
+#pragma warning disable xUnit2027
 				Assert.NotEqual(expected, (object)actual);
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -2980,7 +3666,9 @@ public class EqualityAssertsTests
 
 				assertFailure(() => Assert.NotEqual(expected, actual));
 				assertFailure(() => Assert.NotEqual(expected, (ISet<string>)actual));
+#pragma warning disable xUnit2027
 				assertFailure(() => Assert.NotEqual(expected, (object)actual));
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -2991,7 +3679,9 @@ public class EqualityAssertsTests
 
 				Assert.NotEqual(expected, actual);
 				Assert.NotEqual(expected, (ISet<string>)actual);
+#pragma warning disable xUnit2027
 				Assert.NotEqual(expected, (object)actual);
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -3015,7 +3705,9 @@ public class EqualityAssertsTests
 
 				assertFailure(() => Assert.NotEqual(expected, actual));
 				assertFailure(() => Assert.NotEqual(expected, (ISet<string>)actual));
+#pragma warning disable xUnit2027
 				assertFailure(() => Assert.NotEqual(expected, (object)actual));
+#pragma warning restore xUnit2027
 			}
 
 			[Fact]
@@ -3026,7 +3718,30 @@ public class EqualityAssertsTests
 
 				Assert.NotEqual(expected, actual);
 				Assert.NotEqual(expected, (ISet<string>)actual);
+#pragma warning disable xUnit2027
 				Assert.NotEqual(expected, (object)actual);
+#pragma warning restore xUnit2027
+			}
+
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void ComparerFunc_Throws()
+			{
+				var expected = new NonGenericSet { "bar" };
+				var actual = new HashSet<string> { "baz" };
+
+#pragma warning disable xUnit2026
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual, (string l, string r) => false));
+#pragma warning restore xUnit2026
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: During comparison of two collections, GetHashCode was called, but only a comparison function was provided. This typically indicates trying to compare two sets with an item comparison function, which is not supported. For more information, see https://xunit.net/docs/hash-sets-vs-linear-containers",
+					ex.Message
+				);
 			}
 		}
 
@@ -3072,6 +3787,133 @@ public class EqualityAssertsTests
 			}
 		}
 
+		public class KeyValuePair
+		{
+			[Fact]
+			public void CollectionKeys_Equal()
+			{
+				// Different concrete collection types in the key slot, per https://github.com/xunit/xunit/issues/2850
+				var expected = new KeyValuePair<IEnumerable<string>, int>(new List<string> { "Key1", "Key2" }, 42);
+				var actual = new KeyValuePair<IEnumerable<string>, int>(new string[] { "Key1", "Key2" }, 42);
+
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Values are equal" + Environment.NewLine +
+					"Expected: Not [[\"Key1\", \"Key2\"]] = 42" + Environment.NewLine +
+					"Actual:       [[\"Key1\", \"Key2\"]] = 42",
+					ex.Message
+				);
+			}
+
+			[Fact]
+			public void CollectionKeys_NotEqual()
+			{
+				// Different concrete collection types in the key slot, per https://github.com/xunit/xunit/issues/2850
+				var expected = new KeyValuePair<IEnumerable<string>, int>(new List<string> { "Key1", "Key2" }, 42);
+				var actual = new KeyValuePair<IEnumerable<string>, int>(new string[] { "Key1", "Key3" }, 42);
+
+				Assert.NotEqual(expected, actual);
+			}
+
+			[Fact]
+			public void CollectionValues_Equal()
+			{
+				// Different concrete collection types in the key slot, per https://github.com/xunit/xunit/issues/2850
+				var expected = new KeyValuePair<string, IEnumerable<string>>("Key1", new List<string> { "Value1a", "Value1b" });
+				var actual = new KeyValuePair<string, IEnumerable<string>>("Key1", new string[] { "Value1a", "Value1b" });
+
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Values are equal" + Environment.NewLine +
+					"Expected: Not [\"Key1\"] = [\"Value1a\", \"Value1b\"]" + Environment.NewLine +
+					"Actual:       [\"Key1\"] = [\"Value1a\", \"Value1b\"]",
+					ex.Message
+				);
+			}
+
+			[Fact]
+			public void CollectionValues_NotEqual()
+			{
+				// Different concrete collection types in the key slot, per https://github.com/xunit/xunit/issues/2850
+				var expected = new KeyValuePair<string, IEnumerable<string>>("Key1", new List<string> { "Value1a", "Value1b" });
+				var actual = new KeyValuePair<string, IEnumerable<string>>("Key1", new string[] { "Value1a", "Value2a" });
+
+				Assert.NotEqual(expected, actual);
+			}
+
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void EquatableKeys_Equal()
+			{
+				var expected = new KeyValuePair<EquatableObject, int>(new() { Char = 'a' }, 42);
+				var actual = new KeyValuePair<EquatableObject, int>(new() { Char = 'a' }, 42);
+
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Values are equal" + Environment.NewLine +
+					"Expected: Not [EquatableObject { Char = 'a' }] = 42" + Environment.NewLine +
+					"Actual:       [EquatableObject { Char = 'a' }] = 42",
+					ex.Message
+				);
+			}
+
+			[Fact]
+			public void EquatableKeys_NotEqual()
+			{
+				var expected = new KeyValuePair<EquatableObject, int>(new() { Char = 'a' }, 42);
+				var actual = new KeyValuePair<EquatableObject, int>(new() { Char = 'b' }, 42);
+
+				Assert.NotEqual(expected, actual);
+			}
+
+#if XUNIT_AOT
+			[Fact(Skip = "Not supported with AOT")]
+#else
+			[Fact]
+#endif
+			public void EquatableValues_Equal()
+			{
+				var expected = new KeyValuePair<string, EquatableObject>("Key1", new() { Char = 'a' });
+				var actual = new KeyValuePair<string, EquatableObject>("Key1", new() { Char = 'a' });
+
+				var ex = Record.Exception(() => Assert.NotEqual(expected, actual));
+
+				Assert.IsType<NotEqualException>(ex);
+				Assert.Equal(
+					"Assert.NotEqual() Failure: Values are equal" + Environment.NewLine +
+					"Expected: Not [\"Key1\"] = EquatableObject { Char = 'a' }" + Environment.NewLine +
+					"Actual:       [\"Key1\"] = EquatableObject { Char = 'a' }",
+					ex.Message
+				);
+			}
+
+			[Fact]
+			public void EquatableValues_NotEqual()
+			{
+				var expected = new KeyValuePair<string, EquatableObject>("Key1", new() { Char = 'a' });
+				var actual = new KeyValuePair<string, EquatableObject>("Key1", new() { Char = 'b' });
+
+				Assert.NotEqual(expected, actual);
+			}
+
+			public class EquatableObject : IEquatable<EquatableObject>
+			{
+				public char Char { get; set; }
+
+				public bool Equals(EquatableObject? other) =>
+					other != null && other.Char == Char;
+			}
+		}
+
 		public class DoubleEnumerationPrevention
 		{
 			[Fact]
@@ -3104,7 +3946,11 @@ public class EqualityAssertsTests
 
 	public class NotEqual_Decimal
 	{
+#if XUNIT_AOT
 		[Fact]
+#else
+		[CulturedFact]
+#endif
 		public void Equal()
 		{
 			var ex = Record.Exception(() => Assert.NotEqual(0.11111M, 0.11444M, 2));
@@ -3129,7 +3975,11 @@ public class EqualityAssertsTests
 	{
 		public class WithPrecision
 		{
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void Equal()
 			{
 				var ex = Record.Exception(() => Assert.NotEqual(0.11111, 0.11444, 2));
@@ -3152,7 +4002,11 @@ public class EqualityAssertsTests
 
 		public class WithMidPointRounding
 		{
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void Equal()
 			{
 				var ex = Record.Exception(() => Assert.NotEqual(10.565, 10.566, 2, MidpointRounding.AwayFromZero));
@@ -3185,7 +4039,11 @@ public class EqualityAssertsTests
 				Assert.Equal("tolerance", argEx.ParamName);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void Equal()
 			{
 				var ex = Record.Exception(() => Assert.NotEqual(10.566, 10.565, 0.01));
@@ -3205,7 +4063,11 @@ public class EqualityAssertsTests
 				Assert.NotEqual(0.11113, 0.11115, 0.00001);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NaN_Equal()
 			{
 				var ex = Record.Exception(() => Assert.NotEqual(double.NaN, double.NaN, 1000.0));
@@ -3225,7 +4087,11 @@ public class EqualityAssertsTests
 				Assert.NotEqual(20210102.2208, double.NaN, 20000000.0);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void InfiniteTolerance_Equal()
 			{
 				var ex = Record.Exception(() => Assert.NotEqual(double.MinValue, double.MaxValue, double.PositiveInfinity));
@@ -3257,7 +4123,11 @@ public class EqualityAssertsTests
 	{
 		public class WithPrecision
 		{
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void Equal()
 			{
 				var ex = Record.Exception(() => Assert.NotEqual(0.11111f, 0.11444f, 2));
@@ -3280,7 +4150,11 @@ public class EqualityAssertsTests
 
 		public class WithMidPointRounding
 		{
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void Equal()
 			{
 				var ex = Record.Exception(() => Assert.NotEqual(10.5655f, 10.5666f, 2, MidpointRounding.AwayFromZero));
@@ -3313,7 +4187,11 @@ public class EqualityAssertsTests
 				Assert.Equal("tolerance", argEx.ParamName);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void Equal()
 			{
 				var ex = Record.Exception(() => Assert.NotEqual(10.569f, 10.562f, 0.01f));
@@ -3333,7 +4211,11 @@ public class EqualityAssertsTests
 				Assert.NotEqual(0.11113f, 0.11115f, 0.00001f);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void NaN_Equal()
 			{
 				var ex = Record.Exception(() => Assert.NotEqual(float.NaN, float.NaN, 1000.0f));
@@ -3353,7 +4235,11 @@ public class EqualityAssertsTests
 				Assert.NotEqual(20210102.2208f, float.NaN, 20000000.0f);
 			}
 
+#if XUNIT_AOT
 			[Fact]
+#else
+			[CulturedFact]
+#endif
 			public void InfiniteTolerance_Equal()
 			{
 				var ex = Record.Exception(() => Assert.NotEqual(float.MinValue, float.MaxValue, float.PositiveInfinity));
@@ -3429,17 +4315,17 @@ public class EqualityAssertsTests
 		[Fact]
 		public static void Equal()
 		{
-#pragma warning disable xUnit2006
+#pragma warning disable xUnit2006 // Do not use invalid string equality check
 			Assert.StrictEqual("actual", "actual");
-#pragma warning restore xUnit2006
+#pragma warning restore xUnit2006 // Do not use invalid string equality check
 		}
 
 		[Fact]
 		public static void NotEqual_Strings()
 		{
-#pragma warning disable xUnit2006
+#pragma warning disable xUnit2006 // Do not use invalid string equality check
 			var ex = Record.Exception(() => Assert.StrictEqual("bob", "jim"));
-#pragma warning restore xUnit2006
+#pragma warning restore xUnit2006 // Do not use invalid string equality check
 
 			Assert.IsType<StrictEqualException>(ex);
 			Assert.Equal(

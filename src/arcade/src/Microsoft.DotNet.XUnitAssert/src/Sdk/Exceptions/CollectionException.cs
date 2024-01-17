@@ -18,6 +18,8 @@ namespace Xunit.Sdk
 #endif
 	partial class CollectionException : XunitException
 	{
+		static readonly char[] crlfSeparators = new[] { '\r', '\n' };
+
 		CollectionException(string message) :
 			base(message)
 		{ }
@@ -27,7 +29,7 @@ namespace Xunit.Sdk
 			var lines =
 				innerException
 					.Message
-					.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+					.Split(crlfSeparators, StringSplitOptions.RemoveEmptyEntries)
 					.Select((value, idx) => idx > 0 ? "            " + value : value);
 
 			return string.Join(Environment.NewLine, lines);
