@@ -253,13 +253,13 @@
   <PropertyGroup>
     <AspireFeatureBand>8.0.100</AspireFeatureBand>
     <AspireWorkloadManifestVersion>8.0.0-preview.3.24060.4</AspireWorkloadManifestVersion>
-    <MauiFeatureBand>8.0.100-rc.1</MauiFeatureBand>
-    <MauiWorkloadManifestVersion>8.0.0-rc.1.9171</MauiWorkloadManifestVersion>
-    <XamarinAndroidWorkloadManifestVersion>34.0.0-rc.1.432</XamarinAndroidWorkloadManifestVersion>
-    <XamarinIOSWorkloadManifestVersion>16.4.8825-net8-rc1</XamarinIOSWorkloadManifestVersion>
-    <XamarinMacCatalystWorkloadManifestVersion>16.4.8825-net8-rc1</XamarinMacCatalystWorkloadManifestVersion>
-    <XamarinMacOSWorkloadManifestVersion>13.3.8825-net8-rc1</XamarinMacOSWorkloadManifestVersion>
-    <XamarinTvOSWorkloadManifestVersion>16.4.8825-net8-rc1</XamarinTvOSWorkloadManifestVersion>
+    <MauiFeatureBand>9.0.100-alpha.1</MauiFeatureBand>
+    <MauiWorkloadManifestVersion>9.0.0-ci.net9.9818</MauiWorkloadManifestVersion>
+    <XamarinAndroidWorkloadManifestVersion>34.99.0-preview.1.109</XamarinAndroidWorkloadManifestVersion>
+    <XamarinIOSWorkloadManifestVersion>17.0.9712-net9-p1</XamarinIOSWorkloadManifestVersion>
+    <XamarinMacCatalystWorkloadManifestVersion>17.0.9712-net9-p1</XamarinMacCatalystWorkloadManifestVersion>
+    <XamarinMacOSWorkloadManifestVersion>14.0.9712-net9-p1</XamarinMacOSWorkloadManifestVersion>
+    <XamarinTvOSWorkloadManifestVersion>17.0.9712-net9-p1</XamarinTvOSWorkloadManifestVersion>
     <!-- Workloads from dotnet/emsdk -->
     <MicrosoftNETWorkloadEmscriptenCurrentManifest90100TransportPackageVersion>9.0.0-alpha.1.24053.1</MicrosoftNETWorkloadEmscriptenCurrentManifest90100TransportPackageVersion>
     <EmscriptenWorkloadManifestVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest90100TransportPackageVersion)</EmscriptenWorkloadManifestVersion>
