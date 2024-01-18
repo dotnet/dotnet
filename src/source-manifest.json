@@ -13,10 +13,10 @@
       "commitSha": "48e42f59d64d84b404e904996a9ed61f2a17a569"
     },
     {
-      "packageVersion": "8.0.1-servicing.23580.8",
+      "packageVersion": "8.0.2-servicing.24068.4",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "8e941eb42f819adb116b881195158b3887a70a1c"
+      "commitSha": "da7e9894ce22ef8cc02e5acc56e95a6f8cf8f644"
     },
     {
       "packageVersion": "0.11.4-alpha.23509.2",
@@ -43,10 +43,10 @@
       "commitSha": "5ce78f66d89ea529e459abddb129ab36cb5bd936"
     },
     {
-      "packageVersion": "8.0.1-servicing.23571.1",
+      "packageVersion": "8.0.2-servicing.24062.1",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "201f4dae9d1a1e105d8ba86d7ece61eed1f665e0"
+      "commitSha": "2fc2ffd960930318f33fcaa690cbdbc55d72f52d"
     },
     {
       "packageVersion": "8.0.456602",
@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "2ceb7bf98e5ce630d5f06f22490fe0b862eeff59"
+      "commitSha": "5dbe778528a3149d10e7b9e192eb8931a348682c"
     },
     {
       "packageVersion": "17.8.5-preview-24055-02",
@@ -97,16 +97,16 @@
       "commitSha": "b4d9a1334d5189172977ba8fddd00bda70161e4a"
     },
     {
-      "packageVersion": "8.0.1-servicing.23580.1",
+      "packageVersion": "8.0.2-servicing.24067.11",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "bf5e279d9239bfef5bb1b8d6212f1b971c434606"
+      "commitSha": "1381d5ebd2ab1f292848d5b19b80cf71ac332508"
     },
     {
-      "packageVersion": "8.0.102-servicing.24061.11",
+      "packageVersion": "8.0.102-servicing.24068.26",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "c156e4feae5e45c934d00ed95b47b7504418fb4d"
+      "commitSha": "2151f8c8adebcfa82512ee7d5d63a35e468b36b1"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23577.6",
