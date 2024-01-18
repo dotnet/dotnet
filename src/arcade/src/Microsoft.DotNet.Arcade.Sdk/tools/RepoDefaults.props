@@ -1,0 +1,25 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <!--
+    Properties describing some default properties of the repo.
+  -->
+
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
+    <PlatformName Condition="'$(PlatformName)' == ''">$(Platform)</PlatformName>
+  </PropertyGroup>
+
+  <!-- DotNetBuild properties -->
+  <PropertyGroup>
+    <!-- The DotNetBuild property is set to true if in any kind of .NET product build (orchestrator, repo, or inner repo). -->
+    <DotNetBuild Condition="'$(DotNetBuildInnerRepo)' == 'true' or '$(DotNetBuildRepo)' == 'true' or '$(DotNetBuildOrchestrator)' == 'true'">true</DotNetBuild>
+
+    <!-- The phase is calculated from the inner, orchestrator, and repo variables. Innermost wins. -->
+    <DotNetBuildPhase Condition="'$(DotNetBuildInnerRepo)' == 'true'">InnerRepo</DotNetBuildPhase>
+    <DotNetBuildPhase Condition="'$(DotNetBuildPhase)' == '' and '$(DotNetBuildRepo)' == 'true'">Repo</DotNetBuildPhase>
+    <DotNetBuildPhase Condition="'$(DotNetBuildPhase)' == '' and '$(DotNetBuildOrchestrator)' == 'true'">Orchestrator</DotNetBuildPhase>
+  </PropertyGroup>
+
+</Project>

@@ -40,8 +40,10 @@
     <IsReleaseOnlyPackageVersion Condition ="('$(SkipPackagePublishingVersionChecks)' == 'true') or ('$(PreReleaseVersionLabel)' == '' and '$(AutoGenerateAssemblyVersion)' == 'true')">true</IsReleaseOnlyPackageVersion>
     
     <!-- If `AutoGenerateSymbolPackages` is not set we default it to true. -->
-    <!-- Do not generate symbol packages if in outer source build mode, to avoid creating copies of the SB intermediates. -->
-    <AutoGenerateSymbolPackages Condition="'$(AutoGenerateSymbolPackages)' == '' and ('$(ArcadeBuildFromSource)' != 'true' or '$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildInnerRepo)' == 'true')">true</AutoGenerateSymbolPackages>
+    <!-- Do not generate symbol packages if in outer source build mode, to avoid creating copies of the intermediates. -->
+    <AutoGenerateSymbolPackages Condition="'$(AutoGenerateSymbolPackages)' == '' and
+      (('$(ArcadeBuildFromSource)' != 'true' or '$(ArcadeInnerBuildFromSource)' == 'true') or 
+       ('$(DotNetBuild)' != 'true' or '$(DotNetBuildPhase)' == 'InnerRepo'))">true</AutoGenerateSymbolPackages>
 
     <AssetManifestOS Condition="'$(AssetManifestOS)' == ''">$(OS)</AssetManifestOS>
 
@@ -286,6 +288,9 @@
     <FileSignInfo Update="@(FileSignInfo->WithMetadataValue('CertificateName','Microsoft400'))" CertificateName="$(DotNetCertificateName)" />
   </ItemGroup>
 
-  <Import Project="SourceBuild/SourceBuildArcadePublish.targets" Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(ArcadeBuildVertical)' == 'true'" />
+  <!-- Import the publish targets when in the inner or outer repo builds. -->
+  <Import Project="SourceBuild/SourceBuildArcadePublish.targets" Condition="'$(ArcadeBuildFromSource)' == 'true' or 
+                                                                            '$(ArcadeBuildVertical)' == 'true' or 
+                                                                            '$(DotNetBuildRepo)' == 'true'" />
 
 </Project>

@@ -5,6 +5,7 @@
      Properties describing the layout of the repo specific to the current project.
   -->
 
+  <Import Project="RepoDefaults.props"/>
   <Import Project="RepoLayout.props"/>
 
   <PropertyGroup>
