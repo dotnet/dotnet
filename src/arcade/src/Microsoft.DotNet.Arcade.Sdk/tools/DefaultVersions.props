@@ -59,7 +59,7 @@
   <!--
     Disable features when building from source.
   -->
-  <PropertyGroup Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuildRepo)' == 'true'">
+  <PropertyGroup Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true'">
     <UsingToolPdbConverter>false</UsingToolPdbConverter>
     <UsingToolVSSDK>false</UsingToolVSSDK>
     <UsingToolIbcOptimization>false</UsingToolIbcOptimization>

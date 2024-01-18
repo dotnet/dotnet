@@ -75,7 +75,7 @@
       OutputReportFile="$(SourceBuildSelfPrebuiltReportDir)baseline-comparison.xml"
       ContinueOnError="$(ContinueOnPrebuiltBaselineError)"
       Condition="'$(DotNetBuildFromSourceFlavor)' != 'Product' and 
-        ('$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuildFromSourceOnly)' == 'true')" />
+        ('$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true')" />
   </Target>
 
   <!--
