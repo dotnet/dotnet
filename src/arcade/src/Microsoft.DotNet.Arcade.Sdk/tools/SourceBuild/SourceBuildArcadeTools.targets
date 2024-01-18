@@ -11,11 +11,18 @@
     <PackageReference Include="Microsoft.DotNet.SourceBuild.Tasks" Version="$(MicrosoftDotNetSourceBuildTasksVersion)" IsImplicitlyDefined="true" />
   </ItemGroup>
 
+  <!-- Because the condition here is rather complex, it should read as the following:
+      - Don't collect intermediates if running the product build
+      - Otherwise, collect if we're forcing it using SetUpSourceBuildIntermediateNupkgCache
+      - Otherwise, collect if:
+        - Building from source and we're in the inner build OR
+        - Building in DotNetBuild mode and we're in the inner repo and this is a source-only build -->
   <Target Name="CollectSourceBuildIntermediateNupkgDependencies"
           Condition="
             '$(DotNetBuildFromSourceFlavor)' != 'Product' and
-            (('$(ArcadeBuildFromSource)' == 'true' and ('$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildInnerRepo)' == 'true')) or
-              '$(SetUpSourceBuildIntermediateNupkgCache)' == 'true')"
+            ('$(SetUpSourceBuildIntermediateNupkgCache)' == 'true' or
+            ('$(ArcadeBuildFromSource)' == 'true' and '$(ArcadeInnerBuildFromSource)' == 'true') or
+            ('$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildFromSourceOnly)' == 'true'))"
           DependsOnTargets="GetSourceBuildIntermediateNupkgNameConvention"
           BeforeTargets="CollectPackageReferences">
     <ReadSourceBuildIntermediateNupkgDependencies
@@ -30,11 +37,19 @@
     </ItemGroup>
   </Target>
 
+  <!-- Because the condition here i rather complex, it should read as the following:
+       - Don't set up the intermediate cache if running the product build
+       - Otherwise, set it up if we're forcing it to be set up using SetUpSourceBuildIntermediateNupkgCache
+       - Otherwise, set it up if there are intermediate nupkg referencs AND
+         - If building from source and we're in the inner build OR
+         - If building in DotNetBuild mode and we're in the inner repo and this is a source-only build -->
   <Target Name="SetUpSourceBuildIntermediateNupkgCache"
           Condition="
             '$(DotNetBuildFromSourceFlavor)' != 'Product' and
-            (('$(ArcadeBuildFromSource)' == 'true' and ('$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildInnerRepo)' == 'true') and '@(SourceBuildIntermediateNupkgReference)' != '') or
-              '$(SetUpSourceBuildIntermediateNupkgCache)' == 'true')"
+            ('$(SetUpSourceBuildIntermediateNupkgCache)' == 'true' or
+              ('@(SourceBuildIntermediateNupkgReference)' != '' and
+                (('$(ArcadeBuildFromSource)' == 'true' and '$(ArcadeInnerBuildFromSource)' == 'true') or
+                 ('$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildFromSourceOnly)' == 'true'))))"
           AfterTargets="Restore">
     <ItemGroup>
       <IntermediateNupkgSourceDir Include="$([MSBuild]::NormalizeDirectory(

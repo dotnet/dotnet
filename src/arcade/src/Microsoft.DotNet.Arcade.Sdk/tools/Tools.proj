@@ -57,7 +57,10 @@
     <Exec Command='"$(DotNetTool)" tool restore' WorkingDirectory="$(RepoRoot)" />
   </Target>
 
-  <Import Project="SourceBuild/SourceBuildArcadeTools.targets" Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(ArcadeBuildVertical)' == 'true' or '$(SetUpSourceBuildIntermediateNupkgCache)' == 'true'" />
+  <Import Project="SourceBuild/SourceBuildArcadeTools.targets" Condition="'$(ArcadeBuildFromSource)' == 'true' or
+                                                                          '$(ArcadeBuildVertical)' == 'true' or
+                                                                          '$(DotNetBuildRepo)' == 'true' or
+                                                                          '$(SetUpSourceBuildIntermediateNupkgCache)' == 'true'" />
 
   <!-- Repository extensibility point -->
   <Import Project="$(RepositoryEngineeringDir)Tools.props" Condition="Exists('$(RepositoryEngineeringDir)Tools.props')" />

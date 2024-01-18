@@ -66,8 +66,7 @@
       <ContinueOnPrebuiltBaselineError Condition="'$(FailOnPrebuiltBaselineError)' != 'true'">true</ContinueOnPrebuiltBaselineError>
     </PropertyGroup>
 
-    <!-- Usage of prebuiltss against the baseline is not reported in vertical build modes,
-         as it is expected to be extensive. -->
+    <!-- Usage of prebuilts against the baseline is not reported outside of source-only builds. -->
     <ValidateUsageAgainstBaseline
       DataFile="$(PackageReportDataFile)"
       BaselineDataFile="$(PrebuiltBaselineDataFile)"
@@ -75,7 +74,8 @@
       OutputBaselineFile="$(SourceBuildSelfPrebuiltReportDir)generated-new-baseline.xml"
       OutputReportFile="$(SourceBuildSelfPrebuiltReportDir)baseline-comparison.xml"
       ContinueOnError="$(ContinueOnPrebuiltBaselineError)"
-      Condition="'$(DotNetBuildFromSourceFlavor)' != 'Product' and '$(ArcadeBuildVertical)' != 'true'" />
+      Condition="'$(DotNetBuildFromSourceFlavor)' != 'Product' and 
+        ('$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuildFromSourceOnly)' == 'true')" />
   </Target>
 
   <!--

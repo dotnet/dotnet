@@ -10,6 +10,9 @@
   Optional parameters:
     Configuration                   Build configuration: "Debug", "Release", etc.
 
+    DotNetBuildRepo                 Build the repo as part of the entire .NET stack.
+    DotNetBuildInnerRepo            Build the repo as part of the entire .NET stack. This switch is used on the inner repo invocation and should not be passed by the user.
+    DotNetBuildOrchestrator         Build the entire .NET stack.
     DotNetBuildFromSource           Building the entire stack from source with no external dependencies.
     DotNetBuildVertical             Building the entire stack in "Vertical" PoC mode. This is a superset of DotNetBuildFromSource.
     DotNetOutputBlobFeedDir         Directory to publish Source Build assets to (packages, symbol packages, installers, etc.).
@@ -47,9 +50,10 @@
     </ProjectToBuild>
   </ItemDefinitionGroup>
 
+  <Import Project="RepoDefaults.props"/>
   <Import Project="RepoLayout.props"/>
 
-  <Import Project="SourceBuild/SourceBuildArcadeBuild.targets" Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(ArcadeBuildVertical)' == 'true'" />
+  <Import Project="SourceBuild/SourceBuildArcadeBuild.targets" Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(ArcadeBuildVertical)' == 'true' or '$(DotNetBuildRepo)' == 'true'" />
 
   <!-- Allow for repo specific Build properties such as the list of Projects to build -->
   <Import Project="$(RepositoryEngineeringDir)Build.props" Condition="Exists('$(RepositoryEngineeringDir)Build.props')" />
@@ -298,7 +302,7 @@
     -->
     <MSBuild Projects="SourceBuild\AfterSourceBuild.proj"
              Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild"
-             Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(ArcadeBuildVertical)' == 'true'"/>
+             Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(ArcadeBuildVertical)' == 'true' or '$(DotNetBuildRepo)' == 'true'"/>
 
     <!--
       Publish artifacts.

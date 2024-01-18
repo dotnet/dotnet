@@ -19,6 +19,15 @@
     <ProjectReference Include="..\Microsoft.DotNet.VersionTools\lib\Microsoft.DotNet.VersionTools.csproj" />
   </ItemGroup>
 
+  <!-- Upgrade SymbolUploader's transitive NETStandard.Library dependency to avoid .NET Standard 1.x dependencies. -->
+  <ItemGroup>
+    <PackageReference Include="NETStandard.Library"
+                      IsImplicitlyDefined="false"
+                      PrivateAssets="all"
+                      ExcludeAssets="runtime"
+                      VersionOverride="2.0.3" />
+  </ItemGroup>
+
   <ItemGroup>
     <Content Include="TestInputs\**"
              CopyToOutputDirectory="Always" />

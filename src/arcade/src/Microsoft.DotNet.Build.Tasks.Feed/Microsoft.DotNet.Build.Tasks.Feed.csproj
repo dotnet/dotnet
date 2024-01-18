@@ -18,6 +18,15 @@
     <PackageReference Include="Microsoft.SymbolUploader" />
   </ItemGroup>
 
+  <!-- Upgrade SymbolUploader's transitive NETStandard.Library dependency to avoid .NET Standard 1.x dependencies. -->
+  <ItemGroup>
+    <PackageReference Include="NETStandard.Library"
+                      IsImplicitlyDefined="false"
+                      PrivateAssets="all"
+                      ExcludeAssets="runtime"
+                      VersionOverride="2.0.3" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
     <!-- Maestro.Client stopped supporting .NET 4.7.2 long ago.
          This functionality should eventually be moved into an arcade-services package,

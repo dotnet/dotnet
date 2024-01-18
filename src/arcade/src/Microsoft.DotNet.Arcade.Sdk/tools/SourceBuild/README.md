@@ -22,12 +22,12 @@ maintaining this functionality directly.
 The source-build targets work by having the build noop, and instead recursively
 call an inner build after some setup. The targets work roughly like this:
 
-* Run `./build.sh /p:ArcadeBuildFromSource=true`
-  * Run `dotnet msbuild ... Build.proj /p:ArcadeBuildFromSource=true`
+* Run `./build.sh /p:ArcadeBuildFromSource=true /p:DotNetBuildRepo=true`
+  * Run `dotnet msbuild ... Build.proj /p:ArcadeBuildFromSource=true /p:DotNetBuildRepo=true`
     * [Hook] Before **Outer Execute**:
       * Clone the source into `artifacts/sb/src`
       * Assemble a build command by appending to the `dotnet msbuild` call.
-      * Run `dotnet msbuild ... Build.proj /p:ArcadeBuildFromSource=true ... /p:ArcadeInnerBuildFromSource=true /p:DotNetBuildInnerRepo=true`
+      * Run `dotnet msbuild ... Build.proj /p:ArcadeBuildFromSource=true /p:DotNetBuildRepo=true ... /p:ArcadeInnerBuildFromSource=true /p:DotNetBuildInnerRepo=true`
         * [Hook] Before **Inner Execute**:
           * Compile source-build MSBuild tasks. (Temporary, should migrate to Arcade task DLL.)
         * During **Inner Execute**:
