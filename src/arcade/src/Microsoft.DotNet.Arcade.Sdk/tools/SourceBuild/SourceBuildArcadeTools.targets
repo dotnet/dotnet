@@ -22,7 +22,7 @@
             '$(DotNetBuildFromSourceFlavor)' != 'Product' and
             ('$(SetUpSourceBuildIntermediateNupkgCache)' == 'true' or
             ('$(ArcadeBuildFromSource)' == 'true' and '$(ArcadeInnerBuildFromSource)' == 'true') or
-            ('$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildFromSourceOnly)' == 'true'))"
+            ('$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildSourceOnly)' == 'true'))"
           DependsOnTargets="GetSourceBuildIntermediateNupkgNameConvention"
           BeforeTargets="CollectPackageReferences">
     <ReadSourceBuildIntermediateNupkgDependencies
@@ -49,7 +49,7 @@
             ('$(SetUpSourceBuildIntermediateNupkgCache)' == 'true' or
               ('@(SourceBuildIntermediateNupkgReference)' != '' and
                 (('$(ArcadeBuildFromSource)' == 'true' and '$(ArcadeInnerBuildFromSource)' == 'true') or
-                 ('$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildFromSourceOnly)' == 'true'))))"
+                 ('$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildSourceOnly)' == 'true'))))"
           AfterTargets="Restore">
     <ItemGroup>
       <IntermediateNupkgSourceDir Include="$([MSBuild]::NormalizeDirectory(
