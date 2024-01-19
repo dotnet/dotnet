@@ -133,10 +133,10 @@
       "commitSha": "493e89e2251674d974480b9523added944d45ed2"
     },
     {
-      "packageVersion": "2.1.0-beta.24058.1",
+      "packageVersion": "2.1.0-beta.24060.1",
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
-      "commitSha": "1194d0bd9b2a0257706a2635531948ceaa02e729"
+      "commitSha": "b264fbe4dfb1e665a49f052940697bd6dabd561f"
     },
     {
       "packageVersion": "9.0.100-alpha.24061.2",
