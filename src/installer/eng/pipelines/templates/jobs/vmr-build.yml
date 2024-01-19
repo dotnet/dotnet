@@ -228,8 +228,6 @@ jobs:
       customBuildArgs="--ci"
       if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
         customBuildArgs="$customBuildArgs --online"
-      else
-        customRunArgs="$customRunArgs --network none"
       fi
 
       if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
@@ -267,10 +265,16 @@ jobs:
 
       # Only use Docker stuff on Linux
       if [[ "$useDocker" == "true" ]]; then
+        customDockerRunArgs=""
         for envVar in $customEnvVars; do
-          customEnvVarsWithDockerSyntax="$customEnvVarsWithDockerSyntax -e $envVar"
+          customDockerRunArgs="$customDockerRunArgs -e $envVar"
         done
-        docker run --rm -v "$(sourcesPath):/vmr" -w /vmr $customEnvVarsWithDockerSyntax ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) $customBuildArgs $extraBuildProperties
+        
+        if [[ '${{ parameters.runOnline }}' == 'False' ]]; then
+          customDockerRunArgs="$customDockerRunArgs --network none"
+        fi
+
+        docker run --rm -v "$(sourcesPath):/vmr" -w /vmr $customDockerRunArgs ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) $customBuildArgs $extraBuildProperties
       else
         for envVar in $customEnvVars; do
           customEnvVarsWithBashSyntax="$customEnvVarsWithBashSyntax export $envVar;"
