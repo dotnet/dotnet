@@ -4,7 +4,6 @@
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
@@ -24,13 +23,11 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Cohost;
 internal sealed class CohostSemanticTokensRangeEndpoint(
     IRazorSemanticTokensInfoService semanticTokensInfoService,
     IClientSettingsManager clientSettingsManager,
-    IDocumentContextFactory documentContextFactory,
     IRazorLoggerFactory loggerFactory)
     : AbstractRazorCohostDocumentRequestHandler<SemanticTokensRangeParams, SemanticTokens?>, ICapabilitiesProvider
 {
     private readonly IRazorSemanticTokensInfoService _semanticTokensInfoService = semanticTokensInfoService;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
-    private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
     private readonly ILogger _logger = loggerFactory.CreateLogger<CohostSemanticTokensRangeEndpoint>();
 
     protected override bool MutatesSolutionState => false;
@@ -44,10 +41,9 @@ internal sealed class CohostSemanticTokensRangeEndpoint(
 
     protected override Task<SemanticTokens?> HandleRequestAsync(SemanticTokensRangeParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
     {
-        // TODO: Create document context from request.TextDocument, by looking at request.Solution instead of our project snapshots
-        var documentContext = _documentContextFactory.TryCreateForOpenDocument(request.TextDocument);
+        var documentContext = context.GetRequiredDocumentContext();
 
-        _logger.LogDebug("[Cohost] Received semantic range request for {requestPath} and got document {documentPath}", request.TextDocument.Uri, documentContext?.FilePath);
+        _logger.LogDebug("[Cohost] Received semantic range request for {requestPath} and got document {documentPath}", request.TextDocument.Uri, documentContext.FilePath);
 
         // TODO: We can't MEF import IRazorCohostClientLanguageServerManager in the constructor. We can make this work
         //       by having it implement a base class, RazorClientConnectionBase or something, that in turn implements
@@ -62,6 +58,6 @@ internal sealed class CohostSemanticTokensRangeEndpoint(
         //       we should create a hook into Roslyn's LSP options infra so we get the option values from the LSP client
         var colorBackground = _clientSettingsManager.GetClientSettings().AdvancedSettings.ColorBackground;
 
-        return _semanticTokensInfoService.GetSemanticTokensAsync(clientConnection, request.TextDocument, request.Range, documentContext.AssumeNotNull(), colorBackground, cancellationToken);
+        return _semanticTokensInfoService.GetSemanticTokensAsync(clientConnection, request.TextDocument, request.Range, documentContext, colorBackground, cancellationToken);
     }
 }

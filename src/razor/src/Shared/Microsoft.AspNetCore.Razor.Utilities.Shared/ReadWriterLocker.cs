@@ -13,17 +13,13 @@ internal class ReadWriterLocker
     // get another read lock on the same thread
     private readonly ReaderWriterLockSlim _lock = new(LockRecursionPolicy.SupportsRecursion);
 
+    public bool IsReadLockHeld => _lock.IsReadLockHeld;
+    public bool IsUpgradeableReadLockHeld => _lock.IsUpgradeableReadLockHeld;
+    public bool IsWriteLockHeld => _lock.IsWriteLockHeld;
+
     public ReadOnlyLock EnterReadLock() => new ReadOnlyLock(_lock);
     public WriteOnlyLock EnterWriteLock() => new WriteOnlyLock(_lock);
-    public UpgradeableReadLock EnterUpgradeAbleReadLock() => new UpgradeableReadLock(_lock);
-
-    public void EnsureNoWriteLock()
-    {
-        if (_lock.IsWriteLockHeld)
-        {
-            throw new InvalidOperationException("Expected no write lock to be held");
-        }
-    }
+    public UpgradeableReadLock EnterUpgradeableReadLock() => new UpgradeableReadLock(_lock);
 
     private static readonly TimeSpan s_maxTimeout = TimeSpan.FromMilliseconds(int.MaxValue);
     private static readonly TimeSpan s_timeout =

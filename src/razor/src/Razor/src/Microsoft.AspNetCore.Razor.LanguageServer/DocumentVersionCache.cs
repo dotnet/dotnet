@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -15,17 +16,60 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 //       but leaving this note here because you never know.
 [Export(typeof(IDocumentVersionCache)), Shared]
 [method: ImportingConstructor]
-internal sealed class DocumentVersionCache() : IDocumentVersionCache, IProjectSnapshotChangeTrigger
+internal sealed partial class DocumentVersionCache() : IDocumentVersionCache, IProjectSnapshotChangeTrigger
 {
     internal const int MaxDocumentTrackingCount = 20;
 
-    // Internal for testing
-    internal readonly Dictionary<string, List<DocumentEntry>> DocumentLookup_NeedsLock = new(FilePathComparer.Instance);
+    private readonly Dictionary<string, List<DocumentEntry>> _documentLookup_NeedsLock = new(FilePathComparer.Instance);
     private readonly ReadWriterLocker _lock = new();
     private ProjectSnapshotManagerBase? _projectSnapshotManager;
 
     private ProjectSnapshotManagerBase ProjectSnapshotManager
         => _projectSnapshotManager ?? throw new InvalidOperationException("ProjectSnapshotManager accessed before Initialized was called.");
+
+    public void Initialize(ProjectSnapshotManagerBase projectManager)
+    {
+        _projectSnapshotManager = projectManager;
+        ProjectSnapshotManager.Changed += ProjectSnapshotManager_Changed;
+    }
+
+    private void ProjectSnapshotManager_Changed(object? sender, ProjectChangeEventArgs args)
+    {
+        // Don't do any work if the solution is closing
+        if (args.SolutionIsClosing)
+        {
+            return;
+        }
+
+        if (args.Kind == ProjectChangeKind.DocumentChanged)
+        {
+            var documentFilePath = args.DocumentFilePath.AssumeNotNull();
+
+            using (_lock.EnterUpgradeableReadLock())
+            {
+                if (_documentLookup_NeedsLock.ContainsKey(documentFilePath) &&
+                    !ProjectSnapshotManager.IsDocumentOpen(documentFilePath))
+                {
+                    using (_lock.EnterWriteLock())
+                    {
+                        // Document closed, evict entry.
+                        _documentLookup_NeedsLock.Remove(documentFilePath);
+                    }
+                }
+            }
+        }
+
+        // Any event that has a project may have changed the state of the documents
+        // and therefore requires us to mark all existing documents as latest.
+        var project = ProjectSnapshotManager.GetLoadedProject(args.ProjectKey);
+        if (project is null)
+        {
+            // Project no longer loaded, so there's no work to do.
+            return;
+        }
+
+        CaptureProjectDocumentsAsLatest(project);
+    }
 
     public void TrackDocumentVersion(IDocumentSnapshot documentSnapshot, int version)
     {
@@ -34,20 +78,24 @@ internal sealed class DocumentVersionCache() : IDocumentVersionCache, IProjectSn
             throw new ArgumentNullException(nameof(documentSnapshot));
         }
 
-        using var upgradeableReadLock = _lock.EnterUpgradeAbleReadLock();
-        TrackDocumentVersion(documentSnapshot, version, upgradeableReadLock);
+        using (_lock.EnterUpgradeableReadLock())
+        {
+            TrackDocumentVersionCore(documentSnapshot, version);
+        }
     }
 
-    private void TrackDocumentVersion(IDocumentSnapshot documentSnapshot, int version, ReadWriterLocker.UpgradeableReadLock upgradeableReadLock)
+    private void TrackDocumentVersionCore(IDocumentSnapshot documentSnapshot, int version)
     {
+        Debug.Assert(_lock.IsUpgradeableReadLockHeld);
+
         // Need to ensure the write lock covers all uses of documentEntries, not just DocumentLookup
-        using (upgradeableReadLock.EnterWriteLock())
+        using (_lock.EnterWriteLock())
         {
             var key = documentSnapshot.FilePath.AssumeNotNull();
-            if (!DocumentLookup_NeedsLock.TryGetValue(key, out var documentEntries))
+            if (!_documentLookup_NeedsLock.TryGetValue(key, out var documentEntries))
             {
-                documentEntries = new List<DocumentEntry>();
-                DocumentLookup_NeedsLock[key] = documentEntries;
+                documentEntries = [];
+                _documentLookup_NeedsLock.Add(key, documentEntries);
             }
 
             if (documentEntries.Count == MaxDocumentTrackingCount)
@@ -64,6 +112,18 @@ internal sealed class DocumentVersionCache() : IDocumentVersionCache, IProjectSn
         }
     }
 
+    public int GetLatestDocumentVersion(string filePath)
+    {
+        using var _ = _lock.EnterReadLock();
+
+        if (!_documentLookup_NeedsLock.TryGetValue(filePath, out var documentEntries))
+        {
+            return -1;
+        }
+
+        return documentEntries[^1].Version;
+    }
+
     public bool TryGetDocumentVersion(IDocumentSnapshot documentSnapshot, [NotNullWhen(true)] out int? version)
     {
         if (documentSnapshot is null)
@@ -73,107 +133,49 @@ internal sealed class DocumentVersionCache() : IDocumentVersionCache, IProjectSn
 
         using var _ = _lock.EnterReadLock();
 
-        var key = documentSnapshot.FilePath.AssumeNotNull();
-        if (!DocumentLookup_NeedsLock.TryGetValue(key, out var documentEntries))
+        var filePath = documentSnapshot.FilePath.AssumeNotNull();
+        if (!_documentLookup_NeedsLock.TryGetValue(filePath, out var documentEntries))
         {
             version = null;
             return false;
         }
 
-        DocumentEntry? entry = null;
+        // We iterate backwards over the entries to prioritize newer entries.
         for (var i = documentEntries.Count - 1; i >= 0; i--)
         {
-            // We iterate backwards over the entries to prioritize newer entries.
             if (documentEntries[i].Document.TryGetTarget(out var document) &&
                 document == documentSnapshot)
             {
-                entry = documentEntries[i];
-                break;
+                version = documentEntries[i].Version;
+                return true;
             }
         }
 
-        if (entry is null)
-        {
-            version = null;
-            return false;
-        }
-
-        version = entry.Version;
-        return true;
+        version = null;
+        return false;
     }
 
-    public void Initialize(ProjectSnapshotManagerBase projectManager)
+    private void CaptureProjectDocumentsAsLatest(IProjectSnapshot projectSnapshot)
     {
-        if (projectManager is null)
-        {
-            throw new ArgumentNullException(nameof(projectManager));
-        }
+        Debug.Assert(!_lock.IsUpgradeableReadLockHeld);
 
-        _projectSnapshotManager = projectManager;
-        ProjectSnapshotManager.Changed += ProjectSnapshotManager_Changed;
-    }
+        using var _ = _lock.EnterUpgradeableReadLock();
 
-    private void ProjectSnapshotManager_Changed(object? sender, ProjectChangeEventArgs args)
-    {
-        // Don't do any work if the solution is closing
-        if (args.SolutionIsClosing)
-        {
-            return;
-        }
-
-        var upgradeableLock = _lock.EnterUpgradeAbleReadLock();
-
-        switch (args.Kind)
-        {
-            case ProjectChangeKind.DocumentChanged:
-                var documentFilePath = args.DocumentFilePath!;
-                if (DocumentLookup_NeedsLock.ContainsKey(documentFilePath) &&
-                    !ProjectSnapshotManager.IsDocumentOpen(documentFilePath))
-                {
-                    using (upgradeableLock.EnterWriteLock())
-                    {
-                        // Document closed, evict entry.
-                        DocumentLookup_NeedsLock.Remove(documentFilePath);
-                    }
-                }
-
-                break;
-        }
-
-        // Any event that has a project may have changed the state of the documents
-        // and therefore requires us to mark all existing documents as latest.
-        var project = ProjectSnapshotManager.GetLoadedProject(args.ProjectKey);
-        if (project is null)
-        {
-            // Project no longer loaded, wait for document removed event.
-            return;
-        }
-
-        CaptureProjectDocumentsAsLatest(project, upgradeableLock);
-    }
-
-    // Internal for testing
-    internal void MarkAsLatestVersion(IDocumentSnapshot document)
-    {
-        using var upgradeableLock = _lock.EnterUpgradeAbleReadLock();
-        MarkAsLatestVersion(document, upgradeableLock);
-    }
-
-    private void CaptureProjectDocumentsAsLatest(IProjectSnapshot projectSnapshot, ReadWriterLocker.UpgradeableReadLock upgradeableReadLock)
-    {
         foreach (var documentPath in projectSnapshot.DocumentFilePaths)
         {
-            if (DocumentLookup_NeedsLock.ContainsKey(documentPath) &&
+            if (_documentLookup_NeedsLock.ContainsKey(documentPath) &&
                 projectSnapshot.GetDocument(documentPath) is { } document)
             {
-                MarkAsLatestVersion(document, upgradeableReadLock);
+                MarkAsLatestVersion(document);
             }
         }
     }
 
-    private void MarkAsLatestVersion(IDocumentSnapshot document, ReadWriterLocker.UpgradeableReadLock upgradeableReadLock)
+    private void MarkAsLatestVersion(IDocumentSnapshot document)
     {
-        if (!DocumentLookup_NeedsLock.TryGetValue(document.FilePath.AssumeNotNull(), out var documentEntries))
+        Debug.Assert(_lock.IsUpgradeableReadLockHeld);
+
+        if (!_documentLookup_NeedsLock.TryGetValue(document.FilePath.AssumeNotNull(), out var documentEntries))
         {
             return;
         }
@@ -181,19 +183,6 @@ internal sealed class DocumentVersionCache() : IDocumentVersionCache, IProjectSn
         var latestEntry = documentEntries[^1];
 
         // Update our internal tracking state to track the changed document as the latest document.
-        TrackDocumentVersion(document, latestEntry.Version, upgradeableReadLock);
-    }
-
-    internal class DocumentEntry
-    {
-        public DocumentEntry(IDocumentSnapshot document, int version)
-        {
-            Document = new WeakReference<IDocumentSnapshot>(document);
-            Version = version;
-        }
-
-        public WeakReference<IDocumentSnapshot> Document { get; }
-
-        public int Version { get; }
+        TrackDocumentVersionCore(document, latestEntry.Version);
     }
 }

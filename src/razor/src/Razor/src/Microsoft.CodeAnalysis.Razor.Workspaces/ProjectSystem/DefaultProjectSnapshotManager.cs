@@ -432,7 +432,7 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
         [NotNullWhen(true)] out IProjectSnapshot? oldSnapshot,
         [NotNullWhen(true)] out IProjectSnapshot? newSnapshot)
     {
-        using var upgradeableLock = _rwLocker.EnterUpgradeAbleReadLock();
+        using var upgradeableLock = _rwLocker.EnterUpgradeableReadLock();
 
         if (action is ProjectAddedAction projectAddedAction)
         {

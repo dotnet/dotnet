@@ -12,20 +12,10 @@ using Microsoft.VisualStudio.Shell.Interop;
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
 [Export(typeof(IErrorReporter))]
-internal class VisualStudioErrorReporter : IErrorReporter
+[method: ImportingConstructor]
+internal class VisualStudioErrorReporter(SVsServiceProvider serviceProvider) : IErrorReporter
 {
-    private readonly SVsServiceProvider _services;
-
-    [ImportingConstructor]
-    public VisualStudioErrorReporter(SVsServiceProvider services)
-    {
-        if (services is null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
-        _services = services;
-    }
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     public void ReportError(Exception exception)
     {
@@ -73,6 +63,6 @@ internal class VisualStudioErrorReporter : IErrorReporter
 
     private IVsActivityLog? GetActivityLog()
     {
-        return _services.GetService(typeof(SVsActivityLog)) as IVsActivityLog;
+        return _serviceProvider.GetService(typeof(SVsActivityLog)) as IVsActivityLog;
     }
 }

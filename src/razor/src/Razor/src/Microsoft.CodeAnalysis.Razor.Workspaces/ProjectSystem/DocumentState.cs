@@ -82,7 +82,7 @@ internal class DocumentState
 
     public ImmutableArray<IDocumentSnapshot> GetImports(ProjectSnapshot project)
     {
-        return GetImportsCore(project);
+        return GetImportsCore(project, HostDocument.FilePath, HostDocument.FileKind);
     }
 
     public async Task<SourceText> GetTextAsync()
@@ -226,10 +226,11 @@ internal class DocumentState
         return new DocumentState(HostDocument, null, null, loader);
     }
 
-    private ImmutableArray<IDocumentSnapshot> GetImportsCore(ProjectSnapshot project)
+    // Internal, because we are temporarily sharing code with CohostDocumentSnapshot
+    internal static ImmutableArray<IDocumentSnapshot> GetImportsCore(IProjectSnapshot project, string filePath, string fileKind)
     {
         var projectEngine = project.GetProjectEngine();
-        var projectItem = projectEngine.FileSystem.GetItem(HostDocument.FilePath, HostDocument.FileKind);
+        var projectItem = projectEngine.FileSystem.GetItem(filePath, fileKind);
 
         using var _1 = ListPool<RazorProjectItem>.GetPooledObject(out var importItems);
 
@@ -265,8 +266,8 @@ internal class DocumentState
         return imports.ToImmutable();
     }
 
-    // See design notes on ProjectState.ComputedStateTracker.
-    private class ComputedStateTracker
+    // Internal, because we are temporarily sharing code with CohostDocumentSnapshot
+    internal class ComputedStateTracker
     {
         private readonly object _lock;
 
@@ -471,6 +472,12 @@ internal class DocumentState
                 }
             }
 
+            var codeDocument = await GenerateCodeDocumentAsync(project, document, imports).ConfigureAwait(false);
+            return (codeDocument, inputVersion);
+        }
+
+        internal static async Task<RazorCodeDocument> GenerateCodeDocumentAsync(IProjectSnapshot project, IDocumentSnapshot document, ImmutableArray<ImportItem> imports)
+        {
             // OK we have to generate the code.
             using var importSources = new PooledArrayBuilder<RazorSourceDocument>(imports.Length);
             var projectEngine = project.GetProjectEngine();
@@ -484,8 +491,7 @@ internal class DocumentState
             var projectItem = document.FilePath is null ? null : projectEngine.FileSystem.GetItem(document.FilePath, document.FileKind);
             var documentSource = await GetRazorSourceDocumentAsync(document, projectItem).ConfigureAwait(false);
 
-            var codeDocument = projectEngine.ProcessDesignTime(documentSource, fileKind: document.FileKind, importSources.DrainToImmutable(), project.TagHelpers);
-            return (codeDocument, inputVersion);
+            return projectEngine.ProcessDesignTime(documentSource, fileKind: document.FileKind, importSources.DrainToImmutable(), project.TagHelpers);
         }
 
         private static async Task<RazorSourceDocument> GetRazorSourceDocumentAsync(IDocumentSnapshot document, RazorProjectItem? projectItem)
@@ -494,7 +500,7 @@ internal class DocumentState
             return RazorSourceDocument.Create(sourceText, RazorSourceDocumentProperties.Create(document.FilePath, projectItem?.RelativePhysicalPath));
         }
 
-        private static async Task<ImmutableArray<ImportItem>> GetImportsAsync(IDocumentSnapshot document)
+        internal static async Task<ImmutableArray<ImportItem>> GetImportsAsync(IDocumentSnapshot document)
         {
             var imports = document.GetImports();
             using var result = new PooledArrayBuilder<ImportItem>(imports.Length);
@@ -508,7 +514,7 @@ internal class DocumentState
             return result.DrainToImmutable();
         }
 
-        private record struct ImportItem(string? FilePath, VersionStamp Version, IDocumentSnapshot Document)
+        internal record struct ImportItem(string? FilePath, VersionStamp Version, IDocumentSnapshot Document)
         {
             public readonly string? FileKind => Document.FileKind;
         }

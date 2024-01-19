@@ -61,16 +61,16 @@ internal class SnippetService
         _serviceProvider = serviceProvider;
         _snippetCache = snippetCache;
         _advancedSettingsStorage = advancedSettingsStorage;
-        _advancedSettingsStorage.Changed += (s, e) =>
-        {
-            _joinableTaskFactory.RunAsync(PopulateAsync).FileAndForget("SnippetService_Populate");
-        };
-
         _joinableTaskFactory.RunAsync(InitializeAsync).FileAndForget("SnippetService_Initialize");
     }
 
     private async Task InitializeAsync()
     {
+        await _advancedSettingsStorage.OnChangedAsync(_ =>
+        {
+            PopulateAsync().FileAndForget("SnippetService_Populate");
+        }).ConfigureAwait(false);
+
         await _joinableTaskFactory.SwitchToMainThreadAsync();
         var textManager = (IVsTextManager2?)await _serviceProvider.GetServiceAsync(typeof(SVsTextManager)).ConfigureAwait(true);
         if (textManager is null)

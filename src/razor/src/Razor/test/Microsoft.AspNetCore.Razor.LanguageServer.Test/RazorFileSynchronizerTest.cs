@@ -18,7 +18,7 @@ public class RazorFileSynchronizerTest(ITestOutputHelper testOutput) : LanguageS
     {
         // Arrange
         var filePath = "/path/to/file.razor";
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         projectService.Setup(service => service.AddDocument(filePath)).Verifiable();
         var synchronizer = new RazorFileSynchronizer(Dispatcher, projectService.Object);
 
@@ -35,7 +35,7 @@ public class RazorFileSynchronizerTest(ITestOutputHelper testOutput) : LanguageS
     {
         // Arrange
         var filePath = "/path/to/file.cshtml";
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         projectService.Setup(service => service.AddDocument(filePath)).Verifiable();
         var synchronizer = new RazorFileSynchronizer(Dispatcher, projectService.Object);
 
@@ -52,7 +52,7 @@ public class RazorFileSynchronizerTest(ITestOutputHelper testOutput) : LanguageS
     {
         // Arrange
         var filePath = "/path/to/file.razor";
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         projectService.Setup(service => service.RemoveDocument(filePath)).Verifiable();
         var synchronizer = new RazorFileSynchronizer(Dispatcher, projectService.Object);
 
@@ -69,7 +69,7 @@ public class RazorFileSynchronizerTest(ITestOutputHelper testOutput) : LanguageS
     {
         // Arrange
         var filePath = "/path/to/file.cshtml";
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         projectService.Setup(service => service.RemoveDocument(filePath)).Verifiable();
         var synchronizer = new RazorFileSynchronizer(Dispatcher, projectService.Object);
 

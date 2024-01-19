@@ -10,26 +10,20 @@ using Microsoft.Extensions.Options;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class DefaultProjectSnapshotManagerAccessor : ProjectSnapshotManagerAccessor, IDisposable
+internal class DefaultProjectSnapshotManagerAccessor(
+    IEnumerable<IProjectSnapshotChangeTrigger> changeTriggers,
+    IOptionsMonitor<RazorLSPOptions> optionsMonitor,
+    AdhocWorkspaceFactory workspaceFactory,
+    ProjectSnapshotManagerDispatcher dispatcher,
+    IErrorReporter errorReporter) : ProjectSnapshotManagerAccessor, IDisposable
 {
-    private readonly IEnumerable<IProjectSnapshotChangeTrigger> _changeTriggers;
-    private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
-    private readonly AdhocWorkspaceFactory _workspaceFactory;
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
+    private readonly IEnumerable<IProjectSnapshotChangeTrigger> _changeTriggers = changeTriggers;
+    private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor = optionsMonitor;
+    private readonly AdhocWorkspaceFactory _workspaceFactory = workspaceFactory;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
+    private readonly IErrorReporter _errorReporter = errorReporter;
     private ProjectSnapshotManagerBase? _instance;
     private bool _disposed;
-
-    public DefaultProjectSnapshotManagerAccessor(
-        IEnumerable<IProjectSnapshotChangeTrigger> changeTriggers,
-        IOptionsMonitor<RazorLSPOptions> optionsMonitor,
-        AdhocWorkspaceFactory workspaceFactory,
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher)
-    {
-        _changeTriggers = changeTriggers ?? throw new ArgumentNullException(nameof(changeTriggers));
-        _optionsMonitor = optionsMonitor ?? throw new ArgumentNullException(nameof(optionsMonitor));
-        _workspaceFactory = workspaceFactory ?? throw new ArgumentNullException(nameof(workspaceFactory));
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-    }
 
     public override ProjectSnapshotManagerBase Instance
     {
@@ -43,10 +37,10 @@ internal class DefaultProjectSnapshotManagerAccessor : ProjectSnapshotManagerAcc
                         new RemoteProjectSnapshotProjectEngineFactory(_optionsMonitor)
                     });
                 _instance = new DefaultProjectSnapshotManager(
-                    ErrorReporter.Instance,
+                    _errorReporter,
                     _changeTriggers,
                     workspace,
-                    _projectSnapshotManagerDispatcher);
+                    _dispatcher);
             }
 
             return _instance;

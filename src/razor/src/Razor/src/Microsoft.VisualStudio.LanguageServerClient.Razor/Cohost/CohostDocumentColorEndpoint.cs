@@ -21,12 +21,10 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Cohost;
 [method: ImportingConstructor]
 internal sealed class CohostDocumentColorEndpoint(
     IDocumentColorService documentColorService,
-    IDocumentContextFactory documentContextFactory,
     IRazorLoggerFactory loggerFactory)
     : AbstractRazorCohostDocumentRequestHandler<DocumentColorParams, ColorInformation[]>, ICapabilitiesProvider
 {
     private readonly IDocumentColorService _documentColorService = documentColorService;
-    private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
     private readonly ILogger _logger = loggerFactory.CreateLogger<CohostDocumentColorEndpoint>();
 
     protected override bool MutatesSolutionState => false;
@@ -41,7 +39,7 @@ internal sealed class CohostDocumentColorEndpoint(
     protected override Task<ColorInformation[]> HandleRequestAsync(DocumentColorParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
     {
         // TODO: Create document context from request.TextDocument, by looking at request.Solution instead of our project snapshots
-        var documentContext = _documentContextFactory.TryCreateForOpenDocument(request.TextDocument);
+        var documentContext = context.GetRequiredDocumentContext();
 
         _logger.LogDebug("[Cohost] Received document color request for {requestPath} and got document {documentPath}", request.TextDocument.Uri, documentContext?.FilePath);
 

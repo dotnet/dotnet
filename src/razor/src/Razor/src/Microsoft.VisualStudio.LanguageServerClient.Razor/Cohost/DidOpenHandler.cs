@@ -17,11 +17,11 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Cohost;
 [method: ImportingConstructor]
 internal class DidOpenHandler(
     ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-    RazorProjectService razorProjectService,
+    IRazorProjectService razorProjectService,
     OpenDocumentGenerator openDocumentGenerator) : IRazorCohostDidOpenHandler
 {
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
-    private readonly RazorProjectService _razorProjectService = razorProjectService;
+    private readonly IRazorProjectService _razorProjectService = razorProjectService;
     private readonly OpenDocumentGenerator _openDocumentGenerator = openDocumentGenerator;
 
     public async Task HandleAsync(Uri uri, int version, SourceText sourceText, CancellationToken cancellationToken)

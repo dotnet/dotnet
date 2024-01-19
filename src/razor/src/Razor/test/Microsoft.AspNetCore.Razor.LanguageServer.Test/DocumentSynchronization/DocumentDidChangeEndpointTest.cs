@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 
 public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    private readonly RazorProjectService _projectService = Mock.Of<RazorProjectService>(MockBehavior.Strict);
+    private readonly IRazorProjectService _projectService = Mock.Of<IRazorProjectService>(MockBehavior.Strict);
 
     [Fact]
     public void ApplyContentChanges_SingleChange()
@@ -107,7 +107,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
         var sourceText = "<p>";
         var codeDocument = CreateCodeDocument(sourceText);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         projectService.Setup(service => service.UpdateDocument(It.IsAny<string>(), It.IsAny<SourceText>(), It.IsAny<int>()))
             .Callback<string, SourceText, int>((path, text, version) =>
             {

@@ -20,7 +20,7 @@ public class DocumentDidCloseEndpointTest(ITestOutputHelper testOutput) : Langua
     {
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         projectService.Setup(service => service.CloseDocument(It.IsAny<string>()))
             .Callback<string>((path) => Assert.Equal(documentPath, path));
         var endpoint = new DocumentDidCloseEndpoint(Dispatcher, projectService.Object);

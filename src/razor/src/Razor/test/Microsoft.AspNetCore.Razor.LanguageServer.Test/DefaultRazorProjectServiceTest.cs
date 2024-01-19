@@ -1243,7 +1243,7 @@ public class DefaultRazorProjectServiceTest(ITestOutputHelper testOutput) : Lang
             document => Assert.Equal(documentFilePath2, document.FilePath));
     }
 
-    private DefaultRazorProjectService CreateProjectService(
+    private RazorProjectService CreateProjectService(
         ISnapshotResolver snapshotResolver,
         ProjectSnapshotManagerBase projectSnapshotManager,
         IDocumentVersionCache documentVersionCache = null)
@@ -1262,7 +1262,7 @@ public class DefaultRazorProjectServiceTest(ITestOutputHelper testOutput) : Lang
         }
 
         var remoteTextLoaderFactory = Mock.Of<RemoteTextLoaderFactory>(factory => factory.Create(It.IsAny<string>()) == Mock.Of<TextLoader>(MockBehavior.Strict), MockBehavior.Strict);
-        var projectService = new DefaultRazorProjectService(
+        var projectService = new RazorProjectService(
             Dispatcher,
             remoteTextLoaderFactory,
             snapshotResolver,

@@ -2,12 +2,11 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-internal interface IErrorReporter : IWorkspaceService
+internal interface IErrorReporter
 {
     void ReportError(Exception exception);
     void ReportError(Exception exception, IProjectSnapshot? project);

@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Editor;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
@@ -23,7 +24,7 @@ internal interface IAdvancedSettingsStorage : IDisposable
 {
     ClientAdvancedSettings GetAdvancedSettings();
 
-    event EventHandler<ClientAdvancedSettingsChangedEventArgs>? Changed;
+    Task OnChangedAsync(Action<ClientAdvancedSettings> changed);
 }
 
 internal class ClientAdvancedSettingsChangedEventArgs(ClientAdvancedSettings advancedSettings) : EventArgs

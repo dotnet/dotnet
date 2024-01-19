@@ -77,6 +77,12 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
             Assert.Fail($"Missing Lines: {missingSpanText}Actual Lines: {linesText}");
         }
 
+        Assert.All(outlines, o =>
+        {
+            Assert.Equal("...", o.CollapsedForm);
+            Assert.True(o.IsCollapsible);
+        });
+
         Assert.Empty(missingLines);
 
         static (ImmutableArray<CollapsibleBlock> missingSpans, ImmutableArray<CollapsibleBlock> extraSpans) GetOutlineDiff(ICollapsible[] outlines, ImmutableArray<Span> foldableSpans, ITextView textView)
@@ -129,21 +135,23 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
         await TestServices.SolutionExplorer.AddFileAsync(
             RazorProjectConstants.BlazorProjectName,
             "Test.razor",
-            @"
-@page ""/Test""
+            """
 
-<PageTitle>Test</PageTitle>
+            @page "/Test"
 
-<h1>Test</h1>
+            <PageTitle>Test</PageTitle>
 
-@code {
-    private int currentCount = 0;
+            <h1>Test</h1>
 
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
-}",
+            @code {
+                private int currentCount = 0;
+
+                private void IncrementCount()
+                {
+                    currentCount++;
+                }
+            }
+            """,
             open: true,
             ControlledHangMitigatingCancellationToken);
 
@@ -152,18 +160,22 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
         TestServices.Input.Send("{ENTER}");
 
         await AssertFoldableBlocksAsync(
-@"@code {
-    private int currentCount = 0;
+            """
+            @code {
+                private int currentCount = 0;
 
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
-}",
-@"private void IncrementCount()
-    {
-        currentCount++;
-    }");
+                private void IncrementCount()
+                {
+                    currentCount++;
+                }
+            }
+            """,
+            """
+            private void IncrementCount()
+                {
+                    currentCount++;
+                }
+            """);
     }
 
     [IdeFact]
@@ -172,25 +184,27 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
         await TestServices.SolutionExplorer.AddFileAsync(
             RazorProjectConstants.BlazorProjectName,
             "Test.razor",
-            @"
-@page ""/Test""
+            """
 
-<PageTitle>Test</PageTitle>
+            @page "/Test"
 
-<h1>Test</h1>
+            <PageTitle>Test</PageTitle>
 
-@if(true)
-{
-    if (true)
-    {
-        M();
-    }
-}
+            <h1>Test</h1>
 
-@code {
-    string M() => ""M"";
-}
-",
+            @if(true)
+            {
+                if (true)
+                {
+                    M();
+                }
+            }
+
+            @code {
+                string M() => "M";
+            }
+
+            """,
             open: true,
             ControlledHangMitigatingCancellationToken);
 
@@ -199,20 +213,26 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
         TestServices.Input.Send("{ENTER}");
 
         await AssertFoldableBlocksAsync(
-@"@if(true)
-{
-    if (true)
-    {
-        M();
-    }
-}",
-@"if (true)
-    {
-        M();
-    }",
-@"@code {
-    string M() => ""M"";
-}");
+            """
+            @if(true)
+            {
+                if (true)
+                {
+                    M();
+                }
+            }
+            """,
+            """
+            if (true)
+                {
+                    M();
+                }
+            """,
+            """
+            @code {
+                string M() => "M";
+            }
+            """);
     }
 
     [IdeFact]
@@ -221,22 +241,24 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
         await TestServices.SolutionExplorer.AddFileAsync(
             RazorProjectConstants.BlazorProjectName,
             "Test.razor",
-            @"
-@page ""/Test""
+            """
 
-<PageTitle>Test</PageTitle>
+            @page "/Test"
 
-<h1>Test</h1>
+            <PageTitle>Test</PageTitle>
 
-@foreach (var s in GetStuff())
-{
-    <h2>s</h2>
-}
+            <h1>Test</h1>
 
-@code {
-    string[] GetStuff() => new string[0];
-}
-",
+            @foreach (var s in GetStuff())
+            {
+                <h2>s</h2>
+            }
+
+            @code {
+                string[] GetStuff() => new string[0];
+            }
+
+            """,
             open: true,
             ControlledHangMitigatingCancellationToken);
 
@@ -245,13 +267,17 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
         TestServices.Input.Send("{ENTER}");
 
         await AssertFoldableBlocksAsync(
-@"@foreach (var s in GetStuff())
-{
-    <h2>s</h2>
-}",
-@"@code {
-    string[] GetStuff() => new string[0];
-}");
+            """
+            @foreach (var s in GetStuff())
+            {
+                <h2>s</h2>
+            }
+            """,
+            """
+            @code {
+                string[] GetStuff() => new string[0];
+            }
+            """);
     }
 
     [IdeFact]
@@ -260,20 +286,22 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
         await TestServices.SolutionExplorer.AddFileAsync(
             RazorProjectConstants.BlazorProjectName,
             "Test.razor",
-            @"
-@page ""/Test""
+            """
 
-<PageTitle>Test</PageTitle>
+            @page "/Test"
 
-<h1>Test</h1>
+            <PageTitle>Test</PageTitle>
 
-@code {
-    #region Methods
-    void M1() { }
-    void M2() { }
-    #endregion
-}
-",
+            <h1>Test</h1>
+
+            @code {
+                #region Methods
+                void M1() { }
+                void M2() { }
+                #endregion
+            }
+
+            """,
             open: true,
             ControlledHangMitigatingCancellationToken);
 
@@ -282,15 +310,50 @@ public class CodeFoldingTests(ITestOutputHelper testOutputHelper) : AbstractRazo
         TestServices.Input.Send("{ENTER}");
 
         await AssertFoldableBlocksAsync(
-@"#region Methods
-    void M1() { }
-    void M2() { }
-    #endregion",
-@"@code {
-    #region Methods
-    void M1() { }
-    void M2() { }
-    #endregion
-}");
+            """
+            #region Methods
+                void M1() { }
+                void M2() { }
+                #endregion
+            """,
+            """
+            @code {
+                #region Methods
+                void M1() { }
+                void M2() { }
+                #endregion
+            }
+            """);
+    }
+
+    [IdeFact]
+    public async Task CodeFolding_Div()
+    {
+        await TestServices.SolutionExplorer.AddFileAsync(
+            RazorProjectConstants.BlazorProjectName,
+            "Test.razor",
+            """
+            @page "/Test"
+
+            <PageTitle>Test</PageTitle>
+
+            <div>
+                <h1>Test</h1>
+            </div>
+
+            """,
+            open: true,
+            ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        TestServices.Input.Send("{ENTER}");
+
+        await AssertFoldableBlocksAsync(
+            """
+            <div>
+                <h1>Test</h1>
+            </div>
+            """);
     }
 }
