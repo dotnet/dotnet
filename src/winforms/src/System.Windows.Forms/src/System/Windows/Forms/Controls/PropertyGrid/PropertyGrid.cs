@@ -2365,7 +2365,7 @@ public partial class PropertyGrid : ContainerControl, IComPropertyBrowser, IProp
 
             // This is so changes to names of native objects will be reflected in the combo box.
             object obj = GetUnwrappedObject(0);
-            if (ComNativeDescriptor.IsNameDispId(obj, dispID) || dispID == PInvoke.DISPID_Name)
+            if (ComNativeDescriptor.IsNameDispId(obj, dispID) || dispID == PInvokeCore.DISPID_Name)
             {
                 OnComComponentNameChanged(new ComponentRenameEventArgs(obj, null, TypeDescriptor.GetClassName(obj)));
             }
@@ -3564,7 +3564,7 @@ public partial class PropertyGrid : ContainerControl, IComPropertyBrowser, IProp
         int tabIndex = -1;
         for (int i = 0; i < _tabs.Count; i++)
         {
-            if (tabType == _tabs[i].GetType())
+            if (tabType == _tabs[i].Tab.GetType())
             {
                 tabIndex = i;
                 break;

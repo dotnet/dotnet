@@ -2,9 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Drawing.Drawing2D;
-using System.Runtime.InteropServices;
 using Gdip = System.Drawing.SafeNativeMethods.Gdip;
-using static Interop;
 
 namespace System.Drawing;
 
@@ -28,7 +26,8 @@ public unsafe sealed class Region : MarshalByRefObject, IDisposable, IPointer<Gp
     public Region(RectangleF rect)
     {
         GpRegion* region = default;
-        CheckStatus(PInvoke.GdipCreateRegionRect(rect, ref region));
+        RectF rectF = rect;
+        CheckStatus(PInvoke.GdipCreateRegionRect(&rectF, &region));
         SetNativeRegion(region);
     }
 
@@ -90,7 +89,8 @@ public unsafe sealed class Region : MarshalByRefObject, IDisposable, IPointer<Gp
             throw new ArgumentNullException(nameof(regionHandle));
         }
 
-        Gdi32.DeleteObject(new HandleRef(this, regionHandle));
+        PInvokeCore.DeleteObject((HRGN)regionHandle);
+        GC.KeepAlive(this);
     }
 
     public void Dispose()
@@ -256,7 +256,7 @@ public unsafe sealed class Region : MarshalByRefObject, IDisposable, IPointer<Gp
     {
         ArgumentNullException.ThrowIfNull(g);
         HRGN hrgn;
-        CheckStatus(PInvoke.GdipGetRegionHRgn(NativeRegion, g.NativeGraphics, &hrgn));
+        CheckStatus(PInvokeCore.GdipGetRegionHRgn(NativeRegion, g.NativeGraphics, &hrgn));
         GC.KeepAlive(g);
         return hrgn;
     }
@@ -274,7 +274,7 @@ public unsafe sealed class Region : MarshalByRefObject, IDisposable, IPointer<Gp
     {
         ArgumentNullException.ThrowIfNull(g);
         BOOL isInfinite;
-        CheckStatus(PInvoke.GdipIsInfiniteRegion(NativeRegion, g.NativeGraphics, &isInfinite));
+        CheckStatus(PInvokeCore.GdipIsInfiniteRegion(NativeRegion, g.NativeGraphics, &isInfinite));
         return isInfinite;
     }
 

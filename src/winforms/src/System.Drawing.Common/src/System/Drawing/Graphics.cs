@@ -8,18 +8,15 @@ using System.Drawing.Text;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-#if NET7_0_OR_GREATER
 using System.Runtime.InteropServices.Marshalling;
-#endif
 using Gdip = System.Drawing.SafeNativeMethods.Gdip;
-using static Interop;
 
 namespace System.Drawing;
 
 /// <summary>
 ///  Encapsulates a GDI+ drawing surface.
 /// </summary>
-public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceContext, IPointer<GpGraphics>
+public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceContext, IGraphics
 {
 #if FINALIZATION_WATCH
     static readonly TraceSwitch GraphicsFinalization = new("GraphicsFinalization", "Tracks the creation and destruction of finalization");
@@ -48,7 +45,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
     private object? _printingHelper;
 
     // GDI+'s preferred HPALETTE.
-    private static IntPtr s_halftonePalette;
+    private static HPALETTE s_halftonePalette;
 
     // pointer back to the Image backing a specific graphic object
     private Image? _backingImage;
@@ -166,7 +163,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
     public static Graphics FromHwndInternal(IntPtr hwnd)
     {
         GpGraphics* nativeGraphics;
-        Gdip.CheckStatus(PInvoke.GdipCreateFromHWND((HWND)hwnd, &nativeGraphics));
+        Gdip.CheckStatus(PInvokeCore.GdipCreateFromHWND((HWND)hwnd, &nativeGraphics));
         return new Graphics(nativeGraphics);
     }
 
@@ -238,7 +235,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
 #if DEBUG
                 Status status = !Gdip.Initialized ? Status.Ok :
 #endif
-                PInvoke.GdipDeleteGraphics(NativeGraphics);
+                PInvokeCore.GdipDeleteGraphics(NativeGraphics);
 
 #if DEBUG
                 Debug.Assert(status == Status.Ok, $"GDI+ returned an error status: {status}");
@@ -551,6 +548,8 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
             }
         }
     }
+
+    HDC IHdcContext.GetHdc() => (HDC)GetHdc();
 
     public IntPtr GetHdc()
     {
@@ -2426,7 +2425,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
             BOOL isInfinite;
             PInvoke.GdipGetClip(NativeGraphics, regionHandle);
 
-            CheckStatus(PInvoke.GdipIsInfiniteRegion(
+            CheckStatus(PInvokeCore.GdipIsInfiniteRegion(
                 regionHandle,
                 NativeGraphics,
                 &isInfinite));
@@ -2459,7 +2458,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
         get => _printingHelper;
         set
         {
-            Debug.Assert(_printingHelper is null, "WARNING: Overwritting the printing helper reference!");
+            Debug.Assert(_printingHelper is null, "WARNING: Overwriting the printing helper reference!");
             _printingHelper = value;
         }
     }
@@ -2505,11 +2504,10 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
             throw new Win32Exception(6);
         }
 
-        nint targetDC = 0;
+        HDC targetDC = (HDC)GetHdc();
         try
         {
-            targetDC = GetHdc();
-            int result = Gdi32.BitBlt(
+            BOOL result = PInvokeCore.BitBlt(
                 targetDC,
                 destinationX,
                 destinationY,
@@ -2518,16 +2516,16 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
                 screenDC,
                 sourceX,
                 sourceY,
-                (Gdi32.RasterOp)copyPixelOperation);
+                (ROP_CODE)copyPixelOperation);
 
-            if (result == 0)
+            if (!result)
             {
                 throw new Win32Exception();
             }
         }
         finally
         {
-            if (targetDC != 0)
+            if (!targetDC.IsNull)
             {
                 ReleaseHdc();
             }
@@ -2693,7 +2691,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
     {
         CheckStatus(Gdip.GdipEnumerateMetafileDestPoint(
             new HandleRef(this, (nint)NativeGraphics),
-            new HandleRef(metafile, metafile?._nativeImage ?? IntPtr.Zero),
+            new HandleRef(metafile, metafile is null ? 0 : (nint)metafile._nativeImage),
             ref destPoint,
             callback,
             callbackData,
@@ -2709,7 +2707,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
     {
         CheckStatus(Gdip.GdipEnumerateMetafileDestPointI(
             new HandleRef(this, (nint)NativeGraphics),
-            new HandleRef(metafile, metafile?._nativeImage ?? IntPtr.Zero),
+            new HandleRef(metafile, metafile is null ? 0 : (nint)metafile._nativeImage),
             ref destPoint,
             callback,
             callbackData,
@@ -2725,7 +2723,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
     {
         CheckStatus(Gdip.GdipEnumerateMetafileDestRect(
             new HandleRef(this, (nint)NativeGraphics),
-            new HandleRef(metafile, metafile?._nativeImage ?? IntPtr.Zero),
+            new HandleRef(metafile, metafile is null ? 0 : (nint)metafile._nativeImage),
             ref destRect,
             callback,
             callbackData,
@@ -2741,7 +2739,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
     {
         CheckStatus(Gdip.GdipEnumerateMetafileDestRectI(
             new HandleRef(this, (nint)NativeGraphics),
-            new HandleRef(metafile, metafile?._nativeImage ?? IntPtr.Zero),
+            new HandleRef(metafile, metafile is null ? 0 : (nint)metafile._nativeImage),
             ref destRect,
             callback,
             callbackData,
@@ -2764,7 +2762,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
         {
             CheckStatus(Gdip.GdipEnumerateMetafileDestPoints(
                 new HandleRef(this, (nint)NativeGraphics),
-                new HandleRef(metafile, metafile?._nativeImage ?? IntPtr.Zero),
+                new HandleRef(metafile, metafile is null ? 0 : (nint)metafile._nativeImage),
                 p, destPoints.Length,
                 callback,
                 callbackData,
@@ -2788,7 +2786,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
         {
             CheckStatus(Gdip.GdipEnumerateMetafileDestPointsI(
                 new HandleRef(this, (nint)NativeGraphics),
-                new HandleRef(metafile, metafile?._nativeImage ?? IntPtr.Zero),
+                new HandleRef(metafile, metafile is null ? 0 : (nint)metafile._nativeImage),
                 p, destPoints.Length,
                 callback,
                 callbackData,
@@ -2807,7 +2805,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
     {
         CheckStatus(Gdip.GdipEnumerateMetafileSrcRectDestPoint(
             new HandleRef(this, (nint)NativeGraphics),
-            new HandleRef(metafile, metafile?._nativeImage ?? IntPtr.Zero),
+            new HandleRef(metafile, metafile is null ? 0 : (nint)metafile._nativeImage),
             ref destPoint,
             ref srcRect,
             unit,
@@ -2827,7 +2825,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
     {
         CheckStatus(Gdip.GdipEnumerateMetafileSrcRectDestPointI(
             new HandleRef(this, (nint)NativeGraphics),
-            new HandleRef(metafile, metafile?._nativeImage ?? IntPtr.Zero),
+            new HandleRef(metafile, metafile is null ? 0 : (nint)metafile._nativeImage),
             ref destPoint,
             ref srcRect,
             unit,
@@ -2847,7 +2845,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
     {
         CheckStatus(Gdip.GdipEnumerateMetafileSrcRectDestRect(
             new HandleRef(this, (nint)NativeGraphics),
-            new HandleRef(metafile, metafile?._nativeImage ?? IntPtr.Zero),
+            new HandleRef(metafile, metafile is null ? 0 : (nint)metafile._nativeImage),
             ref destRect,
             ref srcRect,
             unit,
@@ -2867,7 +2865,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
     {
         CheckStatus(Gdip.GdipEnumerateMetafileSrcRectDestRectI(
             new HandleRef(this, (nint)NativeGraphics),
-            new HandleRef(metafile, metafile?._nativeImage ?? IntPtr.Zero),
+            new HandleRef(metafile, metafile is null ? 0 : (nint)metafile._nativeImage),
             ref destRect,
             ref srcRect,
             unit,
@@ -2894,7 +2892,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
         {
             CheckStatus(Gdip.GdipEnumerateMetafileSrcRectDestPoints(
                 new HandleRef(this, (nint)NativeGraphics),
-                new HandleRef(metafile, metafile?._nativeImage ?? IntPtr.Zero),
+                new HandleRef(metafile, metafile is null ? 0 : (nint)metafile._nativeImage),
                 p, destPoints.Length,
                 ref srcRect,
                 unit,
@@ -2922,7 +2920,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
         {
             CheckStatus(Gdip.GdipEnumerateMetafileSrcRectDestPointsI(
                 new HandleRef(this, (nint)NativeGraphics),
-                new HandleRef(metafile, metafile?._nativeImage ?? IntPtr.Zero),
+                new HandleRef(metafile, metafile is null ? 0 : (nint)metafile._nativeImage),
                 p, destPoints.Length,
                 ref srcRect,
                 unit,
@@ -2944,9 +2942,7 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
     ///  WARNING: This method is for internal FX support only.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-#if NETCOREAPP
     [Obsolete("Use the Graphics.GetContextInfo overloads that accept arguments for better performance and fewer allocations.", DiagnosticId = "SYSLIB0016", UrlFormat = "https://aka.ms/dotnet-warnings/{0}")]
-#endif
     [SupportedOSPlatform("windows")]
     public object GetContextInfo()
     {
@@ -3024,6 +3020,74 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
             // If we don't have a cumulative clip, we're infinite, and translation on infinite regions is a no-op.
             cumulativeClip?.Translate(-totalOffset.X, -totalOffset.Y);
         }
+    }
+
+    (HDC hdc, int saveState) IGraphicsContextInfo.GetHdc(ApplyGraphicsProperties apply, bool alwaysSaveState)
+    {
+        bool applyTransform = apply.HasFlag(ApplyGraphicsProperties.TranslateTransform);
+        bool applyClipping = apply.HasFlag(ApplyGraphicsProperties.Clipping);
+
+        int saveState = 0;
+        HDC hdc = HDC.Null;
+
+        Region? clipRegion = null;
+        PointF offset = default;
+        if (applyClipping)
+        {
+            GetContextInfo(out offset, out clipRegion);
+        }
+        else if (applyTransform)
+        {
+            GetContextInfo(out offset);
+        }
+
+        using (clipRegion)
+        {
+            applyTransform = applyTransform && !offset.IsEmpty;
+            applyClipping = clipRegion is not null;
+
+            using var graphicsRegion = applyClipping ? new RegionScope(clipRegion!, this) : default;
+            applyClipping = applyClipping && !graphicsRegion!.Region.IsNull;
+
+            hdc = (HDC)GetHdc();
+
+            if (alwaysSaveState || applyClipping || applyTransform)
+            {
+                saveState = PInvokeCore.SaveDC(hdc);
+            }
+
+            if (applyClipping)
+            {
+                // If the Graphics object was created from a native DC the actual clipping region is the intersection
+                // between the original DC clip region and the GDI+ one - for display Graphics it is the same as
+                // Graphics.VisibleClipBounds.
+
+                GDI_REGION_TYPE type;
+
+                using RegionScope dcRegion = new(hdc);
+                if (!dcRegion.IsNull)
+                {
+                    type = PInvokeCore.CombineRgn(graphicsRegion!, dcRegion, graphicsRegion!, RGN_COMBINE_MODE.RGN_AND);
+                    if (type == GDI_REGION_TYPE.RGN_ERROR)
+                    {
+                        throw new Win32Exception();
+                    }
+                }
+
+                type = PInvokeCore.SelectClipRgn(hdc, graphicsRegion!);
+                if (type == GDI_REGION_TYPE.RGN_ERROR)
+                {
+                    throw new Win32Exception();
+                }
+            }
+
+            if (applyTransform)
+            {
+                PInvokeCore.OffsetViewportOrgEx(hdc, (int)offset.X, (int)offset.Y, lppt: null);
+            }
+        }
+
+        return (hdc, saveState);
     }
 
     /// <summary>
@@ -3215,10 +3279,10 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
     // This is called from AppDomain.ProcessExit and AppDomain.DomainUnload.
     private static void OnDomainUnload(object? sender, EventArgs e)
     {
-        if (s_halftonePalette != IntPtr.Zero)
+        if (!s_halftonePalette.IsNull)
         {
-            Gdi32.DeleteObject(s_halftonePalette);
-            s_halftonePalette = IntPtr.Zero;
+            PInvokeCore.DeleteObject(s_halftonePalette);
+            s_halftonePalette = HPALETTE.Null;
         }
     }
 
@@ -3245,8 +3309,8 @@ public unsafe sealed class Graphics : MarshalByRefObject, IDisposable, IDeviceCo
         // Generic error from GDI+ can be GenericError or Win32Error.
         if (status is Status.GenericError or Status.Win32Error)
         {
-            int error = Marshal.GetLastWin32Error();
-            if (error == SafeNativeMethods.ERROR_ACCESS_DENIED || error == SafeNativeMethods.ERROR_PROC_NOT_FOUND ||
+            WIN32_ERROR error = (WIN32_ERROR)Marshal.GetLastWin32Error();
+            if (error == WIN32_ERROR.ERROR_ACCESS_DENIED || error == WIN32_ERROR.ERROR_PROC_NOT_FOUND ||
                     // Here, we'll check to see if we are in a terminal services session.
                     (((PInvokeCore.GetSystemMetrics(SYSTEM_METRICS_INDEX.SM_REMOTESESSION) & 0x00000001) != 0) && (error == 0)))
             {

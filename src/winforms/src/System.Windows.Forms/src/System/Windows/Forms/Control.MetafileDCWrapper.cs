@@ -27,7 +27,7 @@ public partial class Control
 
         internal unsafe MetafileDCWrapper(HDC hOriginalDC, Size size)
         {
-            Debug.Assert((OBJ_TYPE)PInvoke.GetObjectType(hOriginalDC) == OBJ_TYPE.OBJ_ENHMETADC,
+            Debug.Assert((OBJ_TYPE)PInvokeCore.GetObjectType(hOriginalDC) == OBJ_TYPE.OBJ_ENHMETADC,
                 "Why wrap a non-Enhanced MetaFile DC?");
 
             if (size.Width < 0 || size.Height < 0)
@@ -64,7 +64,7 @@ public partial class Control
                 success = DICopy(_hMetafileDC, HDC, _destRect, bStretch: true);
                 Debug.Assert(success, "DICopy() failed.");
                 PInvoke.SelectObject(HDC, _hOriginalBmp);
-                success = PInvoke.DeleteObject(_hBitmap);
+                success = PInvokeCore.DeleteObject(_hBitmap);
                 Debug.Assert(success, "DeleteObject() failed.");
                 success = PInvokeCore.DeleteDC(HDC);
                 Debug.Assert(success, "DeleteObject() failed.");
@@ -105,7 +105,7 @@ public partial class Control
                 // Restore original bitmap
                 PInvoke.SelectObject(hdcSrc, hBitmap);
 
-                if (!PInvoke.GetObject(hBitmap, out BITMAP bmp))
+                if (!PInvokeCore.GetObject(hBitmap, out BITMAP bmp))
                 {
                     return false;
                 }
@@ -211,7 +211,7 @@ public partial class Control
             }
             finally
             {
-                PInvoke.DeleteObject(hNullBitmap);
+                PInvokeCore.DeleteObject(hNullBitmap);
             }
 
             return true;

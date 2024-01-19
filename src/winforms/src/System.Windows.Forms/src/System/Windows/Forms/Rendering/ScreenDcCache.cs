@@ -102,10 +102,10 @@ internal sealed partial class ScreenDcCache : IDisposable
 
         HRGN hrgn = PInvoke.CreateRectRgn(0, 0, 0, 0);
         Debug.Assert(PInvoke.GetClipRgn(hdc, hrgn) == 0, "Should not have a clipping region");
-        PInvoke.DeleteObject(hrgn);
+        PInvokeCore.DeleteObject(hrgn);
 
         Point point;
-        PInvoke.GetViewportOrgEx(hdc, &point);
+        PInvokeCore.GetViewportOrgEx(hdc, &point);
         Debug.Assert(point.IsEmpty, "Viewport origin shouldn't be shifted");
         Debug.Assert(PInvoke.GetMapMode(hdc) == HDC_MAP_MODE.MM_TEXT);
         Debug.Assert(PInvoke.GetROP2(hdc) == R2_MODE.R2_COPYPEN);

@@ -897,7 +897,7 @@ public unsafe partial class Control :
     ///  will always return a non-null value.
     /// </summary>
     [SRCategory(nameof(SR.CatAppearance))]
-    [DispId(PInvoke.DISPID_BACKCOLOR)]
+    [DispId(PInvokeCore.DISPID_BACKCOLOR)]
     [SRDescription(nameof(SR.ControlBackColorDescr))]
     public virtual Color BackColor
     {
@@ -1991,7 +1991,7 @@ public unsafe partial class Control :
     /// </summary>
     [SRCategory(nameof(SR.CatBehavior))]
     [Localizable(true)]
-    [DispId(PInvoke.DISPID_ENABLED)]
+    [DispId(PInvokeCore.DISPID_ENABLED)]
     [SRDescription(nameof(SR.ControlEnabledDescr))]
     public bool Enabled
     {
@@ -2055,7 +2055,7 @@ public unsafe partial class Control :
     /// </summary>
     [SRCategory(nameof(SR.CatAppearance))]
     [Localizable(true)]
-    [DispId(PInvoke.DISPID_FONT)]
+    [DispId(PInvokeCore.DISPID_FONT)]
     [AmbientValue(null)]
     [SRDescription(nameof(SR.ControlFontDescr))]
     [AllowNull]
@@ -2263,7 +2263,7 @@ public unsafe partial class Control :
     ///  The foreground color of the control.
     /// </summary>
     [SRCategory(nameof(SR.CatAppearance))]
-    [DispId(PInvoke.DISPID_FORECOLOR)]
+    [DispId(PInvokeCore.DISPID_FORECOLOR)]
     [SRDescription(nameof(SR.ControlForeColorDescr))]
     public virtual Color ForeColor
     {
@@ -2409,7 +2409,7 @@ public unsafe partial class Control :
     /// </summary>
     [Browsable(false)]
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    [DispId(PInvoke.DISPID_HWND)]
+    [DispId(PInvokeCore.DISPID_HWND)]
     [SRDescription(nameof(SR.ControlHandleDescr))]
     public IntPtr Handle
     {
@@ -3406,7 +3406,7 @@ public unsafe partial class Control :
     /// </summary>
     [SRCategory(nameof(SR.CatBehavior))]
     [DefaultValue(true)]
-    [DispId(PInvoke.DISPID_TABSTOP)]
+    [DispId(PInvokeCore.DISPID_TABSTOP)]
     [SRDescription(nameof(SR.ControlTabStopDescr))]
     public bool TabStop
     {
@@ -3465,7 +3465,7 @@ public unsafe partial class Control :
     [SRCategory(nameof(SR.CatAppearance))]
     [Localizable(true)]
     [Bindable(true)]
-    [DispId(PInvoke.DISPID_TEXT)]
+    [DispId(PInvokeCore.DISPID_TEXT)]
     [SRDescription(nameof(SR.ControlTextDescr))]
     [AllowNull]
     public virtual string Text
@@ -5066,7 +5066,7 @@ public unsafe partial class Control :
                 HBRUSH p = (HBRUSH)backBrush;
                 if (!p.IsNull)
                 {
-                    PInvoke.DeleteObject(p);
+                    PInvokeCore.DeleteObject(p);
                 }
 
                 Properties.SetObject(s_backBrushProperty, value: null);
@@ -5280,7 +5280,7 @@ public unsafe partial class Control :
         // Now BLT the result to the destination bitmap.
         using Graphics destGraphics = Graphics.FromImage(bitmap);
         using DeviceContextHdcScope desthDC = new(destGraphics, applyGraphicsState: false);
-        PInvoke.BitBlt(
+        PInvokeCore.BitBlt(
             desthDC,
             targetBounds.X,
             targetBounds.Y,
@@ -6205,7 +6205,7 @@ public unsafe partial class Control :
             return BackColorBrush;
         }
 
-        return (HBRUSH)PInvoke.GetStockObject(GET_STOCK_OBJECT_FLAGS.NULL_BRUSH);
+        return (HBRUSH)PInvokeCore.GetStockObject(GET_STOCK_OBJECT_FLAGS.NULL_BRUSH);
     }
 
     /// <summary>
@@ -7036,7 +7036,7 @@ public unsafe partial class Control :
                 HBRUSH p = (HBRUSH)backBrush;
                 if (!p.IsNull)
                 {
-                    PInvoke.DeleteObject(p);
+                    PInvokeCore.DeleteObject(p);
                 }
             }
 
@@ -7938,7 +7938,7 @@ public unsafe partial class Control :
                     HBRUSH p = (HBRUSH)backBrush;
                     if (!p.IsNull)
                     {
-                        PInvoke.DeleteObject(p);
+                        PInvokeCore.DeleteObject(p);
                     }
                 }
             }
@@ -8746,7 +8746,7 @@ public unsafe partial class Control :
         using DeviceContextHdcScope hdc = new(e);
         using SaveDcScope savedc = new(hdc);
 
-        PInvoke.OffsetViewportOrgEx(hdc, -Left, -Top, lppt: null);
+        PInvokeCore.OffsetViewportOrgEx(hdc, -Left, -Top, lppt: null);
 
         using PaintEventArgs newArgs = new(hdc, newClipRect);
 
@@ -9234,18 +9234,18 @@ public unsafe partial class Control :
 
     private unsafe void PrintToMetaFile(HDC hDC, IntPtr lParam)
     {
-        Debug.Assert((OBJ_TYPE)PInvoke.GetObjectType(hDC) == OBJ_TYPE.OBJ_ENHMETADC,
+        Debug.Assert((OBJ_TYPE)PInvokeCore.GetObjectType(hDC) == OBJ_TYPE.OBJ_ENHMETADC,
             "PrintToMetaFile() called with a non-Enhanced MetaFile DC.");
         Debug.Assert((lParam & (long)PInvoke.PRF_CHILDREN) != 0,
             "PrintToMetaFile() called without PRF_CHILDREN.");
 
         // Strip the PRF_CHILDREN flag.  We will manually walk our children and print them.
-        lParam = (IntPtr)(lParam & (long)~PInvoke.PRF_CHILDREN);
+        lParam = (nint)(lParam & (long)~PInvoke.PRF_CHILDREN);
 
         // We're the root control, so we need to set up our clipping region.  Retrieve the
         // x-coordinates and y-coordinates of the viewport origin for the specified device context.
         Point viewportOrg = default;
-        bool success = PInvoke.GetViewportOrgEx(hDC, &viewportOrg);
+        bool success = PInvokeCore.GetViewportOrgEx(hDC, &viewportOrg);
         Debug.Assert(success, "GetViewportOrgEx() failed.");
 
         using RegionScope hClippingRegion = new(
@@ -9257,7 +9257,7 @@ public unsafe partial class Control :
         Debug.Assert(!hClippingRegion.IsNull, "CreateRectRgn() failed.");
 
         // Select the new clipping region; make sure it's a SIMPLEREGION or NULLREGION
-        GDI_REGION_TYPE selectResult = PInvoke.SelectClipRgn(hDC, hClippingRegion);
+        GDI_REGION_TYPE selectResult = PInvokeCore.SelectClipRgn(hDC, hClippingRegion);
         Debug.Assert(
             selectResult is GDI_REGION_TYPE.SIMPLEREGION or GDI_REGION_TYPE.NULLREGION,
             "SIMPLEREGION or NULLLREGION expected.");
