@@ -10,6 +10,9 @@ using System.Reflection;
 using Microsoft.Extensions.CommandLineUtils;
 using NuGet.Commands;
 using NuGet.Common;
+using System.CommandLine;
+using System.Threading;
+using System.CommandLine.Parsing;
 
 namespace NuGet.CommandLine.XPlat
 {
@@ -20,6 +23,8 @@ namespace NuGet.CommandLine.XPlat
 #endif
         private const string DotnetNuGetAppName = "dotnet nuget";
         private const string DotnetPackageAppName = "NuGet.CommandLine.XPlat.dll package";
+
+        private const int DotnetPackageSearchTimeOut = 15;
 
         public static int Main(string[] args)
         {
@@ -68,6 +73,41 @@ namespace NuGet.CommandLine.XPlat
             log.LogDebug(string.Format(CultureInfo.CurrentCulture, Strings.Debug_CurrentUICulture, CultureInfo.DefaultThreadCurrentUICulture));
 
             NuGet.Common.Migrations.MigrationRunner.Run();
+
+            if (args.Count() >= 2 && args[0] == "package" && args[1] == "search")
+            {
+                // We are executing command `dotnet package search`
+                Func<ILoggerWithColor> getHidePrefixLogger = () =>
+                {
+                    log.HidePrefixForInfoAndMinimal = true;
+                    return log;
+                };
+
+                CliCommand rootCommand = new CliCommand("package");
+                PackageSearchCommand.Register(rootCommand, getHidePrefixLogger);
+
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+                tokenSource.CancelAfter(TimeSpan.FromMinutes(DotnetPackageSearchTimeOut));
+                int exitCodeValue = 0;
+
+                CliConfiguration config = new(rootCommand);
+                ParseResult parseResult = rootCommand.Parse(args, config);
+
+                try
+                {
+                    exitCodeValue = parseResult.Invoke();
+                }
+                catch (Exception ex)
+                {
+                    LogException(ex, log);
+                    var tokenList = parseResult.Tokens.TakeWhile(token => token.Type == CliTokenType.Argument || token.Type == CliTokenType.Command || token.Type == CliTokenType.Directive).Select(t => t.Value).ToList();
+                    tokenList.Add("-h");
+                    rootCommand.Parse(tokenList).Invoke();
+                    exitCodeValue = 1;
+                }
+
+                return exitCodeValue;
+            }
 
             var app = InitializeApp(args, log);
 
@@ -166,11 +206,26 @@ namespace NuGet.CommandLine.XPlat
             return exitCode;
         }
 
+        internal static void LogException(Exception e, ILogger log)
+        {
+            // Log the error
+            if (ExceptionLogger.Instance.ShowStack)
+            {
+                log.LogError(e.ToString());
+            }
+            else
+            {
+                log.LogError(ExceptionUtilities.DisplayMessage(e));
+            }
+
+            // Log the stack trace as verbose output.
+            log.LogVerbose(e.ToString());
+        }
 
         private static CommandLineApplication InitializeApp(string[] args, CommandOutputLogger log)
         {
             // Many commands don't want prefixes output. Use this func instead of () => log to set the HidePrefix property first.
-            Func<ILogger> getHidePrefixLogger = () =>
+            Func<ILoggerWithColor> getHidePrefixLogger = () =>
             {
                 log.HidePrefixForInfoAndMinimal = true;
                 return log;

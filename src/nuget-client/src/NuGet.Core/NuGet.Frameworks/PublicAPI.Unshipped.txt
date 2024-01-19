@@ -1,3 +1,1 @@
 #nullable enable
-static readonly NuGet.Frameworks.FrameworkConstants.CommonFrameworks.Net80 -> NuGet.Frameworks.NuGetFramework!
-static readonly NuGet.Frameworks.FrameworkConstants.Version8 -> System.Version!

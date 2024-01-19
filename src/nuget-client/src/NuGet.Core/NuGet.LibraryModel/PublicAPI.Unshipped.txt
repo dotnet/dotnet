@@ -1,4 +1,1 @@
 #nullable enable
-NuGet.LibraryModel.Library.Library(NuGet.LibraryModel.LibraryRange! libraryRange, NuGet.LibraryModel.LibraryIdentity! identity, System.Collections.Generic.IEnumerable<NuGet.LibraryModel.LibraryDependency!>! dependencies) -> void
-NuGet.LibraryModel.LibraryDependency.LibraryDependency(NuGet.LibraryModel.LibraryRange! libraryRange) -> void
-NuGet.LibraryModel.LibraryRange.LibraryRange(string! name) -> void

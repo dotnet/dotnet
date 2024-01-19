@@ -12,7 +12,7 @@ namespace NuGet.CommandLine.XPlat
     /// <summary>
     /// Logger to print formatted command output.
     /// </summary>
-    internal class CommandOutputLogger : LoggerBase, ILogger
+    internal class CommandOutputLogger : LoggerBase, ILoggerWithColor
     {
         public CommandOutputLogger(LogLevel logLevel)
         {
@@ -126,6 +126,14 @@ namespace NuGet.CommandLine.XPlat
             Log(message);
 
             return Task.CompletedTask;
+        }
+
+        public void LogMinimal(string data, ConsoleColor color)
+        {
+            var currentColor = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+            Console.Write(data);
+            Console.ForegroundColor = currentColor;
         }
     }
 }

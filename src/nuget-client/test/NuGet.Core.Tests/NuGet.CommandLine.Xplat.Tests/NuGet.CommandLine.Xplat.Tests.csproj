@@ -19,5 +19,6 @@
       <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" />
       <PackageReference Include="Microsoft.Build.Locator" />
       <PackageReference Include="System.Memory" />
+      <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 </Project>

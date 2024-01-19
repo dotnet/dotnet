@@ -33,6 +33,7 @@ NuGet.LibraryModel.Library.Identity.set -> void
 NuGet.LibraryModel.Library.Items.get -> System.Collections.Generic.IDictionary<string!, object!>!
 NuGet.LibraryModel.Library.Items.set -> void
 NuGet.LibraryModel.Library.Library() -> void
+NuGet.LibraryModel.Library.Library(NuGet.LibraryModel.LibraryRange! libraryRange, NuGet.LibraryModel.LibraryIdentity! identity, System.Collections.Generic.IEnumerable<NuGet.LibraryModel.LibraryDependency!>! dependencies) -> void
 NuGet.LibraryModel.Library.LibraryRange.get -> NuGet.LibraryModel.LibraryRange!
 NuGet.LibraryModel.Library.LibraryRange.set -> void
 NuGet.LibraryModel.Library.Path.get -> string?
@@ -53,6 +54,7 @@ NuGet.LibraryModel.LibraryDependency.GeneratePathProperty.set -> void
 NuGet.LibraryModel.LibraryDependency.IncludeType.get -> NuGet.LibraryModel.LibraryIncludeFlags
 NuGet.LibraryModel.LibraryDependency.IncludeType.set -> void
 NuGet.LibraryModel.LibraryDependency.LibraryDependency() -> void
+NuGet.LibraryModel.LibraryDependency.LibraryDependency(NuGet.LibraryModel.LibraryRange! libraryRange) -> void
 NuGet.LibraryModel.LibraryDependency.LibraryRange.get -> NuGet.LibraryModel.LibraryRange!
 NuGet.LibraryModel.LibraryDependency.LibraryRange.set -> void
 NuGet.LibraryModel.LibraryDependency.Name.get -> string!
@@ -113,6 +115,7 @@ NuGet.LibraryModel.LibraryIncludeFlags.Runtime = 1 -> NuGet.LibraryModel.Library
 NuGet.LibraryModel.LibraryRange
 NuGet.LibraryModel.LibraryRange.Equals(NuGet.LibraryModel.LibraryRange? other) -> bool
 NuGet.LibraryModel.LibraryRange.LibraryRange() -> void
+NuGet.LibraryModel.LibraryRange.LibraryRange(string! name) -> void
 NuGet.LibraryModel.LibraryRange.LibraryRange(string! name, NuGet.LibraryModel.LibraryDependencyTarget typeConstraint) -> void
 NuGet.LibraryModel.LibraryRange.LibraryRange(string! name, NuGet.Versioning.VersionRange? versionRange, NuGet.LibraryModel.LibraryDependencyTarget typeConstraint) -> void
 NuGet.LibraryModel.LibraryRange.Name.get -> string!
