@@ -20,14 +20,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 [LanguageServerEndpoint(Methods.TextDocumentDidChangeName)]
 internal class DocumentDidChangeEndpoint(
     ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-    RazorProjectService razorProjectService,
+    IRazorProjectService razorProjectService,
     IRazorLoggerFactory loggerFactory)
     : IRazorNotificationHandler<DidChangeTextDocumentParams>, ITextDocumentIdentifierHandler<DidChangeTextDocumentParams, TextDocumentIdentifier>, ICapabilitiesProvider
 {
     public bool MutatesSolutionState => true;
 
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
-    private readonly RazorProjectService _projectService = razorProjectService;
+    private readonly IRazorProjectService _projectService = razorProjectService;
     private readonly ILogger _logger = loggerFactory.CreateLogger<DocumentDidChangeEndpoint>();
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)

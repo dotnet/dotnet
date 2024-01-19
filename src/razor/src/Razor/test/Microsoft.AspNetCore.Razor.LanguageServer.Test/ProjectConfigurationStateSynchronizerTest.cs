@@ -29,7 +29,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
     public async Task ProjectConfigurationFileChanged_Removed_UnknownDocumentNoops()
     {
         // Arrange
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         var synchronizer = GetSynchronizer(projectService.Object);
         var deserializerMock = new Mock<IRazorProjectInfoDeserializer>(MockBehavior.Strict);
         var args = new ProjectConfigurationFileChangeEventArgs(
@@ -59,7 +59,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
             ImmutableArray<DocumentSnapshotHandle>.Empty);
         var intermediateOutputPath = Path.GetDirectoryName(FilePathNormalizer.Normalize(projectInfo.SerializedFilePath));
         var projectKey = TestProjectKey.Create(intermediateOutputPath);
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         projectService
             .Setup(x => x.AddProject(
                 projectInfo.FilePath,
@@ -117,7 +117,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
     public async Task ProjectConfigurationFileChanged_Added_CantDeserialize_Noops()
     {
         // Arrange
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         var synchronizer = GetSynchronizer(projectService.Object);
 
         var deserializerMock = new Mock<IRazorProjectInfoDeserializer>(MockBehavior.Strict);
@@ -152,7 +152,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
             ImmutableArray<DocumentSnapshotHandle>.Empty);
         var intermediateOutputPath = Path.GetDirectoryName(FilePathNormalizer.Normalize(projectInfo.SerializedFilePath));
         var projectKey = TestProjectKey.Create(intermediateOutputPath);
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         projectService
             .Setup(service => service.AddProject(
                 projectInfo.FilePath,
@@ -200,7 +200,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
             ImmutableArray<DocumentSnapshotHandle>.Empty);
         var intermediateOutputPath = Path.GetDirectoryName(FilePathNormalizer.Normalize(projectInfo.SerializedFilePath));
         var projectKey = TestProjectKey.Create(intermediateOutputPath);
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         projectService
             .Setup(service => service.AddProject(
                 projectInfo.FilePath,
@@ -268,7 +268,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
             ImmutableArray<DocumentSnapshotHandle>.Empty);
         var intermediateOutputPath = Path.GetDirectoryName(FilePathNormalizer.Normalize(initialProjectInfo.SerializedFilePath));
         var projectKey = TestProjectKey.Create(intermediateOutputPath);
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         projectService
             .Setup(service => service.AddProject(
                 initialProjectInfo.FilePath,
@@ -352,7 +352,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
             ImmutableArray<DocumentSnapshotHandle>.Empty);
         var intermediateOutputPath = Path.GetDirectoryName(FilePathNormalizer.Normalize(initialProjectInfo.SerializedFilePath));
         var projectKey = TestProjectKey.Create(intermediateOutputPath);
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         projectService
             .Setup(service => service.AddProject(
                 initialProjectInfo.FilePath,
@@ -428,7 +428,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
     public async Task ProjectConfigurationFileChanged_Changed_UntrackedProject_Noops()
     {
         // Arrange
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         var synchronizer = GetSynchronizer(projectService.Object);
 
         var changedDeserializerMock = new Mock<IRazorProjectInfoDeserializer>(MockBehavior.Strict);
@@ -467,7 +467,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
             ImmutableArray<DocumentSnapshotHandle>.Empty);
         var intermediateOutputPath = Path.GetDirectoryName(FilePathNormalizer.Normalize(projectInfo.SerializedFilePath));
         var projectKey = TestProjectKey.Create(intermediateOutputPath);
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         projectService
             .Setup(service => service.AddProject(
                 projectInfo.FilePath,
@@ -526,7 +526,7 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
         }
     }
 
-    private ProjectConfigurationStateSynchronizer GetSynchronizer(RazorProjectService razorProjectService)
+    private ProjectConfigurationStateSynchronizer GetSynchronizer(IRazorProjectService razorProjectService)
     {
         var synchronizer = new ProjectConfigurationStateSynchronizer(Dispatcher, razorProjectService, LoggerFactory);
         synchronizer.EnqueueDelay = 5;

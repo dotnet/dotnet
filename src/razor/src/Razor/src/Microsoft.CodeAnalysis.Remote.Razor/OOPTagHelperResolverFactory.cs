@@ -13,12 +13,14 @@ namespace Microsoft.CodeAnalysis.Remote.Razor;
 [Shared]
 [ExportWorkspaceServiceFactory(typeof(ITagHelperResolver), ServiceLayer.Host)]
 [method: ImportingConstructor]
-internal class OOPTagHelperResolverFactory(ITelemetryReporter telemetryReporter) : IWorkspaceServiceFactory
+internal class OOPTagHelperResolverFactory(
+    IErrorReporter errorReporter,
+    ITelemetryReporter telemetryReporter) : IWorkspaceServiceFactory
 {
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
         => new OOPTagHelperResolver(
             workspaceServices.GetRequiredService<ProjectSnapshotProjectEngineFactory>(),
-            workspaceServices.GetRequiredService<IErrorReporter>(),
+            errorReporter,
             workspaceServices.Workspace,
             telemetryReporter);
 }

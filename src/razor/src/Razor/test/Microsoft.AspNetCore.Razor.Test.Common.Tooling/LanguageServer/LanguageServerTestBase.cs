@@ -127,6 +127,9 @@ public abstract class LanguageServerTestBase : ToolingTestBase
     protected Task RunOnDispatcherThreadAsync(Action action)
         => Dispatcher.RunOnDispatcherThreadAsync(action, DisposalToken);
 
+    protected Task<T> RunOnDispatcherThreadAsync<T>(Func<T> func)
+        => Dispatcher.RunOnDispatcherThreadAsync(func, DisposalToken);
+
     private class ThrowingRazorSpanMappingService : IRazorSpanMappingService
     {
         public Task<ImmutableArray<RazorMappedSpanResult>> MapSpansAsync(Document document, IEnumerable<TextSpan> spans, CancellationToken cancellationToken)

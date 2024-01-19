@@ -245,7 +245,7 @@ internal class ProjectState
 
         // Compute the effect on the import map
         var importTargetPaths = GetImportDocumentTargetPaths(hostDocument);
-        var importsToRelatedDocuments = AddToImportsToRelatedDocuments(ImportsToRelatedDocuments, hostDocument, importTargetPaths);
+        var importsToRelatedDocuments = AddToImportsToRelatedDocuments(ImportsToRelatedDocuments, hostDocument.FilePath, importTargetPaths);
 
         // Now check if the updated document is an import - it's important this this happens after
         // updating the imports map.
@@ -366,7 +366,7 @@ internal class ProjectState
         foreach (var document in documents)
         {
             var importTargetPaths = GetImportDocumentTargetPaths(document.Value.HostDocument);
-            importsToRelatedDocuments = AddToImportsToRelatedDocuments(importsToRelatedDocuments, document.Value.HostDocument, importTargetPaths);
+            importsToRelatedDocuments = AddToImportsToRelatedDocuments(importsToRelatedDocuments, document.Value.HostDocument.FilePath, importTargetPaths);
         }
 
         var state = new ProjectState(this, ProjectDifference.ConfigurationChanged, hostProject, ProjectWorkspaceState, documents, importsToRelatedDocuments);
@@ -391,9 +391,9 @@ internal class ProjectState
         return state;
     }
 
-    private static ImmutableDictionary<string, ImmutableArray<string>> AddToImportsToRelatedDocuments(
+    internal static ImmutableDictionary<string, ImmutableArray<string>> AddToImportsToRelatedDocuments(
         ImmutableDictionary<string, ImmutableArray<string>> importsToRelatedDocuments,
-        HostDocument hostDocument,
+        string documentFilePath,
         List<string> importTargetPaths)
     {
         foreach (var importTargetPath in importTargetPaths)
@@ -403,7 +403,7 @@ internal class ProjectState
                 relatedDocuments = ImmutableArray.Create<string>();
             }
 
-            relatedDocuments = relatedDocuments.Add(hostDocument.FilePath);
+            relatedDocuments = relatedDocuments.Add(documentFilePath);
             importsToRelatedDocuments = importsToRelatedDocuments.SetItem(importTargetPath, relatedDocuments);
         }
 
@@ -431,9 +431,13 @@ internal class ProjectState
 
     public List<string> GetImportDocumentTargetPaths(HostDocument hostDocument)
     {
-        var projectEngine = ProjectEngine;
+        return GetImportDocumentTargetPaths(hostDocument.TargetPath, hostDocument.FileKind, ProjectEngine);
+    }
+
+    internal static List<string> GetImportDocumentTargetPaths(string targetPath, string fileKind, RazorProjectEngine projectEngine)
+    {
         var importFeatures = projectEngine.ProjectFeatures.OfType<IImportProjectFeature>();
-        var projectItem = projectEngine.FileSystem.GetItem(hostDocument.TargetPath, hostDocument.FileKind);
+        var projectItem = projectEngine.FileSystem.GetItem(targetPath, fileKind);
         var importItems = importFeatures.SelectMany(f => f.GetImports(projectItem)).Where(i => i.FilePath != null);
 
         // Target path looks like `Foo\\Bar.cshtml`
@@ -442,7 +446,7 @@ internal class ProjectState
         {
             var itemTargetPath = importItem.FilePath.Replace('/', '\\').TrimStart('\\');
 
-            if (FilePathNormalizer.Comparer.Equals(itemTargetPath, hostDocument.TargetPath))
+            if (FilePathNormalizer.Comparer.Equals(itemTargetPath, targetPath))
             {
                 // We've normalized the original importItem.FilePath into the HostDocument.TargetPath. For instance, if the HostDocument.TargetPath
                 // was '/_Imports.razor' it'd be normalized down into '_Imports.razor'. The purpose of this method is to get the associated document

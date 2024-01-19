@@ -21,7 +21,7 @@ public class DocumentDidOpenEndpointTest(ITestOutputHelper testOutput) : Languag
     {
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
-        var projectService = new Mock<RazorProjectService>(MockBehavior.Strict);
+        var projectService = new Mock<IRazorProjectService>(MockBehavior.Strict);
         projectService.Setup(service => service.OpenDocument(It.IsAny<string>(), It.IsAny<SourceText>(), It.IsAny<int>()))
             .Callback<string, SourceText, int>((path, text, version) =>
             {

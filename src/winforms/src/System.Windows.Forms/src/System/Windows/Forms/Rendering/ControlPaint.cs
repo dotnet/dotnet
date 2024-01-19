@@ -164,7 +164,7 @@ public static partial class ControlPaint
         using CreateDcScope dc = new(screen);
 
         HPALETTE palette = PInvoke.CreateHalftonePalette(dc);
-        PInvoke.GetObject(palette, out uint entryCount);
+        PInvokeCore.GetObject(palette, out uint entryCount);
 
         using BufferScope<byte> bitmapInfoBuffer = new
             (checked((int)(sizeof(BITMAPINFOHEADER) + (sizeof(RGBQUAD) * entryCount))));
@@ -184,7 +184,7 @@ public static partial class ControlPaint
 
             Span<RGBQUAD> colors = new(bi + sizeof(BITMAPINFOHEADER), (int)entryCount);
             Span<PALETTEENTRY> entries = stackalloc PALETTEENTRY[(int)entryCount];
-            PInvoke.GetPaletteEntries(palette, entries);
+            PInvokeCore.GetPaletteEntries(palette, entries);
 
             // Set up color table
             for (int i = 0; i < entryCount; i++)
@@ -198,10 +198,10 @@ public static partial class ControlPaint
                 };
             }
 
-            PInvoke.DeleteObject(palette);
+            PInvokeCore.DeleteObject(palette);
 
             void* bitsBuffer;
-            hbitmap = PInvoke.CreateDIBSection(
+            hbitmap = PInvokeCore.CreateDIBSection(
                 screen,
                 (BITMAPINFO*)bi,
                 DIB_USAGE.DIB_RGB_COLORS,
@@ -226,7 +226,7 @@ public static partial class ControlPaint
                 throw new Win32Exception();
             }
 
-            PInvoke.DeleteObject(previousBitmap);
+            PInvokeCore.DeleteObject(previousBitmap);
 
             using Graphics graphics = dc.CreateGraphics();
             using var brush = background.GetCachedSolidBrushScope();
@@ -236,7 +236,7 @@ public static partial class ControlPaint
         catch
         {
             // As we're throwing out, we can't return this and need to delete it.
-            PInvoke.DeleteObject(hbitmap);
+            PInvokeCore.DeleteObject(hbitmap);
             throw;
         }
 
@@ -326,7 +326,7 @@ public static partial class ControlPaint
 
         PInvoke.SetBkColor(targetDC, (COLORREF)0x00ffffff);    // white
         PInvoke.SetTextColor(targetDC, (COLORREF)0x00000000);  // black
-        PInvoke.BitBlt(targetDC, x: 0, y: 0, size.Width, size.Height, sourceDC, x1: 0, y1: 0, (ROP_CODE)0x220326);
+        PInvokeCore.BitBlt(targetDC, x: 0, y: 0, size.Width, size.Height, sourceDC, x1: 0, y1: 0, (ROP_CODE)0x220326);
         // RasterOp.SOURCE.Invert().AndWith(RasterOp.TARGET).GetRop());
 
         return (IntPtr)colorMask;
@@ -732,7 +732,7 @@ public static partial class ControlPaint
                 {
                     if (!topColor.HasTransparency() && topStyle == ButtonBorderStyle.Solid)
                     {
-                        using DeviceContextHdcScope hdc = new(deviceContext);
+                        using DeviceContextHdcScope hdc = deviceContext.ToHdcScope();
                         using CreatePenScope hpen = new(topColor);
                         for (int i = 0; i < topWidth; i++)
                         {
@@ -768,7 +768,7 @@ public static partial class ControlPaint
                 {
                     HLSColor hlsColor = new(topColor);
                     float inc = InfinityToOne(1.0f / (topWidth - 1));
-                    using DeviceContextHdcScope hdc = new(deviceContext);
+                    using DeviceContextHdcScope hdc = deviceContext.ToHdcScope();
                     for (int i = 0; i < topWidth; i++)
                     {
                         using CreatePenScope hpen = new(
@@ -795,7 +795,7 @@ public static partial class ControlPaint
                 {
                     if (!leftColor.HasTransparency() && leftStyle == ButtonBorderStyle.Solid)
                     {
-                        using DeviceContextHdcScope hdc = new(deviceContext);
+                        using DeviceContextHdcScope hdc = deviceContext.ToHdcScope();
                         using CreatePenScope hpen = new(leftColor);
                         for (int i = 0; i < leftWidth; i++)
                         {
@@ -831,7 +831,7 @@ public static partial class ControlPaint
                 {
                     HLSColor hlsColor = new(leftColor);
                     float inc = InfinityToOne(1.0f / (leftWidth - 1));
-                    using DeviceContextHdcScope hdc = new(deviceContext);
+                    using DeviceContextHdcScope hdc = deviceContext.ToHdcScope();
                     for (int i = 0; i < leftWidth; i++)
                     {
                         using CreatePenScope hpen = new(
@@ -858,7 +858,7 @@ public static partial class ControlPaint
                 {
                     if (!bottomColor.HasTransparency() && bottomStyle == ButtonBorderStyle.Solid)
                     {
-                        using DeviceContextHdcScope hdc = new(deviceContext);
+                        using DeviceContextHdcScope hdc = deviceContext.ToHdcScope();
                         using CreatePenScope hpen = new(bottomColor);
                         for (int i = 0; i < bottomWidth; i++)
                         {
@@ -904,7 +904,7 @@ public static partial class ControlPaint
                 {
                     HLSColor hlsColor = new(bottomColor);
                     float inc = InfinityToOne(1.0f / (bottomWidth - 1));
-                    using DeviceContextHdcScope hdc = new(deviceContext);
+                    using DeviceContextHdcScope hdc = deviceContext.ToHdcScope();
                     for (int i = 0; i < bottomWidth; i++)
                     {
                         using CreatePenScope hpen = new(
@@ -936,7 +936,7 @@ public static partial class ControlPaint
                 {
                     if (!rightColor.HasTransparency() && rightStyle == ButtonBorderStyle.Solid)
                     {
-                        using DeviceContextHdcScope hdc = new(deviceContext);
+                        using DeviceContextHdcScope hdc = deviceContext.ToHdcScope();
                         using CreatePenScope hpen = new(rightColor);
                         for (int i = 0; i < rightWidth; i++)
                         {
@@ -982,7 +982,7 @@ public static partial class ControlPaint
                 {
                     HLSColor hlsColor = new(rightColor);
                     float inc = InfinityToOne(1.0f / (rightWidth - 1));
-                    using DeviceContextHdcScope hdc = new(deviceContext);
+                    using DeviceContextHdcScope hdc = deviceContext.ToHdcScope();
                     for (int i = 0; i < rightWidth; i++)
                     {
                         using CreatePenScope hpen = new(
@@ -1201,7 +1201,7 @@ public static partial class ControlPaint
             }
         }
 
-        using DeviceContextHdcScope hdc = new(context);
+        using DeviceContextHdcScope hdc = context.ToHdcScope();
         using CreatePenScope hpen = new(color);
         hdc.DrawRectangle(bounds, hpen);
     }
@@ -1854,7 +1854,7 @@ public static partial class ControlPaint
         });
 
         using SetRop2Scope rop2Scope = new(desktopDC, rop2);
-        using SelectObjectScope brushSelection = new(desktopDC, PInvoke.GetStockObject(GET_STOCK_OBJECT_FLAGS.NULL_BRUSH));
+        using SelectObjectScope brushSelection = new(desktopDC, PInvokeCore.GetStockObject(GET_STOCK_OBJECT_FLAGS.NULL_BRUSH));
         using SelectObjectScope penSelection = new(desktopDC, pen);
 
         PInvoke.SetBkColor(desktopDC, (COLORREF)(uint)ColorTranslator.ToWin32(graphicsColor));
@@ -1875,7 +1875,7 @@ public static partial class ControlPaint
 
         using ObjectScope pen = new(PInvoke.CreatePen(PEN_STYLE.PS_SOLID, cWidth: 1, (COLORREF)(uint)ColorTranslator.ToWin32(backColor)));
         using SetRop2Scope ropScope = new(desktopDC, rop2);
-        using SelectObjectScope brushSelection = new(desktopDC, PInvoke.GetStockObject(GET_STOCK_OBJECT_FLAGS.NULL_BRUSH));
+        using SelectObjectScope brushSelection = new(desktopDC, PInvokeCore.GetStockObject(GET_STOCK_OBJECT_FLAGS.NULL_BRUSH));
         using SelectObjectScope penSelection = new(desktopDC, pen);
 
         PInvoke.MoveToEx(desktopDC, start.X, start.Y, lppt: null);
@@ -1966,7 +1966,7 @@ public static partial class ControlPaint
         int right = x + width - 1;
         int bottom = y + height - 2;
 
-        using DeviceContextHdcScope hdc = new(deviceContext);
+        using DeviceContextHdcScope hdc = deviceContext.ToHdcScope();
         using CreatePenScope hpenBright = new(LightLight(backColor));
         using CreatePenScope hpenDark = new(Dark(backColor));
 
@@ -2029,7 +2029,7 @@ public static partial class ControlPaint
         // This must come before creating the scope.
         FONT_QUALITY quality = TextRenderer.FontQualityFromTextRenderingHint(dc);
 
-        using DeviceContextHdcScope hdc = new(dc, TextRenderer.GetApplyStateFlags(dc, format));
+        using DeviceContextHdcScope hdc = dc.ToHdcScope(TextRenderer.GetApplyStateFlags(dc, format));
         DrawStringDisabled(hdc, s, font, color, layoutRectangle, format, quality);
     }
 

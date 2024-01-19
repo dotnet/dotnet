@@ -10,4 +10,7 @@ internal interface IDocumentVersionCache
 {
     bool TryGetDocumentVersion(IDocumentSnapshot documentSnapshot, [NotNullWhen(true)] out int? version);
     void TrackDocumentVersion(IDocumentSnapshot documentSnapshot, int version);
+
+    // HACK: This is temporary to allow the cohosting and normal language server to co-exist and share code
+    int GetLatestDocumentVersion(string filePath);
 }

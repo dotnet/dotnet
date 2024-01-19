@@ -37,12 +37,12 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
             // determine if we should suppress this run and filter out all the additional files and references if so
             var isGeneratorSuppressed = analyzerConfigOptions.CheckGlobalFlagSet("SuppressRazorSourceGenerator");
-            var additionalTexts = context.AdditionalTextsProvider.EmptyWhen(isGeneratorSuppressed, true);
-            var metadataRefs = context.MetadataReferencesProvider.EmptyWhen(isGeneratorSuppressed, true);
+            var additionalTexts = context.AdditionalTextsProvider.EmptyOrCachedWhen(isGeneratorSuppressed, true);
+            var metadataRefs = context.MetadataReferencesProvider.EmptyOrCachedWhen(isGeneratorSuppressed, true);
 
             var razorSourceGeneratorOptions = analyzerConfigOptions
                 .Combine(parseOptions)
-                .Combine(isGeneratorSuppressed)
+                .SuppressIfNeeded(isGeneratorSuppressed)
                 .Select(ComputeRazorSourceGeneratorOptions)
                 .ReportDiagnostics(context);
 
@@ -112,7 +112,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
             var tagHelpersFromCompilation = declCompilation
                 .Combine(razorSourceGeneratorOptions)
-                .Combine(isGeneratorSuppressed)
+                .SuppressIfNeeded(isGeneratorSuppressed)
                 .Select(static (pair, _) =>
                 {
 
@@ -199,7 +199,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
             // Currently unused. See https://github.com/dotnet/roslyn/issues/71024.
             var razorHostOutputsEnabled = analyzerConfigOptions.CheckGlobalFlagSet("EnableRazorHostOutputs");
-            var withOptionsDesignTime = withOptions.EmptyWhen(razorHostOutputsEnabled, false);
+            var withOptionsDesignTime = withOptions.EmptyOrCachedWhen(razorHostOutputsEnabled, false);
 
             var isAddComponentParameterAvailable = metadataRefs
                 .Where(r => r.Display is { } display && display.EndsWith("Microsoft.AspNetCore.Components.dll", StringComparison.Ordinal))
@@ -284,24 +284,34 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     }
 
                     return string.Equals(a.csharpDocument.GeneratedCode, b.csharpDocument.GeneratedCode, StringComparison.Ordinal);
-                });
+                })
+                .WithTrackingName("CSharpDocuments");
 
-            context.RegisterImplementationSourceOutput(csharpDocuments, static (context, pair) =>
+            var csharpDocumentsWithSuppressionFlag = csharpDocuments
+                // Explicitly combine with the suppression state. We *do* want this to run even if we're in the latched state
+                .Combine(isGeneratorSuppressed)
+                .WithTrackingName("DocumentsWithSuppression");
+
+            context.RegisterImplementationSourceOutput(csharpDocumentsWithSuppressionFlag, static (context, pair) =>
             {
-                var (filePath, csharpDocument) = pair;
+                var ((filePath, csharpDocument), isGeneratorSuppressed) = pair;
 
-                // Add a generated suffix so tools, such as coverlet, consider the file to be generated
-                var hintName = GetIdentifierFromPath(filePath) + ".g.cs";
-
-                RazorSourceGeneratorEventSource.Log.AddSyntaxTrees(hintName);
-                for (var i = 0; i < csharpDocument.Diagnostics.Count; i++)
+                // When the generator is suppressed, we may still have a lot of cached data for perf, but we don't want to actually add any of the files to the output
+                if (!isGeneratorSuppressed)
                 {
-                    var razorDiagnostic = csharpDocument.Diagnostics[i];
-                    var csharpDiagnostic = razorDiagnostic.AsDiagnostic();
-                    context.ReportDiagnostic(csharpDiagnostic);
-                }
+                    // Add a generated suffix so tools, such as coverlet, consider the file to be generated
+                    var hintName = GetIdentifierFromPath(filePath) + ".g.cs";
 
-                context.AddSource(hintName, csharpDocument.GeneratedCode);
+                    RazorSourceGeneratorEventSource.Log.AddSyntaxTrees(hintName);
+                    for (var i = 0; i < csharpDocument.Diagnostics.Count; i++)
+                    {
+                        var razorDiagnostic = csharpDocument.Diagnostics[i];
+                        var csharpDiagnostic = razorDiagnostic.AsDiagnostic();
+                        context.ReportDiagnostic(csharpDiagnostic);
+                    }
+
+                    context.AddSource(hintName, csharpDocument.GeneratedCode);
+                }
             });
         }
     }

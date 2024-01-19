@@ -188,6 +188,7 @@ NuGet.Common.NuGetLogCode.NU1106 = 1106 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1107 = 1107 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1108 = 1108 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1109 = 1109 -> NuGet.Common.NuGetLogCode
+NuGet.Common.NuGetLogCode.NU1110 = 1110 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1201 = 1201 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1202 = 1202 -> NuGet.Common.NuGetLogCode
 NuGet.Common.NuGetLogCode.NU1203 = 1203 -> NuGet.Common.NuGetLogCode

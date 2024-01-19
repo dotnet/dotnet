@@ -361,7 +361,9 @@ NuGet.PackageManagement.VersionConstraints.ExactPatch = 4 -> NuGet.PackageManage
 NuGet.PackageManagement.VersionConstraints.ExactRelease = 8 -> NuGet.PackageManagement.VersionConstraints
 NuGet.PackageManagement.VersionConstraints.None = 0 -> NuGet.PackageManagement.VersionConstraints
 NuGet.ProjectManagement.BuildIntegratedInstallationContext
+NuGet.ProjectManagement.BuildIntegratedInstallationContext.AreAllPackagesConditional.get -> bool
 ~NuGet.ProjectManagement.BuildIntegratedInstallationContext.BuildIntegratedInstallationContext(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> successfulFrameworks, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> unsucessfulFrameworks, System.Collections.Generic.IDictionary<NuGet.Frameworks.NuGetFramework, string> originalFrameworks) -> void
+~NuGet.ProjectManagement.BuildIntegratedInstallationContext.BuildIntegratedInstallationContext(System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> successfulFrameworks, System.Collections.Generic.IEnumerable<NuGet.Frameworks.NuGetFramework> unsucessfulFrameworks, System.Collections.Generic.IDictionary<NuGet.Frameworks.NuGetFramework, string> originalFrameworks, bool areAllPackagesConditional) -> void
 NuGet.ProjectManagement.BuildIntegratedInstallationContext.IncludeType.get -> NuGet.LibraryModel.LibraryIncludeFlags
 NuGet.ProjectManagement.BuildIntegratedInstallationContext.IncludeType.set -> void
 ~NuGet.ProjectManagement.BuildIntegratedInstallationContext.OriginalFrameworks.get -> System.Collections.Generic.IDictionary<NuGet.Frameworks.NuGetFramework, string>
@@ -656,6 +658,7 @@ NuGet.ProjectManagement.XmlUtility
 ~abstract NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.InstallPackageAsync(string packageId, NuGet.Versioning.VersionRange range, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, NuGet.ProjectManagement.BuildIntegratedInstallationContext installationContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
 ~abstract NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.MSBuildProjectPath.get -> string
 ~abstract NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.ProjectName.get -> string
+~abstract NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.UninstallPackageAsync(string packageId, NuGet.ProjectManagement.BuildIntegratedInstallationContext installationContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
 ~abstract NuGet.ProjectManagement.SourceControlManager.CreateFile(string fullPath, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> System.IO.Stream
 ~abstract NuGet.ProjectManagement.SourceControlManager.PendAddFiles(System.Collections.Generic.IEnumerable<string> fullPaths, string root, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> void
 ~abstract NuGet.ProjectManagement.SourceControlManager.PendDeleteFiles(System.Collections.Generic.IEnumerable<string> fullPaths, string root, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext) -> void
@@ -672,6 +675,7 @@ NuGet.ProjectManagement.XmlUtility
 ~const NuGet.ProjectManagement.ProjectBuildProperties.AssemblyName = "AssemblyName" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.AssetTargetFallback = "AssetTargetFallback" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.CLRSupport = "CLRSupport" -> string
+~const NuGet.ProjectManagement.ProjectBuildProperties.CentralPackageFloatingVersionsEnabled = "CentralPackageFloatingVersionsEnabled" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.CentralPackageTransitivePinningEnabled = "CentralPackageTransitivePinningEnabled" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.CentralPackageVersionOverrideEnabled = "CentralPackageVersionOverrideEnabled" -> string
 ~const NuGet.ProjectManagement.ProjectBuildProperties.Clear = "Clear" -> string
@@ -763,6 +767,7 @@ override NuGet.ProjectManagement.FileTransformExtensions.GetHashCode() -> int
 ~override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.MSBuildProjectPath.get -> string
 ~override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.ProjectName.get -> string
 ~override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.UninstallPackageAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+~override NuGet.ProjectManagement.Projects.ProjectJsonNuGetProject.UninstallPackageAsync(string packageId, NuGet.ProjectManagement.BuildIntegratedInstallationContext installationContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
 ~override sealed NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject.InstallPackageAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.DownloadResourceResult downloadResourceResult, NuGet.ProjectManagement.INuGetProjectContext nuGetProjectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
 ~static NuGet.PackageManagement.BuildIntegratedRestoreUtility.ExecuteInitPs1ScriptsAsync(NuGet.ProjectManagement.Projects.BuildIntegratedNuGetProject project, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> packages, NuGet.Packaging.FallbackPackagePathResolver pathResolver, NuGet.ProjectManagement.INuGetProjectContext projectContext, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task
 ~static NuGet.PackageManagement.BuildIntegratedRestoreUtility.GetAddedPackages(NuGet.ProjectModel.LockFile originalLockFile, NuGet.ProjectModel.LockFile updatedLockFile) -> System.Collections.Generic.IReadOnlyList<NuGet.Packaging.Core.PackageIdentity>

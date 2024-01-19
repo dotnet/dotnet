@@ -2,29 +2,32 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Composition;
+using System.ComponentModel.Composition;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Editor;
 using Microsoft.Extensions.Logging;
+using Microsoft.Internal.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.Settings;
-using Microsoft.Internal.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.Utilities.UnifiedSettings;
-using System.Linq;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Options;
 
-[Shared]
 [Export(typeof(OptionsStorage))]
 [Export(typeof(IAdvancedSettingsStorage))]
 internal class OptionsStorage : IAdvancedSettingsStorage
 {
     private readonly WritableSettingsStore _writableSettingsStore;
     private readonly Lazy<ITelemetryReporter> _telemetryReporter;
-    private readonly ISettingsReader _unifiedSettingsReader;
-    private readonly IDisposable _unifiedSettingsSubscription;
+    private readonly JoinableTask _initializeTask;
+    private ISettingsReader? _unifiedSettingsReader;
+    private IDisposable? _unifiedSettingsSubscription;
 
     public bool FormatOnType
     {
@@ -69,20 +72,34 @@ internal class OptionsStorage : IAdvancedSettingsStorage
     }
 
     [ImportingConstructor]
-    public OptionsStorage(SVsServiceProvider vsServiceProvider, Lazy<ITelemetryReporter> telemetryReporter)
+    public OptionsStorage(
+        SVsServiceProvider synchronousServiceProvider,
+        [Import(typeof(SAsyncServiceProvider))] IAsyncServiceProvider serviceProvider,
+        Lazy<ITelemetryReporter> telemetryReporter,
+        JoinableTaskContext joinableTaskContext)
     {
-        var shellSettingsManager = new ShellSettingsManager(vsServiceProvider);
+        var shellSettingsManager = new ShellSettingsManager(synchronousServiceProvider);
         _writableSettingsStore = shellSettingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
 
         _writableSettingsStore.CreateCollection(SettingsNames.LegacyCollection);
         _telemetryReporter = telemetryReporter;
 
-        var settingsManager = vsServiceProvider.GetService<SVsUnifiedSettingsManager, Utilities.UnifiedSettings.ISettingsManager>();
-        _unifiedSettingsReader = settingsManager.GetReader();
-        _unifiedSettingsSubscription = _unifiedSettingsReader.SubscribeToChanges(OnUnifiedSettingsChanged, SettingsNames.AllSettings.Select(s => s.UnifiedName).ToArray());
+        _initializeTask = joinableTaskContext.Factory.RunAsync(async () =>
+        {
+            var unifiedSettingsManager = await serviceProvider.GetServiceAsync<SVsUnifiedSettingsManager, Utilities.UnifiedSettings.ISettingsManager>();
+            _unifiedSettingsReader = unifiedSettingsManager.GetReader();
+            _unifiedSettingsSubscription = _unifiedSettingsReader.SubscribeToChanges(OnUnifiedSettingsChanged, SettingsNames.AllSettings.Select(s => s.UnifiedName).ToArray());
+        });
     }
 
-    public event EventHandler<ClientAdvancedSettingsChangedEventArgs>? Changed;
+    public async Task OnChangedAsync(Action<ClientAdvancedSettings> changed)
+    {
+        await _initializeTask.JoinAsync();
+
+        _changed += (_, args) => changed(args.Settings);
+    }
+
+    private EventHandler<ClientAdvancedSettingsChangedEventArgs>? _changed;
 
     public ClientAdvancedSettings GetAdvancedSettings() => new(FormatOnType, AutoClosingTags, AutoInsertAttributeQuotes, ColorBackground, CommitElementsWithSpace, Snippets, LogLevel);
 
@@ -124,7 +141,8 @@ internal class OptionsStorage : IAdvancedSettingsStorage
 
     private void NotifyChange()
     {
-        Changed?.Invoke(this, new ClientAdvancedSettingsChangedEventArgs(GetAdvancedSettings()));
+        _initializeTask.Join();
+        _changed?.Invoke(this, new ClientAdvancedSettingsChangedEventArgs(GetAdvancedSettings()));
     }
 
     private void OnUnifiedSettingsChanged(SettingsUpdate update)
@@ -134,6 +152,6 @@ internal class OptionsStorage : IAdvancedSettingsStorage
 
     public void Dispose()
     {
-        _unifiedSettingsSubscription.Dispose();
+        _unifiedSettingsSubscription?.Dispose();
     }
 }

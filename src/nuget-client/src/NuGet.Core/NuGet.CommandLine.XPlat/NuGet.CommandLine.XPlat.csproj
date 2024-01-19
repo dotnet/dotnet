@@ -18,6 +18,7 @@
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils.Sources" PrivateAssets="All" />
     <PackageReference Include="System.Diagnostics.Debug" />
     <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
+    <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
 <!-- Microsoft.Build.Locator is only used when debugging, and the compiler will skip copying this dependency from Release assemblies we insert because we only refer to it conditionally with the DEBUG configuration.

@@ -53,6 +53,7 @@
     <UsagePattern IdentityGlob="System.CodeDom/*" />
     <UsagePattern IdentityGlob="System.Collections.Immutable/*" />
     <UsagePattern IdentityGlob="System.Collections/*" />
+    <UsagePattern IdentityGlob="System.CommandLine/*"/>
     <UsagePattern IdentityGlob="System.ComponentModel.Composition/*" />
     <UsagePattern IdentityGlob="System.Configuration.ConfigurationManager/*" />
     <UsagePattern IdentityGlob="System.Diagnostics.Debug/*" />

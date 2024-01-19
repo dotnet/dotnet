@@ -21,14 +21,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal class ProjectConfigurationStateSynchronizer : IProjectConfigurationFileChangeListener
 {
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
-    private readonly RazorProjectService _projectService;
+    private readonly IRazorProjectService _projectService;
     private readonly ILogger _logger;
     private readonly Dictionary<string, ProjectKey> _configurationToProjectMap;
     internal readonly Dictionary<ProjectKey, DelayedProjectInfo> ProjectInfoMap;
 
     public ProjectConfigurationStateSynchronizer(
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-        RazorProjectService projectService,
+        IRazorProjectService projectService,
         IRazorLoggerFactory loggerFactory)
     {
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
