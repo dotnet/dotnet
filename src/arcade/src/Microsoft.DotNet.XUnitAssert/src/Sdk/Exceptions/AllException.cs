@@ -58,10 +58,18 @@ namespace Xunit.Sdk
 								CultureInfo.CurrentCulture,
 								"{0}Item:  {1}{2}{3}Error: {4}",
 								string.Format(CultureInfo.CurrentCulture, "[{0}]:", error.Item1).PadRight(maxItemIndexLength),
+#if NETCOREAPP2_0_OR_GREATER
+								error.Item2.Replace(Environment.NewLine, wrapSpaces, StringComparison.Ordinal),
+#else
 								error.Item2.Replace(Environment.NewLine, wrapSpaces),
+#endif
 								Environment.NewLine,
 								indexSpaces,
+#if NETCOREAPP2_0_OR_GREATER
+								error.Item3.Message.Replace(Environment.NewLine, wrapSpaces, StringComparison.Ordinal)
+#else
 								error.Item3.Message.Replace(Environment.NewLine, wrapSpaces)
+#endif
 							)
 						)
 					)

@@ -83,10 +83,10 @@
     <MicrosoftTestPlatformVersion Condition="'$(MicrosoftTestPlatformVersion)' == ''">16.5.0</MicrosoftTestPlatformVersion>
 
     <!-- Follow the instructions on how to update any of the below xunit versions: https://github.com/dotnet/arcade/blob/main/Documentation/update-xunit.md. -->
-    <XUnitVersion Condition="'$(XUnitVersion)' == ''">2.6.6</XUnitVersion>
+    <XUnitVersion Condition="'$(XUnitVersion)' == ''">2.6.7-pre.5</XUnitVersion>
     <XUnitAnalyzersVersion Condition="'$(XUnitAnalyzersVersion)' == ''">1.10.0</XUnitAnalyzersVersion>
     <XUnitRunnerConsoleVersion Condition="'$(XUnitRunnerConsoleVersion)' == ''">$(XUnitVersion)</XUnitRunnerConsoleVersion>
-    <XUnitRunnerVisualStudioVersion Condition="'$(XUnitRunnerVisualStudioVersion)' == ''">2.5.6</XUnitRunnerVisualStudioVersion>
+    <XUnitRunnerVisualStudioVersion Condition="'$(XUnitRunnerVisualStudioVersion)' == ''">2.5.7-pre.8</XUnitRunnerVisualStudioVersion>
 
     <MSTestVersion Condition="'$(MSTestVersion)' == ''">2.0.0</MSTestVersion>
     <MSTestTestAdapterVersion Condition="'$(MSTestTestAdapterVersion)' == ''">$(MSTestVersion)</MSTestTestAdapterVersion>

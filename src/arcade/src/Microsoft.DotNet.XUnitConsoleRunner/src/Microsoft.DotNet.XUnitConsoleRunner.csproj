@@ -10,10 +10,11 @@
     <IsTestUtilityProject>true</IsTestUtilityProject>
     <IsPackable>true</IsPackable>
     <PackageId>Microsoft.DotNet.XUnitConsoleRunner</PackageId>
-    <VersionPrefix>$(XUnitVersion)</VersionPrefix>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddBuildOutputToPackage</TargetsForTfmSpecificContentInPackage>
+    <!-- Use split function in case a pre-release version is consumed. -->
+    <VersionPrefix>$(XUnitVersion.Split('-')[0])</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>

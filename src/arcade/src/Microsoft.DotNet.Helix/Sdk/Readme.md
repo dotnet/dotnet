@@ -228,7 +228,7 @@ Given a local folder `$(TestFolder)` containing `runtests.cmd`, this will run `r
     <!-- TargetFramework of the xunit.runner.dll to use when running the tests -->
     <XUnitRuntimeTargetFramework>netcoreapp2.0</XUnitRuntimeTargetFramework>
     <!-- PackageVersion of xunit.runner.console to use -->
-    <XUnitRunnerVersion>2.6.6</XUnitRunnerVersion>
+    <XUnitRunnerVersion>2.6.7-pre.5</XUnitRunnerVersion>
     <!-- Additional command line arguments to pass to xunit.console.exe -->
     <XUnitArguments></XUnitArguments>
   </PropertyGroup>
