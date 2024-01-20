@@ -23,6 +23,10 @@ using Xunit.Sdk;
 using System.Diagnostics.CodeAnalysis;
 #endif
 
+#if NETCOREAPP3_0_OR_GREATER
+using System.Threading.Tasks;
+#endif
+
 namespace Xunit.Internal
 {
 	internal static class AssertHelper
@@ -132,6 +136,34 @@ namespace Xunit.Internal
 						.ToDictionary(g => g.name, g => g.getter);
 			});
 
+#if !XUNIT_AOT
+#if XUNIT_NULLABLE
+		static TypeInfo? GetTypeInfo(string typeName)
+#else
+		static TypeInfo GetTypeInfo(string typeName)
+#endif
+		{
+			try
+			{
+				foreach (var assembly in getAssemblies.Value)
+				{
+					var type = assembly.GetType(typeName);
+					if (type != null)
+						return type.GetTypeInfo();
+				}
+
+				return null;
+			}
+			catch (Exception ex)
+			{
+				throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "Fatal error: Exception occurred while trying to retrieve type '{0}'", typeName), ex);
+			}
+		}
+#endif
+
+		internal static bool IsCompilerGenerated(Type type) =>
+			type.GetTypeInfo().CustomAttributes.Any(a => a.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute");
+
 		internal static string ShortenAndEncodeString(
 #if XUNIT_NULLABLE
 			string? value,
@@ -214,6 +246,33 @@ namespace Xunit.Internal
 
 			return ShortenAndEncodeString(value, (value?.Length - 1) ?? 0, out pointerIndent);
 		}
+
+#if NETCOREAPP3_0_OR_GREATER
+
+#if XUNIT_NULLABLE
+		[return: NotNullIfNotNull(nameof(data))]
+		internal static IEnumerable<T>? ToEnumerable<T>(IAsyncEnumerable<T>? data) =>
+#else
+		internal static IEnumerable<T> ToEnumerable<T>(IAsyncEnumerable<T> data) =>
+#endif
+			data == null ? null : ToEnumerableImpl(data);
+
+		static IEnumerable<T> ToEnumerableImpl<T>(IAsyncEnumerable<T> data)
+		{
+			var enumerator = data.GetAsyncEnumerator();
+
+			try
+			{
+				while (WaitForValueTask(enumerator.MoveNextAsync()))
+					yield return enumerator.Current;
+			}
+			finally
+			{
+				WaitForValueTask(enumerator.DisposeAsync());
+			}
+		}
+
+#endif
 
 		static bool TryConvert(
 			object value,
@@ -522,5 +581,29 @@ namespace Xunit.Internal
 
 			return null;
 		}
+
+#if NETCOREAPP3_0_OR_GREATER
+
+		static void WaitForValueTask(ValueTask valueTask)
+		{
+			var valueTaskAwaiter = valueTask.GetAwaiter();
+			if (valueTaskAwaiter.IsCompleted)
+				return;
+
+			// Let the task complete on a thread pool thread while we block the main thread
+			Task.Run(valueTask.AsTask).GetAwaiter().GetResult();
+		}
+
+		static T WaitForValueTask<T>(ValueTask<T> valueTask)
+		{
+			var valueTaskAwaiter = valueTask.GetAwaiter();
+			if (valueTaskAwaiter.IsCompleted)
+				return valueTaskAwaiter.GetResult();
+
+			// Let the task complete on a thread pool thread while we block the main thread
+			return Task.Run(valueTask.AsTask).GetAwaiter().GetResult();
+		}
+
+#endif
 	}
 }

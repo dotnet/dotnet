@@ -40,8 +40,12 @@ namespace Xunit.Sdk
 		/// <exception cref="ArgumentNullException"></exception>
 		protected CollectionTracker(IEnumerable innerEnumerable)
 		{
+#if NET6_0_OR_GREATER
+			ArgumentNullException.ThrowIfNull(innerEnumerable);
+#else
 			if (innerEnumerable == null)
 				throw new ArgumentNullException(nameof(innerEnumerable));
+#endif
 
 			InnerEnumerable = innerEnumerable;
 		}
@@ -467,8 +471,12 @@ namespace Xunit.Sdk
 			IEnumerable<T> castCollection) :
 				base(collection)
 		{
+#if NET6_0_OR_GREATER
+			ArgumentNullException.ThrowIfNull(castCollection);
+#else
 			if (castCollection == null)
 				throw new ArgumentNullException(nameof(castCollection));
+#endif
 
 			this.collection = castCollection;
 		}

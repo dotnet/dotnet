@@ -25,8 +25,12 @@ namespace Xunit.Sdk
 		/// <param name="innerComparer">The comparer that is being adapted.</param>
 		public AssertEqualityComparerAdapter(IEqualityComparer<T> innerComparer)
 		{
+#if NET6_0_OR_GREATER
+			ArgumentNullException.ThrowIfNull(innerComparer);
+#else
 			if (innerComparer == null)
 				throw new ArgumentNullException(nameof(innerComparer));
+#endif
 
 			this.innerComparer = innerComparer;
 		}

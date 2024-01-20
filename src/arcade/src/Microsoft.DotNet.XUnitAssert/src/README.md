@@ -1,6 +1,8 @@
 # About This Project
 
-This project contains the xUnit.net assertion library source code, intended to be used as a Git submodule. Code here is built with a target-framework of `netstandard1.1`, and must support both `net452` and `netcoreapp1.0`. The code must be buildable by a minimum of C# 6.0. These constraints are supported by the [suggested contribution workflow](#suggested-contribution-workflow), which makes it trivial to know when you've used unavailable features.
+This project contains the xUnit.net assertion library source code, intended to be used as a Git submodule.
+
+Code here is built with several target frameworks: `netstandard1.1` and `net6.0` for xUnit.net v2; and `netstandard2.0` and `net6.0` for xUnit.net v3. At a minimum the code needs to be able to support `net452` and later for .NET Framework, `netcoreapp1.0` and later for .NET Core, and `net5.0` and later for .NET. The minimum (and default) C# version is 6.0, unless specific features require targeting later compilers. Additionally, we compile with the full Roslyn analyzer set enabled when building for v3, so you will frequently see conditional code and/or rules being disabled as appropriate. These constraints are supported by the [suggested contribution workflow](#suggested-contribution-workflow), which aims to make it easy to know when you've used unavailable features.
 
 > _**Note:** If your PR requires a newer target framework or a newer C# language to build, please start a discussion in the related issue(s) before starting any work. PRs that arbitrarily use newer target frameworks and/or newer C# language features will need to be fixed; you may be asked to fix them, or we may fix them for you, or we may decline the PR (at our discretion)._
 
