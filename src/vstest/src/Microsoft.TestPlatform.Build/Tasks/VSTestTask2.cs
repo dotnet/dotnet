@@ -40,6 +40,8 @@ public class VSTestTask2 : ToolTask, ITestTask
     public string? VSTestArtifactsProcessingMode { get; set; }
     public string? VSTestSessionCorrelationId { get; set; }
 
+    private readonly string _testResultSplitter = "++++";
+    private readonly string[] _testResultSplitterArray = new[] { "++++" };
 
     private readonly string _errorSplitter = "||||";
     private readonly string[] _errorSplitterArray = new[] { "||||" };
@@ -91,8 +93,7 @@ public class VSTestTask2 : ToolTask, ITestTask
                 return;
             }
         }
-
-        if (singleLine.StartsWith(_fullErrorSplitter))
+        else if (singleLine.StartsWith(_fullErrorSplitter))
         {
             var parts = singleLine.Split(_fullErrorSplitterArray, StringSplitOptions.None);
             if (parts.Length > 1)
@@ -116,6 +117,18 @@ public class VSTestTask2 : ToolTask, ITestTask
                 var logMessage = $"{message}{Environment.NewLine}StackTrace:{Environment.NewLine}{stackTrace}";
 
                 Log.LogMessage(MessageImportance.Low, logMessage);
+                return;
+            }
+        }
+        else if (singleLine.StartsWith(_testResultSplitter))
+        {
+            var parts = singleLine.Split(_testResultSplitterArray, StringSplitOptions.None);
+            if (parts.Length == 3)
+            {
+                var outcome = parts[1];
+                var testName = parts[2];
+
+                Log.LogMessage(MessageImportance.Low, $"{outcome} {testName}");
                 return;
             }
         }

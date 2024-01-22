@@ -14,4 +14,5 @@ public enum PlatformArchitecture
     ARM64,
     S390x,
     Ppc64le,
+    RiscV64,
 }

@@ -18,7 +18,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client;
 /// </summary>
 internal sealed class ParallelOperationManager<TManager, TEventHandler, TWorkload> : IDisposable
 {
-    private const int PreStart = 2;
+    private const int PreStart = 0;
     private readonly static int VSTEST_HOSTPRESTART_COUNT =
         int.TryParse(
                 Environment.GetEnvironmentVariable(nameof(VSTEST_HOSTPRESTART_COUNT)),

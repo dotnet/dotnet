@@ -30,8 +30,8 @@
     <MicrosoftExtensionsDependencyModelPackageVersion>3.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftFakesVersion>17.9.0-beta.24058.4</MicrosoftFakesVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.10.1-preview.24067.1</MicrosoftInternalCodeCoverageVersion>
-    <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.6.33910.51</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
+    <MicrosoftInternalCodeCoverageVersion>17.10.1-preview.24069.2</MicrosoftInternalCodeCoverageVersion>
+    <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.8.34518.129</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
     <MicrosoftVisualStudioInteropVersion>17.3.32622.426</MicrosoftVisualStudioInteropVersion>
     <MicrosoftVSTelemetryVersion>17.6.46</MicrosoftVSTelemetryVersion>

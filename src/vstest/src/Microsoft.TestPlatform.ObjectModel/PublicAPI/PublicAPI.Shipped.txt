@@ -971,3 +971,4 @@ virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.TestObject.Properties.ge
 virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.TestObject.ProtectedGetPropertyValue(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProperty! property, object? defaultValue) -> object?
 virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.TestObject.ProtectedSetPropertyValue(Microsoft.VisualStudio.TestPlatform.ObjectModel.TestProperty! property, object? value) -> void
 virtual Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateValueCallback.Invoke(object? value) -> bool
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture.RiscV64 = 8 -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Architecture

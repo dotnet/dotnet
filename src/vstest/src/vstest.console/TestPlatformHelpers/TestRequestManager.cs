@@ -848,6 +848,8 @@ internal class TestRequestManager : ITestRequestManager
                     return Architecture.S390x;
                 case PlatformArchitecture.Ppc64le:
                     return Architecture.Ppc64le;
+                case PlatformArchitecture.RiscV64:
+                    return Architecture.RiscV64;
                 default:
                     EqtTrace.Error($"TestRequestManager.TranslateToArchitecture: Unhandled architecture '{targetArchitecture}'.");
                     break;

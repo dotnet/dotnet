@@ -18,7 +18,6 @@ using CommandLineResources = Microsoft.VisualStudio.TestPlatform.CommandLine.Res
 
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Internal;
 
-// Not using FriendlyName because it 
 [ExtensionUri(ExtensionUri)]
 [FriendlyName(FriendlyName)]
 internal class MSBuildLogger : ITestLoggerWithParameters
@@ -100,72 +99,83 @@ internal class MSBuildLogger : ITestLoggerWithParameters
         TPDebug.Assert(Output != null, "Initialize should have been called.");
         switch (e.Result.Outcome)
         {
+            case TestOutcome.Passed:
+            case TestOutcome.Skipped:
+
+                var test = e.Result.TestCase.DisplayName;
+                var outcome = e.Result.Outcome == TestOutcome.Passed
+                    ? CommandLineResources.PassedTestIndicator
+                    : CommandLineResources.SkippedTestIndicator;
+                var info = $"++++{outcome}++++{ReplacePlusSeparator(test)}";
+
+                Debug.WriteLine(">>>>MESSAGE:" + info);
+                Output.Information(false, info);
+                break;
             case TestOutcome.Failed:
+
+                var result = e.Result;
+                if (!StringUtils.IsNullOrWhiteSpace(result.ErrorStackTrace))
                 {
-                    var result = e.Result;
-                    if (!StringUtils.IsNullOrWhiteSpace(result.ErrorStackTrace))
+                    var maxLength = 1000;
+                    string? error = null;
+                    if (result.ErrorMessage != null)
                     {
-                        var maxLength = 1000;
-                        string? error = null;
-                        if (result.ErrorMessage != null)
-                        {
-                            var oneLineMessage = result.ErrorMessage.Replace(Environment.NewLine, " ");
-                            error = oneLineMessage.Length > maxLength ? oneLineMessage.Substring(0, maxLength) : oneLineMessage;
-                        }
-
-                        string? stackFrame = null;
-                        var stackFrames = Regex.Split(result.ErrorStackTrace, Environment.NewLine);
-                        string? line = null;
-                        string? file = null;
-                        string? place = null;
-                        if (stackFrames.Length > 0)
-                        {
-                            foreach (var frame in stackFrames.Take(20))
-                            {
-                                if (TryGetStackFrameLocation(frame, out line, out file, out place))
-                                {
-                                    break;
-                                }
-                            }
-                        }
-
-                        // We did not find any stack frame with location in the first 20 frames.
-                        // Try getting location of the test.
-                        if (file == null)
-                        {
-                            if (!StringUtils.IsNullOrEmpty(result.TestCase.CodeFilePath))
-                            {
-                                // if there are no symbols but we collect source info, us the source info.
-                                file = result.TestCase.CodeFilePath;
-                                line = result.TestCase.LineNumber > 0 ? result.TestCase.LineNumber.ToString(CultureInfo.InvariantCulture) : null;
-                                place = stackFrame;
-                            }
-                            else
-                            {
-                                // if there are no symbols and no source info use the dll
-                                place = result.TestCase.DisplayName;
-                                file = result.TestCase.Source;
-                            }
-                        }
-
-                        place = $"({result.TestCase.DisplayName}) {place}";
-                        var message = $"||||{ReplacePipeSeparator(file)}||||{line}||||{ReplacePipeSeparator(place)}||||{ReplacePipeSeparator(error)}";
-
-                        Trace.WriteLine(">>>>MESSAGE:" + message);
-                        Output.Error(false, message);
-
-                        var fullError = $"~~~~{ReplaceTildaSeparator(result.ErrorMessage)}~~~~{ReplaceTildaSeparator(result.ErrorStackTrace)}";
-                        Output.Information(false, fullError);
-                        return;
-                    }
-                    else
-                    {
-                        Output.Error(false, result.DisplayName?.Replace(Environment.NewLine, " ") ?? string.Empty);
+                        // Do not use environment.newline here, we want to replace also \n on Windows.
+                        var oneLineMessage = result.ErrorMessage.Replace("\n", " ").Replace("\r", " ");
+                        error = oneLineMessage.Length > maxLength ? oneLineMessage.Substring(0, maxLength) : oneLineMessage;
                     }
 
+                    string? stackFrame = null;
+                    var stackFrames = Regex.Split(result.ErrorStackTrace, Environment.NewLine);
+                    string? line = null;
+                    string? file = null;
+                    string? place = null;
+                    if (stackFrames.Length > 0)
+                    {
+                        foreach (var frame in stackFrames.Take(20))
+                        {
+                            if (TryGetStackFrameLocation(frame, out line, out file, out place))
+                            {
+                                break;
+                            }
+                        }
+                    }
 
-                    break;
+                    // We did not find any stack frame with location in the first 20 frames.
+                    // Try getting location of the test.
+                    if (file == null)
+                    {
+                        if (!StringUtils.IsNullOrEmpty(result.TestCase.CodeFilePath))
+                        {
+                            // if there are no symbols but we collect source info, us the source info.
+                            file = result.TestCase.CodeFilePath;
+                            line = result.TestCase.LineNumber > 0 ? result.TestCase.LineNumber.ToString(CultureInfo.InvariantCulture) : null;
+                            place = stackFrame;
+                        }
+                        else
+                        {
+                            // if there are no symbols and no source info use the dll
+                            place = result.TestCase.DisplayName;
+                            file = result.TestCase.Source;
+                        }
+                    }
+
+                    place = $"({result.TestCase.DisplayName}) {place}";
+                    var message = $"||||{ReplacePipeSeparator(file)}||||{line}||||{ReplacePipeSeparator(place)}||||{ReplacePipeSeparator(error)}";
+
+                    Debug.WriteLine(">>>>MESSAGE:" + message);
+                    Output.Error(false, message);
+
+                    var fullError = $"~~~~{ReplaceTildaSeparator(result.ErrorMessage)}~~~~{ReplaceTildaSeparator(result.ErrorStackTrace)}";
+                    Output.Information(false, fullError);
+                    return;
                 }
+                else
+                {
+                    Output.Error(false, result.DisplayName?.Replace(Environment.NewLine, " ") ?? string.Empty);
+                }
+
+                break;
         }
     }
 
@@ -186,7 +196,7 @@ internal class MSBuildLogger : ITestLoggerWithParameters
             line = match.Groups["line"].Value;
         }
 
-        Trace.WriteLine($">>>> {(match.Success ? "MATCH" : "NOMATCH")} {stackFrame}");
+        Debug.WriteLine($">>>> {(match.Success ? "MATCH" : "NOMATCH")} {stackFrame}");
 
         return match.Success;
     }
@@ -201,6 +211,17 @@ internal class MSBuildLogger : ITestLoggerWithParameters
 
         // Remove any occurrence of message splitter.
         return text.Replace("||||", "____");
+    }
+
+    private static string? ReplacePlusSeparator(string? text)
+    {
+        if (text == null)
+        {
+            return null;
+        }
+
+        // Remove any occurrence of message splitter.
+        return text.Replace("++++", "____");
     }
 
     private static string? ReplaceTildaSeparator(string? text)

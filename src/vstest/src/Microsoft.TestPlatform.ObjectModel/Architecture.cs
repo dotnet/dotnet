@@ -12,5 +12,6 @@ public enum Architecture
     AnyCPU,
     ARM64,
     S390x,
-    Ppc64le
+    Ppc64le,
+    RiscV64,
 }
