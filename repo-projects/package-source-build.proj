@@ -49,10 +49,13 @@
     <MakeDir Directories="$(SharedOutputPath)" />
 
     <ItemGroup>
-      <_TarDirArgs Include="@(RepositoryReferenceInfo->'-C %(SourceName) .')" />
+      <_TarDirArg Include="@(RepositoryReferenceInfo->'-C %(SourceName) .')" />
     </ItemGroup>
+    <PropertyGroup>
+      <_TarDirArgs>%(_TarDirArg.Identity)</_TarDirArgs>
+    </PropertyGroup>
 
-    <Exec Command="tar --numeric-owner --exclude='Microsoft.SourceBuild.Intermediate.*.nupkg' -czf $(SourceBuiltTarballName) $(SourceBuiltVersionFileName) *.nupkg *.props %(_TarDirArgs.Identity) -C $(SourceBuildReferencePackagesDestination) ."
+    <Exec Command="tar --numeric-owner --exclude='Microsoft.SourceBuild.Intermediate.*.nupkg' -czf $(SourceBuiltTarballName) $(RepositoryName)/$(SourceBuiltVersionFileName) $(_TarDirArgs) -C $(SourceBuildReferencePackagesDestination) ."
           WorkingDirectory="$(SourceBuiltBasePackagesPath)" />
 
     <Message Importance="High" Text="Packaged source-built artifacts to $(SourceBuiltTarballName)" />
