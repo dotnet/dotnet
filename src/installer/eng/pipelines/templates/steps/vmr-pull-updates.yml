@@ -53,7 +53,7 @@ steps:
     ./eng/vmr-sync.sh
     --vmr ${{ parameters.vmrPath }}
     --tmp $(Agent.TempDirectory)
-    --azdev-pat '$(System.AccessToken)'
+    --azdev-pat '$(dn-bot-all-orgs-code-r)'
     --branch ${{ parameters.vmrBranch }}
     --repository "installer:${{ parameters.targetRef }}"
     --recursive
