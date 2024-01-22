@@ -1026,7 +1026,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
     {
         TestFileMarkupParser.GetSpan(input, out input, out var textSpan);
 
-        var razorFilePath = "file://C:/path/test.razor";
+        var razorFilePath = "C:/path/test.razor";
         var codeDocument = CreateCodeDocument(input, filePath: razorFilePath);
         var sourceText = codeDocument.GetSourceText();
         var uri = new Uri(razorFilePath);

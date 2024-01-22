@@ -156,9 +156,6 @@ public class Foo { }
             .Setup(d => d.GetGeneratedOutputAsync())
             .ReturnsAsync(codeDocument);
         documentSnapshot
-            .Setup(d => d.Project.GetProjectEngine())
-            .Returns(projectEngine);
-        documentSnapshot
             .Setup(d => d.TargetPath)
             .Returns(path);
         documentSnapshot

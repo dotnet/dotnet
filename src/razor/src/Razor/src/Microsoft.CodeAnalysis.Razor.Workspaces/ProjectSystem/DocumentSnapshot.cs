@@ -61,4 +61,9 @@ internal class DocumentSnapshot : IDocumentSnapshot
         result = null;
         return false;
     }
+
+    public IDocumentSnapshot WithText(SourceText text)
+    {
+        return new DocumentSnapshot(ProjectInternal, State.WithText(text, VersionStamp.Create()));
+    }
 }

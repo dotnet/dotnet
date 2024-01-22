@@ -158,29 +158,8 @@ public class Foo { }
         var projectEngine = RazorProjectEngine.Create(builder => builder.SetRootNamespace("Test"));
         var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKind, importSources: default, tagHelpers);
 
-        var documentSnapshot = new Mock<IDocumentSnapshot>(MockBehavior.Strict);
-        documentSnapshot
-            .Setup(d => d.GetImports())
-            .Returns(ImmutableArray<IDocumentSnapshot>.Empty);
-        documentSnapshot
-            .Setup(d => d.GetGeneratedOutputAsync())
-            .ReturnsAsync(codeDocument);
-        documentSnapshot
-            .Setup(d => d.Project.GetProjectEngine())
-            .Returns(projectEngine);
-        documentSnapshot
-            .Setup(d => d.TargetPath)
-            .Returns(path);
-        documentSnapshot
-            .Setup(d => d.Project.TagHelpers)
-            .Returns(tagHelpers);
-        documentSnapshot
-            .Setup(d => d.FileKind)
-            .Returns(fileKind);
-        documentSnapshot
-            .Setup(d => d.FilePath)
-            .Returns(path);
+        var documentSnapshot = FormattingTestBase.CreateDocumentSnapshot(path, tagHelpers, fileKind, ImmutableArray<RazorSourceDocument>.Empty, ImmutableArray<IDocumentSnapshot>.Empty, projectEngine, codeDocument);
 
-        return (codeDocument, documentSnapshot.Object);
+        return (codeDocument, documentSnapshot);
     }
 }
