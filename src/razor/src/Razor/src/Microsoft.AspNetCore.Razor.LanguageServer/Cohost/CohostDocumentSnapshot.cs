@@ -70,4 +70,12 @@ internal class CohostDocumentSnapshot(TextDocument textDocument, IProjectSnapsho
         result = _codeDocument;
         return result is not null;
     }
+
+    public IDocumentSnapshot WithText(SourceText text)
+    {
+        var id = _textDocument.Id;
+        var newDocument = _textDocument.Project.Solution.WithAdditionalDocumentText(id, text).GetAdditionalDocument(id).AssumeNotNull();
+
+        return new CohostDocumentSnapshot(newDocument, _projectSnapshot);
+    }
 }

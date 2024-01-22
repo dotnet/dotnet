@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.MapCode.Mappers;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
@@ -76,10 +75,11 @@ internal sealed class MapCodeEndpoint(
                 continue;
             }
 
-            var (projectEngine, importSources) = await InitializeProjectEngineAsync(documentContext.Snapshot).ConfigureAwait(false);
             var tagHelperContext = await documentContext.GetTagHelperContextAsync(cancellationToken).ConfigureAwait(false);
             var fileKind = FileKinds.GetFileKindFromFilePath(documentContext.FilePath);
             var extension = Path.GetExtension(documentContext.FilePath);
+
+            var snapshot = documentContext.Snapshot;
 
             foreach (var content in mapping.Contents)
             {
@@ -89,8 +89,8 @@ internal sealed class MapCodeEndpoint(
                 }
 
                 // We create a new Razor file based on each content in each mapping order to get the syntax tree that we'll later use to map.
-                var sourceDocument = RazorSourceDocument.Create(content, "Test" + extension);
-                var codeToMap = projectEngine.ProcessDesignTime(sourceDocument, fileKind, importSources, tagHelperContext.TagHelpers);
+                var newSnapshot = snapshot.WithText(SourceText.From(content));
+                var codeToMap = await newSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
 
                 var mappingSuccess = await TryMapCodeAsync(
                     codeToMap, mapping.FocusLocations, changes, documentContext, cancellationToken).ConfigureAwait(false);
@@ -239,24 +239,6 @@ internal sealed class MapCodeEndpoint(
         }
 
         return false;
-    }
-
-    private static async Task<(RazorProjectEngine projectEngine, ImmutableArray<RazorSourceDocument> importSources)> InitializeProjectEngineAsync(
-        IDocumentSnapshot originalSnapshot)
-    {
-        var engine = originalSnapshot.Project.GetProjectEngine();
-
-        var imports = originalSnapshot.GetImports();
-        using var importSources = new PooledArrayBuilder<RazorSourceDocument>(imports.Length);
-
-        foreach (var import in imports)
-        {
-            var sourceText = await import.GetTextAsync().ConfigureAwait(false);
-            var source = RazorSourceDocument.Create(sourceText, RazorSourceDocumentProperties.Create(import.FilePath, import.TargetPath));
-            importSources.Add(source);
-        }
-
-        return (engine, importSources.DrainToImmutable());
     }
 
     private static List<SyntaxNode> ExtractValidNodesToMap(SyntaxNode rootNode)

@@ -363,7 +363,7 @@ public partial class OnAutoInsertEndpointTest
         TestFileMarkupParser.GetPosition(input, out input, out var cursorPosition);
 
         var codeDocument = CreateCodeDocument(input);
-        var razorFilePath = "file://path/test.razor";
+        var razorFilePath = "C:/path/test.razor";
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
         var optionsMonitor = GetOptionsMonitor();

@@ -76,4 +76,7 @@ internal class ImportDocumentSnapshot : IDocumentSnapshot
 
     public bool TryGetGeneratedOutput([NotNullWhen(true)] out RazorCodeDocument? result)
         => throw new NotSupportedException();
+
+    public IDocumentSnapshot WithText(SourceText text)
+        => throw new NotSupportedException();
 }
