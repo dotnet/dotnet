@@ -65,7 +65,7 @@
         <PackagesPath>$(SourceBuiltBasePackagesPath)%(Identity)/</PackagesPath>
       </RepositoryReferenceInfo>
       <DependentRepoSourceName Include="@(RepositoryReferenceInfo->'%(SourceName)')" />
-      <DependentRepoPackagesPath Include="@(RepositoryReferenceInfo->'%(PackagesPath)')" />
+      <DependentRepoPackageFile Include="%(RepositoryReferenceInfo.PackagesPath)**" />
     </ItemGroup>
   </Target>
 
@@ -208,7 +208,7 @@
           Outputs="$(BaseIntermediateOutputPath)CreateBuildInputProps.complete">
     <ItemGroup>
       <!-- Collect all the NuGet packages from dependent repos except for the symbols -->
-      <_CurrentSourceBuiltPackages Include="@(DependentRepoPackagesPath)"
+      <_CurrentSourceBuiltPackages Include="@(DependentRepoPackageFile)"
                                    Condition="'%(Extension)' == '.nupkg' and !$([System.String]::new('%(Filename)').EndsWith('.symbols')) " />
       <_PreviouslyBuiltSourceBuiltPackages Include="$(PrebuiltSourceBuiltPackagesPath)*.nupkg" />
     </ItemGroup>
