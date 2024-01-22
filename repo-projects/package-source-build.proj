@@ -49,10 +49,11 @@
     <MakeDir Directories="$(SharedOutputPath)" />
 
     <ItemGroup>
-      <_TarDirArg Include="@(RepositoryReferenceInfo->'-C %(SourceName) .')" />
+      <_AllRepoDirs>$([System.IO.Directory]::GetDirectories($(SourceBuiltBasePackagesPath)).ToString())</_AllRepoDirs>
+      <_TarDirArg Include="@(_AllRepoDirs->'-C %(Identity) .')" />
     </ItemGroup>
     <PropertyGroup>
-      <_TarDirArgs>%(_TarDirArg.Identity)</_TarDirArgs>
+      <_TarDirArgs>$(_TarDirArgs) %(_TarDirArg.Identity)</_TarDirArgs>
     </PropertyGroup>
 
     <Exec Command="tar --numeric-owner --exclude='Microsoft.SourceBuild.Intermediate.*.nupkg' -czf $(SourceBuiltTarballName) $(RepositoryName)/$(SourceBuiltVersionFileName) $(_TarDirArgs) -C $(SourceBuildReferencePackagesDestination) ."
