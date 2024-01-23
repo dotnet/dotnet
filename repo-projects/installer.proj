@@ -17,6 +17,8 @@
     <!-- Restore and Build actions are already passed in by the root script. -->
     <BuildActions>$(FlagParameterPrefix)pack $(FlagParameterPrefix)publish</BuildActions>
 
+    <SkipEnsurePackagesCreated>true</SkipEnsurePackagesCreated>
+
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)runtime-id $(OverrideTargetRid)</BuildArgs>
 
     <!--
