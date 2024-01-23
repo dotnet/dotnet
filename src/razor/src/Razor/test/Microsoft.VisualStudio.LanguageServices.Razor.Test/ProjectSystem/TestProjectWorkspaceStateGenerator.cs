@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.Test;
 
-internal class TestProjectWorkspaceStateGenerator : ProjectWorkspaceStateGenerator
+internal class TestProjectWorkspaceStateGenerator : IProjectWorkspaceStateGenerator
 {
     private readonly List<TestUpdate> _updates;
 
@@ -22,11 +22,7 @@ internal class TestProjectWorkspaceStateGenerator : ProjectWorkspaceStateGenerat
 
     public IReadOnlyList<TestUpdate> UpdateQueue => _updates;
 
-    public override void Initialize(ProjectSnapshotManagerBase projectManager)
-    {
-    }
-
-    public override void Update(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    public void Update(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
         var update = new TestUpdate(workspaceProject, projectSnapshot, cancellationToken);
         _updates.Add(update);

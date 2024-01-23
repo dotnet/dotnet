@@ -1,13 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.LanguageServer;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -15,21 +12,20 @@ namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 
 internal class TestProjectSnapshotManager : DefaultProjectSnapshotManager
 {
-    private TestProjectSnapshotManager(IErrorReporter errorReporter, Workspace workspace, ProjectSnapshotManagerDispatcher dispatcher)
-        : base(errorReporter, Array.Empty<IProjectSnapshotChangeTrigger>(), workspace, dispatcher)
+    private TestProjectSnapshotManager(
+        IErrorReporter errorReporter,
+        Workspace workspace,
+        IProjectEngineFactoryProvider projectEngineFactoryProvider,
+        ProjectSnapshotManagerDispatcher dispatcher)
+        : base(errorReporter, triggers: [], workspace, projectEngineFactoryProvider, dispatcher)
     {
     }
 
     public static TestProjectSnapshotManager Create(IErrorReporter errorReporter, ProjectSnapshotManagerDispatcher dispatcher)
     {
-        var services = TestServices.Create(
-            workspaceServices: new[]
-            {
-                new DefaultProjectSnapshotProjectEngineFactory(new FallbackProjectEngineFactory(), MefProjectEngineFactories.Factories)
-            },
-            razorLanguageServices: Enumerable.Empty<ILanguageService>());
+        var services = TestServices.Create(workspaceServices: [], razorLanguageServices: []);
         var workspace = TestWorkspace.Create(services);
-        var testProjectManager = new TestProjectSnapshotManager(errorReporter, workspace, dispatcher);
+        var testProjectManager = new TestProjectSnapshotManager(errorReporter, workspace, ProjectEngineFactories.DefaultProvider, dispatcher);
 
         return testProjectManager;
     }

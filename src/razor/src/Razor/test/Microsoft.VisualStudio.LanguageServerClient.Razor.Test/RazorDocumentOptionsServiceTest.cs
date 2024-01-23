@@ -104,7 +104,7 @@ public class RazorDocumentOptionsServiceTest : WorkspaceTestBase
             Path.Combine(baseDirectory, "SomeProject", "File1.cshtml"), "File1.cshtml", FileKinds.Legacy);
 
         var project = new ProjectSnapshot(
-            ProjectState.Create(ProjectEngineFactory, hostProject, ProjectWorkspaceState.Default)
+            ProjectState.Create(ProjectEngineFactoryProvider, hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var documentSnapshot = project.GetDocument(hostDocument.FilePath);

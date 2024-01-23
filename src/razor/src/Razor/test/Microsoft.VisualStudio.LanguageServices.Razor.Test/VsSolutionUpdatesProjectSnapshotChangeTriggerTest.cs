@@ -8,6 +8,7 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
@@ -40,8 +41,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : ToolingTestBase
         _someProject = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
         _someOtherProject = new HostProject(TestProjectData.AnotherProject.FilePath, TestProjectData.AnotherProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, TestProjectData.AnotherProject.RootNamespace);
 
-        var projectEngineFactory = Mock.Of<ProjectSnapshotProjectEngineFactory>(MockBehavior.Strict);
-        var testServices = TestServices.Create([projectEngineFactory], []);
+        var testServices = TestServices.Create([], []);
 
         _workspace = TestWorkspace.Create(testServices,
             w =>
@@ -78,7 +78,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : ToolingTestBase
         var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
             services.Object,
             Mock.Of<TextBufferProjectService>(MockBehavior.Strict),
-            Mock.Of<ProjectWorkspaceStateGenerator>(MockBehavior.Strict),
+            Mock.Of<IProjectWorkspaceStateGenerator>(MockBehavior.Strict),
             s_dispatcher,
             JoinableTaskFactory.Context);
 
@@ -107,7 +107,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : ToolingTestBase
         var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
             services.Object,
             Mock.Of<TextBufferProjectService>(MockBehavior.Strict),
-            Mock.Of<ProjectWorkspaceStateGenerator>(MockBehavior.Strict),
+            Mock.Of<IProjectWorkspaceStateGenerator>(MockBehavior.Strict),
             s_dispatcher,
             context);
 
@@ -123,7 +123,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : ToolingTestBase
     public async Task SolutionClosing_CancelsActiveWork()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(_workspace, s_dispatcher)
+        var projectManager = new TestProjectSnapshotManager(_workspace, ProjectEngineFactories.DefaultProvider, s_dispatcher)
         {
             AllowNotifyListeners = true,
         };
@@ -163,7 +163,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : ToolingTestBase
     public async Task OnProjectBuiltAsync_KnownProject_EnqueuesProjectStateUpdate()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(_workspace, s_dispatcher);
+        var projectManager = new TestProjectSnapshotManager(_workspace, ProjectEngineFactories.DefaultProvider, s_dispatcher);
         var expectedProjectPath = _someProject.FilePath;
         var expectedProjectSnapshot = await s_dispatcher.RunOnDispatcherThreadAsync(() =>
         {
@@ -204,11 +204,11 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : ToolingTestBase
             .Setup(s => s.GetService(It.Is<Type>(f => f == typeof(SVsSolutionBuildManager))))
             .Returns(buildManager.Object);
 
-        var projectEngineFactory = Mock.Of<ProjectSnapshotProjectEngineFactory>(MockBehavior.Strict);
+        var projectEngineFactoryProvider = Mock.Of<IProjectEngineFactoryProvider>(MockBehavior.Strict);
 
         var projectSnapshot = new ProjectSnapshot(
             ProjectState.Create(
-                projectEngineFactory,
+                projectEngineFactoryProvider,
                 new HostProject("/Some/Unknown/Path.csproj", "/Some/Unknown/obj", RazorConfiguration.Default, "Path"),
                 ProjectWorkspaceState.Default));
         var expectedProjectPath = projectSnapshot.FilePath;

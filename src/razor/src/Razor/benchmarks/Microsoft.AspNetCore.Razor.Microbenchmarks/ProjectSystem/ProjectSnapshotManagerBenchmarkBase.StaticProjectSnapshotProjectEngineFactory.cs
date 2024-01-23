@@ -4,25 +4,35 @@
 using System;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 
 namespace Microsoft.AspNetCore.Razor.Microbenchmarks;
 
 public abstract partial class ProjectSnapshotManagerBenchmarkBase
 {
-    private class StaticProjectSnapshotProjectEngineFactory : ProjectSnapshotProjectEngineFactory
+    private class StaticProjectEngineFactoryProvider : IProjectEngineFactoryProvider
     {
-        public override IProjectEngineFactory FindFactory(IProjectSnapshot project)
-            => throw new NotImplementedException();
+        public static readonly StaticProjectEngineFactoryProvider Instance = new();
 
-        public override IProjectEngineFactory FindSerializableFactory(IProjectSnapshot project)
-            => throw new NotImplementedException();
+        private StaticProjectEngineFactoryProvider()
+        {
+        }
 
-        public override RazorProjectEngine Create(
-            RazorConfiguration configuration,
-            RazorProjectFileSystem fileSystem,
-            Action<RazorProjectEngineBuilder> configure)
-            => RazorProjectEngine.Create(configuration, fileSystem, RazorExtensions.Register);
+        public IProjectEngineFactory GetFactory(RazorConfiguration configuration)
+            => Factory.Instance;
+
+        private sealed class Factory : IProjectEngineFactory
+        {
+            public static readonly Factory Instance = new();
+
+            private Factory()
+            {
+            }
+
+            public string ConfigurationName => "Static";
+
+            public RazorProjectEngine Create(RazorConfiguration configuration, RazorProjectFileSystem fileSystem, Action<RazorProjectEngineBuilder>? configure)
+                => RazorProjectEngine.Create(configuration, fileSystem, RazorExtensions.Register);
+        }
     }
 }

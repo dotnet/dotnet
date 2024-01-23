@@ -42,7 +42,7 @@ public class DefaultDocumentSnapshotTest : WorkspaceTestBase
         _legacyHostDocument = new HostDocument(TestProjectData.SomeProjectFile1);
         _nestedComponentHostDocument = new HostDocument(TestProjectData.SomeProjectNestedComponentFile3);
 
-        var projectState = ProjectState.Create(ProjectEngineFactory, TestProjectData.SomeProject, ProjectWorkspaceState.Default);
+        var projectState = ProjectState.Create(ProjectEngineFactoryProvider, TestProjectData.SomeProject, ProjectWorkspaceState.Default);
         var project = new ProjectSnapshot(projectState);
 
         var textAndVersion = TextAndVersion.Create(_sourceText, _version);

@@ -11,14 +11,16 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
 [System.Composition.Shared]
-[Export(typeof(ProjectSnapshotManagerAccessor))]
+[Export(typeof(IProjectSnapshotManagerAccessor))]
 [method: ImportingConstructor]
-internal class VisualStudioWindowsProjectSnapshotManagerAccessor([Import(typeof(VisualStudioWorkspace))] Workspace workspace) : ProjectSnapshotManagerAccessor
+internal sealed class VisualStudioProjectSnapshotManagerAccessor(
+    [Import(typeof(VisualStudioWorkspace))] Workspace workspace)
+    : IProjectSnapshotManagerAccessor
 {
     private readonly Workspace _workspace = workspace;
     private ProjectSnapshotManagerBase? _projectManager;
 
-    public override ProjectSnapshotManagerBase Instance
+    public ProjectSnapshotManagerBase Instance
     {
         get
         {
@@ -31,6 +33,8 @@ internal class VisualStudioWindowsProjectSnapshotManagerAccessor([Import(typeof(
     [MemberNotNull(nameof(_projectManager))]
     private void EnsureInitialized()
     {
-        _projectManager ??= (ProjectSnapshotManagerBase)_workspace.Services.GetLanguageServices(RazorLanguage.Name).GetRequiredService<ProjectSnapshotManager>();
+        _projectManager ??= (ProjectSnapshotManagerBase)_workspace.Services
+            .GetLanguageServices(RazorLanguage.Name)
+            .GetRequiredService<ProjectSnapshotManager>();
     }
 }
