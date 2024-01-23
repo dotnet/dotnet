@@ -11,14 +11,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+    <ItemsToCopy Include="..\..\template_feed\**\*.*" />
   </ItemGroup>
 
-    <ItemGroup>
-        <ItemsToCopy Include="..\..\template_feed\**\*.*" />
-    </ItemGroup>
-    <Target Name="CopyTarget" AfterTargets="Build">
-        <Copy SourceFiles="@(ItemsToCopy)" DestinationFolder="$(OutputPath)\template_feed\%(RecursiveDir)" />
-    </Target>
+  <Target Name="CopyTarget" AfterTargets="Build">
+    <Copy SourceFiles="@(ItemsToCopy)" DestinationFolder="$(OutputPath)\template_feed\%(RecursiveDir)" />
+  </Target>
+    
 </Project>

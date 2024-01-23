@@ -5,6 +5,7 @@
 namespace Microsoft.TestTemplates.Acceptance.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     using System;
     using System.Collections.Generic;
     using System.Globalization;
@@ -17,30 +18,26 @@ namespace Microsoft.TestTemplates.Acceptance.Tests
         /// <summary>
         /// The net core versions for which templates are present
         /// </summary>
-        private static string[] netCoreVersions =
-        {
-            // refer to https://dotnet.microsoft.com/download/dotnet-core
-            // for a list of supported dotnet versions and only include the ones
-            // that are not end-of-life
-             "6.0",
-             "7.0",
-             "8.0",
-             "9.0"
-        };
+        private static readonly string[] NetCoreVersions =
+        [
+            "8.0",
+            "9.0",
+        ];
 
         /// <summary>
         /// The type of the test template, combination of the test framework and language
         /// </summary>
-        private static readonly (string ProjectTemplateName, string ItemTemplateName, string Language)[] templateTypes = new [] {
+        private static readonly (string ProjectTemplateName, string ItemTemplateName, string Language)[] TemplateTypes =
+        [
             ("nunit", "nunit-test", "c#"),
             ("nunit", "nunit-test", "f#"),
             ("nunit", "nunit-test", "vb"),
-        };
+        ];
 
         [ClassInitialize]
         public static void InstallTemplates(TestContext testContext)
         {
-            foreach (var netcoreVersion in netCoreVersions)
+            foreach (var netcoreVersion in NetCoreVersions)
             {
                 var template = Path.Combine("template_feed", "Microsoft.DotNet.Test.ProjectTemplates." + netcoreVersion, "content");
                 InvokeDotnetNewInstall(template);
@@ -73,14 +70,14 @@ namespace Microsoft.TestTemplates.Acceptance.Tests
             // Run tests: dotnet test <path>
             InvokeDotnetTest(testProjectName);
 
-            // Verfiy the tests run as expected.
+            // Verify the tests run as expected.
             ValidateSummaryStatus(2, 0, 0);
         }
 
         [ClassCleanup]
         public static void UninstallTemplates()
         {
-            foreach (var netcoreVersion in netCoreVersions)
+            foreach (var netcoreVersion in NetCoreVersions)
             {
                 var template = Path.Combine("template_feed", "Microsoft.DotNet.Test.ProjectTemplates." + netcoreVersion, "content");
                 InvokeDotnetNewUninstall(template);
@@ -89,15 +86,15 @@ namespace Microsoft.TestTemplates.Acceptance.Tests
 
         private static IEnumerable<object[]> GetTemplateItemsToTest()
         {
-            foreach (var netcoreVersion in netCoreVersions)
+            foreach (var netcoreVersion in NetCoreVersions)
             {
-                foreach (var (projectTemplate, itemTemplate, language) in templateTypes)
+                foreach (var (projectTemplate, itemTemplate, language) in TemplateTypes)
                 {
                     var targetFramework = double.Parse(netcoreVersion, CultureInfo.InvariantCulture) < 5.0
                         ? "netcoreapp" + netcoreVersion
                         : "net" + netcoreVersion;
 
-                    yield return new object[] { targetFramework, projectTemplate, itemTemplate, language};
+                    yield return new object[] { targetFramework, projectTemplate, itemTemplate, language };
                 }
             }
         }
