@@ -112,7 +112,7 @@
           AfterTargets="CopyFilesToOutputDirectory">
 
     <ItemGroup>
-      <CompileWithRelativePath Include="@(Compile)" Condition="!$([System.String]::new('%(Identity)').StartsWith('/'))" />
+      <CompileWithRelativePath Include="@(Compile)" Condition="!$([System.String]::new('%(Identity)').StartsWith('%(RootDir)'))" />
     </ItemGroup>
 
     <Error
