@@ -111,6 +111,11 @@ namespace NuGet.Packaging.Signing
         MultipleTimestamps = 1 << 18,
 
         /// <summary>
+        /// Unknown build status.
+        /// </summary>
+        UnknownBuildStatus = 1 << 19,
+
+        /// <summary>
         /// Flags which indicate that the signed package is suspect.
         /// </summary>
         Suspect = IntegrityCheckFailed |
@@ -137,6 +142,7 @@ namespace NuGet.Packaging.Signing
             ChainBuildingFailure |
             UnknownRevocation |
             UntrustedRoot |
-            GeneralizedTimeOutsideValidity
+            GeneralizedTimeOutsideValidity |
+            UnknownBuildStatus
     }
 }
