@@ -22,7 +22,7 @@ stages:
           
         # Default Maestro++ API Endpoint and API Version
         - name: MaestroApiEndPoint
-          value: "https://maestro-prod.westus2.cloudapp.azure.com"
+          value: "https://maestro.dot.net"
         - name: MaestroApiAccessToken
           value: $(MaestroAccessToken)
         - name: MaestroApiVersion
@@ -146,7 +146,7 @@ stages:
           displayName: 'Install NuGet.exe'
 
         # This is necessary whenever we want to publish/restore to an AzDO private feed
-        - task: NuGetAuthenticate@0
+        - task: NuGetAuthenticate@1
           displayName: 'Authenticate to AzDO Feeds'
 
         - task: PowerShell@2
