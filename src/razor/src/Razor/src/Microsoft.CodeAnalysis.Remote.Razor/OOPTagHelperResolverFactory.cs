@@ -19,8 +19,7 @@ internal class OOPTagHelperResolverFactory(
 {
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
         => new OOPTagHelperResolver(
-            workspaceServices.GetRequiredService<ProjectSnapshotProjectEngineFactory>(),
-            errorReporter,
             workspaceServices.Workspace,
+            errorReporter,
             telemetryReporter);
 }

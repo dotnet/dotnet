@@ -117,7 +117,7 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
             services.AddSingleton<ProjectSnapshotManagerDispatcher>(_projectSnapshotManagerDispatcher);
         }
 
-        services.AddSingleton<AdhocWorkspaceFactory, DefaultAdhocWorkspaceFactory>();
+        services.AddSingleton<IAdhocWorkspaceFactory, AdhocWorkspaceFactory>();
 
         var featureOptions = _featureOptions ?? new DefaultLanguageServerFeatureOptions();
         services.AddSingleton(featureOptions);

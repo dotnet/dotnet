@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Editor;
 using Microsoft.Extensions.Internal;
@@ -38,7 +39,7 @@ internal class DefaultVisualStudioRazorParser : VisualStudioRazorParser, IDispos
     private readonly VisualStudioCompletionBroker _completionBroker;
     private readonly VisualStudioDocumentTracker _documentTracker;
     private readonly JoinableTaskContext _joinableTaskContext;
-    private readonly ProjectSnapshotProjectEngineFactory _projectEngineFactory;
+    private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
     private readonly IErrorReporter _errorReporter;
     private readonly List<CodeDocumentRequest> _codeDocumentRequests;
     private readonly TaskScheduler _uiThreadScheduler;
@@ -60,7 +61,7 @@ internal class DefaultVisualStudioRazorParser : VisualStudioRazorParser, IDispos
     public DefaultVisualStudioRazorParser(
         JoinableTaskContext joinableTaskContext,
         VisualStudioDocumentTracker documentTracker,
-        ProjectSnapshotProjectEngineFactory projectEngineFactory,
+        IProjectEngineFactoryProvider projectEngineFactoryProvider,
         IErrorReporter errorReporter,
         VisualStudioCompletionBroker completionBroker)
     {
@@ -74,9 +75,9 @@ internal class DefaultVisualStudioRazorParser : VisualStudioRazorParser, IDispos
             throw new ArgumentNullException(nameof(documentTracker));
         }
 
-        if (projectEngineFactory is null)
+        if (projectEngineFactoryProvider is null)
         {
-            throw new ArgumentNullException(nameof(projectEngineFactory));
+            throw new ArgumentNullException(nameof(projectEngineFactoryProvider));
         }
 
         if (errorReporter is null)
@@ -90,7 +91,7 @@ internal class DefaultVisualStudioRazorParser : VisualStudioRazorParser, IDispos
         }
 
         _joinableTaskContext = joinableTaskContext;
-        _projectEngineFactory = projectEngineFactory;
+        _projectEngineFactoryProvider = projectEngineFactoryProvider;
         _errorReporter = errorReporter;
         _completionBroker = completionBroker;
         _documentTracker = documentTracker;
@@ -246,17 +247,17 @@ internal class DefaultVisualStudioRazorParser : VisualStudioRazorParser, IDispos
         // Make sure any tests use the real thing or a good mock. These tests can cause failures
         // that are hard to understand when this throws.
         Debug.Assert(_documentTracker.IsSupportedProject);
-        Debug.Assert(_documentTracker.ProjectSnapshot is not null);
 
-        _projectEngine = _projectEngineFactory.Create(_documentTracker.ProjectSnapshot, ConfigureProjectEngine);
+        var projectSnapshot = _documentTracker.ProjectSnapshot.AssumeNotNull();
 
-        Debug.Assert(_projectEngine is not null);
-        Debug.Assert(_projectEngine!.Engine is not null);
+        _projectEngine = _projectEngineFactoryProvider.Create(projectSnapshot, ConfigureProjectEngine).AssumeNotNull();
+
+        Debug.Assert(_projectEngine.Engine is not null);
         Debug.Assert(_projectEngine.FileSystem is not null);
 
         // We might not have a document snapshot in the case of an ephemeral project.
         // If we don't have a document then infer the FileKind from the FilePath.
-        var fileKind = _documentTracker.ProjectSnapshot?.GetDocument(_documentTracker.FilePath)?.FileKind ?? FileKinds.GetFileKindFromFilePath(_documentTracker.FilePath);
+        var fileKind = projectSnapshot.GetDocument(_documentTracker.FilePath)?.FileKind ?? FileKinds.GetFileKindFromFilePath(_documentTracker.FilePath);
 
         var projectDirectory = Path.GetDirectoryName(_documentTracker.ProjectPath);
         _parser = new BackgroundParser(_projectEngine, FilePath, projectDirectory, fileKind);

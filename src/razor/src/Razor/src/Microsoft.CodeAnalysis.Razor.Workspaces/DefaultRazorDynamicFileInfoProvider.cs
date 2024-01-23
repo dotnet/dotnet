@@ -28,7 +28,7 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
     private readonly RazorDocumentServiceProviderFactory _factory;
     private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
     private readonly FilePathService _filePathService;
-    private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
+    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
     private readonly FallbackProjectManager _fallbackProjectManager;
 
     [ImportingConstructor]
@@ -36,7 +36,7 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
         RazorDocumentServiceProviderFactory factory,
         LSPEditorFeatureDetector lspEditorFeatureDetector,
         FilePathService filePathService,
-        ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+        IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
         FallbackProjectManager fallbackProjectManager)
     {
         _factory = factory ?? throw new ArgumentNullException(nameof(factory));

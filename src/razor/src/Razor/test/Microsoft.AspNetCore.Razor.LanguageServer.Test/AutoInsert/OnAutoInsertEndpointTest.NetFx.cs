@@ -347,7 +347,7 @@ public partial class OnAutoInsertEndpointTest
     {
         var lspServices = new Mock<ILspServices>(MockBehavior.Strict);
         lspServices
-            .Setup(l => l.GetRequiredService<AdhocWorkspaceFactory>()).Returns(TestAdhocWorkspaceFactory.Instance);
+            .Setup(l => l.GetRequiredService<IAdhocWorkspaceFactory>()).Returns(TestAdhocWorkspaceFactory.Instance);
         var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, Dispatcher);
         lspServices
             .Setup(l => l.GetRequiredService<IRazorFormattingService>())

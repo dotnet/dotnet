@@ -67,7 +67,7 @@ public class CSharpVirtualDocumentFactoryTest : ToolingTestBase
         // Arrange
         var uri = new Uri("C:/path/to/file.razor");
         var uriProvider = Mock.Of<FileUriProvider>(provider => provider.GetOrCreate(It.IsAny<ITextBuffer>()) == uri, MockBehavior.Strict);
-        var projectSnapshotManagerAccessor = Mock.Of<ProjectSnapshotManagerAccessor>(MockBehavior.Strict);
+        var projectSnapshotManagerAccessor = Mock.Of<IProjectSnapshotManagerAccessor>(MockBehavior.Strict);
         var factory = new CSharpVirtualDocumentFactory(_contentTypeRegistryService, _textBufferFactoryService, TextDocumentFactoryService, uriProvider, _filePathService, projectSnapshotManagerAccessor, TestLanguageServerFeatureOptions.Instance, LoggerFactory, telemetryReporter: null);
 
         // Act
@@ -89,7 +89,7 @@ public class CSharpVirtualDocumentFactoryTest : ToolingTestBase
         var projectSnapshotManager = TestProjectSnapshotManager.Create(ErrorReporter, new TestDispatcher());
         var project = projectSnapshotManager.CreateAndAddProject(@"C:\path\to\project.csproj");
         projectSnapshotManager.CreateAndAddDocument(project, @"C:\path\to\file.razor");
-        var projectSnapshotManagerAccessor = Mock.Of<ProjectSnapshotManagerAccessor>(a => a.Instance == projectSnapshotManager, MockBehavior.Strict);
+        var projectSnapshotManagerAccessor = Mock.Of<IProjectSnapshotManagerAccessor>(a => a.Instance == projectSnapshotManager, MockBehavior.Strict);
 
         var factory = new CSharpVirtualDocumentFactory(_contentTypeRegistryService, _textBufferFactoryService, TextDocumentFactoryService, uriProvider, _filePathService, projectSnapshotManagerAccessor, TestLanguageServerFeatureOptions.Instance, LoggerFactory, telemetryReporter: null);
 
@@ -117,7 +117,7 @@ public class CSharpVirtualDocumentFactoryTest : ToolingTestBase
         project = TestProjectSnapshot.Create(@"C:\path\to\project2.csproj", @"C:\path\to\obj2", Array.Empty<string>(), RazorConfiguration.Default, projectWorkspaceState: null);
         projectSnapshotManager.ProjectAdded(project.HostProject);
         projectSnapshotManager.CreateAndAddDocument(project, @"C:\path\to\file.razor");
-        var projectSnapshotManagerAccessor = Mock.Of<ProjectSnapshotManagerAccessor>(a => a.Instance == projectSnapshotManager, MockBehavior.Strict);
+        var projectSnapshotManagerAccessor = Mock.Of<IProjectSnapshotManagerAccessor>(a => a.Instance == projectSnapshotManager, MockBehavior.Strict);
 
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
         var filePathService = new FilePathService(languageServerFeatureOptions);

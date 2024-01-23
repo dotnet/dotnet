@@ -23,9 +23,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Cohost;
 
 internal class CohostProjectSnapshot : IProjectSnapshot
 {
-    private static readonly EmptyProjectEngineFactory s_fallbackProjectEngineFactory = new();
-    private static readonly (IProjectEngineFactory Value, ICustomProjectEngineFactoryMetadata)[] s_projectEngineFactories = ProjectEngineFactories.Factories.Select(f => (f.Item1.Value, f.Item2)).ToArray();
-
     private readonly Project _project;
     private readonly DocumentSnapshotFactory _documentSnapshotFactory;
     private readonly ITelemetryReporter _telemetryReporter;
@@ -44,17 +41,18 @@ internal class CohostProjectSnapshot : IProjectSnapshot
         _projectKey = ProjectKey.From(_project).AssumeNotNull();
 
         _lazyConfiguration = new Lazy<RazorConfiguration>(CreateRazorConfiguration);
-        _lazyProjectEngine = new Lazy<RazorProjectEngine>(() => DefaultProjectEngineFactory.Create(
-            Configuration,
-            fileSystem: RazorProjectFileSystem.Create(Path.GetDirectoryName(FilePath)),
-            configure: builder =>
-            {
-                builder.SetRootNamespace(RootNamespace);
-                builder.SetCSharpLanguageVersion(CSharpLanguageVersion);
-                builder.SetSupportLocalizedComponentNames();
-            },
-            fallback: s_fallbackProjectEngineFactory,
-            factories: s_projectEngineFactories));
+        _lazyProjectEngine = new Lazy<RazorProjectEngine>(() =>
+        {
+            return ProjectEngineFactories.DefaultProvider.Create(
+                Configuration,
+                rootDirectoryPath: Path.GetDirectoryName(FilePath).AssumeNotNull(),
+                configure: builder =>
+                {
+                    builder.SetRootNamespace(RootNamespace);
+                    builder.SetCSharpLanguageVersion(CSharpLanguageVersion);
+                    builder.SetSupportLocalizedComponentNames();
+                });
+        });
 
         _tagHelpersLazy = new AsyncLazy<ImmutableArray<TagHelperDescriptor>>(() =>
         {

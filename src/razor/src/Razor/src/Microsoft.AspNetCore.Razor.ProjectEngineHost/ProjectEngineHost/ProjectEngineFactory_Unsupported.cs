@@ -4,13 +4,14 @@
 using System;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost;
 
 internal class ProjectEngineFactory_Unsupported : IProjectEngineFactory
 {
-    public RazorProjectEngine Create(RazorConfiguration configuration, RazorProjectFileSystem fileSystem, Action<RazorProjectEngineBuilder> configure)
+    public string ConfigurationName => UnsupportedRazorConfiguration.Instance.ConfigurationName;
+
+    public RazorProjectEngine Create(RazorConfiguration configuration, RazorProjectFileSystem fileSystem, Action<RazorProjectEngineBuilder>? configure)
     {
         return RazorProjectEngine.Create(configuration, fileSystem, builder =>
         {

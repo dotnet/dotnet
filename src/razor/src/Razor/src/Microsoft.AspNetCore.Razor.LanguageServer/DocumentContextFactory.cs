@@ -20,13 +20,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 [Export(typeof(IDocumentContextFactory)), Shared]
 [method: ImportingConstructor]
 internal sealed class DocumentContextFactory(
-    ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+    IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
     ISnapshotResolver snapshotResolver,
     IDocumentVersionCache documentVersionCache,
     IRazorLoggerFactory loggerFactory)
     : IDocumentContextFactory
 {
-    private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
+    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
     private readonly ISnapshotResolver _snapshotResolver = snapshotResolver;
     private readonly IDocumentVersionCache _documentVersionCache = documentVersionCache;
     private readonly ILogger _logger = loggerFactory.CreateLogger<DocumentContextFactory>();
