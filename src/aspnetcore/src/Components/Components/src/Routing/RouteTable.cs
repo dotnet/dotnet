@@ -28,18 +28,6 @@ internal sealed class RouteTable(TreeRouter treeRouter)
                 ((Type page, string template) key) => RouteTableFactory.CreateEntry(key.page, key.template));
 
             var routeValueDictionary = new RouteValueDictionary(endpointRouteData.RouteValues);
-            foreach (var kvp in endpointRouteData.RouteValues)
-            {
-                if (kvp.Value is string value)
-                {
-                    // At this point the values have already been URL decoded, but we might not have decoded '/' characters.
-                    // as that can cause issues when routing the request (You wouldn't be able to accept parameters that contained '/').
-                    // To be consistent with existing Blazor quirks that used Uri.UnescapeDataString, we'll replace %2F with /.
-                    // We don't want to call Uri.UnescapeDataString here as that would decode other characters that we don't want to decode,
-                    // for example, any value that was "double" encoded (for whatever reason) within the original URL.
-                    routeValueDictionary[kvp.Key] = value.Replace("%2F", "/", StringComparison.OrdinalIgnoreCase);
-                }
-            }
             ProcessParameters(entry, routeValueDictionary);
             return new RouteData(endpointRouteData.PageType, routeValueDictionary)
             {
@@ -75,19 +63,6 @@ internal sealed class RouteTable(TreeRouter treeRouter)
             foreach (var parameter in entry.UnusedRouteParameterNames)
             {
                 routeValues[parameter] = null;
-            }
-        }
-
-        foreach (var kvp in routeValues)
-        {
-            if (kvp.Value is string value)
-            {
-                // At this point the values have already been URL decoded, but we might not have decoded '/' characters.
-                // as that can cause issues when routing the request (You wouldn't be able to accept parameters that contained '/').
-                // To be consistent with existing Blazor quirks that used Uri.UnescapeDataString, we'll replace %2F with /.
-                // We don't want to call Uri.UnescapeDataString here as that would decode other characters that we don't want to decode,
-                // for example, any value that was "double" encoded (for whatever reason) within the original URL.
-                routeValues[kvp.Key] = value.Replace("%2F", "/", StringComparison.OrdinalIgnoreCase);
             }
         }
 
