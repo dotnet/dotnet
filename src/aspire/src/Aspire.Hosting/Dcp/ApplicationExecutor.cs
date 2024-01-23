@@ -123,7 +123,7 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger, D
 
             // We do not specify the initial list version, so the watcher will give us all updates to Service objects.
             IAsyncEnumerable<(WatchEventType, Service)> serviceChangeEnumerator = kubernetesService.WatchAsync<Service>(cancellationToken: cancellationToken);
-            await foreach (var (evt, updated) in serviceChangeEnumerator)
+            await foreach (var (evt, updated) in serviceChangeEnumerator.ConfigureAwait(true)) // Setting ConfigureAwait to silence analyzer. Consider calling ConfigureAwait(false)
             {
                 if (evt == WatchEventType.Bookmark) { continue; } // Bookmarks do not contain any data.
 
@@ -518,9 +518,10 @@ internal sealed class ApplicationExecutor(ILogger<ApplicationExecutor> logger, D
                 foreach (var mount in volumeMounts)
                 {
                     bool isBound = mount.Type == ApplicationModel.VolumeMountType.Bind;
-                    var volumeSpec = new VolumeMount()
+                    var volumeSpec = new VolumeMount
                     {
-                        Source = isBound ? Path.GetFullPath(mount.Source) : mount.Source,
+                        Source = isBound && !Path.IsPathRooted(mount.Source) ?
+                            Path.GetFullPath(mount.Source) : mount.Source,
                         Target = mount.Target,
                         Type = isBound ? Model.VolumeMountType.Bind : Model.VolumeMountType.Named,
                         IsReadOnly = mount.IsReadOnly
