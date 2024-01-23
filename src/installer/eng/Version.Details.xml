@@ -87,20 +87,20 @@
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.102">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>3206ce37b3af707a6bca134c14b396af9036f974</Sha>
+      <Sha>4dc36050406554319d333a791a3e1dd8262cfd1b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.102-servicing.24068.55">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.102-servicing.24069.16">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>3206ce37b3af707a6bca134c14b396af9036f974</Sha>
+      <Sha>4dc36050406554319d333a791a3e1dd8262cfd1b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.102-servicing.24068.55">
+    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.102-servicing.24069.16">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>3206ce37b3af707a6bca134c14b396af9036f974</Sha>
+      <Sha>4dc36050406554319d333a791a3e1dd8262cfd1b</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.102-servicing.24068.55">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.102-servicing.24069.16">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>3206ce37b3af707a6bca134c14b396af9036f974</Sha>
+      <Sha>4dc36050406554319d333a791a3e1dd8262cfd1b</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.2.1" Version="1.0.2-beta4.22406.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
@@ -159,9 +159,9 @@
       <Uri>https://github.com/dotnet/msbuild</Uri>
       <Sha>b5265ef370a651f8c3458110b804e5cbf869eeb5</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Build.Tasks" Version="6.8.0-rc.122" CoherentParentDependency="Microsoft.NET.Sdk">
-      <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>0dd5a1ea536201af94725353e4bc711d7560b246</Sha>
+    <Dependency Name="NuGet.Build.Tasks" Version="6.8.1-rc.2" CoherentParentDependency="Microsoft.NET.Sdk">
+      <Uri>https://dev.azure.com/devdiv/DevDiv/_git/NuGet-NuGet.Client-Trusted</Uri>
+      <Sha>550277e0616e549446f03fda35d3e23dff75dc01</Sha>
       <SourceBuildTarball RepoName="nuget-client" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.ApplicationInsights" Version="2.0.0">
@@ -214,18 +214,18 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.23564.4">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.24059.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>0aaeafef60933f87b0b50350313bb2fd77defb5d</Sha>
+      <Sha>61ae141d2bf3534619265c8f691fd55dc3e75147</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.23564.4">
+    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="8.0.0-beta.24059.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>0aaeafef60933f87b0b50350313bb2fd77defb5d</Sha>
+      <Sha>61ae141d2bf3534619265c8f691fd55dc3e75147</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.23564.4">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="8.0.0-beta.24059.4">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>0aaeafef60933f87b0b50350313bb2fd77defb5d</Sha>
+      <Sha>61ae141d2bf3534619265c8f691fd55dc3e75147</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.23578.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
