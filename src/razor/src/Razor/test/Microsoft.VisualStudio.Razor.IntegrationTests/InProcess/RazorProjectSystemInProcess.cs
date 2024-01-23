@@ -36,7 +36,7 @@ internal partial class RazorProjectSystemInProcess
 
     public async Task WaitForProjectFileAsync(string projectFilePath, CancellationToken cancellationToken)
     {
-        var accessor = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManagerAccessor>(cancellationToken);
+        var accessor = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManagerAccessor>(cancellationToken);
         var projectSnapshotManager = accessor.Instance;
         Assert.NotNull(accessor);
         await Helper.RetryAsync(ct =>
@@ -55,7 +55,7 @@ internal partial class RazorProjectSystemInProcess
 
     public async Task WaitForRazorFileInProjectAsync(string projectFilePath, string filePath, CancellationToken cancellationToken)
     {
-        var accessor = await TestServices.Shell.GetComponentModelServiceAsync<ProjectSnapshotManagerAccessor>(cancellationToken);
+        var accessor = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManagerAccessor>(cancellationToken);
         var projectSnapshotManager = accessor.Instance;
         Assert.NotNull(accessor);
         await Helper.RetryAsync(ct =>

@@ -39,7 +39,7 @@ internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenamePar
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         IDocumentContextFactory documentContextFactory,
         RazorComponentSearchEngine componentSearchEngine,
-        ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+        IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
         LanguageServerFeatureOptions languageServerFeatureOptions,
         IRazorDocumentMappingService documentMappingService,
         IClientConnection clientConnection,

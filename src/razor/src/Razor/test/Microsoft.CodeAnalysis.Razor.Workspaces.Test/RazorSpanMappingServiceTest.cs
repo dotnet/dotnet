@@ -37,7 +37,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
 ");
 
         var project = new ProjectSnapshot(
-            ProjectState.Create(ProjectEngineFactory, _hostProject, ProjectWorkspaceState.Default)
+            ProjectState.Create(ProjectEngineFactoryProvider, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var document = project.GetDocument(_hostDocument.FilePath);
@@ -69,7 +69,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
 ");
 
         var project = new ProjectSnapshot(
-            ProjectState.Create(ProjectEngineFactory, _hostProject, ProjectWorkspaceState.Default)
+            ProjectState.Create(ProjectEngineFactoryProvider, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var document = project.GetDocument(_hostDocument.FilePath);
@@ -102,7 +102,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
 ");
 
         var project = new ProjectSnapshot(
-            ProjectState.Create(ProjectEngineFactory, _hostProject, ProjectWorkspaceState.Default)
+            ProjectState.Create(ProjectEngineFactoryProvider, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var document = project.GetDocument(_hostDocument.FilePath);
@@ -134,7 +134,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
 ");
 
         var project = new ProjectSnapshot(
-            ProjectState.Create(ProjectEngineFactory, _hostProject, ProjectWorkspaceState.Default)
+            ProjectState.Create(ProjectEngineFactoryProvider, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var document = project.GetDocument(_hostDocument.FilePath);

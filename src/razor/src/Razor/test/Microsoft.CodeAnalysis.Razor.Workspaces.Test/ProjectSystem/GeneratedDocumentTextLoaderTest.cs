@@ -31,7 +31,7 @@ public class GeneratedDocumentTextLoaderTest : WorkspaceTestBase
     {
         // Arrange
         var project = new ProjectSnapshot(
-            ProjectState.Create(ProjectEngineFactory, _hostProject, ProjectWorkspaceState.Default)
+            ProjectState.Create(ProjectEngineFactoryProvider, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(SourceText.From(""), VersionStamp.Create()))));
 
         var document = project.GetDocument(_hostDocument.FilePath);

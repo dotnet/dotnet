@@ -1,15 +1,25 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal abstract class AdhocWorkspaceFactory
+internal sealed class AdhocWorkspaceFactory(HostServicesProvider hostServicesProvider) : IAdhocWorkspaceFactory
 {
-    public abstract AdhocWorkspace Create();
+    public AdhocWorkspace Create(params IWorkspaceService[] workspaceServices)
+    {
+        workspaceServices ??= [];
 
-    public abstract AdhocWorkspace Create(IEnumerable<IWorkspaceService> workspaceServices);
+        var fallbackServices = hostServicesProvider.GetServices();
+        var services = AdhocServices.Create(
+            workspaceServices: workspaceServices.ToImmutableArray(),
+            languageServices: ImmutableArray<ILanguageService>.Empty,
+            fallbackServices);
+
+        return new AdhocWorkspace(services);
+    }
 }

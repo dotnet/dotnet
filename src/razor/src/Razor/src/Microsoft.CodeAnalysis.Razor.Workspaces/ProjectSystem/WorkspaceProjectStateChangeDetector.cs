@@ -23,7 +23,7 @@ internal class WorkspaceProjectStateChangeDetector : IProjectSnapshotChangeTrigg
     private static readonly TimeSpan s_batchingDelay = TimeSpan.FromSeconds(1);
     private readonly object _disposedLock = new();
     private readonly object _workQueueAccessLock = new();
-    private readonly ProjectWorkspaceStateGenerator _workspaceStateGenerator;
+    private readonly IProjectWorkspaceStateGenerator _workspaceStateGenerator;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly LanguageServerFeatureOptions _options;
     private BatchingWorkQueue? _workQueue;
@@ -35,7 +35,7 @@ internal class WorkspaceProjectStateChangeDetector : IProjectSnapshotChangeTrigg
 
     [ImportingConstructor]
     public WorkspaceProjectStateChangeDetector(
-        ProjectWorkspaceStateGenerator workspaceStateGenerator,
+        IProjectWorkspaceStateGenerator workspaceStateGenerator,
         ProjectSnapshotManagerDispatcher dispatcher,
         LanguageServerFeatureOptions options)
     {
@@ -46,7 +46,7 @@ internal class WorkspaceProjectStateChangeDetector : IProjectSnapshotChangeTrigg
 
     // Internal for testing
     internal WorkspaceProjectStateChangeDetector(
-        ProjectWorkspaceStateGenerator workspaceStateGenerator,
+        IProjectWorkspaceStateGenerator workspaceStateGenerator,
         ProjectSnapshotManagerDispatcher dispatcher,
         LanguageServerFeatureOptions options,
         BatchingWorkQueue workQueue)
@@ -514,13 +514,13 @@ internal class WorkspaceProjectStateChangeDetector : IProjectSnapshotChangeTrigg
     {
         private readonly Project? _workspaceProject;
         private readonly IProjectSnapshot _projectSnapshot;
-        private readonly ProjectWorkspaceStateGenerator _workspaceStateGenerator;
+        private readonly IProjectWorkspaceStateGenerator _workspaceStateGenerator;
         private readonly ProjectSnapshotManagerDispatcher _dispatcher;
 
         public UpdateWorkspaceWorkItem(
             Project? workspaceProject,
             IProjectSnapshot projectSnapshot,
-            ProjectWorkspaceStateGenerator workspaceStateGenerator,
+            IProjectWorkspaceStateGenerator workspaceStateGenerator,
             ProjectSnapshotManagerDispatcher dispatcher)
         {
             _workspaceProject = workspaceProject;

@@ -32,7 +32,7 @@ public class ProjectSnapshotSynchronizationServiceTest : WorkspaceTestBase
     {
         _sessionContext = new TestCollaborationSession(isHost: false);
 
-        _projectSnapshotManager = new TestProjectSnapshotManager(Workspace, new TestProjectSnapshotManagerDispatcher());
+        _projectSnapshotManager = new TestProjectSnapshotManager(Workspace, ProjectEngineFactoryProvider, new TestProjectSnapshotManagerDispatcher());
 
         _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create(ImmutableArray.Create(
             TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()));

@@ -4,10 +4,10 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
-using Microsoft.CodeAnalysis.Razor;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
@@ -17,7 +17,7 @@ public abstract class WorkspaceTestBase : ToolingTestBase
     private bool _initialized;
     private HostServices? _hostServices;
     private Workspace? _workspace;
-    private ProjectSnapshotProjectEngineFactory? _projectEngineFactory;
+    private IProjectEngineFactoryProvider? _projectEngineFactoryProvider;
 
     protected WorkspaceTestBase(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -42,12 +42,12 @@ public abstract class WorkspaceTestBase : ToolingTestBase
         }
     }
 
-    private protected ProjectSnapshotProjectEngineFactory ProjectEngineFactory
+    private protected IProjectEngineFactoryProvider ProjectEngineFactoryProvider
     {
         get
         {
             EnsureInitialized();
-            return _projectEngineFactory;
+            return _projectEngineFactoryProvider;
         }
     }
 
@@ -67,26 +67,23 @@ public abstract class WorkspaceTestBase : ToolingTestBase
     {
     }
 
-    [MemberNotNull(nameof(_hostServices), nameof(_workspace), nameof(_projectEngineFactory))]
+    [MemberNotNull(nameof(_hostServices), nameof(_workspace), nameof(_projectEngineFactoryProvider))]
     private void EnsureInitialized()
     {
         if (_initialized)
         {
             _hostServices.AssumeNotNull();
             _workspace.AssumeNotNull();
-            _projectEngineFactory.AssumeNotNull();
+            _projectEngineFactoryProvider.AssumeNotNull();
             return;
         }
 
-        _projectEngineFactory = new TestProjectSnapshotProjectEngineFactory()
+        _projectEngineFactoryProvider = new TestProjectEngineFactoryProvider()
         {
             Configure = ConfigureProjectEngine,
         };
 
-        var workspaceServices = new List<IWorkspaceService>()
-        {
-            _projectEngineFactory,
-        };
+        var workspaceServices = new List<IWorkspaceService>();
         ConfigureWorkspaceServices(workspaceServices);
 
         var languageServices = new List<ILanguageService>();

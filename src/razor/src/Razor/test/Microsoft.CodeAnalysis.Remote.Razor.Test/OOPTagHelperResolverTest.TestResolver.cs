@@ -13,31 +13,32 @@ using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
 
+#pragma warning disable VSTHRD110 // Observe result of async calls
+
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 public partial class OOPTagHelperResolverTest
 {
     private class TestResolver(
-        ProjectSnapshotProjectEngineFactory factory,
-        IErrorReporter errorReporter,
         Workspace workspace,
+        IErrorReporter errorReporter,
         ITelemetryReporter telemetryReporter)
-        : OOPTagHelperResolver(factory, errorReporter, workspace, telemetryReporter)
+        : OOPTagHelperResolver(workspace, errorReporter, telemetryReporter)
     {
-        public Func<IProjectEngineFactory, IProjectSnapshot, ValueTask<ImmutableArray<TagHelperDescriptor>>>? OnResolveOutOfProcess { get; init; }
+        public Func<IProjectSnapshot, ValueTask<ImmutableArray<TagHelperDescriptor>>>? OnResolveOutOfProcess { get; init; }
 
         public Func<IProjectSnapshot, ValueTask<ImmutableArray<TagHelperDescriptor>>>? OnResolveInProcess { get; init; }
 
-        protected override ValueTask<ImmutableArray<TagHelperDescriptor>> ResolveTagHelpersOutOfProcessAsync(IProjectEngineFactory factory, Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+        protected override ValueTask<ImmutableArray<TagHelperDescriptor>> ResolveTagHelpersOutOfProcessAsync(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
         {
-            Assert.NotNull(OnResolveOutOfProcess);
-            return OnResolveOutOfProcess(factory, projectSnapshot);
+            return OnResolveOutOfProcess?.Invoke(projectSnapshot)
+                ?? new ValueTask<ImmutableArray<TagHelperDescriptor>>(default(ImmutableArray<TagHelperDescriptor>));
         }
 
         protected override ValueTask<ImmutableArray<TagHelperDescriptor>> ResolveTagHelpersInProcessAsync(Project project, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
         {
-            Assert.NotNull(OnResolveInProcess);
-            return OnResolveInProcess(projectSnapshot);
+            return OnResolveInProcess?.Invoke(projectSnapshot)
+                ?? new ValueTask<ImmutableArray<TagHelperDescriptor>>(default(ImmutableArray<TagHelperDescriptor>));
         }
 
         public ImmutableArray<Checksum> PublicProduceChecksumsFromDelta(ProjectId projectId, int lastResultId, TagHelperDeltaResult deltaResult)

@@ -3,58 +3,33 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Common;
 
-internal class AdhocWorkspaceServices : HostWorkspaceServices
+internal sealed class AdhocWorkspaceServices : HostWorkspaceServices
 {
-    private readonly HostServices _hostServices;
-    private readonly HostLanguageServices _razorLanguageServices;
-    private readonly IEnumerable<IWorkspaceService> _workspaceServices;
+    private readonly AdhocServices _hostServices;
+    private readonly AdhocLanguageServices _languageServices;
+    private readonly ImmutableArray<IWorkspaceService> _workspaceServices;
     private readonly Workspace _workspace;
     private readonly HostWorkspaceServices _fallbackServices;
 
     public AdhocWorkspaceServices(
-        HostServices hostServices,
-        IEnumerable<IWorkspaceService> workspaceServices,
-        IEnumerable<ILanguageService> languageServices,
+        AdhocServices hostServices,
+        ImmutableArray<IWorkspaceService> workspaceServices,
+        ImmutableArray<ILanguageService> languageServices,
         Workspace workspace,
         HostWorkspaceServices fallbackServices)
     {
-        if (hostServices is null)
-        {
-            throw new ArgumentNullException(nameof(hostServices));
-        }
-
-        if (workspaceServices is null)
-        {
-            throw new ArgumentNullException(nameof(workspaceServices));
-        }
-
-        if (languageServices is null)
-        {
-            throw new ArgumentNullException(nameof(languageServices));
-        }
-
-        if (workspace is null)
-        {
-            throw new ArgumentNullException(nameof(workspace));
-        }
-
-        if (fallbackServices is null)
-        {
-            throw new ArgumentNullException(nameof(fallbackServices));
-        }
-
         _hostServices = hostServices;
         _workspaceServices = workspaceServices;
         _workspace = workspace;
         _fallbackServices = fallbackServices;
-        _razorLanguageServices = new AdhocLanguageServices(this, languageServices);
+        _languageServices = new AdhocLanguageServices(this, languageServices);
     }
 
     public override HostServices HostServices => _hostServices;
@@ -64,22 +39,23 @@ internal class AdhocWorkspaceServices : HostWorkspaceServices
     public override TWorkspaceService? GetService<TWorkspaceService>()
         where TWorkspaceService : default
     {
-        var service = _workspaceServices.OfType<TWorkspaceService>().FirstOrDefault();
-
-        if (service is null)
+        foreach (var service in _workspaceServices)
         {
-            // Fallback to default host services to resolve roslyn specific features.
-            service = _fallbackServices.GetService<TWorkspaceService>();
+            if (service is TWorkspaceService workspaceService)
+            {
+                return workspaceService;
+            }
         }
 
-        return service;
+        // Fallback to default host services to resolve roslyn specific features.
+        return _fallbackServices.GetService<TWorkspaceService>();
     }
 
     public override HostLanguageServices GetLanguageServices(string languageName)
     {
         if (languageName == RazorLanguage.Name)
         {
-            return _razorLanguageServices;
+            return _languageServices;
         }
 
         // Fallback to default host services to resolve roslyn specific features.
@@ -90,5 +66,6 @@ internal class AdhocWorkspaceServices : HostWorkspaceServices
 
     public override bool IsSupported(string languageName) => languageName == RazorLanguage.Name;
 
-    public override IEnumerable<TLanguageService> FindLanguageServices<TLanguageService>(MetadataFilter filter) => throw new NotImplementedException();
+    public override IEnumerable<TLanguageService> FindLanguageServices<TLanguageService>(MetadataFilter filter)
+        => throw new NotImplementedException();
 }

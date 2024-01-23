@@ -15,14 +15,12 @@ internal interface IRemoteTagHelperProviderService
     ValueTask<TagHelperDeltaResult> GetTagHelpersDeltaAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
         ProjectSnapshotHandle projectHandle,
-        string factoryTypeName,
         int lastResultId,
         CancellationToken cancellationToken);
 
     ValueTask<FetchTagHelpersResult> FetchTagHelpersAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
         ProjectSnapshotHandle projectHandle,
-        string factoryTypeName,
         ImmutableArray<Checksum> checksums,
         CancellationToken cancellationToken);
 }

@@ -19,14 +19,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 [Export(typeof(ISnapshotResolver)), Shared]
 internal sealed class SnapshotResolver : ISnapshotResolver
 {
-    private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
+    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
     private readonly ILogger _logger;
 
     // Internal for testing
     internal readonly HostProject MiscellaneousHostProject;
 
     [ImportingConstructor]
-    public SnapshotResolver(ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor, IRazorLoggerFactory loggerFactory)
+    public SnapshotResolver(IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor, IRazorLoggerFactory loggerFactory)
     {
         _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor ?? throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
         _logger = loggerFactory.CreateLogger<SnapshotResolver>();

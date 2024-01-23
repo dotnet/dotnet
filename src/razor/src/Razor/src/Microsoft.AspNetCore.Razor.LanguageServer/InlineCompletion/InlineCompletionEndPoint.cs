@@ -27,7 +27,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.InlineCompletion;
 internal sealed class InlineCompletionEndpoint(
     IRazorDocumentMappingService documentMappingService,
     IClientConnection clientConnection,
-    AdhocWorkspaceFactory adhocWorkspaceFactory,
+    IAdhocWorkspaceFactory adhocWorkspaceFactory,
     IRazorLoggerFactory loggerFactory)
     : IRazorRequestHandler<VSInternalInlineCompletionRequest, VSInternalInlineCompletionList?>, ICapabilitiesProvider
 {
@@ -38,7 +38,7 @@ internal sealed class InlineCompletionEndpoint(
 
     private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     private readonly IClientConnection _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
-    private readonly AdhocWorkspaceFactory _adhocWorkspaceFactory = adhocWorkspaceFactory ?? throw new ArgumentNullException(nameof(adhocWorkspaceFactory));
+    private readonly IAdhocWorkspaceFactory _adhocWorkspaceFactory = adhocWorkspaceFactory ?? throw new ArgumentNullException(nameof(adhocWorkspaceFactory));
     private readonly ILogger _logger = loggerFactory.CreateLogger<InlineCompletionEndpoint>();
 
     public bool MutatesSolutionState => false;
