@@ -115,6 +115,9 @@ steps:
         exit 1
       }
 
+- task: ComponentGovernanceComponentDetection@0
+  displayName: 'Component Detection'
+
 - task: MSBuild@1
   displayName: "Build"
   inputs:
@@ -272,9 +275,6 @@ steps:
     TargetFolders: '$(Build.Repository.LocalPath)\\artifacts\\VS15'
     ApprovalListPathForCerts: '$(Build.Repository.LocalPath)\\build\\ignorecodesign.csv'
     ApprovalListPathForSigs: '$(Build.Repository.LocalPath)\\build\\ignorecodesign.csv'
-
-- task: ComponentGovernanceComponentDetection@0
-  displayName: 'Component Detection'
 
 - task: PublishPipelineArtifact@1
   displayName: "Publish nupkgs"
@@ -447,16 +447,6 @@ steps:
     targetPath: "$(Build.Repository.LocalPath)\\artifacts\\localizationArtifacts\\"
     artifactName: "localizationArtifacts"
   condition: "and(eq(variables['BuildRTM'], 'false'), or(eq(variables['OverridePublishLocalizationArtifact'], 'true'), and(succeededOrFailed(), eq(variables['IsOfficialBuild'], 'true'))))"
-
-- task: NuGetCommand@2
-  displayName: Publish public Nuget packages to nuget-build
-  inputs:
-    command: push
-    packagesToPush: 'artifacts\nupkgs\*.nupkg;!artifacts\nupkgs\*.symbols.nupkg'
-    nuGetFeedType: external
-    allowPackageConflicts: true
-    publishFeedCredentials : nuget-build-dnceng-public-feed
-  condition: " and(succeeded(),eq(variables['PublishArtifactsToMyGet'], 'true'), eq(variables['BuildRTM'], 'false')) "
 
 - task: MSBuild@1
   displayName: "Collect Build Symbols"

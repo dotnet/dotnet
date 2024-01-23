@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "8.0.0-beta.23564.4",
+      "packageVersion": "8.0.0-beta.24059.4",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "0aaeafef60933f87b0b50350313bb2fd77defb5d"
+      "commitSha": "61ae141d2bf3534619265c8f691fd55dc3e75147"
     },
     {
       "packageVersion": "8.0.0-preview.1.23557.2",
@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "99d72e3941ee6b00db1cfdbb1a8d2ab16d6bd474"
+      "commitSha": "b7800db369acbd1bbae91f2fad199e69f8f600b4"
     },
     {
       "packageVersion": "17.8.5-preview-24055-02",
@@ -73,10 +73,10 @@
       "commitSha": "b5265ef370a651f8c3458110b804e5cbf869eeb5"
     },
     {
-      "packageVersion": "6.8.0-rc.122",
+      "packageVersion": "6.8.1-rc.2",
       "path": "nuget-client",
-      "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "0dd5a1ea536201af94725353e4bc711d7560b246"
+      "remoteUri": "https://dev.azure.com/devdiv/DevDiv/_git/NuGet-NuGet.Client-Trusted",
+      "commitSha": "550277e0616e549446f03fda35d3e23dff75dc01"
     },
     {
       "packageVersion": "7.0.0-preview.24052.1",
@@ -103,10 +103,10 @@
       "commitSha": "1381d5ebd2ab1f292848d5b19b80cf71ac332508"
     },
     {
-      "packageVersion": "8.0.102-servicing.24068.55",
+      "packageVersion": "8.0.102-servicing.24069.16",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "3206ce37b3af707a6bca134c14b396af9036f974"
+      "commitSha": "4dc36050406554319d333a791a3e1dd8262cfd1b"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23577.6",
@@ -133,10 +133,10 @@
       "commitSha": "2c8079e2e8e78c0cd11ac75a32014756136ecdb9"
     },
     {
-      "packageVersion": "8.0.102-servicing.24065.1",
+      "packageVersion": "8.0.102-servicing.24068.1",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "5f8a5516842e82befe1461833d470aedb96a416e"
+      "commitSha": "1fd47947d9b0fd7d5f9700d59b2a7636e3ee9284"
     },
     {
       "packageVersion": "1.1.0-rc.23410.2",

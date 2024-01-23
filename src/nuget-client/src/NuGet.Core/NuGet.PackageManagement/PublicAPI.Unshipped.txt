@@ -1,6 +1,1 @@
 #nullable enable
-NuGet.PackageManagement.ActionsTelemetryEvent.OperationType.get -> NuGet.PackageManagement.NuGetProjectActionType
-NuGet.PackageManagement.NuGetProjectActionType.Update = 2 -> NuGet.PackageManagement.NuGetProjectActionType
-~NuGet.PackageManagement.ActionsTelemetryEvent.ActionsTelemetryEvent(string operationId, string[] projectIds, NuGet.PackageManagement.NuGetProjectActionType operationType, System.DateTimeOffset startTime, NuGet.Common.NuGetOperationStatus status, int packageCount, System.DateTimeOffset endTime, double duration) -> void
-~static NuGet.PackageManagement.PackageReferenceComparer.Instance.get -> NuGet.PackageManagement.PackageReferenceComparer
-~static NuGet.PackageManagement.SourceRepositoryComparer.Instance.get -> NuGet.PackageManagement.SourceRepositoryComparer
