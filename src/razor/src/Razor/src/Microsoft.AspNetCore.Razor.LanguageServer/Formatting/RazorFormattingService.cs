@@ -19,11 +19,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 internal class RazorFormattingService : IRazorFormattingService
 {
     private readonly List<IFormattingPass> _formattingPasses;
-    private readonly IAdhocWorkspaceFactory _workspaceFactory;
+    private readonly AdhocWorkspaceFactory _workspaceFactory;
 
     public RazorFormattingService(
         IEnumerable<IFormattingPass> formattingPasses,
-        IAdhocWorkspaceFactory workspaceFactory)
+        AdhocWorkspaceFactory workspaceFactory)
     {
         if (formattingPasses is null)
         {

@@ -60,18 +60,22 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
         Assert.True(_publisher.PublishedHtml);
     }
 
-    private class TestGeneratedDocumentPublisher : IGeneratedDocumentPublisher
+    private class TestGeneratedDocumentPublisher : GeneratedDocumentPublisher
     {
+        public override void Initialize(ProjectSnapshotManagerBase projectManager)
+        {
+        }
+
         public bool PublishedCSharp { get; private set; }
 
         public bool PublishedHtml { get; private set; }
 
-        public void PublishCSharp(ProjectKey projectKey, string filePath, SourceText sourceText, int hostDocumentVersion)
+        public override void PublishCSharp(ProjectKey projectKey, string filePath, SourceText sourceText, int hostDocumentVersion)
         {
             PublishedCSharp = true;
         }
 
-        public void PublishHtml(ProjectKey projectKey, string filePath, SourceText sourceText, int hostDocumentVersion)
+        public override void PublishHtml(ProjectKey projectKey, string filePath, SourceText sourceText, int hostDocumentVersion)
         {
             PublishedHtml = true;
         }

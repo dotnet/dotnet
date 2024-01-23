@@ -6,22 +6,33 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Host;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
 internal class EphemeralProjectSnapshot : IProjectSnapshot
 {
-    private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
+    private readonly HostWorkspaceServices _services;
     private readonly Lazy<RazorProjectEngine> _projectEngine;
 
-    public EphemeralProjectSnapshot(IProjectEngineFactoryProvider projectEngineFactoryProvider, string projectPath)
+    public EphemeralProjectSnapshot(HostWorkspaceServices services, string projectPath)
     {
-        _projectEngineFactoryProvider = projectEngineFactoryProvider;
+        if (services is null)
+        {
+            throw new ArgumentNullException(nameof(services));
+        }
+
+        if (projectPath is null)
+        {
+            throw new ArgumentNullException(nameof(projectPath));
+        }
+
+        _services = services;
         FilePath = projectPath;
         IntermediateOutputPath = Path.Combine(Path.GetDirectoryName(FilePath) ?? FilePath, "obj");
         DisplayName = Path.GetFileNameWithoutExtension(projectPath);
@@ -90,6 +101,7 @@ internal class EphemeralProjectSnapshot : IProjectSnapshot
 
     private RazorProjectEngine CreateProjectEngine()
     {
-        return _projectEngineFactoryProvider.Create(this);
+        var factory = _services.GetRequiredService<ProjectSnapshotProjectEngineFactory>();
+        return factory.Create(this);
     }
 }

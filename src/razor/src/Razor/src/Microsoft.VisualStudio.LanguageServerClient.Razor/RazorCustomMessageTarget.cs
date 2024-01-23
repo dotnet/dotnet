@@ -34,7 +34,7 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
     private readonly LSPRequestInvoker _requestInvoker;
     private readonly ITelemetryReporter _telemetryReporter;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
+    private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
     private readonly SnippetCache _snippetCache;
     private readonly FormattingOptionsProvider _formattingOptionsProvider;
     private readonly IClientSettingsManager _editorSettingsManager;
@@ -53,7 +53,7 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
         CSharpVirtualDocumentAddListener csharpVirtualDocumentAddListener,
         ITelemetryReporter telemetryReporter,
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+        ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
         SnippetCache snippetCache,
         IRazorLoggerFactory loggerFactory)
     {

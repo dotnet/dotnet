@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
-internal interface IProjectSnapshotManagerAccessor
+internal abstract class ProjectSnapshotManagerAccessor
 {
-    ProjectSnapshotManagerBase Instance { get; }
+    public abstract ProjectSnapshotManagerBase Instance { get; }
 }

@@ -1,11 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using Microsoft.AspNetCore.Razor.Language;
-
 namespace Microsoft.AspNetCore.Razor.ProjectEngineHost;
 
-internal interface IProjectEngineFactoryProvider
+internal class ProjectEngineFactory_2_0 : ProjectEngineFactory
 {
-    IProjectEngineFactory GetFactory(RazorConfiguration configuration);
+    protected override string AssemblyName { get; } = "Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version2_X";
 }

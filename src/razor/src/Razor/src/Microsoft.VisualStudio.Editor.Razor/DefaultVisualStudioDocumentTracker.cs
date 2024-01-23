@@ -7,7 +7,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Editor;
@@ -20,7 +19,7 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 
 internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
 {
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
+    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly JoinableTaskContext _joinableTaskContext;
     private readonly string _filePath;
     private readonly string _projectPath;
@@ -29,7 +28,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
     private readonly ITextBuffer _textBuffer;
     private readonly ImportDocumentManager _importDocumentManager;
     private readonly List<ITextView> _textViews;
-    private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
+    private readonly Workspace _workspace;
     private bool _isSupportedProject;
     private IProjectSnapshot? _projectSnapshot;
     private int _subscribeCount;
@@ -37,19 +36,19 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
     public override event EventHandler<ContextChangeEventArgs>? ContextChanged;
 
     public DefaultVisualStudioDocumentTracker(
-        ProjectSnapshotManagerDispatcher dispatcher,
+        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         JoinableTaskContext joinableTaskContext,
         string filePath,
         string projectPath,
         ProjectSnapshotManager projectManager,
         WorkspaceEditorSettings workspaceEditorSettings,
-        IProjectEngineFactoryProvider projectEngineFactoryProvider,
+        Workspace workspace,
         ITextBuffer textBuffer,
         ImportDocumentManager importDocumentManager)
     {
-        if (dispatcher is null)
+        if (projectSnapshotManagerDispatcher is null)
         {
-            throw new ArgumentNullException(nameof(dispatcher));
+            throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
         }
 
         if (joinableTaskContext is null)
@@ -77,9 +76,9 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
             throw new ArgumentNullException(nameof(workspaceEditorSettings));
         }
 
-        if (projectEngineFactoryProvider is null)
+        if (workspace is null)
         {
-            throw new ArgumentNullException(nameof(projectEngineFactoryProvider));
+            throw new ArgumentNullException(nameof(workspace));
         }
 
         if (textBuffer is null)
@@ -92,7 +91,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
             throw new ArgumentNullException(nameof(importDocumentManager));
         }
 
-        _dispatcher = dispatcher;
+        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
         _joinableTaskContext = joinableTaskContext;
         _filePath = filePath;
         _projectPath = projectPath;
@@ -100,7 +99,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
         _workspaceEditorSettings = workspaceEditorSettings;
         _textBuffer = textBuffer;
         _importDocumentManager = importDocumentManager;
-        _projectEngineFactoryProvider = projectEngineFactoryProvider;
+        _workspace = workspace; // For now we assume that the workspace is the always default VS workspace.
 
         _textViews = new List<ITextView>();
     }
@@ -118,6 +117,8 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
     public override ITextBuffer TextBuffer => _textBuffer;
 
     public override IReadOnlyList<ITextView> TextViews => _textViews;
+
+    public override Workspace Workspace => _workspace;
 
     public override string FilePath => _filePath;
 
@@ -170,7 +171,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
 
     public void Subscribe()
     {
-        _dispatcher.AssertDispatcherThread();
+        _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
         if (_subscribeCount++ > 0)
         {
@@ -191,13 +192,13 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
 
     private IProjectSnapshot? GetOrCreateProject(string projectPath)
     {
-        _dispatcher.AssertDispatcherThread();
+        _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
         var projectKey = _projectManager.GetAllProjectKeys(projectPath).FirstOrDefault();
 
         if (_projectManager.GetLoadedProject(projectKey) is not { } project)
         {
-            return new EphemeralProjectSnapshot(_projectEngineFactoryProvider, projectPath);
+            return new EphemeralProjectSnapshot(Workspace.Services, projectPath);
         }
 
         return project;
@@ -205,7 +206,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
 
     public void Unsubscribe()
     {
-        _dispatcher.AssertDispatcherThread();
+        _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
         if (_subscribeCount == 0 || _subscribeCount-- > 1)
         {
@@ -240,7 +241,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
             return;
         }
 
-        _dispatcher.AssertDispatcherThread();
+        _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
         if (_projectPath is not null &&
             string.Equals(_projectPath, e.ProjectFilePath, StringComparison.OrdinalIgnoreCase))
@@ -291,7 +292,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
     // Internal for testing
     internal void Import_Changed(object sender, ImportChangedEventArgs args)
     {
-        _dispatcher.AssertDispatcherThread();
+        _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
         foreach (var path in args.AssociatedDocuments)
         {

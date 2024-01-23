@@ -23,7 +23,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
 public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    private static readonly IProjectSnapshotManagerAccessor s_projectSnapshotManager = CreateProjectSnapshotManagerAccessor();
+    private static readonly ProjectSnapshotManagerAccessor s_projectSnapshotManager = CreateProjectSnapshotManagerAccessor();
 
     [Fact]
     public async Task Handle_SearchFound_GenericComponent()
@@ -161,7 +161,7 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
         return documentSnapshot;
     }
 
-    internal static IProjectSnapshotManagerAccessor CreateProjectSnapshotManagerAccessor()
+    internal static ProjectSnapshotManagerAccessor CreateProjectSnapshotManagerAccessor()
     {
         var firstProject = Mock.Of<IProjectSnapshot>(p =>
             p.FilePath == "c:/First/First.csproj" &&
@@ -178,8 +178,13 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
         return new TestProjectSnapshotManagerAccessor(projectSnapshotManager);
     }
 
-    internal class TestProjectSnapshotManagerAccessor(ProjectSnapshotManagerBase instance) : IProjectSnapshotManagerAccessor
+    internal class TestProjectSnapshotManagerAccessor : ProjectSnapshotManagerAccessor
     {
-        public ProjectSnapshotManagerBase Instance => instance;
+        public TestProjectSnapshotManagerAccessor(ProjectSnapshotManagerBase instance)
+        {
+            Instance = instance;
+        }
+
+        public override ProjectSnapshotManagerBase Instance { get; }
     }
 }

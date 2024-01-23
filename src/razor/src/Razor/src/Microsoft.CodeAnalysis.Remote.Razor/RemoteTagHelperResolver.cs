@@ -8,35 +8,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 internal class RemoteTagHelperResolver(ITelemetryReporter telemetryReporter)
 {
-    /// <summary>
-    /// A map of configuration names to <see cref="IProjectEngineFactory"/> instances.
-    /// </summary>
-    private static readonly Dictionary<string, IProjectEngineFactory> s_configurationNameToFactoryMap = CreateConfigurationNameToFactoryMap();
-
+    private readonly IFallbackProjectEngineFactory _fallbackFactory = new FallbackProjectEngineFactory();
+    private readonly Dictionary<string, IProjectEngineFactory> _typeNameToFactoryMap = new(StringComparer.Ordinal);
     private readonly CompilationTagHelperResolver _compilationTagHelperResolver = new(telemetryReporter);
-
-    private static Dictionary<string, IProjectEngineFactory> CreateConfigurationNameToFactoryMap()
-    {
-        var map = new Dictionary<string, IProjectEngineFactory>(StringComparer.Ordinal);
-
-        foreach (var factory in ProjectEngineFactories.All)
-        {
-            map.Add(factory.ConfigurationName, factory);
-        }
-
-        return map;
-    }
 
     public ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(
         Project workspaceProject,
         RazorConfiguration? configuration,
+        string factoryTypeName,
         CancellationToken cancellationToken)
     {
         if (configuration is null)
@@ -46,11 +32,11 @@ internal class RemoteTagHelperResolver(ITelemetryReporter telemetryReporter)
 
         return _compilationTagHelperResolver.GetTagHelpersAsync(
             workspaceProject,
-            CreateProjectEngine(configuration),
+            CreateProjectEngine(configuration, factoryTypeName),
             cancellationToken);
     }
 
-    private RazorProjectEngine CreateProjectEngine(RazorConfiguration configuration)
+    private RazorProjectEngine CreateProjectEngine(RazorConfiguration configuration, string factoryTypeName)
     {
         // If there's no factory to handle the configuration then fall back to a very basic configuration.
         //
@@ -59,15 +45,28 @@ internal class RemoteTagHelperResolver(ITelemetryReporter telemetryReporter)
 
         IProjectEngineFactory factory;
 
-        lock (s_configurationNameToFactoryMap)
+        lock (_typeNameToFactoryMap)
         {
-            if (!s_configurationNameToFactoryMap.TryGetValue(configuration.ConfigurationName, out factory))
+            if (!_typeNameToFactoryMap.TryGetValue(factoryTypeName, out factory))
             {
-                factory = ProjectEngineFactories.Empty;
-                s_configurationNameToFactoryMap.Add(configuration.ConfigurationName, factory);
+                factory = CreateFactory(factoryTypeName) ?? _fallbackFactory;
+                _typeNameToFactoryMap.Add(factoryTypeName, factory);
             }
         }
 
-        return factory.Create(configuration, RazorProjectFileSystem.Empty, configure: null);
+        return factory.Create(configuration, RazorProjectFileSystem.Empty, static _ => { });
+
+        static IProjectEngineFactory? CreateFactory(string factoryTypeName)
+        {
+            try
+            {
+                var factoryType = Type.GetType(factoryTypeName, throwOnError: true);
+                return (IProjectEngineFactory)Activator.CreateInstance(factoryType);
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

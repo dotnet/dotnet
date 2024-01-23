@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Composition;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 
@@ -14,7 +13,6 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 [method: ImportingConstructor]
 internal class DefaultProjectSnapshotManagerFactory(
     [ImportMany] IEnumerable<IProjectSnapshotChangeTrigger> triggers,
-    IProjectEngineFactoryProvider projectEngineFactoryProvider,
     ProjectSnapshotManagerDispatcher dispatcher,
     IErrorReporter errorReporter) : ILanguageServiceFactory
 {
@@ -23,6 +21,5 @@ internal class DefaultProjectSnapshotManagerFactory(
             errorReporter,
             triggers,
             languageServices.WorkspaceServices.Workspace,
-            projectEngineFactoryProvider,
             dispatcher);
 }

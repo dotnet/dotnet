@@ -21,12 +21,12 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 internal sealed class FallbackProjectManager(
     ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
     LanguageServerFeatureOptions languageServerFeatureOptions,
-    IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+    ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
     ITelemetryReporter telemetryReporter)
 {
     private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore = projectConfigurationFilePathStore;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
-    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
+    private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
     internal void DynamicFileAdded(ProjectId projectId, ProjectKey razorProjectKey, string projectFilePath, string filePath)

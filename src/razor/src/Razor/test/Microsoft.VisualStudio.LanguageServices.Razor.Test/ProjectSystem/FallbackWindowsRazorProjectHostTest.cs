@@ -10,7 +10,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
@@ -33,7 +32,7 @@ public class FallbackWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatc
     public FallbackWindowsRazorProjectHostTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _projectManager = new TestProjectSnapshotManager(Workspace, ProjectEngineFactoryProvider, Dispatcher);
+        _projectManager = new TestProjectSnapshotManager(Workspace, Dispatcher);
 
         var projectConfigurationFilePathStore = new Mock<ProjectConfigurationFilePathStore>(MockBehavior.Strict);
         projectConfigurationFilePathStore.Setup(s => s.Remove(It.IsAny<ProjectKey>())).Verifiable();
@@ -665,15 +664,11 @@ public class FallbackWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatc
         }
     }
 
-    private class TestProjectSnapshotManager(
-        Workspace workspace,
-        IProjectEngineFactoryProvider projectEngineFactoryProvider,
-        ProjectSnapshotManagerDispatcher dispatcher) : DefaultProjectSnapshotManager(
-              Mock.Of<IErrorReporter>(MockBehavior.Strict),
-              triggers: [],
-              workspace,
-              projectEngineFactoryProvider,
-              dispatcher)
+    private class TestProjectSnapshotManager : DefaultProjectSnapshotManager
     {
+        public TestProjectSnapshotManager(Workspace workspace, ProjectSnapshotManagerDispatcher dispatcher)
+            : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), Array.Empty<IProjectSnapshotChangeTrigger>(), workspace, dispatcher)
+        {
+        }
     }
 }

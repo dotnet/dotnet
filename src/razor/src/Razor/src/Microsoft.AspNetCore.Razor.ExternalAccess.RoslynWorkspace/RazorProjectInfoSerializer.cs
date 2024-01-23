@@ -20,13 +20,18 @@ namespace Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace;
 
 internal static class RazorProjectInfoSerializer
 {
+    private static readonly EmptyProjectEngineFactory s_fallbackProjectEngineFactory;
     private static readonly StringComparison s_stringComparison;
+    private static readonly (IProjectEngineFactory Value, ICustomProjectEngineFactoryMetadata)[] s_projectEngineFactories;
 
     static RazorProjectInfoSerializer()
     {
+        s_fallbackProjectEngineFactory = new EmptyProjectEngineFactory();
         s_stringComparison = RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
             ? StringComparison.Ordinal
             : StringComparison.OrdinalIgnoreCase;
+
+        s_projectEngineFactories = ProjectEngineFactories.Factories.Select(f => (f.Item1.Value, f.Item2)).ToArray();
     }
 
     public static async Task SerializeAsync(Project project, string configurationFileName, CancellationToken cancellationToken)
@@ -70,12 +75,12 @@ internal static class RazorProjectInfoSerializer
             builder.SetSupportLocalizedComponentNames(); // ProjectState in MS.CA.Razor.Workspaces does this, so I'm doing it too!
         };
 
-        var engineFactory = ProjectEngineFactories.DefaultProvider.GetFactory(configuration);
-
-        var engine = engineFactory.Create(
+        var engine = DefaultProjectEngineFactory.Create(
             configuration,
-            fileSystem,
-            configure: defaultConfigure);
+            fileSystem: fileSystem,
+            configure: defaultConfigure,
+            fallback: s_fallbackProjectEngineFactory,
+            factories: s_projectEngineFactories);
 
         var resolver = new CompilationTagHelperResolver(NoOpTelemetryReporter.Instance);
         var tagHelpers = await resolver.GetTagHelpersAsync(project, engine, cancellationToken).ConfigureAwait(false);

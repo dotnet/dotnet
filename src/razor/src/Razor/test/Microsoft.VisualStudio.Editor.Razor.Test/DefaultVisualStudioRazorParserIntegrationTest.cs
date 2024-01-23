@@ -4,15 +4,17 @@
 #nullable disable
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -28,7 +30,6 @@ public class DefaultVisualStudioRazorParserIntegrationTest : ProjectSnapshotMana
     private const string TestLinePragmaFileName = @"C:\This\Path\Is\Just\For\Line\Pragmas.cshtml";
     private const string TestProjectPath = @"C:\This\Path\Is\Just\For\Project.csproj";
 
-    private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
     private readonly IProjectSnapshot _projectSnapshot;
     private readonly CodeAnalysis.Workspace _workspace;
 
@@ -38,8 +39,7 @@ public class DefaultVisualStudioRazorParserIntegrationTest : ProjectSnapshotMana
         _workspace = TestWorkspace.Create();
         AddDisposable(_workspace);
 
-        _projectEngineFactoryProvider = CreateProjectEngineFactoryProvider();
-        _projectSnapshot = new EphemeralProjectSnapshot(_projectEngineFactoryProvider, TestProjectPath);
+        _projectSnapshot = new EphemeralProjectSnapshot(_workspace.Services, TestProjectPath);
     }
 
     [UIFact]
@@ -560,10 +560,11 @@ public class DefaultVisualStudioRazorParserIntegrationTest : ProjectSnapshotMana
 
     private TestParserManager CreateParserManager(VisualStudioDocumentTracker documentTracker)
     {
+        var templateEngineFactory = CreateProjectEngineFactory();
         var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskFactory.Context,
             documentTracker,
-            _projectEngineFactoryProvider,
+            templateEngineFactory,
             ErrorReporter,
             new TestCompletionBroker())
         {
@@ -586,7 +587,7 @@ public class DefaultVisualStudioRazorParserIntegrationTest : ProjectSnapshotMana
         return CreateParserManager(documentTracker);
     }
 
-    private static IProjectEngineFactoryProvider CreateProjectEngineFactoryProvider()
+    private static ProjectSnapshotProjectEngineFactory CreateProjectEngineFactory(IEnumerable<TagHelperDescriptor> tagHelpers = null)
     {
         var fileSystem = new TestRazorProjectFileSystem();
         var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, fileSystem, builder =>
@@ -595,20 +596,18 @@ public class DefaultVisualStudioRazorParserIntegrationTest : ProjectSnapshotMana
 
             builder.AddDefaultImports("@addTagHelper *, Test");
 
+            if (tagHelpers != null)
+            {
+                builder.AddTagHelpers(tagHelpers);
+            }
+
             builder.Features.Add(new DefaultVisualStudioRazorParser.VisualStudioEnableTagHelpersFeature());
         });
 
-        var factoryMock = new Mock<IProjectEngineFactory>(MockBehavior.Strict);
-        factoryMock
-            .Setup(x => x.Create(It.IsAny<RazorConfiguration>(), It.IsAny<RazorProjectFileSystem>(), It.IsAny<Action<RazorProjectEngineBuilder>>()))
-            .Returns(projectEngine);
-
-        var providerMock = new Mock<IProjectEngineFactoryProvider>(MockBehavior.Strict);
-        providerMock
-            .Setup(x => x.GetFactory(It.IsAny<RazorConfiguration>()))
-            .Returns(factoryMock.Object);
-
-        return providerMock.Object;
+        return new TestProjectSnapshotProjectEngineFactory()
+        {
+            Engine = projectEngine,
+        };
     }
 
     private async Task RunTypeKeywordTestAsync(string keyword)
