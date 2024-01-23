@@ -1,8 +1,5 @@
 ﻿<Project>
+
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
-  <ItemGroup Condition="'$(IsTestProject)' == 'true' or '$(MSBuildProjectName)' == 'TestUtilities'">
-    <!-- Upgrade the NETStandard.Library transitive xunit dependency to avoid transitive 1.x NS dependencies. -->
-    <PackageReference Include="NETStandard.Library" Version="$(NETStandardLibraryVersion)" Condition="'$(TargetFrameworkIdentifier)' != '.NETStandard'" />
-  </ItemGroup>
 </Project>
