@@ -40,7 +40,6 @@
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     <RepositoryReference Include="command-line-api" />
     <RepositoryReference Include="cecil" />
-    <RepositoryReference Include="xliff-tasks" />
   </ItemGroup>
 
   <!-- Environment Variables -->
