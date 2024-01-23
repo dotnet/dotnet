@@ -1,4 +1,5 @@
 ﻿<Project>
+
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
@@ -9,4 +10,5 @@
     <!-- Any code that allows overflows intentionally should be explicitly in an unchecked region. -->
     <CheckForOverflowUnderflow Condition="'$(Configuration)' == 'Debug'">true</CheckForOverflowUnderflow>
   </PropertyGroup>
+
 </Project>
