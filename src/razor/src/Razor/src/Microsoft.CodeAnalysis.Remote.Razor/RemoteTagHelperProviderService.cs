@@ -30,17 +30,19 @@ internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemote
     public ValueTask<FetchTagHelpersResult> FetchTagHelpersAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
         ProjectSnapshotHandle projectHandle,
+        string factoryTypeName,
         ImmutableArray<Checksum> checksums,
         CancellationToken cancellationToken)
         => RazorBrokeredServiceImplementation.RunServiceAsync(
             solutionInfo,
             ServiceBrokerClient,
-            solution => FetchTagHelpersCoreAsync(solution, projectHandle, checksums, cancellationToken),
+            solution => FetchTagHelpersCoreAsync(solution, projectHandle, factoryTypeName, checksums, cancellationToken),
             cancellationToken);
 
     private async ValueTask<FetchTagHelpersResult> FetchTagHelpersCoreAsync(
         Solution solution,
         ProjectSnapshotHandle projectHandle,
+        string factoryTypeName,
         ImmutableArray<Checksum> checksums,
         CancellationToken cancellationToken)
     {
@@ -59,7 +61,7 @@ internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemote
 
             // Compute the latest tag helpers and add them all to the cache.
             var latestTagHelpers = await _tagHelperResolver
-                .GetTagHelpersAsync(workspaceProject, projectHandle.Configuration, cancellationToken)
+                .GetTagHelpersAsync(workspaceProject, projectHandle.Configuration, factoryTypeName, cancellationToken)
                 .ConfigureAwait(false);
 
             var cache = TagHelperCache.Default;
@@ -103,17 +105,19 @@ internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemote
     public ValueTask<TagHelperDeltaResult> GetTagHelpersDeltaAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,
         ProjectSnapshotHandle projectHandle,
+        string factoryTypeName,
         int lastResultId,
         CancellationToken cancellationToken)
         => RazorBrokeredServiceImplementation.RunServiceAsync(
             solutionInfo,
             ServiceBrokerClient,
-            solution => GetTagHelpersDeltaCoreAsync(solution, projectHandle, lastResultId, cancellationToken),
+            solution => GetTagHelpersDeltaCoreAsync(solution, projectHandle, factoryTypeName, lastResultId, cancellationToken),
             cancellationToken);
 
     private async ValueTask<TagHelperDeltaResult> GetTagHelpersDeltaCoreAsync(
         Solution solution,
         ProjectSnapshotHandle projectHandle,
+        string factoryTypeName,
         int lastResultId,
         CancellationToken cancellationToken)
     {
@@ -126,7 +130,7 @@ internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemote
         else
         {
             var tagHelpers = await _tagHelperResolver
-                .GetTagHelpersAsync(workspaceProject, projectHandle.Configuration, cancellationToken)
+                .GetTagHelpersAsync(workspaceProject, projectHandle.Configuration, factoryTypeName, cancellationToken)
                 .ConfigureAwait(false);
 
             checksums = GetChecksums(tagHelpers);

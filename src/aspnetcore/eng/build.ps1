@@ -27,9 +27,6 @@ Do not build project-to-project references and only build the specified project.
 .PARAMETER NoBuildRepoTasks
 Skip building eng/tools/RepoTasks/
 
-.PARAMETER OnlyBuildRepoTasks
-Only build eng/tools/RepoTasks/ and nothing else.
-
 .PARAMETER Pack
 Produce packages.
 
@@ -162,7 +159,6 @@ param(
     [switch]$NoBuildInstallers,
 
     [switch]$NoBuildRepoTasks,
-    [switch]$OnlyBuildRepoTasks,
 
     # Diagnostics
     [Alias('bl')]
@@ -441,22 +437,20 @@ try {
             @ToolsetBuildArguments
     }
 
-    if (-not $OnlyBuildRepoTasks) {
-        if ($performDesktopBuild) {
-            Write-Host
-            Remove-Item variable:global:_BuildTool -ErrorAction Ignore
-            $msbuildEngine = 'vs'
+    if ($performDesktopBuild) {
+        Write-Host
+        Remove-Item variable:global:_BuildTool -ErrorAction Ignore
+        $msbuildEngine = 'vs'
 
-            MSBuild $toolsetBuildProj /p:RepoRoot=$RepoRoot @MSBuildArguments
-        }
+        MSBuild $toolsetBuildProj /p:RepoRoot=$RepoRoot @MSBuildArguments
+    }
 
-        if ($performDotnetBuild) {
-            Write-Host
-            Remove-Item variable:global:_BuildTool -ErrorAction Ignore
-            $msbuildEngine = 'dotnet'
+    if ($performDotnetBuild) {
+        Write-Host
+        Remove-Item variable:global:_BuildTool -ErrorAction Ignore
+        $msbuildEngine = 'dotnet'
 
-            MSBuild $toolsetBuildProj /p:RepoRoot=$RepoRoot @dotnetBuildArguments
-        }
+        MSBuild $toolsetBuildProj /p:RepoRoot=$RepoRoot @dotnetBuildArguments
     }
 }
 catch {

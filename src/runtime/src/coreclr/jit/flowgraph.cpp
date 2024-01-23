@@ -266,8 +266,16 @@ BasicBlock* Compiler::fgCreateGCPoll(GCPollType pollType, BasicBlock* block)
         // I want to create:
         // top -> poll -> bottom (lexically)
         // so that we jump over poll to get to bottom.
-        BasicBlock* top         = block;
-        BBKinds     oldJumpKind = top->GetKind();
+        BasicBlock*   top                = block;
+        unsigned char lpIndexFallThrough = BasicBlock::NOT_IN_LOOP;
+
+        BBKinds       oldJumpKind = top->GetKind();
+        unsigned char lpIndex     = top->bbNatLoopNum;
+
+        if (oldJumpKind == BBJ_COND)
+        {
+            lpIndexFallThrough = top->GetFalseTarget()->bbNatLoopNum;
+        }
 
         BasicBlock* poll = fgNewBBafter(BBJ_ALWAYS, top, true);
         bottom           = fgNewBBafter(top->GetKind(), poll, true);
@@ -293,6 +301,24 @@ BasicBlock* Compiler::fgCreateGCPoll(GCPollType pollType, BasicBlock* block)
 
         // Mark Poll as rarely run.
         poll->bbSetRunRarely();
+
+        if (optLoopTableValid)
+        {
+            poll->bbNatLoopNum = lpIndex; // Set the bbNatLoopNum in case we are in a loop
+
+            bottom->bbNatLoopNum = lpIndex; // Set the bbNatLoopNum in case we are in a loop
+            if (lpIndex != BasicBlock::NOT_IN_LOOP)
+            {
+                // Set the new lpBottom in the natural loop table
+                optLoopTable[lpIndex].lpBottom = bottom;
+            }
+
+            if (lpIndexFallThrough != BasicBlock::NOT_IN_LOOP)
+            {
+                // Set the new lpHead in the natural loop table
+                optLoopTable[lpIndexFallThrough].lpHead = bottom;
+            }
+        }
 
         // Add the GC_CALL node to Poll.
         Statement* pollStmt = fgNewStmtAtEnd(poll, call);
@@ -4542,12 +4568,23 @@ void FlowGraphNaturalLoop::Dump(FlowGraphNaturalLoop* loop)
         return;
     }
 
-    // Display: LOOP# / header / parent loop# / blocks / entry edges / exit edges / back edges
+    // Display: LOOP# (old LOOP#) / header / parent loop# / blocks / entry edges / exit edges / back edges
     // Blocks can compacted be "[top .. bottom]" if lexically adjacent and no non-loop blocks in
     // the range. Otherwise, print a verbose list of blocks.
 
     Compiler* comp = loop->GetDfsTree()->GetCompiler();
     printf(FMT_LP, loop->GetIndex());
+
+    // We might want to print out the old loop number using something like:
+    //
+    // if (comp->m_newToOldLoop[loop->GetIndex()] != nullptr)
+    // {
+    //   printf(" (old: " FMT_LP ")", (unsigned)(comp->m_newToOldLoop[loop->GetIndex()] - comp->optLoopTable));
+    // }
+    //
+    // However, not all callers of FlowGraphNaturalLoops::Find update m_newToOldLoop -- only
+    // Compiler::optFindNewLoops() does that. This dumper should work with any construction of
+    // FlowGraphNaturalLoops.
 
     printf(" header: " FMT_BB, loop->GetHeader()->bbNum);
     if (loop->GetParent() != nullptr)
@@ -4749,7 +4786,7 @@ void FlowGraphNaturalLoop::Dump(FlowGraphNaturalLoop* loop)
 /* static */
 void FlowGraphNaturalLoops::Dump(FlowGraphNaturalLoops* loops)
 {
-    printf("\n***************  Natural loop graph\n");
+    printf("\n***************  (New) Natural loop graph\n");
 
     if (loops == nullptr)
     {

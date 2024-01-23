@@ -1346,7 +1346,7 @@ namespace System.Diagnostics.Tracing
 
         protected static unsafe IDictionary<string, string?>? ParseFilterData(byte[]? data)
         {
-            Dictionary<string, string?>? args = null;
+            IDictionary<string, string?>? args = null;
 
             // data can be null if the filterArgs had a very large size which failed our sanity check
             if (data != null)

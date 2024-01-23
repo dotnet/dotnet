@@ -5,7 +5,6 @@
 
 using System;
 using System.Linq;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Moq;
@@ -21,11 +20,10 @@ public partial class OOPTagHelperResolverTest
         return dispatcher.Object;
     });
 
-    private class TestProjectSnapshotManager(Workspace workspace, IProjectEngineFactoryProvider projectEngineFactoryProvider) : DefaultProjectSnapshotManager(
+    private class TestProjectSnapshotManager(Workspace workspace) : DefaultProjectSnapshotManager(
         Mock.Of<IErrorReporter>(MockBehavior.Strict),
         Enumerable.Empty<IProjectSnapshotChangeTrigger>(),
         workspace,
-        projectEngineFactoryProvider,
         s_projectSnapshotManagerDispatcher.Value)
     {
     }

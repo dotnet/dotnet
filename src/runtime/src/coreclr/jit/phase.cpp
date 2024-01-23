@@ -158,7 +158,7 @@ void Phase::PostPhase(PhaseStatus status)
 
         if ((comp->activePhaseChecks & PhaseChecks::CHECK_LOOPS) == PhaseChecks::CHECK_LOOPS)
         {
-            comp->fgDebugCheckLoops();
+            comp->fgDebugCheckLoopTable();
         }
 
         if ((comp->activePhaseChecks & PhaseChecks::CHECK_PROFILE) == PhaseChecks::CHECK_PROFILE)

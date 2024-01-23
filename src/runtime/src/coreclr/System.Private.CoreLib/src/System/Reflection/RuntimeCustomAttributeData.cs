@@ -522,9 +522,7 @@ namespace System.Reflection
             };
         }
 
-#pragma warning disable CA1859
         private static object EncodedValueToRawValue(long val, CustomAttributeEncoding encodedType)
-#pragma warning restore
         {
             switch (encodedType)
             {

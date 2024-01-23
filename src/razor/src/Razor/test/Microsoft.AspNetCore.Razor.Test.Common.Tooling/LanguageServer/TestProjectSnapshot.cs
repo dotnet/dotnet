@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -29,8 +28,9 @@ internal class TestProjectSnapshot : ProjectSnapshot
         ProjectWorkspaceState? projectWorkspaceState = null,
         string? displayName = null)
     {
+        var projectEngineFactory = new TestProjectSnapshotProjectEngineFactory();
         var hostProject = new HostProject(filePath, intermediateOutputPath, configuration, "TestRootNamespace", displayName);
-        var state = ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject, projectWorkspaceState ?? ProjectWorkspaceState.Default);
+        var state = ProjectState.Create(projectEngineFactory, hostProject, projectWorkspaceState ?? ProjectWorkspaceState.Default);
 
         foreach (var documentFilePath in documentFilePaths)
         {

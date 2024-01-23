@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -36,19 +35,16 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     // We have a queue for changes because if one change results in another change aka, add -> open we want to make sure the "add" finishes running first before "open" is notified.
     private readonly Queue<ProjectChangeEventArgs> _notificationWork = new();
-    private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
 
     public DefaultProjectSnapshotManager(
         IErrorReporter errorReporter,
         IEnumerable<IProjectSnapshotChangeTrigger> triggers,
         Workspace workspace,
-        IProjectEngineFactoryProvider projectEngineFactoryProvider,
         ProjectSnapshotManagerDispatcher dispatcher)
     {
         ErrorReporter = errorReporter ?? throw new ArgumentNullException(nameof(errorReporter));
         Workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
-        _projectEngineFactoryProvider = projectEngineFactoryProvider ?? throw new ArgumentNullException(nameof(projectEngineFactoryProvider));
         _dispatcher = dispatcher ?? throw new ArgumentException(nameof(dispatcher));
 
         using (_rwLocker.EnterReadLock())
@@ -446,8 +442,10 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
                 return false;
             }
 
+            var projectEngineFactory = Workspace.Services.GetRequiredService<ProjectSnapshotProjectEngineFactory>();
+
             var state = ProjectState.Create(
-                _projectEngineFactoryProvider,
+                projectEngineFactory,
                 projectAddedAction.HostProject,
                 ProjectWorkspaceState.Default);
             var newEntry = new Entry(state);

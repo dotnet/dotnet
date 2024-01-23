@@ -84,7 +84,7 @@ namespace System.Configuration
 
         internal static IDictionary ReadSettings(string sectionName, bool isUserScoped)
         {
-            Hashtable settings = new Hashtable();
+            IDictionary settings = new Hashtable();
 
             if (isUserScoped && !ConfigurationManagerInternalFactory.Instance.SupportsUserConfig)
             {
@@ -108,7 +108,7 @@ namespace System.Configuration
 
         internal static IDictionary ReadSettingsFromFile(string configFileName, string sectionName, bool isUserScoped)
         {
-            Hashtable settings = new Hashtable();
+            IDictionary settings = new Hashtable();
 
             if (isUserScoped && !ConfigurationManagerInternalFactory.Instance.SupportsUserConfig)
             {

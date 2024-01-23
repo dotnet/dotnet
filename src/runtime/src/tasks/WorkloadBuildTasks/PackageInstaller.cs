@@ -69,7 +69,7 @@ namespace Microsoft.Workload.Build.Tasks
                 return false;
             }
 
-            List<(PackageReference, string)> failedToRestore = references
+            IList<(PackageReference, string)> failedToRestore = references
                                                              .Select(r => (r, Path.Combine(_packagesDir, r.Name.ToLowerInvariant(), r.Version)))
                                                              .Where(tuple => !Directory.Exists(tuple.Item2))
                                                              .ToList();

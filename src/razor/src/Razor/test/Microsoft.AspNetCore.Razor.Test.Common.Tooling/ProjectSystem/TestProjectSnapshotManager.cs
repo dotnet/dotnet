@@ -3,7 +3,6 @@
 
 using System;
 using System.Linq;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -11,15 +10,11 @@ using Moq;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 
-internal class TestProjectSnapshotManager(
-    Workspace workspace,
-    IProjectEngineFactoryProvider projectEngineFactoryProvider,
-    ProjectSnapshotManagerDispatcher dispatcher)
+internal class TestProjectSnapshotManager(Workspace workspace, ProjectSnapshotManagerDispatcher dispatcher)
     : DefaultProjectSnapshotManager(
         Mock.Of<IErrorReporter>(MockBehavior.Strict),
         Array.Empty<IProjectSnapshotChangeTrigger>(),
         workspace,
-        projectEngineFactoryProvider,
         dispatcher)
 {
     public bool AllowNotifyListeners { get; set; }

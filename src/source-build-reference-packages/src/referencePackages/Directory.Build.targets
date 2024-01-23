@@ -112,15 +112,16 @@
           AfterTargets="CopyFilesToOutputDirectory">
 
     <ItemGroup>
-      <CompileWithRelativePath Include="@(Compile)" Condition="!$([System.String]::new('%(Identity)').StartsWith('/'))" />
+      <CompileForRelativePath Include="@(Compile)" />
+      <CompileForRelativePath Remove="$(RepoRoot)src\SourceBuildAssemblyMetdata.cs" />
     </ItemGroup>
 
     <Error
-      Condition="@(CompileWithRelativePath->Count()) != 1"
+      Condition="@(CompileForRelativePath->Count()) != 1"
       Text="Number of Compile items != 1. We need just one, to determine the path of the resulting DLL in the package including ref/lib and TFM." />
 
     <ItemGroup>
-      <FullCompileDir Include="$([System.IO.Directory]::GetParent('%(CompileWithRelativePath.Identity)'))" />
+      <FullCompileDir Include="$([System.IO.Directory]::GetParent('%(CompileForRelativePath.Identity)'))" />
       <RelativeCompileDir Include="$([MSBuild]::MakeRelative('$(MSBuildProjectDirectory)\', '%(FullCompileDir.Identity)'))" />
     </ItemGroup>
 

@@ -123,8 +123,8 @@ namespace ILCompiler.Dataflow
             }
 
             Stack<StackSlot> newStack = new Stack<StackSlot>(a.Count);
-            Stack<StackSlot>.Enumerator aEnum = a.GetEnumerator();
-            Stack<StackSlot>.Enumerator bEnum = b.GetEnumerator();
+            IEnumerator<StackSlot> aEnum = a.GetEnumerator();
+            IEnumerator<StackSlot> bEnum = b.GetEnumerator();
             while (aEnum.MoveNext() && bEnum.MoveNext())
             {
                 newStack.Push(MergeStackElement(aEnum.Current, bEnum.Current));
