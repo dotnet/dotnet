@@ -517,7 +517,7 @@ namespace System.IO.Ports.Tests
                 com1.Write(endString);
 
                 string received = com2.ReadTo(endString);
-                Assert.Equal(buffer, received.ToCharArray());
+                Assert.Equal(buffer, received);
             }
         }
 

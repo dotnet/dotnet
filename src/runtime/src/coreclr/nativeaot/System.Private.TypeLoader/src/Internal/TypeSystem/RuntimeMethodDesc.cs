@@ -63,7 +63,7 @@ namespace Internal.TypeSystem.NoMetadata
             }
         }
 
-        private DefType _owningType;
+        private TypeDesc _owningType;
         public override TypeDesc OwningType
         {
             get

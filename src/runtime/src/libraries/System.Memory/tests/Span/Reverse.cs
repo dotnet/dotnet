@@ -40,7 +40,7 @@ namespace System.SpanTests
             span = actual;
             span.Slice(2, 0).Reverse();
 
-            Assert.Equal(expected, span.ToArray());
+            Assert.Equal<string>(expected, span.ToArray());
         }
 
         [Fact]
@@ -228,7 +228,7 @@ namespace System.SpanTests
 
             var span = new Span<string>(actual);
             span.Reverse();
-            Assert.Equal(expected, actual);
+            Assert.Equal<string>(expected, actual);
         }
 
         [Fact]
@@ -240,7 +240,7 @@ namespace System.SpanTests
             var span = new Span<string>(actual);
             span.Reverse();
             span.Reverse();
-            Assert.Equal(expected, actual);
+            Assert.Equal<string>(expected, actual);
         }
 
         [Fact]

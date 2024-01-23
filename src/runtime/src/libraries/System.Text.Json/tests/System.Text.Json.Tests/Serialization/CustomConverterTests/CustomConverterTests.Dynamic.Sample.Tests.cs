@@ -314,7 +314,7 @@ namespace System.Text.Json.Serialization.Tests
             dynamic obj = JsonSerializer.Deserialize<dynamic>("{}", options);
 
             // We return null here; ExpandoObject throws for missing properties.
-            Assert.Null(obj.NonExistingProperty);
+            Assert.Equal(null, obj.NonExistingProperty);
         }
 
         [ConditionalFact(typeof(PlatformDetection), nameof(PlatformDetection.IsReflectionEmitSupported))]

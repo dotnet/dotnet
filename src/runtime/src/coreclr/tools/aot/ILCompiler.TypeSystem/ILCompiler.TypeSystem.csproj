@@ -18,7 +18,6 @@
     <GenerateDependencyFile>false</GenerateDependencyFile>
     <Configurations>Debug;Release;Checked</Configurations>
     <IsTrimmable>true</IsTrimmable>
-    <NoWarn>$(NoWarn);CA1859</NoWarn>
   </PropertyGroup>
 
   <ItemGroup Label="Embedded Resources">

@@ -1268,7 +1268,7 @@ namespace System.DirectoryServices.ActiveDirectory
         // This method searches in the schema container for all non-defunct classes of the
         // specified name (ldapDisplayName).
         //
-        private ArrayList GetClasses(ArrayList ldapDisplayNames)
+        private ArrayList GetClasses(ICollection ldapDisplayNames)
         {
             ArrayList classes = new ArrayList();
             SearchResultCollection? resCol = null;
@@ -1340,7 +1340,7 @@ namespace System.DirectoryServices.ActiveDirectory
         // This method searches in the schema container for all non-defunct properties of the
         // specified name (ldapDisplayName).
         //
-        private ArrayList GetProperties(ArrayList ldapDisplayNames)
+        private ArrayList GetProperties(ICollection ldapDisplayNames)
         {
             ArrayList properties = new ArrayList();
             SearchResultCollection? resCol = null;

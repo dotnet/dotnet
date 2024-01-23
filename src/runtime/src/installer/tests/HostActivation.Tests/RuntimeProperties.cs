@@ -4,16 +4,13 @@
 using System;
 using System.IO;
 using Microsoft.DotNet.Cli.Build;
-using Microsoft.DotNet.CoreSetup.Test;
 using Xunit;
 
-namespace HostActivation.Tests
+namespace Microsoft.DotNet.CoreSetup.Test.HostActivation
 {
     public class RuntimeProperties : IClassFixture<RuntimeProperties.SharedTestState>
     {
-        private const string PrintProperties = "print_properties";
-
-        private readonly SharedTestState sharedState;
+        private SharedTestState sharedState;
 
         public RuntimeProperties(RuntimeProperties.SharedTestState fixture)
         {
@@ -23,39 +20,53 @@ namespace HostActivation.Tests
         [Fact]
         public void AppConfigProperty_AppCanGetData()
         {
-            sharedState.DotNet.Exec(sharedState.App.AppDll, PrintProperties, SharedTestState.AppTestPropertyName)
+            var fixture = sharedState.RuntimePropertiesFixture
+                .Copy();
+
+            var dotnet = fixture.BuiltDotnet;
+            var appDll = fixture.TestProject.AppDll;
+            dotnet.Exec(appDll, sharedState.AppTestPropertyName)
                 .EnableTracingAndCaptureOutputs()
                 .Execute()
                 .Should().Pass()
-                .And.HaveStdErrContaining($"Property {SharedTestState.AppTestPropertyName} = {SharedTestState.AppTestPropertyValue}")
-                .And.HaveStdOutContaining($"AppContext.GetData({SharedTestState.AppTestPropertyName}) = {SharedTestState.AppTestPropertyValue}");
+                .And.HaveStdErrContaining($"Property {sharedState.AppTestPropertyName} = {sharedState.AppTestPropertyValue}")
+                .And.HaveStdOutContaining($"AppContext.GetData({sharedState.AppTestPropertyName}) = {sharedState.AppTestPropertyValue}");
         }
 
         [Fact]
         public void FrameworkConfigProperty_AppCanGetData()
         {
-            sharedState.DotNet.Exec(sharedState.App.AppDll, PrintProperties, SharedTestState.FrameworkTestPropertyName)
+            var fixture = sharedState.RuntimePropertiesFixture
+                .Copy();
+
+            var dotnet = fixture.BuiltDotnet;
+            var appDll = fixture.TestProject.AppDll;
+            dotnet.Exec(appDll, sharedState.FrameworkTestPropertyName)
                 .EnableTracingAndCaptureOutputs()
                 .Execute()
                 .Should().Pass()
-                .And.HaveStdErrContaining($"Property {SharedTestState.FrameworkTestPropertyName} = {SharedTestState.FrameworkTestPropertyValue}")
-                .And.HaveStdOutContaining($"AppContext.GetData({SharedTestState.FrameworkTestPropertyName}) = {SharedTestState.FrameworkTestPropertyValue}");
+                .And.HaveStdErrContaining($"Property {sharedState.FrameworkTestPropertyName} = {sharedState.FrameworkTestPropertyValue}")
+                .And.HaveStdOutContaining($"AppContext.GetData({sharedState.FrameworkTestPropertyName}) = {sharedState.FrameworkTestPropertyValue}");
         }
 
         [Fact]
         public void DuplicateConfigProperty_AppConfigValueUsed()
         {
-            var app = sharedState.App.Copy();
-            RuntimeConfig.FromFile(app.RuntimeConfigJson)
-                .WithProperty(SharedTestState.FrameworkTestPropertyName, SharedTestState.AppTestPropertyValue)
+            var fixture = sharedState.RuntimePropertiesFixture
+                .Copy();
+
+            RuntimeConfig.FromFile(fixture.TestProject.RuntimeConfigJson)
+                .WithProperty(sharedState.FrameworkTestPropertyName, sharedState.AppTestPropertyValue)
                 .Save();
 
-            sharedState.DotNet.Exec(app.AppDll, PrintProperties, SharedTestState.FrameworkTestPropertyName)
+            var dotnet = fixture.BuiltDotnet;
+            var appDll = fixture.TestProject.AppDll;
+            dotnet.Exec(appDll, sharedState.FrameworkTestPropertyName)
                 .EnableTracingAndCaptureOutputs()
                 .Execute()
                 .Should().Pass()
-                .And.HaveStdErrContaining($"Property {SharedTestState.FrameworkTestPropertyName} = {SharedTestState.AppTestPropertyValue}")
-                .And.HaveStdOutContaining($"AppContext.GetData({SharedTestState.FrameworkTestPropertyName}) = {SharedTestState.AppTestPropertyValue}");
+                .And.HaveStdErrContaining($"Property {sharedState.FrameworkTestPropertyName} = {sharedState.AppTestPropertyValue}")
+                .And.HaveStdOutContaining($"AppContext.GetData({sharedState.FrameworkTestPropertyName}) = {sharedState.AppTestPropertyValue}");
         }
 
         [Fact]
@@ -66,30 +77,38 @@ namespace HostActivation.Tests
                 .EnableTracingAndCaptureOutputs()
                 .Execute()
                 .Should().Pass()
-                .And.HaveStdErrContaining($"Property {SharedTestState.HostFxrPathPropertyName} = {dotnet.GreatestVersionHostFxrFilePath}");
+                .And.HaveStdErrContaining($"Property {sharedState.HostFxrPathPropertyName} = {dotnet.GreatestVersionHostFxrFilePath}");
         }
 
         [Fact]
         public void HostFxrPathProperty_NotVisibleFromApp()
         {
-            sharedState.DotNet.Exec(sharedState.App.AppDll, PrintProperties, SharedTestState.HostFxrPathPropertyName)
+            var fixture = sharedState.RuntimePropertiesFixture
+                .Copy();
+
+            var dotnet = fixture.BuiltDotnet;
+            var appDll = fixture.TestProject.AppDll;
+            dotnet.Exec(appDll, sharedState.HostFxrPathPropertyName)
                 .EnableTracingAndCaptureOutputs()
                 .Execute()
                 .Should().Pass()
-                .And.HaveStdOutContaining($"Property '{SharedTestState.HostFxrPathPropertyName}' was not found.");
+                .And.HaveStdOutContaining($"Property '{sharedState.HostFxrPathPropertyName}' was not found.");
         }
 
         [Fact]
         public void DuplicateCommonProperty_Fails()
         {
-            var app = sharedState.App.Copy();
+            var fixture = sharedState.RuntimePropertiesFixture
+                .Copy();
 
             string name = "RUNTIME_IDENTIFIER";
-            RuntimeConfig.FromFile(app.RuntimeConfigJson)
-                .WithProperty(name, SharedTestState.AppTestPropertyValue)
+            RuntimeConfig.FromFile(fixture.TestProject.RuntimeConfigJson)
+                .WithProperty(name, sharedState.AppTestPropertyValue)
                 .Save();
 
-            sharedState.DotNet.Exec(app.AppDll)
+            var dotnet = fixture.BuiltDotnet;
+            var appDll = fixture.TestProject.AppDll;
+            dotnet.Exec(appDll)
                 .EnableTracingAndCaptureOutputs()
                 .Execute()
                 .Should().Fail()
@@ -99,41 +118,43 @@ namespace HostActivation.Tests
         [Fact]
         public void SpecifiedInConfigAndDevConfig_ConfigWins()
         {
-            var app = sharedState.App.Copy();
+            var fixture = sharedState.RuntimePropertiesFixture
+                .Copy();
 
-            RuntimeConfig.FromFile(app.RuntimeDevConfigJson)
-                .WithProperty(SharedTestState.AppTestPropertyName, "VALUE_FROM_DEV_CONFIG")
+            RuntimeConfig.FromFile(fixture.TestProject.RuntimeDevConfigJson)
+                .WithProperty(sharedState.AppTestPropertyName, "VALUE_FROM_DEV_CONFIG")
                 .Save();
 
-            sharedState.DotNet.Exec(app.AppDll, PrintProperties, SharedTestState.AppTestPropertyName)
+            var dotnet = fixture.BuiltDotnet;
+            var appDll = fixture.TestProject.AppDll;
+            dotnet.Exec(appDll, sharedState.AppTestPropertyName)
                 .EnableTracingAndCaptureOutputs()
                 .Execute()
                 .Should().Pass()
-                .And.HaveStdErrContaining($"Property {SharedTestState.AppTestPropertyName} = {SharedTestState.AppTestPropertyValue}")
-                .And.HaveStdOutContaining($"AppContext.GetData({SharedTestState.AppTestPropertyName}) = {SharedTestState.AppTestPropertyValue}");
+                .And.HaveStdErrContaining($"Property {sharedState.AppTestPropertyName} = {sharedState.AppTestPropertyValue}")
+                .And.HaveStdOutContaining($"AppContext.GetData({sharedState.AppTestPropertyName}) = {sharedState.AppTestPropertyValue}");
         }
 
         public class SharedTestState : IDisposable
         {
-            public const string AppTestPropertyName = "APP_TEST_PROPERTY";
-            public const string AppTestPropertyValue = "VALUE_FROM_APP";
-            public const string FrameworkTestPropertyName = "FRAMEWORK_TEST_PROPERTY";
-            public const string FrameworkTestPropertyValue = "VALUE_FROM_FRAMEWORK";
-            public const string HostFxrPathPropertyName = "HOSTFXR_PATH";
-
-            public TestApp App { get; }
+            public TestProjectFixture RuntimePropertiesFixture { get; }
+            public RepoDirectoriesProvider RepoDirectories { get; }
             public DotNetCli MockSDK { get; }
 
-            public DotNetCli DotNet { get; }
+            public string AppTestPropertyName => "APP_TEST_PROPERTY";
+            public string AppTestPropertyValue => "VALUE_FROM_APP";
+            public string FrameworkTestPropertyName => "FRAMEWORK_TEST_PROPERTY";
+            public string FrameworkTestPropertyValue => "VALUE_FROM_FRAMEWORK";
+            public string HostFxrPathPropertyName => "HOSTFXR_PATH";
+
             private readonly TestArtifact copiedDotnet;
 
             public SharedTestState()
             {
-                // Make a copy of the built .NET, as we will update the framework's runtime config
-                copiedDotnet = TestArtifact.Create("runtimeProperties");
-                SharedFramework.CopyDirectory(TestContext.BuiltDotNet.BinPath, copiedDotnet.Location);
+                copiedDotnet = new TestArtifact(Path.Combine(TestArtifact.TestArtifactsPath, "runtimeProperties"));
+                SharedFramework.CopyDirectory(Path.Combine(TestArtifact.TestArtifactsPath, "sharedFrameworkPublish"), copiedDotnet.Location);
 
-                MockSDK = new DotNetBuilder(copiedDotnet.Location, TestContext.BuiltDotNet.BinPath, "mocksdk")
+                MockSDK = new DotNetBuilder(copiedDotnet.Location, Path.Combine(TestArtifact.TestArtifactsPath, "sharedFrameworkPublish"), "exe")
                     .AddMicrosoftNETCoreAppFrameworkMockCoreClr("9999.0.0")
                     .AddMockSDK("9999.0.0-dev", "9999.0.0")
                     .Build();
@@ -146,20 +167,24 @@ namespace HostActivation.Tests
     }
 }");
 
-                App = TestApp.CreateFromBuiltAssets("HelloWorld");
-                RuntimeConfig.FromFile(App.RuntimeConfigJson)
+                RepoDirectories = new RepoDirectoriesProvider(builtDotnet: copiedDotnet.Location);
+
+                RuntimePropertiesFixture = new TestProjectFixture("RuntimeProperties", RepoDirectories)
+                    .EnsureRestored()
+                    .BuildProject();
+
+                RuntimeConfig.FromFile(RuntimePropertiesFixture.TestProject.RuntimeConfigJson)
                     .WithProperty(AppTestPropertyName, AppTestPropertyValue)
                     .Save();
 
-                DotNet = new DotNetCli(copiedDotnet.Location);
-                RuntimeConfig.FromFile(Path.Combine(DotNet.GreatestVersionSharedFxPath, "Microsoft.NETCore.App.runtimeconfig.json"))
+                RuntimeConfig.FromFile(Path.Combine(RuntimePropertiesFixture.BuiltDotnet.GreatestVersionSharedFxPath, "Microsoft.NETCore.App.runtimeconfig.json"))
                     .WithProperty(FrameworkTestPropertyName, FrameworkTestPropertyValue)
                     .Save();
             }
 
             public void Dispose()
             {
-                App?.Dispose();
+                RuntimePropertiesFixture.Dispose();
                 copiedDotnet.Dispose();
             }
         }

@@ -257,7 +257,7 @@ namespace System.Speech.Recognition
             private object _name;
             private object _value;
             private float _confidence;
-            private Dictionary<string, SemanticValue> _dictionary;
+            private IDictionary<string, SemanticValue> _dictionary;
         }
 
         #endregion

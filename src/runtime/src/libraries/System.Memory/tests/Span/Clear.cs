@@ -180,7 +180,7 @@ namespace System.SpanTests
 
             var span = new Span<string>(actual);
             span.Clear();
-            Assert.Equal(expected, actual);
+            Assert.Equal<string>(expected, actual);
         }
 
         [Fact]
@@ -195,7 +195,7 @@ namespace System.SpanTests
 
             var span = new Span<string>(actual);
             span.Clear();
-            Assert.Equal(expected, actual);
+            Assert.Equal<string>(expected, actual);
         }
 
         [Fact]

@@ -190,7 +190,7 @@ namespace System.Security.Cryptography.X509Certificates
             return GetCertsArray(rootCertificates);
         }
 
-        private SafeCreateHandle GetCertsArray(List<SafeHandle> safeHandles)
+        private SafeCreateHandle GetCertsArray(IList<SafeHandle> safeHandles)
         {
             int idx = 0;
 

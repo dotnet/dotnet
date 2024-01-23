@@ -134,6 +134,7 @@ namespace System.Data.Odbc
             }
         }
 
+#pragma warning disable CA1859 // https://github.com/dotnet/roslyn-analyzers/issues/6440
         private static object BooleanFromODBC(object odbcSource)
         {
             if (odbcSource != DBNull.Value)
@@ -153,6 +154,7 @@ namespace System.Data.Odbc
 
             return DBNull.Value;
         }
+#pragma warning disable CA1859
 
         private static OdbcCommand GetCommand(OdbcConnection connection)
         {
