@@ -4,6 +4,9 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
+using System;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 [assembly: AssemblyMetadata("BuildLabel", "130703.2")]
 [assembly: AssemblyMetadata("BuildBranch", "Release\\ReferenceAssemblies\\1.0")]
 [assembly: AssemblyProduct("Microsoft® .NET Framework")]

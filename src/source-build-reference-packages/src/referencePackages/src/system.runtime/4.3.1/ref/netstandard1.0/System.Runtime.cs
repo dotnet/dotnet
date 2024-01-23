@@ -4,6 +4,9 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
+using System;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 [assembly: System.Runtime.CompilerServices.ReferenceAssembly]
 [assembly: CompilationRelaxations(8)]
 [assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]

@@ -11,14 +11,14 @@
       <Sha>5f670e45d060b25d5b07646dfcd94eae31893191</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24069.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24066.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>abddd0bd5145578246dcadda264c7557f2a935a9</Sha>
+      <Sha>d5ee27a55ec6383c29790f3ec666e7c87f7da022</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.GenAPI.Task" Version="9.0.100-alpha.1.24072.1">
+    <Dependency Name="Microsoft.DotNet.GenAPI.Task" Version="9.0.100-alpha.1.24064.9">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>eb47a3cf296746d8624124b5c002db9dc81bbc44</Sha>
+      <Sha>bfd2919bc446cad68d11de90cec4025d3683591c</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.ILAsm" Version="5.0.0-preview.4.20202.18">
       <Uri>https://github.com/dotnet/runtime</Uri>

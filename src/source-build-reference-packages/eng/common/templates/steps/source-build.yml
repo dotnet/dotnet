@@ -94,7 +94,6 @@ steps:
       $baseOsArgs \
       /p:SourceBuildNonPortable=${{ parameters.platform.nonPortable }} \
       /p:ArcadeBuildFromSource=true \
-      /p:DotNetBuildRepo=true \
       /p:AssetManifestFileName=$assetManifestFileName
   displayName: Build
 

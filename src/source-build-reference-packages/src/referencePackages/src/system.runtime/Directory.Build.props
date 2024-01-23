@@ -6,10 +6,4 @@
     <AssemblyName>System.Runtime</AssemblyName>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Using Include="System" />
-    <Using Include="System.Reflection" />
-    <Using Include="System.Runtime.CompilerServices" />
-  </ItemGroup>
-
 </Project>
