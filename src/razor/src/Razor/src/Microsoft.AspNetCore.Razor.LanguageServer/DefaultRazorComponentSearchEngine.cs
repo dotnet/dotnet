@@ -22,7 +22,7 @@ internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
     private readonly ILogger _logger;
 
     public DefaultRazorComponentSearchEngine(
-        ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+        IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
         IRazorLoggerFactory loggerFactory)
     {
         if (loggerFactory is null)

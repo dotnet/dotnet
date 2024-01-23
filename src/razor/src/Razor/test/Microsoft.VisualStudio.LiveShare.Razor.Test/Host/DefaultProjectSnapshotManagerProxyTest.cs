@@ -7,9 +7,9 @@ using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LiveShare.Razor.Test;
 using Microsoft.VisualStudio.Threading;
@@ -27,14 +27,14 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
     public DefaultProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var projectEngineFactory = Mock.Of<ProjectSnapshotProjectEngineFactory>(MockBehavior.Strict);
+        var projectEngineFactoryProvider = Mock.Of<IProjectEngineFactoryProvider>(MockBehavior.Strict);
 
         var projectWorkspaceState1 = ProjectWorkspaceState.Create(ImmutableArray.Create(
             TagHelperDescriptorBuilder.Create("test1", "TestAssembly1").Build()));
 
         _projectSnapshot1 = new ProjectSnapshot(
             ProjectState.Create(
-                projectEngineFactory,
+                projectEngineFactoryProvider,
                 new HostProject("/host/path/to/project1.csproj", "/host/path/to/obj", RazorConfiguration.Default, "project1"),
                 projectWorkspaceState1));
 
@@ -43,7 +43,7 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
 
         _projectSnapshot2 = new ProjectSnapshot(
             ProjectState.Create(
-                projectEngineFactory,
+                projectEngineFactoryProvider,
                 new HostProject("/host/path/to/project2.csproj", "/host/path/to/obj", RazorConfiguration.Default, "project2"),
                 projectWorkspaceState2));
     }

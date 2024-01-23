@@ -31,11 +31,11 @@ internal class RazorProjectService(
     RemoteTextLoaderFactory remoteTextLoaderFactory,
     ISnapshotResolver snapshotResolver,
     IDocumentVersionCache documentVersionCache,
-    ProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+    IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
     IRazorLoggerFactory loggerFactory)
     : IRazorProjectService
 {
-    private readonly ProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor ?? throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
+    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor ?? throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
     private readonly RemoteTextLoaderFactory _remoteTextLoaderFactory = remoteTextLoaderFactory ?? throw new ArgumentNullException(nameof(remoteTextLoaderFactory));
     private readonly ISnapshotResolver _snapshotResolver = snapshotResolver ?? throw new ArgumentNullException(nameof(snapshotResolver));

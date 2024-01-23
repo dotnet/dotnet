@@ -67,11 +67,7 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
     internal DefaultProjectSnapshotManager CreateProjectSnapshotManager()
     {
         var services = TestServices.Create(
-            new IWorkspaceService[]
-            {
-                TagHelperResolver,
-                new StaticProjectSnapshotProjectEngineFactory(),
-            },
+            [TagHelperResolver],
             Array.Empty<ILanguageService>());
 
         return new DefaultProjectSnapshotManager(
@@ -79,6 +75,7 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
             Array.Empty<IProjectSnapshotChangeTrigger>(),
 #pragma warning disable CA2000 // Dispose objects before losing scope
             new AdhocWorkspace(services),
+            StaticProjectEngineFactoryProvider.Instance,
             new TestProjectSnapshotManagerDispatcher());
 #pragma warning restore CA2000 // Dispose objects before losing scope
     }

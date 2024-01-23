@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
@@ -59,7 +60,7 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
         _hostProject2 = new HostProject(TestProjectData.AnotherProject.FilePath, TestProjectData.AnotherProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_1, TestProjectData.AnotherProject.RootNamespace);
         _hostProjectWithConfigurationChange = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
 
-        _projectManager = new TestProjectSnapshotManager(Enumerable.Empty<IProjectSnapshotChangeTrigger>(), Workspace, Dispatcher);
+        _projectManager = new TestProjectSnapshotManager(triggers: [], Workspace, ProjectEngineFactoryProvider, Dispatcher);
 
         _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create(_tagHelperResolver.TagHelpers);
 
@@ -88,7 +89,7 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
         var triggers = new[] { defaultPriorityTrigger, highPriorityTrigger };
 
         // Act
-        var projectManager = new TestProjectSnapshotManager(triggers, Workspace, Dispatcher);
+        var projectManager = new TestProjectSnapshotManager(triggers, Workspace, ProjectEngineFactoryProvider, Dispatcher);
 
         // Assert
         Assert.Equal(new[] { "highPriority", "lowPriority" }, initializedOrder);
@@ -663,13 +664,13 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
         textLoader.Verify(d => d.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()), Times.Never());
     }
 
-    private class TestProjectSnapshotManager : DefaultProjectSnapshotManager
+    private class TestProjectSnapshotManager(
+        IEnumerable<IProjectSnapshotChangeTrigger> triggers,
+        Workspace workspace,
+        IProjectEngineFactoryProvider projectEngineFactoryProvider,
+        ProjectSnapshotManagerDispatcher dispatcher)
+        : DefaultProjectSnapshotManager(Mock.Of<IErrorReporter>(MockBehavior.Strict), triggers, workspace, projectEngineFactoryProvider, dispatcher)
     {
-        public TestProjectSnapshotManager(IEnumerable<IProjectSnapshotChangeTrigger> triggers, Workspace workspace, ProjectSnapshotManagerDispatcher dispatcher)
-            : base(Mock.Of<IErrorReporter>(MockBehavior.Strict), triggers, workspace, dispatcher)
-        {
-        }
-
         public ProjectChangeKind? ListenersNotifiedOf { get; private set; }
 
         public bool NotifyChangedEvents { get; set; }

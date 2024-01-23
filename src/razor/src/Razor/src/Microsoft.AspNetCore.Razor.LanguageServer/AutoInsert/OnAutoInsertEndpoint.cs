@@ -88,7 +88,7 @@ internal class OnAutoInsertEndpoint(
         var uri = request.TextDocument.Uri;
         var position = request.Position;
 
-        var workspaceFactory = requestContext.GetRequiredService<AdhocWorkspaceFactory>();
+        var workspaceFactory = requestContext.GetRequiredService<IAdhocWorkspaceFactory>();
         using (var formattingContext = FormattingContext.Create(uri, documentContext.Snapshot, codeDocument, request.Options, workspaceFactory))
         {
             for (var i = 0; i < applicableProviders.Count; i++)

@@ -105,7 +105,7 @@ namespace System.Runtime.CompilerServices
         private readonly Threading.Tasks.ValueTask<TResult> _value;
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
-        public readonly ConfiguredValueTaskAwaitable<TResult>.ConfiguredValueTaskAwaiter GetAwaiter() { throw null; }
+        public readonly ConfiguredValueTaskAwaiter GetAwaiter() { throw null; }
 
         public readonly partial struct ConfiguredValueTaskAwaiter : ICriticalNotifyCompletion, INotifyCompletion
         {

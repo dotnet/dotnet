@@ -4,9 +4,6 @@
 // ------------------------------------------------------------------------------
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
-using System;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 [assembly: CompilationRelaxations(8)]
 [assembly: System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows = true)]
 [assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
@@ -4676,7 +4673,7 @@ namespace System.Runtime.CompilerServices
 
         public TValue GetOrCreateValue(TKey key) { throw null; }
 
-        public TValue GetValue(TKey key, ConditionalWeakTable<TKey, TValue>.CreateValueCallback createValueCallback) { throw null; }
+        public TValue GetValue(TKey key, CreateValueCallback createValueCallback) { throw null; }
 
         public Boolean Remove(TKey key) { throw null; }
 

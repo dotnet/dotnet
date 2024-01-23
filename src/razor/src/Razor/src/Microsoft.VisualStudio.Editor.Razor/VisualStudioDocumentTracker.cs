@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Editor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Text;
@@ -30,8 +29,6 @@ internal abstract class VisualStudioDocumentTracker
     public abstract string ProjectPath { get; }
 
     internal abstract IProjectSnapshot? ProjectSnapshot { get; }
-
-    public abstract Workspace Workspace { get; }
 
     public abstract ITextBuffer TextBuffer { get; }
 

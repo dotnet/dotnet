@@ -2,49 +2,22 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-internal class DefaultVisualStudioRazorParserFactory : VisualStudioRazorParserFactory
+internal class DefaultVisualStudioRazorParserFactory(
+    JoinableTaskContext joinableTaskContext,
+    IErrorReporter errorReporter,
+    VisualStudioCompletionBroker completionBroker,
+    IProjectEngineFactoryProvider projectEngineFactoryProvider) : VisualStudioRazorParserFactory
 {
-    private readonly JoinableTaskContext _joinableTaskContext;
-    private readonly ProjectSnapshotProjectEngineFactory _projectEngineFactory;
-    private readonly VisualStudioCompletionBroker _completionBroker;
-    private readonly IErrorReporter _errorReporter;
-
-    public DefaultVisualStudioRazorParserFactory(
-        JoinableTaskContext joinableTaskContext,
-        IErrorReporter errorReporter,
-        VisualStudioCompletionBroker completionBroker,
-        ProjectSnapshotProjectEngineFactory projectEngineFactory)
-    {
-        if (joinableTaskContext is null)
-        {
-            throw new ArgumentNullException(nameof(joinableTaskContext));
-        }
-
-        if (errorReporter is null)
-        {
-            throw new ArgumentNullException(nameof(errorReporter));
-        }
-
-        if (completionBroker is null)
-        {
-            throw new ArgumentNullException(nameof(completionBroker));
-        }
-
-        if (projectEngineFactory is null)
-        {
-            throw new ArgumentNullException(nameof(projectEngineFactory));
-        }
-
-        _joinableTaskContext = joinableTaskContext;
-        _errorReporter = errorReporter;
-        _completionBroker = completionBroker;
-        _projectEngineFactory = projectEngineFactory;
-    }
+    private readonly JoinableTaskContext _joinableTaskContext = joinableTaskContext;
+    private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider = projectEngineFactoryProvider;
+    private readonly VisualStudioCompletionBroker _completionBroker = completionBroker;
+    private readonly IErrorReporter _errorReporter = errorReporter;
 
     public override VisualStudioRazorParser Create(VisualStudioDocumentTracker documentTracker)
     {
@@ -55,12 +28,11 @@ internal class DefaultVisualStudioRazorParserFactory : VisualStudioRazorParserFa
 
         _joinableTaskContext.AssertUIThread();
 
-        var parser = new DefaultVisualStudioRazorParser(
+        return new DefaultVisualStudioRazorParser(
             _joinableTaskContext,
             documentTracker,
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             _errorReporter,
             _completionBroker);
-        return parser;
     }
 }

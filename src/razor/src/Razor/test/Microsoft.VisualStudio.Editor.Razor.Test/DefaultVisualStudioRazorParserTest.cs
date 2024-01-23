@@ -7,9 +7,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Moq;
 using Xunit;
@@ -20,7 +20,7 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatcherTestBase
 {
     private readonly IProjectSnapshot _projectSnapshot;
-    private readonly ProjectSnapshotProjectEngineFactory _projectEngineFactory;
+    private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
     private readonly CodeAnalysis.Workspace _workspace;
 
     public DefaultVisualStudioRazorParserTest(ITestOutputHelper testOutput)
@@ -29,14 +29,21 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         _workspace = TestWorkspace.Create();
         AddDisposable(_workspace);
 
-        _projectSnapshot = new EphemeralProjectSnapshot(_workspace.Services, "c:\\SomeProject.csproj");
-
         var engine = RazorProjectEngine.Create(RazorConfiguration.Default, RazorProjectFileSystem.Empty);
-        _projectEngineFactory = Mock.Of<ProjectSnapshotProjectEngineFactory>(
-            f => f.Create(
-                It.IsAny<RazorConfiguration>(),
-                It.IsAny<RazorProjectFileSystem>(),
-                It.IsAny<Action<RazorProjectEngineBuilder>>()) == engine, MockBehavior.Strict);
+
+        var factoryMock = new Mock<IProjectEngineFactory>(MockBehavior.Strict);
+        factoryMock
+            .Setup(x => x.Create(It.IsAny<RazorConfiguration>(), It.IsAny<RazorProjectFileSystem>(), It.IsAny<Action<RazorProjectEngineBuilder>>()))
+            .Returns(engine);
+
+        var factoryProviderMock = new Mock<IProjectEngineFactoryProvider>(MockBehavior.Strict);
+        factoryProviderMock
+            .Setup(x => x.GetFactory(It.IsAny<RazorConfiguration>()))
+            .Returns(factoryMock.Object);
+
+        _projectEngineFactoryProvider = factoryProviderMock.Object;
+
+        _projectSnapshot = new EphemeralProjectSnapshot(_projectEngineFactoryProvider, "c:\\SomeProject.csproj");
     }
 
     private VisualStudioDocumentTracker CreateDocumentTracker(bool isSupportedProject = true, int versionNumber = 0)
@@ -59,7 +66,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             documentTracker,
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
@@ -101,7 +108,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             documentTracker,
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
@@ -140,7 +147,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             documentTracker,
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
@@ -166,7 +173,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             documentTracker,
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
@@ -194,7 +201,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             documentTracker,
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
@@ -237,7 +244,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             documentTracker,
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
@@ -379,7 +386,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             CreateDocumentTracker(),
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict));
         parser.Dispose();
@@ -395,7 +402,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             CreateDocumentTracker(),
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict));
         parser.Dispose();
@@ -411,7 +418,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             CreateDocumentTracker(),
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict));
         parser.Dispose();
@@ -427,7 +434,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             CreateDocumentTracker(),
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
@@ -454,7 +461,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             documentTracker,
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
@@ -485,7 +492,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             documentTracker,
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
@@ -524,7 +531,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             CreateDocumentTracker(),
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict))
         {
@@ -554,7 +561,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             CreateDocumentTracker(),
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict))
         {
@@ -583,7 +590,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             CreateDocumentTracker(),
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
@@ -607,7 +614,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             documentTracker,
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
@@ -627,7 +634,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             CreateDocumentTracker(isSupportedProject: true),
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {
@@ -646,7 +653,7 @@ public class DefaultVisualStudioRazorParserTest : ProjectSnapshotManagerDispatch
         using (var parser = new DefaultVisualStudioRazorParser(
             JoinableTaskContext,
             CreateDocumentTracker(isSupportedProject: false),
-            _projectEngineFactory,
+            _projectEngineFactoryProvider,
             ErrorReporter,
             Mock.Of<VisualStudioCompletionBroker>(MockBehavior.Strict)))
         {

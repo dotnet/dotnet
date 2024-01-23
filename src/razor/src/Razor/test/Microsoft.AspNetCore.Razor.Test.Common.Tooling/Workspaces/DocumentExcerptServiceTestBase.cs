@@ -41,7 +41,7 @@ public abstract class DocumentExcerptServiceTestBase(ITestOutputHelper testOutpu
     private (IDocumentSnapshot primary, Document secondary) InitializeDocument(SourceText sourceText)
     {
         var project = new ProjectSnapshot(
-            ProjectState.Create(ProjectEngineFactory, _hostProject, ProjectWorkspaceState.Default)
+            ProjectState.Create(ProjectEngineFactoryProvider, _hostProject, ProjectWorkspaceState.Default)
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var primary = project.GetDocument(_hostDocument.FilePath).AssumeNotNull();

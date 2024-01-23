@@ -4,12 +4,12 @@
 #nullable disable
 
 using System;
-using System.Reflection;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -22,8 +22,7 @@ namespace Microsoft.CodeAnalysis.Razor;
 // Testing this here because we need references to the MVC factories.
 public class DefaultProjectSnapshotProjectEngineFactoryTest : ToolingTestBase
 {
-    private readonly Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>[] _customFactories;
-    private readonly IFallbackProjectEngineFactory _fallbackFactory;
+    private readonly ImmutableArray<IProjectEngineFactory> _customFactories;
     private readonly IProjectSnapshot _snapshot_For_1_0;
     private readonly IProjectSnapshot _snapshot_For_1_1;
     private readonly IProjectSnapshot _snapshot_For_2_0;
@@ -52,35 +51,21 @@ public class DefaultProjectSnapshotProjectEngineFactoryTest : ToolingTestBase
             projectFilePath, intermediateOutputPath,
             new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "Random-0.1", Array.Empty<RazorExtension>()), rootNamespace: null);
 
-        var projectEngineFactory = Mock.Of<ProjectSnapshotProjectEngineFactory>(MockBehavior.Strict);
+        var projectEngineFactoryProvider = Mock.Of<IProjectEngineFactoryProvider>(MockBehavior.Strict);
 
-        _snapshot_For_1_0 = new ProjectSnapshot(ProjectState.Create(projectEngineFactory, hostProject_For_1_0, ProjectWorkspaceState.Default));
-        _snapshot_For_1_1 = new ProjectSnapshot(ProjectState.Create(projectEngineFactory, hostProject_For_1_1, ProjectWorkspaceState.Default));
-        _snapshot_For_2_0 = new ProjectSnapshot(ProjectState.Create(projectEngineFactory, hostProject_For_2_0, ProjectWorkspaceState.Default));
-        _snapshot_For_2_1 = new ProjectSnapshot(ProjectState.Create(projectEngineFactory, hostProject_For_2_1, ProjectWorkspaceState.Default));
-        _snapshot_For_3_0 = new ProjectSnapshot(ProjectState.Create(projectEngineFactory, hostProject_For_3_0, ProjectWorkspaceState.Default));
-        _snapshot_For_UnknownConfiguration = new ProjectSnapshot(ProjectState.Create(projectEngineFactory, hostProject_For_UnknownConfiguration, ProjectWorkspaceState.Default));
+        _snapshot_For_1_0 = new ProjectSnapshot(ProjectState.Create(projectEngineFactoryProvider, hostProject_For_1_0, ProjectWorkspaceState.Default));
+        _snapshot_For_1_1 = new ProjectSnapshot(ProjectState.Create(projectEngineFactoryProvider, hostProject_For_1_1, ProjectWorkspaceState.Default));
+        _snapshot_For_2_0 = new ProjectSnapshot(ProjectState.Create(projectEngineFactoryProvider, hostProject_For_2_0, ProjectWorkspaceState.Default));
+        _snapshot_For_2_1 = new ProjectSnapshot(ProjectState.Create(projectEngineFactoryProvider, hostProject_For_2_1, ProjectWorkspaceState.Default));
+        _snapshot_For_3_0 = new ProjectSnapshot(ProjectState.Create(projectEngineFactoryProvider, hostProject_For_3_0, ProjectWorkspaceState.Default));
+        _snapshot_For_UnknownConfiguration = new ProjectSnapshot(ProjectState.Create(projectEngineFactoryProvider, hostProject_For_UnknownConfiguration, ProjectWorkspaceState.Default));
 
-        _customFactories =
-        [
-            new Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>(
-                () => new LegacyProjectEngineFactory_1_0(),
-                typeof(LegacyProjectEngineFactory_1_0).GetCustomAttribute<ExportCustomProjectEngineFactoryAttribute>()),
-            new Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>(
-                () => new LegacyProjectEngineFactory_1_1(),
-                typeof(LegacyProjectEngineFactory_1_1).GetCustomAttribute<ExportCustomProjectEngineFactoryAttribute>()),
-            new Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>(
-                () => new LegacyProjectEngineFactory_2_0(),
-                typeof(LegacyProjectEngineFactory_2_0).GetCustomAttribute<ExportCustomProjectEngineFactoryAttribute>()),
-            new Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>(
-                () => new LegacyProjectEngineFactory_2_1(),
-                typeof(LegacyProjectEngineFactory_2_1).GetCustomAttribute<ExportCustomProjectEngineFactoryAttribute>()),
-            new Lazy<IProjectEngineFactory, ICustomProjectEngineFactoryMetadata>(
-                () => new LegacyProjectEngineFactory_3_0(),
-                typeof(LegacyProjectEngineFactory_3_0).GetCustomAttribute<ExportCustomProjectEngineFactoryAttribute>()),
-        ];
-
-        _fallbackFactory = new FallbackProjectEngineFactory();
+        _customFactories = ImmutableArray.Create(
+            ProjectEngineFactories.MVC_1_0,
+            ProjectEngineFactories.MVC_1_1,
+            ProjectEngineFactories.MVC_2_0,
+            ProjectEngineFactories.MVC_2_1,
+            ProjectEngineFactories.MVC_3_0);
     }
 
     [Fact]
@@ -89,9 +74,10 @@ public class DefaultProjectSnapshotProjectEngineFactoryTest : ToolingTestBase
         // Arrange
         var snapshot = _snapshot_For_3_0;
 
-        var factory = new DefaultProjectSnapshotProjectEngineFactory(_fallbackFactory, _customFactories);
+        var provider = new ProjectEngineFactoryProvider(_customFactories);
 
         // Act
+        var factory = provider.GetFactory(snapshot.Configuration);
         var engine = factory.Create(snapshot, b => b.Features.Add(new MyCoolNewFeature()));
 
         // Assert
@@ -107,9 +93,10 @@ public class DefaultProjectSnapshotProjectEngineFactoryTest : ToolingTestBase
         // Arrange
         var snapshot = _snapshot_For_2_1;
 
-        var factory = new DefaultProjectSnapshotProjectEngineFactory(_fallbackFactory, _customFactories);
+        var provider = new ProjectEngineFactoryProvider(_customFactories);
 
         // Act
+        var factory = provider.GetFactory(snapshot.Configuration);
         var engine = factory.Create(snapshot, b => b.Features.Add(new MyCoolNewFeature()));
 
         // Assert
@@ -127,9 +114,10 @@ public class DefaultProjectSnapshotProjectEngineFactoryTest : ToolingTestBase
         // Arrange
         var snapshot = _snapshot_For_2_0;
 
-        var factory = new DefaultProjectSnapshotProjectEngineFactory(_fallbackFactory, _customFactories);
+        var provider = new ProjectEngineFactoryProvider(_customFactories);
 
         // Act
+        var factory = provider.GetFactory(snapshot.Configuration);
         var engine = factory.Create(snapshot, b => b.Features.Add(new MyCoolNewFeature()));
 
         // Assert
@@ -145,9 +133,10 @@ public class DefaultProjectSnapshotProjectEngineFactoryTest : ToolingTestBase
         // Arrange
         var snapshot = _snapshot_For_1_1;
 
-        var factory = new DefaultProjectSnapshotProjectEngineFactory(_fallbackFactory, _customFactories);
+        var provider = new ProjectEngineFactoryProvider(_customFactories);
 
         // Act
+        var factory = provider.GetFactory(snapshot.Configuration);
         var engine = factory.Create(snapshot, b => b.Features.Add(new MyCoolNewFeature()));
 
         // Assert
@@ -163,9 +152,10 @@ public class DefaultProjectSnapshotProjectEngineFactoryTest : ToolingTestBase
         // Arrange
         var snapshot = _snapshot_For_1_0;
 
-        var factory = new DefaultProjectSnapshotProjectEngineFactory(_fallbackFactory, _customFactories);
+        var provider = new ProjectEngineFactoryProvider(_customFactories);
 
         // Act
+        var factory = provider.GetFactory(snapshot.Configuration);
         var engine = factory.Create(snapshot, b => b.Features.Add(new MyCoolNewFeature()));
 
         // Assert
@@ -189,9 +179,10 @@ public class DefaultProjectSnapshotProjectEngineFactoryTest : ToolingTestBase
     {
         var snapshot = _snapshot_For_UnknownConfiguration;
 
-        var factory = new DefaultProjectSnapshotProjectEngineFactory(_fallbackFactory, _customFactories);
+        var provider = new ProjectEngineFactoryProvider(_customFactories);
 
         // Act
+        var factory = provider.GetFactory(snapshot.Configuration);
         var engine = factory.Create(snapshot, b => b.Features.Add(new MyCoolNewFeature()));
 
         // Assert
