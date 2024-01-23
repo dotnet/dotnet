@@ -97,10 +97,10 @@
       "commitSha": "e39798fc8357615ab319c81b20acfb036ef7b513"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24072.1",
+      "packageVersion": "9.0.0-alpha.1.24072.5",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "205ef031e0fe5152dede0bd9f99d0f6f9e7f1e45"
+      "commitSha": "e99836a899bdb97be5afbbed8d90573ee5635b30"
     },
     {
       "packageVersion": "9.0.0-preview.24057.2",
