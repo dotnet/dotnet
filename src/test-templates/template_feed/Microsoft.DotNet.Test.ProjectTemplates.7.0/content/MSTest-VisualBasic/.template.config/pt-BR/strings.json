@@ -1,7 +1,0 @@
-{
-  "version": "1.0.0.0",
-  "strings": {
-    "name": "Projeto de Teste MSTest",
-    "description": "Um projeto que contém testes de unidade MSTest que podem ser executados no .NET no Windows, Linux e MacOS."
-  }
-}

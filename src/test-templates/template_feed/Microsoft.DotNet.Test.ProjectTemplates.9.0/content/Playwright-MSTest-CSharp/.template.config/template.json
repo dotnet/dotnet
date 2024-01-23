@@ -40,7 +40,7 @@
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "false",
-      "description": "Whether or not to enable packaging (via (\"dotnet pack\") for the project."
+      "description": "Whether or not to enable packaging (via \"dotnet pack\") for the project."
     },
     "HostIdentifier": {
       "type": "bind",
@@ -58,6 +58,10 @@
     {
       "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
       "path": "UnitTest1.cs"
+    },
+    {
+      "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+      "path": "MSTestSettings.cs"
     },
     {
       "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
