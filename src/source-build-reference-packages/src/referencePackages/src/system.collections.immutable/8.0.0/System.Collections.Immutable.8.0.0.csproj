@@ -5,6 +5,11 @@
     <AssemblyName>System.Collections.Immutable</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' != 'net8.0'">
+    <!-- Include CollectionBuilderAttribute that is defined internally. -->
+    <Compile Include="$(MSBuildThisFileDirectory)System.Collections.Immutable.Manual.cs" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
   </ItemGroup>
