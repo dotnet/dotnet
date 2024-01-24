@@ -1,15 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
 using Xunit.Abstractions;
@@ -18,11 +13,6 @@ namespace Microsoft.CodeAnalysis.Razor;
 
 public class RazorDocumentExcerptServiceTest(ITestOutputHelper testOutput) : DocumentExcerptServiceTestBase(testOutput)
 {
-    protected override void ConfigureWorkspaceServices(List<IWorkspaceService> services)
-    {
-        services.Add(new TestTagHelperResolver());
-    }
-
     [Fact]
     public async Task TryGetExcerptInternalAsync_SingleLine_CanClassifyCSharp()
     {

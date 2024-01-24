@@ -11,19 +11,19 @@ using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Xunit;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 #pragma warning disable VSTHRD110 // Observe result of async calls
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-public partial class OOPTagHelperResolverTest
+public partial class OutOfProcTagHelperResolverTest
 {
     private class TestResolver(
-        Workspace workspace,
+        IProjectSnapshotManagerAccessor projectManagerAccessor,
         IErrorReporter errorReporter,
         ITelemetryReporter telemetryReporter)
-        : OOPTagHelperResolver(workspace, errorReporter, telemetryReporter)
+        : OutOfProcTagHelperResolver(projectManagerAccessor, errorReporter, telemetryReporter)
     {
         public Func<IProjectSnapshot, ValueTask<ImmutableArray<TagHelperDescriptor>>>? OnResolveOutOfProcess { get; init; }
 

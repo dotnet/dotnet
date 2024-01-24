@@ -2,9 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -12,7 +10,6 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -25,12 +22,8 @@ public class ProjectStateTest : WorkspaceTestBase
     private readonly HostProject _hostProject;
     private readonly HostProject _hostProjectWithConfigurationChange;
     private readonly ProjectWorkspaceState _projectWorkspaceState;
-    private readonly ImmutableArray<TagHelperDescriptor> _someTagHelpers;
     private readonly Func<Task<TextAndVersion>> _textLoader;
     private readonly SourceText _text;
-
-    [AllowNull]
-    private TestTagHelperResolver _tagHelperResolver;
 
     public ProjectStateTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -40,9 +33,6 @@ public class ProjectStateTest : WorkspaceTestBase
         _projectWorkspaceState = ProjectWorkspaceState.Create(
             ImmutableArray.Create(
                 TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()));
-
-        _someTagHelpers = ImmutableArray.Create(
-            TagHelperDescriptorBuilder.Create("Test1", "TestAssembly").Build());
 
         _documents = new HostDocument[]
         {
@@ -55,12 +45,6 @@ public class ProjectStateTest : WorkspaceTestBase
 
         _text = SourceText.From("Hello, world!");
         _textLoader = () => Task.FromResult(TextAndVersion.Create(_text, VersionStamp.Create()));
-    }
-
-    protected override void ConfigureWorkspaceServices(List<IWorkspaceService> services)
-    {
-        _tagHelperResolver = new TestTagHelperResolver();
-        services.Add(_tagHelperResolver);
     }
 
     protected override void ConfigureProjectEngine(RazorProjectEngineBuilder builder)
@@ -556,8 +540,6 @@ public class ProjectStateTest : WorkspaceTestBase
         var originalTagHelpers = original.TagHelpers;
         var originalProjectWorkspaceStateVersion = original.ConfigurationVersion;
 
-        _tagHelperResolver.TagHelpers = _someTagHelpers;
-
         // Act
         var state = original.WithHostProject(_hostProjectWithConfigurationChange);
 
@@ -600,8 +582,6 @@ public class ProjectStateTest : WorkspaceTestBase
         // Force init
         _ = original.TagHelpers;
         _ = original.ConfigurationVersion;
-
-        _tagHelperResolver.TagHelpers = _someTagHelpers;
 
         // Act
         var state = original.WithHostProject(hostProjectWithRootNamespaceChange);
@@ -719,9 +699,6 @@ public class ProjectStateTest : WorkspaceTestBase
 
         var changed = ProjectWorkspaceState.Default;
 
-        // Now create some tag helpers
-        _tagHelperResolver.TagHelpers = _someTagHelpers;
-
         // Act
         var state = original.WithProjectWorkspaceState(changed);
 
@@ -755,9 +732,6 @@ public class ProjectStateTest : WorkspaceTestBase
         _ = original.ProjectWorkspaceStateVersion;
 
         var changed = ProjectWorkspaceState.Create(original.TagHelpers, original.CSharpLanguageVersion);
-
-        // Now create some tag helpers
-        _tagHelperResolver.TagHelpers = _someTagHelpers;
 
         // Act
         var state = original.WithProjectWorkspaceState(changed);

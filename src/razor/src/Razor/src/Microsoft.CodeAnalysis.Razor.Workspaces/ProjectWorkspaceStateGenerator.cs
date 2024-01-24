@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Composition;
@@ -20,43 +18,34 @@ namespace Microsoft.CodeAnalysis.Razor;
 
 [Shared]
 [Export(typeof(IProjectWorkspaceStateGenerator))]
-[Export(typeof(IProjectSnapshotChangeTrigger))]
 [method: ImportingConstructor]
 internal sealed class ProjectWorkspaceStateGenerator(
+    IProjectSnapshotManagerAccessor projectManagerAccessor,
+    ITagHelperResolver tagHelperResolver,
     ProjectSnapshotManagerDispatcher dispatcher,
+    IErrorReporter errorReporter,
     ITelemetryReporter telemetryReporter)
-    : IProjectWorkspaceStateGenerator, IProjectSnapshotChangeTrigger, IDisposable
+    : IProjectWorkspaceStateGenerator, IDisposable
 {
     // Internal for testing
     internal readonly Dictionary<ProjectKey, UpdateItem> Updates = new();
 
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter ?? throw new ArgumentNullException(nameof(telemetryReporter));
+    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor = projectManagerAccessor;
+    private readonly ITagHelperResolver _tagHelperResolver = tagHelperResolver;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
+    private readonly IErrorReporter _errorReporter = errorReporter;
+    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(initialCount: 1);
 
-    private ProjectSnapshotManagerBase _projectManager;
-    private ITagHelperResolver _tagHelperResolver;
     private bool _disposed;
 
     // Used in unit tests to ensure we can control when background work starts.
-    public ManualResetEventSlim BlockBackgroundWorkStart { get; set; }
+    public ManualResetEventSlim? BlockBackgroundWorkStart { get; set; }
 
     // Used in unit tests to ensure we can know when background work finishes.
-    public ManualResetEventSlim NotifyBackgroundWorkCompleted { get; set; }
+    public ManualResetEventSlim? NotifyBackgroundWorkCompleted { get; set; }
 
-    public void Initialize(ProjectSnapshotManagerBase projectManager)
-    {
-        if (projectManager is null)
-        {
-            throw new ArgumentNullException(nameof(projectManager));
-        }
-
-        _projectManager = projectManager;
-
-        _tagHelperResolver = _projectManager.Workspace.Services.GetRequiredService<ITagHelperResolver>();
-    }
-
-    public void Update(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    public void Update(Project? workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
         if (projectSnapshot is null)
         {
@@ -119,7 +108,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
         BlockBackgroundWorkStart?.Set();
     }
 
-    private async Task UpdateWorkspaceStateAsync(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
+    private async Task UpdateWorkspaceStateAsync(Project? workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
         // We fire this up on a background thread so we could have been disposed already, and if so, waiting on our semaphore
         // throws an exception.
@@ -163,7 +152,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
                 if (workspaceProject != null)
                 {
                     var csharpLanguageVersion = LanguageVersion.Default;
-                    var csharpParseOptions = (CSharpParseOptions)workspaceProject.ParseOptions;
+                    var csharpParseOptions = workspaceProject.ParseOptions as CSharpParseOptions;
                     if (csharpParseOptions is null)
                     {
                         Debug.Fail("Workspace project should always have CSharp parse options.");
@@ -203,7 +192,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
                     new Property("result", "error"));
 
                 await _dispatcher.RunOnDispatcherThreadAsync(
-                   () => _projectManager.ReportError(ex, projectSnapshot),
+                   () => _errorReporter.ReportError(ex, projectSnapshot),
                    // Don't allow errors to be cancelled
                    CancellationToken.None).ConfigureAwait(false);
                 return;
@@ -236,7 +225,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
         {
             // This is something totally unexpected, let's just send it over to the project manager.
             await _dispatcher.RunOnDispatcherThreadAsync(
-                () => _projectManager.ReportError(ex),
+                () => _errorReporter.ReportError(ex),
                 // Don't allow errors to be cancelled
                 CancellationToken.None).ConfigureAwait(false);
         }
@@ -264,7 +253,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
     {
         _dispatcher.AssertDispatcherThread();
 
-        _projectManager.ProjectWorkspaceStateChanged(projectKey, workspaceStateChange);
+        _projectManagerAccessor.Instance.ProjectWorkspaceStateChanged(projectKey, workspaceStateChange);
     }
 
     private void OnStartingBackgroundWork()
@@ -285,26 +274,10 @@ internal sealed class ProjectWorkspaceStateGenerator(
     }
 
     // Internal for testing
-    internal class UpdateItem
+    internal class UpdateItem(Task task, CancellationTokenSource cts)
     {
-        public UpdateItem(Task task, CancellationTokenSource cts)
-        {
-            if (task is null)
-            {
-                throw new ArgumentNullException(nameof(task));
-            }
+        public Task Task { get; } = task;
 
-            if (cts is null)
-            {
-                throw new ArgumentNullException(nameof(cts));
-            }
-
-            Task = task;
-            Cts = cts;
-        }
-
-        public Task Task { get; }
-
-        public CancellationTokenSource Cts { get; }
+        public CancellationTokenSource Cts { get; } = cts;
     }
 }
