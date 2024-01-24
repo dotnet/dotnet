@@ -498,7 +498,7 @@ public class RazorProjectEngine
         builder.Features.Add(new ComponentChildContentDiagnosticPass());
         builder.Features.Add(new ComponentMarkupDiagnosticPass());
         builder.Features.Add(new ComponentMarkupBlockPass(razorLanguageVersion));
-        builder.Features.Add(new ComponentMarkupEncodingPass());
+        builder.Features.Add(new ComponentMarkupEncodingPass(razorLanguageVersion));
     }
 
     private static void LoadExtensions(RazorProjectEngineBuilder builder, IReadOnlyList<RazorExtension> extensions)
