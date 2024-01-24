@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
@@ -16,16 +17,13 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 internal class DefaultVisualStudioRazorParserFactoryFactory(
     JoinableTaskContext joinableTaskContext,
     IProjectEngineFactoryProvider projectEngineFactoryProvider,
+    ICompletionBroker completionBroker,
     IErrorReporter errorReporter) : ILanguageServiceFactory
 {
     public ILanguageService CreateLanguageService(HostLanguageServices languageServices)
-    {
-        var completionBroker = languageServices.GetRequiredService<VisualStudioCompletionBroker>();
-
-        return new DefaultVisualStudioRazorParserFactory(
+        => new DefaultVisualStudioRazorParserFactory(
             joinableTaskContext,
             errorReporter,
             completionBroker,
             projectEngineFactoryProvider);
-    }
 }

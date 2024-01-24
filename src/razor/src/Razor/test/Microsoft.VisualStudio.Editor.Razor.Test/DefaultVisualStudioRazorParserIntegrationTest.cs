@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Moq;
@@ -764,8 +766,24 @@ public class DefaultVisualStudioRazorParserIntegrationTest : ProjectSnapshotMana
         }
     }
 
-    private class TestCompletionBroker : VisualStudioCompletionBroker
+    private class TestCompletionBroker : ICompletionBroker
     {
-        public override bool IsCompletionActive(ITextView textView) => false;
+        public ICompletionSession CreateCompletionSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret)
+            => throw new NotImplementedException();
+
+        public void DismissAllSessions(ITextView textView)
+            => throw new NotImplementedException();
+
+        public ReadOnlyCollection<ICompletionSession> GetSessions(ITextView textView)
+            => throw new NotImplementedException();
+
+        public bool IsCompletionActive(ITextView textView)
+            => false;
+
+        public ICompletionSession TriggerCompletion(ITextView textView)
+            => throw new NotImplementedException();
+
+        public ICompletionSession TriggerCompletion(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret)
+            => throw new NotImplementedException();
     }
 }
