@@ -210,11 +210,26 @@
         },
         {
             "name": "winforms",
-            "defaultRemote": "https://github.com/dotnet/winforms"
+            "defaultRemote": "https://github.com/dotnet/winforms",
+            "exclude": [
+                // https://github.com/dotnet/source-build/issues/3745
+                "src/System.Windows.Forms.Design/src/Resources/colordlg.data",
+                "src/System.Windows.Forms/src/Resources/System/Windows/Forms/Design/Thumbs.db",
+
+                // https://github.com/dotnet/source-build/issues/3772
+                "src/System.Windows.Forms/tests/IntegrationTests/DesignSurface/**"
+            ]
         },
         {
             "name": "wpf",
-            "defaultRemote": "https://github.com/dotnet/wpf"
+            "defaultRemote": "https://github.com/dotnet/wpf",
+            "exclude": [
+                // https://github.com/dotnet/source-build/issues/3746
+                "src/Microsoft.DotNet.Wpf/src/PresentationFramework/Resources/Hyphenation/Hyphen_en.hdict",
+                "src/Microsoft.DotNet.Wpf/src/PresentationFramework/Resources/Hyphenation/Hyphen_en.lex",
+                "src/Microsoft.DotNet.Wpf/src/ReachFramework/Resources/generated/*.resources",
+                "src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/*.bin"
+            ]
         },
         {
             "name": "windowsdesktop",
