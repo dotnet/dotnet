@@ -131,8 +131,8 @@ No verb selected.
 When executing most operations, the client needs to make some remote queries.
 These remote queries require authentication in most circumstances. There are 3
 PATs that may be used:
-- A GitHub PAT for downloading files from GitHub (e.g. eng/Version.Details.xml or
-  arcade script files.  Required scopes: None
+- A GitHub PAT for downloading files from GitHub (e.g. `eng/Version.Details.xml` or
+  arcade script files. No scopes required but token must be [SSO enabled](https://docs.github.com/en/enterprise-cloud@latest/authentication/authenticating-with-saml-single-sign-on/authorizing-a-personal-access-token-for-use-with-saml-single-sign-on) for all organizations for which repositories `darc` will be used.
 - An Azure DevOps PAT for downloading files from Azure DevOps. (e.g.
   eng/Version.Details.xml)  Required scopes: Code-Read, Build-Read & Execute, Packaging Read.
   The recommended way of generating the PAT is using the [PatGeneratorTool](https://dev.azure.com/dnceng/public/_artifacts/feed/dotnet-eng/NuGet/Microsoft.DncEng.PatGeneratorTool),
