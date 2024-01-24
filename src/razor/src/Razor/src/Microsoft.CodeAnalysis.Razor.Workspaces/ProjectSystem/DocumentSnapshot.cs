@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -26,9 +25,6 @@ internal class DocumentSnapshot : IDocumentSnapshot
         ProjectInternal = project ?? throw new ArgumentNullException(nameof(project));
         State = state ?? throw new ArgumentNullException(nameof(state));
     }
-
-    public virtual ImmutableArray<IDocumentSnapshot> GetImports()
-        => State.GetImports(ProjectInternal);
 
     public Task<SourceText> GetTextAsync()
         => State.GetTextAsync();

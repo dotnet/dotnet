@@ -1,16 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
@@ -22,11 +18,6 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
 {
     private readonly HostProject _hostProject = TestProjectData.SomeProject;
     private readonly HostDocument _hostDocument = TestProjectData.SomeProjectFile1;
-
-    protected override void ConfigureWorkspaceServices(List<IWorkspaceService> services)
-    {
-        services.Add(new TestTagHelperResolver());
-    }
 
     [Fact]
     public async Task TryGetMappedSpans_SpanMatchesSourceMapping_ReturnsTrue()
@@ -41,6 +32,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var document = project.GetDocument(_hostDocument.FilePath);
+        Assert.NotNull(document);
         var service = new RazorSpanMappingService(document);
 
         var output = await document.GetGeneratedOutputAsync();
@@ -73,6 +65,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var document = project.GetDocument(_hostDocument.FilePath);
+        Assert.NotNull(document);
         var service = new RazorSpanMappingService(document);
 
         var output = await document.GetGeneratedOutputAsync();
@@ -106,6 +99,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var document = project.GetDocument(_hostDocument.FilePath);
+        Assert.NotNull(document);
         var service = new RazorSpanMappingService(document);
 
         var output = await document.GetGeneratedOutputAsync();
@@ -138,6 +132,7 @@ public class RazorSpanMappingServiceTest(ITestOutputHelper testOutput) : Workspa
             .WithAddedHostDocument(_hostDocument, () => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Create()))));
 
         var document = project.GetDocument(_hostDocument.FilePath);
+        Assert.NotNull(document);
         var service = new RazorSpanMappingService(document);
 
         var output = await document.GetGeneratedOutputAsync();

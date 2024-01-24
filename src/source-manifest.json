@@ -43,10 +43,10 @@
       "commitSha": "82c9a134f8c13dcfe8a9c243a19ee1861bbcb8ea"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24065.1",
+      "packageVersion": "9.0.0-preview.1.24072.2",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "c14a1d2af9d67eec272ff7d7f3c5bb6b114798fe"
+      "commitSha": "e8ab136db368ccb85c572d2c1541e3056883df3c"
     },
     {
       "packageVersion": "9.0.507001",
@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "fdfe8db11c5d7eb191696a2f2cbee4023195c809"
+      "commitSha": "ca3d8043b51c44ee3a2be3b618ba75814a3209e4"
     },
     {
       "packageVersion": "17.10.0-preview-24073-02",
@@ -79,10 +79,10 @@
       "commitSha": "d55931a69dcda3dcb87ba46a09fe268e0febc223"
     },
     {
-      "packageVersion": "7.0.0-preview.24073.1",
+      "packageVersion": "7.0.0-preview.24073.4",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "f2eefb58ea161a3a8a1ee358547e6738908f2be3"
+      "commitSha": "ebc256b3a199b7fb9f8f7842affa0ac9da7f34fd"
     },
     {
       "packageVersion": "4.10.0-1.24067.21",
@@ -97,10 +97,10 @@
       "commitSha": "e39798fc8357615ab319c81b20acfb036ef7b513"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24072.1",
+      "packageVersion": "9.0.0-preview.1.24073.8",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "205ef031e0fe5152dede0bd9f99d0f6f9e7f1e45"
+      "commitSha": "923b83a56f34df2fd8ea5bde5800fe8c39f26d80"
     },
     {
       "packageVersion": "9.0.0-preview.24057.2",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-preview.1.24073.14",
+      "packageVersion": "9.0.100-preview.1.24073.20",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "51fb6a1d61410d23875a1e6aeaec906b7fe46e76"
+      "commitSha": "191eef93660e9051342fcda27728b1fc76d2e163"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24066.1",

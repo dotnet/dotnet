@@ -1,16 +1,12 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.CodeAnalysis.Host;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -21,13 +17,10 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
     private readonly HostDocument[] _documents;
     private readonly HostProject _hostProject;
     private readonly ProjectWorkspaceState _projectWorkspaceState;
-    private readonly TestTagHelperResolver _tagHelperResolver;
 
     public DefaultProjectSnapshotTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _tagHelperResolver = new TestTagHelperResolver();
-
         _hostProject = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, TestProjectData.SomeProject.RootNamespace);
         _projectWorkspaceState = ProjectWorkspaceState.Create(ImmutableArray.Create(
             TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()));
@@ -40,11 +33,6 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
             // linked file
             TestProjectData.AnotherProjectNestedFile3,
         ];
-    }
-
-    protected override void ConfigureWorkspaceServices(List<IWorkspaceService> services)
-    {
-        services.Add(_tagHelperResolver);
     }
 
     protected override void ConfigureProjectEngine(RazorProjectEngineBuilder builder)
@@ -82,6 +70,7 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
         var snapshot = new ProjectSnapshot(state);
 
         var document = snapshot.GetDocument(_documents[0].FilePath);
+        Assert.NotNull(document);
 
         // Act
         var result = snapshot.IsImportDocument(document);
@@ -100,6 +89,7 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
         var snapshot = new ProjectSnapshot(state);
 
         var document = snapshot.GetDocument(TestProjectData.SomeProjectImportFile.FilePath);
+        Assert.NotNull(document);
 
         // Act
         var result = snapshot.IsImportDocument(document);
@@ -117,6 +107,7 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
         var snapshot = new ProjectSnapshot(state);
 
         var document = snapshot.GetDocument(_documents[0].FilePath);
+        Assert.NotNull(document);
 
         // Act
         var documents = snapshot.GetRelatedDocuments(document);
@@ -136,6 +127,7 @@ public class DefaultProjectSnapshotTest : WorkspaceTestBase
         var snapshot = new ProjectSnapshot(state);
 
         var document = snapshot.GetDocument(TestProjectData.SomeProjectImportFile.FilePath);
+        Assert.NotNull(document);
 
         // Act
         var documents = snapshot.GetRelatedDocuments(document);

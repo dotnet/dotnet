@@ -11,15 +11,15 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common;
 
-internal class TestTagHelperResolver : ITagHelperResolver
+internal class TestTagHelperResolver(ImmutableArray<TagHelperDescriptor> tagHelpers) : ITagHelperResolver
 {
-    public ImmutableArray<TagHelperDescriptor> TagHelpers { get; set; } = ImmutableArray<TagHelperDescriptor>.Empty;
+    public ImmutableArray<TagHelperDescriptor> TagHelpers { get; } = tagHelpers;
 
     public ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(
         Project workspaceProject,
         IProjectSnapshot projectSnapshot,
         CancellationToken cancellationToken)
     {
-        return new(TagHelpers.ToImmutableArray());
+        return new(TagHelpers);
     }
 }
