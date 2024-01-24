@@ -64,13 +64,13 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "eb82a5c032300e06d278955e9149124286c910fc"
+      "commitSha": "cbe3970160e652bfd34eff4245e4d9e1b7799f56"
     },
     {
-      "packageVersion": "17.10.0-preview-24073-01",
+      "packageVersion": "17.10.0-preview-24073-02",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "f0936bf4b63d97a87e163fb1cb204e447550bcae"
+      "commitSha": "d51ae5297cd0a24caa8cfe356442cc8634c3f087"
     },
     {
       "packageVersion": "6.9.0-rc.86",
@@ -79,10 +79,10 @@
       "commitSha": "d55931a69dcda3dcb87ba46a09fe268e0febc223"
     },
     {
-      "packageVersion": "7.0.0-preview.24073.4",
+      "packageVersion": "7.0.0-preview.24074.1",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "ebc256b3a199b7fb9f8f7842affa0ac9da7f34fd"
+      "commitSha": "c8adb2660fb4aca398fe4151435f92d0a113369f"
     },
     {
       "packageVersion": "4.10.0-1.24067.21",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-preview.2.24074.2",
+      "packageVersion": "9.0.100-preview.2.24074.4",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "c105af9ef1cbed830d0588b42233a57ab35ed479"
+      "commitSha": "eb4f88d9986bed5c78f58827735eaa9df0408568"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24072.1",
@@ -127,10 +127,10 @@
       "commitSha": "412264fd6c04712d1d31ff05d37c6919101ef4f4"
     },
     {
-      "packageVersion": "9.0.0-beta.24068.2",
+      "packageVersion": "9.0.0-beta.24073.2",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "8f632790ea2ae7a6500ec0b16f13e39037ee9dcc"
+      "commitSha": "20a7588e413cbb02d8b13199daf0b3cb638708a8"
     },
     {
       "packageVersion": "2.1.0-beta.24067.2",

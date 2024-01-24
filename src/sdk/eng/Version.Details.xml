@@ -52,17 +52,17 @@
       <Sha>ae7c93e25ae596594b3b22d64115f374a3595912</Sha>
       <SourceBuild RepoName="emsdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.10.0-preview-24073-01">
+    <Dependency Name="Microsoft.Build" Version="17.10.0-preview-24073-02">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>f0936bf4b63d97a87e163fb1cb204e447550bcae</Sha>
+      <Sha>d51ae5297cd0a24caa8cfe356442cc8634c3f087</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Localization" Version="17.10.0-preview-24073-01">
+    <Dependency Name="Microsoft.Build.Localization" Version="17.10.0-preview-24073-02">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>f0936bf4b63d97a87e163fb1cb204e447550bcae</Sha>
+      <Sha>d51ae5297cd0a24caa8cfe356442cc8634c3f087</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.10.0-preview-24073-01">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.10.0-preview-24073-02">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>f0936bf4b63d97a87e163fb1cb204e447550bcae</Sha>
+      <Sha>d51ae5297cd0a24caa8cfe356442cc8634c3f087</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.FSharp.Compiler" Version="12.8.300-beta.24066.3">
@@ -279,18 +279,18 @@
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
       <Sha>b43884c1b21ea71e91c539721a75e5c96b8c1263</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.Razor.Tooling.Internal" Version="7.0.0-preview.24073.4">
+    <Dependency Name="Microsoft.CodeAnalysis.Razor.Tooling.Internal" Version="7.0.0-preview.24074.1">
       <Uri>https://github.com/dotnet/razor</Uri>
-      <Sha>ebc256b3a199b7fb9f8f7842affa0ac9da7f34fd</Sha>
+      <Sha>c8adb2660fb4aca398fe4151435f92d0a113369f</Sha>
       <SourceBuild RepoName="razor" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Mvc.Razor.Extensions.Tooling.Internal" Version="7.0.0-preview.24073.4">
+    <Dependency Name="Microsoft.AspNetCore.Mvc.Razor.Extensions.Tooling.Internal" Version="7.0.0-preview.24074.1">
       <Uri>https://github.com/dotnet/razor</Uri>
-      <Sha>ebc256b3a199b7fb9f8f7842affa0ac9da7f34fd</Sha>
+      <Sha>c8adb2660fb4aca398fe4151435f92d0a113369f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk.Razor.SourceGenerators.Transport" Version="7.0.0-preview.24073.4">
+    <Dependency Name="Microsoft.NET.Sdk.Razor.SourceGenerators.Transport" Version="7.0.0-preview.24074.1">
       <Uri>https://github.com/dotnet/razor</Uri>
-      <Sha>ebc256b3a199b7fb9f8f7842affa0ac9da7f34fd</Sha>
+      <Sha>c8adb2660fb4aca398fe4151435f92d0a113369f</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.0-preview.2.24073.3">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
@@ -340,39 +340,39 @@
       <Sha>e39dee753ccfed11d28ab8054082d21c41c6a4fe</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.24072.5">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.24073.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>2249c9a81ec9b6cd86791c21e6e69fbc07099788</Sha>
+      <Sha>412264fd6c04712d1d31ff05d37c6919101ef4f4</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Deployment.DotNet.Releases" Version="2.0.0-preview.1.24067.1">
       <Uri>https://github.com/dotnet/deployment-tools</Uri>
       <Sha>e56c69b0610b50407d29fdc2dda2574712a7b94d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Tasks.Git" Version="9.0.0-beta.24068.2">
+    <Dependency Name="Microsoft.Build.Tasks.Git" Version="9.0.0-beta.24073.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>8f632790ea2ae7a6500ec0b16f13e39037ee9dcc</Sha>
+      <Sha>20a7588e413cbb02d8b13199daf0b3cb638708a8</Sha>
       <SourceBuild RepoName="sourcelink" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Common" Version="9.0.0-beta.24068.2">
+    <Dependency Name="Microsoft.SourceLink.Common" Version="9.0.0-beta.24073.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>8f632790ea2ae7a6500ec0b16f13e39037ee9dcc</Sha>
+      <Sha>20a7588e413cbb02d8b13199daf0b3cb638708a8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="9.0.0-beta.24068.2">
+    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="9.0.0-beta.24073.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>8f632790ea2ae7a6500ec0b16f13e39037ee9dcc</Sha>
+      <Sha>20a7588e413cbb02d8b13199daf0b3cb638708a8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitHub" Version="9.0.0-beta.24068.2">
+    <Dependency Name="Microsoft.SourceLink.GitHub" Version="9.0.0-beta.24073.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>8f632790ea2ae7a6500ec0b16f13e39037ee9dcc</Sha>
+      <Sha>20a7588e413cbb02d8b13199daf0b3cb638708a8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitLab" Version="9.0.0-beta.24068.2">
+    <Dependency Name="Microsoft.SourceLink.GitLab" Version="9.0.0-beta.24073.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>8f632790ea2ae7a6500ec0b16f13e39037ee9dcc</Sha>
+      <Sha>20a7588e413cbb02d8b13199daf0b3cb638708a8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="9.0.0-beta.24068.2">
+    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="9.0.0-beta.24073.2">
       <Uri>https://github.com/dotnet/sourcelink</Uri>
-      <Sha>8f632790ea2ae7a6500ec0b16f13e39037ee9dcc</Sha>
+      <Sha>20a7588e413cbb02d8b13199daf0b3cb638708a8</Sha>
     </Dependency>
     <!-- Explicit dependency because Microsoft.Deployment.DotNet.Releases has different versioning
          than the SB intermediate -->

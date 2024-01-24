@@ -587,6 +587,57 @@ public sealed class RazorSourceGeneratorComponentTests : RazorSourceGeneratorTes
         await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
     }
 
+    [Theory, CombinatorialData, WorkItem("https://github.com/dotnet/aspnetcore/issues/52547")]
+    public async Task ScriptTag_WithVariable([CombinatorialValues("7.0", "8.0", "Latest")] string razorLangVersion)
+    {
+        // Arrange
+        var code = """
+            @{ var msg = "What's up"; }
+            <script>console.log('@msg');</script>
+            <div>console.log('@msg');</div>
+            <script>console.log('No variable');</script>
+            <div>console.log('No variable');</div>
+            <script>
+                console.log('@msg');
+            </script>
+            <div>
+                console.log('@msg');
+            </div>
+            <script>
+                console.log('No variable');
+            </script>
+            <div>
+                console.log('No variable');
+            </div>
+            """;
+        var project = CreateTestProject(new()
+        {
+            ["Views/Home/Index.cshtml"] = $"""
+                {code}
+                @(await Html.RenderComponentAsync<MyApp.Shared.Component1>(RenderMode.Static))
+                """,
+            ["Shared/Component1.razor"] = $"""
+                Component:
+                {code}
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project, options =>
+        {
+            options.TestGlobalOptions["build_property.RazorLangVersion"] = razorLangVersion;
+        });
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver, out compilation);
+
+        // Assert
+        result.Diagnostics.Verify();
+        Assert.Equal(2, result.GeneratedSources.Length);
+        var suffix = razorLangVersion == "7.0" ? "7" : "8";
+        result.VerifyOutputsMatchBaseline(suffix: suffix);
+        await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index", suffix: suffix);
+    }
+
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/9051")]
     public async Task LineMapping()
     {

@@ -210,7 +210,7 @@ public abstract class RazorSourceGeneratorTestsBase
     }
 
     protected static async Task VerifyRazorPageMatchesBaselineAsync(Compilation compilation, string name,
-        [CallerFilePath] string testPath = "", [CallerMemberName] string testName = "")
+        [CallerFilePath] string testPath = "", [CallerMemberName] string testName = "", string suffix = "")
     {
         var html = await RenderRazorPageAsync(compilation, name);
         Extensions.VerifyTextMatchesBaseline(
@@ -218,7 +218,8 @@ public abstract class RazorSourceGeneratorTestsBase
             fileName: name,
             extension: "html",
             testPath: testPath,
-            testName: testName);
+            testName: testName,
+            suffix: suffix);
     }
 
     protected static Project CreateTestProject(
@@ -420,21 +421,22 @@ internal static class Extensions
         return result;
     }
 
-    private static string CreateBaselineDirectory(string testPath, string testName)
+    private static string CreateBaselineDirectory(string testPath, string testName, string suffix)
     {
         var baselineDirectory = Path.Join(
             _testProjectRoot,
             "TestFiles",
             Path.GetFileNameWithoutExtension(testPath)!,
-            testName);
+            testName,
+            suffix);
         Directory.CreateDirectory(baselineDirectory);
         return baselineDirectory;
     }
 
     public static GeneratorRunResult VerifyOutputsMatchBaseline(this GeneratorRunResult result,
-        [CallerFilePath] string testPath = "", [CallerMemberName] string testName = "")
+        [CallerFilePath] string testPath = "", [CallerMemberName] string testName = "", string suffix = "")
     {
-        var baselineDirectory = CreateBaselineDirectory(testPath, testName);
+        var baselineDirectory = CreateBaselineDirectory(testPath, testName, suffix);
         var touchedFiles = new HashSet<string>();
 
         foreach (var source in result.GeneratedSources)
@@ -453,10 +455,10 @@ internal static class Extensions
     }
 
     public static void VerifyTextMatchesBaseline(string actualText, string fileName, string extension,
-        [CallerFilePath] string testPath = "", [CallerMemberName] string testName = "")
+        [CallerFilePath] string testPath = "", [CallerMemberName] string testName = "", string suffix = "")
     {
         // Create output directory.
-        var baselineDirectory = CreateBaselineDirectory(testPath, testName);
+        var baselineDirectory = CreateBaselineDirectory(testPath, testName, suffix);
 
         // Generate baseline if enabled.
         var baselinePath = Path.Join(baselineDirectory, $"{fileName}.{extension}");
