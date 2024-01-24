@@ -15,7 +15,7 @@ public class ComponentMarkupEncodingPassTest
 {
     public ComponentMarkupEncodingPassTest()
     {
-        Pass = new ComponentMarkupEncodingPass();
+        Pass = new ComponentMarkupEncodingPass(RazorLanguageVersion.Latest);
         ProjectEngine = RazorProjectEngine.Create(
             RazorConfiguration.Default,
             RazorProjectFileSystem.Create(Environment.CurrentDirectory),
