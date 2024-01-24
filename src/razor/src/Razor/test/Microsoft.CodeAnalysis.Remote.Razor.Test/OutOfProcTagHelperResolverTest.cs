@@ -11,9 +11,9 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Telemetry;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor.Test;
 using Moq;
 using Xunit;
@@ -21,41 +21,47 @@ using Xunit.Abstractions;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
+public partial class OutOfProcTagHelperResolverTest : TagHelperDescriptorTestBase
 {
-    private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
-    private readonly ImmutableArray<IProjectEngineFactory> _customFactories;
     private readonly HostProject _hostProject_For_2_0;
     private readonly HostProject _hostProject_For_NonSerializableConfiguration;
-    private readonly ProjectSnapshotManagerBase _projectManager;
     private readonly Project _workspaceProject;
-    private readonly Workspace _workspace;
+    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor;
 
-    public OOPTagHelperResolverTest(ITestOutputHelper testOutput)
+    public OutOfProcTagHelperResolverTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _hostProject_For_2_0 = new HostProject("Test.csproj", "/obj", FallbackRazorConfiguration.MVC_2_0, rootNamespace: null);
+        _hostProject_For_2_0 = new HostProject(
+            projectFilePath: "Test.csproj",
+            intermediateOutputPath: "/obj",
+            razorConfiguration: FallbackRazorConfiguration.MVC_2_0,
+            rootNamespace: null);
         _hostProject_For_NonSerializableConfiguration = new HostProject(
-            "Test.csproj", "/obj",
-            new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "Random-0.1", []), rootNamespace: null);
+            projectFilePath: "Test.csproj",
+            intermediateOutputPath: "/obj",
+            razorConfiguration: new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "Random-0.1", []),
+            rootNamespace: null);
 
-        _customFactories = ImmutableArray.Create(
+        var workspace = new AdhocWorkspace();
+        AddDisposable(workspace);
+
+        var info = ProjectInfo.Create(ProjectId.CreateNewId("Test"), VersionStamp.Default, "Test", "Test", LanguageNames.CSharp, filePath: "Test.csproj");
+        _workspaceProject = workspace.CurrentSolution.AddProject(info).GetProject(info.Id).AssumeNotNull();
+
+        var customFactories = ImmutableArray.Create(
             CreateFactory("MVC-2.0"),
 
             // We don't really use this factory, we just use it to ensure that the call is going to go out of process.
             CreateFactory("Test-2"));
 
-        _projectEngineFactoryProvider = new ProjectEngineFactoryProvider(_customFactories);
+        var projectEngineFactoryProvider = new ProjectEngineFactoryProvider(customFactories);
+        var projectManager = new TestProjectSnapshotManager(workspace, projectEngineFactoryProvider);
 
-        var testServices = TestServices.Create([], []);
-
-        _workspace = new AdhocWorkspace(testServices);
-        AddDisposable(_workspace);
-
-        var info = ProjectInfo.Create(ProjectId.CreateNewId("Test"), VersionStamp.Default, "Test", "Test", LanguageNames.CSharp, filePath: "Test.csproj");
-        _workspaceProject = _workspace.CurrentSolution.AddProject(info).GetProject(info.Id).AssumeNotNull();
-
-        _projectManager = new TestProjectSnapshotManager(_workspace, _projectEngineFactoryProvider);
+        var projectManagerAccessorMock = new Mock<IProjectSnapshotManagerAccessor>(MockBehavior.Strict);
+        projectManagerAccessorMock
+            .SetupGet(x => x.Instance)
+            .Returns(projectManager);
+        _projectManagerAccessor = projectManagerAccessorMock.Object;
 
         static IProjectEngineFactory CreateFactory(string configurationName)
         {
@@ -72,13 +78,13 @@ public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
     public async Task GetTagHelpersAsync_WithSerializableCustomFactory_GoesOutOfProcess()
     {
         // Arrange
-        _projectManager.ProjectAdded(_hostProject_For_2_0);
+        _projectManagerAccessor.Instance.ProjectAdded(_hostProject_For_2_0);
 
-        var projectSnapshot = _projectManager.GetLoadedProject(_hostProject_For_2_0.Key).AssumeNotNull();
+        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(_hostProject_For_2_0.Key).AssumeNotNull();
 
         var calledOutOfProcess = false;
 
-        var resolver = new TestResolver(_workspace, ErrorReporter, NoOpTelemetryReporter.Instance)
+        var resolver = new TestResolver(_projectManagerAccessor, ErrorReporter, NoOpTelemetryReporter.Instance)
         {
             OnResolveOutOfProcess = (p) =>
             {
@@ -101,13 +107,13 @@ public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
     public async Task GetTagHelpersAsync_WithNonSerializableCustomFactory_StaysInProcess()
     {
         // Arrange
-        _projectManager.ProjectAdded(_hostProject_For_NonSerializableConfiguration);
+        _projectManagerAccessor.Instance.ProjectAdded(_hostProject_For_NonSerializableConfiguration);
 
-        var projectSnapshot = _projectManager.GetLoadedProject(_hostProject_For_2_0.Key).AssumeNotNull();
+        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(_hostProject_For_2_0.Key).AssumeNotNull();
 
         var calledInProcess = false;
 
-        var resolver = new TestResolver(_workspace, ErrorReporter, NoOpTelemetryReporter.Instance)
+        var resolver = new TestResolver(_projectManagerAccessor, ErrorReporter, NoOpTelemetryReporter.Instance)
         {
             OnResolveInProcess = (p) =>
             {
@@ -130,15 +136,15 @@ public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
     public async Task GetTagHelpersAsync_OperationCanceledException_DoesNotGetWrapped()
     {
         // Arrange
-        _projectManager.ProjectAdded(_hostProject_For_2_0);
+        _projectManagerAccessor.Instance.ProjectAdded(_hostProject_For_2_0);
 
-        var projectSnapshot = _projectManager.GetLoadedProject(_hostProject_For_2_0.Key).AssumeNotNull();
+        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(_hostProject_For_2_0.Key).AssumeNotNull();
 
         var calledOutOfProcess = false;
         var calledInProcess = false;
 
         var cancellationToken = new CancellationToken(canceled: true);
-        var resolver = new TestResolver(_workspace, ErrorReporter, NoOpTelemetryReporter.Instance)
+        var resolver = new TestResolver(_projectManagerAccessor, ErrorReporter, NoOpTelemetryReporter.Instance)
         {
             OnResolveInProcess = (p) =>
             {
@@ -166,7 +172,7 @@ public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
     public void CalculateTagHelpersFromDelta_NewProject()
     {
         // Arrange
-        var resolver = new TestResolver(_workspace, ErrorReporter, NoOpTelemetryReporter.Instance);
+        var resolver = new TestResolver(_projectManagerAccessor, ErrorReporter, NoOpTelemetryReporter.Instance);
         var initialDelta = new TagHelperDeltaResult(IsDelta: false, ResultId: 1, Project1TagHelperChecksums, ImmutableArray<Checksum>.Empty);
 
         // Act
@@ -180,7 +186,7 @@ public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
     public void CalculateTagHelpersFromDelta_DeltaFailedToApplyToKnownProject()
     {
         // Arrange
-        var resolver = new TestResolver(_workspace, ErrorReporter, NoOpTelemetryReporter.Instance);
+        var resolver = new TestResolver(_projectManagerAccessor, ErrorReporter, NoOpTelemetryReporter.Instance);
         var initialDelta = new TagHelperDeltaResult(IsDelta: false, ResultId: 1, Project1TagHelperChecksums, ImmutableArray<Checksum>.Empty);
         resolver.PublicProduceChecksumsFromDelta(Project1Id, lastResultId: -1, initialDelta);
         var newTagHelperSet = ImmutableArray.Create(TagHelper1_Project1.Checksum);
@@ -197,7 +203,7 @@ public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
     public void CalculateTagHelpersFromDelta_NoopResult()
     {
         // Arrange
-        var resolver = new TestResolver(_workspace, ErrorReporter, NoOpTelemetryReporter.Instance);
+        var resolver = new TestResolver(_projectManagerAccessor, ErrorReporter, NoOpTelemetryReporter.Instance);
         var initialDelta = new TagHelperDeltaResult(IsDelta: false, ResultId: 1, Project1TagHelperChecksums, ImmutableArray<Checksum>.Empty);
         resolver.PublicProduceChecksumsFromDelta(Project1Id, lastResultId: -1, initialDelta);
         var noopDelta = new TagHelperDeltaResult(IsDelta: true, initialDelta.ResultId, ImmutableArray<Checksum>.Empty, ImmutableArray<Checksum>.Empty);
@@ -213,7 +219,7 @@ public partial class OOPTagHelperResolverTest : TagHelperDescriptorTestBase
     public void CalculateTagHelpersFromDelta_ReplacedTagHelpers()
     {
         // Arrange
-        var resolver = new TestResolver(_workspace, ErrorReporter, NoOpTelemetryReporter.Instance);
+        var resolver = new TestResolver(_projectManagerAccessor, ErrorReporter, NoOpTelemetryReporter.Instance);
         var initialDelta = new TagHelperDeltaResult(IsDelta: false, ResultId: 1, Project1TagHelperChecksums, ImmutableArray<Checksum>.Empty);
         resolver.PublicProduceChecksumsFromDelta(Project1Id, lastResultId: -1, initialDelta);
         var changedDelta = new TagHelperDeltaResult(IsDelta: true, initialDelta.ResultId + 1, ImmutableArray.Create(TagHelper2_Project2.Checksum), ImmutableArray.Create(TagHelper2_Project1.Checksum));

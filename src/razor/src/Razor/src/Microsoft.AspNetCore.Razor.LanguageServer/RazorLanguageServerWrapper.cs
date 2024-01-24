@@ -77,6 +77,9 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
 
         var jsonRpc = new JsonRpc(new HeaderDelimitedMessageHandler(output, input, messageFormatter));
 
+        // Get more information about exceptions that occur during RPC method invocations.
+        jsonRpc.ExceptionStrategy = ExceptionProcessing.ISerializable;
+
         return jsonRpc;
     }
 

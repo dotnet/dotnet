@@ -1,9 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -11,7 +8,6 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -23,7 +19,6 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
     private readonly HostDocument _hostDocument;
     private readonly HostProject _hostProject;
     private readonly HostProject _hostProjectWithConfigurationChange;
-    private readonly TestTagHelperResolver _tagHelperResolver;
     private readonly ImmutableArray<TagHelperDescriptor> _someTagHelpers;
     private readonly SourceText _text;
 
@@ -33,19 +28,12 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
         _hostProject = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, TestProjectData.SomeProject.RootNamespace);
         _hostProjectWithConfigurationChange = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
 
-        _tagHelperResolver = new TestTagHelperResolver();
-
         _someTagHelpers = ImmutableArray.Create(
             TagHelperDescriptorBuilder.Create("Test1", "TestAssembly").Build());
 
         _hostDocument = TestProjectData.SomeProjectFile1;
 
         _text = SourceText.From("Hello, world!");
-    }
-
-    protected override void ConfigureWorkspaceServices(List<IWorkspaceService> services)
-    {
-        services.Add(_tagHelperResolver);
     }
 
     protected override void ConfigureProjectEngine(RazorProjectEngineBuilder builder)

@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Text;
@@ -78,11 +79,6 @@ internal class DocumentState
     public Task<(RazorCodeDocument output, VersionStamp inputVersion)> GetGeneratedOutputAndVersionAsync(ProjectSnapshot project, DocumentSnapshot document)
     {
         return ComputedState.GetGeneratedOutputAndVersionAsync(project, document);
-    }
-
-    public ImmutableArray<IDocumentSnapshot> GetImports(ProjectSnapshot project)
-    {
-        return GetImportsCore(project, HostDocument.FilePath, HostDocument.FileKind);
     }
 
     public async Task<SourceText> GetTextAsync()
@@ -502,7 +498,7 @@ internal class DocumentState
 
         internal static async Task<ImmutableArray<ImportItem>> GetImportsAsync(IDocumentSnapshot document)
         {
-            var imports = document.GetImports();
+            var imports = DocumentState.GetImportsCore(document.Project, document.FilePath.AssumeNotNull(), document.FileKind.AssumeNotNull());
             using var result = new PooledArrayBuilder<ImportItem>(imports.Length);
 
             foreach (var snapshot in imports)

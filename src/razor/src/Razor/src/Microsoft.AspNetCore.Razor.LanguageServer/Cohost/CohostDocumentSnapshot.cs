@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -35,11 +34,6 @@ internal class CohostDocumentSnapshot(TextDocument textDocument, IProjectSnapsho
     public bool TryGetText([NotNullWhen(true)] out SourceText? result) => _textDocument.TryGetText(out result);
 
     public bool TryGetTextVersion(out VersionStamp result) => _textDocument.TryGetTextVersion(out result);
-
-    public ImmutableArray<IDocumentSnapshot> GetImports()
-    {
-        return DocumentState.GetImportsCore(Project, FilePath.AssumeNotNull(), FileKind.AssumeNotNull());
-    }
 
     public async Task<RazorCodeDocument> GetGeneratedOutputAsync()
     {
