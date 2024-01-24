@@ -4,6 +4,7 @@
 using System;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
@@ -11,12 +12,12 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 internal class DefaultVisualStudioRazorParserFactory(
     JoinableTaskContext joinableTaskContext,
     IErrorReporter errorReporter,
-    VisualStudioCompletionBroker completionBroker,
+    ICompletionBroker completionBroker,
     IProjectEngineFactoryProvider projectEngineFactoryProvider) : VisualStudioRazorParserFactory
 {
     private readonly JoinableTaskContext _joinableTaskContext = joinableTaskContext;
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider = projectEngineFactoryProvider;
-    private readonly VisualStudioCompletionBroker _completionBroker = completionBroker;
+    private readonly ICompletionBroker _completionBroker = completionBroker;
     private readonly IErrorReporter _errorReporter = errorReporter;
 
     public override VisualStudioRazorParser Create(VisualStudioDocumentTracker documentTracker)
