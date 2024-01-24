@@ -8,7 +8,7 @@ secrets:
   source-dot-net-stage1-connection-string:
     type: azure-storage-connection-string
     parameters:
-      subscription: a4fc5514-21a9-4296-bfaf-5c7ee7fa35d1
+      subscription: 813dbf66-c320-41e6-a8a8-cb0dfd8b3187
       account: netsourceindexstage1
 
   #source-dot-net stage1 variables
