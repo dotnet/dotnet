@@ -13,6 +13,13 @@ namespace Microsoft.AspNetCore.Razor.Language.Components;
 
 internal class ComponentMarkupEncodingPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
+    private readonly RazorLanguageVersion _version;
+
+    public ComponentMarkupEncodingPass(RazorLanguageVersion version)
+    {
+        _version = version;
+    }
+
     // Runs after ComponentMarkupBlockPass
     public override int Order => ComponentMarkupDiagnosticPass.DefaultOrder + 20;
 
@@ -29,7 +36,7 @@ internal class ComponentMarkupEncodingPass : ComponentIntermediateNodePassBase, 
             return;
         }
 
-        var rewriter = new Rewriter();
+        var rewriter = new Rewriter(_version);
         rewriter.Visit(documentNode);
     }
 
@@ -47,10 +54,37 @@ internal class ComponentMarkupEncodingPass : ComponentIntermediateNodePassBase, 
 
         private static readonly char[] EncodedCharacters = new[] { '\r', '\n', '\t', '<', '>' };
 
+        private readonly bool _avoidEncodingScripts;
         private readonly Dictionary<string, string> _seenEntities = new Dictionary<string, string>(StringComparer.Ordinal);
+
+        private bool _avoidEncodingContent;
+
+        public Rewriter(RazorLanguageVersion version)
+        {
+            _avoidEncodingScripts = version.CompareTo(RazorLanguageVersion.Version_8_0) >= 0;
+        }
+
+        public override void VisitMarkupElement(MarkupElementIntermediateNode node)
+        {
+            // We don't want to HTML-encode literal content inside <script> tags.
+            var oldAvoidEncodingContent = _avoidEncodingContent;
+            _avoidEncodingContent = _avoidEncodingContent || (
+                _avoidEncodingScripts &&
+                string.Equals("script", node.TagName, StringComparison.OrdinalIgnoreCase));
+
+            base.VisitMarkupElement(node);
+
+            _avoidEncodingContent = oldAvoidEncodingContent;
+        }
 
         public override void VisitHtml(HtmlContentIntermediateNode node)
         {
+            if (_avoidEncodingContent)
+            {
+                node.SetEncoded();
+                return;
+            }
+
             for (var i = 0; i < node.Children.Count; i++)
             {
                 var child = node.Children[i];
