@@ -49,7 +49,7 @@
   <!-- Packages that come from https://github.com/dotnet/arcade -->
   <PropertyGroup>
     <MicrosoftDotNetApiCompatVersion>9.0.0-beta.24053.1</MicrosoftDotNetApiCompatVersion>
-    <MicrosoftDotNetCodeAnalysisPackageVersion>9.0.0-beta.24069.2</MicrosoftDotNetCodeAnalysisPackageVersion>
+    <MicrosoftDotNetCodeAnalysisPackageVersion>9.0.0-beta.24072.1</MicrosoftDotNetCodeAnalysisPackageVersion>
   </PropertyGroup>
   <!-- Sourcelink -->
   <PropertyGroup>
@@ -107,6 +107,6 @@
     <SystemReflectionMetadataLoadContextPackage>System.Reflection.MetadataLoadContext</SystemReflectionMetadataLoadContextPackage>
   </PropertyGroup>
   <PropertyGroup>
-    <MicrosoftDotNetWpfDncEngVersion>9.0.0-preview.2.24072.3</MicrosoftDotNetWpfDncEngVersion>
+    <MicrosoftDotNetWpfDncEngVersion>9.0.0-preview.2.24073.3</MicrosoftDotNetWpfDncEngVersion>
   </PropertyGroup>
 </Project>
