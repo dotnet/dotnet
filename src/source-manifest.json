@@ -49,10 +49,10 @@
       "commitSha": "ae7c93e25ae596594b3b22d64115f374a3595912"
     },
     {
-      "packageVersion": "9.0.507302",
+      "packageVersion": "9.0.507401",
       "path": "format",
       "remoteUri": "https://github.com/dotnet/format",
-      "commitSha": "af231fac430d2239f2d434df3ed87fb06eb489af"
+      "commitSha": "62ad86675213e2541e1ff256867e6f1258485202"
     },
     {
       "packageVersion": "8.0.300-beta.24066.3",
@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "292f1575890dd334bdbf3ccf0265ba5497ad14ab"
+      "commitSha": "1910b128129f7c785f5d3e84bd49a10d2874e9e3"
     },
     {
       "packageVersion": "17.10.0-preview-24073-02",
@@ -91,16 +91,16 @@
       "commitSha": "3cd939f76803da435c20b082a5cfcc844386fcfb"
     },
     {
-      "packageVersion": "3.11.0-beta1.24072.1",
+      "packageVersion": "3.11.0-beta1.24074.1",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "e39798fc8357615ab319c81b20acfb036ef7b513"
+      "commitSha": "890806a346d4feba05b88f6ca3da201dec75e4d3"
     },
     {
-      "packageVersion": "9.0.0-preview.2.24073.12",
+      "packageVersion": "9.0.0-preview.2.24074.3",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "c882cc8d3c1c1c8d9593ac190eed4a6448123726"
+      "commitSha": "96dd3d1b7feb0843ffe12858afb04d1c281150e7"
     },
     {
       "packageVersion": "9.0.0-preview.24057.2",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-preview.2.24074.4",
+      "packageVersion": "9.0.100-preview.2.24074.10",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "eb4f88d9986bed5c78f58827735eaa9df0408568"
+      "commitSha": "87edfcb2fba7334fedd0a4fdc3d1b319047dea67"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24072.1",
@@ -151,10 +151,10 @@
       "commitSha": "28c115a80eb117d4564e93fb4f89ca5b2308cf54"
     },
     {
-      "packageVersion": "17.10.0-preview-24072-01",
+      "packageVersion": "17.10.0-preview-24073-02",
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "e6c166f6c346b6c60092121419529e2cd9dbbbcc"
+      "commitSha": "c0c0e75fb8ea396a8b0717d17c2e738975d412e7"
     },
     {
       "packageVersion": "9.0.0-preview.2.24073.3",
