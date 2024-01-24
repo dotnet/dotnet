@@ -225,7 +225,7 @@ jobs:
 
       # Allows Arcade to have access to the commit for the build
       customEnvVars="BUILD_SOURCEVERSION=$BUILD_SOURCEVERSION"
-      customBuildArgs="--ci"
+      customBuildArgs="--ci --prepareMachine"
       if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
         customBuildArgs="$customBuildArgs --online"
       fi
@@ -274,14 +274,14 @@ jobs:
           customDockerRunArgs="$customDockerRunArgs --network none"
         fi
 
-        docker run --rm -v "$(sourcesPath):/vmr" -w /vmr $customDockerRunArgs ${{ parameters.container }} ./build.sh --clean-while-building $(additionalBuildArgs) $customBuildArgs $extraBuildProperties
+        docker run --rm -v "$(sourcesPath):/vmr" -w /vmr $customDockerRunArgs ${{ parameters.container }} ./build.sh --source-only --clean-while-building $(additionalBuildArgs) $customBuildArgs $extraBuildProperties
       else
         for envVar in $customEnvVars; do
           customEnvVarsWithBashSyntax="$customEnvVarsWithBashSyntax export $envVar;"
         done
         cd $(sourcesPath)
         eval $customEnvVarsWithBashSyntax
-        ./build.sh --clean-while-building $(additionalBuildArgs) $customBuildArgs $extraBuildProperties
+        ./build.sh --source-only --clean-while-building $(additionalBuildArgs) $customBuildArgs $extraBuildProperties
       fi
     displayName: Build
 
@@ -298,7 +298,7 @@ jobs:
           poisonArg='--poison'
         fi
 
-        docker run --rm $dockerVolumeArgs -w /vmr $dockerEnvArgs ${{ parameters.container }} ./build.sh $poisonArg --run-smoke-test $(additionalBuildArgs) -- -p:SmokeTestConsoleVerbosity=detailed
+        docker run --rm $dockerVolumeArgs -w /vmr $dockerEnvArgs ${{ parameters.container }} ./build.sh --source-only $poisonArg --test $(additionalBuildArgs) /p:SmokeTestConsoleVerbosity=detailed
       displayName: Run Tests
 
   # Don't use CopyFiles@2 as it encounters permissions issues because it indexes all files in the source directory graph.
