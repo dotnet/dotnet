@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -18,21 +19,17 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-internal class OOPTagHelperResolver : ITagHelperResolver
+[Export(typeof(ITagHelperResolver))]
+[method: ImportingConstructor]
+internal class OutOfProcTagHelperResolver(
+    IProjectSnapshotManagerAccessor projectManagerAccessor,
+    IErrorReporter errorReporter,
+    ITelemetryReporter telemetryReporter) : ITagHelperResolver
 {
-    private readonly Workspace _workspace;
-    private readonly IErrorReporter _errorReporter;
-    private readonly CompilationTagHelperResolver _innerResolver;
-    private readonly TagHelperResultCache _resultCache;
-
-    public OOPTagHelperResolver(Workspace workspace, IErrorReporter errorReporter, ITelemetryReporter telemetryReporter)
-    {
-        _errorReporter = errorReporter ?? throw new ArgumentNullException(nameof(errorReporter));
-        _workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
-
-        _innerResolver = new CompilationTagHelperResolver(telemetryReporter);
-        _resultCache = new TagHelperResultCache();
-    }
+    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor = projectManagerAccessor;
+    private readonly IErrorReporter _errorReporter = errorReporter;
+    private readonly CompilationTagHelperResolver _innerResolver = new(telemetryReporter);
+    private readonly TagHelperResultCache _resultCache = new();
 
     public async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(
         Project workspaceProject,
@@ -75,7 +72,7 @@ internal class OOPTagHelperResolver : ITagHelperResolver
         //
         // This will change in the future to an easier to consume API but for VS RTM this is what we have.
         var remoteClient = await RazorRemoteHostClient.TryGetClientAsync(
-            _workspace.Services,
+            _projectManagerAccessor.Instance.Workspace.Services,
             RazorServiceDescriptors.TagHelperProviderServiceDescriptors,
             RazorRemoteServiceCallbackDispatcherRegistry.Empty,
             cancellationToken);

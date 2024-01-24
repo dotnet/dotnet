@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language;
@@ -10,7 +8,6 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Editor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -30,15 +27,14 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
     private readonly ITextBuffer _textBuffer;
     private readonly string _filePath;
     private readonly string _projectPath;
-    private readonly string _rootNamespace;
+    private readonly string? _rootNamespace;
     private readonly HostProject _hostProject;
     private readonly HostProject _updatedHostProject;
     private readonly HostProject _otherHostProject;
-    private Project _workspaceProject;
+    private Project? _workspaceProject;
     private readonly ImportDocumentManager _importDocumentManager;
     private readonly WorkspaceEditorSettings _workspaceEditorSettings;
     private readonly List<TagHelperDescriptor> _someTagHelpers;
-    private TestTagHelperResolver _tagHelperResolver;
     private readonly ProjectSnapshotManagerBase _projectManager;
     private readonly DefaultVisualStudioDocumentTracker _documentTracker;
 
@@ -79,12 +75,6 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
             ProjectEngineFactoryProvider,
             _textBuffer,
             _importDocumentManager);
-    }
-
-    protected override void ConfigureWorkspaceServices(List<IWorkspaceService> services)
-    {
-        _tagHelperResolver = new TestTagHelperResolver();
-        services.Add(_tagHelperResolver);
     }
 
     protected override void ConfigureWorkspace(AdhocWorkspace workspace)
@@ -164,7 +154,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         };
 
         // Act
-        _documentTracker.EditorSettingsManager_Changed(null, null);
+        _documentTracker.EditorSettingsManager_Changed(null!, null!);
 
         // Assert
         Assert.True(called);
@@ -176,7 +166,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         // Arrange
         _projectManager.ProjectAdded(_hostProject);
 
-        var e = new ProjectChangeEventArgs(null, _projectManager.GetLoadedProject(_hostProject.Key), ProjectChangeKind.ProjectAdded);
+        var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_hostProject.Key)!, ProjectChangeKind.ProjectAdded);
 
         var called = false;
         _documentTracker.ContextChanged += (sender, args) =>
@@ -199,7 +189,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         // Arrange
         _projectManager.ProjectAdded(_hostProject);
 
-        var e = new ProjectChangeEventArgs(null, _projectManager.GetLoadedProject(_hostProject.Key), ProjectChangeKind.ProjectChanged);
+        var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_hostProject.Key)!, ProjectChangeKind.ProjectChanged);
 
         var called = false;
         _documentTracker.ContextChanged += (sender, args) =>
@@ -225,7 +215,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         var project = _projectManager.GetLoadedProject(_hostProject.Key);
         _projectManager.ProjectRemoved(_hostProject.Key);
 
-        var e = new ProjectChangeEventArgs(project, null, ProjectChangeKind.ProjectRemoved);
+        var e = new ProjectChangeEventArgs(project!, null!, ProjectChangeKind.ProjectRemoved);
 
         var called = false;
         _documentTracker.ContextChanged += (sender, args) =>
@@ -249,7 +239,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         // Arrange
         _projectManager.ProjectAdded(_otherHostProject);
 
-        var e = new ProjectChangeEventArgs(null, _projectManager.GetLoadedProject(_otherHostProject.Key), ProjectChangeKind.ProjectChanged);
+        var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_otherHostProject.Key)!, ProjectChangeKind.ProjectChanged);
 
         var called = false;
         _documentTracker.ContextChanged += (sender, args) => called = true;
@@ -275,7 +265,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         var importChangedArgs = new ImportChangedEventArgs("path/to/import", FileChangeKind.Changed, new[] { _filePath });
 
         // Act
-        _documentTracker.Import_Changed(null, importChangedArgs);
+        _documentTracker.Import_Changed(null!, importChangedArgs);
 
         // Assert
         Assert.True(called);
@@ -290,7 +280,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         var importChangedArgs = new ImportChangedEventArgs("path/to/import", FileChangeKind.Changed, new[] { "path/to/differentfile" });
 
         // Act & Assert (Does not throw)
-        _documentTracker.Import_Changed(null, importChangedArgs);
+        _documentTracker.Import_Changed(null!, importChangedArgs);
     }
 
     [UIFact]

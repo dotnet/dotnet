@@ -12,7 +12,7 @@ using Moq;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-public partial class OOPTagHelperResolverTest
+public partial class OutOfProcTagHelperResolverTest
 {
     private static readonly Lazy<ProjectSnapshotManagerDispatcher> s_projectSnapshotManagerDispatcher = new(() =>
     {
