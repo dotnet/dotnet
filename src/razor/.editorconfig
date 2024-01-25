@@ -103,6 +103,10 @@ csharp_style_unused_value_expression_statement_preference = discard_variable:non
 # IDE0065
 csharp_using_directive_placement = outside_namespace:suggestion
 
+# Roslyn analyzers
+dotnet_diagnostic.RS0006.severity = error
+dotnet_diagnostic.RS0023.severity = error
+
 # xUnit1004: Test methods should not be skipped
 dotnet_diagnostic.xUnit1004.severity = refactoring
 

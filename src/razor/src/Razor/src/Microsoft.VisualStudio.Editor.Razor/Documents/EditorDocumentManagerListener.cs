@@ -24,6 +24,7 @@ namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 // other triggers with lesser priority so we can attach to Changed sooner. We happen to be so important because we control the
 // open/close state of documents. If other triggers depend on a document being open/closed (some do) then we need to ensure we
 // can mark open/closed prior to them running.
+[Shared]
 [Export(typeof(IProjectSnapshotChangeTrigger))]
 internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTrigger
 {

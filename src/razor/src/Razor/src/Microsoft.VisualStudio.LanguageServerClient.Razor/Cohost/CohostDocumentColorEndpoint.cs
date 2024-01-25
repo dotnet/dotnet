@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Cohost;
 
+[Shared]
 [LanguageServerEndpoint(Methods.TextDocumentDocumentColorName)]
 [ExportRazorStatelessLspService(typeof(CohostDocumentColorEndpoint))]
 [Export(typeof(ICapabilitiesProvider))]
