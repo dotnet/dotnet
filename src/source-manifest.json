@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "30089f782b33e9f33717009c8114e031243ead85"
+      "commitSha": "1c031a15ffe7088d42f3a73ad46bb0d0c7a8642e"
     },
     {
       "packageVersion": "17.10.0-preview-24073-02",
@@ -79,10 +79,10 @@
       "commitSha": "d55931a69dcda3dcb87ba46a09fe268e0febc223"
     },
     {
-      "packageVersion": "7.0.0-preview.24074.4",
+      "packageVersion": "7.0.0-preview.24074.5",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "4deeb7776b52eca8188a19e91ad252c03dc7cbcd"
+      "commitSha": "00a9bb181a4028e7fff09d989c5540cff677e411"
     },
     {
       "packageVersion": "4.10.0-1.24067.21",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-preview.1.24074.16",
+      "packageVersion": "9.0.100-preview.1.24074.21",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "4d589f82ab3ee41455e3451a163601f4f78bfb89"
+      "commitSha": "70ae917bc2ff4a1684a6474a58a1363a8278ad39"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24066.1",
@@ -157,22 +157,22 @@
       "commitSha": "53df73d3373e7964f6fb37f4437bda2720a75ef2"
     },
     {
-      "packageVersion": "9.0.0-preview.1.24074.3",
+      "packageVersion": "9.0.0-preview.1.24074.4",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "a6adf2865b2e615fcf9d8c0183e704fcad96d7e6"
+      "commitSha": "7b28f0e0313cfdb6dbfcbe93be1dc22e5bc90a8f"
     },
     {
-      "packageVersion": "9.0.0-preview.1.24073.4",
+      "packageVersion": "9.0.0-preview.1.24074.5",
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "9481a5e12ee4dc6118f6f04d67c451a5e1db0d9a"
+      "commitSha": "653298452192c54eb6b62e8b5b9d44895c01dc16"
     },
     {
-      "packageVersion": "9.0.0-preview.1.24074.2",
+      "packageVersion": "9.0.0-preview.1.24074.3",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "2fb14ade0b54b7cb8ea6b989fe05e857ef7a6346"
+      "commitSha": "90a2728da19afd0cca16f614c7574026499fbf8c"
     },
     {
       "packageVersion": "9.0.0-preview.24058.1",
