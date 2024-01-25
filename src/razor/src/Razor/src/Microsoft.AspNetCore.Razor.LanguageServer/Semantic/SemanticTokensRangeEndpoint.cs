@@ -3,6 +3,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -24,7 +25,9 @@ internal sealed class SemanticTokensRangeEndpoint(
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        _semanticTokensInfoService.ApplyCapabilities(serverCapabilities, clientCapabilities);
+        var legend = new RazorSemanticTokensLegend(clientCapabilities);
+        serverCapabilities.EnableSemanticTokens(legend.Legend);
+        _semanticTokensInfoService.SetTokensLegend(legend);
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(SemanticTokensRangeParams request)

@@ -7,7 +7,8 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-internal interface IRazorSemanticTokensInfoService : ICapabilitiesProvider
+internal interface IRazorSemanticTokensInfoService
 {
     Task<SemanticTokens?> GetSemanticTokensAsync(IClientConnection clientConnection, TextDocumentIdentifier textDocumentIdentifier, Range range, VersionedDocumentContext documentContext, bool colorBackground, CancellationToken cancellationToken);
+    void SetTokensLegend(RazorSemanticTokensLegend legend);
 }
