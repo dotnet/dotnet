@@ -25,6 +25,7 @@ using static Microsoft.VisualStudio.LanguageServer.ContainedLanguage.DefaultLSPD
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
+[Shared]
 [Export(typeof(IRazorCustomMessageTarget))]
 [Export(typeof(RazorCustomMessageTarget))]
 internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget

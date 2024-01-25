@@ -10,6 +10,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Cohost;
 
 // NOTE: This is not a "normal" MEF export (ie, exporting an interface) purely because of a strange desire to keep API in
 //       RazorCohostRequestContextExtensions looking like the previous code in the non-cohost world.
+[Shared]
 [ExportRazorStatelessLspService(typeof(CohostDocumentContextFactory))]
 [method: ImportingConstructor]
 internal class CohostDocumentContextFactory(DocumentSnapshotFactory documentSnapshotFactory, IDocumentVersionCache documentVersionCache) : AbstractRazorLspService
