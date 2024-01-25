@@ -13,11 +13,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentColor;
 [method: ImportingConstructor]
 internal sealed class DocumentColorService() : IDocumentColorService
 {
-    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
-    {
-        serverCapabilities.DocumentColorProvider = new DocumentColorOptions();
-    }
-
     public async Task<ColorInformation[]> GetColorInformationAsync(IClientConnection clientConnection, DocumentColorParams request, VersionedDocumentContext? documentContext, CancellationToken cancellationToken)
     {
         // Workaround for Web Tools bug https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1743689 where they sometimes

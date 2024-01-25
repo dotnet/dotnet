@@ -1011,7 +1011,9 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             featureOptions,
             LoggerFactory,
             telemetryReporter: null);
-        service.ApplyCapabilities(new(), new VSInternalClientCapabilities { SupportsVisualStudioExtensions = true });
+
+        var legend = new RazorSemanticTokensLegend(new VSInternalClientCapabilities { SupportsVisualStudioExtensions = true });
+        service.SetTokensLegend(legend);
         return service;
     }
 
