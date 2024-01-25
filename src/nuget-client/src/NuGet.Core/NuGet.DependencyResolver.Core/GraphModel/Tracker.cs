@@ -44,7 +44,7 @@ namespace NuGet.DependencyResolver
             {
                 var version = item.Key.Version;
 
-                foreach (var known in entry.Items)
+                foreach (var known in entry.Items.NoAllocEnumerate())
                 {
                     if (version < known.Key.Version)
                     {

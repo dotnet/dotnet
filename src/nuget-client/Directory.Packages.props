@@ -6,7 +6,7 @@
     <NewtonsoftJsonPackageVersion Condition="'$(NewtonsoftJsonPackageVersion)' == ''">13.0.3</NewtonsoftJsonPackageVersion>
     <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == ''">7.0.3</SystemTextJsonVersion>
     <SystemPackagesVersion Condition="'$(SystemPackagesVersion)' == ''">4.3.0</SystemPackagesVersion>
-    <VSFrameworkVersion Condition="'$(VSFrameworkVersion)' == ''">17.4.33103.184</VSFrameworkVersion>
+    <VSFrameworkVersion Condition="'$(VSFrameworkVersion)' == ''">17.6.36389</VSFrameworkVersion>
     <VSServicesVersion Condition="'$(VSServicesVersion)' == ''">16.153.0</VSServicesVersion>
     <SystemCommandLineVersion Condition="'$(SystemCommandLineVersion)' == ''">2.0.0-beta4.23307.1</SystemCommandLineVersion>
     <!-- Default MSBuild version -->
@@ -32,7 +32,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="FluentAssertions" Version="6.6.0" />
+    <PackageVersion Include="FluentAssertions" Version="6.12.0" />
     <PackageVersion Include="ILMerge" Version="3.0.41" />
     <PackageVersion Include="Lucene.Net" Version="3.0.3" />
     <PackageVersion Include="MessagePack" Version="2.5.108" />
@@ -58,7 +58,7 @@
     <PackageVersion Include="Microsoft.Internal.VisualStudio.Shell.Framework" Version="$(VSFrameworkVersion)" />
     <PackageVersion Include="Microsoft.Net.Compilers.netcore" Version="3.0.0-dev-61717-03" />
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="3.9.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="Microsoft.PowerShell.3.ReferenceAssemblies" Version="1.0.0" />
     <PackageVersion Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="$(VSServicesVersion)" />
     <PackageVersion Include="Microsoft.Test.Apex.VisualStudio" Version="17.3.32913.221" />
@@ -70,7 +70,7 @@
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.Managed.VS" Version="17.2.0-beta1-20502-01" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.VS" Version="17.4.221-pre" />
     <PackageVersion Include="Microsoft.VisualStudio.SDK" Version="$(VSFrameworkVersion)" />
-    <PackageVersion Include="Microsoft.VisualStudio.Sdk.TestFramework.Xunit" Version="17.2.7" />
+    <PackageVersion Include="Microsoft.VisualStudio.Sdk.TestFramework.Xunit" Version="17.6.32" />
     <PackageVersion Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="$(VSServicesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.4.2244" />
     <PackageVersion Include="Microsoft.VisualStudio.TemplateWizardInterface" Version="$(VSFrameworkVersion)" />
@@ -111,9 +111,11 @@
     -->
     <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.9.0" />
     <PackageVersion Include="VsWebSite.Interop" Version="$(VSFrameworkVersion)" />
-    <PackageVersion Include="xunit" Version="2.4.2" />
+    <PackageVersion Include="xunit" Version="2.6.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
     <PackageVersion Include="Xunit.StaFact" Version="1.1.11" />
+    <PackageVersion Include="Microsoft.NET.StringTools" Version="$(MicrosoftBuildVersion)" />
+
   </ItemGroup>
 
   <!--
@@ -128,7 +130,7 @@
               '$(MSBuildProjectFile)' == 'NuGet.VisualStudio.Contracts.csproj' OR
               '$(MSBuildProjectFile)' == 'NuGet.VisualStudio.Interop.csproj' OR
               '$(MSBuildProjectFile)' == 'NuGet.SolutionRestoreManager.Interop.csproj'">
-    <PackageVersion Include="Microsoft.ServiceHub.Framework" Version="4.1.112" />
+    <PackageVersion Include="Microsoft.ServiceHub.Framework" Version="4.2.102" />
     <PackageVersion Include="Microsoft.VisualStudio.ComponentModelHost" Version="17.4.255" />
     <PackageVersion Update="Microsoft.VisualStudio.SDK" Version="" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="$(VSFrameworkVersion)" />

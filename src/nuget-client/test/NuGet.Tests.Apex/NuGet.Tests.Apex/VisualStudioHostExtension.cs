@@ -11,24 +11,49 @@ namespace NuGet.Tests.Apex
         static private readonly Guid _nugetOutputWindowGuid = new Guid("CEC55EC8-CC51-40E7-9243-57B87A6F6BEB");
 
         /// <summary>
-        /// Assert no errors in the error list or output window
+        /// Assert no errors in the error list or output window.
         /// </summary>
         internal static void AssertNoErrors(this VisualStudioHost host)
         {
             host.AssertNuGetOutputDoesNotHaveErrors();
-            host.GetErrorListErrors().Should().BeEmpty("Empty errors in error list");
+            host.GetMessagesFromErrorList().Should().BeEmpty("Empty errors in the Messages list of the Error List");
         }
 
         /// <summary>
-        /// Assert no errors in the error list
+        /// Assert no messages in the Messages list of the Error List.
         /// </summary>
-        internal static List<string> GetErrorListErrors(this VisualStudioHost host)
+        internal static List<string> GetMessagesFromErrorList(this VisualStudioHost host)
         {
             var errors = new List<string>();
 
             CommonUtility.UIInvoke(() =>
             {
                 errors.AddRange(host.ObjectModel.Shell.ToolWindows.ErrorList.Messages.Select(e => e.Description));
+            });
+
+            return errors;
+        }
+
+        /// <summary>
+        /// Assert Error List contains specific error.
+        /// </summary>
+        internal static void AssertErrorListContainsSpecificError(this VisualStudioHost host, string errorMessage)
+        {
+            var errors = host.GetErrorsFromErrorList();
+            errors.Should().NotBeEmpty("Empty errors in error list");
+            errors.Where(e => e.Contains(errorMessage)).Should().NotBeEmpty();
+        }
+
+        /// <summary>
+        /// Assert no errors in the Error List.
+        /// </summary>
+        internal static List<string> GetErrorsFromErrorList(this VisualStudioHost host)
+        {
+            var errors = new List<string>();
+
+            CommonUtility.UIInvoke(() =>
+            {
+                errors.AddRange(host.ObjectModel.Shell.ToolWindows.ErrorList.Errors.Select(e => e.Description));
             });
 
             return errors;

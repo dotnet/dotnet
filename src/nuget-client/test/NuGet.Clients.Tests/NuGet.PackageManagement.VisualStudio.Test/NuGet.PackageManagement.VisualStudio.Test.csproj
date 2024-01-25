@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
@@ -40,6 +41,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework.Xunit" />
+    <PackageReference Include="Microsoft.Build.Framework" />
+    <PackageReference Include="Microsoft.NET.StringTools" />
     <PackageReference Include="VsWebSite.Interop" />
   </ItemGroup>
 

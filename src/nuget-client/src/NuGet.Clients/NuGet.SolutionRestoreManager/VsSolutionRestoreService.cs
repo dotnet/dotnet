@@ -227,6 +227,7 @@ namespace NuGet.SolutionRestoreManager
                 {
                     var restoreLogMessage = RestoreLogMessage.CreateError(NuGetLogCode.NU1105, string.Format(CultureInfo.CurrentCulture, Resources.NU1105, projectNames.ShortName, e.Message));
                     restoreLogMessage.ProjectPath = projectUniqueName;
+                    restoreLogMessage.FilePath = projectUniqueName;
 
                     nominationErrors = new List<IAssetsLogMessage>()
                     {

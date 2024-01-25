@@ -461,6 +461,15 @@ namespace NuGet.Tests.Apex
         public static void WaitForDirectoryExists(string directoryPath)
         {
             Omni.Common.WaitFor.IsTrue(
+                () => Directory.Exists(directoryPath),
+                Timeout,
+                Interval,
+                $"{directoryPath} did not exist within {Timeout}.");
+        }
+
+        public static void WaitForDirectoryNotExists(string directoryPath)
+        {
+            Omni.Common.WaitFor.IsTrue(
                 () => !Directory.Exists(directoryPath),
                 Timeout,
                 Interval,
