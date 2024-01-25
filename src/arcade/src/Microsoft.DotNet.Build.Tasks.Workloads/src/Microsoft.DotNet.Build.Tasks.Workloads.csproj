@@ -18,7 +18,7 @@
       installers, and source-build doesn't run on Windows, so excluding WiX while building in
       source-build mode to remove the prebuilt dependency has no impact to available .NET features.
     -->
-    <IncludeWiX Condition="'$(DotNetBuildFromSource)' != 'true'">true</IncludeWiX>
+    <IncludeWiX Condition="'$(DotNetBuildFromSource)' != 'true' and '$(DotNetBuildSourceOnly)' != 'true'">true</IncludeWiX>
     <DefaultExcludesInProjectFolder Condition="'$(IncludeWiX)' != 'true'">$(DefaultExcludesInProjectFolder);**\*.wix.cs;*.wix.cs</DefaultExcludesInProjectFolder>
   </PropertyGroup>
 

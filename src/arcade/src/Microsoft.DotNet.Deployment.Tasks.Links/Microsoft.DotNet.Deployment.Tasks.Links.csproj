@@ -7,6 +7,7 @@
     <PackageTags>Arcade aka.ms</PackageTags>
     <DevelopmentDependency>true</DevelopmentDependency>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
   </PropertyGroup>
 
   <ItemGroup>

@@ -7,6 +7,8 @@
         - Vertical-build mode and "ExcludeFromVerticalBuild" is set.
         - Non source-build mode and "ExcludeFromBuild" is set
         - Target filtering is used and the target filters set "ExcludeFromBuild".
+        - .NET product build (DotNetBuild) and "ExcludeFromDotNetBuild" is set.
+        - .NET product build in source-only mode and "ExcludeFromSourceOnlyBuild" is set.
 
         To exclude a project from building, Arcade must do two things:
         - Create/override the standard targets (Build, Restore, Sign, etc.) with empty ones.
@@ -26,16 +28,21 @@
           where the BeforeCommonTargets hook is not used (see https://github.com/dotnet/arcade/issues/2676).
           In that case, Sdk.targets imports it explicitly. -->
 
+  <!-- Exclude test projects from source-only builds by default. Exclude from non-source only .NET product
+       builds if explicitly set. -->
   <PropertyGroup Condition="'$(IsTestProject)' == 'true' or '$(IsTestUtilityProject)' == 'true'">
-    <!-- Exclude test projects from source-build by default -->
-    <ExcludeFromSourceBuild Condition="'$(ExcludeFromSourceBuild)' == ''">true</ExcludeFromSourceBuild>
-    <!-- Vertical Build PoC. Exclude test projects. -->
-    <ExcludeFromVerticalBuild Condition="'$(ExcludeFromVerticalBuild)' == ''">true</ExcludeFromVerticalBuild>
+    <ExcludeFromSourceOnlyBuild Condition="'$(ExcludeFromSourceOnlyBuild)' == '' and '$(DotNetBuildSkipTests)' != 'false'">true</ExcludeFromSourceOnlyBuild>
+    <ExcludeFromSourceBuild Condition="'$(ExcludeFromSourceBuild)' == '' and '$(DotNetBuildSkipTests)' != 'false'">true</ExcludeFromSourceBuild>
+
+    <ExcludeFromDotNetBuild Condition="'$(ExcludeFromDotNetBuild)' == '' and '$(DotNetBuildSkipTests)' == 'true'">true</ExcludeFromDotNetBuild>
+    <ExcludeFromVerticalBuild Condition="'$(ExcludeFromVerticalBuild)' == '' and '$(DotNetBuildSkipTests)' == 'true'">true</ExcludeFromVerticalBuild>
   </PropertyGroup>
 
   <!--
-    If a project specifies ExcludeFromSourceBuild=true or ExcludeFromVerticalBuild=true during a source build/vertical
-    build suppress all targets and emulate a no-op (empty common targets like Restore, Build, Pack, etc.).
+    Calculate the value of the target suppress flag. It should be true when:
+    - Building from source only and the project is excluded from source-only builds (legacy switches and new switches)
+    - Building a vertical and the project is excluded from vertical builds (to be removed)
+    - The project is explicitly excluded.
 
     It's also possible to set ExcludeFromBuild prior to importing the Sdk.targets
     to skip building as desired in non-source build scenarios. This might be done to
@@ -43,8 +50,13 @@
   -->
   <PropertyGroup>
     <_SuppressAllTargets>false</_SuppressAllTargets>
+    <!-- Legacy switches-->
     <_SuppressAllTargets Condition="'$(DotNetBuildFromSource)' == 'true' and '$(ExcludeFromSourceBuild)' == 'true'">true</_SuppressAllTargets>
     <_SuppressAllTargets Condition="'$(DotNetBuildVertical)' == 'true' and '$(ExcludeFromVerticalBuild)' == 'true'">true</_SuppressAllTargets>
+    <!-- New .NET build switches -->
+    <_SuppressAllTargets Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(ExcludeFromSourceOnlyBuild)' == 'true'">true</_SuppressAllTargets>
+    <_SuppressAllTargets Condition="'$(DotNetBuild)' == 'true' and '$(ExcludeFromDotNetBuild)' == 'true'">true</_SuppressAllTargets>
+    <!-- General exclusion -->
     <_SuppressAllTargets Condition="'$(ExcludeFromBuild)' == 'true'">true</_SuppressAllTargets>
 
     <!-- If excluding, then disable a restore warning, which will fire on newer SDKs, as well as set the NuGetRestoreTargets property to empty,
