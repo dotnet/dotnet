@@ -355,6 +355,40 @@ steps:
       }
   condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
 
+- task: PowerShell@1
+  displayName: "Set CloudBuild Session ID variable for tests"
+  name: "setcloudbuildsessionid"
+  continueOnError: true
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      try {
+        $json = Get-Content "${env:Build_StagingDirectory}\MicroBuild\Output\Bootstrapperinfo.json" | ConvertFrom-Json
+        $qBuildSessionId = $json[0].QBuildSessionId;
+        Write-Host "CloudBuild Session ID: $qBuildSessionId"
+        Write-Host "##vso[task.setvariable variable=QBuildSessionId;isOutput=true]$qBuildSessionId"
+      } catch {
+        Write-Host "##vso[task.LogIssue type=error;]Unable to set CloudBuild Session ID: $_"
+      }
+  condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
+
+- task: PowerShell@1
+  displayName: "Set Base Build Drop variable for tests"
+  name: "setbasebuilddrop"
+  continueOnError: true
+  inputs:
+    scriptType: "inlineScript"
+    inlineScript: |
+      try {
+        $json = Get-Content "${env:Build_StagingDirectory}\MicroBuild\Output\Bootstrapperinfo.json" | ConvertFrom-Json
+        $buildDrop = $json[0].BuildDrop;
+        Write-Host "Base Build Drop: $buildDrop"
+        Write-Host "##vso[task.setvariable variable=BaseBuildDrop;isOutput=true]$buildDrop"
+      } catch {
+        Write-Host "##vso[task.LogIssue type=error;]Unable to set Base Build Drop: $_"
+      }
+  condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
+
 - task: MSBuild@1
   displayName: 'Generate .runsettings files'
   inputs:

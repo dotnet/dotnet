@@ -81,22 +81,22 @@
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
       <Sha>c9a79b2067c7b6eaa945fc1b2272d7da07466d78</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="9.0.100-preview.1.24075.6">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="9.0.100-preview.1.24075.7">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>8ae53086d4882801ee0c28c39229a04690714219</Sha>
+      <Sha>2826adaae77e20e216eff43ba74ed43e57414749</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="9.0.100-preview.1.24075.6">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="9.0.100-preview.1.24075.7">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>8ae53086d4882801ee0c28c39229a04690714219</Sha>
+      <Sha>2826adaae77e20e216eff43ba74ed43e57414749</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="9.0.100-preview.1.24075.6">
+    <Dependency Name="Microsoft.NET.Sdk" Version="9.0.100-preview.1.24075.7">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>8ae53086d4882801ee0c28c39229a04690714219</Sha>
+      <Sha>2826adaae77e20e216eff43ba74ed43e57414749</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="9.0.100-preview.1.24075.6">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="9.0.100-preview.1.24075.7">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>8ae53086d4882801ee0c28c39229a04690714219</Sha>
+      <Sha>2826adaae77e20e216eff43ba74ed43e57414749</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.2.1" Version="1.0.2-beta4.22406.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
@@ -160,9 +160,9 @@
       <Sha>d51ae5297cd0a24caa8cfe356442cc8634c3f087</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="NuGet.Build.Tasks" Version="6.9.0-rc.86" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="NuGet.Build.Tasks" Version="6.10.0-preview.1.12" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/nuget/nuget.client</Uri>
-      <Sha>d55931a69dcda3dcb87ba46a09fe268e0febc223</Sha>
+      <Sha>e4899ee48ff3d7787ee345f546c818ce6b962807</Sha>
       <SourceBuildTarball RepoName="nuget-client" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.ApplicationInsights" Version="2.0.0">

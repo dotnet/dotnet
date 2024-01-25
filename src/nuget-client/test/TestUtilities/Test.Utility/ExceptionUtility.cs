@@ -14,7 +14,6 @@ namespace Test.Utility
             Assert.Equal("Microsoft.Assumes+InternalErrorException", exception.GetType().FullName);
             Assert.Equal(0x80131500, (uint)exception.HResult);
             Assert.Equal("Microsoft.VisualStudio.Validation", exception.Source);
-            Assert.Equal("An internal error occurred. Please contact Microsoft Support.", exception.Message);
         }
     }
 }

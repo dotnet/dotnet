@@ -4,13 +4,14 @@
 #nullable enable
 
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace NuGet
 {
     internal class SimplePool<T> where T : class
     {
-        private readonly ConcurrentStack<T> _values = new();
+        private readonly object _lockObj = new();
+        private readonly Stack<T> _values = new();
         private readonly Func<T> _allocate;
 
         public SimplePool(Func<T> allocate)
@@ -20,9 +21,12 @@ namespace NuGet
 
         public T Allocate()
         {
-            if (_values.TryPop(out T? result))
+            lock (_lockObj)
             {
-                return result;
+                if (_values.Count > 0)
+                {
+                    return _values.Pop();
+                }
             }
 
             return _allocate();
@@ -30,7 +34,10 @@ namespace NuGet
 
         public void Free(T value)
         {
-            _values.Push(value);
+            lock (_lockObj)
+            {
+                _values.Push(value);
+            }
         }
     }
 }

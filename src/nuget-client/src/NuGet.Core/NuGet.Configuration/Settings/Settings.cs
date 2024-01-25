@@ -53,6 +53,8 @@ namespace NuGet.Configuration
             return null;
         }
 
+        public IEnumerable<string> GetAllSettingSections() { return _computedSections.Keys; }
+
         public void AddOrUpdate(string sectionName, SettingItem item)
         {
             if (string.IsNullOrEmpty(sectionName))

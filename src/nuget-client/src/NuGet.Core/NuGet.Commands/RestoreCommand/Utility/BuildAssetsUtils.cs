@@ -722,12 +722,24 @@ namespace NuGet.Commands
 
         private static IEnumerable<LockFileItem> WithExtension(this IList<LockFileItem> items, string extension)
         {
-            if (items == null)
+            if (items == null || items.Count == 0)
             {
                 return Enumerable.Empty<LockFileItem>();
             }
 
-            return items.Where(c => extension.Equals(Path.GetExtension(c.Path), StringComparison.OrdinalIgnoreCase));
+            return FilterExtensions(items, extension);
+
+            static IEnumerable<LockFileItem> FilterExtensions(IList<LockFileItem> items, string extension)
+            {
+                for (int i = 0; i < items.Count; ++i)
+                {
+                    var item = items[i];
+                    if (extension.Equals(Path.GetExtension(item.Path), StringComparison.OrdinalIgnoreCase))
+                    {
+                        yield return item;
+                    }
+                }
+            }
         }
 
         private static string GetMatchingFrameworkStrings(PackageSpec spec, NuGetFramework framework)

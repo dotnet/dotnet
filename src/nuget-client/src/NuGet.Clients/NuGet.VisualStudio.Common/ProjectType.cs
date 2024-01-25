@@ -27,6 +27,7 @@ namespace NuGet.VisualStudio
             VsProjectTypes.DeploymentProjectTypeGuid,
             VsProjectTypes.CosmosProjectTypeGuid,
             VsProjectTypes.ManagementPackProjectTypeGuid,
+            VsProjectTypes.ESProjTypeGuid,
         };
 
         private static readonly HashSet<string> Unsupported = new HashSet<string>(StringComparer.OrdinalIgnoreCase)

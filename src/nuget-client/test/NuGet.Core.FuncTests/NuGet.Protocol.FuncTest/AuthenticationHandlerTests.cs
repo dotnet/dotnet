@@ -98,6 +98,148 @@ namespace NuGet.Protocol.FuncTest
             }
         }
 
+        [Fact]
+        public async Task GetAsync_GetPackageServiceIndex_EveryRequestForCredentialsInvokesCacheFirstAndCredentialProvidersIfNeeded_SucceedsAsync()
+        {
+            // Arrange
+            var portReserver = new PortReserver();
+            await portReserver.ExecuteAsync(async (port, cancellationToken) =>
+            {
+                var mockedCredentialService = new Mock<ICredentialService>();
+                var expectedCredentials = new NetworkCredential("user", "password1");
+
+                var server = new RequestCollectingServer(_output);
+                server.Start(port);
+                string serviceIndexUrl = server.BaseUrl + "v3/index.json";
+                string packageUrl = server.BaseUrl + "v3/flatcontainer/packageid/index.json";
+
+                try
+                {
+                    var packageSource = new PackageSource(server.BaseUrl + "v3/index.json", "test");
+                    var repository = Repository.Factory.GetCoreV3(packageSource);
+
+                    SetupCredentialServiceMock(mockedCredentialService, expectedCredentials, packageSource);
+                    HttpHandlerResourceV3.CredentialService = new Lazy<ICredentialService>(() => mockedCredentialService.Object);
+
+                    var httpSourceResource = await repository.GetResourceAsync<HttpSourceResource>();
+                    var source = httpSourceResource.HttpSource;
+
+                    using var sourceCacheContext = new SourceCacheContext()
+                    {
+                        DirectDownload = true,
+                        NoCache = true,
+                    };
+                    Mock<ILogger> logger = new();
+                    HttpSourceCacheContext httpSourceCacheContext = HttpSourceCacheContext.Create(sourceCacheContext, isFirstAttempt: true);
+
+                    // Act                    
+                    var request = new HttpSourceCachedRequest(serviceIndexUrl, "1", httpSourceCacheContext);
+                    _ = await source.GetAsync(request, ProcessResponse, logger.Object, cancellationToken);
+
+                    request = new HttpSourceCachedRequest(packageUrl, "2", httpSourceCacheContext);
+                    _ = await source.GetAsync(request, ProcessResponse, logger.Object, cancellationToken);
+                }
+                finally
+                {
+                    server.Stop();
+                }
+
+                // Assert
+
+                // Each attempt to access a private feed initially receives a 401 Unauthorized response.
+                // Following the 401 response, NuGet attempts to acquire the necessary credentials.
+                // These credentials are then used for subsequent requests to the feed.
+                // Note: If 'HttpClientHandler.PreAuthenticate' is set to true, this behavior might differ as 
+                // credentials would be sent preemptively after the initial request.
+
+                // In this test, 2 requests are sent from the test's perspective, and the previous paragraph's explanation will
+                // make you believe the server should see 4, but it turns out to be 5. This discrepancy occurs because 
+                // HttpSourceCredentials is only initialized with credentials if the PackageSource object has credentials set.
+                // In other words, if there are creds in NuGet.Config or the appropriate environment variable. However, if the
+                // package source uses a credential provider, the provider is not asked for credentials until after the first 401
+                // response. After the auth handler requests HttpClientHandler to make a second request, it will again make
+                // an unauthenticated request, and then finally obtain the credentials and send an authenticated request from
+                // what the server sees as the 3rd request.
+
+                // Request flow while accessing index.json
+                // NuGet -> Server (No Credentials) - 1st request
+                // Server -> NuGet (401 Unauthorized)
+                // NuGet -> Server (Sends HttpClientHandler.Credentials) - 2nd request
+                // Server -> NuGet (401 Unauthorized because HttpClientHandler.Credentials returns a null value by default)
+                // NuGet -> Credential Service
+                // Credential Service -> NuGet (Returns credentials)
+                // NuGet -> Server (Sends credentials received from the credential service) - 3rd request
+                // Server -> NuGet (200 OK)
+
+                // Request flow while retrieving package information
+                // NuGet -> Server (No Credentials) - 4th request
+                // Server -> NuGet (401 Unauthorized)
+                // NuGet -> Server (Sends HttpClientHandler.Credentials) - 5th request
+                // Server -> NuGet (200 OK)
+                server.Requests.Should().HaveCount(5);
+                // This should have been 2, but is 3 because of the reason mentioned above.
+                server.Requests.Count(RequestWithoutAuthorizationHeader).Should().Be(3);
+                // Validate that the credentials sent with the 3rd request & 5th request are the ones received from the credential service.
+                foreach (var httpListenerRequest in server.Requests)
+                {
+                    string? authorization = httpListenerRequest.Headers["Authorization"];
+                    if (authorization != null)
+                    {
+                        var encodedCredentials = authorization.Substring("Basic ".Length).Trim();
+                        var credentials = Encoding.UTF8.GetString(Convert.FromBase64String(encodedCredentials));
+                        var creds = credentials.Split(':');
+                        Assert.Equal(expectedCredentials.UserName, creds[0]);
+                        Assert.Equal(expectedCredentials.Password, creds[1]);
+                    }
+                }
+
+                mockedCredentialService.Verify(x => x.GetCredentialsAsync(It.IsAny<Uri>(), It.IsAny<IWebProxy>(), It.IsAny<CredentialRequestType>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+                // The method TryGetLastKnownGoodCredentialsFromCache is invoked only once, despite the client sending two requests:
+                // the first to access index.json and the second to retrieve package information.
+                // This occurs because when HttpClientHandler.Credentials is set (i.e., not null) while accessing the index.json.
+                // These credentials are automatically sent with requests to the private feed upon receiving 401 challenge.
+                // As a result, NuGet does not need to invoke the credential service again while retrieving the package information.
+                mockedCredentialService.Verify(x => x.TryGetLastKnownGoodCredentialsFromCache(It.IsAny<Uri>(), It.IsAny<bool>(), out It.Ref<ICredentials>.IsAny), Times.Once);
+
+                // ExecuteAsync returns Task<T>, so need to return something to give it a <T>.
+                return (object?)null;
+            },
+            CancellationToken.None);
+
+            static void SetupCredentialServiceMock(Mock<ICredentialService> mockedCredentialService, NetworkCredential expectedCredentials, PackageSource packageSource)
+            {
+                NetworkCredential? cachedCredentials = default;
+                mockedCredentialService.SetupGet(x => x.HandlesDefaultCredentials).Returns(true);
+                // Setup GetCredentialsAsync mock
+                mockedCredentialService
+                    .Setup(x => x.GetCredentialsAsync(packageSource.SourceUri, It.IsAny<IWebProxy>(), CredentialRequestType.Unauthorized, It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(() =>
+                    {
+                        cachedCredentials = expectedCredentials;
+                        return cachedCredentials;
+                    });
+                // Setup TryGetLastKnownGoodCredentialsFromCache mock
+                mockedCredentialService
+                    .Setup(x => x.TryGetLastKnownGoodCredentialsFromCache(packageSource.SourceUri, It.IsAny<bool>(), out It.Ref<ICredentials>.IsAny))
+                    .Returns((Uri sourceUri, bool isProxyRequest, out ICredentials? outCredentials) =>
+                    {
+                        outCredentials = cachedCredentials;
+                        return outCredentials != null;
+                    });
+            }
+
+            static bool RequestWithoutAuthorizationHeader(HttpListenerRequest request)
+            {
+                string? value = request.Headers["Authorization"];
+                return string.IsNullOrEmpty(value);
+            }
+
+            static Task<string> ProcessResponse(HttpSourceResult result)
+            {
+                return Task.FromResult(string.Empty);
+            }
+        }
+
         private class RequestCollectingServer
         {
             private string? _baseUrl;

@@ -37,10 +37,8 @@ namespace NuGet.ProjectModel.Test
             Assert.Equal(0, logger.Warnings);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Read_WhenVersionIsCurrentVersion_ReadsCorrectly(bool haveMissingPackageFiles)
+        [Fact]
+        public void Read_WhenVersionIsCurrentVersion_ReadsCorrectly()
         {
             using (var workingDir = TestDirectory.Create())
             {
@@ -54,11 +52,6 @@ namespace NuGet.ProjectModel.Test
                 var file2 = Path.Combine(workingDir, "C16089965CF84822A71D07580B29AF0E");
 
                 File.WriteAllText(file1, string.Empty);
-                if (!haveMissingPackageFiles)
-                {
-                    // Don't create one of the files
-                    File.WriteAllText(file2, string.Empty);
-                }
 
                 var version = "2";
 
@@ -89,14 +82,6 @@ namespace NuGet.ProjectModel.Test
                 Assert.Equal(bool.Parse(success), cacheFile.Success);
                 Assert.Equal(dgSpecHash, cacheFile.DgSpecHash);
                 Assert.Equal(int.Parse(version), cacheFile.Version);
-                if (haveMissingPackageFiles)
-                {
-                    Assert.True(cacheFile.HasAnyMissingPackageFiles);
-                }
-                else
-                {
-                    Assert.False(cacheFile.HasAnyMissingPackageFiles);
-                }
 
                 Assert.Equal(projectFullPath, cacheFile.ProjectFilePath);
                 Assert.Equal(1, cacheFile.LogMessages.Count);

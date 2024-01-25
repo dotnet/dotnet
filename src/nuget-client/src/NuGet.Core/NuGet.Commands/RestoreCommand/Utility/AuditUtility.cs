@@ -126,7 +126,6 @@ namespace NuGet.Commands.Restore.Utility
             {
                 var messageText = string.Format(Strings.Error_VulnerabilityDataFetch, exception.Message);
                 RestoreLogMessage logMessage = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1900, messageText);
-                logMessage.ProjectPath = _projectFullPath;
                 _logger.Log(logMessage);
             }
         }
@@ -166,7 +165,6 @@ namespace NuGet.Commands.Restore.Utility
                             message,
                             package.Id,
                             affectedGraphs.OrderBy(s => s).ToArray());
-                        restoreLogMessage.ProjectPath = _projectFullPath;
                         _logger.Log(restoreLogMessage);
                     }
                 }
@@ -384,7 +382,6 @@ namespace NuGet.Commands.Restore.Utility
 
             string messageText = string.Format(Strings.Error_InvalidNuGetAuditLevelValue, auditLevel, "low, moderate, high, critical");
             RestoreLogMessage message = RestoreLogMessage.CreateError(NuGetLogCode.NU1014, messageText);
-            message.ProjectPath = _projectFullPath;
             _logger.Log(message);
             return 0;
         }
