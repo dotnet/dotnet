@@ -22,10 +22,10 @@
       Do not use inner-clone in full product source-build, unless explicitly requested,
       i.e. for specific repos, like source-build-externals.
     -->
-    <UseInnerClone Condition="'$(UseInnerClone)' == '' and '$(DotNetBuildFromSourceFlavor)' != 'Product'">true</UseInnerClone>
+    <UseInnerClone Condition="'$(UseInnerClone)' == '' and '$(DotNetBuildFromSourceFlavor)' != 'Product' and '$(DotNetBuildOrchestrator)' != 'true'">true</UseInnerClone>
 
     <!-- Do not create intermediate package in full product source-build. -->
-    <CreateIntermediatePackage Condition="'$(DotNetBuildFromSourceFlavor)' != 'Product'">true</CreateIntermediatePackage>
+    <CreateIntermediatePackage Condition="'$(DotNetBuildFromSourceFlavor)' != 'Product' and '$(DotNetBuildOrchestrator)' != 'true'">true</CreateIntermediatePackage>
 
     <!-- Prefer abbreviations to avoid long paths (breaks on Windows) -->
     <SourceBuildOutputDir Condition="'$(SourceBuildOutputDir)' == ''">$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'sb'))</SourceBuildOutputDir>
@@ -65,6 +65,7 @@
     -->
     <_DefaultNetFrameworkFilter>netstandard2.0%3bnetstandard2.1%3bnetcoreapp2.1%3bnetcoreapp3.1%3bnet5.0%3bnet6.0%3bnet7.0%3bnet8.0%3bnet9.0</_DefaultNetFrameworkFilter>
     <SourceBuildTargetFrameworkFilter Condition="'$(SourceBuildTargetFrameworkFilter)' == ''">$(_DefaultNetFrameworkFilter)</SourceBuildTargetFrameworkFilter>
+    <RepoManifestFile>$(ArtifactsDir)RepoManifest.xml</RepoManifestFile>
   </PropertyGroup>
 
   <Target Name="GetSourceBuildIntermediateNupkgNameConvention">
@@ -145,11 +146,17 @@
   </Target>
 
   <!--
-    Create symbols archive.
+    Create symbols archive in product source-build and during intermediate package build
+    in repo build, if SupplementalIntermediateNupkgCategory matches SymbolsIntermediateNupkgCategory.
+
+    Include symbols archive in the main intermediate nupkg, by default. Repos can select a different
+    intermediate nupkg by defining 'SymbolsIntermediateNupkgCategory' property in eng/SourceBuild.props.
 
     Conditioning out for Windows as the tar execution below doesn't work cross-plat.
   -->
-  <Target Name="CreateRepoSymbolsArchive" Condition="'$(OS)' != 'Windows_NT'">
+  <Target Name="CreateRepoSymbolsArchive"
+          Condition="'$(OS)' != 'Windows_NT' and ('$(DotNetBuildFromSourceFlavor)' == 'Product' or '$(DotNetBuildOrchestrator)' == 'true' or '$(SupplementalIntermediateNupkgCategory)' == '$(SymbolsIntermediateNupkgCategory)')"
+          DependsOnTargets="GetCategorizedIntermediateNupkgContents">
     <PropertyGroup>
       <SymbolsRoot>$(CurrentRepoSourceBuildArtifactsDir)</SymbolsRoot>
       <!-- Fall back to repo root for source-build-externals or repos that don't have the regular SymbolsRoot as defined above -->
@@ -180,11 +187,42 @@
           WorkingDirectory="$(SymbolsRoot)" Condition="Exists($(SymbolsList))" />
     <Message Importance="High" Text="Packaged symbols to $(SymbolsArchiveFile)" Condition="Exists($(SymbolsList))" />
 
-    <ItemGroup>
-      <IntermediateNupkgFile Include="$(SymbolsArchiveFile)" PackagePath="artifacts" Condition="Exists($(SymbolsArchiveFile)) and '$(CreateIntermediatePackage)' != 'true'" />
+    <ItemGroup Condition="Exists($(SymbolsList))">
+      <SymbolsArchivePackageFile Include="$(SymbolsArchiveFile)" PackagePath="artifacts" />
+      <SymbolsArchivePackageFile Condition="'$(SymbolsIntermediateNupkgCategory)' != ''">
+        <Category>$(SymbolsIntermediateNupkgCategory)</Category>
+      </SymbolsArchivePackageFile>
+      <IntermediatePackageFile Include="@(SymbolsArchivePackageFile)" />
     </ItemGroup>
 
     <Delete Files="$(SymbolsList)" Condition="Exists($(SymbolsList))" />
   </Target>
 
+  <!--
+    This target can be removed once we enable standard repo assets manifests and SB orchestrator
+    starts using it - https://github.com/dotnet/source-build/issues/3970
+  -->
+  <Target Name="CreateRepoManifest"
+          DependsOnTargets="
+            GetCategorizedIntermediateNupkgContents;
+            CreateRepoSymbolsArchive">
+    <ItemGroup>
+      <RepoManifestLine Include='&lt;Build&gt;' />
+      <RepoManifestLine Include='&lt;Artifact Path="%(IntermediatePackageFile.Identity)" /&gt;' />
+      <RepoManifestLine Include='&lt;/Build&gt;' />
+    </ItemGroup>
+
+    <WriteLinesToFile
+      File="$(RepoManifestFile)"
+      Lines="@(RepoManifestLine)"
+      Overwrite="true" />
+  </Target>
+
+  <Target Name="IncludeRepoManifestInIntermediatePackage"
+           Condition="'$(CreateIntermediatePackage)' == 'true' and Exists($(RepoManifestFile))"
+           DependsOnTargets="CreateRepoManifest">
+    <ItemGroup>
+      <Content Include="$(RepoManifestFile)" PackagePath="." />
+    </ItemGroup>
+  </Target>
 </Project>

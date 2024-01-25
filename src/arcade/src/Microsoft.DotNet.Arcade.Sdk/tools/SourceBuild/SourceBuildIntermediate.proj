@@ -55,8 +55,9 @@
             GetCategorizedIntermediateNupkgContents;
             CreateRepoSymbolsArchive;
             GetSupplementalIntermediateNupkgManifest;
-            GetSymbolsArchive;
-            GetNonShippingNupkgList"
+            GetNonShippingNupkgList;
+            CreateRepoManifest;
+            IncludeRepoManifestInIntermediatePackage"
           BeforeTargets="_GetPackageFiles">
     <ItemGroup>
       <Content Include="@(IntermediatePackageFile->WithMetadataValue('Category', '$(SupplementalIntermediateNupkgCategory)'))" />
@@ -78,20 +79,6 @@
     <ItemGroup>
       <!-- The list of supplemental package ids goes into the "main" intermediate nupkg. -->
       <Content Include="$(SupplementalIntermediateNupkgManifestFile)" PackagePath="." />
-    </ItemGroup>
-  </Target>
-
-  <!--
-    Include symbols archive in the main intermediate nupkg, by default.
-
-    Repos can select a different intermediate nupkg by defining 'SymbolsIntermediateNupkgCategory'
-    property in eng/SourceBuild.props.
-  -->
-  <Target Name="GetSymbolsArchive"
-    Condition="'$(SupplementalIntermediateNupkgCategory)' == '$(SymbolsIntermediateNupkgCategory)' and '$(SymbolsArchiveFile)' != ''">
-
-    <ItemGroup Condition="Exists($(SymbolsArchiveFile))">
-      <Content Include="$(SymbolsArchiveFile)" PackagePath="artifacts" />
     </ItemGroup>
   </Target>
 

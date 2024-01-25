@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <PackageType>MSBuildSdk</PackageType>
     <IsPackable>true</IsPackable>
     <PackageDescription>An msbuild task to generate code for the API surface of an assembly.</PackageDescription>
