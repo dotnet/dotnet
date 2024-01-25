@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentColor;
 
-internal interface IDocumentColorService : ICapabilitiesProvider
+internal interface IDocumentColorService
 {
     Task<ColorInformation[]> GetColorInformationAsync(IClientConnection clientConnection, DocumentColorParams request, VersionedDocumentContext? documentContext, CancellationToken cancellationToken);
 }

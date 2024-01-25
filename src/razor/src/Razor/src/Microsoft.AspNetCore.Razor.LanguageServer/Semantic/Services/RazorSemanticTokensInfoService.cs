@@ -44,16 +44,10 @@ internal class RazorSemanticTokensInfoService(
 
     private RazorSemanticTokensLegend? _razorSemanticTokensLegend;
 
-    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
+    [MemberNotNull(nameof(_razorSemanticTokensLegend))]
+    public void SetTokensLegend(RazorSemanticTokensLegend legend)
     {
-        _razorSemanticTokensLegend = new RazorSemanticTokensLegend(clientCapabilities);
-
-        serverCapabilities.SemanticTokensOptions = new SemanticTokensOptions
-        {
-            Full = false,
-            Legend = _razorSemanticTokensLegend.Legend,
-            Range = true,
-        };
+        _razorSemanticTokensLegend = legend;
     }
 
     public async Task<SemanticTokens?> GetSemanticTokensAsync(
