@@ -44,6 +44,7 @@
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
+    <RepositoryReference Include="aspire" />
     <RepositoryReference Include="runtime" />
     <RepositoryReference Include="aspnetcore" />
     <RepositoryReference Include="sdk" />
