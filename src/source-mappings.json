@@ -228,7 +228,7 @@
                 "src/Microsoft.DotNet.Wpf/src/PresentationFramework/Resources/Hyphenation/Hyphen_en.hdict",
                 "src/Microsoft.DotNet.Wpf/src/PresentationFramework/Resources/Hyphenation/Hyphen_en.lex",
                 "src/Microsoft.DotNet.Wpf/src/ReachFramework/Resources/generated/*.resources",
-                "src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/*.bin"
+                "src/Microsoft.DotNet.Wpf/src/Shared/Tracing/resources/*.BIN"
             ]
         },
         {

@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "142fab5cf596c0cc676ae2d8073931a4d4dc4a0f"
+      "commitSha": "96b6fd8ae27f35f8bcfd89b2b14ae649d61cf047"
     },
     {
       "packageVersion": "17.10.0-preview-24073-02",
