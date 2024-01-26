@@ -56,12 +56,9 @@
   <UsingTask AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskName="WriteUsageReports" />
 
   <Target Name="GetRepositoryReferenceInfo">
-    <PropertyGroup>
-      <SourceBuiltNuGetSourceName>source-built</SourceBuiltNuGetSourceName>
-    </PropertyGroup>
     <ItemGroup>
       <RepositoryReferenceInfo Include="@(RepositoryReference)">
-        <SourceName>$(SourceBuiltNuGetSourceName)-%(Identity)</SourceName>
+        <SourceName>source-built-%(Identity)</SourceName>
         <PackagesPath>$(SourceBuiltBasePackagesPath)%(Identity)/</PackagesPath>
       </RepositoryReferenceInfo>
       <DependentRepoSourceName Include="@(RepositoryReferenceInfo->'%(SourceName)')" />
@@ -77,10 +74,7 @@
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete">
     <PropertyGroup>
-      <SourceBuiltNuGetSourceName>source-built</SourceBuiltNuGetSourceName>
       <ExtraSourcesNuGetSourceName>ExtraSources</ExtraSourcesNuGetSourceName>
-      <SourceBuildSources>$(SourceBuiltNuGetSourceName)</SourceBuildSources>
-      <SourceBuildSources Condition="'$(ExtraRestoreSourcePath)' != ''">$(SourceBuildSources);$(ExtraSourcesNuGetSourceName)</SourceBuildSources>
     </PropertyGroup>
   
     <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
@@ -88,6 +82,18 @@
       <PreviouslySourceBuiltNuGetSourceName>previously-source-built</PreviouslySourceBuiltNuGetSourceName>
       <ReferencePackagesNuGetSourceName>reference-packages</ReferencePackagesNuGetSourceName>
     </PropertyGroup>
+
+    <ItemGroup>
+      <_CommonSourceBuildSources Include="@(DependentRepoSourceName)" />
+      <_CommonSourceBuildSources Include="$(ExtraSourcesNuGetSourceName)" Condition="'$(ExtraRestoreSourcePath)' != ''" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <SourceBuildSources Condition="'$(DotNetBuildSourceOnly)' == 'true'"
+                          Include="$(PrebuiltNuGetSourceName);$(PreviouslySourceBuiltNuGetSourceName);$(ReferencePackagesNuGetSourceName);@(_CommonSourceBuildSources)" />
+      <SourceBuildSources Condition="'$(DotNetBuildSourceOnly)' != 'true'"
+                          Include="@(_CommonSourceBuildSources)" />
+    </ItemGroup>
     
     <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
       <!-- When not building source-only, repositories lagging behind on the .NET SDK (e.g. tooling repos)
@@ -104,11 +110,6 @@
       <NetSdkSupportingFeedName>net-sdk-supporting-feed</NetSdkSupportingFeedName>
       <NetSdkSupportingFeed>https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v3/index.json</NetSdkSupportingFeed>
     </PropertyGroup>
-
-    <ItemGroup>
-      <SourceBuildSources Include="$(PrebuiltNuGetSourceName);$(PreviouslySourceBuiltNuGetSourceName);$(ReferencePackagesNuGetSourceName);@(DependentRepoSourceName)" />
-      <SourceBuildSources Include="$(ExtraSourcesNuGetSourceName)" Condition="'$(ExtraRestoreSourcePath)' != ''" />
-    </ItemGroup>
 
     <RemoveInternetSourcesFromNuGetConfig
       NuGetConfigFile="$(NuGetConfigFile)"

@@ -165,7 +165,7 @@
     <SharedIntermediateOutputPath>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', '$(TargetArchitecture)', '$(Configuration)'))</SharedIntermediateOutputPath>
 
     <SourceBuiltBlobFeedDir>$([MSBuild]::NormalizeDirectory('$(SharedIntermediateOutputPath)', 'blob-feed'))</SourceBuiltBlobFeedDir>
-    <SourceBuiltBasePackagesPath>$(SourceBuiltBlobFeedDir)packages/</SourceBuiltBasePackagesPath>
+    <SourceBuiltBasePackagesPath>$([MSBuild]::NormalizeDirectory('$(SourceBuiltBlobFeedDir)', 'packages'))</SourceBuiltBasePackagesPath>
     <SourceBuiltAssetsDir>$([MSBuild]::NormalizeDirectory('$(SourceBuiltBlobFeedDir)', 'assets'))</SourceBuiltAssetsDir>
 
     <PrebuiltPackagesPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'prebuilt'))</PrebuiltPackagesPath>
