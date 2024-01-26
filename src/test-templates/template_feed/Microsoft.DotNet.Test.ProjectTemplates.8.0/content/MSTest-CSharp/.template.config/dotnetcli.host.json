@@ -13,6 +13,10 @@
       "shortName": "p",
       "longName": "enable-pack"
     },
+    "DisableRunner": {
+      "shortName": "",
+      "longName": "disable-runner"
+    },
     "skipRestore": {
       "longName": "no-restore",
       "shortName": ""

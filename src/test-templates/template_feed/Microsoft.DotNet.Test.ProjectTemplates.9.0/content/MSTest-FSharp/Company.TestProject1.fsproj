@@ -7,18 +7,20 @@
 
     <IsPackable Condition="'$(EnablePack)' == 'true'">true</IsPackable>
     <IsPackable Condition="'$(EnablePack)' != 'true'">false</IsPackable>
-    <GenerateProgramFile>false</GenerateProgramFile>
     <IsTestProject>true</IsTestProject>
+    <EnableMSTestRunner Condition="'$(DisableRunner)' != 'true'">true</EnableMSTestRunner>
+    <OutputType Condition="'$(DisableRunner)' != 'true'">Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="MSTestSettings.fs" />
     <Compile Include="Tests.fs" />
-    <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="MSTest" Version="3.2.0" />
+    <PackageReference Condition="'$(DisableRunner)' == 'true'" Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Condition="'$(DisableRunner)' != 'true'" Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.10.1" />
   </ItemGroup>
 
 </Project>
