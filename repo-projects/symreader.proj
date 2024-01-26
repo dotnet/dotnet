@@ -3,7 +3,7 @@
   <ItemGroup>
     <RepositoryReference Include="source-build-reference-packages" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="sourcelink" />
+    <!-- <RepositoryReference Include="sourcelink" /> -->
   </ItemGroup>
 
 </Project>

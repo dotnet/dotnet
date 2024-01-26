@@ -12,8 +12,8 @@
     <RepositoryReference Include="diagnostics" />
     <RepositoryReference Include="source-build-externals" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="roslyn" />
-    <RepositoryReference Include="sourcelink" />
+    <!-- <RepositoryReference Include="roslyn" /> -->
+    <!-- <RepositoryReference Include="sourcelink" /> -->
   </ItemGroup>
 
 </Project>
