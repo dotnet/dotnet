@@ -190,9 +190,9 @@
       <Sha>e56c69b0610b50407d29fdc2dda2574712a7b94d</Sha>
       <SourceBuild RepoName="deployment-tools" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="9.0.0-alpha.1.24072.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-externals" Version="9.0.0-alpha.1.24076.1">
       <Uri>https://github.com/dotnet/source-build-externals</Uri>
-      <Sha>e39dee753ccfed11d28ab8054082d21c41c6a4fe</Sha>
+      <Sha>414a85bf970355c0e91d6a2de1ee183fafbfcecd</Sha>
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta4.24068.1" CoherentParentDependency="Microsoft.NET.Sdk">
