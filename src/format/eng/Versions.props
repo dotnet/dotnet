@@ -24,6 +24,7 @@
     <!-- corefx -->
     <MicrosoftVisualBasicVersion>10.3.0</MicrosoftVisualBasicVersion>
     <!-- msbuild -->
+    <MicrosoftBuildTasksCoreVersion>17.3.2</MicrosoftBuildTasksCoreVersion>
     <MicrosoftBuildVersion>17.3.2</MicrosoftBuildVersion>
     <!-- nuget -->
     <!-- In order tests against the same version of NuGet as the SDK. We have to set this to match. -->
@@ -33,8 +34,8 @@
     <!-- roslyn-sdk -->
     <MicrosoftCodeAnalysisAnalyzerTestingVersion>1.1.2-beta1.22216.1</MicrosoftCodeAnalysisAnalyzerTestingVersion>
     <!-- runtime -->
-    <MicrosoftExtensionsFileSystemGlobbingVersion>9.0.0-alpha.1.24064.3</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftExtensionsLoggingVersion>9.0.0-alpha.1.24064.3</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftExtensionsFileSystemGlobbingVersion>9.0.0-preview.1.24074.8</MicrosoftExtensionsFileSystemGlobbingVersion>
+    <MicrosoftExtensionsLoggingVersion>9.0.0-preview.1.24074.8</MicrosoftExtensionsLoggingVersion>
     <!-- symreader -->
     <MicrosoftDiaSymReaderVersion>2.0.0</MicrosoftDiaSymReaderVersion>
   </PropertyGroup>
