@@ -81,6 +81,7 @@
       <TargetingPackVersion Condition="'%(TargetFramework)' == 'net5.0'">5.0.0</TargetingPackVersion>
       <TargetingPackVersion Condition="'%(TargetFramework)' == 'net6.0'">6.0.0</TargetingPackVersion>
       <TargetingPackVersion Condition="'%(TargetFramework)' == 'net7.0'">7.0.0</TargetingPackVersion>
+      <TargetingPackVersion Condition="'%(TargetFramework)' == 'net8.0'">8.0.0</TargetingPackVersion>
     </KnownFrameworkReference>
 
     <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'NETStandard.Library'))">
