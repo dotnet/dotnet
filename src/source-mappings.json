@@ -12,7 +12,7 @@
     // These patches are applied on top of the code synchronized into the VMR
     "patchesPath": "src/installer/src/SourceBuild/patches",
 
-    "sourceMappingsPath": "src/installer/src/VirtualMonoRepo/source-mappings.json",
+    "sourceMappingsPath": "src/installer/src/VirtualMonoRepo/source-mappings-ub.json",
 
     // Some files are copied outside of the src/ directory into other locations
     // When files in the source paths are changed, they are automatically synchronized too
@@ -26,8 +26,8 @@
             "destination": "eng/common"
         },
         {
-            "source": "src/installer/src/VirtualMonoRepo/source-mappings.json",
-            "destination": "src"
+            "source": "src/installer/src/VirtualMonoRepo/source-mappings-ub.json",
+            "destination": "src/source-mappings.json"
         }
     ],
 
@@ -37,28 +37,14 @@
     // Only filters which start with submodule's path are applied when syncing submodules
     "defaults": {
         "defaultRef": "main",
-        "exclude": [
-            "**/*.dll",
-            "**/*.Dll",
-            "**/*.exe",
-            "**/*.mdb",
-            "**/*.nupkg",
-            "**/*.pdb",
-            "**/*.tgz",
-            "**/*.zip"
-        ]
+        "exclude": []
     },
 
     // Each of these mappings has a corresponding folder in the src/ directory
     "mappings": [
         {
             "name": "arcade",
-            "defaultRemote": "https://github.com/dotnet/arcade",
-            "exclude": [
-                "src/Microsoft.DotNet.SignTool.Tests/*.mpack",
-                "src/Microsoft.DotNet.SignTool.Tests/*.msi",
-                "src/Microsoft.DotNet.SignTool.Tests/*.vsix"
-            ]
+            "defaultRemote": "https://github.com/dotnet/arcade"
         },
         {
             "name": "aspire",
@@ -69,14 +55,7 @@
         },
         {
             "name": "aspnetcore",
-            "defaultRemote": "https://github.com/dotnet/aspnetcore",
-            "exclude": [
-                "src/submodules/MessagePack-CSharp/**/*.dll",
-                "**/samples/**/jquery-validation-unobtrusive/.bower.json",
-                "**/samples/**/jquery-validation-unobtrusive/*.js",
-                "src/Installers/Windows/AspNetCoreModule-Setup/*",
-                "src/SignalR/clients/java/signalr/gradle/wrapper/gradle-wrapper.jar"
-            ]
+            "defaultRemote": "https://github.com/dotnet/aspnetcore"
         },
         {
             "name": "cecil",
@@ -121,10 +100,7 @@
         {
             "name": "nuget-client",
             "defaultRemote": "https://github.com/NuGet/NuGet.Client",
-            "defaultRef": "dev",
-            "exclude":[
-                "src/NuGet.Clients/NuGet.VisualStudio.Client"
-            ]
+            "defaultRef": "dev"
         },
         {
             "name": "razor",
@@ -188,11 +164,7 @@
         },
         {
             "name": "vstest",
-            "defaultRemote": "https://github.com/microsoft/vstest",
-            "exclude": [
-                // Non-OSS license used in VS specific build configurations.
-                "src/package/licenses/LICENSE_VS.txt"
-            ]
+            "defaultRemote": "https://github.com/microsoft/vstest"
         },
         {
             "name": "xdt",
