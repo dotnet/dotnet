@@ -19,7 +19,7 @@
         - Building in DotNetBuild mode and we're in the inner repo and this is a source-only build -->
   <Target Name="CollectSourceBuildIntermediateNupkgDependencies"
           Condition="
-            '$(DotNetBuildFromSourceFlavor)' != 'Product' and
+            '$(DotNetBuildFromSourceFlavor)' != 'Product' and '$(DotNetBuildOrchestrator)' != 'true' and
             ('$(SetUpSourceBuildIntermediateNupkgCache)' == 'true' or
             ('$(ArcadeBuildFromSource)' == 'true' and '$(ArcadeInnerBuildFromSource)' == 'true') or
             ('$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildSourceOnly)' == 'true'))"
@@ -45,7 +45,7 @@
          - If building in DotNetBuild mode and we're in the inner repo and this is a source-only build -->
   <Target Name="SetUpSourceBuildIntermediateNupkgCache"
           Condition="
-            '$(DotNetBuildFromSourceFlavor)' != 'Product' and
+            '$(DotNetBuildFromSourceFlavor)' != 'Product' and '$(DotNetBuildOrchestrator)' != 'true' and
             ('$(SetUpSourceBuildIntermediateNupkgCache)' == 'true' or
               ('@(SourceBuildIntermediateNupkgReference)' != '' and
                 (('$(ArcadeBuildFromSource)' == 'true' and '$(ArcadeInnerBuildFromSource)' == 'true') or

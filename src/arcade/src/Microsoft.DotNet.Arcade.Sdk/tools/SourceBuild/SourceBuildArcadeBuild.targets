@@ -82,8 +82,10 @@
            - ArcadeInnerBuildFromSource - Mark inner build, turn on key inner build infra.
            - DotNetBuildVertical -   Vertical build PoC.
            DotNetBuildRepo
-           - DotNetBuildInnerRepo - Mark inner build, turn on key inner build infra. -->
+           - DotNetBuildInnerRepo - Mark inner build, turn on key inner build infra.
+           - DotNetBuildSourceOnly - Build from source only. Pass through outer build value if present. -->
       <InnerBuildArgs Condition="'$(DotNetBuildRepo)' == 'true'">$(InnerBuildArgs) /p:DotNetBuildInnerRepo=true</InnerBuildArgs>
+      <InnerBuildArgs Condition="'$(DotNetBuildSourceOnly)' != ''">$(InnerBuildArgs) /p:DotNetBuildSourceOnly=$(DotNetBuildSourceOnly)</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(ArcadeBuildFromSource)' == 'true'">$(InnerBuildArgs) /p:ArcadeInnerBuildFromSource=true /p:DotNetBuildFromSource=true</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(ArcadeBuildVertical)' == 'true'">$(InnerBuildArgs) /p:ArcadeInnerBuildFromSource=true /p:DotNetBuildVertical=true</InnerBuildArgs>
       <!-- Use a fresh clone of the repo so that source-build modifications are isolated. -->
@@ -106,7 +108,7 @@
     <ItemGroup>
       <!-- Override package cache to separate source-built packages from upstream. -->
       <InnerBuildEnv Include="NUGET_PACKAGES=$(CurrentRepoSourceBuildPackageCache)" />
-      <InnerBuildEnv Include="DotNetTargetFrameworkFilter=$(SourceBuildTargetFrameworkFilter)" Condition="'$(ArcadeBuildFromSource)' == 'true'" />
+      <InnerBuildEnv Include="DotNetTargetFrameworkFilter=$(SourceBuildTargetFrameworkFilter)" Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuildSourceOnly)' != ''" />
     </ItemGroup>
   </Target>
 

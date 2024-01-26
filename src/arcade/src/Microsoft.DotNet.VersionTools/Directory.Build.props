@@ -5,6 +5,7 @@
   <!-- Don't include VersionTools in source-build until we find a reason to use it. -->
   <PropertyGroup>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
   </PropertyGroup>
 
 </Project>
