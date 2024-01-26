@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Editor;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
 
@@ -19,12 +19,12 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 internal class DefaultVisualStudioDocumentTrackerFactoryFactory(
     ProjectSnapshotManagerDispatcher dispatcher,
     JoinableTaskContext joinableTaskContext,
+    IProjectSnapshotManagerAccessor projectManagerAccessor,
     ITextDocumentFactoryService textDocumentFactory,
     IProjectEngineFactoryProvider projectEngineFactoryProvider) : ILanguageServiceFactory
 {
     public ILanguageService CreateLanguageService(HostLanguageServices languageServices)
     {
-        var projectManager = languageServices.GetRequiredService<ProjectSnapshotManager>();
         var workspaceEditorSettings = languageServices.GetRequiredService<WorkspaceEditorSettings>();
         var importDocumentManager = languageServices.GetRequiredService<ImportDocumentManager>();
 
@@ -33,7 +33,7 @@ internal class DefaultVisualStudioDocumentTrackerFactoryFactory(
         return new DefaultVisualStudioDocumentTrackerFactory(
             dispatcher,
             joinableTaskContext,
-            projectManager,
+            projectManagerAccessor,
             workspaceEditorSettings,
             projectPathProvider,
             textDocumentFactory,

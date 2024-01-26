@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Editor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor.Razor.Documents;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -34,7 +35,6 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
     private Project? _workspaceProject;
     private readonly ImportDocumentManager _importDocumentManager;
     private readonly WorkspaceEditorSettings _workspaceEditorSettings;
-    private readonly List<TagHelperDescriptor> _someTagHelpers;
     private readonly ProjectSnapshotManagerBase _projectManager;
     private readonly DefaultVisualStudioDocumentTracker _documentTracker;
 
@@ -54,12 +54,12 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
 
         _workspaceEditorSettings = new DefaultWorkspaceEditorSettings(Mock.Of<IClientSettingsManager>(MockBehavior.Strict));
 
-        _someTagHelpers = new List<TagHelperDescriptor>()
-        {
-            TagHelperDescriptorBuilder.Create("test", "test").Build(),
-        };
-
         _projectManager = new TestProjectSnapshotManager(Workspace, ProjectEngineFactoryProvider, Dispatcher) { AllowNotifyListeners = true };
+
+        var projectManagerAccessorMock = new Mock<IProjectSnapshotManagerAccessor>(MockBehavior.Strict);
+        projectManagerAccessorMock
+            .SetupGet(x => x.Instance)
+            .Returns(_projectManager);
 
         _hostProject = new HostProject(_projectPath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_1, _rootNamespace);
         _updatedHostProject = new HostProject(_projectPath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_0, _rootNamespace);
@@ -70,7 +70,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
             JoinableTaskFactory.Context,
             _filePath,
             _projectPath,
-            _projectManager,
+            projectManagerAccessorMock.Object,
             _workspaceEditorSettings,
             ProjectEngineFactoryProvider,
             _textBuffer,
