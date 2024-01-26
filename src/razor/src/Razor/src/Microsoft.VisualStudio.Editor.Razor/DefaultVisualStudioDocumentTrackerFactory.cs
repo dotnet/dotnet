@@ -6,7 +6,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Editor;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Threading;
 
@@ -19,14 +19,14 @@ internal class DefaultVisualStudioDocumentTrackerFactory : VisualStudioDocumentT
     private readonly ITextDocumentFactoryService _textDocumentFactory;
     private readonly ProjectPathProvider _projectPathProvider;
     private readonly ImportDocumentManager _importDocumentManager;
-    private readonly ProjectSnapshotManager _projectManager;
+    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor;
     private readonly WorkspaceEditorSettings _workspaceEditorSettings;
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
 
     public DefaultVisualStudioDocumentTrackerFactory(
         ProjectSnapshotManagerDispatcher dispatcher,
         JoinableTaskContext joinableTaskContext,
-        ProjectSnapshotManager projectManager,
+        IProjectSnapshotManagerAccessor projectManagerAccessor,
         WorkspaceEditorSettings workspaceEditorSettings,
         ProjectPathProvider projectPathProvider,
         ITextDocumentFactoryService textDocumentFactory,
@@ -35,7 +35,7 @@ internal class DefaultVisualStudioDocumentTrackerFactory : VisualStudioDocumentT
     {
         _dispatcher = dispatcher;
         _joinableTaskContext = joinableTaskContext;
-        _projectManager = projectManager;
+        _projectManagerAccessor = projectManagerAccessor;
         _workspaceEditorSettings = workspaceEditorSettings;
         _projectPathProvider = projectPathProvider;
         _textDocumentFactory = textDocumentFactory;
@@ -63,7 +63,7 @@ internal class DefaultVisualStudioDocumentTrackerFactory : VisualStudioDocumentT
 
         var filePath = textDocument.FilePath;
         var tracker = new DefaultVisualStudioDocumentTracker(
-            _dispatcher, _joinableTaskContext, filePath, projectPath, _projectManager, _workspaceEditorSettings, _projectEngineFactoryProvider, textBuffer, _importDocumentManager);
+            _dispatcher, _joinableTaskContext, filePath, projectPath, _projectManagerAccessor, _workspaceEditorSettings, _projectEngineFactoryProvider, textBuffer, _importDocumentManager);
 
         return tracker;
     }

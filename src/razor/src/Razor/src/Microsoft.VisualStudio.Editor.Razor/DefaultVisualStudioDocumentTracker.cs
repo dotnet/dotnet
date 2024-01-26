@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Editor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Threading;
@@ -24,7 +25,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
     private readonly JoinableTaskContext _joinableTaskContext;
     private readonly string _filePath;
     private readonly string _projectPath;
-    private readonly ProjectSnapshotManager _projectManager;
+    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor;
     private readonly WorkspaceEditorSettings _workspaceEditorSettings;
     private readonly ITextBuffer _textBuffer;
     private readonly ImportDocumentManager _importDocumentManager;
@@ -41,7 +42,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
         JoinableTaskContext joinableTaskContext,
         string filePath,
         string projectPath,
-        ProjectSnapshotManager projectManager,
+        IProjectSnapshotManagerAccessor projectManagerAccessor,
         WorkspaceEditorSettings workspaceEditorSettings,
         IProjectEngineFactoryProvider projectEngineFactoryProvider,
         ITextBuffer textBuffer,
@@ -67,9 +68,9 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
             throw new ArgumentNullException(nameof(projectPath));
         }
 
-        if (projectManager is null)
+        if (projectManagerAccessor is null)
         {
-            throw new ArgumentNullException(nameof(projectManager));
+            throw new ArgumentNullException(nameof(projectManagerAccessor));
         }
 
         if (workspaceEditorSettings is null)
@@ -96,7 +97,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
         _joinableTaskContext = joinableTaskContext;
         _filePath = filePath;
         _projectPath = projectPath;
-        _projectManager = projectManager;
+        _projectManagerAccessor = projectManagerAccessor;
         _workspaceEditorSettings = workspaceEditorSettings;
         _textBuffer = textBuffer;
         _importDocumentManager = importDocumentManager;
@@ -180,7 +181,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
         _projectSnapshot = GetOrCreateProject(_projectPath);
         _isSupportedProject = true;
 
-        _projectManager.Changed += ProjectManager_Changed;
+        _projectManagerAccessor.Instance.Changed += ProjectManager_Changed;
         _workspaceEditorSettings.Changed += EditorSettingsManager_Changed;
         _importDocumentManager.Changed += Import_Changed;
 
@@ -193,9 +194,11 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
     {
         _dispatcher.AssertDispatcherThread();
 
-        var projectKey = _projectManager.GetAllProjectKeys(projectPath).FirstOrDefault();
+        var projectManager = _projectManagerAccessor.Instance;
 
-        if (_projectManager.GetLoadedProject(projectKey) is not { } project)
+        var projectKey = projectManager.GetAllProjectKeys(projectPath).FirstOrDefault();
+
+        if (projectManager.GetLoadedProject(projectKey) is not { } project)
         {
             return new EphemeralProjectSnapshot(_projectEngineFactoryProvider, projectPath);
         }
@@ -214,7 +217,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
 
         _importDocumentManager.OnUnsubscribed(this);
 
-        _projectManager.Changed -= ProjectManager_Changed;
+        _projectManagerAccessor.Instance.Changed -= ProjectManager_Changed;
         _workspaceEditorSettings.Changed -= EditorSettingsManager_Changed;
         _importDocumentManager.Changed -= Import_Changed;
 
@@ -246,7 +249,7 @@ internal class DefaultVisualStudioDocumentTracker : VisualStudioDocumentTracker
             string.Equals(_projectPath, e.ProjectFilePath, StringComparison.OrdinalIgnoreCase))
         {
             // This will be the new snapshot unless the project was removed.
-            _projectSnapshot = _projectManager.GetLoadedProject(e.ProjectKey);
+            _projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(e.ProjectKey);
 
             switch (e.Kind)
             {
