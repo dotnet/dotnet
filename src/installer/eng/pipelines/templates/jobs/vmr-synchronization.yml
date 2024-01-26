@@ -2,6 +2,10 @@
 ### It synchronizes the content of the VMR to this new commit and pushes the changes
 
 parameters:
+- name: jobName
+  displayName: Name of the pipeline job
+  type: string
+
 - name: targetRef
   displayName: Target revision of dotnet/installer to synchronize
   type: string
@@ -18,8 +22,8 @@ parameters:
   default: false
 
 jobs:
-- job: Synchronize_VMR
-  displayName: Synchronize dotnet/dotnet
+- job: ${{ parameters.jobName }}
+  displayName: Synchronize VMR's ${{ parameters.vmrBranch }}
   timeoutInMinutes: 120
   variables:
   - template: /eng/common/templates/variables/pool-providers.yml
@@ -36,7 +40,7 @@ jobs:
       - group: DotNetBot-AzDO-PAT
       - name: vmrInternalUrl
         value: https://dnceng@dev.azure.com/dnceng/internal/_git/dotnet-dotnet
-  
+
   pool:
     ${{ if eq(variables['System.TeamProject'], 'public') }}:
       name: $(DncEngPublicBuildPool)
@@ -59,7 +63,7 @@ jobs:
 
   - ${{ if and(not(parameters.noPush), not(in(variables['Build.Reason'], 'PullRequest')), eq(variables['System.TeamProject'], 'internal')) }}:
     # Push main and release branches to the public VMR
-    - ${{ if or(eq(parameters.vmrBranch, 'main'), startsWith(parameters.vmrBranch, 'release/')) }}:
+    - ${{ if or(eq(parameters.vmrBranch, 'main'), eq(parameters.vmrBranch, 'main-ub'), startsWith(parameters.vmrBranch, 'release/')) }}:
       - script: >
           ./.dotnet/dotnet darc vmr push
           --vmr '$(vmrPath)'

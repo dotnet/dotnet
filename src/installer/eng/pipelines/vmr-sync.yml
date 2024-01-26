@@ -32,10 +32,14 @@ variables:
 - ${{ else }}:
   - name: VmrBranch
     value: ${{ replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), 'refs/pull/', '') }}
-    
+
 jobs:
-  - template: /eng/pipelines/templates/jobs/vmr-synchronization.yml
-    parameters:
-      vmrBranch: ${{ variables.VmrBranch }}
-  
-    
+- template: /eng/pipelines/templates/jobs/vmr-synchronization.yml
+  parameters:
+    jobName: Synchronize_VMR
+    vmrBranch: ${{ variables.VmrBranch }}
+
+- template: /eng/pipelines/templates/jobs/vmr-synchronization.yml
+  parameters:
+    jobName: Synchronize_VMR_uncloacked
+    vmrBranch: ${{ variables.VmrBranch }}-ub
