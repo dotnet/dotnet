@@ -69,6 +69,7 @@ for absl in 0 1; do
     --copt="-Wundef" \
     --cxxopt="-std=c++14" \
     --define="absl=${absl}" \
+    --enable_bzlmod=true \
     --features=external_include_paths \
     --keep_going \
     --show_timestamps \
