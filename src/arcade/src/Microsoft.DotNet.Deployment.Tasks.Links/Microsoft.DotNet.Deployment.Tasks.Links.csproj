@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
     <Description>Aka.ms link manager</Description>
     <PackageTags>Arcade aka.ms</PackageTags>
     <DevelopmentDependency>true</DevelopmentDependency>
@@ -23,7 +24,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.DotNet.VersionTools\lib\Microsoft.DotNet.VersionTools.csproj" />
   </ItemGroup>
-
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

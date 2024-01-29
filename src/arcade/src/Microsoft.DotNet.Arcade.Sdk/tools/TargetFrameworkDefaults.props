@@ -37,8 +37,9 @@
     <NetToolCurrent Condition="'$(DotNetBuildFromSource)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true'">$(NetCurrent)</NetToolCurrent>
 
     <!-- Lowest version of .NET at the time of the release of NetCurrent that is supported by tooling.
-         Undefined when NetToolCurrent and NetToolMinimum are identical. -->
-    <NetToolMinimum>net8.0</NetToolMinimum>
+         Identical with NetToolCurrent when building from source. -->
+    <NetToolMinimum Condition="'$(DotNetBuildFromSource)' != 'true'">net8.0</NetToolMinimum>
+    <NetToolMinimum Condition="'$(DotNetBuildFromSource)' == 'true'">$(NetToolCurrent)</NetToolMinimum>
 
     <!-- The version of .NET Framework that tools (i.e. msbuild tasks) should target. -->
     <NetFrameworkToolCurrent>net472</NetFrameworkToolCurrent>

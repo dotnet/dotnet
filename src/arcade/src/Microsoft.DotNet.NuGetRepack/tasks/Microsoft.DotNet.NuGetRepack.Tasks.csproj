@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
     <PackageType>MSBuildSdk</PackageType>
     <PackageDescription>Build task for updating version of NuGet packages.</PackageDescription>
     <PackageTags>Arcade Build Tool NuGet version</PackageTags>
@@ -26,7 +27,5 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.DotNet.NuGetRepack.Tests" />
   </ItemGroup>
-
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>
