@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@32898dc](https://github.com/dotnet/fsharp/tree/32898dc51efc669de98e7e47f57d521bc07ac4cc)*
 - `src/installer`  
-*[dotnet/installer@6b5e5a1](https://github.com/dotnet/installer/tree/6b5e5a1d025e8f24a045003705fc551a502a0556)*
+*[dotnet/installer@0f8fa81](https://github.com/dotnet/installer/tree/0f8fa81b3857048f3b10bd9b49c89be0a5f03f40)*
 - `src/msbuild`  
 *[dotnet/msbuild@e7a44d7](https://github.com/dotnet/msbuild/tree/e7a44d757e097eb17dcac5a8436645dc612fec4b)*
 - `src/nuget-client`  
