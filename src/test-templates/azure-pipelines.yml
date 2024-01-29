@@ -49,9 +49,6 @@ variables:
       /p:VisualStudioDropName=$(_VisualStudioDropName)
       /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
       /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
-      /p:DotNetPublishBlobFeedKey=$(dotnetfeed-storage-access-key-1)
-      /p:DotNetPublishBlobFeedUrl=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
-      /p:DotNetPublishToBlobFeed=true
       /p:DotNetPublishUsingPipelines=true
       /p:DotNetArtifactsCategory=.NETCore
       /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
