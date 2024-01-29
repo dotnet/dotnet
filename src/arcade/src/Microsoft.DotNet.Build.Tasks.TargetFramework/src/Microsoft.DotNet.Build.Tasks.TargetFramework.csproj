@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
     <Title>Configuration system for cross-targeting projects.</Title>
     <PackageDescription>This package provides the following MSBuild tasks: ChooseBestTargetFrameworksTask and ChooseBestP2PTargetFrameworkTask.</PackageDescription>
     <Nullable>enable</Nullable>
@@ -21,7 +22,5 @@
     <PackageReference Include="Microsoft.Build.Tasks.Core" />
     <PackageReference Include="NuGet.Packaging" />
   </ItemGroup>
-
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

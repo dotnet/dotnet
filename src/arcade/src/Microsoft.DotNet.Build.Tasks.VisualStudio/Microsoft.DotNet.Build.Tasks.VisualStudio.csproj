@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>$(NetFrameworkToolCurrent)</TargetFramework>
     <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
     <PackageDescription>Arcade SDK build tasks for Visual Studio profile guided optimization training</PackageDescription>
     <PackageTags>Roslyn Build Task OptProf Optimization Training</PackageTags>
     <DevelopmentDependency>true</DevelopmentDependency>
@@ -19,7 +20,5 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.DotNet.Build.Tasks.VisualStudio.Tests" />
   </ItemGroup>
-
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

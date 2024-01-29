@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
     <Description>Common toolset for building shared frameworks and framework packs.</Description>
     <PackageType>MSBuildSdk</PackageType>
     <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
@@ -36,7 +37,5 @@
 
     <PackageReference Include="System.Reflection.Metadata" />
   </ItemGroup>
-  
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

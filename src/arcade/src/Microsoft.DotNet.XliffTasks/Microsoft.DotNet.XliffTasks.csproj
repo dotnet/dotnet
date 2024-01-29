@@ -1,11 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <!-- TODO: Remove this line when a new Arcade SDK is consumed. -->
+    <NetToolMinimum Condition="'$(DotNetBuildFromSource)' == 'true'">$(NetToolCurrent)</NetToolMinimum>
+    <!--
+       We need to target net8.0 while Arcade SDK 8 is being used.
+       Xliff tasks were moved from dotnet/xliff-tasks to Arcade in V9, so they are not available in release/8.0 branch.
+    -->
+    <TargetFrameworks>$(NetToolMinimum);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
     <RootNamespace>XliffTasks</RootNamespace>
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <BuildTaskTargetTfmSpecificFolder>net</BuildTaskTargetTfmSpecificFolder>
+    <BuildTaskTargetTfmSpecificFolder Condition="'$(TargetFramework)' == '$(NetFrameworkToolCurrent)'">netframework</BuildTaskTargetTfmSpecificFolder>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Text.Json" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" />
   </ItemGroup>
 
@@ -24,7 +35,5 @@
     <EmbeddedResource Include="Model\xliff-core-1.2-transitional.xsd" />
     <EmbeddedResource Include="Model\xml.xsd" />
   </ItemGroup>
-
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

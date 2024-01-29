@@ -2,8 +2,8 @@
 <Project>
 
   <PropertyGroup>
-    <XliffTasksDirectory Condition="'$(XliffTasksDirectory)' == '' and '$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net9.0\</XliffTasksDirectory>
-    <XliffTasksDirectory Condition="'$(XliffTasksDirectory)' == '' and '$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\net472\</XliffTasksDirectory>
+    <XliffTasksDirectory Condition="'$(XliffTasksDirectory)' == '' and '$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)..\tools\net\</XliffTasksDirectory>
+    <XliffTasksDirectory Condition="'$(XliffTasksDirectory)' == '' and '$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)..\tools\netframework\</XliffTasksDirectory>
     <XliffTasksAssembly>$(XliffTasksDirectory)Microsoft.DotNet.XliffTasks.dll</XliffTasksAssembly>
     <XliffTasksTaskFactory Condition="'$(XliffTasksTaskFactory)' == ''">AssemblyTaskFactory</XliffTasksTaskFactory>
   </PropertyGroup>
@@ -99,6 +99,12 @@
         <XlfInput Condition="'%(EmbeddedResource.XlfInput)' == '' and '%(EmbeddedResource.Extension)' == '.resx'">true</XlfInput>
       </EmbeddedResource>
 
+      <Content Update="@(Content)" Condition="'%(Content.Extension)' == '.json' and ('%(Content.XlfInput)' == 'true' or '%(Content.XlfPreserveFileName)' != '')">
+        <XlfInput>true</XlfInput>
+        <XlfSourceFormat>Json</XlfSourceFormat>
+        <XlfOutputItem>Content</XlfOutputItem>
+      </Content>
+
       <UnstructuredResource Include="%(VSTemplate.TranslatableResources)" />
 
       <XlfSource Include="@(EmbeddedResource->WithMetadataValue('XlfInput', 'true'))" />
@@ -107,6 +113,7 @@
       <XlfSource Include="@(XamlPropertyRule->WithMetadataValue('XlfInput', 'true'))" />
       <XlfSource Include="@(XamlPropertyRuleNoCodeBehind->WithMetadataValue('XlfInput', 'true'))" />
       <XlfSource Include="@(XamlPropertyProjectItemsSchema->WithMetadataValue('XlfInput', 'true'))" />
+      <XlfSource Include="@(Content->WithMetadataValue('XlfInput', 'true'))" />
     </ItemGroup>
   </Target>
 

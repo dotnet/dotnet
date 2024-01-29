@@ -1,9 +1,10 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
+using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using System.IO;
 
 namespace XliffTasks.Tasks
 {
@@ -24,13 +25,19 @@ namespace XliffTasks.Tasks
             {
                 string translatedFullPath = xlf.GetMetadataOrThrow(MetadataKey.XlfTranslatedFullPath);
                 string language = xlf.GetMetadataOrThrow(MetadataKey.XlfLanguage);
+                bool preserveFileName = string.Equals(xlf.GetMetadata(MetadataKey.XlfPreserveFileName), "true", StringComparison.OrdinalIgnoreCase);
 
                 TaskItem output = new(xlf) { ItemSpec = translatedFullPath };
 
                 // Set up metadata required to give the correct resource names to translated source.
-                SetLink(xlf, output, translatedFullPath);
-                AdjustManifestResourceName(xlf, output, language);
-                AdjustLogicalName(xlf, output, language);
+                SetLink(xlf, output, language, translatedFullPath, preserveFileName);
+
+                if (!preserveFileName)
+                {
+                    AdjustManifestResourceName(xlf, output, language);
+                    AdjustLogicalName(xlf, output, language);
+                }
+
                 AdjustDependentUpon(xlf, output);
 
                 outputs[index++] = output;
@@ -46,7 +53,7 @@ namespace XliffTasks.Tasks
             Path.AltDirectorySeparatorChar
         };
 
-        private static void SetLink(ITaskItem xlf, ITaskItem output, string translatedFullPath)
+        private static void SetLink(ITaskItem xlf, ITaskItem output, string language, string translatedFullPath, bool preserveFileName)
         {
             // Set link metadata to logically locate translated source next to untranslated source
             // so that the correct resource names are generated.
@@ -56,15 +63,20 @@ namespace XliffTasks.Tasks
                 link = xlf.GetMetadataOrThrow(MetadataKey.XlfSource);
             }
 
-            string linkFileName = Path.GetFileName(translatedFullPath);
+            string relativePath = Path.GetFileName(translatedFullPath);
+            if (preserveFileName)
+            {
+                relativePath = Path.Combine(language, relativePath);
+            }
+
             if (link.IndexOfAny(s_directorySeparatorChars) < 0)
             {
-                link = linkFileName;
+                link = relativePath;
             }
             else
             {
                 string linkDirectory = Path.GetDirectoryName(link);
-                link = Path.Combine(linkDirectory, linkFileName);
+                link = Path.Combine(linkDirectory, relativePath);
             }
 
             output.SetMetadata(MetadataKey.Link, link);

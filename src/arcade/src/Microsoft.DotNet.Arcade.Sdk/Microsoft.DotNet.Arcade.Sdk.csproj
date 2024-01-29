@@ -5,6 +5,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
+
     <!-- Generate package during Build, rather than Pack, so that it can be used during Test. -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
@@ -82,7 +84,5 @@
       <FileWrites Include="$(_GeneratedVersionFilePath)" />
     </ItemGroup>
   </Target>
-
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>
