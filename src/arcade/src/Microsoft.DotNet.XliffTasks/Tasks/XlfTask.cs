@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Utilities;
@@ -49,6 +49,10 @@ namespace XliffTasks.Tasks
             else if (format.Equals("XamlRule", StringComparison.OrdinalIgnoreCase))
             {
                 document = new XamlRuleDocument();
+            }
+            else if (format.Equals("Json", StringComparison.OrdinalIgnoreCase))
+            {
+                document = new JsonDocument();
             }
             else
             {

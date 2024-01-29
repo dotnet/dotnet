@@ -4,6 +4,7 @@
     <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
     <Description>Workload pack installer generation task package</Description>
     <PackageTags>Arcade Build Tool Installer Workloads</PackageTags>
     <DevelopmentDependency>true</DevelopmentDependency>
@@ -71,7 +72,5 @@
              AutoGen="True"
              DependentUpon="Strings.resx" />
   </ItemGroup>
-
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

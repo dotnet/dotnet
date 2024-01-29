@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
@@ -50,16 +50,21 @@ namespace XliffTasks.Tasks
 
         private string GetTranslatedOutputPath(ITaskItem source, string language, HashSet<string> outputPaths)
         {
-            string translatedFilename = source.GetMetadata(MetadataKey.XlfTranslatedFilename);
-            if (string.IsNullOrEmpty(translatedFilename))
+            bool preserveFileName = string.Equals(source.GetMetadata(MetadataKey.XlfPreserveFileName), "true", StringComparison.OrdinalIgnoreCase);
+
+            string translatedFileName = source.GetMetadata(MetadataKey.XlfTranslatedFilename);
+            if (string.IsNullOrEmpty(translatedFileName))
             {
-                translatedFilename = Path.GetFileNameWithoutExtension(source.ItemSpec);
-                source.SetMetadata(MetadataKey.XlfTranslatedFilename, translatedFilename);
+                translatedFileName = Path.GetFileNameWithoutExtension(source.ItemSpec);
+                source.SetMetadata(MetadataKey.XlfTranslatedFilename, translatedFileName);
             }
 
             string sourceDocumentPath = source.GetMetadataOrDefault(MetadataKey.SourceDocumentPath, source.ItemSpec);
             string extension = Path.GetExtension(source.ItemSpec);
-            string outputPath = Path.Combine(TranslatedOutputDirectory, $"{translatedFilename}.{language}{extension}");
+
+            string outputPath = preserveFileName ?
+                Path.Combine(TranslatedOutputDirectory, language, $"{translatedFileName}{extension}") :
+                Path.Combine(TranslatedOutputDirectory, $"{translatedFileName}.{language}{extension}");
 
             if (!outputPaths.Add(outputPath))
             {

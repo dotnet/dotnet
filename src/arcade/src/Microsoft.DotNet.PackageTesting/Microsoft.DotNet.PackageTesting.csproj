@@ -4,6 +4,7 @@
     <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <PackageType>MSBuildSdk</PackageType>
     <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,7 +20,5 @@
   <ItemGroup>
     <Compile Include="..\Common\Internal\BuildTask.cs" />
   </ItemGroup>
-
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

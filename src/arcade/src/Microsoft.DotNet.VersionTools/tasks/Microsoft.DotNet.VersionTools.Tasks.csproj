@@ -1,8 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
     <PackageType>MSBuildSdk</PackageType>
   </PropertyGroup>
 
@@ -14,7 +15,5 @@
     <ProjectReference Include="..\..\Common\Microsoft.Arcade.Common\Microsoft.Arcade.Common.csproj" />
     <ProjectReference Include="..\lib\Microsoft.DotNet.VersionTools.csproj" />
   </ItemGroup>
-
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

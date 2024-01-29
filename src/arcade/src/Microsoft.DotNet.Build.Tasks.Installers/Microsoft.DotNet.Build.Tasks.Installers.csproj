@@ -4,6 +4,7 @@
     <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
     <Description>Installer task package</Description>
     <PackageTags>Arcade Build Tool Installer</PackageTags>
     <DevelopmentDependency>true</DevelopmentDependency>
@@ -37,7 +38,5 @@
   <ItemGroup>
     <Compile Include="..\Common\Internal\BuildTask.cs" />
   </ItemGroup>
-
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

@@ -5,6 +5,7 @@
     <SignAssembly>true</SignAssembly>
     <Description>This package provides support for publishing assets to a NuGet protocol based feed.</Description>
     <DevelopmentDependency>true</DevelopmentDependency>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
     <PackageType>MSBuildSdk</PackageType>
     <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
@@ -48,7 +49,5 @@
   <ItemGroup>
     <Compile Include="..\Common\Internal\EnumExtensions.cs" />
   </ItemGroup>
-
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>
