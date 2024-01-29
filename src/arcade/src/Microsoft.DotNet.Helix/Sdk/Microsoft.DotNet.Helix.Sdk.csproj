@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <PackageType>MSBuildSdk</PackageType>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
     <DefaultItemExcludes Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) != '.NETFramework'">**/*.Desktop.*</DefaultItemExcludes>
   </PropertyGroup>
 
@@ -49,7 +50,5 @@
                                tools\xharness-runner\xharness-helix-job.android.ps1"
                       CopyToOutputDirectory="Never" />
   </ItemGroup>
-
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

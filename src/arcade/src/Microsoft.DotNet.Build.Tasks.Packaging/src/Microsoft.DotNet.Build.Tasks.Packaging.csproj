@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
     <IsPackable>true</IsPackable>
+    <IsBuildTaskProject>true</IsBuildTaskProject>
     <PackageType>MSBuildSdk</PackageType>
     <Title>Packaging Targets and Tasks used by Dotnet repos</Title>
     <PackageDescription>This package provides the following MSBuild tasks:
@@ -79,7 +80,5 @@
              PackagePath="build\runtime.json" />
      </ItemGroup>
   </Target>
-
-  <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" />
 
 </Project>

@@ -1,0 +1,11 @@
+<Project>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <PackageVersion Update="System.Text.Json" Version="7.0.1" />
+    <PackageVersion Update="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+    <PackageVersion Update="Microsoft.Extensions.DependencyModel" Version="7.0.0" />
+    <PackageVersion Update="System.Collections.Immutable" Version="7.0.0" />
+    <PackageVersion Update="System.Reflection.Metadata" Version="7.0.0" />
+  </ItemGroup>
+
+</Project>
