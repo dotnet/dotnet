@@ -22,11 +22,11 @@ namespace Microsoft.CodeAnalysis.Remote.Razor;
 [Export(typeof(ITagHelperResolver))]
 [method: ImportingConstructor]
 internal class OutOfProcTagHelperResolver(
-    IProjectSnapshotManagerAccessor projectManagerAccessor,
+    IWorkspaceProvider workspaceProvider,
     IErrorReporter errorReporter,
     ITelemetryReporter telemetryReporter) : ITagHelperResolver
 {
-    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor = projectManagerAccessor;
+    private readonly IWorkspaceProvider _workspaceProvider = workspaceProvider;
     private readonly IErrorReporter _errorReporter = errorReporter;
     private readonly CompilationTagHelperResolver _innerResolver = new(telemetryReporter);
     private readonly TagHelperResultCache _resultCache = new();
@@ -71,8 +71,10 @@ internal class OutOfProcTagHelperResolver(
         // when it's disconnected (user stops the process).
         //
         // This will change in the future to an easier to consume API but for VS RTM this is what we have.
+        var workspace = _workspaceProvider.GetWorkspace();
+
         var remoteClient = await RazorRemoteHostClient.TryGetClientAsync(
-            _projectManagerAccessor.Instance.Workspace.Services,
+            workspace.Services,
             RazorServiceDescriptors.TagHelperProviderServiceDescriptors,
             RazorRemoteServiceCallbackDispatcherRegistry.Empty,
             cancellationToken);

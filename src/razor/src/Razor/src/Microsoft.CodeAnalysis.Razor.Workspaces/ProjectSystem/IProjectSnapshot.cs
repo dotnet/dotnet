@@ -3,6 +3,8 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.CSharp;
@@ -30,7 +32,7 @@ internal interface IProjectSnapshot
     string DisplayName { get; }
     VersionStamp Version { get; }
     LanguageVersion CSharpLanguageVersion { get; }
-    ImmutableArray<TagHelperDescriptor> TagHelpers { get; }
+    ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken);
     ProjectWorkspaceState ProjectWorkspaceState { get; }
 
     RazorProjectEngine GetProjectEngine();

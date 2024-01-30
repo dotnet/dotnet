@@ -97,8 +97,8 @@ internal sealed class DocumentContextFactory(
             return _snapshotResolver.TryResolveDocumentInAnyProject(filePath, out documentSnapshot);
         }
 
-        var project = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(projectContext.ToProjectKey());
-        if (project?.GetDocument(filePath) is { } document)
+        if (_projectSnapshotManagerAccessor.Instance.TryGetLoadedProject(projectContext.ToProjectKey(), out var project) &&
+            project.GetDocument(filePath) is { } document)
         {
             documentSnapshot = document;
             return true;

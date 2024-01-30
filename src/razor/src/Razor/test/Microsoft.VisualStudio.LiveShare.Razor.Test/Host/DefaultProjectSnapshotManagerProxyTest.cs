@@ -5,6 +5,8 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Threading;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
@@ -63,17 +65,20 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
         var state = await JoinableTaskFactory.RunAsync(() => proxy.CalculateUpdatedStateAsync(projectSnapshotManager.GetProjects()));
 
         // Assert
+        var project1TagHelpers = await _projectSnapshot1.GetTagHelpersAsync(CancellationToken.None);
+        var project2TagHelpers = await _projectSnapshot2.GetTagHelpersAsync(CancellationToken.None);
+
         Assert.Collection(
             state.ProjectHandles,
             handle =>
             {
                 Assert.Equal("vsls:/path/to/project1.csproj", handle.FilePath.ToString());
-                Assert.Equal<TagHelperDescriptor>(_projectSnapshot1.TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
+                Assert.Equal<TagHelperDescriptor>(project1TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
             },
             handle =>
             {
                 Assert.Equal("vsls:/path/to/project2.csproj", handle.FilePath.ToString());
-                Assert.Equal<TagHelperDescriptor>(_projectSnapshot2.TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
+                Assert.Equal<TagHelperDescriptor>(project2TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
             });
     }
 
@@ -160,17 +165,20 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
         var state = await JoinableTaskFactory.RunAsync(() => proxy.GetProjectManagerStateAsync(DisposalToken));
 
         // Assert
+        var project1TagHelpers = await _projectSnapshot1.GetTagHelpersAsync(CancellationToken.None);
+        var project2TagHelpers = await _projectSnapshot2.GetTagHelpersAsync(CancellationToken.None);
+
         Assert.Collection(
             state.ProjectHandles,
             handle =>
             {
                 Assert.Equal("vsls:/path/to/project1.csproj", handle.FilePath.ToString());
-                Assert.Equal<TagHelperDescriptor>(_projectSnapshot1.TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
+                Assert.Equal<TagHelperDescriptor>(project1TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
             },
             handle =>
             {
                 Assert.Equal("vsls:/path/to/project2.csproj", handle.FilePath.ToString());
-                Assert.Equal<TagHelperDescriptor>(_projectSnapshot2.TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
+                Assert.Equal<TagHelperDescriptor>(project2TagHelpers, handle.ProjectWorkspaceState.TagHelpers);
             });
     }
 
@@ -193,32 +201,29 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
         Assert.Same(state1, state2);
     }
 
-    private class TestProjectSnapshotManager(params IProjectSnapshot[] projects) : ProjectSnapshotManager
+    private class TestProjectSnapshotManager(params IProjectSnapshot[] projects) : IProjectSnapshotManager
     {
         private ImmutableArray<IProjectSnapshot> _projects = projects.ToImmutableArray();
 
-        public override ImmutableArray<IProjectSnapshot> GetProjects() => _projects;
+        public ImmutableArray<IProjectSnapshot> GetProjects() => _projects;
 
-        public override event EventHandler<ProjectChangeEventArgs> Changed;
+        public event EventHandler<ProjectChangeEventArgs> Changed;
 
         public void TriggerChanged(ProjectChangeEventArgs args)
         {
             Changed?.Invoke(this, args);
         }
 
-        public override IProjectSnapshot GetLoadedProject(ProjectKey projectKey)
-        {
-            throw new NotImplementedException();
-        }
+        public IProjectSnapshot GetLoadedProject(ProjectKey projectKey)
+            => throw new NotImplementedException();
 
-        public override ImmutableArray<ProjectKey> GetAllProjectKeys(string projectFileName)
-        {
-            throw new NotImplementedException();
-        }
+        public ImmutableArray<ProjectKey> GetAllProjectKeys(string projectFileName)
+            => throw new NotImplementedException();
 
-        public override bool IsDocumentOpen(string documentFilePath)
-        {
-            throw new NotImplementedException();
-        }
+        public bool IsDocumentOpen(string documentFilePath)
+            => throw new NotImplementedException();
+
+        public bool TryGetLoadedProject(ProjectKey projectKey, [NotNullWhen(true)] out IProjectSnapshot project)
+            => throw new NotImplementedException();
     }
 }

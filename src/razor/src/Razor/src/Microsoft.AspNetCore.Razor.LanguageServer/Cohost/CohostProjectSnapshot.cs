@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
@@ -17,7 +18,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Cohost;
 
@@ -29,11 +29,11 @@ internal class CohostProjectSnapshot : IProjectSnapshot
     private readonly ProjectKey _projectKey;
     private readonly Lazy<RazorConfiguration> _lazyConfiguration;
     private readonly Lazy<RazorProjectEngine> _lazyProjectEngine;
-    private readonly AsyncLazy<ImmutableArray<TagHelperDescriptor>> _tagHelpersLazy;
-    private readonly Lazy<ProjectWorkspaceState> _projectWorkspaceStateLazy;
     private readonly Lazy<ImmutableDictionary<string, ImmutableArray<string>>> _importsToRelatedDocumentsLazy;
 
-    public CohostProjectSnapshot(Project project, DocumentSnapshotFactory documentSnapshotFactory, ITelemetryReporter telemetryReporter, JoinableTaskContext joinableTaskContext)
+    private ImmutableArray<TagHelperDescriptor>? _tagHelpers;
+
+    public CohostProjectSnapshot(Project project, DocumentSnapshotFactory documentSnapshotFactory, ITelemetryReporter telemetryReporter)
     {
         _project = project;
         _documentSnapshotFactory = documentSnapshotFactory;
@@ -44,7 +44,7 @@ internal class CohostProjectSnapshot : IProjectSnapshot
         _lazyProjectEngine = new Lazy<RazorProjectEngine>(() =>
         {
             return ProjectEngineFactories.DefaultProvider.Create(
-                Configuration,
+                _lazyConfiguration.Value,
                 rootDirectoryPath: Path.GetDirectoryName(FilePath).AssumeNotNull(),
                 configure: builder =>
                 {
@@ -54,20 +54,12 @@ internal class CohostProjectSnapshot : IProjectSnapshot
                 });
         });
 
-        _tagHelpersLazy = new AsyncLazy<ImmutableArray<TagHelperDescriptor>>(() =>
-        {
-            var resolver = new CompilationTagHelperResolver(_telemetryReporter);
-            return resolver.GetTagHelpersAsync(_project, GetProjectEngine(), CancellationToken.None).AsTask();
-        }, joinableTaskContext.Factory);
-
-        _projectWorkspaceStateLazy = new Lazy<ProjectWorkspaceState>(() => ProjectWorkspaceState.Create(TagHelpers, CSharpLanguageVersion));
-
         _importsToRelatedDocumentsLazy = new Lazy<ImmutableDictionary<string, ImmutableArray<string>>>(() =>
         {
             var importsToRelatedDocuments = ImmutableDictionary.Create<string, ImmutableArray<string>>(FilePathNormalizer.Comparer);
             foreach (var document in DocumentFilePaths)
             {
-                var importTargetPaths = ProjectState.GetImportDocumentTargetPaths(document, FileKinds.GetFileKindFromFilePath(document), GetProjectEngine());
+                var importTargetPaths = ProjectState.GetImportDocumentTargetPaths(document, FileKinds.GetFileKindFromFilePath(document), _lazyProjectEngine.Value);
                 importsToRelatedDocuments = ProjectState.AddToImportsToRelatedDocuments(importsToRelatedDocuments, document, importTargetPaths);
             }
 
@@ -77,7 +69,7 @@ internal class CohostProjectSnapshot : IProjectSnapshot
 
     public ProjectKey Key => _projectKey;
 
-    public RazorConfiguration Configuration => _lazyConfiguration.Value;
+    public RazorConfiguration Configuration => throw new InvalidOperationException("Should not be called for cohosted projects.");
 
     public IEnumerable<string> DocumentFilePaths
         => _project.AdditionalDocuments
@@ -96,9 +88,18 @@ internal class CohostProjectSnapshot : IProjectSnapshot
 
     public LanguageVersion CSharpLanguageVersion => ((CSharpParseOptions)_project.ParseOptions!).LanguageVersion;
 
-    public ImmutableArray<TagHelperDescriptor> TagHelpers => _tagHelpersLazy.GetValue();
+    public async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken)
+    {
+        if (_tagHelpers is null)
+        {
+            var resolver = new CompilationTagHelperResolver(_telemetryReporter);
+            _tagHelpers = await resolver.GetTagHelpersAsync(_project, _lazyProjectEngine.Value, cancellationToken).ConfigureAwait(false);
+        }
 
-    public ProjectWorkspaceState ProjectWorkspaceState => _projectWorkspaceStateLazy.Value;
+        return _tagHelpers.GetValueOrDefault();
+    }
+
+    public ProjectWorkspaceState ProjectWorkspaceState => throw new InvalidOperationException("Should not be called for cohosted projects.");
 
     public IDocumentSnapshot? GetDocument(string filePath)
     {
@@ -111,7 +112,13 @@ internal class CohostProjectSnapshot : IProjectSnapshot
         return _documentSnapshotFactory.GetOrCreate(textDocument);
     }
 
-    public RazorProjectEngine GetProjectEngine() => _lazyProjectEngine.Value;
+    public RazorProjectEngine GetProjectEngine() => throw new InvalidOperationException("Should not be called for cohosted projects.");
+
+    /// <summary>
+    /// NOTE: To be called only from CohostDocumentSnapshot.GetGeneratedOutputAsync(). Will be removed when that method uses the source generator directly.
+    /// </summary>
+    /// <returns></returns>
+    internal RazorProjectEngine GetProjectEngine_CohostOnly() => _lazyProjectEngine.Value;
 
     public ImmutableArray<IDocumentSnapshot> GetRelatedDocuments(IDocumentSnapshot document)
     {

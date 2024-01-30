@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
@@ -290,8 +291,8 @@ public class FormattingTestBase : RazorToolingIntegrationTestBase
             .Setup(d => d.TargetPath)
             .Returns(path);
         documentSnapshot
-            .Setup(d => d.Project.TagHelpers)
-            .Returns(tagHelpers);
+            .Setup(d => d.Project.GetTagHelpersAsync(It.IsAny<CancellationToken>()))
+            .Returns(new ValueTask<ImmutableArray<TagHelperDescriptor>>(tagHelpers));
         documentSnapshot
             .Setup(d => d.FileKind)
             .Returns(fileKind);

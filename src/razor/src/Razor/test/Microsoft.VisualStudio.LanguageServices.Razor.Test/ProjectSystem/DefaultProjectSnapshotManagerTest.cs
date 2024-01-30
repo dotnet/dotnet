@@ -51,7 +51,7 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
         _hostProject2 = new HostProject(TestProjectData.AnotherProject.FilePath, TestProjectData.AnotherProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_2_1, TestProjectData.AnotherProject.RootNamespace);
         _hostProjectWithConfigurationChange = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, FallbackRazorConfiguration.MVC_1_0, TestProjectData.SomeProject.RootNamespace);
 
-        _projectManager = new TestProjectSnapshotManager(triggers: [], Workspace, ProjectEngineFactoryProvider, Dispatcher);
+        _projectManager = new TestProjectSnapshotManager(triggers: [], ProjectEngineFactoryProvider, Dispatcher);
 
         _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create(someTagHelpers);
 
@@ -70,7 +70,7 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
         var triggers = new[] { defaultPriorityTrigger, highPriorityTrigger };
 
         // Act
-        var projectManager = new TestProjectSnapshotManager(triggers, Workspace, ProjectEngineFactoryProvider, Dispatcher);
+        var projectManager = new TestProjectSnapshotManager(triggers, ProjectEngineFactoryProvider, Dispatcher);
 
         // Assert
         Assert.Equal(new[] { "highPriority", "lowPriority" }, initializedOrder);
@@ -211,20 +211,20 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
     }
 
     [UIFact]
-    public void DocumentAdded_CachesTagHelpers()
+    public async Task DocumentAdded_CachesTagHelpers()
     {
         // Arrange
         _projectManager.ProjectAdded(_hostProject);
         _projectManager.ProjectWorkspaceStateChanged(_hostProject.Key, _projectWorkspaceStateWithTagHelpers);
         _projectManager.Reset();
 
-        var originalTagHelpers = _projectManager.GetSnapshot(_hostProject).TagHelpers;
+        var originalTagHelpers = await _projectManager.GetSnapshot(_hostProject).GetTagHelpersAsync(CancellationToken.None);
 
         // Act
         _projectManager.DocumentAdded(_hostProject.Key, _documents[0], null!);
 
         // Assert
-        var newTagHelpers = _projectManager.GetSnapshot(_hostProject).TagHelpers;
+        var newTagHelpers = await _projectManager.GetSnapshot(_hostProject).GetTagHelpersAsync(CancellationToken.None);
 
         Assert.Equal(originalTagHelpers.Length, newTagHelpers.Length);
         for (var i = 0; i < originalTagHelpers.Length; i++)
@@ -305,7 +305,7 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
     }
 
     [UIFact]
-    public void DocumentRemoved_CachesTagHelpers()
+    public async Task DocumentRemoved_CachesTagHelpers()
     {
         // Arrange
         _projectManager.ProjectAdded(_hostProject);
@@ -315,13 +315,13 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
         _projectManager.DocumentAdded(_hostProject.Key, _documents[2], null!);
         _projectManager.Reset();
 
-        var originalTagHelpers = _projectManager.GetSnapshot(_hostProject).TagHelpers;
+        var originalTagHelpers = await _projectManager.GetSnapshot(_hostProject).GetTagHelpersAsync(CancellationToken.None);
 
         // Act
         _projectManager.DocumentRemoved(_hostProject.Key, _documents[1]);
 
         // Assert
-        var newTagHelpers = _projectManager.GetSnapshot(_hostProject).TagHelpers;
+        var newTagHelpers = await _projectManager.GetSnapshot(_hostProject).GetTagHelpersAsync(CancellationToken.None);
 
         Assert.Equal(originalTagHelpers.Length, newTagHelpers.Length);
         for (var i = 0; i < originalTagHelpers.Length; i++)
@@ -649,10 +649,9 @@ public class DefaultProjectSnapshotManagerTest : ProjectSnapshotManagerDispatche
 
     private class TestProjectSnapshotManager(
         IEnumerable<IProjectSnapshotChangeTrigger> triggers,
-        Workspace workspace,
         IProjectEngineFactoryProvider projectEngineFactoryProvider,
         ProjectSnapshotManagerDispatcher dispatcher)
-        : DefaultProjectSnapshotManager(Mock.Of<IErrorReporter>(MockBehavior.Strict), triggers, workspace, projectEngineFactoryProvider, dispatcher)
+        : DefaultProjectSnapshotManager(triggers, projectEngineFactoryProvider, dispatcher, Mock.Of<IErrorReporter>(MockBehavior.Strict))
     {
         public ProjectChangeKind? ListenersNotifiedOf { get; private set; }
 

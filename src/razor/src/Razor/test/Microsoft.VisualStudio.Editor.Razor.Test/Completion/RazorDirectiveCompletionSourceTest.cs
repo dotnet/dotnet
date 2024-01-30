@@ -53,6 +53,7 @@ public class RazorDirectiveCompletionSourceTest : ProjectSnapshotManagerDispatch
             .ReturnsAsync(value: null); // CodeDocument will be null faking a parser without a parse.
         var completionSource = new RazorDirectiveCompletionSource(parser.Object, _completionFactsService);
         var documentSnapshot = new StringTextSnapshot(text);
+        var textBuffer = new TestTextBuffer(documentSnapshot, new LegacyCoreContentType());
         var triggerLocation = new SnapshotPoint(documentSnapshot, 4);
         var applicableSpan = new SnapshotSpan(documentSnapshot, new Span(1, text.Length - 1 /* validCompletion */));
 
@@ -77,6 +78,7 @@ public class RazorDirectiveCompletionSourceTest : ProjectSnapshotManagerDispatch
         var parser = CreateParser(text);
         var completionSource = new RazorDirectiveCompletionSource(parser, _completionFactsService);
         var documentSnapshot = new StringTextSnapshot(text);
+        var textBuffer = new TestTextBuffer(documentSnapshot, new LegacyCoreContentType());
         var triggerLocation = new SnapshotPoint(documentSnapshot, 4);
         var applicableSpan = new SnapshotSpan(documentSnapshot, new Span(2, text.Length - 3 /* @() */));
 
@@ -94,15 +96,17 @@ public class RazorDirectiveCompletionSourceTest : ProjectSnapshotManagerDispatch
     }
 
     // This is more of an integration level test validating the end-to-end completion flow.
-    [UIFact]
+    [UITheory]
+    [InlineData("@")]
+    [InlineData("@\r\n")]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/4547")]
-    public async Task GetCompletionContextAsync_ProvidesCompletionsWhenAtCompletionPoint()
+    public async Task GetCompletionContextAsync_ProvidesCompletionsWhenAtCompletionPoint(string text)
     {
         // Arrange
-        var text = "@";
         var parser = CreateParser(text, SectionDirective.Directive);
         var completionSource = new RazorDirectiveCompletionSource(parser, _completionFactsService);
         var documentSnapshot = new StringTextSnapshot(text);
+        var textBuffer = new TestTextBuffer(documentSnapshot, new LegacyCoreContentType());
         var triggerLocation = new SnapshotPoint(documentSnapshot, 1);
         var applicableSpan = new SnapshotSpan(documentSnapshot, new Span(1, 0));
 

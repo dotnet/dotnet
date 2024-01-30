@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectContexts;
 
-[LanguageServerEndpoint(VSMethods.GetProjectContextsName)]
+[RazorLanguageServerEndpoint(VSMethods.GetProjectContextsName)]
 // Using a documentless handler here because:
 //   a. We don't need any extra info than just the Uri
 //   b. If we say we have a document, then our RequestContextFactory will try to get a DocumentContext for us

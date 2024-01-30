@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Using Alias="Range" Include="Microsoft.VisualStudio.LanguageServer.Protocol.Range" />
+    <Using Alias="LanguageServerConstants" Include="Microsoft.AspNetCore.Razor.LanguageServer.Common.LanguageServerConstants"/>
   </ItemGroup>
 
   <ItemGroup>

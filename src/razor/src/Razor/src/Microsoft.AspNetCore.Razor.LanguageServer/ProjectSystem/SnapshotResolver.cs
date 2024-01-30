@@ -64,11 +64,10 @@ internal sealed class SnapshotResolver : ISnapshotResolver
 
     public IProjectSnapshot GetMiscellaneousProject()
     {
-        var miscellaneousProject = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(MiscellaneousHostProject.Key);
-        if (miscellaneousProject is null)
+        if (!_projectSnapshotManagerAccessor.Instance.TryGetLoadedProject(MiscellaneousHostProject.Key, out var miscellaneousProject))
         {
             _projectSnapshotManagerAccessor.Instance.ProjectAdded(MiscellaneousHostProject);
-            miscellaneousProject = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(MiscellaneousHostProject.Key).AssumeNotNull();
+            miscellaneousProject = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(MiscellaneousHostProject.Key);
         }
 
         return miscellaneousProject;

@@ -334,7 +334,7 @@ internal class RazorProjectInfoPublisher : IProjectSnapshotChangeTrigger
 
                     if (projectSnapshot.GetDocument(documentFilePath) is { } documentSnapshot &&
                         string.Equals(documentSnapshot.FileKind, AspNetCore.Razor.Language.FileKinds.Component, StringComparison.OrdinalIgnoreCase) &&
-                        projectSnapshot.TagHelpers.Any(t => t.Name.EndsWith("." + fileName, StringComparison.OrdinalIgnoreCase)))
+                        projectSnapshot.GetTagHelpersSynchronously().Any(t => t.Name.EndsWith("." + fileName, StringComparison.OrdinalIgnoreCase)))
                     {
                         // Documents have been processed, lets publish
                         _documentsProcessed = true;
