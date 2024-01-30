@@ -18,7 +18,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
 {
-    private readonly ProjectSnapshotManager _projectSnapshotManager;
+    private readonly IProjectSnapshotManager _projectSnapshotManager;
     private readonly ILogger _logger;
 
     public DefaultRazorComponentSearchEngine(
@@ -66,7 +66,8 @@ internal class DefaultRazorComponentSearchEngine : RazorComponentSearchEngine
             }
 
             // If we got this far, we can check for tag helpers
-            foreach (var tagHelper in project.TagHelpers)
+            var tagHelpers = await project.GetTagHelpersAsync(cancellationToken).ConfigureAwait(false);
+            foreach (var tagHelper in tagHelpers)
             {
                 // Check the typename and namespace match
                 if (IsPathCandidateForComponent(documentSnapshot, tagHelper.GetTypeNameIdentifier().AsMemory()) &&

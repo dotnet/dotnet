@@ -44,11 +44,23 @@ public class DefaultRazorDocumentManagerTest : ProjectSnapshotManagerDispatcherT
             c => c.IsOfType(It.IsAny<string>()) == false,
             MockBehavior.Strict);
 
-        var projectManager = Mock.Of<ProjectSnapshotManagerBase>(
-            p => p.GetProjects() == ImmutableArray<IProjectSnapshot>.Empty &&
-                 p.GetLoadedProject(It.IsAny<ProjectKey>()) == null &&
-                 p.GetAllProjectKeys(It.IsAny<string>()) == ImmutableArray<ProjectKey>.Empty,
-            MockBehavior.Strict);
+        var projectManagerMock = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
+        projectManagerMock
+            .Setup(p => p.GetAllProjectKeys(It.IsAny<string>()))
+            .Returns(ImmutableArray<ProjectKey>.Empty);
+        projectManagerMock
+            .Setup(p => p.GetProjects())
+            .Returns(ImmutableArray<IProjectSnapshot>.Empty);
+
+        IProjectSnapshot projectResult = null;
+        projectManagerMock
+            .Setup(p => p.GetLoadedProject(It.IsAny<ProjectKey>()))
+            .Returns(projectResult);
+        projectManagerMock
+            .Setup(p => p.TryGetLoadedProject(It.IsAny<ProjectKey>(), out projectResult))
+            .Returns(false);
+
+        var projectManager = projectManagerMock.Object;
 
         var projectManagerAccessorMock = new Mock<IProjectSnapshotManagerAccessor>(MockBehavior.Strict);
         projectManagerAccessorMock
@@ -64,7 +76,6 @@ public class DefaultRazorDocumentManagerTest : ProjectSnapshotManagerDispatcherT
         importDocumentManager.Setup(m => m.OnSubscribed(It.IsAny<VisualStudioDocumentTracker>())).Verifiable();
         importDocumentManager.Setup(m => m.OnUnsubscribed(It.IsAny<VisualStudioDocumentTracker>())).Verifiable();
         _importDocumentManager = importDocumentManager.Object;
-
     }
 
     [UIFact]

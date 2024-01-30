@@ -6,6 +6,7 @@
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Tooltip;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
@@ -160,8 +161,8 @@ public class LegacyRazorCompletionResolveEndpointTest : LanguageServerTestBase
             Kind = MarkupKind.Markdown,
             Value = "Some Markdown"
         };
-        lspDescriptionFactory.Setup(factory => factory.TryCreateTooltip(It.IsAny<string>(), It.IsAny<AggregateBoundElementDescription>(), MarkupKind.Markdown, out markdown))
-            .Returns(true);
+        lspDescriptionFactory.Setup(factory => factory.TryCreateTooltipAsync(It.IsAny<string>(), It.IsAny<AggregateBoundElementDescription>(), MarkupKind.Markdown, It.IsAny<CancellationToken>()))
+            .Returns(Task.FromResult(markdown));
         var endpoint = new LegacyRazorCompletionResolveEndpoint(lspDescriptionFactory.Object, _vsLspTagHelperTooltipFactory, _completionListCache, LoggerFactory);
         endpoint.ApplyCapabilities(new(), _defaultClientCapability);
         var razorCompletionItem = new RazorCompletionItem("TestItem", "TestItem", RazorCompletionItemKind.TagHelperElement);
@@ -217,8 +218,8 @@ public class LegacyRazorCompletionResolveEndpointTest : LanguageServerTestBase
             Kind = MarkupKind.Markdown,
             Value = "Some Markdown"
         };
-        lspDescriptionFactory.Setup(factory => factory.TryCreateTooltip(It.IsAny<string>(), It.IsAny<AggregateBoundElementDescription>(), MarkupKind.Markdown, out markdown))
-            .Returns(true);
+        lspDescriptionFactory.Setup(factory => factory.TryCreateTooltipAsync(It.IsAny<string>(), It.IsAny<AggregateBoundElementDescription>(), MarkupKind.Markdown, It.IsAny<CancellationToken>()))
+            .Returns(Task.FromResult(markdown));
         var endpoint = new LegacyRazorCompletionResolveEndpoint(_lspTagHelperTooltipFactory, _vsLspTagHelperTooltipFactory, _completionListCache, LoggerFactory);
         endpoint.ApplyCapabilities(new(), _defaultClientCapability);
         var completionItem = new CompletionItem();

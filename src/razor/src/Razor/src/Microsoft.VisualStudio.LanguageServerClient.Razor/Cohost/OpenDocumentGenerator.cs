@@ -36,28 +36,7 @@ internal sealed class OpenDocumentGenerator(
     private readonly JoinableTaskFactory _joinableTaskFactory = joinableTaskContext.Factory;
     private readonly ILogger _logger = loggerFactory.CreateLogger<OpenDocumentGenerator>();
 
-    public async Task DocumentOpenedOrChangedAsync(string textDocumentPath, int version, CancellationToken cancellationToken)
-    {
-        // We are purposefully trigger code generation here directly, rather than using the project manager events that the above call
-        // would have triggered, because Cohosting is intended to eventually remove the project manager and its events. We also want
-        // to eventually remove this code too, and just rely on the source generator, but by keeping the concepts separate we are not
-        // tying the code to any particular order of feature removal.
-        if (!_snapshotResolver.TryResolveAllProjects(textDocumentPath, out var projectSnapshots))
-        {
-            projectSnapshots = [_snapshotResolver.GetMiscellaneousProject()];
-        }
-
-        foreach (var project in projectSnapshots)
-        {
-            var document = project.GetDocument(textDocumentPath);
-            if (document is not null)
-            {
-                await UpdateGeneratedDocumentsAsync(document, version, cancellationToken);
-            }
-        }
-    }
-
-    private async Task UpdateGeneratedDocumentsAsync(IDocumentSnapshot document, int version, CancellationToken cancellationToken)
+    public async Task UpdateGeneratedDocumentsAsync(IDocumentSnapshot document, int version, CancellationToken cancellationToken)
     {
         // These flags exist to workaround things in VS Code, so bringing cohosting to VS Code without also fixing these flags, is very silly.
         Debug.Assert(_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath);

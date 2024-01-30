@@ -49,7 +49,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         }
     ];
 
-    private readonly ProjectSnapshotManager _projectManager;
+    private readonly IProjectSnapshotManager _projectManager;
     private readonly IDocumentSnapshot _closedDocument;
     private readonly IDocumentSnapshot _openedDocument;
     private readonly RazorCodeDocument _testCodeDocument;
@@ -58,7 +58,7 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
     public RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var testProjectManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
+        var testProjectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         var hostProject = new HostProject("C:/project/project.csproj", "C:/project/obj", RazorConfiguration.Default, "TestRootNamespace");
         testProjectManager.ProjectAdded(hostProject);
         var sourceText = SourceText.From(string.Empty);

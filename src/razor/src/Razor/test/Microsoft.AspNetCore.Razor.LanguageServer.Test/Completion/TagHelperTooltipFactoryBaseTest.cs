@@ -5,6 +5,8 @@
 
 using System.Collections.Immutable;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
@@ -341,18 +343,18 @@ There is no xml, but I got you this < and the >.
     }
 
     [Fact]
-    public void GetAvailableProjects_NoProjects_ReturnsNull()
+    public async Task GetAvailableProjects_NoProjects_ReturnsNull()
     {
         var snapshotResolver = new TestSnapshotResolver();
         var service = new TestTagHelperToolTipFactory(snapshotResolver);
 
-        var availability = service.GetProjectAvailability("file.razor", "MyTagHelper");
+        var availability = await service.GetProjectAvailabilityAsync("file.razor", "MyTagHelper", CancellationToken.None);
 
         Assert.Null(availability);
     }
 
     [Fact]
-    public void GetAvailableProjects_OneProject_ReturnsNull()
+    public async Task GetAvailableProjects_OneProject_ReturnsNull()
     {
         var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "TestTagHelper", "TestAssembly");
         builder.TagMatchingRule(rule => rule.TagName = "Test");
@@ -370,13 +372,13 @@ There is no xml, but I got you this < and the >.
         var snapshotResolver = new TestSnapshotResolver(razorFilePath, project);
         var service = new TestTagHelperToolTipFactory(snapshotResolver);
 
-        var availability = service.GetProjectAvailability(razorFilePath, tagHelperTypeName);
+        var availability = await service.GetProjectAvailabilityAsync(razorFilePath, tagHelperTypeName, CancellationToken.None);
 
         Assert.Null(availability);
     }
 
     [Fact]
-    public void GetAvailableProjects_AvailableInAllProjects_ReturnsNull()
+    public async Task GetAvailableProjects_AvailableInAllProjects_ReturnsNull()
     {
         var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "TestTagHelper", "TestAssembly");
         builder.TagMatchingRule(rule => rule.TagName = "Test");
@@ -407,13 +409,13 @@ There is no xml, but I got you this < and the >.
         var snapshotResolver = new TestSnapshotResolver(razorFilePath, project1, project2);
         var service = new TestTagHelperToolTipFactory(snapshotResolver);
 
-        var availability = service.GetProjectAvailability(razorFilePath, tagHelperTypeName);
+        var availability = await service.GetProjectAvailabilityAsync(razorFilePath, tagHelperTypeName, CancellationToken.None);
 
         Assert.Null(availability);
     }
 
     [Fact]
-    public void GetAvailableProjects_NotAvailableInAllProjects_ReturnsText()
+    public async Task GetAvailableProjects_NotAvailableInAllProjects_ReturnsText()
     {
         var builder = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, "TestTagHelper", "TestAssembly");
         builder.TagMatchingRule(rule => rule.TagName = "Test");
@@ -446,7 +448,7 @@ There is no xml, but I got you this < and the >.
         var snapshotResolver = new TestSnapshotResolver(razorFilePath, project1, project2);
         var service = new TestTagHelperToolTipFactory(snapshotResolver);
 
-        var availability = service.GetProjectAvailability(razorFilePath, tagHelperTypeName);
+        var availability = await service.GetProjectAvailabilityAsync(razorFilePath, tagHelperTypeName, CancellationToken.None);
 
         AssertEx.EqualOrDiff("""
 
@@ -456,7 +458,7 @@ There is no xml, but I got you this < and the >.
     }
 
     [Fact]
-    public void GetAvailableProjects_NotAvailableInAnyProject_ReturnsText()
+    public async Task GetAvailableProjects_NotAvailableInAnyProject_ReturnsText()
     {
         var baseDirectory = PathUtilities.CreateRootedPath("path", "to");
         var razorFilePath = Path.Combine(baseDirectory, "file.razor");
@@ -482,7 +484,7 @@ There is no xml, but I got you this < and the >.
         var snapshotResolver = new TestSnapshotResolver(razorFilePath, project1, project2);
         var service = new TestTagHelperToolTipFactory(snapshotResolver);
 
-        var availability = service.GetProjectAvailability(razorFilePath, "MyTagHelper");
+        var availability = await service.GetProjectAvailabilityAsync(razorFilePath, "MyTagHelper", CancellationToken.None);
 
         AssertEx.EqualOrDiff("""
 

@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -18,58 +19,26 @@ using Task = System.Threading.Tasks.Task;
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
 [Export(typeof(IProjectSnapshotChangeTrigger))]
-internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IProjectSnapshotChangeTrigger, IVsUpdateSolutionEvents2, IDisposable
+[method: ImportingConstructor]
+internal class VsSolutionUpdatesProjectSnapshotChangeTrigger(
+    [Import(typeof(SVsServiceProvider))] IServiceProvider services,
+    TextBufferProjectService projectService,
+    IProjectWorkspaceStateGenerator workspaceStateGenerator,
+    IWorkspaceProvider workspaceProvider,
+    ProjectSnapshotManagerDispatcher dispatcher,
+    JoinableTaskContext joinableTaskContext) : IProjectSnapshotChangeTrigger, IVsUpdateSolutionEvents2, IDisposable
 {
-    private readonly IServiceProvider _services;
-    private readonly TextBufferProjectService _projectService;
-    private readonly IProjectWorkspaceStateGenerator _workspaceStateGenerator;
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
-    private readonly JoinableTaskContext _joinableTaskContext;
+    private readonly IServiceProvider _services = services;
+    private readonly TextBufferProjectService _projectService = projectService;
+    private readonly IProjectWorkspaceStateGenerator _workspaceStateGenerator = workspaceStateGenerator;
+    private readonly IWorkspaceProvider _workspaceProvider = workspaceProvider;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
+    private readonly JoinableTaskContext _joinableTaskContext = joinableTaskContext;
+
     private ProjectSnapshotManagerBase? _projectManager;
-    private CancellationTokenSource? _activeSolutionCancellationTokenSource;
+    private CancellationTokenSource? _activeSolutionCancellationTokenSource = new();
     private uint _updateCookie;
     private IVsSolutionBuildManager? _solutionBuildManager;
-
-    [ImportingConstructor]
-    public VsSolutionUpdatesProjectSnapshotChangeTrigger(
-        [Import(typeof(SVsServiceProvider))] IServiceProvider services,
-        TextBufferProjectService projectService,
-        IProjectWorkspaceStateGenerator workspaceStateGenerator,
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-        JoinableTaskContext joinableTaskContext)
-    {
-        if (services is null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
-        if (projectService is null)
-        {
-            throw new ArgumentNullException(nameof(projectService));
-        }
-
-        if (workspaceStateGenerator is null)
-        {
-            throw new ArgumentNullException(nameof(workspaceStateGenerator));
-        }
-
-        if (projectSnapshotManagerDispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-        }
-
-        if (joinableTaskContext is null)
-        {
-            throw new ArgumentNullException(nameof(joinableTaskContext));
-        }
-
-        _services = services;
-        _projectService = projectService;
-        _workspaceStateGenerator = workspaceStateGenerator;
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
-        _joinableTaskContext = joinableTaskContext;
-        _activeSolutionCancellationTokenSource = new CancellationTokenSource();
-    }
 
     internal Task? CurrentUpdateTaskForTests { get; private set; }
 
@@ -142,7 +111,7 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IProjectSnapshotC
     internal Task OnProjectBuiltAsync(IVsHierarchy projectHierarchy, CancellationToken cancellationToken)
     {
         var projectFilePath = _projectService.GetProjectPath(projectHierarchy);
-        return _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
+        return _dispatcher.RunOnDispatcherThreadAsync(() =>
         {
             if (_projectManager is null)
             {
@@ -152,10 +121,10 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IProjectSnapshotC
             var projectKeys = _projectManager.GetAllProjectKeys(projectFilePath);
             foreach (var projectKey in projectKeys)
             {
-                var projectSnapshot = _projectManager?.GetLoadedProject(projectKey);
-                if (projectSnapshot is not null)
+                if (_projectManager.TryGetLoadedProject(projectKey, out var projectSnapshot))
                 {
-                    var workspaceProject = _projectManager?.Workspace.CurrentSolution.Projects.FirstOrDefault(wp => ProjectKey.From(wp) == projectSnapshot.Key);
+                    var workspace = _workspaceProvider.GetWorkspace();
+                    var workspaceProject = workspace.CurrentSolution.Projects.FirstOrDefault(wp => ProjectKey.From(wp) == projectSnapshot.Key);
                     if (workspaceProject is not null)
                     {
                         // Trigger a tag helper update by forcing the project manager to see the workspace Project

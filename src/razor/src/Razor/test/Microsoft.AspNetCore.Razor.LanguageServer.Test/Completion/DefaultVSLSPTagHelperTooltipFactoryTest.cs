@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.Text.Adornments;
@@ -165,7 +167,7 @@ End summary description.";
     }
 
     [Fact]
-    public void TryCreateTooltip_ClassifiedTextElement_NoAssociatedTagHelperDescriptions_ReturnsFalse()
+    public async Task TryCreateTooltip_ClassifiedTextElement_NoAssociatedTagHelperDescriptions_ReturnsFalse()
     {
         // Arrange
         var snapshotResolver = new TestSnapshotResolver();
@@ -173,15 +175,14 @@ End summary description.";
         var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, out ClassifiedTextElement classifiedTextElement);
+        var classifiedTextElement = await descriptionFactory.TryCreateTooltipAsync("file.razor", elementDescription, CancellationToken.None);
 
         // Assert
-        Assert.False(result);
         Assert.Null(classifiedTextElement);
     }
 
     [Fact]
-    public void TryCreateTooltip_ClassifiedTextElement_Element_SingleAssociatedTagHelper_ReturnsTrue_NestedTypes()
+    public async Task TryCreateTooltip_ClassifiedTextElement_Element_SingleAssociatedTagHelper_ReturnsTrue_NestedTypes()
     {
         // Arrange
         var snapshotResolver = new TestSnapshotResolver();
@@ -195,10 +196,10 @@ End summary description.";
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, out ClassifiedTextElement classifiedTextElement);
+        var classifiedTextElement = await descriptionFactory.TryCreateTooltipAsync("file.razor", elementDescription, CancellationToken.None);
 
         // Assert
-        Assert.True(result);
+        Assert.NotNull(classifiedTextElement);
 
         // Expected output:
         //     Microsoft.AspNetCore.SomeTagHelper
@@ -222,7 +223,7 @@ End summary description.";
     }
 
     [Fact]
-    public void TryCreateTooltip_ClassifiedTextElement_Element_NamespaceContainsTypeName_ReturnsTrue()
+    public async Task TryCreateTooltip_ClassifiedTextElement_Element_NamespaceContainsTypeName_ReturnsTrue()
     {
         // Arrange
         var snapshotResolver = new TestSnapshotResolver();
@@ -236,10 +237,10 @@ End summary description.";
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, out ClassifiedTextElement classifiedTextElement);
+        var classifiedTextElement = await descriptionFactory.TryCreateTooltipAsync("file.razor", elementDescription, CancellationToken.None);
 
         // Assert
-        Assert.True(result);
+        Assert.NotNull(classifiedTextElement);
 
         // Expected output:
         //     Microsoft.AspNetCore.SomeTagHelper.SomeTagHelper
@@ -262,7 +263,7 @@ End summary description.";
     }
 
     [Fact]
-    public void TryCreateTooltip_ClassifiedTextElement_Element_MultipleAssociatedTagHelpers_ReturnsTrue()
+    public async Task TryCreateTooltip_ClassifiedTextElement_Element_MultipleAssociatedTagHelpers_ReturnsTrue()
     {
         // Arrange
         var snapshotResolver = new TestSnapshotResolver();
@@ -275,10 +276,10 @@ End summary description.";
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, out ClassifiedTextElement classifiedTextElement);
+        var classifiedTextElement = await descriptionFactory.TryCreateTooltipAsync("file.razor", elementDescription, CancellationToken.None);
 
         // Assert
-        Assert.True(result);
+        Assert.NotNull(classifiedTextElement);
 
         // Expected output:
         //     Microsoft.AspNetCore.SomeTagHelper
@@ -456,7 +457,7 @@ End summary description.";
     }
 
     [Fact]
-    public void TryCreateTooltip_ContainerElement_NoAssociatedTagHelperDescriptions_ReturnsFalse()
+    public async Task TryCreateTooltip_ContainerElement_NoAssociatedTagHelperDescriptions_ReturnsFalse()
     {
         // Arrange
         var snapshotResolver = new TestSnapshotResolver();
@@ -464,15 +465,14 @@ End summary description.";
         var elementDescription = AggregateBoundElementDescription.Empty;
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, out ContainerElement containerElement);
+        var containerElement = await descriptionFactory.TryCreateTooltipContainerAsync("file.razor", elementDescription, CancellationToken.None);
 
         // Assert
-        Assert.False(result);
         Assert.Null(containerElement);
     }
 
     [Fact]
-    public void TryCreateTooltip_ContainerElement_Attribute_MultipleAssociatedTagHelpers_ReturnsTrue()
+    public async Task TryCreateTooltip_ContainerElement_Attribute_MultipleAssociatedTagHelpers_ReturnsTrue()
     {
         // Arrange
         var snapshotResolver = new TestSnapshotResolver();
@@ -485,10 +485,10 @@ End summary description.";
         var elementDescription = new AggregateBoundElementDescription(associatedTagHelperInfos.ToImmutableArray());
 
         // Act
-        var result = descriptionFactory.TryCreateTooltip("file.razor", elementDescription, out ContainerElement container);
+        var container = await descriptionFactory.TryCreateTooltipContainerAsync("file.razor", elementDescription, CancellationToken.None);
 
         // Assert
-        Assert.True(result);
+        Assert.NotNull(container);
         var containerElements = container.Elements.ToList();
 
         // Expected output:

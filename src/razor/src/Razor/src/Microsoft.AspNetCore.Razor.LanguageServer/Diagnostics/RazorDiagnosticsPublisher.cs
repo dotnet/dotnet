@@ -33,7 +33,7 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
     private readonly IClientConnection _clientConnection;
     private readonly Dictionary<string, IDocumentSnapshot> _work;
     private readonly ILogger _logger;
-    private ProjectSnapshotManager? _projectManager;
+    private IProjectSnapshotManager? _projectManager;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly Lazy<RazorTranslateDiagnosticsService> _razorTranslateDiagnosticsService;
     private readonly Lazy<IDocumentContextFactory> _documentContextFactory;
@@ -93,7 +93,7 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
     // Used in tests to ensure we can control when background work completes.
     public ManualResetEventSlim? NotifyBackgroundWorkCompleting { get; set; }
 
-    public override void Initialize(ProjectSnapshotManager projectManager)
+    public override void Initialize(IProjectSnapshotManager projectManager)
     {
         if (projectManager is null)
         {

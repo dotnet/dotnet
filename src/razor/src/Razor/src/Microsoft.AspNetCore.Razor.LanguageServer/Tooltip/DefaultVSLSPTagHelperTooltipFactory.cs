@@ -7,6 +7,8 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
@@ -51,21 +53,20 @@ internal class DefaultVSLSPTagHelperTooltipFactory(ISnapshotResolver snapshotRes
     private static readonly ClassifiedTextRun s_newLine = new(VSPredefinedClassificationTypeNames.WhiteSpace, Environment.NewLine);
     private static readonly ClassifiedTextRun s_nullableType = new(VSPredefinedClassificationTypeNames.Punctuation, "?");
 
-    public override bool TryCreateTooltip(string documentFilePath, AggregateBoundElementDescription elementDescriptionInfo, [NotNullWhen(true)] out ContainerElement? tooltipContent)
+    public override async Task<ContainerElement?> TryCreateTooltipContainerAsync(string documentFilePath, AggregateBoundElementDescription elementDescriptionInfo, CancellationToken cancellationToken)
     {
         if (elementDescriptionInfo is null)
         {
             throw new ArgumentNullException(nameof(elementDescriptionInfo));
         }
 
-        if (!TryClassifyElement(documentFilePath, elementDescriptionInfo, out var descriptionClassifications))
+        var descriptionClassifications = await TryClassifyElementAsync(documentFilePath, elementDescriptionInfo, cancellationToken).ConfigureAwait(false);
+        if (descriptionClassifications.IsDefaultOrEmpty)
         {
-            tooltipContent = null;
-            return false;
+            return null;
         }
 
-        tooltipContent = CombineClassifiedTextRuns(descriptionClassifications, ClassGlyph);
-        return true;
+        return CombineClassifiedTextRuns(descriptionClassifications, ClassGlyph);
     }
 
     public override bool TryCreateTooltip(AggregateBoundAttributeDescription attributeDescriptionInfo, [NotNullWhen(true)] out ContainerElement? tooltipContent)
@@ -87,21 +88,20 @@ internal class DefaultVSLSPTagHelperTooltipFactory(ISnapshotResolver snapshotRes
 
     // TO-DO: This method can be removed once LSP's VSCompletionItem supports returning ContainerElements for
     // its Description property, tracked by https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1319274.
-    public override bool TryCreateTooltip(string documentFilePath, AggregateBoundElementDescription elementDescriptionInfo, [NotNullWhen(true)] out ClassifiedTextElement? tooltipContent)
+    public override async Task<ClassifiedTextElement?> TryCreateTooltipAsync(string documentFilePath, AggregateBoundElementDescription elementDescriptionInfo, CancellationToken cancellationToken)
     {
         if (elementDescriptionInfo is null)
         {
             throw new ArgumentNullException(nameof(elementDescriptionInfo));
         }
 
-        if (!TryClassifyElement(documentFilePath, elementDescriptionInfo, out var descriptionClassifications))
+        var descriptionClassifications = await TryClassifyElementAsync(documentFilePath, elementDescriptionInfo, cancellationToken).ConfigureAwait(false);
+        if (descriptionClassifications.IsDefaultOrEmpty)
         {
-            tooltipContent = null;
-            return false;
+            return null;
         }
 
-        tooltipContent = GenerateClassifiedTextElement(descriptionClassifications);
-        return true;
+        return GenerateClassifiedTextElement(descriptionClassifications);
     }
 
     // TO-DO: This method can be removed once LSP's VSCompletionItem supports returning ContainerElements for
@@ -123,13 +123,12 @@ internal class DefaultVSLSPTagHelperTooltipFactory(ISnapshotResolver snapshotRes
         return true;
     }
 
-    private bool TryClassifyElement(string documentFilePath, AggregateBoundElementDescription elementInfo, out ImmutableArray<DescriptionClassification> classifications)
+    private async Task<ImmutableArray<DescriptionClassification>> TryClassifyElementAsync(string documentFilePath, AggregateBoundElementDescription elementInfo, CancellationToken cancellationToken)
     {
         var associatedTagHelperInfos = elementInfo.DescriptionInfos;
         if (associatedTagHelperInfos.Length == 0)
         {
-            classifications = default;
-            return false;
+            return default;
         }
 
         using var descriptions = new PooledArrayBuilder<DescriptionClassification>();
@@ -150,19 +149,18 @@ internal class DefaultVSLSPTagHelperTooltipFactory(ISnapshotResolver snapshotRes
             TryClassifySummary(documentationRuns, descriptionInfo.Documentation);
 
             // 3. Project availability
-            AddProjectAvailabilityInfo(documentFilePath, descriptionInfo.TagHelperTypeName, documentationRuns);
+            await AddProjectAvailabilityInfoAsync(documentFilePath, descriptionInfo.TagHelperTypeName, documentationRuns, cancellationToken).ConfigureAwait(false);
 
             // 4. Combine type + summary information
             descriptions.Add(new DescriptionClassification(typeRuns, documentationRuns));
         }
 
-        classifications = descriptions.DrainToImmutable();
-        return true;
+        return descriptions.DrainToImmutable();
     }
 
-    private void AddProjectAvailabilityInfo(string documentFilePath, string tagHelperTypeName, List<ClassifiedTextRun> documentationRuns)
+    private async Task AddProjectAvailabilityInfoAsync(string documentFilePath, string tagHelperTypeName, List<ClassifiedTextRun> documentationRuns, CancellationToken cancellationToken)
     {
-        var availability = GetProjectAvailability(documentFilePath, tagHelperTypeName);
+        var availability = await GetProjectAvailabilityAsync(documentFilePath, tagHelperTypeName, cancellationToken).ConfigureAwait(false);
 
         if (availability is not null)
         {

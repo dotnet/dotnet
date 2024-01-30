@@ -12,12 +12,11 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 
-[LanguageServerEndpoint(VSInternalMethods.DocumentPullDiagnosticName)]
+[RazorLanguageServerEndpoint(VSInternalMethods.DocumentPullDiagnosticName)]
 internal class DocumentPullDiagnosticsEndpoint : IRazorRequestHandler<VSInternalDocumentDiagnosticsParams, IEnumerable<VSInternalDiagnosticReport>?>, ICapabilitiesProvider
 {
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;

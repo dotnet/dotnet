@@ -37,19 +37,18 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
     // We have a queue for changes because if one change results in another change aka, add -> open we want to make sure the "add" finishes running first before "open" is notified.
     private readonly Queue<ProjectChangeEventArgs> _notificationWork = new();
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
+    private readonly IErrorReporter _errorReporter;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
 
     public DefaultProjectSnapshotManager(
-        IErrorReporter errorReporter,
         IEnumerable<IProjectSnapshotChangeTrigger> triggers,
-        Workspace workspace,
         IProjectEngineFactoryProvider projectEngineFactoryProvider,
-        ProjectSnapshotManagerDispatcher dispatcher)
+        ProjectSnapshotManagerDispatcher dispatcher,
+        IErrorReporter errorReporter)
     {
-        ErrorReporter = errorReporter ?? throw new ArgumentNullException(nameof(errorReporter));
-        Workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
-        _projectEngineFactoryProvider = projectEngineFactoryProvider ?? throw new ArgumentNullException(nameof(projectEngineFactoryProvider));
-        _dispatcher = dispatcher ?? throw new ArgumentException(nameof(dispatcher));
+        _projectEngineFactoryProvider = projectEngineFactoryProvider;
+        _dispatcher = dispatcher;
+        _errorReporter = errorReporter;
 
         using (_rwLocker.EnterReadLock())
         {
@@ -93,19 +92,32 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
         return _openDocuments_needsLock.ToImmutableArray();
     }
 
-    internal override Workspace Workspace { get; }
-
-    internal override IErrorReporter ErrorReporter { get; }
-
-    public override IProjectSnapshot? GetLoadedProject(ProjectKey projectKey)
+    public override IProjectSnapshot GetLoadedProject(ProjectKey projectKey)
     {
-        using var _ = _rwLocker.EnterReadLock();
-        if (_projects_needsLock.TryGetValue(projectKey, out var entry))
+        using (_rwLocker.EnterReadLock())
         {
-            return entry.GetSnapshot();
+            if (_projects_needsLock.TryGetValue(projectKey, out var entry))
+            {
+                return entry.GetSnapshot();
+            }
         }
 
-        return null;
+        throw new InvalidOperationException($"No project snapshot exists with the key, '{projectKey}'");
+    }
+
+    public override bool TryGetLoadedProject(ProjectKey projectKey, [NotNullWhen(true)] out IProjectSnapshot? project)
+    {
+        using (_rwLocker.EnterReadLock())
+        {
+            if (_projects_needsLock.TryGetValue(projectKey, out var entry))
+            {
+                project = entry.GetSnapshot();
+                return true;
+            }
+        }
+
+        project = null;
+        return false;
     }
 
     public override ImmutableArray<ProjectKey> GetAllProjectKeys(string projectFileName)
@@ -347,33 +359,24 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     internal override void ReportError(Exception exception)
     {
-        if (exception is null)
-        {
-            throw new ArgumentNullException(nameof(exception));
-        }
-
-        ErrorReporter.ReportError(exception);
+        _errorReporter.ReportError(exception);
     }
 
     internal override void ReportError(Exception exception, IProjectSnapshot project)
     {
-        if (exception is null)
-        {
-            throw new ArgumentNullException(nameof(exception));
-        }
-
-        ErrorReporter.ReportError(exception, project);
+        _errorReporter.ReportError(exception, project);
     }
 
     internal override void ReportError(Exception exception, ProjectKey projectKey)
     {
-        if (exception is null)
+        if (TryGetLoadedProject(projectKey, out var project))
         {
-            throw new ArgumentNullException(nameof(exception));
+            _errorReporter.ReportError(exception, project);
         }
-
-        var snapshot = GetLoadedProject(projectKey);
-        ErrorReporter.ReportError(exception, snapshot);
+        else
+        {
+            _errorReporter.ReportError(exception);
+        }
     }
 
     private void NotifyListeners(IProjectSnapshot? older, IProjectSnapshot? newer, string? documentFilePath, ProjectChangeKind kind)

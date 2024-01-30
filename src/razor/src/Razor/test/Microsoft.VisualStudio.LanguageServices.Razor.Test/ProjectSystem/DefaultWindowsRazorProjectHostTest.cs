@@ -37,7 +37,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
     public DefaultWindowsRazorProjectHostTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _projectManager = new TestProjectSnapshotManager(Workspace, ProjectEngineFactoryProvider, Dispatcher);
+        _projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher);
 
         var projectManagerAccessorMock = new Mock<IProjectSnapshotManagerAccessor>(MockBehavior.Strict);
         projectManagerAccessorMock
@@ -1247,15 +1247,13 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
     }
 
     private class TestProjectSnapshotManager(
-        Workspace workspace,
         IProjectEngineFactoryProvider projectEngineFactoryProvider,
         ProjectSnapshotManagerDispatcher dispatcher)
         : DefaultProjectSnapshotManager(
-            Mock.Of<IErrorReporter>(MockBehavior.Strict),
             triggers: [],
-            workspace,
             projectEngineFactoryProvider,
-            dispatcher)
+            dispatcher,
+            Mock.Of<IErrorReporter>(MockBehavior.Strict))
     {
     }
 }
