@@ -271,41 +271,6 @@ index ------------
  ./sdk/x.y.z/Containers/tasks/netx.y/Newtonsoft.Json.dll
  ./sdk/x.y.z/Containers/tasks/netx.y/NuGet.Common.dll
 @@ ------------ @@
- ./sdk/x.y.z/DotnetTools/dotnet-format/ko/Microsoft.CodeAnalysis.Workspaces.resources.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/ko/System.CommandLine.resources.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.Build.Locator.dll
-+./sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.Build.Tasks.Core.dll
-+./sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.Build.Utilities.Core.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.CodeAnalysis.AnalyzerUtilities.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.CodeAnalysis.CSharp.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.CodeAnalysis.CSharp.Features.dll
-@@ ------------ @@
- ./sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.Extensions.Logging.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.Extensions.Options.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.Extensions.Primitives.dll
--./sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.Win32.SystemEvents.dll
-+./sdk/x.y.z/DotnetTools/dotnet-format/Microsoft.NET.StringTools.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/Newtonsoft.Json.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/pl/
- ./sdk/x.y.z/DotnetTools/dotnet-format/pl/dotnet-format.resources.dll
-@@ ------------ @@
- ./sdk/x.y.z/DotnetTools/dotnet-format/System.Composition.Runtime.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/System.Composition.TypedParts.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/System.Configuration.ConfigurationManager.dll
--./sdk/x.y.z/DotnetTools/dotnet-format/System.Drawing.Common.dll
-+./sdk/x.y.z/DotnetTools/dotnet-format/System.Diagnostics.EventLog.dll
-+./sdk/x.y.z/DotnetTools/dotnet-format/System.Formats.Asn1.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/System.IO.Pipelines.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/System.Reflection.MetadataLoadContext.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/System.Resources.Extensions.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/System.Security.Cryptography.Pkcs.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/System.Security.Cryptography.ProtectedData.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/System.Security.Cryptography.Xml.dll
-+./sdk/x.y.z/DotnetTools/dotnet-format/System.Threading.Tasks.Dataflow.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/tr/
- ./sdk/x.y.z/DotnetTools/dotnet-format/tr/dotnet-format.resources.dll
- ./sdk/x.y.z/DotnetTools/dotnet-format/tr/Microsoft.CodeAnalysis.CSharp.Features.resources.dll
-@@ ------------ @@
  ./sdk/x.y.z/Microsoft.Build.NuGetSdkResolver.dll
  ./sdk/x.y.z/Microsoft.Build.Tasks.Core.dll
  ./sdk/x.y.z/Microsoft.Build.Utilities.Core.dll
