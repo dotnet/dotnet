@@ -28,14 +28,13 @@
           where the BeforeCommonTargets hook is not used (see https://github.com/dotnet/arcade/issues/2676).
           In that case, Sdk.targets imports it explicitly. -->
 
-  <!-- Exclude test projects from source-only builds by default. Exclude from non-source only .NET product
-       builds if explicitly set. -->
+  <!-- Exclude test and test utility projects from source-only and .NET non-source only product builds by default. -->
   <PropertyGroup Condition="'$(IsTestProject)' == 'true' or '$(IsTestUtilityProject)' == 'true'">
-    <ExcludeFromSourceOnlyBuild Condition="'$(ExcludeFromSourceOnlyBuild)' == '' and '$(DotNetBuildSkipTests)' != 'false'">true</ExcludeFromSourceOnlyBuild>
-    <ExcludeFromSourceBuild Condition="'$(ExcludeFromSourceBuild)' == '' and '$(DotNetBuildSkipTests)' != 'false'">true</ExcludeFromSourceBuild>
+    <ExcludeFromSourceOnlyBuild Condition="'$(ExcludeFromSourceOnlyBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromSourceOnlyBuild>
+    <ExcludeFromSourceBuild Condition="'$(ExcludeFromSourceBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromSourceBuild>
 
-    <ExcludeFromDotNetBuild Condition="'$(ExcludeFromDotNetBuild)' == '' and '$(DotNetBuildSkipTests)' == 'true'">true</ExcludeFromDotNetBuild>
-    <ExcludeFromVerticalBuild Condition="'$(ExcludeFromVerticalBuild)' == '' and '$(DotNetBuildSkipTests)' == 'true'">true</ExcludeFromVerticalBuild>
+    <ExcludeFromDotNetBuild Condition="'$(ExcludeFromDotNetBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromDotNetBuild>
+    <ExcludeFromVerticalBuild Condition="'$(ExcludeFromVerticalBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromVerticalBuild>
   </PropertyGroup>
 
   <!--
