@@ -19,18 +19,17 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Refactoring;
 
-[LanguageServerEndpoint(Methods.TextDocumentRenameName)]
+[RazorLanguageServerEndpoint(Methods.TextDocumentRenameName)]
 internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenameParams, WorkspaceEdit?>, ICapabilitiesProvider
 {
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly IDocumentContextFactory _documentContextFactory;
-    private readonly ProjectSnapshotManager _projectSnapshotManager;
+    private readonly IProjectSnapshotManager _projectSnapshotManager;
     private readonly RazorComponentSearchEngine _componentSearchEngine;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly IRazorDocumentMappingService _documentMappingService;
@@ -381,7 +380,8 @@ internal sealed class RenameEndpoint : AbstractRazorDelegatingEndpoint<RenamePar
         }
 
         var originTagHelpers = new List<TagHelperDescriptor>() { primaryTagHelper };
-        var associatedTagHelper = FindAssociatedTagHelper(primaryTagHelper, documentContext.Snapshot.Project.TagHelpers);
+        var tagHelpers = await documentContext.Snapshot.Project.GetTagHelpersAsync(cancellationToken).ConfigureAwait(false);
+        var associatedTagHelper = FindAssociatedTagHelper(primaryTagHelper, tagHelpers);
         if (associatedTagHelper is null)
         {
             Debug.Fail("Components should always have an associated TagHelper.");

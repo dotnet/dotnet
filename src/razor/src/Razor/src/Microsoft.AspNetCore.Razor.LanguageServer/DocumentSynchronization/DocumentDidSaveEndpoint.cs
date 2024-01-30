@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 
-[LanguageServerEndpoint(Methods.TextDocumentDidSaveName)]
+[RazorLanguageServerEndpoint(Methods.TextDocumentDidSaveName)]
 internal class DocumentDidSaveEndpoint(IRazorLoggerFactory loggerFactory)
     : IRazorNotificationHandler<DidSaveTextDocumentParams>, ITextDocumentIdentifierHandler<DidSaveTextDocumentParams, TextDocumentIdentifier>
 {

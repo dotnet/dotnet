@@ -13,12 +13,11 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.SpellCheck;
 
-[LanguageServerEndpoint(VSInternalMethods.TextDocumentSpellCheckableRangesName)]
+[RazorLanguageServerEndpoint(VSInternalMethods.TextDocumentSpellCheckableRangesName)]
 internal sealed class DocumentSpellCheckEndpoint : IRazorRequestHandler<VSInternalDocumentSpellCheckableParams, VSInternalSpellCheckableRangeReport[]>, ICapabilitiesProvider
 {
     private readonly IRazorDocumentMappingService _documentMappingService;

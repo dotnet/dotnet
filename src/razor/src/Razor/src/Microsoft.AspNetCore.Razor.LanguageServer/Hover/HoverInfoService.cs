@@ -7,6 +7,8 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
@@ -61,7 +63,7 @@ internal sealed class HoverInfoService : IHoverInfoService
         _htmlFactsService = htmlFactsService;
     }
 
-    public VSInternalHover? GetHoverInfo(string documentFilePath, RazorCodeDocument codeDocument, SourceLocation location, VSInternalClientCapabilities clientCapabilities)
+    public async Task<VSInternalHover?> GetHoverInfoAsync(string documentFilePath, RazorCodeDocument codeDocument, SourceLocation location, VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
     {
         if (codeDocument is null)
         {
@@ -132,7 +134,7 @@ internal sealed class HoverInfoService : IHoverInfoService
 
                 var range = containingTagNameToken.GetRange(codeDocument.Source);
 
-                var result = ElementInfoToHover(documentFilePath, binding.Descriptors, range, clientCapabilities);
+                var result = await ElementInfoToHoverAsync(documentFilePath, binding.Descriptors, range, clientCapabilities, cancellationToken).ConfigureAwait(false);
                 return result;
             }
         }
@@ -261,46 +263,49 @@ internal sealed class HoverInfoService : IHoverInfoService
         }
     }
 
-    private VSInternalHover? ElementInfoToHover(string documentFilePath, IEnumerable<TagHelperDescriptor> descriptors, Range range, VSInternalClientCapabilities clientCapabilities)
+    private async Task<VSInternalHover?> ElementInfoToHoverAsync(string documentFilePath, IEnumerable<TagHelperDescriptor> descriptors, Range range, VSInternalClientCapabilities clientCapabilities, CancellationToken cancellationToken)
     {
         var descriptionInfos = descriptors.SelectAsArray(BoundElementDescriptionInfo.From);
         var elementDescriptionInfo = new AggregateBoundElementDescription(descriptionInfos);
 
         var isVSClient = clientCapabilities.SupportsVisualStudioExtensions;
-        if (isVSClient && _vsLspTagHelperTooltipFactory.TryCreateTooltip(documentFilePath, elementDescriptionInfo, out ContainerElement? classifiedTextElement))
+        if (isVSClient)
         {
-            var vsHover = new VSInternalHover
+            var classifiedTextElement = await _vsLspTagHelperTooltipFactory.TryCreateTooltipContainerAsync(documentFilePath, elementDescriptionInfo, cancellationToken).ConfigureAwait(false);
+            if (classifiedTextElement is not null)
             {
-                Contents = Array.Empty<SumType<string, MarkedString>>(),
-                Range = range,
-                RawContent = classifiedTextElement,
-            };
+                var vsHover = new VSInternalHover
+                {
+                    Contents = Array.Empty<SumType<string, MarkedString>>(),
+                    Range = range,
+                    RawContent = classifiedTextElement,
+                };
 
-            return vsHover;
-        }
-        else
-        {
-            var hoverContentFormat = GetHoverContentFormat(clientCapabilities);
-
-            if (!_lspTagHelperTooltipFactory.TryCreateTooltip(documentFilePath, elementDescriptionInfo, hoverContentFormat, out var vsMarkupContent))
-            {
-                return null;
+                return vsHover;
             }
-
-            var markupContent = new MarkupContent()
-            {
-                Value = vsMarkupContent.Value,
-                Kind = vsMarkupContent.Kind,
-            };
-
-            var hover = new VSInternalHover
-            {
-                Contents = markupContent,
-                Range = range
-            };
-
-            return hover;
         }
+
+        var hoverContentFormat = GetHoverContentFormat(clientCapabilities);
+
+        var vsMarkupContent = await _lspTagHelperTooltipFactory.TryCreateTooltipAsync(documentFilePath, elementDescriptionInfo, hoverContentFormat, cancellationToken).ConfigureAwait(false);
+        if (vsMarkupContent is null)
+        {
+            return null;
+        }
+
+        var markupContent = new MarkupContent()
+        {
+            Value = vsMarkupContent.Value,
+            Kind = vsMarkupContent.Kind,
+        };
+
+        var hover = new VSInternalHover
+        {
+            Contents = markupContent,
+            Range = range
+        };
+
+        return hover;
     }
 
     private static VisualStudioMarkupKind GetHoverContentFormat(ClientCapabilities clientCapabilities)

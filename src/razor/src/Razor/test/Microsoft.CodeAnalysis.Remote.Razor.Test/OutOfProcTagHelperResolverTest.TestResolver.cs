@@ -20,10 +20,10 @@ namespace Microsoft.CodeAnalysis.Remote.Razor;
 public partial class OutOfProcTagHelperResolverTest
 {
     private class TestResolver(
-        IProjectSnapshotManagerAccessor projectManagerAccessor,
+        IWorkspaceProvider workspaceProvider,
         IErrorReporter errorReporter,
         ITelemetryReporter telemetryReporter)
-        : OutOfProcTagHelperResolver(projectManagerAccessor, errorReporter, telemetryReporter)
+        : OutOfProcTagHelperResolver(workspaceProvider, errorReporter, telemetryReporter)
     {
         public Func<IProjectSnapshot, ValueTask<ImmutableArray<TagHelperDescriptor>>>? OnResolveOutOfProcess { get; init; }
 

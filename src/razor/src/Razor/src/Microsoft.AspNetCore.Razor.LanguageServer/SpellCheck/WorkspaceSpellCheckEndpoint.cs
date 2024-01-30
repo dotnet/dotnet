@@ -5,12 +5,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.SpellCheck;
 
-[LanguageServerEndpoint(VSInternalMethods.WorkspaceSpellCheckableRangesName)]
+[RazorLanguageServerEndpoint(VSInternalMethods.WorkspaceSpellCheckableRangesName)]
 internal sealed class WorkspaceSpellCheckEndpoint : IRazorDocumentlessRequestHandler<VSInternalWorkspaceSpellCheckableParams, VSInternalWorkspaceSpellCheckableReport[]>
 {
     public bool MutatesSolutionState => false;

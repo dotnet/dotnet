@@ -4,18 +4,16 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Mapping;
 
-[LanguageServerEndpoint(LanguageServerConstants.RazorLanguageQueryEndpoint)]
+[RazorLanguageServerEndpoint(LanguageServerConstants.RazorLanguageQueryEndpoint)]
 internal sealed class RazorLanguageQueryEndpoint(IRazorDocumentMappingService documentMappingService, IRazorLoggerFactory loggerFactory)
     : IRazorRequestHandler<RazorLanguageQueryParams, RazorLanguageQueryResponse>
 {

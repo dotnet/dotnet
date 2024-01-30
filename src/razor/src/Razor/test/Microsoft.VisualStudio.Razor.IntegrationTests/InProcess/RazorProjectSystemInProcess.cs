@@ -47,9 +47,7 @@ internal partial class RazorProjectSystemInProcess
                 return Task.FromResult(false);
             }
 
-            var project = projectSnapshotManager.GetLoadedProject(projectKeys[0]);
-
-            return Task.FromResult(project is not null);
+            return Task.FromResult(projectSnapshotManager.TryGetLoadedProject(projectKeys[0], out _));
         }, TimeSpan.FromMilliseconds(100), cancellationToken);
     }
 
@@ -61,13 +59,13 @@ internal partial class RazorProjectSystemInProcess
         await Helper.RetryAsync(ct =>
         {
             var projectKeys = projectSnapshotManager.GetAllProjectKeys(projectFilePath);
-            if (projectKeys.Length == 0)
+            if (projectKeys.Length == 0 ||
+                !projectSnapshotManager.TryGetLoadedProject(projectKeys[0], out var project))
             {
                 return Task.FromResult(false);
             }
 
-            var project = projectSnapshotManager.GetLoadedProject(projectKeys[0]);
-            var document = project?.GetDocument(filePath);
+            var document = project.GetDocument(filePath);
 
             return Task.FromResult(document is not null);
         }, TimeSpan.FromMilliseconds(100), cancellationToken);

@@ -17,13 +17,12 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.InlineCompletion;
 
-[LanguageServerEndpoint(VSInternalMethods.TextDocumentInlineCompletionName)]
+[RazorLanguageServerEndpoint(VSInternalMethods.TextDocumentInlineCompletionName)]
 internal sealed class InlineCompletionEndpoint(
     IRazorDocumentMappingService documentMappingService,
     IClientConnection clientConnection,

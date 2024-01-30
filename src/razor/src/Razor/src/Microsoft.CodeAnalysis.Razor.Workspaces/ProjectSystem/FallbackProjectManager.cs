@@ -22,25 +22,29 @@ internal sealed class FallbackProjectManager(
     ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+    IWorkspaceProvider workspaceProvider,
     ITelemetryReporter telemetryReporter)
 {
     private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore = projectConfigurationFilePathStore;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
+    private readonly IWorkspaceProvider _workspaceProvider = workspaceProvider;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
     internal void DynamicFileAdded(ProjectId projectId, ProjectKey razorProjectKey, string projectFilePath, string filePath)
     {
         try
         {
-            var project = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(razorProjectKey);
-            if (project is ProjectSnapshot { HostProject: FallbackHostProject })
+            if (_projectSnapshotManagerAccessor.Instance.TryGetLoadedProject(razorProjectKey, out var project))
             {
-                // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
-                // are the only way to know about files in the project.
-                AddFallbackDocument(razorProjectKey, filePath, projectFilePath);
+                if (project is ProjectSnapshot { HostProject: FallbackHostProject })
+                {
+                    // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
+                    // are the only way to know about files in the project.
+                    AddFallbackDocument(razorProjectKey, filePath, projectFilePath);
+                }
             }
-            else if (project is null)
+            else
             {
                 // We have been asked to provide dynamic file info, which means there is a .razor or .cshtml file in the project
                 // but for some reason our project system doesn't know about the project. In these cases (often when people don't
@@ -58,8 +62,8 @@ internal sealed class FallbackProjectManager(
     {
         try
         {
-            var project = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(razorProjectKey);
-            if (project is ProjectSnapshot { HostProject: FallbackHostProject })
+            if (_projectSnapshotManagerAccessor.Instance.TryGetLoadedProject(razorProjectKey, out var project) &&
+                project is ProjectSnapshot { HostProject: FallbackHostProject })
             {
                 // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
                 // are the only way to know about files in the project.
@@ -156,10 +160,7 @@ internal sealed class FallbackProjectManager(
 
     private Project? TryFindProjectForProjectId(ProjectId projectId)
     {
-        if (_projectSnapshotManagerAccessor.Instance.Workspace is not { } workspace)
-        {
-            throw new InvalidOperationException("Can not map a ProjectId to a ProjectKey before the project is initialized");
-        }
+        var workspace = _workspaceProvider.GetWorkspace();
 
         var project = workspace.CurrentSolution.GetProject(projectId);
         if (project is null ||

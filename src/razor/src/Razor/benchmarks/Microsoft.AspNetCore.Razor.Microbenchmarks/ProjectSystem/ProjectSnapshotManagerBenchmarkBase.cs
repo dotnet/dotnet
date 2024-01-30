@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -60,15 +59,10 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
 
     internal DefaultProjectSnapshotManager CreateProjectSnapshotManager()
     {
-        var services = TestServices.Create([], []);
-
         return new DefaultProjectSnapshotManager(
-            new TestErrorReporter(),
             triggers: [],
-#pragma warning disable CA2000 // Dispose objects before losing scope
-            new AdhocWorkspace(services),
-            StaticProjectEngineFactoryProvider.Instance,
-            new TestProjectSnapshotManagerDispatcher());
-#pragma warning restore CA2000 // Dispose objects before losing scope
+            projectEngineFactoryProvider: StaticProjectEngineFactoryProvider.Instance,
+            dispatcher: new TestProjectSnapshotManagerDispatcher(),
+            errorReporter: new TestErrorReporter());
     }
 }

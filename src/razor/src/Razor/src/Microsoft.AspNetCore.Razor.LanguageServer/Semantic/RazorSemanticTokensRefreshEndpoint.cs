@@ -6,11 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-[LanguageServerEndpoint(CustomMessageNames.RazorSemanticTokensRefreshEndpoint)]
+[RazorLanguageServerEndpoint(CustomMessageNames.RazorSemanticTokensRefreshEndpoint)]
 internal sealed class RazorSemanticTokensRefreshEndpoint : IRazorNotificationHandler<SemanticTokensRefreshParams>
 {
     private readonly WorkspaceSemanticTokensRefreshPublisher _semanticTokensRefreshPublisher;

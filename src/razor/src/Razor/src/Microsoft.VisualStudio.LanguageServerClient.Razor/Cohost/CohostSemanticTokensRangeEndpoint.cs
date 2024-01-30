@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -18,7 +17,7 @@ using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Cohost;
 
 [Shared]
-[LanguageServerEndpoint(Methods.TextDocumentSemanticTokensRangeName)]
+[RazorLanguageServerEndpoint(Methods.TextDocumentSemanticTokensRangeName)]
 [ExportRazorStatelessLspService(typeof(CohostSemanticTokensRangeEndpoint))]
 [Export(typeof(ICapabilitiesProvider))]
 [method: ImportingConstructor]
