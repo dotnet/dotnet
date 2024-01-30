@@ -317,7 +317,7 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
 
     private TestProjectSnapshotManager CreateProjectSnapshotManager()
     {
-        var result = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
+        var result = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         result.AllowNotifyListeners = true;
 
         return result;

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -27,7 +29,7 @@ internal abstract class TagHelperTooltipFactoryBase
         _snapshotResolver = snapshotResolver;
     }
 
-    internal string? GetProjectAvailability(string documentFilePath, string tagHelperTypeName)
+    internal async Task<string?> GetProjectAvailabilityAsync(string documentFilePath, string tagHelperTypeName, CancellationToken cancellationToken)
     {
         if (!_snapshotResolver.TryResolveAllProjects(documentFilePath, out var projectSnapshots))
         {
@@ -39,7 +41,8 @@ internal abstract class TagHelperTooltipFactoryBase
         foreach (var project in projectSnapshots)
         {
             var found = false;
-            foreach (var tagHelper in project.TagHelpers)
+            var tagHelpers = await project.GetTagHelpersAsync(cancellationToken).ConfigureAwait(false);
+            foreach (var tagHelper in tagHelpers)
             {
                 if (tagHelper.GetTypeName() == tagHelperTypeName)
                 {

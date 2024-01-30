@@ -14,14 +14,13 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
 
-[LanguageServerEndpoint(VSInternalMethods.OnAutoInsertName)]
+[RazorLanguageServerEndpoint(VSInternalMethods.OnAutoInsertName)]
 internal class OnAutoInsertEndpoint(
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IRazorDocumentMappingService documentMappingService,

@@ -12,14 +12,13 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-[LanguageServerEndpoint(Methods.TextDocumentOnTypeFormattingName)]
+[RazorLanguageServerEndpoint(Methods.TextDocumentOnTypeFormattingName)]
 internal class DocumentOnTypeFormattingEndpoint(
     IRazorFormattingService razorFormattingService,
     IRazorDocumentMappingService razorDocumentMappingService,

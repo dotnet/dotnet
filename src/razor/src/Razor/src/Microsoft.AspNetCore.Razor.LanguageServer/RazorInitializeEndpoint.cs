@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-[LanguageServerEndpoint(Methods.InitializeName)]
+[RazorLanguageServerEndpoint(Methods.InitializeName)]
 internal class RazorInitializeEndpoint : IRazorDocumentlessRequestHandler<InitializeParams, InitializeResult>
 {
     public bool MutatesSolutionState { get; } = true;

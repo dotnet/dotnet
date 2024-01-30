@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal class CodeDocumentReferenceHolder : DocumentProcessedListener
 {
     private Dictionary<DocumentKey, RazorCodeDocument> _codeDocumentCache;
-    private ProjectSnapshotManager? _projectManager;
+    private IProjectSnapshotManager? _projectManager;
 
     public CodeDocumentReferenceHolder()
     {
@@ -29,7 +29,7 @@ internal class CodeDocumentReferenceHolder : DocumentProcessedListener
         _codeDocumentCache[key] = codeDocument;
     }
 
-    public override void Initialize(ProjectSnapshotManager projectManager)
+    public override void Initialize(IProjectSnapshotManager projectManager)
     {
         _projectManager = projectManager;
         _projectManager.Changed += ProjectManager_Changed;

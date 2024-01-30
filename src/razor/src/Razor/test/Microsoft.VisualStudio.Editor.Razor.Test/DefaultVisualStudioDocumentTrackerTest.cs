@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
@@ -54,7 +53,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
 
         _workspaceEditorSettings = new DefaultWorkspaceEditorSettings(Mock.Of<IClientSettingsManager>(MockBehavior.Strict));
 
-        _projectManager = new TestProjectSnapshotManager(Workspace, ProjectEngineFactoryProvider, Dispatcher) { AllowNotifyListeners = true };
+        _projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher) { AllowNotifyListeners = true };
 
         var projectManagerAccessorMock = new Mock<IProjectSnapshotManagerAccessor>(MockBehavior.Strict);
         projectManagerAccessorMock
@@ -166,7 +165,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         // Arrange
         _projectManager.ProjectAdded(_hostProject);
 
-        var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_hostProject.Key)!, ProjectChangeKind.ProjectAdded);
+        var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_hostProject.Key), ProjectChangeKind.ProjectAdded);
 
         var called = false;
         _documentTracker.ContextChanged += (sender, args) =>
@@ -189,7 +188,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         // Arrange
         _projectManager.ProjectAdded(_hostProject);
 
-        var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_hostProject.Key)!, ProjectChangeKind.ProjectChanged);
+        var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_hostProject.Key), ProjectChangeKind.ProjectChanged);
 
         var called = false;
         _documentTracker.ContextChanged += (sender, args) =>
@@ -239,7 +238,7 @@ public class DefaultVisualStudioDocumentTrackerTest : ProjectSnapshotManagerDisp
         // Arrange
         _projectManager.ProjectAdded(_otherHostProject);
 
-        var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_otherHostProject.Key)!, ProjectChangeKind.ProjectChanged);
+        var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_otherHostProject.Key), ProjectChangeKind.ProjectChanged);
 
         var called = false;
         _documentTracker.ContextChanged += (sender, args) => called = true;

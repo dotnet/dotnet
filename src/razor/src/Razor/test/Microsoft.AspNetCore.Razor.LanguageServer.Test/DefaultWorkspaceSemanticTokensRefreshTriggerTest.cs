@@ -23,7 +23,7 @@ public class DefaultWorkspaceSemanticTokensRefreshTriggerTest : LanguageServerTe
     public DefaultWorkspaceSemanticTokensRefreshTriggerTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _projectManager = TestProjectSnapshotManager.Create(ErrorReporter, new TestDispatcher());
+        _projectManager = TestProjectSnapshotManager.Create(new TestDispatcher(), ErrorReporter);
         _projectManager.AllowNotifyListeners = true;
         _hostProject = new HostProject("/path/to/project.csproj", "/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         _projectManager.ProjectAdded(_hostProject);

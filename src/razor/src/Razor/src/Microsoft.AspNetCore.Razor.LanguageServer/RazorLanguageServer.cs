@@ -118,6 +118,7 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
         }
 
         services.AddSingleton<IAdhocWorkspaceFactory, AdhocWorkspaceFactory>();
+        services.AddSingleton<IWorkspaceProvider, LspWorkspaceProvider>();
 
         var featureOptions = _featureOptions ?? new DefaultLanguageServerFeatureOptions();
         services.AddSingleton(featureOptions);

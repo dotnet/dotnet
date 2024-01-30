@@ -116,7 +116,7 @@ internal class GenerateMethodCodeActionResolver : IRazorCodeActionResolver
 
         var codeBehindTextDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = codeBehindUri };
 
-        var templateWithMethodSignature = PopulateMethodSignature(documentContext, actionParams);
+        var templateWithMethodSignature = await PopulateMethodSignatureAsync(documentContext, actionParams, cancellationToken).ConfigureAwait(false);
         var classLocationLineSpan = @class.GetLocation().GetLineSpan();
         var formattedMethod = FormattingUtilities.AddIndentationToMethod(
             templateWithMethodSignature,
@@ -160,7 +160,7 @@ internal class GenerateMethodCodeActionResolver : IRazorCodeActionResolver
         string? razorClassName,
         CancellationToken cancellationToken)
     {
-        var templateWithMethodSignature = PopulateMethodSignature(documentContext, actionParams);
+        var templateWithMethodSignature = await PopulateMethodSignatureAsync(documentContext, actionParams, cancellationToken).ConfigureAwait(false);
         var edits = CodeBlockService.CreateFormattedTextEdit(code, templateWithMethodSignature, _razorLSPOptionsMonitor.CurrentValue);
 
         // If there are 3 edits, this means that there is no existing @code block, so we have an edit for '@code {', the method stub, and '}'.
@@ -250,14 +250,15 @@ internal class GenerateMethodCodeActionResolver : IRazorCodeActionResolver
         return new WorkspaceEdit() { DocumentChanges = new[] { razorTextDocEdit } };
     }
 
-    private static string PopulateMethodSignature(VersionedDocumentContext documentContext, GenerateMethodCodeActionParams actionParams)
+    private static async Task<string> PopulateMethodSignatureAsync(VersionedDocumentContext documentContext, GenerateMethodCodeActionParams actionParams, CancellationToken cancellationToken)
     {
         var templateWithMethodSignature = s_generateMethodTemplate.Replace(s_methodName, actionParams.MethodName);
 
         var returnType = actionParams.IsAsync ? "global::System.Threading.Tasks.Task" : "void";
         templateWithMethodSignature = templateWithMethodSignature.Replace(s_returnType, returnType);
 
-        var eventTagHelper = documentContext.Project.TagHelpers
+        var tagHelpers = await documentContext.Project.GetTagHelpersAsync(cancellationToken).ConfigureAwait(false);
+        var eventTagHelper = tagHelpers
             .FirstOrDefault(th => th.Name == actionParams.EventName && th.IsEventHandlerTagHelper() && th.GetEventArgsType() is not null);
         var eventArgsType = eventTagHelper is null
             ? string.Empty // Couldn't find the params, generate no params instead.

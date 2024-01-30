@@ -17,7 +17,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using DefinitionResult = Microsoft.VisualStudio.LanguageServer.Protocol.SumType<
@@ -28,7 +27,7 @@ using SyntaxKind = Microsoft.AspNetCore.Razor.Language.SyntaxKind;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
 
-[LanguageServerEndpoint(Methods.TextDocumentDefinitionName)]
+[RazorLanguageServerEndpoint(Methods.TextDocumentDefinitionName)]
 internal sealed class DefinitionEndpoint(
     RazorComponentSearchEngine componentSearchEngine,
     IRazorDocumentMappingService documentMappingService,

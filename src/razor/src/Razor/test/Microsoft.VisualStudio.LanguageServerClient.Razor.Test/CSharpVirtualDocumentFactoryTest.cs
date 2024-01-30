@@ -86,7 +86,7 @@ public class CSharpVirtualDocumentFactoryTest : ToolingTestBase
         var uriProvider = Mock.Of<FileUriProvider>(provider => provider.GetOrCreate(_razorLSPBuffer) == uri, MockBehavior.Strict);
         Mock.Get(uriProvider).Setup(p => p.AddOrUpdate(It.IsAny<ITextBuffer>(), It.IsAny<Uri>())).Verifiable();
 
-        var projectSnapshotManager = TestProjectSnapshotManager.Create(ErrorReporter, new TestDispatcher());
+        var projectSnapshotManager = TestProjectSnapshotManager.Create(new TestDispatcher(), ErrorReporter);
         var project = projectSnapshotManager.CreateAndAddProject(@"C:\path\to\project.csproj");
         projectSnapshotManager.CreateAndAddDocument(project, @"C:\path\to\file.razor");
         var projectSnapshotManagerAccessor = Mock.Of<IProjectSnapshotManagerAccessor>(a => a.Instance == projectSnapshotManager, MockBehavior.Strict);
@@ -110,7 +110,7 @@ public class CSharpVirtualDocumentFactoryTest : ToolingTestBase
         var uriProvider = Mock.Of<FileUriProvider>(provider => provider.GetOrCreate(_razorLSPBuffer) == uri, MockBehavior.Strict);
         Mock.Get(uriProvider).Setup(p => p.AddOrUpdate(It.IsAny<ITextBuffer>(), It.IsAny<Uri>())).Verifiable();
 
-        var projectSnapshotManager = TestProjectSnapshotManager.Create(ErrorReporter, new TestDispatcher());
+        var projectSnapshotManager = TestProjectSnapshotManager.Create(new TestDispatcher(), ErrorReporter);
         var project = TestProjectSnapshot.Create(@"C:\path\to\project1.csproj", @"C:\path\to\obj1", Array.Empty<string>(), RazorConfiguration.Default, projectWorkspaceState: null);
         projectSnapshotManager.ProjectAdded(project.HostProject);
         projectSnapshotManager.CreateAndAddDocument(project, @"C:\path\to\file.razor");

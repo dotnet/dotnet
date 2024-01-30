@@ -24,8 +24,10 @@ internal class WorkspaceProjectStateChangeDetector : IProjectSnapshotChangeTrigg
     private readonly object _disposedLock = new();
     private readonly object _workQueueAccessLock = new();
     private readonly IProjectWorkspaceStateGenerator _workspaceStateGenerator;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly LanguageServerFeatureOptions _options;
+    private readonly IWorkspaceProvider _workspaceProvider;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
+    private readonly IErrorReporter _errorReporter;
     private BatchingWorkQueue? _workQueue;
     private ProjectSnapshotManagerBase? _projectManager;
     private bool _disposed;
@@ -36,24 +38,28 @@ internal class WorkspaceProjectStateChangeDetector : IProjectSnapshotChangeTrigg
     [ImportingConstructor]
     public WorkspaceProjectStateChangeDetector(
         IProjectWorkspaceStateGenerator workspaceStateGenerator,
+        LanguageServerFeatureOptions options,
+        IWorkspaceProvider workspaceProvider,
         ProjectSnapshotManagerDispatcher dispatcher,
-        LanguageServerFeatureOptions options)
+        IErrorReporter errorReporter)
     {
-        _workspaceStateGenerator = workspaceStateGenerator ?? throw new ArgumentNullException(nameof(workspaceStateGenerator));
-        _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-        _options = options ?? throw new ArgumentNullException(nameof(options));
+        _workspaceStateGenerator = workspaceStateGenerator;
+        _options = options;
+        _workspaceProvider = workspaceProvider;
+        _dispatcher = dispatcher;
+        _errorReporter = errorReporter;
     }
 
     // Internal for testing
     internal WorkspaceProjectStateChangeDetector(
         IProjectWorkspaceStateGenerator workspaceStateGenerator,
-        ProjectSnapshotManagerDispatcher dispatcher,
         LanguageServerFeatureOptions options,
+        IWorkspaceProvider workspaceProvider,
+        IErrorReporter errorReporter,
+        ProjectSnapshotManagerDispatcher dispatcher,
         BatchingWorkQueue workQueue)
+        : this(workspaceStateGenerator, options, workspaceProvider, dispatcher, errorReporter)
     {
-        _workspaceStateGenerator = workspaceStateGenerator;
-        _dispatcher = dispatcher;
-        _options = options;
         _workQueue = workQueue;
     }
 
@@ -66,11 +72,13 @@ internal class WorkspaceProjectStateChangeDetector : IProjectSnapshotChangeTrigg
         EnsureWorkQueue();
 
         projectManager.Changed += ProjectManager_Changed;
-        projectManager.Workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
+
+        var workspace = _workspaceProvider.GetWorkspace();
+        workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
 
         // This will usually no-op, in the case that another project snapshot change trigger
         // immediately adds projects we want to be able to handle those projects.
-        InitializeSolution(projectManager.Workspace.CurrentSolution);
+        InitializeSolution(workspace.CurrentSolution);
     }
 
     private void EnsureWorkQueue()
@@ -87,7 +95,7 @@ internal class WorkspaceProjectStateChangeDetector : IProjectSnapshotChangeTrigg
                 _workQueue ??= new BatchingWorkQueue(
                     s_batchingDelay,
                     FilePathComparer.Instance,
-                    projectManager.ErrorReporter);
+                    _errorReporter);
             }
         }
     }
@@ -412,7 +420,8 @@ internal class WorkspaceProjectStateChangeDetector : IProjectSnapshotChangeTrigg
             case ProjectChangeKind.ProjectAdded:
             case ProjectChangeKind.DocumentRemoved:
             case ProjectChangeKind.DocumentAdded:
-                var currentSolution = ProjectSnapshotManager.Workspace.CurrentSolution;
+                var workspace = _workspaceProvider.GetWorkspace();
+                var currentSolution = workspace.CurrentSolution;
                 var associatedWorkspaceProject = currentSolution.Projects
                     .FirstOrDefault(project => e.ProjectKey == ProjectKey.From(project));
 
@@ -483,8 +492,7 @@ internal class WorkspaceProjectStateChangeDetector : IProjectSnapshotChangeTrigg
             return false;
         }
 
-        projectSnapshot = ProjectSnapshotManager.GetLoadedProject(projectKey);
-        return projectSnapshot is not null;
+        return ProjectSnapshotManager.TryGetLoadedProject(projectKey, out projectSnapshot);
     }
 
     public void Dispose()

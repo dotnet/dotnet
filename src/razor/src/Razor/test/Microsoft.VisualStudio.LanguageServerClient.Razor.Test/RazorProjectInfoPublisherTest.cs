@@ -645,7 +645,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
 
     internal ProjectSnapshotManagerBase CreateProjectSnapshotManager(bool allowNotifyListeners = false)
     {
-        var snapshotManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
+        var snapshotManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         snapshotManager.AllowNotifyListeners = allowNotifyListeners;
 
         return snapshotManager;

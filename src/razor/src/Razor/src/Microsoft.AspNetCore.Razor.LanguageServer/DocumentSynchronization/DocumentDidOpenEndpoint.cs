@@ -7,12 +7,11 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 
-[LanguageServerEndpoint(Methods.TextDocumentDidOpenName)]
+[RazorLanguageServerEndpoint(Methods.TextDocumentDidOpenName)]
 internal class DocumentDidOpenEndpoint : IRazorNotificationHandler<DidOpenTextDocumentParams>
 {
     public bool MutatesSolutionState => true;

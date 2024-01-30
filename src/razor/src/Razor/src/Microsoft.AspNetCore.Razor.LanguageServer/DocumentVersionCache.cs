@@ -61,8 +61,7 @@ internal sealed partial class DocumentVersionCache() : IDocumentVersionCache, IP
 
         // Any event that has a project may have changed the state of the documents
         // and therefore requires us to mark all existing documents as latest.
-        var project = ProjectSnapshotManager.GetLoadedProject(args.ProjectKey);
-        if (project is null)
+        if (!ProjectSnapshotManager.TryGetLoadedProject(args.ProjectKey, out var project))
         {
             // Project no longer loaded, so there's no work to do.
             return;

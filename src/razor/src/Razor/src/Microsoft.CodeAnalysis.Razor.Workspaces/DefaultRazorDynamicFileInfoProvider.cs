@@ -28,7 +28,7 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
     private readonly RazorDocumentServiceProviderFactory _factory;
     private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
     private readonly FilePathService _filePathService;
-    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
+    private readonly IWorkspaceProvider _workspaceProvider;
     private readonly FallbackProjectManager _fallbackProjectManager;
 
     [ImportingConstructor]
@@ -36,14 +36,14 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
         RazorDocumentServiceProviderFactory factory,
         LSPEditorFeatureDetector lspEditorFeatureDetector,
         FilePathService filePathService,
-        IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+        IWorkspaceProvider workspaceProvider,
         FallbackProjectManager fallbackProjectManager)
     {
-        _factory = factory ?? throw new ArgumentNullException(nameof(factory));
-        _lspEditorFeatureDetector = lspEditorFeatureDetector ?? throw new ArgumentNullException(nameof(lspEditorFeatureDetector));
-        _filePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
-        _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor ?? throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
-        _fallbackProjectManager = fallbackProjectManager ?? throw new ArgumentNullException(nameof(fallbackProjectManager));
+        _factory = factory;
+        _lspEditorFeatureDetector = lspEditorFeatureDetector;
+        _filePathService = filePathService;
+        _workspaceProvider = workspaceProvider;
+        _fallbackProjectManager = fallbackProjectManager;
         _entries = new ConcurrentDictionary<Key, Entry>();
         _createEmptyEntry = (key) => new Entry(CreateEmptyInfo(key));
     }
@@ -329,10 +329,7 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
 
     private ProjectId? TryFindProjectIdForProjectKey(ProjectKey key)
     {
-        if (_projectSnapshotManagerAccessor.Instance.Workspace is not { } workspace)
-        {
-            throw new InvalidOperationException("Can not map a ProjectKey to a ProjectId before the project is initialized");
-        }
+        var workspace = _workspaceProvider.GetWorkspace();
 
         foreach (var project in workspace.CurrentSolution.Projects)
         {
@@ -347,10 +344,7 @@ internal class DefaultRazorDynamicFileInfoProvider : RazorDynamicFileInfoProvide
 
     public ProjectKey? TryFindProjectKeyForProjectId(ProjectId projectId)
     {
-        if (_projectSnapshotManagerAccessor.Instance.Workspace is not { } workspace)
-        {
-            throw new InvalidOperationException("Can not map a ProjectId to a ProjectKey before the project is initialized");
-        }
+        var workspace = _workspaceProvider.GetWorkspace();
 
         var project = workspace.CurrentSolution.GetProject(projectId);
         if (project is null ||

@@ -11,13 +11,12 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 
-[LanguageServerEndpoint(Methods.TextDocumentHoverName)]
+[RazorLanguageServerEndpoint(Methods.TextDocumentHoverName)]
 internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, VSInternalHover?>, ICapabilitiesProvider
 {
     private readonly IHoverInfoService _hoverInfoService;
@@ -81,7 +80,7 @@ internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocume
         }
 
         var location = new SourceLocation(positionInfo.HostDocumentIndex, request.Position.Line, request.Position.Character);
-        return _hoverInfoService.GetHoverInfo(documentContext.FilePath, codeDocument, location, _clientCapabilities!);
+        return await _hoverInfoService.GetHoverInfoAsync(documentContext.FilePath, codeDocument, location, _clientCapabilities!, cancellationToken).ConfigureAwait(false);
     }
 
     protected override async Task<VSInternalHover?> HandleDelegatedResponseAsync(VSInternalHover? response, TextDocumentPositionParams originalRequest, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
