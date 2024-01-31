@@ -3,8 +3,8 @@
   <!-- Specify the solutions to build. Add all new solutions/projects here as necessary or the main build won't build them! -->
   <ItemGroup>
     <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\template_feed\NetCoreTestTemplates.sln" />
-    <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\Templates\MSTestTemplates.sln" Condition="'$(DotNetBuildFromSource)' != 'true'" />
-    <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\WizardExtensions\WizardExtensions.sln" Condition="'$(DotNetBuildFromSource)' != 'true'" />
-    <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\test\Microsoft.TestTemplates.Acceptance.Tests.sln" Condition="'$(DotNetBuildFromSource)' != 'true'" />
+    <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\Templates\MSTestTemplates.sln" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+    <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\WizardExtensions\WizardExtensions.sln" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+    <ProjectToBuild Include="$(MSBuildThisFileDirectory)..\test\Microsoft.TestTemplates.Acceptance.Tests.sln" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
 </Project>
