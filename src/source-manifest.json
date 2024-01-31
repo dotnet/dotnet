@@ -13,10 +13,10 @@
       "commitSha": "1226bf2df28644de5f808dc1674f4a195fb333e8"
     },
     {
-      "packageVersion": "9.0.0-preview.1.24075.4",
+      "packageVersion": "9.0.0-preview.1.24080.2",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "1d58b24591820b2a134cfc0a5e3154bf9fe65cb4"
+      "commitSha": "688559886575a7f0d84b771de5c17501d5daaedc"
     },
     {
       "packageVersion": "0.11.4-alpha.24065.1",
@@ -37,10 +37,10 @@
       "commitSha": "b4f8847a36543b3274dc252534d0175de35bd16c"
     },
     {
-      "packageVersion": "8.0.0-preview.24062.1",
+      "packageVersion": "8.0.0-preview.24076.1",
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "82c9a134f8c13dcfe8a9c243a19ee1861bbcb8ea"
+      "commitSha": "79b59c505405b9bee1d62dfa73dfb9750b2d4376"
     },
     {
       "packageVersion": "9.0.0-preview.1.24072.2",
@@ -55,22 +55,22 @@
       "commitSha": "4f1acf059b7e5e4ee76125a5a1dd94ce45d87a14"
     },
     {
-      "packageVersion": "8.0.300-beta.24075.4",
+      "packageVersion": "8.0.300-beta.24080.5",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "32898dc51efc669de98e7e47f57d521bc07ac4cc"
+      "commitSha": "80003bb3f0516455a0046887aa169febf2c4d3a8"
     },
     {
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "46ba867793d0599759fbb8f1ac07a3f75cb2ea9d"
+      "commitSha": "5499f92df4a46606612c5d498fa7f7031cb3c9c1"
     },
     {
-      "packageVersion": "17.10.0-preview-24076-03",
+      "packageVersion": "17.10.0-preview-24081-01",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "0d8d09e5c582526daeb4af0b52956c3290e424d1"
+      "commitSha": "97651a25d833ebd284cc7bd8b69bb88630b85b8e"
     },
     {
       "packageVersion": "6.10.0-preview.1.12",
@@ -97,10 +97,10 @@
       "commitSha": "e39798fc8357615ab319c81b20acfb036ef7b513"
     },
     {
-      "packageVersion": "9.0.0-preview.1.24074.8",
+      "packageVersion": "9.0.0-preview.1.24080.9",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "b4aa81d9da52616ac18e6eb584e37a08cfb2ba87"
+      "commitSha": "1d1bf92fcf43aa6981804dc53c5174445069c9e4"
     },
     {
       "packageVersion": "9.0.0-preview.24057.2",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-preview.1.24078.3",
+      "packageVersion": "9.0.100-preview.1.24081.13",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "a5ff667ac7e3b36ad1aeda2d13ff6fcbb165a19d"
+      "commitSha": "a484271b10c8bafb4f16c3c561e41840dbabd3a5"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24076.1",
@@ -139,10 +139,10 @@
       "commitSha": "b264fbe4dfb1e665a49f052940697bd6dabd561f"
     },
     {
-      "packageVersion": "9.0.100-preview.1.24075.1",
+      "packageVersion": "9.0.100-preview.1.24081.1",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "647c87d68aeb36d008bd9395625c0c4e2f3257d2"
+      "commitSha": "e0ef000d2c0429b7458c7ffbd43515419c367f42"
     },
     {
       "packageVersion": "1.1.0-rc.24068.2",
@@ -151,28 +151,28 @@
       "commitSha": "81349c13c2b8e8babf1cdd4e7ab350fbb1b193a4"
     },
     {
-      "packageVersion": "17.10.0-preview-24069-04",
+      "packageVersion": "17.10.0-preview-24081-03",
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "53df73d3373e7964f6fb37f4437bda2720a75ef2"
+      "commitSha": "29768a4cf9f7b9edd6963a25863298b8ccbba2f2"
     },
     {
-      "packageVersion": "9.0.0-preview.1.24075.3",
+      "packageVersion": "9.0.0-preview.1.24081.3",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "85b4932a31a185105303259e70347309c5d1e39d"
+      "commitSha": "135441216b173df08c391beeb2d2a9a324eadf17"
     },
     {
-      "packageVersion": "9.0.0-preview.1.24075.2",
+      "packageVersion": "9.0.0-preview.1.24081.2",
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "54d6056e0c17b4ddc3262e1c836d2b82ef22bd73"
+      "commitSha": "e97b9849db6d156a262fa2354364c755103df8b1"
     },
     {
-      "packageVersion": "9.0.0-preview.1.24075.2",
+      "packageVersion": "9.0.0-preview.1.24081.2",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "1aac60e5b2b5021a035fb657cb108f438a0d322d"
+      "commitSha": "d1026a0b76b6099bd857cae63a85c5a05461f6eb"
     },
     {
       "packageVersion": "9.0.0-preview.24058.1",
