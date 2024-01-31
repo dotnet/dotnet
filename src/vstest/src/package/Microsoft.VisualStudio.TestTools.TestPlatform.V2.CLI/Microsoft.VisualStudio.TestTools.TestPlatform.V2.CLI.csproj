@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <IsVsixProject>true</IsVsixProject>
-    <TargetFramework>$(NetFrameworkMinimum)</TargetFramework>
+    <TargetFrameworks>$(NetFrameworkMinimum)</TargetFrameworks>
     <!-- MSB3270 Suppress warnings about platform specific projects imported in AnyCPU (MSIL) projects. -->
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
   </PropertyGroup>

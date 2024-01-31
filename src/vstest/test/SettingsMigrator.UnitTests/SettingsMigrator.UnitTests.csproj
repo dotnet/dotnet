@@ -8,23 +8,18 @@
 
   <PropertyGroup>
     <!-- TODO: Do we need this for net6.0 as well? -->
-    <TargetFramework>net48</TargetFramework>
+    <TargetFrameworks>net48</TargetFrameworks>
     <AssemblyName>SettingsMigrator.UnitTests</AssemblyName>
   </PropertyGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\..\src\SettingsMigrator\SettingsMigrator.csproj" />
   </ItemGroup>
+  
   <ItemGroup>
     <Content Include="oldTestSettings.testsettings" CopyToOutputDirectory="Always" />
     <Content Include="oldRunSettingsWithEmbeddedSettings.runsettings" CopyToOutputDirectory="Always" />
     <Content Include="oldRunSettingsWithDataCollector.runsettings" CopyToOutputDirectory="Always" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Runtime" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
 
   <Target Name="RunTests" Condition=" '$(OS)' != 'Windows_NT' " />

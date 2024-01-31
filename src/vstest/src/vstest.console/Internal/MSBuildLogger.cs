@@ -112,8 +112,9 @@ internal class MSBuildLogger : ITestLoggerWithParameters
                 Output.Information(false, info);
                 break;
             case TestOutcome.Failed:
-
                 var result = e.Result;
+                Debug.WriteLine(">>>>ERR:" + result.ErrorMessage);
+                Debug.WriteLine(">>>>STK:" + result.ErrorStackTrace);
                 if (!StringUtils.IsNullOrWhiteSpace(result.ErrorStackTrace))
                 {
                     var maxLength = 1000;

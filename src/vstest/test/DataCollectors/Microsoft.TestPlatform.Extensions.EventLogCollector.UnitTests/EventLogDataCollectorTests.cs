@@ -103,6 +103,7 @@ public class EventLogDataCollectorTests
 
         _eventLogDataCollector.Initialize(null, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
 
+        Assert.IsNotNull(_eventLogDataCollector.EventLogNames);
         CollectionAssert.AreEqual(eventLogNames, _eventLogDataCollector.EventLogNames.ToList());
     }
 
@@ -123,6 +124,7 @@ public class EventLogDataCollectorTests
 
         _eventLogDataCollector.Initialize(expectedXmlDoc.DocumentElement, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
 
+        Assert.IsNotNull(_eventLogDataCollector.EventLogNames);
         CollectionAssert.AreEqual(eventLogNames, _eventLogDataCollector.EventLogNames.ToList());
     }
 
@@ -138,6 +140,7 @@ public class EventLogDataCollectorTests
 
         _eventLogDataCollector.Initialize(null, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
 
+        Assert.IsNotNull(_eventLogDataCollector.EntryTypes);
         CollectionAssert.AreEqual(entryTypes, _eventLogDataCollector.EntryTypes.ToList());
     }
 
@@ -156,6 +159,7 @@ public class EventLogDataCollectorTests
         expectedXmlDoc.LoadXml(configurationString);
         _eventLogDataCollector.Initialize(expectedXmlDoc.DocumentElement, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
 
+        Assert.IsNotNull(_eventLogDataCollector.EntryTypes);
         CollectionAssert.AreEqual(entryTypes, _eventLogDataCollector.EntryTypes.ToList());
     }
 
@@ -174,6 +178,7 @@ public class EventLogDataCollectorTests
         expectedXmlDoc.LoadXml(configurationString);
         _eventLogDataCollector.Initialize(expectedXmlDoc.DocumentElement, _mockDataCollectionEvents.Object, _mockDataCollectionSink, _mockDataCollectionLogger.Object, _dataCollectionEnvironmentContext);
 
+        Assert.IsNotNull(_eventLogDataCollector.EventSources);
         CollectionAssert.AreEqual(eventSources, _eventLogDataCollector.EventSources.ToList());
     }
 
