@@ -10,8 +10,8 @@
     <_BeforeCommonTargetsHookUsed Condition="'$(_ArcadeBeforeCommonTargetsImported)' != 'true'">false</_BeforeCommonTargetsHookUsed>
   </PropertyGroup>
 
-  <Import Project="..\tools\BeforeCommonTargets.targets" Condition="!$(_SuppressSdkImports) and '$(_ArcadeBeforeCommonTargetsImported)' != 'true' and '$(IsCrossTargetingBuild)' != 'true'"/>
-  <Import Project="..\tools\BeforeCommonTargets.CrossTargeting.targets" Condition="!$(_SuppressSdkImports) and '$(_ArcadeBeforeCommonTargetsImported)' != 'true' and '$(IsCrossTargetingBuild)' == 'true'"/>
+  <Import Project="..\tools\BeforeCommonTargets.targets" Condition="'$(_SuppressSdkImports)' != 'true' and '$(_ArcadeBeforeCommonTargetsImported)' != 'true' and '$(IsCrossTargetingBuild)' != 'true'"/>
+  <Import Project="..\tools\BeforeCommonTargets.CrossTargeting.targets" Condition="'$(_SuppressSdkImports)' != 'true' and '$(_ArcadeBeforeCommonTargetsImported)' != 'true' and '$(IsCrossTargetingBuild)' == 'true'"/>
 
   <!-- 
     Output the location of the Build.proj so that the build driver can find where it was restored.
@@ -24,7 +24,7 @@
     </ItemGroup>
   </Target>
 
-  <Import Project="..\tools\Imports.targets" Condition="!$(_SuppressSdkImports) and !$(_SuppressAllTargets)" />
-  <Import Project="..\tools\Empty.targets" Condition="!$(_SuppressSdkImports) and $(_SuppressAllTargets)"/>
+  <Import Project="..\tools\Imports.targets" Condition="'$(_SuppressSdkImports)' != 'true' and '$(_SuppressAllTargets)' != 'true'" />
+  <Import Project="..\tools\Empty.targets" Condition="'$(_SuppressSdkImports)' != 'true' and '$(_SuppressAllTargets)' == 'true'" />
 
 </Project>
