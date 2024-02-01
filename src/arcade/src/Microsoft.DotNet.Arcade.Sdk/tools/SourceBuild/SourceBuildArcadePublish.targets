@@ -10,7 +10,7 @@
     clear way, instead.
 
     If this happens, it's likely caused by incompatible build scripts vs. the source-build job
-    template. Publish may need to be disabled in eng/SourceBuild.props.
+    template. Publish may need to be disabled in eng/DotNetBuild.props.
   -->
   <Target Name="EnsureSourceBuildInnerBuildDoesNotPublish"
           Condition="'$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildInnerRepo)' == 'true'"
