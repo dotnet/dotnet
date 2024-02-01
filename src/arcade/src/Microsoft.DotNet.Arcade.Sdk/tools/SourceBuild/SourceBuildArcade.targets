@@ -1,7 +1,7 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
-  <!-- OS invariant helper properties for use in the repo's SourceBuild.props file and here. -->
+  <!-- OS invariant helper properties for use in the repo's DotNetBuild.props file and here. -->
   <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
     <ArchiveExtension>.zip</ArchiveExtension>
     <FlagParameterPrefix>-</FlagParameterPrefix>
@@ -15,6 +15,8 @@
   </PropertyGroup>
 
   <!-- Repo extensibility point. -->
+  <Import Project="$(RepositoryEngineeringDir)DotNetBuild.props" Condition="Exists('$(RepositoryEngineeringDir)DotNetBuild.props')" />
+  <!-- Remove the legacy extension point when all repositories updated to Arcade 9 and renamed their SourceBuild.props file. -->
   <Import Project="$(RepositoryEngineeringDir)SourceBuild.props" Condition="Exists('$(RepositoryEngineeringDir)SourceBuild.props')" />
 
   <PropertyGroup>
@@ -96,7 +98,7 @@
     default, all non-symbol-package nupkg files and archive files in
     'artifacts/packages/{configuration}' are packed in the intermediate nupkg.
 
-    To configure this, add a target to eng/SourceBuild.props with
+    To configure this, add a target to eng/DotNetBuild.props with
     'BeforeTargets="GetCategorizedIntermediateNupkgContents"' that sets up
     'IntermediateNupkgArtifactFile' items with optional 'Category' metadata.
 
@@ -150,7 +152,7 @@
     in repo build, if SupplementalIntermediateNupkgCategory matches SymbolsIntermediateNupkgCategory.
 
     Include symbols archive in the main intermediate nupkg, by default. Repos can select a different
-    intermediate nupkg by defining 'SymbolsIntermediateNupkgCategory' property in eng/SourceBuild.props.
+    intermediate nupkg by defining 'SymbolsIntermediateNupkgCategory' property in eng/DotNetBuild.props.
 
     Conditioning out for Windows as the tar execution below doesn't work cross-plat.
   -->
