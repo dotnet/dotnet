@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -51,7 +53,7 @@ internal class ProjectSnapshot : IProjectSnapshot
 
     public virtual VersionStamp Version => State.Version;
 
-    public ImmutableArray<TagHelperDescriptor> TagHelpers => State.TagHelpers;
+    public ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken) => new(State.TagHelpers);
 
     public ProjectWorkspaceState ProjectWorkspaceState => State.ProjectWorkspaceState;
 

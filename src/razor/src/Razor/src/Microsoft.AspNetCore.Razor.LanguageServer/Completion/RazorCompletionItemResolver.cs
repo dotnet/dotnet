@@ -26,7 +26,7 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
         _vsLspTagHelperTooltipFactory = vsLspTagHelperTooltipFactory;
     }
 
-    public override Task<VSInternalCompletionItem?> ResolveAsync(
+    public override async Task<VSInternalCompletionItem?> ResolveAsync(
         VSInternalCompletionItem completionItem,
         VSInternalCompletionList containingCompletionList,
         object? originalRequestContext,
@@ -36,13 +36,13 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
         if (originalRequestContext is not RazorCompletionResolveContext razorCompletionResolveContext)
         {
             // Can't recognize the original request context, bail.
-            return Task.FromResult<VSInternalCompletionItem?>(null);
+            return null;
         }
 
         var associatedRazorCompletion = razorCompletionResolveContext.CompletionItems.FirstOrDefault(completion => string.Equals(completion.DisplayText, completionItem.Label, StringComparison.Ordinal));
         if (associatedRazorCompletion is null)
         {
-            return Task.FromResult<VSInternalCompletionItem?>(null);
+            return null;
         }
 
         // If the client is VS, also fill in the Description property.
@@ -106,11 +106,11 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
 
                     if (useDescriptionProperty)
                     {
-                        _vsLspTagHelperTooltipFactory.TryCreateTooltip(razorCompletionResolveContext.FilePath, descriptionInfo, out tagHelperClassifiedTextTooltip);
+                        tagHelperClassifiedTextTooltip = await _vsLspTagHelperTooltipFactory.TryCreateTooltipAsync(razorCompletionResolveContext.FilePath, descriptionInfo, cancellationToken).ConfigureAwait(false);
                     }
                     else
                     {
-                        _lspTagHelperTooltipFactory.TryCreateTooltip(razorCompletionResolveContext.FilePath, descriptionInfo, documentationKind, out tagHelperMarkupTooltip);
+                        tagHelperMarkupTooltip = await _lspTagHelperTooltipFactory.TryCreateTooltipAsync(razorCompletionResolveContext.FilePath, descriptionInfo, documentationKind, cancellationToken).ConfigureAwait(false);
                     }
 
                     break;
@@ -127,6 +127,6 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
             completionItem.Description = tagHelperClassifiedTextTooltip;
         }
 
-        return Task.FromResult<VSInternalCompletionItem?>(completionItem);
+        return completionItem;
     }
 }

@@ -29,11 +29,11 @@ public class FallbackProjectManagerTest : WorkspaceTestBase
         _projectConfigurationFilePathStore = new TestProjectConfigurationFilePathStore();
 
         var dispatcher = Mock.Of<ProjectSnapshotManagerDispatcher>(MockBehavior.Strict);
-        _projectSnapshotManager = new TestProjectSnapshotManager(Workspace, ProjectEngineFactoryProvider, dispatcher);
+        _projectSnapshotManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, dispatcher);
 
         var projectSnapshotManagerAccessor = Mock.Of<IProjectSnapshotManagerAccessor>(a => a.Instance == _projectSnapshotManager, MockBehavior.Strict);
 
-        _fallbackProjectManger = new FallbackProjectManager(_projectConfigurationFilePathStore, languageServerFeatureOptions, projectSnapshotManagerAccessor, NoOpTelemetryReporter.Instance);
+        _fallbackProjectManger = new FallbackProjectManager(_projectConfigurationFilePathStore, languageServerFeatureOptions, projectSnapshotManagerAccessor, WorkspaceProvider, NoOpTelemetryReporter.Instance);
     }
 
     [Fact]

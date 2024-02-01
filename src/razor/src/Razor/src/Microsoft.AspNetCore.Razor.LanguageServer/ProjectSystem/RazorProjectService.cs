@@ -91,7 +91,7 @@ internal class RazorProjectService(
             // from Misc Project to a real one, and means the newly added document could actually already be open.
             // If it is, we need to make sure we start generating it so we're ready to handle requests that could start coming in.
             if (projectSnapshotManager.IsDocumentOpen(textDocumentPath) &&
-                projectSnapshotManager.GetLoadedProject(projectSnapshot.Key) is { } project &&
+                projectSnapshotManager.TryGetLoadedProject(projectSnapshot.Key, out var project) &&
                 project.GetDocument(textDocumentPath) is { } document)
             {
                 _ = document.GetGeneratedOutputAsync();
@@ -164,7 +164,7 @@ internal class RazorProjectService(
             if (_projectSnapshotManagerAccessor.Instance.IsDocumentOpen(textDocumentPath))
             {
                 _logger.LogInformation("Moving document '{textDocumentPath}' from project '{projectKey}' to misc files because it is open.", textDocumentPath, projectSnapshot.Key);
-                var miscellaneousProject = (ProjectSnapshot)_snapshotResolver.GetMiscellaneousProject();
+                var miscellaneousProject = _snapshotResolver.GetMiscellaneousProject();
                 if (projectSnapshot != miscellaneousProject)
                 {
                     MoveDocument(textDocumentPath, projectSnapshot, miscellaneousProject);
@@ -235,9 +235,7 @@ internal class RazorProjectService(
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
-        var project = (ProjectSnapshot?)_projectSnapshotManagerAccessor.Instance.GetLoadedProject(projectKey);
-
-        if (project is null)
+        if (!_projectSnapshotManagerAccessor.Instance.TryGetLoadedProject(projectKey, out var project))
         {
             // Never tracked the project to begin with, noop.
             _logger.LogInformation("Failed to update untracked project '{projectKey}'.", projectKey);
@@ -254,10 +252,10 @@ internal class RazorProjectService(
 
         _projectSnapshotManagerAccessor.Instance.ProjectWorkspaceStateChanged(project.Key, projectWorkspaceState);
 
-        var currentHostProject = project.HostProject;
-        var currentConfiguration = currentHostProject.Configuration;
+        var currentConfiguration = project.Configuration;
+        var currentRootNamespace = project.RootNamespace;
         if (currentConfiguration.ConfigurationName == configuration?.ConfigurationName &&
-            currentHostProject.RootNamespace == rootNamespace)
+            currentRootNamespace == rootNamespace)
         {
             _logger.LogTrace("Updating project '{key}'. The project is already using configuration '{configuration.ConfigurationName}' and root namespace '{rootNamespace}'.",
                 project.Key, configuration.ConfigurationName, rootNamespace);
@@ -275,7 +273,7 @@ internal class RazorProjectService(
                 project.Key, configuration.ConfigurationName, configuration.LanguageVersion);
         }
 
-        if (currentHostProject.RootNamespace != rootNamespace)
+        if (currentRootNamespace != rootNamespace)
         {
             _logger.LogInformation("Updating project '{key}''s root namespace to '{rootNamespace}'.", project.Key, rootNamespace);
         }
@@ -288,11 +286,11 @@ internal class RazorProjectService(
     {
         _logger.LogDebug("UpdateProjectDocuments for {projectKey} with {documentCount} documents.", projectKey, documents.Length);
 
-        var project = (ProjectSnapshot)_projectSnapshotManagerAccessor.Instance.GetLoadedProject(projectKey).AssumeNotNull();
-        var currentHostProject = project.HostProject;
+        var project = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(projectKey);
+        var currentProjectKey = project.Key;
         var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(project.FilePath);
         var documentMap = documents.ToDictionary(document => EnsureFullPath(document.FilePath, projectDirectory), FilePathComparer.Instance);
-        var miscellaneousProject = (ProjectSnapshot)_snapshotResolver.GetMiscellaneousProject();
+        var miscellaneousProject = _snapshotResolver.GetMiscellaneousProject();
 
         // "Remove" any unnecessary documents by putting them into the misc project
         foreach (var documentFilePath in project.DocumentFilePaths)
@@ -308,7 +306,7 @@ internal class RazorProjectService(
             MoveDocument(documentFilePath, project, miscellaneousProject);
         }
 
-        project = (ProjectSnapshot)_projectSnapshotManagerAccessor.Instance.GetLoadedProject(projectKey).AssumeNotNull();
+        project = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(projectKey);
 
         // Update existing documents
         foreach (var documentFilePath in project.DocumentFilePaths)
@@ -338,14 +336,14 @@ internal class RazorProjectService(
             _logger.LogTrace("Updating document '{newHostDocument.FilePath}''s file kind to '{newHostDocument.FileKind}' and target path to '{newHostDocument.TargetPath}'.",
                 newHostDocument.FilePath, newHostDocument.FileKind, newHostDocument.TargetPath);
 
-            _projectSnapshotManagerAccessor.Instance.DocumentRemoved(currentHostProject.Key, currentHostDocument);
+            _projectSnapshotManagerAccessor.Instance.DocumentRemoved(currentProjectKey, currentHostDocument);
 
             var remoteTextLoader = _remoteTextLoaderFactory.Create(newFilePath);
-            _projectSnapshotManagerAccessor.Instance.DocumentAdded(currentHostProject.Key, newHostDocument, remoteTextLoader);
+            _projectSnapshotManagerAccessor.Instance.DocumentAdded(currentProjectKey, newHostDocument, remoteTextLoader);
         }
 
-        project = (ProjectSnapshot)_projectSnapshotManagerAccessor.Instance.GetLoadedProject(project.Key).AssumeNotNull();
-        miscellaneousProject = (ProjectSnapshot)_snapshotResolver.GetMiscellaneousProject();
+        project = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(project.Key);
+        miscellaneousProject = _snapshotResolver.GetMiscellaneousProject();
 
         // Add (or migrate from misc) any new documents
         foreach (var documentKvp in documentMap)
@@ -367,13 +365,13 @@ internal class RazorProjectService(
                 var remoteTextLoader = _remoteTextLoaderFactory.Create(documentFilePath);
                 var newHostDocument = new HostDocument(documentFilePath, documentHandle.TargetPath, documentHandle.FileKind);
 
-                _logger.LogInformation("Adding new document '{documentFilePath}' to project '{key}'.", documentFilePath, currentHostProject.Key);
-                _projectSnapshotManagerAccessor.Instance.DocumentAdded(currentHostProject.Key, newHostDocument, remoteTextLoader);
+                _logger.LogInformation("Adding new document '{documentFilePath}' to project '{key}'.", documentFilePath, currentProjectKey);
+                _projectSnapshotManagerAccessor.Instance.DocumentAdded(currentProjectKey, newHostDocument, remoteTextLoader);
             }
         }
     }
 
-    private void MoveDocument(string documentFilePath, IProjectSnapshot fromProject, ProjectSnapshot toProject)
+    private void MoveDocument(string documentFilePath, IProjectSnapshot fromProject, IProjectSnapshot toProject)
     {
         Debug.Assert(fromProject.DocumentFilePaths.Contains(documentFilePath, FilePathComparer.Instance));
         Debug.Assert(!toProject.DocumentFilePaths.Contains(documentFilePath, FilePathComparer.Instance));
@@ -424,7 +422,7 @@ internal class RazorProjectService(
                 ?? miscellaneousProject;
 
             var textLoader = new DocumentSnapshotTextLoader(documentSnapshot);
-            var defaultToProject = (ProjectSnapshot)toProject;
+            var defaultToProject = toProject;
             var newHostDocument = new HostDocument(documentSnapshot.FilePath, documentSnapshot.TargetPath, documentSnapshot.FileKind);
 
             _logger.LogInformation("Migrating '{documentFilePath}' from the '{project.Key}' project to '{toProject.KEy}' project.",
@@ -454,13 +452,13 @@ internal class RazorProjectService(
             }
 
             // Remove from miscellaneous project
-            var defaultMiscProject = (ProjectSnapshot)miscellaneousProject;
+            var defaultMiscProject = miscellaneousProject;
             _projectSnapshotManagerAccessor.Instance.DocumentRemoved(defaultMiscProject.Key, documentSnapshot.State.HostDocument);
 
             // Add to new project
 
             var textLoader = new DocumentSnapshotTextLoader(documentSnapshot);
-            var defaultProject = (ProjectSnapshot)projectSnapshot;
+            var defaultProject = projectSnapshot;
             var newHostDocument = new HostDocument(documentSnapshot.FilePath, documentSnapshot.TargetPath);
             _logger.LogInformation("Migrating '{documentFilePath}' from the '{miscellaneousProject.Key}' project to '{projectSnapshot.Key}' project.",
                 documentFilePath, miscellaneousProject.Key, projectSnapshot.Key);

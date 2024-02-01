@@ -3,16 +3,25 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-internal abstract class ProjectSnapshotManagerBase : ProjectSnapshotManager
+internal abstract class ProjectSnapshotManagerBase : IProjectSnapshotManager
 {
-    internal abstract Workspace Workspace { get; }
+    public abstract event EventHandler<ProjectChangeEventArgs> Changed;
 
-    internal abstract IErrorReporter ErrorReporter { get; }
+    public abstract ImmutableArray<IProjectSnapshot> GetProjects();
+
+    public abstract bool IsDocumentOpen(string documentFilePath);
+
+    public abstract IProjectSnapshot GetLoadedProject(ProjectKey projectKey);
+
+    public abstract bool TryGetLoadedProject(ProjectKey projectKey, [NotNullWhen(true)] out IProjectSnapshot? project);
+
+    public abstract ImmutableArray<ProjectKey> GetAllProjectKeys(string projectFileName);
 
     internal abstract ImmutableArray<string> GetOpenDocuments();
 

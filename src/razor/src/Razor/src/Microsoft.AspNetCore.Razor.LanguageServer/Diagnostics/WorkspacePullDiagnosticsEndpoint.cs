@@ -5,12 +5,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 
-[LanguageServerEndpoint(VSInternalMethods.WorkspacePullDiagnosticName)]
+[RazorLanguageServerEndpoint(VSInternalMethods.WorkspacePullDiagnosticName)]
 internal class WorkspacePullDiagnosticsEndpoint : IRazorDocumentlessRequestHandler<VSInternalWorkspaceDiagnosticsParams, VSInternalWorkspaceDiagnosticReport[]>
 {
     public bool MutatesSolutionState => false;

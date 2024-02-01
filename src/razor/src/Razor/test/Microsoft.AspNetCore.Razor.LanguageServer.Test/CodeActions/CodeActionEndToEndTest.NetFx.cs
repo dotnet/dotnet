@@ -19,7 +19,6 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Utilities;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
@@ -140,7 +139,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
         await ValidateCodeActionAsync(input, expected, RazorPredefinedCodeRefactoringProviderNames.IntroduceVariable);
     }
 
-    [Fact(Skip = "https://github.com/dotnet/roslyn/issues/71335")]
+    [Fact]
     public async Task Handle_IntroduceLocal_All()
     {
         var input = """

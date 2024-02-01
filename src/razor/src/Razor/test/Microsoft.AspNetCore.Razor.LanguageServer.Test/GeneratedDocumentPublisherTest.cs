@@ -25,7 +25,7 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
         : base(testOutput)
     {
         _serverClient = new TestClient();
-        _projectManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
+        _projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         _projectManager.AllowNotifyListeners = true;
         _hostProject = new HostProject("/path/to/project.csproj", "/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         _hostProject2 = new HostProject("/path/to/project2.csproj", "/path/to/obj2", RazorConfiguration.Default, "TestRootNamespace");

@@ -25,7 +25,7 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
     public CodeDocumentReferenceHolderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _projectManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
+        _projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         _projectManager.AllowNotifyListeners = true;
         _referenceHolder = new CodeDocumentReferenceHolder();
         _referenceHolder.Initialize(_projectManager);
@@ -165,7 +165,7 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
             _projectManager.ProjectAdded(_hostProject);
             var textLoader = new SourceTextLoader("<p>Hello World</p>", _hostDocument.FilePath);
             _projectManager.DocumentAdded(_hostProject.Key, _hostDocument, textLoader);
-            var project = _projectManager.GetLoadedProject(_hostProject.Key).AssumeNotNull();
+            var project = _projectManager.GetLoadedProject(_hostProject.Key);
             return project.GetDocument(_hostDocument.FilePath).AssumeNotNull();
         }, cancellationToken);
     }

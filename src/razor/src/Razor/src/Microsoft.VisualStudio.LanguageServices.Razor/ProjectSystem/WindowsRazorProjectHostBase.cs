@@ -231,8 +231,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
             var projectKeys = projectManager.GetAllProjectKeys(oldProjectFilePath);
             foreach (var projectKey in projectKeys)
             {
-                var current = projectManager.GetLoadedProject(projectKey);
-                if (current?.Configuration is not null)
+                if (projectManager.TryGetLoadedProject(projectKey, out var current))
                 {
                     UninitializeProjectUnsafe(projectKey);
 
@@ -268,8 +267,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
     protected void UninitializeProjectUnsafe(ProjectKey projectKey)
     {
         var projectManager = GetProjectManager();
-        var current = projectManager.GetLoadedProject(projectKey);
-        if (current is not null)
+        if (projectManager.TryGetLoadedProject(projectKey, out _))
         {
             projectManager.ProjectRemoved(projectKey);
             ProjectConfigurationFilePathStore.Remove(projectKey);
@@ -280,8 +278,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
     {
         var projectManager = GetProjectManager();
 
-        var current = projectManager.GetLoadedProject(project.Key);
-        if (current is null)
+        if (!projectManager.TryGetLoadedProject(project.Key, out _))
         {
             // Just in case we somehow got in a state where VS didn't tell us that solution close was finished, lets just
             // ensure we're going to actually do something with the new project that we've just been told about.

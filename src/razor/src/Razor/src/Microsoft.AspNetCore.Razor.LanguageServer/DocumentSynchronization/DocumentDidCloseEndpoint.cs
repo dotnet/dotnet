@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 
-[LanguageServerEndpoint(Methods.TextDocumentDidCloseName)]
+[RazorLanguageServerEndpoint(Methods.TextDocumentDidCloseName)]
 internal class DocumentDidCloseEndpoint : IRazorNotificationHandler<DidCloseTextDocumentParams>, ITextDocumentIdentifierHandler<DidCloseTextDocumentParams, TextDocumentIdentifier>
 {
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;

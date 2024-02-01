@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-[LanguageServerEndpoint(Methods.InitializedName)]
+[RazorLanguageServerEndpoint(Methods.InitializedName)]
 internal class RazorInitializedEndpoint : INotificationHandler<InitializedParams, RazorRequestContext>
 {
     public bool MutatesSolutionState { get; } = true;

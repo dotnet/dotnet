@@ -40,7 +40,7 @@ public class DefaultRazorDynamicFileInfoProviderTest : WorkspaceTestBase
     {
         _documentServiceFactory = new DefaultRazorDocumentServiceProviderFactory();
         _editorFeatureDetector = Mock.Of<LSPEditorFeatureDetector>(MockBehavior.Strict);
-        _projectSnapshotManager = new TestProjectSnapshotManager(Workspace, ProjectEngineFactoryProvider, new TestProjectSnapshotManagerDispatcher())
+        _projectSnapshotManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, new TestProjectSnapshotManagerDispatcher())
         {
             AllowNotifyListeners = true
         };
@@ -59,9 +59,9 @@ public class DefaultRazorDynamicFileInfoProviderTest : WorkspaceTestBase
         var projectSnapshotManagerAccessor = Mock.Of<IProjectSnapshotManagerAccessor>(a => a.Instance == _projectSnapshotManager, MockBehavior.Strict);
 
         var projectConfigurationFilePathStore = Mock.Of<ProjectConfigurationFilePathStore>(MockBehavior.Strict);
-        var fallbackProjectManager = new FallbackProjectManager(projectConfigurationFilePathStore, languageServerFeatureOptions, projectSnapshotManagerAccessor, NoOpTelemetryReporter.Instance);
+        var fallbackProjectManager = new FallbackProjectManager(projectConfigurationFilePathStore, languageServerFeatureOptions, projectSnapshotManagerAccessor, WorkspaceProvider, NoOpTelemetryReporter.Instance);
 
-        _provider = new DefaultRazorDynamicFileInfoProvider(_documentServiceFactory, _editorFeatureDetector, filePathService, projectSnapshotManagerAccessor, fallbackProjectManager);
+        _provider = new DefaultRazorDynamicFileInfoProvider(_documentServiceFactory, _editorFeatureDetector, filePathService, WorkspaceProvider, fallbackProjectManager);
         _testAccessor = _provider.GetTestAccessor();
         _provider.Initialize(_projectSnapshotManager);
 
