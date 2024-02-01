@@ -81,22 +81,22 @@
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
       <Sha>688559886575a7f0d84b771de5c17501d5daaedc</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="9.0.100-preview.1.24081.13">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="9.0.100-preview.1.24081.15">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>a484271b10c8bafb4f16c3c561e41840dbabd3a5</Sha>
+      <Sha>c95a23d0d5c18de13820294f14c1e968b6bb9af0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="9.0.100-preview.1.24081.13">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="9.0.100-preview.1.24081.15">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>a484271b10c8bafb4f16c3c561e41840dbabd3a5</Sha>
+      <Sha>c95a23d0d5c18de13820294f14c1e968b6bb9af0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="9.0.100-preview.1.24081.13">
+    <Dependency Name="Microsoft.NET.Sdk" Version="9.0.100-preview.1.24081.15">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>a484271b10c8bafb4f16c3c561e41840dbabd3a5</Sha>
+      <Sha>c95a23d0d5c18de13820294f14c1e968b6bb9af0</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="9.0.100-preview.1.24081.13">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="9.0.100-preview.1.24081.15">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>a484271b10c8bafb4f16c3c561e41840dbabd3a5</Sha>
+      <Sha>c95a23d0d5c18de13820294f14c1e968b6bb9af0</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.2.1" Version="1.0.2-beta4.22406.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
@@ -155,9 +155,9 @@
       <Sha>3cd939f76803da435c20b082a5cfcc844386fcfb</Sha>
       <SourceBuild RepoName="roslyn" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.10.0-preview-24081-01" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.Build" Version="17.10.0-preview-24081-03" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>97651a25d833ebd284cc7bd8b69bb88630b85b8e</Sha>
+      <Sha>0868f37300c62178f9a56c068102ed26dda8c006</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="NuGet.Build.Tasks" Version="6.10.0-preview.1.12" CoherentParentDependency="Microsoft.NET.Sdk">
