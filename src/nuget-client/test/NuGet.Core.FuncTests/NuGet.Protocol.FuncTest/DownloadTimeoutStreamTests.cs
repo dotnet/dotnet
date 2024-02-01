@@ -90,7 +90,7 @@ namespace NuGet.Core.FuncTest
         }
 
 
-        public async Task VerifyFailureOnReadAsync(Func<Stream, Task<string>> readAsync)
+        internal async Task VerifyFailureOnReadAsync(Func<Stream, Task<string>> readAsync)
         {
             // Arrange
             var expected = new IOException();
@@ -110,7 +110,7 @@ namespace NuGet.Core.FuncTest
             Assert.Same(expected, actual);
         }
 
-        public async Task VerifyTimeoutOnReadFunc(Func<Stream, Task<string>> readFunc, bool isSync)
+        internal async Task VerifyTimeoutOnReadFunc(Func<Stream, Task<string>> readFunc, bool isSync)
         {
             // Arrange
             var expectedDownload = "download";

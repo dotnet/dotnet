@@ -300,7 +300,7 @@ namespace NuGet.Protocol.Tests
                 Assert.Equal("a,b,c", package.Authors);
                 Assert.Equal(2, package.DependencySets.Count());
                 Assert.Equal("package description", package.Description);
-                Assert.Equal(null, package.DownloadCount);
+                Assert.Null(package.DownloadCount);
                 Assert.Equal(new Uri("http://nuget.org/nuget.jpg"), package.IconUrl);
                 Assert.Equal("1.0.0-alpha.1.2+5", package.Identity.Version.ToFullString());
                 Assert.Equal(new Uri("http://nuget.org/license.txt"), package.LicenseUrl);

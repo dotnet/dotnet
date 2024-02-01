@@ -77,7 +77,18 @@ internal class RazorCodeDocumentProvidingSnapshotChangeTrigger : IProjectSnapsho
         }
 
         var project = await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
-            () => _projectManager?.GetLoadedProject(projectKey), cancellationToken);
+            () =>
+            {
+                if (_projectManager is { } projectManager &&
+                    projectManager.TryGetLoadedProject(projectKey, out var project))
+                {
+                    return project;
+                }
+                else
+                {
+                    return null;
+                }
+            }, cancellationToken);
 
         if (project is null)
         {

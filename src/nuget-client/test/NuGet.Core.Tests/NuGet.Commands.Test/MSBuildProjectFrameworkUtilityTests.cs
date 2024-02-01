@@ -298,7 +298,7 @@ namespace NuGet.Commands.Test
             Assert.Equal(expectedPrimaryShortName, nugetFramework.GetShortFolderName());
             if (expectedSecondaryShortName != null)
             {
-                Assert.IsAssignableFrom(typeof(DualCompatibilityFramework), nugetFramework);
+                Assert.IsAssignableFrom<DualCompatibilityFramework>(nugetFramework);
                 var extendedFramework = nugetFramework as DualCompatibilityFramework;
                 Assert.Equal(expectedPrimaryShortName, extendedFramework.RootFramework.GetShortFolderName());
                 Assert.Equal(expectedSecondaryShortName, extendedFramework.SecondaryFramework.GetShortFolderName());

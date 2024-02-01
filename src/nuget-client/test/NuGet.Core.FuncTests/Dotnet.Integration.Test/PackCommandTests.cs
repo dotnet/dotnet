@@ -4094,10 +4094,10 @@ namespace ClassLibrary
                     var allFiles = nupkgReader.GetFiles().ToList();
                     Assert.Contains($"lib/net7.0/{projectName}.dll", allFiles);
                     Assert.DoesNotContain($"lib/net7.0/{projectName}.xml", allFiles);
-                    Assert.False(allFiles.Any(f => f.EndsWith(".exe")));
-                    Assert.False(allFiles.Any(f => f.EndsWith(".winmd")));
-                    Assert.False(allFiles.Any(f => f.EndsWith(".json")));
-                    Assert.False(allFiles.Any(f => f.EndsWith(".pri")));
+                    Assert.DoesNotContain(allFiles, f => f.EndsWith(".exe"));
+                    Assert.DoesNotContain(allFiles, f => f.EndsWith(".winmd"));
+                    Assert.DoesNotContain(allFiles, f => f.EndsWith(".json"));
+                    Assert.DoesNotContain(allFiles, f => f.EndsWith(".pri"));
                 }
             }
         }

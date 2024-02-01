@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Host.Mef;
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 [Shared]
-[ExportLanguageServiceFactory(typeof(ProjectSnapshotManager), RazorLanguage.Name)]
+[ExportLanguageServiceFactory(typeof(IProjectSnapshotManager), RazorLanguage.Name)]
 [method: ImportingConstructor]
 internal class DefaultProjectSnapshotManagerFactory(
     [ImportMany] IEnumerable<IProjectSnapshotChangeTrigger> triggers,
@@ -20,9 +20,8 @@ internal class DefaultProjectSnapshotManagerFactory(
 {
     public ILanguageService CreateLanguageService(HostLanguageServices languageServices)
         => new DefaultProjectSnapshotManager(
-            errorReporter,
             triggers,
-            languageServices.WorkspaceServices.Workspace,
             projectEngineFactoryProvider,
-            dispatcher);
+            dispatcher,
+            errorReporter);
 }

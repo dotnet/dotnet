@@ -34,7 +34,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     public async Task UpdateProject_UpdatesProjectWorkspaceState()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var projectService = CreateProjectService(new TestSnapshotResolver(), projectManager);
@@ -59,7 +59,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     public async Task UpdateProject_UpdatingDocument_MapsRelativeFilePathToActualDocument()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
@@ -88,7 +88,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     public async Task UpdateProject_AddsNewDocuments()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
@@ -117,7 +117,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     public async Task UpdateProject_MovesDocumentsFromMisc()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
         var miscProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
         projectManager.ProjectAdded(miscProject.HostProject);
@@ -157,7 +157,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     public async Task UpdateProject_MovesExistingDocumentToMisc()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         IProjectSnapshot miscProject = TestProjectSnapshot.Create("C:/__MISC_PROJECT__");
         var miscHostProject = new HostProject(miscProject.FilePath, miscProject.IntermediateOutputPath, RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(miscHostProject);
@@ -197,7 +197,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     public async Task UpdateProject_KnownDocuments()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         var hostProject = new HostProject("path/to/project.csproj", "path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var document = new HostDocument("path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
@@ -230,7 +230,7 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     public async Task UpdateProject_UpdatesLegacyDocumentsAsComponents()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
+        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         projectManager.ProjectAdded(hostProject);
         var legacyDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
@@ -260,13 +260,19 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     {
         // Arrange
         var projectFilePath = "C:/path/to/project.csproj";
-        var ownerProject = TestProjectSnapshot.Create(projectFilePath);
+        IProjectSnapshot ownerProject = TestProjectSnapshot.Create(projectFilePath);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         var expectedRootNamespace = "NewRootNamespace";
-        projectSnapshotManager.Setup(manager => manager.GetLoadedProject(ownerProject.Key))
+        projectSnapshotManager
+            .Setup(manager => manager.GetLoadedProject(ownerProject.Key))
             .Returns(ownerProject);
-        projectSnapshotManager.Setup(manager => manager.ProjectWorkspaceStateChanged(It.IsAny<ProjectKey>(), It.IsAny<ProjectWorkspaceState>()));
-        projectSnapshotManager.Setup(manager => manager.ProjectConfigurationChanged(It.IsAny<HostProject>()))
+        projectSnapshotManager
+            .Setup(manager => manager.TryGetLoadedProject(ownerProject.Key, out ownerProject))
+            .Returns(true);
+        projectSnapshotManager
+            .Setup(manager => manager.ProjectWorkspaceStateChanged(It.IsAny<ProjectKey>(), It.IsAny<ProjectWorkspaceState>()));
+        projectSnapshotManager
+            .Setup(manager => manager.ProjectConfigurationChanged(It.IsAny<HostProject>()))
             .Callback<HostProject>((hostProject) => Assert.Equal(expectedRootNamespace, hostProject.RootNamespace));
         var projectService = CreateProjectService(new TestSnapshotResolver(), projectSnapshotManager.Object);
 
@@ -289,12 +295,18 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     {
         // Arrange
         var projectFilePath = "C:/path/to/project.csproj";
-        var ownerProject = TestProjectSnapshot.Create(projectFilePath);
+        IProjectSnapshot ownerProject = TestProjectSnapshot.Create(projectFilePath);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
-        projectSnapshotManager.Setup(manager => manager.GetLoadedProject(ownerProject.Key))
+        projectSnapshotManager
+            .Setup(manager => manager.GetLoadedProject(ownerProject.Key))
             .Returns(ownerProject);
-        projectSnapshotManager.Setup(manager => manager.ProjectWorkspaceStateChanged(It.IsAny<ProjectKey>(), It.IsAny<ProjectWorkspaceState>()));
-        projectSnapshotManager.Setup(manager => manager.ProjectConfigurationChanged(It.IsAny<HostProject>()))
+        projectSnapshotManager
+            .Setup(manager => manager.TryGetLoadedProject(ownerProject.Key, out ownerProject))
+            .Returns(true);
+        projectSnapshotManager
+            .Setup(manager => manager.ProjectWorkspaceStateChanged(It.IsAny<ProjectKey>(), It.IsAny<ProjectWorkspaceState>()));
+        projectSnapshotManager
+            .Setup(manager => manager.ProjectConfigurationChanged(It.IsAny<HostProject>()))
             .Throws(new XunitException("Should not have been called."));
         var projectService = CreateProjectService(new TestSnapshotResolver(), projectSnapshotManager.Object);
 
@@ -314,12 +326,18 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     {
         // Arrange
         var projectFilePath = "C:/path/to/project.csproj";
-        var ownerProject = TestProjectSnapshot.Create(projectFilePath);
+        IProjectSnapshot ownerProject = TestProjectSnapshot.Create(projectFilePath);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
-        projectSnapshotManager.Setup(manager => manager.GetLoadedProject(ownerProject.Key))
+        projectSnapshotManager
+            .Setup(manager => manager.GetLoadedProject(ownerProject.Key))
             .Returns(ownerProject);
-        projectSnapshotManager.Setup(manager => manager.ProjectWorkspaceStateChanged(It.IsAny<ProjectKey>(), It.IsAny<ProjectWorkspaceState>()));
-        projectSnapshotManager.Setup(manager => manager.ProjectConfigurationChanged(It.IsAny<HostProject>()))
+        projectSnapshotManager
+            .Setup(manager => manager.TryGetLoadedProject(ownerProject.Key, out ownerProject))
+            .Returns(true);
+        projectSnapshotManager
+            .Setup(manager => manager.ProjectWorkspaceStateChanged(It.IsAny<ProjectKey>(), It.IsAny<ProjectWorkspaceState>()));
+        projectSnapshotManager
+            .Setup(manager => manager.ProjectConfigurationChanged(It.IsAny<HostProject>()))
             .Callback<HostProject>((hostProject) =>
             {
                 Assert.Same(FallbackRazorConfiguration.Latest, hostProject.Configuration);
@@ -346,12 +364,18 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
     {
         // Arrange
         var projectFilePath = "C:/path/to/project.csproj";
-        var ownerProject = TestProjectSnapshot.Create(projectFilePath);
+        IProjectSnapshot ownerProject = TestProjectSnapshot.Create(projectFilePath);
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
-        projectSnapshotManager.Setup(manager => manager.GetLoadedProject(ownerProject.Key))
+        projectSnapshotManager
+            .Setup(manager => manager.GetLoadedProject(ownerProject.Key))
             .Returns(ownerProject);
-        projectSnapshotManager.Setup(manager => manager.ProjectWorkspaceStateChanged(It.IsAny<ProjectKey>(), It.IsAny<ProjectWorkspaceState>()));
-        projectSnapshotManager.Setup(manager => manager.ProjectConfigurationChanged(It.IsAny<HostProject>()))
+        projectSnapshotManager
+            .Setup(manager => manager.TryGetLoadedProject(ownerProject.Key, out ownerProject))
+            .Returns(true);
+        projectSnapshotManager
+            .Setup(manager => manager.ProjectWorkspaceStateChanged(It.IsAny<ProjectKey>(), It.IsAny<ProjectWorkspaceState>()));
+        projectSnapshotManager
+            .Setup(manager => manager.ProjectConfigurationChanged(It.IsAny<HostProject>()))
             .Callback<HostProject>((hostProject) =>
             {
                 Assert.Same(FallbackRazorConfiguration.MVC_1_1, hostProject.Configuration);
@@ -379,9 +403,15 @@ public class RazorProjectServiceTest(ITestOutputHelper testOutput) : LanguageSer
         // Arrange
         var projectSnapshotManager = new Mock<ProjectSnapshotManagerBase>(MockBehavior.Strict);
         var projectKey = TestProjectKey.Create("C:/path/to/obj");
-        projectSnapshotManager.Setup(manager => manager.GetLoadedProject(projectKey))
+        projectSnapshotManager
+            .Setup(manager => manager.GetLoadedProject(projectKey))
             .Returns<IProjectSnapshot>(null);
-        projectSnapshotManager.Setup(manager => manager.ProjectConfigurationChanged(It.IsAny<HostProject>()))
+        IProjectSnapshot projectResult = null;
+        projectSnapshotManager
+            .Setup(manager => manager.TryGetLoadedProject(projectKey, out projectResult))
+            .Returns(false);
+        projectSnapshotManager
+            .Setup(manager => manager.ProjectConfigurationChanged(It.IsAny<HostProject>()))
             .Throws(new XunitException("Should not have been called."));
         var projectService = CreateProjectService(new TestSnapshotResolver(), projectSnapshotManager.Object);
 

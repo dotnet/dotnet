@@ -14,13 +14,12 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 
-[LanguageServerEndpoint(Methods.TextDocumentFoldingRangeName)]
+[RazorLanguageServerEndpoint(Methods.TextDocumentFoldingRangeName)]
 internal sealed class FoldingRangeEndpoint : IRazorRequestHandler<FoldingRangeParams, IEnumerable<FoldingRange>?>, ICapabilitiesProvider
 {
     private readonly IRazorDocumentMappingService _documentMappingService;

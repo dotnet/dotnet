@@ -313,8 +313,8 @@ namespace NuGet.Packaging.FuncTest
                 PackageVerificationResult status = await provider.GetTrustResultAsync(packageReader, primarySignature, settings, CancellationToken.None);
 
                 Assert.Equal(SignatureVerificationStatus.Valid, status.Trust);
-                Assert.False(status.Issues.Where(i => i.Level >= LogLevel.Warning)
-                    .Any(i => i.Message.Contains(UntrustedChainCertError)));
+                Assert.DoesNotContain(status.Issues.Where(i => i.Level >= LogLevel.Warning)
+, i => i.Message.Contains(UntrustedChainCertError));
             }
         }
 
@@ -353,8 +353,8 @@ namespace NuGet.Packaging.FuncTest
                 PackageVerificationResult status = await provider.GetTrustResultAsync(packageReader, primarySignature, settings, CancellationToken.None);
 
                 Assert.Equal(SignatureVerificationStatus.Valid, status.Trust);
-                Assert.False(status.Issues.Where(i => i.Level >= LogLevel.Warning)
-                    .Any(i => i.Message.Contains(UntrustedChainCertError)));
+                Assert.DoesNotContain(status.Issues.Where(i => i.Level >= LogLevel.Warning)
+, i => i.Message.Contains(UntrustedChainCertError));
             }
         }
 

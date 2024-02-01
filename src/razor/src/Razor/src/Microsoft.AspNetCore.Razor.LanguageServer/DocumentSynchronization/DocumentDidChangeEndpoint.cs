@@ -17,7 +17,7 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 
-[LanguageServerEndpoint(Methods.TextDocumentDidChangeName)]
+[RazorLanguageServerEndpoint(Methods.TextDocumentDidChangeName)]
 internal class DocumentDidChangeEndpoint(
     ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
     IRazorProjectService razorProjectService,

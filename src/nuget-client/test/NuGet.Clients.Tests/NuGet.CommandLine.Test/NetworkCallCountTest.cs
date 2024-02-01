@@ -265,8 +265,8 @@ namespace NuGet.CommandLine.Test
 
                 foreach (var package in expectedPackages)
                 {
-                    Assert.True(allPackages.Any(p => p.Identity.Id == package.Id
-                        && p.Identity.Version.ToNormalizedString() == package.Version.ToNormalizedString()));
+                    Assert.Contains(allPackages, p => p.Identity.Id == package.Id
+                        && p.Identity.Version.ToNormalizedString() == package.Version.ToNormalizedString());
                 }
             }
         }
@@ -395,8 +395,8 @@ namespace NuGet.CommandLine.Test
 
                 foreach (var package in expectedPackages)
                 {
-                    Assert.True(allPackages.Any(p => p.Identity.Id == package.Id
-                        && p.Identity.Version.ToNormalizedString() == package.Version.ToNormalizedString()));
+                    Assert.Contains(allPackages, p => p.Identity.Id == package.Id
+                        && p.Identity.Version.ToNormalizedString() == package.Version.ToNormalizedString());
                 }
             }
         }
@@ -524,8 +524,8 @@ namespace NuGet.CommandLine.Test
 
                 foreach (var package in expectedPackages)
                 {
-                    Assert.True(allPackages.Any(p => p.Identity.Id == package.Id
-                        && p.Identity.Version.ToNormalizedString() == package.Version.ToNormalizedString()));
+                    Assert.Contains(allPackages, p => p.Identity.Id == package.Id
+                        && p.Identity.Version.ToNormalizedString() == package.Version.ToNormalizedString());
                 }
             }
         }

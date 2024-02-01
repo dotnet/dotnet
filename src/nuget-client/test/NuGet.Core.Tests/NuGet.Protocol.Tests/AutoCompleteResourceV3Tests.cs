@@ -35,11 +35,11 @@ namespace NuGet.Protocol.Tests
             var logger = new TestLogger();
 
             // Act
-            var result = resource.IdStartsWith("newt", true, logger, CancellationToken.None);
+            var result = await resource.IdStartsWith("newt", true, logger, CancellationToken.None);
 
             // Assert
-            Assert.Equal(10, result.Result.Count());
-            Assert.NotEqual(0, logger.Messages.Count);
+            Assert.Equal(10, result.Count());
+            Assert.NotEmpty(logger.Messages);
         }
     }
 }

@@ -56,7 +56,7 @@ internal sealed class VisualStudioProjectSnapshotManagerAccessor(
 
                 return (ProjectSnapshotManagerBase)_workspace.Services
                     .GetLanguageServices(RazorLanguage.Name)
-                    .GetRequiredService<ProjectSnapshotManager>();
+                    .GetRequiredService<IProjectSnapshotManager>();
             }
         }
     }

@@ -10,13 +10,12 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
-[LanguageServerEndpoint(VSInternalMethods.TextDocumentValidateBreakableRangeName)]
+[RazorLanguageServerEndpoint(VSInternalMethods.TextDocumentValidateBreakableRangeName)]
 internal class ValidateBreakpointRangeEndpoint : AbstractRazorDelegatingEndpoint<ValidateBreakpointRangeParams, Range?>, ICapabilitiesProvider
 {
     private readonly IRazorDocumentMappingService _documentMappingService;

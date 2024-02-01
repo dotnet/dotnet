@@ -26,7 +26,7 @@ public class NoAllocEnumerateExtensionsTests
         foreach (int i in testSet.NoAllocEnumerate())
         {
             // ensure we got something that was actually in the original set
-            Assert.True(testSet.Contains(i));
+            Assert.Contains(i, testSet);
 
             // ensure we don't get duplicates
             Assert.True(newSet.Add(i));

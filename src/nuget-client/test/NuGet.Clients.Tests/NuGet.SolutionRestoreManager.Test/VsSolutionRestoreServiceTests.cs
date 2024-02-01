@@ -1852,7 +1852,7 @@ namespace NuGet.SolutionRestoreManager.Test
         }
 
         [Fact]
-        public void NominateProjectAsync_ThrowsNullReferenceException()
+        public async Task NominateProjectAsync_ThrowsNullReferenceException()
         {
             var cache = Mock.Of<IProjectSystemCache>();
 
@@ -1874,9 +1874,9 @@ namespace NuGet.SolutionRestoreManager.Test
                 cache, restoreWorker, NullLogger.Instance, asyncLazySolution2, telemetryProvider);
 
             // Act
-            _ = Assert.ThrowsAsync<ArgumentNullException>(async () => await service.NominateProjectAsync(@"F:\project\project.csproj", (IVsProjectRestoreInfo)null, CancellationToken.None));
+            _ = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.NominateProjectAsync(@"F:\project\project.csproj", (IVsProjectRestoreInfo)null, CancellationToken.None));
 
-            _ = Assert.ThrowsAsync<ArgumentNullException>(async () => await service.NominateProjectAsync(@"F:\project\project.csproj", (IVsProjectRestoreInfo2)null, CancellationToken.None));
+            _ = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.NominateProjectAsync(@"F:\project\project.csproj", (IVsProjectRestoreInfo2)null, CancellationToken.None));
         }
 
         [Fact]

@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -16,7 +15,7 @@ using LS = Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.SignatureHelp;
 
-[LanguageServerEndpoint(Methods.TextDocumentSignatureHelpName)]
+[RazorLanguageServerEndpoint(Methods.TextDocumentSignatureHelpName)]
 internal sealed class SignatureHelpEndpoint(
         LanguageServerFeatureOptions languageServerFeatureOptions,
         IRazorDocumentMappingService documentMappingService,

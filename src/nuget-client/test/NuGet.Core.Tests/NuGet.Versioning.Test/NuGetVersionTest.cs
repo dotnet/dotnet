@@ -56,8 +56,8 @@ namespace NuGet.Versioning.Test
 
             // Assert
             Assert.True(successful);
-            Assert.Equal<string>(versionString, semVer!.ToFullString());
-            Assert.Equal<string>(semVer.ToNormalizedString(), semVer.ToString());
+            Assert.Equal(versionString, semVer!.ToFullString());
+            Assert.Equal(semVer.ToNormalizedString(), semVer.ToString());
         }
 
         [Theory]
@@ -342,7 +342,7 @@ namespace NuGet.Versioning.Test
         [InlineData("1.0.3.120", "", "1.0.3.120")]
         [InlineData("1.0.3.120", "alpha", "1.0.3.120-alpha")]
         [InlineData("1.0.3.120", "rc-2", "1.0.3.120-rc-2")]
-        public void ToStringConstructedFromVersionAndSpecialVersionConstructor(string versionString, string specialVersion, string expected)
+        public void ToStringConstructedFromVersionAndSpecialVersionConstructor(string versionString, string? specialVersion, string expected)
         {
             // Arrange 
             var version = new Version(versionString);
@@ -373,7 +373,7 @@ namespace NuGet.Versioning.Test
         [InlineData("1.0.3.120", "", "1.0.3.120")]
         [InlineData("1.0.3.120", "alpha", "1.0.3.120-alpha")]
         [InlineData("1.0.3.120", "rc-2", "1.0.3.120-rc-2")]
-        public void ToStringFromStringFormat(string versionString, string specialVersion, string expected)
+        public void ToStringFromStringFormat(string versionString, string? specialVersion, string expected)
         {
             // Arrange 
             var version = new Version(versionString);

@@ -210,6 +210,7 @@ namespace NuGet.ProjectModel.Test
             Assert.Equal(originalSerializedBefore, originalSerializedAfter);
         }
 
+        [Fact]
         public void LockFileLibrary_EqualityEmpty()
         {
             // Arrange
@@ -220,6 +221,7 @@ namespace NuGet.ProjectModel.Test
             Assert.True(library1.Equals(library2));
         }
 
+        [Fact]
         public void LockFileLibrary_EqualityDiffersOnMSBuildPath()
         {
             // Arrange
@@ -237,6 +239,7 @@ namespace NuGet.ProjectModel.Test
             Assert.False(library1.Equals(library2));
         }
 
+        [Fact]
         public void LockFileLibrary_EqualitySameMSBuildPath()
         {
             // Arrange

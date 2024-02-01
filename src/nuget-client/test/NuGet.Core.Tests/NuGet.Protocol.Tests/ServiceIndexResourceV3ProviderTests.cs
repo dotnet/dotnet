@@ -192,7 +192,7 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
             Assert.True(endpoints.Count == 1);
 
             var endpointSet = new HashSet<string>(endpoints.Select(u => u.AbsoluteUri));
-            Assert.True(endpointSet.Contains("http://tempuri.org/orange"));
+            Assert.Contains("http://tempuri.org/orange", endpointSet);
         }
 
         [Fact]
@@ -222,9 +222,9 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
             Assert.True(endpoints.Count == 3);
 
             var endpointSet = new HashSet<string>(endpoints.Select(u => u.AbsoluteUri));
-            Assert.True(endpointSet.Contains("http://tempuri.org/banana"));
-            Assert.True(endpointSet.Contains("http://tempuri.org/apple"));
-            Assert.True(endpointSet.Contains("http://tempuri.org/orange"));
+            Assert.Contains("http://tempuri.org/banana", endpointSet);
+            Assert.Contains("http://tempuri.org/apple", endpointSet);
+            Assert.Contains("http://tempuri.org/orange", endpointSet);
         }
 
         [Fact]
@@ -254,7 +254,7 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
             Assert.True(endpoints.Count == 1);
 
             var endpointSet = new HashSet<string>(endpoints.Select(u => u.AbsoluteUri));
-            Assert.True(endpointSet.Contains("http://tempuri.org/chocolate"));
+            Assert.Contains("http://tempuri.org/chocolate", endpointSet);
         }
 
         [Fact]
@@ -284,7 +284,7 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
             Assert.True(endpoints.Count == 1);
 
             var endpointSet = new HashSet<string>(endpoints.Select(u => u.AbsoluteUri));
-            Assert.True(endpointSet.Contains("http://tempuri.org/A/4.0.0"));
+            Assert.Contains("http://tempuri.org/A/4.0.0", endpointSet);
         }
 
         [Fact]
@@ -341,7 +341,7 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
             Assert.True(endpoints.Count == 1);
 
             var endpointSet = new HashSet<string>(endpoints.Select(u => u.AbsoluteUri));
-            Assert.True(endpointSet.Contains("http://tempuri.org/A/4.0.0"));
+            Assert.Contains("http://tempuri.org/A/4.0.0", endpointSet);
         }
 
         [Fact]
@@ -371,7 +371,7 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
             Assert.True(endpoints.Count == 1);
 
             var endpointSet = new HashSet<string>(endpoints.Select(u => u.AbsoluteUri));
-            Assert.True(endpointSet.Contains("http://tempuri.org/B"));
+            Assert.Contains("http://tempuri.org/B", endpointSet);
         }
 
         [Fact]
@@ -401,8 +401,8 @@ xmlns=""http://www.w3.org/2007/app"" xmlns:atom=""http://www.w3.org/2005/Atom"">
             Assert.True(endpoints.Count == 2);
 
             var endpointSet = new HashSet<string>(endpoints.Select(u => u.AbsoluteUri));
-            Assert.True(endpointSet.Contains("http://tempuri.org/A/5.0.0/1"));
-            Assert.True(endpointSet.Contains("http://tempuri.org/A/5.0.0/2"));
+            Assert.Contains("http://tempuri.org/A/5.0.0/1", endpointSet);
+            Assert.Contains("http://tempuri.org/A/5.0.0/2", endpointSet);
         }
 
         [Fact]

@@ -24,7 +24,7 @@ internal class GeneratedDocumentSynchronizer : DocumentProcessedListener
         _dispatcher = dispatcher;
     }
 
-    public override void Initialize(ProjectSnapshotManager projectManager)
+    public override void Initialize(IProjectSnapshotManager projectManager)
     {
     }
 

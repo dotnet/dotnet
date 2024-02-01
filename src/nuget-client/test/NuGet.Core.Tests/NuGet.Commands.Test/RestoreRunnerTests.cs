@@ -757,7 +757,7 @@ namespace NuGet.Commands.Test
 
                     // Assert
                     Assert.True(success, "Failed: " + string.Join(Environment.NewLine, logger.Messages));
-                    Assert.True(lockFile.Targets.Any(graph => graph.RuntimeIdentifier == "linux-x86"));
+                    Assert.Contains(lockFile.Targets, graph => graph.RuntimeIdentifier == "linux-x86");
                 }
             }
         }

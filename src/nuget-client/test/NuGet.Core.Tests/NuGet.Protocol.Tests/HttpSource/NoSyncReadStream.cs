@@ -16,7 +16,7 @@ namespace NuGet.Protocol.Tests
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            Assert.True(false, "READ should not be called");
+            Assert.Fail("READ should not be called");
             throw new InvalidOperationException("test failed!! Read should not be called!");
         }
     }

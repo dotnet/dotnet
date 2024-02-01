@@ -29,7 +29,7 @@ namespace NuGet.PackageManagement.UI.Test.Converters
 
             object value = converter.Convert(input, targetType: null, parameter: null, culture: null);
 
-            Assert.IsType(typeof(PackageItemDeprecationLabelState), value);
+            Assert.IsType<PackageItemDeprecationLabelState>(value);
             Assert.Equal(expected, value);
         }
     }

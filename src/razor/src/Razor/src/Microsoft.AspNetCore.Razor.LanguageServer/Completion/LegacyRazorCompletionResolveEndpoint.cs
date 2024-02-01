@@ -77,25 +77,25 @@ internal class LegacyRazorCompletionResolveEndpoint : IVSCompletionResolveEndpoi
         _documentationKind = completionSupportedKinds?.Contains(MarkupKind.Markdown) == true ? MarkupKind.Markdown : MarkupKind.PlainText;
     }
 
-    public Task<VSInternalCompletionItem> HandleRequestAsync(VSInternalCompletionItem completionItem, RazorRequestContext requestContext, CancellationToken cancellationToken)
+    public async Task<VSInternalCompletionItem> HandleRequestAsync(VSInternalCompletionItem completionItem, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
         if (!completionItem.TryGetCompletionListResultIds(out var resultIds))
         {
             // Couldn't resolve.
-            return Task.FromResult(completionItem);
+            return completionItem;
         }
 
         var resultId = resultIds.First();
 
         if (!_completionListCache.TryGet(resultId, out var cachedCompletionItems))
         {
-            return Task.FromResult(completionItem);
+            return completionItem;
         }
 
         if (cachedCompletionItems.Context is not RazorCompletionResolveContext razorCompletionResolveContext)
         {
             // Can't recognize the original request context, bail.
-            return Task.FromResult(completionItem);
+            return completionItem;
         }
 
         var labelQuery = completionItem.Label;
@@ -104,7 +104,7 @@ internal class LegacyRazorCompletionResolveEndpoint : IVSCompletionResolveEndpoi
         {
             _logger.LogError("Could not find an associated razor completion item. This should never happen since we were able to look up the cached completion list.");
             Debug.Fail("Could not find an associated razor completion item. This should never happen since we were able to look up the cached completion list.");
-            return Task.FromResult(completionItem);
+            return completionItem;
         }
 
         // If the client is VS, also fill in the Description property.
@@ -166,11 +166,11 @@ internal class LegacyRazorCompletionResolveEndpoint : IVSCompletionResolveEndpoi
 
                     if (useDescriptionProperty)
                     {
-                        _vsLspTagHelperTooltipFactory.TryCreateTooltip(razorCompletionResolveContext.FilePath, descriptionInfo, out tagHelperClassifiedTextTooltip);
+                        tagHelperClassifiedTextTooltip = await _vsLspTagHelperTooltipFactory.TryCreateTooltipAsync(razorCompletionResolveContext.FilePath, descriptionInfo, cancellationToken).ConfigureAwait(false);
                     }
                     else
                     {
-                        _lspTagHelperTooltipFactory.TryCreateTooltip(razorCompletionResolveContext.FilePath, descriptionInfo, _documentationKind, out tagHelperMarkupTooltip);
+                        tagHelperMarkupTooltip = await _lspTagHelperTooltipFactory.TryCreateTooltipAsync(razorCompletionResolveContext.FilePath, descriptionInfo, _documentationKind, cancellationToken).ConfigureAwait(false);
                     }
 
                     break;
@@ -187,6 +187,6 @@ internal class LegacyRazorCompletionResolveEndpoint : IVSCompletionResolveEndpoi
             completionItem.Description = tagHelperClassifiedTextTooltip;
         }
 
-        return Task.FromResult(completionItem);
+        return completionItem;
     }
 }

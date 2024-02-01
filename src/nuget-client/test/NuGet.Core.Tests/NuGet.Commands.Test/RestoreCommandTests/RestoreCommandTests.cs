@@ -1302,7 +1302,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
                 // Assert
                 Assert.False(result.Success);
-                Assert.True(logger.ErrorMessages.Any(s => s.Contains("Cycle detected")));
+                Assert.Contains(logger.ErrorMessages, s => s.Contains("Cycle detected"));
             }
         }
 
@@ -2272,7 +2272,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 Assert.True(result.Success);
                 Assert.NotNull(targetLib);
                 Assert.Equal(1, targetLib.Dependencies.Count);
-                Assert.True(targetLib.Dependencies.Any(d => d.Id == packageName));
+                Assert.Contains(targetLib.Dependencies, d => d.Id == packageName);
             }
         }
 

@@ -6,14 +6,26 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BD1946CE-554
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet.Clients", "NuGet.Clients", "{08F523EC-3C2A-4A00-A54C-2E54C5AC856B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.VisualStudio.Client", "src\NuGet.Clients\NuGet.VisualStudio.Client\NuGet.VisualStudio.Client.csproj", "{3B96F91B-3B58-40ED-B06E-5CD133A79A63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.VisualStudio.Client", "src\NuGet.Clients\NuGet.VisualStudio.Client\NuGet.VisualStudio.Client.csproj", "{3B96F91B-3B58-40ED-B06E-5CD133A79A63}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4A4623E9-CE1F-4DF2-A4C2-513CE8377D2A}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		build\BannedSymbols.txt = build\BannedSymbols.txt
+		build\common.legacy.props = build\common.legacy.props
+		build\common.project.props = build\common.project.props
+		build\common.props = build\common.props
+		build\common.ps1 = build\common.ps1
+		build\common.targets = build\common.targets
+		build\config.props = build\config.props
 		Directory.Packages.props = Directory.Packages.props
+		build\DotNetSdkVersions.txt = build\DotNetSdkVersions.txt
 		build\NuGet.ruleset = build\NuGet.ruleset
+		build\NuGet.Tests.ruleset = build\NuGet.Tests.ruleset
+		build\sign.targets = build\sign.targets
 		spelling.dic = spelling.dic
+		build\test.targets = build\test.targets
+		build\vsts_build.yaml = build\vsts_build.yaml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet.Core.UnitTests", "NuGet.Core.UnitTests", "{7323F93B-D141-4001-BB9E-7AF14031143E}"
@@ -162,13 +174,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.VisualStudio", "src\N
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.VisualStudio.Implementation", "src\NuGet.Clients\NuGet.VisualStudio.Implementation\NuGet.VisualStudio.Implementation.csproj", "{9623CF30-192C-4864-B419-29649169AE30}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.PackageManagement.PowerShellCmdlets", "src\NuGet.Clients\NuGet.PackageManagement.PowerShellCmdlets\NuGet.PackageManagement.PowerShellCmdlets.csproj", "{26DC17AC-A390-4515-A2C0-07A0950036C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.PackageManagement.PowerShellCmdlets", "src\NuGet.Clients\NuGet.PackageManagement.PowerShellCmdlets\NuGet.PackageManagement.PowerShellCmdlets.csproj", "{26DC17AC-A390-4515-A2C0-07A0950036C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.PackageManagement.UI", "src\NuGet.Clients\NuGet.PackageManagement.UI\NuGet.PackageManagement.UI.csproj", "{538ADEFD-2170-40A9-A2C5-EC8369CFE490}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.PackageManagement.UI", "src\NuGet.Clients\NuGet.PackageManagement.UI\NuGet.PackageManagement.UI.csproj", "{538ADEFD-2170-40A9-A2C5-EC8369CFE490}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.SolutionRestoreManager", "src\NuGet.Clients\NuGet.SolutionRestoreManager\NuGet.SolutionRestoreManager.csproj", "{06662133-1292-4918-90F3-36C930C0B16F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.SolutionRestoreManager", "src\NuGet.Clients\NuGet.SolutionRestoreManager\NuGet.SolutionRestoreManager.csproj", "{06662133-1292-4918-90F3-36C930C0B16F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.Tools", "src\NuGet.Clients\NuGet.Tools\NuGet.Tools.csproj", "{D0F9864B-D782-4471-81A2-29555E5DC0D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Tools", "src\NuGet.Clients\NuGet.Tools\NuGet.Tools.csproj", "{D0F9864B-D782-4471-81A2-29555E5DC0D7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.PackageManagement.VisualStudio", "src\NuGet.Clients\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj", "{306CDDFA-FF0B-4299-930C-9EC6C9308160}"
 EndProject
@@ -178,7 +190,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.VisualStudio.Common",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.VisualStudio.Interop", "src\NuGet.Clients\NuGet.VisualStudio.Interop\NuGet.VisualStudio.Interop.csproj", "{7DB43FE1-75E1-49F9-B2C8-06A552BA2144}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.Console", "src\NuGet.Clients\NuGet.Console\NuGet.Console.csproj", "{50E33DA2-AF14-486D-81B8-BD8409744A38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Console", "src\NuGet.Clients\NuGet.Console\NuGet.Console.csproj", "{50E33DA2-AF14-486D-81B8-BD8409744A38}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.CommandLine.FuncTest", "test\NuGet.Clients.FuncTests\NuGet.CommandLine.FuncTest\NuGet.CommandLine.FuncTest.csproj", "{23725516-0A6E-48F9-A148-B5E3FA515B13}"
 EndProject
@@ -234,7 +246,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Build.Tasks.Console",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Build.Tasks.Console.Test", "test\NuGet.Core.Tests\NuGet.Build.Tasks.Console.Test\NuGet.Build.Tasks.Console.Test.csproj", "{2011B5A4-2184-4F94-9897-E5BC2425DCDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet.VisualStudio.OnlineEnvironment.Client", "src\NuGet.Clients\NuGet.VisualStudio.OnlineEnvironment.Client\NuGet.VisualStudio.OnlineEnvironment.Client.csproj", "{290DB64D-74BA-45C5-BAC0-6E31A8AFD5CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.VisualStudio.OnlineEnvironment.Client", "src\NuGet.Clients\NuGet.VisualStudio.OnlineEnvironment.Client\NuGet.VisualStudio.OnlineEnvironment.Client.csproj", "{290DB64D-74BA-45C5-BAC0-6E31A8AFD5CB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.VisualStudio.Internal.Contracts", "src\NuGet.Clients\NuGet.VisualStudio.Internal.Contracts\NuGet.VisualStudio.Internal.Contracts.csproj", "{DEEBF1A1-1C21-4E9E-8CE3-1EB21381FF1E}"
 EndProject

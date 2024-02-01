@@ -29,7 +29,7 @@ namespace NuGet.Packaging.Test
             var issues = rule.Validate(files);
 
             // Assert
-            Assert.True(issues.Any(p => p.Code == NuGetLogCode.NU5127));
+            Assert.Contains(issues, p => p.Code == NuGetLogCode.NU5127);
         }
 
         [Theory]
@@ -41,7 +41,7 @@ namespace NuGet.Packaging.Test
             var issues = rule.Validate(files);
 
             // Assert
-            Assert.False(issues.Any(p => p.Code == NuGetLogCode.NU5127));
+            Assert.DoesNotContain(issues, p => p.Code == NuGetLogCode.NU5127);
         }
 
         public static class FileSource

@@ -190,7 +190,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             // Assert
             Assert.Equal(result, meta);
             Assert.NotNull(result.SourceSearchStatus);
+#pragma warning disable xUnit2002 // Do not use null check on value type - The analyzer is raising a false positive
             Assert.NotNull(result.SourceSearchStatus["Installed"]);
+#pragma warning restore xUnit2002 // Do not use null check on value type
         }
 
         private void SetupRemotePackageMetadata(string id, params string[] versions)

@@ -118,8 +118,7 @@ namespace NuGet.Packaging.FuncTest
         {
             using (var test = await VerifyTest.CreateAsync(settings: null, certificate: _untrustedTestCertificate.Cert))
             {
-                Assert.Throws(typeof(ArgumentException),
-                    () => test.PrimarySignature.GetSigningCertificateFingerprint((HashAlgorithmName)99));
+                Assert.Throws<ArgumentException>(() => test.PrimarySignature.GetSigningCertificateFingerprint((HashAlgorithmName)99));
             }
         }
 

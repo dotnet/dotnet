@@ -499,8 +499,8 @@ namespace NuGet.Packaging.Test
                                                                            CancellationToken.None);
 
                     // Assert
-                    Assert.True(files.Any(p => p.EndsWith(".nupkg")));
-                    Assert.False(files.Any(p => p.EndsWith(".nuspec")));
+                    Assert.Contains(files, p => p.EndsWith(".nupkg"));
+                    Assert.DoesNotContain(files, p => p.EndsWith(".nuspec"));
                 }
             }
         }
@@ -534,8 +534,8 @@ namespace NuGet.Packaging.Test
                                                                          CancellationToken.None);
 
                     // Assert
-                    Assert.False(files.Any(p => p.EndsWith(".nupkg")));
-                    Assert.True(files.Any(p => p.EndsWith(".nuspec")));
+                    Assert.DoesNotContain(files, p => p.EndsWith(".nupkg"));
+                    Assert.Contains(files, p => p.EndsWith(".nuspec"));
                 }
             }
         }
@@ -569,8 +569,8 @@ namespace NuGet.Packaging.Test
                                                                          CancellationToken.None);
 
                     // Assert
-                    Assert.True(files.Any(p => p.EndsWith(".nupkg")));
-                    Assert.True(files.Any(p => p.EndsWith(".nuspec")));
+                    Assert.Contains(files, p => p.EndsWith(".nupkg"));
+                    Assert.Contains(files, p => p.EndsWith(".nuspec"));
                 }
             }
         }

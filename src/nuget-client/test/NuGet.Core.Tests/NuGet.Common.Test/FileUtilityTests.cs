@@ -165,7 +165,7 @@ namespace NuGet.Common.Test
                 using (var stream = File.OpenWrite(dest))
                 {
                     // Act & Assert
-                    Assert.Throws(typeof(IOException), () =>
+                    Assert.Throws<IOException>(() =>
                         FileUtility.Move(orig, dest));
                 }
             }
@@ -204,7 +204,7 @@ namespace NuGet.Common.Test
                     // Act & Assert
                     if (RuntimeEnvironmentHelper.IsWindows)
                     {
-                        Assert.Throws(typeof(IOException), () =>
+                        Assert.Throws<IOException>(() =>
                             FileUtility.Delete(path));
                     }
                     else

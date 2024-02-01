@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Threading;
 using Moq;
@@ -56,8 +57,10 @@ public class EditorDocumentManagerListenerTest : ProjectSnapshotManagerDispatche
             .Setup(e => e.RemoveDocument(It.IsAny<EditorDocument>()))
             .Callback<EditorDocument>(doc => Assert.Same(document, doc));
 
+        var workspaceProvider = Mock.Of<IWorkspaceProvider>(MockBehavior.Strict);
+
         var listener = new EditorDocumentManagerListener(
-            Dispatcher, JoinableTaskFactory.Context, editorDocumentManger.Object, changedOnDisk, changedInEditor, opened, closed);
+            workspaceProvider, Dispatcher, JoinableTaskContext, editorDocumentManger.Object, changedOnDisk, changedInEditor, opened, closed);
 
         var projectFilePath = "/Path/to/project.csproj";
         var project = Mock.Of<IProjectSnapshot>(p => p.Key == TestProjectKey.Create("/Path/to/obj") && p.FilePath == projectFilePath, MockBehavior.Strict);
@@ -84,8 +87,10 @@ public class EditorDocumentManagerListenerTest : ProjectSnapshotManagerDispatche
             .Setup(e => e.RemoveDocument(It.IsAny<EditorDocument>()))
             .Callback<EditorDocument>(doc => Assert.Same(document, doc));
 
+        var workspaceProvider = Mock.Of<IWorkspaceProvider>(MockBehavior.Strict);
+
         var listener = new EditorDocumentManagerListener(
-            Dispatcher, JoinableTaskFactory.Context, editorDocumentManger.Object, changedOnDisk, changedInEditor, opened, closed);
+            workspaceProvider, Dispatcher, JoinableTaskContext, editorDocumentManger.Object, changedOnDisk, changedInEditor, opened, closed);
 
         var projectFilePath = "/Path/to/project.csproj";
         var project = Mock.Of<IProjectSnapshot>(p =>
@@ -118,8 +123,10 @@ public class EditorDocumentManagerListenerTest : ProjectSnapshotManagerDispatche
                 Assert.Same(closed, onClosed);
             });
 
+        var workspaceProvider = Mock.Of<IWorkspaceProvider>(MockBehavior.Strict);
+
         var listener = new EditorDocumentManagerListener(
-            Dispatcher, JoinableTaskFactory.Context, editorDocumentManger.Object, changedOnDisk, changedInEditor, opened, closed);
+            workspaceProvider, Dispatcher, JoinableTaskContext, editorDocumentManger.Object, changedOnDisk, changedInEditor, opened, closed);
 
         var projectFilePath = "/Path/to/project.csproj";
         var project = Mock.Of<IProjectSnapshot>(p => p.Key == TestProjectKey.Create("/Path/to/obj") && p.FilePath == projectFilePath, MockBehavior.Strict);
@@ -140,8 +147,10 @@ public class EditorDocumentManagerListenerTest : ProjectSnapshotManagerDispatche
             .Setup(e => e.GetOrCreateDocument(It.IsAny<DocumentKey>(), It.IsAny<string>(), It.IsAny<ProjectKey>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>()))
             .Returns(GetEditorDocument(isOpen: true));
 
+        var workspaceProvider = Mock.Of<IWorkspaceProvider>(MockBehavior.Strict);
+
         var listener = new EditorDocumentManagerListener(
-            Dispatcher, JoinableTaskFactory.Context, editorDocumentManger.Object, onChangedOnDisk: null, onChangedInEditor: null, onOpened: opened, onClosed: null);
+            workspaceProvider, Dispatcher, JoinableTaskContext, editorDocumentManger.Object, onChangedOnDisk: null, onChangedInEditor: null, onOpened: opened, onClosed: null);
 
         var projectFilePath = "/Path/to/project.csproj";
         var project = Mock.Of<IProjectSnapshot>(p => p.Key == TestProjectKey.Create("/Path/to/obj") && p.FilePath == projectFilePath, MockBehavior.Strict);
@@ -158,7 +167,7 @@ public class EditorDocumentManagerListenerTest : ProjectSnapshotManagerDispatche
         var document = new EditorDocument(
             documentManager ?? Mock.Of<EditorDocumentManager>(MockBehavior.Strict),
             Dispatcher,
-            JoinableTaskFactory.Context,
+            JoinableTaskContext,
             _projectFilePath,
             _documentFilePath,
             _projectKey,

@@ -94,29 +94,27 @@ namespace NuGet.Common.Test
         }
 
         [Fact]
-        public void Enter_WhenCompleted_LockIsAcquired()
+        public async Task Enter_WhenCompleted_LockIsAcquired()
         {
             _mutex.Enter(Key);
 
             using (var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(3)))
             {
-                Assert.Throws<OperationCanceledException>(
-                    () => _mutex.EnterAsync(Key, cancellationTokenSource.Token).GetAwaiter().GetResult());
+                await Assert.ThrowsAsync<OperationCanceledException>(
+                    () => _mutex.EnterAsync(Key, cancellationTokenSource.Token));
             }
 
             _mutex.Exit(Key);
         }
 
         [Fact]
-        public void Enter_WithDifferentKeys_DoesNotBlock()
+        public async Task Enter_WithDifferentKeys_DoesNotBlock()
         {
             _mutex.Enter(Key);
 
             using (var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(3)))
             {
-                Task task = Task.Run(() => _mutex.Enter(OtherKey));
-
-                task.GetAwaiter().GetResult();
+                await Task.Run(() => _mutex.Enter(OtherKey));
             }
 
             _mutex.Exit(Key);

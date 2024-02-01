@@ -211,8 +211,10 @@ namespace NuGet.Protocol.Plugins.Tests
                 test.Context.HandleResponse(response);
 
                 Assert.Equal(TaskStatus.RanToCompletion, test.Context.CompletionTask.Status);
+#pragma warning disable xUnit1031 // Do not use blocking task operations in test method
                 Assert.Equal(MessageResponseCode.Error, test.Context.CompletionTask.Result.ResponseCode);
                 Assert.Null(test.Context.CompletionTask.Result.ProtocolVersion);
+#pragma warning restore xUnit1031 // Do not use blocking task operations in test method
             }
         }
 
@@ -230,7 +232,9 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 test.Context.HandleResponse(firstResponse);
 
+#pragma warning disable xUnit1031 // Do not use blocking task operations in test method
                 var response = test.Context.CompletionTask.Result;
+#pragma warning restore xUnit1031 // Do not use blocking task operations in test method
 
                 payload = new HandshakeResponse(MessageResponseCode.Success, ProtocolConstants.CurrentVersion);
                 var secondResponse = MessageUtilities.Create(
@@ -241,7 +245,9 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 test.Context.HandleResponse(secondResponse);
 
+#pragma warning disable xUnit1031 // Do not use blocking task operations in test method
                 Assert.Same(response, test.Context.CompletionTask.Result);
+#pragma warning restore xUnit1031 // Do not use blocking task operations in test method
             }
         }
 

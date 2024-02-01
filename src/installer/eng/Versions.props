@@ -86,9 +86,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/sdk -->
-    <MicrosoftDotNetCommonItemTemplatesPackageVersion>9.0.100-preview.1.24081.20</MicrosoftDotNetCommonItemTemplatesPackageVersion>
-    <MicrosoftNETSdkPackageVersion>9.0.100-preview.1.24081.20</MicrosoftNETSdkPackageVersion>
-    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>9.0.100-preview.1.24081.20</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
+    <MicrosoftDotNetCommonItemTemplatesPackageVersion>9.0.100-preview.1.24081.23</MicrosoftDotNetCommonItemTemplatesPackageVersion>
+    <MicrosoftNETSdkPackageVersion>9.0.100-preview.1.24081.23</MicrosoftNETSdkPackageVersion>
+    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>9.0.100-preview.1.24081.23</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
     <MicrosoftNETBuildExtensionsPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETBuildExtensionsPackageVersion>
     <MicrosoftDotnetToolsetInternalPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetToolsetInternalPackageVersion>
     <MicrosoftDotnetTemplateLocatorPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetTemplateLocatorPackageVersion>
@@ -127,7 +127,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/NuGet/NuGet.Client -->
-    <NuGetBuildTasksPackageVersion>6.10.0-preview.1.12</NuGetBuildTasksPackageVersion>
+    <NuGetBuildTasksPackageVersion>6.10.0-preview.1.18</NuGetBuildTasksPackageVersion>
   </PropertyGroup>
   <!-- Dependencies from https://github.com/dotnet/deployment-tools -->
   <PropertyGroup>

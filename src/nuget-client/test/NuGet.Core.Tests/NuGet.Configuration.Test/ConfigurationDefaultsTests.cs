@@ -265,6 +265,7 @@ namespace NuGet.Configuration
             }
         }
 
+        [Fact]
         public void GetDefaultSameNamePackageSourcesFromSourceProvider()
         {
             // Arrange
@@ -303,6 +304,7 @@ namespace NuGet.Configuration
             }
         }
 
+        [Fact]
         public void GetDefaultSameSourcePackageSourcesFromSourceProvider()
         {
             // Arrange

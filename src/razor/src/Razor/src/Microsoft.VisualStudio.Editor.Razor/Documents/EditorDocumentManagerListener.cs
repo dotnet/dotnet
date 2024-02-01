@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Documents;
@@ -28,7 +29,8 @@ namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 [Export(typeof(IProjectSnapshotChangeTrigger))]
 internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTrigger
 {
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
+    private readonly IWorkspaceProvider _workspaceProvider;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly JoinableTaskContext _joinableTaskContext;
     private readonly ITelemetryReporter _telemetryReporter;
     private readonly EventHandler? _onChangedOnDisk;
@@ -43,11 +45,16 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
     public ProjectSnapshotManagerBase ProjectManager => _projectManager ?? throw new InvalidOperationException($"{nameof(ProjectManager)} called before {nameof(Initialize)}");
 
     [ImportingConstructor]
-    public EditorDocumentManagerListener(ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher, JoinableTaskContext joinableTaskContext, ITelemetryReporter telemetryReporter)
+    public EditorDocumentManagerListener(
+        IWorkspaceProvider workspaceProvider,
+        ProjectSnapshotManagerDispatcher dispatcher,
+        JoinableTaskContext joinableTaskContext,
+        ITelemetryReporter telemetryReporter)
     {
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-        _joinableTaskContext = joinableTaskContext ?? throw new ArgumentNullException(nameof(joinableTaskContext));
-        _telemetryReporter = telemetryReporter ?? throw new ArgumentNullException(nameof(telemetryReporter));
+        _workspaceProvider = workspaceProvider;
+        _dispatcher = dispatcher;
+        _joinableTaskContext = joinableTaskContext;
+        _telemetryReporter = telemetryReporter;
 
         _onChangedOnDisk = Document_ChangedOnDisk;
         _onChangedInEditor = Document_ChangedInEditor;
@@ -57,7 +64,8 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
 
     // For testing purposes only.
     internal EditorDocumentManagerListener(
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
+        IWorkspaceProvider workspaceProvider,
+        ProjectSnapshotManagerDispatcher dispatcher,
         JoinableTaskContext joinableTaskContext,
         EditorDocumentManager documentManager,
         EventHandler? onChangedOnDisk,
@@ -65,7 +73,8 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
         EventHandler onOpened,
         EventHandler? onClosed)
     {
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
+        _workspaceProvider = workspaceProvider;
+        _dispatcher = dispatcher;
         _joinableTaskContext = joinableTaskContext;
         _documentManager = documentManager;
         _onChangedOnDisk = onChangedOnDisk;
@@ -80,7 +89,9 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
     public void Initialize(ProjectSnapshotManagerBase projectManager)
     {
         _projectManager = projectManager;
-        _documentManager = projectManager.Workspace.Services.GetRequiredService<EditorDocumentManager>();
+
+        var workspace = _workspaceProvider.GetWorkspace();
+        _documentManager = workspace.Services.GetRequiredService<EditorDocumentManager>();
 
         _projectManager.Changed += ProjectManager_Changed;
     }
@@ -174,7 +185,7 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
             // This event is called by the EditorDocumentManager, which runs on the UI thread.
             // However, due to accessing the project snapshot manager, we need to switch to
             // running on the project snapshot manager's specialized thread.
-            await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
+            await _dispatcher.RunOnDispatcherThreadAsync(() =>
             {
                 ProjectManager.DocumentChanged(document.ProjectKey, document.DocumentFilePath, document.TextLoader);
             }, cancellationToken).ConfigureAwait(false);
@@ -202,7 +213,7 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
             // This event is called by the EditorDocumentManager, which runs on the UI thread.
             // However, due to accessing the project snapshot manager, we need to switch to
             // running on the project snapshot manager's specialized thread.
-            await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
+            await _dispatcher.RunOnDispatcherThreadAsync(() =>
             {
                 var document = (EditorDocument)sender;
                 ProjectManager.DocumentChanged(document.ProjectKey, document.DocumentFilePath, document.EditorTextContainer!.CurrentText);
@@ -232,21 +243,22 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
             // This event is called by the EditorDocumentManager, which runs on the UI thread.
             // However, due to accessing the project snapshot manager, we need to switch to
             // running on the project snapshot manager's specialized thread.
-            await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
+            await _dispatcher.RunOnDispatcherThreadAsync(async () =>
             {
                 var document = (EditorDocument)sender;
 
-                var project = ProjectManager.GetLoadedProject(document.ProjectKey);
-                if (project is ProjectSnapshot { HostProject: FallbackHostProject } projectSnapshot)
+                if (ProjectManager.TryGetLoadedProject(document.ProjectKey, out var project) &&
+                    project is ProjectSnapshot { HostProject: FallbackHostProject } projectSnapshot)
                 {
                     // The user is opening a document that is part of a fallback project. This is a scenario we are very interested in knowing more about
                     // so fire some telemetry. We can't log details about the project, for PII reasons, but we can use document count and tag helper count
                     // as some kind of measure of complexity.
+                    var tagHelpers = await project.GetTagHelpersAsync(cancellationToken).ConfigureAwait(false);
                     _telemetryReporter.ReportEvent(
                         "fallbackproject/documentopen",
                         Severity.Normal,
                         new Property("document.count", projectSnapshot.DocumentCount),
-                        new Property("taghelper.count", projectSnapshot.TagHelpers.Length));
+                        new Property("taghelper.count", tagHelpers.Length));
                 }
 
                 ProjectManager.DocumentOpened(document.ProjectKey, document.DocumentFilePath, document.EditorTextContainer!.CurrentText);
@@ -275,7 +287,7 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
             // This event is called by the EditorDocumentManager, which runs on the UI thread.
             // However, due to accessing the project snapshot manager, we need to switch to
             // running on the project snapshot manager's specialized thread.
-            await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
+            await _dispatcher.RunOnDispatcherThreadAsync(() =>
             {
                 var document = (EditorDocument)sender;
                 ProjectManager.DocumentClosed(document.ProjectKey, document.DocumentFilePath, document.TextLoader);

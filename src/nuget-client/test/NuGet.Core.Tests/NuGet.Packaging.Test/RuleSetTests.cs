@@ -27,7 +27,7 @@ namespace NuGet.Packaging.Test
                         issues.AddRange(rule.Validate(reader).OrderBy(p => p.Code.ToString(), StringComparer.CurrentCulture));
                     }
 
-                    Assert.True(issues.Any(p => p.Code == NuGetLogCode.NU5123));
+                    Assert.Contains(issues, p => p.Code == NuGetLogCode.NU5123);
                 }
             }
         }
@@ -49,7 +49,7 @@ namespace NuGet.Packaging.Test
                         issues.AddRange(rule.Validate(reader).OrderBy(p => p.Code.ToString(), StringComparer.CurrentCulture));
                     }
 
-                    Assert.False(issues.Any(p => p.Code == NuGetLogCode.NU5123));
+                    Assert.DoesNotContain(issues, p => p.Code == NuGetLogCode.NU5123);
                 }
             }
         }

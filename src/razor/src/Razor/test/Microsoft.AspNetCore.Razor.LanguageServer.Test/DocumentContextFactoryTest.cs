@@ -31,7 +31,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
     {
         _documentVersionCache = new DocumentVersionCache();
 
-        _projectSnapshotManagerBase = TestProjectSnapshotManager.Create(ErrorReporter, Dispatcher);
+        _projectSnapshotManagerBase = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         _projectSnapshotManagerAccessor = new TestProjectSnapshotManagerAccessor(_projectSnapshotManagerBase);
     }
 
