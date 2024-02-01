@@ -1668,7 +1668,7 @@ EndGlobal";
                 Assert.True(File.Exists(projectIntermed.AssetsFileOutputPath));
                 var lockFile = reader.Read(projectIntermed.AssetsFileOutputPath);
                 IList<LockFileTargetLibrary> libraries = lockFile.Targets[0].Libraries;
-                Assert.True(libraries.Any(l => l.Type == "package" && l.Name == projectA.ProjectName));
+                Assert.Contains(libraries, l => l.Type == "package" && l.Name == projectA.ProjectName);
 
                 projdir = Path.GetDirectoryName(projectMain.ProjectPath);
                 projfilename = Path.GetFileNameWithoutExtension(projectMain.ProjectName);
@@ -1681,8 +1681,8 @@ EndGlobal";
                 Assert.Equal(0, warnings.Count());
                 libraries = lockFile.Targets[0].Libraries;
                 Assert.Equal(2, libraries.Count);
-                Assert.True(libraries.Any(l => l.Type == "project" && l.Name == projectA.ProjectName));
-                Assert.True(libraries.Any(l => l.Type == "project" && l.Name == projectIntermed.ProjectName));
+                Assert.Contains(libraries, l => l.Type == "project" && l.Name == projectA.ProjectName);
+                Assert.Contains(libraries, l => l.Type == "project" && l.Name == projectIntermed.ProjectName);
             }
         }
 
@@ -2276,6 +2276,7 @@ EndGlobal";
             Assert.Contains($"Installed {packageY} {version} from {pathContext.PackageSource}", result.AllOutput);
         }
 
+        [Fact]
         public async Task DotnetRestore_WithDuplicatePackageVersion_WithTreatWarningsAsErrors_ErrorsWithNU1506()
         {
             using (SimpleTestPathContext pathContext = _msbuildFixture.CreateSimpleTestPathContext())
@@ -2296,7 +2297,7 @@ EndGlobal";
                             <PackageVersion Include=""X"" Version=""[2.0.0]"" />
                         </ItemGroup>
                     </Project>";
-                File.WriteAllText(Path.Combine(workingDirectory, $"Directory.Packages.Props"), directoryPackagesPropsContent);
+                File.WriteAllText(Path.Combine(workingDirectory, $"Directory.Packages.props"), directoryPackagesPropsContent);
 
                 using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
                 {
@@ -2320,7 +2321,7 @@ EndGlobal";
 
                 var result = _msbuildFixture.RunDotnetExpectFailure(workingDirectory, $"restore {projectFile}");
 
-                result.Errors.Should().Contain("NU1506");
+                result.AllOutput.Should().Contain("NU1506");
                 result.AllOutput.Contains("X [1.0.0], X [2.0.0]");
             }
         }

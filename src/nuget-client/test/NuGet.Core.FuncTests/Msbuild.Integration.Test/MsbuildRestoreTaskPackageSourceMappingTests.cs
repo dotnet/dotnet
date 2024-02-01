@@ -229,7 +229,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var packageContosoBuffersPath = Path.Combine(projectAPackages, packageContosoBuffersOpenSource.ToString(), packageContosoBuffersOpenSource.ToString() + ".nupkg");
                 Assert.True(File.Exists(packageContosoBuffersPath));
                 // Assert Contoso.MVC.ASP is not restored.
-                Assert.True(result.Output.Contains("Unable to find version '1.0.0' of package 'Contoso.MVC.ASP'."));
+                Assert.Contains("Unable to find version '1.0.0' of package 'Contoso.MVC.ASP'.", result.Output);
                 var packageContosoMvcPath = Path.Combine(projectAPackages, packageOpenSourceContosoMvc.ToString(), packageOpenSourceContosoMvc.ToString() + ".nupkg");
                 Assert.False(File.Exists(packageContosoMvcPath));
             }
@@ -439,7 +439,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 var packageContosoBuffersPath = Path.Combine(projectAPackages, packageContosoBuffersOpenSource.ToString(), packageContosoBuffersOpenSource.ToString() + ".nupkg");
                 Assert.True(File.Exists(packageContosoBuffersPath));
                 // Assert Contoso.MVC.ASP is not restored.
-                Assert.True(result.Output.Contains("Unable to find version '1.0.0' of package 'Contoso.MVC.ASP'."));
+                Assert.Contains("Unable to find version '1.0.0' of package 'Contoso.MVC.ASP'.", result.Output);
                 var packageContosoMvcPath = Path.Combine(projectAPackages, packageOpenSourceContosoMvc.ToString(), packageOpenSourceContosoMvc.ToString() + ".nupkg");
                 Assert.False(File.Exists(packageContosoMvcPath));
             }

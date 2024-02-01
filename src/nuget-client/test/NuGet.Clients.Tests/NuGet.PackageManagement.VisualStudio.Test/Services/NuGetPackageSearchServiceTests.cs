@@ -339,8 +339,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     CancellationToken.None);
                 SearchResultContextInfo continueSearchResult = await searchService.ContinueSearchAsync(CancellationToken.None);
 
-                Assert.True(searchResult.PackageSearchItems.First().Title.Equals("NuGet.Core1", StringComparison.OrdinalIgnoreCase));
-                Assert.True(continueSearchResult.PackageSearchItems.First().Title.Equals("NuGet.Core27", StringComparison.OrdinalIgnoreCase));
+                Assert.Equal(searchResult.PackageSearchItems.First().Title, "NuGet.Core1", ignoreCase: true);
+                Assert.Equal(continueSearchResult.PackageSearchItems.First().Title, "NuGet.Core27", ignoreCase: true);
 
                 TelemetryEvent[] events = eventsQueue.ToArray();
                 Assert.True(4 == events.Length, string.Join(Environment.NewLine, events.Select(e => e.Name)));

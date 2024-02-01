@@ -41,7 +41,7 @@ namespace NuGet.Common.Test
                             fileId,
                             tB => Task.FromResult(0),
                             ctsB.Token);
-                        Assert.False(true, "Waiting with a timeout for a lock that has not been released should fail.");
+                        Assert.Fail("Waiting with a timeout for a lock that has not been released should fail.");
                     }
                     catch (OperationCanceledException)
                     {
@@ -94,9 +94,11 @@ namespace NuGet.Common.Test
 
             // Assert
             Assert.Equal(TaskStatus.Canceled, tasks[0].Status);
+#pragma warning disable xUnit1031 // Do not use blocking task operations in test method
             Assert.Equal(1, tasks[1].Result);
             Assert.Equal(1, tasks[2].Result);
             Assert.Equal(2, tasks[3].Result);
+#pragma warning restore xUnit1031 // Do not use blocking task operations in test method
 
             Assert.False(timeout.IsCancellationRequested);
         }
@@ -142,9 +144,11 @@ namespace NuGet.Common.Test
             await Task.WhenAll(tasks);
 
             // Assert
+#pragma warning disable xUnit1031 // Do not use blocking task operations in test method
             Assert.Equal(0, tasks[1].Result);
             Assert.Equal(1, tasks[2].Result);
             Assert.Equal(2, tasks[3].Result);
+#pragma warning restore xUnit1031 // Do not use blocking task operations in test method
 
             Assert.False(timeout.IsCancellationRequested);
         }

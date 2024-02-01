@@ -43,7 +43,10 @@ namespace NuGet.PackageManagement.VisualStudio
         protected override async Task<string> GetMSBuildProjectExtensionsPathAsync()
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+#pragma warning disable CS0618 // Type or member is obsolete
+            // Need to validate no project systems get this property via DTE, and if so, switch to GetPropertyValue
             var msbuildProjectExtensionsPath = _vsProjectAdapter.BuildProperties.GetPropertyValueWithDteFallback(ProjectBuildProperties.MSBuildProjectExtensionsPath);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (string.IsNullOrEmpty(msbuildProjectExtensionsPath))
             {
@@ -72,17 +75,23 @@ namespace NuGet.PackageManagement.VisualStudio
                 var jsonTargetFramework = targetFramework as NuGetFramework;
                 if (IsUAPFramework(jsonTargetFramework))
                 {
+#pragma warning disable CS0618 // Type or member is obsolete
+                    // Need to validate no project systems get this property via DTE, and if so, switch to GetPropertyValue
                     var platformMinVersionString = _vsProjectAdapter
                         .BuildProperties
                         .GetPropertyValueWithDteFallback(ProjectBuildProperties.TargetPlatformMinVersion);
+#pragma warning restore CS0618 // Type or member is obsolete
 
                     var platformMinVersion = !string.IsNullOrEmpty(platformMinVersionString)
                         ? new Version(platformMinVersionString)
                         : null;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+                    // Need to validate no project systems get this property via DTE, and if so, switch to GetPropertyValue
                     var targetFrameworkMonikerString = _vsProjectAdapter
                         .BuildProperties
                         .GetPropertyValueWithDteFallback(ProjectBuildProperties.TargetFrameworkMoniker);
+#pragma warning restore CS0618 // Type or member is obsolete
 
                     var targetFrameworkMoniker = !string.IsNullOrWhiteSpace(targetFrameworkMonikerString)
                         ? NuGetFramework.Parse(targetFrameworkMonikerString)

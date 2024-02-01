@@ -96,7 +96,7 @@ namespace NuGet.XPlat.FuncTest
                 var commandRunner = new RemovePackageReferenceCommandRunner();
 
                 // Act
-                var result = commandRunner.ExecuteCommand(packageArgs, MsBuild).Result;
+                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
                 projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
                 // Assert
@@ -106,7 +106,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public void RemovePkg_RemoveInvalidPackage_Failure()
+        public async Task RemovePkg_RemoveInvalidPackage_Failure()
         {
             // Arrange
 
@@ -123,7 +123,7 @@ namespace NuGet.XPlat.FuncTest
                 var msBuild = MsBuild;
 
                 // Act
-                var result = commandRunner.ExecuteCommand(packageArgs, msBuild).Result;
+                var result = await commandRunner.ExecuteCommand(packageArgs, msBuild);
                 projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
                 // Assert
@@ -160,7 +160,7 @@ namespace NuGet.XPlat.FuncTest
                 var commandRunner = new RemovePackageReferenceCommandRunner();
 
                 // Act
-                var result = commandRunner.ExecuteCommand(packageArgs, MsBuild).Result;
+                var result = await commandRunner.ExecuteCommand(packageArgs, MsBuild);
                 projectXmlRoot = XPlatTestUtils.LoadCSProj(projectA.ProjectPath).Root;
 
                 // Assert

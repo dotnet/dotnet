@@ -1,8 +1,11 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using NuGet.Common;
@@ -15,49 +18,73 @@ namespace NuGet.PackageManagement.VisualStudio.Telemetry
     internal class VsProjectBuildPropertiesTelemetry : IVsProjectBuildPropertiesTelemetry
     {
         // some project systems return guid in upper case, others return guids in lower case, so ignore case.
-        ConcurrentDictionary<string, ApiUsage> _apiUsages = new ConcurrentDictionary<string, ApiUsage>(StringComparer.OrdinalIgnoreCase);
+        ConcurrentDictionary<string, ConcurrentDictionary<string, ApiUsage>> _projectSystems = new(StringComparer.OrdinalIgnoreCase);
 
         public VsProjectBuildPropertiesTelemetry()
         {
             InstanceCloseTelemetryEmitter.AddEventsOnShutdown += AddEventsOnShutdown;
         }
 
-        public void OnDteUsed(string[] projectTypeGuids)
+        public void OnDteUsed(string propertyName, string[] projectTypeGuids)
         {
             foreach (var typeGuid in projectTypeGuids)
             {
-                var apiUsage = _apiUsages.GetOrAdd(typeGuid, NewApiUsage);
+                ApiUsage apiUsage = GetApiUsage(propertyName, typeGuid);
                 apiUsage.DteUsed = true;
             }
         }
 
-        public void OnPropertyStorageUsed(string[] projectTypeGuids)
+        public void OnPropertyStorageUsed(string propertyName, string[] projectTypeGuids)
         {
             foreach (var typeGuid in projectTypeGuids)
             {
-                var apiUsage = _apiUsages.GetOrAdd(typeGuid, NewApiUsage);
+                ApiUsage apiUsage = GetApiUsage(propertyName, typeGuid);
                 apiUsage.PropertyStorageUsed = true;
             }
         }
 
-        private static ApiUsage NewApiUsage(string projectTypeGuid)
+        private ApiUsage GetApiUsage(string propertyName, string projectTypeGuid)
         {
-            var guid = projectTypeGuid.ToUpperInvariant();
+            ConcurrentDictionary<string, ApiUsage> propertyNames = _projectSystems.GetOrAdd(projectTypeGuid, CreatePropertyNamesDictionary);
+            ApiUsage apiUsage = propertyNames.GetOrAdd(propertyName, CreateApiUsage, projectTypeGuid);
+            return apiUsage;
+        }
+
+        private static ConcurrentDictionary<string, ApiUsage> CreatePropertyNamesDictionary(string _)
+        {
+            return new ConcurrentDictionary<string, ApiUsage>();
+        }
+
+        private static ApiUsage CreateApiUsage(string propertyName, string projectTypeGuid)
+        {
             return new ApiUsage()
             {
-                ProjectType = guid
+                ProjectType = projectTypeGuid,
+                PropertyName = propertyName
             };
         }
 
         internal void AddEventsOnShutdown(object sender, TelemetryEvent e)
         {
-            var entries = _apiUsages.Values.ToList();
-            e.ComplexData["ProjectBuildProperties"] = entries;
+            int count = _projectSystems.Values.Sum(p => p.Count);
+            List<ApiUsage> items = new(count);
+
+            foreach (var projectSystem in _projectSystems)
+            {
+                foreach (var property in projectSystem.Value)
+                {
+                    ApiUsage apiUsage = property.Value;
+                    items.Add(property.Value);
+                }
+            }
+
+            e.ComplexData["ProjectBuildProperties"] = items;
         }
 
         private class ApiUsage
         {
-            public string ProjectType { get; set; }
+            public required string ProjectType { get; set; }
+            public required string PropertyName { get; set; }
             public bool PropertyStorageUsed { get; set; } = false;
             public bool DteUsed { get; set; } = false;
         }

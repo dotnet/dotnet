@@ -80,8 +80,7 @@ namespace NuGet.Packaging.Test
             var nuspec = GetNuspec("99.0.0");
 
             // Act & Assert
-            Assert.Throws(typeof(MinClientVersionException),
-                () => MinClientVersionUtility.VerifyMinClientVersion(nuspec));
+            Assert.Throws<MinClientVersionException>(() => MinClientVersionUtility.VerifyMinClientVersion(nuspec));
         }
 
         [Fact]

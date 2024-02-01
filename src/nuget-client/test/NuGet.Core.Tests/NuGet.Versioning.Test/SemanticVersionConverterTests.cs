@@ -13,7 +13,7 @@ namespace NuGet.Versioning.Test
         public void ConverterIsRegistered()
         {
             var converter = TypeDescriptor.GetConverter(typeof(SemanticVersion));
-            Assert.IsType(typeof(SemanticVersionConverter), converter);
+            Assert.IsType<SemanticVersionConverter>(converter);
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace NuGet.Versioning.Test
         {
             var converter = new SemanticVersionConverter();
             var result = converter.ConvertFrom(input);
-            Assert.IsType(typeof(SemanticVersion), result);
+            Assert.IsType<SemanticVersion>(result);
             Assert.Equal(input, ((SemanticVersion)result!).ToFullString());
         }
 
@@ -95,7 +95,7 @@ namespace NuGet.Versioning.Test
         {
             var converter = new SemanticVersionConverter();
             var exception = Record.Exception(() => converter.ConvertFrom(input));
-            Assert.IsType(typeof(ArgumentException), exception);
+            Assert.IsType<ArgumentException>(exception);
         }
 
         [Theory]

@@ -584,7 +584,7 @@ namespace NuGet.ProjectModel.Test
                     actualValue => Assert.Equal("-2", actualValue),
                     actualValue => Assert.Equal("3.14", actualValue),
                     actualValue => Assert.Equal("True", actualValue),
-                    actualValue => Assert.Equal(null, actualValue));
+                    actualValue => Assert.Null(actualValue));
                 Assert.Equal(JsonToken.EndArray, test.Reader.TokenType);
             }
         }
@@ -795,7 +795,7 @@ namespace NuGet.ProjectModel.Test
 
                 Assert.Collection(
                     actualResults,
-                    actualResult => Assert.Equal(null, actualResult),
+                    actualResult => Assert.Null(actualResult),
                     actualResult => Assert.Equal("True", actualResult),
                     actualResult => Assert.Equal("-2", actualResult),
                     actualResult => Assert.Equal("3.14", actualResult),

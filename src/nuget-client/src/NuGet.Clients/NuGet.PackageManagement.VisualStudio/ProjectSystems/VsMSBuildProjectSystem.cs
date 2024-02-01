@@ -136,7 +136,10 @@ namespace NuGet.PackageManagement.VisualStudio
             // it into the project.
             // Other exceptions are 'web.config' and 'app.config'
             var fileName = Path.GetFileName(path);
+#pragma warning disable CS0618 // Type or member is obsolete
+            // Need to validate no project systems get this property via DTE, and if so, switch to GetPropertyValue
             var lockFileFullPath = PackagesConfigLockFileUtility.GetPackagesLockFilePath(ProjectFullPath, GetPropertyValue("NuGetLockFilePath")?.ToString(), ProjectName);
+#pragma warning restore CS0618 // Type or member is obsolete
             if (File.Exists(Path.Combine(ProjectFullPath, path))
                 && !fileExistsInProject
                 && !fileName.Equals(ProjectManagement.Constants.PackageReferenceFile, StringComparison.Ordinal)
@@ -399,6 +402,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 });
         }
 
+        [Obsolete("New properties should use IVsProjectBuildProperties.GetPropertyValue instead. Ideally we should migrate existing properties to stop using DTE as well.")]
         public virtual dynamic GetPropertyValue(string propertyName)
         {
             return NuGetUIThreadHelper.JoinableTaskFactory.Run(async delegate

@@ -702,9 +702,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 connection.SimulateResponse(response);
 
-                await requestTask;
-
-                Assert.IsType<Response>(requestTask.Result);
+                Assert.IsType<Response>(await requestTask);
             }
         }
 
@@ -792,9 +790,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 connection.SimulateResponse(response);
 
-                await requestTask;
-
-                Assert.IsType<Response>(requestTask.Result);
+                Assert.IsType<Response>(await requestTask);
             }
         }
 

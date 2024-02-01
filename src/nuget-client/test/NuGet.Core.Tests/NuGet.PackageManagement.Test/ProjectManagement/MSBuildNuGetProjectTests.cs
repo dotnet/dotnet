@@ -1907,7 +1907,7 @@ namespace ProjectManagement.Test
                 // Assert
                 // Check that the packages.config file exists after the installation
                 Assert.True(File.Exists(packagesProjectNameConfigPath));
-                Assert.True(msBuildNuGetProjectSystem.Files.Contains(Path.GetFileName(packagesProjectNameConfigPath)));
+                Assert.Contains(Path.GetFileName(packagesProjectNameConfigPath), msBuildNuGetProjectSystem.Files);
 
                 // Check the number of packages and packages returned by PackagesConfigProject after the installation
                 packagesInPackagesConfig = (await msBuildNuGetProject.PackagesConfigNuGetProject.GetInstalledPackagesAsync(token)).ToList();

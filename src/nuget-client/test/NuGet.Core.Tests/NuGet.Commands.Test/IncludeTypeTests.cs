@@ -1082,8 +1082,8 @@ namespace NuGet.Commands.Test
                 Assert.Equal(0, logger.Warnings);
                 Assert.Equal(2, target.Libraries.Where(lib => lib.Type == LibraryType.Package).Count());
                 Assert.Equal(2, result.LockFile.Libraries.Where(lib => lib.Type == LibraryType.Package).Count());
-                Assert.True(target.Libraries.Any(lib => lib.Name == "packageX"));
-                Assert.True(target.Libraries.Any(lib => lib.Name == "packageY"));
+                Assert.Contains(target.Libraries, lib => lib.Name == "packageX");
+                Assert.Contains(target.Libraries, lib => lib.Name == "packageY");
             }
         }
 

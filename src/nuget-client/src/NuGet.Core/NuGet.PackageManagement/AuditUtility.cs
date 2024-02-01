@@ -137,13 +137,22 @@ namespace NuGet.PackageManagement
 
             static async Task<GetVulnerabilityInfoResult?> GetVulnerabilityInfoAsync(SourceRepository source, SourceCacheContext cacheContext, ILogger logger)
             {
-                IVulnerabilityInfoResource vulnerabilityInfoResource =
-                    await source.GetResourceAsync<IVulnerabilityInfoResource>(CancellationToken.None);
-                if (vulnerabilityInfoResource is null)
+                try
                 {
-                    return null;
+                    IVulnerabilityInfoResource vulnerabilityInfoResource =
+                        await source.GetResourceAsync<IVulnerabilityInfoResource>(CancellationToken.None);
+                    if (vulnerabilityInfoResource is null)
+                    {
+                        return null;
+                    }
+                    return await vulnerabilityInfoResource.GetVulnerabilityInfoAsync(cacheContext, logger, CancellationToken.None);
                 }
-                return await vulnerabilityInfoResource.GetVulnerabilityInfoAsync(cacheContext, logger, CancellationToken.None);
+                catch (Exception exception)
+                {
+                    AggregateException aggregateException = new(exception);
+                    GetVulnerabilityInfoResult result = new(knownVulnerabilities: null, exceptions: aggregateException);
+                    return result;
+                }
             }
         }
 

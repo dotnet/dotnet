@@ -727,7 +727,7 @@ namespace NuGet.Protocol.Tests
                         .ToList();
 
                 // Assert
-                Assert.Equal(true, matchingPackages.All(p => p.Identity.Id == packageId));
+                Assert.True(matchingPackages.All(p => p.Identity.Id == packageId));
                 Assert.Equal(expected, matchingPackages.Select(p => p.Identity.Version.ToFullString()).ToArray());
                 Assert.Equal(0, testLogger.Warnings);
                 Assert.Equal(0, testLogger.Errors);

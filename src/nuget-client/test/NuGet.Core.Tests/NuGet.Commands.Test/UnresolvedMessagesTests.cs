@@ -355,7 +355,8 @@ namespace NuGet.Commands.Test
             UnresolvedMessages.IsPrereleaseAllowed(range).Should().BeTrue();
         }
 
-        public void GivenANullRangeVerifyIsPrereleaseAllowedFalse(string s)
+        [Fact]
+        public void GivenANullRangeVerifyIsPrereleaseAllowedFalse()
         {
             UnresolvedMessages.IsPrereleaseAllowed(null).Should().BeFalse();
         }

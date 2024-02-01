@@ -246,7 +246,7 @@ namespace NuGet.Protocol.Tests
             return new RepositorySignatureResource(allRepositorySigned: false, repositoryCertInfos: certInfos);
         }
 
-        public static void VerifyCertInfo(IRepositoryCertificateInfo certInfo)
+        internal static void VerifyCertInfo(IRepositoryCertificateInfo certInfo)
         {
             Assert.Equal(_fingerprint, certInfo.Fingerprints["2.16.840.1.101.3.4.2.1"]);
             Assert.Equal(_issuer, certInfo.Issuer);

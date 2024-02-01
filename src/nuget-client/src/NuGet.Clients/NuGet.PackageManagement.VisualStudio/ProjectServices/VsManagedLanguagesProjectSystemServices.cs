@@ -338,7 +338,10 @@ namespace NuGet.PackageManagement.VisualStudio
         private bool IsCentralPackageManagementVersionsEnabled()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+#pragma warning disable CS0618 // Type or member is obsolete
+            // Need to validate no project systems get this property via DTE, and if so, switch to GetPropertyValue
             return MSBuildStringUtility.IsTrue(_vsProjectAdapter.BuildProperties.GetPropertyValueWithDteFallback(ProjectBuildProperties.ManagePackageVersionsCentrally));
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         private class ProjectReference

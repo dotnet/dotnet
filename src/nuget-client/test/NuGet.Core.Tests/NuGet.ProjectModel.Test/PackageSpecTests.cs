@@ -605,7 +605,7 @@ namespace NuGet.ProjectModel.Test
 
             // Assert
             Assert.NotEqual(originalProjectRestoreMetadata, happyClone);
-            Assert.Equal(true, happyClone.ProjectWideWarningProperties.AllWarningsAsErrors);
+            Assert.True(happyClone.ProjectWideWarningProperties.AllWarningsAsErrors);
         }
 
         [Fact]
