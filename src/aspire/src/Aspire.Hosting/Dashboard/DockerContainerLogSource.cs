@@ -10,8 +10,13 @@ namespace Aspire.Hosting.Dashboard;
 
 internal sealed class DockerContainerLogSource(string containerId) : IAsyncEnumerable<IReadOnlyList<(string Content, bool IsErrorMessage)>>
 {
-    public async IAsyncEnumerator<IReadOnlyList<(string Content, bool IsErrorMessage)>> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+    public async IAsyncEnumerator<IReadOnlyList<(string Content, bool IsErrorMessage)>> GetAsyncEnumerator(CancellationToken cancellationToken)
     {
+        if (!cancellationToken.CanBeCanceled)
+        {
+            throw new ArgumentException("Cancellation token must be cancellable in order to prevent leaking resources.", nameof(cancellationToken));
+        }
+
         Task<ProcessResult>? processResultTask = null;
         IAsyncDisposable? processDisposable = null;
 
@@ -41,7 +46,7 @@ internal sealed class DockerContainerLogSource(string containerId) : IAsyncEnume
             // Don't forward cancellationToken here, because it's handled internally in WaitForExit
             _ = Task.Run(() => WaitForExit(tcs, ctr), CancellationToken.None);
 
-            await foreach (var batch in channel.GetBatches(cancellationToken))
+            await foreach (var batch in channel.GetBatches(cancellationToken).ConfigureAwait(true)) // Setting ConfigureAwait to silence analyzer. Consider calling ConfigureAwait(false)
             {
                 yield return batch;
             }
