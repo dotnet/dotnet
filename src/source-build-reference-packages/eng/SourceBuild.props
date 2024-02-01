@@ -12,6 +12,8 @@
           BeforeTargets="Execute">
     <PropertyGroup>
       <LocalNuGetPackageCacheDirectory Condition="'$(LocalNuGetPackageCacheDirectory)' == ''">$(CurrentRepoSourceBuiltNupkgCacheDir)</LocalNuGetPackageCacheDirectory>
+      <_AdditionalDependencyProjectsBuildArgs />
+      <_AdditionalDependencyProjectsBuildArgs Condition="'$(RestoreConfigFile)' != ''" >$(_AdditionalRepoTaskBuildArgs) /p:RestoreConfigFile=$(RestoreConfigFile)</_AdditionalDependencyProjectsBuildArgs>
     </PropertyGroup>
 
     <MakeDir Condition="'$(LocalNuGetPackageCacheDirectory)' != ''"
@@ -20,7 +22,7 @@
     <!-- 'SourceBuildOutputDir' must be included as a build parameter in order to correct new SBRPs referencing online feeds when dependent on DependencyPackageProjects. -->
     <!-- See https://github.com/dotnet/source-build-reference-packages/pull/858 -->
     <Exec
-      Command="./build.sh --configuration $(Configuration) /bl:$(ArtifactsDir)sourcebuild-dependency-projects.binlog /p:LocalNuGetPackageCacheDirectory=$(LocalNuGetPackageCacheDirectory) /p:SourceBuildOutputDir=$(SourceBuildOutputDir) /p:BuildDependencyPackageProjects=true /p:SetUpSourceBuildIntermediateNupkgCache=true /p:DotNetBuildFromSource=true /p:ArcadeInnerBuildFromSource=true /p:MicrosoftNetCoreIlasmPackageRuntimeId=$(MicrosoftNetCoreIlasmPackageRuntimeId)"
+      Command="./build.sh --configuration $(Configuration) /bl:$(ArtifactsDir)sourcebuild-dependency-projects.binlog /p:LocalNuGetPackageCacheDirectory=$(LocalNuGetPackageCacheDirectory) /p:SourceBuildOutputDir=$(SourceBuildOutputDir) /p:BuildDependencyPackageProjects=true /p:SetUpSourceBuildIntermediateNupkgCache=true /p:DotNetBuildFromSource=true /p:ArcadeInnerBuildFromSource=true /p:MicrosoftNetCoreIlasmPackageRuntimeId=$(MicrosoftNetCoreIlasmPackageRuntimeId) $(_AdditionalDependencyProjectsBuildArgs)"
       WorkingDirectory="$(InnerSourceBuildRepoRoot)"
       EnvironmentVariables="@(InnerBuildEnv)" />
   </Target>
