@@ -65,7 +65,15 @@ parameters:
   type: string
   default: ''
 
-- name: targetRid
+- name: runTests
+  type: boolean
+  default: false
+
+- name: targetOS
+  type: string
+  default: ''
+
+- name: targetArchitecture
   type: string
   default: ''
 
@@ -247,20 +255,20 @@ jobs:
         useDocker=true
       fi
 
-      if [[ ! -z '${{ parameters.targetRid }}' ]]; then
-        extraBuildProperties="--"
-        if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
-            customEnvVars="$customEnvVars CROSSCOMPILE=1"
-        fi
-        extraBuildProperties="$extraBuildProperties /p:PortableBuild=true /p:DotNetBuildVertical=true /p:CrossBuild=true"
+      if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
+        customEnvVars="$customEnvVars CROSSCOMPILE=1"
       fi
 
       if [[ ! -z '${{ parameters.crossRootFs }}' ]]; then
         customEnvVars="$customEnvVars ROOTFS_DIR=${{ parameters.crossRootFs}}"
       fi
 
-      if [[ ! -z '${{ parameters.targetRid }}' ]]; then
-        extraBuildProperties="$extraBuildProperties /p:OverrideTargetRid=${{ parameters.targetRid }}"
+      if [[ ! -z '${{ parameters.targetOS }}' ]]; then
+        extraBuildProperties="$extraBuildProperties /p:TargetOS=${{ parameters.targetOS }}"
+      fi
+
+      if [[ ! -z '${{ parameters.targetArchitecture }}' ]]; then
+        extraBuildProperties="$extraBuildProperties /p:TargetArchitecture=${{ parameters.targetArchitecture }}"
       fi
 
       # Only use Docker stuff on Linux
@@ -286,7 +294,7 @@ jobs:
     displayName: Build
 
   # Don't run tests if overriding RID, we don't support that for now
-  - ${{ if eq(parameters.targetRid, '') }}:
+  - ${{ if eq(parameters.runTests, 'True') }}:
     - script: |
         set -x
 
