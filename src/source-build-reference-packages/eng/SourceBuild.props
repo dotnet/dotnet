@@ -13,7 +13,7 @@
     <PropertyGroup>
       <LocalNuGetPackageCacheDirectory Condition="'$(LocalNuGetPackageCacheDirectory)' == ''">$(CurrentRepoSourceBuiltNupkgCacheDir)</LocalNuGetPackageCacheDirectory>
       <_AdditionalDependencyProjectsBuildArgs />
-      <_AdditionalDependencyProjectsBuildArgs Condition="'$(RestoreConfigFile)' != ''" >$(_AdditionalRepoTaskBuildArgs) /p:RestoreConfigFile=$(RestoreConfigFile)</_AdditionalDependencyProjectsBuildArgs>
+      <_AdditionalDependencyProjectsBuildArgs Condition="'$(RestoreConfigFile)' != ''" >$(_AdditionalDependencyProjectsBuildArgs) /p:RestoreConfigFile=$(RestoreConfigFile)</_AdditionalDependencyProjectsBuildArgs>
     </PropertyGroup>
 
     <MakeDir Condition="'$(LocalNuGetPackageCacheDirectory)' != ''"
