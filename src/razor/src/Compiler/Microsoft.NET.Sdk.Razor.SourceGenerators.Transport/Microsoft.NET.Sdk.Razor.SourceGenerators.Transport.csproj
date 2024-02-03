@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.Build.NoTargets/2.0.1">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
