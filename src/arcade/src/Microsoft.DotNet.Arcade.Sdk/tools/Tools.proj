@@ -78,6 +78,14 @@
     <Exec Command='"$(DotNetTool)" tool restore' WorkingDirectory="$(RepoRoot)" />
   </Target>
 
+  <!-- Set as DependsOnTargets when internal tools (e.g. IBC data, optprof) is required -->
+  <Target Name="RestoreInternalTooling">
+    <MSBuild Projects="$(RepoRoot)eng/common/internal/Tools.csproj"
+        Targets="Restore"
+        Properties="@(_RestoreToolsProps);_NETCORE_ENGINEERING_TELEMETRY=Restore"
+        Condition="'$(Restore)' == 'true'"/>
+  </Target>
+
   <Import Project="SourceBuild/SourceBuildArcadeTools.targets" Condition="'$(ArcadeBuildFromSource)' == 'true' or
                                                                           '$(ArcadeBuildVertical)' == 'true' or
                                                                           '$(DotNetBuildRepo)' == 'true' or
