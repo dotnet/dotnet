@@ -8,7 +8,7 @@
   <Import Project="SourceBuildArcade.targets" />
 
   <PropertyGroup>
-    <CurrentRepoSourceBuildBinlogFile>$([MSBuild]::NormalizePath('$(CurrentRepoSourceBuildArtifactsDir)', 'sourcebuild.binlog'))</CurrentRepoSourceBuildBinlogFile>
+    <CurrentRepoSourceBuildBinlogFile>$([MSBuild]::NormalizePath('$(CurrentRepoSourceBuildArtifactsLogsDir)', 'source-inner-build.binlog'))</CurrentRepoSourceBuildBinlogFile>
 
     <InnerSourceBuildRepoRoot Condition="'$(InnerSourceBuildRepoRoot)' == ''">$(CurrentRepoSourceBuildSourceDir)</InnerSourceBuildRepoRoot>
     <InnerSourceBuildRepoRoot Condition="'$(UseInnerClone)' != 'true'">$(RepoRoot)</InnerSourceBuildRepoRoot>

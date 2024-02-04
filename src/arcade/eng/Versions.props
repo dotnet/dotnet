@@ -10,9 +10,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- arcade -->
-    <MicrosoftDotNetBuildTasksFeedVersion>9.0.0-beta.24076.5</MicrosoftDotNetBuildTasksFeedVersion>
-    <MicrosoftDotNetSignToolVersion>9.0.0-beta.24076.5</MicrosoftDotNetSignToolVersion>
-    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>9.0.0-beta.24076.5</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
+    <MicrosoftDotNetBuildTasksFeedVersion>9.0.0-beta.24102.1</MicrosoftDotNetBuildTasksFeedVersion>
+    <MicrosoftDotNetSignToolVersion>9.0.0-beta.24102.1</MicrosoftDotNetSignToolVersion>
+    <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>9.0.0-beta.24102.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- arcade-services -->
     <MicrosoftDotNetMaestroClientVersion>1.1.0-beta.24076.2</MicrosoftDotNetMaestroClientVersion>
     <MicrosoftDotNetMaestroTasksVersion>1.1.0-beta.24076.2</MicrosoftDotNetMaestroTasksVersion>

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <!-- TODO: Remove this line when a new Arcade SDK is consumed. -->
-    <NetToolMinimum Condition="'$(DotNetBuildFromSource)' == 'true'">$(NetToolCurrent)</NetToolMinimum>
+    <NetToolMinimum Condition="'$(DotNetBuildFromSource)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true'">$(NetToolCurrent)</NetToolMinimum>
     <!--
        We need to target net8.0 while Arcade SDK 8 is being used.
        Xliff tasks were moved from dotnet/xliff-tasks to Arcade in V9, so they are not available in release/8.0 branch.
