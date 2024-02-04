@@ -30,7 +30,8 @@
           Condition="'$(EnableNgenOptimization)' == 'true'">
   </Target>
   
-  <Target Name="_PrepareAcquireVisualStudioOptimizationData">
+  <Target Name="_PrepareAcquireVisualStudioOptimizationData"
+          DependsOnTargets="RestoreInternalTooling">
     <PropertyGroup>
       <_DropToolPath>$(NuGetPackageRoot)drop.app\$(DropAppVersion)\lib\net45\drop.exe</_DropToolPath>
       <_DropToolExists>false</_DropToolExists>
