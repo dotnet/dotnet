@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "microsoft.dotnet.darc": {
-      "version": "1.1.0-beta.24076.2",
+      "version": "1.1.0-beta.24080.1",
       "commands": [
         "darc"
       ]
