@@ -334,18 +334,6 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
-        buildName: OSX
-        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-        vmrBranch: ${{ variables.VmrBranch }}
-        architecture: x64
-        pool:
-          vmImage: ${{ variables.defaultPoolNameMac }}
-        container: ''
-        targetOS: osx
-        targetArchitecture: x64
-
-    - template: ../jobs/vmr-build.yml
-      parameters:
         buildName: Windows
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
@@ -358,9 +346,21 @@ stages:
         targetArchitecture: x64
 
     ### Additional jobs for full build ###
-    # Cross builds are currently failing
-    # - ${{ if in(parameters.scope, 'full') }}:
+    - ${{ if in(parameters.scope, 'full') }}:
 
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: OSX
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            pool:
+              vmImage: ${{ variables.defaultPoolNameMac }}
+            container: ''
+            targetOS: osx
+            targetArchitecture: x64
+
+    # Cross builds are currently failing
 
       # - template: ../jobs/vmr-build.yml
       #   parameters:
