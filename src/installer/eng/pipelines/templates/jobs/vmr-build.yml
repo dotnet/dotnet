@@ -1,10 +1,38 @@
-### This job source-builds https://github.com/dotnet/dotnet with given parameters
-### If run in a PR, new changes are applied to a local copy of the VMR, then it is source-built and tested
+### This job builds https://github.com/dotnet/dotnet with given parameters
+### If run in a PR, new changes are applied to a local copy of the VMR, then it is built and tested
 
 parameters:
+- name: architecture
+  type: string
+
+- name: artifactsRid
+  type: string
+  default: ''
+
+- name: buildName
+  type: string
+
+- name: container
+  type: string
+
+- name: crossRootFS
+  type: string
+  default: ''
+
 - name: isBuiltFromVmr
   displayName: True when build is running from dotnet/dotnet directly
   type: boolean
+
+- name: pool
+  type: object
+
+- name: targetOS
+  type: string
+  default: ''
+
+- name: targetArchitecture
+  type: string
+  default: ''
 
 - name: vmrPath
   type: string
@@ -15,25 +43,25 @@ parameters:
   type: string
   default: $(Build.SourceBranch)
 
-- name: buildName
-  type: string
+#### SOURCE-ONLY parameters ####
 
-- name: architecture
-  type: string
-
-- name: artifactsRid
-  type: string
-  default: ''
-
-- name: container
-  type: string
-
-- name: pool
-  type: object
-
-# Allow downloading artifacts from the internet during the build
-- name: runOnline
+# Instead of building the VMR directly, exports the sources into a tarball and builds from that
+- name: buildFromArchive
   type: boolean
+  default: false
+
+# Enable for source-building the VMR
+- name: buildSourceOnly
+  type: boolean
+  default: false
+
+- name: enablePoison
+  type: boolean
+  default: false
+
+- name: excludeOmniSharpTests
+  type: boolean
+  default: false
 
 # Name of a previous job (from the same template as this) whose output will be used to build this job
 # The SDK from its artifacts is copied to vmr/.dotnet
@@ -41,18 +69,12 @@ parameters:
   type: string
   default: ''
 
-- name: excludeOmniSharpTests
+# Allow downloading artifacts from the internet during the build
+- name: runOnline
   type: boolean
+  default: true
 
-- name: enablePoison
-  type: boolean
-
-# Instead of building the VMR directly, exports the sources into a tarball and builds from that
-- name: buildFromArchive
-  type: boolean
-
-# Use the previous version's SDK to build the current one
-- name: withPreviousSDK
+- name: runTests
   type: boolean
   default: false
 
@@ -61,21 +83,10 @@ parameters:
   type: boolean
   default: false
 
-- name: crossRootFS
-  type: string
-  default: ''
-
-- name: runTests
+# Use the previous version's SDK to build the current one
+- name: withPreviousSDK
   type: boolean
   default: false
-
-- name: targetOS
-  type: string
-  default: ''
-
-- name: targetArchitecture
-  type: string
-  default: ''
 
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.architecture }}
@@ -133,7 +144,7 @@ jobs:
       displayName: Export VMR sources
       workingDirectory: $(Build.StagingDirectory)
 
-  - ${{ if ne(variables['System.TeamProject'], 'public') }}:
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), eq(parameters.runTests, 'True')) }}:
     - script: cp "$(sourcesPath)/src/installer/NuGet.config" "$(sourcesPath)/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/online.NuGet.Config"
       displayName: Copy Test NuGet Config
 
@@ -188,112 +199,114 @@ jobs:
           exit 1
         fi
       displayName: Setup Previously Source-Built SDK
+  
+  - ${{ if eq(parameters.targetOS, 'windows') }}:
+    - script: |
+        call $(sourcesPath)\build.cmd -ci -cleanWhileBuilding -prepareMachine
+      displayName: Build
 
-  - script: |
-      set -x
+  - ${{ else }}:
+    - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
+      - script: |
+          set -x
 
-      customPrepArgs=""
-      prepSdk=true
+          customPrepArgs=""
+          prepSdk=true
 
-      if [[ -n '${{ parameters.artifactsRid }}' ]]; then
-        customPrepArgs="${customPrepArgs} --artifacts-rid ${{ parameters.artifactsRid }}"
-      fi
+          if [[ -n '${{ parameters.artifactsRid }}' ]]; then
+            customPrepArgs="${customPrepArgs} --artifacts-rid ${{ parameters.artifactsRid }}"
+          fi
 
-      if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
-        # Source-built artifacts are from CentOS 8 Stream or Alpine 3.19. We want to download them without
-        # downloading portable versions from the internet.
-        customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
-        prepSdk=false
-      elif [[ -n '${{ parameters.reuseBuildArtifactsFrom }}' ]]; then
-        customPrepArgs="${customPrepArgs} --no-sdk --no-artifacts"
-        prepSdk=false
-      fi
+          if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
+            # Source-built artifacts are from CentOS 8 Stream or Alpine 3.19. We want to download them without
+            # downloading portable versions from the internet.
+            customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
+            prepSdk=false
+          elif [[ -n '${{ parameters.reuseBuildArtifactsFrom }}' ]]; then
+            customPrepArgs="${customPrepArgs} --no-sdk --no-artifacts"
+            prepSdk=false
+          fi
 
-      if [[ "$prepSdk" == "false" ]]; then
-        mkdir $(sourcesPath)/.dotnet
-        previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
-        eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
-        eval rm -f "$previousSdkPath"
+          if [[ "$prepSdk" == "false" ]]; then
+            mkdir $(sourcesPath)/.dotnet
+            previousSdkPath="$(sourcesPath)/prereqs/packages/archive/dotnet-sdk-*.tar.gz"
+            eval tar -ozxf "$previousSdkPath" -C "$(sourcesPath)/.dotnet"
+            eval rm -f "$previousSdkPath"
 
-        echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk /vmr/.dotnet"
-      fi
+            echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk /vmr/.dotnet"
+          fi
 
-      # Only use Docker stuff on Linux
-      if [[ -n "${{ parameters.container }}" ]]; then
-        docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh $customPrepArgs
-      else
-        cd $(sourcesPath)
-        ./prep.sh $customPrepArgs
-      fi
-    displayName: Prep the Build
+          docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep.sh $customPrepArgs
+        displayName: Prep the Build
 
-  - script: |
-      set -x
-      df -h
+    - script: |
+        set -x
+        df -h
 
-      # Allows Arcade to have access to the commit for the build
-      customEnvVars="BUILD_SOURCEVERSION=$BUILD_SOURCEVERSION"
-      customBuildArgs="--ci --prepareMachine"
-      if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
-        customBuildArgs="$customBuildArgs --online"
-      fi
-
-      if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
-        customBuildArgs="$customBuildArgs --poison"
-      fi
-
-      if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
-        customBuildArgs="$customBuildArgs --source-repository https://github.com/dotnet/dotnet"
-        customBuildArgs="$customBuildArgs --source-version $(git -C "${{ parameters.vmrPath }}" rev-parse HEAD)"
-      fi
-
-      if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
-        customBuildArgs="$customBuildArgs --use-mono-runtime"
-      fi
-
-      if [[ -n "${{ parameters.container }}" ]]; then
-        useDocker=true
-      fi
-
-      if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
-        customEnvVars="$customEnvVars CROSSCOMPILE=1"
-      fi
-
-      if [[ ! -z '${{ parameters.crossRootFs }}' ]]; then
-        customEnvVars="$customEnvVars ROOTFS_DIR=${{ parameters.crossRootFs}}"
-      fi
-
-      if [[ ! -z '${{ parameters.targetOS }}' ]]; then
-        extraBuildProperties="$extraBuildProperties /p:TargetOS=${{ parameters.targetOS }}"
-      fi
-
-      if [[ ! -z '${{ parameters.targetArchitecture }}' ]]; then
-        extraBuildProperties="$extraBuildProperties /p:TargetArchitecture=${{ parameters.targetArchitecture }}"
-      fi
-
-      # Only use Docker stuff on Linux
-      if [[ "$useDocker" == "true" ]]; then
-        customDockerRunArgs=""
-        for envVar in $customEnvVars; do
-          customDockerRunArgs="$customDockerRunArgs -e $envVar"
-        done
-        
-        if [[ '${{ parameters.runOnline }}' == 'False' ]]; then
-          customDockerRunArgs="$customDockerRunArgs --network none"
+        customEnvVars=""
+        customBuildArgs="--ci --clean-while-building --prepareMachine"
+        if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
+          customBuildArgs="$customBuildArgs --online"
         fi
 
-        docker run --rm -v "$(sourcesPath):/vmr" -w /vmr $customDockerRunArgs ${{ parameters.container }} ./build.sh --source-only --clean-while-building $(additionalBuildArgs) $customBuildArgs $extraBuildProperties
-      else
-        for envVar in $customEnvVars; do
-          customEnvVarsWithBashSyntax="$customEnvVarsWithBashSyntax export $envVar;"
-        done
-        cd $(sourcesPath)
-        eval $customEnvVarsWithBashSyntax
-        ./build.sh --source-only --clean-while-building $(additionalBuildArgs) $customBuildArgs $extraBuildProperties
-      fi
-    displayName: Build
+        if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
+          customBuildArgs="$customBuildArgs --poison"
+        fi
 
-  # Don't run tests if overriding RID, we don't support that for now
+        if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
+          customBuildArgs="$customBuildArgs --source-repository https://github.com/dotnet/dotnet"
+          customBuildArgs="$customBuildArgs --source-version $(git -C "${{ parameters.vmrPath }}" rev-parse HEAD)"
+        fi
+
+        if [[ '${{ parameters.buildSourceOnly }}' == 'True' ]]; then
+          customBuildArgs="$customBuildArgs --source-only"
+        fi
+
+        if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
+          customBuildArgs="$customBuildArgs --use-mono-runtime"
+          customEnvVars="$customEnvVars CROSSCOMPILE=1"
+        fi
+
+        if [[ ! -z '${{ parameters.crossRootFs }}' ]]; then
+          customEnvVars="$customEnvVars ROOTFS_DIR=${{ parameters.crossRootFs}}"
+        fi
+
+        if [[ ! -z '${{ parameters.targetOS }}' ]]; then
+          extraBuildProperties="$extraBuildProperties /p:TargetOS=${{ parameters.targetOS }}"
+        fi
+
+        if [[ ! -z '${{ parameters.targetArchitecture }}' ]]; then
+          extraBuildProperties="$extraBuildProperties /p:TargetArchitecture=${{ parameters.targetArchitecture }}"
+        fi
+
+        buildArgs="$(additionalBuildArgs) $customBuildArgs $extraBuildProperties"
+
+        # Only use Docker when a container is specified
+        if [[ -n "${{ parameters.container }}" ]]; then
+          # Allows Arcade to have access to the commit for the build, pass it through to the container
+          customEnvVars="$customEnvVars BUILD_SOURCEVERSION=$BUILD_SOURCEVERSION"
+
+          customDockerRunArgs=""
+          for envVar in $customEnvVars; do
+            customDockerRunArgs="$customDockerRunArgs -e $envVar"
+          done
+          
+          if [[ '${{ parameters.runOnline }}' == 'False' ]]; then
+            customDockerRunArgs="$customDockerRunArgs --network none"
+          fi
+
+          docker run --rm -v "$(sourcesPath):/vmr" -w /vmr $customDockerRunArgs ${{ parameters.container }} ./build.sh $buildArgs
+        else
+          for envVar in $customEnvVars; do
+            customEnvVarsWithBashSyntax="$customEnvVarsWithBashSyntax export $envVar;"
+          done
+          cd $(sourcesPath)
+          eval $customEnvVarsWithBashSyntax
+          ./build.sh $buildArgs
+        fi
+      displayName: Build
+
+  # Only run tests if enabled
   - ${{ if eq(parameters.runTests, 'True') }}:
     - script: |
         set -x
@@ -309,25 +322,56 @@ jobs:
         docker run --rm $dockerVolumeArgs -w /vmr $dockerEnvArgs ${{ parameters.container }} ./build.sh --source-only $poisonArg --test $(additionalBuildArgs) /p:SmokeTestConsoleVerbosity=detailed
       displayName: Run Tests
 
-  # Don't use CopyFiles@2 as it encounters permissions issues because it indexes all files in the source directory graph.
-  - script: |
-      set -x
+  - ${{ if eq(parameters.targetOS, 'windows') }}:
 
-      targetFolder=$(Build.StagingDirectory)/BuildLogs/
-      mkdir -p ${targetFolder}
+    # Don't use CopyFiles@2 as it encounters permissions issues because it indexes all files in the source directory graph.
+    - powershell: |
+        function CopyWithRelativeFolders($sourcePath, $targetFolder, $filter) {
+          Get-ChildItem -Path $sourcePath -Filter $filter -Recurse | ForEach-Object { 
+            $targetPath = Join-Path $targetFolder (Resolve-Path -Relative $_.FullName)
+            New-Item -ItemType Directory -Path (Split-Path -Parent $targetPath) -Force | Out-Null
+            Copy-Item $_.FullName -Destination $targetPath -Force 
+          }
+        }
 
-      cd "$(sourcesPath)"
-      find artifacts/ -type f -name "*.binlog" -exec cp {} --parents -t ${targetFolder} \;
-      find artifacts/ -type f -name "*.log" -exec cp {} --parents -t ${targetFolder} \;
-      find artifacts/prebuilt-report/ -exec cp {} --parents -t ${targetFolder} \;
-      find src/ -type f -name "*.binlog" -exec cp {} --parents -t ${targetFolder} \;
-      find src/ -type f -name "*.log" -exec cp {} --parents -t ${targetFolder} \;
-      find test/ -type f -name "*.binlog" -exec cp {} --parents -t ${targetFolder} \;
-      find test/ -type f -name "Updated*.diff" -exec cp {} --parents -t ${targetFolder} \;
-      find test/ -type f -name "Updated*.txt" -exec cp {} --parents -t ${targetFolder} \;
-    displayName: Prepare BuildLogs staging directory
-    continueOnError: true
-    condition: succeededOrFailed()
+        $targetFolder = "$(Build.StagingDirectory)/BuildLogs/"
+        New-Item -ItemType Directory -Path $targetFolder -Force | Out-Null
+
+        cd "$(sourcesPath)"
+
+        CopyWithRelativeFolders "artifacts/"                 $targetFolder "*.binlog"
+        CopyWithRelativeFolders "artifacts/"                 $targetFolder "*.log"
+        CopyWithRelativeFolders "artifacts/prebuilt-report/" $targetFolder
+        CopyWithRelativeFolders "src/"                       $targetFolder "*.binlog"
+        CopyWithRelativeFolders "src/"                       $targetFolder "*.log"
+        CopyWithRelativeFolders "test/"                      $targetFolder "*.binlog"
+        CopyWithRelativeFolders "test/"                      $targetFolder "Updated*.diff"
+        CopyWithRelativeFolders "test/"                      $targetFolder "Updated*.txt"
+      displayName: Prepare BuildLogs staging directory
+      continueOnError: true
+      condition: succeededOrFailed()
+
+  - ${{ else }}:
+
+    # Don't use CopyFiles@2 as it encounters permissions issues because it indexes all files in the source directory graph.
+    - script: |
+        set -x
+
+        targetFolder=$(Build.StagingDirectory)/BuildLogs/
+        mkdir -p ${targetFolder}
+
+        cd "$(sourcesPath)"
+        find artifacts/ -type f -name "*.binlog" -exec rsync -R {} -t ${targetFolder} \;
+        find artifacts/ -type f -name "*.log" -exec rsync -R {} -t ${targetFolder} \;
+        find artifacts/prebuilt-report/ -exec rsync -R {} -t ${targetFolder} \;
+        find src/ -type f -name "*.binlog" -exec rsync -R {} -t ${targetFolder} \;
+        find src/ -type f -name "*.log" -exec rsync -R {} -t ${targetFolder} \;
+        find test/ -type f -name "*.binlog" -exec rsync -R {} -t ${targetFolder} \;
+        find test/ -type f -name "Updated*.diff" -exec rsync -R {} -t ${targetFolder} \;
+        find test/ -type f -name "Updated*.txt" -exec rsync -R {} -t ${targetFolder} \;
+      displayName: Prepare BuildLogs staging directory
+      continueOnError: true
+      condition: succeededOrFailed()
 
   - publish: '$(Build.StagingDirectory)/BuildLogs'
     artifact: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
@@ -335,17 +379,19 @@ jobs:
     continueOnError: true
     condition: succeededOrFailed()
 
-  - task: PublishTestResults@2
-    displayName: Publish Test Results
-    condition: succeededOrFailed()
-    continueOnError: true
-    inputs:
-      testRunner: vSTest
-      testResultsFiles: 'test/**/*.trx'
-      searchFolder: ${{ variables.sourcesPath }}
-      mergeTestResults: true
-      publishRunAttachments: true
-      testRunTitle: SourceBuild_SmokeTests_$(Agent.JobName)
+  # Only upload test results if enabled
+  - ${{ if eq(parameters.runTests, 'True') }}:
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      condition: succeededOrFailed()
+      continueOnError: true
+      inputs:
+        testRunner: vSTest
+        testResultsFiles: 'test/**/*.trx'
+        searchFolder: ${{ variables.sourcesPath }}
+        mergeTestResults: true
+        publishRunAttachments: true
+        testRunTitle: SourceBuild_SmokeTests_$(Agent.JobName)
 
   - publish: '${{ variables.sourcesPath }}/artifacts/${{ parameters.architecture }}/Release/'
     artifact: $(Agent.JobName)_Artifacts
