@@ -88,7 +88,7 @@ steps:
     # -remote "installer:$(Agent.BuildDirectory)/installer"
     -componentTemplate $(Agent.BuildDirectory)/installer/src/VirtualMonoRepo/Component.template.md `
     -tpnTemplate $(Agent.BuildDirectory)/installer/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt `
-    -debug
+    -debugOutput
 
     if ($LASTEXITCODE -ne 0) {
       echo "##vso[task.logissue type=error]Failed to synchronize the VMR"
