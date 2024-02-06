@@ -104,7 +104,7 @@ repository=''
 additional_remotes=''
 recursive=false
 verbosity=verbose
-readme_template="$installer_dir/src/VirtualMonoRepo/Component.template.md"
+component_template="$installer_dir/src/VirtualMonoRepo/Component.template.md"
 tpn_template="$installer_dir/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt"
 azdev_pat=''
 
@@ -180,8 +180,8 @@ if [[ -z "$tmp_dir" ]]; then
   exit 1
 fi
 
-if [[ ! -f "$readme_template" ]]; then
-  fail "File '$readme_template' does not exist. Please specify a valid path to the README template"
+if [[ ! -f "$component_template" ]]; then
+  fail "File '$component_template' does not exist. Please specify a valid path to the Component.md template"
   exit 1
 fi
 

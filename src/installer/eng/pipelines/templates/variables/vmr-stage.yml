@@ -1,0 +1,53 @@
+parameters:
+- name: vmrBranch 
+  type: string
+
+variables:
+- ${{ if ne(parameters.vmrBranch, '') }}:
+  - name: VmrBranch
+    value: ${{ parameters.vmrBranch }}
+- ${{ else }}:
+  - name: VmrBranch
+    value: ${{ replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), 'refs/pull/', '') }}
+
+- name: alpine319Container
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.19-WithNode
+- name: centOSStream8Container
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
+- name: centOSStream9Container
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
+- name: fedora39Container
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-39
+- name: ubuntu2204Container
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04
+- name: ubuntu2204ArmContainer
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-arm64
+- name: marinerX64CrossContainer
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64
+- name: marinerArm64CrossContainer
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-arm64
+
+- ${{ if eq(variables['System.TeamProject'], 'public') }}:
+  - name: defaultPoolName
+    value: NetCore-Public-XL
+  - name: defaultPoolDemandsLinux
+    value: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+  - name: defaultPoolDemandsWindows
+    value: ImageOverride -equals windows.vs2022.amd64.open
+- ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+  - ${{ if in(variables['Build.Reason'], 'PullRequest') }}:
+    - name: defaultPoolName
+      value: NetCore1ESPool-Internal-XL
+  - ${{ else }}:
+    - name: defaultPoolName
+      value: NetCore1ESPool-Svc-Internal
+  - name: defaultPoolDemandsLinux
+    value: ImageOverride -equals Build.Ubuntu.1804.Amd64
+  - name: defaultPoolDemandsWindows
+    value: ImageOverride -equals windows.vs2022.amd64
+
+- name: defaultPoolNameLinuxArm64
+  value: Docker-Linux-Arm-Internal
+
+- name: defaultPoolNameMac
+  value: macos-12
