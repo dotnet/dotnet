@@ -10,9 +10,7 @@
   <Target Name="ConfigureInnerBuildArg" BeforeTargets="GetSourceBuildCommandConfiguration">
     <PropertyGroup>
       <InnerBuildArgs>$(InnerBuildArgs) /p:SkipBuildingInstallers=true</InnerBuildArgs>
-      <InnerBuildArgs>$(InnerBuildArgs) /p:IncludeNuGetPackageArchive=false</InnerBuildArgs>
       <InnerBuildArgs>$(InnerBuildArgs) /p:IncludeAdditionalSharedFrameworks=false</InnerBuildArgs>
-      <InnerBuildArgs>$(InnerBuildArgs) /p:IncludeSharedFrameworksForBackwardsCompatibilityTests=false</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(SourceBuildUseMonoRuntime)' == 'true'">$(InnerBuildArgs) /p:DISABLE_CROSSGEN=true</InnerBuildArgs>
     </PropertyGroup>
   </Target>
