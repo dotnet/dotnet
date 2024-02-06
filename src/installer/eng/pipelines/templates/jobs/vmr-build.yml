@@ -15,7 +15,7 @@ parameters:
 - name: container
   type: string
 
-- name: crossRootFS
+- name: crossRootFs
   type: string
   default: ''
 
@@ -264,11 +264,10 @@ jobs:
 
         if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
           customBuildArgs="$customBuildArgs --use-mono-runtime"
-          customEnvVars="$customEnvVars CROSSCOMPILE=1"
         fi
 
-        if [[ ! -z '${{ parameters.crossRootFs }}' ]]; then
-          customEnvVars="$customEnvVars ROOTFS_DIR=${{ parameters.crossRootFs}}"
+        if [[ -n "${{ parameters.crossRootFs }}" ]]; then
+          customEnvVars="$customEnvVars ROOTFS_DIR=${{ parameters.crossRootFs}} CROSSCOMPILE=1"
         fi
 
         if [[ ! -z '${{ parameters.targetOS }}' ]]; then
