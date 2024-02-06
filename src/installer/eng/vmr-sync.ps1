@@ -62,6 +62,9 @@ Optional. Azure DevOps PAT to use for cloning private repositories.
 
 .PARAMETER vmrDir
 Optional. Path to the dotnet/dotnet repository. When null, gets cloned to the temporary folder
+
+.PARAMETER debugOutput
+Optional. Enables debug logging in the darc vmr command.
 #>
 param (
   [Parameter(Mandatory=$true, HelpMessage="Path to the temporary folder where repositories will be cloned")]
@@ -73,7 +76,8 @@ param (
   [string][Alias('r')]$repository,
   [string]$tpnTemplate = "src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt",
   [string]$azdevPat,
-  [string][Alias('v', 'vmr')]$vmrDir
+  [string][Alias('v', 'vmr')]$vmrDir,
+  [switch]$debugOutput
 )
 
 $scriptRoot = $PSScriptRoot
@@ -98,7 +102,7 @@ if ($remote) {
 }
 
 $verbosity = 'verbose'
-if ($debug) {
+if ($debugOutput) {
   $verbosity = 'debug'
 }
 # Validation
@@ -206,7 +210,7 @@ if ($LASTEXITCODE -eq 0) {
 else {
   Fail "Synchronization of dotnet/dotnet to '$repository' failed!"
   Fail "'$vmrDir' is left in its last state (re-run of this script will reset it)."
-  Fail "Please inspect the logs which contain path to the failing patch file (use --debug to get all the details)."
+  Fail "Please inspect the logs which contain path to the failing patch file (use -debugOutput to get all the details)."
   Fail "Once you make changes to the conflicting VMR patch, commit it locally and re-run this script."
   exit 1
 }
