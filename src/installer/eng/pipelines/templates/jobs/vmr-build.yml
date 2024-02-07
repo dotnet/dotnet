@@ -138,6 +138,7 @@ jobs:
           vmrPath: $(vmrPath)
           vmrBranch: ${{ parameters.vmrBranch }}
           targetRef: $(Build.SourceVersion) # Synchronize the current installer commit
+          architecture: ${{ parameters.architecture }}
 
   - ${{ if parameters.buildFromArchive }}:
     - script: |
