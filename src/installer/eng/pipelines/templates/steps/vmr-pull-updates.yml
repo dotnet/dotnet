@@ -17,6 +17,11 @@ parameters:
   type: string
   default: $(Agent.BuildDirectory)/vmr
 
+- name: architecture
+  displayName: Architecture used for build artifacts
+  type: string
+  default: 'x64'
+
 steps:
 - checkout: self
   displayName: Clone dotnet/installer
@@ -37,12 +42,12 @@ steps:
   workingDirectory: ${{ parameters.vmrPath }}
 
 - script: |
-    mkdir -p ${{ parameters.vmrPath }}/artifacts/x64/Release
+    mkdir -p ${{ parameters.vmrPath }}/artifacts/${{ parameters.architecture }}/Release
   displayName: Create artifacts folder (Unix)
   condition: ne(variables['Agent.OS'], 'Windows_NT')
 
 - powershell: |
-    New-Item -ItemType Directory -Path ${{ parameters.vmrPath }}/artifacts/x64/Release
+    New-Item -ItemType Directory -Path ${{ parameters.vmrPath }}/artifacts/${{ parameters.architecture }}/Release
   displayName: Create artifacts folder (Windows)
   condition: eq(variables['Agent.OS'], 'Windows_NT')
 

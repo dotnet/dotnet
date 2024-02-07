@@ -360,25 +360,25 @@ stages:
             targetOS: osx
             targetArchitecture: x64
 
-    # Cross builds are currently failing
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Mariner_x64_Cross
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            pool:
+              name: ${{ variables.defaultPoolName }}
+              demands: ${{ variables.defaultPoolDemandsLinux }}
+            container: ${{ variables.marinerX64CrossContainer }}
+            crossRootFs: '/crossrootfs/x64'
+            targetOS: linux
+            targetArchitecture: x64
+
+      # Mariner x64->non-x64 builds are currently broken, see https://github.com/dotnet/source-build/issues/3698
 
       # - template: ../jobs/vmr-build.yml
       #   parameters:
-      #     buildName: MarinerCross
-      #     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-      #     vmrBranch: ${{ variables.VmrBranch }}
-      #     architecture: x64
-      #     pool:
-      #       name: ${{ variables.defaultPoolName }}
-      #       demands: ${{ variables.defaultPoolDemandsLinux }}
-      #     container: ${{ variables.marinerX64CrossContainer }}
-      #     crossRootFs: '/crossrootfs/x64'
-      #     targetOS: linux
-      #     targetArchitecture: x64
-
-      # - template: ../jobs/vmr-build.yml
-      #   parameters:
-      #     buildName: MarinerCross
+      #     buildName: Mariner_x64_Cross
       #     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       #     vmrBranch: ${{ variables.VmrBranch }}
       #     architecture: arm64
@@ -390,14 +390,14 @@ stages:
       #     targetOS: linux
       #     targetArchitecture: arm64
 
-      # - template: ../jobs/vmr-build.yml
-      #   parameters:
-      #     buildName: OSXCross
-      #     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-      #     vmrBranch: ${{ variables.VmrBranch }}
-      #     architecture: arm64
-      #     pool:
-      #       vmImage: ${{ variables.defaultPoolNameMac }}
-      #     container: ''
-      #     targetOS: osx
-      #     targetArchitecture: arm64
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: OSX_x64_Cross
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm64
+            pool:
+              vmImage: ${{ variables.defaultPoolNameMac }}
+            container: ''
+            targetOS: osx
+            targetArchitecture: arm64
