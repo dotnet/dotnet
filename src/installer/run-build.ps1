@@ -32,7 +32,7 @@ if ($Sign) {
 $Parameters = "$Parameters -WarnAsError `$$WarnAsError"
 
 try {
-    $ExpressionToInvoke = "$RepoRoot\eng\common\build.ps1 -restore -build $Parameters $ExtraParameters"
+    $ExpressionToInvoke = "$RepoRoot\eng\common\build.ps1 -restore -build -nativeToolsOnMachine $Parameters $ExtraParameters"
     Write-Host "Invoking expression: $ExpressionToInvoke"
     Invoke-Expression $ExpressionToInvoke
 }
