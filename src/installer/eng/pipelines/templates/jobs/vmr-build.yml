@@ -51,7 +51,7 @@ parameters:
   default: false
 
 # Name of a previous job (from the same template as this) whose output will be used to build this job
-# The SDK from its artifacts is copied to vmr/.dotnet
+# The SDK from its artifacts is copied to $(vmrPath)/.dotnet
 - name: reuseBuildArtifactsFrom
   type: string
   default: ''
@@ -108,7 +108,7 @@ jobs:
 
   - ${{ if parameters.isBuiltFromVmr }}:
     - name: vmrPath
-      value: $(Agent.BuildDirectory)
+      value: $(Build.SourcesDirectory)
   - ${{ else }}:
     - name: vmrPath
       value: $(Agent.BuildDirectory)/vmr
@@ -172,7 +172,7 @@ jobs:
       inputs:
         SourceFolder: $(Pipeline.Workspace)/${{ parameters.reuseBuildArtifactsFrom }}_${{ parameters.architecture }}_Artifacts
         Contents: '*.tar.gz'
-        TargetFolder: ${{ variables.sourcesPath }}/prereqs/packages/archive/
+        TargetFolder: $(sourcesPath)/prereqs/packages/archive/
 
   - ${{ if eq(parameters.withPreviousSDK, 'true') }}:
     - script: |
@@ -183,7 +183,7 @@ jobs:
            exit 1
         fi
 
-        packageVersionsPath="${{ variables.sourcesPath }}/eng/Versions.props"
+        packageVersionsPath="$(sourcesPath)/eng/Versions.props"
         notFoundMessage="No source-built SDK found to download..."
 
         echo "Looking for source-built SDK to download..."
@@ -390,12 +390,12 @@ jobs:
       inputs:
         testRunner: vSTest
         testResultsFiles: 'test/**/*.trx'
-        searchFolder: ${{ variables.sourcesPath }}
+        searchFolder: $(sourcesPath)
         mergeTestResults: true
         publishRunAttachments: true
         testRunTitle: SourceBuild_SmokeTests_$(Agent.JobName)
 
-  - publish: '${{ variables.sourcesPath }}/artifacts/${{ parameters.architecture }}/Release/'
+  - publish: '$(sourcesPath)/artifacts/${{ parameters.architecture }}/Release/'
     artifact: $(Agent.JobName)_Artifacts
     displayName: Publish Artifacts
     condition: succeededOrFailed()
