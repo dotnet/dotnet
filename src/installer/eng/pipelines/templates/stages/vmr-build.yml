@@ -350,6 +350,19 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
+            buildName: Android_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            pool:
+              name: ${{ variables.defaultPoolName }}
+              demands: ${{ variables.defaultPoolDemandsLinux }}
+            container: ${{ variables.androidCrossContainer }}
+            targetOS: android
+            targetArchitecture: x64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
             buildName: OSX
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
