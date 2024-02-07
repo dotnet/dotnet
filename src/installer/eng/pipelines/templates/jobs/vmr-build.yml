@@ -1,5 +1,5 @@
 ### This job builds https://github.com/dotnet/dotnet with given parameters
-### If run in a PR, new changes are applied to a local copy of the VMR, then it is built and tested
+### If run in an installer PR, new changes are applied to a local copy of the VMR, then it is built and tested
 
 parameters:
 - name: architecture
@@ -19,10 +19,6 @@ parameters:
   type: string
   default: ''
 
-- name: isBuiltFromVmr
-  displayName: True when build is running from dotnet/dotnet directly
-  type: boolean
-
 - name: pool
   type: object
 
@@ -33,15 +29,6 @@ parameters:
 - name: targetArchitecture
   type: string
   default: ''
-
-- name: vmrPath
-  type: string
-  default: $(Agent.BuildDirectory)/vmr
-
-- name: vmrBranch
-  displayName: dotnet/dotnet branch to use
-  type: string
-  default: $(Build.SourceBranch)
 
 #### SOURCE-ONLY parameters ####
 
@@ -64,7 +51,7 @@ parameters:
   default: false
 
 # Name of a previous job (from the same template as this) whose output will be used to build this job
-# The SDK from its artifacts is copied to vmr/.dotnet
+# The SDK from its artifacts is copied to $(sourcesPath)/.dotnet
 - name: reuseBuildArtifactsFrom
   type: string
   default: ''
@@ -88,6 +75,16 @@ parameters:
   type: boolean
   default: false
 
+#### INSTALLER parameters ####
+
+- name: isBuiltFromVmr
+  displayName: True when build is running from dotnet/dotnet directly
+  type: boolean
+
+- name: vmrBranch
+  displayName: dotnet/dotnet branch to use
+  type: string
+
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.architecture }}
   timeoutInMinutes: 150
@@ -109,6 +106,13 @@ jobs:
   - name: additionalBuildArgs
     value: ''
 
+  - ${{ if parameters.isBuiltFromVmr }}:
+    - name: vmrPath
+      value: $(Build.SourcesDirectory)
+  - ${{ else }}:
+    - name: vmrPath
+      value: $(Agent.BuildDirectory)/vmr
+
   # Location of the VMR sources
   # We either build the repo directly, or we extract them outside (which is what partners do)
   - ${{ if parameters.buildFromArchive }}:
@@ -116,30 +120,29 @@ jobs:
       value: $(Build.StagingDirectory)/dotnet-sources/
   - ${{ else }}:
     - name: sourcesPath
-      value: ${{ parameters.vmrPath }}
+      value: $(vmrPath)
 
   steps:
-  - template: ../steps/vmr-prepare.yml
-    parameters:
-      ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-        vmrBranch: $(System.PullRequest.TargetBranch)
-      ${{ else }}:
-        vmrBranch: ${{ parameters.vmrBranch }}
-      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-      skipComponentGovernanceDetection: true
-
-  # Synchronize new content in the VMR during PRs (we expect this to come
-  - ${{ if and(not(parameters.isBuiltFromVmr), eq(variables['Build.Reason'], 'PullRequest')) }}:
-    - template: ../steps/vmr-pull-updates.yml
+  - ${{ if not(parameters.isBuiltFromVmr) }}:
+    - template: ../steps/vmr-prepare.yml
       parameters:
-        vmrPath: ${{ parameters.vmrPath }}
-        vmrBranch: ${{ parameters.vmrBranch }}
-        targetRef: $(Build.SourceVersion) # Synchronize the current installer commit
+        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+          vmrBranch: $(System.PullRequest.TargetBranch)
+        ${{ else }}:
+          vmrBranch: ${{ parameters.vmrBranch }}
+
+    # Synchronize new content in the VMR during PRs (we expect this to come
+    - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      - template: ../steps/vmr-pull-updates.yml
+        parameters:
+          vmrPath: $(vmrPath)
+          vmrBranch: ${{ parameters.vmrBranch }}
+          targetRef: $(Build.SourceVersion) # Synchronize the current installer commit
 
   - ${{ if parameters.buildFromArchive }}:
     - script: |
         set -ex
-        cp -r "${{ parameters.vmrPath }}" "$(sourcesPath)"
+        cp -r "$(vmrPath)" "$(sourcesPath)"
         rm -rf "$(sourcesPath)/.git"
       displayName: Export VMR sources
       workingDirectory: $(Build.StagingDirectory)
@@ -169,7 +172,7 @@ jobs:
       inputs:
         SourceFolder: $(Pipeline.Workspace)/${{ parameters.reuseBuildArtifactsFrom }}_${{ parameters.architecture }}_Artifacts
         Contents: '*.tar.gz'
-        TargetFolder: ${{ variables.sourcesPath }}/prereqs/packages/archive/
+        TargetFolder: $(sourcesPath)/prereqs/packages/archive/
 
   - ${{ if eq(parameters.withPreviousSDK, 'true') }}:
     - script: |
@@ -180,7 +183,7 @@ jobs:
            exit 1
         fi
 
-        packageVersionsPath="${{ variables.sourcesPath }}/eng/Versions.props"
+        packageVersionsPath="$(sourcesPath)/eng/Versions.props"
         notFoundMessage="No source-built SDK found to download..."
 
         echo "Looking for source-built SDK to download..."
@@ -255,7 +258,7 @@ jobs:
 
         if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
           customBuildArgs="$customBuildArgs --source-repository https://github.com/dotnet/dotnet"
-          customBuildArgs="$customBuildArgs --source-version $(git -C "${{ parameters.vmrPath }}" rev-parse HEAD)"
+          customBuildArgs="$customBuildArgs --source-version $(git -C "$(vmrPath)" rev-parse HEAD)"
         fi
 
         if [[ '${{ parameters.buildSourceOnly }}' == 'True' ]]; then
@@ -387,12 +390,12 @@ jobs:
       inputs:
         testRunner: vSTest
         testResultsFiles: 'test/**/*.trx'
-        searchFolder: ${{ variables.sourcesPath }}
+        searchFolder: $(sourcesPath)
         mergeTestResults: true
         publishRunAttachments: true
         testRunTitle: SourceBuild_SmokeTests_$(Agent.JobName)
 
-  - publish: '${{ variables.sourcesPath }}/artifacts/${{ parameters.architecture }}/Release/'
+  - publish: '$(sourcesPath)/artifacts/${{ parameters.architecture }}/Release/'
     artifact: $(Agent.JobName)_Artifacts
     displayName: Publish Artifacts
     condition: succeededOrFailed()

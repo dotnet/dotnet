@@ -53,7 +53,14 @@ jobs:
   - template: ../steps/vmr-prepare.yml
     parameters:
       vmrBranch: ${{ parameters.vmrBranch }}
-      isBuiltFromVmr: false
+    
+  # TODO (https://github.com/dotnet/arcade/issues/11332): Allow full CG?
+  # Currently, we ignore dirs of individual repos - they have been scanned before
+  - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal')) }}:
+    - task: ComponentGovernanceComponentDetection@0
+      inputs:
+        sourceScanPath: $(Agent.BuildDirectory)/vmr
+        ignoreDirectories: $(Agent.BuildDirectory)/vmr/src
 
   - template: ../steps/vmr-pull-updates.yml
     parameters:
