@@ -3,7 +3,7 @@
 # - installer-source-build (public)
 #   - PR: release/* and main, ultralite build
 # - installer-unified-build (public)
-#   - PR: release/* and main, lite build
+#   - PR: main, lite build
 
 trigger: none
 pr:
