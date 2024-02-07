@@ -1,4 +1,4 @@
-namespace Company.TestProject1;
+﻿namespace Company.TestProject1;
 
 [TestClass]
 public class UnitTest1 : PageTest

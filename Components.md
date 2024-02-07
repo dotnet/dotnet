@@ -8,7 +8,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@2fb543a](https://github.com/dotnet/arcade/tree/2fb543a45580400a559b5ae41c96a815ea14dac5)*
+*[dotnet/arcade@8cfc948](https://github.com/dotnet/arcade/tree/8cfc9489d3e51071fedec9dcb99071dc912718bd)*
 - `src/aspire`  
 *[dotnet/aspire@87d5246](https://github.com/dotnet/aspire/tree/87d5246ddfc1fb9b07fcdf7b4b42830f67427ab9)*
 - `src/aspnetcore`  
@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@7c217c4](https://github.com/dotnet/fsharp/tree/7c217c487c6e2b7d824f3d40666b3cbad412cad4)*
 - `src/installer`  
-*[dotnet/installer@722bcd8](https://github.com/dotnet/installer/tree/722bcd86aaff06d5627e9e6f2ce17abc0a1a7977)*
+*[dotnet/installer@ae3f3a8](https://github.com/dotnet/installer/tree/ae3f3a87e348a56965639e6d5d8d556eb94585ab)*
 - `src/msbuild`  
 *[dotnet/msbuild@0d8d09e](https://github.com/dotnet/msbuild/tree/0d8d09e5c582526daeb4af0b52956c3290e424d1)*
 - `src/nuget-client`  
@@ -52,7 +52,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[dotnet/sdk@aea4e42](https://github.com/dotnet/sdk/tree/aea4e42aff076545d4709fd6071dda62fe0ae332)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@949db2f](https://github.com/dotnet/source-build-externals/tree/949db2fd23b687c0d545e954943feada8b361ed6)*
+*[dotnet/source-build-externals@2c52f66](https://github.com/dotnet/source-build-externals/tree/2c52f66055a098987321c8fe96472679661c4071)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
@@ -90,7 +90,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/templating`  
 *[dotnet/templating@521a674](https://github.com/dotnet/templating/tree/521a6740eb526eecb03b93683784ab8afb788216)*
 - `src/test-templates`  
-*[dotnet/test-templates@4486ff2](https://github.com/dotnet/test-templates/tree/4486ff28949aa10726517ddf7ecabedc2a7e1ceb)*
+*[dotnet/test-templates@5f1d632](https://github.com/dotnet/test-templates/tree/5f1d6326de00be62fc7f3e309c6f344520d1a4e9)*
 - `src/vstest`  
 *[microsoft/vstest@a09e17e](https://github.com/microsoft/vstest/tree/a09e17e9efd7f85abab5a83d627d15aef5b6a954)*
 - `src/windowsdesktop`  

@@ -1,4 +1,4 @@
-#if (ImplicitUsings != "enable")
+﻿#if (ImplicitUsings != "enable")
 using NUnit.Framework;
 
 #endif

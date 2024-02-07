@@ -1,4 +1,4 @@
-module Company.TestProject1
+﻿module Company.TestProject1
 
 open NUnit.Framework
 
