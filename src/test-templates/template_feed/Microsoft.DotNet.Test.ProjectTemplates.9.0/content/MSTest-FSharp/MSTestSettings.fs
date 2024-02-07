@@ -1,4 +1,4 @@
-module MSTestSettings
+﻿module MSTestSettings
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
 

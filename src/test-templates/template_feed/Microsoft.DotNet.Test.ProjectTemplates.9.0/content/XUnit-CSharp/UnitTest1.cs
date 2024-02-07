@@ -1,4 +1,4 @@
-namespace Company.TestProject1;
+﻿namespace Company.TestProject1;
 
 public class UnitTest1
 {
