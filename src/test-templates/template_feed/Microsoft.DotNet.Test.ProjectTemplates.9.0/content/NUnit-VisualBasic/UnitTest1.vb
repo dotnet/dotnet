@@ -1,4 +1,4 @@
-Imports NUnit.Framework
+﻿Imports NUnit.Framework
 
 Namespace Company.TestProject1
 

@@ -1,0 +1,47 @@
+id: 
+name: GitOps.PullRequestIssueManagement
+description: GitOps.PullRequestIssueManagement primitive
+owner: 
+resource: repository
+disabled: false
+where: 
+configuration:
+  resourceManagementConfiguration:
+    scheduledSearches: []
+    eventResponderTasks:
+    - if:
+      - payloadType: Pull_Request
+      - hasLabel:
+          label: auto-merge
+      then:
+      - enableAutoMerge:
+          mergeMethod: Squash
+      description: Auto-merge PRs
+    - if:
+      - payloadType: Pull_Request
+      - labelRemoved:
+          label: auto-merge
+      then:
+      - disableAutoMerge
+      description: Auto-merge PRs
+    - if:
+      - payloadType: Pull_Request
+      - titleContains:
+          pattern: Update dependencies from dotnet/arcade
+          isRegex: False
+      - isAction:
+          action: Opened
+      - activitySenderHasPermission:
+          permission: Write
+      - isActivitySender:
+          user: dotnet-maestro
+          issueAuthor: False
+      then:
+      - addLabel:
+          label: auto-merge
+      - approvePullRequest:
+          comment: Arcade update PR auto-approved.
+      description: Arcade PR merger
+      triggerOnOwnActions: true
+onFailure: 
+onSuccess: 

@@ -1,4 +1,4 @@
-module Tests
+﻿module Tests
 
 open NUnit.Framework
 
