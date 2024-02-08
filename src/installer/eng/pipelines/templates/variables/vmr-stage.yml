@@ -37,7 +37,7 @@ variables:
   - name: defaultPoolNameMac
     value: macos-12
   - name: defaultPoolDemandsLinux
-    value: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+    value: ImageOverride -equals Build.Ubuntu.2204.Amd64.Open
   - name: defaultPoolDemandsWindows
     value: ImageOverride -equals windows.vs2022.amd64.open
 - ${{ elseif eq(variables['System.TeamProject'], 'internal') }}:
@@ -52,6 +52,6 @@ variables:
   - name: defaultPoolNameMac
     value: macos-13-arm64
   - name: defaultPoolDemandsLinux
-    value: ImageOverride -equals Build.Ubuntu.1804.Amd64
+    value: ImageOverride -equals Build.Ubuntu.2204.Amd64
   - name: defaultPoolDemandsWindows
     value: ImageOverride -equals windows.vs2022.amd64
