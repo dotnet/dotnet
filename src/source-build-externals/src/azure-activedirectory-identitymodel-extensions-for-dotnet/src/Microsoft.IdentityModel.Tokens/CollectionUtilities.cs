@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.IdentityModel.Tokens
 {
@@ -17,7 +18,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <typeparam name="T">The type of the <paramref name="enumerable"/>.</typeparam>
         /// <param name="enumerable">The <see cref="IEnumerable{T}"/> to be checked.</param>
         /// <returns>True if <paramref name="enumerable"/> is null or empty, false otherwise.</returns>
-        public static bool IsNullOrEmpty<T>(this IEnumerable<T> enumerable)
+        public static bool IsNullOrEmpty<T>([NotNullWhen(false)] this IEnumerable<T> enumerable)
         {
             return enumerable == null || !enumerable.Any();
         }
