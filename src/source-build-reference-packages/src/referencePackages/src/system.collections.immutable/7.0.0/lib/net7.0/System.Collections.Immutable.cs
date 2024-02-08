@@ -243,7 +243,7 @@ namespace System.Collections.Immutable
 
         public override readonly bool Equals(object? obj) { throw null; }
 
-        public readonly ImmutableArray<T>.Enumerator GetEnumerator() { throw null; }
+        public readonly Enumerator GetEnumerator() { throw null; }
 
         public override readonly int GetHashCode() { throw null; }
 
@@ -385,10 +385,12 @@ namespace System.Collections.Immutable
 
         readonly int IStructuralEquatable.GetHashCode(IEqualityComparer comparer) { throw null; }
 
-        public readonly ImmutableArray<T>.Builder ToBuilder() { throw null; }
+        public readonly Builder ToBuilder() { throw null; }
 
         public sealed partial class Builder : Generic.IList<T>, Generic.ICollection<T>, Generic.IEnumerable<T>, IEnumerable, Generic.IReadOnlyList<T>, Generic.IReadOnlyCollection<T>
         {
+            internal Builder() { }
+
             public int Capacity { get { throw null; } set { } }
 
             public int Count { get { throw null; } set { } }
@@ -407,7 +409,7 @@ namespace System.Collections.Immutable
 
             public void AddRange(ImmutableArray<T> items, int length) { }
 
-            public void AddRange(ImmutableArray<T>.Builder items) { }
+            public void AddRange(Builder items) { }
 
             public void AddRange(ImmutableArray<T> items) { }
 
@@ -561,6 +563,8 @@ namespace System.Collections.Immutable
 
     public sealed partial class ImmutableDictionary<TKey, TValue> : IImmutableDictionary<TKey, TValue>, Generic.IReadOnlyDictionary<TKey, TValue>, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>>, IEnumerable, Generic.IReadOnlyCollection<Generic.KeyValuePair<TKey, TValue>>, Generic.IDictionary<TKey, TValue>, Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>, IDictionary, ICollection
     {
+        internal ImmutableDictionary() { }
+
         public static readonly ImmutableDictionary<TKey, TValue> Empty;
         public int Count { get { throw null; } }
 
@@ -610,7 +614,7 @@ namespace System.Collections.Immutable
 
         public bool ContainsValue(TValue value) { throw null; }
 
-        public ImmutableDictionary<TKey, TValue>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public ImmutableDictionary<TKey, TValue> Remove(TKey key) { throw null; }
 
@@ -662,7 +666,7 @@ namespace System.Collections.Immutable
 
         IImmutableDictionary<TKey, TValue> IImmutableDictionary<TKey, TValue>.SetItems(Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) { throw null; }
 
-        public ImmutableDictionary<TKey, TValue>.Builder ToBuilder() { throw null; }
+        public Builder ToBuilder() { throw null; }
 
         public bool TryGetKey(TKey equalKey, out TKey actualKey) { throw null; }
 
@@ -674,6 +678,8 @@ namespace System.Collections.Immutable
 
         public sealed partial class Builder : Generic.IDictionary<TKey, TValue>, Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>>, IEnumerable, Generic.IReadOnlyDictionary<TKey, TValue>, Generic.IReadOnlyCollection<Generic.KeyValuePair<TKey, TValue>>, IDictionary, ICollection
         {
+            internal Builder() { }
+
             public int Count { get { throw null; } }
 
             public TValue this[TKey key] { get { throw null; } set { } }
@@ -720,7 +726,7 @@ namespace System.Collections.Immutable
 
             public bool ContainsValue(TValue value) { throw null; }
 
-            public ImmutableDictionary<TKey, TValue>.Enumerator GetEnumerator() { throw null; }
+            public Enumerator GetEnumerator() { throw null; }
 
             public TValue GetValueOrDefault(TKey key, TValue defaultValue) { throw null; }
 
@@ -802,6 +808,8 @@ namespace System.Collections.Immutable
 
     public sealed partial class ImmutableHashSet<T> : IImmutableSet<T>, Generic.IReadOnlyCollection<T>, Generic.IEnumerable<T>, IEnumerable, Generic.ICollection<T>, Generic.ISet<T>, ICollection, Generic.IReadOnlySet<T>
     {
+        internal ImmutableHashSet() { }
+
         public static readonly ImmutableHashSet<T> Empty;
         public int Count { get { throw null; } }
 
@@ -823,7 +831,7 @@ namespace System.Collections.Immutable
 
         public ImmutableHashSet<T> Except(Generic.IEnumerable<T> other) { throw null; }
 
-        public ImmutableHashSet<T>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public ImmutableHashSet<T> Intersect(Generic.IEnumerable<T> other) { throw null; }
 
@@ -881,7 +889,7 @@ namespace System.Collections.Immutable
 
         IImmutableSet<T> IImmutableSet<T>.Union(Generic.IEnumerable<T> other) { throw null; }
 
-        public ImmutableHashSet<T>.Builder ToBuilder() { throw null; }
+        public Builder ToBuilder() { throw null; }
 
         public bool TryGetValue(T equalValue, out T actualValue) { throw null; }
 
@@ -891,6 +899,8 @@ namespace System.Collections.Immutable
 
         public sealed partial class Builder : Generic.IReadOnlyCollection<T>, Generic.IEnumerable<T>, IEnumerable, Generic.ISet<T>, Generic.ICollection<T>
         {
+            internal Builder() { }
+
             public int Count { get { throw null; } }
 
             public Generic.IEqualityComparer<T> KeyComparer { get { throw null; } set { } }
@@ -905,7 +915,7 @@ namespace System.Collections.Immutable
 
             public void ExceptWith(Generic.IEnumerable<T> other) { }
 
-            public ImmutableHashSet<T>.Enumerator GetEnumerator() { throw null; }
+            public Enumerator GetEnumerator() { throw null; }
 
             public void IntersectWith(Generic.IEnumerable<T> other) { }
 
@@ -1040,6 +1050,8 @@ namespace System.Collections.Immutable
 
     public sealed partial class ImmutableList<T> : IImmutableList<T>, Generic.IReadOnlyList<T>, Generic.IEnumerable<T>, IEnumerable, Generic.IReadOnlyCollection<T>, Generic.IList<T>, Generic.ICollection<T>, IList, ICollection
     {
+        internal ImmutableList() { }
+
         public static readonly ImmutableList<T> Empty;
         public int Count { get { throw null; } }
 
@@ -1105,7 +1117,7 @@ namespace System.Collections.Immutable
 
         public void ForEach(Action<T> action) { }
 
-        public ImmutableList<T>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public ImmutableList<T> GetRange(int index, int count) { throw null; }
 
@@ -1207,12 +1219,14 @@ namespace System.Collections.Immutable
 
         IImmutableList<T> IImmutableList<T>.SetItem(int index, T value) { throw null; }
 
-        public ImmutableList<T>.Builder ToBuilder() { throw null; }
+        public Builder ToBuilder() { throw null; }
 
         public bool TrueForAll(Predicate<T> match) { throw null; }
 
         public sealed partial class Builder : Generic.IList<T>, Generic.ICollection<T>, Generic.IEnumerable<T>, IEnumerable, IList, ICollection, Generic.IReadOnlyList<T>, Generic.IReadOnlyCollection<T>
         {
+            internal Builder() { }
+
             public int Count { get { throw null; } }
 
             public T this[int index] { get { throw null; } set { } }
@@ -1273,7 +1287,7 @@ namespace System.Collections.Immutable
 
             public void ForEach(Action<T> action) { }
 
-            public ImmutableList<T>.Enumerator GetEnumerator() { throw null; }
+            public Enumerator GetEnumerator() { throw null; }
 
             public ImmutableList<T> GetRange(int index, int count) { throw null; }
 
@@ -1383,6 +1397,8 @@ namespace System.Collections.Immutable
 
     public sealed partial class ImmutableQueue<T> : IImmutableQueue<T>, Generic.IEnumerable<T>, IEnumerable
     {
+        internal ImmutableQueue() { }
+
         public static ImmutableQueue<T> Empty { get { throw null; } }
 
         public bool IsEmpty { get { throw null; } }
@@ -1395,7 +1411,7 @@ namespace System.Collections.Immutable
 
         public ImmutableQueue<T> Enqueue(T value) { throw null; }
 
-        public ImmutableQueue<T>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public T Peek() { throw null; }
 
@@ -1461,6 +1477,8 @@ namespace System.Collections.Immutable
 
     public sealed partial class ImmutableSortedDictionary<TKey, TValue> : IImmutableDictionary<TKey, TValue>, Generic.IReadOnlyDictionary<TKey, TValue>, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>>, IEnumerable, Generic.IReadOnlyCollection<Generic.KeyValuePair<TKey, TValue>>, Generic.IDictionary<TKey, TValue>, Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>, IDictionary, ICollection
     {
+        internal ImmutableSortedDictionary() { }
+
         public static readonly ImmutableSortedDictionary<TKey, TValue> Empty;
         public int Count { get { throw null; } }
 
@@ -1510,7 +1528,7 @@ namespace System.Collections.Immutable
 
         public bool ContainsValue(TValue value) { throw null; }
 
-        public ImmutableSortedDictionary<TKey, TValue>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public ImmutableSortedDictionary<TKey, TValue> Remove(TKey value) { throw null; }
 
@@ -1562,7 +1580,7 @@ namespace System.Collections.Immutable
 
         IImmutableDictionary<TKey, TValue> IImmutableDictionary<TKey, TValue>.SetItems(Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) { throw null; }
 
-        public ImmutableSortedDictionary<TKey, TValue>.Builder ToBuilder() { throw null; }
+        public Builder ToBuilder() { throw null; }
 
         public bool TryGetKey(TKey equalKey, out TKey actualKey) { throw null; }
 
@@ -1576,6 +1594,8 @@ namespace System.Collections.Immutable
 
         public sealed partial class Builder : Generic.IDictionary<TKey, TValue>, Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>>, IEnumerable, Generic.IReadOnlyDictionary<TKey, TValue>, Generic.IReadOnlyCollection<Generic.KeyValuePair<TKey, TValue>>, IDictionary, ICollection
         {
+            internal Builder() { }
+
             public int Count { get { throw null; } }
 
             public TValue this[TKey key] { get { throw null; } set { } }
@@ -1622,7 +1642,7 @@ namespace System.Collections.Immutable
 
             public bool ContainsValue(TValue value) { throw null; }
 
-            public ImmutableSortedDictionary<TKey, TValue>.Enumerator GetEnumerator() { throw null; }
+            public Enumerator GetEnumerator() { throw null; }
 
             public TValue GetValueOrDefault(TKey key, TValue defaultValue) { throw null; }
 
@@ -1706,6 +1726,8 @@ namespace System.Collections.Immutable
 
     public sealed partial class ImmutableSortedSet<T> : IImmutableSet<T>, Generic.IReadOnlyCollection<T>, Generic.IEnumerable<T>, IEnumerable, Generic.IReadOnlySet<T>, Generic.IReadOnlyList<T>, Generic.IList<T>, Generic.ICollection<T>, Generic.ISet<T>, IList, ICollection
     {
+        internal ImmutableSortedSet() { }
+
         public static readonly ImmutableSortedSet<T> Empty;
         public int Count { get { throw null; } }
 
@@ -1741,7 +1763,7 @@ namespace System.Collections.Immutable
 
         public ImmutableSortedSet<T> Except(Generic.IEnumerable<T> other) { throw null; }
 
-        public ImmutableSortedSet<T>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public int IndexOf(T item) { throw null; }
 
@@ -1823,7 +1845,7 @@ namespace System.Collections.Immutable
 
         IImmutableSet<T> IImmutableSet<T>.Union(Generic.IEnumerable<T> other) { throw null; }
 
-        public ImmutableSortedSet<T>.Builder ToBuilder() { throw null; }
+        public Builder ToBuilder() { throw null; }
 
         public bool TryGetValue(T equalValue, out T actualValue) { throw null; }
 
@@ -1833,6 +1855,8 @@ namespace System.Collections.Immutable
 
         public sealed partial class Builder : Generic.IReadOnlyCollection<T>, Generic.IEnumerable<T>, IEnumerable, Generic.ISet<T>, Generic.ICollection<T>, ICollection
         {
+            internal Builder() { }
+
             public int Count { get { throw null; } }
 
             public T this[int index] { get { throw null; } }
@@ -1857,7 +1881,7 @@ namespace System.Collections.Immutable
 
             public void ExceptWith(Generic.IEnumerable<T> other) { }
 
-            public ImmutableSortedSet<T>.Enumerator GetEnumerator() { throw null; }
+            public Enumerator GetEnumerator() { throw null; }
 
             public int IndexOf(T item) { throw null; }
 
@@ -1931,13 +1955,15 @@ namespace System.Collections.Immutable
 
     public sealed partial class ImmutableStack<T> : IImmutableStack<T>, Generic.IEnumerable<T>, IEnumerable
     {
+        internal ImmutableStack() { }
+
         public static ImmutableStack<T> Empty { get { throw null; } }
 
         public bool IsEmpty { get { throw null; } }
 
         public ImmutableStack<T> Clear() { throw null; }
 
-        public ImmutableStack<T>.Enumerator GetEnumerator() { throw null; }
+        public Enumerator GetEnumerator() { throw null; }
 
         public T Peek() { throw null; }
 
