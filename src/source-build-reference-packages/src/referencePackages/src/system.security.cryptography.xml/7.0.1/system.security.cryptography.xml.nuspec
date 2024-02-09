@@ -66,7 +66,5 @@ System.Security.Cryptography.Xml.XmlLicenseTransform</description>
         <dependency id="System.Security.AccessControl" version="6.0.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
-    <frameworkAssemblies>
-    </frameworkAssemblies>
   </metadata>
 </package>
