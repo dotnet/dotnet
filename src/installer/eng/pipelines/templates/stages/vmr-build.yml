@@ -341,7 +341,6 @@ stages:
         pool:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemandsWindows }}
-        container: ''
         targetOS: windows
         targetArchitecture: x64
 
@@ -367,7 +366,6 @@ stages:
         architecture: arm64
         pool:
           vmImage: ${{ variables.defaultPoolNameMac }}
-        container: ''
         targetOS: iossimulator
         targetArchitecture: arm64
 
@@ -395,7 +393,6 @@ stages:
             architecture: arm64
             pool:
               vmImage: ${{ variables.defaultPoolNameMac }}
-            container: ''
             targetOS: ios
             targetArchitecture: arm64
 
@@ -407,7 +404,6 @@ stages:
             architecture: x64
             pool:
               vmImage: ${{ variables.defaultPoolNameMac }}
-            container: ''
             targetOS: iossimulator
             targetArchitecture: x64
 
@@ -419,7 +415,6 @@ stages:
             architecture: arm64
             pool:
               vmImage: ${{ variables.defaultPoolNameMac }}
-            container: ''
             targetOS: maccatalyst
             targetArchitecture: arm64
 
@@ -431,7 +426,6 @@ stages:
             architecture: x64
             pool:
               vmImage: ${{ variables.defaultPoolNameMac }}
-            container: ''
             targetOS: maccatalyst
             targetArchitecture: x64
 
@@ -443,7 +437,6 @@ stages:
             architecture: arm64
             pool:
               vmImage: ${{ variables.defaultPoolNameMac }}
-            container: ''
             targetOS: tvos
             targetArchitecture: arm64
 
@@ -455,7 +448,6 @@ stages:
             architecture: arm64
             pool:
               vmImage: ${{ variables.defaultPoolNameMac }}
-            container: ''
             targetOS: tvossimulator
             targetArchitecture: arm64
 
@@ -467,7 +459,6 @@ stages:
             architecture: x64
             pool:
               vmImage: ${{ variables.defaultPoolNameMac }}
-            container: ''
             targetOS: tvossimulator
             targetArchitecture: x64
 
@@ -493,7 +484,6 @@ stages:
             architecture: x64
             pool:
               vmImage: ${{ variables.defaultPoolNameMac }}
-            container: ''
             targetOS: osx
             targetArchitecture: x64
 
@@ -535,6 +525,5 @@ stages:
             architecture: arm64
             pool:
               vmImage: ${{ variables.defaultPoolNameMac }}
-            container: ''
             targetOS: osx
             targetArchitecture: arm64
