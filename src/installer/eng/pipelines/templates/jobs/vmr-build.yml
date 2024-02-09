@@ -213,7 +213,7 @@ jobs:
   - ${{ else }}:
     - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
       - script: |
-          set -x
+          set -ex
 
           customPrepArgs=""
           prepSdk=true
@@ -245,7 +245,7 @@ jobs:
         displayName: Prep the Build
 
     - script: |
-        set -x
+        set -ex
         df -h
 
         customEnvVars=""
@@ -316,7 +316,7 @@ jobs:
   # Only run tests if enabled
   - ${{ if eq(parameters.runTests, 'True') }}:
     - script: |
-        set -x
+        set -ex
 
         dockerVolumeArgs="-v $(sourcesPath):/vmr"
         dockerEnvArgs="-e SMOKE_TESTS_EXCLUDE_OMNISHARP=${{ parameters.excludeOmniSharpTests }} -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=true -e SMOKE_TESTS_RUNNING_IN_CI=true"
