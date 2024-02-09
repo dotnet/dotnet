@@ -241,7 +241,6 @@ namespace System.CodeDom
 
     public partial class CodeBaseReferenceExpression : CodeExpression
     {
-        public CodeBaseReferenceExpression() { }
     }
 
     public partial class CodeBinaryOperatorExpression : CodeExpression
@@ -405,8 +404,6 @@ namespace System.CodeDom
 
     public partial class CodeCompileUnit : CodeObject
     {
-        public CodeCompileUnit() { }
-
         public CodeAttributeDeclarationCollection AssemblyCustomAttributes { get { throw null; } }
 
         public CodeDirectiveCollection EndDirectives { get { throw null; } }
@@ -435,8 +432,6 @@ namespace System.CodeDom
 
     public partial class CodeConstructor : CodeMemberMethod
     {
-        public CodeConstructor() { }
-
         public CodeExpressionCollection BaseConstructorArgs { get { throw null; } }
 
         public CodeExpressionCollection ChainedConstructorArgs { get { throw null; } }
@@ -490,7 +485,6 @@ namespace System.CodeDom
 
     public partial class CodeDirective : CodeObject
     {
-        public CodeDirective() { }
     }
 
     public partial class CodeDirectiveCollection : Collections.CollectionBase
@@ -522,7 +516,6 @@ namespace System.CodeDom
 
     public partial class CodeEntryPointMethod : CodeMemberMethod
     {
-        public CodeEntryPointMethod() { }
     }
 
     public partial class CodeEventReferenceExpression : CodeExpression
@@ -538,7 +531,6 @@ namespace System.CodeDom
 
     public partial class CodeExpression : CodeObject
     {
-        public CodeExpression() { }
     }
 
     public partial class CodeExpressionCollection : Collections.CollectionBase
@@ -649,8 +641,6 @@ namespace System.CodeDom
 
     public partial class CodeMemberEvent : CodeTypeMember
     {
-        public CodeMemberEvent() { }
-
         public CodeTypeReferenceCollection ImplementationTypes { get { throw null; } }
 
         public CodeTypeReference PrivateImplementationType { get { throw null; } set { } }
@@ -675,8 +665,6 @@ namespace System.CodeDom
 
     public partial class CodeMemberMethod : CodeTypeMember
     {
-        public CodeMemberMethod() { }
-
         public CodeTypeReferenceCollection ImplementationTypes { get { throw null; } }
 
         public CodeParameterDeclarationExpressionCollection Parameters { get { throw null; } }
@@ -700,8 +688,6 @@ namespace System.CodeDom
 
     public partial class CodeMemberProperty : CodeTypeMember
     {
-        public CodeMemberProperty() { }
-
         public CodeStatementCollection GetStatements { get { throw null; } }
 
         public bool HasGet { get { throw null; } set { } }
@@ -817,8 +803,6 @@ namespace System.CodeDom
 
     public partial class CodeNamespaceImportCollection : Collections.IList, Collections.ICollection, Collections.IEnumerable
     {
-        public CodeNamespaceImportCollection() { }
-
         public int Count { get { throw null; } }
 
         public CodeNamespaceImport this[int index] { get { throw null; } set { } }
@@ -864,8 +848,6 @@ namespace System.CodeDom
 
     public partial class CodeObject
     {
-        public CodeObject() { }
-
         public Collections.IDictionary UserData { get { throw null; } }
     }
 
@@ -952,7 +934,6 @@ namespace System.CodeDom
 
     public partial class CodePropertySetValueReferenceExpression : CodeExpression
     {
-        public CodePropertySetValueReferenceExpression() { }
     }
 
     public partial class CodeRegionDirective : CodeDirective
@@ -1026,8 +1007,6 @@ namespace System.CodeDom
 
     public partial class CodeStatement : CodeObject
     {
-        public CodeStatement() { }
-
         public CodeDirectiveCollection EndDirectives { get { throw null; } }
 
         public CodeLinePragma LinePragma { get { throw null; } set { } }
@@ -1066,7 +1045,6 @@ namespace System.CodeDom
 
     public partial class CodeThisReferenceExpression : CodeExpression
     {
-        public CodeThisReferenceExpression() { }
     }
 
     public partial class CodeThrowExceptionStatement : CodeStatement
@@ -1095,7 +1073,6 @@ namespace System.CodeDom
 
     public partial class CodeTypeConstructor : CodeMemberMethod
     {
-        public CodeTypeConstructor() { }
     }
 
     public partial class CodeTypeDeclaration : CodeTypeMember
@@ -1167,8 +1144,6 @@ namespace System.CodeDom
 
     public partial class CodeTypeMember : CodeObject
     {
-        public CodeTypeMember() { }
-
         public MemberAttributes Attributes { get { throw null; } set { } }
 
         public CodeCommentStatementCollection Comments { get { throw null; } }
@@ -1414,8 +1389,6 @@ namespace System.CodeDom.Compiler
 {
     public abstract partial class CodeCompiler : CodeGenerator, ICodeCompiler
     {
-        protected CodeCompiler() { }
-
         protected abstract string CompilerName { get; }
         protected abstract string FileExtension { get; }
 
@@ -1453,8 +1426,6 @@ namespace System.CodeDom.Compiler
     [ComponentModel.ToolboxItem(false)]
     public abstract partial class CodeDomProvider : ComponentModel.Component
     {
-        protected CodeDomProvider() { }
-
         public virtual string FileExtension { get { throw null; } }
 
         public virtual LanguageOptions LanguageOptions { get { throw null; } }
@@ -1519,8 +1490,6 @@ namespace System.CodeDom.Compiler
 
     public abstract partial class CodeGenerator : ICodeGenerator
     {
-        protected CodeGenerator() { }
-
         protected CodeTypeDeclaration CurrentClass { get { throw null; } }
 
         protected CodeTypeMember CurrentMember { get { throw null; } }
@@ -1713,8 +1682,6 @@ namespace System.CodeDom.Compiler
 
     public partial class CodeGeneratorOptions
     {
-        public CodeGeneratorOptions() { }
-
         public bool BlankLinesBetweenMembers { get { throw null; } set { } }
 
         public string BracingStyle { get { throw null; } set { } }
@@ -1730,8 +1697,6 @@ namespace System.CodeDom.Compiler
 
     public abstract partial class CodeParser : ICodeParser
     {
-        protected CodeParser() { }
-
         public abstract CodeCompileUnit Parse(IO.TextReader codeStream);
     }
 
@@ -1789,6 +1754,8 @@ namespace System.CodeDom.Compiler
 
     public sealed partial class CompilerInfo
     {
+        internal CompilerInfo() { }
+
         public Type CodeDomProviderType { get { throw null; } }
 
         public bool IsCodeDomProviderTypeValid { get { throw null; } }
