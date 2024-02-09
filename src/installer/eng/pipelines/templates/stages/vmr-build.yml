@@ -33,6 +33,7 @@ stages:
 - ${{ if parameters.isSourceOnlyBuild }}:
   - stage: VMR_SourceOnly_Build
     displayName: VMR Source-Only Build
+    dependsOn: []
     variables:
     - template: ../variables/vmr-stage.yml
       parameters:
@@ -313,6 +314,7 @@ stages:
 - ${{ if not(parameters.isSourceOnlyBuild) }}:
   - stage: VMR_Vertical_Build
     displayName: VMR Vertical Build
+    dependsOn: []
     variables:
     - template: ../variables/vmr-stage.yml
       parameters:
