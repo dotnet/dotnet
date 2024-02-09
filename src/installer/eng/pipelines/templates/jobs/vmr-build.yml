@@ -14,6 +14,7 @@ parameters:
 
 - name: container
   type: string
+  default: ''
 
 - name: crossRootFs
   type: string
