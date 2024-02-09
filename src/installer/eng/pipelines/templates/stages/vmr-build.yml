@@ -347,6 +347,20 @@ stages:
 
     - template: ../jobs/vmr-build.yml
       parameters:
+        buildName: Browser_Shortstack
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        vmrBranch: ${{ variables.VmrBranch }}
+        architecture: wasm
+        pool:
+          name: ${{ variables.defaultPoolName }}
+          demands: ${{ variables.defaultPoolDemandsLinux }}
+        container: ${{ variables.wasmCrossContainer }}
+        crossRootFs: '/crossrootfs/x64'
+        targetOS: browser
+        targetArchitecture: wasm
+
+    - template: ../jobs/vmr-build.yml
+      parameters:
         buildName: iOSSimulator_Shortstack
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
@@ -456,6 +470,20 @@ stages:
             container: ''
             targetOS: tvossimulator
             targetArchitecture: x64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Wasi_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: wasm
+            pool:
+              name: ${{ variables.defaultPoolName }}
+              demands: ${{ variables.defaultPoolDemandsLinux }}
+            container: ${{ variables.wasmCrossContainer }}
+            crossRootFs: '/crossrootfs/x64'
+            targetOS: wasi
+            targetArchitecture: wasm
 
         - template: ../jobs/vmr-build.yml
           parameters:
