@@ -3,11 +3,11 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -30,9 +30,11 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
     {
         _sessionContext = new TestCollaborationSession(isHost: false);
 
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, new TestProjectSnapshotManagerDispatcher());
+        var projectManager = new TestProjectSnapshotManager(
+            ProjectEngineFactoryProvider,
+            Dispatcher);
 
-        var projectManagerAccessorMock = new Mock<IProjectSnapshotManagerAccessor>(MockBehavior.Strict);
+        var projectManagerAccessorMock = new StrictMock<IProjectSnapshotManagerAccessor>();
         projectManagerAccessorMock
             .SetupGet(x => x.Instance)
             .Returns(projectManager);
@@ -43,7 +45,7 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
             TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()));
     }
 
-    [Fact]
+    [UIFact]
     public async Task InitializeAsync_RetrievesHostProjectManagerStateAndInitializesGuestManager()
     {
         // Arrange
@@ -53,16 +55,19 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
             RazorConfiguration.Default,
             "project",
             _projectWorkspaceStateWithTagHelpers);
-        var state = new ProjectSnapshotManagerProxyState(new[] { projectHandle });
-        var hostProjectManagerProxy = Mock.Of<IProjectSnapshotManagerProxy>(
-            proxy => proxy.GetProjectManagerStateAsync(It.IsAny<CancellationToken>()) == Task.FromResult(state), MockBehavior.Strict);
+        var state = new ProjectSnapshotManagerProxyState([projectHandle]);
+        var hostProjectManagerProxyMock = new StrictMock<IProjectSnapshotManagerProxy>();
+        hostProjectManagerProxyMock
+            .Setup(x => x.GetProjectManagerStateAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(state);
+
         var synchronizationService = new ProjectSnapshotSynchronizationService(
-            JoinableTaskFactory,
             _sessionContext,
-            hostProjectManagerProxy,
+            hostProjectManagerProxyMock.Object,
             _projectManagerAccessor,
+            Dispatcher,
             ErrorReporter,
-            Dispatcher);
+            JoinableTaskFactory);
 
         // Act
         await synchronizationService.InitializeAsync(DisposalToken);
@@ -82,7 +87,7 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
         }
     }
 
-    [Fact]
+    [UIFact]
     public async Task UpdateGuestProjectManager_ProjectAdded()
     {
         // Arrange
@@ -93,12 +98,12 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
             "project",
             _projectWorkspaceStateWithTagHelpers);
         var synchronizationService = new ProjectSnapshotSynchronizationService(
-            JoinableTaskFactory,
             _sessionContext,
-            Mock.Of<IProjectSnapshotManagerProxy>(MockBehavior.Strict),
+            StrictMock.Of<IProjectSnapshotManagerProxy>(),
             _projectManagerAccessor,
+            Dispatcher,
             ErrorReporter,
-            Dispatcher);
+            JoinableTaskFactory);
         var args = new ProjectChangeEventProxyArgs(older: null, newHandle, ProjectProxyChangeKind.ProjectAdded);
 
         // Act
@@ -119,7 +124,7 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
         }
     }
 
-    [Fact]
+    [UIFact]
     public async Task UpdateGuestProjectManager_ProjectRemoved()
     {
         // Arrange
@@ -128,14 +133,14 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
             new Uri("vsls:/path/obj"),
             RazorConfiguration.Default,
             "project",
-            projectWorkspaceState: null);
+            ProjectWorkspaceState.Default);
         var synchronizationService = new ProjectSnapshotSynchronizationService(
-            JoinableTaskFactory,
             _sessionContext,
-            Mock.Of<IProjectSnapshotManagerProxy>(MockBehavior.Strict),
+            StrictMock.Of<IProjectSnapshotManagerProxy>(),
             _projectManagerAccessor,
+            Dispatcher,
             ErrorReporter,
-            Dispatcher);
+            JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
 
         await Dispatcher.RunOnDispatcherThreadAsync(
@@ -152,7 +157,7 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
         Assert.Empty(projects);
     }
 
-    [Fact]
+    [UIFact]
     public async Task UpdateGuestProjectManager_ProjectChanged_ConfigurationChange()
     {
         // Arrange
@@ -161,8 +166,8 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
             new Uri("vsls:/path/obj"),
             RazorConfiguration.Default,
             "project",
-            projectWorkspaceState: null);
-        var newConfiguration = RazorConfiguration.Create(RazorLanguageVersion.Version_1_0, "Custom-1.0", Enumerable.Empty<RazorExtension>());
+            ProjectWorkspaceState.Default);
+        var newConfiguration = RazorConfiguration.Create(RazorLanguageVersion.Version_1_0, "Custom-1.0", []);
         var newHandle = new ProjectSnapshotHandleProxy(
             oldHandle.FilePath,
             oldHandle.IntermediateOutputPath,
@@ -170,12 +175,12 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
             oldHandle.RootNamespace,
             oldHandle.ProjectWorkspaceState);
         var synchronizationService = new ProjectSnapshotSynchronizationService(
-            JoinableTaskFactory,
             _sessionContext,
-            Mock.Of<IProjectSnapshotManagerProxy>(MockBehavior.Strict),
+            StrictMock.Of<IProjectSnapshotManagerProxy>(),
             _projectManagerAccessor,
+            Dispatcher,
             ErrorReporter,
-            Dispatcher);
+            JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
         await Dispatcher.RunOnDispatcherThreadAsync(() =>
         {
@@ -197,7 +202,7 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
         Assert.Empty(await project.GetTagHelpersAsync(CancellationToken.None));
     }
 
-    [Fact]
+    [UIFact]
     public async Task UpdateGuestProjectManager_ProjectChanged_ProjectWorkspaceStateChange()
     {
         // Arrange
@@ -215,12 +220,12 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
             oldHandle.RootNamespace,
             newProjectWorkspaceState);
         var synchronizationService = new ProjectSnapshotSynchronizationService(
-            JoinableTaskFactory,
             _sessionContext,
-            Mock.Of<IProjectSnapshotManagerProxy>(MockBehavior.Strict),
+            StrictMock.Of<IProjectSnapshotManagerProxy>(),
             _projectManagerAccessor,
+            Dispatcher,
             ErrorReporter,
-            Dispatcher);
+            JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
         await Dispatcher.RunOnDispatcherThreadAsync(() =>
         {

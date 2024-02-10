@@ -2,14 +2,15 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Utilities;
-using Microsoft.CodeAnalysis.Remote.Razor.Test;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Test.Common.TagHelperTestData;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-public class RemoteTagHelperDeltaProviderTest(ITestOutputHelper testOutput) : TagHelperDescriptorTestBase(testOutput)
+public class RemoteTagHelperDeltaProviderTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     private readonly RemoteTagHelperDeltaProvider _provider = new();
 

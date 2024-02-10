@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-// This type must be a public interface in order to properly advertise itself as part of the LiveShare ICollaborationService infrastructure.
+// This type must be a public interface in order to to be implemented as an RPC proxy by live share.
 public interface IRemoteHierarchyService : ICollaborationService
 {
     public Task<bool> HasCapabilityAsync(Uri pathOfFileInProject, string capability, CancellationToken cancellationToken);

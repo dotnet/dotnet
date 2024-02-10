@@ -3,32 +3,30 @@
 
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Utilities;
-using Xunit.Abstractions;
+using Microsoft.CodeAnalysis;
 
-namespace Microsoft.CodeAnalysis.Remote.Razor.Test;
+namespace Microsoft.AspNetCore.Razor.Test.Common;
 
-public class TagHelperDescriptorTestBase : ToolingTestBase
+internal static class TagHelperTestData
 {
-    protected string Project1FilePath { get; }
-    internal ProjectId Project1Id { get; }
-    protected TagHelperDescriptor TagHelper1_Project1 { get; }
-    protected TagHelperDescriptor TagHelper2_Project1 { get; }
-    protected ImmutableArray<TagHelperDescriptor> Project1TagHelpers { get; }
-    private protected ImmutableArray<Checksum> Project1TagHelperChecksums { get; }
+    public static string Project1FilePath { get; }
+    public static ProjectId Project1Id { get; }
+    public static TagHelperDescriptor TagHelper1_Project1 { get; }
+    public static TagHelperDescriptor TagHelper2_Project1 { get; }
+    public static ImmutableArray<TagHelperDescriptor> Project1TagHelpers { get; }
+    public static ImmutableArray<Checksum> Project1TagHelperChecksums { get; }
 
-    protected string Project2FilePath { get; }
-    internal ProjectId Project2Id { get; }
-    protected TagHelperDescriptor TagHelper1_Project2 { get; }
-    protected TagHelperDescriptor TagHelper2_Project2 { get; }
-    protected ImmutableArray<TagHelperDescriptor> Project2TagHelpers { get; }
-    private protected ImmutableArray<Checksum> Project2TagHelperChecksums { get; }
-    protected ImmutableArray<TagHelperDescriptor> Project1AndProject2TagHelpers { get; }
-    private protected ImmutableArray<Checksum> Project1AndProject2TagHelperChecksums { get; }
+    public static string Project2FilePath { get; }
+    public static ProjectId Project2Id { get; }
+    public static TagHelperDescriptor TagHelper1_Project2 { get; }
+    public static TagHelperDescriptor TagHelper2_Project2 { get; }
+    public static ImmutableArray<TagHelperDescriptor> Project2TagHelpers { get; }
+    public static ImmutableArray<Checksum> Project2TagHelperChecksums { get; }
+    public static ImmutableArray<TagHelperDescriptor> Project1AndProject2TagHelpers { get; }
+    public static ImmutableArray<Checksum> Project1AndProject2TagHelperChecksums { get; }
 
-    public TagHelperDescriptorTestBase(ITestOutputHelper testOutput)
-        : base(testOutput)
+    static TagHelperTestData()
     {
         Project1FilePath = "C:/path/to/Project1/Project1.csproj";
         Project1Id = ProjectId.CreateNewId();

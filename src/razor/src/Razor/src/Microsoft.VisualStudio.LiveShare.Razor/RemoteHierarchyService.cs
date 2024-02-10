@@ -10,26 +10,10 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-internal class RemoteHierarchyService : IRemoteHierarchyService
+internal class RemoteHierarchyService(CollaborationSession session, JoinableTaskFactory jtf) : IRemoteHierarchyService
 {
-    private readonly CollaborationSession _session;
-    private readonly JoinableTaskFactory _joinableTaskFactory;
-
-    internal RemoteHierarchyService(CollaborationSession session, JoinableTaskFactory joinableTaskFactory)
-    {
-        if (session is null)
-        {
-            throw new ArgumentNullException(nameof(session));
-        }
-
-        if (joinableTaskFactory is null)
-        {
-            throw new ArgumentNullException(nameof(joinableTaskFactory));
-        }
-
-        _session = session;
-        _joinableTaskFactory = joinableTaskFactory;
-    }
+    private readonly CollaborationSession _session = session;
+    private readonly JoinableTaskFactory _jtf = jtf;
 
     public async Task<bool> HasCapabilityAsync(Uri pathOfFileInProject, string capability, CancellationToken cancellationToken)
     {
@@ -43,7 +27,7 @@ internal class RemoteHierarchyService : IRemoteHierarchyService
             throw new ArgumentNullException(nameof(capability));
         }
 
-        await _joinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+        await _jtf.SwitchToMainThreadAsync(cancellationToken);
 
         var hostPathOfFileInProject = _session.ConvertSharedUriToLocalPath(pathOfFileInProject);
         if (ServiceProvider.GlobalProvider.GetService(typeof(SVsUIShellOpenDocument)) is not IVsUIShellOpenDocument vsUIShellOpenDocument)
