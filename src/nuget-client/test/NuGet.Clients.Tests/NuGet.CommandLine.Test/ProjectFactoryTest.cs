@@ -437,7 +437,7 @@ namespace NuGet.CommandLine
             {
                 var actual = ProjectFactory.ContentEquals(sourcePath, fullPath);
 
-                Assert.Equal(true, actual);
+                Assert.True(actual);
             }
             finally
             {

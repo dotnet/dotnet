@@ -19,6 +19,26 @@ public class NoAllocEnumerateExtensionsTests
     }
 
     [Fact]
+    public void NoAllocEnumerate_IEnumerable_HashSet()
+    {
+        var testSet = new HashSet<int> { 0, 1, 2, 3 };
+        var newSet = new HashSet<int>(testSet.Count);
+        foreach (int i in testSet.NoAllocEnumerate())
+        {
+            // ensure we got something that was actually in the original set
+            Assert.Contains(i, testSet);
+
+            // ensure we don't get duplicates
+            Assert.True(newSet.Add(i));
+        }
+
+        // If every item we get from the enumerator exists in the source set
+        // and we didn't add any duplicates, we know we enumerated over the same set
+        // of items if the counts are equal.
+        Assert.Equal(testSet.Count, newSet.Count);
+    }
+
+    [Fact]
     public void NoAllocEnumerate_IEnumerable_ImmutableList()
     {
         ValidateIEnumerable(ImmutableList.Create(0, 1, 2, 3));

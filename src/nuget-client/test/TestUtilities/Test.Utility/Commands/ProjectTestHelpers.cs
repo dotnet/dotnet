@@ -205,7 +205,7 @@ namespace NuGet.Commands.Test
 
             return new TestRestoreRequest(projectToRestore, sources, pathContext.UserPackagesFolder, logger)
             {
-                LockFilePath = Path.Combine(projectToRestore.FilePath, LockFileFormat.AssetsFileName),
+                LockFilePath = Path.Combine(projectToRestore.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName),
                 DependencyGraphSpec = dgSpec,
                 ExternalProjects = externalClosure,
             };

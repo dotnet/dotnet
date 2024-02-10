@@ -8,8 +8,12 @@ resources:
     source: NuGet.Client-Official
     trigger:
       branches:
+        include:
         - dev
         - release-*
+        exclude:
+        - release-6.0.x
+        - release-6.3.x
   - pipeline: DartLab
     source: DartLab
     branch: main
@@ -178,7 +182,7 @@ stages:
         dropMetadataContainerName: "DropMetadata-Product"
     # Remove this step hook and it's task if you don't want LKG support
     prePublishOptimizationInputsDropStepList:
-    # Set parameter for PreviousOptimizationInputsDropName 
+    # Set parameter for PreviousOptimizationInputsDropName
     - powershell: |
         try {
           $artifactName = 'OptProf'
@@ -191,7 +195,7 @@ stages:
 
           Write-Host "The content of the metadata.json file was $json"
           $dropname = $json.OptimizationData
-          
+
           Write-Host "PreviousOptimizationInputsDropName: $dropname"
           Set-AzurePipelinesVariable 'PreviousOptimizationInputsDropName' $dropname
         }

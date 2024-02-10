@@ -520,6 +520,25 @@ namespace NuGet.PackageManagement.Test
         }
 
         [Fact]
+        public async Task GetAllVulnerabilityDataAsync_SourceWithInvalidHost_ReturnResultWithException()
+        {
+            // Arrange
+            // .test is a reserved TLD, so we know it will never exist
+            var packageSource = new PackageSource("https://nuget.test/v3/index.json");
+            SourceRepository source = Repository.Factory.GetCoreV3(packageSource);
+            List<SourceRepository> sourceRepositories = new List<SourceRepository>() { source };
+            using SourceCacheContext cacheContext = new();
+
+            // Act
+            GetVulnerabilityInfoResult? result = await AuditUtility.GetAllVulnerabilityDataAsync(sourceRepositories, cacheContext, NullLogger.Instance, CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result!.KnownVulnerabilities.Should().BeNull();
+            result.Exceptions.Should().NotBeNull();
+        }
+
+        [Fact]
         public void CreateWarningsForPackagesWithVulnerabilities_CreatesWarningsForAllVulnerabilities()
         {
             var packageA = new PackageIdentity("A", new NuGetVersion(1, 0, 0));

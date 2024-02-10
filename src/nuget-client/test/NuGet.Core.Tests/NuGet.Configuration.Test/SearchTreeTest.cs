@@ -76,7 +76,7 @@ namespace NuGet.Configuration.Test
             // Act & Assert
             IReadOnlyList<string> configuredSources = searchTree.GetConfiguredPackageSources(term);
             Assert.Equal(1, configuredSources.Count);
-            Assert.True(configuredSources[0].StartsWith(term.Trim().Substring(0, 5)));
+            Assert.StartsWith(term.Trim().Substring(0, 5), configuredSources[0]);
         }
 
         [Theory]
@@ -92,7 +92,7 @@ namespace NuGet.Configuration.Test
             // Act & Assert
             IReadOnlyList<string> configuredSources = searchTree.GetConfiguredPackageSources(term);
             Assert.Equal(1, configuredSources.Count);
-            Assert.True(term.Trim().StartsWith(configuredSources[0], StringComparison.OrdinalIgnoreCase));
+            Assert.StartsWith(configuredSources[0], term.Trim(), StringComparison.OrdinalIgnoreCase);
         }
 
         [Theory]

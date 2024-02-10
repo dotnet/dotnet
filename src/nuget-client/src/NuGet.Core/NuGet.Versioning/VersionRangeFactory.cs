@@ -204,7 +204,7 @@ namespace NuGet.Versioning
 #if NETCOREAPP2_1_OR_GREATER
                 if (allowFloating && minVersionString.Contains('*', StringComparison.Ordinal))
 #else
-                if (allowFloating && minVersionString.Contains('*'))
+                if (allowFloating && minVersionString.Contains("*"))
 #endif
                 {
                     // single floating version

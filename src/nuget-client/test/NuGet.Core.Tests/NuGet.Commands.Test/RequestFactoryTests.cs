@@ -58,7 +58,7 @@ namespace NuGet.Commands.Test
 
                     // Act
                     var supports = await provider.Supports(dgSpec);
-                    Assert.Equal(true, supports);
+                    Assert.True(supports);
 
                     var requests = await provider.CreateRequests(dgSpec, context);
                     Assert.Equal(1, requests.Count);

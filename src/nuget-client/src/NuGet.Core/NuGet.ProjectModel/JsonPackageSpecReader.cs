@@ -350,7 +350,7 @@ namespace NuGet.ProjectModel
                     var dependencyIncludeFlagsValue = LibraryIncludeFlags.All;
                     var dependencyExcludeFlagsValue = LibraryIncludeFlags.None;
                     var suppressParentFlagsValue = LibraryIncludeFlagUtils.DefaultSuppressParent;
-                    List<NuGetLogCode> noWarn = null;
+                    IList<NuGetLogCode> noWarn = Array.Empty<NuGetLogCode>();
 
                     // This method handles both the dependencies and framework assembly sections.
                     // Framework references should be limited to references.
@@ -484,7 +484,7 @@ namespace NuGet.ProjectModel
 
                     // the dependency flags are: Include flags - Exclude flags
                     var includeFlags = dependencyIncludeFlagsValue & ~dependencyExcludeFlagsValue;
-                    var libraryDependency = new LibraryDependency()
+                    var libraryDependency = new LibraryDependency(noWarn)
                     {
                         LibraryRange = new LibraryRange()
                         {
@@ -503,11 +503,6 @@ namespace NuGet.ProjectModel
                         ReferenceType = LibraryDependencyReferenceType.Direct,
                         VersionOverride = versionOverride
                     };
-
-                    if (noWarn != null)
-                    {
-                        libraryDependency.NoWarn = noWarn;
-                    }
 
                     results.Add(libraryDependency);
                 }
@@ -616,7 +611,7 @@ namespace NuGet.ProjectModel
 
                     // the dependency flags are: Include flags - Exclude flags
                     var includeFlags = dependencyIncludeFlagsValue & ~dependencyExcludeFlagsValue;
-                    var libraryDependency = new LibraryDependency()
+                    var libraryDependency = new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
                     {
                         LibraryRange = new LibraryRange()
                         {
@@ -1252,9 +1247,9 @@ namespace NuGet.ProjectModel
             }
         }
 
-        private static List<NuGetLogCode> ReadNuGetLogCodesList(JsonTextReader jsonReader)
+        private static IList<NuGetLogCode> ReadNuGetLogCodesList(JsonTextReader jsonReader)
         {
-            List<NuGetLogCode> items = null;
+            IList<NuGetLogCode> items = null;
 
             if (jsonReader.ReadNextToken() && jsonReader.TokenType == JsonToken.StartArray)
             {
@@ -1269,7 +1264,7 @@ namespace NuGet.ProjectModel
                 }
             }
 
-            return items;
+            return items ?? Array.Empty<NuGetLogCode>();
         }
 
         private static void ReadPackageTypes(PackageSpec packageSpec, JsonTextReader jsonReader)

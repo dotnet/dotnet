@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Moq;
+using FluentAssertions;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Test.Utility;
@@ -300,11 +300,125 @@ namespace NuGet.Protocol.Tests
                 Assert.Equal("a,b,c", package.Authors);
                 Assert.Equal(2, package.DependencySets.Count());
                 Assert.Equal("package description", package.Description);
-                Assert.Equal(null, package.DownloadCount);
+                Assert.Null(package.DownloadCount);
                 Assert.Equal(new Uri("http://nuget.org/nuget.jpg"), package.IconUrl);
                 Assert.Equal("1.0.0-alpha.1.2+5", package.Identity.Version.ToFullString());
                 Assert.Equal(new Uri("http://nuget.org/license.txt"), package.LicenseUrl);
-                Assert.Equal("a,b", package.Owners);
+
+                Assert.NotNull(package.OwnersList);
+                package.OwnersList.Should()
+                    .NotBeNull()
+                    .And.NotBeEmpty()
+                    .And.HaveCount(2)
+                    .And.ContainInOrder(["a", "b"]);
+                package.Owners.Should().Be("a,b");
+
+                Assert.Equal(new Uri("http://nuget.org/"), package.ProjectUrl);
+                Assert.NotNull(package.Published);
+                Assert.Null(package.ReportAbuseUrl);
+                Assert.Null(package.PackageDetailsUrl);
+                Assert.True(package.RequireLicenseAcceptance);
+                Assert.Equal("sum", package.Summary);
+                Assert.Equal("a b c", package.Tags);
+                Assert.Equal("myTitle", package.Title);
+            }
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("<owners></owners>")]
+        [InlineData("<owners>     </owners>")]
+        public async Task LocalPackageMetadataResourceTests_WhenOwnersIsEmpty_OwnersListIsEmpty(string ownersNode)
+        {
+            using (var root = TestDirectory.Create())
+            {
+                // Arrange
+                var testLogger = new TestLogger();
+
+                var nuspec = XDocument.Parse($@"<?xml version=""1.0"" encoding=""utf-8""?>
+                        <package>
+                        <metadata>
+                            <id>a</id>
+                            <version>1.0.0-alpha.1.2+5</version>
+                            <title>myTitle</title>
+                            <authors>a,b,c</authors>
+                            {ownersNode}
+                            <description>package description</description>
+                            <releaseNotes>notes</releaseNotes>
+                            <summary>sum</summary>
+                            <language>en-us</language>
+                            <projectUrl>http://nuget.org/</projectUrl>
+                            <iconUrl>http://nuget.org/nuget.jpg</iconUrl>
+                            <licenseUrl>http://nuget.org/license.txt</licenseUrl>
+                            <requireLicenseAcceptance>true</requireLicenseAcceptance>
+                            <copyright>MIT</copyright>
+                            <tags>a b c</tags>
+                            <developmentDependency>true</developmentDependency>
+                            <dependencies>
+                                <group>
+                                 <dependency id=""b"" version=""1.0"" />
+                                </group>
+                                 <group targetFramework=""net461"">
+                                </group>
+                            </dependencies>
+                        </metadata>
+                        </package>");
+
+                var packageA = new SimpleTestPackageContext()
+                {
+                    Id = "a",
+                    Version = "1.0.0-alpha.1.2+5",
+                    Nuspec = nuspec
+                };
+
+                var packageA2 = new SimpleTestPackageContext()
+                {
+                    Id = "a",
+                    Version = "1.0.0-alpha.1.1"
+                };
+
+                var packageContexts = new SimpleTestPackageContext[]
+                {
+                    packageA,
+                    packageA2
+                };
+
+                await SimpleTestPackageUtility.CreatePackagesAsync(root, packageContexts);
+
+                var localResource = new FindLocalPackagesResourceV2(root);
+                var resource = new LocalPackageMetadataResource(localResource);
+
+                // Act
+                var packages = (await resource.GetMetadataAsync(
+                        "A",
+                        includePrerelease: true,
+                        includeUnlisted: false,
+                        sourceCacheContext: NullSourceCacheContext.Instance,
+                        log: testLogger,
+                        token: CancellationToken.None))
+                        .OrderByDescending(p => p.Identity.Version)
+                        .ToList();
+
+                var package = packages.First();
+
+                // Assert
+                Assert.Equal(2, packages.Count);
+                Assert.Equal("a,b,c", package.Authors);
+                Assert.Equal(2, package.DependencySets.Count());
+                Assert.Equal("package description", package.Description);
+                Assert.Null(package.DownloadCount);
+                Assert.Equal(new Uri("http://nuget.org/nuget.jpg"), package.IconUrl);
+                Assert.Equal("1.0.0-alpha.1.2+5", package.Identity.Version.ToFullString());
+                Assert.Equal(new Uri("http://nuget.org/license.txt"), package.LicenseUrl);
+
+                Assert.NotNull(package.OwnersList);
+                package.Owners
+                    .Should().NotBeNull()
+                    .And.BeEmpty();
+                package.OwnersList
+                    .Should().NotBeNull()
+                    .And.BeEmpty();
+
                 Assert.Equal(new Uri("http://nuget.org/"), package.ProjectUrl);
                 Assert.NotNull(package.Published);
                 Assert.Null(package.ReportAbuseUrl);

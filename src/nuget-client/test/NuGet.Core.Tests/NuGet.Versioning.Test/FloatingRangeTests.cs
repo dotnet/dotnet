@@ -341,13 +341,15 @@ namespace NuGet.Versioning.Test
         [InlineData("1.0.*-")]
         [InlineData(null)]
         [InlineData("")]
-        public void FloatingRange_TryParse_Invalid(string floatVersionString)
+        public void FloatingRange_TryParse_Invalid(string? floatVersionString)
         {
             // Arrange
             FloatRange? range;
 
             // Act
+#pragma warning disable CS8604 // Possible null reference argument. - The string is marked as not nullable, but null checks are still performed.
             var valid = FloatRange.TryParse(floatVersionString, out range);
+#pragma warning restore CS8604 // Possible null reference argument.
 
             // Assert
             Assert.False(valid);

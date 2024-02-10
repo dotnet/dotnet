@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Build.Framework;
 using NuGet.Packaging;
@@ -77,7 +78,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
         /// </summary>
         /// <returns></returns>
         [Fact]
-        public void Resolve_WhenPackageExists_ReturnsSucceededSdkResult()
+        public async Task Resolve_WhenPackageExists_ReturnsSucceededSdkResult()
         {
             using (var pathContext = new SimpleTestPathContext())
             {
@@ -85,7 +86,7 @@ namespace Microsoft.Build.NuGetSdkResolver.Test
                 var package = new SimpleTestPackageContext(sdkReference.Name, sdkReference.Version);
                 package.AddFile("Sdk/Sdk.props", "<Project />");
                 package.AddFile("Sdk/Sdk.targets", "<Project />");
-                SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, PackageSaveMode.Defaultv3, package).Wait();
+                await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, PackageSaveMode.Defaultv3, package);
                 var sdkResolverContext = new MockSdkResolverContext(pathContext.WorkingDirectory);
                 var sdkResultFactory = new MockSdkResultFactory();
                 var sdkResolver = new NuGetSdkResolver();

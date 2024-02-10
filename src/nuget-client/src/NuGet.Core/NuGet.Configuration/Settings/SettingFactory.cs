@@ -43,6 +43,7 @@ namespace NuGet.Configuration
                         return new CredentialsItem(element, origin);
 
                     case SettingElementType.PackageSources:
+                    case SettingElementType.AuditSources:
                         if (elementType == SettingElementType.Add)
                         {
                             return new SourceItem(element, origin);

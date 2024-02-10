@@ -17,7 +17,7 @@ namespace NuGet.Tests.Apex
         private NuGetConsoleTestExtension _console;
         private string _packageManagerOutputWindowText;
 
-        internal const int DefaultTimeout = 5 * 60 * 1000; // 5 minutes
+        public const int DefaultTimeout = 5 * 60 * 1000; // 5 minutes
 
         protected SharedVisualStudioHostTestClass()
         {

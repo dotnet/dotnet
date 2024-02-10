@@ -3,6 +3,8 @@ parameters:
     type: object
   - name: bootstrapperUrl
     type: string
+  - name: baseBuildDrop
+    type: string
   - name: runSettingsURI
     type: string
   - name: DartLabEnvironment
@@ -22,9 +24,11 @@ parameters:
   - name: isOfficialBuild
     type: boolean
     default: false
+  - name: QBuildSessionId
+    type: string
 
 stages:
-  - template: stages\visual-studio\single-runsettings.yml@DartLabTemplates
+  - template: stages\visual-studio\build-to-build-upgrade\single-runsettings.yml@DartLabTemplates
     parameters:
       name: VS_Apex_Tests
       displayName: Apex Tests On Windows
@@ -33,12 +37,16 @@ stages:
       variables:
         - name: bootstrapperUrl
           value: ${{parameters.bootstrapperUrl}}
-        - ${{parameters.variables}}
+        - ${{if gt(length(parameters.variables), 0)}}:
+          - ${{parameters.variables}}
       runSettingsURI: ${{parameters.runSettingsURI}}
-      visualStudioBootstrapperURI: $(bootstrapperUrl)
+      visualStudioBootstrapperURI: $(bootstrapperUrl)      
+      baseVisualStudioBootstrapperURI: https://vsdrop.corp.microsoft.com/file/v1/$(VisualStudio.BaseBuild.ProductsDropName);bootstrappers/Enterprise/vs_enterprise.exe
+      candidateBaselineBuilds: $(BaselineBuildCommitIds)
       testLabPoolName: VS-Platform
       dartLabEnvironment: ${{parameters.DartLabEnvironment}}
       visualStudioSigning: Test
+      testMachineConfigurationJobTimeoutInMinutes: 30
       testMachineDeploymentJobTimeoutInMinutes: 240
       testMachineConfigurationJobDisplayName: 'Apex Test Machine Configuration'
       testMachineDeploymentJobDisplayName: 'Apex Test Machine Deployment'
@@ -48,6 +56,67 @@ stages:
       testExecutionJobTimeoutInMinutes: ${{parameters.testExecutionJobTimeoutInMinutes}}
       testMachineCleanUpStrategy: ${{parameters.testMachineCleanUpStrategy}}
       testAgentElevated: true
+      preTestMachineConfigurationStepList:
+        - template: \steps\powershell\execute-script.yml@DartLabTemplates
+          parameters:
+            displayName: Get Baseline Build ID using CloudBuild Session ID
+            continueOnError: true
+            filePath: $(DartLab.Path)\Scripts\AzureDevOps\Build\Get-BuildIdFromCloudBuildSessionID.ps1
+            arguments: -ClientSecret (ConvertTo-SecureString '$(CloudBuild-ClientSecret)' -AsPlainText -Force) -ClientID '$(CloudBuild-ClientID)' -SessionID '${{ parameters.QBuildSessionId }}' -OutVariableName 'BaselineBuildID'
+        
+        - task: PowerShell@2
+          displayName: "Get Baseline build commit ids"
+          name: "getbaselinebuildcommitids"
+          retryCountOnTaskFailure: 3
+          continueOnError: true
+          inputs:
+            targetType: 'inline'
+            script: |
+              try {
+              Write-Host "Getting Baseline build commit ids for build: '$(BaselineBuildID)'"
+              
+              $artifactName = 'BuildArtifacts'
+              $baselineBuildsFile = Join-Path $(Agent.TempDirectory) "BaselineBuilds.json"
+
+              $artifact = Get-BuildArtifact -InstanceURL 'https://dev.azure.com/devdiv' -ProjectName 'DevDiv' -BuildID $(BaselineBuildID)  -ArtifactName $artifactName -OAuthAccessToken (ConvertTo-SecureString '$(System.AccessToken)' -AsPlainText -Force)
+              $containerName = $artifact.Resource.Data -Split '/' | Select-Object -Last 1
+              $fileName = Join-Path $containerName 'BaselineBuilds.json'
+              $jsonString = Read-BuildArtifactFile -InstanceURL 'https://dev.azure.com/devdiv' -ProjectName 'DevDiv' -BuildID $(BaselineBuildID) -ArtifactName $artifactName -FileName $fileName -OAuthAccessToken (ConvertTo-SecureString '$(System.AccessToken)' -AsPlainText -Force)
+
+              $jsonString | Out-File -FilePath $baselineBuildsFile
+
+              $(DartLab.Path)\Scripts\VisualStudio\Build\Get-BaselineBuildCommitIDs.ps1 -BuildJson $baselineBuildsFile -OutVariableName "BaselineBuildCommitIds"
+              } catch {
+                Write-Host "Unable to get Baseline build commit ids: $_"
+              }
+        - task: PowerShell@2
+          name: SetVisualStudioBaseBuildID
+          displayName: Set 'VisualStudio.BaseBuild.ID'
+          retryCountOnTaskFailure: 3
+          condition: ne(variables['BaselineBuildCommitIds'], '')
+          continueOnError: true
+          inputs:
+            filePath: $(DartLab.Path)\Scripts\VisualStudio\Build\Get-BaselineBuildID.ps1
+            arguments: -OAuthAccessToken (ConvertTo-SecureString '$(System.AccessToken)' -AsPlainText -Force) -InstanceURL '$(System.CollectionUri)' -RepositoryName 'VS' -ProjectName '$(System.TeamProject)' -CommitIDs $(BaselineBuildCommitIds) -BuildDefinitionIDs 10289 -OutVariableName 'VisualStudio.BaseBuild.ID'
+        - task: PowerShell@2
+          name: SetVisualStudioBaseBuildProductsDropName
+          displayName: Set 'VisualStudio.BaseBuild.ProductsDropName'
+          retryCountOnTaskFailure: 3
+          condition: ne(variables['VisualStudio.BaseBuild.ID'], '')
+          inputs:
+            filePath: $(DartLab.Path)\Scripts\VisualStudio\Build\Get-VisualStudioDropName.ps1
+            arguments: -AccessToken (ConvertTo-SecureString '$(System.AccessToken)' -AsPlainText -Force) -DropNamePrefix 'Products' -AccountURL '$(System.CollectionUri)' -ProjectName '$(System.TeamProject)' -BuildID $(VisualStudio.BaseBuild.ID) -OutVariableName 'VisualStudio.BaseBuild.ProductsDropName'
+        - task: PowerShell@2
+          name: SetBaseProductsDropNameToTarget
+          displayName: Set 'VisualStudio.BaseBuild.ProductsDropName' to drop from target build
+          retryCountOnTaskFailure: 3
+          condition: eq(variables['VisualStudio.BaseBuild.ID'], '')
+          inputs:
+            targetType: 'inline'
+            script: |
+              $buildDrop = "${{parameters.baseBuildDrop}}" -split "/"
+              $dropName = "Products/DevDiv/VS/$($buildDrop[-2])/$($buildDrop[-1])"
+              Write-Host "##vso[task.setvariable variable=VisualStudio.BaseBuild.ProductsDropName]$dropName"
       preDeployAndRunTestsStepList:
         - task: PowerShell@1
           displayName: "Print Environment Variables"

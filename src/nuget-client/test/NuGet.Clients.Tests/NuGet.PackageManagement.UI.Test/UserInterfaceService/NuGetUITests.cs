@@ -180,7 +180,7 @@ namespace NuGet.PackageManagement.UI.Test
             nuGetUI.LaunchNuGetOptionsDialog(packageSourceMappingActionViewModel);
 
             // Assert
-            Assert.Equal(false, nuGetUI.UIContext.PackageSourceMapping.IsEnabled);
+            Assert.False(nuGetUI.UIContext.PackageSourceMapping.IsEnabled);
             Assert.NotNull(_lastTelemetryEvent);
             Assert.Equal(NavigationType.Button, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
             Assert.Equal(contractsItemFilter, _lastTelemetryEvent[NavigatedTelemetryEvent.CurrentTabPropertyName]);
@@ -211,7 +211,7 @@ namespace NuGet.PackageManagement.UI.Test
             nuGetUI.LaunchNuGetOptionsDialog(packageSourceMappingActionViewModel);
 
             // Assert
-            Assert.Equal(true, nuGetUI.UIContext.PackageSourceMapping.IsEnabled);
+            Assert.True(nuGetUI.UIContext.PackageSourceMapping.IsEnabled);
             Assert.NotNull(_lastTelemetryEvent);
             Assert.Equal(NavigationType.Button, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
             Assert.Equal(contractsItemFilter, _lastTelemetryEvent[NavigatedTelemetryEvent.CurrentTabPropertyName]);
@@ -244,7 +244,7 @@ namespace NuGet.PackageManagement.UI.Test
             nuGetUI.LaunchNuGetOptionsDialog(packageSourceMappingActionViewModel);
 
             // Assert
-            Assert.Equal(true, nuGetUI.UIContext.PackageSourceMapping.IsEnabled);
+            Assert.True(nuGetUI.UIContext.PackageSourceMapping.IsEnabled);
             Assert.NotNull(_lastTelemetryEvent);
             Assert.Equal(NavigationType.Button, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
             Assert.Equal(contractsItemFilter, _lastTelemetryEvent[NavigatedTelemetryEvent.CurrentTabPropertyName]);

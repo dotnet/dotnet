@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
@@ -59,6 +58,11 @@ namespace NuGet.Configuration
         /// The default definition of empty is an element without attributes.
         /// </summary>
         public override bool IsEmpty() => !Attributes.Any();
+
+        /// <summary>
+        /// Settings file path file of the element.
+        /// </summary>
+        public string ConfigPath => Origin?.ConfigFilePath;
 
         /// <summary>
         /// Default constructor

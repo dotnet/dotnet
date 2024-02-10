@@ -28,8 +28,8 @@ namespace NuGet.Protocol.Tests
             var metaData = new PackageSearchMetadataV2Feed(testPackage);
 
             // Assert
-            Assert.True(metaData.Authors.Equals("James Newkirk, Brad Wilson"));
-            Assert.True(metaData.Owners.Equals(""));
+            Assert.Equal(metaData.Authors, "James Newkirk, Brad Wilson");
+            Assert.Equal(metaData.Owners, "");
             Assert.Equal("https://raw.githubusercontent.com/xunit/media/master/logo-512-transparent.png", metaData.IconUrl.AbsoluteUri);
             Assert.Equal("https://github.com/xunit/xunit", metaData.LicenseUrl.AbsoluteUri);
             Assert.Null(metaData.ProjectUrl);

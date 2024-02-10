@@ -420,6 +420,7 @@ namespace NuGet.Commands
             var text = string.Format(CultureInfo.CurrentCulture, Strings.UnsupportedProject, path);
             var message = RestoreLogMessage.CreateWarning(NuGetLogCode.NU1503, text);
             message.FilePath = path;
+            message.ProjectPath = path;
 
             return message;
         }
@@ -429,6 +430,7 @@ namespace NuGet.Commands
             var text = string.Format(CultureInfo.CurrentCulture, Strings.UnsupportedProject, path);
             var message = new RestoreLogMessage(LogLevel.Information, text);
             message.FilePath = path;
+            message.ProjectPath = path;
 
             return message;
         }
@@ -636,7 +638,10 @@ namespace NuGet.Commands
         {
             foreach (var item in GetItemByType(items, "Dependency"))
             {
-                var dependency = new LibraryDependency
+                // Get warning suppressions
+                IList<NuGetLogCode> noWarn = MSBuildStringUtility.GetNuGetLogCodes(item.GetProperty("NoWarn"));
+
+                var dependency = new LibraryDependency(noWarn)
                 {
                     LibraryRange = new LibraryRange(
                         name: item.GetProperty("Id"),
@@ -648,12 +653,6 @@ namespace NuGet.Commands
                     Aliases = item.GetProperty("Aliases"),
                     VersionOverride = GetVersionRange(item, defaultValue: null, "VersionOverride")
                 };
-
-                // Add warning suppressions
-                foreach (var code in MSBuildStringUtility.GetNuGetLogCodes(item.GetProperty("NoWarn")))
-                {
-                    dependency.NoWarn.Add(code);
-                }
 
                 ApplyIncludeFlags(dependency, item);
 
@@ -1071,9 +1070,9 @@ namespace NuGet.Commands
         /// <param name="projectSpecItem">The <see cref="IMSBuildItem" /> to get the central package management settings from.</param>
         /// <param name="projectStyle">The <see cref="ProjectStyle?" /> of the specified project.  Specify <see langword="null" /> when the project does not define a restore style.</param>
         /// <returns>A <see cref="Tuple{T1, T2, T3, T4}" /> containing values indicating whether or not central package management is enabled, if the ability to override a package version 
-        public static (bool IsEnabled, bool IsVersionOverrideDisabled, bool IsCentralPackageTransitivePinningEnabled, bool isCentralPackageFloatingVersionsEnabled) GetCentralPackageManagementSettings(IMSBuildItem projectSpecItem, ProjectStyle? projectStyle)
+        public static (bool IsEnabled, bool IsVersionOverrideDisabled, bool IsCentralPackageTransitivePinningEnabled, bool isCentralPackageFloatingVersionsEnabled) GetCentralPackageManagementSettings(IMSBuildItem projectSpecItem, ProjectStyle projectStyle)
         {
-            if (!projectStyle.HasValue || (projectStyle.Value == ProjectStyle.PackageReference))
+            if (projectStyle == ProjectStyle.PackageReference)
             {
                 bool isEnabled = IsPropertyTrue(projectSpecItem, "_CentralPackageVersionsEnabled");
                 bool isVersionOverrideDisabled = IsPropertyFalse(projectSpecItem, "CentralPackageVersionOverrideEnabled");

@@ -55,6 +55,23 @@ namespace NuGet.DependencyResolver
             return true;
         }
 
+        /// <summary>
+        /// Ensures that <see cref="InnerNodes"/> has the capacity to add
+        /// <paramref name="additionalSpace"/> more items.
+        /// </summary>
+        /// <param name="additionalSpace">The count of additional items that will be added.</param>
+        internal void EnsureInnerNodeCapacity(int additionalSpace)
+        {
+            if (InnerNodes is List<GraphNode<TItem>> innerList)
+            {
+                int requiredCapacity = innerList.Count + additionalSpace;
+                if (innerList.Capacity < requiredCapacity)
+                {
+                    innerList.Capacity = requiredCapacity;
+                }
+            }
+        }
+
         public override string ToString()
         {
             return (Item?.Key ?? Key) + " " + Disposition;

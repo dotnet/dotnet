@@ -1,100 +1,134 @@
 {
   "@context": {
     "@vocab": "http://schema.nuget.org/schema#",
-    "@base": "http://api.nuget.org/v3/registration0/"
+    "@base": "https://api.nuget.org/v3/registration5-gz-semver2/"
   },
-  "totalHits": 972,
-  "lastReopen": "2017-03-22T23:58:15.5787510Z",
-  "index": "v3-lucene0-v2v3-20170110",
+  "totalHits": 5385,
   "data": [
     {
-      "@id": "http://api.nuget.org/v3/registration0/entityframework/index.json",
+      "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/index.json",
       "@type": "Package",
-      "registration": "http://api.nuget.org/v3/registration0/entityframework/index.json",
+      "registration": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/index.json",
       "id": "EntityFramework",
-      "version": "6.1.3",
-      "description": "Entity Framework is Microsoft's recommended data access technology for new applications.",
-      "summary": "Entity Framework is Microsoft's recommended data access technology for new applications.",
+      "version": "6.4.4",
+      "description": "Entity Framework 6 (EF6) is a tried and tested object-relational mapper for .NET with many years of feature development and stabilization.",
+      "summary": "",
       "title": "EntityFramework",
-      "iconUrl": "http://go.microsoft.com/fwlink/?LinkID=386613",
-      "licenseUrl": "http://go.microsoft.com/fwlink/?LinkID=320539",
-      "projectUrl": "http://go.microsoft.com/fwlink/?LinkID=320540",
-      "tags": [ "Microsoft", "EF", "Database", "Data", "O/RM", "ADO.NET" ],
-      "authors": [ "Microsoft" ],
-      "totalDownloads": 28390569,
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/entityframework/6.4.4/icon",
+      "licenseUrl": "https://www.nuget.org/packages/EntityFramework/6.4.4/license",
+      "projectUrl": "http://go.microsoft.com/fwlink/?LinkID=263480",
+      "tags": [
+        "Microsoft",
+        "EntityFramework",
+        "EF",
+        "Database",
+        "Data",
+        "O/RM",
+        "ADO.NET"
+      ],
+      "authors": [
+        "Microsoft"
+      ],
+      "owners": [
+        "aspnet",
+        "EntityFramework",
+        "Microsoft"
+      ],
+      "totalDownloads": 248620082,
       "verified": true,
+      "packageTypes": [
+        {
+          "name": "Dependency"
+        }
+      ],
       "versions": [
         {
-          "version": "4.1.10311",
-          "downloads": 64099,
-          "@id": "http://api.nuget.org/v3/registration0/entityframework/4.1.10311.json"
-        },
-        {
           "version": "4.1.10331",
-          "downloads": 2147483657,
-          "@id": "http://api.nuget.org/v3/registration0/entityframework/4.1.10331.json"
+          "downloads": 1267747,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/4.1.10331.json"
         },
         {
           "version": "4.1.10715",
-          "downloads": 763125,
-          "@id": "http://api.nuget.org/v3/registration0/entityframework/4.1.10715.json"
+          "downloads": 2147483657,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/4.1.10715.json"
         },
         {
           "version": "4.2.0",
-          "downloads": 392907,
-          "@id": "http://api.nuget.org/v3/registration0/entityframework/4.2.0.json"
+          "downloads": 552823,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/4.2.0.json"
         },
         {
           "version": "4.3.0",
-          "downloads": 89777,
-          "@id": "http://api.nuget.org/v3/registration0/entityframework/4.3.0.json"
+          "downloads": 179704,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/4.3.0.json"
         },
         {
           "version": "4.3.1",
-          "downloads": 465884,
-          "@id": "http://api.nuget.org/v3/registration0/entityframework/4.3.1.json"
+          "downloads": 917884,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/4.3.1.json"
         },
         {
           "version": "5.0.0",
-          "downloads": 6798521,
-          "@id": "http://api.nuget.org/v3/registration0/entityframework/5.0.0.json"
+          "downloads": 14749428,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/5.0.0.json"
         },
         {
           "version": "6.0.0",
-          "downloads": 1841069,
-          "@id": "http://api.nuget.org/v3/registration0/entityframework/6.0.0.json"
+          "downloads": 12823600,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/6.0.0.json"
         },
         {
           "version": "6.0.1",
-          "downloads": 1010303,
-          "@id": "http://api.nuget.org/v3/registration0/entityframework/6.0.1.json"
+          "downloads": 2031541,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/6.0.1.json"
         },
         {
           "version": "6.0.2",
-          "downloads": 1659310,
-          "@id": "http://api.nuget.org/v3/registration0/entityframework/6.0.2.json"
+          "downloads": 3384130,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/6.0.2.json"
         },
         {
           "version": "6.1.0",
-          "downloads": 1614353,
-          "@id": "http://api.nuget.org/v3/registration0/entityframework/6.1.0.json"
+          "downloads": 9793464,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/6.1.0.json"
         },
         {
           "version": "6.1.1",
-          "downloads": 2548547,
-          "@id": "http://api.nuget.org/v3/registration0/entityframework/6.1.1.json"
+          "downloads": 7747319,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/6.1.1.json"
         },
         {
           "version": "6.1.2",
-          "downloads": 1367762,
-          "@id": "http://api.nuget.org/v3/registration0/entityframework/6.1.2.json"
+          "downloads": 3936654,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/6.1.2.json"
         },
         {
           "version": "6.1.3",
-          "downloads": 8211011,
-          "@id": "http://api.nuget.org/v3/registration0/entityframework/6.1.3.json"
+          "downloads": 57578588,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/6.1.3.json"
+        },
+        {
+          "version": "6.2.0",
+          "downloads": 48654570,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/6.2.0.json"
+        },
+        {
+          "version": "6.3.0",
+          "downloads": 18516600,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/6.3.0.json"
+        },
+        {
+          "version": "6.4.0",
+          "downloads": 12993014,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/6.4.0.json"
+        },
+        {
+          "version": "6.4.4",
+          "downloads": 49485329,
+          "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/6.4.4.json"
         }
-      ]
+      ],
+      "vulnerabilities": []
     }
   ]
 }

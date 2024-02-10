@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NuGet.Common;
@@ -50,8 +51,16 @@ namespace NuGet.LibraryModel
         /// <summary>Initializes a new instance of the LibraryDependency class.</summary>
         /// <remarks>Required properties must be set when using this constructor.</remarks>
         public LibraryDependency()
+            : this(new List<NuGetLogCode>())
         {
-            NoWarn = new List<NuGetLogCode>();
+        }
+
+        /// <summary>Initializes a new instance of the LibraryDependency class with the specified NoWarn codes.</summary>
+        /// <param name="noWarn">Specifies a <see cref="List{T}" /> containing <see cref="NuGetLogCode" /> values.</param>
+        /// <remarks>Required properties must be set when using this constructor.</remarks>
+        public LibraryDependency(IList<NuGetLogCode> noWarn)
+        {
+            NoWarn = noWarn;
         }
 
         /// <summary>Initializes a new instance of the LibraryDependency class.</summary>

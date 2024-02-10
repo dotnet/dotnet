@@ -45,7 +45,7 @@ namespace NuGet.Protocol.Tests
             Assert.Equal("WindowsAzure.Storage", latestPackage.Title);
             Assert.Equal("Microsoft", latestPackage.Authors);
             Assert.Equal("", latestPackage.Owners);
-            Assert.True(latestPackage.Description.StartsWith("This client library enables"));
+            Assert.StartsWith("This client library enables", latestPackage.Description);
             Assert.Equal(3957668, latestPackage.DownloadCount);
             Assert.Equal("http://go.microsoft.com/fwlink/?LinkID=288890", latestPackage.IconUrl.AbsoluteUri);
             Assert.Equal("http://go.microsoft.com/fwlink/?LinkId=331471", latestPackage.LicenseUrl.AbsoluteUri);

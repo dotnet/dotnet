@@ -76,6 +76,7 @@ namespace NuGet.Protocol
             ICredentials promptCredentials = null;
 
             var configuration = request.GetOrCreateConfiguration();
+            bool areLastKnownGoodCredentialsTried = false;
 
             // Authorizing may take multiple attempts
             while (true)
@@ -127,7 +128,10 @@ namespace NuGet.Protocol
                         response.StatusCode,
                         beforeLockVersion,
                         configuration.Logger,
+                        areLastKnownGoodCredentialsTried,
                         cancellationToken);
+
+                    areLastKnownGoodCredentialsTried = true;
 
                     if (stopwatches != null)
                     {
@@ -154,7 +158,12 @@ namespace NuGet.Protocol
             }
         }
 
-        private async Task<ICredentials> AcquireCredentialsAsync(HttpStatusCode statusCode, Guid credentialsVersion, ILogger log, CancellationToken cancellationToken)
+        private async Task<ICredentials> AcquireCredentialsAsync(
+            HttpStatusCode statusCode,
+            Guid credentialsVersion,
+            ILogger log,
+            bool areLastKnownGoodCredentialsTried,
+            CancellationToken cancellationToken)
         {
             // Only one request may prompt and attempt to auth at a time
             await _httpClientLock.WaitAsync(cancellationToken);
@@ -198,7 +207,14 @@ namespace NuGet.Protocol
                         _packageSource.Source);
                 }
 
-                var promptCredentials = await PromptForCredentialsAsync(
+                ICredentials promptCredentials = default;
+                if (!areLastKnownGoodCredentialsTried)
+                {
+                    // isProxy is false because the previous if statement allows only Unauthorized or Forbidden types, not Proxy.
+                    _ = _credentialService.TryGetLastKnownGoodCredentialsFromCache(uri: _packageSource.SourceUri, isProxy: false, out promptCredentials);
+                }
+
+                promptCredentials ??= await PromptForCredentialsAsync(
                     type,
                     message,
                     authState,

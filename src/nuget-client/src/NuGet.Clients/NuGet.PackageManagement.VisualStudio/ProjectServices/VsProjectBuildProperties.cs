@@ -75,13 +75,14 @@ namespace NuGet.PackageManagement.VisualStudio
 
             if (result == VSConstants.S_OK && !string.IsNullOrWhiteSpace(output))
             {
-                _buildPropertiesTelemetry.OnPropertyStorageUsed(_projectTypeGuids);
+                _buildPropertiesTelemetry.OnPropertyStorageUsed(propertyName, _projectTypeGuids);
                 return output;
             }
 
             return null;
         }
 
+        [Obsolete("New properties should use GetPropertyValue instead. Ideally we should migrate existing properties to stop using DTE as well.")]
         public string GetPropertyValueWithDteFallback(string propertyName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -96,7 +97,7 @@ namespace NuGet.PackageManagement.VisualStudio
 
                 if (result == VSConstants.S_OK && !string.IsNullOrWhiteSpace(output))
                 {
-                    _buildPropertiesTelemetry.OnPropertyStorageUsed(_projectTypeGuids);
+                    _buildPropertiesTelemetry.OnPropertyStorageUsed(propertyName, _projectTypeGuids);
                     return output;
                 }
             }
@@ -108,7 +109,7 @@ namespace NuGet.PackageManagement.VisualStudio
                     _project = _dteProject.Value;
                 }
                 var property = _project.Properties.Item(propertyName);
-                _buildPropertiesTelemetry.OnDteUsed(_projectTypeGuids);
+                _buildPropertiesTelemetry.OnDteUsed(propertyName, _projectTypeGuids);
                 return property?.Value as string;
             }
             catch (ArgumentException)

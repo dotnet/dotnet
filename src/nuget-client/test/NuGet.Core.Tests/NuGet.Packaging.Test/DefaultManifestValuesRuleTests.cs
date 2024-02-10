@@ -69,7 +69,7 @@ urlMetadata +
                         issues.AddRange(rule.Validate(reader).OrderBy(p => p.Code.ToString(), StringComparer.CurrentCulture));
                     }
 
-                    Assert.True(issues.Any(p => p.Code == NuGetLogCode.NU5102 && p.Message.Contains(urlType)));
+                    Assert.Contains(issues, p => p.Code == NuGetLogCode.NU5102 && p.Message.Contains(urlType));
                 }
             }
         }
@@ -127,7 +127,7 @@ urlMetadata +
                         issues.AddRange(rule.Validate(reader).OrderBy(p => p.Code.ToString(), StringComparer.CurrentCulture));
                     }
 
-                    Assert.False(issues.Any(p => p.Code == NuGetLogCode.NU5102));
+                    Assert.DoesNotContain(issues, p => p.Code == NuGetLogCode.NU5102);
                 }
             }
         }

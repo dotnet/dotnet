@@ -16,7 +16,6 @@ using Microsoft.VisualStudio.Shell.ServiceBroker;
 using Moq;
 using NuGet.Configuration;
 using NuGet.Frameworks;
-using NuGet.PackageManagement.UI.Utility;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;

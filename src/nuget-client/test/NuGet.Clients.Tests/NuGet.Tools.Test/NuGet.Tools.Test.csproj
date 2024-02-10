@@ -16,6 +16,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework.Xunit" />
     <PackageReference Include="VsWebSite.Interop" />
+    <PackageReference Include="Microsoft.Build.Framework" />
+    <PackageReference Include="Microsoft.NET.StringTools" />
   </ItemGroup>
 
   <ItemGroup>

@@ -229,9 +229,9 @@ namespace NuGet.SolutionRestoreManager
         {
             return WarningProperties.GetWarningProperties(
                         treatWarningsAsErrors: GetSingleOrDefaultPropertyValue(targetFrameworks, ProjectBuildProperties.TreatWarningsAsErrors, e => e),
-                        warningsAsErrors: GetSingleOrDefaultNuGetLogCodes(targetFrameworks, ProjectBuildProperties.WarningsAsErrors, e => MSBuildStringUtility.GetNuGetLogCodes(e)),
-                        noWarn: GetSingleOrDefaultNuGetLogCodes(targetFrameworks, ProjectBuildProperties.NoWarn, e => MSBuildStringUtility.GetNuGetLogCodes(e)),
-                        warningsNotAsErrors: GetSingleOrDefaultNuGetLogCodes(targetFrameworks, ProjectBuildProperties.WarningsNotAsErrors, e => MSBuildStringUtility.GetNuGetLogCodes(e)));
+                        warningsAsErrors: GetSingleOrDefaultNuGetLogCodes(targetFrameworks, ProjectBuildProperties.WarningsAsErrors, MSBuildStringUtility.GetNuGetLogCodes),
+                        noWarn: GetSingleOrDefaultNuGetLogCodes(targetFrameworks, ProjectBuildProperties.NoWarn, MSBuildStringUtility.GetNuGetLogCodes),
+                        warningsNotAsErrors: GetSingleOrDefaultNuGetLogCodes(targetFrameworks, ProjectBuildProperties.WarningsNotAsErrors, MSBuildStringUtility.GetNuGetLogCodes));
         }
 
         /// <summary>
@@ -419,7 +419,10 @@ namespace NuGet.SolutionRestoreManager
 
             TryGetVersionRange(item, "VersionOverride", out VersionRange versionOverrideRange);
 
-            var dependency = new LibraryDependency
+            // Get warning suppressions
+            IList<NuGetLogCode> noWarn = MSBuildStringUtility.GetNuGetLogCodes(GetPropertyValueOrNull(item, ProjectBuildProperties.NoWarn));
+
+            var dependency = new LibraryDependency(noWarn)
             {
                 LibraryRange = new LibraryRange(
                     name: item.Name,
@@ -432,12 +435,6 @@ namespace NuGet.SolutionRestoreManager
                 Aliases = GetPropertyValueOrNull(item, "Aliases"),
                 VersionOverride = versionOverrideRange
             };
-
-            // Add warning suppressions
-            foreach (var code in MSBuildStringUtility.GetNuGetLogCodes(GetPropertyValueOrNull(item, ProjectBuildProperties.NoWarn)))
-            {
-                dependency.NoWarn.Add(code);
-            }
 
             MSBuildRestoreUtility.ApplyIncludeFlags(
                 dependency,

@@ -889,7 +889,7 @@ namespace NuGet.Build.Tasks.Pack
                     //   https://github.com/NuGet/Home/issues/3891
                     //
                     // For now, assume the project reference is a package dependency.
-                    var projectDependency = new LibraryDependency
+                    var projectDependency = new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
                     {
                         LibraryRange = new LibraryRange(
                             targetLibrary.Name,

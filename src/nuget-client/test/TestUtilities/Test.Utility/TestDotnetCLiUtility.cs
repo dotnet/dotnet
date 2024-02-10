@@ -194,7 +194,7 @@ SDKs found: {string.Join(", ", Directory.EnumerateDirectories(SdkDirSource).Sele
 
         private static void CopyRestoreArtifacts(string artifactsDirectory, string pathToSdkInCli, string configuration)
         {
-            var fileExtensions = new[] { ".dll", ".pdb", ".targets" };
+            var fileExtensions = new[] { ".dll", ".pdb", ".targets", ".props" };
 
             var sdkDependencies = new List<string> { "NuGet.Build.Tasks.Console", "NuGet.CommandLine.XPlat" };
 

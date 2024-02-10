@@ -96,6 +96,8 @@ namespace Test.Utility
 
         public IEnumerable<PackageSource> LoadPackageSources() => PackageSources;
 
+        public IReadOnlyList<PackageSource> LoadAuditSources() => Array.Empty<PackageSource>();
+
         public event EventHandler PackageSourcesChanged;
 
         public void SavePackageSources(IEnumerable<PackageSource> sources)
