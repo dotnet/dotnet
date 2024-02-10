@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.Packaging;
@@ -101,6 +102,7 @@ namespace NuGet.DependencyResolver
 
             LightweightList<ValueTask<GraphNode<RemoteResolveResult>>> tasks = EvaluateDependencies(libraryRange, framework, runtimeName, runtimeGraph, predicate, outerEdge, transitiveCentralPackageVersions, node);
 
+            node.EnsureInnerNodeCapacity(tasks.Count);
             foreach (var task in tasks)
             {
                 var dependencyNode = await task;
@@ -186,9 +188,9 @@ namespace NuGet.DependencyResolver
                 // HACK(davidfowl): This is making runtime.json support package redirects
 
                 // Look up any additional dependencies for this package
-                foreach (var runtimeDependency in runtimeGraph.FindRuntimeDependencies(runtimeName, libraryRange.Name))
+                foreach (var runtimeDependency in runtimeGraph.FindRuntimeDependencies(runtimeName, libraryRange.Name).NoAllocEnumerate())
                 {
-                    var libraryDependency = new LibraryDependency
+                    var libraryDependency = new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
                     {
                         LibraryRange = new LibraryRange()
                         {
@@ -557,14 +559,22 @@ namespace NuGet.DependencyResolver
 
     internal struct LightweightList<T>
     {
-        private const int Fields = 4;
+        private const int Fields = 10;
         private int _count;
         private T _firstItem;
         private T _secondItem;
         private T _thirdItem;
         private T _fourthItem;
+        private T _fifthItem;
+        private T _sixthItem;
+        private T _seventhItem;
+        private T _eighthItem;
+        private T _ninthItem;
+        private T _tenthItem;
 
         private List<T> _additionalItems;
+
+        public readonly int Count => _count;
 
         public void Add(T task)
         {
@@ -583,6 +593,30 @@ namespace NuGet.DependencyResolver
             else if (_count == 3)
             {
                 _fourthItem = task;
+            }
+            else if (_count == 4)
+            {
+                _fifthItem = task;
+            }
+            else if (_count == 5)
+            {
+                _sixthItem = task;
+            }
+            else if (_count == 6)
+            {
+                _seventhItem = task;
+            }
+            else if (_count == 7)
+            {
+                _eighthItem = task;
+            }
+            else if (_count == 8)
+            {
+                _ninthItem = task;
+            }
+            else if (_count == 9)
+            {
+                _tenthItem = task;
             }
             else
             {
@@ -630,6 +664,30 @@ namespace NuGet.DependencyResolver
                     else if (_index == 3)
                     {
                         _current = _itemList._fourthItem;
+                    }
+                    else if (_index == 4)
+                    {
+                        _current = _itemList._fifthItem;
+                    }
+                    else if (_index == 5)
+                    {
+                        _current = _itemList._sixthItem;
+                    }
+                    else if (_index == 6)
+                    {
+                        _current = _itemList._seventhItem;
+                    }
+                    else if (_index == 7)
+                    {
+                        _current = _itemList._eighthItem;
+                    }
+                    else if (_index == 8)
+                    {
+                        _current = _itemList._ninthItem;
+                    }
+                    else if (_index == 9)
+                    {
+                        _current = _itemList._tenthItem;
                     }
                     else
                     {

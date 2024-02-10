@@ -85,19 +85,32 @@ namespace NuGet.Common
         }
 
         /// <summary>
-        /// Splits and parses a ; or , delimited list of log codes.
-        /// Ignores codes that are unknown.
+        /// Parses the specified string as a comma or semicolon delimited list of NuGet log codes and ignores unknown codes.
         /// </summary>
-        public static IEnumerable<NuGetLogCode> GetNuGetLogCodes(string s)
+        /// <param name="s">A comma or semicolon delimited list of NuGet log codes.</param>
+        /// <returns>An <see cref="IList{T}" /> containing the <see cref="NuGetLogCode" /> values that were successfully parsed from the specified string.</returns>
+        public static IList<NuGetLogCode> GetNuGetLogCodes(string s)
         {
-            foreach (var item in MSBuildStringUtility.Split(s, ';', ','))
+            // The Split() method already checks for an empty string and returns Array.Empty<string>().
+            string[] split = MSBuildStringUtility.Split(s, ';', ',');
+
+            if (split.Length == 0)
             {
-                if (item.StartsWith("NU", StringComparison.OrdinalIgnoreCase) &&
-                    Enum.TryParse<NuGetLogCode>(value: item, ignoreCase: true, result: out var result))
+                return Array.Empty<NuGetLogCode>();
+            }
+
+            List<NuGetLogCode> logCodes = new List<NuGetLogCode>(capacity: split.Length);
+
+            for (int i = 0; i < split.Length; i++)
+            {
+                if (split[i].StartsWith("NU", StringComparison.OrdinalIgnoreCase) &&
+                    Enum.TryParse(value: split[i], ignoreCase: true, out NuGetLogCode logCode))
                 {
-                    yield return result;
+                    logCodes.Add(logCode);
                 }
             }
+
+            return logCodes;
         }
 
         /// <summary>

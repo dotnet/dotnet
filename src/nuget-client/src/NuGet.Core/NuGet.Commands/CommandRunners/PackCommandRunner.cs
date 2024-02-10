@@ -1252,7 +1252,7 @@ namespace NuGet.Commands
                 if (!newVersionRange.Equals(VersionRange.None))
                 {
                     list.Remove(matchingDependency);
-                    list.Add(new LibraryDependency()
+                    list.Add(new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
                     {
                         LibraryRange = new LibraryRange(matchingDependency.Name, newVersionRange, LibraryDependencyTarget.All),
                         IncludeType = dependency.IncludeType & matchingDependency.IncludeType,

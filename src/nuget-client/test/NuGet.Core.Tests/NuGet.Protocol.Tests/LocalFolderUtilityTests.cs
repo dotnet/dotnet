@@ -1141,7 +1141,7 @@ namespace NuGet.Protocol.Tests
         }
 
         [Theory]
-        [MemberData("GetValidVersions")]
+        [MemberData(nameof(GetValidVersions))]
         public async Task LocalFolderUtility_VerifyPackageCanBeFoundV2_NonNormalizedOnDiskAsync(string versionString)
         {
             using (var root = TestDirectory.Create())
@@ -1169,7 +1169,7 @@ namespace NuGet.Protocol.Tests
         }
 
         [Theory]
-        [MemberData("GetValidVersions")]
+        [MemberData(nameof(GetValidVersions))]
         public async Task LocalFolderUtility_VerifyPackageCanBeFoundV2_NormalizedOnDiskAsync(string versionString)
         {
             using (var root = TestDirectory.Create())
@@ -1198,7 +1198,7 @@ namespace NuGet.Protocol.Tests
         }
 
         [Theory]
-        [MemberData("GetValidVersions")]
+        [MemberData(nameof(GetValidVersions))]
         public async Task LocalFolderUtility_VerifyPackageCanBeFoundV3_NonNormalizedOnDiskAsync(string versionString)
         {
             using (var root = TestDirectory.Create())
@@ -1226,7 +1226,7 @@ namespace NuGet.Protocol.Tests
         }
 
         [Theory]
-        [MemberData("GetValidVersions")]
+        [MemberData(nameof(GetValidVersions))]
         public async Task LocalFolderUtility_VerifyPackageCanBeFoundV3_NormalizedOnDiskAsync(string versionString)
         {
             using (var root = TestDirectory.Create())

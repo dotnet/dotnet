@@ -302,6 +302,73 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Fact]
+        public void WriteNonEmptyNameArray_WhenNameIsNull_Throws()
+        {
+            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
+                () => _writer.WriteNonEmptyNameArray(name: null, values: new[] { "b" }));
+
+            Assert.Equal("name", exception.ParamName);
+        }
+
+        [Fact]
+        public void WriteNonEmptyNameArray_WhenDisposed_Throws()
+        {
+            _writer.Dispose();
+
+            Assert.Throws<ObjectDisposedException>(() => _writer.WriteNonEmptyNameArray(PropertyName, new[] { "b" }));
+        }
+
+        [Fact]
+        public void WriteNonEmptyNameArray_WhenReadOnly_Throws()
+        {
+            MakeReadOnly();
+
+            Assert.Throws<InvalidOperationException>(() => _writer.WriteNonEmptyNameArray(PropertyName, new[] { "b" }));
+        }
+
+        [Theory]
+        [InlineData(PropertyName, "b", "6lWKPWARIKyDadU74W5+bb7W7/1mFLyZaljfm4UpudCTeiny7dbPU5hB/C63Xt6LDpqbjtLvoxS0hiWIbWGvkA==")]
+        public void WriteNonEmptyNameArray_WithValidValues_WritesNameArray(string name, string value, string expectedHash)
+        {
+            IEnumerable<string> values = value == null ? Enumerable.Empty<string>() : new[] { value };
+
+            _writer.WriteObjectStart();
+            _writer.WriteNonEmptyNameArray(name, values);
+
+            string actualHash = _writer.GetHash();
+
+            Assert.Equal(expectedHash, actualHash);
+        }
+
+        [Theory]
+        [InlineData(PropertyName, "b", "6lWKPWARIKyDadU74W5+bb7W7/1mFLyZaljfm4UpudCTeiny7dbPU5hB/C63Xt6LDpqbjtLvoxS0hiWIbWGvkA==")]
+        public void WriteNonEmptyNameArray_WithEmptyValues_DoesNotWriteNameArray(string name, string value, string expectedHash)
+        {
+            IEnumerable<string> values = value == null ? Enumerable.Empty<string>() : new[] { value };
+
+            _writer.WriteObjectStart();
+            _writer.WriteNonEmptyNameArray("FirstEmptyWrite", Enumerable.Empty<string>());
+            _writer.WriteNonEmptyNameArray(name, values);
+            _writer.WriteNonEmptyNameArray("SecondEmptyWrite", Enumerable.Empty<string>());
+
+            string actualHash = _writer.GetHash();
+
+            Assert.Equal(expectedHash, actualHash);
+        }
+
+        [Fact]
+        public void WriteNonEmptyNameArray_WithNullValue_WritesNameArray()
+        {
+            _writer.WriteObjectStart();
+            _writer.WriteNonEmptyNameArray(PropertyName, new string[] { null });
+
+            const string expectedHash = "BqvCuFre4Siu1xS8bzI6rXbSTCoNBI/bqGRvUTFDtUAVlDGfDg5cqeBosLcw5sboEHqOFOb/MqJBOyK1Xj5Ueg==";
+            string actualHash = _writer.GetHash();
+
+            Assert.Equal(expectedHash, actualHash);
+        }
+
+        [Fact]
         public void GetHash_WithNoOtherChanges_ReturnsDefaultValue()
         {
             const string expectedHash = "z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==";

@@ -1705,7 +1705,7 @@ namespace NuGet.Test
 
                 // Assert
                 Assert.Equal(1, buildIntegratedProject.ExecuteInitScriptAsyncCalls.Count);
-                Assert.True(buildIntegratedProject.ExecuteInitScriptAsyncCalls.Contains(updateIdentity));
+                Assert.Contains(updateIdentity, buildIntegratedProject.ExecuteInitScriptAsyncCalls);
             }
         }
 

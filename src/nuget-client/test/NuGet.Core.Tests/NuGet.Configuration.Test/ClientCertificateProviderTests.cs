@@ -31,7 +31,7 @@ namespace NuGet.Configuration.Test
                                                                              testInfo.ConfigFile));
 
                 // Assert
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var packageSourceList = packageSourceProvider.LoadPackageSources().ToList();
                 Assert.Equal(1, packageSourceList.Count);
                 Assert.Equal(1, packageSourceList[0].ClientCertificates.Count);
@@ -57,7 +57,7 @@ namespace NuGet.Configuration.Test
                                                                               testInfo.CertificateFindBy));
 
                 // Assert
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var packageSourceList = packageSourceProvider.LoadPackageSources().ToList();
                 Assert.Equal(1, packageSourceList.Count);
                 Assert.Equal(1, packageSourceList[0].ClientCertificates.Count);

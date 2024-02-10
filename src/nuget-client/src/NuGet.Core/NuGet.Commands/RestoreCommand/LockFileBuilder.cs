@@ -60,7 +60,7 @@ namespace NuGet.Commands
                 Version = _lockFileVersion
             };
 
-            var previousLibraries = previousLockFile?.Libraries.ToDictionary(l => Tuple.Create(l.Name, l.Version));
+            var previousLibraries = previousLockFile?.Libraries.ToDictionary(l => ValueTuple.Create(l.Name, l.Version));
 
             if (project.RestoreMetadata?.ProjectStyle == ProjectStyle.PackageReference ||
                 project.RestoreMetadata?.ProjectStyle == ProjectStyle.DotnetToolReference)
@@ -139,7 +139,7 @@ namespace NuGet.Commands
                         LockFileLibrary lockFileLib = null;
                         LockFileLibrary previousLibrary = null;
 
-                        if (previousLibraries?.TryGetValue(Tuple.Create(package.Id, package.Version), out previousLibrary) == true)
+                        if (previousLibraries?.TryGetValue(ValueTuple.Create(package.Id, package.Version), out previousLibrary) == true)
                         {
                             // Check that the previous library is still valid
                             if (previousLibrary != null
@@ -165,7 +165,7 @@ namespace NuGet.Commands
                 }
             }
 
-            Dictionary<Tuple<string, NuGetVersion>, LockFileLibrary> libraries = EnsureUniqueLockFileLibraries(lockFile);
+            Dictionary<ValueTuple<string, NuGetVersion>, LockFileLibrary> libraries = EnsureUniqueLockFileLibraries(lockFile);
 
             var librariesWithWarnings = new HashSet<LibraryIdentity>();
 
@@ -233,7 +233,7 @@ namespace NuGet.Commands
 
                         (LockFileTargetLibrary targetLibrary, bool usedFallbackFramework) = LockFileUtils.CreateLockFileTargetLibrary(
                             libraryDependency?.Aliases,
-                            libraries[Tuple.Create(library.Name, library.Version)],
+                            libraries[ValueTuple.Create(library.Name, library.Version)],
                             package,
                             targetGraph,
                             dependencyType: includeFlags,
@@ -253,7 +253,7 @@ namespace NuGet.Commands
 
                                 var targetLibraryWithoutFallback = LockFileUtils.CreateLockFileTargetLibrary(
                                     libraryDependency?.Aliases,
-                                    libraries[Tuple.Create(library.Name, library.Version)],
+                                    libraries[ValueTuple.Create(library.Name, library.Version)],
                                     package,
                                     targetGraph,
                                     targetFrameworkOverride: nonFallbackFramework,
@@ -302,14 +302,14 @@ namespace NuGet.Commands
             return lockFile;
         }
 
-        private Dictionary<Tuple<string, NuGetVersion>, LockFileLibrary> EnsureUniqueLockFileLibraries(LockFile lockFile)
+        private Dictionary<ValueTuple<string, NuGetVersion>, LockFileLibrary> EnsureUniqueLockFileLibraries(LockFile lockFile)
         {
             IList<LockFileLibrary> libraries = lockFile.Libraries;
-            var libraryReferences = new Dictionary<Tuple<string, NuGetVersion>, LockFileLibrary>();
+            var libraryReferences = new Dictionary<ValueTuple<string, NuGetVersion>, LockFileLibrary>();
 
             foreach (LockFileLibrary lib in libraries)
             {
-                var libraryKey = Tuple.Create(lib.Name, lib.Version);
+                var libraryKey = ValueTuple.Create(lib.Name, lib.Version);
 
                 if (libraryReferences.TryGetValue(libraryKey, out LockFileLibrary existingLibrary))
                 {
@@ -328,7 +328,7 @@ namespace NuGet.Commands
             if (lockFile.Libraries.Count != libraryReferences.Count)
             {
                 lockFile.Libraries = new List<LockFileLibrary>(libraryReferences.Count);
-                foreach (KeyValuePair<Tuple<string, NuGetVersion>, LockFileLibrary> pair in libraryReferences)
+                foreach (KeyValuePair<ValueTuple<string, NuGetVersion>, LockFileLibrary> pair in libraryReferences)
                 {
                     lockFile.Libraries.Add(pair.Value);
                 }
@@ -550,7 +550,7 @@ namespace NuGet.Commands
                     // If all assets are suppressed then the dependency should not be added
                     if (suppressParent != LibraryIncludeFlags.All)
                     {
-                        yield return new LibraryDependency()
+                        yield return new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
                         {
                             LibraryRange = new LibraryRange(centralPackageVersion.Name, centralPackageVersion.VersionRange, LibraryDependencyTarget.Package),
                             ReferenceType = LibraryDependencyReferenceType.Transitive,
@@ -630,8 +630,10 @@ namespace NuGet.Commands
                 Path = path
             };
 
-            foreach (var file in package.Files)
+            // Use for loop to avoid boxing enumerator
+            for (var i = 0; i < package.Files.Count; i++)
             {
+                var file = package.Files[i];
                 if (!lockFileLib.HasTools && HasTools(file))
                 {
                     lockFileLib.HasTools = true;

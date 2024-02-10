@@ -44,9 +44,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             var allTimings = tracker.GetIntervals().ToList();
 
             Assert.Equal(3, allTimings.Count);
-            Assert.True(allTimings.Any(e => e.Item1.Equals("first")));
-            Assert.True(allTimings.Any(e => e.Item1.Equals("second")));
-            Assert.True(allTimings.Any(e => e.Item1.Equals("third")));
+            Assert.Contains(allTimings, e => e.Item1.Equals("first"));
+            Assert.Contains(allTimings, e => e.Item1.Equals("second"));
+            Assert.Contains(allTimings, e => e.Item1.Equals("third"));
         }
     }
 }

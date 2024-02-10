@@ -344,7 +344,7 @@ namespace NuGet.CommandLine.Test
 
                 foreach (var letter in projects.Keys)
                 {
-                    Assert.True(projects[letter].AssetsFile.Libraries.Select(e => e.Name).Contains($"package{letter}"));
+                    Assert.Contains($"package{letter}", projects[letter].AssetsFile.Libraries.Select(e => e.Name));
                 }
             }
         }
@@ -430,7 +430,7 @@ namespace NuGet.CommandLine.Test
                 var r = Util.Restore(pathContext, project.ProjectPath);
 
                 // Assert
-                Assert.True(project.AssetsFile.Libraries.Select(e => e.Name).Contains("packageB"));
+                Assert.Contains("packageB", project.AssetsFile.Libraries.Select(e => e.Name));
             }
         }
 
@@ -6149,9 +6149,9 @@ namespace NuGet.CommandLine.Test
                 {
                     var library = target.Libraries.FirstOrDefault(lib => lib.Name.Equals("x"));
                     Assert.NotNull(library);
-                    Assert.True(library.EmbedAssemblies.Any(embed => embed.Path.Equals("embed/net461/a.dll")));
-                    Assert.True(library.CompileTimeAssemblies.Any(embed => embed.Path.Equals("lib/net461/a.dll")));
-                    Assert.True(library.RuntimeAssemblies.Any(embed => embed.Path.Equals("lib/net461/a.dll")));
+                    Assert.Contains(library.EmbedAssemblies, embed => embed.Path.Equals("embed/net461/a.dll"));
+                    Assert.Contains(library.CompileTimeAssemblies, embed => embed.Path.Equals("lib/net461/a.dll"));
+                    Assert.Contains(library.RuntimeAssemblies, embed => embed.Path.Equals("lib/net461/a.dll"));
                 }
             }
         }
@@ -6358,7 +6358,7 @@ namespace NuGet.CommandLine.Test
                 {
                     var library = target.Libraries.FirstOrDefault(lib => lib.Name.Equals("y"));
                     Assert.NotNull(library);
-                    Assert.True(library.Build.Any(build => build.Path.Equals("buildTransitive/y.targets")));
+                    Assert.Contains(library.Build, build => build.Path.Equals("buildTransitive/y.targets"));
                 }
             }
         }
@@ -6420,7 +6420,7 @@ namespace NuGet.CommandLine.Test
                 {
                     var library = target.Libraries.FirstOrDefault(lib => lib.Name.Equals("y"));
                     Assert.NotNull(library);
-                    Assert.False(library.Build.Any(build => build.Path.Equals("buildTransitive/y.targets")));
+                    Assert.DoesNotContain(library.Build, build => build.Path.Equals("buildTransitive/y.targets"));
                 }
             }
         }
@@ -9184,7 +9184,6 @@ namespace NuGet.CommandLine.Test
                    "a",
                    pathContext.SolutionRoot,
                    NuGetFramework.Parse("net46"));
-                projectA.Properties.Add("ManagePackageVersionsCentrally", "true");
                 projectA.Properties.Add("RestoreLockedMode", "true");
                 projectA.Properties.Add("RestorePackagesWithLockFile", "true");
 
@@ -9269,7 +9268,6 @@ namespace NuGet.CommandLine.Test
                    "a",
                    pathContext.SolutionRoot,
                    NuGetFramework.Parse("net46"));
-                projectA.Properties.Add("ManagePackageVersionsCentrally", "true");
                 projectA.Properties.Add("RestoreLockedMode", "true");
                 projectA.Properties.Add("RestorePackagesWithLockFile", "true");
 
@@ -9352,7 +9350,6 @@ namespace NuGet.CommandLine.Test
                    "a",
                    pathContext.SolutionRoot,
                    NuGetFramework.Parse("net46"));
-                projectA.Properties.Add("ManagePackageVersionsCentrally", "true");
                 projectA.Properties.Add("RestoreLockedMode", "true");
                 projectA.Properties.Add("RestorePackagesWithLockFile", "true");
 
@@ -9426,7 +9423,6 @@ namespace NuGet.CommandLine.Test
                    "a",
                    pathContext.SolutionRoot,
                    NuGetFramework.Parse("net46"));
-                projectA.Properties.Add("ManagePackageVersionsCentrally", "true");
                 projectA.Properties.Add("RestoreLockedMode", "true");
                 projectA.Properties.Add("RestorePackagesWithLockFile", "true");
 
@@ -9500,7 +9496,6 @@ namespace NuGet.CommandLine.Test
                    "a",
                    pathContext.SolutionRoot,
                    NuGetFramework.Parse("net46"));
-                projectA.Properties.Add("ManagePackageVersionsCentrally", "true");
                 projectA.Properties.Add("RestoreLockedMode", "true");
                 projectA.Properties.Add("RestorePackagesWithLockFile", "true");
 
@@ -9573,7 +9568,6 @@ namespace NuGet.CommandLine.Test
                    "a",
                    pathContext.SolutionRoot,
                    NuGetFramework.Parse("net46"));
-                projectA.Properties.Add("ManagePackageVersionsCentrally", "true");
                 projectA.Properties.Add("RestoreLockedMode", "true");
                 projectA.Properties.Add("RestorePackagesWithLockFile", "true");
 
@@ -9676,19 +9670,16 @@ namespace NuGet.CommandLine.Test
                     "a",
                     pathContext.SolutionRoot,
                     netcoreapp2);
-                projectA.Properties.Add("ManagePackageVersionsCentrally", "true");
 
                 var projectB = SimpleTestProjectContext.CreateNETCore(
                     "b",
                     pathContext.SolutionRoot,
                     netcoreapp2);
-                projectB.Properties.Add("ManagePackageVersionsCentrally", "true");
 
                 var projectC = SimpleTestProjectContext.CreateNETCore(
                     "c",
                     pathContext.SolutionRoot,
                     netcoreapp2);
-                projectC.Properties.Add("ManagePackageVersionsCentrally", "true");
 
                 var packageX100 = new SimpleTestPackageContext()
                 {
@@ -9821,8 +9812,7 @@ namespace NuGet.CommandLine.Test
                    "projectA",
                    pathContext.SolutionRoot,
                    NuGetFramework.Parse("netcoreapp2.0"));
-                projectA.Properties.Add(ProjectBuildProperties.ManagePackageVersionsCentrally, "true");
-                projectA.Properties.Add(ProjectBuildProperties.CentralPackageTransitivePinningEnabled, "true");
+                projectA.Properties.Add(ProjectBuildProperties.CentralPackageTransitivePinningEnabled, bool.TrueString);
 
                 // the package references defined in the project should not have version
                 var packageBNoVersion = createTestPackage("B", null, packagesForProject);
@@ -9948,13 +9938,13 @@ namespace NuGet.CommandLine.Test
                 var libraries = assetsFile.Libraries.Select(l => $"{l.Name}.{l.Version}").OrderBy(n => n).ToList();
                 Assert.Equal(expectedLibraries, libraries);
 
-                var centralfileDependencyGroups = assetsFile
+                var centralFileDependencyGroups = assetsFile
                     .CentralTransitiveDependencyGroups
                     .SelectMany(g => g.TransitiveDependencies.Select(t => $"{g.FrameworkName}_{t.LibraryRange.Name}.{t.LibraryRange.VersionRange.OriginalString}")).ToList();
 
-                var expectedCentralfileDependencyGroups = new List<string>() { $"{framework.DotNetFrameworkName}_P.[3.0.0, )", $"{framework.DotNetFrameworkName}_S.[3.0.0, )" };
+                var expectedCentralFileDependencyGroups = new List<string>() { $"{framework.DotNetFrameworkName}_P.[3.0.0, )", $"{framework.DotNetFrameworkName}_S.[3.0.0, )" };
 
-                Assert.Equal(expectedCentralfileDependencyGroups, centralfileDependencyGroups);
+                Assert.Equal(expectedCentralFileDependencyGroups, centralFileDependencyGroups);
             }
         }
 
@@ -10072,7 +10062,6 @@ namespace NuGet.CommandLine.Test
                    "projectA",
                    pathContext.SolutionRoot,
                    framework);
-                projectA.Properties.Add("ManagePackageVersionsCentrally", "true");
 
                 // the package references defined in the project should not have version
                 var packageBNoVersion = createTestPackage("B", null, packagesForProject);
@@ -10110,11 +10099,70 @@ namespace NuGet.CommandLine.Test
                 var libraries = assetsFile.Libraries.Select(l => $"{l.Name}.{l.Version}").OrderBy(n => n).ToList();
                 Assert.Equal(expectedLibraries, libraries);
 
-                var centralfileDependencyGroups = assetsFile
+                var centralFileDependencyGroups = assetsFile
                     .CentralTransitiveDependencyGroups
                     .SelectMany(g => g.TransitiveDependencies.Select(t => $"{g.FrameworkName}_{t.LibraryRange.Name}.{t.LibraryRange.VersionRange.OriginalString}")).ToList();
 
-                Assert.Equal(0, centralfileDependencyGroups.Count);
+                Assert.Equal(0, centralFileDependencyGroups.Count);
+            }
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        [InlineData(null)]
+        public async Task RestoreNetCore_CPVMProject_ManagePackageVersionsCentrally_CanBeDisabled(bool? managePackageVersionsCentrally)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+
+            var packageA = new SimpleTestPackageContext("A", "1.0.0");
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("projectA", pathContext.SolutionRoot, "net472");
+
+            if (managePackageVersionsCentrally is null || managePackageVersionsCentrally == true)
+            {
+                packageA.Version = null;
+            }
+
+            projectA.AddPackageToAllFrameworks(packageA);
+
+            solution.CentralPackageVersionsManagementFile = CentralPackageVersionsManagementFile.Create(pathContext.SolutionRoot, managePackageVersionsCentrally)
+                .SetPackageVersion("A", "1.0.0");
+
+            solution.Projects.Add(projectA);
+            solution.Create(pathContext.SolutionRoot);
+
+            // Act
+            var result = Util.RestoreSolution(pathContext);
+
+            // Assert
+            result.Success.Should().BeTrue();
+
+            var assetFileReader = new LockFileFormat();
+            var assetsFile = assetFileReader.Read(projectA.AssetsFileOutputPath);
+
+            assetsFile.Libraries.Select(l => $"{l.Name}.{l.Version}").Should().BeEquivalentTo(new string[] { "A.1.0.0" });
+
+            var targetFramework = assetsFile.PackageSpec.TargetFrameworks.Should().ContainSingle();
+
+            if (managePackageVersionsCentrally is null || managePackageVersionsCentrally == true)
+            {
+                targetFramework.Subject.Dependencies.Should().ContainSingle()
+                    .Which.VersionCentrallyManaged.Should().BeTrue();
+
+                targetFramework.Subject.CentralPackageVersions.Should().ContainSingle()
+                    .Which.Value.Should().Be(new CentralPackageVersion("A", VersionRange.Parse("1.0.0")));
+            }
+            else
+            {
+                targetFramework.Subject.Dependencies.Should().ContainSingle()
+                    .Which.VersionCentrallyManaged.Should().BeFalse();
+                targetFramework.Subject.CentralPackageVersions.Should().BeEmpty();
             }
         }
 
@@ -10248,8 +10296,6 @@ namespace NuGet.CommandLine.Test
 
                 var projectA = SimpleTestProjectContext.CreateNETCore("projectA", pathContext.SolutionRoot, framework);
 
-                projectA.Properties.Add("ManagePackageVersionsCentrally", "true");
-
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
                    pathContext.PackageSource,
                    new[]
@@ -10308,11 +10354,11 @@ namespace NuGet.CommandLine.Test
                 var libraries = assetsFile.Libraries.Select(l => $"{l.Name}.{l.Version}").OrderBy(n => n).ToList();
                 Assert.Equal(expectedLibraries, libraries);
 
-                var centralfileDependencyGroups = assetsFile
+                var centralFileDependencyGroups = assetsFile
                     .CentralTransitiveDependencyGroups
                     .SelectMany(g => g.TransitiveDependencies.Select(t => $"{g.FrameworkName}_{t.LibraryRange.Name}.{t.LibraryRange.VersionRange.OriginalString}")).ToList();
 
-                Assert.Equal(0, centralfileDependencyGroups.Count);
+                Assert.Equal(0, centralFileDependencyGroups.Count);
             }
         }
 
@@ -10329,7 +10375,6 @@ namespace NuGet.CommandLine.Test
 
                 var projectA = SimpleTestProjectContext.CreateNETCore("projectA", pathContext.SolutionRoot, framework);
 
-                projectA.Properties.Add(ProjectBuildProperties.ManagePackageVersionsCentrally, bool.TrueString);
                 projectA.Properties.Add(ProjectBuildProperties.CentralPackageVersionOverrideEnabled, bool.FalseString);
 
                 await SimpleTestPackageUtility.CreateFolderFeedV3Async(
@@ -11330,11 +11375,6 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 var xml = projectA.GetXML();
 
-                ProjectFileUtils.AddProperty(
-                    xml,
-                    "ManagePackageVersionsCentrally",
-                    "true");
-
                 ProjectFileUtils.AddItem(
                                     xml,
                                     "PackageReference",
@@ -11427,9 +11467,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 Version = "1.0.0"
             };
 
-            // Add 1.0.0
             projectA.AddPackageToAllFrameworks(packageX);
-            // But create only 2.0.0 on the server.
             await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageX);
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
@@ -11453,7 +11491,6 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             // Assert
             result.Success.Should().BeTrue(because: result.AllOutput);
 
-            // Is there a thing that's always guaranteed to have a $(User)
             projectA.AssetsFile.PackageFolders.Should().HaveCountGreaterThan(0);
             var globalPackagesFolder = projectA.AssetsFile.PackageFolders[0]; // the package folders are always in priority and gpf is always first.
 
@@ -11548,7 +11585,6 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                     pathContext.SolutionRoot,
                     "net472");
 
-                projectContext.Properties.Add("ManagePackageVersionsCentrally", "true");
                 projectContext.Properties.Add("CentralPackageTransitivePinningEnabled", centralPackageTransitivePinningEnabled.ToString());
 
                 if (referencedProject != null)

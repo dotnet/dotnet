@@ -258,7 +258,7 @@ namespace NuGet.Test.Utility
                 _packageSpec.RestoreMetadata.TargetFrameworks = Frameworks
                     .Select(f => new ProjectRestoreMetadataFrameworkInfo(f.Framework))
                     .ToList();
-                _packageSpec.RestoreMetadata.Sources = Sources.ToList();
+                _packageSpec.RestoreMetadata.Sources = Sources?.ToList();
                 _packageSpec.RestoreMetadata.PackagesPath = GlobalPackagesFolder;
                 _packageSpec.RestoreMetadata.FallbackFolders = FallbackFolders;
                 if (Type == ProjectStyle.ProjectJson)

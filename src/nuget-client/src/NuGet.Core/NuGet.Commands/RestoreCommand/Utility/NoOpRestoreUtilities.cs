@@ -11,6 +11,7 @@ using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.ProjectModel;
 using NuGet.Protocol;
+using NuGet.Shared;
 using NuGet.Versioning;
 
 namespace NuGet.Commands
@@ -155,15 +156,18 @@ namespace NuGet.Commands
 
             }
 
-            if (cacheFile.HasAnyMissingPackageFiles)
+            foreach (var path in cacheFile.ExpectedPackageFilePaths.AsList())
             {
-                request.Log.LogVerbose(string.Format(CultureInfo.CurrentCulture, Strings.Log_MissingPackagesOnDisk, request.Project.Name));
-                return false;
+                if (!request.DependencyProviders.PackageFileCache.Sha512Exists(path))
+                {
+                    request.Log.LogVerbose(string.Format(CultureInfo.CurrentCulture, Strings.Log_MissingPackagesOnDisk, request.Project.Name));
+                    return false;
+                }
             }
 
             if (request.UpdatePackageLastAccessTime)
             {
-                foreach (var package in cacheFile.ExpectedPackageFilePaths)
+                foreach (var package in cacheFile.ExpectedPackageFilePaths.AsList())
                 {
                     if (!package.StartsWith(request.PackagesDirectory, StringComparison.OrdinalIgnoreCase)) { continue; }
 

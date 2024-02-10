@@ -31,7 +31,7 @@ namespace NuGet.Configuration.Test
 
                 var settings = new Settings(directory, "nuget.Config");
 
-                var before = new PackageSourceProvider(settings);
+                var before = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 Assert.Equal(NuGetConstants.FeedName, before.ActivePackageSourceName);
 
                 before.SaveActivePackageSource(new PackageSource(NuGetConstants.V3FeedUrl, NuGetConstants.FeedName));
@@ -53,7 +53,7 @@ namespace NuGet.Configuration.Test
                 File.WriteAllText(nugetConfigFilePath, text);
 
                 var settings = new Settings(directory, "nuget.config");
-                var before = new PackageSourceProvider(settings);
+                var before = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 Assert.Null(before.ActivePackageSourceName);
 
                 before.SaveActivePackageSource(new PackageSource(NuGetConstants.V3FeedUrl, NuGetConstants.FeedName));
@@ -77,7 +77,7 @@ namespace NuGet.Configuration.Test
                 File.WriteAllText(nugetConfigFilePath, fileContents);
 
                 var settings = new Settings(directory, "nuget.Config");
-                var before = new PackageSourceProvider(settings);
+                var before = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 Assert.Null(before.ActivePackageSourceName);
 
                 before.SaveActivePackageSource(new PackageSource(NuGetConstants.V3FeedUrl, NuGetConstants.FeedName));
@@ -85,10 +85,8 @@ namespace NuGet.Configuration.Test
             }
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void LoadPackageSources_LoadsCredentials(bool useStaticMethod)
+        [Fact]
+        public void LoadPackageSources_LoadsCredentials()
         {
             // Arrange
             var nugetConfigFilePath = "NuGet.Config";
@@ -152,7 +150,7 @@ namespace NuGet.Configuration.Test
                 var settings = new Settings(directory);
 
                 // Act
-                List<PackageSource> sources = LoadPackageSources(useStaticMethod, settings);
+                List<PackageSource> sources = LoadPackageSources(settings);
 
                 // Assert
                 sources.Count.Should().Be(6);
@@ -161,16 +159,14 @@ namespace NuGet.Configuration.Test
             }
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void TestNoPackageSourcesAreReturnedIfUserSettingsIsEmpty(bool useStaticMethod)
+        [Fact]
+        public void TestNoPackageSourcesAreReturnedIfUserSettingsIsEmpty()
         {
             // Arrange
             var settings = new Mock<ISettings>();
 
             // Act
-            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+            List<PackageSource> values = LoadPackageSources(settings.Object);
 
             // Assert
             Assert.Equal(0, values.Count);
@@ -189,7 +185,7 @@ namespace NuGet.Configuration.Test
             {
                 SettingsTestUtils.CreateConfigurationFile(nugetConfigFilePath, directory, configContent);
                 var settings = new Settings(directory);
-                var provider = new PackageSourceProvider(settings);
+                var provider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
 
                 // Act
                 provider.SavePackageSources(
@@ -254,7 +250,7 @@ namespace NuGet.Configuration.Test
                     machineWideSettings: null,
                     loadUserWideSettings: false,
                     useTestingGlobalPath: false);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var packageSourceList = packageSourceProvider.LoadPackageSources().ToList();
 
                 // Act
@@ -298,7 +294,7 @@ namespace NuGet.Configuration.Test
                     machineWideSettings: null,
                     loadUserWideSettings: false,
                     useTestingGlobalPath: false);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var packageSourceList = packageSourceProvider.LoadPackageSources().ToList();
 
                 // Act
@@ -347,7 +343,7 @@ namespace NuGet.Configuration.Test
                     machineWideSettings: null,
                     loadUserWideSettings: false,
                     useTestingGlobalPath: false);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var packageSourceList = packageSourceProvider.LoadPackageSources().ToList();
 
                 // act
@@ -400,7 +396,7 @@ namespace NuGet.Configuration.Test
                     machineWideSettings: null,
                     loadUserWideSettings: false,
                     useTestingGlobalPath: false);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var packageSourceList = packageSourceProvider.LoadPackageSources().ToList();
 
                 // act
@@ -452,7 +448,7 @@ namespace NuGet.Configuration.Test
                     machineWideSettings: null,
                     loadUserWideSettings: false,
                     useTestingGlobalPath: false);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var packageSourceList = packageSourceProvider.LoadPackageSources().ToList();
 
                 // act
@@ -508,7 +504,7 @@ namespace NuGet.Configuration.Test
                     loadUserWideSettings: false,
                     useTestingGlobalPath: false);
 
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var packageSourceList = packageSourceProvider.LoadPackageSources().ToList();
 
                 // act
@@ -574,7 +570,7 @@ namespace NuGet.Configuration.Test
 
                 var expectedDisabledSources = disabledPackagesSection?.Items.ToList();
 
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var packageSourceList = packageSourceProvider.LoadPackageSources().ToList();
 
                 // Act
@@ -638,7 +634,7 @@ namespace NuGet.Configuration.Test
                 Assert.Equal("Microsoft and .NET", disabledSources[0].Key);
                 Assert.Equal("b", disabledSources[1].Key);
 
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var packageSourceList = packageSourceProvider.LoadPackageSources().ToList();
 
                 Assert.Equal(2, packageSourceList.Count);
@@ -666,7 +662,7 @@ namespace NuGet.Configuration.Test
                 Assert.Equal(1, disabledSources.Count);
                 Assert.Equal("Microsoft and .NET", disabledSources[0].Key);
 
-                packageSourceList = PackageSourceProvider.LoadPackageSources(newSettings).ToList();
+                packageSourceList = new PackageSourceProvider(newSettings, TestConfigurationDefaults.NullInstance).LoadPackageSources().ToList();
 
                 Assert.Equal(2, packageSourceList.Count);
                 Assert.Equal("a", packageSourceList[0].Name);
@@ -676,10 +672,8 @@ namespace NuGet.Configuration.Test
             }
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void LoadPackageSourcesReturnCorrectDataFromSettings(bool useStaticMethod)
+        [Fact]
+        public void LoadPackageSourcesReturnCorrectDataFromSettings()
         {
             // Arrange
             var settings = new Mock<ISettings>(MockBehavior.Strict);
@@ -704,7 +698,7 @@ namespace NuGet.Configuration.Test
                     .Returns(new VirtualSettingSection("clientCertificates"));
 
             // Act
-            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+            List<PackageSource> values = LoadPackageSources(settings.Object);
 
             // Assert
             Assert.Equal(3, values.Count);
@@ -713,10 +707,8 @@ namespace NuGet.Configuration.Test
             AssertPackageSource(values[2], "three", "threesource", isEnabled: true);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void LoadPackageSourcesReturnCorrectDataFromSettingsWhenSomePackageSourceIsDisabled(bool useStaticMethod)
+        [Fact]
+        public void LoadPackageSourcesReturnCorrectDataFromSettingsWhenSomePackageSourceIsDisabled()
         {
             // Arrange
             var settings = new Mock<ISettings>(MockBehavior.Strict);
@@ -744,7 +736,7 @@ namespace NuGet.Configuration.Test
                 .Returns(new VirtualSettingSection("clientCertificates"));
 
             // Act
-            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+            List<PackageSource> values = LoadPackageSources(settings.Object);
 
             // Assert
             Assert.Equal(3, values.Count);
@@ -753,10 +745,8 @@ namespace NuGet.Configuration.Test
             AssertPackageSource(values[2], "three", "threesource", isEnabled: true);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void LoadPackageSources_ReadsSourcesWithProtocolVersionFromPackageSourceSections(bool useStaticMethod)
+        [Fact]
+        public void LoadPackageSources_ReadsSourcesWithProtocolVersionFromPackageSourceSections()
         {
             // Arrange
             var settings = new Mock<ISettings>();
@@ -784,7 +774,7 @@ namespace NuGet.Configuration.Test
             settings.Setup(s => s.GetConfigFilePaths())
                 .Returns(new List<string>());
             // Act
-            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+            List<PackageSource> values = LoadPackageSources(settings.Object);
 
             // Assert
             Assert.Collection(values,
@@ -822,10 +812,8 @@ namespace NuGet.Configuration.Test
                     });
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void LoadPackageSources_ReadsSourcesWithNullAllowInsecureConnectionsFromPackageSourceSections_LoadsDefault(bool useStaticMethod)
+        [Fact]
+        public void LoadPackageSources_ReadsSourcesWithNullAllowInsecureConnectionsFromPackageSourceSections_LoadsDefault()
         {
             // Arrange
             var settings = new Mock<ISettings>();
@@ -839,7 +827,7 @@ namespace NuGet.Configuration.Test
                 .Returns(new List<string>());
 
             // Act
-            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+            List<PackageSource> values = LoadPackageSources(settings.Object);
 
             // Assert
             var loadedSource = values.Single();
@@ -848,10 +836,8 @@ namespace NuGet.Configuration.Test
             Assert.Equal(PackageSource.DefaultAllowInsecureConnections, loadedSource.AllowInsecureConnections);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void LoadPackageSources_ReadsSourcesWithInvalidAllowInsecureConnectionsFromPackageSourceSections_LoadsDefault(bool useStaticMethod)
+        [Fact]
+        public void LoadPackageSources_ReadsSourcesWithInvalidAllowInsecureConnectionsFromPackageSourceSections_LoadsDefault()
         {
             // Arrange
             var settings = new Mock<ISettings>();
@@ -865,7 +851,7 @@ namespace NuGet.Configuration.Test
                 .Returns(new List<string>());
 
             // Act
-            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+            List<PackageSource> values = LoadPackageSources(settings.Object);
 
             // Assert
             var loadedSource = values.Single();
@@ -875,13 +861,11 @@ namespace NuGet.Configuration.Test
         }
 
         [Theory]
-        [InlineData(true, "true")]
-        [InlineData(true, "TRUE")]
-        [InlineData(true, "false")]
-        [InlineData(false, "false")]
-        [InlineData(false, "fALSE")]
-        [InlineData(false, "true")]
-        public void LoadPackageSources_ReadsSourcesWithNotNullAllowInsecureConnectionsFromPackageSourceSections_LoadsValue(bool useStaticMethod, string allowInsecureConnections)
+        [InlineData("true")]
+        [InlineData("TRUE")]
+        [InlineData("false")]
+        [InlineData("fALSE")]
+        public void LoadPackageSources_ReadsSourcesWithNotNullAllowInsecureConnectionsFromPackageSourceSections_LoadsValue(string allowInsecureConnections)
         {
             // Arrange
             var settings = new Mock<ISettings>();
@@ -895,7 +879,7 @@ namespace NuGet.Configuration.Test
                 .Returns(new List<string>());
 
             // Act
-            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+            List<PackageSource> values = LoadPackageSources(settings.Object);
 
             // Assert
             var loadedSource = values.Single();
@@ -940,10 +924,8 @@ namespace NuGet.Configuration.Test
             Assert.False(isEnabled);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void LoadPackageSources_ReadsCredentialPairsFromSettings(bool useStaticMethod)
+        [Fact]
+        public void LoadPackageSources_ReadsCredentialPairsFromSettings()
         {
             // Arrange
             var encryptedPassword = Guid.NewGuid().ToString();
@@ -965,7 +947,7 @@ namespace NuGet.Configuration.Test
                     ));
 
             // Act
-            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+            List<PackageSource> values = LoadPackageSources(settings.Object);
 
             // Assert
             Assert.Equal(3, values.Count);
@@ -973,10 +955,8 @@ namespace NuGet.Configuration.Test
             AssertCredentials(values[1].Credentials, "two", "user1", encryptedPassword, isPasswordClearText: false);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void LoadPackageSources_WithSpaceInName_ReadsCredentialPairsFromSettings(bool useStaticMethod)
+        [Fact]
+        public void LoadPackageSources_WithSpaceInName_ReadsCredentialPairsFromSettings()
         {
             // Arrange
             var encryptedPassword = Guid.NewGuid().ToString();
@@ -998,7 +978,7 @@ namespace NuGet.Configuration.Test
             settings.Setup(s => s.GetConfigFilePaths())
                 .Returns(new List<string>());
             // Act
-            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+            List<PackageSource> values = LoadPackageSources(settings.Object);
 
             // Assert
             Assert.Equal(3, values.Count);
@@ -1006,10 +986,8 @@ namespace NuGet.Configuration.Test
             AssertCredentials(values[1].Credentials, "two source", "user1", encryptedPassword, isPasswordClearText: false);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void LoadPackageSources_ReadsClearTextCredentialPairsFromSettings(bool useStaticMethod)
+        [Fact]
+        public void LoadPackageSources_ReadsClearTextCredentialPairsFromSettings()
         {
             // Arrange
             const string clearTextPassword = "topsecret";
@@ -1031,7 +1009,7 @@ namespace NuGet.Configuration.Test
             settings.Setup(s => s.GetConfigFilePaths())
                 .Returns(new List<string>());
             // Act
-            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+            List<PackageSource> values = LoadPackageSources(settings.Object);
 
             // Assert
             Assert.Equal(3, values.Count);
@@ -1039,10 +1017,8 @@ namespace NuGet.Configuration.Test
             AssertCredentials(values[1].Credentials, "two", "user1", clearTextPassword);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void LoadPackageSources_WhenEnvironmentCredentialsAreMalformed_FallsbackToSettingsCredentials(bool useStaticMethod)
+        [Fact]
+        public void LoadPackageSources_WhenEnvironmentCredentialsAreMalformed_FallsbackToSettingsCredentials()
         {
             // Arrange
             var settings = new Mock<ISettings>();
@@ -1062,7 +1038,7 @@ namespace NuGet.Configuration.Test
             settings.Setup(s => s.GetConfigFilePaths())
                 .Returns(new List<string>());
             // Act
-            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+            List<PackageSource> values = LoadPackageSources(settings.Object);
 
             // Assert
             Assert.Equal(3, values.Count);
@@ -1082,7 +1058,7 @@ namespace NuGet.Configuration.Test
 
                 File.WriteAllText(Path.Combine(directory.Path, "NuGet.Config"), configContents);
                 var settings = new Settings(directory);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var sources = new[] { new PackageSource("one"), new PackageSource("two"), new PackageSource("three") };
 
                 // Act
@@ -1122,7 +1098,7 @@ namespace NuGet.Configuration.Test
 
                 File.WriteAllText(Path.Combine(directory.Path, "NuGet.Config"), configContents);
                 var settings = new Settings(directory);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var sources = new[]
                     {
                     new PackageSource("Source1", "Source1-Name"),
@@ -1161,7 +1137,7 @@ namespace NuGet.Configuration.Test
 
                 File.WriteAllText(Path.Combine(directory.Path, "NuGet.Config"), configContents);
                 var settings = new Settings(directory);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var sources = new[] { new PackageSource("one"), new PackageSource("two", "two", isEnabled: false), new PackageSource("three") };
 
                 // Act
@@ -1204,7 +1180,7 @@ namespace NuGet.Configuration.Test
 
                 File.WriteAllText(Path.Combine(directory.Path, "NuGet.Config"), configContents);
                 var settings = new Settings(directory);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var encryptedPassword = Guid.NewGuid().ToString();
                 var credentials = new PackageSourceCredential("twoname", "User", encryptedPassword, isPasswordClearText: false, validAuthenticationTypesText: null);
 
@@ -1260,7 +1236,7 @@ namespace NuGet.Configuration.Test
 
                 File.WriteAllText(Path.Combine(directory.Path, "NuGet.Config"), configContents);
                 var settings = new Settings(directory);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var credentials = new PackageSourceCredential("twoname", "User", "password", isPasswordClearText: true, validAuthenticationTypesText: null);
 
                 var sources = new[]
@@ -1303,10 +1279,8 @@ namespace NuGet.Configuration.Test
             }
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void LoadPackageSourcesWithDisabledPackageSourceIsUpperCase(bool useStaticMethod)
+        [Fact]
+        public void LoadPackageSourcesWithDisabledPackageSourceIsUpperCase()
         {
             // Arrange
             var settings = new Mock<ISettings>(MockBehavior.Strict);
@@ -1329,7 +1303,7 @@ namespace NuGet.Configuration.Test
             settings.Setup(s => s.GetSection("clientCertificates"))
                 .Returns(new VirtualSettingSection("clientCertificates"));
             // Act
-            List<PackageSource> values = LoadPackageSources(useStaticMethod, settings.Object);
+            List<PackageSource> values = LoadPackageSources(settings.Object);
 
             // Assert
             Assert.Equal(3, values.Count);
@@ -1340,10 +1314,8 @@ namespace NuGet.Configuration.Test
 
         // Test that a source added in a high priority config file is not
         // disabled by <disabledPackageSources> in a low priority file.
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void HighPrioritySourceDisabled(bool useStaticMethod)
+        [Fact]
+        public void HighPrioritySourceDisabled()
         {
             // Arrange
             using (var directory = TestDirectory.Create())
@@ -1368,7 +1340,7 @@ namespace NuGet.Configuration.Test
                     useTestingGlobalPath: false);
 
                 // Act
-                List<PackageSource> values = LoadPackageSources(useStaticMethod, settings);
+                List<PackageSource> values = LoadPackageSources(settings);
 
                 // Assert
                 Assert.Equal(1, values.Count);
@@ -1380,10 +1352,8 @@ namespace NuGet.Configuration.Test
 
         // Test that a source added in a low priority config file is disabled
         // if it's listed in <disabledPackageSources> in a high priority file.
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void LowPrioritySourceDisabled(bool useStaticMethod)
+        [Fact]
+        public void LowPrioritySourceDisabled()
         {
             // Arrange
             using (var directory = TestDirectory.Create())
@@ -1408,7 +1378,7 @@ namespace NuGet.Configuration.Test
                     useTestingGlobalPath: false);
 
                 // Act
-                List<PackageSource> values = LoadPackageSources(useStaticMethod, settings);
+                List<PackageSource> values = LoadPackageSources(settings);
 
                 // Assert
                 Assert.Equal(1, values.Count);
@@ -1418,10 +1388,8 @@ namespace NuGet.Configuration.Test
             }
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void V2NotDisabled(bool useStaticMethod)
+        [Fact]
+        public void V2NotDisabled()
         {
             // Arrange
             using (var directory = TestDirectory.Create())
@@ -1441,7 +1409,7 @@ namespace NuGet.Configuration.Test
                     useTestingGlobalPath: false);
 
                 // Act
-                List<PackageSource> values = LoadPackageSources(useStaticMethod, settings);
+                List<PackageSource> values = LoadPackageSources(settings);
 
                 // Assert
                 Assert.True(values.Single(p => p.Name.Equals("nuget.org", StringComparison.OrdinalIgnoreCase)).IsEnabled);
@@ -1470,7 +1438,7 @@ namespace NuGet.Configuration.Test
                    machineWideSettings: null,
                    loadUserWideSettings: true,
                    useTestingGlobalPath: false);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
 
                 // Act
                 var sources = packageSourceProvider.LoadPackageSources().ToList();
@@ -1519,7 +1487,7 @@ namespace NuGet.Configuration.Test
                     machineWideSettings: null,
                     loadUserWideSettings: false,
                     useTestingGlobalPath: false);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
 
                 // Act - 1
                 var sources = packageSourceProvider.LoadPackageSources();
@@ -1585,7 +1553,7 @@ namespace NuGet.Configuration.Test
                     machineWideSettings: null,
                     loadUserWideSettings: false,
                     useTestingGlobalPath: false);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
 
                 // Act - 1
                 var sources = packageSourceProvider.LoadPackageSources();
@@ -1656,7 +1624,7 @@ namespace NuGet.Configuration.Test
                     machineWideSettings: null,
                     loadUserWideSettings: false,
                     useTestingGlobalPath: false);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
 
                 // Act - 1
                 var sources = packageSourceProvider.LoadPackageSources().ToList();
@@ -1723,7 +1691,7 @@ namespace NuGet.Configuration.Test
                     machineWideSettings: null,
                     loadUserWideSettings: false,
                     useTestingGlobalPath: false);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
 
                 // Act - 1
                 var sources = packageSourceProvider.LoadPackageSources().ToList();
@@ -1799,7 +1767,7 @@ namespace NuGet.Configuration.Test
                     machineWideSettings: m.Object,
                     loadUserWideSettings: true,
                     useTestingGlobalPath: true);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var sources = packageSourceProvider.LoadPackageSources().ToList();
 
                 // Act
@@ -1854,7 +1822,7 @@ namespace NuGet.Configuration.Test
                     machineWideSettings: m.Object,
                     loadUserWideSettings: true,
                     useTestingGlobalPath: true);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var sources = packageSourceProvider.LoadPackageSources().ToList();
 
 
@@ -1872,10 +1840,8 @@ namespace NuGet.Configuration.Test
             }
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void DisabledMachineWideSourceByDefaultWithNull(bool useStaticMethod)
+        [Fact]
+        public void DisabledMachineWideSourceByDefaultWithNull()
         {
             using (var directory = TestDirectory.Create())
             {
@@ -1889,17 +1855,15 @@ namespace NuGet.Configuration.Test
                     useTestingGlobalPath: true);
 
                 // Act
-                List<PackageSource> sources = LoadPackageSources(useStaticMethod, settings);
+                List<PackageSource> sources = LoadPackageSources(settings);
 
                 // Assert
                 Assert.Equal(0, sources.Count);
             }
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void LoadPackageSourceEmptyConfigFileOnUserMachine(bool useStaticMethod)
+        [Fact]
+        public void LoadPackageSourceEmptyConfigFileOnUserMachine()
         {
             using (var directory = TestDirectory.Create())
             {
@@ -1920,17 +1884,15 @@ namespace NuGet.Configuration.Test
                                   useTestingGlobalPath: true);
 
                 // Act
-                List<PackageSource> sources = LoadPackageSources(useStaticMethod, settings);
+                List<PackageSource> sources = LoadPackageSources(settings);
 
                 // Assert
                 Assert.Equal(0, sources.Count);
             }
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void LoadPackageSourceLocalConfigFileOnUserMachine(bool useStaticMethod)
+        [Fact]
+        public void LoadPackageSourceLocalConfigFileOnUserMachine()
         {
             using (var directory = TestDirectory.Create())
             {
@@ -1952,7 +1914,7 @@ namespace NuGet.Configuration.Test
                                   useTestingGlobalPath: true);
 
                 // Act
-                List<PackageSource> sources = LoadPackageSources(useStaticMethod, settings);
+                List<PackageSource> sources = LoadPackageSources(settings);
 
                 // Assert
                 Assert.Equal(1, sources.Count);
@@ -1983,7 +1945,7 @@ namespace NuGet.Configuration.Test
                                   machineWideSettings: null,
                                   loadUserWideSettings: true,
                                   useTestingGlobalPath: true);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
 
                 // Act
                 var sources = packageSourceProvider.LoadPackageSources().ToList();
@@ -2028,7 +1990,7 @@ namespace NuGet.Configuration.Test
                         machineWideSettings: null,
                         loadUserWideSettings: true,
                         useTestingGlobalPath: true);
-                    var packageSourceProvider = new PackageSourceProvider(settings);
+                    var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
 
                     // Act
                     var sources = packageSourceProvider.LoadPackageSources().ToList();
@@ -2081,8 +2043,8 @@ namespace NuGet.Configuration.Test
                    loadUserWideSettings: true,
                    useTestingGlobalPath: false);
 
-                var packageSourceProviderWithDefault = new PackageSourceProvider(settingsWithDefault);
-                var packageSourceProviderWithoutDefault = new PackageSourceProvider(settingsWithoutDefault);
+                var packageSourceProviderWithDefault = new PackageSourceProvider(settingsWithDefault, TestConfigurationDefaults.NullInstance);
+                var packageSourceProviderWithoutDefault = new PackageSourceProvider(settingsWithoutDefault, TestConfigurationDefaults.NullInstance);
 
                 // Act
                 var defaultPushSourceWithDefault = packageSourceProviderWithDefault.DefaultPushSource;
@@ -2120,7 +2082,7 @@ namespace NuGet.Configuration.Test
                                   machineWideSettings: null,
                                   loadUserWideSettings: false,
                                   useTestingGlobalPath: false);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
 
                 // Act
                 var sources = packageSourceProvider.LoadPackageSources().ToList();
@@ -2171,7 +2133,7 @@ namespace NuGet.Configuration.Test
                     machineWideSettings: null,
                     loadUserWideSettings: true,
                     useTestingGlobalPath: true);
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
 
                 // Act
                 var sources = packageSourceProvider.LoadPackageSources().ToList();
@@ -2209,7 +2171,7 @@ namespace NuGet.Configuration.Test
                    loadUserWideSettings: true,
                    useTestingGlobalPath: false);
 
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
 
                 // Act
                 var packageSources = packageSourceProvider.LoadPackageSources();
@@ -2241,7 +2203,7 @@ namespace NuGet.Configuration.Test
                    loadUserWideSettings: true,
                    useTestingGlobalPath: false);
 
-                var packageSourceProvider = new PackageSourceProvider(settings);
+                var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
 
                 // Act
                 var packageSources = packageSourceProvider.LoadPackageSources();
@@ -2289,14 +2251,157 @@ namespace NuGet.Configuration.Test
             File.WriteAllText(path, contents);
 
             Settings settings = new Settings(testDirectory.Path);
-            var machineDefaultSources = Array.Empty<PackageSource>();
 
             // Act
-            PackageSourceProvider psp = new PackageSourceProvider(settings, machineDefaultSources);
+            PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
             PackageSource source = psp.GetPackageSourceBySource(sourceUrl);
 
             // Assert
             source.Name.Should().Be("s1");
+        }
+
+        [Fact]
+        public void LoadAuditSources_ConfigWithoutAuditSources_ReturnsEmptyList()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            const string contents = @"<configuration />";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+
+            // Act
+            PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+            IReadOnlyList<PackageSource> auditSources = psp.LoadAuditSources();
+
+            // Assert
+            auditSources.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void LoadAuditSources_ConfigWithAuditSources_ReturnsAuditSources()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            const string contents = @"<configuration>
+    <auditSources>
+        <add key=""contoso"" value=""https://contoso.test/nuget/v3/index.json"" protocolVersion=""3"" />
+    </auditSources>
+</configuration>";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+
+            // Act
+            PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+            IReadOnlyList<PackageSource> auditSources = psp.LoadAuditSources();
+
+            // Assert
+            auditSources.Should().NotBeEmpty();
+            var auditSource = auditSources.Should().ContainSingle();
+            auditSource.Subject.Name.Should().Be("contoso");
+            auditSource.Subject.Source.Should().Be("https://contoso.test/nuget/v3/index.json");
+            auditSource.Subject.ProtocolVersion.Should().Be(3);
+            auditSource.Subject.IsEnabled.Should().BeTrue();
+        }
+
+        [Fact]
+        public void LoadAuditSources_ConfigWithDisabledAuditSources_ReturnsDisabledAuditSources()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            const string contents = @"<configuration>
+    <auditSources>
+        <add key=""contoso"" value=""https://contoso.test/nuget/v3/index.json"" protocolVersion=""3"" />
+    </auditSources>
+    <disabledPackageSources>
+        <add key=""contoso"" value=""true"" />
+    </disabledPackageSources>
+</configuration>";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+
+            // Act
+            PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+            IReadOnlyList<PackageSource> auditSources = psp.LoadAuditSources();
+
+            // Assert
+            auditSources.Should().NotBeEmpty();
+            var auditSource = auditSources.Should().ContainSingle();
+            auditSource.Subject.Name.Should().Be("contoso");
+            auditSource.Subject.Source.Should().Be("https://contoso.test/nuget/v3/index.json");
+            auditSource.Subject.ProtocolVersion.Should().Be(3);
+            auditSource.Subject.IsEnabled.Should().BeFalse();
+        }
+
+        [Fact]
+        public void LoadAuditSources_DefaultConfigWithAuditSources_ReturnsAuditSources()
+        {
+            // Arrange
+            Mock<ISettings> defaultSettings = new Mock<ISettings>();
+            defaultSettings.Setup(s => s.GetSection("auditSources"))
+                .Returns(new VirtualSettingSection("auditSources",
+                    new SourceItem("contoso", "https://contoso.test/nuget/v3/index.json", "3")));
+            ConfigurationDefaults configurationDefaults = new ConfigurationDefaults(defaultSettings.Object);
+
+            Mock<ISettings> solutionConfig = new Mock<ISettings>();
+
+            // Act
+            PackageSourceProvider psp = new PackageSourceProvider(solutionConfig.Object, configurationDefaults);
+            IReadOnlyList<PackageSource> auditSources = psp.LoadAuditSources();
+
+            // Assert
+            auditSources.Should().NotBeEmpty();
+            var auditSource = auditSources.Should().ContainSingle();
+            auditSource.Subject.Name.Should().Be("contoso");
+            auditSource.Subject.Source.Should().Be("https://contoso.test/nuget/v3/index.json");
+            auditSource.Subject.ProtocolVersion.Should().Be(3);
+            auditSource.Subject.IsEnabled.Should().BeTrue();
+        }
+
+        [Fact]
+        public void LoadAuditSources_LocalConfigDisablesDefaultAuditSource_DefaultSourceCannotBeDisabled()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+
+            Mock<ISettings> defaultSettings = new Mock<ISettings>();
+            defaultSettings.Setup(s => s.GetSection("auditSources"))
+                .Returns(new VirtualSettingSection("auditSources",
+                    new SourceItem("contoso", "https://contoso.test/nuget/v3/index.json", "3")));
+            ConfigurationDefaults configurationDefaults = new ConfigurationDefaults(defaultSettings.Object);
+
+            const string contents = @"<configuration>
+    <packageSources>
+        <add key=""contoso"" value=""https://contoso.test/nuget/v3/index.json"" />
+    </packageSources>
+    <disabledPackageSources>
+        <add key=""contoso"" value=""true"" />
+    </disabledPackageSources>
+</configuration>";
+            var path = Path.Combine(testDirectory.Path, Settings.DefaultSettingsFileName);
+            File.WriteAllText(path, contents);
+
+            Settings settings = new Settings(testDirectory.Path);
+
+            // Act
+            PackageSourceProvider psp = new PackageSourceProvider(settings, configurationDefaults);
+            IReadOnlyList<PackageSource> auditSources = psp.LoadAuditSources();
+
+            // Assert
+            auditSources.Should().NotBeEmpty();
+            var auditSource = auditSources.Should().ContainSingle();
+            auditSource.Subject.Name.Should().Be("contoso");
+            auditSource.Subject.Source.Should().Be("https://contoso.test/nuget/v3/index.json");
+            auditSource.Subject.ProtocolVersion.Should().Be(3);
+            auditSource.Subject.IsEnabled.Should().BeTrue();
         }
 
         private string CreateNuGetConfigContent(string enabledReplacement = "", string disabledReplacement = "", string activeSourceReplacement = "")
@@ -2326,17 +2431,11 @@ namespace NuGet.Configuration.Test
             return nugetConfig;
         }
 
-        private List<PackageSource> LoadPackageSources(bool useStaticMethod, ISettings settings)
+        private List<PackageSource> LoadPackageSources(ISettings settings)
         {
-            if (useStaticMethod)
-            {
-                return PackageSourceProvider.LoadPackageSources(settings).ToList();
-            }
-            else
-            {
-                var provider = new PackageSourceProvider(settings);
-                return provider.LoadPackageSources().ToList();
-            }
+            var configurationDefaults = TestConfigurationDefaults.NullInstance;
+            var provider = new PackageSourceProvider(settings, configurationDefaults);
+            return provider.LoadPackageSources().ToList();
         }
 
         private void AssertPackageSource(PackageSource ps, string name, string source, bool isEnabled, bool isMachineWide = false, bool isOfficial = false)

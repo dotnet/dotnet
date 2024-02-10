@@ -208,7 +208,7 @@ namespace NuGet.ProjectManagement.Test
                 // Assert
                 Assert.NotNull(installedPackageFilePath);
                 Assert.True(File.Exists(installedPackageFilePath));
-                Assert.True(string.Equals(nupkgFilePath, installedPackageFilePath));
+                Assert.Equal(nupkgFilePath, installedPackageFilePath);
             }
         }
 
@@ -266,7 +266,7 @@ namespace NuGet.ProjectManagement.Test
                 // Assert
                 Assert.NotNull(installedPath);
                 Assert.True(Directory.Exists(installedPath));
-                Assert.True(string.Equals(packageInstallPath, installedPath));
+                Assert.Equal(packageInstallPath, installedPath);
             }
         }
 
@@ -687,7 +687,7 @@ namespace NuGet.ProjectManagement.Test
                 Assert.True(File.Exists(nupkgFilePath));
 
                 Assert.Equal(5, testSourceControlManager.PendAddedFiles.Count);
-                Assert.True(testSourceControlManager.PendAddedFiles.Contains(nupkgFilePath));
+                Assert.Contains(nupkgFilePath, testSourceControlManager.PendAddedFiles);
                 var expectedEntries = new[]
                 {
                     "lib/test.dll",

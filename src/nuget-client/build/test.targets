@@ -4,7 +4,7 @@
   <!-- Shared test project template -->
 
   <PropertyGroup>
-    <NoWarn>$(NoWarn);CS1701;xUnit2013;xUnit2000;xUnit2017;xUnit2006;xUnit2009;xUnit2013;xUnit2014;xUnit2003;xUnit2010;xUnit2015;xUnit2007;xUnit1013;xUnit1014;xUnit2002;xUnit2012;xUnit2004</NoWarn>
+    <NoWarn>$(NoWarn);CS1701;xUnit1012;xUnit1014;xUnit2000;xUnit2009;xUnit2013</NoWarn>
   </PropertyGroup>
   
   <ItemGroup>

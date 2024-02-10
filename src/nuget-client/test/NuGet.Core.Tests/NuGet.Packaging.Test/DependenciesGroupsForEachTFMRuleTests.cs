@@ -290,7 +290,7 @@ namespace NuGet.Packaging.Test
 
             Assert.Empty(compat);
             Assert.Empty(file);
-            Assert.True(nuspec.Contains(FrameworkConstants.CommonFrameworks.Net45));
+            Assert.Contains(FrameworkConstants.CommonFrameworks.Net45, nuspec);
             Assert.Equal(1, nuspec.Count);
         }
 
@@ -324,7 +324,7 @@ namespace NuGet.Packaging.Test
             var (compat, file, nuspec) = rule.Categorize(files, frameworks);
 
             Assert.Empty(compat);
-            Assert.True(file.Contains(FrameworkConstants.CommonFrameworks.Net45));
+            Assert.Contains(FrameworkConstants.CommonFrameworks.Net45, file);
             Assert.Equal(file.Count, 1);
             Assert.Empty(nuspec);
         }
@@ -358,8 +358,8 @@ namespace NuGet.Packaging.Test
             var (compat, file, nuspec) = rule.Categorize(files, frameworks);
 
             Assert.Empty(compat);
-            Assert.True(file.Contains(FrameworkConstants.CommonFrameworks.Net2));
-            Assert.True(nuspec.Contains(FrameworkConstants.CommonFrameworks.Net45));
+            Assert.Contains(FrameworkConstants.CommonFrameworks.Net2, file);
+            Assert.Contains(FrameworkConstants.CommonFrameworks.Net45, nuspec);
             Assert.Equal(file.Count, 1);
             Assert.Equal(nuspec.Count, 1);
         }
@@ -385,9 +385,9 @@ namespace NuGet.Packaging.Test
             var rule = new DependenciesGroupsForEachTFMRule();
             var (compat, file, nuspec) = rule.Categorize(files, frameworks);
 
-            Assert.True(compat.Contains(NuGetFramework.Parse("net472")));
-            Assert.True(file.Contains(FrameworkConstants.CommonFrameworks.Net2));
-            Assert.True(nuspec.Contains(FrameworkConstants.CommonFrameworks.Net45));
+            Assert.Contains(NuGetFramework.Parse("net472"), compat);
+            Assert.Contains(FrameworkConstants.CommonFrameworks.Net2, file);
+            Assert.Contains(FrameworkConstants.CommonFrameworks.Net45, nuspec);
             Assert.Equal(file.Count, 1);
             Assert.Equal(nuspec.Count, 1);
             Assert.Equal(compat.Count, 1);
@@ -415,12 +415,12 @@ namespace NuGet.Packaging.Test
 
             Assert.Empty(compat);
             Assert.Empty(file);
-            Assert.True(nuspec.Contains(FrameworkConstants.CommonFrameworks.Net35));
-            Assert.True(nuspec.Contains(FrameworkConstants.CommonFrameworks.Net4));
-            Assert.True(nuspec.Contains(FrameworkConstants.CommonFrameworks.Net45));
-            Assert.True(nuspec.Contains(FrameworkConstants.CommonFrameworks.NetStandard10));
-            Assert.True(nuspec.Contains(FrameworkConstants.CommonFrameworks.NetStandard13));
-            Assert.True(nuspec.Contains(FrameworkConstants.CommonFrameworks.NetStandard20));
+            Assert.Contains(FrameworkConstants.CommonFrameworks.Net35, nuspec);
+            Assert.Contains(FrameworkConstants.CommonFrameworks.Net4, nuspec);
+            Assert.Contains(FrameworkConstants.CommonFrameworks.Net45, nuspec);
+            Assert.Contains(FrameworkConstants.CommonFrameworks.NetStandard10, nuspec);
+            Assert.Contains(FrameworkConstants.CommonFrameworks.NetStandard13, nuspec);
+            Assert.Contains(FrameworkConstants.CommonFrameworks.NetStandard20, nuspec);
             Assert.Equal(nuspec.Count, 6);
         }
 
@@ -446,12 +446,12 @@ namespace NuGet.Packaging.Test
             var (compat, file, nuspec) = rule.Categorize(files, frameworks);
 
             Assert.Empty(compat);
-            Assert.True(file.Contains(FrameworkConstants.CommonFrameworks.Net35));
-            Assert.True(file.Contains(FrameworkConstants.CommonFrameworks.Net4));
-            Assert.True(file.Contains(FrameworkConstants.CommonFrameworks.Net45));
-            Assert.True(file.Contains(FrameworkConstants.CommonFrameworks.NetStandard10));
-            Assert.True(file.Contains(FrameworkConstants.CommonFrameworks.NetStandard13));
-            Assert.True(file.Contains(FrameworkConstants.CommonFrameworks.NetStandard20));
+            Assert.Contains(FrameworkConstants.CommonFrameworks.Net35, file);
+            Assert.Contains(FrameworkConstants.CommonFrameworks.Net4, file);
+            Assert.Contains(FrameworkConstants.CommonFrameworks.Net45, file);
+            Assert.Contains(FrameworkConstants.CommonFrameworks.NetStandard10, file);
+            Assert.Contains(FrameworkConstants.CommonFrameworks.NetStandard13, file);
+            Assert.Contains(FrameworkConstants.CommonFrameworks.NetStandard20, file);
             Assert.Equal(file.Count, 6);
             Assert.Empty(nuspec);
         }

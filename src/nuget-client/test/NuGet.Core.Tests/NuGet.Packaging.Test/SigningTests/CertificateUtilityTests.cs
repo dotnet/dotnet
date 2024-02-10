@@ -331,8 +331,7 @@ namespace NuGet.Packaging.Test
         {
             using (var certificate = _fixture.GetDefaultCertificate())
             {
-                Assert.Throws(typeof(ArgumentException),
-                    () => CertificateUtility.GetHashString(certificate, Common.HashAlgorithmName.Unknown));
+                Assert.Throws<ArgumentException>(() => CertificateUtility.GetHashString(certificate, Common.HashAlgorithmName.Unknown));
             }
         }
 
@@ -341,8 +340,7 @@ namespace NuGet.Packaging.Test
         {
             using (var certificate = _fixture.GetDefaultCertificate())
             {
-                Assert.Throws(typeof(ArgumentException),
-                    () => CertificateUtility.GetHashString(certificate, (Common.HashAlgorithmName)46));
+                Assert.Throws<ArgumentException>(() => CertificateUtility.GetHashString(certificate, (Common.HashAlgorithmName)46));
             }
         }
 

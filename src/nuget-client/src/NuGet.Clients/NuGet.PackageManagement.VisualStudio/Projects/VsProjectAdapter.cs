@@ -34,7 +34,10 @@ namespace NuGet.PackageManagement.VisualStudio
         public string GetMSBuildProjectExtensionsPath()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+#pragma warning disable CS0618 // Type or member is obsolete
+            // Need to validate no project systems get this property via DTE, and if so, switch to GetPropertyValue
             var msbuildProjectExtensionsPath = BuildProperties.GetPropertyValueWithDteFallback(ProjectBuildProperties.MSBuildProjectExtensionsPath);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (string.IsNullOrEmpty(msbuildProjectExtensionsPath))
             {
@@ -88,11 +91,17 @@ namespace NuGet.PackageManagement.VisualStudio
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
 
+#pragma warning disable CS0618 // Type or member is obsolete
+                // Need to validate no project systems get this property via DTE, and if so, switch to GetPropertyValue
                 var packageVersion = BuildProperties.GetPropertyValueWithDteFallback(ProjectBuildProperties.PackageVersion);
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 if (string.IsNullOrEmpty(packageVersion))
                 {
+#pragma warning disable CS0618 // Type or member is obsolete
+                    // Need to validate no project systems get this property via DTE, and if so, switch to GetPropertyValue
                     packageVersion = BuildProperties.GetPropertyValueWithDteFallback(ProjectBuildProperties.Version);
+#pragma warning restore CS0618 // Type or member is obsolete
 
                     if (string.IsNullOrEmpty(packageVersion))
                     {
@@ -230,6 +239,8 @@ namespace NuGet.PackageManagement.VisualStudio
             await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             var projectPath = FullName;
+#pragma warning disable CS0618 // Type or member is obsolete
+            // Need to validate no project systems get this property via DTE, and if so, switch to GetPropertyValue
             var platformIdentifier = BuildProperties.GetPropertyValueWithDteFallback(
                 ProjectBuildProperties.TargetPlatformIdentifier);
             var platformVersion = BuildProperties.GetPropertyValueWithDteFallback(
@@ -238,6 +249,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 ProjectBuildProperties.TargetPlatformMinVersion);
             var targetFrameworkMoniker = BuildProperties.GetPropertyValueWithDteFallback(
                 ProjectBuildProperties.TargetFrameworkMoniker);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             // Projects supporting TargetFramework and TargetFrameworks are detected before
             // this check. The values can be passed as null here.

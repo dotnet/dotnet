@@ -95,20 +95,20 @@ namespace NuGet.CommandLine.XPlat
                     // search
                     // Throws FatalProtocolException for JSON parsing errors as fatal metadata issues.
                     // Throws FatalProtocolException for HTTP request issues indicating critical source(v2/v3) problems.
-                    packageSearchResultRenderer.Add(source, new PackageSearchProblem(PackageSearchProblemType.Warning, ex.Message));
+                    packageSearchResultRenderer.Add(source, new PackageSearchProblem(PackageSearchProblemType.Error, ex.Message));
                     searchRequests.Remove(completedTask);
                     continue;
                 }
                 catch (OperationCanceledException ex)
                 {
-                    packageSearchResultRenderer.Add(source, new PackageSearchProblem(PackageSearchProblemType.Warning, ex.Message));
+                    packageSearchResultRenderer.Add(source, new PackageSearchProblem(PackageSearchProblemType.Error, ex.Message));
                     searchRequests.Remove(completedTask);
                     continue;
                 }
                 catch (InvalidOperationException ex)
                 {
                     // Thrown for a local package with an invalid source destination.
-                    packageSearchResultRenderer.Add(source, new PackageSearchProblem(PackageSearchProblemType.Warning, ex.Message));
+                    packageSearchResultRenderer.Add(source, new PackageSearchProblem(PackageSearchProblemType.Error, ex.Message));
                     searchRequests.Remove(completedTask);
                     continue;
                 }

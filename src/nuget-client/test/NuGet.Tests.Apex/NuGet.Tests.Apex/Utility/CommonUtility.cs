@@ -325,7 +325,7 @@ namespace NuGet.Tests.Apex
             }
         }
 
-        internal static void OpenNuGetPackageManagerWithDte(VisualStudioHost visualStudio, ITestLogger logger)
+        public static void OpenNuGetPackageManagerWithDte(VisualStudioHost visualStudio, ITestLogger logger)
         {
             visualStudio.ObjectModel.Solution.WaitForOperationsInProgress(TimeSpan.FromMinutes(3));
             WaitForCommandAvailable(visualStudio, "Project.ManageNuGetPackages", TimeSpan.FromMinutes(1), logger);
@@ -459,6 +459,15 @@ namespace NuGet.Tests.Apex
         }
 
         public static void WaitForDirectoryExists(string directoryPath)
+        {
+            Omni.Common.WaitFor.IsTrue(
+                () => Directory.Exists(directoryPath),
+                Timeout,
+                Interval,
+                $"{directoryPath} did not exist within {Timeout}.");
+        }
+
+        public static void WaitForDirectoryNotExists(string directoryPath)
         {
             Omni.Common.WaitFor.IsTrue(
                 () => !Directory.Exists(directoryPath),

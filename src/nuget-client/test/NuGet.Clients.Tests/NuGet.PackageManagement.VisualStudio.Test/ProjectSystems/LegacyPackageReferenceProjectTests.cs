@@ -291,6 +291,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
                 var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
 
+#pragma warning disable CS0618 // Type or member is obsolete
                 projectBuildProperties
                     .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestorePackagesPath))))
                     .Returns(restorePackagesPath);
@@ -302,6 +303,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 projectBuildProperties
                     .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreFallbackFolders))))
                     .Returns(fallbackFolders);
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 var projectServices = new TestProjectSystemServices();
 
@@ -355,6 +357,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
                 var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
 
+#pragma warning disable CS0618 // Type or member is obsolete
                 projectBuildProperties
                     .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestorePackagesPath))))
                     .Returns(restorePackagesPath);
@@ -366,6 +369,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 projectBuildProperties
                     .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreFallbackFolders))))
                     .Returns(fallbackFolders);
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 var projectServices = new TestProjectSystemServices();
 
@@ -415,9 +419,11 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
                 var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
 
+#pragma warning disable CS0618 // Type or member is obsolete
                 projectBuildProperties
                     .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.PackageTargetFallback))))
                     .Returns("portable-net45+win8;dnxcore50");
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 var testProject = new LegacyPackageReferenceProject(
                     projectAdapter,
@@ -761,6 +767,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
                 var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
 
+#pragma warning disable CS0618 // Type or member is obsolete
                 projectBuildProperties
                     .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestorePackagesWithLockFile))))
                     .Returns(restorePackagesWithLockFile);
@@ -772,6 +779,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 projectBuildProperties
                     .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreLockedMode))))
                     .Returns(restoreLockedMode.ToString());
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 var projectServices = new TestProjectSystemServices();
 
@@ -1455,6 +1463,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
                 var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
 
+#pragma warning disable CS0618 // Type or member is obsolete
                 projectBuildProperties
                     .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RuntimeIdentifier))))
                     .Returns(runtimeIdentifier);
@@ -1466,6 +1475,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 projectBuildProperties
                     .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RuntimeSupports))))
                     .Returns(runtimeSupports);
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 var projectServices = new TestProjectSystemServices();
 
@@ -1527,6 +1537,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             var projectBuildProperties = new Mock<IVsProjectBuildProperties>();
             var projectAdapter = CreateProjectAdapter(testDirectory, projectBuildProperties);
 
+#pragma warning disable CS0618 // Type or member is obsolete
             projectBuildProperties
                 .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.NoWarn))))
                 .Returns("NU1504");
@@ -1539,6 +1550,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             projectBuildProperties
                 .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.WarningsAsErrors))))
                 .Returns("NU1803");
+#pragma warning restore CS0618 // Type or member is obsolete
 
             var projectServices = new TestProjectSystemServices();
 

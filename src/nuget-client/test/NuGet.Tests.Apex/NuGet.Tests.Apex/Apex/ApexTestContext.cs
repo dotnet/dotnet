@@ -11,7 +11,7 @@ using NuGet.Test.Utility;
 
 namespace NuGet.Tests.Apex
 {
-    internal class ApexTestContext : IDisposable
+    public class ApexTestContext : IDisposable
     {
 
         private VisualStudioHost _visualStudio;

@@ -2043,8 +2043,8 @@ namespace NuGet.DependencyResolver.Tests
             //check if ParentNodes of centralTranstiveNodes are added correctly
             List<GraphNode<RemoteResolveResult>> centralTransitiveNodes = allNodes.Where(n => n.Item.IsCentralTransitive).ToList();
             Assert.Equal(2, centralTransitiveNodes.Count);
-            Assert.True(centralTransitiveNodes.Any(n => n.Item.Key.Name == "D"));
-            Assert.True(centralTransitiveNodes.Any(n => n.Item.Key.Name == "I"));
+            Assert.Contains(centralTransitiveNodes, n => n.Item.Key.Name == "D");
+            Assert.Contains(centralTransitiveNodes, n => n.Item.Key.Name == "I");
 
             foreach (var node in centralTransitiveNodes)
             {
@@ -2068,10 +2068,10 @@ namespace NuGet.DependencyResolver.Tests
 
             var nonCentralTransitiveNodes = allNodes.Where(n => !n.Item.IsCentralTransitive).ToList();
             Assert.Equal(4, nonCentralTransitiveNodes.Count);
-            Assert.True(nonCentralTransitiveNodes.Any(n => n.Item.Key.Name == "A"));
-            Assert.True(nonCentralTransitiveNodes.Any(n => n.Item.Key.Name == "B"));
-            Assert.True(nonCentralTransitiveNodes.Any(n => n.Item.Key.Name == "C"));
-            Assert.True(nonCentralTransitiveNodes.Any(n => n.Item.Key.Name == "G"));
+            Assert.Contains(nonCentralTransitiveNodes, n => n.Item.Key.Name == "A");
+            Assert.Contains(nonCentralTransitiveNodes, n => n.Item.Key.Name == "B");
+            Assert.Contains(nonCentralTransitiveNodes, n => n.Item.Key.Name == "C");
+            Assert.Contains(nonCentralTransitiveNodes, n => n.Item.Key.Name == "G");
             foreach (var node in nonCentralTransitiveNodes)
             {
                 Assert.Equal(0, node.ParentNodes.Count);
@@ -2081,9 +2081,9 @@ namespace NuGet.DependencyResolver.Tests
             //check if InnerNodes of nodesWithEmptyInnerNodes are pointing to the static empty list correctly
             var nodesWithEmptyInnerNodes = allNodes.Where(n => n.InnerNodes.Count == 0).ToList();
             Assert.Equal(3, nodesWithEmptyInnerNodes.Count);
-            Assert.True(nodesWithEmptyInnerNodes.Any(n => n.Item.Key.Name == "C"));
-            Assert.True(nodesWithEmptyInnerNodes.Any(n => n.Item.Key.Name == "D"));
-            Assert.True(nodesWithEmptyInnerNodes.Any(n => n.Item.Key.Name == "G"));
+            Assert.Contains(nodesWithEmptyInnerNodes, n => n.Item.Key.Name == "C");
+            Assert.Contains(nodesWithEmptyInnerNodes, n => n.Item.Key.Name == "D");
+            Assert.Contains(nodesWithEmptyInnerNodes, n => n.Item.Key.Name == "G");
             Assert.True(nodesWithEmptyInnerNodes.Where(n => n.Item.Key.Name == "G").Single().InnerNodes == staticEmptyList);
 
             Assert.Equal(1, result.Downgrades.Count);
@@ -2143,11 +2143,11 @@ namespace NuGet.DependencyResolver.Tests
             //check if InnerNodes of  are pointing to the static empty list correctly
             var nodesWithEmptyInnerNodes = allNodes.Where(n => n.InnerNodes.Count == 0).ToList();
             Assert.Equal(3, nodesWithEmptyInnerNodes.Count);
-            Assert.True(nodesWithEmptyInnerNodes.Any(n => n.Item.Key.Name == "B"));
+            Assert.Contains(nodesWithEmptyInnerNodes, n => n.Item.Key.Name == "B");
             Assert.True(nodesWithEmptyInnerNodes.Where(n => n.Item.Key.Name == "B").Single().InnerNodes != staticEmptyList);
-            Assert.True(nodesWithEmptyInnerNodes.Any(n => n.Item.Key.Name == "C"));
+            Assert.Contains(nodesWithEmptyInnerNodes, n => n.Item.Key.Name == "C");
             Assert.True(nodesWithEmptyInnerNodes.Where(n => n.Item.Key.Name == "C").Single().InnerNodes == staticEmptyList);
-            Assert.True(nodesWithEmptyInnerNodes.Any(n => n.Item.Key.Name == "E"));
+            Assert.Contains(nodesWithEmptyInnerNodes, n => n.Item.Key.Name == "E");
             Assert.True(nodesWithEmptyInnerNodes.Where(n => n.Item.Key.Name == "E").Single().InnerNodes == staticEmptyList);
         }
 

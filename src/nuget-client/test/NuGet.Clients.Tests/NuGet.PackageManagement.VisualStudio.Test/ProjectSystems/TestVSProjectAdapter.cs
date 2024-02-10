@@ -51,6 +51,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             _isCentralPackageVersionOverrideEnabled = isCentralPackageVersionOverrideEnabled;
             _CentralPackageTransitivePinningEnabled = CentralPackageTransitivePinningEnabled;
 
+#pragma warning disable CS0618 // Type or member is obsolete
             Mock.Get(BuildProperties)
                 .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.ManagePackageVersionsCentrally))))
                 .Returns(_isCPVMEnabled.ToString());
@@ -74,6 +75,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Mock.Get(BuildProperties)
                 .Setup(x => x.GetPropertyValueWithDteFallback(It.Is<string>(x => x.Equals(ProjectBuildProperties.RestoreLockedMode))))
                 .Returns(_restoreLockedMode.ToString());
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         public string GetMSBuildProjectExtensionsPath()

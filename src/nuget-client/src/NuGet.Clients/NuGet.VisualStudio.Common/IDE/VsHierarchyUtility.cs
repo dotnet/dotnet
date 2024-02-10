@@ -106,7 +106,7 @@ namespace NuGet.VisualStudio
                 var hr = aggregatableProject.GetAggregateProjectTypeGuids(out projectTypeGuids);
                 ErrorHandler.ThrowOnFailure(hr);
 
-                return projectTypeGuids.Split(';');
+                return projectTypeGuids.Split([';'], StringSplitOptions.RemoveEmptyEntries);
             }
 
             if (ErrorHandler.Succeeded(hierarchy.GetGuidProperty(VSConstants.VSITEMID_ROOT, (int)__VSHPROPID.VSHPROPID_TypeGuid, out Guid pguid)))

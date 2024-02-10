@@ -150,7 +150,7 @@ namespace NuGet.Test
 
             var set = new HashSet<NuGetFramework>(frameworks!, NuGetFramework.Comparer);
 
-            Assert.False(set.Contains(input));
+            Assert.DoesNotContain(input, set);
         }
 
         [Fact]

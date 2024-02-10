@@ -63,6 +63,19 @@ namespace NuGet.Test.Utility
             Save();
         }
 
+        /// <summary>
+        /// Just disable “Automatically check for missing packages during build in Visual Studio” and save the file.
+        /// </summary>
+        public void DisableAutomaticInPackageRestoreSection()
+        {
+            var section = GetOrAddSection(XML, "packageRestore");
+
+            AddEntry(section, "enabled", "True");
+            AddEntry(section, "automatic", "false");
+
+            Save();
+        }
+
         private static XDocument GetDefault(string userPackagesFolder, string packagesV2, string fallbackFolder, string packageSource)
         {
             var doc = GetEmptyConfig();

@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
+using NuGet.Common;
 using NuGet.LibraryModel;
 
 namespace NuGet.DependencyResolver
@@ -31,7 +33,7 @@ namespace NuGet.DependencyResolver
 
             // Create the library
             // Nuspec references cannot contain suppress parent flags
-            var libraryDependency = new LibraryDependency
+            var libraryDependency = new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
             {
                 LibraryRange = new LibraryRange
                 {

@@ -195,11 +195,12 @@ internal static class NoAllocEnumerateExtensions
         /// </summary>
         public struct Enumerator : IDisposable
         {
-            private enum EnumeratorKind : byte { Empty, List, IList, Fallback };
+            private enum EnumeratorKind : byte { Empty, List, HashSet, IList, Fallback };
 
             private readonly EnumeratorKind _kind;
             private readonly IEnumerator<T>? _fallbackEnumerator;
             private List<T>.Enumerator _listEnumerator;
+            private HashSet<T>.Enumerator _hashSetEnumerator;
             private readonly IList<T>? _iList;
             private int _iListIndex;
 
@@ -214,6 +215,11 @@ internal static class NoAllocEnumerateExtensions
                 {
                     _kind = EnumeratorKind.List;
                     _listEnumerator = list.GetEnumerator();
+                }
+                else if (source is HashSet<T> hashSet)
+                {
+                    _kind = EnumeratorKind.HashSet;
+                    _hashSetEnumerator = hashSet.GetEnumerator();
                 }
                 else if (source is IList<T> iList)
                 {
@@ -235,6 +241,7 @@ internal static class NoAllocEnumerateExtensions
                     return _kind switch
                     {
                         EnumeratorKind.List => _listEnumerator.Current,
+                        EnumeratorKind.HashSet => _hashSetEnumerator.Current,
                         EnumeratorKind.IList => _iList![_iListIndex],
                         EnumeratorKind.Fallback => _fallbackEnumerator!.Current,
                         _ => default!,
@@ -247,6 +254,7 @@ internal static class NoAllocEnumerateExtensions
                 return _kind switch
                 {
                     EnumeratorKind.List => _listEnumerator.MoveNext(),
+                    EnumeratorKind.HashSet => _hashSetEnumerator.MoveNext(),
                     EnumeratorKind.IList => ++_iListIndex < _iList!.Count,
                     EnumeratorKind.Fallback => _fallbackEnumerator!.MoveNext(),
                     _ => false
@@ -259,6 +267,9 @@ internal static class NoAllocEnumerateExtensions
                 {
                     case EnumeratorKind.List:
                         _listEnumerator.Dispose();
+                        break;
+                    case EnumeratorKind.HashSet:
+                        _hashSetEnumerator.Dispose();
                         break;
                     case EnumeratorKind.Fallback:
                         _fallbackEnumerator!.Dispose();

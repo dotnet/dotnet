@@ -31,6 +31,7 @@ namespace NuGet.VisualStudio
         public const string SilverlightProjectTypeGuid = "{A1591282-1198-4647-A2B1-27E5FF5F6F3B}";
         public const string LightSwitchCsharpProjectTypeGuid = "{8BB0C5E8-0616-4F60-8E55-A43933E57E9C}";
         public const string LightSwitchLsxtProjectTypeGuid = "{581633EB-B896-402F-8E60-36F3DA191C85}";
+        public const string ESProjTypeGuid = "{54a90642-561a-4bb1-a94e-469adee60c69}";
 
         // Copied from EnvDTE.Constants since that type can't be embedded
         public const string VsProjectItemKindPhysicalFile = "{6BB5F8EE-4483-11D3-8BCF-00C04F8EC28C}";

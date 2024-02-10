@@ -27,7 +27,7 @@ namespace NuGet.Protocol.Tests
                 testModeEnabled: true);
 
             _output.WriteLine(userAgentString);
-            Assert.True(userAgentString.StartsWith(NuGetTestMode.NuGetTestClientName));
+            Assert.StartsWith(NuGetTestMode.NuGetTestClientName, userAgentString);
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace NuGet.Protocol.Tests
                 testModeEnabled: false);
 
             _output.WriteLine(userAgentString);
-            Assert.True(userAgentString.StartsWith(UserAgentStringBuilder.DefaultNuGetClientName));
+            Assert.StartsWith(UserAgentStringBuilder.DefaultNuGetClientName, userAgentString);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace NuGet.Protocol.Tests
                 testModeEnabled: false);
 
             _output.WriteLine(userAgentString);
-            Assert.True(userAgentString.StartsWith("Dummy Test Client Name"));
+            Assert.StartsWith("Dummy Test Client Name", userAgentString);
         }
 
         [Fact]
@@ -64,8 +64,8 @@ namespace NuGet.Protocol.Tests
             var userAgentString = builder.WithOSDescription(osDescription).Build();
             var userAgentString2 = builder.WithOSDescription(osDescription).WithVisualStudioSKU("VS SKU/Version").Build();
 
-            Assert.True(userAgentString.Contains($"({osDescription})"));
-            Assert.True(userAgentString2.Contains($"({osDescription}, VS SKU/Version)"));
+            Assert.Contains($"({osDescription})", userAgentString);
+            Assert.Contains($"({osDescription}, VS SKU/Version)", userAgentString2);
         }
 
         [Fact]
@@ -76,7 +76,7 @@ namespace NuGet.Protocol.Tests
             var userAgentString = builder.WithOSDescription("OSName/OSVersion").WithVisualStudioSKU(vsInfo).Build();
 
             _output.WriteLine(userAgentString);
-            Assert.True(userAgentString.Contains($"(OSName/OSVersion, {vsInfo})"));
+            Assert.Contains($"(OSName/OSVersion, {vsInfo})", userAgentString);
         }
 
         [Fact]
@@ -92,10 +92,10 @@ namespace NuGet.Protocol.Tests
             _output.WriteLine("NuGet client version: " + builder.NuGetClientVersion);
             Assert.NotNull(builder.NuGetClientVersion);
             Assert.NotEmpty(builder.NuGetClientVersion);
-            Assert.True(userAgentString.Contains(builder.NuGetClientVersion));
-            Assert.True(userAgentString2.Contains(builder.NuGetClientVersion));
-            Assert.True(userAgentString3.Contains(builder.NuGetClientVersion));
-            Assert.True(userAgentString4.Contains(builder.NuGetClientVersion));
+            Assert.Contains(builder.NuGetClientVersion, userAgentString);
+            Assert.Contains(builder.NuGetClientVersion, userAgentString2);
+            Assert.Contains(builder.NuGetClientVersion, userAgentString3);
+            Assert.Contains(builder.NuGetClientVersion, userAgentString4);
         }
 
         [Theory]

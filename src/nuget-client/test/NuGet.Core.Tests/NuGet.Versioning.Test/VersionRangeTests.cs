@@ -486,7 +486,7 @@ namespace NuGet.Versioning.Test
             // Assert
             Assert.Equal("1.2", versionInfo.MinVersion?.ToString());
             Assert.True(versionInfo.IsMinInclusive);
-            Assert.Equal(null, versionInfo.MaxVersion);
+            Assert.Null(versionInfo.MaxVersion);
             Assert.False(versionInfo.IsMaxInclusive);
         }
 
@@ -499,7 +499,7 @@ namespace NuGet.Versioning.Test
             // Assert
             Assert.Equal("1.2", versionInfo.MinVersion?.ToString());
             Assert.True(versionInfo.IsMinInclusive);
-            Assert.Equal(null, versionInfo.MaxVersion);
+            Assert.Null(versionInfo.MaxVersion);
             Assert.False(versionInfo.IsMaxInclusive);
         }
 
@@ -510,7 +510,7 @@ namespace NuGet.Versioning.Test
             var versionInfo = VersionRange.Parse("(,1.2]");
 
             // Assert
-            Assert.Equal(null, versionInfo.MinVersion);
+            Assert.Null(versionInfo.MinVersion);
             Assert.False(versionInfo.IsMinInclusive);
             Assert.Equal("1.2", versionInfo.MaxVersion?.ToString());
             Assert.True(versionInfo.IsMaxInclusive);
@@ -520,7 +520,7 @@ namespace NuGet.Versioning.Test
         public void ParseVersionRangeMaxOnlyExclusive()
         {
             var versionInfo = VersionRange.Parse("(,1.2)");
-            Assert.Equal(null, versionInfo.MinVersion);
+            Assert.Null(versionInfo.MinVersion);
             Assert.False(versionInfo.IsMinInclusive);
             Assert.Equal("1.2", versionInfo.MaxVersion?.ToString());
             Assert.False(versionInfo.IsMaxInclusive);
@@ -548,7 +548,7 @@ namespace NuGet.Versioning.Test
             // Assert
             Assert.Equal("1.2", versionInfo.MinVersion?.ToString());
             Assert.False(versionInfo.IsMinInclusive);
-            Assert.Equal(null, versionInfo.MaxVersion);
+            Assert.Null(versionInfo.MaxVersion);
             Assert.False(versionInfo.IsMaxInclusive);
         }
 
@@ -809,7 +809,7 @@ namespace NuGet.Versioning.Test
         [InlineData("(, 3.2.4.5]", null, false, "3.2.4.5", true)]
         [InlineData("(1.6, ]", "1.6", false, null, true)]
         [InlineData("[2.7]", "2.7", true, "2.7", true)]
-        public void ParseVersionParsesTokensVersionsCorrectly(string versionString, string min, bool incMin, string max, bool incMax)
+        public void ParseVersionParsesTokensVersionsCorrectly(string versionString, string? min, bool incMin, string? max, bool incMax)
         {
             // Arrange
             var versionRange = new VersionRange(min == null ? null : NuGetVersion.Parse(min), incMin,
