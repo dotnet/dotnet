@@ -1049,7 +1049,7 @@ EndProject");
 
             // Break the test if no proper command is found
             if (commandSplit.Length < 1 || string.IsNullOrEmpty(commandSplit[0]))
-                Assert.True(false, "command not found");
+                Assert.Fail("command not found");
 
             var mainCommand = commandSplit[0];
 

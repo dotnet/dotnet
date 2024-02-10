@@ -149,8 +149,8 @@ namespace NuGet.Packaging.Test
             var singleIssue = missingReferences.Single(t => t.MissingFrom.Equals("ref"));
             Assert.Equal("net462", missingReferences.First().Tfm);
             Assert.Equal(2, missingReferences.First().MissingItems.Length);
-            Assert.True(missingReferences.First().MissingItems.Contains("MyLib.dll"));
-            Assert.True(missingReferences.First().MissingItems.Contains("MyHelpers.dll"));
+            Assert.Contains("MyLib.dll", missingReferences.First().MissingItems);
+            Assert.Contains("MyHelpers.dll", missingReferences.First().MissingItems);
         }
 
         [Fact]
@@ -277,8 +277,8 @@ namespace NuGet.Packaging.Test
             var singleMissingReference = missingReferences.Single(t => t.MissingFrom.Equals("ref"));
             Assert.Equal("net472", singleMissingReference.Tfm);
             Assert.Equal(2, singleMissingReference.MissingItems.Length);
-            Assert.True(singleMissingReference.MissingItems.Contains("MyLib.dll"));
-            Assert.True(singleMissingReference.MissingItems.Contains("MyHelpers.dll"));
+            Assert.Contains("MyLib.dll", singleMissingReference.MissingItems);
+            Assert.Contains("MyHelpers.dll", singleMissingReference.MissingItems);
         }
         [Fact]
         public void Compare_NuspecHasFilesWithNoSpecificTfmWithMissingRefFiles_ShouldWarnOnce()
@@ -302,7 +302,7 @@ namespace NuGet.Packaging.Test
             var singleMissingReference = missingReferences.Single(t => t.MissingFrom.Equals("ref"));
             Assert.Equal("net462", singleMissingReference.Tfm);
             Assert.Equal(1, singleMissingReference.MissingItems.Length);
-            Assert.True(singleMissingReference.MissingItems.Contains("MyHelpers.dll"));
+            Assert.Contains("MyHelpers.dll", singleMissingReference.MissingItems);
         }
 
         [Fact]
@@ -328,7 +328,7 @@ namespace NuGet.Packaging.Test
             var singleMissingReference = missingReferences.Single(t => t.MissingFrom.Equals("nuspec"));
             Assert.Equal("net462", singleMissingReference.Tfm);
             Assert.Equal(1, singleMissingReference.MissingItems.Length);
-            Assert.True(singleMissingReference.MissingItems.Contains("MyHelpers.dll"));
+            Assert.Contains("MyHelpers.dll", singleMissingReference.MissingItems);
         }
         [Fact]
         public void GenerateWarnings_PackageWithReferencesMissingFromTheNuspec_ShouldWarn()

@@ -50,7 +50,7 @@ namespace NuGet.XPlat.FuncTest
 
                 // Asert
                 Assert.Equal(2, result.Count);
-                Assert.NotEqual(null, result[0].Credentials);
+                Assert.NotNull(result[0].Credentials);
             }
         }
 
@@ -111,7 +111,7 @@ namespace NuGet.XPlat.FuncTest
                 var result = await AddPackageCommandUtility.GetLatestVersionFromSourcesAsync(sources, logger, package, prerelease);
 
                 //Asert
-                Assert.Equal(null, result);
+                Assert.Null(result);
             }
         }
 

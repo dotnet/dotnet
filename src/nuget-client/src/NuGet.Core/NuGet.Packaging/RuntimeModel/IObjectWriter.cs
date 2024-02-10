@@ -84,6 +84,15 @@ namespace NuGet.RuntimeModel
         void WriteNameArray(string name, IEnumerable<string> values);
 
         /// <summary>
+        /// Writes a name-collection pair only if <paramref name="values"/> is not empty.
+        /// </summary>
+        /// <param name="name">The name of the data.</param>
+        /// <param name="values">The data.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="name" /> is <see langword="null" />.</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this object is disposed.</exception>
+        void WriteNonEmptyNameArray(string name, IEnumerable<string> values);
+
+        /// <summary>
         /// Writes the start of an array.
         /// The new object becomes the scope of all other methods until WriteArrayStart is called to start a new object in the array, or WriteArrayEnd is called.
         /// Every call to WriteArrayStart needs to be balanced with a corresponding call to WriteArrayEnd and not WriteObjectEnd.

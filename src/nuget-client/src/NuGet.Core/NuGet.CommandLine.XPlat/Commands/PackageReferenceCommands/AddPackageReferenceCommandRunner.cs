@@ -49,7 +49,7 @@ namespace NuGet.CommandLine.XPlat
                     versionRange = VersionRange.Parse(packageReferenceArgs.PackageVersion);
                 }
 
-                var libraryDependency = new LibraryDependency
+                var libraryDependency = new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
                 {
                     LibraryRange = new LibraryRange(
                         name: packageReferenceArgs.PackageId,
@@ -329,7 +329,7 @@ namespace NuGet.CommandLine.XPlat
                 }
             }
 
-            return new LibraryDependency
+            return new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
             {
                 LibraryRange = new LibraryRange(
                     name: packageReferenceArgs.PackageId,

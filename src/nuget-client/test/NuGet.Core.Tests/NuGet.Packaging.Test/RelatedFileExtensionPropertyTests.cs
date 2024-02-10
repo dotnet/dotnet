@@ -64,7 +64,7 @@ namespace NuGet.Packaging.Test
             string relatedProperty = collection.GetRelatedFileExtensionProperty(assembly, CreateAssetsFromPathList(paths));
 
             // Assert
-            Assert.Equal(null, relatedProperty);
+            Assert.Null(relatedProperty);
         }
 
 

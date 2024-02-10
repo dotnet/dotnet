@@ -36,6 +36,7 @@ namespace NuGet.PackageManagement.VisualStudio
             return false;
         }
 
+        [Obsolete("New properties should use IVsProjectBuildProperties.GetPropertyValue instead. Ideally we should migrate existing properties to stop using DTE as well.")]
         public override dynamic GetPropertyValue(string propertyName)
         {
             if (propertyName.Equals(RootNamespace, StringComparison.OrdinalIgnoreCase))

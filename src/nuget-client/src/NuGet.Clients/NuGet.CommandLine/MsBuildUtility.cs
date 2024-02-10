@@ -23,6 +23,7 @@ namespace NuGet.CommandLine
     {
         internal const int MsBuildWaitTime = 2 * 60 * 1000; // 2 minutes in milliseconds
 
+        private const string NuGetProps = "NuGet.CommandLine.NuGet.props";
         private const string NuGetTargets = "NuGet.CommandLine.NuGet.targets";
         private static readonly XNamespace MSBuildNamespace = XNamespace.Get("http://schemas.microsoft.com/developer/msbuild/2003");
 
@@ -103,10 +104,12 @@ namespace NuGet.CommandLine
             }
 
             using (var inputTargetPath = new TempFile(".nugetinputs.targets"))
+            using (var nugetPropsPath = new TempFile(".nugetrestore.props"))
             using (var entryPointTargetPath = new TempFile(".nugetrestore.targets"))
             using (var resultsPath = new TempFile(".output.dg"))
             {
-                // Read NuGet.targets from nuget.exe and write it to disk for msbuild.exe
+                // Read NuGet.props and NuGet.targets from nuget.exe and write it to disk for msbuild.exe
+                ExtractResource(NuGetProps, nugetPropsPath);
                 ExtractResource(NuGetTargets, entryPointTargetPath);
 
                 // Build a .targets file of all restore inputs, this is needed to avoid going over the limit on command line arguments.
@@ -115,7 +118,7 @@ namespace NuGet.CommandLine
                     { "RestoreUseCustomAfterTargets", "true" },
                     { "RestoreGraphOutputPath", resultsPath },
                     { "RestoreRecursive", recursive.ToString(CultureInfo.CurrentCulture).ToLowerInvariant() },
-                    { "RestoreProjectFilterMode", "exclusionlist" }
+                    { "RestoreProjectFilterMode", "exclusionlist" },
                 };
 
                 var inputTargetXML = GetRestoreInputFile(entryPointTargetPath, properties, projectPaths);
@@ -123,7 +126,7 @@ namespace NuGet.CommandLine
                 inputTargetXML.Save(inputTargetPath);
 
                 // Create msbuild parameters and include global properties that cannot be set in the input targets path
-                var arguments = GetMSBuildArguments(entryPointTargetPath, inputTargetPath, nugetExePath, solutionDirectory, solutionName, restoreConfigFile, sources, packagesDirectory, msbuildToolset, restoreLockProperties, EnvironmentVariableWrapper.Instance);
+                var arguments = GetMSBuildArguments(entryPointTargetPath, nugetPropsPath, inputTargetPath, nugetExePath, solutionDirectory, solutionName, restoreConfigFile, sources, packagesDirectory, msbuildToolset, restoreLockProperties, EnvironmentVariableWrapper.Instance);
 
                 var processStartInfo = new ProcessStartInfo
                 {
@@ -221,6 +224,7 @@ namespace NuGet.CommandLine
 
         public static string GetMSBuildArguments(
             string entryPointTargetPath,
+            string nugetPropsPath,
             string inputTargetPath,
             string nugetExePath,
             string solutionDirectory,
@@ -252,6 +256,8 @@ namespace NuGet.CommandLine
             {
                 args.Add($"/v:{msbuildVerbosity} ");
             }
+
+            AddProperty(args, "NuGetPropsFile", nugetPropsPath);
 
             // Override the target under ImportsAfter with the current NuGet.targets version.
             AddProperty(args, "NuGetRestoreTargets", entryPointTargetPath);

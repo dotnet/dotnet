@@ -733,11 +733,23 @@ namespace NuGet.PackageManagement.UI
 
         private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
+            int packagesCount = Items.Count;
+
+            if (Items.Contains(_loadingStatusIndicator))
+            {
+                packagesCount--;
+            }
+
+            if (Items.Contains(_loadingVulnerabilitiesStatusIndicator))
+            {
+                packagesCount--;
+            }
+
             if (_loader?.State.LoadingStatus == LoadingStatus.Ready)
             {
                 var first = _scrollViewer.VerticalOffset;
                 var last = _scrollViewer.ViewportHeight + first;
-                if (_scrollViewer.ViewportHeight > 0 && last >= Items.Count)
+                if (_scrollViewer.ViewportHeight > 0 && last >= packagesCount)
                 {
                     NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(() =>
                         LoadItemsAsync(selectedPackageItem: null, token: CancellationToken.None)

@@ -1,1 +1,3 @@
 #nullable enable
+~NuGet.RuntimeModel.IObjectWriter.WriteNonEmptyNameArray(string name, System.Collections.Generic.IEnumerable<string> values) -> void
+~NuGet.RuntimeModel.JsonObjectWriter.WriteNonEmptyNameArray(string name, System.Collections.Generic.IEnumerable<string> values) -> void

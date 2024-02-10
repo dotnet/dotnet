@@ -41,7 +41,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
                     message.AppendLine(definedFormatterName);
                 }
 
-                Assert.True(false, message.ToString());
+                Assert.Fail(message.ToString());
             }
         }
 

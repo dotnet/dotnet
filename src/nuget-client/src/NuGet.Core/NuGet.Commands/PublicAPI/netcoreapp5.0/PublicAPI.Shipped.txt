@@ -440,7 +440,6 @@ NuGet.Commands.RemoveSourceRunner
 NuGet.Commands.RequestRuntimeUtility
 NuGet.Commands.ResolvedDependencyKey
 ~NuGet.Commands.ResolvedDependencyKey.Child.get -> NuGet.LibraryModel.LibraryIdentity
-~NuGet.Commands.ResolvedDependencyKey.Equals(NuGet.Commands.ResolvedDependencyKey other) -> bool
 ~NuGet.Commands.ResolvedDependencyKey.Parent.get -> NuGet.LibraryModel.LibraryIdentity
 ~NuGet.Commands.ResolvedDependencyKey.Range.get -> NuGet.Versioning.VersionRange
 ~NuGet.Commands.ResolvedDependencyKey.ResolvedDependencyKey(NuGet.LibraryModel.LibraryIdentity parent, NuGet.Versioning.VersionRange range, NuGet.LibraryModel.LibraryIdentity child) -> void
@@ -772,7 +771,6 @@ NuGet.Commands.TrustedSignersArgs.TrustedSignersArgs() -> void
 NuGet.Commands.TrustedSignersCommandRunner
 ~NuGet.Commands.TrustedSignersCommandRunner.ExecuteCommandAsync(NuGet.Commands.TrustedSignersArgs trustedSignersArgs) -> System.Threading.Tasks.Task<int>
 ~NuGet.Commands.TrustedSignersCommandRunner.TrustedSignersCommandRunner(NuGet.Packaging.Signing.ITrustedSignersProvider trustedSignersProvider, NuGet.Configuration.IPackageSourceProvider packageSourceProvider) -> void
-NuGet.Commands.UnexpectedDependencyMessages
 NuGet.Commands.UpdateClientCertArgs
 ~NuGet.Commands.UpdateClientCertArgs.Configfile.get -> string
 ~NuGet.Commands.UpdateClientCertArgs.Configfile.set -> void
@@ -945,7 +943,7 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.MSBuildRestoreUtility.ContainsClearKeyword(System.Collections.Generic.IEnumerable<string> values) -> bool
 ~static NuGet.Commands.MSBuildRestoreUtility.Dump(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items, NuGet.Common.ILogger log) -> void
 ~static NuGet.Commands.MSBuildRestoreUtility.FixSourcePath(string s) -> string
-~static NuGet.Commands.MSBuildRestoreUtility.GetCentralPackageManagementSettings(NuGet.Commands.IMSBuildItem projectSpecItem, NuGet.ProjectModel.ProjectStyle? projectStyle) -> (bool IsEnabled, bool IsVersionOverrideDisabled, bool IsCentralPackageTransitivePinningEnabled, bool isCentralPackageFloatingVersionsEnabled)
+~static NuGet.Commands.MSBuildRestoreUtility.GetCentralPackageManagementSettings(NuGet.Commands.IMSBuildItem projectSpecItem, NuGet.ProjectModel.ProjectStyle projectStyle) -> (bool IsEnabled, bool IsVersionOverrideDisabled, bool IsCentralPackageTransitivePinningEnabled, bool isCentralPackageFloatingVersionsEnabled)
 ~static NuGet.Commands.MSBuildRestoreUtility.GetDependencySpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items) -> NuGet.ProjectModel.DependencyGraphSpec
 ~static NuGet.Commands.MSBuildRestoreUtility.GetMessageForUnsupportedProject(string path) -> NuGet.Common.RestoreLogMessage
 ~static NuGet.Commands.MSBuildRestoreUtility.GetPackageSpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items) -> NuGet.ProjectModel.PackageSpec
@@ -1008,14 +1006,6 @@ override NuGet.Commands.WarningPropertiesCollection.GetHashCode() -> int
 ~static NuGet.Commands.TransitiveNoWarnUtils.MergePackageSpecificNoWarn(System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode>> first, System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode>> second) -> System.Collections.Generic.Dictionary<string, System.Collections.Generic.HashSet<NuGet.Common.NuGetLogCode>>
 ~static NuGet.Commands.TransitiveNoWarnUtils.MergePackageSpecificWarningProperties(NuGet.Commands.PackageSpecificWarningProperties first, NuGet.Commands.PackageSpecificWarningProperties second) -> NuGet.Commands.PackageSpecificWarningProperties
 ~static NuGet.Commands.TransitiveNoWarnUtils.TryMergeNullObjects<T>(T first, T second, out T merged) -> bool
-~static NuGet.Commands.UnexpectedDependencyMessages.DependencyRangeHasMissingExactMatch(NuGet.Commands.ResolvedDependencyKey dependency) -> bool
-~static NuGet.Commands.UnexpectedDependencyMessages.GetBumpedUpDependencies(System.Collections.Generic.List<NuGet.Commands.IndexedRestoreTargetGraph> graphs, NuGet.ProjectModel.PackageSpec project, System.Collections.Generic.ISet<string> ignoreIds) -> System.Collections.Generic.IEnumerable<NuGet.Common.RestoreLogMessage>
-~static NuGet.Commands.UnexpectedDependencyMessages.GetDependenciesAboveUpperBounds(System.Collections.Generic.List<NuGet.Commands.IndexedRestoreTargetGraph> graphs, NuGet.Common.ILogger logger) -> System.Collections.Generic.IEnumerable<NuGet.Common.RestoreLogMessage>
-~static NuGet.Commands.UnexpectedDependencyMessages.GetMissingLowerBoundMessage(NuGet.Commands.ResolvedDependencyKey dependency, params string[] targetGraphs) -> NuGet.Common.RestoreLogMessage
-~static NuGet.Commands.UnexpectedDependencyMessages.GetMissingLowerBounds(System.Collections.Generic.IEnumerable<NuGet.Commands.IRestoreTargetGraph> graphs, System.Collections.Generic.ISet<string> ignoreIds) -> System.Collections.Generic.IEnumerable<NuGet.Common.RestoreLogMessage>
-~static NuGet.Commands.UnexpectedDependencyMessages.GetProjectDependenciesMissingLowerBounds(NuGet.ProjectModel.PackageSpec project) -> System.Collections.Generic.IEnumerable<NuGet.Common.RestoreLogMessage>
-~static NuGet.Commands.UnexpectedDependencyMessages.HasMissingLowerBound(NuGet.Versioning.VersionRange range) -> bool
-~static NuGet.Commands.UnexpectedDependencyMessages.LogAsync(System.Collections.Generic.IEnumerable<NuGet.Commands.IRestoreTargetGraph> graphs, NuGet.ProjectModel.PackageSpec project, NuGet.Common.ILogger logger) -> System.Threading.Tasks.Task
 ~static NuGet.Commands.UpdateClientCertRunner.Run(NuGet.Commands.UpdateClientCertArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.UpdateSourceRunner.Run(NuGet.Commands.UpdateSourceArgs args, System.Func<NuGet.Common.ILogger> getLogger) -> void
 ~static NuGet.Commands.WarningPropertiesCollection.ApplyProjectWideNoWarnProperties(NuGet.Common.ILogMessage message, NuGet.ProjectModel.WarningProperties warningProperties) -> bool

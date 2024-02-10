@@ -121,6 +121,7 @@ namespace NuGet.Packaging.Test
                 trustedSigners.Count.Should().Be(3);
                 trustedSigners.Should().BeEquivalentTo(expectedTrustedSigners,
                     options => options
+                        .Excluding(o => o.ConfigPath)
                         .Excluding(o => o.Path == "[0].Origin")
                         .Excluding(o => o.Path == "[1].Origin")
                         .Excluding(o => o.Path == "[2].Origin"));
@@ -173,6 +174,7 @@ namespace NuGet.Packaging.Test
                 trustedSigners.Should().BeEquivalentTo(
                     expectedTrustedSigners,
                     options => options
+                        .Excluding(o => o.ConfigPath)
                         .Excluding(o => o.Path == "[0].Origin")
                         .Excluding(o => o.Path == "[1].Origin")
                         .Excluding(o => o.Path == "[2].Origin"));
@@ -249,6 +251,7 @@ namespace NuGet.Packaging.Test
                 trustedSigners.Should().BeEquivalentTo(
                     expectedTrustedSigners,
                     options => options
+                        .Excluding(o => o.ConfigPath)
                         .Excluding(o => o.Path == "[0].Origin")
                         .Excluding(o => o.Path == "[1].Origin"));
             }
@@ -299,6 +302,7 @@ namespace NuGet.Packaging.Test
                 trustedSigners.Should().BeEquivalentTo(
                     expectedTrustedSigners,
                     options => options
+                        .Excluding(o => o.ConfigPath)
                         .Excluding(o => o.Path == "[0].Origin")
                         .Excluding(o => o.Path == "[1].Origin"));
             }
@@ -362,6 +366,7 @@ namespace NuGet.Packaging.Test
                 trustedSigners.Should().BeEquivalentTo(
                     expectedTrustedSigners,
                     options => options
+                        .Excluding(o => o.ConfigPath)
                         .Excluding(o => o.Path == "[0].Origin")
                         .Excluding(o => o.Path == "[1].Origin")
                         .Excluding(o => o.Path == "[2].Origin")
@@ -413,6 +418,7 @@ namespace NuGet.Packaging.Test
                 trustedSigners.Count.Should().Be(3);
                 trustedSigners.Should().BeEquivalentTo(expectedTrustedSigners,
                     options => options
+                        .Excluding(o => o.ConfigPath)
                         .Excluding(o => o.Path == "[0].Origin")
                         .Excluding(o => o.Path == "[1].Origin")
                         .Excluding(o => o.Path == "[2].Origin"));

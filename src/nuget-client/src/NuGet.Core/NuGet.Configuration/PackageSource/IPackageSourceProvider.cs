@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -15,12 +17,18 @@ namespace NuGet.Configuration
         IEnumerable<PackageSource> LoadPackageSources();
 
         /// <summary>
+        /// Gets a list of all of the audit sources
+        /// </summary>
+        /// <returns>Read only list of all of the audit sources</returns>
+        IReadOnlyList<PackageSource> LoadAuditSources();
+
+        /// <summary>
         /// Gets the source that matches a given name.
         /// </summary>
         /// <param name="name">Name of source to be searched for</param>
         /// <returns>PackageSource that matches the given name. Null if none was found</returns>
         /// <throws>ArgumentException when <paramref name="name"/> is null or empty.</throws>
-        PackageSource GetPackageSourceByName(string name);
+        PackageSource? GetPackageSourceByName(string name);
 
         /// <summary>
         /// Gets the source that matches a given source url.
@@ -29,12 +37,12 @@ namespace NuGet.Configuration
         /// <returns>PackageSource that matches the given source. Null if none was found</returns>
         /// <throws>ArgumentException when <paramref name="source"/> is null or empty.</throws>
         /// <remarks>There may be multiple sources that match a given url. This method will return the first.</remarks>
-        PackageSource GetPackageSourceBySource(string source);
+        PackageSource? GetPackageSourceBySource(string source);
 
         /// <summary>
         /// Event raised when the package sources have been changed.
         /// </summary>
-        event EventHandler PackageSourcesChanged;
+        event EventHandler? PackageSourcesChanged;
 
         /// <summary>
         /// Removes the package source that matches the given name
@@ -86,12 +94,12 @@ namespace NuGet.Configuration
         /// <summary>
         /// Gets the name of the active PackageSource
         /// </summary>
-        string ActivePackageSourceName { get; }
+        string? ActivePackageSourceName { get; }
 
         /// <summary>
         /// Gets the Default push source
         /// </summary>
-        string DefaultPushSource { get; }
+        string? DefaultPushSource { get; }
 
         /// <summary>
         /// Updates the active package source with the given source.

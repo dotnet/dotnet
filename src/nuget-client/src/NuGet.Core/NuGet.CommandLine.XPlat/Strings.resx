@@ -853,6 +853,19 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
   <data name="Error_CannotObtainSearchSource" xml:space="preserve">
     <value>Failed to obtain a search resource.</value>
   </data>
+  <data name="ConfigPathsCommandDescription" xml:space="preserve">
+    <value>Lists the paths to all NuGet configuration files that will be applied when invoking NuGet command in a specific directory</value>
+  </data>
+  <data name="ConfigPathsWorkingDirectoryDescription" xml:space="preserve">
+    <value>Specifies the directory to start from when listing configuration files. If not specified, the current directory is used.</value>
+  </data>
+  <data name="Config_Description" xml:space="preserve">
+    <value>NuGet configuration CLI</value>
+  </data>
+  <data name="Error_PathNotFound" xml:space="preserve">
+    <value>The specified path '{0}' does not exist.</value>
+    <comment>0 - path</comment>
+  </data>
   <data name="Error_NoSource" xml:space="preserve">
     <value>No package sources found.</value>
   </data>
@@ -863,5 +876,40 @@ Non-HTTPS access will be removed in a future version. Consider migrating to 'HTT
   <data name="pkgSearch_VerbosityDescription" xml:space="preserve">
     <value>Display this amount of details in the output: `normal`, `minimal`, `detailed`. The default is `normal`.</value>
     <comment>Please don't translate `minimal`, `normal`, `detailed`</comment>
+  </data>
+  <data name="ConfigCommandKeyNotFound" xml:space="preserve">
+    <value>Key '{0}' not found.</value>
+  </data>
+  <data name="ConfigSetCommandDescription" xml:space="preserve">
+    <value>Set the value of a specified NuGet configuration setting.</value>
+  </data>
+  <data name="ConfigSetConfigKeyDescription" xml:space="preserve">
+    <value>The key of the settings that are to be set.</value>
+  </data>
+  <data name="ConfigSetConfigValueDescription" xml:space="preserve">
+    <value>The value of the settings that are to be set.</value>
+  </data>
+  <data name="Error_ConfigSetInvalidKey" xml:space="preserve">
+    <value>'{0}' is not a valid config key in config section.</value>
+    <comment>0 - The config key</comment>
+  </data>
+  <data name="ConfigUnsetCommandDescription" xml:space="preserve">
+    <value>Removes the key-value pair from a specified NuGet configuration setting.</value>
+  </data>
+  <data name="ConfigUnsetConfigKeyDescription" xml:space="preserve">
+    <value>The key of the settings that are to be removed.</value>
+  </data>
+  <data name="ConfigUnsetNonExistingKey" xml:space="preserve">
+    <value>The key "{0}" could not be found in config section, so it could not be unset.</value>
+    <comment>0 - The config key</comment>
+  </data>
+  <data name="ConfigGetAllOrConfigKeyDescription" xml:space="preserve">
+    <value>ALL: Get all merged NuGet configuration settings from multiple NuGet configuration files that will be applied, when invoking NuGet command from the working directory path.  CONFIG_KEY: Get the effective value of the specified configuration settings of the config section.</value>
+  </data>
+  <data name="ConfigGetShowPathDescription" xml:space="preserve">
+    <value>Indicate that the NuGet configuration file path will be shown beside the configuration settings.</value>
+  </data>
+  <data name="ConfigGetCommandDescription" xml:space="preserve">
+    <value>Gets the NuGet configuration settings that will be applied.</value>
   </data>
 </root>

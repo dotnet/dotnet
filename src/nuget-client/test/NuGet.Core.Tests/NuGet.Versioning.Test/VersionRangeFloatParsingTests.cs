@@ -270,7 +270,7 @@ namespace NuGet.Versioning.Test
         [InlineData("1.1.0;1.2.0-rc.1;1.2.0-rc.2;2.0.0;3.0.0-beta.1", "*-rc.*", "2.0.0")]
         [InlineData("1.1.0;1.2.0-rc.1;1.2.0-rc.2;1.2.0-rc1;2.0.0;3.0.0-beta.1", "1.*-rc*", "1.2.0-rc1")]
         [InlineData("1.1.0;1.2.0-rc.1;1.2.0-rc.2;1.2.0-rc1;1.10.0;2.0.0;3.0.0-beta.1", "1.1*-*", "1.10.0")]
-        public void VersionRangeFloatParsing_FindsBestMatch(string availableVersions, string declaredRange, string expectedVersion)
+        public void VersionRangeFloatParsing_FindsBestMatch(string availableVersions, string declaredRange, string? expectedVersion)
         {
             var range = VersionRange.Parse(declaredRange);
 

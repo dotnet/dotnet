@@ -444,6 +444,8 @@ namespace NuGet.ProjectModel
                         assetsLogMessage.WarningLevel = (WarningLevel)Enum.ToObject(typeof(WarningLevel), warningLevelJson.Value<int>());
                     }
 
+                    assetsLogMessage.ProjectPath = projectPath;
+
                     if (filePathJson != null)
                     {
                         assetsLogMessage.FilePath = filePathJson.Value<string>();

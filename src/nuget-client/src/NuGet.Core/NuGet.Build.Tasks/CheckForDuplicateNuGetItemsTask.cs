@@ -65,6 +65,7 @@ namespace NuGet.Build.Tasks
                         duplicateItemsFormatted))
                 {
                     FilePath = MSBuildProjectFullPath,
+                    ProjectPath = MSBuildProjectFullPath,
                 });
 
                 // Set Output

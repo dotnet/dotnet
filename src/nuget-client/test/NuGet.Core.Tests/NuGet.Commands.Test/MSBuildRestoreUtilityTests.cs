@@ -1264,8 +1264,7 @@ namespace NuGet.Commands.Test
                 var wrappedItems = items.Select(CreateItems).ToList();
 
                 // Act && Assert
-                Assert.Throws(typeof(ArgumentException),
-                    () => MSBuildRestoreUtility.GetDependencySpec(wrappedItems));
+                Assert.Throws<ArgumentException>(() => MSBuildRestoreUtility.GetDependencySpec(wrappedItems));
             }
         }
 
@@ -2444,7 +2443,7 @@ namespace NuGet.Commands.Test
                 // Assert
                 Assert.Equal(projectPath, spec.FilePath);
                 Assert.Equal("a", spec.Name);
-                Assert.IsType(typeof(PackagesConfigProjectRestoreMetadata), spec.RestoreMetadata);
+                Assert.IsType<PackagesConfigProjectRestoreMetadata>(spec.RestoreMetadata);
                 var restoreMetadata = (PackagesConfigProjectRestoreMetadata)spec.RestoreMetadata;
                 Assert.Equal(ProjectStyle.PackagesConfig, restoreMetadata.ProjectStyle);
                 Assert.Equal("482C20DE-DFF9-4BD0-B90A-BD3201AA351A", restoreMetadata.ProjectUniqueName);

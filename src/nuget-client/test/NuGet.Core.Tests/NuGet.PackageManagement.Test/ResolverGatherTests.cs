@@ -61,7 +61,7 @@ namespace NuGet.Test
             var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(500));
 
             // Act and Assert
-            await Assert.ThrowsAsync(typeof(InvalidOperationException), async () =>
+            await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
                 await ResolverGather.GatherAsync(context, cts.Token);
             });
@@ -200,7 +200,7 @@ namespace NuGet.Test
             };
 
             // Act and Assert
-            await Assert.ThrowsAsync(typeof(InvalidOperationException), async () =>
+            await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
                 await ResolverGather.GatherAsync(context, CancellationToken.None);
             });
@@ -705,7 +705,7 @@ namespace NuGet.Test
             context.ResolutionContext = new ResolutionContext();
 
             // Act and Assert
-            await Assert.ThrowsAsync(typeof(InvalidOperationException), async () =>
+            await Assert.ThrowsAsync<InvalidOperationException>(async () =>
                 {
                     try
                     {

@@ -85,9 +85,6 @@ Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.dll
 Microsoft.VisualStudio.Services.TestResults.WebApi.dll
 Microsoft.VisualStudio.Services.WebApi.dll
 Microsoft.VisualStudio.Services.WebApi.resources.dll
-Microsoft.VisualStudio.TextTemplating.dll
-Microsoft.VisualStudio.TextTemplating.Interfaces.dll
-Microsoft.VisualStudio.TextTemplating.resources.dll
 Microsoft.VisualStudio.TextTemplating.VSHost.dll
 Microsoft.VisualStudio.Workspace.dll
 Microsoft.VisualStudio.Workspace.Extensions.dll

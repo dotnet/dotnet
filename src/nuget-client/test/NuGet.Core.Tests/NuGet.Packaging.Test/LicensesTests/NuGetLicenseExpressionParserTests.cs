@@ -299,7 +299,7 @@ namespace NuGet.Packaging.Licenses.Test
             Assert.NotNull(mit);
             Assert.Equal(LicenseExpressionType.License, mit.Type);
             Assert.Equal(mit.ToString(), "MIT+");
-            Assert.Equal(true, mit.Plus);
+            Assert.True(mit.Plus);
             Assert.Equal("MIT", mit.Identifier);
         }
     }

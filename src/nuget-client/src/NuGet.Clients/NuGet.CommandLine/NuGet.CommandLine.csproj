@@ -91,6 +91,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.props">
+      <Link>NuGet.props</Link>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.targets">
       <Link>NuGet.targets</Link>
       <SubType>Designer</SubType>

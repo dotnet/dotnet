@@ -194,6 +194,7 @@ namespace NuGet.Packaging.Test
             Assert.NotEqual(aHashCode, bHashCode);
         }
 
+        [Fact]
         public void PackageDependencyGroup_GetHashCode_SameVersionAndPackages_DifferentOrder()
         {
             var a = new PackageDependencyGroup(

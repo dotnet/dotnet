@@ -29,9 +29,9 @@ NuGet.Configuration.ClientCertificateProvider
 ~NuGet.Configuration.ClientCertificateProvider.Remove(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.ClientCertItem> items) -> void
 NuGet.Configuration.ConfigurationConstants
 NuGet.Configuration.ConfigurationDefaults
-~NuGet.Configuration.ConfigurationDefaults.DefaultPackageRestoreConsent.get -> string
-~NuGet.Configuration.ConfigurationDefaults.DefaultPackageSources.get -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource>
-~NuGet.Configuration.ConfigurationDefaults.DefaultPushSource.get -> string
+NuGet.Configuration.ConfigurationDefaults.DefaultPackageRestoreConsent.get -> string?
+NuGet.Configuration.ConfigurationDefaults.DefaultPackageSources.get -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>!
+NuGet.Configuration.ConfigurationDefaults.DefaultPushSource.get -> string?
 NuGet.Configuration.CredentialRequestType
 NuGet.Configuration.CredentialRequestType.Forbidden = 2 -> NuGet.Configuration.CredentialRequestType
 NuGet.Configuration.CredentialRequestType.Proxy = 0 -> NuGet.Configuration.CredentialRequestType
@@ -69,20 +69,20 @@ NuGet.Configuration.IExtensionLocator
 NuGet.Configuration.IMachineWideSettings
 ~NuGet.Configuration.IMachineWideSettings.Settings.get -> NuGet.Configuration.ISettings
 NuGet.Configuration.IPackageSourceProvider
-~NuGet.Configuration.IPackageSourceProvider.ActivePackageSourceName.get -> string
-~NuGet.Configuration.IPackageSourceProvider.AddPackageSource(NuGet.Configuration.PackageSource source) -> void
-~NuGet.Configuration.IPackageSourceProvider.DefaultPushSource.get -> string
-~NuGet.Configuration.IPackageSourceProvider.DisablePackageSource(string name) -> void
-~NuGet.Configuration.IPackageSourceProvider.EnablePackageSource(string name) -> void
-~NuGet.Configuration.IPackageSourceProvider.GetPackageSourceByName(string name) -> NuGet.Configuration.PackageSource
-~NuGet.Configuration.IPackageSourceProvider.GetPackageSourceBySource(string source) -> NuGet.Configuration.PackageSource
-~NuGet.Configuration.IPackageSourceProvider.IsPackageSourceEnabled(string name) -> bool
-~NuGet.Configuration.IPackageSourceProvider.LoadPackageSources() -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource>
-NuGet.Configuration.IPackageSourceProvider.PackageSourcesChanged -> System.EventHandler
-~NuGet.Configuration.IPackageSourceProvider.RemovePackageSource(string name) -> void
-~NuGet.Configuration.IPackageSourceProvider.SaveActivePackageSource(NuGet.Configuration.PackageSource source) -> void
-~NuGet.Configuration.IPackageSourceProvider.SavePackageSources(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> sources) -> void
-~NuGet.Configuration.IPackageSourceProvider.UpdatePackageSource(NuGet.Configuration.PackageSource source, bool updateCredentials, bool updateEnabled) -> void
+NuGet.Configuration.IPackageSourceProvider.ActivePackageSourceName.get -> string?
+NuGet.Configuration.IPackageSourceProvider.AddPackageSource(NuGet.Configuration.PackageSource! source) -> void
+NuGet.Configuration.IPackageSourceProvider.DefaultPushSource.get -> string?
+NuGet.Configuration.IPackageSourceProvider.DisablePackageSource(string! name) -> void
+NuGet.Configuration.IPackageSourceProvider.EnablePackageSource(string! name) -> void
+NuGet.Configuration.IPackageSourceProvider.GetPackageSourceByName(string! name) -> NuGet.Configuration.PackageSource?
+NuGet.Configuration.IPackageSourceProvider.GetPackageSourceBySource(string! source) -> NuGet.Configuration.PackageSource?
+NuGet.Configuration.IPackageSourceProvider.IsPackageSourceEnabled(string! name) -> bool
+NuGet.Configuration.IPackageSourceProvider.LoadPackageSources() -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>!
+NuGet.Configuration.IPackageSourceProvider.PackageSourcesChanged -> System.EventHandler?
+NuGet.Configuration.IPackageSourceProvider.RemovePackageSource(string! name) -> void
+NuGet.Configuration.IPackageSourceProvider.SaveActivePackageSource(NuGet.Configuration.PackageSource! source) -> void
+NuGet.Configuration.IPackageSourceProvider.SavePackageSources(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>! sources) -> void
+NuGet.Configuration.IPackageSourceProvider.UpdatePackageSource(NuGet.Configuration.PackageSource! source, bool updateCredentials, bool updateEnabled) -> void
 NuGet.Configuration.IProxyCache
 ~NuGet.Configuration.IProxyCache.Add(System.Net.IWebProxy proxy) -> void
 ~NuGet.Configuration.IProxyCache.GetProxy(System.Uri uri) -> System.Net.IWebProxy
@@ -186,28 +186,28 @@ NuGet.Configuration.PackageSourceMappingSourceItem
 ~NuGet.Configuration.PackageSourceMappingSourceItem.Patterns.get -> System.Collections.Generic.IList<NuGet.Configuration.PackagePatternItem>
 ~NuGet.Configuration.PackageSourceMappingSourceItem.SetKey(string value) -> void
 NuGet.Configuration.PackageSourceProvider
-~NuGet.Configuration.PackageSourceProvider.ActivePackageSourceName.get -> string
-~NuGet.Configuration.PackageSourceProvider.AddPackageSource(NuGet.Configuration.PackageSource source) -> void
-~NuGet.Configuration.PackageSourceProvider.DefaultPushSource.get -> string
-~NuGet.Configuration.PackageSourceProvider.DisablePackageSource(NuGet.Configuration.PackageSource source) -> void
-~NuGet.Configuration.PackageSourceProvider.DisablePackageSource(string name) -> void
-~NuGet.Configuration.PackageSourceProvider.EnablePackageSource(string name) -> void
-~NuGet.Configuration.PackageSourceProvider.GetPackageSourceByName(string name) -> NuGet.Configuration.PackageSource
-~NuGet.Configuration.PackageSourceProvider.GetPackageSourceBySource(string source) -> NuGet.Configuration.PackageSource
-~NuGet.Configuration.PackageSourceProvider.GetPackageSourceNamesMatchingNamePrefix(string namePrefix) -> System.Collections.Generic.HashSet<string>
-~NuGet.Configuration.PackageSourceProvider.IsPackageSourceEnabled(NuGet.Configuration.PackageSource source) -> bool
-~NuGet.Configuration.PackageSourceProvider.IsPackageSourceEnabled(string name) -> bool
-~NuGet.Configuration.PackageSourceProvider.LoadPackageSources() -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource>
-~NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings settings) -> void
-~NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings settings, System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> configurationDefaultSources) -> void
-~NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings settings, System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> configurationDefaultSources, bool enablePackageSourcesChangedEvent) -> void
-~NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings settings, bool enablePackageSourcesChangedEvent) -> void
-NuGet.Configuration.PackageSourceProvider.PackageSourcesChanged -> System.EventHandler
-~NuGet.Configuration.PackageSourceProvider.RemovePackageSource(string name) -> void
-~NuGet.Configuration.PackageSourceProvider.SaveActivePackageSource(NuGet.Configuration.PackageSource source) -> void
-~NuGet.Configuration.PackageSourceProvider.SavePackageSources(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource> sources) -> void
-~NuGet.Configuration.PackageSourceProvider.Settings.get -> NuGet.Configuration.ISettings
-~NuGet.Configuration.PackageSourceProvider.UpdatePackageSource(NuGet.Configuration.PackageSource source, bool updateCredentials, bool updateEnabled) -> void
+NuGet.Configuration.PackageSourceProvider.ActivePackageSourceName.get -> string?
+NuGet.Configuration.PackageSourceProvider.AddPackageSource(NuGet.Configuration.PackageSource! source) -> void
+NuGet.Configuration.PackageSourceProvider.DefaultPushSource.get -> string?
+NuGet.Configuration.PackageSourceProvider.DisablePackageSource(NuGet.Configuration.PackageSource! source) -> void
+NuGet.Configuration.PackageSourceProvider.DisablePackageSource(string! name) -> void
+NuGet.Configuration.PackageSourceProvider.EnablePackageSource(string! name) -> void
+NuGet.Configuration.PackageSourceProvider.GetPackageSourceByName(string! name) -> NuGet.Configuration.PackageSource?
+NuGet.Configuration.PackageSourceProvider.GetPackageSourceBySource(string! source) -> NuGet.Configuration.PackageSource?
+NuGet.Configuration.PackageSourceProvider.GetPackageSourceNamesMatchingNamePrefix(string! namePrefix) -> System.Collections.Generic.HashSet<string!>!
+NuGet.Configuration.PackageSourceProvider.IsPackageSourceEnabled(NuGet.Configuration.PackageSource! source) -> bool
+NuGet.Configuration.PackageSourceProvider.IsPackageSourceEnabled(string! name) -> bool
+NuGet.Configuration.PackageSourceProvider.LoadPackageSources() -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>!
+NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings! settings) -> void
+NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings! settings, System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>! configurationDefaultSources) -> void
+NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings! settings, System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>! configurationDefaultSources, bool enablePackageSourcesChangedEvent) -> void
+NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings! settings, bool enablePackageSourcesChangedEvent) -> void
+NuGet.Configuration.PackageSourceProvider.PackageSourcesChanged -> System.EventHandler?
+NuGet.Configuration.PackageSourceProvider.RemovePackageSource(string! name) -> void
+NuGet.Configuration.PackageSourceProvider.SaveActivePackageSource(NuGet.Configuration.PackageSource! source) -> void
+NuGet.Configuration.PackageSourceProvider.SavePackageSources(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>! sources) -> void
+NuGet.Configuration.PackageSourceProvider.Settings.get -> NuGet.Configuration.ISettings!
+NuGet.Configuration.PackageSourceProvider.UpdatePackageSource(NuGet.Configuration.PackageSource! source, bool updateCredentials, bool updateEnabled) -> void
 NuGet.Configuration.ProxyCache
 ~NuGet.Configuration.ProxyCache.Add(System.Net.IWebProxy proxy) -> void
 ~NuGet.Configuration.ProxyCache.GetCredential(System.Uri proxyAddress, string authType) -> System.Net.NetworkCredential
@@ -401,7 +401,7 @@ override NuGet.Configuration.UnknownItem.IsEmpty() -> bool
 ~override NuGet.Configuration.VirtualSettingSection.Clone() -> NuGet.Configuration.SettingBase
 ~override sealed NuGet.Configuration.AddItem.Equals(object other) -> bool
 override sealed NuGet.Configuration.AddItem.GetHashCode() -> int
-~static NuGet.Configuration.ConfigurationDefaults.Instance.get -> NuGet.Configuration.ConfigurationDefaults
+static NuGet.Configuration.ConfigurationDefaults.Instance.get -> NuGet.Configuration.ConfigurationDefaults!
 ~static NuGet.Configuration.EncryptionUtility.DecryptString(string encryptedString) -> string
 ~static NuGet.Configuration.EncryptionUtility.EncryptString(string value) -> string
 ~static NuGet.Configuration.NuGetPathContext.Create(NuGet.Configuration.ISettings settings) -> NuGet.Configuration.NuGetPathContext
@@ -409,7 +409,7 @@ override sealed NuGet.Configuration.AddItem.GetHashCode() -> int
 ~static NuGet.Configuration.NullSettings.Instance.get -> NuGet.Configuration.NullSettings
 ~static NuGet.Configuration.PackageSourceCredential.FromUserInput(string source, string username, string password, bool storePasswordInClearText, string validAuthenticationTypesText) -> NuGet.Configuration.PackageSourceCredential
 static NuGet.Configuration.PackageSourceMapping.GetPackageSourceMapping(NuGet.Configuration.ISettings! settings) -> NuGet.Configuration.PackageSourceMapping!
-~static NuGet.Configuration.PackageSourceProvider.LoadPackageSources(NuGet.Configuration.ISettings settings) -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource>
+static NuGet.Configuration.PackageSourceProvider.LoadPackageSources(NuGet.Configuration.ISettings! settings) -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>!
 ~static NuGet.Configuration.ProxyCache.Instance.get -> NuGet.Configuration.ProxyCache
 ~static NuGet.Configuration.Settings.ApplyEnvironmentTransform(string value) -> string
 ~static NuGet.Configuration.Settings.GetFileNameAndItsRoot(string root, string settingsPath) -> System.Tuple<string, string>

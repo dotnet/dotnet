@@ -66,13 +66,13 @@ readmeMetadata +
                     // Assert
                     if (readmeMetadataExists)
                     {
-                        Assert.False(issues.Any(p => p.Message.Contains(AnalysisResources.MissingReadmeInformation)));
+                        Assert.DoesNotContain(issues, p => p.Message.Contains(AnalysisResources.MissingReadmeInformation));
                     }
                     else
                     {
-                        Assert.True(issues.Any(p => p.Message.Contains(string.Format(AnalysisResources.MissingReadmeInformation, "test.1.0.0")) &&
+                        Assert.Contains(issues, p => p.Message.Contains(string.Format(AnalysisResources.MissingReadmeInformation, "test.1.0.0")) &&
                         p.Code == NuGetLogCode.Undefined &&
-                        p.Level == LogLevel.Minimal));
+                        p.Level == LogLevel.Minimal);
                     }
                 }
             }

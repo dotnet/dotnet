@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -134,9 +133,14 @@ namespace NuGet.Commands
                 // if the message is not suppressed then check if it needs to be upgraded to an error
                 UpgradeWarningToErrorIfNeeded(message);
 
+                if (string.IsNullOrEmpty(message.ProjectPath))
+                {
+                    message.ProjectPath = ProjectPath;
+                }
+
                 if (string.IsNullOrEmpty(message.FilePath))
                 {
-                    message.FilePath = message.ProjectPath ?? ProjectPath;
+                    message.FilePath = message.ProjectPath;
                 }
 
                 if (CollectMessage(message.Level))
@@ -162,6 +166,11 @@ namespace NuGet.Commands
                 if (string.IsNullOrEmpty(message.FilePath))
                 {
                     message.FilePath = message.ProjectPath ?? ProjectPath;
+                }
+
+                if (string.IsNullOrEmpty(message.ProjectPath))
+                {
+                    message.ProjectPath = ProjectPath;
                 }
 
                 if (CollectMessage(message.Level))

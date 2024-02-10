@@ -127,9 +127,11 @@ namespace NuGet.VisualStudio.Internal.Contracts
 
                                 for (var i = 0; i < targetGraphsCount; ++i)
                                 {
-                                    string targetGraph = reader.ReadString();
-
-                                    list.Add(targetGraph);
+                                    string? targetGraph = reader.ReadString();
+                                    if (targetGraph != null)
+                                    {
+                                        list.Add(targetGraph);
+                                    }
                                 }
 
                                 targetGraphs = list;

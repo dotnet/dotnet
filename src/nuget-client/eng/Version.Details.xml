@@ -30,6 +30,10 @@
       <Uri>https://github.com/aspnet/xdt</Uri>
       <Sha>d4d088b6a9c793525b1a27a119cb66ba4587bb39</Sha>
     </Dependency>
+    <Dependency Name="System.CommandLine" Version="2.0.0-beta4.24068.1">
+      <Uri>https://github.com/dotnet/command-line-api</Uri>
+      <Sha>ecd2ce5eafbba3008a7d4f5d04b025d30928c812</Sha>
+    </Dependency>
     <Dependency Name="System.ComponentModel.Composition" Version="4.5.0">
       <Uri>https://github.com/dotnet/corefx</Uri>
       <Sha>30ab651fcb4354552bd4891619a0bdd81e0ebdbf</Sha>

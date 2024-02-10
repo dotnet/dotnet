@@ -1,1 +1,2 @@
 #nullable enable
+static NuGet.Common.MSBuildStringUtility.GetNuGetLogCodes(string! s) -> System.Collections.Generic.IList<NuGet.Common.NuGetLogCode>!

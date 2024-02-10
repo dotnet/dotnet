@@ -172,6 +172,41 @@ namespace NuGet.ProjectModel
             _writer.WriteEndArray();
         }
 
+        public void WriteNonEmptyNameArray(string name, IEnumerable<string> values)
+        {
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+
+            ThrowIfDisposed();
+            ThrowIfReadOnly();
+
+            // Manually enumerate the IEnumerable so we only write the name
+            // when there are corresponding values and avoid potentially expensive
+            // multiple enumeration.
+            var enumerator = values.GetEnumerator();
+            if (!enumerator.MoveNext())
+            {
+                return;
+            }
+
+            _writer.WritePropertyName(name);
+            _writer.WriteStartArray();
+            _writer.WriteValue(enumerator.Current);
+            while (enumerator.MoveNext())
+            {
+                _writer.WriteValue(enumerator.Current);
+            }
+
+            _writer.WriteEndArray();
+        }
+
         /// <summary>
         /// Gets the hash for the object.
         ///

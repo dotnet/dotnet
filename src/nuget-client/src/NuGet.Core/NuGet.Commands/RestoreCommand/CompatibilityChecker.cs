@@ -455,20 +455,35 @@ namespace NuGet.Commands
         {
             // Use data from the current lock file if it exists.
             LockFileTargetLibrary targetLibrary = null;
-            var target = _lockFile.Targets.FirstOrDefault(t => Equals(t.TargetFramework, graph.Framework) && string.Equals(t.RuntimeIdentifier, graph.RuntimeIdentifier, StringComparison.Ordinal));
-            if (target != null)
+
+            for (int i = 0; i < _lockFile.Targets.Count; ++i)
             {
-                targetLibrary = target.Libraries
-                    .FirstOrDefault(t => t.Name.Equals(libraryId.Name, StringComparison.OrdinalIgnoreCase) && t.Version.Equals(libraryId.Version));
+                var target = _lockFile.Targets[i];
+                if (Equals(target.TargetFramework, graph.Framework) && string.Equals(target.RuntimeIdentifier, graph.RuntimeIdentifier, StringComparison.Ordinal))
+                {
+                    for (int j = 0; j < target.Libraries.Count; ++j)
+                    {
+                        var library = target.Libraries[j];
+                        if (library.Name.Equals(libraryId.Name, StringComparison.OrdinalIgnoreCase) && library.Version.Equals(libraryId.Version))
+                        {
+                            targetLibrary = library;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
             }
 
             IEnumerable<string> files = null;
-            var lockFileLibrary = _lockFile.Libraries
-                .FirstOrDefault(l => l.Name.Equals(libraryId.Name, StringComparison.OrdinalIgnoreCase) && l.Version.Equals(libraryId.Version));
-
-            if (lockFileLibrary != null)
+            for (var i = 0; i < _lockFile.Libraries.Count; i++)
             {
-                files = lockFileLibrary.Files;
+                LockFileLibrary library = _lockFile.Libraries[i];
+                if (library.Name.Equals(libraryId.Name, StringComparison.OrdinalIgnoreCase) && library.Version.Equals(libraryId.Version))
+                {
+                    files = library.Files;
+                    break;
+                }
             }
 
             if (files == null || targetLibrary == null)
