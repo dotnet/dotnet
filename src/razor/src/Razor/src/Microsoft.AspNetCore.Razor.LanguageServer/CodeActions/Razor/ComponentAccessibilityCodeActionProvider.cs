@@ -25,13 +25,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
 
 internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActionProvider
 {
-    private readonly ITagHelperFactsService _tagHelperFactsService;
-
-    public ComponentAccessibilityCodeActionProvider(ITagHelperFactsService tagHelperFactsService)
-    {
-        _tagHelperFactsService = tagHelperFactsService ?? throw new ArgumentNullException(nameof(tagHelperFactsService));
-    }
-
     public async Task<IReadOnlyList<RazorVSInternalCodeAction>?> ProvideAsync(RazorCodeActionContext context, CancellationToken cancellationToken)
     {
         using var _ = ListPool<RazorVSInternalCodeAction>.GetPooledObject(out var codeActions);
@@ -217,7 +210,7 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
             parentTagName = parentTagHelperElement.StartTag?.Name.Content ?? parentTagHelperElement.EndTag?.Name.Content;
         }
 
-        var attributes = _tagHelperFactsService.StringifyAttributes(startTag.Attributes);
+        var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
 
         // Find all matching tag helpers
         using var _ = DictionaryPool<string, TagHelperPair>.GetPooledObject(out var matching);
@@ -313,11 +306,11 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         {
             DocumentChanges = new TextDocumentEdit[]
             {
-                    new TextDocumentEdit()
-                    {
-                        TextDocument = codeDocumentIdentifier,
-                        Edits = textEdits.ToArray(),
-                    }
+                new TextDocumentEdit()
+                {
+                    TextDocument = codeDocumentIdentifier,
+                    Edits = textEdits.ToArray(),
+                }
             },
         };
     }

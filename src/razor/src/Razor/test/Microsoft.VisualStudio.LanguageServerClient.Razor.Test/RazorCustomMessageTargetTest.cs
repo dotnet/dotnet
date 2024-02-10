@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.VisualStudio.Editor.Razor.Settings;
 using Microsoft.VisualStudio.Editor.Razor.Snippets;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -42,7 +42,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         : base(testOutput)
     {
         _textBuffer = new TestTextBuffer(new StringTextSnapshot(string.Empty));
-        _editorSettingsManager = new ClientSettingsManager(Array.Empty<ClientSettingsChangedTrigger>());
+        _editorSettingsManager = new ClientSettingsManager(Array.Empty<IClientSettingsChangedTrigger>());
     }
 
     [Fact]

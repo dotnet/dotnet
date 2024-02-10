@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Xunit;

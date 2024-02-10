@@ -3,9 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.TextManager.Interop;
@@ -16,45 +19,21 @@ namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 // Similar to the DocumentProvider in dotnet/Roslyn - but simplified quite a bit to remove
 // concepts that we don't need. Responsible for providing data about text changes for documents
 // and editor open/closed state.
-internal class VisualStudioEditorDocumentManager : EditorDocumentManagerBase
+[Export(typeof(IEditorDocumentManager))]
+[method: ImportingConstructor]
+internal sealed class VisualStudioEditorDocumentManager(
+    SVsServiceProvider serviceProvider,
+    IVsEditorAdaptersFactoryService editorAdaptersFactory,
+    IFileChangeTrackerFactory fileChangeTrackerFactory,
+    ProjectSnapshotManagerDispatcher dispatcher,
+    JoinableTaskContext joinableTaskContext) : EditorDocumentManager(fileChangeTrackerFactory, dispatcher, joinableTaskContext)
 {
-    private readonly IVsEditorAdaptersFactoryService _editorAdaptersFactory;
+    private readonly IVsRunningDocumentTable4 _runningDocumentTable = serviceProvider.GetService<SVsRunningDocumentTable, IVsRunningDocumentTable4>(throwOnFailure: true).AssumeNotNull();
+    private readonly IVsEditorAdaptersFactoryService _editorAdaptersFactory = editorAdaptersFactory;
 
-    private readonly IVsRunningDocumentTable4 _runningDocumentTable;
-
-    private readonly Dictionary<uint, List<DocumentKey>> _documentsByCookie;
-    private readonly Dictionary<DocumentKey, uint> _cookiesByDocument;
+    private readonly Dictionary<uint, List<DocumentKey>> _documentsByCookie = [];
+    private readonly Dictionary<DocumentKey, uint> _cookiesByDocument = [];
     private bool _advised;
-
-    public VisualStudioEditorDocumentManager(
-        ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-        JoinableTaskContext joinableTaskContext,
-        FileChangeTrackerFactory fileChangeTrackerFactory,
-        IVsRunningDocumentTable runningDocumentTable,
-        IVsEditorAdaptersFactoryService editorAdaptersFactory)
-        : base(projectSnapshotManagerDispatcher, joinableTaskContext, fileChangeTrackerFactory)
-    {
-        if (runningDocumentTable is null)
-        {
-            throw new ArgumentNullException(nameof(runningDocumentTable));
-        }
-
-        if (editorAdaptersFactory is null)
-        {
-            throw new ArgumentNullException(nameof(editorAdaptersFactory));
-        }
-
-        if (fileChangeTrackerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(fileChangeTrackerFactory));
-        }
-
-        _runningDocumentTable = (IVsRunningDocumentTable4)runningDocumentTable;
-        _editorAdaptersFactory = editorAdaptersFactory;
-
-        _documentsByCookie = new Dictionary<uint, List<DocumentKey>>();
-        _cookiesByDocument = new Dictionary<DocumentKey, uint>();
-    }
 
     protected override ITextBuffer? GetTextBufferForOpenDocument(string filePath)
     {

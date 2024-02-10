@@ -235,7 +235,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
                 {
                     UninitializeProjectUnsafe(projectKey);
 
-                    var hostProject = new HostProject(newProjectFilePath, current.IntermediateOutputPath, current.Configuration, current.RootNamespace, current.DisplayName);
+                    var hostProject = new HostProject(newProjectFilePath, current.IntermediateOutputPath, current.Configuration, current.RootNamespace);
                     UpdateProjectUnsafe(hostProject);
 
                     // This should no-op in the common case, just putting it here for insurance.
@@ -330,6 +330,20 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
     private Task UnconfiguredProject_ProjectRenamingAsync(object? sender, ProjectRenamedEventArgs args)
         => OnProjectRenamingAsync(args.OldFullPath, args.NewFullPath);
 
+    protected bool TryGetBeforeIntermediateOutputPath(IImmutableDictionary<string, IProjectChangeDescription> state,
+        [NotNullWhen(returnValue: true)] out string? path)
+    {
+        if (!state.TryGetValue(ConfigurationGeneralSchemaName, out var rule))
+        {
+            path = null;
+            return false;
+        }
+
+        var beforeValues = rule.Before;
+
+        return TryGetIntermediateOutputPathFromProjectRuleSnapshot(beforeValues, out path);
+    }
+
     // virtual for testing
     protected virtual bool TryGetIntermediateOutputPath(
         IImmutableDictionary<string, IProjectRuleSnapshot> state,
@@ -341,6 +355,11 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
             return false;
         }
 
+        return TryGetIntermediateOutputPathFromProjectRuleSnapshot(rule, out path);
+    }
+
+    private bool TryGetIntermediateOutputPathFromProjectRuleSnapshot(IProjectRuleSnapshot rule, out string? path)
+    {
         if (!rule.Properties.TryGetValue(BaseIntermediateOutputPathPropertyName, out var baseIntermediateOutputPathValue))
         {
             path = null;

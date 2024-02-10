@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
@@ -26,7 +27,7 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
         var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(3);
 
         // Act
-        var attributes = TagHelperFactsService.StringifyAttributes(startTag.Attributes);
+        var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
 
         // Assert
         Assert.Collection(
@@ -47,7 +48,7 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
         var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(3);
 
         // Act
-        var attributes = TagHelperFactsService.StringifyAttributes(startTag.Attributes);
+        var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
 
         // Assert
         Assert.Collection(
@@ -68,7 +69,7 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
         var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(3);
 
         // Act
-        var attributes = TagHelperFactsService.StringifyAttributes(startTag.Attributes);
+        var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
 
         // Assert
         Assert.Collection(
@@ -89,7 +90,7 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
         var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(3);
 
         // Act
-        var attributes = TagHelperFactsService.StringifyAttributes(startTag.Attributes);
+        var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
 
         // Assert
         Assert.Collection(
@@ -122,7 +123,7 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
         var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
-        var attributes = TagHelperFactsService.StringifyAttributes(startTag.Attributes);
+        var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
 
         // Assert
         Assert.Collection(
@@ -155,7 +156,7 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
         var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
-        var attributes = TagHelperFactsService.StringifyAttributes(startTag.Attributes);
+        var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
 
         // Assert
         Assert.Collection(
@@ -179,7 +180,7 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
         var startTag = (MarkupStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
-        var attributes = TagHelperFactsService.StringifyAttributes(startTag.Attributes);
+        var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
 
         // Assert
         Assert.Collection(
@@ -203,7 +204,7 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
         var startTag = (MarkupStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
-        var attributes = TagHelperFactsService.StringifyAttributes(startTag.Attributes);
+        var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
 
         // Assert
         Assert.Collection(
@@ -227,7 +228,7 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
         var startTag = (MarkupStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
-        var attributes = TagHelperFactsService.StringifyAttributes(startTag.Attributes);
+        var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
 
         // Assert
         Assert.Collection(

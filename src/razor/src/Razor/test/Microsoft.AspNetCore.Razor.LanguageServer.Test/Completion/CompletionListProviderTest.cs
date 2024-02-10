@@ -105,7 +105,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
             VSInternalCompletionList completionList,
             IEnumerable<string> triggerCharacters,
             IRazorLoggerFactory loggerFactory)
-            : base(completionFactsService: null, htmlFactsService: null, completionListCache: null, loggerFactory)
+            : base(completionFactsService: null, completionListCache: null, loggerFactory)
         {
             _completionList = completionList;
             TriggerCharacters = triggerCharacters.ToImmutableHashSet();

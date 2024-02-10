@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Moq;
 using Xunit;
@@ -37,10 +38,12 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
     public async Task Handle_Disposed_Noops()
     {
         // Arrange
+        var projectSnapshotManagerAccessor = Mock.Of<IProjectSnapshotManagerAccessor>(MockBehavior.Strict);
         var directoryPathResolver = new Mock<WorkspaceDirectoryPathResolver>(MockBehavior.Strict);
         directoryPathResolver.Setup(resolver => resolver.Resolve())
             .Throws<Exception>();
         var configurationFileEndpoint = new MonitorProjectConfigurationFilePathEndpoint(
+            projectSnapshotManagerAccessor,
             Dispatcher,
             directoryPathResolver.Object,
             Enumerable.Empty<IProjectConfigurationFileChangeListener>(),
@@ -67,10 +70,12 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
     public async Task Handle_ConfigurationFilePath_UntrackedMonitorNoops()
     {
         // Arrange
+        var projectSnapshotManagerAccessor = Mock.Of<IProjectSnapshotManagerAccessor>(MockBehavior.Strict);
         var directoryPathResolver = new Mock<WorkspaceDirectoryPathResolver>(MockBehavior.Strict);
         directoryPathResolver.Setup(resolver => resolver.Resolve())
             .Throws<Exception>();
         var configurationFileEndpoint = new MonitorProjectConfigurationFilePathEndpoint(
+            projectSnapshotManagerAccessor,
             Dispatcher,
             directoryPathResolver.Object,
             Enumerable.Empty<IProjectConfigurationFileChangeListener>(),
@@ -414,6 +419,51 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
         Assert.Equal(0, release1Detector.StopCount);
     }
 
+    [Fact]
+    public async Task Handle_ConfigurationFilePath_TrackedMonitor_RemovesProject()
+    {
+        // Arrange
+        var projectSnapshotManagerAccessor = new Mock<IProjectSnapshotManagerAccessor>(MockBehavior.Strict);
+
+        var detector = new TestFileChangeDetector();
+        var configurationFileEndpoint = new TestMonitorProjectConfigurationFilePathEndpoint(
+            () => detector,
+            Dispatcher,
+            _directoryPathResolver,
+            Enumerable.Empty<IProjectConfigurationFileChangeListener>(),
+            LoggerFactory,
+            options: new TestLanguageServerFeatureOptions(monitorWorkspaceFolderForConfigurationFiles: false),
+            accessor: projectSnapshotManagerAccessor.Object);
+
+        var debugDirectory = PathUtilities.CreateRootedPath("externaldir", "obj", "Debug");
+        var projectKeyDirectory = PathUtilities.CreateRootedPath("dir", "obj");
+        var projectKey = TestProjectKey.Create(projectKeyDirectory);
+
+        projectSnapshotManagerAccessor
+            .Setup(a => a.Instance.ProjectRemoved(It.IsAny<ProjectKey>()))
+            .Callback((ProjectKey key) => Assert.Equal(projectKey, key));
+
+        var startRequest = new MonitorProjectConfigurationFilePathParams()
+        {
+            ProjectKeyId = projectKey.Id,
+            ConfigurationFilePath = Path.Combine(debugDirectory, "project.razor.bin")
+        };
+        var requestContext = CreateRazorRequestContext(documentContext: null);
+        await configurationFileEndpoint.HandleNotificationAsync(startRequest, requestContext, DisposalToken);
+        var stopRequest = new MonitorProjectConfigurationFilePathParams()
+        {
+            ProjectKeyId = projectKey.Id,
+            ConfigurationFilePath = null!,
+        };
+
+        // Act
+        await configurationFileEndpoint.HandleNotificationAsync(stopRequest, requestContext, DisposalToken);
+
+        // Assert
+        Assert.Equal(1, detector.StartCount);
+        Assert.Equal(1, detector.StopCount);
+    }
+
     private class TestMonitorProjectConfigurationFilePathEndpoint : MonitorProjectConfigurationFilePathEndpoint
     {
         private readonly Func<IFileChangeDetector> _fileChangeDetectorFactory;
@@ -438,8 +488,10 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
             WorkspaceDirectoryPathResolver workspaceDirectoryPathResolver,
             IEnumerable<IProjectConfigurationFileChangeListener> listeners,
             IRazorLoggerFactory loggerFactory,
-            LanguageServerFeatureOptions? options = null)
+            LanguageServerFeatureOptions? options = null,
+            IProjectSnapshotManagerAccessor? accessor = null)
             : base(
+                accessor ?? Mock.Of<IProjectSnapshotManagerAccessor>(MockBehavior.Strict),
                 projectSnapshotManagerDispatcher,
                 workspaceDirectoryPathResolver,
                 listeners,

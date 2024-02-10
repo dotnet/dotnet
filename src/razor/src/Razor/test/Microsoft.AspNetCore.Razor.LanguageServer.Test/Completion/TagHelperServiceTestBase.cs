@@ -7,11 +7,9 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis;
-using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.CodeAnalysis.Razor.Completion;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
-using DefaultRazorTagHelperCompletionService = Microsoft.VisualStudio.Editor.Razor.LanguageServerTagHelperCompletionService;
-using RazorTagHelperCompletionService = Microsoft.VisualStudio.Editor.Razor.TagHelperCompletionService;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
@@ -21,9 +19,7 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
     protected const string RazorFile = "test.razor";
 
     protected ImmutableArray<TagHelperDescriptor> DefaultTagHelpers { get; }
-    private protected RazorTagHelperCompletionService RazorTagHelperCompletionService { get; }
-    internal HtmlFactsService HtmlFactsService { get; }
-    private protected ITagHelperFactsService TagHelperFactsService { get; }
+    private protected ITagHelperCompletionService RazorTagHelperCompletionService { get; }
 
     public TagHelperServiceTestBase(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -249,9 +245,7 @@ public abstract class TagHelperServiceTestBase : LanguageServerTestBase
             directiveAttribute3.Build(),
             htmlTagMutator.Build());
 
-        HtmlFactsService = new DefaultHtmlFactsService();
-        TagHelperFactsService = new TagHelperFactsService();
-        RazorTagHelperCompletionService = new DefaultRazorTagHelperCompletionService(TagHelperFactsService);
+        RazorTagHelperCompletionService = new LspTagHelperCompletionService();
     }
 
     internal static RazorCodeDocument CreateCodeDocument(string text, bool isRazorFile, ImmutableArray<TagHelperDescriptor> tagHelpers)

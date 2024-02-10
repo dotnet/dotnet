@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Linq;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -11,7 +11,7 @@ using static Microsoft.VisualStudio.Editor.Razor.Snippets.XmlSnippetParser;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Snippets;
 
-[Export(typeof(SnippetCache)), Shared]
+[Export(typeof(SnippetCache))]
 internal sealed class SnippetCache
 {
     private Dictionary<SnippetLanguage, ImmutableArray<SnippetInfo>> _snippetCache = new();

@@ -9,8 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Debugging;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -122,21 +120,6 @@ public class DefaultRazorProximityExpressionResolverTest : ToolingTestBase
             TestLSPProximityExpressionProvider.Instance);
 
         return razorProximityExpressionResolver;
-    }
-
-    private class TestWorkspaceAccessor : VisualStudioWorkspaceAccessor
-    {
-        public static readonly TestWorkspaceAccessor Instance = new TestWorkspaceAccessor();
-
-        private TestWorkspaceAccessor()
-        {
-        }
-
-        public override bool TryGetWorkspace(ITextBuffer textBuffer, out CodeAnalysis.Workspace workspace)
-        {
-            workspace = TestWorkspace.Create();
-            return true;
-        }
     }
 
     private class TestLSPProximityExpressionProvider : LSPProximityExpressionsProvider
