@@ -1302,7 +1302,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
                 // Assert
                 Assert.False(result.Success);
-                Assert.True(logger.ErrorMessages.Any(s => s.Contains("Cycle detected")));
+                Assert.Contains(logger.ErrorMessages, s => s.Contains("Cycle detected"));
             }
         }
 
@@ -2272,7 +2272,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 Assert.True(result.Success);
                 Assert.NotNull(targetLib);
                 Assert.Equal(1, targetLib.Dependencies.Count);
-                Assert.True(targetLib.Dependencies.Any(d => d.Id == packageName));
+                Assert.Contains(targetLib.Dependencies, d => d.Id == packageName);
             }
         }
 
@@ -3209,9 +3209,56 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             }
         }
 
-        private static PackageSpec GetPackageSpec(string projectName, string testDirectory, string referenceSpec)
+        [Fact]
+        public async Task ExecuteAsync_ProjectWithWarnings_SkipsWritingAssetsFileWhenUpToDate()
         {
-            return JsonPackageSpecReader.GetPackageSpec(referenceSpec, projectName, testDirectory).WithTestRestoreMetadata();
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var projectName = "TestProject";
+            var projectPath = Path.Combine(pathContext.SolutionRoot, projectName);
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(projectName, pathContext.SolutionRoot, "net472", "a");
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext("a", "1.5.0"));
+
+            var logger = new TestLogger();
+
+            // Pre-Conditions
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+            var restoreCommand = new RestoreCommand(request);
+            RestoreResult result = await restoreCommand.ExecuteAsync();
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+            await result.CommitAsync(logger, CancellationToken.None);
+            var logMessages = result.LogMessages;
+            logMessages.Should().HaveCount(1);
+            logMessages[0].Code.Should().Be(NuGetLogCode.NU1603);
+            DateTime assetsFileWriteTime = GetFileLastWriteTime(result.LockFilePath);
+
+            // Act
+            var forceRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+            forceRequest.AllowNoOp = false;
+            var forceRestoreCommand = new RestoreCommand(forceRequest);
+            RestoreResult forceResult = await forceRestoreCommand.ExecuteAsync();
+            await forceResult.CommitAsync(logger, CancellationToken.None);
+
+            // Assert
+            forceResult.Success.Should().BeTrue(because: logger.ShowMessages());
+            logMessages = forceResult.LogMessages;
+            logMessages.Should().HaveCount(1);
+            logMessages[0].Code.Should().Be(NuGetLogCode.NU1603);
+
+            var currentWriteTime = GetFileLastWriteTime(result.LockFilePath);
+            currentWriteTime.Should().Be(assetsFileWriteTime);
+
+            static DateTime GetFileLastWriteTime(string path)
+            {
+                var fileInfo = new FileInfo(path);
+                fileInfo.Exists.Should().BeTrue();
+                return fileInfo.LastWriteTimeUtc;
+            }
         }
 
         private static TargetFrameworkInformation CreateTargetFrameworkInformation(List<LibraryDependency> dependencies, List<CentralPackageVersion> centralVersionsDependencies, NuGetFramework framework = null)

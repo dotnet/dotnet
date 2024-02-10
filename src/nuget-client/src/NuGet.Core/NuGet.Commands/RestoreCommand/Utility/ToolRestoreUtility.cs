@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
@@ -38,7 +39,7 @@ namespace NuGet.Commands
                         FrameworkName = framework,
                         Dependencies = new List<LibraryDependency>
                         {
-                            new LibraryDependency
+                            new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
                             {
                                 LibraryRange = new LibraryRange(id, versionRange, LibraryDependencyTarget.Package)
                             }

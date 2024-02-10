@@ -46,7 +46,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                     case OperationIdPropertyName:
                         if (!reader.TryReadNil())
                         {
-                            string guidString = reader.ReadString();
+                            string? guidString = reader.ReadString();
                             if (Guid.TryParse(guidString, out Guid operationIdGuid))
                             {
                                 operationId = operationIdGuid;

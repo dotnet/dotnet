@@ -94,7 +94,7 @@ namespace NuGet.Versioning.Test
             gitHash.Add(semVer1);
 
             // Assert
-            Assert.True(gitHash.Contains(semVer2));
+            Assert.Contains(semVer2, gitHash);
         }
     }
 }

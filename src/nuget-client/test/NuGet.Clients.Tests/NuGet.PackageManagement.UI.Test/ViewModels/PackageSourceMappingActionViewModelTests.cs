@@ -32,9 +32,9 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             var target = PackageSourceMappingActionViewModel.Create(mockUiController.Object);
 
             Assert.Equal(mockUiController.Object, target.UIController);
-            Assert.Equal(false, target.IsPackageSourceMappingEnabled);
-            Assert.Equal(false, target.CanAutomaticallyCreateSourceMapping);
-            Assert.Equal(false, target.IsPackageMapped);
+            Assert.False(target.IsPackageSourceMappingEnabled);
+            Assert.False(target.CanAutomaticallyCreateSourceMapping);
+            Assert.False(target.IsPackageMapped);
             Assert.Equal(Resources.Text_PackageMappingsDisabled, target.MappingStatus);
             Assert.Equal(KnownMonikers.StatusInformation, target.MappingStatusIcon);
             Assert.Null(target.PackageId);
@@ -66,9 +66,9 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
 
             // Assert
             Assert.Equal(mockUiController.Object, target.UIController);
-            Assert.Equal(true, target.IsPackageSourceMappingEnabled);
+            Assert.True(target.IsPackageSourceMappingEnabled);
             Assert.False(target.CanAutomaticallyCreateSourceMapping, "Expected default value since Selected package source is null.");
-            Assert.Equal(false, target.IsPackageMapped);
+            Assert.False(target.IsPackageMapped);
             Assert.Equal(Resources.Text_PackageMappingsNotFound, target.MappingStatus);
             Assert.Equal(KnownMonikers.StatusError, target.MappingStatusIcon);
             Assert.Null(targetPackageIdBeforeSelecting);
@@ -98,9 +98,9 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
 
             // Assert
             Assert.Equal(mockUiController.Object, target.UIController);
-            Assert.Equal(true, target.IsPackageSourceMappingEnabled);
-            Assert.Equal(false, target.CanAutomaticallyCreateSourceMapping);
-            Assert.Equal(true, target.IsPackageMapped);
+            Assert.True(target.IsPackageSourceMappingEnabled);
+            Assert.False(target.CanAutomaticallyCreateSourceMapping);
+            Assert.True(target.IsPackageMapped);
             Assert.Equal(Resources.Text_PackageMappingsFound, target.MappingStatus);
             Assert.Equal(KnownMonikers.StatusOK, target.MappingStatusIcon);
             Assert.Equal(packageId, target.PackageId);
@@ -134,13 +134,13 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             target.PackageId = packageId;
 
             // Assert
-            Assert.Equal(false, target.CanAutomaticallyCreateSourceMapping);
+            Assert.False(target.CanAutomaticallyCreateSourceMapping);
             Assert.Equal(Resources.Text_PackageMappingsNotFound, target.MappingStatus);
             Assert.Equal(KnownMonikers.StatusError, target.MappingStatusIcon);
 
             Assert.Equal(mockUiController.Object, target.UIController);
-            Assert.Equal(true, target.IsPackageSourceMappingEnabled);
-            Assert.Equal(false, target.IsPackageMapped);
+            Assert.True(target.IsPackageSourceMappingEnabled);
+            Assert.False(target.IsPackageMapped);
             Assert.Equal(packageId, target.PackageId);
         }
 
@@ -169,13 +169,13 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             target.PackageId = packageId;
 
             // Assert
-            Assert.Equal(true, target.CanAutomaticallyCreateSourceMapping);
+            Assert.True(target.CanAutomaticallyCreateSourceMapping);
             Assert.Equal(Resources.Text_PackageMappingsAutoCreate, target.MappingStatus);
             Assert.Equal(KnownMonikers.StatusInformation, target.MappingStatusIcon);
 
             Assert.Equal(mockUiController.Object, target.UIController);
-            Assert.Equal(true, target.IsPackageSourceMappingEnabled);
-            Assert.Equal(false, target.IsPackageMapped);
+            Assert.True(target.IsPackageSourceMappingEnabled);
+            Assert.False(target.IsPackageMapped);
             Assert.Equal(packageId, target.PackageId);
         }
 
@@ -225,8 +225,8 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             Assert.Equal(KnownMonikers.StatusError, target.MappingStatusIcon);
 
             Assert.Equal(mockUiController.Object, target.UIController);
-            Assert.Equal(true, target.IsPackageSourceMappingEnabled);
-            Assert.Equal(false, target.IsPackageMapped);
+            Assert.True(target.IsPackageSourceMappingEnabled);
+            Assert.False(target.IsPackageMapped);
             Assert.Equal(packageId, target.PackageId);
         }
     }

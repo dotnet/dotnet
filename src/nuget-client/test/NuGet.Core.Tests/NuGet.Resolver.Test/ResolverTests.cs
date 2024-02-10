@@ -918,7 +918,7 @@ namespace NuGet.Resolver.Test
             var context = CreatePackageResolverContext(DependencyBehavior.Lowest, target, packages);
             var solution = resolver.Resolve(context, CancellationToken.None);
 
-            Assert.True(solution.Contains(target, PackageIdentityComparer.Default));
+            Assert.Contains(target, solution, PackageIdentityComparer.Default);
         }
 
         private ResolverPackage CreatePackage(string id, string version, IDictionary<string, string> dependencies = null)

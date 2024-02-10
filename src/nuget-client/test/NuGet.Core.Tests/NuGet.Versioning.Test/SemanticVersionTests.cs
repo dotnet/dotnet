@@ -26,8 +26,8 @@ namespace NuGet.Versioning.Test
 
             // Assert
             Assert.True(successful);
-            Assert.Equal<string>(versionString, semVer!.ToFullString());
-            Assert.Equal<string>(semVer.ToNormalizedString(), semVer.ToString());
+            Assert.Equal(versionString, semVer!.ToFullString());
+            Assert.Equal(semVer.ToNormalizedString(), semVer.ToString());
         }
 
         [Theory]

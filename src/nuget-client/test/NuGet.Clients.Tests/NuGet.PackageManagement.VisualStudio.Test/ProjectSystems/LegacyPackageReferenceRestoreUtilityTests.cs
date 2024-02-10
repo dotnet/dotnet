@@ -1240,8 +1240,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                         var dependency = target.Libraries.FirstOrDefault(lib => lib.Name.Equals("packageA", StringComparison.OrdinalIgnoreCase));
 
                         Assert.NotNull(dependency);
-                        Assert.False(dependency.CompileTimeAssemblies.Any(item => item.Path.Equals("lib/net45/a.dll")));
-                        Assert.True(dependency.RuntimeAssemblies.Any(item => item.Path.Equals("lib/net45/a.dll")));
+                        Assert.DoesNotContain(dependency.CompileTimeAssemblies, item => item.Path.Equals("lib/net45/a.dll"));
+                        Assert.Contains(dependency.RuntimeAssemblies, item => item.Path.Equals("lib/net45/a.dll"));
                     }
 
                     var expectedIncludeFlags = LibraryIncludeFlags.All & ~LibraryIncludeFlags.Compile;

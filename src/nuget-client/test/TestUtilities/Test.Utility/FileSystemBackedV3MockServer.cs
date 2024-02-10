@@ -17,10 +17,12 @@ namespace Test.Utility
     {
         private string _packageDirectory;
         private readonly MockResponseBuilder _builder;
-        public FileSystemBackedV3MockServer(string packageDirectory)
+        private readonly bool _isPrivateFeed;
+        public FileSystemBackedV3MockServer(string packageDirectory, bool isPrivateFeed = false)
         {
             _packageDirectory = packageDirectory;
             _builder = new MockResponseBuilder(Uri.TrimEnd(new[] { '/' }));
+            _isPrivateFeed = isPrivateFeed;
             InitializeServer();
         }
 
@@ -44,6 +46,18 @@ namespace Test.Utility
 
             Get.Add("/", request =>
             {
+                if (_isPrivateFeed)
+                {
+                    string authorization = request.Headers["Authorization"];
+                    if (authorization == null)
+                    {
+                        return new Action<HttpListenerResponse>(response =>
+                        {
+                            response.StatusCode = 401;
+                            response.AddHeader("WWW-Authenticate", "Basic");
+                        });
+                    }
+                }
                 return ServerHandlerV3(request);
             });
 

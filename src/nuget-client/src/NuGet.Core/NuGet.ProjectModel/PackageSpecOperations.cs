@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.Packaging.Core;
@@ -234,7 +235,7 @@ namespace NuGet.ProjectModel
             VersionRange range,
             bool centralPackageVersionsEnabled)
         {
-            var dependency = new LibraryDependency
+            var dependency = new LibraryDependency(noWarn: Array.Empty<NuGetLogCode>())
             {
                 LibraryRange = new LibraryRange(packageId, range, LibraryDependencyTarget.Package),
                 VersionCentrallyManaged = centralPackageVersionsEnabled

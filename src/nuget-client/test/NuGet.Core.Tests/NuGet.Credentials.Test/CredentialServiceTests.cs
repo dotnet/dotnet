@@ -206,7 +206,7 @@ namespace NuGet.Credentials.Test
         }
 
         [Fact]
-        public void GetCredentialsAsync_SingleThreadedAccessToEachProvider()
+        public async Task GetCredentialsAsync_SingleThreadedAccessToEachProvider()
         {
             // Arrange
             IEnumerable<ICredentialProvider> providers = new[] { _mockProvider.Object };
@@ -244,7 +244,7 @@ namespace NuGet.Credentials.Test
                     message: null,
                     cancellationToken: CancellationToken.None);
             }
-            Task.WaitAll(tasks);
+            await Task.WhenAll(tasks);
 
             // Assert
             // in this case, assert is done during provider access

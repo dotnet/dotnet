@@ -168,13 +168,18 @@ namespace NuGet.PackageManagement.VisualStudio
             return false;
         }
 
+#pragma warning disable CS0672 // Member overrides obsolete member
+        // Website project properties are only available via DTE.
         public override dynamic GetPropertyValue(string propertyName)
+#pragma warning restore CS0672 // Member overrides obsolete member
         {
             if (propertyName.Equals(RootNamespace, StringComparison.OrdinalIgnoreCase))
             {
                 return DefaultNamespace;
             }
+#pragma warning disable CS0618 // Type or member is obsolete
             return base.GetPropertyValue(propertyName);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         public override IEnumerable<string> GetDirectories(string path)

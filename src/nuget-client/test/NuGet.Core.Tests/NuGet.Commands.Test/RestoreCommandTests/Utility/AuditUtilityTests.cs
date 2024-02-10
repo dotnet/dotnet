@@ -42,7 +42,7 @@ public class AuditUtilityTests
     [InlineData("disable", false)]
     [InlineData("FALSE", false)]
     [InlineData("invalid", true, true)]
-    public void ParseEnableValue_WithValue_ReturnsExpected(string input, bool expected, bool expectLog = false)
+    public void ParseEnableValue_WithValue_ReturnsExpected(string? input, bool expected, bool expectLog = false)
     {
         // Arrange
         string projectPath = "my.csproj";
@@ -76,7 +76,6 @@ public class AuditUtilityTests
         // Assert
         context.Log.LogMessages.Count.Should().Be(2);
         context.Log.LogMessages.All(m => m.Code == NuGetLogCode.NU1900).Should().BeTrue();
-        context.Log.LogMessages.All(m => m.ProjectPath == context.ProjectFullPath).Should().BeTrue();
         context.Log.LogMessages.Where(m => m.Message.Contains("404")).Should().ContainSingle();
         context.Log.LogMessages.Where(m => m.Message.Contains("401")).Should().ContainSingle();
         context.Log.LogMessages.All(m => m.Level == LogLevel.Warning).Should().BeTrue();
@@ -227,7 +226,6 @@ public class AuditUtilityTests
             message.Message.Should().Contain("1.0.0", "Message doesn't contain package version");
             message.Message.Should().Contain(CveUrl.OriginalString, "Message doesn't contain CVE URL");
             message.Code.Should().Be(expectedCode);
-            message.ProjectPath.Should().Be(context.ProjectFullPath);
             message.LibraryId.Should().Be(packageId);
             message.TargetGraphs.Should().BeEquivalentTo(new[] { "net6.0" });
         }
@@ -357,7 +355,6 @@ public class AuditUtilityTests
             context.Log.Messages.Count.Should().Be(1);
             RestoreLogMessage message = (RestoreLogMessage)context.Log.LogMessages.Single();
             message.Message.Should().Contain(vulnerablePackage).And.Contain(vulnerableVersion);
-            message.ProjectPath.Should().Be(context.ProjectFullPath);
         }
         else
         {

@@ -1,0 +1,48 @@
+resources:
+  pipelines:
+  - pipeline: ComponentBuildUnderTest
+    source: NuGet.Client-PrivateDev
+    trigger:
+        branches:
+          - dev
+  - pipeline: DartLab
+    source: DartLab
+    branch: main
+  repositories:
+  - repository: DartLabTemplates
+    type: git
+    name: DartLab.Templates
+    ref: refs/heads/main
+
+parameters:
+- name: DartLabEnvironment
+  displayName: DartLab Environment
+  type: string
+  default: Production
+  values:
+  - Production
+  - Staging
+- name: ApexAgentCleanup
+  displayName: Delete or keep VS Apex test machine for debugging
+  type: string
+  default: delete
+  values:
+  - delete
+  - stop
+- name: isOfficialBuild
+  type: boolean
+  default: false
+
+variables:
+  DOTNET_NOLOGO: 1
+  Codeql.Enabled: ${{ parameters.isOfficialBuild }}
+  Codeql.TSAEnabled: ${{ parameters.isOfficialBuild }}
+
+extends:
+# Dartlab's template defines this in its own stage
+  template: templates/Apex_Tests_On_Windows_Daily.yml
+  parameters:
+    isOfficialBuild: ${{parameters.isOfficialBuild}}
+    dartLabEnvironment: ${{parameters.DartLabEnvironment}}
+    testExecutionJobTimeoutInMinutes: 150
+    testMachineCleanUpStrategy: ${{parameters.ApexAgentCleanup}}

@@ -103,13 +103,13 @@ namespace NuGet.Test
 
             Assert.Equal(4, dependentsDict.Count);
             Assert.Equal(B1, keysList[0]);
-            Assert.True(valuesList[0].Contains(A1));
+            Assert.Contains(A1, valuesList[0]);
             Assert.Equal(C1, keysList[1]);
-            Assert.True(valuesList[1].Contains(A1));
+            Assert.Contains(A1, valuesList[1]);
             Assert.Equal(D1, keysList[2]);
-            Assert.True(valuesList[2].Contains(C1));
+            Assert.Contains(C1, valuesList[2]);
             Assert.Equal(E1, keysList[3]);
-            Assert.True(valuesList[3].Contains(C1));
+            Assert.Contains(C1, valuesList[3]);
         }
 
         [Fact]
@@ -125,11 +125,11 @@ namespace NuGet.Test
 
             Assert.Equal(2, dependenciesDict.Count);
             Assert.Equal(A1, keysList[0]);
-            Assert.True(valuesList[0].Contains(B1));
-            Assert.True(valuesList[0].Contains(C1));
+            Assert.Contains(B1, valuesList[0]);
+            Assert.Contains(C1, valuesList[0]);
             Assert.Equal(C1, keysList[1]);
-            Assert.True(valuesList[1].Contains(D1));
-            Assert.True(valuesList[1].Contains(E1));
+            Assert.Contains(D1, valuesList[1]);
+            Assert.Contains(E1, valuesList[1]);
         }
 
         [Fact]

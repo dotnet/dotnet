@@ -340,7 +340,6 @@ namespace NuGet.ProjectModel
                     SetArrayValue(writer, "noWarn", msbuildMetadata
                        .ProjectWideWarningProperties
                        .NoWarn
-                       .ToArray()
                        .OrderBy(c => c)
                        .Select(c => c.GetName())
                        .Where(c => !string.IsNullOrEmpty(c)));
@@ -351,7 +350,6 @@ namespace NuGet.ProjectModel
                     SetArrayValue(writer, "warnAsError", msbuildMetadata
                         .ProjectWideWarningProperties
                         .WarningsAsErrors
-                        .ToArray()
                         .OrderBy(c => c)
                         .Select(c => c.GetName())
                         .Where(c => !string.IsNullOrEmpty(c)));
@@ -362,7 +360,6 @@ namespace NuGet.ProjectModel
                     SetArrayValue(writer, "warnNotAsError", msbuildMetadata
                         .ProjectWideWarningProperties
                         .WarningsNotAsErrors
-                        .ToArray()
                         .OrderBy(c => c)
                         .Select(c => c.GetName())
                         .Where(c => !string.IsNullOrEmpty(c)));
@@ -495,8 +492,8 @@ namespace NuGet.ProjectModel
                     {
                         SetArrayValue(writer, "noWarn", dependency
                             .NoWarn
-                            .OrderBy(c => c)
                             .Distinct()
+                            .OrderBy(c => c)
                             .Select(code => code.GetName())
                             .Where(s => !string.IsNullOrEmpty(s)));
                     }
@@ -663,9 +660,9 @@ namespace NuGet.ProjectModel
             }
             else
             {
-                foreach (var dependency in centralPackageVersions.OrderBy(dep => dep.Name))
+                foreach (var dependency in centralPackageVersions.OrderBy(dep => dep.Name, StringComparer.OrdinalIgnoreCase))
                 {
-                    writer.WriteNameValue(name: dependency.Name, value: dependency.VersionRange.ToNormalizedString());
+                    writer.WriteNameValue(name: dependency.Name, value: dependency.VersionRange.OriginalString ?? dependency.VersionRange.ToNormalizedString());
                 }
             }
 
@@ -698,9 +695,9 @@ namespace NuGet.ProjectModel
 
         private static void SetArrayValue(IObjectWriter writer, string name, IEnumerable<string> values)
         {
-            if (values != null && values.Any())
+            if (values != null)
             {
-                writer.WriteNameArray(name, values);
+                writer.WriteNonEmptyNameArray(name, values);
             }
         }
 

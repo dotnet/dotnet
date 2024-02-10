@@ -175,7 +175,7 @@ namespace NuGet.CommandLine.Test
                 }
                 else if (version == null)
                 {
-                    Assert.True(new List<string> { msbuild14, msbuild15 }.Contains(toolset.Path));
+                    Assert.Contains(toolset.Path, new List<string> { msbuild14, msbuild15 });
                 }
             }
         }

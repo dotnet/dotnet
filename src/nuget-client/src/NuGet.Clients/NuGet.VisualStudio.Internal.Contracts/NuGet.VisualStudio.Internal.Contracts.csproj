@@ -6,6 +6,7 @@
     <IncludeInVsix>true</IncludeInVsix>
     <RootNamespace>NuGet.VisualStudio.Internal.Contracts</RootNamespace>
     <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);CS8602</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

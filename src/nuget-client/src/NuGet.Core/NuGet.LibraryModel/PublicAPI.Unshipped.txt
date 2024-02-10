@@ -1,1 +1,2 @@
 #nullable enable
+NuGet.LibraryModel.LibraryDependency.LibraryDependency(System.Collections.Generic.IList<NuGet.Common.NuGetLogCode>! noWarn) -> void

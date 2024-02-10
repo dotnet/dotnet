@@ -87,6 +87,8 @@ namespace NuGet.Test.Utility
 
             public DateTimeOffset? Published => DateTimeOffset.Now;
 
+            public IReadOnlyList<string> OwnersList => null;
+
             public string Owners => string.Empty;
 
             public bool RequireLicenseAcceptance => false;

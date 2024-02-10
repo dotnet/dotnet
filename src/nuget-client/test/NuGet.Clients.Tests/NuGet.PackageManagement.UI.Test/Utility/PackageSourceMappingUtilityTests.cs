@@ -144,7 +144,7 @@ namespace NuGet.PackageManagement.UI.Test.Utility
                 Assert.Equal(1, newSourceMappings.Count);
                 Assert.True(newSourceMappings.ContainsKey(selectedSourceName));
                 Assert.Equal(1, newSourceMappings[selectedSourceName].Count);
-                Assert.True(newSourceMappings[selectedSourceName].Contains(packageC.Id));
+                Assert.Contains(packageC.Id, newSourceMappings[selectedSourceName]);
             }
         }
 
@@ -229,7 +229,7 @@ namespace NuGet.PackageManagement.UI.Test.Utility
                 Assert.Equal(1, newSourceMappings.Count);
                 Assert.True(newSourceMappings.ContainsKey(nupkgMetadataSourceName));
                 Assert.Equal(1, newSourceMappings[nupkgMetadataSourceName].Count);
-                Assert.True(newSourceMappings[nupkgMetadataSourceName].Contains(packageC.Id));
+                Assert.Contains(packageC.Id, newSourceMappings[nupkgMetadataSourceName]);
             }
         }
 

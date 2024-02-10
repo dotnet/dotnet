@@ -196,7 +196,7 @@ namespace NuGet.Build.Tasks.Pack.Test
                     var contentItems = nupkgReader.GetFiles().ToList();
                     foreach (var expectedPackagePath in expectedPackagePaths.Split(';'))
                     {
-                        Assert.True(contentItems.Contains(expectedPackagePath));
+                        Assert.Contains(expectedPackagePath, contentItems);
                     }
                 }
             }
@@ -240,7 +240,7 @@ namespace NuGet.Build.Tasks.Pack.Test
                     var contentItems = nupkgReader.GetFiles().ToList();
                     foreach (var expectedPackagePath in expectedPackagePaths.Split(';'))
                     {
-                        Assert.True(contentItems.Contains(expectedPackagePath));
+                        Assert.Contains(expectedPackagePath, contentItems);
                     }
                 }
             }
@@ -284,7 +284,7 @@ namespace NuGet.Build.Tasks.Pack.Test
                     var contentItems = nupkgReader.GetFiles().ToList();
                     foreach (var expectedPackagePath in expectedPackagePaths.Split(';'))
                     {
-                        Assert.True(contentItems.Contains(expectedPackagePath));
+                        Assert.Contains(expectedPackagePath, contentItems);
                     }
                 }
             }

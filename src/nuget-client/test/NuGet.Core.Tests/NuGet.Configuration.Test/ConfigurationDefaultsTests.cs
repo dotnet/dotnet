@@ -1,12 +1,13 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
+#nullable enable
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Xml;
+using FluentAssertions;
 using NuGet.Test.Utility;
 using Xunit;
 
@@ -51,12 +52,13 @@ namespace NuGet.Configuration
                 //Act
                 ConfigurationDefaults configDefaults = new ConfigurationDefaults(nugetConfigFileFolder, nugetConfigFile);
                 IEnumerable<PackageSource> defaultSourcesFromConfigFile = configDefaults.DefaultPackageSources;
-                string packageRestore = configDefaults.DefaultPackageRestoreConsent;
-                string packagePushSource = configDefaults.DefaultPushSource;
+                string? packageRestore = configDefaults.DefaultPackageRestoreConsent;
+                string? packagePushSource = configDefaults.DefaultPushSource;
 
                 //Assert
                 VerifyPackageSource(defaultSourcesFromConfigFile, 2, new string[] { name1, name2 }, new string[] { feed1, feed2 });
                 Assert.Equal(feed2, packagePushSource);
+                Assert.NotNull(packageRestore);
                 Assert.Equal("true", packageRestore.ToLowerInvariant());
             }
         }
@@ -267,6 +269,7 @@ namespace NuGet.Configuration
             }
         }
 
+        [Fact]
         public void GetDefaultSameNamePackageSourcesFromSourceProvider()
         {
             // Arrange
@@ -305,6 +308,7 @@ namespace NuGet.Configuration
             }
         }
 
+        [Fact]
         public void GetDefaultSameSourcePackageSourcesFromSourceProvider()
         {
             // Arrange
@@ -340,6 +344,77 @@ namespace NuGet.Configuration
                 Assert.Equal(1, packageSources.Count());
                 Assert.Equal("v2", packageSources[0].Name);
                 Assert.Equal("http://www.nuget.org/api/v2/", packageSources[0].Source);
+            }
+        }
+
+        [Fact]
+        public void DefaultAuditSources_ConfigWithoutAuditSources_ReturnsEmptyList()
+        {
+            // Arrange
+            using (var mockBaseDirectory = TestDirectory.CreateInTemp())
+            {
+                const string configurationDefaultsContent = @"<configuration />";
+                ConfigurationDefaults configurationDefaults = GetConfigurationDefaults(configurationDefaultsContent, mockBaseDirectory);
+
+                // Act
+                var defaultAuditSources = configurationDefaults.DefaultAuditSources;
+
+                // Assert
+                Assert.NotNull(defaultAuditSources);
+                Assert.Empty(defaultAuditSources);
+            }
+        }
+
+        [Fact]
+        public void DefaultAuditSources_ConfigWithAuditSources_ReturnsNonEmptyList()
+        {
+            // Arrange
+            using (var mockBaseDirectory = TestDirectory.CreateInTemp())
+            {
+                const string configurationDefaultsContent = @"<configuration>
+  <auditSources>
+    <add key=""contoso"" value=""https://contoso.text/nuget/v3/index.json"" />
+  </auditSources>
+</configuration>";
+                ConfigurationDefaults configurationDefaults = GetConfigurationDefaults(configurationDefaultsContent, mockBaseDirectory);
+
+                // Act
+                var defaultAuditSources = configurationDefaults.DefaultAuditSources;
+
+                // Assert
+                Assert.NotNull(defaultAuditSources);
+                var auditSource = Assert.Single(defaultAuditSources);
+                auditSource.Source.Should().Be("https://contoso.text/nuget/v3/index.json");
+                auditSource.Name.Should().Be("contoso");
+                auditSource.IsEnabled.Should().BeTrue();
+            }
+        }
+
+        [Fact]
+        public void DefaultAuditSources_ConfigWithDisabledAuditSources_ReturnsEmptyList()
+        {
+            // Arrange
+            using (var mockBaseDirectory = TestDirectory.CreateInTemp())
+            {
+                const string configurationDefaultsContent = @"<configuration>
+  <auditSources>
+    <add key=""contoso"" value=""https://contoso.text/nuget/v3/index.json"" />
+  </auditSources>
+  <disabledPackageSources>
+    <add key=""contoso"" value=""true"" />
+  </disabledPackageSources>
+</configuration>";
+                ConfigurationDefaults configurationDefaults = GetConfigurationDefaults(configurationDefaultsContent, mockBaseDirectory);
+
+                // Act
+                var defaultAuditSources = configurationDefaults.DefaultAuditSources;
+
+                // Assert
+                Assert.NotNull(defaultAuditSources);
+                var auditSource = Assert.Single(defaultAuditSources);
+                auditSource.Source.Should().Be("https://contoso.text/nuget/v3/index.json");
+                auditSource.Name.Should().Be("contoso");
+                auditSource.IsEnabled.Should().BeFalse();
             }
         }
 

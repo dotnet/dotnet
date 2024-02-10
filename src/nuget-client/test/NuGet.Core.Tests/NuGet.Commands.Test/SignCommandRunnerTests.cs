@@ -104,7 +104,7 @@ namespace NuGet.Commands.Test
                 testContext.Args.SignatureHashAlgorithm = HashAlgorithmName.SHA256;
                 testContext.Args.TimestampHashAlgorithm = HashAlgorithmName.SHA256;
 
-                var returncode = testContext.Runner.ExecuteCommandAsync(testContext.Args).Result;
+                var returncode = await testContext.Runner.ExecuteCommandAsync(testContext.Args);
                 Assert.Equal(returncode, 0);
 
                 var packagePaths = testContext.Args.PackagePaths;
@@ -140,7 +140,7 @@ namespace NuGet.Commands.Test
                 testContext.Args.SignatureHashAlgorithm = HashAlgorithmName.SHA256;
                 testContext.Args.TimestampHashAlgorithm = HashAlgorithmName.SHA256;
 
-                var returncode = testContext.Runner.ExecuteCommandAsync(testContext.Args).Result;
+                var returncode = await testContext.Runner.ExecuteCommandAsync(testContext.Args);
                 Assert.Equal(returncode, 0);
 
                 var packagePaths = testContext.Args.PackagePaths;
@@ -197,7 +197,7 @@ namespace NuGet.Commands.Test
                 testContext.Args.SignatureHashAlgorithm = HashAlgorithmName.SHA256;
                 testContext.Args.TimestampHashAlgorithm = HashAlgorithmName.SHA256;
 
-                var returncode = testContext.Runner.ExecuteCommandAsync(testContext.Args).Result;
+                var returncode = await testContext.Runner.ExecuteCommandAsync(testContext.Args);
                 Assert.Equal(returncode, 0);
 
                 var packagePaths = testContext.Args.PackagePaths;

@@ -44,8 +44,11 @@ namespace NuGet.VisualStudio
             {
                 var featureFlagService = await _ivsFeatureFlags.GetValueAsync();
                 await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                featureEnabled = featureFlagService.IsFeatureEnabled(featureFlag.Name, defaultValue: featureFlag.DefaultState);
-                _featureFlagCache.Add(featureFlag.Name, featureEnabled);
+                if (!_featureFlagCache.TryGetValue(featureFlag.Name, out featureEnabled))
+                {
+                    featureEnabled = featureFlagService.IsFeatureEnabled(featureFlag.Name, defaultValue: featureFlag.DefaultState);
+                    _featureFlagCache[featureFlag.Name] = featureEnabled;
+                }
             }
             return !isFeatureForcedDisabled && (isFeatureForcedEnabled || featureEnabled);
         }

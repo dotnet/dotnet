@@ -1,1 +1,2 @@
 #nullable enable
+~NuGet.ProjectModel.HashObjectWriter.WriteNonEmptyNameArray(string name, System.Collections.Generic.IEnumerable<string> values) -> void

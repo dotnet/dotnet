@@ -57,7 +57,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Utility
             // so several nuget.config including user default nuget.config'll get loaded.
             Assert.True(configPaths.Count > 1);
             // Assert user default nuget.config is loaded
-            Assert.True(configPaths.Contains(baseNugetConfigPath));
+            Assert.Contains(baseNugetConfigPath, configPaths);
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace NuGet.CommandLine.Xplat.Tests.Utility
                 List<string> configPaths = settings.GetConfigFilePaths().ToList();
                 // If optional nuget.config passed then only that 1 file get loaded.
                 Assert.Equal(1, configPaths.Count);
-                Assert.True(configPaths.Contains(tempFolderNuGetConfigPath));
+                Assert.Contains(tempFolderNuGetConfigPath, configPaths);
             }
         }
     }

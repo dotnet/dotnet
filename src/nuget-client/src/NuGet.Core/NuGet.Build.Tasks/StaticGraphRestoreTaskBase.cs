@@ -145,76 +145,77 @@ namespace NuGet.Build.Tasks
 
                     process.Exited += (sender, args) => semaphore.Release();
 
+                    Log.LogMessageFromResources(MessageImportance.Low, nameof(Strings.Log_RunningStaticGraphRestoreCommand), process.StartInfo.FileName, process.StartInfo.Arguments);
+
+                    Encoding previousConsoleInputEncoding = Console.InputEncoding;
+
+                    // Set the input encoding to UTF8 without a byte order mark, the spawned process will use this encoding on .NET Framework
+                    Console.InputEncoding = utf8Encoding;
+
                     try
                     {
-                        Log.LogMessageFromResources(MessageImportance.Low, nameof(Strings.Log_RunningStaticGraphRestoreCommand), process.StartInfo.FileName, process.StartInfo.Arguments);
+                        process.Start();
+                    }
+                    catch (Exception e)
+                    {
+                        Log.LogErrorFromResources(nameof(Strings.Error_StaticGraphRestoreFailedToStart), e.Message);
 
-                        Encoding previousConsoleInputEncoding = Console.InputEncoding;
+                        return false;
+                    }
+                    finally
+                    {
+                        Console.InputEncoding = previousConsoleInputEncoding;
+                    }
 
-                        // Set the input encoding to UTF8 without a byte order mark, the spawned process will use this encoding on .NET Framework
-                        Console.InputEncoding = utf8Encoding;
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
 
-                        try
-                        {
-                            process.Start();
-                        }
-                        catch (Exception e)
-                        {
-                            Log.LogErrorFromResources(nameof(Strings.Error_StaticGraphRestoreFailedToStart), e.Message);
+                    if (SerializeGlobalProperties)
+                    {
+                        using var writer = new BinaryWriter(process.StandardInput.BaseStream, utf8Encoding, leaveOpen: true);
 
-                            return false;
-                        }
-                        finally
-                        {
-                            Console.InputEncoding = previousConsoleInputEncoding;
-                        }
+                        WriteGlobalProperties(writer, globalProperties);
+                    }
 
-                        process.BeginOutputReadLine();
-                        process.BeginErrorReadLine();
+                    process.StandardInput.Close();
 
-                        if (SerializeGlobalProperties)
-                        {
-                            using var writer = new BinaryWriter(process.StandardInput.BaseStream, utf8Encoding, leaveOpen: true);
-
-                            WriteGlobalProperties(writer, globalProperties);
-                        }
-
-                        process.StandardInput.Close();
-
+                    try
+                    {
                         semaphore.Wait(_cancellationTokenSource.Token);
-
-                        if (!process.HasExited)
-                        {
-                            try
-                            {
-                                process.Kill();
-                            }
-                            catch (InvalidOperationException)
-                            {
-                                // The process may have exited, in this case ignore the exception
-                            }
-                        }
-
-                        if (_cancellationTokenSource.IsCancellationRequested)
-                        {
-                            return true;
-                        }
-
-                        if (process.ExitCode > 0 && !Log.HasLoggedErrors && !errorLogged)
-                        {
-                            // All non-zero exit codes should have logged an error, if not its unexpected so log an error asking the user to file an issue
-                            Log.LogErrorFromResources(nameof(Strings.Error_StaticGraphNonZeroExitCode), process.ExitCode);
-                        }
-
-                        EmbedInBinlog = loggingQueue.FilesToEmbedInBinlog.Select(i => new TaskItem(i)).ToArray();
                     }
                     catch (Exception e) when (
                         e is OperationCanceledException
                         || (e is AggregateException aggregateException && aggregateException.InnerException is OperationCanceledException))
                     {
-                        // Build was canceled
+                        // Wait() throws when the cancellation token is triggered, this is expected so ignore the exception
+                    }
+
+                    if (!process.HasExited)
+                    {
+                        try
+                        {
+                            // Kill the process in the case of cancellation
+                            process.Kill();
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            // The process may have exited, in this case ignore the exception
+                        }
+                    }
+
+                    if (_cancellationTokenSource.IsCancellationRequested)
+                    {
+                        // Return true so the task "succeeds" in the case of cancellation so the build doesn't appear to fail
                         return true;
                     }
+
+                    if (process.ExitCode > 0 && !Log.HasLoggedErrors && !errorLogged)
+                    {
+                        // All non-zero exit codes should have logged an error, if not its unexpected so log an error asking the user to file an issue
+                        Log.LogErrorFromResources(nameof(Strings.Error_StaticGraphNonZeroExitCode), process.ExitCode);
+                    }
+
+                    EmbedInBinlog = loggingQueue.FilesToEmbedInBinlog.Select(i => new TaskItem(i)).ToArray();
                 }
             }
             catch (Exception e)

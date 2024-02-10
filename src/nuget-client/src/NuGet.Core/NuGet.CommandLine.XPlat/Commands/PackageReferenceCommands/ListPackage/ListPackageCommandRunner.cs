@@ -53,6 +53,9 @@ namespace NuGet.CommandLine.XPlat
                         listPackageArgs.Path));
                 return (GenericFailureExitCode, listPackageReportModel);
             }
+
+            PopulateSourceRepositoryCache(listPackageArgs);
+
             //If the given file is a solution, get the list of projects
             //If not, then it's a project, which is put in a list
             var projectsPaths = Path.GetExtension(listPackageArgs.Path).Equals(".sln", PathUtility.GetStringComparisonBasedOnOS()) ?
@@ -127,7 +130,6 @@ namespace NuGet.CommandLine.XPlat
                     {
                         if (listPackageArgs.ReportType != ReportType.Default)  // generic list package is offline -- no server lookups
                         {
-                            PopulateSourceRepositoryCache(listPackageArgs);
                             WarnForHttpSources(listPackageArgs, projectModel);
                             var metadata = await GetPackageMetadataAsync(frameworks, listPackageArgs);
                             await UpdatePackagesWithSourceMetadata(frameworks, metadata, listPackageArgs);

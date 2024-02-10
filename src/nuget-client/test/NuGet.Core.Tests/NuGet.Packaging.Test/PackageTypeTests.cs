@@ -144,8 +144,8 @@ namespace NuGet.Packaging.Core.Test
             };
 
             // Act & Assert
-            Assert.True(set.Contains(inSet));
-            Assert.False(set.Contains(notInSet));
+            Assert.Contains(inSet, set);
+            Assert.DoesNotContain(notInSet, set);
         }
     }
 }

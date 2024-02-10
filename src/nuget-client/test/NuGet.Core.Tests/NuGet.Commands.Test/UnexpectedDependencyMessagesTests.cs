@@ -873,11 +873,7 @@ namespace NuGet.Commands.Test
             UnexpectedDependencyMessages.HasMissingLowerBound(VersionRange.Parse(s)).Should().BeFalse();
         }
 
-        public void GivenANullRangeVerifyLowerBoundMissingIsTrue()
-        {
-            UnexpectedDependencyMessages.HasMissingLowerBound(range: null).Should().BeTrue();
-        }
-
+        [Fact]
         public void GivenTheAllRangeVerifyLowerBoundMissingIsTrue()
         {
             UnexpectedDependencyMessages.HasMissingLowerBound(VersionRange.All).Should().BeTrue();

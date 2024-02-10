@@ -74,7 +74,7 @@ namespace NuGet.CommandLine.XPlat
 
             NuGet.Common.Migrations.MigrationRunner.Run();
 
-            if (args.Count() >= 2 && args[0] == "package" && args[1] == "search")
+            if ((args.Count() >= 2 && args[0] == "package" && args[1] == "search") || (args.Any() && args[0] == "config"))
             {
                 // We are executing command `dotnet package search`
                 Func<ILoggerWithColor> getHidePrefixLogger = () =>
@@ -85,6 +85,7 @@ namespace NuGet.CommandLine.XPlat
 
                 CliCommand rootCommand = new CliCommand("package");
                 PackageSearchCommand.Register(rootCommand, getHidePrefixLogger);
+                ConfigCommand.Register(rootCommand, getHidePrefixLogger);
 
                 CancellationTokenSource tokenSource = new CancellationTokenSource();
                 tokenSource.CancelAfter(TimeSpan.FromMinutes(DotnetPackageSearchTimeOut));

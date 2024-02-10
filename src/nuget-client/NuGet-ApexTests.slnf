@@ -39,6 +39,7 @@
       "test\\NuGet.Tests.Apex\\NuGet.OptProf\\NuGet.OptProf.csproj",
       "test\\NuGet.Tests.Apex\\NuGet.PackageManagement.UI.TestContract\\NuGet.PackageManagement.UI.TestContract.csproj",
       "test\\NuGet.Tests.Apex\\NuGet.Tests.Apex\\NuGet.Tests.Apex.csproj",
+      "test\\NuGet.Tests.Apex\\NuGet.Tests.Apex.Daily\\NuGet.Tests.Apex.Daily.csproj",
       "test\\TestExtensions\\NuGet.StaFact\\NuGet.StaFact.csproj",
       "test\\TestUtilities\\Test.Utility\\Test.Utility.csproj"
     ]
