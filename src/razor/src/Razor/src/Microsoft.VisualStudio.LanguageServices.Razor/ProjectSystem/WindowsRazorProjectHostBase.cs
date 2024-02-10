@@ -17,7 +17,7 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDisposedAsync, IProjectDynamicLoadComponent
+internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnceDisposedAsync, IProjectDynamicLoadComponent
 {
     private static readonly DataflowLinkOptions s_dataflowLinkOptions = new DataflowLinkOptions() { PropagateCompletion = true };
 
@@ -401,7 +401,7 @@ internal abstract class WindowsRazorProjectHostBase : OnceInitializedOnceDispose
             }
         }
 
-        path = joinedPath;
+        path = Path.GetFullPath(joinedPath);
         return true;
     }
 

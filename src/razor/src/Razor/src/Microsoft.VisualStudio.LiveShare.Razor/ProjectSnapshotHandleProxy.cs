@@ -7,20 +7,23 @@ using Microsoft.AspNetCore.Razor.ProjectSystem;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-internal sealed class ProjectSnapshotHandleProxy
+// This type must be public because it is exposed by a public interface that is implemented as
+// an RPC proxy by live share. However, its properties and constructor are intentionally internal
+// because they expose internal compiler APIs.
+public sealed class ProjectSnapshotHandleProxy
 {
-    public Uri FilePath { get; }
-    public Uri IntermediateOutputPath { get; }
-    public RazorConfiguration Configuration { get; }
-    public string? RootNamespace { get; }
-    public ProjectWorkspaceState? ProjectWorkspaceState { get; }
+    internal Uri FilePath { get; }
+    internal Uri IntermediateOutputPath { get; }
+    internal RazorConfiguration Configuration { get; }
+    internal string? RootNamespace { get; }
+    internal ProjectWorkspaceState ProjectWorkspaceState { get; }
 
-    public ProjectSnapshotHandleProxy(
+    internal ProjectSnapshotHandleProxy(
         Uri filePath,
         Uri intermediateOutputPath,
         RazorConfiguration configuration,
         string? rootNamespace,
-        ProjectWorkspaceState? projectWorkspaceState)
+        ProjectWorkspaceState projectWorkspaceState)
     {
         FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
         IntermediateOutputPath = intermediateOutputPath ?? throw new ArgumentNullException(nameof(intermediateOutputPath));

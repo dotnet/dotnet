@@ -17,13 +17,13 @@ namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 internal class GuestProjectPathProvider(
     JoinableTaskContext joinableTaskContext,
     ITextDocumentFactoryService textDocumentFactory,
-    ProxyAccessor proxyAccessor,
-    LiveShareSessionAccessor liveShareSessionAccessor) : ILiveShareProjectPathProvider
+    IProxyAccessor proxyAccessor,
+    ILiveShareSessionAccessor liveShareSessionAccessor) : ILiveShareProjectPathProvider
 {
     private readonly JoinableTaskFactory _joinableTaskFactory = joinableTaskContext.Factory;
     private readonly ITextDocumentFactoryService _textDocumentFactory = textDocumentFactory;
-    private readonly ProxyAccessor _proxyAccessor = proxyAccessor;
-    private readonly LiveShareSessionAccessor _liveShareSessionAccessor = liveShareSessionAccessor;
+    private readonly IProxyAccessor _proxyAccessor = proxyAccessor;
+    private readonly ILiveShareSessionAccessor _liveShareSessionAccessor = liveShareSessionAccessor;
 
     public bool TryGetProjectPath(ITextBuffer textBuffer, [NotNullWhen(returnValue: true)] out string? filePath)
     {
@@ -51,8 +51,7 @@ internal class GuestProjectPathProvider(
         return true;
     }
 
-    // Internal virtual for testing
-    internal virtual Uri? GetHostProjectPath(ITextDocument textDocument)
+    private Uri? GetHostProjectPath(ITextDocument textDocument)
     {
         Assumes.NotNull(_liveShareSessionAccessor.Session);
 
@@ -75,6 +74,8 @@ internal class GuestProjectPathProvider(
     [MethodImpl(MethodImplOptions.NoInlining)]
     private string ResolveGuestPath(Uri hostProjectPath)
     {
-        return _liveShareSessionAccessor.Session!.ConvertSharedUriToLocalPath(hostProjectPath);
+        Assumes.NotNull(_liveShareSessionAccessor.Session);
+
+        return _liveShareSessionAccessor.Session.ConvertSharedUriToLocalPath(hostProjectPath);
     }
 }

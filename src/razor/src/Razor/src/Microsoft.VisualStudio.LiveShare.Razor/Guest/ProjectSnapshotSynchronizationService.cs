@@ -13,30 +13,20 @@ using IAsyncDisposable = Microsoft.VisualStudio.Threading.IAsyncDisposable;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 
-internal class ProjectSnapshotSynchronizationService : ICollaborationService, IAsyncDisposable, System.IAsyncDisposable
+internal class ProjectSnapshotSynchronizationService(
+    CollaborationSession sessionContext,
+    IProjectSnapshotManagerProxy hostProjectManagerProxy,
+    IProjectSnapshotManagerAccessor projectManagerAccessor,
+    ProjectSnapshotManagerDispatcher dispatcher,
+    IErrorReporter errorReporter,
+    JoinableTaskFactory jtf) : ICollaborationService, IAsyncDisposable, System.IAsyncDisposable
 {
-    private readonly JoinableTaskFactory _joinableTaskFactory;
-    private readonly CollaborationSession _sessionContext;
-    private readonly IProjectSnapshotManagerProxy _hostProjectManagerProxy;
-    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor;
-    private readonly IErrorReporter _errorReporter;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
-
-    public ProjectSnapshotSynchronizationService(
-        JoinableTaskFactory joinableTaskFactory,
-        CollaborationSession sessionContext,
-        IProjectSnapshotManagerProxy hostProjectManagerProxy,
-        IProjectSnapshotManagerAccessor projectManagerAccessor,
-        IErrorReporter errorReporter,
-        ProjectSnapshotManagerDispatcher dispatcher)
-    {
-        _joinableTaskFactory = joinableTaskFactory;
-        _sessionContext = sessionContext;
-        _hostProjectManagerProxy = hostProjectManagerProxy;
-        _projectManagerAccessor = projectManagerAccessor;
-        _errorReporter = errorReporter;
-        _dispatcher = dispatcher;
-    }
+    private readonly JoinableTaskFactory _jtf = jtf;
+    private readonly CollaborationSession _sessionContext = sessionContext;
+    private readonly IProjectSnapshotManagerProxy _hostProjectManagerProxy = hostProjectManagerProxy;
+    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor = projectManagerAccessor;
+    private readonly IErrorReporter _errorReporter = errorReporter;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
 
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
@@ -153,7 +143,7 @@ internal class ProjectSnapshotSynchronizationService : ICollaborationService, IA
             throw new ArgumentNullException(nameof(args));
         }
 
-        _joinableTaskFactory.Run(async () =>
+        _jtf.Run(async () =>
         {
             try
             {

@@ -1,35 +1,34 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Immutable;
-using System.Threading;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LiveShare.Razor.Test;
 using Microsoft.VisualStudio.Threading;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Host;
 
-public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDispatcherTestBase
+public class ProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDispatcherTestBase
 {
     private readonly IProjectSnapshot _projectSnapshot1;
     private readonly IProjectSnapshot _projectSnapshot2;
 
-    public DefaultProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput)
+    public ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var projectEngineFactoryProvider = Mock.Of<IProjectEngineFactoryProvider>(MockBehavior.Strict);
+        var projectEngineFactoryProvider = StrictMock.Of<IProjectEngineFactoryProvider>();
 
         var projectWorkspaceState1 = ProjectWorkspaceState.Create(ImmutableArray.Create(
             TagHelperDescriptorBuilder.Create("test1", "TestAssembly1").Build()));
@@ -55,10 +54,10 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
     {
         // Arrange
         var projectSnapshotManager = new TestProjectSnapshotManager(_projectSnapshot1, _projectSnapshot2);
-        using var proxy = new DefaultProjectSnapshotManagerProxy(
+        using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
-            Dispatcher,
             projectSnapshotManager,
+            Dispatcher,
             JoinableTaskFactory);
 
         // Act
@@ -87,11 +86,12 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
     {
         // Arrange
         var projectSnapshotManager = new TestProjectSnapshotManager(_projectSnapshot1);
-        using var proxy = new DefaultProjectSnapshotManagerProxy(
+        using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
-            Dispatcher,
             projectSnapshotManager,
+            Dispatcher,
             JoinableTaskFactory);
+        var proxyAccessor = proxy.GetTestAccessor();
         var changedArgs = new ProjectChangeEventArgs(_projectSnapshot1, _projectSnapshot1, ProjectChangeKind.ProjectChanged);
         var called = false;
         proxy.Changed += (sender, args) =>
@@ -99,27 +99,29 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
             called = true;
             Assert.Equal($"vsls:/path/to/project1.csproj", args.ProjectFilePath.ToString());
             Assert.Equal(ProjectProxyChangeKind.ProjectChanged, args.Kind);
+            Assert.NotNull(args.Newer);
             Assert.Equal("vsls:/path/to/project1.csproj", args.Newer.FilePath.ToString());
         };
 
         // Act
         projectSnapshotManager.TriggerChanged(changedArgs);
-        await proxy._processingChangedEventTestTask.JoinAsync();
+        await proxyAccessor.ProcessingChangedEventTestTask.AssumeNotNull().JoinAsync();
 
         // Assert
         Assert.True(called);
     }
 
-    [Fact]
+    [UIFact]
     public void Changed_NoopsIfProxyDisposed()
     {
         // Arrange
         var projectSnapshotManager = new TestProjectSnapshotManager(_projectSnapshot1);
-        var proxy = new DefaultProjectSnapshotManagerProxy(
+        var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
-            Dispatcher,
             projectSnapshotManager,
+            Dispatcher,
             JoinableTaskFactory);
+        var proxyAccessor = proxy.GetTestAccessor();
         var changedArgs = new ProjectChangeEventArgs(_projectSnapshot1, _projectSnapshot1, ProjectChangeKind.ProjectChanged);
         proxy.Changed += (sender, args) => throw new InvalidOperationException("Should not have been called.");
         proxy.Dispose();
@@ -128,7 +130,7 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
         projectSnapshotManager.TriggerChanged(changedArgs);
 
         // Assert
-        Assert.Null(proxy._processingChangedEventTestTask);
+        Assert.Null(proxyAccessor.ProcessingChangedEventTestTask);
     }
 
     [Fact]
@@ -136,10 +138,10 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
     {
         // Arrange
         var projectSnapshotManager = new TestProjectSnapshotManager(_projectSnapshot1);
-        using var proxy = new DefaultProjectSnapshotManagerProxy(
+        using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
-            Dispatcher,
             projectSnapshotManager,
+            Dispatcher,
             JoinableTaskFactory);
 
         // Act
@@ -155,10 +157,10 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
     {
         // Arrange
         var projectSnapshotManager = new TestProjectSnapshotManager(_projectSnapshot1, _projectSnapshot2);
-        using var proxy = new DefaultProjectSnapshotManagerProxy(
+        using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
-            Dispatcher,
             projectSnapshotManager,
+            Dispatcher,
             JoinableTaskFactory);
 
         // Act
@@ -187,10 +189,10 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
     {
         // Arrange
         var projectSnapshotManager = new TestProjectSnapshotManager(_projectSnapshot1);
-        using var proxy = new DefaultProjectSnapshotManagerProxy(
+        using var proxy = new ProjectSnapshotManagerProxy(
             new TestCollaborationSession(true),
-            Dispatcher,
             projectSnapshotManager,
+            Dispatcher,
             JoinableTaskFactory);
 
         // Act
@@ -201,13 +203,13 @@ public class DefaultProjectSnapshotManagerProxyTest : ProjectSnapshotManagerDisp
         Assert.Same(state1, state2);
     }
 
-    private class TestProjectSnapshotManager(params IProjectSnapshot[] projects) : IProjectSnapshotManager
+    private sealed class TestProjectSnapshotManager(params IProjectSnapshot[] projects) : IProjectSnapshotManager
     {
-        private ImmutableArray<IProjectSnapshot> _projects = projects.ToImmutableArray();
+        private readonly ImmutableArray<IProjectSnapshot> _projects = projects.ToImmutableArray();
 
         public ImmutableArray<IProjectSnapshot> GetProjects() => _projects;
 
-        public event EventHandler<ProjectChangeEventArgs> Changed;
+        public event EventHandler<ProjectChangeEventArgs>? Changed;
 
         public void TriggerChanged(ProjectChangeEventArgs args)
         {

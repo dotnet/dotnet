@@ -6,7 +6,9 @@ using System.Collections.Generic;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-internal sealed class ProjectSnapshotManagerProxyState(IReadOnlyList<ProjectSnapshotHandleProxy> projectHandles)
+// This type must be public because it is exposed by a public interface that is implemented as
+// an RPC proxy by live share.
+public sealed class ProjectSnapshotManagerProxyState(IReadOnlyList<ProjectSnapshotHandleProxy> projectHandles)
 {
     public IReadOnlyList<ProjectSnapshotHandleProxy> ProjectHandles { get; } = projectHandles ?? throw new ArgumentNullException(nameof(projectHandles));
 }
