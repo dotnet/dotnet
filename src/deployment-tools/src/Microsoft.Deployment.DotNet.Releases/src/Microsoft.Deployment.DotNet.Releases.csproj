@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <IsPackable Condition="'$(TargetArchitecture)' == 'x86' OR '$(DotNetBuildFromSource)' == 'true'">true</IsPackable>
+    <!-- Always produce this package in the .NET unified product build so that it may flow to downstream consumers. -->
+    <IsPackable Condition="'$(TargetArchitecture)' == 'x86' OR '$(DotNetBuild)' == 'true'">true</IsPackable>
     <IsShipping>true</IsShipping>
     <PackageId>Microsoft.Deployment.DotNet.Releases</PackageId>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>

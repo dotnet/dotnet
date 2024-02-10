@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(MSBuildThisFileDirectory)**\*.csproj" Exclude="$(MSBuildProjectFullPath)" Condition="'$(DotNetBuildFromSource)' != 'true'" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)**\*.csproj" Exclude="$(MSBuildProjectFullPath)" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
 
   <!--
