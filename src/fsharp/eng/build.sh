@@ -25,6 +25,7 @@ usage()
   echo "Test actions:"
   echo "  --testcoreclr                  Run unit tests on .NET Core (short: --test, -t)"
   echo "  --testCompilerComponentTests   Run FSharp.Compiler.ComponentTests on .NET Core"
+  echo "  --testBenchmarks               Build and Run Benchmark suite"
   echo ""
   echo "Advanced settings:"
   echo "  --ci                           Building in CI"
@@ -56,6 +57,7 @@ pack=false
 publish=false
 test_core_clr=false
 test_compilercomponent_tests=false
+test_benchmarks=false
 configuration="Debug"
 verbosity='minimal'
 binary_log=false
@@ -125,6 +127,9 @@ while [[ $# > 0 ]]; do
       ;;
     --testcompilercomponenttests)
       test_compilercomponent_tests=true
+      ;;
+      --testbenchmarks)
+      test_benchmarks=true
       ;;
     --ci)
       ci=true
@@ -264,8 +269,8 @@ function BuildSolution {
       MSBuild "$repo_root/buildtools/buildtools.proj" /restore "$bltools" /p:Configuration=$bootstrap_config
 
       mkdir -p "$bootstrap_dir"
-      cp -pr $artifacts_dir/bin/fslex/$bootstrap_config/net9.0 $bootstrap_dir/fslex
-      cp -pr $artifacts_dir/bin/fsyacc/$bootstrap_config/net9.0 $bootstrap_dir/fsyacc
+      cp -pr $artifacts_dir/bin/fslex/$bootstrap_config/net8.0 $bootstrap_dir/fslex
+      cp -pr $artifacts_dir/bin/fsyacc/$bootstrap_config/net8.0 $bootstrap_dir/fsyacc
     fi
     if [ ! -f "$bootstrap_dir/fsc.exe" ]; then
       local bltools=""
@@ -274,7 +279,7 @@ function BuildSolution {
       fi
       BuildMessage="Error building bootstrap"
       MSBuild "$repo_root/Proto.sln" /restore "$bltools" /p:Configuration=$bootstrap_config
-      cp -pr $artifacts_dir/bin/fsc/$bootstrap_config/net9.0 $bootstrap_dir/fsc
+      cp -pr $artifacts_dir/bin/fsc/$bootstrap_config/net8.0 $bootstrap_dir/fsc
     fi
   fi
 
@@ -328,6 +333,12 @@ fi
 if [[ "$test_compilercomponent_tests" == true ]]; then
   coreclrtestframework=net8.0
   TestUsingNUnit --testproject "$repo_root/tests/FSharp.Compiler.ComponentTests/FSharp.Compiler.ComponentTests.fsproj" --targetframework $coreclrtestframework  --notestfilter 
+fi
+
+if [[ "$test_benchmarks" == true ]]; then
+  pushd "$repo_root/tests/benchmarks"
+  ./SmokeTestBenchmarks.sh
+  popd
 fi
 
 ExitWithExitCode 0
