@@ -29,7 +29,7 @@ Copyright (c) .NET Foundation. All rights reserved.
   -->
   <Target Name="VSTest" DependsOnTargets="ShowInfoMessageIfProjectHasNoIsTestProjectProperty">
     <!-- Unloggable colorized output (cf. https://github.com/microsoft/vstest/issues/680) -->
-    <CallTarget Targets="_VSTestConsole" Condition="!$(VsTestUseMSBuildOutput)" />
+    <CallTarget Targets="_VSTestConsole" Condition="!$(VsTestUseMSBuildOutput) OR $(MSBUILDENSURESTDOUTFORTASKPROCESSES) == '1'" />
     <!-- Proper MSBuild integration, but no custom colorization -->
     <CallTarget Targets="_VSTestMSBuild" Condition="$(VsTestUseMSBuildOutput)" />
   </Target>

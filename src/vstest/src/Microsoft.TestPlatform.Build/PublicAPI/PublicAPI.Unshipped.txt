@@ -116,6 +116,8 @@ override Microsoft.TestPlatform.Build.Tasks.VSTestTask.Execute() -> bool
 override Microsoft.TestPlatform.Build.Tasks.VSTestTask2.GenerateCommandLineCommands() -> string?
 override Microsoft.TestPlatform.Build.Tasks.VSTestTask2.GenerateFullPathToTool() -> string?
 override Microsoft.TestPlatform.Build.Tasks.VSTestTask2.LogEventsFromTextOutput(string! singleLine, Microsoft.Build.Framework.MessageImportance messageImportance) -> void
+override Microsoft.TestPlatform.Build.Tasks.VSTestTask2.StandardErrorEncoding.get -> System.Text.Encoding!
+override Microsoft.TestPlatform.Build.Tasks.VSTestTask2.StandardOutputEncoding.get -> System.Text.Encoding!
 override Microsoft.TestPlatform.Build.Tasks.VSTestTask2.ToolName.get -> string?
 static Microsoft.TestPlatform.Build.Trace.Tracing.Trace(string! message) -> void
 static Microsoft.TestPlatform.Build.Trace.Tracing.traceEnabled -> bool

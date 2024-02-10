@@ -10,18 +10,15 @@
   <PropertyGroup Label="Configuration">
     <RootNamespace>Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests</RootNamespace>
   </PropertyGroup>
+  
   <PropertyGroup>
     <!-- TODO: Also for .NET6 ? -->
     <TargetFrameworks>net48</TargetFrameworks>
     <AssemblyName>Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests</AssemblyName>
   </PropertyGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <Reference Include="System" />
-    <Reference Include="System.Runtime" />
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
   <!-- We build this only for net48, and it fails to skip this on Linux in Aracade otherwise. -->
