@@ -7,13 +7,8 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.Editor;
 
-public abstract class ProjectSnapshotManagerDispatcherWorkspaceTestBase : WorkspaceTestBase
+public abstract class ProjectSnapshotManagerDispatcherWorkspaceTestBase(ITestOutputHelper testOutput) : WorkspaceTestBase(testOutput)
 {
-    internal ProjectSnapshotManagerDispatcher Dispatcher { get; }
-
-    protected ProjectSnapshotManagerDispatcherWorkspaceTestBase(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        Dispatcher = new TestProjectSnapshotManagerDispatcher();
-    }
+    private protected override ProjectSnapshotManagerDispatcher CreateDispatcher()
+        => new TestProjectSnapshotManagerDispatcher();
 }

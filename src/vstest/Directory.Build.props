@@ -64,6 +64,12 @@
     <!-- Naming is based on dotnet/runtime one -->
     <NetFrameworkMinimum>net462</NetFrameworkMinimum>
     <NetCoreAppMinimum>netcoreapp3.1</NetCoreAppMinimum>
+    <!--
+      Arcade is making things hard to work with. This property is unset when its value is equal to NetMinimum.
+      https://github.com/dotnet/arcade/blob/66c9c5397d599af40f2a94989241944f5a73442a/src/Microsoft.DotNet.Arcade.Sdk/tools/TargetFrameworkDefaults.props#L16-L18
+      Because I don't want to complexify further the logic on VSTest just for that, I will set it to NetMinimum.
+      -->
+    <NetPrevious Condition=" $(NetPrevious) == '' ">$(NetMinimum)</NetPrevious>
   </PropertyGroup>
 
   <!-- Build & pack config -->

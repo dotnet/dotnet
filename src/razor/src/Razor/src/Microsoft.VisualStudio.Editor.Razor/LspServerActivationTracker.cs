@@ -1,12 +1,11 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Composition;
+using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
-[Shared]
 [Export(typeof(ILspServerActivationTracker))]
 internal class LspServerActivationTracker : ILspServerActivationTracker
 {

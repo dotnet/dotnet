@@ -3,13 +3,13 @@
 
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.CodeAnalysis.Razor.Completion;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor;
 
 internal static partial class RazorWrapperFactory
 {
-    private class TagHelperCompletionServiceWrapper(TagHelperCompletionService obj) : Wrapper<TagHelperCompletionService>(obj), IRazorTagHelperCompletionService
+    private class TagHelperCompletionServiceWrapper(ITagHelperCompletionService obj) : Wrapper<ITagHelperCompletionService>(obj), IRazorTagHelperCompletionService
     {
         public IRazorElementCompletionContext CreateContext(IRazorTagHelperDocumentContext tagHelperContext, IEnumerable<string>? existingCompletions, string? containingTagName, IEnumerable<KeyValuePair<string, string>> attributes, string? containingParentTagName, bool containingParentIsTagHelper, Func<string, bool> inHTMLSchema)
             => Wrap(

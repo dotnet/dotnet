@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
 
@@ -19,6 +20,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 [RazorLanguageServerEndpoint(LanguageServerConstants.RazorMonitorProjectConfigurationFilePathEndpoint)]
 internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationHandler<MonitorProjectConfigurationFilePathParams>, IDisposable
 {
+    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly WorkspaceDirectoryPathResolver _workspaceDirectoryPathResolver;
     private readonly IEnumerable<IProjectConfigurationFileChangeListener> _listeners;
@@ -32,17 +34,14 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
     public bool MutatesSolutionState => false;
 
     public MonitorProjectConfigurationFilePathEndpoint(
+        IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
         ProjectSnapshotManagerDispatcher dispatcher,
         WorkspaceDirectoryPathResolver workspaceDirectoryPathResolver,
         IEnumerable<IProjectConfigurationFileChangeListener> listeners,
         LanguageServerFeatureOptions options,
         IRazorLoggerFactory loggerFactory)
     {
-        if (options is null)
-        {
-            throw new ArgumentNullException(nameof(options));
-        }
-
+        _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
         _dispatcher = dispatcher;
         _workspaceDirectoryPathResolver = workspaceDirectoryPathResolver;
         _listeners = listeners;
@@ -71,7 +70,9 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
         if (request.ConfigurationFilePath is null)
         {
             _logger.LogInformation("'null' configuration path provided. Stopping custom configuration monitoring for project '{0}'.", request.ProjectKeyId);
-            RemoveMonitor(request.ProjectKeyId);
+            // If we're monitoring individual project configuration files, then the config file path should only be null if we're removing the
+            // project entirely.
+            await RemoveMonitorAsync(request.ProjectKeyId, removeProject: !_options.MonitorWorkspaceFolderForConfigurationFiles, cancellationToken).ConfigureAwait(false);
 
             return;
         }
@@ -98,7 +99,7 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
                 if (previousMonitorExists)
                 {
                     _logger.LogInformation("Configuration directory changed from external directory -> internal directory for project '{0}, terminating existing monitor'.", request.ProjectKeyId);
-                    RemoveMonitor(request.ProjectKeyId);
+                    await RemoveMonitorAsync(request.ProjectKeyId, removeProject: false, cancellationToken).ConfigureAwait(false);
                 }
                 else
                 {
@@ -121,7 +122,7 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
             }
 
             _logger.LogInformation("Project configuration output path has changed. Stopping existing monitor for project '{0}' so we can restart it with a new directory.", request.ProjectKeyId);
-            RemoveMonitor(request.ProjectKeyId);
+            await RemoveMonitorAsync(request.ProjectKeyId, removeProject: false, cancellationToken).ConfigureAwait(false);
         }
 
         var detector = CreateFileChangeDetector();
@@ -162,7 +163,7 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
         }
     }
 
-    private void RemoveMonitor(string projectKeyId)
+    private async Task RemoveMonitorAsync(string projectKeyId, bool removeProject, CancellationToken cancellationToken)
     {
         // Should no longer monitor configuration output paths for the project
         if (_outputPathMonitors.TryRemove(projectKeyId, out var removedEntry))
@@ -173,6 +174,14 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
         {
             // Concurrent requests to remove the same configuration output path for the project.  We've already
             // done the removal so we can just return gracefully.
+        }
+
+        if (removeProject)
+        {
+            await _dispatcher.RunOnDispatcherThreadAsync(() =>
+            {
+                _projectSnapshotManagerAccessor.Instance.ProjectRemoved(ProjectKey.FromString(projectKeyId));
+            }, cancellationToken).ConfigureAwait(false);
         }
     }
 

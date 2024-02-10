@@ -2,16 +2,16 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.VisualStudio.LegacyEditor.Razor;
 using Microsoft.VisualStudio.Text.Editor;
-using ContextChangeEventArgsInternal = Microsoft.VisualStudio.Editor.Razor.ContextChangeEventArgs;
-using ContextChangeKindInternal = Microsoft.VisualStudio.Editor.Razor.ContextChangeKind;
+using ContextChangeEventArgsInternal = Microsoft.VisualStudio.LegacyEditor.Razor.ContextChangeEventArgs;
+using ContextChangeKindInternal = Microsoft.VisualStudio.LegacyEditor.Razor.ContextChangeKind;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor;
 
 internal static partial class RazorWrapperFactory
 {
-    private class DocumentTrackerWrapper(VisualStudioDocumentTracker obj) : Wrapper<VisualStudioDocumentTracker>(obj), IRazorDocumentTracker
+    private class DocumentTrackerWrapper(IVisualStudioDocumentTracker obj) : Wrapper<IVisualStudioDocumentTracker>(obj), IRazorDocumentTracker
     {
         private EventHandler<ContextChangeEventArgs>? _contextChanged;
 

@@ -28,18 +28,14 @@ namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 
 public abstract class LanguageServerTestBase : ToolingTestBase
 {
-    private protected ProjectSnapshotManagerDispatcher Dispatcher { get; }
     private protected IRazorSpanMappingService SpanMappingService { get; }
     private protected FilePathService FilePathService { get; }
 
     protected JsonSerializer Serializer { get; }
 
-    public LanguageServerTestBase(ITestOutputHelper testOutput)
+    protected LanguageServerTestBase(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        Dispatcher = new LSPProjectSnapshotManagerDispatcher(LoggerFactory);
-        AddDisposable((IDisposable)Dispatcher);
-
         SpanMappingService = new ThrowingRazorSpanMappingService();
 
         Serializer = new JsonSerializer();
@@ -47,6 +43,14 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         Serializer.AddVSExtensionConverters();
 
         FilePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
+    }
+
+    private protected override ProjectSnapshotManagerDispatcher CreateDispatcher()
+    {
+        var dispatcher = new LSPProjectSnapshotManagerDispatcher(LoggerFactory);
+        AddDisposable(dispatcher);
+
+        return dispatcher;
     }
 
     internal RazorRequestContext CreateRazorRequestContext(VersionedDocumentContext? documentContext, ILspServices? lspServices = null)

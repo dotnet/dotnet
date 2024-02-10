@@ -28,7 +28,7 @@
     <SkipGenerationCheck>true</SkipGenerationCheck>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(DotNetBuildFromSource)' == 'true'">
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <!-- Don't build referenced projects -->
     <BuildPackageLibraryReferences>false</BuildPackageLibraryReferences>
     <!-- Omit any files that were not built -->

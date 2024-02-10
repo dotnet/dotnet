@@ -17,4 +17,9 @@ internal static class JoinableTaskContextExtensions
             throw new InvalidOperationException($"{caller} must be called on the UI thread.");
         }
     }
+
+    public static void AssertUIThread(this JoinableTaskFactory jtf, [CallerMemberName] string? caller = null)
+    {
+        jtf.Context.AssertUIThread(caller);
+    }
 }

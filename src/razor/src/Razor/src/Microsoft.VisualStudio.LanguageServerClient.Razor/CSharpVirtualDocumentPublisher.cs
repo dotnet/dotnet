@@ -5,13 +5,14 @@ using System;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;
+using Microsoft.VisualStudio.Razor.DynamicFiles;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 
@@ -21,11 +22,11 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 [ContentType(RazorConstants.RazorLSPContentTypeName)]
 internal class CSharpVirtualDocumentPublisher : LSPDocumentChangeListener
 {
-    private readonly RazorDynamicFileInfoProvider _dynamicFileInfoProvider;
+    private readonly IRazorDynamicFileInfoProviderInternal _dynamicFileInfoProvider;
     private readonly LSPDocumentMappingProvider _lspDocumentMappingProvider;
 
     [ImportingConstructor]
-    public CSharpVirtualDocumentPublisher(RazorDynamicFileInfoProvider dynamicFileInfoProvider, LSPDocumentMappingProvider lspDocumentMappingProvider)
+    public CSharpVirtualDocumentPublisher(IRazorDynamicFileInfoProviderInternal dynamicFileInfoProvider, LSPDocumentMappingProvider lspDocumentMappingProvider)
     {
         if (dynamicFileInfoProvider is null)
         {
@@ -51,9 +52,9 @@ internal class CSharpVirtualDocumentPublisher : LSPDocumentChangeListener
         // This workaround adds the Razor client name to the generated document so the C# server will recognize
         // it, despite the document not being formally opened. Note this is meant to only be a temporary
         // workaround until a longer-term solution is implemented in the future.
-        if (kind == LSPDocumentChangeKind.Added && _dynamicFileInfoProvider is DefaultRazorDynamicFileInfoProvider defaultProvider)
+        if (kind == LSPDocumentChangeKind.Added && _dynamicFileInfoProvider is RazorDynamicFileInfoProvider defaultProvider)
         {
-            defaultProvider.PromoteBackgroundDocument(@new!.Uri, CSharpDocumentPropertiesService.Instance);
+            defaultProvider.PromoteBackgroundDocument(@new.AssumeNotNull().Uri, CSharpDocumentPropertiesService.Instance);
         }
 
         if (kind != LSPDocumentChangeKind.VirtualDocumentChanged)
@@ -63,104 +64,51 @@ internal class CSharpVirtualDocumentPublisher : LSPDocumentChangeListener
 
         if (virtualNew is CSharpVirtualDocumentSnapshot)
         {
-            var csharpContainer = new CSharpVirtualDocumentContainer(_lspDocumentMappingProvider, @new!, virtualNew.Snapshot);
-            _dynamicFileInfoProvider.UpdateLSPFileInfo(@new!.Uri, csharpContainer);
+            Assumes.NotNull(@new);
+            var csharpContainer = new CSharpVirtualDocumentContainer(_lspDocumentMappingProvider, @new, virtualNew.Snapshot);
+            _dynamicFileInfoProvider.UpdateLSPFileInfo(@new.Uri, csharpContainer);
         }
     }
 
-    private class CSharpVirtualDocumentContainer : DynamicDocumentContainer
+    private sealed class CSharpVirtualDocumentContainer(
+        LSPDocumentMappingProvider lspDocumentMappingProvider,
+        LSPDocumentSnapshot documentSnapshot,
+        ITextSnapshot textSnapshot) : IDynamicDocumentContainer
     {
-        private readonly ITextSnapshot _textSnapshot;
-        private readonly LSPDocumentMappingProvider _lspDocumentMappingProvider;
-        private readonly LSPDocumentSnapshot _documentSnapshot;
+        private readonly LSPDocumentMappingProvider _lspDocumentMappingProvider = lspDocumentMappingProvider;
+        private readonly LSPDocumentSnapshot _documentSnapshot = documentSnapshot;
+        private readonly ITextSnapshot _textSnapshot = textSnapshot;
+
         private IRazorSpanMappingService? _mappingService;
         private IRazorDocumentExcerptServiceImplementation? _excerptService;
 
-        public override string FilePath => _documentSnapshot.Uri.LocalPath;
+        public string FilePath => _documentSnapshot.Uri.LocalPath;
 
-        public override bool SupportsDiagnostics => true;
+        public bool SupportsDiagnostics => true;
 
-        public CSharpVirtualDocumentContainer(LSPDocumentMappingProvider lspDocumentMappingProvider, LSPDocumentSnapshot documentSnapshot, ITextSnapshot textSnapshot)
+        public void SetSupportsDiagnostics(bool value)
         {
-            if (lspDocumentMappingProvider is null)
-            {
-                throw new ArgumentNullException(nameof(lspDocumentMappingProvider));
-            }
-
-            if (textSnapshot is null)
-            {
-                throw new ArgumentNullException(nameof(textSnapshot));
-            }
-
-            if (documentSnapshot is null)
-            {
-                throw new ArgumentNullException(nameof(documentSnapshot));
-            }
-
-            _lspDocumentMappingProvider = lspDocumentMappingProvider;
-
-            _textSnapshot = textSnapshot;
-            _documentSnapshot = documentSnapshot;
+            // This dynamic document container always supports diagnostics, so we don't allow disabling them.
         }
 
-        public override IRazorDocumentExcerptServiceImplementation GetExcerptService()
+        public IRazorDocumentExcerptServiceImplementation GetExcerptService()
+            => _excerptService ??InterlockedOperations.Initialize(ref _excerptService,
+                new CSharpDocumentExcerptService(GetMappingService(), _documentSnapshot));
+
+        public IRazorSpanMappingService GetMappingService()
+            => _mappingService ?? InterlockedOperations.Initialize(ref _mappingService,
+                new RazorLSPSpanMappingService(_lspDocumentMappingProvider, _documentSnapshot, _textSnapshot));
+
+        public IRazorDocumentPropertiesService GetDocumentPropertiesService()
+            => CSharpDocumentPropertiesService.Instance;
+
+        public TextLoader GetTextLoader(string filePath)
+            => new SourceTextLoader(_textSnapshot.AsText(), filePath);
+
+        private sealed class SourceTextLoader(SourceText sourceText, string filePath) : TextLoader
         {
-            if (_excerptService is null)
-            {
-                var mappingService = GetMappingService();
-                _excerptService = new CSharpDocumentExcerptService(mappingService, _documentSnapshot);
-            }
-
-            return _excerptService;
-        }
-
-        public override IRazorSpanMappingService GetMappingService()
-        {
-            if (_mappingService is null)
-            {
-                _mappingService = new RazorLSPSpanMappingService(_lspDocumentMappingProvider, _documentSnapshot, _textSnapshot);
-            }
-
-            return _mappingService;
-        }
-
-        public override IRazorDocumentPropertiesService GetDocumentPropertiesService()
-        {
-            return CSharpDocumentPropertiesService.Instance;
-        }
-
-        public override TextLoader GetTextLoader(string filePath)
-        {
-            var sourceText = _textSnapshot.AsText();
-            var textLoader = new SourceTextLoader(sourceText, filePath);
-            return textLoader;
-        }
-
-        private sealed class SourceTextLoader : TextLoader
-        {
-            private readonly SourceText _sourceText;
-            private readonly string _filePath;
-
-            public SourceTextLoader(SourceText sourceText, string filePath)
-            {
-                if (sourceText is null)
-                {
-                    throw new ArgumentNullException(nameof(sourceText));
-                }
-
-                if (filePath is null)
-                {
-                    throw new ArgumentNullException(nameof(filePath));
-                }
-
-                _sourceText = sourceText;
-                _filePath = filePath;
-            }
-
             public override Task<TextAndVersion> LoadTextAndVersionAsync(LoadTextOptions options, CancellationToken cancellationToken)
-            {
-                return Task.FromResult(TextAndVersion.Create(_sourceText, VersionStamp.Default, _filePath));
-            }
+                => Task.FromResult(TextAndVersion.Create(sourceText, VersionStamp.Default, filePath));
         }
     }
 }

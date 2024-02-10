@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.VisualStudio.Shell;
@@ -11,7 +11,6 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
-[Shared]
 [Export(typeof(RazorLogger))]
 internal class ActivityLogRazorLogger : RazorLogger
 {

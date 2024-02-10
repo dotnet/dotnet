@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
@@ -22,6 +20,38 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
 public class ValidateBreakpointRangeEndpointTest(ITestOutputHelper testOutput) : SingleServerDelegatingEndpointTestBase(testOutput)
 {
+    [Fact]
+    public async Task Handle_CSharpInHtml_ValidBreakpoint()
+    {
+        var input = """
+                <div></div>
+
+                @{
+                    var currentCount = 1;
+                }
+
+                <p>@{|breakpoint:{|expected:currentCount|}|}</p>
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
+    [Fact]
+    public async Task Handle_CSharpInAttribute_ValidBreakpoint()
+    {
+        var input = """
+                <div></div>
+
+                @{
+                    var currentCount = 1;
+                }
+
+                <button class="btn btn-primary" disabled="@({|breakpoint:{|expected:currentCount > 3|}|})">Click me</button>
+                """;
+
+        await VerifyBreakpointRangeAsync(input);
+    }
+
     [Fact]
     public async Task Handle_CSharp_ValidBreakpoint()
     {
@@ -107,7 +137,7 @@ public class ValidateBreakpointRangeEndpointTest(ITestOutputHelper testOutput) :
         Assert.Equal(expectedRange, result);
     }
 
-    private async Task<Range> GetBreakpointRangeAsync(RazorCodeDocument codeDocument, string razorFilePath, TextSpan breakpointSpan)
+    private async Task<Range?> GetBreakpointRangeAsync(RazorCodeDocument codeDocument, string razorFilePath, TextSpan breakpointSpan)
     {
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 
@@ -122,7 +152,7 @@ public class ValidateBreakpointRangeEndpointTest(ITestOutputHelper testOutput) :
             Range = breakpointSpan.ToRange(codeDocument.GetSourceText())
         };
 
-        var documentContext = DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument);
+        var documentContext = DocumentContextFactory.TryCreateForOpenDocument(request.TextDocument).AssumeNotNull();
         var requestContext = CreateValidateBreakpointRangeRequestContext(documentContext);
 
         return await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);

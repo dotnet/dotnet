@@ -12,7 +12,6 @@ using Microsoft.VisualStudio.Threading;
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
 [Export(typeof(IProjectSnapshotChangeTrigger))]
-[System.Composition.Shared]
 internal class VisualStudioSolutionCloseChangeTrigger : IProjectSnapshotChangeTrigger, IVsSolutionEvents3, IDisposable
 {
     private IVsSolution? _solution;

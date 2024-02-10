@@ -125,9 +125,9 @@ public class StringTextSnapshot : ITextSnapshot2
 
     public ITrackingPoint CreateTrackingPoint(int position, PointTrackingMode trackingMode, TrackingFidelityMode trackingFidelity) => throw new NotImplementedException();
 
-    public ITrackingSpan CreateTrackingSpan(VisualStudio.Text.Span span, SpanTrackingMode trackingMode) => throw new NotImplementedException();
+    public ITrackingSpan CreateTrackingSpan(Span span, SpanTrackingMode trackingMode) => throw new NotImplementedException();
 
-    public ITrackingSpan CreateTrackingSpan(VisualStudio.Text.Span span, SpanTrackingMode trackingMode, TrackingFidelityMode trackingFidelity) => throw new NotImplementedException();
+    public ITrackingSpan CreateTrackingSpan(Span span, SpanTrackingMode trackingMode, TrackingFidelityMode trackingFidelity) => throw new NotImplementedException();
 
     public ITrackingSpan CreateTrackingSpan(int start, int length, SpanTrackingMode trackingMode) => throw new NotImplementedException();
 
@@ -135,9 +135,9 @@ public class StringTextSnapshot : ITextSnapshot2
 
     public int GetLineNumberFromPosition(int position) => throw new NotImplementedException();
 
-    public string GetText(VisualStudio.Text.Span span) => throw new NotImplementedException();
+    public string GetText(Span span) => throw new NotImplementedException();
 
-    public void Write(TextWriter writer, VisualStudio.Text.Span span) => throw new NotImplementedException();
+    public void Write(TextWriter writer, Span span) => throw new NotImplementedException();
 
     public void Write(TextWriter writer) => throw new NotImplementedException();
 

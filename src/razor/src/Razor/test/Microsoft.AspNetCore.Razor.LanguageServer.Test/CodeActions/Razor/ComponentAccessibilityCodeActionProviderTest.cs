@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
@@ -43,7 +42,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(0, 1));
 
-        var provider = new ComponentAccessibilityCodeActionProvider(new TagHelperFactsService());
+        var provider = new ComponentAccessibilityCodeActionProvider();
 
         // Act
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
@@ -73,7 +72,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(0, 0));
         context.CodeDocument.SetFileKind(FileKinds.Legacy);
 
-        var provider = new ComponentAccessibilityCodeActionProvider(new TagHelperFactsService());
+        var provider = new ComponentAccessibilityCodeActionProvider();
 
         // Act
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
@@ -102,7 +101,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("Component", StringComparison.Ordinal), 9));
 
-        var provider = new ComponentAccessibilityCodeActionProvider(new TagHelperFactsService());
+        var provider = new ComponentAccessibilityCodeActionProvider();
 
         // Act
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
@@ -131,7 +130,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("Component", StringComparison.Ordinal), 9), supportsFileCreation: true);
 
-        var provider = new ComponentAccessibilityCodeActionProvider(new TagHelperFactsService());
+        var provider = new ComponentAccessibilityCodeActionProvider();
 
         // Act
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
@@ -180,7 +179,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("CompOnent", StringComparison.Ordinal), 9), supportsFileCreation: true);
 
-        var provider = new ComponentAccessibilityCodeActionProvider(new TagHelperFactsService());
+        var provider = new ComponentAccessibilityCodeActionProvider();
 
         // Act
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
@@ -231,7 +230,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("CompOnent", StringComparison.Ordinal), 9), supportsFileCreation: true);
 
-        var provider = new ComponentAccessibilityCodeActionProvider(new TagHelperFactsService());
+        var provider = new ComponentAccessibilityCodeActionProvider();
 
         // Act
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
@@ -274,7 +273,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("GenericComponent", StringComparison.Ordinal), "GenericComponent".Length), supportsFileCreation: true);
 
-        var provider = new ComponentAccessibilityCodeActionProvider(new TagHelperFactsService());
+        var provider = new ComponentAccessibilityCodeActionProvider();
 
         // Act
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
@@ -323,7 +322,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("Component", StringComparison.Ordinal), 9), supportsFileCreation: true);
 
-        var provider = new ComponentAccessibilityCodeActionProvider(new TagHelperFactsService());
+        var provider = new ComponentAccessibilityCodeActionProvider();
 
         // Act
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
@@ -355,7 +354,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("Component", StringComparison.Ordinal), 9), supportsFileCreation: true);
 
-        var provider = new ComponentAccessibilityCodeActionProvider(new TagHelperFactsService());
+        var provider = new ComponentAccessibilityCodeActionProvider();
 
         // Act
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
@@ -387,7 +386,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("Component", StringComparison.Ordinal), 9), supportsFileCreation: false);
 
-        var provider = new ComponentAccessibilityCodeActionProvider(new TagHelperFactsService());
+        var provider = new ComponentAccessibilityCodeActionProvider();
 
         // Act
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);
@@ -417,7 +416,7 @@ public class ComponentAccessibilityCodeActionProviderTest(ITestOutputHelper test
         var location = new SourceLocation(cursorPosition, -1, -1);
         var context = CreateRazorCodeActionContext(request, location, documentPath, contents, new SourceSpan(contents.IndexOf("Component", StringComparison.Ordinal), 9), supportsFileCreation: false);
 
-        var provider = new ComponentAccessibilityCodeActionProvider(new TagHelperFactsService());
+        var provider = new ComponentAccessibilityCodeActionProvider();
 
         // Act
         var commandOrCodeActionContainer = await provider.ProvideAsync(context, default);

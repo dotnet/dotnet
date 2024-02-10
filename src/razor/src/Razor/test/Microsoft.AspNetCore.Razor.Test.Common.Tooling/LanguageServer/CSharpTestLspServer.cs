@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.VisualStudio.Composition;
@@ -53,8 +54,6 @@ public sealed class CSharpTestLspServer : IAsyncDisposable
             ExceptionStrategy = ExceptionProcessing.ISerializable,
         };
 
-        _languageServer = CreateLanguageServer(_serverRpc, testWorkspace, languageServerFactory, exportProvider, serverCapabilities);
-
         _clientMessageFormatter = CreateJsonMessageFormatter(languageServerFactory);
         _clientMessageHandler = new HeaderDelimitedMessageHandler(clientStream, clientStream, _clientMessageFormatter);
         _clientRpc = new JsonRpc(_clientMessageHandler)
@@ -62,7 +61,13 @@ public sealed class CSharpTestLspServer : IAsyncDisposable
             ExceptionStrategy = ExceptionProcessing.ISerializable,
         };
 
+        // Roslyn will call back to us to get configuration options when the server is initialized, so this is how we configure
+        // what it options we need
+        _clientRpc.AddLocalRpcTarget(new WorkspaceConfigurationHandler());
+
         _clientRpc.StartListening();
+
+        _languageServer = CreateLanguageServer(_serverRpc, testWorkspace, languageServerFactory, exportProvider, serverCapabilities);
 
         static JsonMessageFormatter CreateJsonMessageFormatter(IRazorLanguageServerFactoryWrapper languageServerFactory)
         {
@@ -204,6 +209,28 @@ public sealed class CSharpTestLspServer : IAsyncDisposable
             // To avoid exposing types from VS.LSP.Protocol across the Razor <-> Roslyn API boundary, and therefore
             // requiring us to agree on dependency versions, we use JSON as a transport mechanism.
             return JsonConvert.SerializeObject(_serverCapabilities);
+        }
+    }
+
+    private class WorkspaceConfigurationHandler
+    {
+        [JsonRpcMethod(Methods.WorkspaceConfigurationName, UseSingleObjectParameterDeserialization = true)]
+        public string[]? GetConfigurationOptions(ConfigurationParams configurationParams)
+        {
+            using var _ = ListPool<string>.GetPooledObject(out var values);
+            values.SetCapacityIfLarger(configurationParams.Items.Length);
+
+            foreach (var item in configurationParams.Items)
+            {
+                values.Add(item.Section switch
+                {
+                    "csharp|inlay_hints.dotnet_enable_inlay_hints_for_parameters" => "true",
+                    "csharp|inlay_hints.csharp_enable_inlay_hints_for_types" => "true",
+                    _ => ""
+                });
+            }
+
+            return values.ToArray();
         }
     }
 }

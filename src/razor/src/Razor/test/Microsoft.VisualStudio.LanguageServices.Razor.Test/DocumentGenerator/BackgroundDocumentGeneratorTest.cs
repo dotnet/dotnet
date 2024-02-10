@@ -12,8 +12,8 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.Razor.DynamicFiles;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -375,32 +375,28 @@ public class BackgroundDocumentGeneratorTest : ProjectSnapshotManagerDispatcherW
         Assert.False(queue.IsScheduledOrRunning, "Queue should not have restarted");
     }
 
-    private class TestDynamicFileInfoProvider : RazorDynamicFileInfoProvider
+    private class TestDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInternal
     {
-        private readonly Dictionary<string, DynamicDocumentContainer> _dynamicDocuments;
+        private readonly Dictionary<string, IDynamicDocumentContainer> _dynamicDocuments;
 
         public TestDynamicFileInfoProvider()
         {
-            _dynamicDocuments = new Dictionary<string, DynamicDocumentContainer>();
+            _dynamicDocuments = new Dictionary<string, IDynamicDocumentContainer>();
         }
 
-        public IReadOnlyDictionary<string, DynamicDocumentContainer> DynamicDocuments => _dynamicDocuments;
+        public IReadOnlyDictionary<string, IDynamicDocumentContainer> DynamicDocuments => _dynamicDocuments;
 
-        public override void Initialize(ProjectSnapshotManagerBase projectManager)
-        {
-        }
-
-        public override void SuppressDocument(ProjectKey projectFilePath, string documentFilePath)
+        public void SuppressDocument(ProjectKey projectFilePath, string documentFilePath)
         {
             _dynamicDocuments[documentFilePath] = null;
         }
 
-        public override void UpdateFileInfo(ProjectKey projectKey, DynamicDocumentContainer documentContainer)
+        public void UpdateFileInfo(ProjectKey projectKey, IDynamicDocumentContainer documentContainer)
         {
             _dynamicDocuments[documentContainer.FilePath] = documentContainer;
         }
 
-        public override void UpdateLSPFileInfo(Uri documentUri, DynamicDocumentContainer documentContainer)
+        public void UpdateLSPFileInfo(Uri documentUri, IDynamicDocumentContainer documentContainer)
         {
             _dynamicDocuments[documentContainer.FilePath] = documentContainer;
         }

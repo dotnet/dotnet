@@ -891,7 +891,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         {
             // Note that the expected lengths are different on Windows vs. Unix.
             var expectedCsharpRangeLength = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? 970 : 938;
-            Assert.True(RazorSemanticTokensInfoService.TryGetMinimalCSharpRange(codeDocument, razorRange, out var csharpRange));
+            Assert.True(codeDocument.TryGetMinimalCSharpRange(razorRange, out var csharpRange));
             var textSpan = csharpRange.ToTextSpan(csharpSourceText);
             Assert.Equal(expectedCsharpRangeLength, textSpan.Length);
         }
@@ -1139,7 +1139,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         }
 
         if (!documentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetCSharpDocument(), razorRange, out var range) &&
-            !RazorSemanticTokensInfoService.TryGetMinimalCSharpRange(codeDocument, razorRange, out range))
+            !codeDocument.TryGetMinimalCSharpRange(razorRange, out range))
         {
             // No C# in the range.
             return null;

@@ -25,9 +25,13 @@ Trace level can be changed using below command line:
 
 Allowed values for tracelevel are: off, error, warning, info and verbose. The default value is verbose.
 
+### Collect traces using VSTEST_DIAG
+
+Since v17.2.0, environment variable `VSTEST_DIAG` can be used to specify the path to the log file. 
+
 ### Dotnet test
 
-The `--diag` option is supported on the `dotnet test` command as well. This will also produce same
+The `--diag` and `VSTEST_DIAG` option is supported on the `dotnet test` command as well. This will also produce same
 set of log files: `log.txt` and `log.*.txt`.
 
 ```shell
