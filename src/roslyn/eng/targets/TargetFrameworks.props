@@ -49,7 +49,6 @@
         <NetRoslynToolset>$(NetCurrent)</NetRoslynToolset>
         <NetRoslynSourceBuild>$(NetCurrent);$(NetPrevious)</NetRoslynSourceBuild>
         <NetRoslynAll>$(NetCurrent);$(NetPrevious)</NetRoslynAll>
-        <NetRoslyn>$(NetCurrent)</NetRoslyn>
       </PropertyGroup>
     </When>
 
