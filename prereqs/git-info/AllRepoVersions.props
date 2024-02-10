@@ -37,8 +37,8 @@
     <runtimeOutputPackageVersion>9.0.0-preview.2.24109.4</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>bfde902a10d7b672f4fc7e844198ede405dbb9c6</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24057.2</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>f0ba9f67e7f31d97c131331b11210579e3044aa4</sdkGitCommitHash>
-    <sdkOutputPackageVersion>9.0.100-preview.2.24109.17</sdkOutputPackageVersion>
+    <sdkGitCommitHash>0a9575555102b404ff5bc41620865cc3f99aebde</sdkGitCommitHash>
+    <sdkOutputPackageVersion>9.0.100-preview.2.24110.1</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>f1ef074dfcf79d2f2da6e6ff9df8696a32aa063c</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24106.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>8ee50f75f960fbfb20fce0fefc5a3b05d15b1d21</sourcebuildreferencepackagesGitCommitHash>
