@@ -26,14 +26,14 @@
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>3.11.0-beta1.23525.2</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>3.11.0-beta1.23525.2</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <MicrosoftCodeCoverageIOVersion>17.7.0</MicrosoftCodeCoverageIOVersion>
-    <MicrosoftDiagnosticsNETCoreClientVersion>0.2.0-preview.24069.1</MicrosoftDiagnosticsNETCoreClientVersion>
+    <MicrosoftDiagnosticsNETCoreClientVersion>0.2.0-preview.24076.1</MicrosoftDiagnosticsNETCoreClientVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>3.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftFakesVersion>17.9.0-beta.24058.4</MicrosoftFakesVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.10.2-preview.24078.1</MicrosoftInternalCodeCoverageVersion>
+    <MicrosoftInternalCodeCoverageVersion>17.10.3-preview.24106.2</MicrosoftInternalCodeCoverageVersion>
     <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.8.34518.129</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
-    <MicrosoftVisualStudioInteropVersion>17.3.32622.426</MicrosoftVisualStudioInteropVersion>
+    <MicrosoftVisualStudioInteropVersion>17.10.525-preview.1</MicrosoftVisualStudioInteropVersion>
     <MicrosoftVSTelemetryVersion>17.6.46</MicrosoftVSTelemetryVersion>
     <MicrosoftVSUtilitiesInternalVersion>16.3.42</MicrosoftVSUtilitiesInternalVersion>
     <MicrosoftVSSDKBuildToolsVersion>17.4.2124</MicrosoftVSSDKBuildToolsVersion>
@@ -45,8 +45,8 @@
     <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>
     <SystemReflectionMetadataVersion>1.6.0</SystemReflectionMetadataVersion>
     <SystemUriVersion>4.3.2</SystemUriVersion>
-    <TestPlatformExternalsVersion>17.9.34508.126</TestPlatformExternalsVersion>
-    <MicrosoftInternalTestPlatformExtensions>17.9.34508.126</MicrosoftInternalTestPlatformExtensions>
+    <TestPlatformExternalsVersion>17.10.0-preview-2-34602-162</TestPlatformExternalsVersion>
+    <MicrosoftInternalTestPlatformExtensions>17.10.0-preview-2-34602-162</MicrosoftInternalTestPlatformExtensions>
     <TestPlatformMSDiaVersion>17.9.34504.149</TestPlatformMSDiaVersion>
   </PropertyGroup>
   <PropertyGroup Label="VSTest test settings">
