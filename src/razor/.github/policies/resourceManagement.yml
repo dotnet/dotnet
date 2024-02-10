@@ -240,7 +240,8 @@ configuration:
     - if:
       - payloadType: Pull_Request
       - isAction:
-          action: Null
+          action: Closed
+      - isMerged
       - targetsBranch:
           branch: main
       then:
@@ -248,4 +249,4 @@ configuration:
           milestone: Next
       description: '[PRs] Milestone tracking'
 onFailure: 
-onSuccess: 
+onSuccess:

@@ -15,10 +15,10 @@ namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 [ExportCollaborationService(typeof(ProjectSnapshotSynchronizationService), Scope = SessionScope.Guest)]
 [method: ImportingConstructor]
 internal class ProjectSnapshotSynchronizationServiceFactory(
-    JoinableTaskContext joinableTaskContext,
     IProjectSnapshotManagerAccessor projectManagerAccessor,
+    ProjectSnapshotManagerDispatcher dispatcher,
     IErrorReporter errorReporter,
-    ProjectSnapshotManagerDispatcher dispatcher) : ICollaborationServiceFactory
+    JoinableTaskContext joinableTaskContext) : ICollaborationServiceFactory
 {
     public async Task<ICollaborationService> CreateServiceAsync(CollaborationSession sessionContext, CancellationToken cancellationToken)
     {
@@ -29,12 +29,12 @@ internal class ProjectSnapshotSynchronizationServiceFactory(
 
         var projectSnapshotManagerProxy = await sessionContext.GetRemoteServiceAsync<IProjectSnapshotManagerProxy>(typeof(IProjectSnapshotManagerProxy).Name, cancellationToken);
         var synchronizationService = new ProjectSnapshotSynchronizationService(
-            joinableTaskContext.Factory,
             sessionContext,
             projectSnapshotManagerProxy,
             projectManagerAccessor,
+            dispatcher,
             errorReporter,
-            dispatcher);
+            joinableTaskContext.Factory);
 
         await synchronizationService.InitializeAsync(cancellationToken);
 

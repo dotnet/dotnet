@@ -208,8 +208,6 @@
       <AdditionalProperties>TargetFramework=$(DefaultNetFxTargetFramework)</AdditionalProperties>
     </ProjectReference>
 
-    <ProjectReference Include="..\Microsoft.CodeAnalysis.Remote.Razor\Microsoft.CodeAnalysis.Remote.Razor.csproj" />
-
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Remote.Razor.CoreComponents\Microsoft.CodeAnalysis.Remote.Razor.CoreComponents.csproj">
       <Name>Microsoft.CodeAnalysis.Remote.Razor.CoreComponents</Name>
       <!-- This project targets netcoreapp -->

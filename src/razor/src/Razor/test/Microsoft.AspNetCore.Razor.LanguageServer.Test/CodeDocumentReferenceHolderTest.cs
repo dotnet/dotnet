@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.VisualStudio.Threading;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -126,16 +127,23 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
         // Arrange
         var documentSnapshot = await CreateDocumentSnapshotAsync(DisposalToken);
         var codeDocumentReference = await ProcessDocumentAndRetrieveOutputAsync(documentSnapshot, DisposalToken);
+        var asyncManualResetEvent = new AsyncManualResetEvent(false);
 
         // Act
         await Dispatcher.RunOnDispatcherThreadAsync(() =>
         {
             _projectManager.ProjectConfigurationChanged(new HostProject(_hostProject.FilePath, _hostProject.IntermediateOutputPath, RazorConfiguration.Default, rootNamespace: "NewRootNamespace"));
+            asyncManualResetEvent.Set();
         }, DisposalToken);
 
         GC.Collect();
 
+        using var cts = new CancellationTokenSource();
+        cts.CancelAfter(TimeSpan.FromSeconds(5));
+        await asyncManualResetEvent.WaitAsync(cts.Token);
+
         // Assert
+        Assert.False(cts.IsCancellationRequested);
         Assert.False(codeDocumentReference.TryGetTarget(out _));
     }
 

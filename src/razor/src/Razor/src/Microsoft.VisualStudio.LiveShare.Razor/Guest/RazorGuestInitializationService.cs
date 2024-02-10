@@ -12,35 +12,19 @@ using Microsoft.CodeAnalysis.Razor;
 namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 
 [ExportCollaborationService(typeof(SessionActiveDetector), Scope = SessionScope.Guest)]
-internal class RazorGuestInitializationService : ICollaborationServiceFactory
+[method: ImportingConstructor]
+internal class RazorGuestInitializationService(
+    [Import(typeof(ILiveShareSessionAccessor))] LiveShareSessionAccessor sessionAccessor) : ICollaborationServiceFactory
 {
     private const string ViewImportsFileName = "_ViewImports.cshtml";
-    private readonly DefaultLiveShareSessionAccessor _sessionAccessor;
+    private readonly LiveShareSessionAccessor _sessionAccessor = sessionAccessor;
 
-    // Internal for testing
-    internal Task? _viewImportsCopyTask;
-
-    [ImportingConstructor]
-    public RazorGuestInitializationService([Import(typeof(LiveShareSessionAccessor))] DefaultLiveShareSessionAccessor sessionAccessor)
-    {
-        if (sessionAccessor is null)
-        {
-            throw new ArgumentNullException(nameof(sessionAccessor));
-        }
-
-        _sessionAccessor = sessionAccessor;
-    }
+    private Task? _viewImportsCopyTask;
 
     public Task<ICollaborationService> CreateServiceAsync(CollaborationSession sessionContext, CancellationToken cancellationToken)
     {
-        if (sessionContext is null)
-        {
-            throw new ArgumentNullException(nameof(sessionContext));
-        }
-
-#pragma warning disable CA2000 // Dispose objects before losing scope
         var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-#pragma warning restore CA2000 // Dispose objects before losing scope
+
         _viewImportsCopyTask = EnsureViewImportsCopiedAsync(sessionContext, cts.Token);
 
         _sessionAccessor.SetSession(sessionContext);
@@ -98,6 +82,14 @@ internal class RazorGuestInitializationService : ICollaborationServiceFactory
                 copyTasks.Add(copyTask);
             }
         }
+    }
+
+    internal TestAccessor GetTestAccessor()
+        => new(this);
+
+    internal sealed class TestAccessor(RazorGuestInitializationService instance)
+    {
+        public Task? ViewImportsCopyTask => instance._viewImportsCopyTask;
     }
 }
 

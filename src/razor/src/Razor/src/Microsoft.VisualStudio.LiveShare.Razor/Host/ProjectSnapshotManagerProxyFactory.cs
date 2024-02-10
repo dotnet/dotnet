@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,23 +18,18 @@ namespace Microsoft.VisualStudio.LiveShare.Razor.Host;
     Scope = SessionScope.Host,
     Role = ServiceRole.RemoteService)]
 [method: ImportingConstructor]
-internal class DefaultProjectSnapshotManagerProxyFactory(
+internal class ProjectSnapshotManagerProxyFactory(
+    IProjectSnapshotManagerAccessor projectManagerAccessor,
     ProjectSnapshotManagerDispatcher dispatcher,
-    JoinableTaskContext joinableTaskContext,
-    IProjectSnapshotManagerAccessor projectManagerAccessor) : ICollaborationServiceFactory
+    JoinableTaskContext joinableTaskContext) : ICollaborationServiceFactory
 {
     public Task<ICollaborationService> CreateServiceAsync(CollaborationSession session, CancellationToken cancellationToken)
     {
-        if (session is null)
-        {
-            throw new ArgumentNullException(nameof(session));
-        }
-
         var serializer = (JsonSerializer)session.GetService(typeof(JsonSerializer));
         serializer.Converters.RegisterRazorLiveShareConverters();
 
-        var service = new DefaultProjectSnapshotManagerProxy(
-            session, dispatcher, projectManagerAccessor.Instance, joinableTaskContext.Factory);
+        var service = new ProjectSnapshotManagerProxy(
+            session, projectManagerAccessor.Instance, dispatcher, joinableTaskContext.Factory);
         return Task.FromResult<ICollaborationService>(service);
     }
 }
