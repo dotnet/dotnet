@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Documents;
@@ -25,11 +24,10 @@ namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 // other triggers with lesser priority so we can attach to Changed sooner. We happen to be so important because we control the
 // open/close state of documents. If other triggers depend on a document being open/closed (some do) then we need to ensure we
 // can mark open/closed prior to them running.
-[Shared]
 [Export(typeof(IProjectSnapshotChangeTrigger))]
 internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTrigger
 {
-    private readonly IWorkspaceProvider _workspaceProvider;
+    private readonly IEditorDocumentManager _documentManager;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly JoinableTaskContext _joinableTaskContext;
     private readonly ITelemetryReporter _telemetryReporter;
@@ -38,20 +36,19 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
     private readonly EventHandler _onOpened;
     private readonly EventHandler? _onClosed;
 
-    private EditorDocumentManager? _documentManager;
     private ProjectSnapshotManagerBase? _projectManager;
 
-    public EditorDocumentManager DocumentManager => _documentManager ?? throw new InvalidOperationException($"{nameof(DocumentManager)} called before {nameof(Initialize)}");
-    public ProjectSnapshotManagerBase ProjectManager => _projectManager ?? throw new InvalidOperationException($"{nameof(ProjectManager)} called before {nameof(Initialize)}");
+    public ProjectSnapshotManagerBase ProjectManager
+        => _projectManager ?? throw new InvalidOperationException($"{nameof(ProjectManager)} called before {nameof(Initialize)}");
 
     [ImportingConstructor]
     public EditorDocumentManagerListener(
-        IWorkspaceProvider workspaceProvider,
+        IEditorDocumentManager documentManager,
         ProjectSnapshotManagerDispatcher dispatcher,
         JoinableTaskContext joinableTaskContext,
         ITelemetryReporter telemetryReporter)
     {
-        _workspaceProvider = workspaceProvider;
+        _documentManager = documentManager;
         _dispatcher = dispatcher;
         _joinableTaskContext = joinableTaskContext;
         _telemetryReporter = telemetryReporter;
@@ -64,16 +61,14 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
 
     // For testing purposes only.
     internal EditorDocumentManagerListener(
-        IWorkspaceProvider workspaceProvider,
+        IEditorDocumentManager documentManager,
         ProjectSnapshotManagerDispatcher dispatcher,
         JoinableTaskContext joinableTaskContext,
-        EditorDocumentManager documentManager,
         EventHandler? onChangedOnDisk,
         EventHandler? onChangedInEditor,
         EventHandler onOpened,
         EventHandler? onClosed)
     {
-        _workspaceProvider = workspaceProvider;
         _dispatcher = dispatcher;
         _joinableTaskContext = joinableTaskContext;
         _documentManager = documentManager;
@@ -85,14 +80,10 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
         _telemetryReporter = null!;
     }
 
-    [MemberNotNull(nameof(_documentManager), nameof(_projectManager))]
+    [MemberNotNull(nameof(_projectManager))]
     public void Initialize(ProjectSnapshotManagerBase projectManager)
     {
         _projectManager = projectManager;
-
-        var workspace = _workspaceProvider.GetWorkspace();
-        _documentManager = workspace.Services.GetRequiredService<EditorDocumentManager>();
-
         _projectManager.Changed += ProjectManager_Changed;
     }
 
@@ -121,7 +112,7 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
                         // GetOrCreateDocument needs to be run on the UI thread
                         await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
 
-                        var document = DocumentManager.GetOrCreateDocument(
+                        var document = _documentManager.GetOrCreateDocument(
                             key, e.ProjectFilePath, e.ProjectKey, _onChangedOnDisk, _onChangedInEditor, _onOpened, _onClosed);
                         if (document.IsOpenInEditor)
                         {
@@ -165,7 +156,7 @@ internal class EditorDocumentManagerListener : IPriorityProjectSnapshotChangeTri
 
         void RemoveAndDisposeDocument_RunOnUIThread(ProjectKey projectKey, string documentFilePath)
         {
-            if (DocumentManager.TryGetDocument(new DocumentKey(projectKey, documentFilePath), out var document))
+            if (_documentManager.TryGetDocument(new DocumentKey(projectKey, documentFilePath), out var document))
             {
                 // This class 'owns' the document entry so it's safe for us to dispose it.
                 document.Dispose();

@@ -57,6 +57,18 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
         {
             TryGetRootNamespace(update.Value.CurrentState, out var rootNamespace);
 
+            if (TryGetBeforeIntermediateOutputPath(update.Value.ProjectChanges, out var beforeIntermediateOutputPath) &&
+                beforeIntermediateOutputPath != intermediatePath)
+            {
+                // If the intermediate output path is in the ProjectChanges, then we know that it has changed, so we want to ensure we remove the old one,
+                // otherwise this would be seen as an Add, and we'd end up with two active projects
+                await UpdateAsync(() =>
+                {
+                    var beforeProjectKey = ProjectKey.FromString(beforeIntermediateOutputPath);
+                    UninitializeProjectUnsafe(beforeProjectKey);
+                }, CancellationToken.None).ConfigureAwait(false);
+            }
+
             // We need to deal with the case where the project was uninitialized, but now
             // is valid for Razor. In that case we might have previously seen all of the documents
             // but ignored them because the project wasn't active.

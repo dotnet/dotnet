@@ -375,4 +375,24 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
         Assert.Equal("// some new code here", textChange.NewText!.Trim());
         Assert.Equal(124, updateRequest.HostDocumentVersion);
     }
+
+    [Fact]
+    public async Task ProjectSnapshotManager_ProjectRemoved_ClearsContent()
+    {
+        // Arrange
+        var options = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
+        var publisher = new GeneratedDocumentPublisher(Dispatcher, _serverClient, options, LoggerFactory);
+        publisher.Initialize(_projectManager);
+        var sourceTextContent = "// The content";
+        var initialSourceText = SourceText.From(sourceTextContent);
+        await RunOnDispatcherThreadAsync(() =>
+            publisher.PublishCSharp(_hostProject.Key, _hostDocument.FilePath, initialSourceText, 123));
+        _projectManager.DocumentOpened(_hostProject.Key, _hostDocument.FilePath, initialSourceText);
+
+        // Act
+        await RunOnDispatcherThreadAsync(() =>
+            _projectManager.ProjectRemoved(_hostProject.Key));
+
+        Assert.Equal(0, publisher.GetTestAccessor().PublishedCSharpDataCount);
+    }
 }

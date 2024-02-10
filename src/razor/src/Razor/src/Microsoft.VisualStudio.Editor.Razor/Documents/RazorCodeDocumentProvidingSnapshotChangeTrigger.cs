@@ -15,7 +15,6 @@ namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 
 [Export(typeof(RazorCodeDocumentProvidingSnapshotChangeTrigger))]
 [Export(typeof(IProjectSnapshotChangeTrigger))]
-[System.Composition.Shared]
 internal class RazorCodeDocumentProvidingSnapshotChangeTrigger : IProjectSnapshotChangeTrigger
 {
     private readonly HashSet<string> _openDocuments = new(FilePathComparer.Instance);

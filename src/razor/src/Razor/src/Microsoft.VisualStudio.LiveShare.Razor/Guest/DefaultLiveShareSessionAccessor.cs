@@ -5,7 +5,6 @@ using System.ComponentModel.Composition;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 
-[System.Composition.Shared]
 [Export(typeof(LiveShareSessionAccessor))]
 internal class DefaultLiveShareSessionAccessor : LiveShareSessionAccessor
 {

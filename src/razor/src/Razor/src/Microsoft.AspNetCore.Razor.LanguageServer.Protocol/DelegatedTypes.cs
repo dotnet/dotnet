@@ -23,6 +23,16 @@ internal record DelegatedPositionParams(
     Position ProjectedPosition,
     RazorLanguageKind ProjectedKind) : IDelegatedParams;
 
+internal record DelegatedInlayHintParams(
+    TextDocumentIdentifierAndVersion Identifier,
+    Range ProjectedRange,
+    RazorLanguageKind ProjectedKind) : IDelegatedParams;
+
+internal record DelegatedInlayHintResolveParams(
+    TextDocumentIdentifierAndVersion Identifier,
+    InlayHint InlayHint,
+    RazorLanguageKind ProjectedKind) : IDelegatedParams;
+
 internal record DelegatedValidateBreakpointRangeParams(
     TextDocumentIdentifierAndVersion Identifier,
     Range ProjectedRange,

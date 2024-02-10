@@ -1,7 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +12,6 @@ using VSShell = Microsoft.VisualStudio.Shell;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
 
-[Shared]
 [Export(typeof(RazorLogHubTraceProvider))]
 internal class VisualStudioWindowsLogHubTraceProvider : RazorLogHubTraceProvider
 {

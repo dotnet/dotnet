@@ -4,7 +4,6 @@
 #nullable disable
 
 using System.Collections.Generic;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using System.Threading;

@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 
-internal class VisualStudioFileChangeTracker : FileChangeTracker, IVsFreeThreadedFileChangeEvents2
+internal class VisualStudioFileChangeTracker : IFileChangeTracker, IVsFreeThreadedFileChangeEvents2
 {
     private const _VSFILECHANGEFLAGS FileChangeFlags = _VSFILECHANGEFLAGS.VSFILECHG_Time | _VSFILECHANGEFLAGS.VSFILECHG_Size | _VSFILECHANGEFLAGS.VSFILECHG_Del | _VSFILECHANGEFLAGS.VSFILECHG_Add;
 
@@ -24,7 +24,9 @@ internal class VisualStudioFileChangeTracker : FileChangeTracker, IVsFreeThreade
     internal JoinableTask? _fileChangeUnadviseTask;
     internal JoinableTask? _fileChangedTask;
 
-    public override event EventHandler<FileChangeEventArgs>? Changed;
+    public string FilePath { get; }
+
+    public event EventHandler<FileChangeEventArgs>? Changed;
 
     public VisualStudioFileChangeTracker(
         string filePath,
@@ -38,26 +40,6 @@ internal class VisualStudioFileChangeTracker : FileChangeTracker, IVsFreeThreade
             throw new ArgumentException(SR.ArgumentCannotBeNullOrEmpty, nameof(filePath));
         }
 
-        if (errorReporter is null)
-        {
-            throw new ArgumentNullException(nameof(errorReporter));
-        }
-
-        if (fileChangeService is null)
-        {
-            throw new ArgumentNullException(nameof(fileChangeService));
-        }
-
-        if (projectSnapshotManagerDispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-        }
-
-        if (joinableTaskContext is null)
-        {
-            throw new ArgumentNullException(nameof(joinableTaskContext));
-        }
-
         FilePath = filePath;
         _errorReporter = errorReporter;
         _fileChangeService = fileChangeService;
@@ -65,9 +47,7 @@ internal class VisualStudioFileChangeTracker : FileChangeTracker, IVsFreeThreade
         _joinableTaskContext = joinableTaskContext;
     }
 
-    public override string FilePath { get; }
-
-    public override void StartListening()
+    public void StartListening()
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 
@@ -106,7 +86,7 @@ internal class VisualStudioFileChangeTracker : FileChangeTracker, IVsFreeThreade
         });
     }
 
-    public override void StopListening()
+    public void StopListening()
     {
         _projectSnapshotManagerDispatcher.AssertDispatcherThread();
 

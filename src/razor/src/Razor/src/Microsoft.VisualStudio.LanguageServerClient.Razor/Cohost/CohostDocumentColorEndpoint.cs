@@ -39,20 +39,11 @@ internal sealed class CohostDocumentColorEndpoint(
 
     protected override Task<ColorInformation[]> HandleRequestAsync(DocumentColorParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
     {
-        // TODO: Create document context from request.TextDocument, by looking at request.Solution instead of our project snapshots
         var documentContext = context.GetRequiredDocumentContext();
 
         _logger.LogDebug("[Cohost] Received document color request for {requestPath} and got document {documentPath}", request.TextDocument.Uri, documentContext?.FilePath);
 
-        // TODO: We can't MEF import IRazorCohostClientLanguageServerManager in the constructor. We can make this work
-        //       by having it implement a base class, RazorClientConnectionBase or something, that in turn implements
-        //       AbstractRazorLspService (defined in Roslyn) and then move everything from importing IClientConnection
-        //       to importing the new base class, so we can continue to share services.
-        //
-        //       Until then we have to get the service from the request context.
-        var clientLanguageServerManager = context.GetRequiredService<IRazorCohostClientLanguageServerManager>();
-        var clientConnection = new RazorCohostClientConnection(clientLanguageServerManager);
-
+        var clientConnection = context.GetClientConnection();
         return _documentColorService.GetColorInformationAsync(clientConnection, request, documentContext, cancellationToken);
     }
 }

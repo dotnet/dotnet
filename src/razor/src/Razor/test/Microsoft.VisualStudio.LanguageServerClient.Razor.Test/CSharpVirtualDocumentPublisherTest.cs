@@ -6,9 +6,9 @@
 using System;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;
+using Microsoft.VisualStudio.Razor.DynamicFiles;
 using Microsoft.VisualStudio.Text;
 using Moq;
 using Xunit;
@@ -28,7 +28,7 @@ public class CSharpVirtualDocumentPublisherTest : ToolingTestBase
     {
         // Arrange
         var lspDocumentMappingProvider = new Mock<LSPDocumentMappingProvider>(MockBehavior.Strict);
-        var fileInfoProvider = new Mock<RazorDynamicFileInfoProvider>(MockBehavior.Strict);
+        var fileInfoProvider = new Mock<IRazorDynamicFileInfoProviderInternal>(MockBehavior.Strict);
         var publisher = new CSharpVirtualDocumentPublisher(fileInfoProvider.Object, lspDocumentMappingProvider.Object);
 
         // Act & Assert
@@ -40,7 +40,7 @@ public class CSharpVirtualDocumentPublisherTest : ToolingTestBase
     {
         // Arrange
         var lspDocumentMappingProvider = new Mock<LSPDocumentMappingProvider>(MockBehavior.Strict);
-        var fileInfoProvider = new Mock<RazorDynamicFileInfoProvider>(MockBehavior.Strict);
+        var fileInfoProvider = new Mock<IRazorDynamicFileInfoProviderInternal>(MockBehavior.Strict);
         var publisher = new CSharpVirtualDocumentPublisher(fileInfoProvider.Object, lspDocumentMappingProvider.Object);
 
         // Act & Assert
@@ -52,7 +52,7 @@ public class CSharpVirtualDocumentPublisherTest : ToolingTestBase
     {
         // Arrange
         var lspDocumentMappingProvider = new Mock<LSPDocumentMappingProvider>(MockBehavior.Strict);
-        var fileInfoProvider = new Mock<RazorDynamicFileInfoProvider>(MockBehavior.Strict);
+        var fileInfoProvider = new Mock<IRazorDynamicFileInfoProviderInternal>(MockBehavior.Strict);
         var publisher = new CSharpVirtualDocumentPublisher(fileInfoProvider.Object, lspDocumentMappingProvider.Object);
 
         // Act & Assert
@@ -69,9 +69,9 @@ public class CSharpVirtualDocumentPublisherTest : ToolingTestBase
         // Arrange
         var csharpSnapshot = new CSharpVirtualDocumentSnapshot(projectKey: default, new Uri("C:/path/to/something.razor.g.cs"), Mock.Of<ITextSnapshot>(MockBehavior.Strict), hostDocumentSyncVersion: 1337);
         var lspDocument = new TestLSPDocumentSnapshot(new Uri("C:/path/to/something.razor"), 1337, csharpSnapshot);
-        var fileInfoProvider = new Mock<RazorDynamicFileInfoProvider>(MockBehavior.Strict);
+        var fileInfoProvider = new Mock<IRazorDynamicFileInfoProviderInternal>(MockBehavior.Strict);
         var lspDocumentMappingProvider = new Mock<LSPDocumentMappingProvider>(MockBehavior.Strict);
-        fileInfoProvider.Setup(provider => provider.UpdateLSPFileInfo(lspDocument.Uri, It.IsAny<DynamicDocumentContainer>()))
+        fileInfoProvider.Setup(provider => provider.UpdateLSPFileInfo(lspDocument.Uri, It.IsAny<IDynamicDocumentContainer>()))
             .Verifiable();
         var publisher = new CSharpVirtualDocumentPublisher(fileInfoProvider.Object, lspDocumentMappingProvider.Object);
 

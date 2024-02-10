@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.FindAllReferences;
 using Microsoft.AspNetCore.Razor.LanguageServer.Folding;
 using Microsoft.AspNetCore.Razor.LanguageServer.Implementation;
+using Microsoft.AspNetCore.Razor.LanguageServer.InlayHints;
 using Microsoft.AspNetCore.Razor.LanguageServer.LinkedEditingRange;
 using Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectContexts;
@@ -28,7 +29,6 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.VisualStudio.Editor.Razor;
 using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -134,7 +134,7 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
         services.AddFormattingServices();
         services.AddCodeActionsServices();
         services.AddOptionsServices(_lspOptions);
-        services.AddHoverServices();
+        services.AddHoverServices(featureOptions);
         services.AddTextDocumentServices();
 
         // Auto insert
@@ -146,7 +146,6 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
         services.AddSingleton<IRazorFoldingRangeProvider, UsingsFoldingRangeProvider>();
 
         // Other
-        services.AddSingleton<HtmlFactsService, DefaultHtmlFactsService>();
         services.AddSingleton<WorkspaceDirectoryPathResolver, DefaultWorkspaceDirectoryPathResolver>();
         services.AddSingleton<RazorComponentSearchEngine, DefaultRazorComponentSearchEngine>();
 
@@ -197,6 +196,14 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
             services.AddHandlerWithCapabilities<ProjectContextsEndpoint>();
             services.AddHandlerWithCapabilities<DocumentSymbolEndpoint>();
             services.AddHandler<MapCodeEndpoint>();
+
+            if (!featureOptions.UseRazorCohostServer)
+            {
+                services.AddSingleton<IInlayHintService, InlayHintService>();
+
+                services.AddHandlerWithCapabilities<InlayHintEndpoint>();
+                services.AddHandler<InlayHintResolveEndpoint>();
+            }
         }
     }
 

@@ -524,7 +524,8 @@ Render Children
 
         var node = new CSharpExpressionIntermediateNode()
         {
-            Source = new SourceSpan(fileName, 0, 0, 0, 3),
+            // Create a fake source span, so we can check it correctly maps in the #line below
+            Source = new SourceSpan(fileName, 0, 2, 3, 6, 1, 2),
         };
         var builder = IntermediateNodeBuilder.Create(node);
         builder.Add(new IntermediateToken()
@@ -540,7 +541,7 @@ Render Children
             $"""
 
             #nullable restore
-            #line (1,1)-(1,1) 6 "{expectedFileName}"
+            #line (3,4)-(4,3) 6 "{expectedFileName}"
             Write(i++);
 
             #line default
@@ -551,6 +552,7 @@ Render Children
             csharp,
             ignoreLineEndingDifferences: true);
     }
+
 
     private DocumentIntermediateNode Lower(RazorCodeDocument codeDocument)
     {

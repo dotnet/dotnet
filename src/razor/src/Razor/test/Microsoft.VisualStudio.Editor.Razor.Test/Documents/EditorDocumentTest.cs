@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.CodeAnalysis;
@@ -16,24 +14,24 @@ namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 
 public class EditorDocumentTest : ProjectSnapshotManagerDispatcherTestBase
 {
-    private readonly EditorDocumentManager _documentManager;
+    private readonly IEditorDocumentManager _documentManager;
     private readonly string _projectFilePath;
     private readonly ProjectKey _projectKey;
     private readonly string _documentFilePath;
     private readonly TextLoader _textLoader;
-    private readonly FileChangeTracker _fileChangeTracker;
+    private readonly IFileChangeTracker _fileChangeTracker;
     private readonly TestTextBuffer _textBuffer;
 
     public EditorDocumentTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _documentManager = new Mock<EditorDocumentManager>(MockBehavior.Strict).Object;
+        _documentManager = new Mock<IEditorDocumentManager>(MockBehavior.Strict).Object;
         Mock.Get(_documentManager).Setup(m => m.RemoveDocument(It.IsAny<EditorDocument>())).Verifiable();
         _projectFilePath = TestProjectData.SomeProject.FilePath;
         _projectKey = TestProjectData.SomeProject.Key;
         _documentFilePath = TestProjectData.SomeProjectFile1.FilePath;
         _textLoader = TextLoader.From(TextAndVersion.Create(SourceText.From("FILE"), VersionStamp.Default));
-        _fileChangeTracker = new DefaultFileChangeTracker(_documentFilePath);
+        _fileChangeTracker = Mock.Of<IFileChangeTracker>(x => x.FilePath == _documentFilePath, MockBehavior.Strict);
 
         _textBuffer = new TestTextBuffer(new StringTextSnapshot("Hello"));
     }
@@ -42,7 +40,7 @@ public class EditorDocumentTest : ProjectSnapshotManagerDispatcherTestBase
     public void EditorDocument_CreatedWhileOpened()
     {
         // Arrange & Act
-        using (var document = new EditorDocument(
+        using var document = new EditorDocument(
             _documentManager,
             Dispatcher,
             JoinableTaskFactory.Context,
@@ -55,20 +53,19 @@ public class EditorDocumentTest : ProjectSnapshotManagerDispatcherTestBase
             changedOnDisk: null,
             changedInEditor: null,
             opened: null,
-            closed: null))
-        {
-            // Assert
-            Assert.True(document.IsOpenInEditor);
-            Assert.Same(_textBuffer, document.EditorTextBuffer);
-            Assert.NotNull(document.EditorTextContainer);
-        }
+            closed: null);
+
+        // Assert
+        Assert.True(document.IsOpenInEditor);
+        Assert.Same(_textBuffer, document.EditorTextBuffer);
+        Assert.NotNull(document.EditorTextContainer);
     }
 
     [Fact]
     public void EditorDocument_CreatedWhileClosed()
     {
         // Arrange & Act
-        using (var document = new EditorDocument(
+        using var document = new EditorDocument(
             _documentManager,
             Dispatcher,
             JoinableTaskFactory.Context,
@@ -81,12 +78,11 @@ public class EditorDocumentTest : ProjectSnapshotManagerDispatcherTestBase
             changedOnDisk: null,
             changedInEditor: null,
             opened: null,
-            closed: null))
-        {
-            // Assert
-            Assert.False(document.IsOpenInEditor);
-            Assert.Null(document.EditorTextBuffer);
-            Assert.Null(document.EditorTextContainer);
-        }
+            closed: null);
+
+        // Assert
+        Assert.False(document.IsOpenInEditor);
+        Assert.Null(document.EditorTextBuffer);
+        Assert.Null(document.EditorTextContainer);
     }
 }

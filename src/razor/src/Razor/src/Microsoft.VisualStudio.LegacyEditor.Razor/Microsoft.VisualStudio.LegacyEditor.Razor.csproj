@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(DefaultNetFxTargetFramework)</TargetFramework>
+    <EnableApiCheck>false</EnableApiCheck>
+    <IsShippingPackage>false</IsShippingPackage>
+    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
+    <IsPackable Condition="'$(OS)' != 'Windows_NT'">false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.VisualStudio.Editor.Razor\Microsoft.VisualStudio.Editor.Razor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="String Resources">
+    <EmbeddedResource Update="Resources\SR.resx">
+      <GenerateSource>true</GenerateSource>
+      <Namespace>$(ProjectName).Resources</Namespace>
+    </EmbeddedResource>
+
+    <Using Include="$(ProjectName).Resources" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="PublicAPI\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI\PublicAPI.Unshipped.txt" />
+    <AdditionalFiles Include="$(RepoRoot)src\Razor\vs-threading.MainThreadAssertingMethods.txt" Link="AnalyzerConfig\vs-threading.MainThreadAssertingMethods.txt" />
+  </ItemGroup>
+
+</Project>

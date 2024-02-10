@@ -1,47 +1,34 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
-using System.Composition;
+using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer;
-using Microsoft.CodeAnalysis.Razor.Editor;
-using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.VisualStudio.Editor.Razor.Settings;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
-[Shared]
-[Export(typeof(ClientSettingsChangedTrigger))]
-internal class WorkspaceConfigurationChangedListener : ClientSettingsChangedTrigger
+[Export(typeof(IClientSettingsChangedTrigger))]
+[method: ImportingConstructor]
+internal class WorkspaceConfigurationChangedListener(LSPRequestInvoker requestInvoker) : IClientSettingsChangedTrigger
 {
-    private readonly LSPRequestInvoker _requestInvoker;
+    private readonly LSPRequestInvoker _requestInvoker = requestInvoker;
 
-    [ImportingConstructor]
-    public WorkspaceConfigurationChangedListener(LSPRequestInvoker requestInvoker)
+    public void Initialize(IClientSettingsManager editorSettingsManager)
     {
-        if (requestInvoker is null)
-        {
-            throw new ArgumentNullException(nameof(requestInvoker));
-        }
-
-        _requestInvoker = requestInvoker;
+        editorSettingsManager.ClientSettingsChanged += OnClientSettingsChanged;
     }
 
-    public override void Initialize(IClientSettingsManager editorSettingsManager)
+    private void OnClientSettingsChanged(object sender, ClientSettingsChangedEventArgs args)
     {
-        editorSettingsManager.ClientSettingsChanged += EditorSettingsManager_Changed;
+        _ = OnClientSettingsChangedAsync();
     }
 
-    private void EditorSettingsManager_Changed(object sender, ClientSettingsChangedEventArgs args)
-    {
-        _ = EditorSettingsManager_ChangedAsync();
-    }
-
-    private async Task EditorSettingsManager_ChangedAsync()
+    private async Task OnClientSettingsChangedAsync()
     {
         // Make sure the server updates the settings on their side by sending a
         // workspace/didChangeConfiguration request. This notifies the server that the user's
@@ -69,6 +56,5 @@ internal class WorkspaceConfigurationChangedListener : ClientSettingsChangedTrig
 
     private class Unit
     {
-
     }
 }

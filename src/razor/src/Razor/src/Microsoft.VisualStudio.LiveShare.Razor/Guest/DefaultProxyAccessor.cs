@@ -8,7 +8,6 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 
-[System.Composition.Shared]
 [Export(typeof(ProxyAccessor))]
 internal class DefaultProxyAccessor : ProxyAccessor
 {

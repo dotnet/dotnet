@@ -10,8 +10,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Options;
-using Microsoft.CodeAnalysis.Razor.Editor;
-using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.CodeAnalysis.Razor.Settings;
+using Microsoft.VisualStudio.Editor.Razor.Settings;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
