@@ -13,49 +13,28 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Host;
 
-internal class DefaultProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, ICollaborationService, IDisposable
+internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, ICollaborationService, IDisposable
 {
     private readonly CollaborationSession _session;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly IProjectSnapshotManager _projectSnapshotManager;
-    private readonly JoinableTaskFactory _joinableTaskFactory;
+    private readonly JoinableTaskFactory _jtf;
     private readonly AsyncSemaphore _latestStateSemaphore;
     private bool _disposed;
     private ProjectSnapshotManagerProxyState? _latestState;
 
-    // Internal for testing
-    internal JoinableTask? _processingChangedEventTestTask;
+    private JoinableTask? _processingChangedEventTestTask;
 
-    public DefaultProjectSnapshotManagerProxy(
+    public ProjectSnapshotManagerProxy(
         CollaborationSession session,
-        ProjectSnapshotManagerDispatcher dispatcher,
         IProjectSnapshotManager projectSnapshotManager,
-        JoinableTaskFactory joinableTaskFactory)
+        ProjectSnapshotManagerDispatcher dispatcher,
+        JoinableTaskFactory jtf)
     {
-        if (session is null)
-        {
-            throw new ArgumentNullException(nameof(session));
-        }
-
-        if (dispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(dispatcher));
-        }
-
-        if (projectSnapshotManager is null)
-        {
-            throw new ArgumentNullException(nameof(projectSnapshotManager));
-        }
-
-        if (joinableTaskFactory is null)
-        {
-            throw new ArgumentNullException(nameof(joinableTaskFactory));
-        }
-
         _session = session;
         _dispatcher = dispatcher;
         _projectSnapshotManager = projectSnapshotManager;
-        _joinableTaskFactory = joinableTaskFactory;
+        _jtf = jtf;
 
         _latestStateSemaphore = new AsyncSemaphore(initialCount: 1);
         _projectSnapshotManager.Changed += ProjectSnapshotManager_Changed;
@@ -81,8 +60,6 @@ internal class DefaultProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy
 
     public void Dispose()
     {
-        _dispatcher.AssertDispatcherThread();
-
         _projectSnapshotManager.Changed -= ProjectSnapshotManager_Changed;
         _latestStateSemaphore.Dispose();
         _disposed = true;
@@ -91,9 +68,9 @@ internal class DefaultProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy
     // Internal for testing
     internal async Task<IReadOnlyList<IProjectSnapshot>> GetLatestProjectsAsync()
     {
-        if (!_joinableTaskFactory.Context.IsOnMainThread)
+        if (!_jtf.Context.IsOnMainThread)
         {
-            await _joinableTaskFactory.SwitchToMainThreadAsync(CancellationToken.None);
+            await _jtf.SwitchToMainThreadAsync(CancellationToken.None);
         }
 
         return _projectSnapshotManager.GetProjects();
@@ -148,11 +125,11 @@ internal class DefaultProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy
             return;
         }
 
-        _processingChangedEventTestTask = _joinableTaskFactory.RunAsync(async () =>
+        _processingChangedEventTestTask = _jtf.RunAsync(async () =>
         {
             var projects = await GetLatestProjectsAsync();
 
-            await _joinableTaskFactory.SwitchToMainThreadAsync();
+            await _jtf.SwitchToMainThreadAsync();
 
             var oldProjectProxy = await ConvertToProxyAsync(args.Older).ConfigureAwait(false);
             var newProjectProxy = await ConvertToProxyAsync(args.Newer).ConfigureAwait(false);
@@ -172,5 +149,13 @@ internal class DefaultProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy
         }
 
         Changed?.Invoke(this, args);
+    }
+
+    internal TestAccessor GetTestAccessor()
+        => new(this);
+
+    internal sealed class TestAccessor(ProjectSnapshotManagerProxy instance)
+    {
+        public JoinableTask? ProcessingChangedEventTestTask => instance._processingChangedEventTestTask;
     }
 }

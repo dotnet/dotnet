@@ -749,8 +749,40 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
         Assert.Empty(_projectManager.GetProjects());
     }
 
+    [UITheory]
+    // Standard setup.  BaseIntermediateOutputPath ends in obj and IntermediateOutputPath starts with obj
+    [InlineData(@"C:\my repo root\solution folder\projectFolder\obj\", @"obj\Debug\net8.0", @"C:\my repo root\solution folder\projectFolder\obj\Debug\net8.0")]
+    // ArtifactsPath in use as ../artifacts
+    [InlineData(@"C:\my repo root\solution folder\projectFolder\../artifacts\obj\projectName\", @"C:\my repo root\solution folder\projectFolder\../artifacts\obj\projectName\debug", @"C:\my repo root\solution folder\artifacts\obj\projectName\debug")]
+    // .... and ArtifactsPivot is $(ArtifactsPivot)\_MyCustomPivot
+    [InlineData(@"C:\my repo root\solution folder\projectFolder\../artifacts\obj\projectName\", @"C:\my repo root\solution folder\projectFolder\../artifacts\obj\projectName\_MyCustomPivot", @"C:\my repo root\solution folder\artifacts\obj\projectName\_MyCustomPivot")]
+    // Set BIOP to ..\..\artifacts\obj\$(MSBuildProjectFolder), pre-ArtifactsPath existing
+    [InlineData(@"C:\my repo root\solution folder\projectFolder\..\..\artifacts\obj\projectName", @"..\..\artifacts\obj\projectName\Debug\net8.0", @"C:\my repo root\artifacts\obj\projectName\Debug\net8.0")]
+    public void IntermediateOutputPathCalculationHandlesRelativePaths(string baseIntermediateOutputPath, string intermediateOutputPath, string expectedCombinedIOP)
+    {
+        var services = new TestProjectSystemServices(TestProjectData.SomeProject.FilePath);
+        var host = new DefaultWindowsRazorProjectHost(services, _projectManagerAccessor, Dispatcher, _projectConfigurationFilePathStore, languageServerFeatureOptions: null);
+
+        var state = TestProjectRuleSnapshot.CreateProperties(
+             WindowsRazorProjectHostBase.ConfigurationGeneralSchemaName,
+             new Dictionary<string, string>()
+             {
+                 [WindowsRazorProjectHostBase.IntermediateOutputPathPropertyName] = intermediateOutputPath,
+                 [WindowsRazorProjectHostBase.BaseIntermediateOutputPathPropertyName] = baseIntermediateOutputPath,
+             });
+
+        var dict = ImmutableDictionary<string, IProjectRuleSnapshot>.Empty;
+        dict = dict.Add(WindowsRazorProjectHostBase.ConfigurationGeneralSchemaName, state);
+
+        var result = host.GetTestAccessor().GetIntermediateOutputPathFromProjectChange(dict,
+            out var combinedIntermediateOutputPath);
+
+        Assert.True(result);
+        Assert.Equal(expectedCombinedIOP, combinedIntermediateOutputPath);
+    }
+
     [UIFact]
-    public async Task OnProjectChanged_NoVersionFound_DoesNotIniatializeProject()
+    public async Task OnProjectChanged_NoVersionFound_DoesNotInitializeProject()
     {
         // Arrange
         _razorGeneralProperties.Property(Rules.RazorGeneral.RazorLangVersionProperty, "");
@@ -998,7 +1030,7 @@ public class DefaultWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatch
     }
 
     [UIFact]
-    public async Task OnProjectChanged_VersionRemoved_DeinitializesProject()
+    public async Task OnProjectChanged_VersionRemoved_DeInitializesProject()
     {
         // Arrange
         _razorGeneralProperties.Property(Rules.RazorGeneral.RazorLangVersionProperty, "2.1");

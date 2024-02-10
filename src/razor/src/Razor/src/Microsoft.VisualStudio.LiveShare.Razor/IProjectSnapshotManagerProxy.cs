@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-internal interface IProjectSnapshotManagerProxy
+// This type must be a public interface in order to to be implemented as an RPC proxy by live share.
+public interface IProjectSnapshotManagerProxy
 {
-    event EventHandler<ProjectChangeEventProxyArgs>? Changed;
+    event EventHandler<ProjectChangeEventProxyArgs> Changed;
 
     Task<ProjectSnapshotManagerProxyState> GetProjectManagerStateAsync(CancellationToken cancellationToken);
 }

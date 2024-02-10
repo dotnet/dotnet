@@ -1,9 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Threading;
 using Task = System.Threading.Tasks.Task;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
@@ -17,10 +18,11 @@ namespace Microsoft.VisualStudio.LiveShare.Razor;
     Name = nameof(IRemoteHierarchyService),
     Scope = SessionScope.Host,
     Role = ServiceRole.RemoteService)]
-internal sealed class RemoteHierarchyServiceFactory : ICollaborationServiceFactory
+[method: ImportingConstructor]
+internal sealed class RemoteHierarchyServiceFactory(JoinableTaskContext joinableTaskContext) : ICollaborationServiceFactory
 {
     public Task<ICollaborationService> CreateServiceAsync(CollaborationSession session, CancellationToken cancellationToken)
     {
-        return Task.FromResult<ICollaborationService>(new RemoteHierarchyService(session, ThreadHelper.JoinableTaskFactory));
+        return Task.FromResult<ICollaborationService>(new RemoteHierarchyService(session, joinableTaskContext.Factory));
     }
 }

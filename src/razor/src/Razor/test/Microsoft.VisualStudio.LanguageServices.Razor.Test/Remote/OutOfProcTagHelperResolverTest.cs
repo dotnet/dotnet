@@ -11,20 +11,30 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Remote.Razor.Test;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
+using static Microsoft.AspNetCore.Razor.Test.Common.TagHelperTestData;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-public partial class OutOfProcTagHelperResolverTest : TagHelperDescriptorTestBase
+public partial class OutOfProcTagHelperResolverTest : ToolingTestBase
 {
-    private readonly HostProject _hostProject_For_2_0;
-    private readonly HostProject _hostProject_For_NonSerializableConfiguration;
+    private static readonly HostProject s_hostProject_For_2_0 = new(
+        projectFilePath: "Test.csproj",
+        intermediateOutputPath: "/obj",
+        razorConfiguration: FallbackRazorConfiguration.MVC_2_0,
+        rootNamespace: null);
+    private static readonly HostProject s_hostProject_For_NonSerializableConfiguration = new(
+        projectFilePath: "Test.csproj",
+        intermediateOutputPath: "/obj",
+        razorConfiguration: new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "Random-0.1", []),
+        rootNamespace: null);
+
     private readonly Project _workspaceProject;
     private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor;
     private readonly IWorkspaceProvider _workspaceProvider;
@@ -32,17 +42,6 @@ public partial class OutOfProcTagHelperResolverTest : TagHelperDescriptorTestBas
     public OutOfProcTagHelperResolverTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _hostProject_For_2_0 = new HostProject(
-            projectFilePath: "Test.csproj",
-            intermediateOutputPath: "/obj",
-            razorConfiguration: FallbackRazorConfiguration.MVC_2_0,
-            rootNamespace: null);
-        _hostProject_For_NonSerializableConfiguration = new HostProject(
-            projectFilePath: "Test.csproj",
-            intermediateOutputPath: "/obj",
-            razorConfiguration: new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "Random-0.1", []),
-            rootNamespace: null);
-
         var workspace = new AdhocWorkspace();
         AddDisposable(workspace);
 
@@ -86,9 +85,9 @@ public partial class OutOfProcTagHelperResolverTest : TagHelperDescriptorTestBas
     public async Task GetTagHelpersAsync_WithSerializableCustomFactory_GoesOutOfProcess()
     {
         // Arrange
-        _projectManagerAccessor.Instance.ProjectAdded(_hostProject_For_2_0);
+        _projectManagerAccessor.Instance.ProjectAdded(s_hostProject_For_2_0);
 
-        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(_hostProject_For_2_0.Key);
+        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(s_hostProject_For_2_0.Key);
 
         var calledOutOfProcess = false;
 
@@ -115,9 +114,9 @@ public partial class OutOfProcTagHelperResolverTest : TagHelperDescriptorTestBas
     public async Task GetTagHelpersAsync_WithNonSerializableCustomFactory_StaysInProcess()
     {
         // Arrange
-        _projectManagerAccessor.Instance.ProjectAdded(_hostProject_For_NonSerializableConfiguration);
+        _projectManagerAccessor.Instance.ProjectAdded(s_hostProject_For_NonSerializableConfiguration);
 
-        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(_hostProject_For_2_0.Key);
+        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(s_hostProject_For_2_0.Key);
 
         var calledInProcess = false;
 
@@ -144,9 +143,9 @@ public partial class OutOfProcTagHelperResolverTest : TagHelperDescriptorTestBas
     public async Task GetTagHelpersAsync_OperationCanceledException_DoesNotGetWrapped()
     {
         // Arrange
-        _projectManagerAccessor.Instance.ProjectAdded(_hostProject_For_2_0);
+        _projectManagerAccessor.Instance.ProjectAdded(s_hostProject_For_2_0);
 
-        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(_hostProject_For_2_0.Key);
+        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(s_hostProject_For_2_0.Key);
 
         var calledOutOfProcess = false;
         var calledInProcess = false;

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Serialization;
@@ -15,7 +16,7 @@ internal class ProjectSnapshotHandleProxyJsonConverter : ObjectJsonConverter<Pro
         var intermediateOutputPath = reader.ReadNonNullUri(nameof(ProjectSnapshotHandleProxy.IntermediateOutputPath));
         var configuration = reader.ReadNonNullObject(nameof(ProjectSnapshotHandleProxy.Configuration), ObjectReaders.ReadConfigurationFromProperties);
         var rootNamespace = reader.ReadStringOrNull(nameof(ProjectSnapshotHandleProxy.RootNamespace));
-        var projectWorkspaceState = reader.ReadObjectOrNull(nameof(ProjectSnapshotHandleProxy.ProjectWorkspaceState), ObjectReaders.ReadProjectWorkspaceStateFromProperties);
+        var projectWorkspaceState = reader.ReadObjectOrNull(nameof(ProjectSnapshotHandleProxy.ProjectWorkspaceState), ObjectReaders.ReadProjectWorkspaceStateFromProperties) ?? ProjectWorkspaceState.Default;
 
         return new(filePath, intermediateOutputPath, configuration, rootNamespace, projectWorkspaceState);
     }

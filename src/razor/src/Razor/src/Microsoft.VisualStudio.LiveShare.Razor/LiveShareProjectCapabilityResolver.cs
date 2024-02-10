@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.ComponentModel.Composition;
 using System.Threading;
 using Microsoft.VisualStudio.Editor.Razor;
@@ -11,29 +10,13 @@ using Microsoft.VisualStudio.Threading;
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
 [Export(typeof(ProjectCapabilityResolver))]
-internal class LiveShareProjectCapabilityResolver : ProjectCapabilityResolver
+[method: ImportingConstructor]
+internal class LiveShareProjectCapabilityResolver(
+    ILiveShareSessionAccessor sessionAccessor,
+    JoinableTaskContext joinableTaskContext) : ProjectCapabilityResolver
 {
-    private readonly LiveShareSessionAccessor _sessionAccessor;
-    private readonly JoinableTaskFactory _joinableTaskFactory;
-
-    [ImportingConstructor]
-    public LiveShareProjectCapabilityResolver(
-        LiveShareSessionAccessor sessionAccessor,
-        JoinableTaskContext joinableTaskContext)
-    {
-        if (sessionAccessor is null)
-        {
-            throw new ArgumentNullException(nameof(sessionAccessor));
-        }
-
-        if (joinableTaskContext is null)
-        {
-            throw new ArgumentNullException(nameof(joinableTaskContext));
-        }
-
-        _sessionAccessor = sessionAccessor;
-        _joinableTaskFactory = joinableTaskContext.Factory;
-    }
+    private readonly ILiveShareSessionAccessor _sessionAccessor = sessionAccessor;
+    private readonly JoinableTaskFactory _joinableTaskFactory = joinableTaskContext.Factory;
 
     public override bool HasCapability(object project, string capability)
     {

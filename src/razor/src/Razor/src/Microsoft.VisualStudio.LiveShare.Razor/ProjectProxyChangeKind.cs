@@ -3,7 +3,9 @@
 
 namespace Microsoft.VisualStudio.LiveShare.Razor;
 
-internal enum ProjectProxyChangeKind
+// This type must be public because it is exposed by a public interface that is implemented as
+// an RPC proxy by live share.
+public enum ProjectProxyChangeKind
 {
     ProjectAdded,
     ProjectRemoved,

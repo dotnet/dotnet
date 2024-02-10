@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,32 +11,28 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 
-public class RazorGuestInitializationServiceTest : ToolingTestBase
+public class RazorGuestInitializationServiceTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    private readonly DefaultLiveShareSessionAccessor _liveShareSessionAccessor;
-
-    public RazorGuestInitializationServiceTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        _liveShareSessionAccessor = new DefaultLiveShareSessionAccessor();
-    }
+    private readonly LiveShareSessionAccessor _liveShareSessionAccessor = new();
 
     [Fact]
     public async Task CreateServiceAsync_StartsViewImportsCopy()
     {
         // Arrange
         var service = new RazorGuestInitializationService(_liveShareSessionAccessor);
-        var session = new Mock<CollaborationSession>(MockBehavior.Strict);
-        session.Setup(s => s.ListRootsAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Array.Empty<Uri>())
+        var serviceAccessor = service.GetTestAccessor();
+        var session = new StrictMock<CollaborationSession>();
+        session
+            .Setup(s => s.ListRootsAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync([])
             .Verifiable();
 
         // Act
         await service.CreateServiceAsync(session.Object, default);
 
         // Assert
-        Assert.NotNull(service._viewImportsCopyTask);
-        await service._viewImportsCopyTask;
+        Assert.NotNull(serviceAccessor.ViewImportsCopyTask);
+        await serviceAccessor.ViewImportsCopyTask;
 
         session.VerifyAll();
     }
@@ -48,11 +42,13 @@ public class RazorGuestInitializationServiceTest : ToolingTestBase
     {
         // Arrange
         var service = new RazorGuestInitializationService(_liveShareSessionAccessor);
-        var session = new Mock<CollaborationSession>(MockBehavior.Strict);
+        var serviceAccessor = service.GetTestAccessor();
+        var session = new StrictMock<CollaborationSession>();
         using var disposedServiceGate = new ManualResetEventSlim();
         var disposedService = false;
-        IDisposable sessionService = null;
-        session.Setup(s => s.ListRootsAsync(It.IsAny<CancellationToken>()))
+        IDisposable? sessionService = null;
+        session
+            .Setup(s => s.ListRootsAsync(It.IsAny<CancellationToken>()))
             .Returns<CancellationToken>((cancellationToken) => Task.Run(() =>
                 {
                     cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(5));
@@ -64,7 +60,7 @@ public class RazorGuestInitializationServiceTest : ToolingTestBase
                     return Array.Empty<Uri>();
                 }))
             .Verifiable();
-        sessionService = (IDisposable)await service.CreateServiceAsync(session.Object, default);
+        sessionService = (IDisposable)await service.CreateServiceAsync(session.Object, DisposalToken);
 
         // Act
         sessionService.Dispose();
@@ -72,8 +68,8 @@ public class RazorGuestInitializationServiceTest : ToolingTestBase
         disposedServiceGate.Set();
 
         // Assert
-        Assert.NotNull(service._viewImportsCopyTask);
-        await service._viewImportsCopyTask;
+        Assert.NotNull(serviceAccessor.ViewImportsCopyTask);
+        await serviceAccessor.ViewImportsCopyTask;
 
         session.VerifyAll();
     }
@@ -83,10 +79,12 @@ public class RazorGuestInitializationServiceTest : ToolingTestBase
     {
         // Arrange
         var service = new RazorGuestInitializationService(_liveShareSessionAccessor);
-        var session = new Mock<CollaborationSession>(MockBehavior.Strict);
+        var serviceAccessor = service.GetTestAccessor();
+        var session = new StrictMock<CollaborationSession>();
         using var cts = new CancellationTokenSource();
-        IDisposable sessionService = null;
-        session.Setup(s => s.ListRootsAsync(It.IsAny<CancellationToken>()))
+        IDisposable? sessionService = null;
+        session
+            .Setup(s => s.ListRootsAsync(It.IsAny<CancellationToken>()))
             .Returns<CancellationToken>((cancellationToken) => Task.Run(() =>
                 {
                     cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(3));
@@ -101,8 +99,8 @@ public class RazorGuestInitializationServiceTest : ToolingTestBase
         cts.Cancel();
 
         // Assert
-        Assert.NotNull(service._viewImportsCopyTask);
-        await service._viewImportsCopyTask;
+        Assert.NotNull(serviceAccessor.ViewImportsCopyTask);
+        await serviceAccessor.ViewImportsCopyTask;
 
         session.VerifyAll();
     }
@@ -112,10 +110,12 @@ public class RazorGuestInitializationServiceTest : ToolingTestBase
     {
         // Arrange
         var service = new RazorGuestInitializationService(_liveShareSessionAccessor);
-        var session = new Mock<CollaborationSession>(MockBehavior.Strict);
+        var serviceAcessor = service.GetTestAccessor();
+        var session = new StrictMock<CollaborationSession>();
         using var cts = new CancellationTokenSource();
-        IDisposable sessionService = null;
-        session.Setup(s => s.ListRootsAsync(It.IsAny<CancellationToken>()))
+        IDisposable? sessionService = null;
+        session
+            .Setup(s => s.ListRootsAsync(It.IsAny<CancellationToken>()))
             .Returns<CancellationToken>((cancellationToken) => Task.Run(() =>
                 {
                     cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(3));
@@ -131,8 +131,8 @@ public class RazorGuestInitializationServiceTest : ToolingTestBase
         cts.Cancel();
 
         // Assert
-        Assert.NotNull(service._viewImportsCopyTask);
-        await service._viewImportsCopyTask;
+        Assert.NotNull(serviceAcessor.ViewImportsCopyTask);
+        await serviceAcessor.ViewImportsCopyTask;
 
         session.VerifyAll();
     }
