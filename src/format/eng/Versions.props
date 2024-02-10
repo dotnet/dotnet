@@ -19,8 +19,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- command-line-api -->
-    <SystemCommandLineVersion>2.0.0-beta4.24059.2</SystemCommandLineVersion>
-    <SystemCommandLineRenderingVersion>0.4.0-alpha.24059.2</SystemCommandLineRenderingVersion>
+    <SystemCommandLineVersion>2.0.0-beta4.24102.1</SystemCommandLineVersion>
+    <SystemCommandLineRenderingVersion>0.4.0-alpha.24102.1</SystemCommandLineRenderingVersion>
     <!-- corefx -->
     <MicrosoftVisualBasicVersion>10.3.0</MicrosoftVisualBasicVersion>
     <!-- msbuild -->
@@ -34,8 +34,8 @@
     <!-- roslyn-sdk -->
     <MicrosoftCodeAnalysisAnalyzerTestingVersion>1.1.2-beta1.22216.1</MicrosoftCodeAnalysisAnalyzerTestingVersion>
     <!-- runtime -->
-    <MicrosoftExtensionsFileSystemGlobbingVersion>9.0.0-alpha.1.24064.3</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftExtensionsLoggingVersion>9.0.0-alpha.1.24064.3</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftExtensionsFileSystemGlobbingVersion>9.0.0-preview.2.24105.2</MicrosoftExtensionsFileSystemGlobbingVersion>
+    <MicrosoftExtensionsLoggingVersion>9.0.0-preview.2.24105.2</MicrosoftExtensionsLoggingVersion>
     <!-- symreader -->
     <MicrosoftDiaSymReaderVersion>2.0.0</MicrosoftDiaSymReaderVersion>
   </PropertyGroup>

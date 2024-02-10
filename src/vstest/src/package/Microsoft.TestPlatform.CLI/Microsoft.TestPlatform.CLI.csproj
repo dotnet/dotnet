@@ -3,26 +3,18 @@
     <TargetFrameworks>$(NetCoreAppMinimum);$(NetFrameworkMinimum);net47;net471;net472;net48</TargetFrameworks>
   </PropertyGroup>
 
-  <Choose>
-    <When Condition=" '$(DotNetBuildFromSource)' == 'true' ">
-      <PropertyGroup>
-        <NuspecFile>Microsoft.TestPlatform.CLI.sourcebuild.nuspec</NuspecFile>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <NuspecFile>Microsoft.TestPlatform.CLI.nuspec</NuspecFile>
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
-
   <PropertyGroup>
-    <!-- This package is included even in source build -->
+    <NuspecFile Condition=" '$(DotNetBuildFromSource)' != 'true' ">Microsoft.TestPlatform.CLI.nuspec</NuspecFile>
+    <NuspecFile Condition=" '$(DotNetBuildFromSource)' == 'true' AND '$(DotNetBuildFromSourceFlavor)' != 'Product' ">Microsoft.TestPlatform.CLI.sourcebuild.nuspec</NuspecFile>
+    <NuspecFile Condition=" '$(DotNetBuildFromSource)' == 'true' AND '$(DotNetBuildFromSourceFlavor)' == 'Product' ">Microsoft.TestPlatform.CLI.sourcebuild.product.nuspec</NuspecFile>
     <IsPackable>true</IsPackable>
+    <!-- This package is included even in source build -->
     <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.CLI</PackageId>
     <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
+    <PackageProjectUrl>https://github.com/microsoft/vstest</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/microsoft/vstest</RepositoryUrl>
     <PackageDescription>
       The cross platform Microsoft Test Platform.
     </PackageDescription>
@@ -31,7 +23,8 @@
   <ItemGroup Label="NuGet">
     <NuspecProperty Include="SrcPackageFolder=$(SrcPackageFolder)" />
     <NuspecProperty Include="TesthostRuntimeconfig=$(RepoRoot)temp\testhost" />
-    <NuspecProperty Include="SourceBuildTfm=$(NetCurrent)" />
+    <NuspecProperty Include="SourceBuildTfmPrevious=$(NetPrevious)" />
+    <NuspecProperty Include="SourceBuildTfmCurrent=$(NetCurrent)" />
   </ItemGroup>
 
   <PropertyGroup>

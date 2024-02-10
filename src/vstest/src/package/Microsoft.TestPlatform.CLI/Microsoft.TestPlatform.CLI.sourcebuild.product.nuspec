@@ -1,0 +1,69 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    $CommonMetadataElements$
+
+    <contentFiles>
+      <files include="**/*.*" copyToOutput="true" flatten="false" buildAction="None" />
+    </contentFiles>
+  </metadata>
+  <files>
+    $CommonFileElements$
+
+    <!-- Add a third party notice file -->
+    <file src="$SrcPackageFolder$ThirdPartyNotices.txt" target="" />
+
+    <file src="$SourceBuildTfmCurrent$\datacollector.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\datacollector.dll.config" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\datacollector.deps.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\datacollector.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+
+    <file src="$SourceBuildTfmCurrent$\Microsoft.Extensions.DependencyModel\Microsoft.Extensions.DependencyModel.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\Microsoft.Extensions.FileSystemGlobbing\Microsoft.Extensions.FileSystemGlobbing.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+
+    <file src="$SourceBuildTfmCurrent$\Microsoft.TestPlatform.CommunicationUtilities.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\Microsoft.TestPlatform.CoreUtilities.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\Microsoft.TestPlatform.CrossPlatEngine.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\Microsoft.TestPlatform.PlatformAbstractions.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\Microsoft.TestPlatform.Utilities.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\Microsoft.VisualStudio.TestPlatform.Client.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\Microsoft.VisualStudio.TestPlatform.Common.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+
+    <file src="$SourceBuildTfmCurrent$\Newtonsoft.Json\Newtonsoft.Json.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\System.ComponentModel.Composition.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+
+    <file src="$TesthostRuntimeconfig$\testhost-1.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$TesthostRuntimeconfig$\testhost-1.1.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$TesthostRuntimeconfig$\testhost-2.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$TesthostRuntimeconfig$\testhost-2.1.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$TesthostRuntimeconfig$\testhost-3.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$TesthostRuntimeconfig$\testhost-3.1.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$TesthostRuntimeconfig$\testhost-5.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$TesthostRuntimeconfig$\testhost-6.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$TesthostRuntimeconfig$\testhost-7.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$TesthostRuntimeconfig$\testhost-8.0.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$TesthostRuntimeconfig$\testhost-latest.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\testhost.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\testhost.deps.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+
+    <file src="$SourceBuildTfmCurrent$\vstest.console.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\vstest.console.dll.config" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\vstest.console.deps.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\vstest.console.runtimeconfig.json" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+
+    <!-- Extensions -->
+    <file src="$SourceBuildTfmCurrent$\Microsoft.Diagnostics.NETCore.Client\Microsoft.Diagnostics.NETCore.Client.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
+    <file src="$SourceBuildTfmCurrent$\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
+    <file src="$SourceBuildTfmCurrent$\Microsoft.TestPlatform.Extensions.EventLogCollector.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
+    <file src="$SourceBuildTfmCurrent$\Microsoft.TestPlatform.TesthostRuntimeProvider.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
+    <file src="$SourceBuildTfmCurrent$\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
+    <file src="$SourceBuildTfmCurrent$\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
+
+    <!-- Resources -->
+    <file src="$SourceBuildTfmCurrent$\**\Microsoft.TestPlatform.*.resources.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\**\Microsoft.VisualStudio.TestPlatform.*.resources.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <file src="$SourceBuildTfmCurrent$\**\vstest.console.resources.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+  </files>
+</package>

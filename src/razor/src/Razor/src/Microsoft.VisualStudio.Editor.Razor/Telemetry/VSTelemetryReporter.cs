@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Composition;
+using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Telemetry;
@@ -11,7 +11,6 @@ using StreamJsonRpc;
 
 namespace Microsoft.AspNetCore.Razor.Telemetry;
 
-[Shared]
 [Export(typeof(ITelemetryReporter))]
 internal class VSTelemetryReporter : TelemetryReporter
 {
@@ -19,10 +18,10 @@ internal class VSTelemetryReporter : TelemetryReporter
 
     [ImportingConstructor]
     public VSTelemetryReporter(IRazorLoggerFactory loggerFactory)
-            // Get the DefaultSession for telemetry. This is set by VS with
-            // TelemetryService.SetDefaultSession and provides the correct
-            // appinsights keys etc
-            : base(ImmutableArray.Create(TelemetryService.DefaultSession))
+        // Get the DefaultSession for telemetry. This is set by VS with
+        // TelemetryService.SetDefaultSession and provides the correct
+        // appinsights keys etc
+        : base(ImmutableArray.Create(TelemetryService.DefaultSession))
     {
         _logger = loggerFactory.CreateLogger<VSTelemetryReporter>();
     }

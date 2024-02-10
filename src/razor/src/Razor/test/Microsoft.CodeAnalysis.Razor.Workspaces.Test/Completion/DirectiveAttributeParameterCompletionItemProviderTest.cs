@@ -8,7 +8,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
-using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -26,8 +25,8 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolin
     public DirectiveAttributeParameterCompletionItemProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _provider = new DirectiveAttributeParameterCompletionItemProvider(new TagHelperFactsService());
-        _emptyAttributes = Enumerable.Empty<string>();
+        _provider = new DirectiveAttributeParameterCompletionItemProvider();
+        _emptyAttributes = [];
 
         // Most of these completions rely on stuff in the web namespace.
         ImportItems.Add(CreateProjectItem(
@@ -184,7 +183,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolin
         var tagHelperDocumentContext = codeDocument.GetTagHelperContext();
 
         var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex);
-        owner = RazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex, new DefaultHtmlFactsService());
+        owner = RazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, absoluteIndex);
         return new RazorCompletionContext(absoluteIndex, owner, syntaxTree, tagHelperDocumentContext);
     }
 }

@@ -66,7 +66,7 @@ internal class Executor
     /// </summary>
     public Executor(IOutput output) : this(output, TestPlatformEventSource.Instance, new ProcessHelper(), new PlatformEnvironment())
     {
-        if (!FeatureFlag.Instance.IsSet(nameof(FeatureFlag.DISABLE_THREADPOOL_SIZE_INCREASE)))
+        if (!FeatureFlag.Instance.IsSet(FeatureFlag.DISABLE_THREADPOOL_SIZE_INCREASE))
         {
             // TODO: Get rid of this by making vstest.console code properly async.
             // The current implementation of vstest.console is blocking many threads that just wait

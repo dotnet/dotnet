@@ -6,10 +6,10 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Telemetry;
-using Microsoft.CodeAnalysis.Razor.Editor;
+using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.Extensions.Logging;
 using Microsoft.Internal.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.VisualStudio.Editor.Razor.Settings;
 using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -21,7 +21,7 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Options;
 
 [Export(typeof(OptionsStorage))]
 [Export(typeof(IAdvancedSettingsStorage))]
-internal class OptionsStorage : IAdvancedSettingsStorage
+internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
 {
     private readonly WritableSettingsStore _writableSettingsStore;
     private readonly Lazy<ITelemetryReporter> _telemetryReporter;

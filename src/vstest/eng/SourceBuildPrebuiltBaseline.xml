@@ -14,5 +14,8 @@
     <!-- Caused by dependency on System.ComponentModel.Composition.4.5.0. This version is overridden in full source-build. -->
     <UsagePattern IdentityGlob="System.Security.Principal.Windows/4.5.0" />
     <UsagePattern IdentityGlob="Microsoft.Diagnostics.NETCore.Client/0.2.452401" />
+    <!-- Caused by multi-targeting source build for repo builds/CI. Product source build only targets NetCurrent. -->
+    <UsagePattern IdentityGlob="Microsoft.AspNetCore.App.Ref/8.0.0" />
+    <UsagePattern IdentityGlob="Microsoft.NETCore.App.Host.linux-x64/8.0.0" />
   </IgnorePatterns>
 </UsageData>

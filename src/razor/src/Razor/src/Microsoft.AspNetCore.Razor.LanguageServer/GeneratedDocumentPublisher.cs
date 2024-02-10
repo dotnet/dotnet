@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -253,6 +254,33 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
                 }
 
                 break;
+
+            case ProjectChangeKind.ProjectRemoved:
+                {
+                    // When a project is removed, we have to remove all published C# source for files in the project because if it comes back,
+                    // or a new one comes back with the same name, we want it to start with a clean slate. We only do this if the project key
+                    // is part of the generated file name though, because otherwise a project with the same name is effectively the same project.
+                    if (!_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath)
+                    {
+                        break;
+                    }
+
+                    using var _ = ListPool<DocumentKey>.GetPooledObject(out var keysToRemove);
+                    foreach (var keyValuePair in _publishedCSharpData)
+                    {
+                        if (keyValuePair.Key.ProjectKey.Equals(args.ProjectKey))
+                        {
+                            keysToRemove.Add(keyValuePair.Key);
+                        }
+                    }
+
+                    foreach (var key in keysToRemove)
+                    {
+                        _publishedCSharpData.Remove(key);
+                    }
+
+                    break;
+                }
         }
     }
 
@@ -269,5 +297,22 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
         public SourceText SourceText { get; }
 
         public int? HostDocumentVersion { get; }
+    }
+
+    internal TestAccessor GetTestAccessor()
+    {
+        return new TestAccessor(this);
+    }
+
+    internal readonly struct TestAccessor
+    {
+        private readonly GeneratedDocumentPublisher _instance;
+
+        internal TestAccessor(GeneratedDocumentPublisher instance)
+        {
+            _instance = instance;
+        }
+
+        internal int PublishedCSharpDataCount => _instance._publishedCSharpData.Count;
     }
 }

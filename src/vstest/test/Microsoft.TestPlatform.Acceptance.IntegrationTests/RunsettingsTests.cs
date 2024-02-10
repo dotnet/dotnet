@@ -514,7 +514,7 @@ public class RunsettingsTests : AcceptanceTestBase
 
         var projectName = "ProjectFileRunSettingsTestProject.csproj";
         var projectPath = GetIsolatedTestAsset(projectName);
-        InvokeDotnetTest($@"{projectPath} --logger:""Console;Verbosity=normal"" /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}");
+        InvokeDotnetTest($@"{projectPath} /p:VSTestUseMSBuildOutput=false --logger:""Console;Verbosity=normal"" /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}");
         ValidateSummaryStatus(0, 1, 0);
 
         // make sure that we can revert the project settings back by providing a config from command line
@@ -522,7 +522,7 @@ public class RunsettingsTests : AcceptanceTestBase
         // are honored by dotnet test, instead of just using the default, which would produce the same
         // result
         var settingsPath = GetProjectAssetFullPath(projectName, "inconclusive.runsettings");
-        InvokeDotnetTest($@"{projectPath} --settings {settingsPath} --logger:""Console;Verbosity=normal"" /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}");
+        InvokeDotnetTest($@"{projectPath} --settings {settingsPath} /p:VSTestUseMSBuildOutput=false --logger:""Console;Verbosity=normal"" /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}");
         ValidateSummaryStatus(0, 0, 1);
     }
 

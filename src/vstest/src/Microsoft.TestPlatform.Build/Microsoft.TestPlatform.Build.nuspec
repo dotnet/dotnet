@@ -4,29 +4,29 @@
     $CommonMetadataElements$
 
     <dependencies>
-      <group targetFramework="$tfm$" />
+      <group targetFramework="netstandard2.0" />
     </dependencies>
   </metadata>
 
   <files>
     $CommonFileElements$
 
-    <file src="$tfm$/Microsoft.TestPlatform.targets" target="runtimes/any/native" />
-    <file src="$tfm$/Microsoft.TestPlatform.Build.dll" target="lib/$tfm$" />
+    <file src="netstandard2.0/Microsoft.TestPlatform.targets" target="runtimes/any/native" />
+    <file src="netstandard2.0/Microsoft.TestPlatform.Build.dll" target="lib/netstandard2.0" />
 
     <!-- Add localized resources -->
-    <file src="$tfm$/cs/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/cs" />
-    <file src="$tfm$/de/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/de" />
-    <file src="$tfm$/es/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/es" />
-    <file src="$tfm$/fr/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/fr" />
-    <file src="$tfm$/it/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/it" />
-    <file src="$tfm$/ja/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/ja" />
-    <file src="$tfm$/ko/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/ko" />
-    <file src="$tfm$/pl/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/pl" />
-    <file src="$tfm$/pt-BR/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/pt-BR" />
-    <file src="$tfm$/ru/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/ru" />
-    <file src="$tfm$/tr/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/tr" />
-    <file src="$tfm$/zh-Hans/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/zh-Hans" />
-    <file src="$tfm$/zh-Hant/Microsoft.TestPlatform.Build.resources.dll" target="lib/$tfm$/zh-Hant" />
+    <file src="netstandard2.0/cs/Microsoft.TestPlatform.Build.resources.dll" target="lib/netstandard2.0/cs" />
+    <file src="netstandard2.0/de/Microsoft.TestPlatform.Build.resources.dll" target="lib/netstandard2.0/de" />
+    <file src="netstandard2.0/es/Microsoft.TestPlatform.Build.resources.dll" target="lib/netstandard2.0/es" />
+    <file src="netstandard2.0/fr/Microsoft.TestPlatform.Build.resources.dll" target="lib/netstandard2.0/fr" />
+    <file src="netstandard2.0/it/Microsoft.TestPlatform.Build.resources.dll" target="lib/netstandard2.0/it" />
+    <file src="netstandard2.0/ja/Microsoft.TestPlatform.Build.resources.dll" target="lib/netstandard2.0/ja" />
+    <file src="netstandard2.0/ko/Microsoft.TestPlatform.Build.resources.dll" target="lib/netstandard2.0/ko" />
+    <file src="netstandard2.0/pl/Microsoft.TestPlatform.Build.resources.dll" target="lib/netstandard2.0/pl" />
+    <file src="netstandard2.0/pt-BR/Microsoft.TestPlatform.Build.resources.dll" target="lib/netstandard2.0/pt-BR" />
+    <file src="netstandard2.0/ru/Microsoft.TestPlatform.Build.resources.dll" target="lib/netstandard2.0/ru" />
+    <file src="netstandard2.0/tr/Microsoft.TestPlatform.Build.resources.dll" target="lib/netstandard2.0/tr" />
+    <file src="netstandard2.0/zh-Hans/Microsoft.TestPlatform.Build.resources.dll" target="lib/netstandard2.0/zh-Hans" />
+    <file src="netstandard2.0/zh-Hant/Microsoft.TestPlatform.Build.resources.dll" target="lib/netstandard2.0/zh-Hant" />
   </files>
 </package>

@@ -16,10 +16,10 @@ namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 // which tracks the state at a point in time.
 internal sealed class EditorDocument : IDisposable
 {
-    private readonly EditorDocumentManager _documentManager;
+    private readonly IEditorDocumentManager _documentManager;
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
     private readonly JoinableTaskContext _joinableTaskContext;
-    private readonly FileChangeTracker _fileTracker;
+    private readonly IFileChangeTracker _fileTracker;
     private readonly SnapshotChangeTracker _snapshotTracker;
     private readonly EventHandler? _changedOnDisk;
     private readonly EventHandler? _changedInEditor;
@@ -29,14 +29,14 @@ internal sealed class EditorDocument : IDisposable
     private bool _disposed;
 
     public EditorDocument(
-        EditorDocumentManager documentManager,
+        IEditorDocumentManager documentManager,
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         JoinableTaskContext joinableTaskContext,
         string projectFilePath,
         string documentFilePath,
         ProjectKey projectKey,
         TextLoader textLoader,
-        FileChangeTracker fileTracker,
+        IFileChangeTracker fileTracker,
         ITextBuffer? textBuffer,
         EventHandler? changedOnDisk,
         EventHandler? changedInEditor,

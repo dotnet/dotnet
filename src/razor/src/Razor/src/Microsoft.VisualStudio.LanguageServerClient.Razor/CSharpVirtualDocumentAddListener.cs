@@ -58,7 +58,9 @@ internal class CSharpVirtualDocumentAddListener(IRazorLoggerFactory loggerFactor
             _tcs = new TaskCompletionSource<bool>();
         }
 
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
         return _tcs.Task;
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
     }
 
     public override void Changed(LSPDocumentSnapshot? old, LSPDocumentSnapshot? @new, VirtualDocumentSnapshot? virtualOld, VirtualDocumentSnapshot? virtualNew, LSPDocumentChangeKind kind)

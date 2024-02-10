@@ -16,8 +16,6 @@ internal class MarkupTransitionCompletionItemProvider : IRazorCompletionItemProv
 {
     private static readonly IReadOnlyList<RazorCommitCharacter> s_elementCommitCharacters = RazorCommitCharacter.FromArray(new[] { ">" });
 
-    private readonly HtmlFactsService _htmlFactsService;
-
     private static RazorCompletionItem? s_markupTransitionCompletionItem;
     public static RazorCompletionItem MarkupTransitionCompletionItem
     {
@@ -37,11 +35,6 @@ internal class MarkupTransitionCompletionItemProvider : IRazorCompletionItemProv
 
             return s_markupTransitionCompletionItem;
         }
-    }
-
-    public MarkupTransitionCompletionItemProvider(HtmlFactsService htmlFactsService)
-    {
-        _htmlFactsService = htmlFactsService ?? throw new ArgumentNullException(nameof(htmlFactsService));
     }
 
     public ImmutableArray<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
@@ -74,7 +67,7 @@ internal class MarkupTransitionCompletionItemProvider : IRazorCompletionItemProv
 
         // Also helps filter out edge cases like `< te` and `< te=""`
         // (see comment in AtMarkupTransitionCompletionPoint)
-        if (!_htmlFactsService.TryGetElementInfo(owner, out var containingTagNameToken, out _, closingForwardSlashOrCloseAngleToken: out _) ||
+        if (!HtmlFacts.TryGetElementInfo(owner, out var containingTagNameToken, out _, closingForwardSlashOrCloseAngleToken: out _) ||
             !containingTagNameToken.Span.IntersectsWith(context.AbsoluteIndex))
         {
             return ImmutableArray<RazorCompletionItem>.Empty;

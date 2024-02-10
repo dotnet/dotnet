@@ -564,7 +564,7 @@ internal static class CodeWriterExtensions
             // If you try and use the line pragma in the design time docs to map back to the original file it will fail,
             // as the path isn't actually valid on windows. As a workaround we apply a simple heuristic to switch the
             // paths back when writing out the design time paths.
-            sourceSpan = new SourceSpan(sourceSpan.FilePath.Replace("/", "\\"), sourceSpan.AbsoluteIndex, sourceSpan.LineIndex, sourceSpan.CharacterIndex, sourceSpan.Length);
+            sourceSpan = new SourceSpan(sourceSpan.FilePath.Replace("/", "\\"), sourceSpan.AbsoluteIndex, sourceSpan.LineIndex, sourceSpan.CharacterIndex, sourceSpan.Length, sourceSpan.LineCount, sourceSpan.EndCharacterIndex);
         }
         return sourceSpan;
     }

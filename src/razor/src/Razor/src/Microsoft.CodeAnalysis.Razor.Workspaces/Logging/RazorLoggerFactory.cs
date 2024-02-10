@@ -2,18 +2,19 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.CodeAnalysis.Razor.Logging;
 
-[Export(typeof(IRazorLoggerFactory)), System.Composition.Shared]
+[Shared]
+[Export(typeof(IRazorLoggerFactory))]
 internal class RazorLoggerFactory : IRazorLoggerFactory
 {
     private readonly ILoggerFactory _loggerFactory;
 
     [ImportingConstructor]
-    public RazorLoggerFactory([ImportMany(typeof(IRazorLoggerProvider))] IEnumerable<IRazorLoggerProvider> razorLoggerProviders)
+    public RazorLoggerFactory([ImportMany] IEnumerable<IRazorLoggerProvider> razorLoggerProviders)
     {
         _loggerFactory = LoggerFactory.Create(b =>
         {

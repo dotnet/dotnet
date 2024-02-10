@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.Extensions.Internal;
 

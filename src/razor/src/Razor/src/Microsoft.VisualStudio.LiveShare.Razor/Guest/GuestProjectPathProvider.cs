@@ -12,49 +12,20 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 
-[System.Composition.Shared]
-[Export(typeof(LiveShareProjectPathProvider))]
-internal class GuestProjectPathProvider : LiveShareProjectPathProvider
+[Export(typeof(ILiveShareProjectPathProvider))]
+[method: ImportingConstructor]
+internal class GuestProjectPathProvider(
+    JoinableTaskContext joinableTaskContext,
+    ITextDocumentFactoryService textDocumentFactory,
+    ProxyAccessor proxyAccessor,
+    LiveShareSessionAccessor liveShareSessionAccessor) : ILiveShareProjectPathProvider
 {
-    private readonly JoinableTaskFactory _joinableTaskFactory;
-    private readonly ITextDocumentFactoryService _textDocumentFactory;
-    private readonly ProxyAccessor _proxyAccessor;
-    private readonly LiveShareSessionAccessor _liveShareSessionAccessor;
+    private readonly JoinableTaskFactory _joinableTaskFactory = joinableTaskContext.Factory;
+    private readonly ITextDocumentFactoryService _textDocumentFactory = textDocumentFactory;
+    private readonly ProxyAccessor _proxyAccessor = proxyAccessor;
+    private readonly LiveShareSessionAccessor _liveShareSessionAccessor = liveShareSessionAccessor;
 
-    [ImportingConstructor]
-    public GuestProjectPathProvider(
-        JoinableTaskContext joinableTaskContext,
-        ITextDocumentFactoryService textDocumentFactory,
-        ProxyAccessor proxyAccessor,
-        LiveShareSessionAccessor liveShareSessionAccessor)
-    {
-        if (joinableTaskContext is null)
-        {
-            throw new ArgumentNullException(nameof(joinableTaskContext));
-        }
-
-        if (textDocumentFactory is null)
-        {
-            throw new ArgumentNullException(nameof(textDocumentFactory));
-        }
-
-        if (proxyAccessor is null)
-        {
-            throw new ArgumentNullException(nameof(proxyAccessor));
-        }
-
-        if (liveShareSessionAccessor is null)
-        {
-            throw new ArgumentNullException(nameof(liveShareSessionAccessor));
-        }
-
-        _joinableTaskFactory = joinableTaskContext.Factory;
-        _textDocumentFactory = textDocumentFactory;
-        _proxyAccessor = proxyAccessor;
-        _liveShareSessionAccessor = liveShareSessionAccessor;
-    }
-
-    public override bool TryGetProjectPath(ITextBuffer textBuffer, [NotNullWhen(returnValue: true)] out string? filePath)
+    public bool TryGetProjectPath(ITextBuffer textBuffer, [NotNullWhen(returnValue: true)] out string? filePath)
     {
         if (!_liveShareSessionAccessor.IsGuestSessionActive)
         {

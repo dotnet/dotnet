@@ -10,7 +10,6 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
-[System.Composition.Shared]
 [Export(typeof(IProjectSnapshotManagerAccessor))]
 [method: ImportingConstructor]
 internal sealed class VisualStudioProjectSnapshotManagerAccessor(

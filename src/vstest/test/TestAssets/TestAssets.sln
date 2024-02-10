@@ -132,7 +132,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiHostTestExecutionProje
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NonDll.TestAdapter", "NonDll.TestAdapter\NonDll.TestAdapter.csproj", "{429552A4-4C18-4355-94C5-80DC88C48405}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetStandard2Library", "NetStandard2Library\NetStandard2Library.csproj", "{080F0AD2-E7AE-42C8-B867-56D78576735D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetStandard2Library", "NetStandard2Library\NetStandard2Library.csproj", "{080F0AD2-E7AE-42C8-B867-56D78576735D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerminalLoggerTestProject", "TerminalLoggerTestProject\TerminalLoggerTestProject.csproj", "{C69BEEA4-BE37-4155-8DD0-130C62D8BF6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -384,6 +386,10 @@ Global
 		{080F0AD2-E7AE-42C8-B867-56D78576735D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{080F0AD2-E7AE-42C8-B867-56D78576735D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{080F0AD2-E7AE-42C8-B867-56D78576735D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C69BEEA4-BE37-4155-8DD0-130C62D8BF6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C69BEEA4-BE37-4155-8DD0-130C62D8BF6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C69BEEA4-BE37-4155-8DD0-130C62D8BF6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C69BEEA4-BE37-4155-8DD0-130C62D8BF6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

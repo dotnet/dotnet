@@ -190,7 +190,7 @@ internal class RazorSemanticTokensInfoService(
             // We'll try to call into the mapping service to map to the projected range for us. If that doesn't work,
             // we'll try to find the minimal range ourselves.
             if (!_documentMappingService.TryMapToGeneratedDocumentRange(generatedDocument, razorRange, out var csharpRange) &&
-                !TryGetMinimalCSharpRange(codeDocument, razorRange, out csharpRange))
+                !codeDocument.TryGetMinimalCSharpRange(razorRange, out csharpRange))
             {
                 // There's no C# in the range.
                 return ImmutableArray<SemanticRange>.Empty;
@@ -284,53 +284,6 @@ internal class RazorSemanticTokensInfoService(
         }
 
         return true;
-    }
-
-    // Internal for testing only
-    internal static bool TryGetMinimalCSharpRange(RazorCodeDocument codeDocument, Range razorRange, [NotNullWhen(true)] out Range? csharpRange)
-    {
-        SourceSpan? minGeneratedSpan = null;
-        SourceSpan? maxGeneratedSpan = null;
-
-        var sourceText = codeDocument.GetSourceText();
-        var textSpan = razorRange.ToTextSpan(sourceText);
-        var csharpDoc = codeDocument.GetCSharpDocument();
-
-        // We want to find the min and max C# source mapping that corresponds with our Razor range.
-        foreach (var mapping in csharpDoc.SourceMappings)
-        {
-            var mappedTextSpan = mapping.OriginalSpan.AsTextSpan();
-
-            if (textSpan.OverlapsWith(mappedTextSpan))
-            {
-                if (minGeneratedSpan is null || mapping.GeneratedSpan.AbsoluteIndex < minGeneratedSpan.Value.AbsoluteIndex)
-                {
-                    minGeneratedSpan = mapping.GeneratedSpan;
-                }
-
-                var mappingEndIndex = mapping.GeneratedSpan.AbsoluteIndex + mapping.GeneratedSpan.Length;
-                if (maxGeneratedSpan is null || mappingEndIndex > maxGeneratedSpan.Value.AbsoluteIndex + maxGeneratedSpan.Value.Length)
-                {
-                    maxGeneratedSpan = mapping.GeneratedSpan;
-                }
-            }
-        }
-
-        // Create a new projected range based on our calculated min/max source spans.
-        if (minGeneratedSpan is not null && maxGeneratedSpan is not null)
-        {
-            var csharpSourceText = codeDocument.GetCSharpSourceText();
-            var startRange = minGeneratedSpan.Value.ToRange(csharpSourceText);
-            var endRange = maxGeneratedSpan.Value.ToRange(csharpSourceText);
-
-            csharpRange = new Range { Start = startRange.Start, End = endRange.End };
-            Debug.Assert(csharpRange.Start.CompareTo(csharpRange.End) <= 0, "Range.Start should not be larger than Range.End");
-
-            return true;
-        }
-
-        csharpRange = null;
-        return false;
     }
 
     private async Task<int[]?> GetMatchingCSharpResponseAsync(

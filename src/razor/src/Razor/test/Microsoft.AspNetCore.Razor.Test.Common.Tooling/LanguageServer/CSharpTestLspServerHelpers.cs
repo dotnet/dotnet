@@ -72,8 +72,16 @@ internal static class CSharpTestLspServerHelpers
                         SnippetSupport = true
                     }
                 },
+                InlayHint = new()
+                {
+                    ResolveSupport = new InlayHintResolveSupportSetting { Properties = ["tooltip"] }
+                }
             },
             SupportsDiagnosticRequests = true,
+            Workspace = new()
+            {
+                Configuration = true
+            }
         };
 
         return await CSharpTestLspServer.CreateAsync(
@@ -179,8 +187,7 @@ internal static class CSharpTestLspServerHelpers
     {
         public Task<ImmutableArray<RazorMappedSpanResult>> MapSpansAsync(Document document, IEnumerable<TextSpan> spans, CancellationToken cancellationToken)
         {
-            var result = Enumerable.Empty<RazorMappedSpanResult>().ToImmutableArray();
-            return Task.FromResult(result);
+            return Task.FromResult(ImmutableArray<RazorMappedSpanResult>.Empty);
         }
     }
 }

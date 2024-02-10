@@ -2,8 +2,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -40,6 +42,9 @@ public class VSTestTask2 : ToolTask, ITestTask
     public string? VSTestArtifactsProcessingMode { get; set; }
     public string? VSTestSessionCorrelationId { get; set; }
 
+    protected override Encoding StandardErrorEncoding => _disableUtf8ConsoleEncoding ? base.StandardErrorEncoding : Encoding.UTF8;
+    protected override Encoding StandardOutputEncoding => _disableUtf8ConsoleEncoding ? base.StandardOutputEncoding : Encoding.UTF8;
+
     private readonly string _testResultSplitter = "++++";
     private readonly string[] _testResultSplitterArray = new[] { "++++" };
 
@@ -50,6 +55,7 @@ public class VSTestTask2 : ToolTask, ITestTask
     private readonly string[] _fullErrorSplitterArray = new[] { "~~~~" };
 
     private readonly string _fullErrorNewlineSplitter = "!!!!";
+    private readonly bool _disableUtf8ConsoleEncoding;
 
     protected override string? ToolName
     {
@@ -64,12 +70,15 @@ public class VSTestTask2 : ToolTask, ITestTask
 
     public VSTestTask2()
     {
+        // Unless user opted out, use UTF encoding, which we force in vstest.console.
+        _disableUtf8ConsoleEncoding = Environment.GetEnvironmentVariable("VSTEST_DISABLE_UTF8_CONSOLE_ENCODING") == "1";
         LogStandardErrorAsError = false;
         StandardOutputImportance = "Normal";
     }
 
     protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
     {
+        Debug.WriteLine($"vstestTask2: received output {singleLine}, importance {messageImportance}");
         if (singleLine.StartsWith(_errorSplitter))
         {
             var parts = singleLine.Split(_errorSplitterArray, StringSplitOptions.None);
@@ -132,8 +141,14 @@ public class VSTestTask2 : ToolTask, ITestTask
                 return;
             }
         }
+        else
+        {
+            Log.LogMessage(MessageImportance.Low, singleLine);
+        }
 
-        base.LogEventsFromTextOutput(singleLine, messageImportance);
+        // Do not call the base, it parses out the output, and if it sees "error" in any place it will log it as error
+        // we don't want this, we only want to log errors from the text messages we receive that start error splitter.
+        // base.LogEventsFromTextOutput(singleLine, messageImportance);
     }
 
     protected override string? GenerateCommandLineCommands()

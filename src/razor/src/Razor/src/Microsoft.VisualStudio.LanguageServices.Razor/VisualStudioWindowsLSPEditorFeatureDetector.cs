@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Composition;
+using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Internal.VisualStudio.Shell.Interop;
@@ -12,7 +12,6 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
-[Shared]
 [Export(typeof(LSPEditorFeatureDetector))]
 internal class VisualStudioWindowsLSPEditorFeatureDetector : LSPEditorFeatureDetector
 {
