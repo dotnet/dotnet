@@ -67,7 +67,7 @@
     },
     {
       "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
-      "path": "GlobalUsings.cs"
+      "path": "MSTestSettings.cs"
     }
   ],
   "defaultName": "TestProject1",
