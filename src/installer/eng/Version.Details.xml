@@ -277,9 +277,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>ab1a8224cdf115b65e0db5dc88d11f205068f444</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.24109.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.24112.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>8ee50f75f960fbfb20fce0fefc5a3b05d15b1d21</Sha>
+      <Sha>9af3d3655226a7218ad9e05649ed67632f359ecf</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DotNet.ScenarioTests.SdkTemplateTests" Version="9.0.0-preview.24057.2">
