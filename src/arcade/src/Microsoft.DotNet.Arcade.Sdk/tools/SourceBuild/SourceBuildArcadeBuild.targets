@@ -23,10 +23,8 @@
 
   <Target Name="ExecuteWithSourceBuiltTooling"
           DependsOnTargets="
-            BuildUpstreamRepos;
             GetSourceBuildCommandConfiguration;
-            RunInnerSourceBuildCommand;
-            PackSourceBuildTarball"
+            RunInnerSourceBuildCommand"
           Condition="
             (('$(ArcadeBuildFromSource)' == 'true' or '$(ArcadeBuildVertical)' == 'true') and '$(ArcadeInnerBuildFromSource)' != 'true') or 
             '$(DotNetBuildPhase)' == 'Repo'"
@@ -48,23 +46,6 @@
             '$(DotNetBuildPhase)' == 'InnerRepo'"
           DependsOnTargets="ExecuteInnerSourceBuild"
           BeforeTargets="Execute"/>
-
-  <!--
-    Build upstream repos from source.
-
-    TODO: (arcade-sb) Support building upstreams from source based on int nupkgs. For now this
-    target is overridden in any repo that implements the upstream build from source. It involves a
-    lot of source-build infra that will be more gradually moved. Same for PackSourceBuildTarball.
-  -->
-  <Target Name="BuildUpstreamRepos"
-          Condition="'$(BuildUpstreamRepos)' == 'true'">
-    <Error Text="NotImplemented" />
-  </Target>
-
-  <Target Name="PackSourceBuildTarball"
-          Condition="'$(PackSourceBuildTarball)' == 'true'">
-    <Error Text="NotImplemented" />
-  </Target>
 
   <!--
     Set up build args to append to the passed build command. These args specify what is unique about
@@ -233,8 +214,7 @@
     <Exec
       Command="$(BaseInnerSourceBuildCommand) $(InnerBuildArgs)"
       WorkingDirectory="$(InnerSourceBuildRepoRoot)"
-      EnvironmentVariables="@(InnerBuildEnv)"
-      IgnoreStandardErrorWarningFormat="true" />
+      EnvironmentVariables="@(InnerBuildEnv)" />
   </Target>
 
   <Target Name="PreventPrebuiltBuild"
