@@ -64,6 +64,10 @@
     {
       "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
       "path": "UnitTest1.vb"
+    },
+    {
+      "condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+      "path": "MSTestSettings.vb"
     }
   ],
   "defaultName": "TestProject1",
