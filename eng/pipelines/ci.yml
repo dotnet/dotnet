@@ -49,10 +49,10 @@ stages:
     ${{ if eq(variables.isScheduleTrigger, 'true') }}:
       scope: full
     ${{ elseif eq(variables.isSourceOnlyBuildLite, 'true') }}:
-      scope: lite
+      scope: full
     ${{ elseif and(eq(variables.isPRTrigger, 'true'), eq(variables.isSourceOnlyBuild, 'true')) }}:
-      scope: ultralite
+      scope: full
     ${{ elseif and(eq(variables.isPRTrigger, 'true'), ne(variables.isSourceOnlyBuild, 'true')) }}:
-      scope: lite
+      scope: full
     ${{ else }}:
       scope: full
