@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-using Modifiers = RazorSemanticTokensLegend.RazorTokenModifiers;
+using Modifiers = RazorSemanticTokensLegendService.RazorTokenModifiers;
 
 public class RazorSemanticTokensLegendTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {

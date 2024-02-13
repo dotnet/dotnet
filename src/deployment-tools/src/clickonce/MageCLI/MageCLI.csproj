@@ -6,7 +6,7 @@
     <SignAssemblyAttribute>true</SignAssemblyAttribute>
     <RCSuppressManifest>true</RCSuppressManifest>
     <AssemblyAttributeClsCompliant>false</AssemblyAttributeClsCompliant>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <PlatformSpecificBuild>true</PlatformSpecificBuild>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>

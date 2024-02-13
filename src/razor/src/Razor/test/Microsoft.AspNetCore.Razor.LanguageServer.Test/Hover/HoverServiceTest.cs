@@ -933,6 +933,7 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
         var languageServer = new HoverLanguageServer(csharpServer, csharpDocumentUri, DisposalToken);
         var documentMappingService = new RazorDocumentMappingService(FilePathService, documentContextFactory, LoggerFactory);
         var projectSnapshotManager = Mock.Of<ProjectSnapshotManagerBase>(p => p.GetProjects() == new[] { Mock.Of<IProjectSnapshot>(MockBehavior.Strict) }.ToImmutableArray(), MockBehavior.Strict);
+
         var hoverService = GetHoverService(documentMappingService);
 
         var endpoint = new HoverEndpoint(
@@ -941,11 +942,6 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
             documentMappingService,
             languageServer,
             LoggerFactory);
-
-        var clientCapabilities = CreateMarkDownCapabilities();
-        clientCapabilities.SupportsVisualStudioExtensions = true;
-
-        endpoint.ApplyCapabilities(new(), clientCapabilities);
 
         codeDocument.GetSourceText().GetLineAndOffset(cursorPosition, out var line, out var offset);
         var razorFileUri = new Uri(razorFilePath);
@@ -1028,7 +1024,11 @@ public class HoverServiceTest(ITestOutputHelper testOutput) : TagHelperServiceTe
         var snapshotResolver = new TestSnapshotResolver();
         var lspTagHelperTooltipFactory = new DefaultLSPTagHelperTooltipFactory(snapshotResolver);
         var vsLspTagHelperTooltipFactory = new DefaultVSLSPTagHelperTooltipFactory(snapshotResolver);
-        return new HoverService(lspTagHelperTooltipFactory, vsLspTagHelperTooltipFactory, mappingService);
+
+        var clientCapabilities = CreateMarkDownCapabilities();
+        clientCapabilities.SupportsVisualStudioExtensions = true;
+        var clientCapabilitiesService = new TestClientCapabilitiesService(clientCapabilities);
+        return new HoverService(lspTagHelperTooltipFactory, vsLspTagHelperTooltipFactory, mappingService, clientCapabilitiesService);
     }
 
     private class HoverLanguageServer : IClientConnection

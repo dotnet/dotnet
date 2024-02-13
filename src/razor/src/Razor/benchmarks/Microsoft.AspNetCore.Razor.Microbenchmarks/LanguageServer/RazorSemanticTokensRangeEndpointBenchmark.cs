@@ -76,8 +76,9 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
 
         var razorOptionsMonitor = RazorLanguageServer.GetRequiredService<RazorLSPOptionsMonitor>();
         var clientConnection = RazorLanguageServer.GetRequiredService<IClientConnection>();
-        SemanticTokensRangeEndpoint = new SemanticTokensRangeEndpoint(RazorSemanticTokenService, razorOptionsMonitor, clientConnection);
-        SemanticTokensRangeEndpoint.ApplyCapabilities(new(), new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = true });
+        var clientCapabilitiesService = new BenchmarkClientCapabilitiesService(new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = true });
+        var razorSemanticTokensLegendService = new RazorSemanticTokensLegendService(clientCapabilitiesService);
+        SemanticTokensRangeEndpoint = new SemanticTokensRangeEndpoint(RazorSemanticTokenService, razorSemanticTokensLegendService, razorOptionsMonitor, clientConnection);
 
         var text = await DocumentContext.GetSourceTextAsync(CancellationToken.None).ConfigureAwait(false);
         Range = new Range
@@ -155,8 +156,9 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
         public TestCustomizableRazorSemanticTokensInfoService(
             LanguageServerFeatureOptions languageServerFeatureOptions,
             IRazorDocumentMappingService documentMappingService,
+            RazorSemanticTokensLegendService razorSemanticTokensLegendService,
             IRazorLoggerFactory loggerFactory)
-            : base(documentMappingService, languageServerFeatureOptions, loggerFactory, telemetryReporter: null)
+            : base(documentMappingService, razorSemanticTokensLegendService, languageServerFeatureOptions, loggerFactory, telemetryReporter: null)
         {
         }
 
@@ -166,7 +168,6 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
             RazorCodeDocument codeDocument,
             TextDocumentIdentifier textDocumentIdentifier,
             Range razorRange,
-            RazorSemanticTokensLegend razorSemanticTokensLegend,
             bool colorBackground,
             long documentVersion,
             Guid correlationId,
