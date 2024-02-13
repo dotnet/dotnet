@@ -1,0 +1,159 @@
+id: 
+name: GitOps.PullRequestIssueManagement
+description: GitOps.PullRequestIssueManagement primitive
+owner: 
+resource: repository
+disabled: false
+where: 
+configuration:
+  resourceManagementConfiguration:
+    scheduledSearches:
+    - description: '[stale non-community PR] [5-1] Search for PRs with no activity over 7 days and warn. (except community PRs)'
+      frequencies:
+      - hourly:
+          hour: 3
+      filters:
+      - isNotLabeledWith:
+          label: Community
+      - noActivitySince:
+          days: 7
+      - isPullRequest
+      - isOpen
+      - isNotLabeledWith:
+          label: Status:No recent activity
+      actions:
+      - addLabel:
+          label: Status:No recent activity
+      - addReply:
+          reply: This PR has been automatically marked as stale because it has no activity for **7 days**. It will be closed if no further activity occurs **within another 7 days of this comment**. If it is closed, you may reopen it anytime when you're ready again, as long as you don't delete the branch.
+    - description: '[stale non-community PR] [5-5] Close PRs with no activity over 7 days after warn. (except community PRs)'
+      frequencies:
+      - hourly:
+          hour: 3
+      filters:
+      - isPullRequest
+      - isOpen
+      - hasLabel:
+          label: Status:No recent activity
+      - isNotLabeledWith:
+          label: Community
+      - noActivitySince:
+          days: 7
+      actions:
+      - closeIssue
+    - description: '[stale community PR] [5-1] Search for community PRs with no activity over 7 days and warn.'
+      frequencies:
+      - hourly:
+          hour: 3
+      filters:
+      - hasLabel:
+          label: Community
+      - noActivitySince:
+          days: 7
+      - isPullRequest
+      - isOpen
+      - isNotLabeledWith:
+          label: Status:No recent activity
+      actions:
+      - addLabel:
+          label: Status:No recent activity
+      - addReply:
+          reply: This PR has been automatically marked as stale because it has no activity for **7 days**. It will be closed if no further activity occurs **within another 90 days** of this comment. If it is closed, you may reopen it anytime when you're ready again, as long as you don't delete the branch.
+    - description: '[stale community PR] [5-5] Close PRs with no activity over 90 days after warn.'
+      frequencies:
+      - hourly:
+          hour: 3
+      filters:
+      - isPullRequest
+      - isOpen
+      - hasLabel:
+          label: Status:No recent activity
+      - hasLabel:
+          label: Community
+      - noActivitySince:
+          days: 90
+      actions:
+      - closeIssue
+    eventResponderTasks:
+    - if:
+      - payloadType: Pull_Request
+      - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Reopened
+      - activitySenderHasPermission:
+          permission: Read
+      - not:
+          isActivitySender:
+            user: 'nuget-client '
+            issueAuthor: False
+      - not:
+          hasLabel:
+            label: Community
+      then:
+      - addLabel:
+          label: Community
+      description: '[Label community PRs] [1-1] Label the community PRs'
+    - if:
+      - payloadType: Pull_Request
+      - not:
+          isAction:
+            action: Closed
+      - hasLabel:
+          label: Status:No recent activity
+      then:
+      - removeLabel:
+          label: Status:No recent activity
+      description: '[stale non-community PR] [5-2] Remove "Status:No recent activity" if there is any activity. (Community PRs are not included)'
+    - if:
+      - payloadType: Issue_Comment
+      - hasLabel:
+          label: Status:No recent activity
+      then:
+      - removeLabel:
+          label: Status:No recent activity
+      description: '[stale non-community PR] [5-3] Remove "Status:No recent activity" if there is any comment. (Community PRs are not included)'
+    - if:
+      - payloadType: Pull_Request_Review
+      - hasLabel:
+          label: Status:No recent activity
+      then:
+      - removeLabel:
+          label: Status:No recent activity
+      description: '[stale non-community PR] [5-4] Remove "Status:No recent activity" if there is any reviews. (Community PRs are not included)'
+    - if:
+      - payloadType: Pull_Request
+      - not:
+          isAction:
+            action: Closed
+      - hasLabel:
+          label: Status:No recent activity
+      - hasLabel:
+          label: Community
+      then:
+      - removeLabel:
+          label: Status:No recent activity
+      description: '[stale community PR] [5-2] Remove "Status:No recent activity" if there is any activity.'
+    - if:
+      - payloadType: Issue_Comment
+      - hasLabel:
+          label: Status:No recent activity
+      - hasLabel:
+          label: Community
+      then:
+      - removeLabel:
+          label: Status:No recent activity
+      description: '[stale community PR] [5-3] Remove "Status:No recent activity" if there is any comment.'
+    - if:
+      - payloadType: Pull_Request_Review
+      - hasLabel:
+          label: Status:No recent activity
+      - hasLabel:
+          label: Community
+      then:
+      - removeLabel:
+          label: Status:No recent activity
+      description: '[stale community PR] [5-4] Remove "Status:No recent activity" if there are any reviews.'
+onFailure: 
+onSuccess: 
