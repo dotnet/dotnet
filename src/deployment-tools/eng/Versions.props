@@ -36,7 +36,7 @@
     <SystemTextJsonVersion>7.0.1</SystemTextJsonVersion>
     <!-- Standard dependencies -->
     <!-- MSBuild dependencies -->
-    <MicrosoftBuildTasksCoreVersion>16.8.0-preview-20453-01</MicrosoftBuildTasksCoreVersion>
+    <MicrosoftBuildTasksCoreVersion>17.0.0</MicrosoftBuildTasksCoreVersion>
     <!-- Testing -->
     <XUnitVersion>2.4.1</XUnitVersion>
     <XUnitRunnerVisualStudioVersion>2.4.2</XUnitRunnerVisualStudioVersion>

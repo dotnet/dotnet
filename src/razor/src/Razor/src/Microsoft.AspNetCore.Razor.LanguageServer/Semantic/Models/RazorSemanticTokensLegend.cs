@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -12,7 +13,8 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-internal class RazorSemanticTokensLegend
+[Export(typeof(RazorSemanticTokensLegendService))]
+internal sealed class RazorSemanticTokensLegendService
 {
 #pragma warning disable IDE1006 // Naming Styles - These names are queried with reflection below
     private static readonly string MarkupAttributeQuoteType = "markupAttributeQuote";
@@ -38,58 +40,69 @@ internal class RazorSemanticTokensLegend
     private static readonly string RazorTransitionType = "razorTransition";
 #pragma warning restore IDE1006 // Naming Styles
 
-    public int MarkupAttribute => _razorTokenTypeMap[MarkupAttributeType];
-    public int MarkupAttributeQuote => _razorTokenTypeMap[MarkupAttributeQuoteType];
-    public int MarkupAttributeValue => _razorTokenTypeMap[MarkupAttributeValueType];
-    public int MarkupComment => _razorTokenTypeMap[MarkupCommentType];
-    public int MarkupCommentPunctuation => _razorTokenTypeMap[MarkupCommentPunctuationType];
-    public int MarkupElement => _razorTokenTypeMap[MarkupElementType];
-    public int MarkupOperator => _razorTokenTypeMap[MarkupOperatorType];
-    public int MarkupTagDelimiter => _razorTokenTypeMap[MarkupTagDelimiterType];
-    public int MarkupTextLiteral => _razorTokenTypeMap[MarkupTextLiteralType];
+    public int MarkupAttribute => RazorTokenTypeMap[MarkupAttributeType];
+    public int MarkupAttributeQuote => RazorTokenTypeMap[MarkupAttributeQuoteType];
+    public int MarkupAttributeValue => RazorTokenTypeMap[MarkupAttributeValueType];
+    public int MarkupComment => RazorTokenTypeMap[MarkupCommentType];
+    public int MarkupCommentPunctuation => RazorTokenTypeMap[MarkupCommentPunctuationType];
+    public int MarkupElement => RazorTokenTypeMap[MarkupElementType];
+    public int MarkupOperator => RazorTokenTypeMap[MarkupOperatorType];
+    public int MarkupTagDelimiter => RazorTokenTypeMap[MarkupTagDelimiterType];
+    public int MarkupTextLiteral => RazorTokenTypeMap[MarkupTextLiteralType];
 
-    public int RazorComment => _razorTokenTypeMap[RazorCommentType];
-    public int RazorCommentStar => _razorTokenTypeMap[RazorCommentStarType];
-    public int RazorCommentTransition => _razorTokenTypeMap[RazorCommentTransitionType];
-    public int RazorComponentAttribute => _razorTokenTypeMap[RazorComponentAttributeType];
-    public int RazorComponentElement => _razorTokenTypeMap[RazorComponentElementType];
-    public int RazorDirective => _razorTokenTypeMap[RazorDirectiveType];
-    public int RazorDirectiveAttribute => _razorTokenTypeMap[RazorDirectiveAttributeType];
-    public int RazorDirectiveColon => _razorTokenTypeMap[RazorDirectiveColonType];
-    public int RazorTagHelperAttribute => _razorTokenTypeMap[RazorTagHelperAttributeType];
-    public int RazorTagHelperElement => _razorTokenTypeMap[RazorTagHelperElementType];
-    public int RazorTransition => _razorTokenTypeMap[RazorTransitionType];
+    public int RazorComment => RazorTokenTypeMap[RazorCommentType];
+    public int RazorCommentStar => RazorTokenTypeMap[RazorCommentStarType];
+    public int RazorCommentTransition => RazorTokenTypeMap[RazorCommentTransitionType];
+    public int RazorComponentAttribute => RazorTokenTypeMap[RazorComponentAttributeType];
+    public int RazorComponentElement => RazorTokenTypeMap[RazorComponentElementType];
+    public int RazorDirective => RazorTokenTypeMap[RazorDirectiveType];
+    public int RazorDirectiveAttribute => RazorTokenTypeMap[RazorDirectiveAttributeType];
+    public int RazorDirectiveColon => RazorTokenTypeMap[RazorDirectiveColonType];
+    public int RazorTagHelperAttribute => RazorTokenTypeMap[RazorTagHelperAttributeType];
+    public int RazorTagHelperElement => RazorTokenTypeMap[RazorTagHelperElementType];
+    public int RazorTransition => RazorTokenTypeMap[RazorTransitionType];
 
-    public SemanticTokensLegend Legend => _legend;
+    public SemanticTokensLegend Legend => _lazyInitializer.Value.Legend;
 
-    private readonly SemanticTokensLegend _legend;
-    private readonly Dictionary<string, int> _razorTokenTypeMap;
+    private Dictionary<string, int> RazorTokenTypeMap => _lazyInitializer.Value.TokenTypeMap;
 
-    public RazorSemanticTokensLegend(ClientCapabilities clientCapabilities)
+    private readonly Lazy<(SemanticTokensLegend Legend, Dictionary<string, int> TokenTypeMap)> _lazyInitializer;
+
+    [ImportingConstructor]
+    public RazorSemanticTokensLegendService(IClientCapabilitiesService clientCapabilitiesService)
     {
-        using var _ = ArrayBuilderPool<string>.GetPooledObject(out var builder);
-
-        builder.AddRange(RazorSemanticTokensAccessor.GetTokenTypes(clientCapabilities is VSInternalClientCapabilities { SupportsVisualStudioExtensions: true }));
-
-        _razorTokenTypeMap = new Dictionary<string, int>();
-        foreach (var razorTokenType in GetRazorSemanticTokenTypes())
+        // DI calls this constructor to build the service container, but we can't access clientCapabilitiesService
+        // until the language server has received the Initialize message, so we have to do this lazily.
+        _lazyInitializer = new Lazy<(SemanticTokensLegend, Dictionary<string, int>)>(() =>
         {
-            _razorTokenTypeMap.Add(razorTokenType, builder.Count);
-            builder.Add(razorTokenType);
-        }
+            using var _ = ArrayBuilderPool<string>.GetPooledObject(out var builder);
 
-        _legend = new()
-        {
-            TokenModifiers = s_tokenModifiers,
-            TokenTypes = builder.ToArray()
-        };
+            var supportsVsExtensions = clientCapabilitiesService.ClientCapabilities.SupportsVisualStudioExtensions;
+
+            builder.AddRange(RazorSemanticTokensAccessor.GetTokenTypes(supportsVsExtensions));
+
+            var razorTokenTypeMap = new Dictionary<string, int>();
+            foreach (var razorTokenType in GetRazorSemanticTokenTypes())
+            {
+                razorTokenTypeMap.Add(razorTokenType, builder.Count);
+                builder.Add(razorTokenType);
+            }
+
+            var legend = new SemanticTokensLegend()
+            {
+                TokenModifiers = s_tokenModifiers,
+                TokenTypes = builder.ToArray()
+            };
+
+            return (legend, razorTokenTypeMap);
+        });
     }
 
     private static ImmutableArray<string> GetRazorSemanticTokenTypes()
     {
         using var _ = ArrayBuilderPool<string>.GetPooledObject(out var builder);
 
-        foreach (var field in typeof(RazorSemanticTokensLegend).GetFields(BindingFlags.NonPublic | BindingFlags.Static))
+        foreach (var field in typeof(RazorSemanticTokensLegendService).GetFields(BindingFlags.NonPublic | BindingFlags.Static))
         {
             if (field.GetValue(null) is string value)
             {

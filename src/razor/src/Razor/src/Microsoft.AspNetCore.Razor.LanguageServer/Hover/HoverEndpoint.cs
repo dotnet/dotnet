@@ -19,7 +19,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocumentPositionParams, VSInternalHover?>, ICapabilitiesProvider
 {
     private readonly IHoverService _hoverService;
-    private VSInternalClientCapabilities? _clientCapabilities;
 
     public HoverEndpoint(
         IHoverService hoverService,
@@ -35,7 +34,6 @@ internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocume
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        _clientCapabilities = clientCapabilities;
         serverCapabilities.EnableHoverProvider();
     }
 
@@ -59,7 +57,6 @@ internal sealed class HoverEndpoint : AbstractRazorDelegatingEndpoint<TextDocume
             requestContext.GetRequiredDocumentContext(),
             positionInfo,
             request.Position,
-            _clientCapabilities,
             cancellationToken);
 
     protected override Task<VSInternalHover?> HandleDelegatedResponseAsync(VSInternalHover? response, TextDocumentPositionParams originalRequest, RazorRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)
