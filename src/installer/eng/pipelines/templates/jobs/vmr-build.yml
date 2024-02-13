@@ -139,7 +139,6 @@ jobs:
           vmrPath: $(vmrPath)
           vmrBranch: ${{ parameters.vmrBranch }}
           targetRef: $(Build.SourceVersion) # Synchronize the current installer commit
-          architecture: ${{ parameters.architecture }}
 
   - ${{ if parameters.buildFromArchive }}:
     - script: |
@@ -348,7 +347,6 @@ jobs:
 
         CopyWithRelativeFolders "artifacts/"                 $targetFolder "*.binlog"
         CopyWithRelativeFolders "artifacts/"                 $targetFolder "*.log"
-        CopyWithRelativeFolders "artifacts/prebuilt-report/" $targetFolder
         CopyWithRelativeFolders "src/"                       $targetFolder "*.binlog"
         CopyWithRelativeFolders "src/"                       $targetFolder "*.log"
         CopyWithRelativeFolders "test/"                      $targetFolder "*.binlog"
@@ -370,7 +368,9 @@ jobs:
         cd "$(sourcesPath)"
         find artifacts/ -type f -name "*.binlog" -exec rsync -R {} -t ${targetFolder} \;
         find artifacts/ -type f -name "*.log" -exec rsync -R {} -t ${targetFolder} \;
-        find artifacts/prebuilt-report/ -exec rsync -R {} -t ${targetFolder} \;
+        if [[ "${{ parameters.buildSourceOnly }}" == "True" ]]; then
+          find artifacts/prebuilt-report/ -exec rsync -R {} -t ${targetFolder} \;
+        fi
         find src/ -type f -name "*.binlog" -exec rsync -R {} -t ${targetFolder} \;
         find src/ -type f -name "*.log" -exec rsync -R {} -t ${targetFolder} \;
         find test/ -type f -name "*.binlog" -exec rsync -R {} -t ${targetFolder} \;
@@ -400,8 +400,14 @@ jobs:
         publishRunAttachments: true
         testRunTitle: SourceBuild_SmokeTests_$(Agent.JobName)
 
-  - publish: '$(sourcesPath)/artifacts/${{ parameters.architecture }}/Release/'
+  - publish: '$(sourcesPath)/artifacts/assets/Release/'
     artifact: $(Agent.JobName)_Artifacts
     displayName: Publish Artifacts
     condition: succeededOrFailed()
     continueOnError: true
+
+  # When building from source, the Private.SourceBuilt.Artifacts archive already contains the nuget packages
+  - ${{ if ne(parameters.buildSourceOnly, 'true') }}:
+    - publish: '$(sourcesPath)/artifacts/packages/Release/'
+      artifact: $(Agent.JobName)_Packages
+      displayName: Publish Packages
