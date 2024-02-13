@@ -252,7 +252,7 @@
   <!-- Workload manifest package versions -->
   <PropertyGroup>
     <AspireFeatureBand>9.0.100-preview.1</AspireFeatureBand>
-    <MicrosoftNETSdkAspireManifest90100preview1PackageVersion>9.0.0-preview.1.24079.2</MicrosoftNETSdkAspireManifest90100preview1PackageVersion>
+    <MicrosoftNETSdkAspireManifest90100preview1PackageVersion>9.0.0-preview.1.24109.7</MicrosoftNETSdkAspireManifest90100preview1PackageVersion>
     <MauiFeatureBand>9.0.100-alpha.1</MauiFeatureBand>
     <MauiWorkloadManifestVersion>9.0.0-ci.net9.9818</MauiWorkloadManifestVersion>
     <XamarinAndroidWorkloadManifestVersion>34.99.0-preview.1.109</XamarinAndroidWorkloadManifestVersion>
