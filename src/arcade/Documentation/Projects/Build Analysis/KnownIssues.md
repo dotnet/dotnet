@@ -75,6 +75,62 @@ You can use the preview tab to validate your JSON blob, GitHub will highlight in
 
 ![Invalid JSON blob](./Resources/invalid_json_blob.png?raw=true)
 
+### Fill out Known Issues with a list of errors 
+This section describes how to specify multiple error messages / error patterns to search for in order, as an AND condition, and every message/pattern being exclusive to a single line.
+
+- To use the feature, you need to pass a list of strings as part of the JSON.
+
+    For example, an ErrorMessage will look like this:
+    ```json
+    {
+    "ErrorMessage": ["Assert.True() Failure", "Actual:   False"]
+    }
+    ```
+
+    And an ErrorPattern will look like this:
+
+    ```json
+    {
+    "ErrorPattern": ["Assert.True() .+", "Actual:.*False"]
+    }
+    ```
+
+- The list works as an AND and they must be in order. Every issue in the list will try to match a line.
+- The first issue in the list will be searched first, and then if the first issue matches, the second issue will be searched in the subsequent lines.
+- In order to count as a match, all issues in the list must match.
+- **This works for ErrorMessage and ErrorPattern, but they should not be mixed. If you use ErrorMessage, then all issues in the list must match the ErrorMessage, and the same for ErrorPattern.**
+
+
+*Note that every pattern/message will be searched per line, NOT multiple lines.*
+
+#### Example
+
+Consider the following error message:
+
+```
+Assert.True() Failure
+Expected: True
+Actual:   False
+```
+
+In order to match this error message, you can use the following JSON:
+
+```json
+{
+  "ErrorMessage": ["Assert.True() Failure", "Actual:   False"]
+}
+```
+Even though we didn't put the `Expected: True` line, the other lines are in there and in the right order, so it will match.
+
+However, if we use the following JSON:
+```json
+{
+  "ErrorMessage": ["Assert.True() Failure", "Actual: True"]
+}
+```
+The last line doesn’t match, so it will not match the error message.
+
+
 ## How the matching process works between a Known Issue and a build/test error
 
 The Known Issues feature identifies build and test errors and matches them with open Known Issues. It uses `String.Contains` to compare the errors with the “ErrorMessage” property of Known Issues, or regex matching if an “ErrorPattern” property is provided.
