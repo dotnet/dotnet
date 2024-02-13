@@ -4,11 +4,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
@@ -17,17 +17,17 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-public class DefaultWorkspaceSemanticTokensRefreshPublisherTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
+public class WorkspaceSemanticTokensRefreshPublisherTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
     [Fact]
     public void PublishWorkspaceChanged_DoesNotSendWorkspaceRefreshRequest_WhenNotSupported()
     {
         // Arrange
-        var settingManager = GetServerSettingsManager(semanticRefreshEnabled: false);
+        var clientCapabilitiesService = GetClientCapabilitiesService(semanticRefreshEnabled: false);
         var serverClient = new TestClient();
         var errorReporter = new TestErrorReporter();
         var optionsMonitor = GetOptionsMonitor();
-        using var defaultWorkspaceChangedPublisher = new DefaultWorkspaceSemanticTokensRefreshPublisher(settingManager, serverClient, errorReporter, optionsMonitor);
+        using var defaultWorkspaceChangedPublisher = new WorkspaceSemanticTokensRefreshPublisher(clientCapabilitiesService, serverClient, errorReporter, optionsMonitor);
         var testAccessor = defaultWorkspaceChangedPublisher.GetTestAccessor();
 
         // Act
@@ -42,11 +42,11 @@ public class DefaultWorkspaceSemanticTokensRefreshPublisherTest(ITestOutputHelpe
     public void PublishWorkspaceChanged_SendsWorkspaceRefreshRequest_WhenSupported()
     {
         // Arrange
-        var settingManager = GetServerSettingsManager(semanticRefreshEnabled: true);
+        var clientCapabilitiesService = GetClientCapabilitiesService(semanticRefreshEnabled: true);
         var serverClient = new TestClient();
         var errorReporter = new TestErrorReporter();
         var optionsMonitor = GetOptionsMonitor();
-        using var defaultWorkspaceChangedPublisher = new DefaultWorkspaceSemanticTokensRefreshPublisher(settingManager, serverClient, errorReporter, optionsMonitor);
+        using var defaultWorkspaceChangedPublisher = new WorkspaceSemanticTokensRefreshPublisher(clientCapabilitiesService, serverClient, errorReporter, optionsMonitor);
         var testAccessor = defaultWorkspaceChangedPublisher.GetTestAccessor();
 
         // Act
@@ -62,11 +62,11 @@ public class DefaultWorkspaceSemanticTokensRefreshPublisherTest(ITestOutputHelpe
     public void PublishWorkspaceChanged_DebouncesWorkspaceRefreshRequest()
     {
         // Arrange
-        var settingManager = GetServerSettingsManager(semanticRefreshEnabled: true);
+        var clientCapabilitiesService = GetClientCapabilitiesService(semanticRefreshEnabled: true);
         var serverClient = new TestClient();
         var errorReporter = new TestErrorReporter();
         var optionsMonitor = GetOptionsMonitor();
-        using var defaultWorkspaceChangedPublisher = new DefaultWorkspaceSemanticTokensRefreshPublisher(settingManager, serverClient, errorReporter, optionsMonitor);
+        using var defaultWorkspaceChangedPublisher = new WorkspaceSemanticTokensRefreshPublisher(clientCapabilitiesService, serverClient, errorReporter, optionsMonitor);
         var testAccessor = defaultWorkspaceChangedPublisher.GetTestAccessor();
 
         // Act
@@ -87,11 +87,11 @@ public class DefaultWorkspaceSemanticTokensRefreshPublisherTest(ITestOutputHelpe
     public async Task PublishWorkspaceChanged_SendsWorkspaceRefreshRequest_WhenOptionChanges()
     {
         // Arrange
-        var settingManager = GetServerSettingsManager(semanticRefreshEnabled: true);
+        var clientCapabilitiesService = GetClientCapabilitiesService(semanticRefreshEnabled: true);
         var serverClient = new TestClient();
         var errorReporter = new TestErrorReporter();
         var optionsMonitor = GetOptionsMonitor(withCSharpBackground: true);
-        using var defaultWorkspaceChangedPublisher = new DefaultWorkspaceSemanticTokensRefreshPublisher(settingManager, serverClient, errorReporter, optionsMonitor);
+        using var defaultWorkspaceChangedPublisher = new WorkspaceSemanticTokensRefreshPublisher(clientCapabilitiesService, serverClient, errorReporter, optionsMonitor);
         var testAccessor = defaultWorkspaceChangedPublisher.GetTestAccessor();
 
         // Act
@@ -121,31 +121,20 @@ public class DefaultWorkspaceSemanticTokensRefreshPublisherTest(ITestOutputHelpe
         return optionsMonitor;
     }
 
-    private static IInitializeManager<InitializeParams, InitializeResult> GetServerSettingsManager(bool semanticRefreshEnabled)
+    private static IClientCapabilitiesService GetClientCapabilitiesService(bool semanticRefreshEnabled)
     {
-        var initializedParams = GetInitializedParams(semanticRefreshEnabled);
-
-        var settingsManager = new Mock<IInitializeManager<InitializeParams, InitializeResult>>(MockBehavior.Strict);
-        settingsManager.Setup(s => s.GetInitializeParams()).Returns(initializedParams);
-
-        return settingsManager.Object;
-    }
-
-    private static InitializeParams GetInitializedParams(bool semanticRefreshEnabled)
-    {
-        return new InitializeParams
+        var clientCapabilities = new VSInternalClientCapabilities
         {
-            Capabilities = new ClientCapabilities
+            Workspace = new WorkspaceClientCapabilities
             {
-                Workspace = new WorkspaceClientCapabilities
+                SemanticTokens = new SemanticTokensWorkspaceSetting
                 {
-                    SemanticTokens = new SemanticTokensWorkspaceSetting
-                    {
-                        RefreshSupport = semanticRefreshEnabled
-                    },
-                }
+                    RefreshSupport = semanticRefreshEnabled
+                },
             }
         };
+
+        return new TestClientCapabilitiesService(clientCapabilities);
     }
 
     private class TestErrorReporter : IErrorReporter

@@ -23,11 +23,13 @@ namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Cohost;
 [method: ImportingConstructor]
 internal sealed class CohostSemanticTokensRangeEndpoint(
     IRazorSemanticTokensInfoService semanticTokensInfoService,
+    RazorSemanticTokensLegendService razorSemanticTokensLegendService,
     IClientSettingsManager clientSettingsManager,
     IRazorLoggerFactory loggerFactory)
     : AbstractRazorCohostDocumentRequestHandler<SemanticTokensRangeParams, SemanticTokens?>, ICapabilitiesProvider
 {
     private readonly IRazorSemanticTokensInfoService _semanticTokensInfoService = semanticTokensInfoService;
+    private readonly RazorSemanticTokensLegendService _razorSemanticTokensLegendService = razorSemanticTokensLegendService;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
     private readonly ILogger _logger = loggerFactory.CreateLogger<CohostSemanticTokensRangeEndpoint>();
 
@@ -39,9 +41,7 @@ internal sealed class CohostSemanticTokensRangeEndpoint(
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        var legend = new RazorSemanticTokensLegend(clientCapabilities);
-        serverCapabilities.EnableSemanticTokens(legend.Legend);
-        _semanticTokensInfoService.SetTokensLegend(legend);
+        serverCapabilities.EnableSemanticTokens(_razorSemanticTokensLegendService.Legend);
     }
 
     protected override Task<SemanticTokens?> HandleRequestAsync(SemanticTokensRangeParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)

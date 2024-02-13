@@ -6,11 +6,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
@@ -19,24 +19,27 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-public class RazorSemanticTokensRefreshEndpointTest : ToolingTestBase
+public class RazorSemanticTokensRefreshEndpointTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    public RazorSemanticTokensRefreshEndpointTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-    }
-
     [Fact]
     public async Task Handle_QueuesRefresh()
     {
         // Arrange
-        var clientSettings = GetInitializedParams(semanticRefreshEnabled: true);
-        var clientSettingsManager = new Mock<IInitializeManager<InitializeParams, InitializeResult>>(MockBehavior.Strict);
-        clientSettingsManager.Setup(m => m.GetInitializeParams()).Returns(clientSettings);
+        var clientCapabilities = new VSInternalClientCapabilities
+        {
+            Workspace = new WorkspaceClientCapabilities
+            {
+                SemanticTokens = new SemanticTokensWorkspaceSetting
+                {
+                    RefreshSupport = true
+                },
+            },
+        };
+        var clientCapabilitiesService = new TestClientCapabilitiesService(clientCapabilities);
         var serverClient = new TestClient();
         var errorReporter = new TestErrorReporter();
         var optionsMonitor = GetOptionsMonitor();
-        using var semanticTokensRefreshPublisher = new DefaultWorkspaceSemanticTokensRefreshPublisher(clientSettingsManager.Object, serverClient, errorReporter, optionsMonitor);
+        using var semanticTokensRefreshPublisher = new WorkspaceSemanticTokensRefreshPublisher(clientCapabilitiesService, serverClient, errorReporter, optionsMonitor);
         var refreshEndpoint = new RazorSemanticTokensRefreshEndpoint(semanticTokensRefreshPublisher);
         var refreshParams = new SemanticTokensRefreshParams();
         var requestContext = new RazorRequestContext();
@@ -65,23 +68,6 @@ public class RazorSemanticTokensRefreshEndpointTest : ToolingTestBase
             optionsMonitorCache);
 
         return optionsMonitor;
-    }
-
-    private static InitializeParams GetInitializedParams(bool semanticRefreshEnabled)
-    {
-        return new InitializeParams
-        {
-            Capabilities = new ClientCapabilities
-            {
-                Workspace = new WorkspaceClientCapabilities
-                {
-                    SemanticTokens = new SemanticTokensWorkspaceSetting
-                    {
-                        RefreshSupport = semanticRefreshEnabled
-                    },
-                },
-            },
-        };
     }
 
     private class TestErrorReporter : IErrorReporter

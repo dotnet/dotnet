@@ -28,12 +28,9 @@ internal sealed class CohostHoverEndpoint(
       ICapabilitiesProvider
 {
     private readonly IHoverService _hoverInfoService = hoverInfoService;
-    private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
-    private VSInternalClientCapabilities? _clientCapabilities;
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        _clientCapabilities = clientCapabilities;
         serverCapabilities.EnableHoverProvider();
     }
 
@@ -59,7 +56,6 @@ internal sealed class CohostHoverEndpoint(
             requestContext.GetRequiredDocumentContext(),
             positionInfo,
             request.Position,
-            _clientCapabilities,
             cancellationToken);
 
     protected override Task<VSInternalHover?> HandleDelegatedResponseAsync(VSInternalHover? response, TextDocumentPositionParams originalRequest, RazorCohostRequestContext requestContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)

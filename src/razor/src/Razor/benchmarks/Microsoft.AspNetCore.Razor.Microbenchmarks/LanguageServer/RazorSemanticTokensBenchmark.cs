@@ -120,9 +120,9 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
     private void EnsureServicesInitialized()
     {
         var languageServer = RazorLanguageServer.GetInnerLanguageServerForTesting();
-        var legend = new RazorSemanticTokensLegend(new VSInternalClientCapabilities { SupportsVisualStudioExtensions = true });
+        var capabilitiesService = new BenchmarkClientCapabilitiesService(new VSInternalClientCapabilities { SupportsVisualStudioExtensions = true });
+        var legend = new RazorSemanticTokensLegendService(capabilitiesService);
         RazorSemanticTokenService = languageServer.GetRequiredService<IRazorSemanticTokensInfoService>();
-        RazorSemanticTokenService.SetTokensLegend(legend);
         VersionCache = languageServer.GetRequiredService<IDocumentVersionCache>();
         ProjectSnapshotManagerDispatcher = languageServer.GetRequiredService<ProjectSnapshotManagerDispatcher>();
     }
@@ -132,8 +132,9 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
         public TestRazorSemanticTokensInfoService(
             LanguageServerFeatureOptions languageServerFeatureOptions,
             IRazorDocumentMappingService documentMappingService,
+            RazorSemanticTokensLegendService razorSemanticTokensLegendService,
             IRazorLoggerFactory loggerFactory)
-            : base(documentMappingService, languageServerFeatureOptions, loggerFactory, telemetryReporter: null)
+            : base(documentMappingService, razorSemanticTokensLegendService, languageServerFeatureOptions, loggerFactory, telemetryReporter: null)
         {
         }
 
@@ -143,7 +144,6 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
             RazorCodeDocument codeDocument,
             TextDocumentIdentifier textDocumentIdentifier,
             Range razorRange,
-            RazorSemanticTokensLegend razorSemanticTokensLegend,
             bool colorBackground,
             long documentVersion,
             Guid correlationId,

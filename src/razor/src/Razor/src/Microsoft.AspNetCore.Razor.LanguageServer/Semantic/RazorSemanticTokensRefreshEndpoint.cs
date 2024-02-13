@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
@@ -10,16 +9,11 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
 [RazorLanguageServerEndpoint(CustomMessageNames.RazorSemanticTokensRefreshEndpoint)]
-internal sealed class RazorSemanticTokensRefreshEndpoint : IRazorNotificationHandler<SemanticTokensRefreshParams>
+internal sealed class RazorSemanticTokensRefreshEndpoint(IWorkspaceSemanticTokensRefreshPublisher semanticTokensRefreshPublisher) : IRazorNotificationHandler<SemanticTokensRefreshParams>
 {
-    private readonly WorkspaceSemanticTokensRefreshPublisher _semanticTokensRefreshPublisher;
+    private readonly IWorkspaceSemanticTokensRefreshPublisher _semanticTokensRefreshPublisher = semanticTokensRefreshPublisher;
 
     public bool MutatesSolutionState { get; } = false;
-
-    public RazorSemanticTokensRefreshEndpoint(WorkspaceSemanticTokensRefreshPublisher semanticTokensRefreshPublisher)
-    {
-        _semanticTokensRefreshPublisher = semanticTokensRefreshPublisher ?? throw new ArgumentNullException(nameof(semanticTokensRefreshPublisher));
-    }
 
     public Task HandleNotificationAsync(SemanticTokensRefreshParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
