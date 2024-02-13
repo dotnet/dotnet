@@ -1008,12 +1008,11 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
 
         var service = new RazorSemanticTokensInfoService(
             documentMappingService,
+            TestRazorSemanticTokensLegendService.Instance,
             featureOptions,
             LoggerFactory,
             telemetryReporter: null);
 
-        var legend = new RazorSemanticTokensLegend(new VSInternalClientCapabilities { SupportsVisualStudioExtensions = true });
-        service.SetTokensLegend(legend);
         return service;
     }
 
@@ -1177,7 +1176,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
 
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
         builder.AppendLine("//line,characterPos,length,tokenType,modifier,text");
-        var legendArray = TestRazorSemanticTokensLegend.Instance.Legend.TokenTypes;
+        var legendArray = TestRazorSemanticTokensLegendService.Instance.Legend.TokenTypes;
         var prevLength = 0;
         var lineIndex = 0;
         var lineOffset = 0;

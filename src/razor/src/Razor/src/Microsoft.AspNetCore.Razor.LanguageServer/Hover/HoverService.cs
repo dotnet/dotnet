@@ -29,13 +29,15 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 internal sealed class HoverService(
     LSPTagHelperTooltipFactory lspTagHelperTooltipFactory,
     VSLSPTagHelperTooltipFactory vsLspTagHelperTooltipFactory,
-    IRazorDocumentMappingService mappingService) : IHoverService
+    IRazorDocumentMappingService mappingService,
+    IClientCapabilitiesService clientCapabilitiesService) : IHoverService
 {
     private readonly LSPTagHelperTooltipFactory _lspTagHelperTooltipFactory = lspTagHelperTooltipFactory;
     private readonly VSLSPTagHelperTooltipFactory _vsLspTagHelperTooltipFactory = vsLspTagHelperTooltipFactory;
     private readonly IRazorDocumentMappingService _mappingService = mappingService;
+    private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
 
-    public async Task<VSInternalHover?> GetRazorHoverInfoAsync(VersionedDocumentContext documentContext, DocumentPositionInfo positionInfo, Position position, VSInternalClientCapabilities? clientCapabilities, CancellationToken cancellationToken)
+    public async Task<VSInternalHover?> GetRazorHoverInfoAsync(VersionedDocumentContext documentContext, DocumentPositionInfo positionInfo, Position position, CancellationToken cancellationToken)
     {
         // HTML can still sometimes be handled by razor. For example hovering over
         // a component tag like <Counter /> will still be in an html context
@@ -54,7 +56,7 @@ internal sealed class HoverService(
         }
 
         var location = new SourceLocation(positionInfo.HostDocumentIndex, position.Line, position.Character);
-        return await GetHoverInfoAsync(documentContext.FilePath, codeDocument, location, clientCapabilities.AssumeNotNull(), cancellationToken).ConfigureAwait(false);
+        return await GetHoverInfoAsync(documentContext.FilePath, codeDocument, location, _clientCapabilitiesService.ClientCapabilities, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<VSInternalHover?> TranslateDelegatedResponseAsync(VSInternalHover? response, VersionedDocumentContext documentContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken)

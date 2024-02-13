@@ -22,12 +22,12 @@ internal class DefaultLSPProximityExpressionsProvider : LSPProximityExpressionsP
 {
     private readonly LSPRequestInvoker _requestInvoker;
 
-    private readonly ILogger _logger;
+    private readonly Lazy<ILogger> _logger;
 
     [ImportingConstructor]
     public DefaultLSPProximityExpressionsProvider(
         LSPRequestInvoker requestInvoker,
-        IRazorLoggerFactory loggerFactory)
+        Lazy<IRazorLoggerFactory> loggerFactory)
     {
         if (requestInvoker is null)
         {
@@ -40,7 +40,7 @@ internal class DefaultLSPProximityExpressionsProvider : LSPProximityExpressionsP
         }
 
         _requestInvoker = requestInvoker;
-        _logger = loggerFactory.CreateLogger<DefaultLSPProximityExpressionsProvider>();
+        _logger = new Lazy<ILogger>(() => loggerFactory.Value.CreateLogger<DefaultLSPProximityExpressionsProvider>());
     }
 
     public async override Task<IReadOnlyList<string>?> GetProximityExpressionsAsync(LSPDocumentSnapshot documentSnapshot, Position position, CancellationToken cancellationToken)
@@ -72,7 +72,7 @@ internal class DefaultLSPProximityExpressionsProvider : LSPProximityExpressionsP
         var languageResponse = response?.Response;
         if (languageResponse is null)
         {
-            _logger.LogInformation("The proximity expressions could not be resolved.");
+            _logger.Value.LogInformation("The proximity expressions could not be resolved.");
             return null;
         }
 

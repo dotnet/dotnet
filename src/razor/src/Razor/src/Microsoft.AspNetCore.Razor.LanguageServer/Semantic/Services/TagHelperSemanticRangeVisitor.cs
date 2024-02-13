@@ -17,12 +17,12 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
 {
     private readonly ImmutableArray<SemanticRange>.Builder _semanticRanges;
     private readonly RazorCodeDocument _razorCodeDocument;
-    private readonly RazorSemanticTokensLegend _razorSemanticTokensLegend;
+    private readonly RazorSemanticTokensLegendService _razorSemanticTokensLegend;
     private readonly bool _colorCodeBackground;
 
     private bool _addRazorCodeModifier;
 
-    private TagHelperSemanticRangeVisitor(ImmutableArray<SemanticRange>.Builder semanticRanges, RazorCodeDocument razorCodeDocument, TextSpan? range, RazorSemanticTokensLegend razorSemanticTokensLegend, bool colorCodeBackground)
+    private TagHelperSemanticRangeVisitor(ImmutableArray<SemanticRange>.Builder semanticRanges, RazorCodeDocument razorCodeDocument, TextSpan? range, RazorSemanticTokensLegendService razorSemanticTokensLegend, bool colorCodeBackground)
         : base(range)
     {
         _semanticRanges = semanticRanges;
@@ -31,14 +31,14 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
         _colorCodeBackground = colorCodeBackground;
     }
 
-    public static ImmutableArray<SemanticRange> VisitAllNodes(RazorCodeDocument razorCodeDocument, Range range, RazorSemanticTokensLegend razorSemanticTokensLegend, bool colorCodeBackground)
+    public static ImmutableArray<SemanticRange> VisitAllNodes(RazorCodeDocument razorCodeDocument, Range range, RazorSemanticTokensLegendService razorSemanticTokensLegendService, bool colorCodeBackground)
     {
         var sourceText = razorCodeDocument.GetSourceText();
         var rangeAsTextSpan = range.ToTextSpan(sourceText);
 
         using var _ = ArrayBuilderPool<SemanticRange>.GetPooledObject(out var builder);
 
-        var visitor = new TagHelperSemanticRangeVisitor(builder, razorCodeDocument, rangeAsTextSpan, razorSemanticTokensLegend, colorCodeBackground);
+        var visitor = new TagHelperSemanticRangeVisitor(builder, razorCodeDocument, rangeAsTextSpan, razorSemanticTokensLegendService, colorCodeBackground);
 
         visitor.Visit(razorCodeDocument.GetSyntaxTree().Root);
 
@@ -543,7 +543,7 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
 
         var source = _razorCodeDocument.Source;
         var range = node.GetLinePositionSpan(source);
-        var tokenModifier = _addRazorCodeModifier ? (int)RazorSemanticTokensLegend.RazorTokenModifiers.razorCode : 0;
+        var tokenModifier = _addRazorCodeModifier ? (int)RazorSemanticTokensLegendService.RazorTokenModifiers.razorCode : 0;
 
         // LSP spec forbids multi-line tokens, so we need to split this up.
         if (range.Start.Line != range.End.Line)

@@ -9,6 +9,6 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 
 internal interface IHoverService
 {
-    Task<VSInternalHover?> GetRazorHoverInfoAsync(VersionedDocumentContext versionedDocumentContext, DocumentPositionInfo positionInfo, Position position, VSInternalClientCapabilities? _clientCapabilities, CancellationToken cancellationToken);
+    Task<VSInternalHover?> GetRazorHoverInfoAsync(VersionedDocumentContext versionedDocumentContext, DocumentPositionInfo positionInfo, Position position, CancellationToken cancellationToken);
     Task<VSInternalHover?> TranslateDelegatedResponseAsync(VSInternalHover? response, VersionedDocumentContext versionedDocumentContext, DocumentPositionInfo positionInfo, CancellationToken cancellationToken);
 }
