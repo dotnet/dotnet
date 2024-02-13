@@ -7,10 +7,10 @@
       "commitSha": "c3f5cbfb2829795294f5c2d9fa5a0522f47e91fb"
     },
     {
-      "packageVersion": "9.0.0-preview.1.24079.2",
+      "packageVersion": "9.0.0-preview.1.24109.7",
       "path": "aspire",
       "remoteUri": "https://github.com/dotnet/aspire",
-      "commitSha": "87d5246ddfc1fb9b07fcdf7b4b42830f67427ab9"
+      "commitSha": "8ec92cbc5fbcba7a677fb52aaa4b0118f1ed17f4"
     },
     {
       "packageVersion": "9.0.0-preview.2.24112.25",
@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "885989873962c6da83a342f0eeee745fa12bdee2"
+      "commitSha": "52c1727df6fdd70393701f068e01bd31c8beb6ed"
     },
     {
       "packageVersion": "17.10.0-preview-24109-03",
