@@ -288,11 +288,24 @@ namespace NuGet.Commands
                 managedCodeConventions.Patterns.MSBuildFiles);
 
             // filter any build asset already being added as part of build transitive
-            var filteredBuildGroup = GetBuildItemsForPackageId(buildGroup, libraryName).
-                Where(buildItem => !filteredBTGroup.Any(
-                    btItem => Path.GetFileName(btItem.Path).Equals(Path.GetFileName(buildItem.Path), StringComparison.OrdinalIgnoreCase)));
+            // PERF: Avoid using LINQ in this path.
+            foreach (var buildItem in GetBuildItemsForPackageId(buildGroup, libraryName))
+            {
+                bool found = false;
+                foreach (var btItem in filteredBTGroup)
+                {
+                    if (Path.GetFileName(btItem.Path).Equals(Path.GetFileName(buildItem.Path), StringComparison.OrdinalIgnoreCase))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
 
-            lockFileLib.Build.AddRange(filteredBuildGroup);
+                if (!found)
+                {
+                    lockFileLib.Build.Add(buildItem);
+                }
+            }
 
             // Build multi targeting
             var buildMultiTargetingGroup = GetLockFileItems(
