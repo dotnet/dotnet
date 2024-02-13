@@ -5,7 +5,7 @@ This is a summarized version of our documentation, you can always look at [Compl
 1. Decide if you need to use “ErrorMessage” or “ErrorPattern”
     - "ErrorMessage" works as `contains` (single line, case-insensitive)
     - "ErrorPattern" works as `regex` (single line, case-insensitive, no backtracking)
-1. Write the error message: <sup>  [Additional documentation on how to write an error message](https://github.com/dotnet/arcade/blob/main/Documentation/Projects/Build%20Analysis/KnownIssues.md#filling-out-known-issues-json-blob)</sup>
+1. Write the error message: <sup>  Additional documentation on [how to write an error message](https://github.com/dotnet/arcade/blob/main/Documentation/Projects/Build%20Analysis/KnownIssues.md#filling-out-known-issues-json-blob) or [known issues with a list of errors](https://github.com/dotnet/arcade/blob/main/Documentation/Projects/Build%20Analysis/KnownIssues.md#filling-out-known-issues-with-a-list-of-errors)</sup>
     - If you use “ErrorMessage” select the part of the line that you want to match, use [string-functions](https://string-functions.com/countsubstrings.aspx) to test it.
     - If you use "ErrorPattern" write the regex that matches your error message. Use [regex101](https://regex101.com/) (choose `.NET (C#)` flavor with `Single line`, `Insensitive`, `No backtracking` flags enabled) to test it.
     - To escape special characters in json, use: [freeformatter](https://www.freeformatter.com/json-escape.html).
