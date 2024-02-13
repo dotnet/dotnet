@@ -141,14 +141,14 @@
     <MicrosoftExtensionsDiagnosticsTestingVersion>9.0.0-preview.2.24111.3</MicrosoftExtensionsDiagnosticsTestingVersion>
     <MicrosoftExtensionsTimeProviderTestingVersion>9.0.0-preview.2.24111.3</MicrosoftExtensionsTimeProviderTestingVersion>
     <!-- Packages from dotnet/efcore -->
-    <dotnetefVersion>9.0.0-preview.2.24112.4</dotnetefVersion>
-    <MicrosoftEntityFrameworkCoreInMemoryVersion>9.0.0-preview.2.24112.4</MicrosoftEntityFrameworkCoreInMemoryVersion>
-    <MicrosoftEntityFrameworkCoreRelationalVersion>9.0.0-preview.2.24112.4</MicrosoftEntityFrameworkCoreRelationalVersion>
-    <MicrosoftEntityFrameworkCoreSqliteVersion>9.0.0-preview.2.24112.4</MicrosoftEntityFrameworkCoreSqliteVersion>
-    <MicrosoftEntityFrameworkCoreSqlServerVersion>9.0.0-preview.2.24112.4</MicrosoftEntityFrameworkCoreSqlServerVersion>
-    <MicrosoftEntityFrameworkCoreToolsVersion>9.0.0-preview.2.24112.4</MicrosoftEntityFrameworkCoreToolsVersion>
-    <MicrosoftEntityFrameworkCoreVersion>9.0.0-preview.2.24112.4</MicrosoftEntityFrameworkCoreVersion>
-    <MicrosoftEntityFrameworkCoreDesignVersion>9.0.0-preview.2.24112.4</MicrosoftEntityFrameworkCoreDesignVersion>
+    <dotnetefVersion>9.0.0-preview.2.24112.6</dotnetefVersion>
+    <MicrosoftEntityFrameworkCoreInMemoryVersion>9.0.0-preview.2.24112.6</MicrosoftEntityFrameworkCoreInMemoryVersion>
+    <MicrosoftEntityFrameworkCoreRelationalVersion>9.0.0-preview.2.24112.6</MicrosoftEntityFrameworkCoreRelationalVersion>
+    <MicrosoftEntityFrameworkCoreSqliteVersion>9.0.0-preview.2.24112.6</MicrosoftEntityFrameworkCoreSqliteVersion>
+    <MicrosoftEntityFrameworkCoreSqlServerVersion>9.0.0-preview.2.24112.6</MicrosoftEntityFrameworkCoreSqlServerVersion>
+    <MicrosoftEntityFrameworkCoreToolsVersion>9.0.0-preview.2.24112.6</MicrosoftEntityFrameworkCoreToolsVersion>
+    <MicrosoftEntityFrameworkCoreVersion>9.0.0-preview.2.24112.6</MicrosoftEntityFrameworkCoreVersion>
+    <MicrosoftEntityFrameworkCoreDesignVersion>9.0.0-preview.2.24112.6</MicrosoftEntityFrameworkCoreDesignVersion>
     <!-- Packages from dotnet/roslyn -->
     <MicrosoftCodeAnalysisCommonVersion>4.8.0-3.23518.7</MicrosoftCodeAnalysisCommonVersion>
     <MicrosoftCodeAnalysisExternalAccessAspNetCoreVersion>4.8.0-3.23518.7</MicrosoftCodeAnalysisExternalAccessAspNetCoreVersion>
@@ -168,11 +168,11 @@
     <!-- Packages from dotnet/source-build-externals -->
     <MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>9.0.0-alpha.1.24106.1</MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>
     <!-- Packages from dotnet/source-build-reference-packages -->
-    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesVersion>9.0.0-alpha.1.24105.3</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesVersion>
+    <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesVersion>9.0.0-alpha.1.24109.1</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesVersion>
     <!-- Packages from dotnet/symreader -->
-    <MicrosoftSourceBuildIntermediatesymreaderVersion>2.1.0-beta.24067.2</MicrosoftSourceBuildIntermediatesymreaderVersion>
+    <MicrosoftSourceBuildIntermediatesymreaderVersion>2.1.0-beta.24105.1</MicrosoftSourceBuildIntermediatesymreaderVersion>
     <!-- Packages from dotnet/winforms -->
-    <SystemDrawingCommonVersion>9.0.0-preview.2.24112.2</SystemDrawingCommonVersion>
+    <SystemDrawingCommonVersion>9.0.0-preview.2.24112.4</SystemDrawingCommonVersion>
     <!-- Packages from dotnet/xdt -->
     <MicrosoftWebXdtVersion>9.0.0-preview.24105.2</MicrosoftWebXdtVersion>
     <MicrosoftSourceBuildIntermediatexdtVersion>9.0.0-preview.24105.2</MicrosoftSourceBuildIntermediatexdtVersion>
