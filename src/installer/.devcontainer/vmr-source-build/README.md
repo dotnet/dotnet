@@ -13,7 +13,7 @@ This Codespace can help you debug the source build of .NET. In case you have run
 `/workspaces/dotnet` with the PR changes pulled into it. You can then attempt to source-build
 the VMR which is what the VMR leg in the installer PR build doing. This build takes about 45
 minutes and, after completion, produces an archived .NET SDK located in
-`/workspaces/dotnet/artifacts/x64/Release`.
+`/workspaces/dotnet/artifacts/assets/Release`.
 
 ## Build the SDK
 
