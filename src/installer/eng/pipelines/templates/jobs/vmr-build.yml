@@ -352,7 +352,12 @@ jobs:
         CopyWithRelativeFolders "test/"                      $targetFolder "*.binlog"
         CopyWithRelativeFolders "test/"                      $targetFolder "Updated*.diff"
         CopyWithRelativeFolders "test/"                      $targetFolder "Updated*.txt"
-      displayName: Prepare BuildLogs staging directory
+
+        # check if we have assets to publish
+        if (Test-Path "artifacts/assets/Release/*") {
+          echo "##vso[task.setvariable variable=hasAssets]true"
+        }
+      displayName: Prepare BuildLogs staging directory and check assets
       continueOnError: true
       condition: succeededOrFailed()
 
@@ -376,7 +381,12 @@ jobs:
         find test/ -type f -name "*.binlog" -exec rsync -R {} -t ${targetFolder} \;
         find test/ -type f -name "Updated*.diff" -exec rsync -R {} -t ${targetFolder} \;
         find test/ -type f -name "Updated*.txt" -exec rsync -R {} -t ${targetFolder} \;
-      displayName: Prepare BuildLogs staging directory
+
+        # check if we have assets to publish
+        if [ -n "$(ls -A 'artifacts/assets/Release/')" ]; then
+          echo "##vso[task.setvariable variable=hasAssets]true"
+        fi
+      displayName: Prepare BuildLogs staging directory and check assets
       continueOnError: true
       condition: succeededOrFailed()
 
@@ -403,7 +413,7 @@ jobs:
   - publish: '$(sourcesPath)/artifacts/assets/Release/'
     artifact: $(Agent.JobName)_Artifacts
     displayName: Publish Artifacts
-    condition: succeededOrFailed()
+    condition: and(succeededOrFailed(), eq(variables['hasAssets'], 'true'))
     continueOnError: true
 
   # When building from source, the Private.SourceBuilt.Artifacts archive already contains the nuget packages
