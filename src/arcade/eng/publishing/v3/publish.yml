@@ -4,7 +4,6 @@ parameters:
   BARBuildId: ''
   symbolPublishingAdditionalParameters: ''
   buildQuality: 'daily'
-  useServicingBuildPools: false
 
 stages:
   - stage: publish
@@ -19,7 +18,7 @@ stages:
         - group: AzureDevOps-Artifact-Feeds-Pats
         - group: DotNet-MSRC-Storage
         - group: Publish-Build-Assets
-          
+
         # Default Maestro++ API Endpoint and API Version
         - name: MaestroApiEndPoint
           value: "https://maestro.dot.net"
@@ -34,16 +33,9 @@ stages:
         ${{ if eq(variables['System.TeamProject'], 'DevDiv') }}:
           name: VSEngSS-MicroBuild2022-1ES
           demands: Cmd
-        # If it's not devdiv, it's dnceng: 
-        # Publishing cannot use /eng/common/templates/variables/pool-providers.yml since it always runs from 'main',
-        # including in the servicing build case.  Instead the 'useServicingBuildPools' parameter dictates this.
-        # If useServicingBuildPools = false, it's a main branch. 
-        ${{ if and(ne(variables['System.TeamProject'], 'DevDiv'), eq(parameters['useServicingBuildPools'], false)) }}:
-          name: NetCore1ESPool-Internal
-          demands: ImageOverride -equals windows.vs2019.amd64
-        # If useServicingBuildPools = true, it's a release branch:
-        ${{ if and(ne(variables['System.TeamProject'], 'DevDiv'), eq(parameters['useServicingBuildPools'], true)) }}:
-          name: NetCore1ESPool-Svc-Internal
+        # If it's not devdiv, it's dnceng:
+        ${{ else }}:
+          name: NetCore1ESPool-Publishing-Internal
           demands: ImageOverride -equals windows.vs2019.amd64
 
       steps:
@@ -81,7 +73,7 @@ stages:
 
                     $channelNames += "'$($channelInfo.name)'"
                   }
-                  
+
                   $azureDevOpsBuildNumber = $buildInfo.azureDevOpsBuildNumber
                   $azureDevOpsRepository = "Unknown"
                   $lastIndexOfSlash = $buildInfo.azureDevOpsRepository.LastIndexOf('/')
@@ -101,7 +93,7 @@ stages:
                     $buildNumberName = $buildNumberName.Substring(0, 255)
                   }
 
-                  # Set tags on publishing for visibility 
+                  # Set tags on publishing for visibility
 
                   Write-Host "##vso[build.updatebuildnumber]$buildNumberName"
                   Write-Host "##vso[build.addbuildtag]Channel(s) - $channelNames"

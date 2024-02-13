@@ -8,7 +8,7 @@
     <GenFacadesReferenceAssemblyItemName Condition="'$(GenFacadesReferenceAssemblyItemName)' == ''">ResolvedMatchingContract</GenFacadesReferenceAssemblyItemName>
     <!-- Tell ResolveMatchingContract to run and resolve contract to project reference -->
     <ResolveMatchingContract>true</ResolveMatchingContract>
-    <GeneratePartialFacadeSourceDependsOn>$(GeneratePartialFacadeSourceDependsOn);ResolveMatchingContract;_GetRoslynAssembliesPath</GeneratePartialFacadeSourceDependsOn>
+    <GeneratePartialFacadeSourceDependsOn>$(GeneratePartialFacadeSourceDependsOn);ResolveMatchingContract;GetGenFacadesRoslynAssembliesPath</GeneratePartialFacadeSourceDependsOn>
     <CoreCompileDependsOn Condition="'$(DesignTimeBuild)' != 'true'">$(CoreCompileDependsOn);GeneratePartialFacadeSource</CoreCompileDependsOn>
     <GenFacadesOutputSourcePath Condition="'$(GenFacadesOutputSourcePath)' == ''">$(IntermediateOutputPath)$(AssemblyTitle).Forwards.cs</GenFacadesOutputSourcePath>
   </PropertyGroup>
@@ -28,7 +28,7 @@
       OmitTypes="@(GenFacadesOmitType)"
       OutputSourcePath="$(GenFacadesOutputSourcePath)"
       SeedTypePreferences="@(SeedTypePreference)"
-      RoslynAssembliesPath="$(RoslynAssembliesPath)" />
+      RoslynAssembliesPath="$(GenFacadesRoslynAssembliesPath)" />
 
     <ItemGroup Condition="'$(GenFacadesAutoIncludeCompileItem)' != 'false' and
                           Exists('$(GenFacadesOutputSourcePath)')">
