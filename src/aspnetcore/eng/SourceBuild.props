@@ -115,7 +115,7 @@
     <Exec
       Command="npm ci --offline"
       WorkingDirectory="$(InnerSourceBuildRepoRoot)"
-      EnvironmentVariables="S(_AdditionalEnvironmentVariable)" />
+      EnvironmentVariables="$(_AdditionalEnvironmentVariable)" />
 
   </Target>
 
