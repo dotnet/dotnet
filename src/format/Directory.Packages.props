@@ -38,6 +38,7 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.VisualBasic" Version="$(MicrosoftCodeAnalysisVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="$(MicrosoftCodeAnalysisVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis" Version="$(MicrosoftCodeAnalysisVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.ExternalAccess.RazorCompiler" Version="$(MicrosoftCodeAnalysisVersion)" />
 
     <!-- runtime -->
     <PackageVersion Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" />
