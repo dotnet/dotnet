@@ -428,6 +428,21 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
+            buildName: Browser_Multithreaded_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: wasm
+            pool:
+              name: ${{ variables.defaultPoolName }}
+              demands: ${{ variables.defaultPoolDemandsLinux }}
+            container: ${{ variables.browserCrossContainer }}
+            crossRootFs: '/crossrootfs/x64'
+            targetOS: browser
+            targetArchitecture: wasm
+            extraProperties: /p:DotNetBuildRuntimeWasmEnableThreads=true
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
             buildName: LinuxBionic_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
@@ -442,6 +457,21 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
+            buildName: LinuxBionic_NativeAOT_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm64
+            pool:
+              name: ${{ variables.defaultPoolName }}
+              demands: ${{ variables.defaultPoolDemandsLinux }}
+            container: ${{ variables.androidCrossContainer }}
+            crossRootFs: '/crossrootfs/x64'
+            targetOS: linux-bionic
+            targetArchitecture: arm64
+            extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
             buildName: LinuxBionic_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
@@ -453,6 +483,21 @@ stages:
             crossRootFs: '/crossrootfs/x64'
             targetOS: linux-bionic
             targetArchitecture: x64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: LinuxBionic_NativeAOT_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            pool:
+              name: ${{ variables.defaultPoolName }}
+              demands: ${{ variables.defaultPoolDemandsLinux }}
+            container: ${{ variables.androidCrossContainer }}
+            crossRootFs: '/crossrootfs/x64'
+            targetOS: linux-bionic
+            targetArchitecture: x64
+            extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -467,6 +512,30 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
+            buildName: iOS_NativeAOT_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm64
+            pool:
+              vmImage: ${{ variables.defaultPoolNameMac }}
+            targetOS: ios
+            targetArchitecture: arm64
+            extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: iOSSimulator_NativeAOT_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm64
+            pool:
+              vmImage: ${{ variables.defaultPoolNameMac }}
+            targetOS: iossimulator
+            targetArchitecture: arm64
+            extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
             buildName: iOSSimulator_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
@@ -475,6 +544,18 @@ stages:
               vmImage: ${{ variables.defaultPoolNameMac }}
             targetOS: iossimulator
             targetArchitecture: x64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: iOSSimulator_NativeAOT_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            pool:
+              vmImage: ${{ variables.defaultPoolNameMac }}
+            targetOS: iossimulator
+            targetArchitecture: x64
+            extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -489,6 +570,18 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
+            buildName: MacCatalyst_NativeAOT_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm64
+            pool:
+              vmImage: ${{ variables.defaultPoolNameMac }}
+            targetOS: maccatalyst
+            targetArchitecture: arm64
+            extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
             buildName: MacCatalyst_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
@@ -497,6 +590,18 @@ stages:
               vmImage: ${{ variables.defaultPoolNameMac }}
             targetOS: maccatalyst
             targetArchitecture: x64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: MacCatalyst_NativeAOT_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            pool:
+              vmImage: ${{ variables.defaultPoolNameMac }}
+            targetOS: maccatalyst
+            targetArchitecture: x64
+            extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -511,6 +616,18 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
+            buildName: tvOS_NativeAOT_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm64
+            pool:
+              vmImage: ${{ variables.defaultPoolNameMac }}
+            targetOS: tvos
+            targetArchitecture: arm64
+            extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
             buildName: tvOSSimulator_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
@@ -522,6 +639,18 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
+            buildName: tvOSSimulator_NativeAOT_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm64
+            pool:
+              vmImage: ${{ variables.defaultPoolNameMac }}
+            targetOS: tvossimulator
+            targetArchitecture: arm64
+            extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
             buildName: tvOSSimulator_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
@@ -530,6 +659,18 @@ stages:
               vmImage: ${{ variables.defaultPoolNameMac }}
             targetOS: tvossimulator
             targetArchitecture: x64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: tvOSSimulator_NativeAOT_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            pool:
+              vmImage: ${{ variables.defaultPoolNameMac }}
+            targetOS: tvossimulator
+            targetArchitecture: x64
+            extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
 
         - template: ../jobs/vmr-build.yml
           parameters:
