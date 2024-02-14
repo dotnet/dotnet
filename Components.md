@@ -12,11 +12,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@8ec92cb](https://github.com/dotnet/aspire/tree/8ec92cbc5fbcba7a677fb52aaa4b0118f1ed17f4)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@43f49bc](https://github.com/dotnet/aspnetcore/tree/43f49bcf6df41b567b67011abdaea242afb83158)*
+*[dotnet/aspnetcore@acb6a41](https://github.com/dotnet/aspnetcore/tree/acb6a41ce06d0701a97c6d58ce65bd54ba6cfbaf)*
     - `src/aspnetcore/src/submodules/googletest`  
-    *[google/googletest@4872968](https://github.com/google/googletest/tree/48729681ad88a89061344ee541b4548833077e00)*
+    *[google/googletest@b75ecf1](https://github.com/google/googletest/tree/b75ecf1bed2fcd416b66c86cb6fe79122abf132e)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
     *[aspnet/MessagePack-CSharp@ecc4e18](https://github.com/aspnet/MessagePack-CSharp/tree/ecc4e18ad7a0c7db51cd7e3d2997a291ed01444d)*
+    - `src/aspnetcore/src/submodules/Node-Externals`  
+    *[dotnet/Node-Externals@cfdec6b](https://github.com/dotnet/Node-Externals/tree/cfdec6b554a93bba6e6158273436383853c1f646)*
 - `src/cecil`  
 *[dotnet/cecil@93dcb57](https://github.com/dotnet/cecil/tree/93dcb576e191a965008eae9b622527436653873f)*
 - `src/command-line-api`  
