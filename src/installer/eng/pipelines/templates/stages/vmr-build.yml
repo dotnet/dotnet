@@ -368,7 +368,7 @@ stages:
         pool:
           name: ${{ variables.defaultPoolName }}
           demands: ${{ variables.defaultPoolDemandsLinux }}
-        container: ${{ variables.wasmCrossContainer }}
+        container: ${{ variables.browserCrossContainer }}
         crossRootFs: '/crossrootfs/x64'
         targetOS: browser
         targetArchitecture: wasm
@@ -540,7 +540,7 @@ stages:
             pool:
               name: ${{ variables.defaultPoolName }}
               demands: ${{ variables.defaultPoolDemandsLinux }}
-            container: ${{ variables.wasmCrossContainer }}
+            container: ${{ variables.wasiCrossContainer }}
             crossRootFs: '/crossrootfs/x64'
             targetOS: wasi
             targetArchitecture: wasm

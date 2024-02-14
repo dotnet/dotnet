@@ -4,15 +4,15 @@
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.InlayHints;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Cohost;
 
 [Shared]
-[LanguageServerEndpoint(Methods.InlayHintResolveName)]
+[RazorLanguageServerEndpoint(Methods.InlayHintResolveName)]
 [ExportRazorStatelessLspService(typeof(CohostInlayHintResolveEndpoint))]
 [method: ImportingConstructor]
 internal sealed class CohostInlayHintResolveEndpoint(

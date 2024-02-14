@@ -13,7 +13,7 @@ internal class RazorRequestExecutionQueue : RequestExecutionQueue<RazorRequestCo
     private CultureInfo? _cultureInfo;
     private readonly CapabilitiesManager _capabilitiesManager;
 
-    public RazorRequestExecutionQueue(AbstractLanguageServer<RazorRequestContext> languageServer, ILspLogger logger, IHandlerProvider handlerProvider)
+    public RazorRequestExecutionQueue(AbstractLanguageServer<RazorRequestContext> languageServer, ILspLogger logger, AbstractHandlerProvider handlerProvider)
         : base(languageServer, logger, handlerProvider)
     {
         _capabilitiesManager = languageServer.GetLspServices().GetRequiredService<CapabilitiesManager>();
