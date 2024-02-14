@@ -10,13 +10,12 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Cohost;
 
 [Shared]
-[LanguageServerEndpoint(Methods.TextDocumentHoverName)]
+[RazorLanguageServerEndpoint(Methods.TextDocumentHoverName)]
 [ExportRazorStatelessLspService(typeof(CohostHoverEndpoint))]
 [Export(typeof(ICapabilitiesProvider))]
 [method: ImportingConstructor]

@@ -13,16 +13,16 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class RazorRequestContextFactory(ILspServices lspServices) : IRequestContextFactory<RazorRequestContext>
+internal class RazorRequestContextFactory(ILspServices lspServices) : AbstractRequestContextFactory<RazorRequestContext>
 {
     private readonly ILspServices _lspServices = lspServices;
 
-    public Task<RazorRequestContext> CreateRequestContextAsync<TRequestParams>(IQueueItem<RazorRequestContext> queueItem, TRequestParams @params, CancellationToken cancellationToken)
+    public override Task<RazorRequestContext> CreateRequestContextAsync<TRequestParams>(IQueueItem<RazorRequestContext> queueItem, IMethodHandler methodHandler, TRequestParams @params, CancellationToken cancellationToken)
     {
         var logger = _lspServices.GetRequiredService<IRazorLoggerFactory>().CreateLogger<RazorRequestContextFactory>();
 
         VersionedDocumentContext? documentContext = null;
-        var textDocumentHandler = queueItem.MethodHandler as ITextDocumentIdentifierHandler;
+        var textDocumentHandler = methodHandler as ITextDocumentIdentifierHandler;
 
         Uri? uri = null;
         var documentContextFactory = _lspServices.GetRequiredService<IDocumentContextFactory>();
