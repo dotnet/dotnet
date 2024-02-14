@@ -57,7 +57,7 @@ public class RazorLanguageServerTest : ToolingTestBase
         using var server = RazorLanguageServerWrapper.Create(serverStream, serverStream, LoggerFactory, NoOpTelemetryReporter.Instance);
 
         var innerServer = server.GetInnerLanguageServerForTesting();
-        var handlerProvider = innerServer.GetTestAccessor().GetHandlerProvider();
+        var handlerProvider = innerServer.GetTestAccessor().HandlerProvider;
 
         var registeredMethods = handlerProvider.GetRegisteredMethods();
         var handlerTypes = typeof(RazorLanguageServerWrapper).Assembly.GetTypes()

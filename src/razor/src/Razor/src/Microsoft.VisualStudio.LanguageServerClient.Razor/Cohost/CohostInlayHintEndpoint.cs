@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.InlayHints;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
@@ -17,7 +16,7 @@ using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Cohost;
 
 [Shared]
-[LanguageServerEndpoint(Methods.TextDocumentInlayHintName)]
+[RazorLanguageServerEndpoint(Methods.TextDocumentInlayHintName)]
 [ExportRazorStatelessLspService(typeof(CohostInlayHintEndpoint))]
 [Export(typeof(ICapabilitiesProvider))]
 [method: ImportingConstructor]
