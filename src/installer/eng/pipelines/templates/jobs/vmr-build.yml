@@ -71,6 +71,11 @@ parameters:
   type: boolean
   default: false
 
+# Freeform field for extra values to pass to build.sh for special build modes
+- name: extraProperties
+  type: string
+  default: ''
+
 # Use the previous version's SDK to build the current one
 - name: withPreviousSDK
   type: boolean
@@ -283,6 +288,10 @@ jobs:
 
         if [[ ! -z '${{ parameters.targetArchitecture }}' ]]; then
           extraBuildProperties="$extraBuildProperties /p:TargetArchitecture=${{ parameters.targetArchitecture }}"
+        fi
+
+        if [[ -n "${{ parameters.extraProperties }}" ]]; then
+          extraBuildProperties="$extraBuildProperties ${{ parameters.extraProperties }}"
         fi
 
         buildArgs="$(additionalBuildArgs) $customBuildArgs $extraBuildProperties"
