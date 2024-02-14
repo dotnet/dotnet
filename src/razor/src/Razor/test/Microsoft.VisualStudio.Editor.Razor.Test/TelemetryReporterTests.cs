@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.Editor.Razor.Test.Shared;
@@ -268,7 +269,7 @@ public class TelemetryReporterTests
     {
         var reporter = new TestTelemetryReporter(new RazorLoggerFactory([]));
 
-        var rie = new RemoteInvocationException("a", 0, errorData:null);
+        var rie = new RemoteInvocationException("a", 0, errorData: null);
 
         reporter.ReportFault(rie, rie.Message);
 
@@ -321,5 +322,73 @@ public class TelemetryReporterTests
                 Assert.NotNull(correlationProperty);
                 Assert.Equal(correlationId, correlationProperty.Value);
             });
+    }
+
+    [Fact]
+    public void ReportFault_OperationCanceledExceptionWithoutInnerException_SkipsFaultReport()
+    {
+        // Arrange
+        var reporter = new TestTelemetryReporter(new RazorLoggerFactory([]));
+        var exception = new OperationCanceledException("OCE", innerException: null);
+
+        // Act
+        reporter.ReportFault(exception, "Test message");
+
+        // Assert
+        Assert.Empty(reporter.Events);
+    }
+
+    [Fact]
+    public void ReportFault_TaskCanceledExceptionWithoutInnerException_SkipsFaultReport()
+    {
+        // Arrange
+        var reporter = new TestTelemetryReporter(new RazorLoggerFactory([]));
+        var exception = new TaskCanceledException("TCE", innerException: null);
+
+        // Act
+        reporter.ReportFault(exception, "Test message");
+
+        // Assert
+        Assert.Empty(reporter.Events);
+    }
+
+    [Fact]
+    public void ReportFault_InnerExceptionOfOCEIsNotAnOCE_ReportsFault()
+    {
+        // Arrange
+        var depth = 3;
+        var reporter = new TestTelemetryReporter(new RazorLoggerFactory([]));
+        var innerMostException = new Exception();
+        var exception = new OperationCanceledException("Test", innerMostException);
+        for (var i = 0; i < depth; i++)
+        {
+            exception = new OperationCanceledException("Test", exception);
+        }
+
+        // Act
+        reporter.ReportFault(exception, "Test message");
+
+        // Assert
+        Assert.NotEmpty(reporter.Events);
+    }
+
+    [Fact]
+    public void ReportFault_InnerMostExceptionIsOperationCanceledException_SkipsFaultReport()
+    {
+        // Arrange
+        var depth = 3;
+        var reporter = new TestTelemetryReporter(new RazorLoggerFactory([]));
+        var innerMostException = new OperationCanceledException();
+        var exception = new OperationCanceledException("Test", innerMostException);
+        for (var i = 0; i < depth; i++)
+        {
+            exception = new OperationCanceledException("Test", exception);
+        }
+
+        // Act
+        reporter.ReportFault(exception, "Test message");
+
+        // Assert
+        Assert.Empty(reporter.Events);
     }
 }
