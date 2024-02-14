@@ -23,7 +23,7 @@
     <DefineConstants>$(DefineConstants);RUNTIME_TYPE_NETCORE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\Shared\NativeMethods.cs" />
+    <Compile Include="..\shared\NativeMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Application.resx">

@@ -25,6 +25,6 @@
     <Reference Include="System.Deployment" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Shared\NativeMethods.cs" />
+    <Compile Include="..\shared\NativeMethods.cs" />
   </ItemGroup>
 </Project>
