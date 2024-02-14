@@ -10,7 +10,7 @@ using Microsoft.CommonLanguageServerProtocol.Framework;
 internal class RazorLanguageServerEndpointAttribute : LanguageServerEndpointAttribute
 {
     public RazorLanguageServerEndpointAttribute(string method)
-        : base(method)
+        : base(method, LanguageServerConstants.DefaultLanguageName)
     {
     }
 }
