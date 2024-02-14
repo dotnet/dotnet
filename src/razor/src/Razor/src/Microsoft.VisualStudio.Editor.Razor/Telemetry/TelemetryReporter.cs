@@ -104,9 +104,14 @@ internal abstract class TelemetryReporter : ITelemetryReporter
     {
         try
         {
-            if (exception is OperationCanceledException { InnerException: { } oceInnerException })
+            if (exception is OperationCanceledException oce)
             {
-                ReportFault(oceInnerException, message, @params);
+                // We don't want to report operation canceled, but don't want to miss out if there is something useful inside it
+                if (oce.InnerException is not null)
+                {
+                    ReportFault(oce.InnerException, message, @params);
+                }
+
                 return;
             }
 
