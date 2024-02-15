@@ -497,6 +497,8 @@ namespace NuGet.SolutionRestoreManager
                                     isRestoreSucceeded = restoreSummaries.All(summary => summary.Success == true);
                                     _noOpProjectsCount += restoreSummaries.Where(summary => summary.NoOpRestore == true).Count();
                                     _solutionUpToDateChecker.SaveRestoreStatus(restoreSummaries);
+                                    // Display info bar in SolutionExplorer if there is a vulnerability during restore.
+                                    await _vulnerabilitiesFoundService.Value.ReportVulnerabilitiesAsync(AnyProjectHasVulnerablePackageWarning(restoreSummaries), t);
                                 }
                                 catch
                                 {
@@ -521,9 +523,6 @@ namespace NuGet.SolutionRestoreManager
                                         _status = NuGetOperationStatus.Failed;
                                     }
 
-                                    // Display info bar in SolutionExplorer if there is a vulnerability during restore.
-                                    await _vulnerabilitiesFoundService.Value.ReportVulnerabilitiesAsync(AnyProjectHasVulnerablePackageWarning(restoreSummaries), t);
-
                                     _nuGetProgressReporter.EndSolutionRestore(projectList);
                                 }
                             },
@@ -539,6 +538,8 @@ namespace NuGet.SolutionRestoreManager
 
         private bool AnyProjectHasVulnerablePackageWarning(IReadOnlyList<RestoreSummary> restoreSummaries)
         {
+            if (restoreSummaries == null) return false;
+
             foreach (RestoreSummary restoreSummary in restoreSummaries)
             {
                 foreach (IRestoreLogMessage restoreLogMessage in restoreSummary.Errors)

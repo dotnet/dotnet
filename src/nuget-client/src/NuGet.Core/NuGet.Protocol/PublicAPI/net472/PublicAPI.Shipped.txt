@@ -215,8 +215,10 @@ NuGet.Protocol.Core.Types.PackageSearchResource
 NuGet.Protocol.Core.Types.PackageSearchResource.PackageSearchResource() -> void
 NuGet.Protocol.Core.Types.PackageUpdateResource
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.Delete(string packageId, string packageVersion, System.Func<string, string> getApiKey, System.Func<string, bool> confirm, bool noServiceEndpoint, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
+~NuGet.Protocol.Core.Types.PackageUpdateResource.Delete(string packageId, string packageVersion, System.Func<string, string> getApiKey, System.Func<string, bool> confirm, bool noServiceEndpoint, bool allowInsecureConnections, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.PackageUpdateResource(string source, NuGet.Protocol.HttpSource httpSource) -> void
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.Push(System.Collections.Generic.IList<string> packagePaths, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3 symbolPackageUpdateResource, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
+~NuGet.Protocol.Core.Types.PackageUpdateResource.Push(System.Collections.Generic.IList<string> packagePaths, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3 symbolPackageUpdateResource, bool allowInsecureConnections, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.Push(string packagePath, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.Push(string packagePath, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3 symbolPackageUpdateResource, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.Settings.get -> NuGet.Configuration.ISettings
@@ -686,6 +688,8 @@ NuGet.Protocol.Model.GetVulnerabilityInfoResult.GetVulnerabilityInfoResult(Syste
 NuGet.Protocol.Model.GetVulnerabilityInfoResult.KnownVulnerabilities.get -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<NuGet.Protocol.Model.PackageVulnerabilityInfo!>!>!>?
 NuGet.Protocol.Model.PackageVulnerabilityInfo
 NuGet.Protocol.Model.PackageVulnerabilityInfo.Equals(NuGet.Protocol.Model.PackageVulnerabilityInfo? other) -> bool
+NuGet.Protocol.Model.PackageVulnerabilityInfo.PackageVulnerabilityInfo(System.Uri! url, NuGet.Protocol.PackageVulnerabilitySeverity severity, NuGet.Versioning.VersionRange! versions) -> void
+NuGet.Protocol.Model.PackageVulnerabilityInfo.Severity.get -> NuGet.Protocol.PackageVulnerabilitySeverity
 NuGet.Protocol.Model.PackageVulnerabilityInfo.Url.get -> System.Uri!
 NuGet.Protocol.Model.PackageVulnerabilityInfo.Versions.get -> NuGet.Versioning.VersionRange!
 NuGet.Protocol.Model.V3VulnerabilityIndexEntry
@@ -820,6 +824,12 @@ NuGet.Protocol.PackageVulnerabilityMetadata
 ~NuGet.Protocol.PackageVulnerabilityMetadata.AdvisoryUrl.get -> System.Uri
 NuGet.Protocol.PackageVulnerabilityMetadata.PackageVulnerabilityMetadata() -> void
 NuGet.Protocol.PackageVulnerabilityMetadata.Severity.get -> int
+NuGet.Protocol.PackageVulnerabilitySeverity
+NuGet.Protocol.PackageVulnerabilitySeverity.Critical = 3 -> NuGet.Protocol.PackageVulnerabilitySeverity
+NuGet.Protocol.PackageVulnerabilitySeverity.High = 2 -> NuGet.Protocol.PackageVulnerabilitySeverity
+NuGet.Protocol.PackageVulnerabilitySeverity.Low = 0 -> NuGet.Protocol.PackageVulnerabilitySeverity
+NuGet.Protocol.PackageVulnerabilitySeverity.Moderate = 1 -> NuGet.Protocol.PackageVulnerabilitySeverity
+NuGet.Protocol.PackageVulnerabilitySeverity.Unknown = -1 -> NuGet.Protocol.PackageVulnerabilitySeverity
 NuGet.Protocol.PluginFindPackageByIdResourceProvider
 NuGet.Protocol.PluginFindPackageByIdResourceProvider.PluginFindPackageByIdResourceProvider() -> void
 NuGet.Protocol.Plugins.AutomaticProgressReporter
@@ -1608,6 +1618,7 @@ const NuGet.Protocol.JsonExtensions.JsonSerializationMaxDepth = 512 -> int
 ~const NuGet.Protocol.JsonProperties.TargetFramework = "targetFramework" -> string
 ~const NuGet.Protocol.JsonProperties.Title = "title" -> string
 ~const NuGet.Protocol.JsonProperties.Type = "@type" -> string
+~const NuGet.Protocol.JsonProperties.Url = "url" -> string
 ~const NuGet.Protocol.JsonProperties.Version = "version" -> string
 ~const NuGet.Protocol.JsonProperties.Versions = "versions" -> string
 ~const NuGet.Protocol.JsonProperties.Vulnerabilities = "vulnerabilities" -> string
