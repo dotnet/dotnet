@@ -280,6 +280,7 @@ override NuGet.Frameworks.NuGetFramework.GetHashCode() -> int
 override NuGet.Frameworks.NuGetFramework.ToString() -> string!
 override NuGet.Frameworks.OneWayCompatibilityMappingEntry.ToString() -> string!
 static NuGet.Frameworks.CompatibilityListProvider.Default.get -> NuGet.Frameworks.IFrameworkCompatibilityListProvider!
+static NuGet.Frameworks.CompatibilityMappingComparer.Instance.get -> NuGet.Frameworks.CompatibilityMappingComparer!
 static NuGet.Frameworks.DefaultCompatibilityProvider.Instance.get -> NuGet.Frameworks.IFrameworkCompatibilityProvider!
 static NuGet.Frameworks.DefaultFrameworkMappings.Instance.get -> NuGet.Frameworks.IFrameworkMappings!
 static NuGet.Frameworks.DefaultFrameworkNameProvider.Instance.get -> NuGet.Frameworks.IFrameworkNameProvider!
@@ -288,6 +289,7 @@ static NuGet.Frameworks.FrameworkNameHelpers.GetFolderName(string! identifierSho
 static NuGet.Frameworks.FrameworkNameHelpers.GetPortableProfileNumberString(int profileNumber) -> string!
 static NuGet.Frameworks.FrameworkNameHelpers.GetVersion(string? versionString) -> System.Version!
 static NuGet.Frameworks.FrameworkNameHelpers.GetVersionString(System.Version! version) -> string!
+static NuGet.Frameworks.FrameworkRangeComparer.Instance.get -> NuGet.Frameworks.FrameworkRangeComparer!
 static NuGet.Frameworks.FrameworkRuntimePair.GetName(NuGet.Frameworks.NuGetFramework! framework, string? runtimeIdentifier) -> string!
 static NuGet.Frameworks.FrameworkRuntimePair.GetTargetGraphName(NuGet.Frameworks.NuGetFramework! framework, string? runtimeIdentifier) -> string!
 static NuGet.Frameworks.NuGetFramework.Parse(string! folderName) -> NuGet.Frameworks.NuGetFramework!
@@ -300,6 +302,9 @@ static NuGet.Frameworks.NuGetFramework.operator !=(NuGet.Frameworks.NuGetFramewo
 static NuGet.Frameworks.NuGetFramework.operator ==(NuGet.Frameworks.NuGetFramework? left, NuGet.Frameworks.NuGetFramework? right) -> bool
 static NuGet.Frameworks.NuGetFrameworkExtensions.GetNearest<T>(this System.Collections.Generic.IEnumerable<T!>! items, NuGet.Frameworks.NuGetFramework! projectFramework) -> T?
 static NuGet.Frameworks.NuGetFrameworkExtensions.IsDesktop(this NuGet.Frameworks.NuGetFramework! framework) -> bool
+static NuGet.Frameworks.NuGetFrameworkFullComparer.Instance.get -> NuGet.Frameworks.NuGetFrameworkFullComparer!
+static NuGet.Frameworks.NuGetFrameworkNameComparer.Instance.get -> NuGet.Frameworks.NuGetFrameworkNameComparer!
+static NuGet.Frameworks.NuGetFrameworkSorter.Instance.get -> NuGet.Frameworks.NuGetFrameworkSorter!
 static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T!>! items, NuGet.Frameworks.NuGetFramework! framework, NuGet.Frameworks.IFrameworkNameProvider! frameworkMappings, NuGet.Frameworks.IFrameworkCompatibilityProvider! compatibilityProvider, System.Func<T!, NuGet.Frameworks.NuGetFramework!>! selector) -> T?
 static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T!>! items, NuGet.Frameworks.NuGetFramework! framework, System.Func<T!, NuGet.Frameworks.NuGetFramework!>! selector) -> T?
 static NuGet.Frameworks.NuGetFrameworkUtility.GetNearest<T>(System.Collections.Generic.IEnumerable<T>! items, NuGet.Frameworks.NuGetFramework! framework) -> T?

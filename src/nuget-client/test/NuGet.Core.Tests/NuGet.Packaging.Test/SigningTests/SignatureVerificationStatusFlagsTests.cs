@@ -42,6 +42,7 @@ namespace NuGet.Packaging.Test
                 { "GeneralizedTimeOutsideValidity", 1 << 16 },
                 { "NoValidTimestamp", 1 << 17 },
                 { "MultipleTimestamps", 1 << 18 },
+                { "UnknownBuildStatus", 1 << 19 },
                 { "Suspect", (int)(SignatureVerificationStatusFlags.IntegrityCheckFailed |
                     SignatureVerificationStatusFlags.CertificateRevoked) },
                 { "Illegal", (int)(SignatureVerificationStatusFlags.NoCertificate |
@@ -58,7 +59,8 @@ namespace NuGet.Packaging.Test
                     SignatureVerificationStatusFlags.ChainBuildingFailure |
                     SignatureVerificationStatusFlags.UnknownRevocation |
                     SignatureVerificationStatusFlags.UntrustedRoot |
-                    SignatureVerificationStatusFlags.GeneralizedTimeOutsideValidity) }
+                    SignatureVerificationStatusFlags.GeneralizedTimeOutsideValidity |
+                    SignatureVerificationStatusFlags.UnknownBuildStatus) }
             };
 
             var actualNames = Enum.GetNames(typeof(SignatureVerificationStatusFlags));

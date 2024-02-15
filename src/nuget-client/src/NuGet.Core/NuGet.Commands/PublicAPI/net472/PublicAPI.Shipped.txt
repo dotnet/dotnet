@@ -30,6 +30,8 @@ NuGet.Commands.AddSourceArgs.AddSourceArgs() -> void
 ~NuGet.Commands.AddSourceArgs.Name.set -> void
 ~NuGet.Commands.AddSourceArgs.Password.get -> string
 ~NuGet.Commands.AddSourceArgs.Password.set -> void
+~NuGet.Commands.AddSourceArgs.ProtocolVersion.get -> string
+~NuGet.Commands.AddSourceArgs.ProtocolVersion.set -> void
 ~NuGet.Commands.AddSourceArgs.Source.get -> string
 ~NuGet.Commands.AddSourceArgs.Source.set -> void
 NuGet.Commands.AddSourceArgs.StorePasswordInClearText.get -> bool
@@ -802,6 +804,8 @@ NuGet.Commands.UpdateSourceArgs
 ~NuGet.Commands.UpdateSourceArgs.Name.set -> void
 ~NuGet.Commands.UpdateSourceArgs.Password.get -> string
 ~NuGet.Commands.UpdateSourceArgs.Password.set -> void
+~NuGet.Commands.UpdateSourceArgs.ProtocolVersion.get -> string
+~NuGet.Commands.UpdateSourceArgs.ProtocolVersion.set -> void
 ~NuGet.Commands.UpdateSourceArgs.Source.get -> string
 ~NuGet.Commands.UpdateSourceArgs.Source.set -> void
 NuGet.Commands.UpdateSourceArgs.StorePasswordInClearText.get -> bool

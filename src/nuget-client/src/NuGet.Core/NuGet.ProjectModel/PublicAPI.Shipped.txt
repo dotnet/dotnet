@@ -281,6 +281,7 @@ NuGet.ProjectModel.LockFileTargetLibrary.FrameworkAssemblies.get -> System.Colle
 NuGet.ProjectModel.LockFileTargetLibrary.FrameworkAssemblies.set -> void
 NuGet.ProjectModel.LockFileTargetLibrary.FrameworkReferences.get -> System.Collections.Generic.IList<string!>!
 NuGet.ProjectModel.LockFileTargetLibrary.FrameworkReferences.set -> void
+NuGet.ProjectModel.LockFileTargetLibrary.Freeze() -> void
 NuGet.ProjectModel.LockFileTargetLibrary.LockFileTargetLibrary() -> void
 NuGet.ProjectModel.LockFileTargetLibrary.Name.get -> string?
 NuGet.ProjectModel.LockFileTargetLibrary.Name.set -> void
