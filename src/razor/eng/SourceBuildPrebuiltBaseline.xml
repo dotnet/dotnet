@@ -4,7 +4,7 @@
 <UsageData>
   <IgnorePatterns>
     <!-- Prebuilts showing in repo build only - ignoring. -->
-    <UsagePattern IdentityGlob="Microsoft.Extensions.ObjectPool/6.0.0" />
+    <UsagePattern IdentityGlob="Microsoft.Extensions.ObjectPool/8.0.0" />
 
     <!--
       Ignoring the following prebuilts. NetPrevious targeting is needed in repo legs

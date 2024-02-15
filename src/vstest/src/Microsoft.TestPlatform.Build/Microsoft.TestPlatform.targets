@@ -34,9 +34,14 @@ Copyright (c) .NET Foundation. All rights reserved.
     <CallTarget Targets="_VSTestMSBuild" Condition="$(VsTestUseMSBuildOutput)" />
   </Target>
 
-  <!-- Used when called from dotnet msbuild command line: uses MSBuild logs but does not allow for console colorization -->
+  <!--
+    Used when called from dotnet msbuild command line: uses MSBuild logs but does not allow for console colorization.
+    We call to empty target _TestRunStart to mark start of the actual test running, in case we need to do build before
+    the test running. This is used in MSBuild Terminal Logger to detect that the current project will run some tests.
+  -->
   <Target Name="_VSTestMSBuild" Condition="'$(IsTestProject)' == 'true'">
     <CallTarget Condition="!$(VSTestNoBuild)" Targets="BuildProject" />
+    <CallTarget Targets="_TestRunStart" />
 
     <VSTestTask2
       TestFileFullPath="$(TargetPath)"
@@ -66,6 +71,8 @@ Copyright (c) .NET Foundation. All rights reserved.
       VSTestNoLogo="$(VSTestNoLogo)"
     />
   </Target>
+
+  <Target Name="_TestRunStart" />
 
   <!-- Used when called from dotnet test command line: does not use MSBuild logs to allow for console colorization -->
   <Target Name="_VSTestConsole">
