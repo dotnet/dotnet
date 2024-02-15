@@ -8,7 +8,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
+#pragma warning disable CS0618 // Type or member is obsolete. Temporary until we remove ILanguageClientMiddleLayer
 internal abstract class RazorLanguageClientMiddleLayer : ILanguageClientMiddleLayer
+#pragma warning restore CS0618 // Type or member is obsolete
 {
     public abstract bool CanHandle(string methodName);
 

@@ -42,7 +42,7 @@ internal partial class RazorCustomMessageTarget
 
         var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalMapCodeParams, WorkspaceEdit?>(
             textBuffer,
-            MapperMethods.WorkspaceMapCodeName,
+            VSInternalMethods.WorkspaceMapCodeName,
             delegationDetails.Value.LanguageServerName,
             SupportsMapCode,
             mapCodeParams,
@@ -81,7 +81,7 @@ internal partial class RazorCustomMessageTarget
     private static bool SupportsMapCode(JToken token)
     {
         return token is JObject obj
-            && obj.TryGetValue(MapperMethods.WorkspaceMapCodeName, out var supportsMapCode)
+            && obj.TryGetValue(VSInternalMethods.WorkspaceMapCodeName, out var supportsMapCode)
             && supportsMapCode.ToObject<bool>();
     }
 }

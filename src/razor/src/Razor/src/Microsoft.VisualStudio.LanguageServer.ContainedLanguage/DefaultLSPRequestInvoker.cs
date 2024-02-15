@@ -81,6 +81,7 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
         }
 
         var serializedParams = JToken.FromObject(parameters);
+#pragma warning disable CS0618 // Type or member is obsolete. Temporary until we resolve the changes to the ILanguageServiceBroker2 interface.
         var (languageClient, resultToken) = await _languageServiceBroker.RequestAsync(
             Array.Empty<string>(),
             capabilitiesFilter,
@@ -88,6 +89,7 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
             method,
             serializedParams,
             cancellationToken);
+#pragma warning restore CS0618 // Type or member is obsolete
 
         var result = resultToken is not null ? new ReinvokeResponse<TOut>(languageClient!, resultToken.ToObject<TOut>(_serializer)!) : default;
         return result;
@@ -113,6 +115,7 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
             return serializedParams;
         }
 
+#pragma warning disable CS0618 // Type or member is obsolete. Temporary until we resolve the changes to the ILanguageServiceBroker2 interface.
         var response = await _languageServiceBroker.RequestAsync(
             textBuffer,
             capabilitiesFilter,
@@ -120,6 +123,7 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
             method,
             ParameterFactory,
             cancellationToken);
+#pragma warning restore CS0618 // Type or member is obsolete
 
         if (response is null)
         {
@@ -181,12 +185,14 @@ internal class DefaultLSPRequestInvoker : LSPRequestInvoker
         var serializedParams = JToken.FromObject(parameters);
         Func<ITextSnapshot, JToken> parameterFactory = (_) => serializedParams;
 
+#pragma warning disable CS0618 // Type or member is obsolete. Temporary until we resolve the changes to the ILanguageServiceBroker2 interface.
         var requests = _languageServiceBroker.RequestMultipleAsync(
             textBuffer,
             capabilitiesFilter,
             method,
             parameterFactory,
             cancellationToken);
+#pragma warning restore CS0618 // Type or member is obsolete
 
         await foreach (var response in requests)
         {
