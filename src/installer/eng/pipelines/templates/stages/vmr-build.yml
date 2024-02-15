@@ -699,6 +699,18 @@ stages:
 
         - template: ../jobs/vmr-build.yml
           parameters:
+            buildName: OSX_Mono
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            pool:
+              vmImage: ${{ variables.defaultPoolNameMac }}
+            useMonoRuntime: true
+            targetOS: osx
+            targetArchitecture: x64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
             buildName: Mariner_x64_Cross
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
@@ -708,6 +720,21 @@ stages:
               demands: ${{ variables.defaultPoolDemandsLinux }}
             container: ${{ variables.marinerX64CrossContainer }}
             crossRootFs: '/crossrootfs/x64'
+            targetOS: linux
+            targetArchitecture: x64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Mariner_x64_Cross_Mono
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            pool:
+              name: ${{ variables.defaultPoolName }}
+              demands: ${{ variables.defaultPoolDemandsLinux }}
+            container: ${{ variables.marinerX64CrossContainer }}
+            crossRootFs: '/crossrootfs/x64'
+            useMonoRuntime: true
             targetOS: linux
             targetArchitecture: x64
 
@@ -737,3 +764,65 @@ stages:
               vmImage: ${{ variables.defaultPoolNameMac }}
             targetOS: osx
             targetArchitecture: arm64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: OSX_Mono
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm64
+            pool:
+              vmImage: ${{ variables.defaultPoolNameMac }}
+            useMonoRuntime: true
+            targetOS: osx
+            targetArchitecture: arm64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Windows
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm64
+            pool:
+              name: ${{ variables.defaultPoolName }}
+              demands: ${{ variables.defaultPoolDemandsWindows }}
+            targetOS: windows
+            targetArchitecture: arm64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Windows_Mono
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            pool:
+              name: ${{ variables.defaultPoolName }}
+              demands: ${{ variables.defaultPoolDemandsWindows }}
+            useMonoRuntime: true
+            targetOS: windows
+            targetArchitecture: x64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Windows
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x86
+            pool:
+              name: ${{ variables.defaultPoolName }}
+              demands: ${{ variables.defaultPoolDemandsWindows }}
+            targetOS: windows
+            targetArchitecture: x86
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Windows_Mono
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x86
+            pool:
+              name: ${{ variables.defaultPoolName }}
+              demands: ${{ variables.defaultPoolDemandsWindows }}
+            useMonoRuntime: true
+            targetOS: windows
+            targetArchitecture: x86
