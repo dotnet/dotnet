@@ -3,10 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
@@ -57,18 +59,30 @@ internal class MSBuildLogger : ITestLoggerWithParameters
         Output ??= ConsoleOutput.Instance;
 
         // Register for the events.
-        // events.TestRunMessage += TestMessageHandler;
+        events.TestRunMessage += TestMessageHandler;
         events.TestResult += TestResultHandler;
         events.TestRunComplete += TestRunCompleteHandler;
-        // events.TestRunStart += TestRunStartHandler;
-
-        // Register for the discovery events.
-        // events.DiscoveryMessage += TestMessageHandler;
     }
 
     public void Initialize(TestLoggerEvents events, Dictionary<string, string?> parameters)
     {
         Initialize(events, string.Empty);
+    }
+
+    private void TestMessageHandler(object? sender, TestRunMessageEventArgs e)
+    {
+        switch (e.Level)
+        {
+            case TestMessageLevel.Informational:
+                SendMessage($"output-info", e.Message);
+                break;
+            case TestMessageLevel.Warning:
+                SendMessage($"output-warning", e.Message);
+                break;
+            case TestMessageLevel.Error:
+                SendMessage($"output-error", e.Message);
+                break;
+        }
     }
 
     private void TestRunCompleteHandler(object? sender, TestRunCompleteEventArgs e)
@@ -77,18 +91,43 @@ internal class MSBuildLogger : ITestLoggerWithParameters
 
         if (e.IsCanceled)
         {
-            Output.Error(false, CommandLineResources.TestRunCanceled);
+            SendMessage("run-cancel", CommandLineResources.TestRunCanceled);
         }
         else if (e.IsAborted)
         {
             if (e.Error == null)
             {
-                Output.Error(false, CommandLineResources.TestRunAborted);
+                SendMessage("run-abort", CommandLineResources.TestRunAborted);
             }
             else
             {
-                Output.Error(false, CommandLineResources.TestRunAbortedWithError, e.Error);
+                SendMessage("run-abort", string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunAbortedWithError, e.Error));
             }
+        }
+        else
+        {
+            var total = e.TestRunStatistics?.ExecutedTests ?? 0;
+            var passed = e.TestRunStatistics?[TestOutcome.Passed] ?? 0;
+            var skipped = e.TestRunStatistics?[TestOutcome.Skipped] ?? 0;
+            var failed = e.TestRunStatistics?[TestOutcome.Failed] ?? 0;
+            var time = e.ElapsedTimeInRunningTests.TotalMilliseconds;
+
+            var summary = string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestRunSummary,
+                        (failed > 0 ? CommandLineResources.FailedTestIndicator : CommandLineResources.PassedTestIndicator) + "!",
+                        failed,
+                        passed,
+                        skipped,
+                        total,
+                        $"[{GetFormattedDurationString(e.ElapsedTimeInRunningTests)}]"
+                        );
+
+            SendMessage("run-finish",
+                summary,
+                total.ToString(CultureInfo.InvariantCulture),
+                passed.ToString(CultureInfo.InvariantCulture),
+                skipped.ToString(CultureInfo.InvariantCulture),
+                failed.ToString(CultureInfo.InvariantCulture),
+                time.ToString(CultureInfo.InvariantCulture));
         }
     }
 
@@ -100,16 +139,17 @@ internal class MSBuildLogger : ITestLoggerWithParameters
         switch (e.Result.Outcome)
         {
             case TestOutcome.Passed:
+                SendMessage("test-passed",
+                    CommandLineResources.PassedTestIndicator,
+                    e.Result.TestCase.DisplayName,
+                    e.Result.Duration.TotalMilliseconds.ToString(CultureInfo.InvariantCulture),
+                    FormatOutputs(e.Result));
+                break;
             case TestOutcome.Skipped:
-
-                var test = e.Result.TestCase.DisplayName;
-                var outcome = e.Result.Outcome == TestOutcome.Passed
-                    ? CommandLineResources.PassedTestIndicator
-                    : CommandLineResources.SkippedTestIndicator;
-                var info = $"++++{outcome}++++{ReplacePlusSeparator(test)}";
-
-                Debug.WriteLine(">>>>MESSAGE:" + info);
-                Output.Information(false, info);
+                SendMessage("test-skipped",
+                    CommandLineResources.PassedTestIndicator,
+                    e.Result.TestCase.DisplayName,
+                    e.Result.Duration.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
                 break;
             case TestOutcome.Failed:
                 var result = e.Result;
@@ -117,15 +157,6 @@ internal class MSBuildLogger : ITestLoggerWithParameters
                 Debug.WriteLine(">>>>STK:" + result.ErrorStackTrace);
                 if (!StringUtils.IsNullOrWhiteSpace(result.ErrorStackTrace))
                 {
-                    var maxLength = 1000;
-                    string? error = null;
-                    if (result.ErrorMessage != null)
-                    {
-                        // Do not use environment.newline here, we want to replace also \n on Windows.
-                        var oneLineMessage = result.ErrorMessage.Replace("\n", " ").Replace("\r", " ");
-                        error = oneLineMessage.Length > maxLength ? oneLineMessage.Substring(0, maxLength) : oneLineMessage;
-                    }
-
                     string? stackFrame = null;
                     var stackFrames = Regex.Split(result.ErrorStackTrace, Environment.NewLine);
                     string? line = null;
@@ -161,19 +192,13 @@ internal class MSBuildLogger : ITestLoggerWithParameters
                         }
                     }
 
-                    place = $"({result.TestCase.DisplayName}) {place}";
-                    var message = $"||||{ReplacePipeSeparator(file)}||||{line}||||{ReplacePipeSeparator(place)}||||{ReplacePipeSeparator(error)}";
-
-                    Debug.WriteLine(">>>>MESSAGE:" + message);
-                    Output.Error(false, message);
-
-                    var fullError = $"~~~~{ReplaceTildaSeparator(result.ErrorMessage)}~~~~{ReplaceTildaSeparator(result.ErrorStackTrace)}";
-                    Output.Information(false, fullError);
+                    var outputs = FormatOutputs(result);
+                    SendMessage("test-failed", result.DisplayName, result.ErrorMessage, result.ErrorStackTrace, outputs, file, line, place);
                     return;
                 }
                 else
                 {
-                    Output.Error(false, result.DisplayName?.Replace(Environment.NewLine, " ") ?? string.Empty);
+                    SendMessage("test-failed", result.DisplayName, result.ErrorMessage);
                 }
 
                 break;
@@ -197,49 +222,157 @@ internal class MSBuildLogger : ITestLoggerWithParameters
             line = match.Groups["line"].Value;
         }
 
-        Debug.WriteLine($">>>> {(match.Success ? "MATCH" : "NOMATCH")} {stackFrame}");
-
         return match.Success;
     }
 
-
-    private static string? ReplacePipeSeparator(string? text)
+    /// <summary>
+    /// Writes message to standard output, with the name of the message followed by the number of
+    /// parameters. With each parameter delimited by '||||', and newlines replaced with ~~~~ and !!!!.
+    /// Such as:
+    ///  ||||run-start1||||s:\t\mstest97\bin\Debug\net8.0\mstest97.dll
+    ///  ||||test-failed6||||TestMethod5||||Assert.IsTrue failed. ||||   at mstest97.UnitTest1.TestMethod5() in s:\t\mstest97\UnitTest1.cs:line 27~~~~!!!!   at Syste...
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="data"></param>
+    private static void SendMessage(string name, params string?[] data)
     {
-        if (text == null)
+        TPDebug.Assert(Output != null, "Initialize should have been called");
+
+        var message = FormatMessage(name, data);
+        Debug.WriteLine($"MSBUILDLOGGER: {message}");
+        Output.Information(appendPrefix: false, FormatMessage(name, data));
+    }
+
+    private static string FormatMessage(string name, params string?[] data)
+    {
+        return $"||||{name}{data.Length}||||{string.Join("||||", data.Select(Escape))}";
+    }
+
+    private static string? Escape(string? input)
+    {
+        if (input == null)
         {
             return null;
         }
 
-        // Remove any occurrence of message splitter.
-        return text.Replace("||||", "____");
+        return input
+            // Cleanup characters that we are using ourselves to delimit the message
+            .Replace("||||", "____").Replace("~~~~", "____").Replace("!!!!", "____")
+            // Replace new line characters that would change how the message is consumed.
+            .Replace("\r", "~~~~").Replace("\n", "!!!!");
     }
 
-    private static string? ReplacePlusSeparator(string? text)
+    /// <summary>
+    /// Collects all the messages of a particular category(Standard Output/Standard Error/Debug Traces) and returns a collection.
+    /// </summary>
+    private static Collection<TestResultMessage> GetTestMessages(Collection<TestResultMessage> messages, string requiredCategory)
     {
-        if (text == null)
+        var selectedMessages = messages.Where(msg => msg.Category.Equals(requiredCategory, StringComparison.OrdinalIgnoreCase));
+        var requiredMessageCollection = new Collection<TestResultMessage>(selectedMessages.ToList());
+        return requiredMessageCollection;
+    }
+
+    private static string FormatOutputs(TestResult result)
+    {
+        var stringBuilder = new StringBuilder();
+        var testResultPrefix = "  ";
+        TPDebug.Assert(result != null, "a null result can not be displayed");
+
+        var stdOutMessagesCollection = GetTestMessages(result.Messages, TestResultMessage.StandardOutCategory);
+        if (stdOutMessagesCollection.Count > 0)
         {
-            return null;
+            stringBuilder.AppendLine(testResultPrefix + CommandLineResources.StdOutMessagesBanner);
+            AddFormattedOutput(stdOutMessagesCollection, stringBuilder);
         }
 
-        // Remove any occurrence of message splitter.
-        return text.Replace("++++", "____");
-    }
-
-    private static string? ReplaceTildaSeparator(string? text)
-    {
-        if (text == null)
+        var stdErrMessagesCollection = GetTestMessages(result.Messages, TestResultMessage.StandardErrorCategory);
+        if (stdErrMessagesCollection.Count > 0)
         {
-            return null;
+            stringBuilder.AppendLine(testResultPrefix + CommandLineResources.StdErrMessagesBanner);
+            AddFormattedOutput(stdErrMessagesCollection, stringBuilder);
+
         }
 
-        // Remove any occurrence of message splitter.
-        text = text.Replace("~~~~", "____");
-        // Clean up any occurrence of newline splitter.
-        text = text.Replace("!!!!", "____");
-        // Replace newlines with newline splitter.
-        text = text.Replace(Environment.NewLine, "!!!!");
+        var dbgTrcMessagesCollection = GetTestMessages(result.Messages, TestResultMessage.DebugTraceCategory);
+        if (dbgTrcMessagesCollection.Count > 0)
+        {
+            stringBuilder.AppendLine(testResultPrefix + CommandLineResources.DbgTrcMessagesBanner);
+            AddFormattedOutput(dbgTrcMessagesCollection, stringBuilder);
+        }
 
-        return text;
+        var addnlInfoMessagesCollection = GetTestMessages(result.Messages, TestResultMessage.AdditionalInfoCategory);
+        if (addnlInfoMessagesCollection.Count > 0)
+        {
+            stringBuilder.AppendLine(testResultPrefix + CommandLineResources.AddnlInfoMessagesBanner);
+            AddFormattedOutput(addnlInfoMessagesCollection, stringBuilder);
+        }
+
+        return stringBuilder.ToString();
     }
 
+    private static void AddFormattedOutput(Collection<TestResultMessage> testMessageCollection, StringBuilder stringBuilder)
+    {
+        string testMessageFormattingPrefix = " ";
+        if (testMessageCollection == null)
+        {
+            return;
+        }
+
+        foreach (var message in testMessageCollection)
+        {
+            var prefix = string.Format(CultureInfo.CurrentCulture, "{0}{1}", Environment.NewLine, testMessageFormattingPrefix);
+            var messageText = message.Text?.Replace(Environment.NewLine, prefix).TrimEnd(testMessageFormattingPrefix.ToCharArray());
+
+            if (!messageText.IsNullOrWhiteSpace())
+            {
+                stringBuilder.AppendFormat(CultureInfo.CurrentCulture, "{0}{1}", testMessageFormattingPrefix, messageText);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Converts the time span format to readable string.
+    /// </summary>
+    /// <param name="duration"></param>
+    /// <returns></returns>
+    internal static string GetFormattedDurationString(TimeSpan duration)
+    {
+        if (duration == default)
+        {
+            return "< 1ms";
+        }
+
+        var time = new List<string>();
+        if (duration.Days > 0)
+        {
+            time.Add("> 1d");
+        }
+        else
+        {
+            if (duration.Hours > 0)
+            {
+                time.Add(duration.Hours + "h");
+            }
+
+            if (duration.Minutes > 0)
+            {
+                time.Add(duration.Minutes + "m");
+            }
+
+            if (duration.Hours == 0)
+            {
+                if (duration.Seconds > 0)
+                {
+                    time.Add(duration.Seconds + "s");
+                }
+
+                if (duration.Milliseconds > 0 && duration.Minutes == 0)
+                {
+                    time.Add(duration.Milliseconds + "ms");
+                }
+            }
+        }
+
+        return time.Count == 0 ? "< 1ms" : string.Join(" ", time);
+    }
 }
