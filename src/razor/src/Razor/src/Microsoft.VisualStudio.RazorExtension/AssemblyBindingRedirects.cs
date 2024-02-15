@@ -36,8 +36,8 @@ using Microsoft.VisualStudio.Shell;
     GenerateCodeBase = true,
     PublicKeyToken = "adb9793829ddae60",
     OldVersionLowerBound = "0.0.0.0",
-    OldVersionUpperBound = "6.0.0.0",
-    NewVersion = "6.0.0.0")]
+    OldVersionUpperBound = "8.0.0.0",
+    NewVersion = "8.0.0.0")]
 [assembly: ProvideBindingRedirection(
     AssemblyName = "Microsoft.Extensions.Options",
     GenerateCodeBase = true,

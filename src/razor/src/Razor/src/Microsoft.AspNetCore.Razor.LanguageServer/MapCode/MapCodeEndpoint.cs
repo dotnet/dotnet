@@ -33,7 +33,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
 /// This class and its mapping heuristics will likely be constantly evolving as we receive
 /// more advanced inputs from the client.
 /// </remarks>
-[RazorLanguageServerEndpoint(MapperMethods.WorkspaceMapCodeName)]
+[RazorLanguageServerEndpoint(VSInternalMethods.WorkspaceMapCodeName)]
 internal sealed class MapCodeEndpoint(
     IRazorDocumentMappingService documentMappingService,
     IDocumentContextFactory documentContextFactory,

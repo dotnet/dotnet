@@ -407,7 +407,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
             };
 
             var result = await _csharpServer.ExecuteRequestAsync<VSInternalMapCodeParams, WorkspaceEdit?>(
-                MapperMethods.WorkspaceMapCodeName, mapCodeRequest, cancellationToken);
+                VSInternalMethods.WorkspaceMapCodeName, mapCodeRequest, cancellationToken);
             if (result is null)
             {
                 return (TResponse)(object)new WorkspaceEdit();

@@ -55,7 +55,7 @@ internal class RazorLanguageServerClient(
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager ?? throw new ArgumentNullException(nameof(clientSettingsManager));
     private readonly ILspServerActivationTracker _lspServerActivationTracker = lspServerActivationTracker ?? throw new ArgumentNullException(nameof(lspServerActivationTracker));
     private readonly RazorCustomMessageTarget _customMessageTarget = customTarget ?? throw new ArgumentNullException(nameof(customTarget));
-    private readonly ILanguageClientMiddleLayer _middleLayer = middleLayer ?? throw new ArgumentNullException(nameof(middleLayer));
+    private readonly RazorLanguageClientMiddleLayer _middleLayer = middleLayer ?? throw new ArgumentNullException(nameof(middleLayer));
     private readonly LSPRequestInvoker _requestInvoker = requestInvoker ?? throw new ArgumentNullException(nameof(requestInvoker));
     private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore = projectConfigurationFilePathStore ?? throw new ArgumentNullException(nameof(projectConfigurationFilePathStore));
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
