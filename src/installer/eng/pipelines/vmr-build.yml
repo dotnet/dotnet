@@ -55,7 +55,9 @@ stages:
       vmrBranch: ${{ variables.VmrBranch }}
       isBuiltFromVmr: false
       isSourceOnlyBuild: ${{ variables.isSourceOnlyBuild }}
-      ${{ if eq(variables.isSourceOnlyBuild, 'true') }}:
+      ${{ if contains(variables['Build.DefinitionName'], '-full') }}:
+        scope: full
+      ${{ elseif eq(variables.isSourceOnlyBuild, 'true') }}:
         scope: ultralite
       ${{ else }}:
         scope: lite
