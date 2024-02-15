@@ -1,0 +1,50 @@
+# This yml is used by these pipelines and triggers:
+#
+# - installer-unified-build-full (public)
+#   - PR: full
+
+trigger: none
+pr:
+  branches:
+    include:
+    - main
+    - release/*
+    exclude:
+    - release/*.0.2xx
+    - release/*.0.3xx
+    - release/*.0.4xx
+
+parameters:
+- name: vmrBranch
+  displayName: dotnet/dotnet branch to push to
+  type: string
+  default: ' '
+
+variables:
+- ${{ if ne(parameters.vmrBranch, ' ') }}:
+  - name: VmrBranch
+    value: ${{ replace(parameters.vmrBranch, ' ', '') }}
+- ${{ else }}:
+  - name: VmrBranch
+    value: ${{ replace(replace(variables['System.PullRequest.TargetBranch'], 'refs/heads/', ''), 'refs/pull/', '') }}
+
+# enable source-only build for pipelines with the -source-build suffix
+- name: isSourceOnlyBuild
+  value: ${{ contains(variables['Build.DefinitionName'], '-source-build') }}
+
+resources:
+  repositories:
+  - repository: vmr
+    type: github
+    name: dotnet/dotnet
+    endpoint: dotnet
+    ref: ${{ variables.VmrBranch }}
+
+stages:
+# You can temporarily disable the VMR Build stage by setting the disableBuild variable
+- template: templates/stages/vmr-build.yml
+  parameters:
+    vmrBranch: ${{ variables.VmrBranch }}
+    isBuiltFromVmr: false
+    isSourceOnlyBuild: ${{ variables.isSourceOnlyBuild }}
+    scope: full
