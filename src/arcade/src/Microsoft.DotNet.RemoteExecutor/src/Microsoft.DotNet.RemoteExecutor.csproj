@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>$(NetCurrent);$(NetFrameworkMinimum)</TargetFrameworks>
+    <TargetFrameworks>$(NetCurrent);$(NetMinimum);$(NetFrameworkMinimum)</TargetFrameworks>
     <!-- The assembly is used as both a library and an executable. -->
     <OutputType>Exe</OutputType>
     <Description>This package provides support for running tests out-of-process.</Description>

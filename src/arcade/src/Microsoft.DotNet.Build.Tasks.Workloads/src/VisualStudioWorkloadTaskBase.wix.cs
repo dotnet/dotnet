@@ -2,15 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Microsoft.Deployment.DotNet.Releases;
-using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
-using Microsoft.DotNet.Build.Tasks.Workloads.Swix;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads
 {
@@ -76,16 +70,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// Root directory where packages are extracted.
         /// </summary>
         protected string PackageRootDirectory => Path.Combine(BaseIntermediateOutputPath, "pkg");
-
-        /// <summary>
-        /// The directory to use for locating workload pack packages.
-        /// </summary>
-        [Required]
-        public string PackageSource
-        {
-            get;
-            set;
-        }
 
         /// <summary>
         /// A set of items containing .swixproj files that can be build to generate
