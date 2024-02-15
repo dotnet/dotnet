@@ -13,8 +13,8 @@
     <commandlineapiOutputPackageVersion>0.1.511201</commandlineapiOutputPackageVersion>
     <deploymenttoolsGitCommitHash>d260974045322b57853c0b1625123cf92b330574</deploymenttoolsGitCommitHash>
     <deploymenttoolsOutputPackageVersion>9.0.0-preview.1.24113.1</deploymenttoolsOutputPackageVersion>
-    <diagnosticsGitCommitHash>79b59c505405b9bee1d62dfa73dfb9750b2d4376</diagnosticsGitCommitHash>
-    <diagnosticsOutputPackageVersion>8.0.0-preview.24076.1</diagnosticsOutputPackageVersion>
+    <diagnosticsGitCommitHash>b190e56e28d67e4d5eb7848e705cb1d5e2bcae17</diagnosticsGitCommitHash>
+    <diagnosticsOutputPackageVersion>8.0.0-preview.24109.1</diagnosticsOutputPackageVersion>
     <emsdkGitCommitHash>4bbafbd3474cb3c927f792a9b6749fe89277ef7d</emsdkGitCommitHash>
     <emsdkOutputPackageVersion>9.0.0-preview.2.24113.2</emsdkOutputPackageVersion>
     <formatGitCommitHash>42462b3946db3f6cad8604b9f8c2d27d1a55257b</formatGitCommitHash>
