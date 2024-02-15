@@ -13,10 +13,10 @@
       "commitSha": "8ec92cbc5fbcba7a677fb52aaa4b0118f1ed17f4"
     },
     {
-      "packageVersion": "9.0.0-preview.2.24113.8",
+      "packageVersion": "9.0.0-preview.2.24114.9",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "d93b8e28b53f7c5d5cf6722facaef6012efa32b2"
+      "commitSha": "4ea9f39a3447596ed9bf42320882cc6423e0c60b"
     },
     {
       "packageVersion": "0.11.4-alpha.24105.1",
@@ -201,7 +201,7 @@
     {
       "path": "aspnetcore/src/submodules/Node-Externals",
       "remoteUri": "https://github.com/dotnet/Node-Externals",
-      "commitSha": "cfdec6b554a93bba6e6158273436383853c1f646"
+      "commitSha": "1bcb78ca694568f7993d9d385eee0687ad0f5dfe"
     },
     {
       "path": "nuget-client/submodules/NuGet.Build.Localization",
