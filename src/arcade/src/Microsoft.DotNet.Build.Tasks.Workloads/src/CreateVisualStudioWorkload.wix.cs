@@ -90,6 +90,16 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             set;
         }
 
+        /// <summary>
+        /// The directory to use for locating workload pack packages.
+        /// </summary>
+        [Required]
+        public string PackageSource
+        {
+            get;
+            set;
+        }
+
         public bool UseWorkloadPackGroupsForVS
         {
             get;

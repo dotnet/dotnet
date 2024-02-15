@@ -23,6 +23,8 @@ namespace Microsoft.DotNet.SignTool
         private readonly string[] _itemsToSkipStrongNameCheck;
         private readonly Dictionary<SignedFileContentKey, string> _hashToCollisionIdMap;
         private Telemetry _telemetry;
+        private readonly int _repackParallelism;
+        private readonly long _maximumParallelFileSizeInBytes;
 
         internal bool SkipZipContainerSignatureMarkerCheck { get; set; }
 
@@ -32,6 +34,8 @@ namespace Microsoft.DotNet.SignTool
             BatchSignInput batchData,
             string[] itemsToSkipStrongNameCheck,
             Dictionary<SignedFileContentKey, string> hashToCollisionIdMap,
+            int repackParallelism = 0,
+            long maximumParallelFileSizeInBytes = 0,
             Telemetry telemetry = null)
         {
             _signTool = signTool;
@@ -41,6 +45,9 @@ namespace Microsoft.DotNet.SignTool
             _itemsToSkipStrongNameCheck = itemsToSkipStrongNameCheck ?? Array.Empty<string>();
             _telemetry = telemetry;
             _hashToCollisionIdMap = hashToCollisionIdMap;
+            _repackParallelism = repackParallelism != 0 ? repackParallelism : Environment.ProcessorCount;
+            _maximumParallelFileSizeInBytes = maximumParallelFileSizeInBytes != 0 ?
+                maximumParallelFileSizeInBytes : 2048 / _repackParallelism * 1024 * 1024;
         }
 
         internal void Go(bool doStrongNameCheck)
@@ -221,9 +228,8 @@ namespace Microsoft.DotNet.SignTool
                 }
                 _log.LogMessage(MessageImportance.High, $"Repacking {repackCount} containers.");
 
-                const int repackParallelism = 16;
                 ParallelOptions parallelOptions = new ParallelOptions();
-                parallelOptions.MaxDegreeOfParallelism = repackParallelism;
+                parallelOptions.MaxDegreeOfParallelism = _repackParallelism;
 
                 // It's possible that there are large containers within this set that, if
                 // repacked in parallel, could cause OOMs. To avoid this, we set a limit on the size of containers
@@ -231,12 +237,11 @@ namespace Microsoft.DotNet.SignTool
                 // Repack these in serial later.
                 var largeRepackList = new List<FileSignInfo>();
                 var smallRepackList = new List<FileSignInfo>();
-                const long parallelRepackLimitInBytes = (2 * 1024 / repackParallelism) * 1024 * 1024;
 
                 foreach (var file in repackList)
                 {
                     FileInfo fileInfo = new FileInfo(file.FullPath);
-                    if (fileInfo.Length > parallelRepackLimitInBytes)
+                    if (fileInfo.Length > _maximumParallelFileSizeInBytes)
                     {
                         largeRepackList.Add(file);
                     }

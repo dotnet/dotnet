@@ -39,7 +39,6 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
                 BaseOutputPath = BaseOutputPath,
                 BaseIntermediateOutputPath = baseIntermediateOutputPath,
                 BuildEngine = buildEngine,
-                PackageSource = TestAssetsPath,
                 WixToolsetPath = WixToolsetPath,
                 WorkloadSetPackageFiles = workloadSetPackages
             };
