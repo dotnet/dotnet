@@ -119,13 +119,13 @@
     <!-- Necessary for source-build. This allows Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages
          to be retrieved from live source-build and their content consumed by packages produced by razor.
          Without these entries, due to PVP flow work, SBRP packages would be consumed causing runtime issue. -->
-    <Dependency Name="Microsoft.Extensions.ObjectPool" Version="6.0.0">
+    <Dependency Name="Microsoft.Extensions.ObjectPool" Version="8.0.0">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
-      <Sha>ae1a6cbe225b99c0bf38b7e31bf60cb653b73a52</Sha>
+      <Sha>3f1acb59718cadf111a0a796681e3d3509bb3381</Sha>
     </Dependency>
-    <Dependency Name="System.Collections.Immutable" Version="6.0.0">
+    <Dependency Name="System.Collections.Immutable" Version="8.0.0">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>4822e3c3aa77eb82b2fb33c9321f923cf11ddde6</Sha>
+      <Sha>5535e31a712343a63f5d7d796cd874e563e5ac14</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

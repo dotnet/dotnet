@@ -24,7 +24,7 @@ internal class Program
     {
         // This project references TranslationLayer, vstest.console, TestHostProvider, testhost and MSTest1 projects, to make sure
         // we build all the dependencies of that are used to run tests via VSTestConsoleWrapper. It then copies the components from
-        // their original build locations, to $(TargetDir)\vstest.console directory, and its subfolders to create an executable
+        // their original build locations, to $(TargetDir)\netfx\vstest.console directory, and its subfolders to create an executable
         // copy of TestPlatform that is similar to what we ship.
         //
         // The copying might trigger only on re-build, if you see outdated dependencies, Rebuild this project instead of just Build.
@@ -37,7 +37,7 @@ internal class Program
         var here = Path.GetDirectoryName(thisAssemblyPath)!;
         var playground = Path.GetFullPath(Path.Combine(here, "..", "..", "..", ".."));
 
-        var console = Path.Combine(here, "vstest.console", "vstest.console.exe");
+        var console = Path.Combine(here, "vstest.console", "netfx", "vstest.console.exe");
 
         var sourceSettings = $$$"""
             <RunSettings>

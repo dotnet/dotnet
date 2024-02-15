@@ -70,7 +70,7 @@ internal class LinkedEditingRangeEndpoint : IRazorRequestHandler<LinkedEditingRa
 
         var syntaxTree = await documentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
 
-        var location = await GetSourceLocation(request, documentContext, cancellationToken).ConfigureAwait(false);
+        var location = await GetSourceLocationAsync(request, documentContext, cancellationToken).ConfigureAwait(false);
         if (location is not SourceLocation validLocation)
         {
             return null;
@@ -95,7 +95,7 @@ internal class LinkedEditingRangeEndpoint : IRazorRequestHandler<LinkedEditingRa
         _logger.LogInformation("LinkedEditingRange request was null at {location} for {uri}", location, request.TextDocument.Uri);
         return null;
 
-        async Task<SourceLocation?> GetSourceLocation(
+        async Task<SourceLocation?> GetSourceLocationAsync(
             LinkedEditingRangeParams request,
             DocumentContext documentContext,
             CancellationToken cancellationToken)

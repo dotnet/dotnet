@@ -78,8 +78,8 @@
       Exception - Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages are not updated by automation,
       but are present in Version.Details.xml for source-build PVP flow. See the comment in Version.Details.xml for more information.
     -->
-    <MicrosoftExtensionsObjectPoolPackageVersion>6.0.0</MicrosoftExtensionsObjectPoolPackageVersion>
-    <SystemCollectionsImmutablePackageVersion>6.0.0</SystemCollectionsImmutablePackageVersion>
+    <MicrosoftExtensionsObjectPoolPackageVersion>8.0.0</MicrosoftExtensionsObjectPoolPackageVersion>
+    <SystemCollectionsImmutablePackageVersion>8.0.0</SystemCollectionsImmutablePackageVersion>
   </PropertyGroup>
   <!--
 
@@ -93,9 +93,9 @@
   <PropertyGroup Label="Manual">
     <!-- Several packages from the editor are used for testing HTML support, and share the following version. -->
     <Tooling_HtmlEditorPackageVersion>17.9.67-preview-0001</Tooling_HtmlEditorPackageVersion>
-    <MicrosoftVisualStudioShellPackagesVersion>17.9.36400-preview.3</MicrosoftVisualStudioShellPackagesVersion>
-    <MicrosoftVisualStudioPackagesVersion>17.9.80-preview</MicrosoftVisualStudioPackagesVersion>
-    <VisualStudioLanguageServerProtocolVersion>17.9.6-preview</VisualStudioLanguageServerProtocolVersion>
+    <MicrosoftVisualStudioShellPackagesVersion>17.9.36524</MicrosoftVisualStudioShellPackagesVersion>
+    <MicrosoftVisualStudioPackagesVersion>17.10.29-preview</MicrosoftVisualStudioPackagesVersion>
+    <VisualStudioLanguageServerProtocolVersion>17.10.13-preview</VisualStudioLanguageServerProtocolVersion>
     <MicrosoftVisualStudioCopilotVersion>0.2.28-beta</MicrosoftVisualStudioCopilotVersion>
     <!-- dotnet/runtime packages -->
     <MicrosoftExtensionsPackageVersion>6.0.0</MicrosoftExtensionsPackageVersion>
@@ -120,7 +120,9 @@
     <MicrosoftVisualStudioExtensibilityTestingSourceGeneratorVersion>$(MicrosoftVisualStudioExtensibilityTestingXunitVersion)</MicrosoftVisualStudioExtensibilityTestingSourceGeneratorVersion>
     <MicrosoftVisualStudioLanguagePackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioLanguagePackageVersion>
     <MicrosoftVisualStudioLanguageIntellisensePackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioLanguageIntellisensePackageVersion>
-    <MicrosoftVisualStudioLanguageServerClientImplementationPackageVersion>$(VisualStudioLanguageServerProtocolVersion)</MicrosoftVisualStudioLanguageServerClientImplementationPackageVersion>
+    <!-- MicrosoftVisualStudioLanguageServerClientImplementationPackageVersion should use VisualStudioLanguageServerProtocolVersion, but as of updating there was  -->
+    <!-- a mismatch in published versions (17.10.13-preview was not published). Next time this is updated please switch back to VisualStudioLanguageServerProtocolVersion -->
+    <MicrosoftVisualStudioLanguageServerClientImplementationPackageVersion>17.10.16-preview</MicrosoftVisualStudioLanguageServerClientImplementationPackageVersion>
     <MicrosoftVisualStudioLanguageServerProtocolPackageVersion>$(VisualStudioLanguageServerProtocolVersion)</MicrosoftVisualStudioLanguageServerProtocolPackageVersion>
     <MicrosoftVisualStudioLanguageServerProtocolExtensionsPackageVersion>$(VisualStudioLanguageServerProtocolVersion)</MicrosoftVisualStudioLanguageServerProtocolExtensionsPackageVersion>
     <MicrosoftVisualStudioLanguageServerProtocolInternalPackageVersion>$(VisualStudioLanguageServerProtocolVersion)</MicrosoftVisualStudioLanguageServerProtocolInternalPackageVersion>
@@ -130,15 +132,15 @@
     <MicrosoftVisualStudioShellFrameworkPackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioShellFrameworkPackageVersion>
     <MicrosoftVisualStudioInteropPackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftVisualStudioInteropPackageVersion>
     <MicrosoftInternalVisualStudioInteropPackageVersion>$(MicrosoftVisualStudioShellPackagesVersion)</MicrosoftInternalVisualStudioInteropPackageVersion>
-    <MicrosoftVisualStudioRpcContractsPackageVersion>17.9.5-alpha</MicrosoftVisualStudioRpcContractsPackageVersion>
+    <MicrosoftVisualStudioRpcContractsPackageVersion>17.9.7</MicrosoftVisualStudioRpcContractsPackageVersion>
     <MicrosoftVisualStudioTelemetryVersion>17.9.13</MicrosoftVisualStudioTelemetryVersion>
     <MicrosoftVisualStudioTextDataPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioTextDataPackageVersion>
     <MicrosoftVisualStudioTextImplementationPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioTextImplementationPackageVersion>
     <MicrosoftVisualStudioTextLogicPackageVersion>$(MicrosoftVisualStudioPackagesVersion)</MicrosoftVisualStudioTextLogicPackageVersion>
-    <MicrosoftVisualStudioThreadingPackageVersion>17.9.26-alpha</MicrosoftVisualStudioThreadingPackageVersion>
+    <MicrosoftVisualStudioThreadingPackageVersion>17.9.27</MicrosoftVisualStudioThreadingPackageVersion>
     <MicrosoftVisualStudioWebPackageVersion>16.10.0-preview-1-31008-014</MicrosoftVisualStudioWebPackageVersion>
     <MicrosoftVisualStudioValidationPackageVersion>17.8.8</MicrosoftVisualStudioValidationPackageVersion>
-    <MicrosoftVisualStudioComponentModelHostPackageVersion>17.9.128-preview</MicrosoftVisualStudioComponentModelHostPackageVersion>
+    <MicrosoftVisualStudioComponentModelHostPackageVersion>17.9.132-preview</MicrosoftVisualStudioComponentModelHostPackageVersion>
     <MicrosoftWebToolsLanguagesHtmlPackageVersion>$(Tooling_HtmlEditorPackageVersion)</MicrosoftWebToolsLanguagesHtmlPackageVersion>
     <MicrosoftWebToolsLanguagesLanguageServerServerPackageVersion>$(Tooling_HtmlEditorPackageVersion)</MicrosoftWebToolsLanguagesLanguageServerServerPackageVersion>
     <MicrosoftWebToolsLanguagesSharedPackageVersion>$(Tooling_HtmlEditorPackageVersion)</MicrosoftWebToolsLanguagesSharedPackageVersion>

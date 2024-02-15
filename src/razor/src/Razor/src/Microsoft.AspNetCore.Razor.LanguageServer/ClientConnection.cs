@@ -18,21 +18,27 @@ internal sealed class ClientConnection(JsonRpc jsonRpc) : IClientConnection, IOn
 
     public async Task<TResponse> SendRequestAsync<TParams, TResponse>(string method, TParams @params, CancellationToken cancellationToken)
     {
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
         await _initializedCompletionSource.Task.ConfigureAwait(false);
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
 
         return await _jsonRpc.InvokeWithParameterObjectAsync<TResponse>(method, @params, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task SendNotificationAsync<TParams>(string method, TParams @params, CancellationToken cancellationToken)
     {
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
         await _initializedCompletionSource.Task.ConfigureAwait(false);
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
 
         await _jsonRpc.NotifyWithParameterObjectAsync(method, @params).ConfigureAwait(false);
     }
 
     public async Task SendNotificationAsync(string method, CancellationToken cancellationToken)
     {
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
         await _initializedCompletionSource.Task.ConfigureAwait(false);
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
 
         await _jsonRpc.NotifyAsync(method).ConfigureAwait(false);
     }
