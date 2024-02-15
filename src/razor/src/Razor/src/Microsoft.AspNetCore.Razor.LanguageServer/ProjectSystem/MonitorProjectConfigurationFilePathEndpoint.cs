@@ -7,15 +7,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
-internal class MonitorProjectConfigurationFilePathEndpoint : IMonitorProjectConfigurationFilePathHandler, IDisposable
+[LanguageServerEndpoint(LanguageServerConstants.RazorMonitorProjectConfigurationFilePathEndpoint)]
+internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationHandler<MonitorProjectConfigurationFilePathParams>, IDisposable
 {
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly WorkspaceDirectoryPathResolver _workspaceDirectoryPathResolver;
@@ -81,28 +84,31 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IMonitorProjectConf
         }
 
         var configurationDirectory = Path.GetDirectoryName(request.ConfigurationFilePath);
-        var normalizedConfigurationDirectory = FilePathNormalizer.NormalizeDirectory(configurationDirectory);
-        var workspaceDirectory = _workspaceDirectoryPathResolver.Resolve();
-        var normalizedWorkspaceDirectory = FilePathNormalizer.NormalizeDirectory(workspaceDirectory);
-
         Assumes.NotNull(configurationDirectory);
 
         var previousMonitorExists = _outputPathMonitors.TryGetValue(request.ProjectKeyId, out var entry);
 
-        if (normalizedConfigurationDirectory.StartsWith(normalizedWorkspaceDirectory, FilePathComparison.Instance))
+        if (_options.MonitorWorkspaceFolderForConfigurationFiles)
         {
-            if (previousMonitorExists)
-            {
-                _logger.LogInformation("Configuration directory changed from external directory -> internal directory for project '{0}, terminating existing monitor'.", request.ProjectKeyId);
-                RemoveMonitor(request.ProjectKeyId);
-            }
-            else
-            {
-                _logger.LogInformation("No custom configuration directory required. The workspace directory is sufficient for '{0}'.", request.ProjectKeyId);
-            }
+            var normalizedConfigurationDirectory = FilePathNormalizer.NormalizeDirectory(configurationDirectory);
+            var workspaceDirectory = _workspaceDirectoryPathResolver.Resolve();
+            var normalizedWorkspaceDirectory = FilePathNormalizer.NormalizeDirectory(workspaceDirectory);
 
-            // Configuration directory is already in the workspace directory. We already monitor everything in the workspace directory.
-            return;
+            if (normalizedConfigurationDirectory.StartsWith(normalizedWorkspaceDirectory, FilePathComparison.Instance))
+            {
+                if (previousMonitorExists)
+                {
+                    _logger.LogInformation("Configuration directory changed from external directory -> internal directory for project '{0}, terminating existing monitor'.", request.ProjectKeyId);
+                    RemoveMonitor(request.ProjectKeyId);
+                }
+                else
+                {
+                    _logger.LogInformation("No custom configuration directory required. The workspace directory is sufficient for '{0}'.", request.ProjectKeyId);
+                }
+
+                // Configuration directory is already in the workspace directory. We already monitor everything in the workspace directory.
+                return;
+            }
         }
 
         if (previousMonitorExists)

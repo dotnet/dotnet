@@ -80,4 +80,6 @@ internal class VisualStudioWindowsLanguageServerFeatureOptions : LanguageServerF
     public override bool IncludeProjectKeyInGeneratedFilePath => _includeProjectKeyInGeneratedFilePath.Value;
 
     public override bool UsePreciseSemanticTokenRanges => _usePreciseSemanticTokenRanges.Value;
+
+    public override bool MonitorWorkspaceFolderForConfigurationFiles => false;
 }

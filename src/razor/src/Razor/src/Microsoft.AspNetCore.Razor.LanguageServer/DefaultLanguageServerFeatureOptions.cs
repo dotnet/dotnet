@@ -38,4 +38,6 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
     public override bool IncludeProjectKeyInGeneratedFilePath => false;
 
     public override bool UsePreciseSemanticTokenRanges => false;
+
+    public override bool MonitorWorkspaceFolderForConfigurationFiles => true;
 }
