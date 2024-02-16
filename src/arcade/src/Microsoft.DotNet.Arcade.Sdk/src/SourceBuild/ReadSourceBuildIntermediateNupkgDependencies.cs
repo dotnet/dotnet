@@ -72,10 +72,10 @@ namespace Microsoft.DotNet.Arcade.Sdk.SourceBuild
 
                     string dependencyName = d.Attribute("Name")?.Value ?? string.Empty;
 
-                    if (string.IsNullOrEmpty(dependencyName))
+                    if (!dependencyName.Contains(SourceBuildIntermediateNupkgPrefix))
                     {
-                        // Log name missing as FYI, but this is not an error case for source-build.
-                        Log.LogMessage($"Dependency Name null or empty in '{VersionDetailsXmlFile}' element {d}");
+                        Log.LogError($"Dependency Name does not contain '{SourceBuildIntermediateNupkgPrefix}' in '{VersionDetailsXmlFile}' element {d}. Only place <SourceBuild> elements on source-build intermediate nupkgs.");
+                        return null;
                     }
 
                     string dependencyVersion = d.Attribute("Version")?.Value;
