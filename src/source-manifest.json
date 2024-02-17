@@ -13,10 +13,10 @@
       "commitSha": "48e42f59d64d84b404e904996a9ed61f2a17a569"
     },
     {
-      "packageVersion": "8.0.2-servicing.24068.4",
+      "packageVersion": "8.0.3-servicing.24116.15",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "da7e9894ce22ef8cc02e5acc56e95a6f8cf8f644"
+      "commitSha": "88ec3bc3f37e76fbcc932a25f9f0c1c29fe2b343"
     },
     {
       "packageVersion": "0.11.4-alpha.23509.2",
@@ -49,10 +49,10 @@
       "commitSha": "9a29abdd764a4de0f253ed368871877a47725247"
     },
     {
-      "packageVersion": "8.0.510703",
+      "packageVersion": "8.0.511601",
       "path": "format",
       "remoteUri": "https://github.com/dotnet/format",
-      "commitSha": "4ffa2f1691a4ac3ebad3fe840d7a25f35feba635"
+      "commitSha": "d237e172b324021b97effa244af44d63d1a8bb7e"
     },
     {
       "packageVersion": "8.0.102-beta.24081.2",
@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "3b978980928f86e0ce11d77a27a9d2daf6aa5f60"
+      "commitSha": "6a90b4b4bc6034fa0cf75368f0ccb9ed98b4651c"
     },
     {
       "packageVersion": "17.8.5-preview-24055-02",
@@ -103,10 +103,10 @@
       "commitSha": "9f4b1f5d664afdfc80e1508ab7ed099dff210fbd"
     },
     {
-      "packageVersion": "8.0.103-servicing.24116.29",
+      "packageVersion": "8.0.103-servicing.24116.86",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "5e0154f6ab1a1cf576bc524b9d97753413997046"
+      "commitSha": "413c870a447075a90b8827353acb28ed37bab9dc"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23577.6",
@@ -167,7 +167,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "7e33b6a1c497ced1e98fc60175aeb4678419281c"
+      "commitSha": "48729681ad88a89061344ee541b4548833077e00"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",

@@ -508,9 +508,9 @@ TEST_F(FooDeathTest, DoesThat) {
 When built with Bazel and using Abseil, GoogleTest uses the
 [RE2](https://github.com/google/re2/wiki/Syntax) syntax. Otherwise, for POSIX
 systems (Linux, Cygwin, Mac), GoogleTest uses the
-[POSIX extended regular expression](http://www.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap09.html#tag_09_04)
+[POSIX extended regular expression](https://www.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap09.html#tag_09_04)
 syntax. To learn about POSIX syntax, you may want to read this
-[Wikipedia entry](http://en.wikipedia.org/wiki/Regular_expression#POSIX_extended).
+[Wikipedia entry](https://en.wikipedia.org/wiki/Regular_expression#POSIX_extended).
 
 On Windows, GoogleTest uses its own simple regular expression implementation. It
 lacks many features. For example, we don't support union (`"x|y"`), grouping
@@ -1004,11 +1004,21 @@ calling the `::testing::AddGlobalTestEnvironment()` function:
 Environment* AddGlobalTestEnvironment(Environment* env);
 ```
 
-Now, when `RUN_ALL_TESTS()` is called, it first calls the `SetUp()` method of
-each environment object, then runs the tests if none of the environments
-reported fatal failures and `GTEST_SKIP()` was not called. `RUN_ALL_TESTS()`
-always calls `TearDown()` with each environment object, regardless of whether or
-not the tests were run.
+Now, when `RUN_ALL_TESTS()` is invoked, it first calls the `SetUp()` method. The
+tests are then executed, provided that none of the environments have reported
+fatal failures and `GTEST_SKIP()` has not been invoked. Finally, `TearDown()` is
+called.
+
+Note that `SetUp()` and `TearDown()` are only invoked if there is at least one
+test to be performed. Importantly, `TearDown()` is executed even if the test is
+not run due to a fatal failure or `GTEST_SKIP()`.
+
+Calling `SetUp()` and `TearDown()` for each iteration depends on the flag
+`gtest_recreate_environments_when_repeating`. `SetUp()` and `TearDown()` are
+called for each environment object when the object is recreated for each
+iteration. However, if test environments are not recreated for each iteration,
+`SetUp()` is called only on the first iteration, and `TearDown()` is called only
+on the last iteration.
 
 It's OK to register multiple environment objects. In this suite, their `SetUp()`
 will be called in the order they are registered, and their `TearDown()` will be
@@ -2171,7 +2181,7 @@ The report format conforms to the following JSON Schema:
 
 ```json
 {
-  "$schema": "http://json-schema.org/schema#",
+  "$schema": "https://json-schema.org/schema#",
   "type": "object",
   "definitions": {
     "TestCase": {
