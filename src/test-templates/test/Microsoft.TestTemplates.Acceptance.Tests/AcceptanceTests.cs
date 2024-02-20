@@ -16,6 +16,7 @@ public sealed partial class AcceptanceTests
     private static readonly (string ProjectTemplateName, string ItemTemplateName, string[] Languages)[] AvailableItemTemplates =
     [
         ("nunit", "nunit-test", Languages.All),
+        ("mstest", "mstest-class", Languages.All),
     ];
 
     private static readonly (string ProjectTemplateName, string[] Languages, bool RunDotnetTest)[] AvailableProjectTemplates =
