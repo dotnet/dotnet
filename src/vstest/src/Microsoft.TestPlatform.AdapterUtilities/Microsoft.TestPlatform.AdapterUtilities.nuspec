@@ -43,6 +43,5 @@
     <file src="netstandard2.0\zh-Hans\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\netstandard2.0\zh-Hans" />
     <file src="netstandard2.0\zh-Hant\Microsoft.TestPlatform.AdapterUtilities.resources.dll" target="lib\netstandard2.0\zh-Hant" />
 
-    <!-- TODO: Include source files. -->
   </files>
 </package>
