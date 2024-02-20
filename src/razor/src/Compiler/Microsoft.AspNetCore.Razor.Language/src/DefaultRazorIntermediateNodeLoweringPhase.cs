@@ -1094,7 +1094,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                         TagHelper = associatedDescriptor,
                         AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
                         Source = null,
-                        IsIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(attributeName.AsSpan(), associatedAttributeDescriptor),
+                        IsIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(associatedAttributeDescriptor, attributeName.AsSpan()),
                     };
 
                     _builder.Add(setTagHelperProperty);
@@ -1137,7 +1137,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                         TagHelper = associatedDescriptor,
                         AttributeStructure = node.TagHelperAttributeInfo.AttributeStructure,
                         Source = BuildSourceSpanFromNode(attributeValueNode),
-                        IsIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(attributeName.AsSpan(), associatedAttributeDescriptor),
+                        IsIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(associatedAttributeDescriptor, attributeName.AsSpan()),
                     };
 
                     _builder.Push(setTagHelperProperty);
@@ -1862,8 +1862,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 foreach (var associatedDescriptor in associatedDescriptors)
                 {
                     if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(
-                        attributeName,
                         associatedDescriptor,
+                        attributeName,
                         out var associatedAttributeDescriptor,
                         out var indexerMatch,
                         out _,
@@ -1925,8 +1925,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 foreach (var associatedDescriptor in associatedDescriptors)
                 {
                     if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(
-                        attributeName,
                         associatedDescriptor,
+                        attributeName,
                         out var associatedAttributeDescriptor,
                         out var indexerMatch,
                         out var parameterMatch,
@@ -2011,8 +2011,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 foreach (var associatedDescriptor in associatedDescriptors)
                 {
                     if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(
-                        attributeName,
                         associatedDescriptor,
+                        attributeName,
                         out var associatedAttributeDescriptor,
                         out var indexerMatch,
                         out _,
@@ -2065,8 +2065,8 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                 foreach (var associatedDescriptor in associatedDescriptors)
                 {
                     if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(
-                        attributeName,
                         associatedDescriptor,
+                        attributeName,
                         out var associatedAttributeDescriptor,
                         out var indexerMatch,
                         out var parameterMatch,

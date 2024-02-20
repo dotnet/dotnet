@@ -183,7 +183,7 @@ internal class LspTagHelperCompletionService : ITagHelperCompletionService
 
             foreach (var rule in possibleDescriptor.TagMatchingRules)
             {
-                if (!TagHelperMatchingConventions.SatisfiesParentTag(completionContext.ContainingParentTagName.AsSpanOrDefault(), rule))
+                if (!TagHelperMatchingConventions.SatisfiesParentTag(rule, completionContext.ContainingParentTagName.AsSpanOrDefault()))
                 {
                     continue;
                 }
@@ -225,7 +225,7 @@ internal class LspTagHelperCompletionService : ITagHelperCompletionService
                 }
 
                 // If we think this completion should be added based on tag name, thats great, but lets also make sure the attributes are correct
-                if (addRuleCompletions && (!checkAttributeRules || TagHelperMatchingConventions.SatisfiesAttributes(tagAttributes, rule)))
+                if (addRuleCompletions && (!checkAttributeRules || TagHelperMatchingConventions.SatisfiesAttributes(rule, tagAttributes)))
                 {
                     UpdateCompletions(prefix + rule.TagName, possibleDescriptor, elementCompletions);
                 }

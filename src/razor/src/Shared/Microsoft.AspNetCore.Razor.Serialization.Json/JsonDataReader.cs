@@ -5,9 +5,9 @@ using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.AspNetCore.Razor.Serialization.Json.Internal;
 using Microsoft.Extensions.ObjectPool;
 using Newtonsoft.Json;
+using SR = Microsoft.AspNetCore.Razor.Serialization.Json.Internal.SR;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.Json;
 

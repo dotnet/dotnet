@@ -247,8 +247,8 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
         foreach (var rule in tagMatchingRules)
         {
             // We have to match parent tag and attributes regardless, so check them first and exit early if there is a fail
-            if (!TagHelperMatchingConventions.SatisfiesParentTag(parentTagNameWithoutPrefix, rule) ||
-               !TagHelperMatchingConventions.SatisfiesAttributes(tagAttributes, rule))
+            if (!TagHelperMatchingConventions.SatisfiesParentTag(rule, parentTagNameWithoutPrefix) ||
+               !TagHelperMatchingConventions.SatisfiesAttributes(rule, tagAttributes))
             {
                 return false;
             }
@@ -259,11 +259,11 @@ internal sealed class ComponentAccessibilityCodeActionProvider : IRazorCodeActio
             {
                 return false;
             }
-            else if (TagHelperMatchingConventions.SatisfiesTagName(tagNameWithoutPrefix, rule))
+            else if (TagHelperMatchingConventions.SatisfiesTagName(rule, tagNameWithoutPrefix))
             {
                 // Nothing to do, just loop around to the next rule
             }
-            else if (TagHelperMatchingConventions.SatisfiesTagName(tagNameWithoutPrefix, rule, StringComparison.OrdinalIgnoreCase))
+            else if (TagHelperMatchingConventions.SatisfiesTagName(rule, tagNameWithoutPrefix, StringComparison.OrdinalIgnoreCase))
             {
                 // Because the code action will be fixing the casing of the tag, we don't need all the rules to be consistent.
                 caseInsensitiveMatch = true;

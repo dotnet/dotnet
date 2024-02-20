@@ -206,7 +206,13 @@ internal sealed class DefinitionEndpoint(
             return (null, null);
         }
 
-        var originTagDescriptor = tagHelperElement.TagHelperInfo.BindingResult.Descriptors.FirstOrDefault(d => !d.IsAttributeDescriptor());
+        if (tagHelperElement.TagHelperInfo?.BindingResult is not TagHelperBinding binding)
+        {
+            logger.LogInformation("MarkupTagHelperElement does not contain TagHelperInfo.");
+            return (null, null);
+        }
+
+        var originTagDescriptor = binding.Descriptors.FirstOrDefault(static d => !d.IsAttributeDescriptor());
         if (originTagDescriptor is null)
         {
             logger.LogInformation("Origin TagHelper descriptor is null.");

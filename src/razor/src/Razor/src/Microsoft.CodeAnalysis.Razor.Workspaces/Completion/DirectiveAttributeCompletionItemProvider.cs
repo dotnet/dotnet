@@ -110,7 +110,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
 
                     foreach (var parameterDescriptor in attributeDescriptor.Parameters)
                     {
-                        if (!attributes.Any(name => TagHelperMatchingConventions.SatisfiesBoundAttributeWithParameter(name, attributeDescriptor, parameterDescriptor)))
+                        if (!attributes.Any(name => TagHelperMatchingConventions.SatisfiesBoundAttributeWithParameter(parameterDescriptor, name, attributeDescriptor)))
                         {
                             // This bound attribute parameter has not had a completion entry added for it, re-represent the base attribute name in the completion list
                             AddCompletion(attributeDescriptor.Name, attributeDescriptor, descriptor);
