@@ -3,8 +3,8 @@
   <PropertyGroup>
     <arcadeGitCommitHash>d5b02a4900c4d521cb48b8f0d7e3f28175268f7c</arcadeGitCommitHash>
     <arcadeOutputPackageVersion>9.0.0-beta.24114.1</arcadeOutputPackageVersion>
-    <aspireGitCommitHash>b2107ab9a2b96b609f16997525f694f587e3018e</aspireGitCommitHash>
-    <aspireOutputPackageVersion>9.0.0-preview.1.24114.5</aspireOutputPackageVersion>
+    <aspireGitCommitHash>1dd4b3265f01a50b20522fd3d7f3cd315db5be6b</aspireGitCommitHash>
+    <aspireOutputPackageVersion>9.0.0-preview.1.24116.3</aspireOutputPackageVersion>
     <aspnetcoreGitCommitHash>4ea9f39a3447596ed9bf42320882cc6423e0c60b</aspnetcoreGitCommitHash>
     <aspnetcoreOutputPackageVersion>9.0.0-preview.2.24114.9</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>93dcb576e191a965008eae9b622527436653873f</cecilGitCommitHash>
@@ -21,7 +21,7 @@
     <formatOutputPackageVersion>9.0.511402</formatOutputPackageVersion>
     <fsharpGitCommitHash>14ddb01cad17d7737028afdd90e36b85a1086626</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.300-beta.24114.2</fsharpOutputPackageVersion>
-    <installerGitCommitHash>e6b3ff2dff85b43bd3a323e7c0bac4f1f58ccd62</installerGitCommitHash>
+    <installerGitCommitHash>709259d8084d7aef80259be1f0ffa7d76923fcfa</installerGitCommitHash>
     <installerOutputPackageVersion>9.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>b783f61ef6fcadef68c54daac21e18c1c20fc071</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.10.0-preview-24115-01</msbuildOutputPackageVersion>
@@ -41,8 +41,8 @@
     <sdkOutputPackageVersion>9.0.100-preview.2.24115.9</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>ddfb60463c966af55fd0e222c2266170e83d1324</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24112.1</sourcebuildexternalsOutputPackageVersion>
-    <sourcebuildreferencepackagesGitCommitHash>2f79f97b7a6a0cf2ca3297a8fa526e6f4ea98ce2</sourcebuildreferencepackagesGitCommitHash>
-    <sourcebuildreferencepackagesOutputPackageVersion>9.0.0-alpha.1.24113.1</sourcebuildreferencepackagesOutputPackageVersion>
+    <sourcebuildreferencepackagesGitCommitHash>539af5d8ae183d4fe61e8b2f8f4a8505c8a765a7</sourcebuildreferencepackagesGitCommitHash>
+    <sourcebuildreferencepackagesOutputPackageVersion>9.0.0-alpha.1.24119.1</sourcebuildreferencepackagesOutputPackageVersion>
     <sourcelinkGitCommitHash>347d0315f89f450850a52e92af23a1d046259d3f</sourcelinkGitCommitHash>
     <sourcelinkOutputPackageVersion>9.0.0-beta.24114.1</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>71a20ad4aaedc284ef2d9a7302f5d2ec4df7dca3</symreaderGitCommitHash>
