@@ -48,7 +48,7 @@ public static class BoundAttributeDescriptorExtensions
             return true;
         }
 
-        var isIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(name.AsSpan(), attribute);
+        var isIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(attribute, name.AsSpan());
         return isIndexerNameMatch && attribute.IsIndexerStringProperty;
     }
 
@@ -59,7 +59,7 @@ public static class BoundAttributeDescriptorExtensions
             return true;
         }
 
-        var isIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(name.AsSpan(), attribute);
+        var isIndexerNameMatch = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(attribute, name.AsSpan());
         return isIndexerNameMatch && attribute.IsIndexerBooleanProperty;
     }
 

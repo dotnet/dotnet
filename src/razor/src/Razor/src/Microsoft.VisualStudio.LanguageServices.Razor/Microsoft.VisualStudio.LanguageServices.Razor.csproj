@@ -17,6 +17,9 @@
     <PackageReference Include="Microsoft.VisualStudio.ProjectSystem.SDK" Version="$(MicrosoftVisualStudioProjectSystemSDKPackageVersion)" />
     <PackageReference Include="Microsoft.Internal.VisualStudio.Interop" Version="$(MicrosoftInternalVisualStudioInteropPackageVersion)" />
 
+    <PackageReference Include="Microsoft.VisualStudio.LiveShare" Version="$(MicrosoftVisualStudioLiveSharePackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="$(MicrosoftVisualStudioShell150PackageVersion)" />
+
     <!--
       Pinning packages to avoid misaligned reference CI failures.
       CI builds here: https://github.com/dotnet/razor-tooling/issues/4327
@@ -156,4 +159,7 @@
       <Compile Remove="@(XamlPropertyRule->'$(IntermediateOutputPath)%(FileName)$(DefaultLanguageSourceExtension)')" />
     </ItemGroup>
   </Target>
+  
+  <Import Project="..\..\..\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems" Label="Shared" />
+  
 </Project>

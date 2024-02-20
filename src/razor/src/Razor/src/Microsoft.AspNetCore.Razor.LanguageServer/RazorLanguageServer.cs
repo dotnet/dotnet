@@ -195,7 +195,7 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
             services.AddHandlerWithCapabilities<FindAllReferencesEndpoint>();
             services.AddHandlerWithCapabilities<ProjectContextsEndpoint>();
             services.AddHandlerWithCapabilities<DocumentSymbolEndpoint>();
-            services.AddHandler<MapCodeEndpoint>();
+            services.AddHandlerWithCapabilities<MapCodeEndpoint>();
 
             if (!featureOptions.UseRazorCohostServer)
             {

@@ -258,7 +258,7 @@ internal sealed class HoverService(
     {
         var descriptionInfos = boundAttributes.SelectAsArray(boundAttribute =>
         {
-            var isIndexer = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(attributeName.AsSpan(), boundAttribute);
+            var isIndexer = TagHelperMatchingConventions.SatisfiesBoundAttributeIndexer(boundAttribute, attributeName.AsSpan());
             return BoundAttributeDescriptionInfo.From(boundAttribute, isIndexer);
         });
 

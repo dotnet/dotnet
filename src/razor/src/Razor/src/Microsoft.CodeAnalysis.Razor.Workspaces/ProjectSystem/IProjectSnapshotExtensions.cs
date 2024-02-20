@@ -41,7 +41,7 @@ internal static class IProjectSnapshotExtensions
     public static ImmutableArray<TagHelperDescriptor> GetTagHelpersSynchronously(this IProjectSnapshot projectSnapshot)
     {
         var canResolveTagHelpersSynchronously = projectSnapshot is ProjectSnapshot ||
-            projectSnapshot.GetType().Name == "Microsoft.VisualStudio.LegacyEditor.Razor.EphemeralProjectSnapshot";
+            projectSnapshot.GetType().FullName == "Microsoft.VisualStudio.LegacyEditor.Razor.EphemeralProjectSnapshot";
 
         Debug.Assert(canResolveTagHelpersSynchronously, "The ProjectSnapshot in the VisualStudioDocumentTracker should not be a cohosted project.");
         var tagHelperTask = projectSnapshot.GetTagHelpersAsync(CancellationToken.None);

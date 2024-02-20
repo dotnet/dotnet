@@ -1,31 +1,36 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public sealed class TagHelperBinding
+internal sealed class TagHelperBinding
 {
+    public string TagName { get; }
+    public string? ParentTagName { get; }
+    public ImmutableArray<KeyValuePair<string, string>> Attributes { get; }
+    public FrozenDictionary<TagHelperDescriptor, ImmutableArray<TagMatchingRuleDescriptor>> Mappings { get; }
+    public string? TagHelperPrefix { get; }
+
+    public ImmutableArray<TagHelperDescriptor> Descriptors => Mappings.Keys;
+
     internal TagHelperBinding(
         string tagName,
-        IReadOnlyList<KeyValuePair<string, string>> attributes,
-        string parentTagName,
-        IReadOnlyDictionary<TagHelperDescriptor, IReadOnlyList<TagMatchingRuleDescriptor>> mappings,
-        string tagHelperPrefix)
+        ImmutableArray<KeyValuePair<string, string>> attributes,
+        string? parentTagName,
+        FrozenDictionary<TagHelperDescriptor, ImmutableArray<TagMatchingRuleDescriptor>> mappings,
+        string? tagHelperPrefix)
     {
         TagName = tagName;
         Attributes = attributes;
         ParentTagName = parentTagName;
         Mappings = mappings;
         TagHelperPrefix = tagHelperPrefix;
-
     }
-
-    public IEnumerable<TagHelperDescriptor> Descriptors => Mappings.Keys;
 
     /// <summary>
     /// Gets a value that indicates whether the the binding matched on attributes only.
@@ -55,25 +60,5 @@ public sealed class TagHelperBinding
             //      <button onclick="..." />
             return true;
         }
-    }
-
-    public string TagName { get; }
-
-    public string ParentTagName { get; }
-
-    public IReadOnlyList<KeyValuePair<string, string>> Attributes { get; }
-
-    public IReadOnlyDictionary<TagHelperDescriptor, IReadOnlyList<TagMatchingRuleDescriptor>> Mappings { get; }
-
-    public string TagHelperPrefix { get; }
-
-    public IReadOnlyList<TagMatchingRuleDescriptor> GetBoundRules(TagHelperDescriptor descriptor)
-    {
-        if (descriptor == null)
-        {
-            throw new ArgumentNullException(nameof(descriptor));
-        }
-
-        return Mappings[descriptor];
     }
 }

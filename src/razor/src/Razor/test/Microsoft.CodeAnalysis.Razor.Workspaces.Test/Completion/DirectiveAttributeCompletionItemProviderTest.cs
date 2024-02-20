@@ -165,7 +165,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
     public void GetAttributeCompletions_NoDescriptorsForTag_ReturnsEmptyCollection()
     {
         // Arrange
-        var documentContext = TagHelperDocumentContext.Create(string.Empty, Enumerable.Empty<TagHelperDescriptor>());
+        var documentContext = TagHelperDocumentContext.Create(string.Empty, tagHelpers: []);
 
         // Act
         var completions = _provider.GetAttributeCompletions("@bin", "foobarbaz", _emptyAttributes, documentContext);
@@ -181,7 +181,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
         var descriptor = TagHelperDescriptorBuilder.Create("CatchAll", "TestAssembly");
         descriptor.BoundAttributeDescriptor(boundAttribute => boundAttribute.Name = "Test");
         descriptor.TagMatchingRule(rule => rule.RequireTagName("*"));
-        var documentContext = TagHelperDocumentContext.Create(string.Empty, new[] { descriptor.Build() });
+        var documentContext = TagHelperDocumentContext.Create(string.Empty, [descriptor.Build()]);
 
         // Act
         var completions = _provider.GetAttributeCompletions("@bin", "input", _emptyAttributes, documentContext);

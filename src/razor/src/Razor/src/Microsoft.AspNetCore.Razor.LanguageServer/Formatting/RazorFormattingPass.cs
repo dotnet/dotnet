@@ -176,22 +176,26 @@ internal class RazorFormattingPass : FormattingPassBase
         // @code
         // {
         // }
-        if (node is CSharpCodeBlockSyntax directiveCode &&
-            directiveCode.Children.Count == 1 && directiveCode.Children.First() is RazorDirectiveSyntax directive &&
-            directive.Body is RazorDirectiveBodySyntax directiveBody &&
-            (directiveBody.Keyword.GetContent().Equals("functions") || directiveBody.Keyword.GetContent().Equals("code")))
+        if (node is CSharpCodeBlockSyntax { Children: [RazorDirectiveSyntax { Body: RazorDirectiveBodySyntax body } directive] })
         {
-            var cSharpCode = directiveBody.CSharpCode;
-            if (!cSharpCode.Children.TryGetOpenBraceNode(out var openBrace) || !cSharpCode.Children.TryGetCloseBraceNode(out var closeBrace))
+            var keywordContent = body.Keyword.GetContent();
+            if (keywordContent != "functions" && keywordContent != "code")
+            {
+                return false;
+            }
+
+            var csharpCodeChildren = body.CSharpCode.Children;
+            if (!csharpCodeChildren.TryGetOpenBraceNode(out var openBrace) ||
+                !csharpCodeChildren.TryGetCloseBraceNode(out var closeBrace))
             {
                 // Don't trust ourselves in an incomplete scenario.
                 return false;
             }
 
-            var code = cSharpCode.Children.PreviousSiblingOrSelf(closeBrace) as CSharpCodeBlockSyntax;
+            var code = csharpCodeChildren.PreviousSiblingOrSelf(closeBrace) as CSharpCodeBlockSyntax;
 
             var openBraceNode = openBrace;
-            var codeNode = code!;
+            var codeNode = code.AssumeNotNull();
             var closeBraceNode = closeBrace;
 
             return FormatBlock(context, source, directive, openBraceNode, codeNode, closeBraceNode, edits);

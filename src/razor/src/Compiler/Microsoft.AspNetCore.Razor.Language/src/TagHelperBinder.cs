@@ -1,12 +1,11 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -16,21 +15,26 @@ namespace Microsoft.AspNetCore.Razor.Language;
 internal sealed class TagHelperBinder
 {
     private readonly Dictionary<string, HashSet<TagHelperDescriptor>> _registrations;
-    private readonly string _tagHelperPrefix;
+
+    public string? TagHelperPrefix { get; }
+    public ImmutableArray<TagHelperDescriptor> TagHelpers { get; }
 
     /// <summary>
     /// Instantiates a new instance of the <see cref="TagHelperBinder"/>.
     /// </summary>
     /// <param name="tagHelperPrefix">The tag helper prefix being used by the document.</param>
-    /// <param name="descriptors">The descriptors that the <see cref="TagHelperBinder"/> will pull from.</param>
-    public TagHelperBinder(string tagHelperPrefix, IReadOnlyList<TagHelperDescriptor> descriptors)
+    /// <param name="tagHelpers">The <see cref="TagHelperDescriptor"/>s that the <see cref="TagHelperBinder"/>
+    /// will pull from.</param>
+    public TagHelperBinder(string? tagHelperPrefix, ImmutableArray<TagHelperDescriptor> tagHelpers)
     {
-        _tagHelperPrefix = tagHelperPrefix;
+        TagHelperPrefix = tagHelperPrefix;
+        TagHelpers = tagHelpers;
+
         // To reduce the frequency of dictionary resizes we use the incoming number of descriptors as a heuristic
-        _registrations = new Dictionary<string, HashSet<TagHelperDescriptor>>(descriptors.Count, StringComparer.OrdinalIgnoreCase);
+        _registrations = new Dictionary<string, HashSet<TagHelperDescriptor>>(tagHelpers.Length, StringComparer.OrdinalIgnoreCase);
 
         // Populate our registrations
-        foreach (var descriptor in descriptors)
+        foreach (var descriptor in tagHelpers)
         {
             Register(descriptor);
         }
@@ -46,43 +50,24 @@ internal sealed class TagHelperBinder
     /// <param name="parentIsTagHelper">Is the parent tag of the given <paramref name="tagName"/> tag a tag helper.</param>
     /// <returns><see cref="TagHelperDescriptor"/>s that apply to the given HTML tag criteria.
     /// Will return <c>null</c> if no <see cref="TagHelperDescriptor"/>s are a match.</returns>
-    public TagHelperBinding GetBinding(
+    public TagHelperBinding? GetBinding(
         string tagName,
         ImmutableArray<KeyValuePair<string, string>> attributes,
-        string parentTagName,
+        string? parentTagName,
         bool parentIsTagHelper)
     {
-        if (!string.IsNullOrEmpty(_tagHelperPrefix) &&
-            (tagName.Length <= _tagHelperPrefix.Length ||
-            !tagName.StartsWith(_tagHelperPrefix, StringComparison.OrdinalIgnoreCase)))
+        if (!TagHelperPrefix.IsNullOrEmpty() &&
+            (tagName.Length <= TagHelperPrefix.Length ||
+             !tagName.StartsWith(TagHelperPrefix, StringComparison.OrdinalIgnoreCase)))
         {
             // The tagName doesn't have the tag helper prefix, we can short circuit.
             return null;
         }
 
-        IEnumerable<TagHelperDescriptor> descriptors;
-
-        // Ensure there's a HashSet to use.
-        if (!_registrations.TryGetValue(TagHelperMatchingConventions.ElementCatchAllName, out HashSet<TagHelperDescriptor> catchAllDescriptors))
-        {
-            descriptors = new HashSet<TagHelperDescriptor>();
-        }
-        else
-        {
-            descriptors = catchAllDescriptors;
-        }
-
-        // If we have a tag name associated with the requested name, we need to combine matchingDescriptors
-        // with all the catch-all descriptors.
-        if (_registrations.TryGetValue(tagName, out HashSet<TagHelperDescriptor> matchingDescriptors))
-        {
-            descriptors = matchingDescriptors.Concat(descriptors);
-        }
-
         var tagNameWithoutPrefix = tagName.AsSpanOrDefault();
         var parentTagNameWithoutPrefix = parentTagName.AsSpanOrDefault();
 
-        if (_tagHelperPrefix is { Length: var length and > 0 })
+        if (TagHelperPrefix is { Length: var length and > 0 })
         {
             tagNameWithoutPrefix = tagNameWithoutPrefix[length..];
 
@@ -92,60 +77,77 @@ internal sealed class TagHelperBinder
             }
         }
 
-        Dictionary<TagHelperDescriptor, IReadOnlyList<TagMatchingRuleDescriptor>> applicableDescriptorMappings = null;
-        foreach (var descriptor in descriptors)
-        {
-            // We're avoiding descriptor.TagMatchingRules.Where and applicableRules.Any() to avoid
-            // Enumerator allocations on this hot path
-            List<TagMatchingRuleDescriptor> applicableRules = null;
-            foreach (var rule in descriptor.TagMatchingRules)
-            {
-                if (TagHelperMatchingConventions.SatisfiesRule(tagNameWithoutPrefix, parentTagNameWithoutPrefix, attributes, rule))
-                {
-                    applicableRules ??= new List<TagMatchingRuleDescriptor>();
-                    applicableRules.Add(rule);
-                }
-            }
+        using var _ = DictionaryPool<TagHelperDescriptor, ImmutableArray<TagMatchingRuleDescriptor>>.GetPooledObject(out var applicableDescriptors);
 
-            if (applicableRules != null && applicableRules.Count > 0)
-            {
-                applicableDescriptorMappings ??= new Dictionary<TagHelperDescriptor, IReadOnlyList<TagMatchingRuleDescriptor>>();
-                applicableDescriptorMappings[descriptor] = applicableRules;
-            }
+        // First, try any tag helpers with this tag name.
+        if (_registrations.TryGetValue(tagName, out var matchingDescriptors))
+        {
+            FindApplicableDescriptors(matchingDescriptors, tagNameWithoutPrefix, parentTagNameWithoutPrefix, attributes, applicableDescriptors);
         }
 
-        if (applicableDescriptorMappings == null)
+        // Next, try any "catch all" descriptors.
+        if (_registrations.TryGetValue(TagHelperMatchingConventions.ElementCatchAllName, out var catchAllDescriptors))
+        {
+            FindApplicableDescriptors(catchAllDescriptors, tagNameWithoutPrefix, parentTagNameWithoutPrefix, attributes, applicableDescriptors);
+        }
+
+        if (applicableDescriptors.Count == 0)
         {
             return null;
         }
 
-        var tagHelperBinding = new TagHelperBinding(
+        return new TagHelperBinding(
             tagName,
             attributes,
             parentTagName,
-            applicableDescriptorMappings,
-            _tagHelperPrefix);
+            applicableDescriptors.ToFrozenDictionary(),
+            TagHelperPrefix);
 
-        return tagHelperBinding;
+        static void FindApplicableDescriptors(
+            HashSet<TagHelperDescriptor> descriptors,
+            ReadOnlySpan<char> tagNameWithoutPrefix,
+            ReadOnlySpan<char> parentTagNameWithoutPrefix,
+            ImmutableArray<KeyValuePair<string, string>> attributes,
+            Dictionary<TagHelperDescriptor, ImmutableArray<TagMatchingRuleDescriptor>> applicableDescriptors)
+        {
+            using var applicableRules = new PooledArrayBuilder<TagMatchingRuleDescriptor>();
+
+            foreach (var descriptor in descriptors)
+            {
+                foreach (var rule in descriptor.TagMatchingRules)
+                {
+                    if (TagHelperMatchingConventions.SatisfiesRule(rule, tagNameWithoutPrefix, parentTagNameWithoutPrefix, attributes))
+                    {
+                        applicableRules.Add(rule);
+                    }
+                }
+
+                if (applicableRules.Count > 0)
+                {
+                    applicableDescriptors[descriptor] = applicableRules.DrainToImmutable();
+                }
+
+                applicableRules.Clear();
+            }
+        }
     }
 
     private void Register(TagHelperDescriptor descriptor)
     {
         foreach (var rule in descriptor.TagMatchingRules)
         {
-            var registrationKey =
-                string.Equals(rule.TagName, TagHelperMatchingConventions.ElementCatchAllName, StringComparison.Ordinal) ?
-                TagHelperMatchingConventions.ElementCatchAllName :
-                _tagHelperPrefix + rule.TagName;
+            var registrationKey = rule.TagName == TagHelperMatchingConventions.ElementCatchAllName
+                ? TagHelperMatchingConventions.ElementCatchAllName
+                : TagHelperPrefix + rule.TagName;
 
             // Ensure there's a HashSet to add the descriptor to.
-            if (!_registrations.TryGetValue(registrationKey, out HashSet<TagHelperDescriptor> descriptorSet))
+            if (!_registrations.TryGetValue(registrationKey, out var descriptorSet))
             {
-                descriptorSet = new HashSet<TagHelperDescriptor>();
+                descriptorSet = [];
                 _registrations[registrationKey] = descriptorSet;
             }
 
-            _ = descriptorSet.Add(descriptor);
+            descriptorSet.Add(descriptor);
         }
     }
 }

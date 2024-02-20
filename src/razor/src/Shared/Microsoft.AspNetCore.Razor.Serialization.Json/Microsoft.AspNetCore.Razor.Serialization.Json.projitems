@@ -22,7 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)WellKnownPropertyNames.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Internal\SR.resx">
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Internal\Strings.resx">
       <GenerateSource>true</GenerateSource>
       <ClassName>Microsoft.AspNetCore.Razor.Serialization.Json.Internal.SR</ClassName>
     </EmbeddedResource>
