@@ -6,11 +6,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Serialization.Json.Internal;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using static Microsoft.AspNetCore.Razor.Language.RequiredAttributeDescriptor;
+using SR = Microsoft.AspNetCore.Razor.Serialization.Json.Internal.SR;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.Json;
 

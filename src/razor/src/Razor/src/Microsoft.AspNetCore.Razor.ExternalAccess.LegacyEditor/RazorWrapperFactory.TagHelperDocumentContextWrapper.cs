@@ -12,7 +12,7 @@ internal static partial class RazorWrapperFactory
     {
         private ImmutableArray<IRazorTagHelperDescriptor> _tagHelpers;
 
-        public string Prefix => Object.Prefix;
+        public string? Prefix => Object.Prefix;
 
         public ImmutableArray<IRazorTagHelperDescriptor> TagHelpers
             => InitializeArrayWithWrappedItems(ref _tagHelpers, Object.TagHelpers, Wrap);

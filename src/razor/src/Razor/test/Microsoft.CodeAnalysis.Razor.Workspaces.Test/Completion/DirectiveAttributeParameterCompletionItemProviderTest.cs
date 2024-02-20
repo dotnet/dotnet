@@ -4,7 +4,6 @@
 #nullable disable
 
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
@@ -92,7 +91,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolin
     public void GetAttributeParameterCompletions_NoDescriptorsForTag_ReturnsEmptyCollection()
     {
         // Arrange
-        var documentContext = TagHelperDocumentContext.Create(string.Empty, Enumerable.Empty<TagHelperDescriptor>());
+        var documentContext = TagHelperDocumentContext.Create(string.Empty, tagHelpers: []);
 
         // Act
         var completions = _provider.GetAttributeParameterCompletions("@bin", string.Empty, "foobarbaz", _emptyAttributes, documentContext);
@@ -108,7 +107,7 @@ public class DirectiveAttributeParameterCompletionItemProviderTest : RazorToolin
         var descriptor = TagHelperDescriptorBuilder.Create("CatchAll", "TestAssembly");
         descriptor.BoundAttributeDescriptor(boundAttribute => boundAttribute.Name = "Test");
         descriptor.TagMatchingRule(rule => rule.RequireTagName("*"));
-        var documentContext = TagHelperDocumentContext.Create(string.Empty, new[] { descriptor.Build() });
+        var documentContext = TagHelperDocumentContext.Create(string.Empty, [descriptor.Build()]);
 
         // Act
         var completions = _provider.GetAttributeParameterCompletions("@bin", string.Empty, "input", _emptyAttributes, documentContext);

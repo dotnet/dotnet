@@ -35,6 +35,8 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
 
         var parserOptions = codeDocument.GetParserOptions();
 
+        using var _ = HashSetPool<TagHelperDescriptor>.GetPooledObject(out var matches);
+
         // We need to find directives in all of the *imports* as well as in the main razor file
         //
         // The imports come logically before the main razor file and are in the order they
@@ -44,11 +46,11 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
             (parserOptions == null || parserOptions.FeatureFlags.AllowComponentFileKind))
         {
             codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var currentNamespace);
-            visitor = new ComponentDirectiveVisitor(codeDocument.Source.FilePath, descriptors, currentNamespace);
+            visitor = new ComponentDirectiveVisitor(codeDocument.Source.FilePath, descriptors, currentNamespace, matches);
         }
         else
         {
-            visitor = new TagHelperDirectiveVisitor(descriptors);
+            visitor = new TagHelperDirectiveVisitor(descriptors, matches);
         }
 
         if (codeDocument.GetImportSyntaxTrees() is { IsDefault: false } imports)
@@ -64,9 +66,7 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
         // This will always be null for a component document.
         var tagHelperPrefix = visitor.TagHelperPrefix;
 
-        descriptors = visitor.Matches.ToArray();
-
-        var context = TagHelperDocumentContext.Create(tagHelperPrefix, descriptors);
+        var context = TagHelperDocumentContext.Create(tagHelperPrefix, matches.ToImmutableArray());
         codeDocument.SetTagHelperContext(context);
         codeDocument.SetPreTagHelperSyntaxTree(syntaxTree);
     }
@@ -106,9 +106,9 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
         return span;
     }
 
-    internal abstract class DirectiveVisitor : SyntaxWalker
+    internal abstract class DirectiveVisitor(HashSet<TagHelperDescriptor> matches) : SyntaxWalker
     {
-        public abstract HashSet<TagHelperDescriptor> Matches { get; }
+        protected readonly HashSet<TagHelperDescriptor> Matches = matches;
 
         public abstract string TagHelperPrefix { get; }
 
@@ -120,10 +120,12 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
         private readonly List<TagHelperDescriptor> _tagHelpers;
         private string _tagHelperPrefix;
 
-        public TagHelperDirectiveVisitor(IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        public TagHelperDirectiveVisitor(IReadOnlyList<TagHelperDescriptor> tagHelpers, HashSet<TagHelperDescriptor> matches)
+            : base(matches)
         {
             // We don't want to consider components in a view document.
             _tagHelpers = new();
+
             for (var i = 0; i < tagHelpers.Count; i++)
             {
                 var tagHelper = tagHelpers[i];
@@ -135,8 +137,6 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
         }
 
         public override string TagHelperPrefix => _tagHelperPrefix;
-
-        public override HashSet<TagHelperDescriptor> Matches { get; } = new HashSet<TagHelperDescriptor>();
 
         public override void Visit(RazorSyntaxTree tree)
         {
@@ -157,6 +157,7 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
                 {
                     case null:
                         continue;
+
                     case AddTagHelperChunkGenerator addTagHelper:
                         if (addTagHelper.AssemblyName == null)
                         {
@@ -170,15 +171,16 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
                             continue;
                         }
 
-                        for (var i = 0; i < _tagHelpers.Count; i++)
+                        foreach (var tagHelper in _tagHelpers)
                         {
-                            var tagHelper = _tagHelpers[i];
                             if (MatchesDirective(tagHelper, addTagHelper.TypePattern, addTagHelper.AssemblyName))
                             {
                                 Matches.Add(tagHelper);
                             }
                         }
+
                         break;
+
                     case RemoveTagHelperChunkGenerator removeTagHelper:
                         if (removeTagHelper.AssemblyName == null)
                         {
@@ -193,31 +195,33 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
                             continue;
                         }
 
-                        for (var i = 0; i < _tagHelpers.Count; i++)
+                        foreach (var tagHelper in _tagHelpers)
                         {
-                            var tagHelper = _tagHelpers[i];
                             if (MatchesDirective(tagHelper, removeTagHelper.TypePattern, removeTagHelper.AssemblyName))
                             {
                                 Matches.Remove(tagHelper);
                             }
                         }
+
                         break;
+
                     case TagHelperPrefixDirectiveChunkGenerator tagHelperPrefix:
                         if (!string.IsNullOrEmpty(tagHelperPrefix.DirectiveText))
                         {
                             // We only expect to see a single one of these per file, but that's enforced at another level.
                             _tagHelperPrefix = tagHelperPrefix.DirectiveText;
                         }
+
                         break;
                 }
             }
         }
 
-        private bool AssemblyContainsTagHelpers(string assemblyName, IReadOnlyList<TagHelperDescriptor> tagHelpers)
+        private static bool AssemblyContainsTagHelpers(string assemblyName, List<TagHelperDescriptor> tagHelpers)
         {
-            for (var i = 0; i < tagHelpers.Count; i++)
+            foreach (var tagHelper in tagHelpers)
             {
-                if (string.Equals(tagHelpers[i].AssemblyName, assemblyName, StringComparison.Ordinal))
+                if (tagHelper.AssemblyName == assemblyName)
                 {
                     return true;
                 }
@@ -233,7 +237,8 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
         private readonly string _filePath;
         private RazorSourceDocument _source;
 
-        public ComponentDirectiveVisitor(string filePath, IReadOnlyList<TagHelperDescriptor> tagHelpers, string currentNamespace)
+        public ComponentDirectiveVisitor(string filePath, IReadOnlyList<TagHelperDescriptor> tagHelpers, string currentNamespace, HashSet<TagHelperDescriptor> matches)
+            : base(matches)
         {
             _filePath = filePath;
 
@@ -280,8 +285,6 @@ internal sealed class DefaultRazorTagHelperContextDiscoveryPhase : RazorEnginePh
 
             _notFullyQualifiedComponents = builder.DrainToImmutable();
         }
-
-        public override HashSet<TagHelperDescriptor> Matches { get; } = new HashSet<TagHelperDescriptor>();
 
         // There is no support for tag helper prefix in component documents.
         public override string TagHelperPrefix => null;

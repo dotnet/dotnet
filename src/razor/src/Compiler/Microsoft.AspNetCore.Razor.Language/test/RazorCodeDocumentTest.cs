@@ -9,40 +9,6 @@ namespace Microsoft.AspNetCore.Razor.Language;
 public class RazorCodeDocumentTest
 {
     [Fact]
-    public void Ctor()
-    {
-        // Arrange
-        var source = TestRazorSourceDocument.Create();
-
-        var imports = ImmutableArray.Create(
-            TestRazorSourceDocument.Create());
-
-        // Act
-        var code = new RazorCodeDocument(source, imports);
-
-        // Assert
-        Assert.Same(source, code.Source);
-        Assert.NotNull(code.Items);
-
-        Assert.Collection(imports, d => Assert.Same(imports[0], d));
-    }
-
-    [Fact]
-    public void Ctor_AllowsDefaultForImports()
-    {
-        // Arrange
-        var source = TestRazorSourceDocument.Create();
-
-        // Act
-        var code = new RazorCodeDocument(source, imports: default);
-
-        // Assert
-        Assert.Same(source, code.Source);
-        Assert.NotNull(code.Items);
-        Assert.Empty(code.Imports);
-    }
-
-    [Fact]
     public void Create()
     {
         // Arrange

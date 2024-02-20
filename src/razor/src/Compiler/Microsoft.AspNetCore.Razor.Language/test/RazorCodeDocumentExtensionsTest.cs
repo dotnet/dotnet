@@ -144,7 +144,7 @@ public class RazorCodeDocumentExtensionsTest
         // Arrange
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
 
-        var expected = TagHelperDocumentContext.Create(null, new TagHelperDescriptor[0]);
+        var expected = TagHelperDocumentContext.Create(prefix: null, tagHelpers: []);
         codeDocument.Items[typeof(TagHelperDocumentContext)] = expected;
 
         // Act
@@ -160,7 +160,7 @@ public class RazorCodeDocumentExtensionsTest
         // Arrange
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
 
-        var expected = TagHelperDocumentContext.Create(null, new TagHelperDescriptor[0]);
+        var expected = TagHelperDocumentContext.Create(prefix: null, tagHelpers: []);
 
         // Act
         codeDocument.SetTagHelperContext(expected);

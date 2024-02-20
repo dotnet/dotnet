@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Xunit;
@@ -14,8 +15,8 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
 {
-    public static TagHelperDescriptor[] SymbolBoundAttributes_Descriptors = new[]
-    {
+    public static ImmutableArray<TagHelperDescriptor> SymbolBoundAttributes_Descriptors =
+    [
         TagHelperDescriptorBuilder.Create("CatchAllTagHelper", "SomeAssembly")
             .TagMatchingRuleDescriptor(rule =>
                 rule
@@ -52,7 +53,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
                 .Metadata(PropertyName("StringProperty2"))
                 .TypeName(typeof(string).FullName))
             .Build()
-    };
+    ];
 
     [Fact]
     public void CanHandleSymbolBoundAttributes1()
@@ -96,15 +97,15 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         EvaluateData(SymbolBoundAttributes_Descriptors, "<div bound #local='value'></div>");
     }
 
-    public static TagHelperDescriptor[] WithoutEndTag_Descriptors = new TagHelperDescriptor[]
-    {
+    public static ImmutableArray<TagHelperDescriptor> WithoutEndTag_Descriptors =
+    [
         TagHelperDescriptorBuilder.Create("InputTagHelper", "SomeAssembly")
             .TagMatchingRuleDescriptor(rule =>
                 rule
                 .RequireTagName("input")
                 .RequireTagStructure(TagStructure.WithoutEndTag))
             .Build()
-    };
+    ];
 
     [Fact]
     public void CanHandleWithoutEndTagTagStructure1()
@@ -136,25 +137,23 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         EvaluateData(WithoutEndTag_Descriptors, "<div><input><input></div>");
     }
 
-    public static TagHelperDescriptor[] GetTagStructureCompatibilityDescriptors(TagStructure structure1, TagStructure structure2)
+    public static ImmutableArray<TagHelperDescriptor> GetTagStructureCompatibilityDescriptors(TagStructure structure1, TagStructure structure2)
     {
-        var descriptors = new TagHelperDescriptor[]
-        {
-                TagHelperDescriptorBuilder.Create("InputTagHelper1", "SomeAssembly")
-                    .TagMatchingRuleDescriptor(rule =>
-                        rule
-                        .RequireTagName("input")
-                        .RequireTagStructure(structure1))
-                    .Build(),
-                TagHelperDescriptorBuilder.Create("InputTagHelper2", "SomeAssembly")
-                    .TagMatchingRuleDescriptor(rule =>
-                        rule
-                        .RequireTagName("input")
-                        .RequireTagStructure(structure2))
-                    .Build()
-        };
-
-        return descriptors;
+        return
+        [
+            TagHelperDescriptorBuilder.Create("InputTagHelper1", "SomeAssembly")
+                .TagMatchingRuleDescriptor(rule =>
+                    rule
+                    .RequireTagName("input")
+                    .RequireTagStructure(structure1))
+                .Build(),
+            TagHelperDescriptorBuilder.Create("InputTagHelper2", "SomeAssembly")
+                .TagMatchingRuleDescriptor(rule =>
+                    rule
+                    .RequireTagName("input")
+                    .RequireTagStructure(structure2))
+                .Build()
+        ];
     }
 
     [Fact]
@@ -241,22 +240,22 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
     public void AllowsCompatibleTagStructures_DirectiveAttribute_SelfClosing()
     {
         // Arrange
-        var descriptors = new TagHelperDescriptor[]
-        {
-                TagHelperDescriptorBuilder.Create("InputTagHelper1", "SomeAssembly")
-                    .TagMatchingRuleDescriptor(rule =>
-                    {
-                        rule
-                            .RequireTagName("*")
-                            .RequireAttributeDescriptor(b =>
-                            {
-                                b.Name = "@onclick";
-                                b.SetMetadata(Attributes.IsDirectiveAttribute);
-                            });
-                    })
-                    .Metadata(SpecialKind(ComponentMetadata.EventHandler.TagHelperKind))
-                    .Build(),
-        };
+        ImmutableArray<TagHelperDescriptor> descriptors =
+        [
+            TagHelperDescriptorBuilder.Create("InputTagHelper1", "SomeAssembly")
+                .TagMatchingRuleDescriptor(rule =>
+                {
+                    rule
+                        .RequireTagName("*")
+                        .RequireAttributeDescriptor(b =>
+                        {
+                            b.Name = "@onclick";
+                            b.SetMetadata(Attributes.IsDirectiveAttribute);
+                        });
+                })
+                .Metadata(SpecialKind(ComponentMetadata.EventHandler.TagHelperKind))
+                .Build(),
+        ];
 
         // Act & Assert
         EvaluateData(descriptors, "<input @onclick=\"@test\"/>");
@@ -266,23 +265,23 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
     public void AllowsCompatibleTagStructures_DirectiveAttribute_Void()
     {
         // Arrange
-        var descriptors = new TagHelperDescriptor[]
-        {
-                TagHelperDescriptorBuilder.Create("InputTagHelper1", "SomeAssembly")
-                    .TagMatchingRuleDescriptor(rule =>
-                    {
-                        rule
-                            .RequireTagName("*")
-                            .RequireAttributeDescriptor(b =>
-                            {
-                                b.Name = "@onclick";
-                                b.SetMetadata(Attributes.IsDirectiveAttribute);
-                            });
+        ImmutableArray<TagHelperDescriptor> descriptors =
+        [
+            TagHelperDescriptorBuilder.Create("InputTagHelper1", "SomeAssembly")
+                .TagMatchingRuleDescriptor(rule =>
+                {
+                    rule
+                        .RequireTagName("*")
+                        .RequireAttributeDescriptor(b =>
+                        {
+                            b.Name = "@onclick";
+                            b.SetMetadata(Attributes.IsDirectiveAttribute);
+                        });
 
-                    })
-                    .Metadata(SpecialKind(ComponentMetadata.EventHandler.TagHelperKind))
-                    .Build(),
-        };
+                })
+                .Metadata(SpecialKind(ComponentMetadata.EventHandler.TagHelperKind))
+                .Build(),
+        ];
 
         // Act & Assert
         EvaluateData(descriptors, "<input @onclick=\"@test\">");
@@ -456,8 +455,8 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         RunParseTreeRewriterTest("<str<strong></p></strong>", "strong", "p");
     }
 
-    public static TagHelperDescriptor[] CodeTagHelperAttributes_Descriptors = new TagHelperDescriptor[]
-    {
+    public static ImmutableArray<TagHelperDescriptor> CodeTagHelperAttributes_Descriptors =
+    [
         TagHelperDescriptorBuilder.Create("PersonTagHelper", "personAssembly")
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("person"))
             .BoundAttributeDescriptor(attribute =>
@@ -476,7 +475,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
                 .Metadata(PropertyName("Name"))
                 .TypeName(typeof(string).FullName))
             .Build()
-    };
+    ];
 
     [Fact]
     public void UnderstandsMultipartNonStringTagHelperAttributes()
@@ -868,8 +867,8 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         RunParseTreeRewriterTest("<p class1=''class2=\"\"class3= />", "p");
     }
 
-    public static TagHelperDescriptor[] EmptyTagHelperBoundAttribute_Descriptors = new TagHelperDescriptor[]
-    {
+    public static ImmutableArray<TagHelperDescriptor> EmptyTagHelperBoundAttribute_Descriptors =
+    [
         TagHelperDescriptorBuilder.Create("mythTagHelper", "SomeAssembly")
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("myth"))
             .BoundAttributeDescriptor(attribute =>
@@ -883,7 +882,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
                 .Metadata(PropertyName("Name"))
                 .TypeName(typeof(string).FullName))
             .Build()
-    };
+    ];
 
     [Fact]
     public void CreatesErrorForEmptyTagHelperBoundAttributes1()
@@ -1282,8 +1281,8 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
         RunParseTreeRewriterTest(document, "input");
     }
 
-    public static TagHelperDescriptor[] MinimizedAttribute_Descriptors = new TagHelperDescriptor[]
-    {
+    public static ImmutableArray<TagHelperDescriptor> MinimizedAttribute_Descriptors =
+    [
         TagHelperDescriptorBuilder.Create("InputTagHelper1", "SomeAssembly")
             .TagMatchingRuleDescriptor(rule =>
                 rule
@@ -1338,7 +1337,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
                 .Metadata(PropertyName("BoundRequiredString"))
                 .TypeName(typeof(int).FullName))
             .Build(),
-    };
+    ];
 
     [Fact]
     public void UnderstandsMinimizedAttributes_Document1()
@@ -2160,25 +2159,25 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
     {
         // Arrange
         var document = "<input boundbool boundbooldict-key />";
-        var descriptors = new TagHelperDescriptor[]
-        {
-                TagHelperDescriptorBuilder.Create("InputTagHelper", "SomeAssembly")
-                    .TagMatchingRuleDescriptor(rule =>
-                        rule
-                        .RequireTagName("input"))
-                    .BoundAttributeDescriptor(attribute =>
-                        attribute
-                        .Name("boundbool")
-                        .Metadata(PropertyName("BoundBoolProp"))
-                        .TypeName(typeof(bool).FullName))
-                    .BoundAttributeDescriptor(attribute =>
-                        attribute
-                        .Name("boundbooldict")
-                        .Metadata(PropertyName("BoundBoolDictProp"))
-                        .TypeName("System.Collections.Generic.IDictionary<string, bool>")
-                        .AsDictionary("boundbooldict-", typeof(bool).FullName))
-                    .Build(),
-        };
+        ImmutableArray<TagHelperDescriptor> descriptors =
+        [
+            TagHelperDescriptorBuilder.Create("InputTagHelper", "SomeAssembly")
+                .TagMatchingRuleDescriptor(rule =>
+                    rule
+                    .RequireTagName("input"))
+                .BoundAttributeDescriptor(attribute =>
+                    attribute
+                    .Name("boundbool")
+                    .Metadata(PropertyName("BoundBoolProp"))
+                    .TypeName(typeof(bool).FullName))
+                .BoundAttributeDescriptor(attribute =>
+                    attribute
+                    .Name("boundbooldict")
+                    .Metadata(PropertyName("BoundBoolDictProp"))
+                    .TypeName("System.Collections.Generic.IDictionary<string, bool>")
+                    .AsDictionary("boundbooldict-", typeof(bool).FullName))
+                .Build(),
+        ];
 
         // Act & Assert
         EvaluateData(descriptors, document);
@@ -2189,25 +2188,25 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
     {
         // Arrange
         var document = "<input boundbool boundbooldict-key />";
-        var descriptors = new TagHelperDescriptor[]
-        {
-                TagHelperDescriptorBuilder.Create("InputTagHelper", "SomeAssembly")
-                    .TagMatchingRuleDescriptor(rule =>
-                        rule
-                        .RequireTagName("input"))
-                    .BoundAttributeDescriptor(attribute =>
-                        attribute
-                        .Name("boundbool")
-                        .Metadata(PropertyName("BoundBoolProp"))
-                        .TypeName(typeof(bool).FullName))
-                    .BoundAttributeDescriptor(attribute =>
-                        attribute
-                        .Name("boundbooldict")
-                        .Metadata(PropertyName("BoundBoolDictProp"))
-                        .TypeName("System.Collections.Generic.IDictionary<string, bool>")
-                        .AsDictionary("boundbooldict-", typeof(bool).FullName))
-                    .Build(),
-        };
+        ImmutableArray<TagHelperDescriptor> descriptors =
+        [
+            TagHelperDescriptorBuilder.Create("InputTagHelper", "SomeAssembly")
+                .TagMatchingRuleDescriptor(rule =>
+                    rule
+                    .RequireTagName("input"))
+                .BoundAttributeDescriptor(attribute =>
+                    attribute
+                    .Name("boundbool")
+                    .Metadata(PropertyName("BoundBoolProp"))
+                    .TypeName(typeof(bool).FullName))
+                .BoundAttributeDescriptor(attribute =>
+                    attribute
+                    .Name("boundbooldict")
+                    .Metadata(PropertyName("BoundBoolDictProp"))
+                    .TypeName("System.Collections.Generic.IDictionary<string, bool>")
+                    .AsDictionary("boundbooldict-", typeof(bool).FullName))
+                .Build(),
+        ];
 
         var featureFlags = CreateFeatureFlags();
 
@@ -2220,8 +2219,8 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
     {
         // Arrange
         var document = @"<input @bind-value=""Message"" @bind-value:event=""onchange"" />";
-        var descriptors = new TagHelperDescriptor[]
-        {
+        ImmutableArray<TagHelperDescriptor> descriptors =
+        [
             TagHelperDescriptorBuilder.Create(ComponentMetadata.Bind.TagHelperKind, "Bind", ComponentsApi.AssemblyName)
                 .Metadata(
                     SpecialKind(ComponentMetadata.Bind.TagHelperKind),
@@ -2251,7 +2250,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
                         p.SetMetadata(PropertyName("Event"));
                     }))
                 .Build(),
-        };
+        ];
 
         var featureFlags = CreateFeatureFlags(allowCSharpInMarkupAttributeArea: false);
 
@@ -2264,8 +2263,8 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
     {
         // Arrange
         var document = @"<input @bind-foo @bind-foo:param />";
-        var descriptors = new TagHelperDescriptor[]
-        {
+        ImmutableArray<TagHelperDescriptor> descriptors =
+        [
             TagHelperDescriptorBuilder.Create(ComponentMetadata.Bind.TagHelperKind, "Bind", ComponentsApi.AssemblyName)
                 .Metadata(
                     SpecialKind(ComponentMetadata.Bind.TagHelperKind),
@@ -2296,7 +2295,7 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
                         p.SetMetadata(PropertyName("Param"));
                     }))
                 .Build(),
-        };
+        ];
 
         var featureFlags = CreateFeatureFlags(allowCSharpInMarkupAttributeArea: false);
 
@@ -2305,21 +2304,21 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
     }
 
     private static RazorParserFeatureFlags CreateFeatureFlags(
-            bool allowMinimizedBooleanTagHelperAttributes = false,
-            bool allowHtmlCommentsInTagHelper = false,
-            bool allowComponentFileKind = false,
-            bool allowRazorInCodeBlockDirectives = false,
-            bool allowUsingVariableDeclarations = false,
-            bool allowConditionalDataDashAttributesInComponents = false,
-            bool allowCSharpInMarkupAttributeArea = true,
-            bool allowNullableForgivenessOperator = false)
-            => new(
-                allowMinimizedBooleanTagHelperAttributes,
-                allowHtmlCommentsInTagHelper,
-                allowComponentFileKind,
-                allowRazorInCodeBlockDirectives,
-                allowUsingVariableDeclarations,
-                allowConditionalDataDashAttributesInComponents,
-                allowCSharpInMarkupAttributeArea,
-                allowNullableForgivenessOperator);
+        bool allowMinimizedBooleanTagHelperAttributes = false,
+        bool allowHtmlCommentsInTagHelper = false,
+        bool allowComponentFileKind = false,
+        bool allowRazorInCodeBlockDirectives = false,
+        bool allowUsingVariableDeclarations = false,
+        bool allowConditionalDataDashAttributesInComponents = false,
+        bool allowCSharpInMarkupAttributeArea = true,
+        bool allowNullableForgivenessOperator = false)
+        => new(
+            allowMinimizedBooleanTagHelperAttributes,
+            allowHtmlCommentsInTagHelper,
+            allowComponentFileKind,
+            allowRazorInCodeBlockDirectives,
+            allowUsingVariableDeclarations,
+            allowConditionalDataDashAttributesInComponents,
+            allowCSharpInMarkupAttributeArea,
+            allowNullableForgivenessOperator);
 }

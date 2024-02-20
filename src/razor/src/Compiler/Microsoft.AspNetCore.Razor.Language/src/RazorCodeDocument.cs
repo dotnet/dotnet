@@ -8,17 +8,12 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 public sealed class RazorCodeDocument
 {
+    public RazorSourceDocument Source { get; }
     public ImmutableArray<RazorSourceDocument> Imports { get; }
     public ItemCollection Items { get; }
-    public RazorSourceDocument Source { get; }
 
-    internal RazorCodeDocument(RazorSourceDocument source, ImmutableArray<RazorSourceDocument> imports)
+    private RazorCodeDocument(RazorSourceDocument source, ImmutableArray<RazorSourceDocument> imports)
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
         Source = source;
         Imports = imports.NullToEmpty();
 

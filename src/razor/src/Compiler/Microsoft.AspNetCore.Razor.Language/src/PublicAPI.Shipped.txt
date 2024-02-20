@@ -66,8 +66,6 @@
 ~abstract Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree.Source.get -> Microsoft.AspNetCore.Razor.Language.RazorSourceDocument
 ~abstract Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorProviderContext.Items.get -> Microsoft.AspNetCore.Razor.Language.ItemCollection
 ~abstract Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorProviderContext.Results.get -> System.Collections.Generic.ICollection<Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor>
-~abstract Microsoft.AspNetCore.Razor.Language.TagHelperDocumentContext.Prefix.get -> string
-~abstract Microsoft.AspNetCore.Razor.Language.TagHelperDocumentContext.TagHelpers.get -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor>
 ~Microsoft.AspNetCore.Razor.Language.AssemblyExtension.Assembly.get -> System.Reflection.Assembly
 ~Microsoft.AspNetCore.Razor.Language.AssemblyExtension.AssemblyExtension(string extensionName, System.Reflection.Assembly assembly) -> void
 ~Microsoft.AspNetCore.Razor.Language.CodeGeneration.LinePragma.FilePath.get -> string
@@ -406,13 +404,6 @@
 ~Microsoft.AspNetCore.Razor.Language.SourceSpan.FilePath.get -> string
 ~Microsoft.AspNetCore.Razor.Language.SourceSpan.SourceSpan(string filePath, int absoluteIndex, int lineIndex, int characterIndex, int length) -> void
 ~Microsoft.AspNetCore.Razor.Language.SourceSpan.SourceSpan(string filePath, int absoluteIndex, int lineIndex, int characterIndex, int length, int lineCount, int endCharacterIndex) -> void
-~Microsoft.AspNetCore.Razor.Language.TagHelperBinding.Attributes.get -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string, string>>
-~Microsoft.AspNetCore.Razor.Language.TagHelperBinding.Descriptors.get -> System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor>
-~Microsoft.AspNetCore.Razor.Language.TagHelperBinding.GetBoundRules(Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor descriptor) -> System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.TagMatchingRuleDescriptor>
-~Microsoft.AspNetCore.Razor.Language.TagHelperBinding.Mappings.get -> System.Collections.Generic.IReadOnlyDictionary<Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor, System.Collections.Generic.IReadOnlyList<Microsoft.AspNetCore.Razor.Language.TagMatchingRuleDescriptor>>
-~Microsoft.AspNetCore.Razor.Language.TagHelperBinding.ParentTagName.get -> string
-~Microsoft.AspNetCore.Razor.Language.TagHelperBinding.TagHelperPrefix.get -> string
-~Microsoft.AspNetCore.Razor.Language.TagHelperBinding.TagName.get -> string
 ~override Microsoft.AspNetCore.Razor.Language.AssemblyExtension.ExtensionName.get -> string
 ~override Microsoft.AspNetCore.Razor.Language.CodeGeneration.DesignTimeNodeWriter.BeginWriterScope(Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeRenderingContext context, string writer) -> void
 ~override Microsoft.AspNetCore.Razor.Language.CodeGeneration.DesignTimeNodeWriter.EndWriterScope(Microsoft.AspNetCore.Razor.Language.CodeGeneration.CodeRenderingContext context) -> void
@@ -649,7 +640,6 @@
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetFileKind(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> string
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetParserOptions(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> Microsoft.AspNetCore.Razor.Language.RazorParserOptions
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetSyntaxTree(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree
-~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.GetTagHelperContext(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document) -> Microsoft.AspNetCore.Razor.Language.TagHelperDocumentContext
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetCodeGenerationOptions(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions codeGenerationOptions) -> void
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetCSharpDocument(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, Microsoft.AspNetCore.Razor.Language.RazorCSharpDocument csharp) -> void
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetCssScope(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, string cssScope) -> void
@@ -657,7 +647,6 @@
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetFileKind(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, string fileKind) -> void
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetParserOptions(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, Microsoft.AspNetCore.Razor.Language.RazorParserOptions parserOptions) -> void
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetSyntaxTree(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, Microsoft.AspNetCore.Razor.Language.RazorSyntaxTree syntaxTree) -> void
-~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.SetTagHelperContext(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, Microsoft.AspNetCore.Razor.Language.TagHelperDocumentContext context) -> void
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeDocumentExtensions.TryComputeNamespace(this Microsoft.AspNetCore.Razor.Language.RazorCodeDocument document, bool fallbackToRootNamespace, out string namespace) -> bool
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions.Create(System.Action<Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptionsBuilder> configure) -> Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions
 ~static Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions.CreateDefault() -> Microsoft.AspNetCore.Razor.Language.RazorCodeGenerationOptions
@@ -692,7 +681,6 @@
 ~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorExtensions.KindUsesDefaultTagHelperRuntime(this Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor tagHelper) -> bool
 ~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorProviderContext.Create() -> Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorProviderContext
 ~static Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorProviderContext.Create(System.Collections.Generic.ICollection<Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor> results) -> Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorProviderContext
-~static Microsoft.AspNetCore.Razor.Language.TagHelperDocumentContext.Create(string prefix, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Razor.Language.TagHelperDescriptor> tagHelpers) -> Microsoft.AspNetCore.Razor.Language.TagHelperDocumentContext
 ~static readonly Microsoft.AspNetCore.Razor.Language.Components.ComponentCodeDirective.Directive -> Microsoft.AspNetCore.Razor.Language.DirectiveDescriptor
 ~static readonly Microsoft.AspNetCore.Razor.Language.Extensions.FunctionsDirective.Directive -> Microsoft.AspNetCore.Razor.Language.DirectiveDescriptor
 ~static readonly Microsoft.AspNetCore.Razor.Language.Extensions.InheritsDirective.Directive -> Microsoft.AspNetCore.Razor.Language.DirectiveDescriptor
@@ -1187,15 +1175,11 @@ Microsoft.AspNetCore.Razor.Language.SourceSpan.LineIndex.get -> int
 Microsoft.AspNetCore.Razor.Language.SourceSpan.SourceSpan(int absoluteIndex, int length) -> void
 Microsoft.AspNetCore.Razor.Language.SourceSpan.SourceSpan(int absoluteIndex, int lineIndex, int characterIndex, int length) -> void
 Microsoft.AspNetCore.Razor.Language.SourceSpan.SourceSpan(Microsoft.AspNetCore.Razor.Language.SourceLocation location, int contentLength) -> void
-Microsoft.AspNetCore.Razor.Language.TagHelperBinding
-Microsoft.AspNetCore.Razor.Language.TagHelperBinding.IsAttributeMatch.get -> bool
 Microsoft.AspNetCore.Razor.Language.TagHelperConventions
 Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorBuilderExtensions
 Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorExtensions
 Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorProviderContext
 Microsoft.AspNetCore.Razor.Language.TagHelperDescriptorProviderContext.TagHelperDescriptorProviderContext() -> void
-Microsoft.AspNetCore.Razor.Language.TagHelperDocumentContext
-Microsoft.AspNetCore.Razor.Language.TagHelperDocumentContext.TagHelperDocumentContext() -> void
 Microsoft.AspNetCore.Razor.Language.TagHelperMetadata
 Microsoft.AspNetCore.Razor.Language.TagHelperMetadata.Common
 Microsoft.AspNetCore.Razor.Language.TagHelperMetadata.Runtime

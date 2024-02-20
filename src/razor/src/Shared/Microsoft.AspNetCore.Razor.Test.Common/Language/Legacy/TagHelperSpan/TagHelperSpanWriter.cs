@@ -1,22 +1,14 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.IO;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-internal class TagHelperSpanWriter
+internal class TagHelperSpanWriter(TextWriter writer, RazorSyntaxTree syntaxTree)
 {
-    private readonly RazorSyntaxTree _syntaxTree;
-    private readonly TextWriter _writer;
-
-    public TagHelperSpanWriter(TextWriter writer, RazorSyntaxTree syntaxTree)
-    {
-        _writer = writer;
-        _syntaxTree = syntaxTree;
-    }
+    private readonly RazorSyntaxTree _syntaxTree = syntaxTree;
+    private readonly TextWriter _writer = writer;
 
     public virtual void Visit()
     {

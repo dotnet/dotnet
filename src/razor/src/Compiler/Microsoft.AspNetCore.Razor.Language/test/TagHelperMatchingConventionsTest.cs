@@ -152,7 +152,7 @@ public class TagHelperMatchingConventionsTest
         var requiredAttibute = builder.Build();
 
         // Act
-        var result = TagHelperMatchingConventions.SatisfiesRequiredAttribute(attributeName, attributeValue, requiredAttibute);
+        var result = TagHelperMatchingConventions.SatisfiesRequiredAttribute(requiredAttibute, attributeName, attributeValue);
 
         // Assert
         Assert.Equal(expectedResult, result);

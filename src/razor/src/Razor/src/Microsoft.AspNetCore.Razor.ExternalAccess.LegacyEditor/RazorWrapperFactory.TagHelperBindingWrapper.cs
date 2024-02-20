@@ -17,7 +17,7 @@ internal static partial class RazorWrapperFactory
 
         public ImmutableArray<IRazorTagMatchingRuleDescriptor> GetBoundRules(IRazorTagHelperDescriptor descriptor)
         {
-            return WrapAll(Object.GetBoundRules(Unwrap(descriptor)), Wrap);
+            return WrapAll(Object.Mappings[Unwrap(descriptor)], Wrap);
         }
     }
 }

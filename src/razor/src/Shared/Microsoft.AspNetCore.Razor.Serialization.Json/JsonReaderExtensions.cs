@@ -4,8 +4,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Razor.Serialization.Json.Internal;
 using Newtonsoft.Json;
+using SR = Microsoft.AspNetCore.Razor.Serialization.Json.Internal.SR;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.Json;
 

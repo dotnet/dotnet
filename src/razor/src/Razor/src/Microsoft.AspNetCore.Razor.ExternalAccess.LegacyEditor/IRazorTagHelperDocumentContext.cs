@@ -7,6 +7,6 @@ namespace Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor;
 
 internal interface IRazorTagHelperDocumentContext
 {
-    string Prefix { get; }
+    string? Prefix { get; }
     ImmutableArray<IRazorTagHelperDescriptor> TagHelpers { get; }
 }

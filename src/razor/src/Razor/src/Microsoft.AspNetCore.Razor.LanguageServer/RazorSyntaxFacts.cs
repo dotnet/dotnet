@@ -119,7 +119,7 @@ internal static class RazorSyntaxFacts
         if (node is CSharpCodeBlockSyntax block &&
             block.Children.FirstOrDefault() is RazorDirectiveSyntax directive &&
             directive.Body is RazorDirectiveBodySyntax directiveBody &&
-            directiveBody.Keyword.GetContent().Equals("code"))
+            directiveBody.Keyword.GetContent() == "code")
         {
             return directiveBody.CSharpCode;
         }

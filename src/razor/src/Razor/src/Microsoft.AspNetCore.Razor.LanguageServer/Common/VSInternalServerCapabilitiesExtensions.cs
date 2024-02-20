@@ -43,4 +43,9 @@ internal static class VSInternalServerCapabilitiesExtensions
     {
         serverCapabilities.BreakableRangeProvider = true;
     }
+
+    public static void EnableMapCodeProvider(this VSInternalServerCapabilities serverCapabilities)
+    {
+        serverCapabilities.MapCodeProvider = true;
+    }
 }
