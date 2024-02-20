@@ -61,7 +61,6 @@ public class RenameEndpointDelegationTest(ITestOutputHelper testOutput) : Single
 
         var endpoint = new RenameEndpoint(
             Dispatcher,
-            DocumentContextFactory,
             searchEngine,
             projectSnapshotManagerAccessor,
             LanguageServerFeatureOptions,

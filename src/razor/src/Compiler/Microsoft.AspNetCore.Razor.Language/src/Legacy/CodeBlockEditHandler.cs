@@ -81,7 +81,7 @@ internal class CodeBlockEditHandler : SpanEditHandler
     {
         var relativePosition = change.Span.AbsoluteIndex - target.Position;
 
-        if (target.GetContent().IndexOfAny(new[] { '{', '}', '@', '<', '*', }, relativePosition, change.Span.Length) >= 0)
+        if (target.GetContent().IndexOfAny(['{', '}', '@', '<', '*',], relativePosition, change.Span.Length) >= 0)
         {
             return true;
         }

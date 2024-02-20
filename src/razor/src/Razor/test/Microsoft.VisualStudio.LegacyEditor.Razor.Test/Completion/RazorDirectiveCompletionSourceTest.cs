@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -204,7 +203,7 @@ public class RazorDirectiveCompletionSourceTest(ITestOutputHelper testOutput) : 
         var syntaxTree = CreateSyntaxTree(text, directives);
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create(text, RazorSourceDocumentProperties.Default));
         codeDocument.SetSyntaxTree(syntaxTree);
-        codeDocument.SetTagHelperContext(TagHelperDocumentContext.Create(prefix: null, Enumerable.Empty<TagHelperDescriptor>()));
+        codeDocument.SetTagHelperContext(TagHelperDocumentContext.Create(prefix: null, tagHelpers: []));
         var parserMock = new StrictMock<IVisualStudioRazorParser>();
         parserMock
             .Setup(p => p.GetLatestCodeDocumentAsync(It.IsAny<ITextSnapshot>(), It.IsAny<CancellationToken>()))

@@ -10,7 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -260,42 +260,120 @@ internal abstract class GreenNode
     #region Text
     public override string ToString()
     {
-        var builder = new StringBuilder();
-        builder.AppendFormat(CultureInfo.InvariantCulture, "{0}<{1}>", GetType().Name, Kind);
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+        builder.Append(GetType().Name);
+        builder.Append('<');
+        builder.Append(Kind.ToString()); // Use ToString() to avoid boxing the enum.
+        builder.Append('>');
 
         return builder.ToString();
     }
 
     public virtual string ToFullString()
     {
-        var builder = new StringBuilder();
-        var writer = new StringWriter(builder, System.Globalization.CultureInfo.InvariantCulture);
+        using var _ = StringBuilderPool.GetPooledObject(out var builder);
+        using var writer = new StringWriter(builder, CultureInfo.InvariantCulture);
         WriteTo(writer);
         return builder.ToString();
     }
 
     public virtual void WriteTo(TextWriter writer)
     {
-        WriteTo(writer, leading: true, trailing: true);
+        WriteTo(writer, includeLeadingTrivia: true, includeTrailingTrivia: true);
     }
 
-    protected internal void WriteTo(TextWriter writer, bool leading, bool trailing)
+    protected internal void WriteTo(TextWriter writer, bool includeLeadingTrivia, bool includeTrailingTrivia)
     {
         // Use an actual Stack so we can write out deeply recursive structures without overflowing.
-        var stack = new Stack<StackEntry>();
-        stack.Push(new StackEntry(this, leading, trailing));
+        using var stack = new PooledArrayBuilder<StackEntry>();
+
+        stack.Push(new(Node: this, includeLeadingTrivia, includeTrailingTrivia));
 
         // Separated out stack processing logic so that it does not unintentionally refer to
         // "this", "leading" or "trailing.
-        ProcessStack(writer, stack);
+        ProcessStack(writer, ref stack.AsRef());
+
+        static void ProcessStack(TextWriter writer, ref PooledArrayBuilder<StackEntry> stack)
+        {
+            while (stack.Count > 0)
+            {
+                var (node, includeLeadingTrivia, includeTrailingTrivia) = stack.Pop();
+
+                if (node.IsToken)
+                {
+                    node.WriteTokenTo(writer, includeLeadingTrivia, includeTrailingTrivia);
+                    continue;
+                }
+
+                if (node.IsTrivia)
+                {
+                    node.WriteTriviaTo(writer);
+                    continue;
+                }
+
+                var firstIndex = GetFirstNonNullChildIndex(node);
+                var lastIndex = GetLastNonNullChildIndex(node);
+
+                for (var i = lastIndex; i >= firstIndex; i--)
+                {
+                    if (node.GetSlot(i) is GreenNode child)
+                    {
+                        var isFirst = i == firstIndex;
+                        var isLast = i == lastIndex;
+
+                        stack.Push(new(
+                            child,
+                            IncludeLeadingTrivia: includeLeadingTrivia | !isFirst,
+                            IncludeTrailingTrivia: includeTrailingTrivia | !isLast));
+                    }
+                }
+            }
+
+            static int GetFirstNonNullChildIndex(GreenNode node)
+            {
+                var slotCount = node.SlotCount;
+                var firstIndex = 0;
+
+                for (; firstIndex < slotCount; firstIndex++)
+                {
+                    if (node.GetSlot(firstIndex) is not null)
+                    {
+                        break;
+                    }
+                }
+
+                return firstIndex;
+            }
+
+            static int GetLastNonNullChildIndex(GreenNode node)
+            {
+                var slotCount = node.SlotCount;
+                var lastIndex = slotCount - 1;
+
+                for (; lastIndex >= 0; lastIndex--)
+                {
+                    if (node.GetSlot(lastIndex) is not null)
+                    {
+                        break;
+                    }
+                }
+
+                return lastIndex;
+            }
+        }
     }
+
+    private readonly record struct StackEntry(
+        GreenNode Node,
+        bool IncludeLeadingTrivia,
+        bool IncludeTrailingTrivia);
 
     protected virtual void WriteTriviaTo(TextWriter writer)
     {
         throw new NotImplementedException();
     }
 
-    protected virtual void WriteTokenTo(TextWriter writer, bool leading, bool trailing)
+    protected virtual void WriteTokenTo(TextWriter writer, bool includeLeadingTrivia, bool includeTrailingTrivia)
     {
         throw new NotImplementedException();
     }
@@ -495,93 +573,4 @@ internal abstract class GreenNode
     public abstract TResult Accept<TResult>(InternalSyntax.SyntaxVisitor<TResult> visitor);
 
     public abstract void Accept(InternalSyntax.SyntaxVisitor visitor);
-
-    #region StaticMethods
-
-    private static void ProcessStack(TextWriter writer,
-        Stack<StackEntry> stack)
-    {
-        while (stack.Count > 0)
-        {
-            var current = stack.Pop();
-            var currentNode = current.Node;
-            var currentLeading = current.Leading;
-            var currentTrailing = current.Trailing;
-
-            if (currentNode.IsToken)
-            {
-                currentNode.WriteTokenTo(writer, currentLeading, currentTrailing);
-                continue;
-            }
-
-            if (currentNode.IsTrivia)
-            {
-                currentNode.WriteTriviaTo(writer);
-                continue;
-            }
-
-            var firstIndex = GetFirstNonNullChildIndex(currentNode);
-            var lastIndex = GetLastNonNullChildIndex(currentNode);
-
-            for (var i = lastIndex; i >= firstIndex; i--)
-            {
-                var child = currentNode.GetSlot(i);
-                if (child != null)
-                {
-                    var first = i == firstIndex;
-                    var last = i == lastIndex;
-                    stack.Push(new StackEntry(child, currentLeading | !first, currentTrailing | !last));
-                }
-            }
-        }
-    }
-
-    private static int GetFirstNonNullChildIndex(GreenNode node)
-    {
-        int n = node.SlotCount;
-        int firstIndex = 0;
-        for (; firstIndex < n; firstIndex++)
-        {
-            var child = node.GetSlot(firstIndex);
-            if (child != null)
-            {
-                break;
-            }
-        }
-
-        return firstIndex;
-    }
-
-    private static int GetLastNonNullChildIndex(GreenNode node)
-    {
-        int n = node.SlotCount;
-        int lastIndex = n - 1;
-        for (; lastIndex >= 0; lastIndex--)
-        {
-            var child = node.GetSlot(lastIndex);
-            if (child != null)
-            {
-                break;
-            }
-        }
-
-        return lastIndex;
-    }
-
-    private struct StackEntry
-    {
-        public StackEntry(GreenNode node, bool leading, bool trailing)
-        {
-            Node = node;
-            Leading = leading;
-            Trailing = trailing;
-        }
-
-        public GreenNode Node { get; }
-
-        public bool Leading { get; }
-
-        public bool Trailing { get; }
-    }
-    #endregion
 }

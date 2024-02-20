@@ -415,7 +415,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         builder.TagMatchingRule(rule => rule.TagName = "Test");
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
-        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, new[] { tagHelper });
+        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
         var codeDocument = CreateCodeDocument("@in");
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
@@ -458,7 +458,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         builder.TagMatchingRule(rule => rule.TagName = "Test");
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
-        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, new[] { tagHelper });
+        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
         var codeDocument = CreateCodeDocument("@inje");
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
@@ -495,7 +495,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         builder.TagMatchingRule(rule => rule.TagName = "Test");
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
-        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, new[] { tagHelper });
+        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
         var codeDocument = CreateCodeDocument("@inje");
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
@@ -539,7 +539,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         builder.TagMatchingRule(rule => rule.TagName = "Test");
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
-        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, new[] { tagHelper });
+        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
         var codeDocument = CreateCodeDocument("<");
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
@@ -579,7 +579,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         });
         builder.Metadata(TypeName("TestNamespace.TestTagHelper"));
         var tagHelper = builder.Build();
-        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, new[] { tagHelper });
+        var tagHelperContext = TagHelperDocumentContext.Create(prefix: string.Empty, [tagHelper]);
         var codeDocument = CreateCodeDocument("<test  ");
         codeDocument.SetTagHelperContext(tagHelperContext);
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
@@ -609,7 +609,7 @@ public class LegacyRazorCompletionEndpointTest : LanguageServerTestBase
         var sourceDocument = TestRazorSourceDocument.Create(text);
         var syntaxTree = RazorSyntaxTree.Parse(sourceDocument);
         codeDocument.SetSyntaxTree(syntaxTree);
-        var tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: string.Empty, Enumerable.Empty<TagHelperDescriptor>());
+        var tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: string.Empty, tagHelpers: []);
         codeDocument.SetTagHelperContext(tagHelperDocumentContext);
         return codeDocument;
     }

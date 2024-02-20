@@ -40,10 +40,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.Test.MvcShim.Version2_X", "src\Razor\test\Microsoft.AspNetCore.Razor.Test.MvcShim.Version2_X\Microsoft.AspNetCore.Razor.Test.MvcShim.Version2_X.csproj", "{D87E5501-B832-46B6-ACD3-EC989E3D14ED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.VisualStudio.LiveShare.Razor", "src\Razor\src\Microsoft.VisualStudio.LiveShare.Razor\Microsoft.VisualStudio.LiveShare.Razor.csproj", "{20193C6A-8981-447F-99B3-120DD3B06279}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.VisualStudio.LiveShare.Razor.Test", "src\Razor\test\Microsoft.VisualStudio.LiveShare.Razor.Test\Microsoft.VisualStudio.LiveShare.Razor.Test.csproj", "{9A27DD55-E8CD-4C03-A89B-A7348B787660}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.LanguageServer", "src\Razor\src\Microsoft.AspNetCore.Razor.LanguageServer\Microsoft.AspNetCore.Razor.LanguageServer.csproj", "{1D15867E-E50F-4107-92A4-BBC2EE6B088C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.Razor.LanguageServer.Test", "src\Razor\test\Microsoft.AspNetCore.Razor.LanguageServer.Test\Microsoft.AspNetCore.Razor.LanguageServer.Test.csproj", "{FBAE9975-77BE-411B-A1A3-4790C8A367EF}"
@@ -302,22 +298,6 @@ Global
 		{D87E5501-B832-46B6-ACD3-EC989E3D14ED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D87E5501-B832-46B6-ACD3-EC989E3D14ED}.ReleaseNoVSIX|Any CPU.ActiveCfg = Release|Any CPU
 		{D87E5501-B832-46B6-ACD3-EC989E3D14ED}.ReleaseNoVSIX|Any CPU.Build.0 = Release|Any CPU
-		{20193C6A-8981-447F-99B3-120DD3B06279}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{20193C6A-8981-447F-99B3-120DD3B06279}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{20193C6A-8981-447F-99B3-120DD3B06279}.DebugNoVSIX|Any CPU.ActiveCfg = Debug|Any CPU
-		{20193C6A-8981-447F-99B3-120DD3B06279}.DebugNoVSIX|Any CPU.Build.0 = Debug|Any CPU
-		{20193C6A-8981-447F-99B3-120DD3B06279}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{20193C6A-8981-447F-99B3-120DD3B06279}.Release|Any CPU.Build.0 = Release|Any CPU
-		{20193C6A-8981-447F-99B3-120DD3B06279}.ReleaseNoVSIX|Any CPU.ActiveCfg = Debug|Any CPU
-		{20193C6A-8981-447F-99B3-120DD3B06279}.ReleaseNoVSIX|Any CPU.Build.0 = Debug|Any CPU
-		{9A27DD55-E8CD-4C03-A89B-A7348B787660}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9A27DD55-E8CD-4C03-A89B-A7348B787660}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9A27DD55-E8CD-4C03-A89B-A7348B787660}.DebugNoVSIX|Any CPU.ActiveCfg = Debug|Any CPU
-		{9A27DD55-E8CD-4C03-A89B-A7348B787660}.DebugNoVSIX|Any CPU.Build.0 = Debug|Any CPU
-		{9A27DD55-E8CD-4C03-A89B-A7348B787660}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9A27DD55-E8CD-4C03-A89B-A7348B787660}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9A27DD55-E8CD-4C03-A89B-A7348B787660}.ReleaseNoVSIX|Any CPU.ActiveCfg = Debug|Any CPU
-		{9A27DD55-E8CD-4C03-A89B-A7348B787660}.ReleaseNoVSIX|Any CPU.Build.0 = Debug|Any CPU
 		{1D15867E-E50F-4107-92A4-BBC2EE6B088C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1D15867E-E50F-4107-92A4-BBC2EE6B088C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D15867E-E50F-4107-92A4-BBC2EE6B088C}.DebugNoVSIX|Any CPU.ActiveCfg = Debug|Any CPU
@@ -753,8 +733,6 @@ Global
 		{6205467F-E381-4C42-AEEC-763BD62B3D5E} = {C2C98051-0F39-47F2-80B6-E72B29159F2C}
 		{72E89155-86C7-454E-BDD9-39F497F2F61B} = {6B566FE3-31FB-4299-8433-07E09653E811}
 		{D87E5501-B832-46B6-ACD3-EC989E3D14ED} = {6B566FE3-31FB-4299-8433-07E09653E811}
-		{20193C6A-8981-447F-99B3-120DD3B06279} = {3C0D6505-79B3-49D0-B4C3-176F0F1836ED}
-		{9A27DD55-E8CD-4C03-A89B-A7348B787660} = {92463391-81BE-462B-AC3C-78C6C760741F}
 		{1D15867E-E50F-4107-92A4-BBC2EE6B088C} = {3C0D6505-79B3-49D0-B4C3-176F0F1836ED}
 		{FBAE9975-77BE-411B-A1A3-4790C8A367EF} = {92463391-81BE-462B-AC3C-78C6C760741F}
 		{70E70B52-EB70-42D1-B785-8618BD0B950E} = {3C0D6505-79B3-49D0-B4C3-176F0F1836ED}
@@ -822,8 +800,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{078aef36-f319-4ce2-baa2-5b58a6536b46}*SharedItemsImports = 5
-		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{20193c6a-8981-447f-99b3-120dd3b06279}*SharedItemsImports = 5
 		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{6205467f-e381-4c42-aeec-763bd62b3d5e}*SharedItemsImports = 5
 		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{cd6913f3-ec47-4470-9c45-f5f898615e9d}*SharedItemsImports = 13
+		src\Shared\Microsoft.AspNetCore.Razor.Serialization.Json\Microsoft.AspNetCore.Razor.Serialization.Json.projitems*{e5d92db7-5cbf-410a-9685-ff76f71ec96f}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

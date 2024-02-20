@@ -37,13 +37,18 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
 internal sealed class MapCodeEndpoint(
     IRazorDocumentMappingService documentMappingService,
     IDocumentContextFactory documentContextFactory,
-    IClientConnection clientConnection) : IRazorDocumentlessRequestHandler<VSInternalMapCodeParams, WorkspaceEdit?>
+    IClientConnection clientConnection) : IRazorDocumentlessRequestHandler<VSInternalMapCodeParams, WorkspaceEdit?>, ICapabilitiesProvider
 {
     private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
     private readonly IClientConnection _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
 
     public bool MutatesSolutionState => false;
+
+    public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities _)
+    {
+        serverCapabilities.EnableMapCodeProvider();
+    }
 
     public async Task<WorkspaceEdit?> HandleRequestAsync(
         VSInternalMapCodeParams request,

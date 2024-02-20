@@ -57,7 +57,7 @@ internal class Program
             .AddAnalyser(DefaultConfig.Instance.GetAnalysers().ToArray()) // copy default analysers
             .AddExporter(MarkdownExporter.GitHub) // export to GitHub markdown
             .AddColumnProvider(DefaultColumnProviders.Instance) // display default columns (method name, args etc)
-            .AddJob(GetJob(CsProjCoreToolchain.NetCoreApp70)) // tell BDN that these are our default settings
+            .AddJob(GetJob(CsProjCoreToolchain.NetCoreApp80)) // tell BDN that these are our default settings
             .AddJob(GetJob(CsProjClassicNetToolchain.Net472))
             .AddDiagnoser(MemoryDiagnoser.Default)
             .AddExporter(JsonExporter.Full)

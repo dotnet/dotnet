@@ -319,6 +319,13 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
 
         var endpoint = new MapCodeEndpoint(documentMappingService, documentContextFactory, languageServer);
 
+        var capabilitiesProvider = Assert.IsAssignableFrom<ICapabilitiesProvider>(endpoint);
+
+        // Make sure the capabilities are applied
+        var serverCapabilities = new VSInternalServerCapabilities();
+        capabilitiesProvider.ApplyCapabilities(serverCapabilities, new());
+        Assert.True(serverCapabilities.MapCodeProvider);
+
         var sourceText = codeDocument.GetSourceText();
         sourceText.GetLineAndOffset(cursorPosition, out var line, out var offset);
 

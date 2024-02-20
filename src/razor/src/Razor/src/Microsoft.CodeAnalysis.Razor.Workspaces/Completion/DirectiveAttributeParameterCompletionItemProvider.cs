@@ -97,7 +97,7 @@ internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttr
                 {
                     foreach (var parameterDescriptor in boundAttributeParameters)
                     {
-                        if (attributes.Any(name => TagHelperMatchingConventions.SatisfiesBoundAttributeWithParameter(name, attributeDescriptor, parameterDescriptor)))
+                        if (attributes.Any(name => TagHelperMatchingConventions.SatisfiesBoundAttributeWithParameter(parameterDescriptor, name, attributeDescriptor)))
                         {
                             // There's already an existing attribute that satisfies this parameter, don't show it in the completion list.
                             continue;

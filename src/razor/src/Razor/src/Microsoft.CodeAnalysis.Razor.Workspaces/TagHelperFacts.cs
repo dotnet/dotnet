@@ -34,17 +34,14 @@ internal static class TagHelperFacts
             return null;
         }
 
-        var descriptors = documentContext.TagHelpers;
-        if (descriptors is null or { Count: 0 })
+        if (documentContext.TagHelpers.Length == 0)
         {
             return null;
         }
 
-        var prefix = documentContext.Prefix;
-        var tagHelperBinder = new TagHelperBinder(prefix, descriptors);
-        var binding = tagHelperBinder.GetBinding(tagName, attributes, parentTag, parentIsTagHelper);
+        var binder = documentContext.GetBinder();
 
-        return binding;
+        return binder.GetBinding(tagName, attributes, parentTag, parentIsTagHelper);
     }
 
     public static ImmutableArray<BoundAttributeDescriptor> GetBoundTagHelperAttributes(
@@ -101,8 +98,7 @@ internal static class TagHelperFacts
             throw new ArgumentNullException(nameof(tagName));
         }
 
-        var tagHelpers = documentContext?.TagHelpers;
-        if (tagHelpers is not { Count: > 0 })
+        if (documentContext?.TagHelpers is not { Length: > 0 } tagHelpers)
         {
             return ImmutableArray<TagHelperDescriptor>.Empty;
         }
@@ -117,14 +113,13 @@ internal static class TagHelperFacts
         using var matchingDescriptors = new PooledArrayBuilder<TagHelperDescriptor>();
 
         var tagNameWithoutPrefix = tagName.AsSpan()[prefix.Length..];
-        for (var i = 0; i < tagHelpers.Count; i++)
-        {
-            var tagHelper = tagHelpers[i];
 
+        foreach (var tagHelper in tagHelpers)
+        {
             foreach (var rule in tagHelper.TagMatchingRules)
             {
-                if (TagHelperMatchingConventions.SatisfiesTagName(tagNameWithoutPrefix, rule) &&
-                    TagHelperMatchingConventions.SatisfiesParentTag(parentTag.AsSpanOrDefault(), rule))
+                if (TagHelperMatchingConventions.SatisfiesTagName(rule, tagNameWithoutPrefix) &&
+                    TagHelperMatchingConventions.SatisfiesParentTag(rule, parentTag.AsSpanOrDefault()))
                 {
                     matchingDescriptors.Add(tagHelper);
                     break;
@@ -142,21 +137,18 @@ internal static class TagHelperFacts
             throw new ArgumentNullException(nameof(documentContext));
         }
 
-        var tagHelpers = documentContext?.TagHelpers;
-        if (tagHelpers is not { Count: > 0 })
+        if (documentContext?.TagHelpers is not { Length: > 0 } tagHelpers)
         {
             return ImmutableArray<TagHelperDescriptor>.Empty;
         }
 
         using var matchingDescriptors = new PooledArrayBuilder<TagHelperDescriptor>();
 
-        for (var i = 0; i < tagHelpers.Count; i++)
+        foreach (var descriptor in tagHelpers)
         {
-            var descriptor = tagHelpers[i];
-
             foreach (var rule in descriptor.TagMatchingRules)
             {
-                if (TagHelperMatchingConventions.SatisfiesParentTag(parentTag.AsSpanOrDefault(), rule))
+                if (TagHelperMatchingConventions.SatisfiesParentTag(rule, parentTag.AsSpanOrDefault()))
                 {
                     matchingDescriptors.Add(descriptor);
                     break;

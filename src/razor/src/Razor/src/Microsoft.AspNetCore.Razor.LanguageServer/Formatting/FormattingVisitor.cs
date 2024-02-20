@@ -215,20 +215,8 @@ internal class FormattingVisitor : SyntaxWalker
 
         static bool IsComponentTagHelperNode(MarkupTagHelperElementSyntax node)
         {
-            var tagHelperInfo = node.TagHelperInfo;
-
-            if (tagHelperInfo is null)
-            {
-                return false;
-            }
-
-            var descriptors = tagHelperInfo.BindingResult?.Descriptors;
-            if (descriptors is null)
-            {
-                return false;
-            }
-
-            return descriptors.Any(d => d.IsComponentOrChildContentTagHelper);
+            return node.TagHelperInfo?.BindingResult?.Descriptors is { Length: > 0 } descriptors &&
+                   descriptors.Any(static d => d.IsComponentOrChildContentTagHelper);
         }
 
         static bool ParentHasProperty(MarkupTagHelperElementSyntax parentComponent, string? propertyName)
@@ -266,22 +254,14 @@ internal class FormattingVisitor : SyntaxWalker
 
         static bool HasUnspecifiedCascadingTypeParameter(MarkupTagHelperElementSyntax node)
         {
-            var tagHelperInfo = node.TagHelperInfo;
-
-            if (tagHelperInfo is null)
-            {
-                return false;
-            }
-
-            var descriptors = tagHelperInfo.BindingResult?.Descriptors;
-            if (descriptors is null)
+            if (node.TagHelperInfo?.BindingResult?.Descriptors is not { Length: > 0 } descriptors)
             {
                 return false;
             }
 
             // A cascading type parameter will mean the generated code will get a TypeInference class generated
             // for it, which we need to account for with an extra level of indentation in our expected C# indentation
-            var hasCascadingGenericParameters = descriptors.Any(d => d.SuppliesCascadingGenericParameters());
+            var hasCascadingGenericParameters = descriptors.Any(static d => d.SuppliesCascadingGenericParameters());
             if (!hasCascadingGenericParameters)
             {
                 return false;

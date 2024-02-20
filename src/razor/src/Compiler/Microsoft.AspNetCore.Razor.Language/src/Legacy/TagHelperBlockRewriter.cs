@@ -30,7 +30,7 @@ internal static class TagHelperBlockRewriter
         foreach (var descriptor in bindingResult.Descriptors)
         {
             var boundRules = bindingResult.Mappings[descriptor];
-            var nonDefaultRule = boundRules.FirstOrDefault(rule => rule.TagStructure != TagStructure.Unspecified);
+            var nonDefaultRule = boundRules.FirstOrDefault(static rule => rule.TagStructure != TagStructure.Unspecified);
 
             if (nonDefaultRule?.TagStructure == TagStructure.WithoutEndTag)
             {
@@ -437,7 +437,7 @@ internal static class TagHelperBlockRewriter
     {
         foreach (var descriptor in descriptors)
         {
-            if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(name, descriptor, out var firstBoundAttribute, out var indexerMatch, out var _, out var _))
+            if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(descriptor, name, out var firstBoundAttribute, out var indexerMatch, out var _, out var _))
             {
                 if (indexerMatch)
                 {
@@ -468,8 +468,8 @@ internal static class TagHelperBlockRewriter
         foreach (var descriptor in descriptors)
         {
             if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(
-                name,
                 descriptor,
+                name,
                 out var firstBoundAttribute,
                 out var indexerMatch,
                 out var parameterMatch,

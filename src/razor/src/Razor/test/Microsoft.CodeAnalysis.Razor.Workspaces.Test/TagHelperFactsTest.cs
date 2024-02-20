@@ -20,12 +20,12 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
     public void GetTagHelperBinding_DoesNotAllowOptOutCharacterPrefix()
     {
         // Arrange
-        var documentDescriptors = new[]
-        {
+        ImmutableArray<TagHelperDescriptor> documentDescriptors =
+        [
             TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .Build()
-        };
+        ];
         var documentContext = TagHelperDocumentContext.Create(string.Empty, documentDescriptors);
 
         // Act
@@ -39,8 +39,8 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
     public void GetTagHelperBinding_WorksAsExpected()
     {
         // Arrange
-        var documentDescriptors = new[]
-        {
+        ImmutableArray<TagHelperDescriptor> documentDescriptors =
+        [
             TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule =>
                     rule
@@ -66,7 +66,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
                         .TypeName(typeof(string).FullName)
                         .Metadata(PropertyName("AspFor")))
                 .Build(),
-        };
+        ];
         var documentContext = TagHelperDocumentContext.Create(string.Empty, documentDescriptors);
         var attributes = ImmutableArray.Create(
             new KeyValuePair<string, string>("asp-for", "Name"));
@@ -85,8 +85,8 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
     public void GetBoundTagHelperAttributes_MatchesPrefixedAttributeName()
     {
         // Arrange
-        var documentDescriptors = new[]
-        {
+        ImmutableArray<TagHelperDescriptor> documentDescriptors =
+        [
             TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("a"))
                 .BoundAttributeDescriptor(attribute =>
@@ -101,7 +101,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
                         .Metadata(PropertyName("AspRoute"))
                         .AsDictionaryAttribute("asp-route-", typeof(string).FullName))
                 .Build()
-        };
+        ];
         var expectedAttributeDescriptors = new[]
         {
             documentDescriptors[0].BoundAttributes.Last()
@@ -120,8 +120,8 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
     public void GetBoundTagHelperAttributes_MatchesAttributeName()
     {
         // Arrange
-        var documentDescriptors = new[]
-        {
+        ImmutableArray<TagHelperDescriptor> documentDescriptors =
+        [
             TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("input"))
                 .BoundAttributeDescriptor(attribute =>
@@ -135,7 +135,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
                         .TypeName(typeof(string).FullName)
                         .Metadata(PropertyName("AspExtra")))
                 .Build()
-        };
+        ];
         var expectedAttributeDescriptors = new[]
         {
             documentDescriptors[0].BoundAttributes.First()
@@ -154,12 +154,12 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
     public void GetTagHelpersGivenTag_DoesNotAllowOptOutCharacterPrefix()
     {
         // Arrange
-        var documentDescriptors = new[]
-        {
+        ImmutableArray<TagHelperDescriptor> documentDescriptors =
+        [
             TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .Build()
-        };
+        ];
         var documentContext = TagHelperDocumentContext.Create(string.Empty, documentDescriptors);
 
         // Act
@@ -173,36 +173,36 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
     public void GetTagHelpersGivenTag_RequiresTagName()
     {
         // Arrange
-        var documentDescriptors = new[]
-        {
+        ImmutableArray<TagHelperDescriptor> documentDescriptors =
+        [
             TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("strong"))
                 .Build()
-        };
+        ];
         var documentContext = TagHelperDocumentContext.Create(string.Empty, documentDescriptors);
 
         // Act
         var descriptors = TagHelperFacts.GetTagHelpersGivenTag(documentContext, "strong", "p");
 
         // Assert
-        Assert.Equal(documentDescriptors, descriptors);
+        Assert.Equal<TagHelperDescriptor>(documentDescriptors, descriptors);
     }
 
     [Fact]
     public void GetTagHelpersGivenTag_RestrictsTagHelpersBasedOnTagName()
     {
         // Arrange
-        var expectedDescriptors = new[]
-        {
+        ImmutableArray<TagHelperDescriptor> expectedDescriptors =
+        [
             TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(
                     rule => rule
                         .RequireTagName("a")
                         .RequireParentTag("div"))
                 .Build()
-        };
-        var documentDescriptors = new[]
-        {
+        ];
+        ImmutableArray<TagHelperDescriptor> documentDescriptors =
+        [
             expectedDescriptors[0],
             TagHelperDescriptorBuilder.Create("TestType2", "TestAssembly")
                 .TagMatchingRuleDescriptor(
@@ -210,57 +210,57 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
                         .RequireTagName("strong")
                         .RequireParentTag("div"))
                 .Build()
-        };
+        ];
         var documentContext = TagHelperDocumentContext.Create(string.Empty, documentDescriptors);
 
         // Act
         var descriptors = TagHelperFacts.GetTagHelpersGivenTag(documentContext, "a", "div");
 
         // Assert
-        Assert.Equal(expectedDescriptors, descriptors);
+        Assert.Equal<TagHelperDescriptor>(expectedDescriptors, descriptors);
     }
 
     [Fact]
     public void GetTagHelpersGivenTag_RestrictsTagHelpersBasedOnTagHelperPrefix()
     {
         // Arrange
-        var expectedDescriptors = new[]
-        {
+        ImmutableArray<TagHelperDescriptor> expectedDescriptors =
+        [
             TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("strong"))
                 .Build()
-        };
-        var documentDescriptors = new[]
-        {
+        ];
+        ImmutableArray<TagHelperDescriptor> documentDescriptors =
+        [
             expectedDescriptors[0],
             TagHelperDescriptorBuilder.Create("TestType2", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("thstrong"))
                 .Build()
-        };
+        ];
         var documentContext = TagHelperDocumentContext.Create("th", documentDescriptors);
 
         // Act
         var descriptors = TagHelperFacts.GetTagHelpersGivenTag(documentContext, "thstrong", "div");
 
         // Assert
-        Assert.Equal(expectedDescriptors, descriptors);
+        Assert.Equal<TagHelperDescriptor>(expectedDescriptors, descriptors);
     }
 
     [Fact]
     public void GetTagHelpersGivenTag_RestrictsTagHelpersBasedOnParent()
     {
         // Arrange
-        var expectedDescriptors = new[]
-        {
+        ImmutableArray<TagHelperDescriptor> expectedDescriptors =
+        [
             TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(
                     rule => rule
                         .RequireTagName("strong")
                         .RequireParentTag("div"))
                 .Build()
-        };
-        var documentDescriptors = new[]
-        {
+        ];
+        ImmutableArray<TagHelperDescriptor> documentDescriptors =
+        [
             expectedDescriptors[0],
             TagHelperDescriptorBuilder.Create("TestType2", "TestAssembly")
                 .TagMatchingRuleDescriptor(
@@ -268,41 +268,41 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
                         .RequireTagName("strong")
                         .RequireParentTag("p"))
                 .Build()
-        };
+        ];
         var documentContext = TagHelperDocumentContext.Create(string.Empty, documentDescriptors);
 
         // Act
         var descriptors = TagHelperFacts.GetTagHelpersGivenTag(documentContext, "strong", "div");
 
         // Assert
-        Assert.Equal(expectedDescriptors, descriptors);
+        Assert.Equal<TagHelperDescriptor>(expectedDescriptors, descriptors);
     }
 
     [Fact]
     public void GetTagHelpersGivenParent_AllowsRootParentTag()
     {
         // Arrange
-        var documentDescriptors = new[]
-        {
+        ImmutableArray<TagHelperDescriptor> documentDescriptors =
+        [
             TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
                 .Build()
-        };
+        ];
         var documentContext = TagHelperDocumentContext.Create(string.Empty, documentDescriptors);
 
         // Act
         var descriptors = TagHelperFacts.GetTagHelpersGivenParent(documentContext, parentTag: null /* root */);
 
         // Assert
-        Assert.Equal(documentDescriptors, descriptors);
+        Assert.Equal<TagHelperDescriptor>(documentDescriptors, descriptors);
     }
 
     [Fact]
     public void GetTagHelpersGivenParent_AllowsRootParentTagForParentRestrictedTagHelperDescriptors()
     {
         // Arrange
-        var documentDescriptors = new[]
-        {
+        ImmutableArray<TagHelperDescriptor> documentDescriptors =
+        [
             TagHelperDescriptorBuilder.Create("DivTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
                 .Build(),
@@ -311,7 +311,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
                     .RequireTagName("p")
                     .RequireParentTag("body"))
                 .Build()
-        };
+        ];
         var documentContext = TagHelperDocumentContext.Create(string.Empty, documentDescriptors);
 
         // Act
@@ -326,36 +326,36 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
     public void GetTagHelpersGivenParent_AllowsUnspecifiedParentTagHelpers()
     {
         // Arrange
-        var documentDescriptors = new[]
-        {
+        ImmutableArray<TagHelperDescriptor> documentDescriptors =
+        [
             TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
                 .Build()
-        };
+        ];
         var documentContext = TagHelperDocumentContext.Create(string.Empty, documentDescriptors);
 
         // Act
         var descriptors = TagHelperFacts.GetTagHelpersGivenParent(documentContext, "p");
 
         // Assert
-        Assert.Equal(documentDescriptors, descriptors);
+        Assert.Equal<TagHelperDescriptor>(documentDescriptors, descriptors);
     }
 
     [Fact]
     public void GetTagHelpersGivenParent_RestrictsTagHelpersBasedOnParent()
     {
         // Arrange
-        var expectedDescriptors = new[]
-        {
+        ImmutableArray<TagHelperDescriptor> expectedDescriptors =
+        [
             TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(
                     rule => rule
                         .RequireTagName("p")
                         .RequireParentTag("div"))
                 .Build()
-        };
-        var documentDescriptors = new[]
-        {
+        ];
+        ImmutableArray<TagHelperDescriptor> documentDescriptors =
+        [
             expectedDescriptors[0],
             TagHelperDescriptorBuilder.Create("TestType2", "TestAssembly")
                 .TagMatchingRuleDescriptor(
@@ -363,13 +363,13 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
                         .RequireTagName("strong")
                         .RequireParentTag("p"))
                 .Build()
-        };
+        ];
         var documentContext = TagHelperDocumentContext.Create(string.Empty, documentDescriptors);
 
         // Act
         var descriptors = TagHelperFacts.GetTagHelpersGivenParent(documentContext, "div");
 
         // Assert
-        Assert.Equal(expectedDescriptors, descriptors);
+        Assert.Equal<TagHelperDescriptor>(expectedDescriptors, descriptors);
     }
 }

@@ -75,13 +75,12 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
         }
 
         // MarkupTagHelperElement > MarkupTagHelperStartTag > MarkupTagHelperDirectiveAttribute 
-        var tagHelperElement = commonParent.Parent.Parent as MarkupTagHelperElementSyntax;
-        if (tagHelperElement is null)
+        if (commonParent.Parent.Parent is not MarkupTagHelperElementSyntax { TagHelperInfo.BindingResult: var binding })
         {
             return false;
         }
 
-        foreach (var tagHelperDescriptor in tagHelperElement.TagHelperInfo.BindingResult.Descriptors)
+        foreach (var tagHelperDescriptor in binding.Descriptors)
         {
             foreach (var attribute in tagHelperDescriptor.BoundAttributes)
             {

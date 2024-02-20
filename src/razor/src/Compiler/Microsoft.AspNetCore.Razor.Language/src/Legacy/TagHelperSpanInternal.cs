@@ -1,29 +1,11 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-internal struct TagHelperSpanInternal
+internal readonly record struct TagHelperSpanInternal(SourceSpan Span, TagHelperBinding Binding)
 {
-    public TagHelperSpanInternal(SourceSpan span, TagHelperBinding binding)
-    {
-        if (binding == null)
-        {
-            throw new ArgumentNullException(nameof(binding));
-        }
-
-        Span = span;
-        Binding = binding;
-    }
-
-    public TagHelperBinding Binding { get; }
-
-    public IEnumerable<TagHelperDescriptor> TagHelpers => Binding.Descriptors;
-
-    public SourceSpan Span { get; }
+    public ImmutableArray<TagHelperDescriptor> TagHelpers => Binding.Descriptors;
 }

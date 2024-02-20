@@ -1,1 +1,23 @@
 ﻿#nullable enable
+Microsoft.VisualStudio.LiveShare.Razor.IProjectHierarchyProxy
+Microsoft.VisualStudio.LiveShare.Razor.IProjectHierarchyProxy.GetProjectPathAsync(System.Uri! documentFilePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Uri?>!
+Microsoft.VisualStudio.LiveShare.Razor.IProjectSnapshotManagerProxy
+Microsoft.VisualStudio.LiveShare.Razor.IProjectSnapshotManagerProxy.Changed -> System.EventHandler<Microsoft.VisualStudio.LiveShare.Razor.ProjectChangeEventProxyArgs!>!
+Microsoft.VisualStudio.LiveShare.Razor.IProjectSnapshotManagerProxy.GetProjectManagerStateAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.VisualStudio.LiveShare.Razor.ProjectSnapshotManagerProxyState!>!
+Microsoft.VisualStudio.LiveShare.Razor.IRemoteHierarchyService
+Microsoft.VisualStudio.LiveShare.Razor.IRemoteHierarchyService.HasCapabilityAsync(System.Uri! pathOfFileInProject, string! capability, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+Microsoft.VisualStudio.LiveShare.Razor.ProjectChangeEventProxyArgs
+Microsoft.VisualStudio.LiveShare.Razor.ProjectChangeEventProxyArgs.IntermediateOutputPath.get -> System.Uri!
+Microsoft.VisualStudio.LiveShare.Razor.ProjectChangeEventProxyArgs.Kind.get -> Microsoft.VisualStudio.LiveShare.Razor.ProjectProxyChangeKind
+Microsoft.VisualStudio.LiveShare.Razor.ProjectChangeEventProxyArgs.Newer.get -> Microsoft.VisualStudio.LiveShare.Razor.ProjectSnapshotHandleProxy?
+Microsoft.VisualStudio.LiveShare.Razor.ProjectChangeEventProxyArgs.Older.get -> Microsoft.VisualStudio.LiveShare.Razor.ProjectSnapshotHandleProxy?
+Microsoft.VisualStudio.LiveShare.Razor.ProjectChangeEventProxyArgs.ProjectChangeEventProxyArgs(Microsoft.VisualStudio.LiveShare.Razor.ProjectSnapshotHandleProxy? older, Microsoft.VisualStudio.LiveShare.Razor.ProjectSnapshotHandleProxy? newer, Microsoft.VisualStudio.LiveShare.Razor.ProjectProxyChangeKind kind) -> void
+Microsoft.VisualStudio.LiveShare.Razor.ProjectChangeEventProxyArgs.ProjectFilePath.get -> System.Uri!
+Microsoft.VisualStudio.LiveShare.Razor.ProjectProxyChangeKind
+Microsoft.VisualStudio.LiveShare.Razor.ProjectProxyChangeKind.ProjectAdded = 0 -> Microsoft.VisualStudio.LiveShare.Razor.ProjectProxyChangeKind
+Microsoft.VisualStudio.LiveShare.Razor.ProjectProxyChangeKind.ProjectChanged = 2 -> Microsoft.VisualStudio.LiveShare.Razor.ProjectProxyChangeKind
+Microsoft.VisualStudio.LiveShare.Razor.ProjectProxyChangeKind.ProjectRemoved = 1 -> Microsoft.VisualStudio.LiveShare.Razor.ProjectProxyChangeKind
+Microsoft.VisualStudio.LiveShare.Razor.ProjectSnapshotHandleProxy
+Microsoft.VisualStudio.LiveShare.Razor.ProjectSnapshotManagerProxyState
+Microsoft.VisualStudio.LiveShare.Razor.ProjectSnapshotManagerProxyState.ProjectHandles.get -> System.Collections.Generic.IReadOnlyList<Microsoft.VisualStudio.LiveShare.Razor.ProjectSnapshotHandleProxy!>!
+Microsoft.VisualStudio.LiveShare.Razor.ProjectSnapshotManagerProxyState.ProjectSnapshotManagerProxyState(System.Collections.Generic.IReadOnlyList<Microsoft.VisualStudio.LiveShare.Razor.ProjectSnapshotHandleProxy!>! projectHandles) -> void

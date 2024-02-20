@@ -94,22 +94,7 @@ internal static partial class RazorWrapperFactory
 
     private static ImmutableArray<TResult> InitializeArrayWithWrappedItems<TInner, TResult>(
         ref ImmutableArray<TResult> location,
-        IReadOnlyList<TInner> list,
-        Func<TInner, TResult> createWrapper)
-        where TInner : class
-        where TResult : class
-    {
-        if (location.IsDefault)
-        {
-            ImmutableInterlocked.InterlockedInitialize(ref location, WrapAll(list, createWrapper));
-        }
-
-        return location;
-    }
-
-    private static ImmutableArray<TResult> InitializeArrayWithWrappedItems<TInner, TResult>(
-        ref ImmutableArray<TResult> location,
-        IEnumerable<TInner> list,
+        ImmutableArray<TInner> list,
         Func<TInner, TResult> createWrapper)
         where TInner : class
         where TResult : class

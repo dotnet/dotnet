@@ -716,7 +716,6 @@ public class RenameEndpointTest : LanguageServerTestBase
 
         var endpoint = new RenameEndpoint(
             Dispatcher,
-            _documentContextFactory,
             searchEngine,
             projectSnapshotManagerAccessor,
             languageServerFeatureOptions,

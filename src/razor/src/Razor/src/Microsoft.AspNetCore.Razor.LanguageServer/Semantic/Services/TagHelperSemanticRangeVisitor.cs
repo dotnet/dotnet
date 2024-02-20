@@ -480,9 +480,9 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
 
     private static bool IsComponent(SyntaxNode node)
     {
-        if (node is MarkupTagHelperElementSyntax element)
+        if (node is MarkupTagHelperElementSyntax { TagHelperInfo.BindingResult: var binding })
         {
-            var componentDescriptor = element.TagHelperInfo.BindingResult.Descriptors.FirstOrDefault(d => d.IsComponentTagHelper);
+            var componentDescriptor = binding.Descriptors.FirstOrDefault(static d => d.IsComponentTagHelper);
             return componentDescriptor is not null;
         }
         else if (node is MarkupTagHelperStartTagSyntax startTag)
@@ -517,9 +517,9 @@ internal sealed class TagHelperSemanticRangeVisitor : SyntaxWalker
             throw new ArgumentNullException(nameof(node));
         }
 
-        if (node.StartTag != null && node.StartTag.Name != null)
+        if (node.StartTag?.Name != null &&
+            node.TagHelperInfo is { BindingResult: var binding })
         {
-            var binding = node.TagHelperInfo.BindingResult;
             return !binding.IsAttributeMatch;
         }
 

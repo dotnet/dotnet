@@ -60,26 +60,20 @@ internal class SyntaxToken : RazorSyntaxNode
         return new Syntax.SyntaxToken(this, parent, position);
     }
 
-    protected override void WriteTokenTo(TextWriter writer, bool leading, bool trailing)
+    protected override void WriteTokenTo(TextWriter writer, bool includeLeadingTrivia, bool includeTrailingTrivia)
     {
-        if (leading)
+        if (includeLeadingTrivia)
         {
             var trivia = GetLeadingTrivia();
-            if (trivia != null)
-            {
-                trivia.WriteTo(writer, true, true);
-            }
+            trivia?.WriteTo(writer, includeLeadingTrivia: true, includeTrailingTrivia: true);
         }
 
         writer.Write(Content);
 
-        if (trailing)
+        if (includeTrailingTrivia)
         {
             var trivia = GetTrailingTrivia();
-            if (trivia != null)
-            {
-                trivia.WriteTo(writer, true, true);
-            }
+            trivia?.WriteTo(writer, includeLeadingTrivia: true, includeTrailingTrivia: true);
         }
     }
 

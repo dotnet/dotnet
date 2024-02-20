@@ -189,7 +189,7 @@ internal sealed class LegacyTagHelperCompletionService : ITagHelperCompletionSer
 
             foreach (var rule in possibleDescriptor.TagMatchingRules)
             {
-                if (!TagHelperMatchingConventions.SatisfiesParentTag(completionContext.ContainingTagName.AsSpanOrDefault(), rule))
+                if (!TagHelperMatchingConventions.SatisfiesParentTag(rule, completionContext.ContainingTagName.AsSpanOrDefault()))
                 {
                     continue;
                 }

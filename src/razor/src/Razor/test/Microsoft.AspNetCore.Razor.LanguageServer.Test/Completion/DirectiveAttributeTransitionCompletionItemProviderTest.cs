@@ -24,7 +24,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
     public DirectiveAttributeTransitionCompletionItemProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: string.Empty, Array.Empty<TagHelperDescriptor>());
+        _tagHelperDocumentContext = TagHelperDocumentContext.Create(prefix: string.Empty, tagHelpers: []);
         _provider = new DirectiveAttributeTransitionCompletionItemProvider();
     }
 

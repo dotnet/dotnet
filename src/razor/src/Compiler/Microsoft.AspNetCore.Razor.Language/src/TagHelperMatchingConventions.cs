@@ -15,17 +15,20 @@ internal static class TagHelperMatchingConventions
     public const char ElementOptOutCharacter = '!';
 
     public static bool SatisfiesRule(
+        TagMatchingRuleDescriptor rule,
         ReadOnlySpan<char> tagNameWithoutPrefix,
         ReadOnlySpan<char> parentTagNameWithoutPrefix,
-        ImmutableArray<KeyValuePair<string, string>> tagAttributes,
-        TagMatchingRuleDescriptor rule)
+        ImmutableArray<KeyValuePair<string, string>> tagAttributes)
     {
-        return SatisfiesTagName(tagNameWithoutPrefix, rule) &&
-               SatisfiesParentTag(parentTagNameWithoutPrefix, rule) &&
-               SatisfiesAttributes(tagAttributes, rule);
+        return SatisfiesTagName(rule, tagNameWithoutPrefix) &&
+               SatisfiesParentTag(rule, parentTagNameWithoutPrefix) &&
+               SatisfiesAttributes(rule, tagAttributes);
     }
 
-    public static bool SatisfiesTagName(ReadOnlySpan<char> tagNameWithoutPrefix, TagMatchingRuleDescriptor rule, StringComparison? comparisonOverride = null)
+    public static bool SatisfiesTagName(
+        TagMatchingRuleDescriptor rule,
+        ReadOnlySpan<char> tagNameWithoutPrefix,
+        StringComparison? comparisonOverride = null)
     {
         if (tagNameWithoutPrefix.IsEmpty)
         {
@@ -47,7 +50,9 @@ internal static class TagHelperMatchingConventions
         return true;
     }
 
-    public static bool SatisfiesParentTag(ReadOnlySpan<char> parentTagNameWithoutPrefix, TagMatchingRuleDescriptor rule)
+    public static bool SatisfiesParentTag(
+        TagMatchingRuleDescriptor rule,
+        ReadOnlySpan<char> parentTagNameWithoutPrefix)
     {
         if (rule.ParentTag != null &&
             !parentTagNameWithoutPrefix.Equals(rule.ParentTag.AsSpan(), rule.GetComparison()))
@@ -58,7 +63,9 @@ internal static class TagHelperMatchingConventions
         return true;
     }
 
-    public static bool SatisfiesAttributes(ImmutableArray<KeyValuePair<string, string>> tagAttributes, TagMatchingRuleDescriptor rule)
+    public static bool SatisfiesAttributes(
+        TagMatchingRuleDescriptor rule,
+        ImmutableArray<KeyValuePair<string, string>> tagAttributes)
     {
         foreach (var requiredAttribute in rule.Attributes)
         {
@@ -66,7 +73,7 @@ internal static class TagHelperMatchingConventions
 
             foreach (var (attributeName, attributeValue) in tagAttributes)
             {
-                if (SatisfiesRequiredAttribute(attributeName, attributeValue, requiredAttribute))
+                if (SatisfiesRequiredAttribute(requiredAttribute, attributeName, attributeValue))
                 {
                     satisfied = true;
                     break;
@@ -84,19 +91,18 @@ internal static class TagHelperMatchingConventions
 
     public static bool CanSatisfyBoundAttribute(string name, BoundAttributeDescriptor descriptor)
     {
-        return SatisfiesBoundAttributeName(name.AsSpan(), descriptor) ||
-               SatisfiesBoundAttributeIndexer(name.AsSpan(), descriptor) ||
-               GetSatisfyingBoundAttributeWithParameter(name, descriptor, descriptor.Parameters) is not null;
+        return SatisfiesBoundAttributeName(descriptor, name.AsSpan()) ||
+               SatisfiesBoundAttributeIndexer(descriptor, name.AsSpan()) ||
+               GetSatisfyingBoundAttributeWithParameter(descriptor, name) is not null;
     }
 
     private static BoundAttributeParameterDescriptor? GetSatisfyingBoundAttributeWithParameter(
-        string name,
         BoundAttributeDescriptor descriptor,
-        ImmutableArray<BoundAttributeParameterDescriptor> boundAttributeParameters)
+        string name)
     {
-        foreach (var parameter in boundAttributeParameters)
+        foreach (var parameter in descriptor.Parameters)
         {
-            if (SatisfiesBoundAttributeWithParameter(name, descriptor, parameter))
+            if (SatisfiesBoundAttributeWithParameter(parameter, name, descriptor))
             {
                 return parameter;
             }
@@ -105,19 +111,19 @@ internal static class TagHelperMatchingConventions
         return null;
     }
 
-    public static bool SatisfiesBoundAttributeIndexer(ReadOnlySpan<char> name, BoundAttributeDescriptor descriptor)
+    public static bool SatisfiesBoundAttributeIndexer(BoundAttributeDescriptor descriptor, ReadOnlySpan<char> name)
     {
         return descriptor.IndexerNamePrefix != null &&
-               !SatisfiesBoundAttributeName(name, descriptor) &&
+               !SatisfiesBoundAttributeName(descriptor, name) &&
                name.StartsWith(descriptor.IndexerNamePrefix.AsSpan(), descriptor.GetComparison());
     }
 
-    public static bool SatisfiesBoundAttributeWithParameter(string name, BoundAttributeDescriptor parent, BoundAttributeParameterDescriptor descriptor)
+    public static bool SatisfiesBoundAttributeWithParameter(BoundAttributeParameterDescriptor descriptor, string name, BoundAttributeDescriptor parent)
     {
         if (TryGetBoundAttributeParameter(name, out var attributeName, out var parameterName))
         {
-            var satisfiesBoundAttributeName = SatisfiesBoundAttributeName(attributeName, parent);
-            var satisfiesBoundAttributeIndexer = SatisfiesBoundAttributeIndexer(attributeName, parent);
+            var satisfiesBoundAttributeName = SatisfiesBoundAttributeName(parent, attributeName);
+            var satisfiesBoundAttributeIndexer = SatisfiesBoundAttributeIndexer(parent, attributeName);
             var matchesParameter = parameterName.Equals(descriptor.Name.AsSpanOrDefault(), descriptor.GetComparison());
             return (satisfiesBoundAttributeName || satisfiesBoundAttributeIndexer) && matchesParameter;
         }
@@ -170,8 +176,8 @@ internal static class TagHelperMatchingConventions
     }
 
     public static bool TryGetFirstBoundAttributeMatch(
-        string name,
         TagHelperDescriptor descriptor,
+        string name,
         out BoundAttributeDescriptor? boundAttribute,
         out bool indexerMatch,
         out bool parameterMatch,
@@ -182,7 +188,7 @@ internal static class TagHelperMatchingConventions
         boundAttribute = null;
         boundAttributeParameter = null;
 
-        if (string.IsNullOrEmpty(name) || descriptor == null)
+        if (descriptor == null || name.IsNullOrEmpty())
         {
             return false;
         }
@@ -190,12 +196,12 @@ internal static class TagHelperMatchingConventions
         // First, check if we have a bound attribute descriptor that matches the parameter if it exists.
         foreach (var attribute in descriptor.BoundAttributes)
         {
-            boundAttributeParameter = GetSatisfyingBoundAttributeWithParameter(name, attribute, attribute.Parameters);
+            boundAttributeParameter = GetSatisfyingBoundAttributeWithParameter(attribute, name);
 
             if (boundAttributeParameter != null)
             {
                 boundAttribute = attribute;
-                indexerMatch = SatisfiesBoundAttributeIndexer(name.AsSpan(), attribute);
+                indexerMatch = SatisfiesBoundAttributeIndexer(attribute, name.AsSpan());
                 parameterMatch = true;
                 return true;
             }
@@ -208,7 +214,7 @@ internal static class TagHelperMatchingConventions
             if (CanSatisfyBoundAttribute(name, attribute))
             {
                 boundAttribute = attribute;
-                indexerMatch = SatisfiesBoundAttributeIndexer(name.AsSpan(), attribute);
+                indexerMatch = SatisfiesBoundAttributeIndexer(attribute, name.AsSpan());
                 return true;
             }
         }
@@ -217,13 +223,16 @@ internal static class TagHelperMatchingConventions
         return false;
     }
 
-    private static bool SatisfiesBoundAttributeName(ReadOnlySpan<char> name, BoundAttributeDescriptor descriptor)
+    private static bool SatisfiesBoundAttributeName(BoundAttributeDescriptor descriptor, ReadOnlySpan<char> name)
     {
         return name.Equals(descriptor.Name.AsSpanOrDefault(), descriptor.GetComparison());
     }
 
     // Internal for testing
-    internal static bool SatisfiesRequiredAttribute(string attributeName, string attributeValue, RequiredAttributeDescriptor descriptor)
+    internal static bool SatisfiesRequiredAttribute(
+        RequiredAttributeDescriptor descriptor,
+        string attributeName,
+        string attributeValue)
     {
         var nameMatches = false;
         if (descriptor.NameComparison == RequiredAttributeDescriptor.NameComparisonMode.FullMatch)

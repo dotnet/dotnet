@@ -22,7 +22,7 @@ public static class RazorCodeDocumentExtensions
     private static readonly object CssScopeKey = new object();
     private static readonly object NamespaceKey = new object();
 
-    public static TagHelperDocumentContext GetTagHelperContext(this RazorCodeDocument document)
+    internal static TagHelperDocumentContext GetTagHelperContext(this RazorCodeDocument document)
     {
         if (document == null)
         {
@@ -32,7 +32,7 @@ public static class RazorCodeDocumentExtensions
         return (TagHelperDocumentContext)document.Items[typeof(TagHelperDocumentContext)];
     }
 
-    public static void SetTagHelperContext(this RazorCodeDocument document, TagHelperDocumentContext context)
+    internal static void SetTagHelperContext(this RazorCodeDocument document, TagHelperDocumentContext context)
     {
         if (document == null)
         {
