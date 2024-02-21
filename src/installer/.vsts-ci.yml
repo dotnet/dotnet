@@ -121,7 +121,7 @@ stages:
       parameters:
         agentOs: Linux
         jobName: Build_Linux_musl_Debug_x64
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.15-WithNode'
+        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.19-WithNode'
         buildConfiguration: Debug
         buildArchitecture: x64
         runtimeIdentifier: 'linux-musl-x64'
@@ -222,7 +222,7 @@ stages:
       parameters:
         agentOs: Linux
         jobName: Build_Linux_musl_Release_x64
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.15-WithNode'
+        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.19-WithNode'
         buildConfiguration: Release
         buildArchitecture: x64
         runtimeIdentifier: 'linux-musl-x64'
