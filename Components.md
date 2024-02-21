@@ -34,7 +34,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@f2a6810](https://github.com/dotnet/fsharp/tree/f2a6810476e1b589bcf56eb5f377c5214c509bc6)*
 - `src/installer`  
-*[dotnet/installer@75d517f](https://github.com/dotnet/installer/tree/75d517fc5415efb747c4d74576e0a5914802d30b)*
+*[dotnet/installer@5df975a](https://github.com/dotnet/installer/tree/5df975abbe41aef53cf3a9f6dce8a95f07b1e72a)*
 - `src/msbuild`  
 *[dotnet/msbuild@53c4f49](https://github.com/dotnet/msbuild/tree/53c4f49868e88ecd7407339a3f4dab9e75c7937f)*
 - `src/nuget-client`  
@@ -44,15 +44,15 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@667c05c](https://github.com/dotnet/razor/tree/667c05ce82ca55f15ecb4578274df4aa0af9d204)*
 - `src/roslyn`  
-*[dotnet/roslyn@6b40ff8](https://github.com/dotnet/roslyn/tree/6b40ff8ace3304fb6a3f018a4b6357e6282e4695)*
+*[dotnet/roslyn@fb78dcb](https://github.com/dotnet/roslyn/tree/fb78dcb1e08e073f2e13631d583f51c05c64c4d9)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@ab13ac7](https://github.com/dotnet/roslyn-analyzers/tree/ab13ac75d1195a27e3cf7fb990fc3a51615caa95)*
 - `src/runtime`  
-*[dotnet/runtime@2756c94](https://github.com/dotnet/runtime/tree/2756c94062959522adbc84ee895c15866a7c9281)*
+*[dotnet/runtime@1b1d26a](https://github.com/dotnet/runtime/tree/1b1d26ac74e374309fb101382026ba0480d3821d)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@bfde902](https://github.com/dotnet/scenario-tests/tree/bfde902a10d7b672f4fc7e844198ede405dbb9c6)*
 - `src/sdk`  
-*[dotnet/sdk@13d3a7e](https://github.com/dotnet/sdk/tree/13d3a7ed09ae5374d81b423f2ea4c15c42ded184)*
+*[dotnet/sdk@5c8dbcb](https://github.com/dotnet/sdk/tree/5c8dbcb83aaf24c889af9a18024b2eaf7d3cc665)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@ddfb604](https://github.com/dotnet/source-build-externals/tree/ddfb60463c966af55fd0e222c2266170e83d1324)*
     - `src/source-build-externals/src/abstractions-xunit`  
