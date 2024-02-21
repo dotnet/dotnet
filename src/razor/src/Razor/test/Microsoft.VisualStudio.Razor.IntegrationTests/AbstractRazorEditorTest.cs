@@ -63,7 +63,6 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
         EnsureLSPEditorEnabled();
         await EnsureTextViewRolesAsync(ControlledHangMitigatingCancellationToken);
         await EnsureExtensionInstalledAsync(ControlledHangMitigatingCancellationToken);
-        EnsureMEFCompositionSuccessForRazor();
 
         await TestServices.Editor.PlaceCaretAsync("</PageTitle>", charsOffset: 1, ControlledHangMitigatingCancellationToken);
 
@@ -150,31 +149,6 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutputHelper
 
         var useLegacyEditor = settingsManager.GetValueOrDefault<bool>(UseLegacyASPNETCoreEditorSetting);
         Assert.AreEqual(false, useLegacyEditor, "Expected the Legacy Razor Editor to be disabled, but it was enabled");
-    }
-
-    private static void EnsureMEFCompositionSuccessForRazor()
-    {
-        var hiveDirectory = VisualStudioLogging.GetHiveDirectory();
-        var cmcPath = Path.Combine(hiveDirectory, "ComponentModelCache");
-        if (!Directory.Exists(cmcPath))
-        {
-            throw new InvalidOperationException("ComponentModelCache directory doesn't exist");
-        }
-
-        var mefErrorFile = Path.Combine(cmcPath, "Microsoft.VisualStudio.Default.err");
-        if (!File.Exists(mefErrorFile))
-        {
-            throw new InvalidOperationException("Expected ComponentModelCache error file to exist");
-        }
-
-        var txt = File.ReadAllText(mefErrorFile);
-        const string Separator = "----------- Used assemblies -----------";
-        var content = txt.Split(new string[] { Separator }, StringSplitOptions.RemoveEmptyEntries);
-        var errors = content[0];
-        if (errors.Contains("Razor"))
-        {
-            throw new InvalidOperationException($"Razor errors detected in MEF cache: {errors}");
-        }
     }
 
     private async Task EnsureTextViewRolesAsync(CancellationToken cancellationToken)

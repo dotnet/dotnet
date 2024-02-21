@@ -2,11 +2,13 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Composition;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
+[Export(typeof(RemoteTagHelperDeltaProvider)), Shared]
 internal class RemoteTagHelperDeltaProvider
 {
     private readonly TagHelperResultCache _resultCache = new();
