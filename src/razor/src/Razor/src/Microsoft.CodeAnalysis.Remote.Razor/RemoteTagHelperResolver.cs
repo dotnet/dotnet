@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -13,6 +14,8 @@ using Microsoft.AspNetCore.Razor.Telemetry;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
+[Export(typeof(RemoteTagHelperResolver)), Shared]
+[method: ImportingConstructor]
 internal class RemoteTagHelperResolver(ITelemetryReporter telemetryReporter)
 {
     /// <summary>
