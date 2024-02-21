@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "e4df48b47c6ecc3e2d5b298dfbe52446183f5f54"
+      "commitSha": "75d517fc5415efb747c4d74576e0a5914802d30b"
     },
     {
       "packageVersion": "17.10.0-preview-24120-03",
@@ -85,10 +85,10 @@
       "commitSha": "667c05ce82ca55f15ecb4578274df4aa0af9d204"
     },
     {
-      "packageVersion": "4.10.0-2.24120.1",
+      "packageVersion": "4.10.0-2.24120.4",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "25aa74d725e801b8232dbb3e5abcda0fa72da8c5"
+      "commitSha": "6b40ff8ace3304fb6a3f018a4b6357e6282e4695"
     },
     {
       "packageVersion": "3.11.0-beta1.24117.1",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-preview.2.24120.18",
+      "packageVersion": "9.0.100-preview.2.24120.19",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "ce2937178070fcb150566ab37738110aab889be1"
+      "commitSha": "13d3a7ed09ae5374d81b423f2ea4c15c42ded184"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24112.1",
