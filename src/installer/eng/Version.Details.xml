@@ -91,26 +91,26 @@
       <Sha>983caa6afb09aeb82952bec077a59ab79514a288</Sha>
       <SourceBuild RepoName="aspnetcore" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="9.0.100-preview.2.24120.18">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="9.0.100-preview.2.24120.19">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>ce2937178070fcb150566ab37738110aab889be1</Sha>
+      <Sha>13d3a7ed09ae5374d81b423f2ea4c15c42ded184</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="9.0.100-preview.2.24120.18">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="9.0.100-preview.2.24120.19">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>ce2937178070fcb150566ab37738110aab889be1</Sha>
+      <Sha>13d3a7ed09ae5374d81b423f2ea4c15c42ded184</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="9.0.100-preview.2.24120.18">
+    <Dependency Name="Microsoft.NET.Sdk" Version="9.0.100-preview.2.24120.19">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>ce2937178070fcb150566ab37738110aab889be1</Sha>
+      <Sha>13d3a7ed09ae5374d81b423f2ea4c15c42ded184</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="9.0.100-preview.2.24120.18">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="9.0.100-preview.2.24120.19">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>ce2937178070fcb150566ab37738110aab889be1</Sha>
+      <Sha>13d3a7ed09ae5374d81b423f2ea4c15c42ded184</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.sdk" Version="9.0.100-preview.2.24120.18">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.sdk" Version="9.0.100-preview.2.24120.19">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>ce2937178070fcb150566ab37738110aab889be1</Sha>
+      <Sha>13d3a7ed09ae5374d81b423f2ea4c15c42ded184</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.2.1" Version="1.0.2-beta4.22406.1">
@@ -176,14 +176,14 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>2756c94062959522adbc84ee895c15866a7c9281</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.10.0-2.24120.1" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.10.0-2.24120.4" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>25aa74d725e801b8232dbb3e5abcda0fa72da8c5</Sha>
+      <Sha>6b40ff8ace3304fb6a3f018a4b6357e6282e4695</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.roslyn" Version="4.10.0-2.24120.1" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.roslyn" Version="4.10.0-2.24120.4" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>25aa74d725e801b8232dbb3e5abcda0fa72da8c5</Sha>
+      <Sha>6b40ff8ace3304fb6a3f018a4b6357e6282e4695</Sha>
       <SourceBuild RepoName="roslyn" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Build" Version="17.10.0-preview-24120-03" CoherentParentDependency="Microsoft.NET.Sdk">
