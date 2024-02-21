@@ -1,0 +1,23 @@
+{
+  "profiles": {
+    "Razor": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "CPS_DiagnosticRuntime": "1",
+        "CPS_MetricsCollection": "1",
+        "ServiceHubTraceLevel": "All",
+      },
+      "nativeDebugging": true
+    },
+    "Razor (with ServiceHub debugging)": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "CPS_DiagnosticRuntime": "1",
+        "CPS_MetricsCollection": "1",
+        "ServiceHubTraceLevel": "All",
+        "SERVICEHUBDEBUGHOSTONSTARTUP": "ServiceHub.RoslynCodeAnalysisService.exe"
+      },
+      "nativeDebugging": true
+    }
+  }
+}

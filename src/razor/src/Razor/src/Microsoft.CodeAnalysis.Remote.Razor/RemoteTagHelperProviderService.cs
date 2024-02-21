@@ -4,14 +4,15 @@
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Serialization;
-using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 using Microsoft.ServiceHub.Framework;
+using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
@@ -20,11 +21,11 @@ internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemote
     private readonly RemoteTagHelperResolver _tagHelperResolver;
     private readonly RemoteTagHelperDeltaProvider _tagHelperDeltaProvider;
 
-    internal RemoteTagHelperProviderService(IServiceBroker serviceBroker, ITelemetryReporter telemetryReporter)
+    internal RemoteTagHelperProviderService(IServiceBroker serviceBroker, ExportProvider exportProvider)
         : base(serviceBroker)
     {
-        _tagHelperResolver = new RemoteTagHelperResolver(telemetryReporter);
-        _tagHelperDeltaProvider = new RemoteTagHelperDeltaProvider();
+        _tagHelperResolver = exportProvider.GetExportedValue<RemoteTagHelperResolver>().AssumeNotNull();
+        _tagHelperDeltaProvider = exportProvider.GetExportedValue<RemoteTagHelperDeltaProvider>().AssumeNotNull();
     }
 
     public ValueTask<FetchTagHelpersResult> FetchTagHelpersAsync(

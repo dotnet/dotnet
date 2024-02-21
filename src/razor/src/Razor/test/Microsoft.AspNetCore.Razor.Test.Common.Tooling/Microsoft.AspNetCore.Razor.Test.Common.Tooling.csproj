@@ -6,10 +6,6 @@
 
     <RootNamespace>Microsoft.AspNetCore.Razor.Test.Common</RootNamespace>
 
-    <!-- This is a temporary measure because Microsoft.CodeAnalysis.ExternalAccess.Razor does not yet provide IVT to
-         Microsoft.AspNetCore.Razor.Test.Common.Tooling. However, it *does* provide IVT to this assembly name. -->
-    <AssemblyName>Microsoft.AspNetCore.Razor.LanguageServer.Test.Common</AssemblyName>
-
     <!-- To generate baselines, run tests with /p:GenerateBaselines=true -->
     <DefineConstants Condition="'$(GenerateBaselines)'=='true'">$(DefineConstants);GENERATE_BASELINES</DefineConstants>
     <DefineConstants>$(DefineConstants);__RemoveThisBitTo__GENERATE_BASELINES</DefineConstants>

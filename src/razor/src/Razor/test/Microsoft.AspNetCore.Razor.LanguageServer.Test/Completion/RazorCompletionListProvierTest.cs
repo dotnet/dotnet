@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json;
@@ -349,19 +350,27 @@ public class RazorCompletionListProvierTest : LanguageServerTestBase
     }
 
     // This is more of an integration test to validate that all the pieces work together
-    [Fact]
+    [Theory]
+    [InlineData("@$$")]
+    [InlineData("@$$\r\n")]
+    [InlineData("@page\r\n@$$")]
+    [InlineData("@page\r\n@$$\r\n")]
+    [InlineData("@page\r\n<div></div>\r\n@f$$")]
+    [InlineData("@page\r\n<div></div>\r\n@f$$\r\n")]
     [WorkItem("https://github.com/dotnet/razor-tooling/issues/4547")]
-    public async Task GetCompletionListAsync_ProvidesDirectiveCompletionItems()
+    [WorkItem("https://github.com/dotnet/razor/issues/9955")]    
+    public async Task GetCompletionListAsync_ProvidesDirectiveCompletionItems(string documentText)
     {
         // Arrange
         var documentPath = "C:/path/to/document.cshtml";
-        var codeDocument = CreateCodeDocument("@");
+        TestFileMarkupParser.GetPosition(documentText, out documentText, out var cursorPosition);
+        var codeDocument = CreateCodeDocument(documentText);
         var documentContext = TestDocumentContext.From(documentPath, codeDocument, hostDocumentVersion: 0);
         var provider = new RazorCompletionListProvider(_completionFactsService, _completionListCache, LoggerFactory);
 
         // Act
         var completionList = await provider.GetCompletionListAsync(
-            absoluteIndex: 1, _defaultCompletionContext, documentContext, _clientCapabilities, existingCompletions: null, DisposalToken);
+            absoluteIndex: cursorPosition, _defaultCompletionContext, documentContext, _clientCapabilities, existingCompletions: null, DisposalToken);
 
         // Assert
 
