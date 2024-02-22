@@ -15,4 +15,10 @@
     <MSBuild Projects="$(RepoTasksDir)tasks.proj"
              Targets="BuildIncrementally" />
   </Target>
+
+  <Target Name="DoError"
+          AfterTargets="Build">
+    <Error Text="This is an error!" />
+  </Target>
+
 </Project>
