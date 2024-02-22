@@ -214,7 +214,10 @@
     <Exec
       Command="$(BaseInnerSourceBuildCommand) $(InnerBuildArgs)"
       WorkingDirectory="$(InnerSourceBuildRepoRoot)"
-      EnvironmentVariables="@(InnerBuildEnv)" />
+      IgnoreStandardErrorWarningFormat="true"
+      EnvironmentVariables="@(InnerBuildEnv)">
+      <Output TaskParameter="ExitCode" PropertyName="InnerRepoBuildExitCode" />
+    </Exec>
   </Target>
 
   <Target Name="PreventPrebuiltBuild"
