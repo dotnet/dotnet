@@ -21,7 +21,7 @@ namespace NuGet.Protocol
         {
             INuGetResource resource = null;
 
-            var serviceIndexResource = await sourceRepository.GetResourceAsync<ServiceIndexResourceV3>();
+            var serviceIndexResource = await sourceRepository.GetResourceAsync<ServiceIndexResourceV3>(token);
 
             if (serviceIndexResource != null)
             {

@@ -994,14 +994,14 @@ EndProject");
 
         public static string GetProjectJsonFileContents(string targetFramework, IEnumerable<PackageIdentity> packages)
         {
-            var dependencies = string.Join(", ", packages.Select(package => $"'{package.Id}': '{package.Version}'"));
+            var dependencies = string.Join(", ", packages.Select(package => $"\"{package.Id}\": \"{package.Version}\""));
             return $@"
 {{
-  'dependencies': {{
+  ""dependencies"": {{
     {dependencies}
   }},
-  'frameworks': {{
-    '{targetFramework}': {{ }}
+  ""frameworks"": {{
+    ""{targetFramework}"": {{ }}
   }}
 }}";
         }

@@ -21,7 +21,9 @@ namespace NuGet.ProjectModel.Test
             var ms = new MemoryStream(Encoding.UTF8.GetBytes(json));
             var streamReader = new StreamReader(ms);
             var jsonReader = new JsonTextReader(streamReader);
+#pragma warning disable CS0612 // Type or member is obsolete
             return JsonPackageSpecReader.GetPackageSpec(jsonReader, "project", "project.json", environmentReader);
+#pragma warning restore CS0612 // Type or member is obsolete
         }
 
         public static PackageSpec RoundTripJson(string json, IEnvironmentVariableReader environmentReader)

@@ -34,7 +34,8 @@ namespace NuGet.Protocol
 
         private readonly string _baseUri;
         private readonly HttpSource _httpSource;
-        private readonly Dictionary<string, Task<IEnumerable<PackageInfo>>> _packageVersionsCache = new Dictionary<string, Task<IEnumerable<PackageInfo>>>(StringComparer.OrdinalIgnoreCase);
+
+        private readonly TaskResultCache<string, List<PackageInfo>> _packageVersionsCache = new(StringComparer.OrdinalIgnoreCase);
         private readonly FindPackagesByIdNupkgDownloader _nupkgDownloader;
         private readonly V2FeedQueryBuilder _queryBuilder;
 
@@ -433,27 +434,22 @@ namespace NuGet.Protocol
             return packageInfos.FirstOrDefault(p => p.Identity.Version == version);
         }
 
-        private Task<IEnumerable<PackageInfo>> EnsurePackagesAsync(
+        private async Task<IEnumerable<PackageInfo>> EnsurePackagesAsync(
             string id,
             SourceCacheContext cacheContext,
             ILogger logger,
             CancellationToken cancellationToken)
         {
-            Task<IEnumerable<PackageInfo>> task;
+            List<PackageInfo> result = await _packageVersionsCache.GetOrAddAsync(
+                id,
+                refresh: cacheContext.RefreshMemoryCache,
+                static state => state.caller.FindPackagesByIdAsyncCore(state.id, state.cacheContext, state.logger, state.cancellationToken),
+                (caller: this, id, cacheContext, logger, cancellationToken), cancellationToken);
 
-            lock (_packageVersionsCache)
-            {
-                if (cacheContext.RefreshMemoryCache || !_packageVersionsCache.TryGetValue(id, out task))
-                {
-                    task = FindPackagesByIdAsyncCore(id, cacheContext, logger, cancellationToken);
-                    _packageVersionsCache[id] = task;
-                }
-            }
-
-            return task;
+            return result;
         }
 
-        private async Task<IEnumerable<PackageInfo>> FindPackagesByIdAsyncCore(
+        private async Task<List<PackageInfo>> FindPackagesByIdAsyncCore(
             string id,
             SourceCacheContext cacheContext,
             ILogger logger,
@@ -489,8 +485,8 @@ namespace NuGet.Protocol
                             {
                                 AcceptHeaderValues =
                                 {
-                                    new MediaTypeWithQualityHeaderValue("application/atom+xml"),
-                                    new MediaTypeWithQualityHeaderValue("application/xml")
+                                new MediaTypeWithQualityHeaderValue("application/atom+xml"),
+                                new MediaTypeWithQualityHeaderValue("application/xml")
                                 },
                                 EnsureValidContents = stream => HttpStreamValidation.ValidateXml(uri, stream),
                                 MaxTries = 1,

@@ -312,7 +312,7 @@ namespace NuGet.Protocol.Tests
 
                 using (var cacheContext = new SourceCacheContext())
                 {
-                    var resource = await repo.GetResourceAsync<FindPackageByIdResource>();
+                    var resource = await repo.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None);
 
                     // Act
                     var info = await resource.GetDependencyInfoAsync(

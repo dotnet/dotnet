@@ -1186,7 +1186,7 @@ namespace NuGet.PackageManagement.UI
 
             foreach (var source in sources)
             {
-                var metadataResource = source.GetResource<PackageMetadataResource>();
+                var metadataResource = source.GetResource<PackageMetadataResource>(token);
                 if (metadataResource == null)
                 {
                     continue;

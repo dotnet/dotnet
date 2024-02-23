@@ -141,7 +141,7 @@ namespace NuGet.PackageManagement.Test
                 var packageDependencyInfos = await PackageGraphAnalysisUtilities.GetDependencyInfoForPackageIdentitiesAsync(
                     packageIdentities: installedList,
                     nuGetFramework: CommonFrameworks.Net45,
-                    dependencyInfoResource: await sourceReposistory.GetResourceAsync<DependencyInfoResource>(),
+                    dependencyInfoResource: await sourceReposistory.GetResourceAsync<DependencyInfoResource>(CancellationToken.None),
                     sourceCacheContext: new SourceCacheContext(),
                     includeUnresolved: true,
                     logger: NullLogger.Instance,

@@ -15,11 +15,11 @@ namespace ensure_nupkg_dependencies_on_source
             _sourceRepository = sourceRepository;
         }
 
-        public async ValueTask<FindPackageByIdResource> GetFindPackageByIdResourceAsync()
+        public async ValueTask<FindPackageByIdResource> GetFindPackageByIdResourceAsync(CancellationToken cancellationToken)
         {
             if (_findPackageByIdResource == null)
             {
-                _findPackageByIdResource = await _sourceRepository.GetResourceAsync<FindPackageByIdResource>();
+                _findPackageByIdResource = await _sourceRepository.GetResourceAsync<FindPackageByIdResource>(cancellationToken);
             }
 
             return _findPackageByIdResource;

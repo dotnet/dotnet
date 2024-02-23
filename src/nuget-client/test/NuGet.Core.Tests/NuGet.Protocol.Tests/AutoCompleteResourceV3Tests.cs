@@ -30,7 +30,7 @@ namespace NuGet.Protocol.Tests
                 JsonData.AutoCompleteEndpointNewtResult);
 
             var repo = StaticHttpHandler.CreateSource(sourceName, Repository.Provider.GetCoreV3(), responses);
-            var resource = await repo.GetResourceAsync<AutoCompleteResource>();
+            var resource = await repo.GetResourceAsync<AutoCompleteResource>(CancellationToken.None);
 
             var logger = new TestLogger();
 
