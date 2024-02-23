@@ -84,7 +84,6 @@ namespace NuGet.DependencyResolver
 
             // Resolve the dependency from the cache or sources
             GraphItem<RemoteResolveResult> item = await ResolverUtility.FindLibraryCachedAsync(
-                _context.FindLibraryEntryCache,
                 libraryRange,
                 framework,
                 runtimeName,

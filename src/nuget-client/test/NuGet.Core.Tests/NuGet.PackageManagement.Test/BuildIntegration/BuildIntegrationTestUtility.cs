@@ -37,12 +37,12 @@ namespace NuGet.PackageManagement.Test
         }
 
         public const string ProjectJsonWithPackage = @"{
-  'dependencies': {
-    'EntityFramework': '5.0.0'
+  ""dependencies"": {
+    ""EntityFramework"": ""5.0.0""
   },
-  'frameworks': {
-                'net46': { }
-            }
+  ""frameworks"": {
+    ""net46"": { }
+  }
 }";
 
         public static ExternalProjectReference CreateReference(string name)

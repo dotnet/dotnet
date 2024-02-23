@@ -418,12 +418,10 @@ namespace NuGet.Build.Tasks
         {
             string globalPackageFolder = null;
             string repositoryPath = null;
-            string firstPackagesConfigPath = null;
             IList<PackageSource> packageSources = null;
-
-            var installedPackageReferences = new HashSet<Packaging.PackageReference>(PackageReferenceComparer.Instance);
-
             ISettings settings = null;
+
+            Dictionary<PackageReference, List<string>> packageReferenceToProjects = new(PackageReferenceComparer.Instance);
 
             foreach (PackageSpec packageSpec in dgFile.Projects.Where(i => i.RestoreMetadata.ProjectStyle == ProjectStyle.PackagesConfig))
             {
@@ -449,9 +447,15 @@ namespace NuGet.Build.Tasks
 
                 string packagesConfigPath = GetPackagesConfigFilePath(pcRestoreMetadata.ProjectPath);
 
-                firstPackagesConfigPath = firstPackagesConfigPath ?? packagesConfigPath;
-
-                installedPackageReferences.AddRange(GetInstalledPackageReferences(packagesConfigPath, allowDuplicatePackageIds: true));
+                foreach (PackageReference packageReference in GetInstalledPackageReferences(packagesConfigPath))
+                {
+                    if (!packageReferenceToProjects.TryGetValue(packageReference, out List<string> value))
+                    {
+                        value ??= new();
+                        packageReferenceToProjects.Add(packageReference, value);
+                    }
+                    value.Add(packagesConfigPath);
+                }
             }
 
             if (string.IsNullOrEmpty(repositoryPath))
@@ -469,18 +473,19 @@ namespace NuGet.Build.Tasks
                 Packaging.PackageSaveMode.Defaultv2 :
                 effectivePackageSaveMode;
 
-            var missingPackageReferences = installedPackageReferences.Where(reference =>
-                !nuGetPackageManager.PackageExistsInPackagesFolder(reference.PackageIdentity, packageSaveMode)).ToArray();
+            List<PackageRestoreData> packageRestoreData = new(packageReferenceToProjects.Count);
+            bool areAnyPackagesMissing = false;
+            foreach (KeyValuePair<PackageReference, List<string>> package in packageReferenceToProjects)
+            {
+                var exists = nuGetPackageManager.PackageExistsInPackagesFolder(package.Key.PackageIdentity, packageSaveMode);
+                packageRestoreData.Add(new PackageRestoreData(package.Key, package.Value, !exists));
+                areAnyPackagesMissing |= !exists;
+            }
 
-            if (missingPackageReferences.Length == 0)
+            if (!areAnyPackagesMissing)
             {
                 return new RestoreSummary(true);
             }
-            var packageRestoreData = missingPackageReferences.Select(reference =>
-                new PackageRestoreData(
-                    reference,
-                    new[] { firstPackagesConfigPath },
-                    isMissing: true));
 
             var repositories = sourceRepositoryProvider.GetRepositories().ToArray();
 
@@ -591,7 +596,7 @@ namespace NuGet.Build.Tasks
         }
 
 
-        private static IEnumerable<PackageReference> GetInstalledPackageReferences(string projectConfigFilePath, bool allowDuplicatePackageIds)
+        private static IEnumerable<PackageReference> GetInstalledPackageReferences(string projectConfigFilePath)
         {
             if (File.Exists(projectConfigFilePath))
             {
@@ -599,7 +604,7 @@ namespace NuGet.Build.Tasks
                 {
                     XDocument xDocument = Load(projectConfigFilePath);
                     var reader = new PackagesConfigReader(xDocument);
-                    return reader.GetPackages(allowDuplicatePackageIds);
+                    return reader.GetPackages(allowDuplicatePackageIds: true);
                 }
                 catch (XmlException ex)
                 {

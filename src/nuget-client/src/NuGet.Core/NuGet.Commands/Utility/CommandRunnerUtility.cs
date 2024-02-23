@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -68,12 +69,12 @@ namespace NuGet.Commands
             return apiKey;
         }
 
-        public static async Task<PackageUpdateResource> GetPackageUpdateResource(IPackageSourceProvider sourceProvider, PackageSource packageSource)
+        public static async Task<PackageUpdateResource> GetPackageUpdateResource(IPackageSourceProvider sourceProvider, PackageSource packageSource, CancellationToken cancellationToken)
         {
             var sourceRepositoryProvider = new CachingSourceProvider(sourceProvider);
             var sourceRepository = sourceRepositoryProvider.CreateRepository(packageSource);
 
-            return await sourceRepository.GetResourceAsync<PackageUpdateResource>();
+            return await sourceRepository.GetResourceAsync<PackageUpdateResource>(cancellationToken);
         }
 
         public static PackageSource GetOrCreatePackageSource(IPackageSourceProvider sourceProvider, string source)
@@ -97,7 +98,7 @@ namespace NuGet.Commands
             return packageSource;
         }
 
-        public static async Task<SymbolPackageUpdateResourceV3> GetSymbolPackageUpdateResource(IPackageSourceProvider sourceProvider, string source)
+        public static async Task<SymbolPackageUpdateResourceV3> GetSymbolPackageUpdateResource(IPackageSourceProvider sourceProvider, string source, CancellationToken cancellationToken)
         {
             // Use a loaded PackageSource if possible since it contains credential info
             var packageSource = sourceProvider.LoadPackageSources()
@@ -112,7 +113,7 @@ namespace NuGet.Commands
             var sourceRepositoryProvider = new CachingSourceProvider(sourceProvider);
             var sourceRepository = sourceRepositoryProvider.CreateRepository(packageSource);
 
-            return await sourceRepository.GetResourceAsync<SymbolPackageUpdateResourceV3>();
+            return await sourceRepository.GetResourceAsync<SymbolPackageUpdateResourceV3>(cancellationToken);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var resource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
@@ -54,7 +54,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var resource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             var package = new PackageIdentity("deepequal", NuGetVersion.Parse("0.9.0"));
 
@@ -78,7 +78,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var resource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
@@ -102,7 +102,7 @@ namespace NuGet.Protocol.Tests
             // Owin is not added
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var resource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
@@ -126,7 +126,7 @@ namespace NuGet.Protocol.Tests
             // Owin is not added
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var resource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
@@ -149,7 +149,7 @@ namespace NuGet.Protocol.Tests
             // Owin is not added
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var resource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             var package = new PackageIdentity("owin", NuGetVersion.Parse("1.0.0"));
 
@@ -174,7 +174,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var resource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             var package = new PackageIdentity("unlistedpackagea", NuGetVersion.Parse("1.0.0"));
 
@@ -202,7 +202,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var resource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             var package = new PackageIdentity("unlistedpackagec", NuGetVersion.Parse("1.0.0"));
 

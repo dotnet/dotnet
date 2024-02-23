@@ -21,7 +21,7 @@ namespace NuGet.Protocol
         public override async Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source, CancellationToken token)
         {
             RawSearchResourceV3 curResource = null;
-            var serviceIndex = await source.GetResourceAsync<ServiceIndexResourceV3>();
+            var serviceIndex = await source.GetResourceAsync<ServiceIndexResourceV3>(token);
 
             if (serviceIndex != null)
             {

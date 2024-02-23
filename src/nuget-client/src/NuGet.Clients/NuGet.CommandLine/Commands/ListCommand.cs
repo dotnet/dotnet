@@ -18,6 +18,7 @@ namespace NuGet.CommandLine
          UsageSummaryResourceName = "ListCommandUsageSummary",
          UsageDescriptionResourceName = "ListCommandUsageDescription",
          UsageExampleResourceName = "ListCommandUsageExamples")]
+    [DeprecatedCommand(typeof(SearchCommand))]
     public class ListCommand : Command
     {
         private readonly List<string> _sources = new List<string>();

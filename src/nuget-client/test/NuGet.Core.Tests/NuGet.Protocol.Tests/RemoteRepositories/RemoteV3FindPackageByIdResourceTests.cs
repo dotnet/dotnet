@@ -294,7 +294,7 @@ namespace NuGet.Protocol.Tests
                 var logger = new TestLogger();
 
                 // Act
-                var resource = await repo.GetResourceAsync<FindPackageByIdResource>();
+                var resource = await repo.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None);
                 var info = await resource.GetDependencyInfoAsync(
                     "DEEPEQUAL",
                     new NuGetVersion("1.4.0.1-RC"),

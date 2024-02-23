@@ -32,14 +32,14 @@ internal class Program
             var sourcesList = ParseResult.GetValue<List<string>>(sourcesOption);
             if (files is not null && sourcesList is not null)
             {
-                await ExecuteAsync(files, sourcesList);
+                await ExecuteAsync(files, sourcesList, CancellationToken);
             }
         });
         var exitCode = await rootCommand.Parse(args).InvokeAsync();
         return exitCode;
     }
 
-    private static async Task<int> ExecuteAsync(List<FileInfo> files, List<string> sourcesList)
+    private static async Task<int> ExecuteAsync(List<FileInfo> files, List<string> sourcesList, CancellationToken cancellationToken)
     {
         if (!CheckAllFilesExist(files))
         {
@@ -50,7 +50,7 @@ internal class Program
         List<string> messages = new();
         IReadOnlyDictionary<string, PackageInfo> nupkgs = GetNupkgInfo(files, messages);
 
-        await CheckDependenciesExistAsync(nupkgs, sources, messages);
+        await CheckDependenciesExistAsync(nupkgs, sources, messages, cancellationToken);
 
         if (messages.Count == 0)
         {
@@ -70,7 +70,8 @@ internal class Program
     private static async Task CheckDependenciesExistAsync(
         IReadOnlyDictionary<string, PackageInfo> nupkgs,
         IReadOnlyList<NuGetFeed> sources,
-        List<string> messages)
+        List<string> messages,
+        CancellationToken cancellationToken)
     {
         Dictionary<PackageIdentity, bool> checkedPackages = new();
 
@@ -91,7 +92,7 @@ internal class Program
                     {
                         foreach (var source in sources)
                         {
-                            FindPackageByIdResource resource = await source.GetFindPackageByIdResourceAsync();
+                            FindPackageByIdResource resource = await source.GetFindPackageByIdResourceAsync(cancellationToken);
                             exists = await resource.DoesPackageExistAsync(dependency.Id, dependency.Version, cacheContext, NullLogger.Instance, CancellationToken.None);
                             if (exists)
                             {

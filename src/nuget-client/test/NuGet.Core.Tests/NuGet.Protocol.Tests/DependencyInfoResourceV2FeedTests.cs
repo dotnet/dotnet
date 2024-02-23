@@ -31,7 +31,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var dependencyInfoResource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var dependencyInfoResource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             // Act
             var dependencyInfoList = await dependencyInfoResource.ResolvePackages("WindowsAzure.Storage",
@@ -57,7 +57,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var dependencyInfoResource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var dependencyInfoResource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             var packageIdentity = new PackageIdentity("WindowsAzure.Storage", new NuGetVersion("4.3.2-preview"));
 
@@ -85,7 +85,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var dependencyInfoResource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var dependencyInfoResource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             var package = new PackageIdentity("xunit", NuGetVersion.Parse("2.1.0-beta1-build2945"));
             var dep1 = new PackageIdentity("xunit.core", NuGetVersion.Parse("2.1.0-beta1-build2945"));
@@ -114,7 +114,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var dependencyInfoResource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var dependencyInfoResource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             var package = new PackageIdentity("xunit", NuGetVersion.Parse("2.1.0-beta1-build2945"));
 
@@ -150,7 +150,7 @@ namespace NuGet.Protocol.Tests
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses,
                  ProtocolUtility.GetResource("NuGet.Protocol.Tests.compiler.resources.500Error.xml", GetType()));
 
-            var dependencyInfoResource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var dependencyInfoResource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             var package = new PackageIdentity("xunit", NuGetVersion.Parse("1.0.0-notfound"));
 
@@ -174,7 +174,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var dependencyInfoResource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var dependencyInfoResource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             // Act
             var results = await dependencyInfoResource.ResolvePackages("not-found", NuGetFramework.Parse("net45"), NullSourceCacheContext.Instance, Common.NullLogger.Instance, CancellationToken.None);
@@ -196,7 +196,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var dependencyInfoResource = await repo.GetResourceAsync<DependencyInfoResource>();
+            var dependencyInfoResource = await repo.GetResourceAsync<DependencyInfoResource>(CancellationToken.None);
 
             var package = new PackageIdentity("DotNetOpenAuth.Core", NuGetVersion.Parse("4.3.2.13293"));
 

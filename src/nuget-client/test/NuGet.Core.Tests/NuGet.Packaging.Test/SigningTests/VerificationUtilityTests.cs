@@ -33,6 +33,7 @@ namespace NuGet.Packaging.Test
         [InlineData(SignatureVerificationStatusFlags.Suspect, SignatureVerificationStatus.Suspect)]
         [InlineData(SignatureVerificationStatusFlags.Illegal, SignatureVerificationStatus.Disallowed)]
         [InlineData(SignatureVerificationStatusFlags.Untrusted, SignatureVerificationStatus.Disallowed)]
+        [InlineData(SignatureVerificationStatusFlags.UnknownBuildStatus, SignatureVerificationStatus.Disallowed)]
         public void GetSignatureVerificationStatus_WithStatusFlag_ReturnsStatus(
             SignatureVerificationStatusFlags flags,
             SignatureVerificationStatus expectedStatus)
