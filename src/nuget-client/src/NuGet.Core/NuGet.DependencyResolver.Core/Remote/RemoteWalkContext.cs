@@ -2,15 +2,11 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.LibraryModel;
 using NuGet.Protocol.Core.Types;
-using NuGet.Shared;
 
 namespace NuGet.DependencyResolver
 {
@@ -26,7 +22,8 @@ namespace NuGet.DependencyResolver
             RemoteLibraryProviders = new List<IRemoteDependencyProvider>();
             PackageSourceMapping = packageSourceMapping ?? throw new ArgumentNullException(nameof(packageSourceMapping));
 
-            FindLibraryEntryCache = new ConcurrentDictionary<LibraryRangeCacheKey, Task<GraphItem<RemoteResolveResult>>>();
+            FindLibraryEntryCache = new TaskResultCache<LibraryRangeCacheKey, GraphItem<RemoteResolveResult>>();
+            ResolvePackageLibraryMatchCache = new TaskResultCache<LibraryRange, Tuple<LibraryRange, RemoteMatch>>();
 
             LockFileLibraries = new Dictionary<LockFileCacheKey, IList<LibraryIdentity>>();
         }
@@ -46,7 +43,9 @@ namespace NuGet.DependencyResolver
         /// <summary>
         /// Library entry cache.
         /// </summary>
-        public ConcurrentDictionary<LibraryRangeCacheKey, Task<GraphItem<RemoteResolveResult>>> FindLibraryEntryCache { get; }
+        internal TaskResultCache<LibraryRangeCacheKey, GraphItem<RemoteResolveResult>> FindLibraryEntryCache { get; }
+
+        internal TaskResultCache<LibraryRange, Tuple<LibraryRange, RemoteMatch>> ResolvePackageLibraryMatchCache { get; }
 
         /// <summary>
         /// True if this is a csproj or similar project. Xproj should be false.

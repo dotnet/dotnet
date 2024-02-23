@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -19,21 +18,18 @@ namespace NuGet.DependencyResolver
     public static class ResolverUtility
     {
         public static Task<GraphItem<RemoteResolveResult>> FindLibraryCachedAsync(
-            ConcurrentDictionary<LibraryRangeCacheKey, Task<GraphItem<RemoteResolveResult>>> cache,
             LibraryRange libraryRange,
             NuGetFramework framework,
             string runtimeIdentifier,
             RemoteWalkContext context,
             CancellationToken cancellationToken)
         {
-            var key = new LibraryRangeCacheKey(libraryRange, framework);
+            LibraryRangeCacheKey key = new(libraryRange, framework);
 
-            if (cache.TryGetValue(key, out var graphItem))
-                return graphItem;
-
-            graphItem = cache.GetOrAdd(key, FindLibraryEntryAsync(key.LibraryRange, framework, runtimeIdentifier, context, cancellationToken));
-
-            return graphItem;
+            return context.FindLibraryEntryCache.GetOrAddAsync(key,
+                static state => FindLibraryEntryAsync(state.LibraryRange, state.framework, state.runtimeIdentifier, state.context, state.cancellationToken),
+                (key.LibraryRange, framework, runtimeIdentifier, context, cancellationToken),
+                cancellationToken);
         }
 
         public static async Task<GraphItem<RemoteResolveResult>> FindLibraryEntryAsync(
@@ -75,26 +71,29 @@ namespace NuGet.DependencyResolver
                 {
                     return CreateUnresolvedResult(libraryRange);
                 }
+                else
+                {
 
-                try
-                {
-                    graphItem = await CreateGraphItemAsync(match, framework, currentCacheContext, context.Logger, cancellationToken);
-                }
-                catch (InvalidCacheProtocolException) when (i == 0)
-                {
-                    // 1st failure, invalidate the cache and try again.
-                    // Clear the on disk and memory caches during the next request.
-                    currentCacheContext = currentCacheContext.WithRefreshCacheTrue();
-                }
-                catch (PackageNotFoundProtocolException ex) when (match.Provider.IsHttp && match.Provider.Source != null)
-                {
-                    // 2nd failure, the feed is likely corrupt or removing packages too fast to keep up with.
-                    var message = string.Format(CultureInfo.CurrentCulture,
-                                                Strings.Error_PackageNotFoundWhenExpected,
-                                                 match.Provider.Source,
-                                                ex.PackageIdentity.ToString());
+                    try
+                    {
+                        graphItem = await CreateGraphItemAsync(match, framework, currentCacheContext, context.Logger, cancellationToken);
+                    }
+                    catch (InvalidCacheProtocolException) when (i == 0)
+                    {
+                        // 1st failure, invalidate the cache and try again.
+                        // Clear the on disk and memory caches during the next request.
+                        currentCacheContext = currentCacheContext.WithRefreshCacheTrue();
+                    }
+                    catch (PackageNotFoundProtocolException ex) when (match.Provider.IsHttp && match.Provider.Source != null)
+                    {
+                        // 2nd failure, the feed is likely corrupt or removing packages too fast to keep up with.
+                        var message = string.Format(CultureInfo.CurrentCulture,
+                                                    Strings.Error_PackageNotFoundWhenExpected,
+                                                        match.Provider.Source,
+                                                    ex.PackageIdentity.ToString());
 
-                    throw new FatalProtocolException(message, ex);
+                        throw new FatalProtocolException(message, ex);
+                    }
                 }
             }
 
@@ -230,12 +229,14 @@ namespace NuGet.DependencyResolver
         /// <param name="cancellationToken">cancellation token</param>
         /// <returns>The requested range and remote match.</returns>
         public static Task<Tuple<LibraryRange, RemoteMatch>> FindPackageLibraryMatchCachedAsync(
-            ConcurrentDictionary<LibraryRange, Task<Tuple<LibraryRange, RemoteMatch>>> cache,
             LibraryRange libraryRange,
-           RemoteWalkContext remoteWalkContext,
+            RemoteWalkContext remoteWalkContext,
             CancellationToken cancellationToken)
         {
-            return cache.GetOrAdd(libraryRange, (cacheKey) => ResolvePackageLibraryMatchAsync(libraryRange, remoteWalkContext, cancellationToken));
+            return remoteWalkContext.ResolvePackageLibraryMatchCache.GetOrAddAsync(libraryRange,
+                static state => ResolvePackageLibraryMatchAsync(state.libraryRange, state.remoteWalkContext, state.cancellationToken),
+                (libraryRange, remoteWalkContext, cancellationToken),
+                cancellationToken);
         }
 
         private static async Task<Tuple<LibraryRange, RemoteMatch>> ResolvePackageLibraryMatchAsync(LibraryRange libraryRange, RemoteWalkContext remoteWalkContext, CancellationToken cancellationToken)
@@ -251,6 +252,7 @@ namespace NuGet.DependencyResolver
             {
                 match = CreateUnresolvedMatch(libraryRange);
             }
+
             return new Tuple<LibraryRange, RemoteMatch>(libraryRange, match);
         }
 

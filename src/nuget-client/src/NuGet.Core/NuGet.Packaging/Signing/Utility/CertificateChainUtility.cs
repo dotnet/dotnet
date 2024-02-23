@@ -94,7 +94,7 @@ namespace NuGet.Packaging.Signing
                     }
                 }
 
-                if (fatalStatuses.Any())
+                if (chain.ChainStatus.Length == 0 || fatalStatuses.Count > 0)
                 {
                     if (certificateType == CertificateType.Timestamp)
                     {

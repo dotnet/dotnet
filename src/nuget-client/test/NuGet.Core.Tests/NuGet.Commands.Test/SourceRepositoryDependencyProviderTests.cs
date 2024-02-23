@@ -190,7 +190,7 @@ namespace NuGet.Commands.Test
                 .ThrowsAsync(new PackageNotFoundProtocolException(new PackageIdentity("x", NuGetVersion.Parse("1.0.0"))));
 
             var source = new Mock<SourceRepository>();
-            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>())
+            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None))
                 .ReturnsAsync(findResource.Object);
             source.SetupGet(s => s.PackageSource)
                 .Returns(new PackageSource("http://test/index.json"));
@@ -244,7 +244,7 @@ namespace NuGet.Commands.Test
                     Enumerable.Empty<FrameworkSpecificGroup>()));
 
             var source = new Mock<SourceRepository>();
-            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>())
+            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None))
                 .ReturnsAsync(findResource.Object);
             source.SetupGet(s => s.PackageSource)
                 .Returns(new PackageSource("http://test/index.json"));
@@ -296,7 +296,7 @@ namespace NuGet.Commands.Test
                 .Callback(() => dependencyHitCount++);
 
             var source = new Mock<SourceRepository>();
-            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>())
+            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None))
                 .ReturnsAsync(findResource.Object);
             source.SetupGet(s => s.PackageSource)
                 .Returns(new PackageSource("http://test/index.json"));
@@ -433,7 +433,7 @@ namespace NuGet.Commands.Test
                 .Callback(() => versionsHitCount++);
 
             var source = new Mock<SourceRepository>();
-            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>())
+            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None))
                 .ReturnsAsync(findResource.Object);
             source.SetupGet(s => s.PackageSource)
                 .Returns(new PackageSource("http://test/index.json"));
@@ -544,7 +544,7 @@ namespace NuGet.Commands.Test
                         It.IsAny<CancellationToken>()))
                     .ThrowsAsync(new FatalProtocolException("simulated"));
 
-                test.SourceRepository.Setup(s => s.GetResourceAsync<FindPackageByIdResource>())
+                test.SourceRepository.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None))
                     .ReturnsAsync(resource.Object);
 
                 await Assert.ThrowsAsync<FatalProtocolException>(
@@ -570,7 +570,7 @@ namespace NuGet.Commands.Test
                         It.IsAny<CancellationToken>()))
                     .ThrowsAsync(new FatalProtocolException("simulated"));
 
-                test.SourceRepository.Setup(s => s.GetResourceAsync<FindPackageByIdResource>())
+                test.SourceRepository.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None))
                     .ReturnsAsync(resource.Object);
 
                 var packageDownloader = await test.Provider.GetPackageDownloaderAsync(
@@ -599,7 +599,7 @@ namespace NuGet.Commands.Test
                         It.IsAny<CancellationToken>()))
                     .ThrowsAsync(new FatalProtocolException("simulated"));
 
-                test.SourceRepository.Setup(s => s.GetResourceAsync<FindPackageByIdResource>())
+                test.SourceRepository.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None))
                     .ReturnsAsync(resource.Object);
 
                 Assert.Equal(0, test.Logger.Warnings);
@@ -643,7 +643,7 @@ namespace NuGet.Commands.Test
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(expectedPackageDownloader.Object);
 
-                test.SourceRepository.Setup(s => s.GetResourceAsync<FindPackageByIdResource>())
+                test.SourceRepository.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None))
                     .ReturnsAsync(resource.Object);
 
                 var actualPackageDownloader = await test.Provider.GetPackageDownloaderAsync(
@@ -675,7 +675,7 @@ namespace NuGet.Commands.Test
                 .Throws(expectedException);
 
             var source = new Mock<SourceRepository>();
-            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>())
+            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None))
                 .ReturnsAsync(findResource.Object);
             source.SetupGet(s => s.PackageSource)
                 .Returns(new PackageSource("http://test/index.json"));
@@ -733,7 +733,7 @@ namespace NuGet.Commands.Test
                 .Throws(expectedException);
 
             var source = new Mock<SourceRepository>();
-            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>())
+            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None))
                 .ReturnsAsync(findResource.Object);
             source.SetupGet(s => s.PackageSource)
                 .Returns(new PackageSource("http://test/index.json"));
@@ -803,7 +803,7 @@ namespace NuGet.Commands.Test
                     Enumerable.Empty<FrameworkSpecificGroup>()));
 
             var source = new Mock<SourceRepository>();
-            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>())
+            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None))
                 .ReturnsAsync(findResource.Object);
             source.SetupGet(s => s.PackageSource)
                 .Returns(new PackageSource("http://test/index.json"));
@@ -865,7 +865,7 @@ namespace NuGet.Commands.Test
                     Enumerable.Empty<FrameworkSpecificGroup>()));
 
             var source = new Mock<SourceRepository>();
-            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>())
+            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None))
                 .ReturnsAsync(findResource.Object);
             source.SetupGet(s => s.PackageSource)
                 .Returns(new PackageSource("http://test/index.json"));

@@ -1352,7 +1352,7 @@ namespace NuGet.PackageManagement
             {
                 var targetFramework = nuGetProject.GetMetadata<NuGetFramework>(NuGetProjectMetadataKeys.TargetFramework);
                 var installedPackageIdentities = (await nuGetProject.GetInstalledPackagesAsync(token)).Select(pr => pr.PackageIdentity);
-                return await GetDependencyInfoFromPackagesFolderAsync(installedPackageIdentities, targetFramework, includeUnresolved);
+                return await GetDependencyInfoFromPackagesFolderAsync(installedPackageIdentities, targetFramework, includeUnresolved, token);
             }
             else
             {
@@ -1371,7 +1371,9 @@ namespace NuGet.PackageManagement
             var installedPackages = await nuGetProject.GetInstalledPackagesAsync(token);
             var installedPackageIdentities = installedPackages.Select(pr => pr.PackageIdentity);
             var dependencyInfoFromPackagesFolder = await GetDependencyInfoFromPackagesFolderAsync(installedPackageIdentities,
-                targetFramework);
+                targetFramework,
+                includeUnresolved: false,
+                token);
 
             // dependencyInfoFromPackagesFolder can be null when NuGetProtocolException is thrown
             var resolverPackages = dependencyInfoFromPackagesFolder?.Select(package =>
@@ -2022,7 +2024,7 @@ namespace NuGet.PackageManagement
             else
             {
                 var logger = new ProjectContextLogger(nuGetProjectContext);
-                var sourceRepository = await GetSourceRepository(packageIdentity, effectiveSources, resolutionContext.SourceCacheContext, logger);
+                var sourceRepository = await GetSourceRepository(packageIdentity, effectiveSources, resolutionContext.SourceCacheContext, logger, token);
                 nuGetProjectActions.Add(NuGetProjectAction.CreateInstallProjectAction(packageIdentity, sourceRepository, nuGetProject));
             }
 
@@ -2049,7 +2051,8 @@ namespace NuGet.PackageManagement
         private static async Task<SourceRepository> GetSourceRepository(PackageIdentity packageIdentity,
             IEnumerable<SourceRepository> sourceRepositories,
             SourceCacheContext sourceCacheContext,
-            ILogger logger)
+            ILogger logger,
+            CancellationToken cancellationToken)
         {
             SourceRepository source = null;
 
@@ -2063,7 +2066,7 @@ namespace NuGet.PackageManagement
             foreach (var sourceRepository in sourceRepositories)
             {
                 // TODO: fetch the resource in parallel also
-                var metadataResource = await sourceRepository.GetResourceAsync<MetadataResource>();
+                var metadataResource = await sourceRepository.GetResourceAsync<MetadataResource>(cancellationToken);
                 if (metadataResource != null)
                 {
                     var task = Task.Run(() => metadataResource.Exists(packageIdentity, sourceCacheContext, logger, tokenSource.Token), tokenSource.Token);
@@ -2376,7 +2379,9 @@ namespace NuGet.PackageManagement
             var log = new LoggerAdapter(nuGetProjectContext);
             var installedPackageIdentities = (await nuGetProject.GetInstalledPackagesAsync(token)).Select(pr => pr.PackageIdentity);
             var dependencyInfoFromPackagesFolder = await GetDependencyInfoFromPackagesFolderAsync(installedPackageIdentities,
-                packageReferenceTargetFramework);
+                packageReferenceTargetFramework,
+                includeUnresolved: false,
+                token);
 
             nuGetProjectContext.Log(ProjectManagement.MessageLevel.Info, Strings.ResolvingActionsToUninstallPackage, packageIdentity);
             // Step-2 : Determine if the package can be uninstalled based on the metadata resources
@@ -2392,10 +2397,11 @@ namespace NuGet.PackageManagement
 
         private async Task<IEnumerable<PackageDependencyInfo>> GetDependencyInfoFromPackagesFolderAsync(IEnumerable<PackageIdentity> packageIdentities,
             NuGetFramework nuGetFramework,
-            bool includeUnresolved = false)
+            bool includeUnresolved,
+            CancellationToken cancellationToken)
         {
-            var dependencyInfoResource = await PackagesFolderSourceRepository.GetResourceAsync<DependencyInfoResource>();
-            return await PackageGraphAnalysisUtilities.GetDependencyInfoForPackageIdentitiesAsync(packageIdentities, nuGetFramework, dependencyInfoResource, NullSourceCacheContext.Instance, includeUnresolved, NullLogger.Instance, CancellationToken.None);
+            var dependencyInfoResource = await PackagesFolderSourceRepository.GetResourceAsync<DependencyInfoResource>(cancellationToken);
+            return await PackageGraphAnalysisUtilities.GetDependencyInfoForPackageIdentitiesAsync(packageIdentities, nuGetFramework, dependencyInfoResource, NullSourceCacheContext.Instance, includeUnresolved, NullLogger.Instance, cancellationToken);
         }
 
         /// <summary>
@@ -3886,7 +3892,7 @@ namespace NuGet.PackageManagement
             Common.ILogger log,
             CancellationToken token)
         {
-            var dependencyInfoResource = await source.GetResourceAsync<DependencyInfoResource>();
+            var dependencyInfoResource = await source.GetResourceAsync<DependencyInfoResource>(token);
 
             // Resolve the package for the project framework and cache the results in the
             // resolution context for the gather to use during the next step.

@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
@@ -22,7 +23,7 @@ namespace NuGet.Protocol.Tests
             var sourceRepository = new SourceRepository(packageSource, new[] { new HttpSourceResourceProvider() });
 
             // Act
-            HttpSourceResource httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>();
+            HttpSourceResource httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>(CancellationToken.None);
 
             // Assert
             Assert.NotNull(httpSourceResource);
@@ -37,7 +38,7 @@ namespace NuGet.Protocol.Tests
             var sourceRepository = new SourceRepository(packageSource, new[] { new HttpSourceResourceProvider() });
 
             // Act
-            HttpSourceResource httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>();
+            HttpSourceResource httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>(CancellationToken.None);
 
             // Assert
             Assert.NotNull(httpSourceResource);
@@ -55,7 +56,7 @@ namespace NuGet.Protocol.Tests
             var sourceRepository = new SourceRepository(packageSource, new[] { new HttpSourceResourceProvider() });
 
             // Act
-            HttpSourceResource httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>();
+            HttpSourceResource httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>(CancellationToken.None);
 
             // Assert
             Assert.NotNull(httpSourceResource);
