@@ -32,10 +32,10 @@ namespace NuGet.Protocol.Tests
             // HttpSourceResourceProvider updates PackageSource.MaxHttpRequestsPerSource value for .NET Framework code paths
             // HttpSource constructor accepts a delegate that creates HttpHandlerResource and it stores the delegate in a private variable.
             // Hence used discard to ignore the return value and fetched HttpHandlerResource from the source repository to verify behavior. 
-            _ = await sourceRepository.GetResourceAsync<HttpSourceResource>();
+            _ = await sourceRepository.GetResourceAsync<HttpSourceResource>(CancellationToken.None);
 
             // Act
-            HttpHandlerResource httpHandlerResource = await sourceRepository.GetResourceAsync<HttpHandlerResource>();
+            HttpHandlerResource httpHandlerResource = await sourceRepository.GetResourceAsync<HttpHandlerResource>(CancellationToken.None);
 
             // Assert
             Assert.NotNull(httpHandlerResource);
@@ -54,10 +54,10 @@ namespace NuGet.Protocol.Tests
             // HttpSourceResourceProvider updates PackageSource.MaxHttpRequestsPerSource value for .NET Framework code paths
             // HttpSource constructor accepts a delegate that creates HttpHandlerResource and it stores the delegate in a private variable.
             // Hence used discard to ignore the return value and fetched HttpHandlerResource from the source repository to verify behavior.
-            _ = await sourceRepository.GetResourceAsync<HttpSourceResource>();
+            _ = await sourceRepository.GetResourceAsync<HttpSourceResource>(CancellationToken.None);
 
             // Act            
-            HttpHandlerResource httpHandlerResource = await sourceRepository.GetResourceAsync<HttpHandlerResource>();
+            HttpHandlerResource httpHandlerResource = await sourceRepository.GetResourceAsync<HttpHandlerResource>(CancellationToken.None);
 
             // Assert
             Assert.NotNull(httpHandlerResource);
@@ -78,10 +78,10 @@ namespace NuGet.Protocol.Tests
             // HttpSourceResourceProvider updates PackageSource.MaxHttpRequestsPerSource value for .NET Framework code paths
             // HttpSource constructor accepts a delegate that creates HttpHandlerResource and it stores the delegate in a private variable.
             // Hence used discard to ignore the return value and fetched HttpHandlerResource from the source repository to verify behavior.
-            _ = await sourceRepository.GetResourceAsync<HttpSourceResource>();
+            _ = await sourceRepository.GetResourceAsync<HttpSourceResource>(CancellationToken.None);
 
             // Act            
-            HttpHandlerResource httpHandlerResource = await sourceRepository.GetResourceAsync<HttpHandlerResource>();
+            HttpHandlerResource httpHandlerResource = await sourceRepository.GetResourceAsync<HttpHandlerResource>(CancellationToken.None);
 
             // Assert
             Assert.NotNull(httpHandlerResource);

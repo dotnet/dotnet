@@ -7,7 +7,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NuGet.Common;
 using NuGet.Packaging;
 
@@ -253,7 +252,9 @@ namespace NuGet.ProjectModel
                         case "projects":
                             jsonReader.ReadObject(projectsPropertyName =>
                             {
+#pragma warning disable CS0612 // Type or member is obsolete
                                 PackageSpec packageSpec = JsonPackageSpecReader.GetPackageSpec(jsonReader, name: null, path, EnvironmentVariableWrapper.Instance);
+#pragma warning restore CS0612 // Type or member is obsolete
                                 dgspec._projects.Add(projectsPropertyName, packageSpec);
                             });
                             break;

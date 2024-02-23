@@ -31,7 +31,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<PackageSearchResource>();
+            var resource = await repo.GetResourceAsync<PackageSearchResource>(CancellationToken.None);
 
             // Act
             var packages = await resource.SearchAsync(
@@ -107,7 +107,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<PackageSearchResource>();
+            var resource = await repo.GetResourceAsync<PackageSearchResource>(CancellationToken.None);
 
             // Act
             var packages = (IEnumerable<PackageSearchMetadataBuilder.ClonedPackageSearchMetadata>)await resource.SearchAsync(
@@ -136,7 +136,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<PackageSearchResource>();
+            var resource = await repo.GetResourceAsync<PackageSearchResource>(CancellationToken.None);
 
             // Act
             var packages = await resource.SearchAsync(
@@ -163,7 +163,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
 
-            var resource = await repo.GetResourceAsync<PackageSearchResource>();
+            var resource = await repo.GetResourceAsync<PackageSearchResource>(CancellationToken.None);
 
             // Act
             var packages = await resource.SearchAsync(

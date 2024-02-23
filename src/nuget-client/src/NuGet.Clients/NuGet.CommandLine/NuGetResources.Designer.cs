@@ -1666,6 +1666,15 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0} {1}&apos; is deprecated. Use &apos;{0} {2}&apos; instead..
+        /// </summary>
+        public static string Warning_CommandDeprecated {
+            get {
+                return ResourceManager.GetString("Warning_CommandDeprecated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The value &quot;{0}&quot; for {1} is a sample value and should be removed..
         /// </summary>
         public static string Warning_DefaultSpecValue {

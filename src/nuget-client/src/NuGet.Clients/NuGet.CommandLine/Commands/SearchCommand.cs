@@ -70,7 +70,7 @@ namespace NuGet.CommandLine
             foreach (PackageSource source in listEndpoints)
             {
                 SourceRepository repository = Repository.Factory.GetCoreV3(source);
-                PackageSearchResource resource = await repository.GetResourceAsync<PackageSearchResource>();
+                PackageSearchResource resource = await repository.GetResourceAsync<PackageSearchResource>(cancellationToken);
 
                 if (resource is null)
                 {

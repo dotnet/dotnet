@@ -2,8 +2,8 @@
 <Project>
   <PropertyGroup>
     <GitCommitHash>01eadf6bfd22b6be33c6861a51c86bd552f0ece0</GitCommitHash>
-    <OfficialBuildId>20240220.2</OfficialBuildId>
-    <OutputPackageVersion>9.0.0-beta.24120.2</OutputPackageVersion>
+    <OfficialBuildId>20240221.1</OfficialBuildId>
+    <OutputPackageVersion>9.0.0-beta.24121.1</OutputPackageVersion>
     <PreReleaseVersionLabel>beta</PreReleaseVersionLabel>
     <IsStable>false</IsStable>
   </PropertyGroup>

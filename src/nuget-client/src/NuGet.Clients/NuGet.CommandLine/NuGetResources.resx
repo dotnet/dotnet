@@ -738,4 +738,10 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</comment>
   <data name="Error_CannotFindNonArchitectureSpecificMsbuild" xml:space="preserve">
     <value>The resolved MSBuild directory is `{0}` which is an architecture-specific directory. Could not find MSBuild in its parent directory (non-architecture specific).</value>
   </data>
+  <data name="Warning_CommandDeprecated" xml:space="preserve">
+    <value>'{0} {1}' is deprecated. Use '{0} {2}' instead.</value>
+    <comment>{0} - name of the assembly running the command, e.g., NuGet
+{1} - current command marked as deprecated, e.g., list
+{2} - replacement command. For example, search</comment>
+  </data>
 </root>

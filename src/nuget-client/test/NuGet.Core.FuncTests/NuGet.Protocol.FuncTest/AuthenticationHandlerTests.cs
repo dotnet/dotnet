@@ -51,7 +51,7 @@ namespace NuGet.Protocol.FuncTest
                     packageSource.Credentials = new PackageSourceCredential(packageSource.Name, "user", "pass", true, "basic");
                     var repository = Repository.Factory.GetCoreV3(packageSource);
 
-                    var httpSourceResource = await repository.GetResourceAsync<HttpSourceResource>();
+                    var httpSourceResource = await repository.GetResourceAsync<HttpSourceResource>(CancellationToken.None);
                     var source = httpSourceResource.HttpSource;
 
                     using (var sourceCacheContext = new SourceCacheContext()
@@ -121,7 +121,7 @@ namespace NuGet.Protocol.FuncTest
                     SetupCredentialServiceMock(mockedCredentialService, expectedCredentials, packageSource);
                     HttpHandlerResourceV3.CredentialService = new Lazy<ICredentialService>(() => mockedCredentialService.Object);
 
-                    var httpSourceResource = await repository.GetResourceAsync<HttpSourceResource>();
+                    var httpSourceResource = await repository.GetResourceAsync<HttpSourceResource>(CancellationToken.None);
                     var source = httpSourceResource.HttpSource;
 
                     using var sourceCacheContext = new SourceCacheContext()

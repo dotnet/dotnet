@@ -25,7 +25,7 @@ namespace NuGet.Protocol.FuncTest
         {
             // Arrange
             var repo = Repository.Factory.GetCoreV3(packageSource);
-            var findPackageByIdResource = await repo.GetResourceAsync<FindPackageByIdResource>();
+            var findPackageByIdResource = await repo.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None);
             var logger = new TestLogger();
 
             using (var context = new SourceCacheContext())
@@ -51,7 +51,7 @@ namespace NuGet.Protocol.FuncTest
         {
             // Arrange
             var repo = Repository.Factory.GetCoreV3(packageSource);
-            var findPackageByIdResource = await repo.GetResourceAsync<FindPackageByIdResource>();
+            var findPackageByIdResource = await repo.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None);
             var logger = new TestLogger();
 
             using (var context = new SourceCacheContext())
@@ -77,7 +77,7 @@ namespace NuGet.Protocol.FuncTest
         {
             // Arrange
             var repo = Repository.Factory.GetCoreV3(packageSource);
-            var findPackageByIdResource = await repo.GetResourceAsync<FindPackageByIdResource>();
+            var findPackageByIdResource = await repo.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None);
             var logger = new TestLogger();
 
             using (var context = new SourceCacheContext())
@@ -103,7 +103,7 @@ namespace NuGet.Protocol.FuncTest
         {
             // Arrange
             var repo = Repository.Factory.GetCoreV2(packageSource);
-            var findPackageByIdResource = await repo.GetResourceAsync<FindPackageByIdResource>();
+            var findPackageByIdResource = await repo.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None);
             var logger = new TestLogger();
 
             using (var context = new SourceCacheContext())
@@ -129,7 +129,7 @@ namespace NuGet.Protocol.FuncTest
         {
             // Arrange
             var repo = Repository.Factory.GetCoreV2(packageSource);
-            var findPackageByIdResource = await repo.GetResourceAsync<FindPackageByIdResource>();
+            var findPackageByIdResource = await repo.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None);
             var logger = new TestLogger();
 
             using (var context = new SourceCacheContext())
@@ -155,7 +155,7 @@ namespace NuGet.Protocol.FuncTest
         {
             // Arrange
             var repo = Repository.Factory.GetCoreV2(packageSource);
-            var findPackageByIdResource = await repo.GetResourceAsync<FindPackageByIdResource>();
+            var findPackageByIdResource = await repo.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None);
             var logger = new TestLogger();
 
             using (var context = new SourceCacheContext())
@@ -195,7 +195,7 @@ namespace NuGet.Protocol.FuncTest
             var source = MockSourceRepository.Create(timeoutHandler);
 
             // Now arrange the NuGet Client SDK experience
-            var protocolResource = await source.GetResourceAsync<FindPackageByIdResource>();
+            var protocolResource = await source.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None);
 
             using (var destination = new MemoryStream())
             {

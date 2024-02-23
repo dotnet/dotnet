@@ -18,3 +18,6 @@ M:Microsoft.VisualStudio.Shell.IAsyncServiceProvider.GetServiceAsync(System.Type
 M:Microsoft.VisualStudio.Shell.AsyncPackage.GetServiceAsync(System.Type); Do not retrieve services from AsyncPackage, use the Async Service provider instead, which that class implements. Use the Microsoft.VisualStudio.Shell.ServiceExtensions.GetServiceAsync for services that have UI thread affinity or that you don't know about their affinity, and use NuGet.VisualStudio.ServiceProviderExtensions.GetFreeThreadedServiceAsync<TService, TInterface> for free threaded services.
 
 M:System.IO.Path.GetTempPath(); Use NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp)
+
+M:NuGet.Protocol.Core.Types.SourceRepository.GetResource`1(); Pass a cancellation token
+M:NuGet.Protocol.Core.Types.SourceRepository.GetResourceAsync`1(); Pass a cancellation token

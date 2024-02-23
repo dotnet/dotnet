@@ -1084,7 +1084,7 @@ namespace NuGet.CommandLine
             var findLocalPackagesResource = Repository
                 .Factory
                 .GetCoreV3(packagesFolderPath)
-                .GetResource<FindLocalPackagesResource>();
+                .GetResource<FindLocalPackagesResource>(CancellationToken.None);
 
             // Collect all packages
             IDictionary<PackageIdentity, PackageReference> packageReferences =

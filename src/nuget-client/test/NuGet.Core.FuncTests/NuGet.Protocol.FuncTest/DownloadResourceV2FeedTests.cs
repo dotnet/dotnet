@@ -22,7 +22,7 @@ namespace NuGet.Protocol.FuncTest
             // Arrange
             var repo = Repository.Factory.GetCoreV3(TestSources.NuGetV2Uri);
 
-            var downloadResource = await repo.GetResourceAsync<DownloadResource>();
+            var downloadResource = await repo.GetResourceAsync<DownloadResource>(CancellationToken.None);
 
             var package = new SourcePackageDependencyInfo("WindowsAzure.Storage", new NuGetVersion("6.2.0"), null, true, repo, new Uri($@"{TestSources.NuGetV2Uri}/package/WindowsAzure.Storage/6.2.0"), "");
 
@@ -49,7 +49,7 @@ namespace NuGet.Protocol.FuncTest
             // Arrange
             var repo = Repository.Factory.GetCoreV3(TestSources.NuGetV2Uri);
 
-            var downloadResource = await repo.GetResourceAsync<DownloadResource>();
+            var downloadResource = await repo.GetResourceAsync<DownloadResource>(CancellationToken.None);
 
             var package = new PackageIdentity("WindowsAzure.Storage", new NuGetVersion("6.2.0"));
 
@@ -76,7 +76,7 @@ namespace NuGet.Protocol.FuncTest
             // Arrange
             var repo = Repository.Factory.GetCoreV3(TestSources.NuGetV2Uri);
 
-            var downloadResource = await repo.GetResourceAsync<DownloadResource>();
+            var downloadResource = await repo.GetResourceAsync<DownloadResource>(CancellationToken.None);
 
             var package = new SourcePackageDependencyInfo("not-found", new NuGetVersion("6.2.0"), null, true, repo, new Uri($@"{TestSources.NuGetV2Uri}/package/not-found/6.2.0"), "");
 
@@ -104,7 +104,7 @@ namespace NuGet.Protocol.FuncTest
             var repo = Repository.Factory.GetCoreV3($"https://www.{randomName}.org/api/v2/");
 
             // Act & Assert
-            Exception ex = await Assert.ThrowsAsync<FatalProtocolException>(async () => await repo.GetResourceAsync<DownloadResource>());
+            Exception ex = await Assert.ThrowsAsync<FatalProtocolException>(async () => await repo.GetResourceAsync<DownloadResource>(CancellationToken.None));
 
             Assert.NotNull(ex);
             Assert.Equal($"Unable to load the service index for source https://www.{randomName}.org/api/v2/.", ex.Message);
@@ -116,7 +116,7 @@ namespace NuGet.Protocol.FuncTest
             // Arrange
             var repo = Repository.Factory.GetCoreV3(TestSources.NuGetV2Uri);
 
-            var packageMetadataResource = await repo.GetResourceAsync<PackageMetadataResource>();
+            var packageMetadataResource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
 
             var package = new PackageIdentity("WindowsAzure.Storage", new NuGetVersion("6.2.0"));
 

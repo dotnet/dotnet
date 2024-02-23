@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Protocol.Core.Types;
@@ -43,7 +44,7 @@ namespace NuGet.Protocol.Tests
                 };
 
                 var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-                var resource = await repo.GetResourceAsync<PackageUpdateResource>();
+                var resource = await repo.GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
                 var apiKey = "SomeApiKey";
 
                 // Act
@@ -91,7 +92,7 @@ namespace NuGet.Protocol.Tests
                 };
 
                 var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-                var resource = await repo.GetResourceAsync<PackageUpdateResource>();
+                var resource = await repo.GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
                 var apiKey = string.Empty;
 
                 // Act
@@ -138,7 +139,7 @@ namespace NuGet.Protocol.Tests
                 };
 
                 var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-                var resource = await repo.GetResourceAsync<PackageUpdateResource>();
+                var resource = await repo.GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
                 var apiKey = "SomeApiKey";
 
                 var packageInfo = await SimpleTestPackageUtility.CreateFullPackageAsync(workingDir, "test", "1.0.0");
@@ -192,7 +193,7 @@ namespace NuGet.Protocol.Tests
                 };
 
                 var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-                var resource = await repo.GetResourceAsync<PackageUpdateResource>();
+                var resource = await repo.GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
                 var apiKey = string.Empty;
 
                 var packageInfo = await SimpleTestPackageUtility.CreateFullPackageAsync(workingDir, "test", "1.0.0");
@@ -283,7 +284,7 @@ namespace NuGet.Protocol.Tests
                 };
 
                 var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-                var resource = await repo.GetResourceAsync<PackageUpdateResource>();
+                var resource = await repo.GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
                 UserAgent.SetUserAgentString(new UserAgentStringBuilder("test client"));
 
                 // Act
@@ -349,7 +350,7 @@ namespace NuGet.Protocol.Tests
                 };
 
                 var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-                var resource = await repo.GetResourceAsync<PackageUpdateResource>();
+                var resource = await repo.GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
                 UserAgent.SetUserAgentString(new UserAgentStringBuilder("test client"));
                 var logger = new TestLogger();
                 // Act
@@ -424,7 +425,7 @@ namespace NuGet.Protocol.Tests
                 };
 
                 var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-                var resource = await repo.GetResourceAsync<PackageUpdateResource>();
+                var resource = await repo.GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
                 UserAgent.SetUserAgentString(new UserAgentStringBuilder("test client"));
 
                 // Act
@@ -500,7 +501,7 @@ namespace NuGet.Protocol.Tests
                 };
 
                 var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-                var resource = await repo.GetResourceAsync<PackageUpdateResource>();
+                var resource = await repo.GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
                 UserAgent.SetUserAgentString(new UserAgentStringBuilder("test client"));
 
                 // Act
@@ -553,7 +554,7 @@ namespace NuGet.Protocol.Tests
                 };
 
                 var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-                var resource = await repo.GetResourceAsync<PackageUpdateResource>();
+                var resource = await repo.GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
                 UserAgent.SetUserAgentString(new UserAgentStringBuilder("test client"));
 
                 // Act
@@ -603,7 +604,7 @@ namespace NuGet.Protocol.Tests
                 };
 
                 var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-                var resource = await repo.GetResourceAsync<PackageUpdateResource>();
+                var resource = await repo.GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
                 UserAgent.SetUserAgentString(new UserAgentStringBuilder("test client"));
 
                 // Act
@@ -666,7 +667,7 @@ namespace NuGet.Protocol.Tests
                 };
 
                 var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-                var resource = await repo.GetResourceAsync<PackageUpdateResource>();
+                var resource = await repo.GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
                 UserAgent.SetUserAgentString(new UserAgentStringBuilder("test client"));
 
                 // Act
@@ -735,7 +736,7 @@ namespace NuGet.Protocol.Tests
                 };
 
                 var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-                var resource = await repo.GetResourceAsync<PackageUpdateResource>();
+                var resource = await repo.GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
                 UserAgent.SetUserAgentString(new UserAgentStringBuilder("test client"));
 
                 // Act
@@ -802,7 +803,7 @@ namespace NuGet.Protocol.Tests
                 };
 
                 var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-                var resource = await repo.GetResourceAsync<PackageUpdateResource>();
+                var resource = await repo.GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
                 UserAgent.SetUserAgentString(new UserAgentStringBuilder("test client"));
 
                 // Act
@@ -854,7 +855,7 @@ namespace NuGet.Protocol.Tests
                         }
                     },
                 };
-            var resource = await StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses).GetResourceAsync<PackageUpdateResource>();
+            var resource = await StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses).GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
             var logger = new TestLogger();
 
             // Act
@@ -921,7 +922,7 @@ namespace NuGet.Protocol.Tests
                     },
                 };
 
-            var resource = await StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses).GetResourceAsync<PackageUpdateResource>();
+            var resource = await StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses).GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
             UserAgent.SetUserAgentString(new UserAgentStringBuilder("test client"));
             var logger = new TestLogger();
 
@@ -989,7 +990,7 @@ namespace NuGet.Protocol.Tests
                     },
                 };
 
-            var resource = await StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses).GetResourceAsync<PackageUpdateResource>();
+            var resource = await StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses).GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
             UserAgent.SetUserAgentString(new UserAgentStringBuilder("test client"));
             var logger = new TestLogger();
 
@@ -1043,7 +1044,7 @@ namespace NuGet.Protocol.Tests
                 };
 
                 var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-                var resource = await repo.GetResourceAsync<PackageUpdateResource>();
+                var resource = await repo.GetResourceAsync<PackageUpdateResource>(CancellationToken.None);
                 var apiKey = string.Empty;
                 var logger = new TestLogger();
 

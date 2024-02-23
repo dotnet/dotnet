@@ -1288,12 +1288,12 @@ EndProject");
 
 
                 var projectJson = @"{
-                    'dependencies': {
-                    'packageA': '1.1.0',
-                    'packageB': '2.2.0'
+                    ""dependencies"": {
+                    ""packageA"": ""1.1.0"",
+                    ""packageB"": ""2.2.0""
                     },
-                    'frameworks': {
-                                'netcore50': { }
+                    ""frameworks"": {
+                                ""netcore50"": { }
                             }
                 }";
 
@@ -1992,12 +1992,12 @@ EndProject";
 
                 Util.CreateFile(Path.Combine(basePath, "A", "A.Util"), "project.json",
 @"{
-  'dependencies': {
-    'packageA': '1.1.0',
-    'packageB': '2.2.0'
+  ""dependencies"": {
+    ""packageA"": ""1.1.0"",
+    ""packageB"": ""2.2.0""
   },
-  'frameworks': {
-                'netcore50': { }
+  ""frameworks"": {
+                ""netcore50"": { }
             }
 }");
                 Util.CreateFile(Path.Combine(basePath, "B"), "B.csproj",
@@ -2022,10 +2022,10 @@ EndProject";
 
                 Util.CreateFile(Path.Combine(basePath, "B"), "project.json",
 @"{
-  'dependencies': {
+  ""dependencies"": {
   },
-  'frameworks': {
-                'netcore50': { }
+  ""frameworks"": {
+                ""netcore50"": { }
             }
 }");
 

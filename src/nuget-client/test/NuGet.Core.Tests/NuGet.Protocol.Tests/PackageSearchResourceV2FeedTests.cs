@@ -30,7 +30,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var packageSearchResource = await repo.GetResourceAsync<PackageSearchResource>();
+            var packageSearchResource = await repo.GetResourceAsync<PackageSearchResource>(CancellationToken.None);
 
             var searchFilter = new SearchFilter(includePrerelease: false)
             {
@@ -76,7 +76,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var packageSearchResource = await repo.GetResourceAsync<PackageSearchResource>();
+            var packageSearchResource = await repo.GetResourceAsync<PackageSearchResource>(CancellationToken.None);
 
             var searchFilter = new SearchFilter(includePrerelease: false)
             {

@@ -79,12 +79,10 @@ namespace NuGet.Commands
             telemetryActivity.StartIntervalMeasure();
 
             var downloadDependencyResolutionTasks = new List<Task<DownloadDependencyResolutionResult>>();
-            var ddLibraryRangeToRemoteMatchCache = new ConcurrentDictionary<LibraryRange, Task<Tuple<LibraryRange, RemoteMatch>>>();
             foreach (var targetFrameworkInformation in _request.Project.TargetFrameworks)
             {
                 downloadDependencyResolutionTasks.Add(ResolveDownloadDependenciesAsync(
                     context,
-                    ddLibraryRangeToRemoteMatchCache,
                     targetFrameworkInformation,
                     token));
             }
@@ -221,10 +219,10 @@ namespace NuGet.Commands
             return null;
         }
 
-        private async Task<DownloadDependencyResolutionResult> ResolveDownloadDependenciesAsync(RemoteWalkContext context, ConcurrentDictionary<LibraryRange, Task<Tuple<LibraryRange, RemoteMatch>>> downloadDependenciesCache, TargetFrameworkInformation targetFrameworkInformation, CancellationToken token)
+        private async Task<DownloadDependencyResolutionResult> ResolveDownloadDependenciesAsync(RemoteWalkContext context, TargetFrameworkInformation targetFrameworkInformation, CancellationToken token)
         {
             var packageDownloadTasks = targetFrameworkInformation.DownloadDependencies.Select(downloadDependency =>
-            ResolverUtility.FindPackageLibraryMatchCachedAsync(downloadDependenciesCache, downloadDependency, context, token));
+            ResolverUtility.FindPackageLibraryMatchCachedAsync(downloadDependency, context, token));
 
             var packageDownloadMatches = await Task.WhenAll(packageDownloadTasks);
 

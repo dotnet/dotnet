@@ -20,12 +20,13 @@ namespace NuGet.Protocol
     /// <summary>
     /// A resource capable of fetching packages, package versions and package dependency information.
     /// </summary>
+#pragma warning disable CA10001
     public class RemoteV3FindPackageByIdResource : FindPackageByIdResource
+#pragma warning restore CA10001
     {
         private readonly SemaphoreSlim _dependencyInfoSemaphore = new SemaphoreSlim(initialCount: 1);
 
-        private readonly Dictionary<string, Task<IEnumerable<RemoteSourceDependencyInfo>>> _packageVersionsCache =
-            new Dictionary<string, Task<IEnumerable<RemoteSourceDependencyInfo>>>(StringComparer.OrdinalIgnoreCase);
+        private readonly TaskResultCache<string, IEnumerable<RemoteSourceDependencyInfo>> _packageVersionsCache = new(StringComparer.OrdinalIgnoreCase);
 
         private readonly HttpSource _httpSource;
         private readonly FindPackagesByIdNupkgDownloader _nupkgDownloader;
@@ -429,18 +430,11 @@ namespace NuGet.Protocol
             ILogger logger,
             CancellationToken cancellationToken)
         {
-            Task<IEnumerable<RemoteSourceDependencyInfo>> task;
-
-            lock (_packageVersionsCache)
-            {
-                if (cacheContext.RefreshMemoryCache || !_packageVersionsCache.TryGetValue(id, out task))
-                {
-                    task = FindPackagesByIdAsyncCore(id, cacheContext, logger, cancellationToken);
-                    _packageVersionsCache[id] = task;
-                }
-            }
-
-            return task;
+            return _packageVersionsCache.GetOrAddAsync(
+                id,
+                cacheContext.RefreshMemoryCache,
+                static state => state.caller.FindPackagesByIdAsyncCore(state.id, state.cacheContext, state.logger, state.cancellationToken),
+                (caller: this, id, cacheContext, logger, cancellationToken), cancellationToken);
         }
 
         private async Task<IEnumerable<RemoteSourceDependencyInfo>> FindPackagesByIdAsyncCore(
@@ -452,7 +446,9 @@ namespace NuGet.Protocol
             // This is invoked from inside a lock.
             await EnsureDependencyProvider(cancellationToken);
 
-            return await _dependencyInfoResource.ResolvePackages(id, sourceCacheContext, logger, cancellationToken);
+            var result = await _dependencyInfoResource.ResolvePackages(id, sourceCacheContext, logger, cancellationToken);
+
+            return result;
         }
 
         private async Task EnsureDependencyProvider(CancellationToken cancellationToken)
@@ -464,7 +460,7 @@ namespace NuGet.Protocol
                     await _dependencyInfoSemaphore.WaitAsync(cancellationToken);
                     if (_dependencyInfoResource == null)
                     {
-                        _dependencyInfoResource = await SourceRepository.GetResourceAsync<DependencyInfoResource>();
+                        _dependencyInfoResource = await SourceRepository.GetResourceAsync<DependencyInfoResource>(cancellationToken);
                     }
                 }
                 finally
