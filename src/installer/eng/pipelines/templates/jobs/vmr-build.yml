@@ -211,7 +211,7 @@ jobs:
   
   - ${{ if eq(parameters.targetOS, 'windows') }}:
     - script: |
-        call $(sourcesPath)\build.cmd -ci -cleanWhileBuilding -prepareMachine
+        call $(sourcesPath)\build.cmd -ci -cleanWhileBuilding -prepareMachine ${{ parameters.extraProperties }}
       displayName: Build
 
   - ${{ else }}:

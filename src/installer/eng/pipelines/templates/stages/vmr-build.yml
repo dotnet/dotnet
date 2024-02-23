@@ -826,3 +826,16 @@ stages:
             useMonoRuntime: true
             targetOS: windows
             targetArchitecture: x86
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Windows_Pgo
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            pool:
+              name: ${{ variables.defaultPoolName }}
+              demands: ${{ variables.defaultPoolDemandsWindows }}
+            targetOS: windows
+            targetArchitecture: x64
+            extraProperties: /p:PgoInstrument=true
