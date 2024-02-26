@@ -851,7 +851,8 @@ function MSBuild-Core() {
 
     # When running on Azure Pipelines, override the returned exit code to avoid double logging.
     # Skip this when the build is nested as part of the VMR.
-    if ($ci -and $env:SYSTEM_TEAMPROJECT -ne $null -and $productBuild -eq $null -and $properties -notlike "*DotNetBuildRepo=true*") {
+    $isProductBuild = if (Test-Path variable:productBuild) { $true } else { $false }
+    if ($ci -and $env:SYSTEM_TEAMPROJECT -ne $null -and !$isProductBuild -and $properties -notlike "*DotNetBuildRepo=true*") {
       Write-PipelineSetResult -Result "Failed" -Message "msbuild execution failed."
       # Exiting with an exit code causes the azure pipelines task to log yet another "noise" error
       # The above Write-PipelineSetResult will cause the task to be marked as failure without adding yet another error
