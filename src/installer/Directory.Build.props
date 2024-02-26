@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <BuildArchitecture>$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant())</BuildArchitecture>
+    <BuildArchitecture Condition="'$(BuildArchitecture)' == ''">$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant())</BuildArchitecture>
     <Architecture Condition="'$(Architecture)' == '' AND ('$(BuildArchitecture)' == 'arm64' OR '$(BuildArchitecture)' == 'arm')">$(BuildArchitecture)</Architecture>
     <Architecture Condition="'$(Architecture)' == '' AND '$(BuildArchitecture)' == 's390x'">$(BuildArchitecture)</Architecture>
     <Architecture Condition="'$(Architecture)' == '' AND '$(BuildArchitecture)' == 'ppc64le'">$(BuildArchitecture)</Architecture>

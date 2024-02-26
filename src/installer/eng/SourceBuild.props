@@ -8,12 +8,25 @@
   </PropertyGroup>
 
   <Target Name="ConfigureInnerBuildArg" BeforeTargets="GetSourceBuildCommandConfiguration">
-    <PropertyGroup>
+    <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
       <InnerBuildArgs>$(InnerBuildArgs) /p:SkipBuildingInstallers=true</InnerBuildArgs>
       <InnerBuildArgs>$(InnerBuildArgs) /p:IncludeAdditionalSharedFrameworks=false</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(SourceBuildUseMonoRuntime)' == 'true'">$(InnerBuildArgs) /p:DISABLE_CROSSGEN=true</InnerBuildArgs>
       <InnerBuildArgs Condition="'$(PgoInstrument)' == 'true'">$(InnerBuildArgs) /p:PgoInstrument=true</InnerBuildArgs>
     </PropertyGroup>
+  </Target>
+
+  <!-- This should be resolved/removed with https://github.com/dotnet/source-build/issues/4101 -->
+  <Target Name="AddInstallers"
+          BeforeTargets="GetCategorizedIntermediateNupkgContents">
+    <ItemGroup Condition="'$(DotNetBuildOrchestrator)' == 'true'">
+      <!-- Include installers when in product VMR builds. These are not necessary when building the repo-only build as we don't
+           need them in downstream source-only PR legs. We could include them, but it may bump us over the package size limit. -->
+      <IntermediateNupkgArtifactFile Include="$(CurrentRepoSourceBuildArtifactsPackagesDir)Shipping\*.msi" />
+      <IntermediateNupkgArtifactFile Include="$(CurrentRepoSourceBuildArtifactsPackagesDir)Shipping\*.deb" />
+      <IntermediateNupkgArtifactFile Include="$(CurrentRepoSourceBuildArtifactsPackagesDir)Shipping\*.rpm" />
+      <IntermediateNupkgArtifactFile Include="$(CurrentRepoSourceBuildArtifactsPackagesDir)Shipping\*.pkg" />
+    </ItemGroup>
   </Target>
 
 </Project>
