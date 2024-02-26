@@ -31,6 +31,11 @@ parameters:
   type: string
   default: ''
 
+- name: useMonoRuntime
+  displayName: True when build output uses the mono runtime
+  type: boolean
+  default: false
+
 #### SOURCE-ONLY parameters ####
 
 # Instead of building the VMR directly, exports the sources into a tarball and builds from that
@@ -63,11 +68,6 @@ parameters:
   default: true
 
 - name: runTests
-  type: boolean
-  default: false
-
-- name: useMonoRuntime
-  displayName: True when build output uses the mono runtime
   type: boolean
   default: false
 
