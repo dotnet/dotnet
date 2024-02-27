@@ -85,6 +85,18 @@ namespace NuGet.ProjectModel
             return ex.WithFilePath(path).WithLineInfo(line, column);
         }
 
+        internal static FileFormatException Create(Exception exception, string path)
+        {
+            var message = string.Format(CultureInfo.CurrentCulture,
+                Strings.Log_ErrorReadingProjectJson,
+                path,
+                exception.Message);
+
+            var ex = new FileFormatException(message, exception);
+
+            return ex.WithFilePath(path);
+        }
+
         public static FileFormatException Create(string message, JToken value, string path)
         {
             var lineInfo = (IJsonLineInfo)value;
@@ -101,32 +113,24 @@ namespace NuGet.ProjectModel
             return ex.WithFilePath(path).WithLineInfo(line, column);
         }
 
-        internal static FileFormatException Create(Exception exception, string path)
+        internal static FileFormatException Create(JsonReaderException exception, string path)
         {
-            var jex = exception as JsonReaderException;
-
             string message;
-            if (jex == null)
-            {
-                message = string.Format(CultureInfo.CurrentCulture,
-                    Strings.Log_ErrorReadingProjectJson,
-                    path,
-                    exception.Message);
+            message = string.Format(CultureInfo.CurrentCulture,
+                Strings.Log_ErrorReadingProjectJsonWithLocation,
+                path, exception.LineNumber,
+                exception.LinePosition,
+                exception.Message);
 
-                return new FileFormatException(message, exception).WithFilePath(path);
-            }
-            else
-            {
-                message = string.Format(CultureInfo.CurrentCulture,
-                    Strings.Log_ErrorReadingProjectJsonWithLocation,
-                    path, jex.LineNumber,
-                    jex.LinePosition,
-                    exception.Message);
+            return new FileFormatException(message, exception)
+                .WithFilePath(path)
+                .WithLineInfo(exception);
+        }
 
-                return new FileFormatException(message, exception)
-                    .WithFilePath(path)
-                    .WithLineInfo(jex);
-            }
+        internal static FileFormatException Create(string message, string path)
+        {
+            return new FileFormatException(message)
+                .WithFilePath(path);
         }
     }
 }

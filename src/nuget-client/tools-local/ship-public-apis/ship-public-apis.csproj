@@ -6,6 +6,7 @@
     <RootNamespace>NuGet.Internal.Tools.ShipPublicApis</RootNamespace>
     <Description>Copy and merge contents of PublicAPI.Unshipped.txt to PublicAPI.Shipped.txt. See https://github.com/NuGet/NuGet.Client/tree/dev/docs/nuget-sdk.md#Shipping_NuGet for more details.</Description>
     <Nullable>enable</Nullable>
+    <SkipShared>true</SkipShared>
   </PropertyGroup>
 
   <ItemGroup>

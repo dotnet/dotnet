@@ -173,6 +173,36 @@ public class TrackerTests
         Assert.True(tracker.IsBestVersion(itemA2));
         Assert.True(tracker.IsBestVersion(itemA3));
         Assert.True(tracker.IsBestVersion(itemB1));
+
+        tracker.Clear();
+
+        tracker.Track(itemB1);
+
+        Assert.True(tracker.IsBestVersion(itemA1));
+        Assert.True(tracker.IsBestVersion(itemA2));
+        Assert.True(tracker.IsBestVersion(itemA3));
+        Assert.True(tracker.IsBestVersion(itemB1));
+
+        tracker.Track(itemA3);
+
+        Assert.False(tracker.IsBestVersion(itemA1));
+        Assert.False(tracker.IsBestVersion(itemA2));
+        Assert.True(tracker.IsBestVersion(itemA3));
+        Assert.True(tracker.IsBestVersion(itemB1));
+
+        tracker.Track(itemA2);
+
+        Assert.False(tracker.IsBestVersion(itemA1));
+        Assert.False(tracker.IsBestVersion(itemA2));
+        Assert.True(tracker.IsBestVersion(itemA3));
+        Assert.True(tracker.IsBestVersion(itemB1));
+
+        tracker.Track(itemA1);
+
+        Assert.False(tracker.IsBestVersion(itemA1));
+        Assert.False(tracker.IsBestVersion(itemA2));
+        Assert.True(tracker.IsBestVersion(itemA3));
+        Assert.True(tracker.IsBestVersion(itemB1));
     }
 
     private static GraphItem<string> MakeItem(string name, int version)

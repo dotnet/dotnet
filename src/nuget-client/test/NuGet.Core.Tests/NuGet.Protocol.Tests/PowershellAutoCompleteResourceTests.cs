@@ -51,7 +51,7 @@ namespace NuGet.Protocol.Tests
         {
             // Arrange
             var source = StaticHttpHandler.CreateSource(sourceUrl, Repository.Provider.GetVisualStudio(), ResponsesDict);
-            var resource = await source.GetResourceAsync<AutoCompleteResource>();
+            var resource = await source.GetResourceAsync<AutoCompleteResource>(CancellationToken.None);
             Assert.NotNull(resource);
 
             var logger = new TestLogger();
@@ -83,7 +83,7 @@ namespace NuGet.Protocol.Tests
         {
             // Arrange
             var source = StaticHttpHandler.CreateSource(sourceUrl, Repository.Provider.GetVisualStudio(), ResponsesDict);
-            var resource = await source.GetResourceAsync<AutoCompleteResource>();
+            var resource = await source.GetResourceAsync<AutoCompleteResource>(CancellationToken.None);
             Assert.NotNull(resource);
 
             var logger = new TestLogger();
@@ -105,7 +105,7 @@ namespace NuGet.Protocol.Tests
         {
             // Arrange
             var source = StaticHttpHandler.CreateSource(sourceUrl, Repository.Provider.GetVisualStudio(), ResponsesDict);
-            var resource = await source.GetResourceAsync<AutoCompleteResource>();
+            var resource = await source.GetResourceAsync<AutoCompleteResource>(CancellationToken.None);
             Assert.NotNull(resource);
 
             var logger = new TestLogger();

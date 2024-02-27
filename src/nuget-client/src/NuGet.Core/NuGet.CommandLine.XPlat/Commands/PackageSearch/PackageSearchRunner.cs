@@ -33,7 +33,7 @@ namespace NuGet.CommandLine.XPlat
 
             if (packageSearchArgs.Format == PackageSearchFormat.Json)
             {
-                packageSearchResultRenderer = new PackageSearchResultJsonRenderer(packageSearchArgs.Logger, packageSearchArgs.Verbosity);
+                packageSearchResultRenderer = new PackageSearchResultJsonRenderer(packageSearchArgs.Logger, packageSearchArgs.Verbosity, packageSearchArgs.ExactMatch);
             }
             else
             {

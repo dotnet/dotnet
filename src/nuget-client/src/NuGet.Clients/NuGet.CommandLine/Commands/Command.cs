@@ -60,6 +60,21 @@ namespace NuGet.CommandLine
 
         protected Configuration.ICredentialService CredentialService { get; private set; }
 
+        public DeprecatedCommandAttribute DeprecatedCommandAttribute
+        {
+            get
+            {
+                var deprecatedAttrs = GetType().GetCustomAttributes(typeof(DeprecatedCommandAttribute), false);
+
+                if (deprecatedAttrs.Length > 0)
+                {
+                    return deprecatedAttrs[0] as DeprecatedCommandAttribute;
+                }
+
+                return null;
+            }
+        }
+
         public string CurrentDirectory
         {
             get
@@ -114,6 +129,12 @@ namespace NuGet.CommandLine
         {
             if (Help)
             {
+                if (DeprecatedCommandAttribute != null)
+                {
+                    var deprecationMessage = DeprecatedCommandAttribute.GetDeprecationMessage(CommandAttribute.CommandName);
+                    Console.WriteWarning(deprecationMessage);
+                }
+
                 HelpCommand.ViewHelpForCommand(CommandAttribute.CommandName);
             }
             else
@@ -150,6 +171,12 @@ namespace NuGet.CommandLine
                 RepositoryFactory = new CommandLineRepositoryFactory(Console);
 
                 UserAgent.SetUserAgentString(new UserAgentStringBuilder(CommandLineConstants.UserAgent));
+
+                if (DeprecatedCommandAttribute != null)
+                {
+                    var deprecationMessage = DeprecatedCommandAttribute.GetDeprecationMessage(CommandAttribute.CommandName);
+                    Console.WriteWarning(deprecationMessage);
+                }
 
                 OutputNuGetVersion();
                 ExecuteCommandAsync().GetAwaiter().GetResult();

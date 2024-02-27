@@ -233,7 +233,7 @@ namespace NuGetConsole.Host.PowerShell
 
             var dependencyInfoResource = await packageManager
                 .PackagesFolderSourceRepository
-                .GetResourceAsync<DependencyInfoResource>();
+                .GetResourceAsync<DependencyInfoResource>(token);
 
             using (var sourceCacheContext = new SourceCacheContext())
             {

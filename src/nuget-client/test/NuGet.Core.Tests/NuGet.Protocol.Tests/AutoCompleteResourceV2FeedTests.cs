@@ -29,7 +29,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var autoCompleteResource = await repo.GetResourceAsync<AutoCompleteResource>();
+            var autoCompleteResource = await repo.GetResourceAsync<AutoCompleteResource>(CancellationToken.None);
 
             // Act
             var result = await autoCompleteResource.IdStartsWith("Azure", false, NullLogger.Instance, CancellationToken.None);
@@ -51,7 +51,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var autoCompleteResource = await repo.GetResourceAsync<AutoCompleteResource>();
+            var autoCompleteResource = await repo.GetResourceAsync<AutoCompleteResource>(CancellationToken.None);
 
             // Act
             var result = await autoCompleteResource.VersionStartsWith("xunit", "1", false, NullSourceCacheContext.Instance, NullLogger.Instance, CancellationToken.None);
@@ -72,7 +72,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var autoCompleteResource = await repo.GetResourceAsync<AutoCompleteResource>();
+            var autoCompleteResource = await repo.GetResourceAsync<AutoCompleteResource>(CancellationToken.None);
 
             // Act
             var result = await autoCompleteResource.VersionStartsWith("azure", "1", false, NullSourceCacheContext.Instance, NullLogger.Instance, CancellationToken.None);

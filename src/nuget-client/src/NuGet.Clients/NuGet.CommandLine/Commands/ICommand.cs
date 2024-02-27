@@ -10,6 +10,8 @@ namespace NuGet.CommandLine
 
         CommandAttribute CommandAttribute { get; }
 
+        DeprecatedCommandAttribute DeprecatedCommandAttribute { get; }
+
         IList<string> Arguments { get; }
 
         void Execute();

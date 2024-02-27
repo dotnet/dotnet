@@ -19,7 +19,7 @@ namespace NuGet.CommandLine.XPlat
 
         public PackageSearchMainOutput()
         {
-            Version = 1;
+            Version = 2;
             Problems = new List<PackageSearchProblem>();
             SearchResult = new List<PackageSearchResult>();
         }

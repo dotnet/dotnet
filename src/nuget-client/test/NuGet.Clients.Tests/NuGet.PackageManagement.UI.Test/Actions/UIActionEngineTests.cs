@@ -879,7 +879,7 @@ namespace NuGet.PackageManagement.UI.Test
             mockRemoteSourceRepository.SetupGet(m => m.PackageSource).Returns(remotePackageSource);
 
             // Required by UIActionEngine to check license metadata.
-            mockRemoteSourceRepository.Setup(m => m.GetResource<PackageMetadataResource>()).Returns(mockPackageMetadataResource.Object);
+            mockRemoteSourceRepository.Setup(m => m.GetResource<PackageMetadataResource>(It.IsAny<CancellationToken>())).Returns(mockPackageMetadataResource.Object);
             return mockRemoteSourceRepository.Object;
         }
 

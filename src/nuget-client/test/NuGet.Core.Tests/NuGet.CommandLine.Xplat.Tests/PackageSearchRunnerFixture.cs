@@ -340,7 +340,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                 }}";
 
             string detailedJson = $@"{{
-  ""version"": 1,
+  ""version"": 2,
   ""problems"": [],
   ""searchResult"": [
     {{
@@ -348,14 +348,14 @@ namespace NuGet.CommandLine.Xplat.Tests
       ""problems"": null,
       ""packages"": [
         {{
+          ""id"": ""Fake.Newtonsoft.Json"",
+          ""latestVersion"": ""12.0.3"",
+          ""totalDownloads"": 531607259,
+          ""owners"": ""James Newton-King"",
           ""description"": ""My description."",
           ""vulnerable"": null,
-          ""deprecation"": ""This package has been deprecated"",
-          ""projectUrl"": ""http://myuri"",
-          ""total downloads"": 531607259,
-          ""owners"": ""James Newton-King"",
-          ""id"": ""Fake.Newtonsoft.Json"",
-          ""latestVersion"": ""12.0.3""
+          ""projectUrl"": ""http://myuri/"",
+          ""deprecation"": ""This package has been deprecated""
         }}
       ]
     }}
@@ -363,7 +363,7 @@ namespace NuGet.CommandLine.Xplat.Tests
 }}";
 
             string normalJson = $@"{{
-  ""version"": 1,
+  ""version"": 2,
   ""problems"": [],
   ""searchResult"": [
     {{
@@ -371,10 +371,10 @@ namespace NuGet.CommandLine.Xplat.Tests
       ""problems"": null,
       ""packages"": [
         {{
-          ""total downloads"": 531607259,
-          ""owners"": ""James Newton-King"",
           ""id"": ""Fake.Newtonsoft.Json"",
-          ""latestVersion"": ""12.0.3""
+          ""latestVersion"": ""12.0.3"",
+          ""totalDownloads"": 531607259,
+          ""owners"": ""James Newton-King""
         }}
       ]
     }}
@@ -382,7 +382,7 @@ namespace NuGet.CommandLine.Xplat.Tests
 }}";
 
             string minimalJson = $@"{{
-  ""version"": 1,
+  ""version"": 2,
   ""problems"": [],
   ""searchResult"": [
     {{

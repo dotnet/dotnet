@@ -19,18 +19,6 @@ namespace NuGet.CommandLine.XPlat
         private PackageSearchVerbosity _verbosity;
         private bool _exactMatch;
 
-        private readonly string[] _minimalVerbosityTableHeader = { "Package ID", "Latest Version" };
-        private readonly string[] _minimalVerbosityTableHeaderForExactMatch = { "Package ID", "Version" };
-        private readonly int[] _minimalColumnsToHighlight = { 0 };
-
-        private readonly string[] _normalVerbosityTableHeader = { "Package ID", "Latest Version", "Owners", "Total Downloads" };
-        private readonly string[] _normalVerbosityTableHeaderForExactMatch = { "Package ID", "Version", "Owners", "Total Downloads" };
-        private readonly int[] _normalColumnsToHighlight = { 0, 2 };
-
-        private readonly string[] _detailedVerbosityTableHeader = { "Package ID", "Latest Version", "Owners", "Total Downloads", "Vulnerable", "Deprecation", "Project URL", "Description" };
-        private readonly string[] _detailedVerbosityTableHeaderForExactMatch = { "Package ID", "Version", "Owners", "Total Downloads", "Vulnerable", "Deprecation", "Project URL", "Description" };
-        private readonly int[] _detailedColumnsToHighlight = { 0, 2, 6, 7 };
-
         public PackageSearchResultTableRenderer(string searchTerm, ILoggerWithColor loggerWithColor, PackageSearchVerbosity verbosity, bool exactMatch)
         {
             _searchTerm = searchTerm;
@@ -44,42 +32,8 @@ namespace NuGet.CommandLine.XPlat
             _loggerWithColor.LogMinimal(SourceSeparator);
             _loggerWithColor.LogMinimal($"Source: {source.Name} ({source.SourceUri})");
 
-            Table table;
-
-            if (_verbosity == PackageSearchVerbosity.Minimal)
-            {
-                if (_exactMatch)
-                {
-                    table = new Table(_minimalColumnsToHighlight, _minimalVerbosityTableHeaderForExactMatch);
-                }
-                else
-                {
-                    table = new Table(_minimalColumnsToHighlight, _minimalVerbosityTableHeader);
-                }
-            }
-            else if (_verbosity == PackageSearchVerbosity.Detailed)
-            {
-                if (_exactMatch)
-                {
-                    table = new Table(_detailedColumnsToHighlight, _detailedVerbosityTableHeaderForExactMatch);
-                }
-                else
-                {
-                    table = new Table(_detailedColumnsToHighlight, _detailedVerbosityTableHeader);
-                }
-            }
-            else
-            {
-                if (_exactMatch)
-                {
-                    table = new Table(_normalColumnsToHighlight, _normalVerbosityTableHeaderForExactMatch);
-                }
-                else
-                {
-                    table = new Table(_normalColumnsToHighlight, _normalVerbosityTableHeader);
-                }
-            }
-
+            ITableFormatStrategy strategy = TableFormatStrategyFactory.GetStrategy(_verbosity, _exactMatch);
+            Table table = strategy.CreateTable();
             PopulateTableWithResultsAsync(completedSearch, table, _verbosity);
             table.PrintResult(_searchTerm, _loggerWithColor);
         }
