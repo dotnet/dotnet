@@ -13,6 +13,7 @@
     <IsShipping>false</IsShipping>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <RepositoryUrl>https://github.com/dotnet/arcade</RepositoryUrl>
   </PropertyGroup>
 
 </Project>
