@@ -22,4 +22,7 @@
     <None Include="$(RepoRoot)LICENSE.TXT;$(RepoRoot)THIRD-PARTY-NOTICES.TXT" Pack="true" PackagePath="%(Filename)%(Extension)" />
   </ItemGroup>
 
+  <!-- This project is a build task dependency and needs to follow desktop version requirements. -->
+  <Import Project="$(RepositoryEngineeringDir)BuildTask.Packages.props" />
+
 </Project>
