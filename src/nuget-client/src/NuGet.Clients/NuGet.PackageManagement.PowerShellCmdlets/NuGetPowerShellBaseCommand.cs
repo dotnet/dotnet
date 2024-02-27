@@ -384,7 +384,6 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
         {
             var packageSource = new PackageSource(source);
             var repository = _sourceRepositoryProvider.CreateRepository(packageSource);
-            var resource = repository.GetResource<PackageSearchResource>();
 
             return repository;
         }

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -39,7 +40,7 @@ namespace NuGet.Commands
                 timeoutSeconds = 5 * 60;
             }
             PackageSource packageSource = CommandRunnerUtility.GetOrCreatePackageSource(sourceProvider, source);
-            var packageUpdateResource = await CommandRunnerUtility.GetPackageUpdateResource(sourceProvider, packageSource);
+            var packageUpdateResource = await CommandRunnerUtility.GetPackageUpdateResource(sourceProvider, packageSource, CancellationToken.None);
 
             // Only warn for V3 style sources because they have a service index which is different from the final push url.
             if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections &&
@@ -58,7 +59,7 @@ namespace NuGet.Commands
                 && !sourceUri.IsFile
                 && sourceUri.IsAbsoluteUri)
             {
-                symbolPackageUpdateResource = await CommandRunnerUtility.GetSymbolPackageUpdateResource(sourceProvider, source);
+                symbolPackageUpdateResource = await CommandRunnerUtility.GetSymbolPackageUpdateResource(sourceProvider, source, CancellationToken.None);
                 if (symbolPackageUpdateResource != null)
                 {
                     symbolSource = symbolPackageUpdateResource.SourceUri.AbsoluteUri;

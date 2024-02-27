@@ -396,7 +396,6 @@ namespace NuGet.Tests.Apex
         {
             var timeout = TimeSpan.FromSeconds(20);
             var timer = Stopwatch.StartNew();
-            string content = null;
 
             do
             {
@@ -405,9 +404,8 @@ namespace NuGet.Tests.Apex
                 {
                     try
                     {
-                        content = File.ReadAllText(path);
                         var format = new LockFileFormat();
-                        return format.Parse(content, path);
+                        return format.Read(path);
                     }
                     catch
                     {

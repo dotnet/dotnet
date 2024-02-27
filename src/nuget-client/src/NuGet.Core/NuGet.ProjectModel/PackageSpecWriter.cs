@@ -65,7 +65,7 @@ namespace NuGet.ProjectModel
 #pragma warning restore CS0612 // Type or member is obsolete
 
 
-            if (packageSpec.Dependencies.Any())
+            if (packageSpec.Dependencies.Count > 0)
             {
                 SetDependencies(writer, packageSpec.Dependencies);
             }
@@ -553,7 +553,7 @@ namespace NuGet.ProjectModel
 
         private static void SetImports(IObjectWriter writer, IList<NuGetFramework> frameworks)
         {
-            if (frameworks?.Any() == true)
+            if (frameworks?.Count > 0)
             {
                 var imports = frameworks.Select(framework => framework.GetShortFolderName());
 
@@ -563,7 +563,7 @@ namespace NuGet.ProjectModel
 
         private static void SetDownloadDependencies(IObjectWriter writer, IList<DownloadDependency> downloadDependencies)
         {
-            if (!downloadDependencies.Any())
+            if (!(downloadDependencies.Count > 0))
             {
                 return;
             }
@@ -585,7 +585,7 @@ namespace NuGet.ProjectModel
 
         private static void SetFrameworks(IObjectWriter writer, IList<TargetFrameworkInformation> frameworks, bool hashing)
         {
-            if (frameworks.Any())
+            if (frameworks.Count > 0)
             {
                 writer.WriteObjectStart("frameworks");
                 var frameworkSorter = NuGetFrameworkSorter.Instance;
@@ -628,7 +628,7 @@ namespace NuGet.ProjectModel
 
         private static void SetFrameworkReferences(IObjectWriter writer, ISet<FrameworkDependency> frameworkReferences)
         {
-            if (frameworkReferences?.Any() == true)
+            if (frameworkReferences?.Count > 0)
             {
                 writer.WriteObjectStart("frameworkReferences");
 
@@ -644,7 +644,7 @@ namespace NuGet.ProjectModel
 
         private static void SetCentralDependencies(IObjectWriter writer, ICollection<CentralPackageVersion> centralPackageVersions, bool hashing)
         {
-            if (!centralPackageVersions.Any())
+            if (!(centralPackageVersions.Count > 0))
             {
                 return;
             }
@@ -703,7 +703,7 @@ namespace NuGet.ProjectModel
 
         private static void SetDictionaryValue(IObjectWriter writer, string name, IDictionary<string, string> values)
         {
-            if (values != null && values.Any())
+            if (values != null && values.Count > 0)
             {
                 writer.WriteObjectStart(name);
 
@@ -720,7 +720,7 @@ namespace NuGet.ProjectModel
 
         private static void SetDictionaryValues(IObjectWriter writer, string name, IDictionary<string, IEnumerable<string>> values)
         {
-            if (values != null && values.Any())
+            if (values != null && values.Count > 0)
             {
                 writer.WriteObjectStart(name);
 

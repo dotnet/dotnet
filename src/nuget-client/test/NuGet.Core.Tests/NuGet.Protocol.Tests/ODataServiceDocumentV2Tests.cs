@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Protocol.Core.Types;
 using Test.Utility;
@@ -24,7 +25,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var oDataServiceDocumentResource = await repo.GetResourceAsync<ODataServiceDocumentResourceV2>();
+            var oDataServiceDocumentResource = await repo.GetResourceAsync<ODataServiceDocumentResourceV2>(CancellationToken.None);
 
             // Act
             var baseAddress = oDataServiceDocumentResource.BaseAddress;
@@ -44,7 +45,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var oDataServiceDocumentResource = await repo.GetResourceAsync<ODataServiceDocumentResourceV2>();
+            var oDataServiceDocumentResource = await repo.GetResourceAsync<ODataServiceDocumentResourceV2>(CancellationToken.None);
 
             // Act
             var baseAddress = oDataServiceDocumentResource.BaseAddress;
@@ -66,7 +67,7 @@ namespace NuGet.Protocol.Tests
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
             // Act
-            var resource = await repo.GetResourceAsync<ODataServiceDocumentResourceV2>();
+            var resource = await repo.GetResourceAsync<ODataServiceDocumentResourceV2>(CancellationToken.None);
 
             // Assert
             Assert.Equal(serviceAddress.Trim('/'), resource.BaseAddress);
@@ -83,7 +84,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var oDataServiceDocumentResource = await repo.GetResourceAsync<ODataServiceDocumentResourceV2>();
+            var oDataServiceDocumentResource = await repo.GetResourceAsync<ODataServiceDocumentResourceV2>(CancellationToken.None);
 
             // Act
             var baseAddress = oDataServiceDocumentResource.BaseAddress;
@@ -103,7 +104,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var oDataServiceDocumentResource = await repo.GetResourceAsync<ODataServiceDocumentResourceV2>();
+            var oDataServiceDocumentResource = await repo.GetResourceAsync<ODataServiceDocumentResourceV2>(CancellationToken.None);
 
             // Act
             var baseAddress = oDataServiceDocumentResource.BaseAddress;
@@ -123,7 +124,7 @@ namespace NuGet.Protocol.Tests
 
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses);
 
-            var oDataServiceDocumentResource = await repo.GetResourceAsync<ODataServiceDocumentResourceV2>();
+            var oDataServiceDocumentResource = await repo.GetResourceAsync<ODataServiceDocumentResourceV2>(CancellationToken.None);
 
             // Act
             var baseAddress = oDataServiceDocumentResource.BaseAddress;

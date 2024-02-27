@@ -3,10 +3,8 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
@@ -19,9 +17,7 @@ namespace NuGet.Protocol
 {
     public class FindPackagesByIdNupkgDownloader
     {
-        private readonly object _cacheEntriesLock = new object();
-        private readonly Dictionary<string, Task<CacheEntry>> _cacheEntries =
-            new Dictionary<string, Task<CacheEntry>>();
+        private readonly TaskResultCache<string, CacheEntry> _cacheEntries = new();
 
         private readonly object _nuspecReadersLock = new object();
         private readonly ConcurrentDictionary<string, NuspecReader> _nuspecReaders =
@@ -191,54 +187,25 @@ namespace NuGet.Protocol
                 throw new ArgumentNullException(nameof(cacheContext));
             }
 
-            if (cacheContext.DirectDownload)
-            {
-                // Don't read from the in-memory cache if we are doing a direct download.
-                var cacheEntry = await ProcessStreamAndGetCacheEntryAsync(
-                    identity,
-                    url,
-                    processStreamAsync,
-                    cacheContext,
-                    logger,
-                    token);
+            token.ThrowIfCancellationRequested();
 
-                // If we get back a cache file result from the cache, we can save it to the in-memory cache.
-                lock (_cacheEntriesLock)
-                {
-                    if (cacheEntry.CacheFile != null && !_cacheEntries.ContainsKey(url))
-                    {
-                        _cacheEntries[url] = Task.FromResult(cacheEntry);
-                    }
-                }
+            // Try to get the NupkgEntry from the in-memory cache. If we find a match, we can open the cache file
+            // and use that as the source stream, instead of going to the package source.
+            CacheEntry cacheEntry = await _cacheEntries.GetOrAddAsync(
+                url,
+                refresh: cacheContext.DirectDownload, // Don't read from the in-memory cache if we are doing a direct download.
+                static state => state.caller.ProcessStreamAndGetCacheEntryAsync(
+                    state.identity,
+                    state.url,
+                    state.processStreamAsync,
+                    state.cacheContext,
+                    state.logger,
+                    state.token),
+                (caller: this, identity, url, processStreamAsync, cacheContext, logger, token),
+                token);
 
-                // Process the NupkgEntry
-                return await ProcessCacheEntryAsync(cacheEntry, processStreamAsync, token);
-            }
-            else
-            {
-                // Try to get the NupkgEntry from the in-memory cache. If we find a match, we can open the cache file
-                // and use that as the source stream, instead of going to the package source.
-                Task<CacheEntry> nupkgEntryTask;
-                lock (_cacheEntriesLock)
-                {
-                    if (!_cacheEntries.TryGetValue(url, out nupkgEntryTask))
-                    {
-                        nupkgEntryTask = ProcessStreamAndGetCacheEntryAsync(
-                            identity,
-                            url,
-                            processStreamAsync,
-                            cacheContext,
-                            logger,
-                            token);
-
-                        _cacheEntries[url] = nupkgEntryTask;
-                    }
-                }
-
-                var nupkgEntry = await nupkgEntryTask;
-
-                return await ProcessCacheEntryAsync(nupkgEntry, processStreamAsync, token);
-            }
+            // Process the NupkgEntry
+            return await ProcessCacheEntryAsync(cacheEntry, processStreamAsync, token);
         }
 
         private async Task<CacheEntry> ProcessStreamAndGetCacheEntryAsync(

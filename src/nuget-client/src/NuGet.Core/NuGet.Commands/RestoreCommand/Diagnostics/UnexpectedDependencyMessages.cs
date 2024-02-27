@@ -73,7 +73,6 @@ namespace NuGet.Commands
             foreach (var graph in graphs)
             {
                 messages.AddRange(graph.ResolvedDependencies
-                                            .Distinct()
                                             .Where(e => !ignoreIds.Contains(e.Child.Name, StringComparer.OrdinalIgnoreCase)
                                                         && DependencyRangeHasMissingExactMatch(e))
                                             .OrderBy(e => e.Child.Name, StringComparer.OrdinalIgnoreCase)

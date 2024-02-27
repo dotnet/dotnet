@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -44,7 +45,7 @@ namespace NuGet.DependencyResolver
             {
                 var version = item.Key.Version;
 
-                foreach (var known in entry.Items.NoAllocEnumerate())
+                foreach (var known in entry)
                 {
                     if (version < known.Key.Version)
                     {
@@ -58,7 +59,13 @@ namespace NuGet.DependencyResolver
 
         public IEnumerable<GraphItem<TItem>> GetDisputes(GraphItem<TItem> item)
         {
-            return TryGetEntry(item)?.Items ?? Enumerable.Empty<GraphItem<TItem>>();
+            var entry = TryGetEntry(item);
+            if (entry is null)
+            {
+                return Enumerable.Empty<GraphItem<TItem>>();
+            }
+
+            return entry;
         }
 
         internal void Clear()
@@ -83,7 +90,7 @@ namespace NuGet.DependencyResolver
             return entry;
         }
 
-        private sealed class Entry
+        private sealed class Entry : IEnumerable<GraphItem<TItem>>
         {
             /// <summary>
             /// This field can have one of three values:
@@ -123,17 +130,105 @@ namespace NuGet.DependencyResolver
                 }
             }
 
+            public Enumerator GetEnumerator()
+            {
+                return new Enumerator(this);
+            }
+
+            IEnumerator<GraphItem<TItem>> IEnumerable<GraphItem<TItem>>.GetEnumerator()
+            {
+                return new Enumerator(this);
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return new Enumerator(this);
+            }
+
             public bool HasMultipleItems => _storage is HashSet<GraphItem<TItem>>;
 
-            public IEnumerable<GraphItem<TItem>> Items
+            public struct Enumerator : IEnumerator<GraphItem<TItem>>, IDisposable, IEnumerator
             {
-                get
+                private enum Type : byte
                 {
-                    if (_storage is null)
-                        return Enumerable.Empty<GraphItem<TItem>>();
-                    if (_storage is GraphItem<TItem> item)
-                        return new[] { item };
-                    return (HashSet<GraphItem<TItem>>)_storage;
+                    Empty,
+                    SingleItem,
+                    MultipleItems,
+                }
+
+                private readonly Type _type;
+                private readonly Entry _entry;
+                private GraphItem<TItem> _current;
+                private bool _done;
+                private HashSet<GraphItem<TItem>>.Enumerator _setEnumerator;
+
+                public Enumerator(Entry entry)
+                {
+                    _entry = entry;
+                    _current = default!;
+                    _done = false;
+
+                    if (_entry._storage is null)
+                    {
+                        _type = Type.Empty;
+                    }
+                    else if (_entry._storage is GraphItem<TItem>)
+                    {
+                        _type = Type.SingleItem;
+                    }
+                    else
+                    {
+                        _type = Type.MultipleItems;
+                        _setEnumerator = ((HashSet<GraphItem<TItem>>)_entry._storage).GetEnumerator();
+                    }
+                }
+
+                public readonly GraphItem<TItem> Current => _current;
+
+                readonly object IEnumerator.Current => Current;
+
+                public bool MoveNext()
+                {
+                    if (_done || _type == Type.Empty)
+                    {
+                        return false;
+                    }
+                    else if (_type == Type.SingleItem)
+                    {
+                        _done = true;
+                        _current = (GraphItem<TItem>)_entry._storage!;
+
+                        return true;
+                    }
+                    else
+                    {
+                        bool result = _setEnumerator.MoveNext();
+                        _current = _setEnumerator.Current;
+
+                        return result;
+                    }
+                }
+
+                public void Dispose()
+                {
+                    if (_type == Type.MultipleItems)
+                    {
+                        _setEnumerator.Dispose();
+                    }
+                }
+
+                void IEnumerator.Reset()
+                {
+                    if (_type == Type.SingleItem)
+                    {
+                        _done = false;
+                    }
+                    else
+                    {
+                        ((IEnumerator)_setEnumerator).Reset();
+                    }
+
+                    _current = default!;
                 }
             }
         }

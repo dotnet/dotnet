@@ -19,7 +19,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         {
             // Arrange
             var mockLoggerWithColor = new Mock<ILoggerWithColor>();
-            var printer = new PackageSearchResultJsonRenderer(mockLoggerWithColor.Object, PackageSearchVerbosity.Normal);
+            var printer = new PackageSearchResultJsonRenderer(mockLoggerWithColor.Object, PackageSearchVerbosity.Normal, exactMatch: false);
             var mockSource = new Mock<PackageSource>("http://mocksource", "MockSource");
             var completedSearch = new List<IPackageSearchMetadata>();
             var mockMetadata = new Mock<IPackageSearchMetadata>();
@@ -27,7 +27,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             printer.Start();
 
             var expectedZeroJson = $@"{{
-  ""version"": 1,
+  ""version"": 2,
   ""problems"": [],
   ""searchResult"": [
     {{
@@ -51,7 +51,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         {
             // Arrange
             var mockLoggerWithColor = new Mock<ILoggerWithColor>();
-            var printer = new PackageSearchResultJsonRenderer(mockLoggerWithColor.Object, PackageSearchVerbosity.Normal);
+            var printer = new PackageSearchResultJsonRenderer(mockLoggerWithColor.Object, PackageSearchVerbosity.Normal, exactMatch: false);
             var mockSource = new Mock<PackageSource>("http://mocksource", "MockSource");
             var completedSearch = new List<IPackageSearchMetadata>();
             var mockMetadata = new Mock<IPackageSearchMetadata>();
@@ -66,7 +66,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             printer.Start();
 
             var expectedOneJson = $@"{{
-  ""version"": 1,
+  ""version"": 2,
   ""problems"": [],
   ""searchResult"": [
     {{
@@ -74,10 +74,10 @@ namespace NuGet.CommandLine.Xplat.Tests
       ""problems"": null,
       ""packages"": [
         {{
-          ""total downloads"": 123456,
-          ""owners"": null,
           ""id"": ""NuGet.Versioning"",
-          ""latestVersion"": ""4.3.0""
+          ""latestVersion"": ""4.3.0"",
+          ""totalDownloads"": 123456,
+          ""owners"": null
         }}
       ]
     }}
@@ -97,7 +97,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         {
             // Arrange
             var mockLoggerWithColor = new Mock<ILoggerWithColor>();
-            var printer = new PackageSearchResultJsonRenderer(mockLoggerWithColor.Object, PackageSearchVerbosity.Normal);
+            var printer = new PackageSearchResultJsonRenderer(mockLoggerWithColor.Object, PackageSearchVerbosity.Normal, exactMatch: false);
             var mockSource = new Mock<PackageSource>("http://mocksource", "MockSource");
             var completedSearch = new List<IPackageSearchMetadata>();
             var mockMetadata = new Mock<IPackageSearchMetadata>();
@@ -113,7 +113,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             printer.Start();
 
             var expectedTwoJson = $@"{{
-  ""version"": 1,
+  ""version"": 2,
   ""problems"": [],
   ""searchResult"": [
     {{
@@ -121,16 +121,16 @@ namespace NuGet.CommandLine.Xplat.Tests
       ""problems"": null,
       ""packages"": [
         {{
-          ""total downloads"": 123456,
-          ""owners"": null,
           ""id"": ""NuGet.Versioning"",
-          ""latestVersion"": ""4.3.0""
+          ""latestVersion"": ""4.3.0"",
+          ""totalDownloads"": 123456,
+          ""owners"": null
         }},
         {{
-          ""total downloads"": 123456,
-          ""owners"": null,
           ""id"": ""NuGet.Versioning"",
-          ""latestVersion"": ""4.3.0""
+          ""latestVersion"": ""4.3.0"",
+          ""totalDownloads"": 123456,
+          ""owners"": null
         }}
       ]
     }}
@@ -150,11 +150,11 @@ namespace NuGet.CommandLine.Xplat.Tests
         {
             // Arrange
             var mockLoggerWithColor = new Mock<ILoggerWithColor>();
-            var printer = new PackageSearchResultJsonRenderer(mockLoggerWithColor.Object, PackageSearchVerbosity.Minimal);
+            var printer = new PackageSearchResultJsonRenderer(mockLoggerWithColor.Object, PackageSearchVerbosity.Minimal, exactMatch: false);
             Mock<PackageSource> mockSource = new Mock<PackageSource>("http://errorsource", "ErrorTestSource");
             string errorMessage = "An error occurred";
             var expectedJson = $@"{{
-  ""version"": 1,
+  ""version"": 2,
   ""problems"": [],
   ""searchResult"": [
     {{
