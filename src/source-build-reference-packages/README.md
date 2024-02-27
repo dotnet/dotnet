@@ -1,6 +1,6 @@
-# .NET Source-build Reference Packages
+# .NET Source Build Reference Packages
 
-This repository contains tools, source and build scripts for source-buildable reference
+This repository contains tools, source and build scripts for source buildable reference
 versions of historical .NET Core packages that are referenced by
 [.NET source build](https://github.com/dotnet/source-build). These are used only
 when source building .NET.
@@ -17,7 +17,7 @@ to time in issues and some documentation.
 
 ## Supported Platforms
 
-.NET source build currently only supports Linux but generating a source-build reference or text-only package
+.NET source build currently only supports Linux but generating a source build reference or text-only package
 is supported on both Windows and Unix based operating systems.
 
 ## Building
@@ -39,6 +39,13 @@ When generating a package(s), the tooling will detect and generate all dependent
 **Note:** All new packages should be for released stable versions. Adding preview/release candidate
 packages are for exceptional cases only and require approval from
 [dotnet/source-build-internal](https://github.com/orgs/dotnet/teams/source-build-internal).
+
+**Note:** Reference packages should only be added to this repo if they are required during the product
+source build (e.g. a [VMR](https://github.com/dotnet/dotnet) build). Reference packages that are only 
+required for building a repo level source build should not be added to this repo. In this case, it is
+appropriate to add these types of package as allowed prebuilt via the `eng/SourceBuildPrebuiltBaseline.xml`
+file. See the [Eliminating pre-builts documentation](https://github.com/dotnet/source-build/blob/main/Documentation/eliminating-pre-builts.md)
+for detailed guidance.
 
 ### Reference
 
@@ -103,8 +110,8 @@ packages were manually upgraded.
 
 ## Filing Issues
 
-This repo does not accept issues. Please file issues in the
-[source-build repository](https://github.com/dotnet/source-build/issues/new/choose).
+This repo does not accept issues. Please file issues in 
+[dotnet/source-build](https://github.com/dotnet/source-build/issues/new/choose).
 
 ## Cleanup
 
