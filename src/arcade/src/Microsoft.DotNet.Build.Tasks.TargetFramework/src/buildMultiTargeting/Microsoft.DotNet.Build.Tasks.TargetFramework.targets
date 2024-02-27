@@ -38,7 +38,7 @@
       <_BuildTargetFrameworkWithTargetOS Include="@(_BuildTargetFramework->Distinct()->'%(Identity)-$(TargetOS)')"
                                          Condition="!$([System.String]::Copy('%(Identity)').StartsWith('net4'))" />
       <_BuildTargetFrameworkWithTargetOS Include="@(_BuildTargetFramework->Distinct())"
-                                         Condition="$([System.String]::Copy('%(Identity)').StartsWith('net4'))" />
+                                         Condition="$([System.String]::Copy('%(Identity)').StartsWith('net4')) and '$(IncludeNetFrameworkTfms)' != 'false'" />
     </ItemGroup>
 
     <ChooseBestTargetFrameworksTask BuildTargetFrameworks="@(_BuildTargetFrameworkWithTargetOS);$(AdditionalBuildTargetFrameworks)"

@@ -65,10 +65,7 @@ secrets:
       scopes: build_execute code_write
 
   akams:
-    type: github-oauth-secret
-    parameters:
-      appName: akams
-      description: set to never expire
+    type: ad-application
 
   publishing-dnceng-devdiv-code-r-build-re:
     type: azure-devops-access-token
