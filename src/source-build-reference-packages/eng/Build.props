@@ -58,6 +58,30 @@
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Tasks.Core.17.8.3.csproj" />
 
     <DependencyPackageProjects Include="$(RepoRoot)src\targetPacks\ILsrc\**\8.0.0\Microsoft.AspNetCore.App.Ref.8.0.0.csproj" />
+
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Frameworks.6.7.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Common.6.7.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Configuration.6.7.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Versioning.6.7.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Packaging.6.7.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Protocol.6.7.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Credentials.6.7.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.LibraryModel.6.7.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.DependencyResolver.Core.6.7.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.ProjectModel.6.7.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Commands.6.7.1.csproj" />
+
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Frameworks.6.8.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Common.6.8.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Configuration.6.8.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Versioning.6.8.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Packaging.6.8.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Protocol.6.8.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Credentials.6.8.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.LibraryModel.6.8.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.DependencyResolver.Core.6.8.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.ProjectModel.6.8.1.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\NuGet.Commands.6.8.1.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">
