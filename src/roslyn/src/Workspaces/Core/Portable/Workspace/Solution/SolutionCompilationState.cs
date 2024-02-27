@@ -50,14 +50,17 @@ internal sealed partial class SolutionCompilationState
     /// they came from.  That way if we are asked about many symbols from the same assembly/module we can answer the
     /// question quickly after computing for the first one.  Created on demand.
     /// </summary>
-    private ConditionalWeakTable<ISymbol, ProjectId?>? _unrootedSymbolToProjectId;
-    private static readonly Func<ConditionalWeakTable<ISymbol, ProjectId?>> s_createTable = () => new ConditionalWeakTable<ISymbol, ProjectId?>();
+    private ConditionalWeakTable<ISymbol, OriginatingProjectInfo?>? _unrootedSymbolToProjectId;
+    private static readonly Func<ConditionalWeakTable<ISymbol, OriginatingProjectInfo?>> s_createTable = () => new ConditionalWeakTable<ISymbol, OriginatingProjectInfo?>();
+
+    private readonly AsyncLazy<SolutionCompilationState> _cachedFrozenSnapshot;
 
     private SolutionCompilationState(
         SolutionState solution,
         bool partialSemanticsEnabled,
         ImmutableDictionary<ProjectId, ICompilationTracker> projectIdToTrackerMap,
-        TextDocumentStates<SourceGeneratedDocumentState>? frozenSourceGeneratedDocumentStates)
+        TextDocumentStates<SourceGeneratedDocumentState>? frozenSourceGeneratedDocumentStates,
+        AsyncLazy<SolutionCompilationState>? cachedFrozenSnapshot = null)
     {
         SolutionState = solution;
         PartialSemanticsEnabled = partialSemanticsEnabled;
@@ -66,6 +69,7 @@ internal sealed partial class SolutionCompilationState
 
         // when solution state is changed, we recalculate its checksum
         _lazyChecksums = AsyncLazy.Create(c => ComputeChecksumsAsync(projectId: null, c));
+        _cachedFrozenSnapshot = cachedFrozenSnapshot ?? AsyncLazy.Create(synchronousComputeFunction: ComputeFrozenSnapshot);
 
         CheckInvariants();
     }
@@ -94,7 +98,8 @@ internal sealed partial class SolutionCompilationState
     private SolutionCompilationState Branch(
         SolutionState newSolutionState,
         ImmutableDictionary<ProjectId, ICompilationTracker>? projectIdToTrackerMap = null,
-        Optional<TextDocumentStates<SourceGeneratedDocumentState>?> frozenSourceGeneratedDocumentStates = default)
+        Optional<TextDocumentStates<SourceGeneratedDocumentState>?> frozenSourceGeneratedDocumentStates = default,
+        AsyncLazy<SolutionCompilationState>? cachedFrozenSnapshot = null)
     {
         projectIdToTrackerMap ??= _projectIdToTrackerMap;
         var newFrozenSourceGeneratedDocumentStates = frozenSourceGeneratedDocumentStates.HasValue ? frozenSourceGeneratedDocumentStates.Value : FrozenSourceGeneratedDocumentStates;
@@ -110,7 +115,8 @@ internal sealed partial class SolutionCompilationState
             newSolutionState,
             PartialSemanticsEnabled,
             projectIdToTrackerMap,
-            newFrozenSourceGeneratedDocumentStates);
+            newFrozenSourceGeneratedDocumentStates,
+            cachedFrozenSnapshot);
     }
 
     /// <inheritdoc cref="SolutionState.ForkProject"/>
@@ -263,7 +269,7 @@ internal sealed partial class SolutionCompilationState
         return ForkProject(
             this.SolutionState.WithProjectAssemblyName(projectId, assemblyName),
             static (stateChange, assemblyName) => new TranslationAction.ProjectAssemblyNameAction(
-                stateChange.OldProjectState, stateChange.NewProjectState, assemblyName),
+                stateChange.OldProjectState, stateChange.NewProjectState),
             forkTracker: true,
             arg: assemblyName);
     }
@@ -570,6 +576,13 @@ internal sealed partial class SolutionCompilationState
     {
         return UpdateDocumentState(
             this.SolutionState.WithDocumentText(documentId, text, mode), documentId);
+    }
+
+    public SolutionCompilationState WithDocumentState(
+        DocumentState documentState)
+    {
+        return UpdateDocumentState(
+            this.SolutionState.WithDocumentState(documentState), documentState.Id);
     }
 
     /// <inheritdoc cref="SolutionState.WithAdditionalDocumentText(DocumentId, SourceText, PreservationMode)"/>
@@ -1044,32 +1057,116 @@ internal sealed partial class SolutionCompilationState
     }
 
     public SolutionCompilationState WithFrozenPartialCompilations(CancellationToken cancellationToken)
+        => _cachedFrozenSnapshot.GetValue(cancellationToken);
+
+    private SolutionCompilationState ComputeFrozenSnapshot(CancellationToken cancellationToken)
     {
         var newIdToProjectStateMapBuilder = this.SolutionState.ProjectStates.ToBuilder();
         var newIdToTrackerMapBuilder = _projectIdToTrackerMap.ToBuilder();
 
+        var filePathToDocumentIdsMapBuilder = this.SolutionState.FilePathToDocumentIdsMap.ToBuilder();
+        var filePathToDocumentIdsMapChanged = false;
+
         foreach (var projectId in this.SolutionState.ProjectIds)
         {
-            // if we don't have one or it is stale, create a new partial solution
-            var tracker = GetCompilationTracker(projectId);
-            var newTracker = tracker.FreezePartialState(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // Definitely do nothing for non-C#/VB projects.  We have nothing to freeze in that case.
+            var oldProjectState = this.SolutionState.GetRequiredProjectState(projectId);
+            if (!oldProjectState.SupportsCompilation)
+                continue;
+
+            var oldTracker = GetCompilationTracker(projectId);
+            var newTracker = oldTracker.FreezePartialState(cancellationToken);
+            if (oldTracker == newTracker)
+                continue;
 
             Contract.ThrowIfFalse(newIdToProjectStateMapBuilder.ContainsKey(projectId));
-            newIdToProjectStateMapBuilder[projectId] = newTracker.ProjectState;
+
+            var newProjectState = newTracker.ProjectState;
+
+            newIdToProjectStateMapBuilder[projectId] = newProjectState;
             newIdToTrackerMapBuilder[projectId] = newTracker;
+
+            // Freezing projects can cause them to have an entirely different set of documents (since it effectively
+            // rewinds the project back to the last time it produced a compilation).  Ensure we keep track of the docs
+            // added or removed from the project states to keep the final filepath-to-documentid map accurate.
+            //
+            // Note: we only have to do this if the actual project-state changed.  If we were able to use the same
+            // instance (common if we already got the compilation for a project), then nothing changes with the set
+            // of documents.
+            //
+            // Examples of where the documents may absolutely change though are when we haven't even gotten a
+            // compilation yet.  In that case, the project transitions to an empty state, which means we should remove
+            // all its documents from the filePathToDocumentIdsMap.  Similarly, if we were at some in-progress-state we
+            // might reset the project back to a prior state from when the last compilation was requested, losing
+            // information about documents recently added or removed.
+
+            if (oldProjectState != newProjectState)
+            {
+                CheckDocumentStates(oldProjectState.DocumentStates, newProjectState.DocumentStates);
+                CheckDocumentStates(oldProjectState.AdditionalDocumentStates, newProjectState.AdditionalDocumentStates);
+                CheckDocumentStates(oldProjectState.AnalyzerConfigDocumentStates, newProjectState.AnalyzerConfigDocumentStates);
+            }
         }
 
         var newIdToProjectStateMap = newIdToProjectStateMapBuilder.ToImmutable();
         var newIdToTrackerMap = newIdToTrackerMapBuilder.ToImmutable();
 
+        var filePathToDocumentIdsMap = filePathToDocumentIdsMapChanged
+            ? filePathToDocumentIdsMapBuilder.ToImmutable()
+            : null;
+
+        var dependencyGraph = SolutionState.CreateDependencyGraph(this.SolutionState.ProjectIds, newIdToProjectStateMap);
+
         var newState = this.SolutionState.Branch(
             idToProjectStateMap: newIdToProjectStateMap,
-            dependencyGraph: SolutionState.CreateDependencyGraph(this.SolutionState.ProjectIds, newIdToProjectStateMap));
+            filePathToDocumentIdsMap: filePathToDocumentIdsMap,
+            dependencyGraph: dependencyGraph);
+
         var newCompilationState = this.Branch(
             newState,
-            newIdToTrackerMap);
+            newIdToTrackerMap,
+            // Set the frozen solution to be its own frozen solution.  Freezing multiple times is a no-op.
+            cachedFrozenSnapshot: _cachedFrozenSnapshot);
 
         return newCompilationState;
+
+        void CheckDocumentStates<TDocumentState>(
+            TextDocumentStates<TDocumentState> oldStates,
+            TextDocumentStates<TDocumentState> newStates) where TDocumentState : TextDocumentState
+        {
+            if (oldStates.Equals(newStates))
+                return;
+
+            // Get the trivial sets of documents that are present in one set but not the other.
+
+            foreach (var documentId in newStates.GetAddedStateIds(oldStates))
+            {
+                filePathToDocumentIdsMapChanged = true;
+                SolutionState.AddDocumentFilePath(newStates.GetRequiredState(documentId), filePathToDocumentIdsMapBuilder);
+            }
+
+            foreach (var documentId in newStates.GetRemovedStateIds(oldStates))
+            {
+                filePathToDocumentIdsMapChanged = true;
+                SolutionState.RemoveDocumentFilePath(oldStates.GetRequiredState(documentId), filePathToDocumentIdsMapBuilder);
+            }
+
+            // Now go through the states that are in both sets.  We have to check these all as it is possible for
+            // document to change its file path without its id changing.
+            foreach (var (documentId, oldDocumentState) in oldStates.States)
+            {
+                if (newStates.States.TryGetValue(documentId, out var newDocumentState) &&
+                    oldDocumentState != newDocumentState &&
+                    oldDocumentState.FilePath != newDocumentState.FilePath)
+                {
+                    filePathToDocumentIdsMapChanged = true;
+                    SolutionState.RemoveDocumentFilePath(oldDocumentState, filePathToDocumentIdsMapBuilder);
+                    SolutionState.AddDocumentFilePath(newDocumentState, filePathToDocumentIdsMapBuilder);
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -1147,7 +1244,10 @@ internal sealed partial class SolutionCompilationState
                     documentStates.Add(documentState);
                 }
 
-                return ComputeFrozenPartialState(@this, documentStates, cancellationToken);
+                // now freeze the solution state, capturing whatever compilations are in progress.
+                var frozenCompilationState = @this.WithFrozenPartialCompilations(cancellationToken);
+
+                return ComputeFrozenPartialState(frozenCompilationState, documentStates, cancellationToken);
             }
             catch (Exception e) when (FatalError.ReportAndPropagateUnlessCanceled(e, cancellationToken, ErrorSeverity.Critical))
             {
@@ -1156,32 +1256,33 @@ internal sealed partial class SolutionCompilationState
         }
 
         static SolutionCompilationState ComputeFrozenPartialState(
-            SolutionCompilationState @this,
+            SolutionCompilationState frozenCompilationState,
             ArrayBuilder<DocumentState> documentStates,
             CancellationToken cancellationToken)
         {
-            var newIdToProjectStateMap = @this.SolutionState.ProjectStates;
-            var newIdToTrackerMap = @this._projectIdToTrackerMap;
-
-            foreach (var docState in documentStates)
+            var currentState = frozenCompilationState;
+            foreach (var newDocumentState in documentStates)
             {
-                // if we don't have one or it is stale, create a new partial solution
-                var tracker = @this.GetCompilationTracker(docState.Id.ProjectId);
-                var newTracker = tracker.FreezePartialStateWithDocument(docState, cancellationToken);
+                var documentId = newDocumentState.Id;
+                var oldProjectState = currentState.SolutionState.GetRequiredProjectState(documentId.ProjectId);
+                var oldDocumentState = oldProjectState.DocumentStates.GetState(documentId);
 
-                Contract.ThrowIfFalse(newIdToProjectStateMap.ContainsKey(docState.Id.ProjectId));
-                newIdToProjectStateMap = newIdToProjectStateMap.SetItem(docState.Id.ProjectId, newTracker.ProjectState);
-                newIdToTrackerMap = newIdToTrackerMap.SetItem(docState.Id.ProjectId, newTracker);
+                if (oldDocumentState is null)
+                {
+                    // Project doesn't have this document, attempt to fork it with the document added.
+                    currentState = currentState.AddDocumentsToMultipleProjects(
+                        [(oldProjectState, [newDocumentState])],
+                        static (oldProjectState, newDocumentStates) =>
+                            new TranslationAction.AddDocumentsAction(oldProjectState, oldProjectState.AddDocuments(newDocumentStates), newDocumentStates));
+                }
+                else
+                {
+                    // Project has this document, attempt to fork it with the new contents.
+                    currentState = currentState.WithDocumentState(newDocumentState);
+                }
             }
 
-            var newState = @this.SolutionState.Branch(
-                idToProjectStateMap: newIdToProjectStateMap,
-                dependencyGraph: SolutionState.CreateDependencyGraph(@this.SolutionState.ProjectIds, newIdToProjectStateMap));
-            var newCompilationState = @this.Branch(
-                newState,
-                newIdToTrackerMap);
-
-            return newCompilationState;
+            return currentState;
         }
     }
 
@@ -1391,16 +1492,6 @@ internal sealed partial class SolutionCompilationState
         }
 
         return result;
-    }
-
-    private static async Task<SyntaxTree[]> GetAllSyntaxTreesAsync(IEnumerable<DocumentState> documents, int documentCount, CancellationToken cancellationToken)
-    {
-        // Parse all the documents in parallel.
-        using var _ = ArrayBuilder<Task<SyntaxTree>>.GetInstance(documentCount, out var tasks);
-        foreach (var document in documents)
-            tasks.Add(Task.Run(async () => await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false), cancellationToken));
-
-        return await Task.WhenAll(tasks).ConfigureAwait(false);
     }
 
     internal TestAccessor GetTestAccessor()
