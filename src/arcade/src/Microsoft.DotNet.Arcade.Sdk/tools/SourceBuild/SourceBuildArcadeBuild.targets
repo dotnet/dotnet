@@ -214,6 +214,7 @@
     <Exec
       Command="$(BaseInnerSourceBuildCommand) $(InnerBuildArgs)"
       WorkingDirectory="$(InnerSourceBuildRepoRoot)"
+      IgnoreStandardErrorWarningFormat="true"
       EnvironmentVariables="@(InnerBuildEnv)" />
   </Target>
 

@@ -28,4 +28,7 @@
           Pack="true" />
   </ItemGroup>
 
+  <!-- This project is a build task dependency and needs to follow desktop version requirements. -->
+  <Import Project="$(RepositoryEngineeringDir)BuildTask.Packages.props" />
+
 </Project>

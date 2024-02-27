@@ -44,14 +44,6 @@
   </Choose>
 
   <!--
-    Workaround for a race condition https://github.com/Microsoft/msbuild/issues/1479.
-  -->
-  <PropertyGroup>
-    <TargetFrameworkMonikerAssemblyAttributesPath>$(IntermediateOutputPath)$(TargetFrameworkMoniker).AssemblyAttributes$(DefaultLanguageSourceExtension)</TargetFrameworkMonikerAssemblyAttributesPath>
-    <TargetFrameworkMonikerAssemblyAttributesFileClean>true</TargetFrameworkMonikerAssemblyAttributesFileClean>
-  </PropertyGroup>
-
-  <!--
      Portable PDBs are not included in .nupkg by default. Include them unless the project produces symbol packages.
      Remove this once we migrate to .snupkg. See https://github.com/dotnet/arcade/issues/1959.
    -->
