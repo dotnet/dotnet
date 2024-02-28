@@ -190,7 +190,7 @@ namespace NuGet.PackageManagement.VisualStudio
             SettingsChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public SettingSection GetSection(string sectionName)
+        public SettingSection? GetSection(string sectionName)
         {
             return SolutionSettings.GetSection(sectionName);
         }

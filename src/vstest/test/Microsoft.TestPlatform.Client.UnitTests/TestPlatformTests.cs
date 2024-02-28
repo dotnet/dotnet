@@ -494,10 +494,6 @@ public class TestPlatformTests
                 testSessionCriteria,
                 mockEventsHandler.Object,
                 It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>()));
-
-        mockEventsHandler.Verify(
-            eh => eh.HandleStartTestSessionComplete(It.IsAny<StartTestSessionCompleteEventArgs>()),
-            Times.Once);
     }
 
     [TestMethod]

@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.IO;
 using System.Linq;
 using FluentAssertions;
 using NuGet.Test.Utility;
@@ -30,7 +31,7 @@ namespace NuGet.Configuration.Test
                 var settingsFile = new SettingsFile(mockBaseDirectory);
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
-                var items = section.Items.ToList();
+                var items = section!.Items.ToList();
 
                 items.Count.Should().Be(1);
 
@@ -45,7 +46,7 @@ namespace NuGet.Configuration.Test
                                                                         @".\certificate.pfx",
                                                                         null,
                                                                         false,
-                                                                        string.Empty);
+                                                                        Path.Combine(mockBaseDirectory, nugetConfigPath));
 
                 SettingsTestUtils.DeepEquals(fileClientCertItem, expectedFileClientCertItem).Should().BeTrue();
             }
@@ -71,7 +72,7 @@ namespace NuGet.Configuration.Test
                 var settingsFile = new SettingsFile(mockBaseDirectory);
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
-                var items = section.Items.ToList();
+                var items = section!.Items.ToList();
 
                 items.Count.Should().Be(1);
 
@@ -86,7 +87,7 @@ namespace NuGet.Configuration.Test
                                                                         @".\certificate.pfx",
                                                                         "...",
                                                                         true,
-                                                                        string.Empty);
+                                                                        Path.Combine(mockBaseDirectory, nugetConfigPath));
 
                 SettingsTestUtils.DeepEquals(fileClientCertItem, expectedFileClientCertItem).Should().BeTrue();
             }

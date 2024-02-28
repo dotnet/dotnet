@@ -12,8 +12,6 @@ namespace NuGet.Configuration
 {
     internal sealed class NuGetConfiguration : SettingsGroup<SettingSection>, ISettingsGroup
     {
-        public override string ElementName => ConfigurationConstants.Configuration;
-
         internal IReadOnlyDictionary<string, SettingSection> Sections => Children.ToDictionary(c => c.ElementName);
 
         protected override bool CanBeCleared => false;
@@ -23,7 +21,7 @@ namespace NuGet.Configuration
         /// This constructor should only be used for tests.
         /// </remarks>
         private NuGetConfiguration(IReadOnlyDictionary<string, string> attributes, IEnumerable<SettingSection> children)
-            : base(attributes, children)
+            : base(name: ConfigurationConstants.Configuration, attributes, children)
         {
         }
 
@@ -32,7 +30,7 @@ namespace NuGet.Configuration
         /// This constructor should only be used for tests.
         /// </remarks>
         internal NuGetConfiguration(params SettingSection[] sections)
-            : base()
+            : base(ConfigurationConstants.Configuration)
         {
             foreach (var section in sections)
             {
@@ -42,7 +40,7 @@ namespace NuGet.Configuration
         }
 
         internal NuGetConfiguration(SettingsFile origin)
-            : base()
+            : base(ConfigurationConstants.Configuration)
         {
             var defaultSource = new SourceItem(NuGetConstants.FeedName, NuGetConstants.V3FeedUrl, protocolVersion: PackageSourceProvider.MaxSupportedProtocolVersion.ToString(CultureInfo.CurrentCulture));
 
@@ -62,7 +60,7 @@ namespace NuGet.Configuration
         }
 
         internal NuGetConfiguration(XElement element, SettingsFile origin)
-            : base(element, origin)
+            : base(ConfigurationConstants.Configuration, element, origin)
         {
             if (!string.Equals(element.Name.LocalName, ElementName, StringComparison.OrdinalIgnoreCase))
             {
@@ -114,7 +112,7 @@ namespace NuGet.Configuration
             }
         }
 
-        public SettingSection GetSection(string sectionName)
+        public SettingSection? GetSection(string sectionName)
         {
             if (Sections.TryGetValue(sectionName, out var section))
             {
@@ -142,10 +140,10 @@ namespace NuGet.Configuration
 
         public override SettingBase Clone()
         {
-            return new NuGetConfiguration(Attributes, Sections.Select(s => s.Value.Clone() as SettingSection));
+            return new NuGetConfiguration(Attributes, Sections.Select(s => (SettingSection)s.Value.Clone()));
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             var nugetConfiguration = other as NuGetConfiguration;
 

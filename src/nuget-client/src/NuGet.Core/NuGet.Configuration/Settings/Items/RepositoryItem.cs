@@ -22,7 +22,7 @@ namespace NuGet.Configuration
             set => SetName(value);
         }
 
-        private OwnersItem _owners;
+        private OwnersItem? _owners;
 
         public IList<string> Owners { get; private set; }
 
@@ -34,7 +34,7 @@ namespace NuGet.Configuration
         {
         }
 
-        public RepositoryItem(string name, string serviceIndex, string owners, params CertificateItem[] certificates)
+        public RepositoryItem(string name, string serviceIndex, string? owners, params CertificateItem[] certificates)
             : base(name, certificates)
         {
             if (string.IsNullOrEmpty(serviceIndex))
@@ -46,20 +46,25 @@ namespace NuGet.Configuration
 
             if (!string.IsNullOrEmpty(owners))
             {
-                _owners = new OwnersItem(owners);
+                _owners = new OwnersItem(owners!);
                 Owners = _owners.Content;
             }
             else
             {
+                _owners = null;
                 Owners = new List<string>();
             }
         }
 
         internal RepositoryItem(XElement element, SettingsFile origin)
-            : base(element, origin)
+            : this(element, origin, ParseDescendants(element, origin))
         {
-            var parsedOwners = _parsedDescendants.OfType<OwnersItem>();
-            Owners = new List<string>();
+        }
+
+        internal RepositoryItem(XElement element, SettingsFile origin, IEnumerable<SettingBase> parsedDescendants)
+            : base(element, origin, parsedDescendants)
+        {
+            var parsedOwners = parsedDescendants.OfType<OwnersItem>();
 
             if (parsedOwners != null && parsedOwners.Any())
             {
@@ -72,7 +77,7 @@ namespace NuGet.Configuration
                 }
 
                 _owners = parsedOwners.FirstOrDefault();
-                Owners = _owners.Content;
+                Owners = _owners?.Content ?? new List<string>();
             }
             else
             {
@@ -86,7 +91,7 @@ namespace NuGet.Configuration
                 Name,
                 ServiceIndex,
                 string.Join(OwnersItem.OwnersListSeparator.ToString(CultureInfo.CurrentCulture), Owners),
-                Certificates.Select(c => c.Clone() as CertificateItem).ToArray());
+                Certificates.Select(c => (CertificateItem)c.Clone()).ToArray());
 
             if (Origin != null)
             {
@@ -123,7 +128,7 @@ namespace NuGet.Configuration
             return element;
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (other is RepositoryItem repository)
             {
@@ -162,17 +167,17 @@ namespace NuGet.Configuration
             _owners?.RemoveFromSettings();
         }
 
-        internal override void Update(SettingItem other)
+        internal override void Update(SettingItem otherRepository)
         {
-            base.Update(other);
+            base.Update(otherRepository);
 
-            var repository = other as RepositoryItem;
+            var other = (RepositoryItem)otherRepository;
 
-            if (!Owners.SequenceEqual(repository.Owners, StringComparer.Ordinal))
+            if (!Owners.SequenceEqual(other.Owners, StringComparer.Ordinal))
             {
                 if (_owners == null || !Owners.Any())
                 {
-                    _owners = new OwnersItem(string.Join(OwnersItem.OwnersListSeparator.ToString(CultureInfo.CurrentCulture), repository.Owners));
+                    _owners = new OwnersItem(string.Join(OwnersItem.OwnersListSeparator.ToString(CultureInfo.CurrentCulture), other.Owners));
                     Owners = _owners.Content;
 
                     if (Origin != null)
@@ -188,7 +193,7 @@ namespace NuGet.Configuration
                         }
                     }
                 }
-                else if (!repository.Owners.Any())
+                else if (!other.Owners.Any())
                 {
                     XElementUtility.RemoveIndented(_owners.Node);
                     _owners = null;
@@ -201,7 +206,13 @@ namespace NuGet.Configuration
                 }
                 else
                 {
-                    _owners.Update(repository._owners);
+#pragma warning disable CS8604 // Possible null reference argument.
+                    // While adding nullable annotations to the codebase, the compiler is warning about this line, but after a long time
+                    // trying to understand this code, I can't convince myself that this is safe. It's also not obvious to me how to fix it.
+                    // Since this code has existed for years, apparently without causing NullReferenceExeptions, I'm going to suppress the warning
+                    // until someone can refactor this code to make it safe.
+                    _owners.Update(other._owners);
+#pragma warning restore CS8604 // Possible null reference argument.
                     Owners = _owners.Content;
                 }
             }

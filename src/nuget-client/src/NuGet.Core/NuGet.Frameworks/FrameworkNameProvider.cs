@@ -405,15 +405,20 @@ namespace NuGet.Frameworks
                     remaining!.Add(fw);
                 }
 
-                var equalFrameworks = new HashSet<NuGetFramework>();
-                // include ourselves
-                equalFrameworks.Add(current!);
+                HashSet<NuGetFramework> equalFrameworks;
 
                 // find all equivalent frameworks for the current one
                 if (_equivalentFrameworks.TryGetValue(current!, out HashSet<NuGetFramework>? curFrameworks))
                 {
-                    UnionWith(equalFrameworks, curFrameworks);
+                    equalFrameworks = new HashSet<NuGetFramework>(curFrameworks);
                 }
+                else
+                {
+                    equalFrameworks = new HashSet<NuGetFramework>();
+                }
+
+                // include ourselves
+                equalFrameworks.Add(current!);
 
                 foreach (var fw in equalFrameworks)
                 {

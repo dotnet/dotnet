@@ -46,11 +46,11 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault();
+                var element = section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
                 // Assert
-                SettingsTestUtils.DeepEquals(element, expectedSetting).Should().BeTrue();
+                SettingsTestUtils.DeepEquals(element!, expectedSetting).Should().BeTrue();
             }
         }
 
@@ -79,11 +79,11 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault();
+                var element = section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
                 // Assert
-                SettingsTestUtils.DeepEquals(element, expectedSetting).Should().BeTrue();
+                SettingsTestUtils.DeepEquals(element!, expectedSetting).Should().BeTrue();
             }
         }
 
@@ -110,11 +110,11 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault();
+                var element = section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
                 // Assert
-                SettingsTestUtils.DeepEquals(element, expectedSetting).Should().BeTrue();
+                SettingsTestUtils.DeepEquals(element!, expectedSetting).Should().BeTrue();
             }
         }
 
@@ -144,11 +144,11 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault();
+                var element = section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
                 // Assert
-                SettingsTestUtils.DeepEquals(element, expectedSetting).Should().BeTrue();
+                SettingsTestUtils.DeepEquals(element!, expectedSetting).Should().BeTrue();
             }
         }
 
@@ -181,11 +181,11 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault();
+                var element = section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
                 // Assert
-                SettingsTestUtils.DeepEquals(element, expectedSetting).Should().BeTrue();
+                SettingsTestUtils.DeepEquals(element!, expectedSetting).Should().BeTrue();
             }
         }
 
@@ -210,11 +210,11 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
                 // Assert
-                var ex = Record.Exception(() => element.Add(new SettingText("test")));
+                var ex = Record.Exception(() => element!.Add(new SettingText("test")));
                 ex.Should().NotBeNull();
                 ex.Should().BeOfType<InvalidOperationException>();
             }
@@ -241,11 +241,11 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
                 // Assert
-                var ex = Record.Exception(() => element.Add(new SettingText("test")));
+                var ex = Record.Exception(() => element!.Add(new SettingText("test")));
                 ex.Should().NotBeNull();
                 ex.Should().BeOfType<InvalidOperationException>();
             }
@@ -275,10 +275,10 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
-                element.Add(new AddItem("key", "val")).Should().BeTrue();
+                element!.Add(new AddItem("key", "val")).Should().BeTrue();
 
                 // Assert
                 SettingsTestUtils.DeepEquals(element, expectedSetting).Should().BeTrue();
@@ -309,10 +309,10 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
-                element.Add(new SettingText("Text for test")).Should().BeTrue();
+                element!.Add(new SettingText("Text for test")).Should().BeTrue();
 
                 // Assert
                 SettingsTestUtils.DeepEquals(element, expectedSetting).Should().BeTrue();
@@ -343,11 +343,11 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
                 // Assert
-                var ex = Record.Exception(() => element.Remove(element.Children.First()));
+                var ex = Record.Exception(() => element!.Remove(element.Children.First()));
                 ex.Should().NotBeNull();
                 ex.Should().BeOfType<InvalidOperationException>();
             }
@@ -376,11 +376,11 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
                 // Assert
-                var ex = Record.Exception(() => element.Remove(element.Children.First()));
+                var ex = Record.Exception(() => element!.Remove(element.Children.First()));
                 ex.Should().NotBeNull();
                 ex.Should().BeOfType<InvalidOperationException>();
             }
@@ -414,10 +414,10 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
-                element.Remove(new AddItem("key3", "val3"));
+                element!.Remove(new AddItem("key3", "val3"));
 
                 // Assert
                 SettingsTestUtils.DeepEquals(element, expectedSetting).Should().BeTrue();
@@ -453,10 +453,10 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
-                element.Remove(element.Children.First());
+                element!.Remove(element.Children.First());
 
                 // Assert
                 SettingsTestUtils.DeepEquals(element, expectedSetting).Should().BeTrue();
@@ -495,9 +495,9 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
-                element.Remove(element.Children.First());
+                element!.Remove(element.Children.First());
 
                 settingsFile.AddOrUpdate("Section", element);
                 settingsFile.SaveToDisk();
@@ -547,10 +547,10 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
-                element.Update(updateSetting);
+                element!.Update(updateSetting);
 
                 // Assert
                 element.Attributes["new"].Should().Be("attr");
@@ -582,10 +582,10 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
-                element.Update(updateSetting);
+                element!.Update(updateSetting);
 
                 // Assert
                 element.Attributes.TryGetValue("old", out var _).Should().BeFalse();
@@ -617,10 +617,10 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
-                element.Update(updateSetting);
+                element!.Update(updateSetting);
 
                 // Assert
                 element.Attributes["old"].Should().Be("newAttr");
@@ -652,10 +652,10 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
-                element.Update(updateSetting);
+                element!.Update(updateSetting);
 
                 // Assert
                 element.Children.Count.Should().Be(1);
@@ -688,10 +688,10 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
-                element.Update(updateSetting);
+                element!.Update(updateSetting);
 
                 // Assert
                 element.Children.Count.Should().Be(1);
@@ -727,10 +727,10 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
-                element.Update(updateSetting);
+                element!.Update(updateSetting);
 
                 // Assert
                 element.Children.Count.Should().Be(1);
@@ -767,10 +767,10 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
-                element.Update(updateSetting);
+                element!.Update(updateSetting);
 
                 // Assert
                 element.Children.Count.Should().Be(1);
@@ -806,15 +806,15 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
-                element.Update(updateSetting);
+                element!.Update(updateSetting);
 
                 // Assert
                 element.Children.Count.Should().Be(1);
                 element.Children.First().Should().BeOfType<AddItem>();
-                (element.Children.First() as AddItem).AdditionalAttributes["meta"].Should().Be("data");
+                ((AddItem)element.Children.First()).AdditionalAttributes["meta"].Should().Be("data");
             }
         }
 
@@ -845,15 +845,15 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as UnknownItem;
+                var element = (UnknownItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
-                element.Update(updateSetting);
+                element!.Update(updateSetting);
 
                 // Assert
                 element.Children.Count.Should().Be(1);
                 element.Children.First().Should().BeOfType<SettingText>();
-                (element.Children.First() as SettingText).Value.Should().Be("New test");
+                ((SettingText)element.Children.First()).Value.Should().Be("New test");
             }
         }
 
@@ -985,12 +985,12 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
+                section!.Items.Count.Should().Be(1);
                 var item = section.Items.First();
                 item.IsCopy().Should().BeFalse();
                 item.Origin.Should().NotBeNull();
 
-                var clone = item.Clone() as UnknownItem;
+                var clone = (UnknownItem)item.Clone();
                 clone.IsCopy().Should().BeTrue();
                 clone.Origin.Should().NotBeNull();
                 SettingsTestUtils.DeepEquals(clone, item).Should().BeTrue();

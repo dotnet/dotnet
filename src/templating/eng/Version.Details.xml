@@ -8,22 +8,22 @@
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.24119.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.24127.2">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
-      <Sha>539af5d8ae183d4fe61e8b2f8f4a8505c8a765a7</Sha>
+      <Sha>6d28b5a26876f8f22dadb8f6cdee878faaa88464</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App.Runtime.win-x64" Version="9.0.0-preview.2.24116.2">
+    <Dependency Name="Microsoft.NETCore.App.Runtime.win-x64" Version="9.0.0-preview.3.24126.1">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>d972a19c077e899d0b3fff97d955968e50906396</Sha>
+      <Sha>c55c4d50793c878cc73ae6ca3335f2b6b3ccc8a4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App.Ref" Version="9.0.0-preview.2.24116.2">
+    <Dependency Name="Microsoft.NETCore.App.Ref" Version="9.0.0-preview.3.24126.1">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>d972a19c077e899d0b3fff97d955968e50906396</Sha>
+      <Sha>c55c4d50793c878cc73ae6ca3335f2b6b3ccc8a4</Sha>
     </Dependency>
-    <Dependency Name="System.CommandLine" Version="2.0.0-beta4.24112.1">
+    <Dependency Name="System.CommandLine" Version="2.0.0-beta4.24126.1">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
-      <Sha>e9ac4ff4293cf853f3d07eb9e747aef27f5be965</Sha>
+      <Sha>5ea97af07263ea3ef68a18557c8aa3f7e3200bda</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>

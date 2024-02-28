@@ -10,8 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.Test.ComponentShim\Microsoft.AspNetCore.Razor.Test.ComponentShim.csproj" />
 
-    <ProjectReference Include="..\..\Compiler\Microsoft.AspNetCore.Razor.Language\src\Microsoft.CodeAnalysis.Razor.Compiler.Language.csproj" />
-    <ProjectReference Include="..\..\Compiler\Microsoft.CodeAnalysis.Razor\src\Microsoft.CodeAnalysis.Razor.Compiler.CSharp.csproj" />
+    <ProjectReference Include="..\..\Compiler\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj" />
     <PackageReference Include="Microsoft.CSharp" Version="$(MicrosoftCSharpVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="$(MicrosoftCodeAnalysisCSharpPackageVersion)" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelVersion)" />

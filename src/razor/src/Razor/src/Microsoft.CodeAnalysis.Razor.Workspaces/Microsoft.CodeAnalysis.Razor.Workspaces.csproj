@@ -25,11 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Compiler\Microsoft.AspNetCore.Razor.Language\src\Microsoft.CodeAnalysis.Razor.Compiler.Language.csproj" />
-    <ProjectReference Include="..\..\..\Compiler\Microsoft.CodeAnalysis.Razor\src\Microsoft.CodeAnalysis.Razor.Compiler.CSharp.csproj" />
-    <ProjectReference Include="..\..\..\Compiler\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X\src\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version1_X.csproj" />
-    <ProjectReference Include="..\..\..\Compiler\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X\src\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version2_X.csproj" />
-    <ProjectReference Include="..\..\..\Compiler\Microsoft.AspNetCore.Mvc.Razor.Extensions\src\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.csproj" />
+    <ProjectReference Include="..\..\..\Compiler\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj" />
   </ItemGroup>
 
   <ItemGroup>

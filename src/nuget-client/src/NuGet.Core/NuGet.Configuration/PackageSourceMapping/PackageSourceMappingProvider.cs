@@ -34,7 +34,7 @@ namespace NuGet.Configuration
 
         public IReadOnlyList<PackageSourceMappingSourceItem> GetPackageSourceMappingItems()
         {
-            SettingSection packageSourceMappingSection = _settings.GetSection(ConfigurationConstants.PackageSourceMapping);
+            SettingSection? packageSourceMappingSection = _settings.GetSection(ConfigurationConstants.PackageSourceMapping);
             if (packageSourceMappingSection == null)
             {
                 return Enumerable.Empty<PackageSourceMappingSourceItem>().ToList();

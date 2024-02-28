@@ -83,7 +83,7 @@ internal class RazorSemanticTokensInfoService(
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        var razorSemanticRanges = TagHelperSemanticRangeVisitor.VisitAllNodes(codeDocument, range, _razorSemanticTokensLegendService, colorBackground);
+        var razorSemanticRanges = SemanticTokensVisitor.GetSemanticRanges(codeDocument, range, _razorSemanticTokensLegendService, colorBackground);
         ImmutableArray<SemanticRange>? csharpSemanticRangesResult = null;
 
         try
@@ -203,7 +203,7 @@ internal class RazorSemanticTokensInfoService(
         using var _ = ArrayBuilderPool<SemanticRange>.GetPooledObject(out var razorRanges);
         razorRanges.SetCapacityIfLarger(csharpResponse.Length / TokenSize);
 
-        var textClassification = _razorSemanticTokensLegendService.MarkupTextLiteral;
+        var textClassification = _razorSemanticTokensLegendService.TokenTypes.MarkupTextLiteral;
         var razorSource = codeDocument.GetSourceText();
 
         SemanticRange previousSemanticRange = default;
@@ -224,7 +224,7 @@ internal class RazorSemanticTokensInfoService(
                 {
                     if (colorBackground)
                     {
-                        tokenModifiers |= (int)RazorSemanticTokensLegendService.RazorTokenModifiers.razorCode;
+                        tokenModifiers |= _razorSemanticTokensLegendService.TokenModifiers.RazorCodeModifier;
                         AddAdditionalCSharpWhitespaceRanges(razorRanges, textClassification, razorSource, previousRazorSemanticRange, originalRange, _logger);
                     }
 
@@ -240,7 +240,7 @@ internal class RazorSemanticTokensInfoService(
         return razorRanges.DrainToImmutable();
     }
 
-    private static void AddAdditionalCSharpWhitespaceRanges(ImmutableArray<SemanticRange>.Builder razorRanges, int textClassification, SourceText razorSource, LinePositionSpan? previousRazorSemanticRange, LinePositionSpan originalRange, ILogger logger)
+    private void AddAdditionalCSharpWhitespaceRanges(ImmutableArray<SemanticRange>.Builder razorRanges, int textClassification, SourceText razorSource, LinePositionSpan? previousRazorSemanticRange, LinePositionSpan originalRange, ILogger logger)
     {
         var startLine = originalRange.Start.Line;
         var startChar = originalRange.Start.Character;
@@ -251,7 +251,7 @@ internal class RazorSemanticTokensInfoService(
             ContainsOnlySpacesOrTabs(razorSource, previousSpanEndIndex + 1, startChar - previousRange.End.Character - 1))
         {
             // we're on the same line as previous, lets extend ours to include whitespace between us and the proceeding range
-            razorRanges.Add(new SemanticRange(textClassification, startLine, previousRange.End.Character, startLine, startChar, (int)RazorSemanticTokensLegendService.RazorTokenModifiers.razorCode, fromRazor: false));
+            razorRanges.Add(new SemanticRange(textClassification, startLine, previousRange.End.Character, startLine, startChar, _razorSemanticTokensLegendService.TokenModifiers.RazorCodeModifier, fromRazor: false));
         }
         else if (startChar > 0 &&
             previousRazorSemanticRange?.End.Line != startLine &&
@@ -259,7 +259,7 @@ internal class RazorSemanticTokensInfoService(
             ContainsOnlySpacesOrTabs(razorSource, originalRangeStartIndex - startChar + 1, startChar - 1))
         {
             // We're on a new line, and the start of the line is only whitespace, so give that a background color too
-            razorRanges.Add(new SemanticRange(textClassification, startLine, 0, startLine, startChar, (int)RazorSemanticTokensLegendService.RazorTokenModifiers.razorCode, fromRazor: false));
+            razorRanges.Add(new SemanticRange(textClassification, startLine, 0, startLine, startChar, _razorSemanticTokensLegendService.TokenModifiers.RazorCodeModifier, fromRazor: false));
         }
     }
 

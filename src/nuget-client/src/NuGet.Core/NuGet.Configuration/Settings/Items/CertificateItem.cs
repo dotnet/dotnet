@@ -103,7 +103,7 @@ namespace NuGet.Configuration
             return newItem;
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (other is CertificateItem cert)
             {

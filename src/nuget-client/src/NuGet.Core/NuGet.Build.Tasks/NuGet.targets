@@ -908,6 +908,8 @@ Copyright (c) .NET Foundation. All rights reserved.
         <ConfigFilePaths>$(_OutputConfigFilePaths)</ConfigFilePaths>
         <PackagesPath>$(_OutputPackagesPath)</PackagesPath>
         <TargetFrameworks>@(_RestoreTargetFrameworksOutputFiltered)</TargetFrameworks>
+        <NuGetAudit>$(NuGetAudit)</NuGetAudit>
+        <NuGetAuditLevel>$(NuGetAuditLevel)</NuGetAuditLevel>
       </_RestoreGraphEntry>
     </ItemGroup>
 

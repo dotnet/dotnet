@@ -130,10 +130,14 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
 
         // Find the lines that were affected by these edits.
         var originalText = codeDocument.GetSourceText();
+        _logger.LogTestOnly("Original text:\r\n{originalText}", originalText);
+
         var changes = filteredEdits.Select(e => e.ToTextChange(originalText));
 
         // Apply the format on type edits sent over by the client.
         var formattedText = ApplyChangesAndTrackChange(originalText, changes, out _, out var spanAfterFormatting);
+        _logger.LogTestOnly("After C# changes:\r\n{formattedText}", formattedText);
+
         var changedContext = await context.WithTextAsync(formattedText).ConfigureAwait(false);
         var rangeAfterFormatting = spanAfterFormatting.ToRange(formattedText);
 
@@ -142,6 +146,8 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
         // We make an optimistic attempt at fixing corner cases.
         var cleanupChanges = CleanupDocument(changedContext, rangeAfterFormatting);
         var cleanedText = formattedText.WithChanges(cleanupChanges);
+        _logger.LogTestOnly("After CleanupDocument:\r\n{cleanedText}", cleanedText);
+
         changedContext = await changedContext.WithTextAsync(cleanedText).ConfigureAwait(false);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -209,6 +215,8 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
         {
             // Apply the edits that modify indentation.
             cleanedText = cleanedText.WithChanges(indentationChanges);
+
+            _logger.LogTestOnly("After AdjustIndentationAsync:\r\n{cleanedText}", cleanedText);
         }
 
         // Now that we have made all the necessary changes to the document. Let's diff the original vs final version and return the diff.
@@ -508,6 +516,16 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
             IsOnSingleLine(template, text))
         {
             // Special case, we don't want to add a line break in front of a single line template
+            return;
+        }
+
+        if (owner is MarkupTagHelperAttributeSyntax { TagHelperAttributeInfo.Bound: true } or
+            MarkupTagHelperDirectiveAttributeSyntax { TagHelperAttributeInfo.Bound: true } or
+            MarkupMinimizedTagHelperAttributeSyntax { TagHelperAttributeInfo.Bound: true } or
+            MarkupMinimizedTagHelperDirectiveAttributeSyntax { TagHelperAttributeInfo.Bound: true })
+        {
+            // Special case, we don't want to add a line break at the end of a component attribute. They are technically
+            // C#, for features like GTD and FAR, but we consider them Html for formatting
             return;
         }
 

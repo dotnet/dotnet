@@ -36,7 +36,7 @@ namespace NuGet.Configuration
                 { ConfigurationConstants.KeyAttribute, new HashSet<string>(new [] {string.Empty }) }
             });
 
-        public AddItem(string key, string value)
+        public AddItem(string key, string? value)
             : this(key, value, additionalAttributes: null)
         {
         }
@@ -46,7 +46,7 @@ namespace NuGet.Configuration
         {
         }
 
-        public AddItem(string key, string value, IReadOnlyDictionary<string, string> additionalAttributes)
+        public AddItem(string key, string? value, IReadOnlyDictionary<string, string>? additionalAttributes)
             : base()
         {
             if (string.IsNullOrEmpty(key))
@@ -102,7 +102,7 @@ namespace NuGet.Configuration
         // Due to how settings AddOrUpdate is implemented, anything extending AddItem must only use the Key in GetHashCode and Equals
         // otherwise existing items won't be updated and new duplicates will always be added.
         // In other words, all sub-class properties must be ignored by these methods.
-        public sealed override bool Equals(object other)
+        public sealed override bool Equals(object? other)
         {
             var item = other as AddItem;
 
