@@ -25,7 +25,7 @@ parameters:
   type: string
   default: ' '
 
-variables: 
+variables:
 - ${{ if ne(parameters.vmrBranch, ' ') }}:
   - name: VmrBranch
     value: ${{ replace(parameters.vmrBranch, ' ', '') }}
@@ -39,7 +39,8 @@ jobs:
     jobName: Synchronize_VMR
     vmrBranch: ${{ variables.VmrBranch }}
 
-- template: /eng/pipelines/templates/jobs/vmr-synchronization.yml
-  parameters:
-    jobName: Synchronize_VMR_uncloacked
-    vmrBranch: ${{ variables.VmrBranch }}-ub
+- ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+  - template: /eng/pipelines/templates/jobs/vmr-synchronization.yml
+    parameters:
+      jobName: Synchronize_VMR_uncloaked
+      vmrBranch: ${{ variables.VmrBranch }}-ub
