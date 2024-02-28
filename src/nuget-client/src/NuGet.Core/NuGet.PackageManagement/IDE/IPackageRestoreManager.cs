@@ -85,6 +85,7 @@ namespace NuGet.PackageManagement
         /// are missing
         /// </remarks>
         /// <returns>Returns true if atleast one package was restored.</returns>
+        [Obsolete("This method is deprecated to reduce complexity, please use one of the other RestoreMissingPackagesAsync methods.")]
         Task<PackageRestoreResult> RestoreMissingPackagesInSolutionAsync(string solutionDirectory,
             INuGetProjectContext nuGetProjectContext,
             CancellationToken token);
@@ -128,6 +129,7 @@ namespace NuGet.PackageManagement
         /// Returns true if at least one package is restored. Raised package restored failed event with the
         /// list of project names.
         /// </returns>
+        [Obsolete("This method is deprecated to reduce complexity, please use one of the other RestoreMissingPackagesAsync methods.")]
         Task<PackageRestoreResult> RestoreMissingPackagesAsync(string solutionDirectory,
             IEnumerable<PackageRestoreData> packages,
             INuGetProjectContext nuGetProjectContext,

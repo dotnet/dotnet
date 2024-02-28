@@ -268,5 +268,50 @@ namespace NuGet.PackageManagement.Test
             buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
             buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeTrue();
         }
+
+        [Fact]
+        public void CreateInstallationContextForPackageId_WithDifferencePackageIdCase_ReturnsCorrectValue()
+        {
+            // Arrange
+
+            var originalPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\",
+                @"
+                {
+                    ""frameworks"": {
+                        ""net472"": {
+                            ""dependencies"": {
+                                ""a"" : ""1.0.0""
+                            }
+                        }
+                    }
+                }");
+
+            string referenceSpec = @"
+                {
+                    ""frameworks"": {
+                        ""net472"": {
+                            ""dependencies"": {
+                                ""a"" : ""2.0.0""
+                            }
+                        }
+                    }
+                }";
+            Dictionary<NuGetFramework, string> originalFrameworks = new()
+            {
+                { FrameworkConstants.CommonFrameworks.Net472, "net472" }
+            };
+
+            var resultingPackageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("project", @"C:\", referenceSpec);
+
+            // Act
+            var buildIntegrationInstallationContext = NuGetPackageManager.CreateInstallationContextForPackageId(packageIdentityId: "A", resultingPackageSpec, originalPackageSpec, unsuccessfulFrameworks: new(), originalFrameworks);
+
+            // Assert
+            buildIntegrationInstallationContext.OriginalFrameworks.Should().Equal(originalFrameworks);
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().HaveCount(1);
+            buildIntegrationInstallationContext.UnsuccessfulFrameworks.Should().HaveCount(0);
+            buildIntegrationInstallationContext.SuccessfulFrameworks.Should().Contain(FrameworkConstants.CommonFrameworks.Net472);
+            buildIntegrationInstallationContext.AreAllPackagesConditional.Should().BeFalse();
+        }
     }
 }

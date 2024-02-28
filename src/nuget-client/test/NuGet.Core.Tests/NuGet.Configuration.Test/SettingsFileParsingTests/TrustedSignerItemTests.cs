@@ -35,22 +35,22 @@ namespace NuGet.Configuration.Test
                 var settingsFile = new SettingsFile(mockBaseDirectory);
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
-                var items = section.Items.ToList();
+                var items = section!.Items.ToList();
 
                 items.Count.Should().Be(2);
 
-                var trustedSignerItem = items[0] as TrustedSignerItem;
+                var trustedSignerItem = (TrustedSignerItem)items[0];
                 trustedSignerItem.Name.Should().Be("repositoryName");
 
-                var repositoryitem = items[0] as RepositoryItem;
+                var repositoryitem = (RepositoryItem)items[0];
                 var expectedRepositoryItem = new RepositoryItem("repositoryName", "https://api.test/index/", "test;text",
                     new CertificateItem("abcdefg", Common.HashAlgorithmName.SHA256, allowUntrustedRoot: true));
                 SettingsTestUtils.DeepEquals(repositoryitem, expectedRepositoryItem).Should().BeTrue();
 
-                trustedSignerItem = items[1] as TrustedSignerItem;
+                trustedSignerItem = (TrustedSignerItem)items[1];
                 trustedSignerItem.Name.Should().Be("authorName");
 
-                var authorItem = items[1] as AuthorItem;
+                var authorItem = (AuthorItem)items[1];
                 var expectedAuthorItem = new AuthorItem("authorName",
                     new CertificateItem("abcdefg", Common.HashAlgorithmName.SHA256, allowUntrustedRoot: true));
                 SettingsTestUtils.DeepEquals(authorItem, expectedAuthorItem).Should().BeTrue();

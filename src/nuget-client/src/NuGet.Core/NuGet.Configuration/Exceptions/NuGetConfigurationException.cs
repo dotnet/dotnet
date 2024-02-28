@@ -17,7 +17,7 @@ namespace NuGet.Configuration
         {
         }
 
-        public NuGetConfigurationException(string message, Exception innerException)
+        public NuGetConfigurationException(string message, Exception? innerException)
             : base(message, innerException)
         {
         }

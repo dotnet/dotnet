@@ -34,7 +34,7 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("section");
                 section.Should().NotBeNull();
 
-                var children = section.Items.ToList();
+                var children = section!.Items.ToList();
 
                 children.Should().NotBeEmpty();
                 children.Count.Should().Be(1);
@@ -65,7 +65,7 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
+                section!.Items.Count.Should().Be(1);
                 section.Items.FirstOrDefault().Should().BeOfType<ClearItem>();
             }
         }
@@ -92,7 +92,7 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
+                section!.Items.Count.Should().Be(1);
                 section.Items.FirstOrDefault().Should().BeOfType<ClearItem>();
             }
         }
@@ -170,12 +170,12 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
+                section!.Items.Count.Should().Be(1);
                 var item = section.Items.First();
                 item.IsCopy().Should().BeFalse();
                 item.Origin.Should().NotBeNull();
 
-                var clone = item.Clone() as ClearItem;
+                var clone = (ClearItem)item.Clone();
                 clone.IsCopy().Should().BeTrue();
                 clone.Origin.Should().NotBeNull();
                 SettingsTestUtils.DeepEquals(clone, item).Should().BeTrue();

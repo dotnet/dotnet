@@ -704,19 +704,18 @@ namespace NuGet.Commands
 
         public static string GetLanguage(string nugetLanguage)
         {
-            var lang = nugetLanguage.ToUpperInvariant();
-
             // Translate S -> #
-            switch (lang)
+            if (StringComparer.OrdinalIgnoreCase.Equals(nugetLanguage, "CS"))
             {
-                case "CS":
-                    return "C#";
-                case "FS":
-                    return "F#";
+                return "C#";
+            }
+            else if (StringComparer.OrdinalIgnoreCase.Equals(nugetLanguage, "FS"))
+            {
+                return "F#";
             }
 
             // Return the language as it is
-            return lang;
+            return nugetLanguage.ToUpperInvariant();
         }
 
         private static IEnumerable<MSBuildRestoreItemGroup> GetLanguageGroups(

@@ -199,7 +199,7 @@ namespace NuGet.Protocol.FuncTest
                 // This occurs because when HttpClientHandler.Credentials is set (i.e., not null) while accessing the index.json.
                 // These credentials are automatically sent with requests to the private feed upon receiving 401 challenge.
                 // As a result, NuGet does not need to invoke the credential service again while retrieving the package information.
-                mockedCredentialService.Verify(x => x.TryGetLastKnownGoodCredentialsFromCache(It.IsAny<Uri>(), It.IsAny<bool>(), out It.Ref<ICredentials>.IsAny), Times.Once);
+                mockedCredentialService.Verify(x => x.TryGetLastKnownGoodCredentialsFromCache(It.IsAny<Uri>(), It.IsAny<bool>(), out It.Ref<ICredentials?>.IsAny), Times.Once);
 
                 // ExecuteAsync returns Task<T>, so need to return something to give it a <T>.
                 return (object?)null;
@@ -220,7 +220,7 @@ namespace NuGet.Protocol.FuncTest
                     });
                 // Setup TryGetLastKnownGoodCredentialsFromCache mock
                 mockedCredentialService
-                    .Setup(x => x.TryGetLastKnownGoodCredentialsFromCache(packageSource.SourceUri, It.IsAny<bool>(), out It.Ref<ICredentials>.IsAny))
+                    .Setup(x => x.TryGetLastKnownGoodCredentialsFromCache(packageSource.SourceUri, It.IsAny<bool>(), out It.Ref<ICredentials?>.IsAny))
                     .Returns((Uri sourceUri, bool isProxyRequest, out ICredentials? outCredentials) =>
                     {
                         outCredentials = cachedCredentials;

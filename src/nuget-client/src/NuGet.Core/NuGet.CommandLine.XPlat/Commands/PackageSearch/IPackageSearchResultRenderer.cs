@@ -36,9 +36,9 @@ namespace NuGet.CommandLine.XPlat
         void Finish();
 
         /// <summary>
-        ///  Renders a problem that prevented the search from happening at all.
+        ///  Adds a problem that prevented the search from happening at all.
         /// </summary>
         /// <param name="packageSearchProblem"></param>
-        void RenderProblem(PackageSearchProblem packageSearchProblem);
+        void Add(PackageSearchProblem packageSearchProblem);
     }
 }

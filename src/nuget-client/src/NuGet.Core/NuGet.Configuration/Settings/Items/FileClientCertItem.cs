@@ -20,18 +20,25 @@ namespace NuGet.Configuration
     /// </summary>
     public sealed class FileClientCertItem : ClientCertItem
     {
-        public FileClientCertItem(string packageSource, string filePath, string password, bool storePasswordInClearText, string settingsFilePath)
+        public FileClientCertItem(string packageSource, string filePath, string? password, bool storePasswordInClearText, string settingsFilePath)
             : this(packageSource,
                    filePath,
                    password,
                    storePasswordInClearText,
-                   string.IsNullOrWhiteSpace(settingsFilePath)
-                       ? null
-                       : new SettingsFile(Path.GetDirectoryName(settingsFilePath), Path.GetFileName(settingsFilePath), isMachineWide: false, isReadOnly: false))
+                   GetSettingsFile(settingsFilePath))
         {
         }
 
-        internal FileClientCertItem(string packageSource, string filePath, string password, bool storePasswordInClearText, SettingsFile origin)
+        private static SettingsFile GetSettingsFile(string settingsFilePath)
+        {
+            if (string.IsNullOrWhiteSpace(settingsFilePath))
+            {
+                throw new ArgumentException(message: Resources.Argument_Cannot_Be_Null_Empty_Or_WhiteSpaceOnly, paramName: nameof(settingsFilePath));
+            }
+            return new SettingsFile(Path.GetDirectoryName(settingsFilePath)!, Path.GetFileName(settingsFilePath), isMachineWide: false, isReadOnly: false);
+        }
+
+        internal FileClientCertItem(string packageSource, string filePath, string? password, bool storePasswordInClearText, SettingsFile origin)
             : base(packageSource)
         {
             if (string.IsNullOrEmpty(filePath))
@@ -66,16 +73,16 @@ namespace NuGet.Configuration
                                                                     Origin?.ConfigFilePath ?? "<Config file path>"));
             }
 
-            AddAttribute(ConfigurationConstants.PathAttribute, path);
+            AddAttribute(ConfigurationConstants.PathAttribute, path!);
 
             if (!string.IsNullOrWhiteSpace(password))
             {
-                AddAttribute(ConfigurationConstants.PasswordAttribute, password);
+                AddAttribute(ConfigurationConstants.PasswordAttribute, password!);
             }
 
             if (!string.IsNullOrWhiteSpace(clearTextPassword))
             {
-                AddAttribute(ConfigurationConstants.ClearTextPasswordAttribute, clearTextPassword);
+                AddAttribute(ConfigurationConstants.ClearTextPasswordAttribute, clearTextPassword!);
             }
         }
 
@@ -85,11 +92,11 @@ namespace NuGet.Configuration
 
         public bool IsPasswordIsClearText => Attributes.ContainsKey(ConfigurationConstants.ClearTextPasswordAttribute);
 
-        public string Password
+        public string? Password
         {
             get
             {
-                string result = null;
+                string? result = null;
                 if (IsPasswordIsClearText)
                 {
                     Attributes.TryGetValue(ConfigurationConstants.ClearTextPasswordAttribute, out result);
@@ -148,7 +155,7 @@ namespace NuGet.Configuration
 
         public override SettingBase Clone()
         {
-            return new FileClientCertItem(PackageSource, FilePath, Password, IsPasswordIsClearText, Origin);
+            return new FileClientCertItem(PackageSource, FilePath, Password, IsPasswordIsClearText, Origin!);
         }
 
         public override IEnumerable<X509Certificate> Search()
@@ -163,7 +170,7 @@ namespace NuGet.Configuration
             return new[] { string.IsNullOrWhiteSpace(Password) ? new X509Certificate2(filePath) : new X509Certificate2(filePath, Password) };
         }
 
-        public void Update(string filePath, string password, bool storePasswordInClearText)
+        public void Update(string filePath, string? password, bool storePasswordInClearText)
         {
             if (!string.IsNullOrWhiteSpace(filePath))
             {
@@ -179,14 +186,14 @@ namespace NuGet.Configuration
                 }
                 else
                 {
-                    var encryptedPassword = EncryptionUtility.EncryptString(password);
+                    var encryptedPassword = EncryptionUtility.EncryptString(password!);
                     AddOrUpdateAttribute(ConfigurationConstants.PasswordAttribute, encryptedPassword);
                     UpdateAttribute(ConfigurationConstants.ClearTextPasswordAttribute, null);
                 }
             }
         }
 
-        private string FindAbsoluteFilePath()
+        private string? FindAbsoluteFilePath()
         {
             var originalValue = FilePath;
 

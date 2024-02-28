@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace NuGet.CommandLine.XPlat
 {
-    internal class PackageSearchMainOutput
+    internal class SearchMainOutput
     {
         [JsonPropertyName("version")]
         public int Version { get; set; }
@@ -17,9 +17,9 @@ namespace NuGet.CommandLine.XPlat
         [JsonPropertyName("searchResult")]
         public List<PackageSearchResult> SearchResult { get; set; }
 
-        public PackageSearchMainOutput()
+        public SearchMainOutput()
         {
-            Version = 1;
+            Version = 2;
             Problems = new List<PackageSearchProblem>();
             SearchResult = new List<PackageSearchResult>();
         }

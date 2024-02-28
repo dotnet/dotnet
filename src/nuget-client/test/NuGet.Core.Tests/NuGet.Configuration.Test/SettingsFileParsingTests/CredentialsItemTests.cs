@@ -327,7 +327,7 @@ namespace NuGet.Configuration.Test
                 // Assert
                 credentials.Username.Should().Be("newuser");
 
-                var credentialElement = credentials.AsXNode() as XElement;
+                var credentialElement = (XElement)credentials.AsXNode();
                 var childElements = credentialElement.Elements().ToList();
 
                 childElements.Count.Should().Be(2);
@@ -359,7 +359,7 @@ namespace NuGet.Configuration.Test
                 // Assert
                 credentials.Password.Should().Be("newpass");
 
-                var credentialElement = credentials.AsXNode() as XElement;
+                var credentialElement = (XElement)credentials.AsXNode();
                 var childElements = credentialElement.Elements().ToList();
 
                 childElements.Count.Should().Be(2);
@@ -391,7 +391,7 @@ namespace NuGet.Configuration.Test
                 // Assert
                 credentials.Password.Should().Be("newpass");
 
-                var credentialElement = credentials.AsXNode() as XElement;
+                var credentialElement = (XElement)credentials.AsXNode();
                 var childElements = credentialElement.Elements().ToList();
 
                 childElements.Count.Should().Be(2);
@@ -423,7 +423,7 @@ namespace NuGet.Configuration.Test
                 // Assert
                 credentials.Password.Should().Be("newpass");
 
-                var credentialElement = credentials.AsXNode() as XElement;
+                var credentialElement = (XElement)credentials.AsXNode();
                 var childElements = credentialElement.Elements().ToList();
 
                 childElements.Count.Should().Be(2);
@@ -455,7 +455,7 @@ namespace NuGet.Configuration.Test
                 // Assert
                 credentials.Password.Should().Be("newpass");
 
-                var credentialElement = credentials.AsXNode() as XElement;
+                var credentialElement = (XElement)credentials.AsXNode();
                 var childElements = credentialElement.Elements().ToList();
 
                 childElements.Count.Should().Be(2);
@@ -491,7 +491,7 @@ namespace NuGet.Configuration.Test
                 origin.IsDirty.Should().BeTrue();
                 origin.SaveToDisk();
 
-                var credentialElement = credentials.AsXNode() as XElement;
+                var credentialElement = (XElement)credentials.AsXNode();
                 var childElements = credentialElement.Elements().ToList();
 
                 childElements.Count.Should().Be(2);
@@ -519,7 +519,7 @@ namespace NuGet.Configuration.Test
 
             // Assert
             xnode.Should().BeOfType<XElement>();
-            var xelement = xnode as XElement;
+            var xelement = (XElement)xnode;
 
             xelement.Name.LocalName.Should().Be("credentials_x0020_name");
             var elements = xelement.Elements().ToList();
@@ -548,7 +548,7 @@ namespace NuGet.Configuration.Test
 
             // Assert
             xnode.Should().BeOfType<XElement>();
-            var xelement = xnode as XElement;
+            var xelement = (XElement)xnode;
 
             xelement.Name.LocalName.Should().Be("https_x003A__x002F__x002F_nuget.contoso.com_x002F_v3_x002F_index.json");
         }
@@ -564,7 +564,7 @@ namespace NuGet.Configuration.Test
 
             // Assert
             xnode.Should().BeOfType<XElement>();
-            var xelement = xnode as XElement;
+            var xelement = (XElement)xnode;
 
             xelement.Name.LocalName.Should().Be("name");
             var elements = xelement.Elements().ToList();
@@ -593,7 +593,7 @@ namespace NuGet.Configuration.Test
 
             // Assert
             xnode.Should().BeOfType<XElement>();
-            var xelement = xnode as XElement;
+            var xelement = (XElement)xnode;
 
             xelement.Name.LocalName.Should().Be("name");
             var elements = xelement.Elements().ToList();
@@ -661,12 +661,12 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("packageSourceCredentials", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
+                section!.Items.Count.Should().Be(1);
                 var item = section.Items.First();
                 item.IsCopy().Should().BeFalse();
                 item.Origin.Should().NotBeNull();
 
-                var clone = item.Clone() as CredentialsItem;
+                var clone = (CredentialsItem)item.Clone();
                 clone.IsCopy().Should().BeTrue();
                 clone.Origin.Should().NotBeNull();
                 SettingsTestUtils.DeepEquals(clone, item).Should().BeTrue();
@@ -696,12 +696,12 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("packageSourceCredentials", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
+                section!.Items.Count.Should().Be(1);
                 var item = section.Items.First();
                 item.IsCopy().Should().BeFalse();
                 item.Origin.Should().NotBeNull();
 
-                var clone = item.Clone() as CredentialsItem;
+                var clone = (CredentialsItem)item.Clone();
                 clone.IsCopy().Should().BeTrue();
                 clone.Origin.Should().NotBeNull();
                 SettingsTestUtils.DeepEquals(clone, item).Should().BeTrue();

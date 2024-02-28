@@ -19,7 +19,7 @@ namespace NuGet.Configuration
         public static readonly string DefaultGlobalPackagesFolderPath = "packages" + Path.DirectorySeparatorChar;
         private const string RevocationModeEnvironmentKey = "NUGET_CERT_REVOCATION_MODE";
 
-        public static string GetValueForAddItem(ISettings settings, string section, string key, bool isPath = false)
+        public static string? GetValueForAddItem(ISettings settings, string section, string key, bool isPath = false)
         {
             if (settings == null)
             {
@@ -64,13 +64,13 @@ namespace NuGet.Configuration
         }
 
 
-        public static string GetRepositoryPath(ISettings settings)
+        public static string? GetRepositoryPath(ISettings settings)
         {
             var path = GetValueForAddItem(settings, ConfigurationConstants.Config, ConfigurationConstants.RepositoryPath, isPath: true);
 
             if (!string.IsNullOrEmpty(path))
             {
-                path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                path = path!.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
             }
 
             return path;
@@ -121,7 +121,7 @@ namespace NuGet.Configuration
             return false;
         }
 
-        public static string GetDecryptedValueForAddItem(ISettings settings, string section, string key, bool isPath = false)
+        public static string? GetDecryptedValueForAddItem(ISettings settings, string section, string key, bool isPath = false)
         {
             if (settings == null)
             {
@@ -151,13 +151,13 @@ namespace NuGet.Configuration
 
             if (isPath)
             {
-                return Settings.ResolvePathFromOrigin(encryptedItem.Origin.DirectoryPath, encryptedItem.Origin.ConfigFilePath, decryptedString);
+                return Settings.ResolvePathFromOrigin(encryptedItem!.Origin!.DirectoryPath, encryptedItem.Origin.ConfigFilePath, decryptedString);
             }
 
             return decryptedString;
         }
 
-        public static void SetEncryptedValueForAddItem(ISettings settings, string section, string key, string value)
+        public static void SetEncryptedValueForAddItem(ISettings settings, string section, string key, string? value)
         {
             if (settings == null)
             {
@@ -178,7 +178,7 @@ namespace NuGet.Configuration
             var elementValue = string.Empty;
             if (!string.IsNullOrEmpty(value))
             {
-                elementValue = EncryptionUtility.EncryptString(value);
+                elementValue = EncryptionUtility.EncryptString(value!);
             }
 
             settings.AddOrUpdate(section, new AddItem(key, elementValue));
@@ -193,7 +193,7 @@ namespace NuGet.Configuration
         /// <param name="decrypt">Determines if the retrieved value needs to be decrypted.</param>
         /// <param name="isPath">Determines if the retrieved value is returned as a path.</param>
         /// <returns>Null if the key was not found, value from config otherwise.</returns>
-        public static string GetConfigValue(ISettings settings, string key, bool decrypt = false, bool isPath = false)
+        public static string? GetConfigValue(ISettings settings, string key, bool decrypt = false, bool isPath = false)
         {
             if (decrypt)
             {
@@ -210,7 +210,7 @@ namespace NuGet.Configuration
         /// <param name="key">The key to store.</param>
         /// <param name="value">The value to store.</param>
         /// <param name="encrypt">Determines if the value needs to be encrypted prior to storing.</param>
-        public static void SetConfigValue(ISettings settings, string key, string value, bool encrypt = false)
+        public static void SetConfigValue(ISettings settings, string key, string? value, bool encrypt = false)
         {
             if (settings == null)
             {
@@ -260,7 +260,7 @@ namespace NuGet.Configuration
 
             if (!string.IsNullOrEmpty(path))
             {
-                path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                path = path!.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
                 path = Path.GetFullPath(path);
                 return path;
             }
@@ -321,7 +321,7 @@ namespace NuGet.Configuration
             // we care more about the bottom ones, so those ones should go first.
             IList<string> configFilePaths = settings.GetConfigFilePaths();
             return fallbackValues
-                .OrderBy(i => configFilePaths.IndexOf(i.Origin?.ConfigFilePath)) //lower index => higher priority => closer to user.
+                .OrderBy(i => configFilePaths.IndexOf(i.Origin?.ConfigFilePath!)) //lower index => higher priority => closer to user.
                 .OfType<AddItem>()
                 .Select(folder => folder.GetValueAsPath())
                 .ToList();
@@ -384,7 +384,7 @@ namespace NuGet.Configuration
         /// - A relative file path
         /// - The name of a registered source from a config file
         /// </summary>
-        public static string GetDefaultPushSource(ISettings settings)
+        public static string? GetDefaultPushSource(ISettings settings)
         {
             if (settings == null)
             {
@@ -396,7 +396,7 @@ namespace NuGet.Configuration
 
             var source = configSetting?.Value;
 
-            var sourceUri = UriUtility.TryCreateSourceUri(source, UriKind.RelativeOrAbsolute);
+            var sourceUri = UriUtility.TryCreateSourceUri(source!, UriKind.RelativeOrAbsolute);
             if (sourceUri != null && !sourceUri.IsAbsoluteUri)
             {
                 // For non-absolute sources, it could be the name of a config source, or a relative file path.
@@ -405,14 +405,14 @@ namespace NuGet.Configuration
                 if (!allSources.Any(s => s.IsEnabled && s.Name.Equals(source, StringComparison.OrdinalIgnoreCase)))
                 {
                     // It wasn't the name of a source, so treat it like a relative file 
-                    source = Settings.ResolvePathFromOrigin(configSetting.Origin.DirectoryPath, configSetting.Origin.ConfigFilePath, source);
+                    source = Settings.ResolvePathFromOrigin(configSetting!.Origin!.DirectoryPath, configSetting.Origin.ConfigFilePath, source!);
                 }
             }
 
             return source;
         }
 
-        public static RevocationMode GetRevocationMode(IEnvironmentVariableReader environmentVariableReader = null)
+        public static RevocationMode GetRevocationMode(IEnvironmentVariableReader? environmentVariableReader = null)
         {
             var reader = environmentVariableReader ?? EnvironmentVariableWrapper.Instance;
             var revocationModeSetting = reader.GetEnvironmentVariable(RevocationModeEnvironmentKey);

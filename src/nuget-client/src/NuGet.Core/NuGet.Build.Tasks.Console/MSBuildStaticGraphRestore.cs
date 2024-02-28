@@ -849,7 +849,8 @@ namespace NuGet.Build.Tasks.Console
                 restoreMetadata = new PackagesConfigProjectRestoreMetadata
                 {
                     PackagesConfigPath = packagesConfigFilePath,
-                    RepositoryPath = GetRepositoryPath(project, settings)
+                    RepositoryPath = GetRepositoryPath(project, settings),
+                    RestoreAuditProperties = auditProperties,
                 };
             }
             else
