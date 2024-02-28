@@ -91,26 +91,26 @@
       <Sha>6a05eb6b345023d518b6dd2dbb93a804bcd4ec31</Sha>
       <SourceBuild RepoName="aspnetcore" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="9.0.100-preview.2.24127.2">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="9.0.100-preview.2.24127.3">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>4fdcf83a0a9982796b50958ddae1087dae15a5b3</Sha>
+      <Sha>9284da2f4e601f07595ec4e60770ecbf0fd80843</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="9.0.100-preview.2.24127.2">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="9.0.100-preview.2.24127.3">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>4fdcf83a0a9982796b50958ddae1087dae15a5b3</Sha>
+      <Sha>9284da2f4e601f07595ec4e60770ecbf0fd80843</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="9.0.100-preview.2.24127.2">
+    <Dependency Name="Microsoft.NET.Sdk" Version="9.0.100-preview.2.24127.3">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>4fdcf83a0a9982796b50958ddae1087dae15a5b3</Sha>
+      <Sha>9284da2f4e601f07595ec4e60770ecbf0fd80843</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="9.0.100-preview.2.24127.2">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="9.0.100-preview.2.24127.3">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>4fdcf83a0a9982796b50958ddae1087dae15a5b3</Sha>
+      <Sha>9284da2f4e601f07595ec4e60770ecbf0fd80843</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.sdk" Version="9.0.100-preview.2.24127.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.sdk" Version="9.0.100-preview.2.24127.3">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>4fdcf83a0a9982796b50958ddae1087dae15a5b3</Sha>
+      <Sha>9284da2f4e601f07595ec4e60770ecbf0fd80843</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.2.1" Version="1.0.2-beta4.22406.1">
@@ -152,14 +152,14 @@
       <Uri>https://github.com/dotnet/wpf</Uri>
       <Sha>21c17bee658dba0531fa7b89143de1bbf7efe347</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.8.300-beta.24122.3" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.8.300-beta.24127.3" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>02bb351b606468bce98688fccda9d0c8adcd964d</Sha>
+      <Sha>b57dee7cec971021547a7b8a36a46d7271fea99e</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="8.0.300-beta.24122.3" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="8.0.300-beta.24127.3" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>02bb351b606468bce98688fccda9d0c8adcd964d</Sha>
+      <Sha>b57dee7cec971021547a7b8a36a46d7271fea99e</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.10.0-preview-24120-01" CoherentParentDependency="Microsoft.NET.Sdk">
