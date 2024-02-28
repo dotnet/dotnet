@@ -20,7 +20,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/aspnetcore/src/submodules/Node-Externals`  
     *[dotnet/Node-Externals@1bcb78c](https://github.com/dotnet/Node-Externals/tree/1bcb78ca694568f7993d9d385eee0687ad0f5dfe)*
 - `src/cecil`  
-*[dotnet/cecil@61250b0](https://github.com/dotnet/cecil/tree/61250b0ed403b3f9b69a33f7d8f66f311338d6a1)*
+*[dotnet/cecil@0d0bc8e](https://github.com/dotnet/cecil/tree/0d0bc8e0f47fdae9834e1eac678f364c50946133)*
 - `src/command-line-api`  
 *[dotnet/command-line-api@5ea97af](https://github.com/dotnet/command-line-api/tree/5ea97af07263ea3ef68a18557c8aa3f7e3200bda)*
 - `src/deployment-tools`  
