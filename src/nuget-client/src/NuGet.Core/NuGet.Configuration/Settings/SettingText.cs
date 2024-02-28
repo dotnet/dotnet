@@ -35,7 +35,7 @@ namespace NuGet.Configuration
             _value = value;
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             var text = other as SettingText;
 
@@ -78,7 +78,7 @@ namespace NuGet.Configuration
                 throw new NuGetConfigurationException(string.Format(CultureInfo.CurrentCulture, Resources.UserSettings_UnableToParseConfigFile, Resources.TextShouldNotBeEmpty, origin.ConfigFilePath));
             }
 
-            Value = value;
+            _value = value;
         }
 
         internal override XNode AsXNode()

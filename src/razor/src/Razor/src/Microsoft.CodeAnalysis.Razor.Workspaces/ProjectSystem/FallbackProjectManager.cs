@@ -4,6 +4,8 @@
 using System;
 using System.Composition;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -21,27 +23,34 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 internal sealed class FallbackProjectManager(
     ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
     LanguageServerFeatureOptions languageServerFeatureOptions,
-    IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+    IProjectSnapshotManagerAccessor projectManagerAccessor,
+    ProjectSnapshotManagerDispatcher dispatcher,
     IWorkspaceProvider workspaceProvider,
     ITelemetryReporter telemetryReporter)
 {
     private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore = projectConfigurationFilePathStore;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
-    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
+    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor = projectManagerAccessor;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
     private readonly IWorkspaceProvider _workspaceProvider = workspaceProvider;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
-    internal void DynamicFileAdded(ProjectId projectId, ProjectKey razorProjectKey, string projectFilePath, string filePath)
+    internal async Task DynamicFileAddedAsync(
+        ProjectId projectId,
+        ProjectKey razorProjectKey,
+        string projectFilePath,
+        string filePath,
+        CancellationToken cancellationToken)
     {
         try
         {
-            if (_projectSnapshotManagerAccessor.Instance.TryGetLoadedProject(razorProjectKey, out var project))
+            if (_projectManagerAccessor.Instance.TryGetLoadedProject(razorProjectKey, out var project))
             {
                 if (project is ProjectSnapshot { HostProject: FallbackHostProject })
                 {
                     // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
                     // are the only way to know about files in the project.
-                    AddFallbackDocument(razorProjectKey, filePath, projectFilePath);
+                    await AddFallbackDocumentAsync(razorProjectKey, filePath, projectFilePath, cancellationToken).ConfigureAwait(false);
                 }
             }
             else
@@ -49,7 +58,7 @@ internal sealed class FallbackProjectManager(
                 // We have been asked to provide dynamic file info, which means there is a .razor or .cshtml file in the project
                 // but for some reason our project system doesn't know about the project. In these cases (often when people don't
                 // use the Razor or Web SDK) we spin up a fallback experience for them
-                AddFallbackProject(projectId, filePath);
+                await AddFallbackProjectAsync(projectId, filePath, cancellationToken).ConfigureAwait(false);
             }
         }
         catch (Exception ex)
@@ -58,16 +67,21 @@ internal sealed class FallbackProjectManager(
         }
     }
 
-    internal void DynamicFileRemoved(ProjectId projectId, ProjectKey razorProjectKey, string projectFilePath, string filePath)
+    internal async Task DynamicFileRemovedAsync(
+        ProjectId projectId,
+        ProjectKey razorProjectKey,
+        string projectFilePath,
+        string filePath,
+        CancellationToken cancellationToken)
     {
         try
         {
-            if (_projectSnapshotManagerAccessor.Instance.TryGetLoadedProject(razorProjectKey, out var project) &&
+            if (_projectManagerAccessor.Instance.TryGetLoadedProject(razorProjectKey, out var project) &&
                 project is ProjectSnapshot { HostProject: FallbackHostProject })
             {
                 // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
                 // are the only way to know about files in the project.
-                RemoveFallbackDocument(projectId, filePath, projectFilePath);
+                await RemoveFallbackDocumentAsync(projectId, filePath, projectFilePath, cancellationToken).ConfigureAwait(false);
             }
         }
         catch (Exception ex)
@@ -76,7 +90,7 @@ internal sealed class FallbackProjectManager(
         }
     }
 
-    private void AddFallbackProject(ProjectId projectId, string filePath)
+    private async Task AddFallbackProjectAsync(ProjectId projectId, string filePath, CancellationToken cancellationToken)
     {
         var project = TryFindProjectForProjectId(projectId);
         if (project?.FilePath is null)
@@ -98,16 +112,20 @@ internal sealed class FallbackProjectManager(
         // the project will be updated, and it will no longer be a fallback project.
         var hostProject = new FallbackHostProject(project.FilePath, intermediateOutputPath, FallbackRazorConfiguration.Latest, rootNamespace, project.Name);
 
-        _projectSnapshotManagerAccessor.Instance.ProjectAdded(hostProject);
+        await _dispatcher
+            .RunOnDispatcherThreadAsync(
+                () => _projectManagerAccessor.Instance.ProjectAdded(hostProject),
+                cancellationToken)
+            .ConfigureAwait(false);
 
-        AddFallbackDocument(hostProject.Key, filePath, project.FilePath);
+        await AddFallbackDocumentAsync(hostProject.Key, filePath, project.FilePath, cancellationToken).ConfigureAwait(false);
 
         var configurationFilePath = Path.Combine(intermediateOutputPath, _languageServerFeatureOptions.ProjectConfigurationFileName);
 
         _projectConfigurationFilePathStore.Set(hostProject.Key, configurationFilePath);
     }
 
-    private void AddFallbackDocument(ProjectKey projectKey, string filePath, string projectFilePath)
+    private async Task AddFallbackDocumentAsync(ProjectKey projectKey, string filePath, string projectFilePath, CancellationToken cancellationToken)
     {
         var hostDocument = CreateHostDocument(filePath, projectFilePath);
         if (hostDocument is null)
@@ -116,7 +134,12 @@ internal sealed class FallbackProjectManager(
         }
 
         var textLoader = new FileTextLoader(filePath, defaultEncoding: null);
-        _projectSnapshotManagerAccessor.Instance.DocumentAdded(projectKey, hostDocument, textLoader);
+
+        await _dispatcher
+            .RunOnDispatcherThreadAsync(
+                () => _projectManagerAccessor.Instance.DocumentAdded(projectKey, hostDocument, textLoader),
+                cancellationToken)
+            .ConfigureAwait(false);
     }
 
     private static HostDocument? CreateHostDocument(string filePath, string projectFilePath)
@@ -135,7 +158,7 @@ internal sealed class FallbackProjectManager(
         return hostDocument;
     }
 
-    private void RemoveFallbackDocument(ProjectId projectId, string filePath, string projectFilePath)
+    private async Task RemoveFallbackDocumentAsync(ProjectId projectId, string filePath, string projectFilePath, CancellationToken cancellationToken)
     {
         var project = TryFindProjectForProjectId(projectId);
         if (project is null)
@@ -155,7 +178,11 @@ internal sealed class FallbackProjectManager(
             return;
         }
 
-        _projectSnapshotManagerAccessor.Instance.DocumentRemoved(razorProjectKey, hostDocument);
+        await _dispatcher
+            .RunOnDispatcherThreadAsync(
+                () => _projectManagerAccessor.Instance.DocumentRemoved(razorProjectKey, hostDocument),
+                cancellationToken)
+            .ConfigureAwait(false);
     }
 
     private Project? TryFindProjectForProjectId(ProjectId projectId)

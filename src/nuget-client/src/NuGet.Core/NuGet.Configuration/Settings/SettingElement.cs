@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
+using NuGet.Shared;
 
 namespace NuGet.Configuration
 {
@@ -14,33 +15,33 @@ namespace NuGet.Configuration
         /// <summary>
         /// Text that differentiates element tag
         /// </summary>
-        public virtual string ElementName { get; protected set; }
+        public abstract string ElementName { get; }
 
         /// <summary>
         /// Specifies the keys for the attributes that the element can have
         /// </summary>
         /// <remarks>If null then all attributes are allowed</remarks>
-        protected virtual IReadOnlyCollection<string> AllowedAttributes { get; } = null;
+        protected virtual IReadOnlyCollection<string>? AllowedAttributes { get; } = null;
 
         /// <summary>
         /// Specifies the keys for the attributes that the element should have
         /// </summary>
         /// <remarks>If null or empty then no attributes are required</remarks>
-        protected virtual IReadOnlyCollection<string> RequiredAttributes { get; } = null;
+        protected virtual IReadOnlyCollection<string>? RequiredAttributes { get; } = null;
 
         /// <summary>
         /// Specifies which values are allowed for a specific attribute.
         /// If an attribute is not defined every value is allowed.
         /// Having allowed values does not imply that the attribute is required.
         /// </summary>
-        protected virtual IReadOnlyDictionary<string, IReadOnlyCollection<string>> AllowedValues { get; } = null;
+        protected virtual IReadOnlyDictionary<string, IReadOnlyCollection<string>>? AllowedValues { get; } = null;
 
         /// <summary>
         /// Specifies values that are explicitely disallowed for a specific attribute.
         /// If an attribute is not defined no value is disallowed.
         /// Having disallowed values does not imply that the attribute is required.
         /// </summary>
-        protected virtual IReadOnlyDictionary<string, IReadOnlyCollection<string>> DisallowedValues { get; } = null;
+        protected virtual IReadOnlyDictionary<string, IReadOnlyCollection<string>>? DisallowedValues { get; } = null;
 
         /// <summary>
         ///  Key-value pairs that give more information about the element
@@ -62,7 +63,7 @@ namespace NuGet.Configuration
         /// <summary>
         /// Settings file path file of the element.
         /// </summary>
-        public string ConfigPath => Origin?.ConfigFilePath;
+        public string? ConfigPath => Origin?.ConfigFilePath;
 
         /// <summary>
         /// Default constructor
@@ -73,7 +74,7 @@ namespace NuGet.Configuration
             MutableAttributes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
 
-        protected SettingElement(IReadOnlyDictionary<string, string> attributes)
+        protected SettingElement(IReadOnlyDictionary<string, string>? attributes)
             : this()
         {
             if (attributes != null)
@@ -127,7 +128,7 @@ namespace NuGet.Configuration
             return element;
         }
 
-        protected void AddOrUpdateAttribute(string attributeName, string value)
+        protected void AddOrUpdateAttribute(string attributeName, string? value)
         {
             if (!UpdateAttribute(attributeName, value))
             {
@@ -138,7 +139,7 @@ namespace NuGet.Configuration
             }
         }
 
-        internal bool UpdateAttribute(string attributeName, string newValue)
+        internal bool UpdateAttribute(string attributeName, string? newValue)
         {
             if (string.IsNullOrEmpty(attributeName))
             {
@@ -187,7 +188,7 @@ namespace NuGet.Configuration
             }
         }
 
-        private bool IsAttributeValid(string attributeName, string value)
+        private bool IsAttributeValid(string attributeName, string? value)
         {
             if (AllowedAttributes != null)
             {
@@ -214,7 +215,7 @@ namespace NuGet.Configuration
 
             if (AllowedValues != null)
             {
-                if (AllowedValues.TryGetValue(attributeName, out var allowed) && !allowed.Contains(value.Trim()))
+                if (AllowedValues.TryGetValue(attributeName, out var allowed) && (value is null || !allowed.Contains(value.Trim())))
                 {
                     return false;
                 }
@@ -222,7 +223,7 @@ namespace NuGet.Configuration
 
             if (DisallowedValues != null)
             {
-                if (DisallowedValues.TryGetValue(attributeName, out var disallowed) && disallowed.Contains(value.Trim()))
+                if (DisallowedValues.TryGetValue(attributeName, out var disallowed) && value is not null && disallowed.Contains(value.Trim()))
                 {
                     return false;
                 }

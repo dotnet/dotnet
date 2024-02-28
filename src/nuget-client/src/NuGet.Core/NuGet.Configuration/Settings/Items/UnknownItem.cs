@@ -10,11 +10,9 @@ namespace NuGet.Configuration
 {
     public sealed class UnknownItem : SettingItem, ISettingsGroup
     {
-        public override string ElementName { get; protected set; }
+        public override string ElementName { get; }
 
         public IReadOnlyList<SettingBase> Children => _mutableChildren.Select(c => c.Value).ToList();
-
-        public new IReadOnlyDictionary<string, string> Attributes => base.Attributes;
 
         public override bool IsEmpty() => false;
 
@@ -39,7 +37,7 @@ namespace NuGet.Configuration
             }
         }
 
-        public UnknownItem(string name, IReadOnlyDictionary<string, string> attributes, IEnumerable<SettingBase> children)
+        public UnknownItem(string name, IReadOnlyDictionary<string, string>? attributes, IEnumerable<SettingBase>? children)
             : base(attributes)
         {
             if (string.IsNullOrEmpty(name))
@@ -99,7 +97,7 @@ namespace NuGet.Configuration
 
                     if (Node != null)
                     {
-                        setting.SetNode(setting.AsXNode());
+                        setting.SetNode(setting.AsXNode()!);
 
                         XElementUtility.AddIndented(Node as XElement, setting.Node);
                         Origin.IsDirty = true;
@@ -163,7 +161,7 @@ namespace NuGet.Configuration
             return element;
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             var unknown = other as UnknownItem;
 
@@ -186,7 +184,7 @@ namespace NuGet.Configuration
         {
             base.Update(setting);
 
-            var unknown = setting as UnknownItem;
+            var unknown = (UnknownItem)setting;
 
             var otherChildren = new Dictionary<SettingBase, SettingBase>(unknown._mutableChildren);
             foreach (var child in Children)
@@ -202,7 +200,7 @@ namespace NuGet.Configuration
                 }
                 else if (child is SettingItem item)
                 {
-                    item.Update(otherChild as SettingItem);
+                    item.Update((SettingItem)otherChild);
                 }
             }
 
@@ -230,7 +228,7 @@ namespace NuGet.Configuration
                 {
                     if (existingChild is SettingItem childItem)
                     {
-                        childItem.Update(child as SettingItem);
+                        childItem.Update((SettingItem)child);
                     }
                 }
                 else

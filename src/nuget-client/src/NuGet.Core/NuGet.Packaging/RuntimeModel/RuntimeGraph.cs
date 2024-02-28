@@ -270,17 +270,22 @@ namespace NuGet.RuntimeModel
             {
                 var key = new RuntimeDependencyKey(runtimeName, packageId);
 
-                return _dependencyCache!.GetOrAdd(key, FindRuntimeDependenciesInternal);
+#if NET472_OR_GREATER || NET5_0_OR_GREATER
+
+                return _dependencyCache!.GetOrAdd(key, FindRuntimeDependenciesInternal, this);
+#else
+                return _dependencyCache!.GetOrAdd(key, key => FindRuntimeDependenciesInternal(key, this));
+#endif
             }
 
             return Enumerable.Empty<RuntimePackageDependency>();
 
-            List<RuntimePackageDependency> FindRuntimeDependenciesInternal(RuntimeDependencyKey key)
+            static List<RuntimePackageDependency> FindRuntimeDependenciesInternal(RuntimeDependencyKey key, RuntimeGraph runtimeGraph)
             {
                 // Find all compatible RIDs
-                foreach (var expandedRuntime in ExpandRuntimeCached(key.RuntimeName))
+                foreach (var expandedRuntime in runtimeGraph.ExpandRuntimeCached(key.RuntimeName))
                 {
-                    if (Runtimes.TryGetValue(expandedRuntime, out RuntimeDescription? runtimeDescription))
+                    if (runtimeGraph.Runtimes.TryGetValue(expandedRuntime, out RuntimeDescription? runtimeDescription))
                     {
                         if (runtimeDescription.RuntimeDependencySets.TryGetValue(key.PackageId, out var dependencySet))
                         {

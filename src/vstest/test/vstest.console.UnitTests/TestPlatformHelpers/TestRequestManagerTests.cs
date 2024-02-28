@@ -2318,6 +2318,56 @@ public class TestRequestManagerTests
     }
 
     [TestMethod]
+    public void StartTestSessionShouldSendCompletedEventIfTestPlatformReturnsFalse()
+    {
+        var payload = new StartTestSessionPayload()
+        {
+            Sources = new List<string>() { "a.dll" },
+            RunSettings =
+                @"<?xml version=""1.0"" encoding=""utf-8""?>
+                    <RunSettings>
+                        <RunConfiguration>
+                        </RunConfiguration>
+                    </RunSettings>"
+        };
+
+        var eventsHandler = new Mock<ITestSessionEventsHandler>();
+        _commandLineOptions.IsDesignMode = true;
+
+        _mockAssemblyMetadataProvider.Setup(
+                a => a.GetArchitecture(It.IsAny<string>()))
+            .Returns(Architecture.ARM);
+        _mockAssemblyMetadataProvider.Setup(
+                a => a.GetFrameworkName(It.IsAny<string>()))
+            .Returns(new FrameworkName(Constants.DotNetFramework46));
+
+        _mockTestPlatform.Setup(
+                tp => tp.StartTestSession(
+                    It.IsAny<IRequestData>(),
+                    It.IsAny<StartTestSessionCriteria>(),
+                    It.IsAny<ITestSessionEventsHandler>(),
+                    It.IsAny<Dictionary<string, SourceDetail>>(),
+                    It.IsAny<IWarningLogger>()))
+            .Returns(false)
+            .Callback(
+                (IRequestData _, StartTestSessionCriteria criteria, ITestSessionEventsHandler _, Dictionary<string, SourceDetail> _, IWarningLogger _) =>
+                {
+                    Assert.IsTrue(criteria.RunSettings!.Contains(Constants.DotNetFramework46));
+                    Assert.IsTrue(criteria.RunSettings.Contains(nameof(Architecture.ARM)));
+                });
+
+        _testRequestManager.StartTestSession(
+            payload,
+            new Mock<ITestHostLauncher3>().Object,
+            eventsHandler.Object,
+            _protocolConfig);
+
+        eventsHandler.Verify(eh => eh.HandleStartTestSessionComplete(It.IsAny<StartTestSessionCompleteEventArgs>()));
+        _mockAssemblyMetadataProvider.Verify(a => a.GetArchitecture(It.IsAny<string>()));
+        _mockAssemblyMetadataProvider.Verify(a => a.GetFrameworkName(It.IsAny<string>()));
+    }
+
+    [TestMethod]
     public void StartTestSessionShouldThrowSettingsExceptionWhenFindingIncompatibleDataCollectorsInTestSettings()
     {
         var settingXml = @"<RunSettings>

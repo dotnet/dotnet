@@ -142,7 +142,6 @@ internal class TestPlatform : ITestPlatform
             // sources tells us we should run in-process (i.e. in vstest.console). Because
             // of this no session will be created because there's no testhost to be launched.
             // Expecting a subsequent call to execute tests with the same set of parameters.
-            eventsHandler.HandleStartTestSessionComplete(new());
             return false;
         }
 

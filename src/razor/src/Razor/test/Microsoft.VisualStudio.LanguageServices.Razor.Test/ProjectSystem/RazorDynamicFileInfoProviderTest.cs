@@ -8,8 +8,10 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -23,7 +25,7 @@ using static Microsoft.VisualStudio.Razor.DynamicFiles.RazorDynamicFileInfoProvi
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.ProjectSystem;
 
-public class RazorDynamicFileInfoProviderTest : WorkspaceTestBase
+public class RazorDynamicFileInfoProviderTest : VisualStudioWorkspaceTestBase
 {
     private readonly RazorDynamicFileInfoProvider _provider;
     private readonly TestAccessor _testAccessor;
@@ -40,7 +42,7 @@ public class RazorDynamicFileInfoProviderTest : WorkspaceTestBase
         : base(testOutput)
     {
         _documentServiceFactory = new RazorDocumentServiceProviderFactory();
-        _editorFeatureDetector = Mock.Of<LSPEditorFeatureDetector>(MockBehavior.Strict);
+        _editorFeatureDetector = StrictMock.Of<LSPEditorFeatureDetector>();
         _projectSnapshotManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, new TestProjectSnapshotManagerDispatcher())
         {
             AllowNotifyListeners = true
@@ -57,16 +59,23 @@ public class RazorDynamicFileInfoProviderTest : WorkspaceTestBase
 
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
         var filePathService = new FilePathService(languageServerFeatureOptions);
-        var projectSnapshotManagerAccessor = Mock.Of<IProjectSnapshotManagerAccessor>(a => a.Instance == _projectSnapshotManager, MockBehavior.Strict);
+        var projectSnapshotManagerAccessor = StrictMock.Of<IProjectSnapshotManagerAccessor>(a =>
+            a.Instance == _projectSnapshotManager);
 
-        var projectConfigurationFilePathStore = Mock.Of<ProjectConfigurationFilePathStore>(MockBehavior.Strict);
-        var fallbackProjectManager = new FallbackProjectManager(projectConfigurationFilePathStore, languageServerFeatureOptions, projectSnapshotManagerAccessor, WorkspaceProvider, NoOpTelemetryReporter.Instance);
+        var projectConfigurationFilePathStore = StrictMock.Of<ProjectConfigurationFilePathStore>();
+        var fallbackProjectManager = new FallbackProjectManager(
+            projectConfigurationFilePathStore,
+            languageServerFeatureOptions,
+            projectSnapshotManagerAccessor,
+            Dispatcher,
+            WorkspaceProvider,
+            NoOpTelemetryReporter.Instance);
 
         _provider = new RazorDynamicFileInfoProvider(_documentServiceFactory, _editorFeatureDetector, filePathService, WorkspaceProvider, fallbackProjectManager);
         _testAccessor = _provider.GetTestAccessor();
         _provider.Initialize(_projectSnapshotManager);
 
-        var lspDocumentContainer = new Mock<IDynamicDocumentContainer>(MockBehavior.Strict);
+        var lspDocumentContainer = new StrictMock<IDynamicDocumentContainer>();
         lspDocumentContainer.Setup(c => c.SetSupportsDiagnostics(true)).Verifiable();
         lspDocumentContainer.Setup(container => container.GetTextLoader(It.IsAny<string>())).Returns(new EmptyTextLoader(string.Empty));
         _lspDocumentContainer = lspDocumentContainer.Object;

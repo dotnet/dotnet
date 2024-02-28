@@ -18,10 +18,4 @@
     <Delete Files="$(InnerSourceBuildRepoRoot).globalconfig" />
   </Target>
 
-  <Target Name="CustomizeInnerBuildArgs"
-          BeforeTargets="GetSourceBuildCommandConfiguration">
-    <PropertyGroup>
-      <InnerBuildArgs>$(InnerBuildArgs) /p:SourceBuildRuntimeIdentifier=$(TargetRuntimeIdentifier)</InnerBuildArgs>
-    </PropertyGroup>
-  </Target>
 </Project>

@@ -31,6 +31,7 @@ using NuGet.ProjectManagement;
 using NuGet.Shared;
 using static NuGet.Shared.XmlUtility;
 using System.Globalization;
+using System.Collections;
 #endif
 
 namespace NuGet.Build.Tasks
@@ -422,6 +423,7 @@ namespace NuGet.Build.Tasks
             ISettings settings = null;
 
             Dictionary<PackageReference, List<string>> packageReferenceToProjects = new(PackageReferenceComparer.Instance);
+            Dictionary<string, RestoreAuditProperties> restoreAuditProperties = new(PathUtility.GetStringComparerBasedOnOS());
 
             foreach (PackageSpec packageSpec in dgFile.Projects.Where(i => i.RestoreMetadata.ProjectStyle == ProjectStyle.PackagesConfig))
             {
@@ -454,8 +456,9 @@ namespace NuGet.Build.Tasks
                         value ??= new();
                         packageReferenceToProjects.Add(packageReference, value);
                     }
-                    value.Add(packagesConfigPath);
+                    value.Add(pcRestoreMetadata.PackagesConfigPath);
                 }
+                restoreAuditProperties.Add(packageSpec.FilePath, packageSpec.RestoreMetadata.RestoreAuditProperties);
             }
 
             if (string.IsNullOrEmpty(repositoryPath))
@@ -482,12 +485,22 @@ namespace NuGet.Build.Tasks
                 areAnyPackagesMissing |= !exists;
             }
 
+            var repositories = sourceRepositoryProvider.GetRepositories().ToList();
+
             if (!areAnyPackagesMissing)
             {
+                using SourceCacheContext cacheContext = new();
+
+                var auditUtility = new AuditChecker(
+                    repositories,
+                    cacheContext,
+                    log);
+
+                await auditUtility.CheckPackageVulnerabilitiesAsync(packageRestoreData, restoreAuditProperties, CancellationToken.None);
+
                 return new RestoreSummary(true);
             }
 
-            var repositories = sourceRepositoryProvider.GetRepositories().ToArray();
 
             var installCount = 0;
             var failedEvents = new ConcurrentQueue<PackageRestoreFailedEventArgs>();
@@ -503,6 +516,8 @@ namespace NuGet.Build.Tasks
                 maxNumberOfParallelTasks: disableParallel
                     ? 1
                     : PackageManagementConstants.DefaultMaxDegreeOfParallelism,
+                enableNuGetAudit: true,
+                restoreAuditProperties,
                 logger: collectorLogger);
 
             // TODO: Check require consent?

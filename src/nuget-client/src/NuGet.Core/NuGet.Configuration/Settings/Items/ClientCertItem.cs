@@ -31,7 +31,7 @@ namespace NuGet.Configuration
 
         protected override bool CanHaveChildren => false;
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             var item = other as ClientCertItem;
             if (item == null)

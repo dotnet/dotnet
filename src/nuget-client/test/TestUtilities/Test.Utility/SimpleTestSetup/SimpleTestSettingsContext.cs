@@ -206,6 +206,12 @@ namespace NuGet.Test.Utility
             Save();
         }
 
+        public void RemoveSource(string key)
+        {
+            RemoveSource(XML, key);
+            Save();
+        }
+
         public void AddSource(string sourceName, string sourceUri)
         {
             var section = GetOrAddSection(XML, "packageSources");

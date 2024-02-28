@@ -77,20 +77,13 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
             return;
         }
 
-        // We expect to monitor the obj\<Configuration>\<TargetFramework> folder, but we are not responsible for creating it
-        // and in some circumstances we can get called before it exists. In those cases we add a short delay and try again.
-        // It doesn't matter if we don't start monitoring immediately because a) the folder doesn't exist, so there is nothing
-        // to monitor anyway and b) this must be a new project, and there is a natural user delay before they start opening .razor
-        // files etc.
-
-        var retryCount = 0;
         try
         {
-            while (!Directory.Exists(workspaceDirectory) && retryCount < 5)
+            // FileSystemWatcher will throw if the folder we want to watch doesn't exist yet.
+            if (!Directory.Exists(workspaceDirectory))
             {
-                _logger.LogInformation("Workspace directory '{path}' does not exist yet! Delaying on retry number {count}", workspaceDirectory, retryCount + 1);
-                await Task.Delay(500, cancellationToken).ConfigureAwait(false);
-                retryCount++;
+                _logger.LogInformation("Workspace directory '{path}' does not exist yet, so Razor is going to create it.", workspaceDirectory);
+                Directory.CreateDirectory(workspaceDirectory);
             }
         }
         catch (OperationCanceledException)
