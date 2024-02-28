@@ -79,7 +79,7 @@ namespace NuGet.Configuration.Test
         public void Clone_CreatesEquivalentObjects(string patternName)
         {
             var original = new PackagePatternItem(patternName);
-            var clone = original.Clone() as PackagePatternItem;
+            var clone = (PackagePatternItem)original.Clone();
 
             original.Equals(clone).Should().BeTrue();
             original.GetHashCode().Equals(clone.GetHashCode()).Should().BeTrue();
@@ -166,8 +166,8 @@ namespace NuGet.Configuration.Test
             var section = settingsFile.GetSection("packageSourceMapping");
             section.Should().NotBeNull();
 
-            section.Items.Count.Should().Be(1);
-            var item = (section.Items.First() as PackageSourceMappingSourceItem).Patterns.First();
+            section!.Items.Count.Should().Be(1);
+            var item = ((PackageSourceMappingSourceItem)section.Items.First()).Patterns.First();
 
             var expectedItem = new PackagePatternItem("sadas");
             SettingsTestUtils.DeepEquals(item, expectedItem).Should().BeTrue();
@@ -194,8 +194,8 @@ namespace NuGet.Configuration.Test
             settingsFile.TryGetSection("packageSourceMapping", out var section).Should().BeTrue();
             section.Should().NotBeNull();
 
-            section.Items.Count.Should().Be(1);
-            var packageSourcePatternsItem = section.Items.First() as PackageSourceMappingSourceItem;
+            section!.Items.Count.Should().Be(1);
+            var packageSourcePatternsItem = (PackageSourceMappingSourceItem)section.Items.First();
             var updatedItem = new PackagePatternItem("updated");
             packageSourcePatternsItem.Patterns.First().Update(updatedItem);
             SettingsTestUtils.DeepEquals(packageSourcePatternsItem.Patterns.First(), updatedItem).Should().BeTrue();

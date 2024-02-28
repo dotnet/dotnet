@@ -41,7 +41,7 @@ namespace NuGet.Configuration.Test
 
             for (int attempt = 0; attempt < 10; attempt++)
             {
-                ConfigurationDefaults configurationDefaults = new(Path.GetDirectoryName(testContext.NuGetConfig), Path.GetFileName(testContext.NuGetConfig));
+                ConfigurationDefaults configurationDefaults = new(Path.GetDirectoryName(testContext.NuGetConfig)!, Path.GetFileName(testContext.NuGetConfig));
 
                 // Act
                 RunInParallel(EnumerateDefaultSources, attempt);
@@ -70,7 +70,7 @@ namespace NuGet.Configuration.Test
                 using SimpleTestPathContext testContext = new();
                 testContext.Settings.SetDefaultPushSource(testContext.PackageSource);
 
-                ConfigurationDefaults configurationDefaults = new(Path.GetDirectoryName(testContext.NuGetConfig), Path.GetFileName(testContext.NuGetConfig));
+                ConfigurationDefaults configurationDefaults = new(Path.GetDirectoryName(testContext.NuGetConfig)!, Path.GetFileName(testContext.NuGetConfig));
 
                 // Act
                 RunInParallel(CheckDefaultPushSource, attempt);
@@ -80,7 +80,7 @@ namespace NuGet.Configuration.Test
 
                 void CheckDefaultPushSource()
                 {
-                    string source = configurationDefaults.DefaultPushSource;
+                    string? source = configurationDefaults.DefaultPushSource;
                     if (source == null)
                     {
                         throw new Exception("Default package source is null");
@@ -107,7 +107,7 @@ namespace NuGet.Configuration.Test
                 threads[i].Join();
             }
 
-            if (exceptions.TryDequeue(out Exception ex))
+            if (exceptions.TryDequeue(out Exception? ex))
             {
                 throw new Exception("At least one thread did not complete successfully on attempt " + (attempt + 1), ex);
             }

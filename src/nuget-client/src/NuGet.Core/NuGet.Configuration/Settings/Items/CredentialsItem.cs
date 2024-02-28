@@ -18,20 +18,10 @@ namespace NuGet.Configuration
     /// </summary>
     public sealed class CredentialsItem : SettingItem
     {
-        private string _elementName;
-        public override string ElementName
-        {
-            get => XmlConvert.DecodeName(_elementName);
-            protected set
-            {
-                if (string.IsNullOrEmpty(value))
-                {
-                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.PropertyCannotBeNullOrEmpty, nameof(ElementName)));
-                }
-
-                _elementName = XmlUtility.GetEncodedXMLName(value);
-            }
-        }
+        // The element name for credential items is the source name it's related to. But source names can have characters that are not allowed in XML element names.
+        // For example, a source name "Package Source" will be encoded as "Package_x0020_Source" in the XML element name.
+        // This property contains the decoded element name, and therefore needs to be encoded when it's written to the XML.
+        public override string ElementName { get; }
 
         public string Username
         {
@@ -75,7 +65,7 @@ namespace NuGet.Configuration
             }
         }
 
-        public string ValidAuthenticationTypes
+        public string? ValidAuthenticationTypes
         {
             get => _validAuthenticationTypes?.Value;
             set
@@ -97,7 +87,7 @@ namespace NuGet.Configuration
                     }
                     else
                     {
-                        _validAuthenticationTypes.Value = value;
+                        _validAuthenticationTypes.Value = value!;
                     }
                 }
             }
@@ -111,9 +101,9 @@ namespace NuGet.Configuration
 
         internal readonly AddItem _password;
 
-        internal AddItem _validAuthenticationTypes { get; set; }
+        internal AddItem? _validAuthenticationTypes { get; set; }
 
-        public CredentialsItem(string name, string username, string password, bool isPasswordClearText, string validAuthenticationTypes)
+        public CredentialsItem(string name, string username, string password, bool isPasswordClearText, string? validAuthenticationTypes)
            : base()
         {
             if (string.IsNullOrEmpty(name))
@@ -131,6 +121,7 @@ namespace NuGet.Configuration
                 throw new ArgumentException(Resources.Argument_Cannot_Be_Null_Or_Empty, nameof(password));
             }
 
+            // ElementName is not being read from XML, so it's not decoded.
             ElementName = name;
 
             _username = new AddItem(ConfigurationConstants.UsernameToken, username);
@@ -149,12 +140,13 @@ namespace NuGet.Configuration
         internal CredentialsItem(XElement element, SettingsFile origin)
             : base(element, origin)
         {
-            ElementName = element.Name.LocalName;
+            // ElementName is read from XML file, so it must be decoded.
+            ElementName = XmlConvert.DecodeName(element.Name.LocalName);
 
             var elementDescendants = element.Elements();
             var countOfDescendants = elementDescendants.Count();
 
-            var parsedItems = elementDescendants.Select(e => SettingFactory.Parse(e, origin) as AddItem).Where(i => i != null);
+            var parsedItems = elementDescendants.Select(e => SettingFactory.Parse(e, origin)).OfType<AddItem>();
 
             foreach (var item in parsedItems)
             {
@@ -228,7 +220,8 @@ namespace NuGet.Configuration
                 return Node;
             }
 
-            var element = new XElement(_elementName,
+            // Always encode the element name, since it might contain characters that are not allowed in XML element names.
+            var element = new XElement(XmlUtility.GetEncodedXMLName(ElementName),
                 _username.AsXNode(),
                 _password.AsXNode());
 
@@ -245,7 +238,7 @@ namespace NuGet.Configuration
             return element;
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             var item = other as CredentialsItem;
 
@@ -275,15 +268,15 @@ namespace NuGet.Configuration
 
             var credentials = other as CredentialsItem;
 
-            if (!string.Equals(Username, credentials.Username, StringComparison.Ordinal))
+            if (!string.Equals(Username, credentials?.Username, StringComparison.Ordinal))
             {
-                _username.Update(credentials._username);
+                _username.Update(credentials!._username);
             }
 
-            if (!string.Equals(Password, credentials.Password, StringComparison.Ordinal) ||
-                IsPasswordClearText != credentials.IsPasswordClearText)
+            if (!string.Equals(Password, credentials?.Password, StringComparison.Ordinal) ||
+                IsPasswordClearText != credentials!.IsPasswordClearText)
             {
-                _password.Update(credentials._password);
+                _password.Update(credentials!._password);
                 IsPasswordClearText = credentials.IsPasswordClearText;
             }
 
@@ -305,7 +298,7 @@ namespace NuGet.Configuration
                         XElementUtility.AddIndented(element, _validAuthenticationTypes.Node);
                     }
                 }
-                else if (credentials.ValidAuthenticationTypes == null)
+                else if (credentials._validAuthenticationTypes == null)
                 {
                     XElementUtility.RemoveIndented(_validAuthenticationTypes.Node);
                     _validAuthenticationTypes = null;

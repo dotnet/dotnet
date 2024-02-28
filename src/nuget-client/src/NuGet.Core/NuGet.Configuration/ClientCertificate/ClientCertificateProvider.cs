@@ -55,7 +55,7 @@ namespace NuGet.Configuration
 
         public IReadOnlyList<ClientCertItem> GetClientCertificates()
         {
-            SettingSection clientCertificatesSection = _settings.GetSection(ConfigurationConstants.ClientCertificates);
+            SettingSection? clientCertificatesSection = _settings.GetSection(ConfigurationConstants.ClientCertificates);
             if (clientCertificatesSection == null)
             {
                 return Enumerable.Empty<ClientCertItem>().ToList();
@@ -76,7 +76,7 @@ namespace NuGet.Configuration
             return result;
         }
 
-        public ClientCertItem GetClientCertificate(string packageSourceName)
+        public ClientCertItem? GetClientCertificate(string packageSourceName)
         {
             return GetClientCertificates().FirstOrDefault(i => string.Equals(i.PackageSource, packageSourceName, StringComparison.Ordinal));
         }

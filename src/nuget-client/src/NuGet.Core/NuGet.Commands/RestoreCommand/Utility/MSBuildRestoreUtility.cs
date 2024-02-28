@@ -285,7 +285,7 @@ namespace NuGet.Commands
                         );
                     }
                     pcRestoreMetadata.RestoreLockProperties = GetRestoreLockProperties(specItem);
-
+                    pcRestoreMetadata.RestoreAuditProperties = GetRestoreAuditProperties(specItem);
                 }
 
                 if (restoreType == ProjectStyle.ProjectJson)

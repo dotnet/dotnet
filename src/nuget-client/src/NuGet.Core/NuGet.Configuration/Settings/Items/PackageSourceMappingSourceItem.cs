@@ -43,8 +43,6 @@ namespace NuGet.Configuration
             UpdateAttribute(ConfigurationConstants.KeyAttribute, value);
         }
 
-        internal readonly IEnumerable<SettingBase> _parsedDescendants;
-
         /// <summary>
         /// Creates a package source mapping source item with the given name, which equals the key and non-empty list of package patters items.
         /// </summary>
@@ -77,10 +75,10 @@ namespace NuGet.Configuration
         internal PackageSourceMappingSourceItem(XElement element, SettingsFile origin)
             : base(element, origin)
         {
-            _parsedDescendants = element.Nodes().Where(n => n is XElement || n is XText text && !string.IsNullOrWhiteSpace(text.Value))
+            var parsedDescendants = element.Nodes().Where(n => n is XElement || n is XText text && !string.IsNullOrWhiteSpace(text.Value))
                 .Select(e => SettingFactory.Parse(e, origin));
 
-            var parsedPackagePatternItems = _parsedDescendants.OfType<PackagePatternItem>().ToList();
+            var parsedPackagePatternItems = parsedDescendants.OfType<PackagePatternItem>().ToList();
 
             if (parsedPackagePatternItems.Count == 0)
             {
@@ -114,7 +112,7 @@ namespace NuGet.Configuration
         {
             var newItem = new PackageSourceMappingSourceItem(
                 Key,
-                Patterns.Select(c => c.Clone() as PackagePatternItem).ToArray());
+                Patterns.Select(c => (PackagePatternItem)c.Clone()).ToArray());
 
             if (Origin != null)
             {
@@ -148,7 +146,7 @@ namespace NuGet.Configuration
 
         internal override void Update(SettingItem other)
         {
-            var packageSourceMappingSourceItem = other as PackageSourceMappingSourceItem;
+            var packageSourceMappingSourceItem = (PackageSourceMappingSourceItem)other;
 
             if (!packageSourceMappingSourceItem.Patterns.Any())
             {
@@ -161,7 +159,7 @@ namespace NuGet.Configuration
             var clonedPatterns = new List<PackagePatternItem>(Patterns);
             foreach (PackagePatternItem packagePatternItem in clonedPatterns)
             {
-                if (otherPatterns.TryGetValue(packagePatternItem, out PackagePatternItem otherChild))
+                if (otherPatterns.TryGetValue(packagePatternItem, out PackagePatternItem? otherChild))
                 {
                     otherPatterns.Remove(packagePatternItem);
                 }
@@ -197,7 +195,7 @@ namespace NuGet.Configuration
             }
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             // It is important that equality on checks that the package source mapping source item is for the same `key. The content is not important. 
             // The equality here is used for updating patterns.

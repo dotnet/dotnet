@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using NuGet.CommandLine.XPlat.Commands.PackageSearch;
+using NuGet.Protocol.Core.Types;
 
 namespace NuGet.CommandLine.XPlat
 {
@@ -19,12 +19,12 @@ namespace NuGet.CommandLine.XPlat
         public List<PackageSearchProblem> Problems { get; set; }
 
         [JsonPropertyName("packages")]
-        public List<ISearchResultPackage> Packages { get; set; }
+        public List<IPackageSearchMetadata> Packages { get; set; }
 
         public PackageSearchResult(string source)
         {
             SourceName = source;
-            Packages = new List<ISearchResultPackage>();
+            Packages = new List<IPackageSearchMetadata>();
         }
     }
 }

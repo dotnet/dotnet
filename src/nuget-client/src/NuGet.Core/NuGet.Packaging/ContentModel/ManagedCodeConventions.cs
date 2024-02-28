@@ -137,7 +137,15 @@ namespace NuGet.Client
             }
 
             // Code language values must be alpha numeric.
-            return name.All(c => char.IsLetterOrDigit(c)) ? name : null;
+            // PERF: use foreach to avoid CharEnumerator allocation
+            foreach (char c in name)
+            {
+                if (!char.IsLetterOrDigit(c))
+                {
+                    return null;
+                }
+            }
+            return name;
         }
 
         private static object Locale_Parser(string name, PatternTable table)

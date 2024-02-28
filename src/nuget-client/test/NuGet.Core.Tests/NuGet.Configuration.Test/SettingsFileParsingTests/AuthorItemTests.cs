@@ -84,8 +84,8 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as AuthorItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (AuthorItem)section.Items.First();
 
                 var expectedItem = new AuthorItem("authorName",
                     new CertificateItem("abcdefg", Common.HashAlgorithmName.SHA256, allowUntrustedRoot: true));
@@ -115,10 +115,10 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as AuthorItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (AuthorItem)section.Items.First();
 
-                var updatedItem = item.Clone() as AuthorItem;
+                var updatedItem = (AuthorItem)item.Clone();
                 updatedItem.Certificates.Add(new CertificateItem("xyz", Common.HashAlgorithmName.SHA256));
 
                 item.Update(updatedItem);
@@ -164,10 +164,10 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as AuthorItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (AuthorItem)section.Items.First();
 
-                var updatedItem = item.Clone() as AuthorItem;
+                var updatedItem = (AuthorItem)item.Clone();
                 updatedItem.Certificates.RemoveAt(1);
 
                 item.Update(updatedItem);
@@ -211,10 +211,10 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as AuthorItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (AuthorItem)section.Items.First();
 
-                var updatedItem = item.Clone() as AuthorItem;
+                var updatedItem = (AuthorItem)item.Clone();
                 updatedItem.Certificates.Clear();
 
                 // Act and Assert
@@ -248,10 +248,10 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as AuthorItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (AuthorItem)section.Items.First();
 
-                var updatedItem = item.Clone() as AuthorItem;
+                var updatedItem = (AuthorItem)item.Clone();
                 var cert = updatedItem.Certificates.First();
                 cert.HashAlgorithm = Common.HashAlgorithmName.SHA384;
 
@@ -327,12 +327,12 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
+                section!.Items.Count.Should().Be(1);
                 var item = section.Items.First();
                 item.IsCopy().Should().BeFalse();
                 item.Origin.Should().NotBeNull();
 
-                var clone = item.Clone() as AuthorItem;
+                var clone = (AuthorItem)item.Clone();
                 clone.IsCopy().Should().BeTrue();
                 clone.Origin.Should().NotBeNull();
                 SettingsTestUtils.DeepEquals(clone, item).Should().BeTrue();

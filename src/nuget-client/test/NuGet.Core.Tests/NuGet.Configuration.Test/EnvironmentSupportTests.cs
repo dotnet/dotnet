@@ -61,7 +61,7 @@ namespace NuGet.Configuration.Test
                 var settings = new Settings(nugetConfigFileFolder, nugetConfigFile);
 
                 //Assert
-                var settingsForConfig = settings.GetSection("config")?.Items.OfType<AddItem>();
+                var settingsForConfig = settings.GetSection("config")?.Items.OfType<AddItem>()!;
                 Assert.Single(settingsForConfig);
                 Assert.Equal(settingsForConfig.Single().GetValueAsPath(), Path.Combine(nugetConfigFileFolder, expectedRepositoryPath));
             }
@@ -117,7 +117,7 @@ namespace NuGet.Configuration.Test
                 var settings = new Settings(nugetConfigFileFolder, nugetConfigFile);
 
                 //Assert
-                var settingsForConfig = settings.GetSection("config")?.Items.OfType<AddItem>();
+                var settingsForConfig = settings.GetSection("config")?.Items.OfType<AddItem>()!;
                 Assert.Single(settingsForConfig);
                 Assert.Equal(expectedRepositoryPath, settingsForConfig.Single().GetValueAsPath());
             }

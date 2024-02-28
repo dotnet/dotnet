@@ -1,10 +1,12 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,8 +33,6 @@ namespace NuGet.Credentials
         /// Unnamed semaphores are local to the current process.
         /// </summary>
         private static readonly Semaphore ProviderSemaphore = new Semaphore(1, 1);
-
-        private Action<string> ErrorDelegate { get; }
 
         public bool HandlesDefaultCredentials { get; }
 
@@ -71,9 +71,9 @@ namespace NuGet.Credentials
         /// </param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A credential object, or null if no credentials could be acquired.</returns>
-        public async Task<ICredentials> GetCredentialsAsync(
+        public async Task<ICredentials?> GetCredentialsAsync(
             Uri uri,
-            IWebProxy proxy,
+            IWebProxy? proxy,
             CredentialRequestType type,
             string message,
             CancellationToken cancellationToken)
@@ -83,7 +83,7 @@ namespace NuGet.Credentials
                 throw new ArgumentNullException(nameof(uri));
             }
 
-            ICredentials creds = null;
+            ICredentials? creds = null;
 
             foreach (var provider in await _providers)
             {
@@ -102,8 +102,7 @@ namespace NuGet.Credentials
                     // such an optimization is likely not necessary.
                     ProviderSemaphore.WaitOne();
 
-                    CredentialResponse response;
-                    if (!TryFromCredentialCache(uri, type, isRetry, provider, out response))
+                    if (!TryFromCredentialCache(uri, type, isRetry, provider, out CredentialResponse? response))
                     {
                         response = await provider.GetAsync(
                             uri,
@@ -160,7 +159,8 @@ namespace NuGet.Credentials
         public bool TryGetLastKnownGoodCredentialsFromCache(
             Uri uri,
             bool isProxy,
-            out ICredentials credentials)
+            [NotNullWhen(true)]
+            out ICredentials? credentials)
         {
             if (uri == null)
             {
@@ -192,15 +192,15 @@ namespace NuGet.Credentials
 
 
         private bool TryFromCredentialCache(Uri uri, CredentialRequestType type, bool isRetry, ICredentialProvider provider,
-            out CredentialResponse credentials)
+            [NotNullWhen(true)]
+            out CredentialResponse? credentials)
         {
             credentials = null;
 
             var key = CredentialCacheKey(uri, type, provider);
             if (isRetry)
             {
-                CredentialResponse removed;
-                _providerCredentialCache.TryRemove(key, out removed);
+                _providerCredentialCache.TryRemove(key, out _);
                 return false;
             }
 

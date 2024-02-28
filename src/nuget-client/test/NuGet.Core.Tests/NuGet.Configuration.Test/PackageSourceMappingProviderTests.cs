@@ -17,7 +17,7 @@ namespace NuGet.Configuration.Test
         [Fact]
         public void Constructor_WithNullSettingsThrows()
         {
-            Assert.Throws<ArgumentNullException>(() => new PackageSourceMappingProvider(null));
+            Assert.Throws<ArgumentNullException>(() => new PackageSourceMappingProvider(null!));
         }
 
         [Fact]

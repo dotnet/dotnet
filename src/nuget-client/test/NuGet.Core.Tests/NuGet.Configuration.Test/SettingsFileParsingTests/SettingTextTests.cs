@@ -33,12 +33,12 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as UnknownItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (UnknownItem)section.Items.First();
                 item.Should().NotBeNull();
 
                 item.Children.Count.Should().Be(1);
-                var text = item.Children.First() as SettingText;
+                var text = (SettingText)item.Children.First();
                 text.Should().NotBeNull();
 
                 text.Value.Should().Be("This is a test");
@@ -67,12 +67,12 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as UnknownItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (UnknownItem)section.Items.First();
                 item.Should().NotBeNull();
 
                 item.Children.Count.Should().Be(1);
-                var text = item.Children.First() as SettingText;
+                var text = (SettingText)item.Children.First();
                 text.Should().NotBeNull();
 
                 text.Value.Should().Be("This is a test");
@@ -84,12 +84,12 @@ namespace NuGet.Configuration.Test
                 section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                item = section.Items.First() as UnknownItem;
+                section!.Items.Count.Should().Be(1);
+                item = (UnknownItem)section.Items.First();
                 item.Should().NotBeNull();
 
                 item.Children.Count.Should().Be(1);
-                text = item.Children.First() as SettingText;
+                text = (SettingText)item.Children.First();
                 text.Should().NotBeNull();
 
                 text.Value.Should().Be("This is another test");
@@ -134,8 +134,8 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as UnknownItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (UnknownItem)section.Items.First();
                 item.IsCopy().Should().BeFalse();
                 item.Origin.Should().NotBeNull();
 
@@ -144,7 +144,7 @@ namespace NuGet.Configuration.Test
                 text.IsCopy().Should().BeFalse();
                 text.Origin.Should().NotBeNull();
 
-                var clone = text.Clone() as SettingText;
+                var clone = (SettingText)text.Clone();
                 clone.IsCopy().Should().BeTrue();
                 clone.Origin.Should().NotBeNull();
                 SettingsTestUtils.DeepEquals(clone, text).Should().BeTrue();

@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using NuGet.Common;
 using NuGet.Packaging.Core;
 using NuGet.Protocol;
+using NuGet.Versioning;
 
 namespace Test.Utility
 {
@@ -18,15 +19,19 @@ namespace Test.Utility
         private string _packageDirectory;
         private readonly MockResponseBuilder _builder;
         private readonly bool _isPrivateFeed;
-        public FileSystemBackedV3MockServer(string packageDirectory, bool isPrivateFeed = false)
+        private readonly bool _sourceReportsVulnerabilities;
+        public FileSystemBackedV3MockServer(string packageDirectory, bool isPrivateFeed = false, bool sourceReportsVulnerabilities = false)
         {
             _packageDirectory = packageDirectory;
             _builder = new MockResponseBuilder(Uri.TrimEnd(new[] { '/' }));
             _isPrivateFeed = isPrivateFeed;
             InitializeServer();
+            _sourceReportsVulnerabilities = sourceReportsVulnerabilities;
         }
 
         public ISet<PackageIdentity> UnlistedPackages { get; } = new HashSet<PackageIdentity>();
+
+        public Dictionary<string, List<(Uri, PackageVulnerabilitySeverity, VersionRange)>> Vulnerabilities = new();
 
         public string ServiceIndexUri => _builder.GetV3Source();
 
@@ -38,7 +43,10 @@ namespace Test.Utility
                 {
                     return new Action<HttpListenerResponse>(response =>
                     {
-                        var mockResponse = _builder.BuildV3IndexResponse(Uri);
+                        var mockResponse = _sourceReportsVulnerabilities ?
+                        _builder.BuildV3IndexResponseWithVulnerabilities(Uri) :
+                        _builder.BuildV3IndexResponse(Uri);
+
                         response.ContentType = mockResponse.ContentType;
                         SetResponseContent(response, mockResponse.Content);
                     });
@@ -141,6 +149,31 @@ namespace Test.Utility
                         {
                             response.StatusCode = 404;
                         });
+                    }
+                }
+                else if (path.StartsWith("/vulnerability/"))
+                {
+                    if (path.EndsWith("index.json"))
+                    {
+                        return new Action<HttpListenerResponse>(response =>
+                        {
+                            response.ContentType = "application/json";
+                            var vulnerabilityJson = FeedUtilities.CreateVulnerabilitiesJson(Uri + "/vulnerability/vulnerability.json");
+                            SetResponseContent(response, vulnerabilityJson.ToString());
+                        });
+                    }
+                    else if (path.EndsWith("/vulnerability.json"))
+                    {
+                        return new Action<HttpListenerResponse>(response =>
+                        {
+                            response.ContentType = "application/json";
+                            var vulnerabilityJson = FeedUtilities.CreateVulnerabilityForPackages(Vulnerabilities);
+                            SetResponseContent(response, vulnerabilityJson.ToString());
+                        });
+                    }
+                    else
+                    {
+                        throw new Exception("This test needs to be updated to support: " + path);
                     }
                 }
                 else

@@ -14,9 +14,6 @@ namespace NuGet.CommandLine.XPlat
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public PackageSearchProblemType ProblemType { get; }
 
-        private PackageSearchProblem()
-        { }
-
         internal PackageSearchProblem(PackageSearchProblemType packageSearchProblemType, string text)
         {
             ProblemType = packageSearchProblemType;

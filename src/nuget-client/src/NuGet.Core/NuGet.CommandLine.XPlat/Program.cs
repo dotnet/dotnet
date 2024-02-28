@@ -90,7 +90,6 @@ namespace NuGet.CommandLine.XPlat
                 CancellationTokenSource tokenSource = new CancellationTokenSource();
                 tokenSource.CancelAfter(TimeSpan.FromMinutes(DotnetPackageSearchTimeOut));
                 int exitCodeValue = 0;
-
                 CliConfiguration config = new(rootCommand);
                 ParseResult parseResult = rootCommand.Parse(args, config);
 

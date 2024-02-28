@@ -35,7 +35,7 @@ namespace NuGet.Configuration.Test
 
             // source credential
             result.Credentials.Should().NotBeNull();
-            result.Credentials.Source.Should().BeEquivalentTo(source.Credentials.Source);
+            result.Credentials!.Source.Should().BeEquivalentTo(source.Credentials.Source);
             result.Credentials.Username.Should().BeEquivalentTo(source.Credentials.Username);
             result.Credentials.IsPasswordClearText.Should().Be(source.Credentials.IsPasswordClearText);
         }

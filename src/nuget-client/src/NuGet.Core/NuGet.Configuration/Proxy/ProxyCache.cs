@@ -46,7 +46,7 @@ namespace NuGet.Configuration
             _environment = environment;
         }
 
-        public IWebProxy GetProxy(Uri sourceUri)
+        public IWebProxy? GetProxy(Uri sourceUri)
         {
             // Check if the user has configured proxy details in settings or in the environment.
             var configuredProxy = GetUserConfiguredProxy();
@@ -77,14 +77,14 @@ namespace NuGet.Configuration
             return _cachedCredentials.TryAdd(configuredProxy.ProxyAddress, proxyCredentials);
         }
 
-        public WebProxy GetUserConfiguredProxy()
+        public WebProxy? GetUserConfiguredProxy()
         {
             // Try reading from the settings. The values are stored as 3 config values http_proxy, http_proxy.user, http_proxy.password
             var host = SettingsUtility.GetConfigValue(_settings, ConfigurationConstants.HostKey);
             if (!string.IsNullOrEmpty(host))
             {
                 // The host is the minimal value we need to assume a user configured proxy.
-                var webProxy = new WebProxy(host);
+                var webProxy = new WebProxy(host!);
 
                 if (RuntimeEnvironmentHelper.IsWindows)
                 {
@@ -101,7 +101,7 @@ namespace NuGet.Configuration
                 if (!string.IsNullOrEmpty(noProxy))
                 {
                     // split comma-separated list of domains
-                    webProxy.BypassList = noProxy.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    webProxy.BypassList = noProxy!.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 }
 
                 return webProxy;
@@ -109,7 +109,7 @@ namespace NuGet.Configuration
 
             // Next try reading from the environment variable http_proxy. This would be specified as http://<username>:<password>@proxy.com
             host = _environment.GetEnvironmentVariable(ConfigurationConstants.HostKey);
-            Uri uri;
+            Uri? uri;
             if (!string.IsNullOrEmpty(host)
                 && Uri.TryCreate(host, UriKind.Absolute, out uri))
             {
@@ -129,7 +129,7 @@ namespace NuGet.Configuration
                 if (!string.IsNullOrEmpty(noProxy))
                 {
                     // split comma-separated list of domains
-                    webProxy.BypassList = noProxy.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    webProxy.BypassList = noProxy!.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 }
 
                 return webProxy;
@@ -150,9 +150,9 @@ namespace NuGet.Configuration
                 updateValueFactory: (_, __) => { Version = Guid.NewGuid(); return credentials; });
         }
 
-        public NetworkCredential GetCredential(Uri proxyAddress, string authType)
+        public NetworkCredential? GetCredential(Uri proxyAddress, string authType)
         {
-            ICredentials cachedCredentials;
+            ICredentials? cachedCredentials;
             if (_cachedCredentials.TryGetValue(proxyAddress, out cachedCredentials))
             {
                 return cachedCredentials.GetCredential(proxyAddress, authType);
@@ -162,10 +162,10 @@ namespace NuGet.Configuration
         }
 
         [Obsolete("Retained for backcompat only. Use UpdateCredential instead")]
-        public void Add(IWebProxy proxy)
+        public void Add(IWebProxy? proxy)
         {
             var webProxy = proxy as WebProxy;
-            if (webProxy != null)
+            if (webProxy?.Credentials is not null)
             {
                 _cachedCredentials.TryAdd(webProxy.ProxyAddress, webProxy.Credentials);
             }

@@ -30,7 +30,7 @@ namespace NuGet.Configuration.Test
         [Fact]
         public void Constructor_WithNullPackagePatterns_Throws()
         {
-            Assert.Throws<ArgumentException>(() => new PackageSourceMappingSourceItem("name", null));
+            Assert.Throws<ArgumentException>(() => new PackageSourceMappingSourceItem("name", null!));
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace NuGet.Configuration.Test
         public void Clone_CreatesEquivalentPackagePatterns()
         {
             var original = new PackageSourceMappingSourceItem("name", new List<PackagePatternItem>() { new PackagePatternItem("stuff"), new PackagePatternItem("stuff2") });
-            var clone = original.Clone() as PackageSourceMappingSourceItem;
+            var clone = (PackageSourceMappingSourceItem)original.Clone();
             original.Equals(clone).Should().BeTrue();
             original.GetHashCode().Equals(clone.GetHashCode()).Should().BeTrue();
             SettingsTestUtils.DeepEquals(original, clone).Should().BeTrue();
@@ -184,8 +184,8 @@ namespace NuGet.Configuration.Test
             var section = settingsFile.GetSection("packageSourceMapping");
             section.Should().NotBeNull();
 
-            section.Items.Count.Should().Be(1);
-            var packageSourceMappingSourceItem = section.Items.First() as PackageSourceMappingSourceItem;
+            section!.Items.Count.Should().Be(1);
+            var packageSourceMappingSourceItem = (PackageSourceMappingSourceItem)section.Items.First();
             var item = packageSourceMappingSourceItem.Patterns.First();
             var expectedItem = new PackagePatternItem("sadas");
             SettingsTestUtils.DeepEquals(item, expectedItem).Should().BeTrue();
@@ -214,8 +214,8 @@ namespace NuGet.Configuration.Test
             var section = settingsFile.GetSection("packageSourceMapping");
             section.Should().NotBeNull();
 
-            section.Items.Count.Should().Be(1);
-            var packageSourceMappingSourceItem = section.Items.First() as PackageSourceMappingSourceItem;
+            section!.Items.Count.Should().Be(1);
+            var packageSourceMappingSourceItem = (PackageSourceMappingSourceItem)section.Items.First();
             var item = packageSourceMappingSourceItem.Patterns.First();
             var expectedItem = new PackagePatternItem("sadas");
             SettingsTestUtils.DeepEquals(item, expectedItem).Should().BeTrue();
@@ -242,11 +242,11 @@ namespace NuGet.Configuration.Test
             settingsFile.TryGetSection("packageSourceMapping", out var section).Should().BeTrue();
             section.Should().NotBeNull();
 
-            section.Items.Count.Should().Be(1);
-            var packageSourceMappingSourceItem = section.Items.First() as PackageSourceMappingSourceItem;
+            section!.Items.Count.Should().Be(1);
+            var packageSourceMappingSourceItem = (PackageSourceMappingSourceItem)section.Items.First();
             packageSourceMappingSourceItem.Patterns.Should().HaveCount(1);
 
-            var clone = packageSourceMappingSourceItem.Clone() as PackageSourceMappingSourceItem;
+            var clone = (PackageSourceMappingSourceItem)packageSourceMappingSourceItem.Clone();
             clone.Patterns.Add(new PackagePatternItem("second"));
 
             packageSourceMappingSourceItem.Update(clone);
@@ -291,11 +291,11 @@ namespace NuGet.Configuration.Test
             settingsFile.TryGetSection("packageSourceMapping", out var section).Should().BeTrue();
             section.Should().NotBeNull();
 
-            section.Items.Count.Should().Be(1);
-            var packageSourceMappingSourceItem = section.Items.First() as PackageSourceMappingSourceItem;
+            section!.Items.Count.Should().Be(1);
+            var packageSourceMappingSourceItem = (PackageSourceMappingSourceItem)section.Items.First();
             packageSourceMappingSourceItem.Patterns.Should().HaveCount(3);
 
-            var clone = packageSourceMappingSourceItem.Clone() as PackageSourceMappingSourceItem;
+            var clone = (PackageSourceMappingSourceItem)packageSourceMappingSourceItem.Clone();
             clone.Patterns.Add(new PackagePatternItem("third"));
             clone.Patterns.Add(new PackagePatternItem("third")); // Add a duplicate pattern to ensure it's handled without exception.
 
@@ -341,11 +341,11 @@ namespace NuGet.Configuration.Test
             settingsFile.TryGetSection("packageSourceMapping", out var section).Should().BeTrue();
             section.Should().NotBeNull();
 
-            section.Items.Count.Should().Be(1);
-            var packageSourceMappingSourceItem = section.Items.First() as PackageSourceMappingSourceItem;
+            section!.Items.Count.Should().Be(1);
+            var packageSourceMappingSourceItem = (PackageSourceMappingSourceItem)section.Items.First();
             packageSourceMappingSourceItem.Patterns.Should().HaveCount(2);
 
-            var clone = packageSourceMappingSourceItem.Clone() as PackageSourceMappingSourceItem;
+            var clone = (PackageSourceMappingSourceItem)packageSourceMappingSourceItem.Clone();
             clone.Patterns.RemoveAt(1);
 
             packageSourceMappingSourceItem.Update(clone);
@@ -387,11 +387,11 @@ namespace NuGet.Configuration.Test
             settingsFile.TryGetSection("packageSourceMapping", out var section).Should().BeTrue();
             section.Should().NotBeNull();
 
-            section.Items.Count.Should().Be(1);
-            var packageSourceMappingSourceItem = section.Items.First() as PackageSourceMappingSourceItem;
+            section!.Items.Count.Should().Be(1);
+            var packageSourceMappingSourceItem = (PackageSourceMappingSourceItem)section.Items.First();
             packageSourceMappingSourceItem.Patterns.Should().HaveCount(1);
 
-            var clone = packageSourceMappingSourceItem.Clone() as PackageSourceMappingSourceItem;
+            var clone = (PackageSourceMappingSourceItem)packageSourceMappingSourceItem.Clone();
             clone.Patterns.Clear();
 
             var ex = Record.Exception(() => packageSourceMappingSourceItem.Update(clone));
@@ -423,11 +423,11 @@ namespace NuGet.Configuration.Test
             settingsFile.TryGetSection("packageSourceMapping", out var section).Should().BeTrue();
             section.Should().NotBeNull();
 
-            section.Items.Count.Should().Be(1);
-            var packageSourceMappingSourceItem = section.Items.First() as PackageSourceMappingSourceItem;
+            section!.Items.Count.Should().Be(1);
+            var packageSourceMappingSourceItem = (PackageSourceMappingSourceItem)section.Items.First();
             packageSourceMappingSourceItem.Patterns.Should().HaveCount(2);
 
-            var clone = packageSourceMappingSourceItem.Clone() as PackageSourceMappingSourceItem;
+            var clone = (PackageSourceMappingSourceItem)packageSourceMappingSourceItem.Clone();
             clone.Patterns.RemoveAt(1);
             clone.Patterns.Add(new PackagePatternItem("third"));
 

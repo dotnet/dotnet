@@ -1050,6 +1050,48 @@ namespace NuGet.Tests.Apex
             }
         }
 
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task UpdatePackageForPR_PackageIdWithDifferentCase_UpdatesSuccessfully()
+        {
+            // Arrange
+            EnsureVisualStudioHost();
+
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            string solutionDirectory = simpleTestPathContext.SolutionRoot;
+            var packageName = "Contoso.A";
+            var packageVersion1 = "1.0.0";
+            var packageVersion2 = "2.0.0";
+
+            await CommonUtility.CreateNetFrameworkPackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, packageVersion1);
+            await CommonUtility.CreateNetFrameworkPackageInSourceAsync(simpleTestPathContext.PackageSource, packageName, packageVersion2);
+
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.NetCoreClassLib, Logger, noAutoRestore: false, addNetStandardFeeds: true, simpleTestPathContext: simpleTestPathContext);
+            var solutionService = VisualStudio.Get<SolutionService>();
+            var nugetConsole = GetConsole(testContext.Project);
+
+            //Pre-conditions
+            nugetConsole.InstallPackageFromPMC(packageName.ToLowerInvariant(), packageVersion1);
+            var expectedMessage = $"Successfully installed '{packageName} {packageVersion1}' to ";
+            nugetConsole.IsMessageFoundInPMC(expectedMessage).Should().BeTrue(because: nugetConsole.GetText());
+            testContext.SolutionService.Build();
+            VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
+            VisualStudio.HasNoErrorsInOutputWindows().Should().BeTrue();
+            nugetConsole.Clear();
+
+            // Act
+            nugetConsole.UpdatePackageFromPMC(packageName.ToUpperInvariant(), packageVersion2);
+
+            // Assert
+            expectedMessage = $"Successfully installed '{packageName} {packageVersion2}' to ";
+            nugetConsole.IsMessageFoundInPMC(expectedMessage).Should().BeTrue(because: nugetConsole.GetText());
+            VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
+            VisualStudio.HasNoErrorsInOutputWindows().Should().BeTrue();
+
+            nugetConsole.Clear();
+            solutionService.Save();
+        }
+
         public static IEnumerable<object[]> GetNetCoreTemplates()
         {
             yield return new object[] { ProjectTemplate.NetCoreConsoleApp };

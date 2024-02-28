@@ -1,1 +1,10 @@
 #nullable enable
+NuGet.PackageManagement.AuditChecker
+NuGet.PackageManagement.AuditChecker.AuditChecker(System.Collections.Generic.List<NuGet.Protocol.Core.Types.SourceRepository!>! sourceRepositories, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! logger) -> void
+NuGet.PackageManagement.AuditChecker.CheckPackageVulnerabilitiesAsync(System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData!>! packages, System.Collections.Generic.Dictionary<string!, NuGet.ProjectModel.RestoreAuditProperties!>! restoreAuditProperties, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.PackageManagement.AuditCheckResult!>!
+NuGet.PackageManagement.AuditCheckResult
+NuGet.PackageManagement.AuditCheckResult.AddMetricsToTelemetry(NuGet.Common.TelemetryEvent! telemetryEvent) -> void
+NuGet.PackageManagement.AuditCheckResult.Warnings.get -> System.Collections.Generic.IReadOnlyList<NuGet.Common.ILogMessage!>!
+NuGet.PackageManagement.PackageRestoreContext.EnableNuGetAudit.get -> bool
+~NuGet.PackageManagement.PackageRestoreContext.PackageRestoreContext(NuGet.PackageManagement.NuGetPackageManager nuGetPackageManager, System.Collections.Generic.IEnumerable<NuGet.PackageManagement.PackageRestoreData> packages, System.Threading.CancellationToken token, System.EventHandler<NuGet.PackageManagement.PackageRestoredEventArgs> packageRestoredEvent, System.EventHandler<NuGet.PackageManagement.PackageRestoreFailedEventArgs> packageRestoreFailedEvent, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourceRepository> sourceRepositories, int maxNumberOfParallelTasks, bool enableNuGetAudit, System.Collections.Generic.Dictionary<string, NuGet.ProjectModel.RestoreAuditProperties> restoreAuditProperties, NuGet.Common.ILogger logger) -> void
+~NuGet.PackageManagement.PackageRestoreContext.RestoreAuditProperties.get -> System.Collections.Generic.Dictionary<string, NuGet.ProjectModel.RestoreAuditProperties>

@@ -13,6 +13,7 @@ using NuGet.Common;
 using NuGet.DependencyResolver;
 using NuGet.LibraryModel;
 using NuGet.Packaging.Core;
+using NuGet.ProjectModel;
 using NuGet.Protocol;
 using NuGet.Protocol.Model;
 using NuGet.Versioning;
@@ -363,27 +364,15 @@ namespace NuGet.Commands.Restore.Utility
                 return PackageVulnerabilitySeverity.Low;
             }
 
-            if (string.Equals("low", auditLevel, StringComparison.OrdinalIgnoreCase))
+            if (_restoreAuditProperties!.TryParseAuditLevel(out PackageVulnerabilitySeverity result))
             {
-                return PackageVulnerabilitySeverity.Low;
-            }
-            if (string.Equals("moderate", auditLevel, StringComparison.OrdinalIgnoreCase))
-            {
-                return PackageVulnerabilitySeverity.Moderate;
-            }
-            if (string.Equals("high", auditLevel, StringComparison.OrdinalIgnoreCase))
-            {
-                return PackageVulnerabilitySeverity.High;
-            }
-            if (string.Equals("critical", auditLevel, StringComparison.OrdinalIgnoreCase))
-            {
-                return PackageVulnerabilitySeverity.Critical;
+                return result;
             }
 
             string messageText = string.Format(Strings.Error_InvalidNuGetAuditLevelValue, auditLevel, "low, moderate, high, critical");
             RestoreLogMessage message = RestoreLogMessage.CreateError(NuGetLogCode.NU1014, messageText);
             _logger.Log(message);
-            return 0;
+            return PackageVulnerabilitySeverity.Low;
         }
 
         internal enum NuGetAuditMode { Unknown, Direct, All }
@@ -414,27 +403,22 @@ namespace NuGet.Commands.Restore.Utility
         }
 
         // Enum parsing and ToString are a magnitude of times slower than a naive implementation.
-        public static bool ParseEnableValue(string? value, string projectFullPath, ILogger logger)
+        public static bool ParseEnableValue(RestoreAuditProperties? value, string projectFullPath, ILogger logger)
         {
-            // Earlier versions allowed "enable" and "default" to opt-in
-            if (string.IsNullOrEmpty(value)
-                || string.Equals(value, bool.TrueString, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(value, "enable", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(value, "default", StringComparison.OrdinalIgnoreCase))
+            if (value == null)
             {
                 return true;
             }
-            if (string.Equals(value, bool.FalseString, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(value, "disable", StringComparison.OrdinalIgnoreCase))
+
+            if (!value.TryParseEnableAudit(out bool result))
             {
-                return false;
+                string messageText = string.Format(Strings.Error_InvalidNuGetAuditValue, value, "true, false");
+                RestoreLogMessage message = RestoreLogMessage.CreateError(NuGetLogCode.NU1014, messageText);
+                message.ProjectPath = projectFullPath;
+                logger.Log(message);
             }
 
-            string messageText = string.Format(Strings.Error_InvalidNuGetAuditValue, value, "true, false");
-            RestoreLogMessage message = RestoreLogMessage.CreateError(NuGetLogCode.NU1014, messageText);
-            message.ProjectPath = projectFullPath;
-            logger.Log(message);
-            return true;
+            return result;
         }
 
         // Enum parsing and ToString are a magnitude of times slower than a naive implementation.

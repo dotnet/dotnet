@@ -9,8 +9,8 @@ namespace NuGet.Configuration
 {
     internal sealed class ParsedSettingSection : SettingSection
     {
-        internal ParsedSettingSection(XElement element, SettingsFile origin)
-            : base(element, origin)
+        internal ParsedSettingSection(string name, XElement element, SettingsFile origin)
+            : base(name, element, origin)
         {
         }
 
@@ -25,7 +25,7 @@ namespace NuGet.Configuration
 
         public override SettingBase Clone()
         {
-            return new VirtualSettingSection(ElementName, Attributes, Items.Select(s => s.Clone() as SettingItem));
+            return new VirtualSettingSection(ElementName, Attributes, Items.Select(s => (SettingItem)s.Clone()));
         }
     }
 }

@@ -75,6 +75,7 @@ namespace NuGet.PackageManagement
             GatherContext context,
             CancellationToken token)
         {
+            if (context == null) throw new ArgumentNullException(nameof(context));
             var engine = new ResolverGather(context);
             return await engine.GatherAsync(token);
         }

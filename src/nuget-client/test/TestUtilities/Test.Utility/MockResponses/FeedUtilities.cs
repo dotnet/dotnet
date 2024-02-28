@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using NuGet.Protocol;
+using NuGet.Versioning;
 
 namespace Test.Utility
 {
@@ -173,6 +175,54 @@ namespace Test.Utility
             catalogEntry.Add(new JProperty("tags", new JArray()));
 
             return item;
+        }
+
+        public static void AddVulnerabilitiesResource(JObject index, string serverUri)
+        {
+            var resource = new JObject
+            {
+                { "@id", $"{serverUri}vulnerability/index.json" },
+                { "@type", "VulnerabilityInfo/6.7.0" }
+            };
+
+            var array = index["resources"] as JArray;
+            array.Add(resource);
+        }
+
+        public static JArray CreateVulnerabilitiesJson(string vulnerabilityJsonUri)
+        {
+            return JArray.Parse(
+                @"[
+                    {
+                        ""@name"": ""all"",
+                        ""@id"": """ + vulnerabilityJsonUri + @""",
+                        ""@updated"": """ + DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture) + @""",
+                        ""comment"": ""The data for vulnerabilities. Contains all vulnerabilities""
+                    }
+                ]");
+        }
+
+        public static JObject CreateVulnerabilityForPackages(Dictionary<string, List<(Uri, PackageVulnerabilitySeverity, VersionRange)>> packages)
+        {
+            var JObject = new JObject();
+
+            foreach (var package in packages)
+            {
+                var packageObject = new JArray();
+                foreach (var vulnerability in package.Value)
+                {
+                    var vulnerabilityObject = new JObject
+                    {
+                        new JProperty("url", vulnerability.Item1.ToString()),
+                        new JProperty("severity", (int)vulnerability.Item2),
+                        new JProperty("versions", vulnerability.Item3.ToNormalizedString())
+                    };
+                    packageObject.Add(vulnerabilityObject);
+                }
+                JObject.Add(package.Key, packageObject);
+            }
+
+            return JObject;
         }
     }
 }

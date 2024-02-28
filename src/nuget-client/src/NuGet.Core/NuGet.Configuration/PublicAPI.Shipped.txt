@@ -1,32 +1,32 @@
 #nullable enable
 NuGet.Configuration.AddItem
-~NuGet.Configuration.AddItem.AddItem(string key, string value) -> void
-~NuGet.Configuration.AddItem.AddItem(string key, string value, System.Collections.Generic.IReadOnlyDictionary<string, string> additionalAttributes) -> void
-~NuGet.Configuration.AddItem.AddOrUpdateAdditionalAttribute(string attributeName, string value) -> void
-~NuGet.Configuration.AddItem.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string, string>
-~NuGet.Configuration.AddItem.Key.get -> string
+NuGet.Configuration.AddItem.AddItem(string! key, string? value) -> void
+NuGet.Configuration.AddItem.AddItem(string! key, string? value, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? additionalAttributes) -> void
+NuGet.Configuration.AddItem.AddOrUpdateAdditionalAttribute(string! attributeName, string! value) -> void
+NuGet.Configuration.AddItem.AdditionalAttributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+NuGet.Configuration.AddItem.Key.get -> string!
 NuGet.Configuration.AuthorItem
-~NuGet.Configuration.AuthorItem.AuthorItem(string name, params NuGet.Configuration.CertificateItem[] certificates) -> void
+NuGet.Configuration.AuthorItem.AuthorItem(string! name, params NuGet.Configuration.CertificateItem![]! certificates) -> void
 NuGet.Configuration.CertificateItem
 NuGet.Configuration.CertificateItem.AllowUntrustedRoot.get -> bool
 NuGet.Configuration.CertificateItem.AllowUntrustedRoot.set -> void
-~NuGet.Configuration.CertificateItem.CertificateItem(string fingerprint, NuGet.Common.HashAlgorithmName hashAlgorithm, bool allowUntrustedRoot = false) -> void
-~NuGet.Configuration.CertificateItem.Fingerprint.get -> string
-~NuGet.Configuration.CertificateItem.Fingerprint.set -> void
+NuGet.Configuration.CertificateItem.CertificateItem(string! fingerprint, NuGet.Common.HashAlgorithmName hashAlgorithm, bool allowUntrustedRoot = false) -> void
+NuGet.Configuration.CertificateItem.Fingerprint.get -> string!
+NuGet.Configuration.CertificateItem.Fingerprint.set -> void
 NuGet.Configuration.CertificateItem.HashAlgorithm.get -> NuGet.Common.HashAlgorithmName
 NuGet.Configuration.CertificateItem.HashAlgorithm.set -> void
 NuGet.Configuration.ClearItem
 NuGet.Configuration.ClearItem.ClearItem() -> void
 NuGet.Configuration.ClientCertItem
-~NuGet.Configuration.ClientCertItem.ClientCertItem(string packageSource) -> void
-~NuGet.Configuration.ClientCertItem.PackageSource.get -> string
-~NuGet.Configuration.ClientCertItem.SetPackageSource(string value) -> void
+NuGet.Configuration.ClientCertItem.ClientCertItem(string! packageSource) -> void
+NuGet.Configuration.ClientCertItem.PackageSource.get -> string!
+NuGet.Configuration.ClientCertItem.SetPackageSource(string! value) -> void
 NuGet.Configuration.ClientCertificateProvider
-~NuGet.Configuration.ClientCertificateProvider.AddOrUpdate(NuGet.Configuration.ClientCertItem item) -> void
-~NuGet.Configuration.ClientCertificateProvider.ClientCertificateProvider(NuGet.Configuration.ISettings settings) -> void
-~NuGet.Configuration.ClientCertificateProvider.GetClientCertificate(string packageSourceName) -> NuGet.Configuration.ClientCertItem
-~NuGet.Configuration.ClientCertificateProvider.GetClientCertificates() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.ClientCertItem>
-~NuGet.Configuration.ClientCertificateProvider.Remove(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.ClientCertItem> items) -> void
+NuGet.Configuration.ClientCertificateProvider.AddOrUpdate(NuGet.Configuration.ClientCertItem! item) -> void
+NuGet.Configuration.ClientCertificateProvider.ClientCertificateProvider(NuGet.Configuration.ISettings! settings) -> void
+NuGet.Configuration.ClientCertificateProvider.GetClientCertificate(string! packageSourceName) -> NuGet.Configuration.ClientCertItem?
+NuGet.Configuration.ClientCertificateProvider.GetClientCertificates() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.ClientCertItem!>!
+NuGet.Configuration.ClientCertificateProvider.Remove(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.ClientCertItem!>! items) -> void
 NuGet.Configuration.ConfigurationConstants
 NuGet.Configuration.ConfigurationDefaults
 NuGet.Configuration.ConfigurationDefaults.DefaultPackageRestoreConsent.get -> string?
@@ -37,37 +37,37 @@ NuGet.Configuration.CredentialRequestType.Forbidden = 2 -> NuGet.Configuration.C
 NuGet.Configuration.CredentialRequestType.Proxy = 0 -> NuGet.Configuration.CredentialRequestType
 NuGet.Configuration.CredentialRequestType.Unauthorized = 1 -> NuGet.Configuration.CredentialRequestType
 NuGet.Configuration.CredentialsItem
-~NuGet.Configuration.CredentialsItem.CredentialsItem(string name, string username, string password, bool isPasswordClearText, string validAuthenticationTypes) -> void
+NuGet.Configuration.CredentialsItem.CredentialsItem(string! name, string! username, string! password, bool isPasswordClearText, string? validAuthenticationTypes) -> void
 NuGet.Configuration.CredentialsItem.IsPasswordClearText.get -> bool
-~NuGet.Configuration.CredentialsItem.Password.get -> string
-~NuGet.Configuration.CredentialsItem.UpdatePassword(string password, bool isPasswordClearText = true) -> void
-~NuGet.Configuration.CredentialsItem.Username.get -> string
-~NuGet.Configuration.CredentialsItem.Username.set -> void
-~NuGet.Configuration.CredentialsItem.ValidAuthenticationTypes.get -> string
-~NuGet.Configuration.CredentialsItem.ValidAuthenticationTypes.set -> void
+NuGet.Configuration.CredentialsItem.Password.get -> string!
+NuGet.Configuration.CredentialsItem.UpdatePassword(string! password, bool isPasswordClearText = true) -> void
+NuGet.Configuration.CredentialsItem.Username.get -> string!
+NuGet.Configuration.CredentialsItem.Username.set -> void
+NuGet.Configuration.CredentialsItem.ValidAuthenticationTypes.get -> string?
+NuGet.Configuration.CredentialsItem.ValidAuthenticationTypes.set -> void
 NuGet.Configuration.EncryptionUtility
 NuGet.Configuration.FileClientCertItem
-~NuGet.Configuration.FileClientCertItem.FileClientCertItem(string packageSource, string filePath, string password, bool storePasswordInClearText, string settingsFilePath) -> void
-~NuGet.Configuration.FileClientCertItem.FilePath.get -> string
+NuGet.Configuration.FileClientCertItem.FileClientCertItem(string! packageSource, string! filePath, string? password, bool storePasswordInClearText, string! settingsFilePath) -> void
+NuGet.Configuration.FileClientCertItem.FilePath.get -> string!
 NuGet.Configuration.FileClientCertItem.IsPasswordIsClearText.get -> bool
-~NuGet.Configuration.FileClientCertItem.Password.get -> string
-~NuGet.Configuration.FileClientCertItem.Update(string filePath, string password, bool storePasswordInClearText) -> void
+NuGet.Configuration.FileClientCertItem.Password.get -> string?
+NuGet.Configuration.FileClientCertItem.Update(string! filePath, string? password, bool storePasswordInClearText) -> void
 NuGet.Configuration.IClientCertificateProvider
-~NuGet.Configuration.IClientCertificateProvider.AddOrUpdate(NuGet.Configuration.ClientCertItem item) -> void
-~NuGet.Configuration.IClientCertificateProvider.GetClientCertificates() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.ClientCertItem>
-~NuGet.Configuration.IClientCertificateProvider.Remove(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.ClientCertItem> items) -> void
+NuGet.Configuration.IClientCertificateProvider.AddOrUpdate(NuGet.Configuration.ClientCertItem! item) -> void
+NuGet.Configuration.IClientCertificateProvider.GetClientCertificates() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.ClientCertItem!>!
+NuGet.Configuration.IClientCertificateProvider.Remove(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.ClientCertItem!>! items) -> void
 NuGet.Configuration.ICredentialCache
-~NuGet.Configuration.ICredentialCache.Add(System.Uri uri, System.Net.ICredentials credentials) -> void
-~NuGet.Configuration.ICredentialCache.GetCredentials(System.Uri uri) -> System.Net.ICredentials
+NuGet.Configuration.ICredentialCache.Add(System.Uri! uri, System.Net.ICredentials! credentials) -> void
+NuGet.Configuration.ICredentialCache.GetCredentials(System.Uri! uri) -> System.Net.ICredentials!
 NuGet.Configuration.ICredentialService
-~NuGet.Configuration.ICredentialService.GetCredentialsAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.ICredentials>
+NuGet.Configuration.ICredentialService.GetCredentialsAsync(System.Uri! uri, System.Net.IWebProxy? proxy, NuGet.Configuration.CredentialRequestType type, string! message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.ICredentials?>!
 NuGet.Configuration.ICredentialService.HandlesDefaultCredentials.get -> bool
-~NuGet.Configuration.ICredentialService.TryGetLastKnownGoodCredentialsFromCache(System.Uri uri, bool isProxy, out System.Net.ICredentials credentials) -> bool
+NuGet.Configuration.ICredentialService.TryGetLastKnownGoodCredentialsFromCache(System.Uri! uri, bool isProxy, out System.Net.ICredentials? credentials) -> bool
 NuGet.Configuration.IExtensionLocator
-~NuGet.Configuration.IExtensionLocator.FindCredentialProviders() -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Configuration.IExtensionLocator.FindExtensions() -> System.Collections.Generic.IEnumerable<string>
+NuGet.Configuration.IExtensionLocator.FindCredentialProviders() -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Configuration.IExtensionLocator.FindExtensions() -> System.Collections.Generic.IEnumerable<string!>!
 NuGet.Configuration.IMachineWideSettings
-~NuGet.Configuration.IMachineWideSettings.Settings.get -> NuGet.Configuration.ISettings
+NuGet.Configuration.IMachineWideSettings.Settings.get -> NuGet.Configuration.ISettings!
 NuGet.Configuration.IPackageSourceProvider
 NuGet.Configuration.IPackageSourceProvider.ActivePackageSourceName.get -> string?
 NuGet.Configuration.IPackageSourceProvider.AddPackageSource(NuGet.Configuration.PackageSource! source) -> void
@@ -84,44 +84,44 @@ NuGet.Configuration.IPackageSourceProvider.SaveActivePackageSource(NuGet.Configu
 NuGet.Configuration.IPackageSourceProvider.SavePackageSources(System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>! sources) -> void
 NuGet.Configuration.IPackageSourceProvider.UpdatePackageSource(NuGet.Configuration.PackageSource! source, bool updateCredentials, bool updateEnabled) -> void
 NuGet.Configuration.IProxyCache
-~NuGet.Configuration.IProxyCache.Add(System.Net.IWebProxy proxy) -> void
-~NuGet.Configuration.IProxyCache.GetProxy(System.Uri uri) -> System.Net.IWebProxy
+NuGet.Configuration.IProxyCache.Add(System.Net.IWebProxy! proxy) -> void
+NuGet.Configuration.IProxyCache.GetProxy(System.Uri! uri) -> System.Net.IWebProxy?
 NuGet.Configuration.IProxyCredentialCache
-~NuGet.Configuration.IProxyCredentialCache.UpdateCredential(System.Uri proxyAddress, System.Net.NetworkCredential credentials) -> void
+NuGet.Configuration.IProxyCredentialCache.UpdateCredential(System.Uri! proxyAddress, System.Net.NetworkCredential! credentials) -> void
 NuGet.Configuration.IProxyCredentialCache.Version.get -> System.Guid
 NuGet.Configuration.ISettings
-~NuGet.Configuration.ISettings.AddOrUpdate(string sectionName, NuGet.Configuration.SettingItem item) -> void
-~NuGet.Configuration.ISettings.GetConfigFilePaths() -> System.Collections.Generic.IList<string>
-~NuGet.Configuration.ISettings.GetConfigRoots() -> System.Collections.Generic.IList<string>
-~NuGet.Configuration.ISettings.GetSection(string sectionName) -> NuGet.Configuration.SettingSection
-~NuGet.Configuration.ISettings.Remove(string sectionName, NuGet.Configuration.SettingItem item) -> void
+NuGet.Configuration.ISettings.AddOrUpdate(string! sectionName, NuGet.Configuration.SettingItem! item) -> void
+NuGet.Configuration.ISettings.GetConfigFilePaths() -> System.Collections.Generic.IList<string!>!
+NuGet.Configuration.ISettings.GetConfigRoots() -> System.Collections.Generic.IList<string!>!
+NuGet.Configuration.ISettings.GetSection(string! sectionName) -> NuGet.Configuration.SettingSection?
+NuGet.Configuration.ISettings.Remove(string! sectionName, NuGet.Configuration.SettingItem! item) -> void
 NuGet.Configuration.ISettings.SaveToDisk() -> void
-NuGet.Configuration.ISettings.SettingsChanged -> System.EventHandler
+NuGet.Configuration.ISettings.SettingsChanged -> System.EventHandler?
 NuGet.Configuration.NuGetConfigurationException
-~NuGet.Configuration.NuGetConfigurationException.NuGetConfigurationException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
-~NuGet.Configuration.NuGetConfigurationException.NuGetConfigurationException(string message) -> void
-~NuGet.Configuration.NuGetConfigurationException.NuGetConfigurationException(string message, System.Exception innerException) -> void
+NuGet.Configuration.NuGetConfigurationException.NuGetConfigurationException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+NuGet.Configuration.NuGetConfigurationException.NuGetConfigurationException(string! message) -> void
+NuGet.Configuration.NuGetConfigurationException.NuGetConfigurationException(string! message, System.Exception? innerException) -> void
 NuGet.Configuration.NuGetConstants
 NuGet.Configuration.NuGetPathContext
-~NuGet.Configuration.NuGetPathContext.FallbackPackageFolders.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.Configuration.NuGetPathContext.HttpCacheFolder.get -> string
+NuGet.Configuration.NuGetPathContext.FallbackPackageFolders.get -> System.Collections.Generic.IReadOnlyList<string!>!
+NuGet.Configuration.NuGetPathContext.HttpCacheFolder.get -> string!
 NuGet.Configuration.NuGetPathContext.NuGetPathContext() -> void
-~NuGet.Configuration.NuGetPathContext.UserPackageFolder.get -> string
+NuGet.Configuration.NuGetPathContext.UserPackageFolder.get -> string!
 NuGet.Configuration.NullSettings
-~NuGet.Configuration.NullSettings.AddOrUpdate(string sectionName, NuGet.Configuration.SettingItem item) -> void
-~NuGet.Configuration.NullSettings.GetConfigFilePaths() -> System.Collections.Generic.IList<string>
-~NuGet.Configuration.NullSettings.GetConfigRoots() -> System.Collections.Generic.IList<string>
-~NuGet.Configuration.NullSettings.GetSection(string sectionName) -> NuGet.Configuration.SettingSection
+NuGet.Configuration.NullSettings.AddOrUpdate(string! sectionName, NuGet.Configuration.SettingItem! item) -> void
+NuGet.Configuration.NullSettings.GetConfigFilePaths() -> System.Collections.Generic.IList<string!>!
+NuGet.Configuration.NullSettings.GetConfigRoots() -> System.Collections.Generic.IList<string!>!
+NuGet.Configuration.NullSettings.GetSection(string! sectionName) -> NuGet.Configuration.SettingSection?
 NuGet.Configuration.NullSettings.NullSettings() -> void
-~NuGet.Configuration.NullSettings.Remove(string sectionName, NuGet.Configuration.SettingItem item) -> void
+NuGet.Configuration.NullSettings.Remove(string! sectionName, NuGet.Configuration.SettingItem! item) -> void
 NuGet.Configuration.NullSettings.SaveToDisk() -> void
-NuGet.Configuration.NullSettings.SettingsChanged -> System.EventHandler
+NuGet.Configuration.NullSettings.SettingsChanged -> System.EventHandler?
 NuGet.Configuration.OwnersItem
-~NuGet.Configuration.OwnersItem.Content.get -> System.Collections.Generic.IList<string>
-~NuGet.Configuration.OwnersItem.OwnersItem(string owners) -> void
+NuGet.Configuration.OwnersItem.Content.get -> System.Collections.Generic.IList<string!>!
+NuGet.Configuration.OwnersItem.OwnersItem(string! owners) -> void
 NuGet.Configuration.PackagePatternItem
-~NuGet.Configuration.PackagePatternItem.PackagePatternItem(string pattern) -> void
-~NuGet.Configuration.PackagePatternItem.Pattern.get -> string
+NuGet.Configuration.PackagePatternItem.PackagePatternItem(string! pattern) -> void
+NuGet.Configuration.PackagePatternItem.Pattern.get -> string!
 NuGet.Configuration.PackageSource
 NuGet.Configuration.PackageSource.AllowInsecureConnections.get -> bool
 NuGet.Configuration.PackageSource.AllowInsecureConnections.set -> void
@@ -158,33 +158,33 @@ NuGet.Configuration.PackageSource.Source.set -> void
 NuGet.Configuration.PackageSource.SourceUri.get -> System.Uri!
 NuGet.Configuration.PackageSource.TrySourceAsUri.get -> System.Uri?
 NuGet.Configuration.PackageSourceCredential
-~NuGet.Configuration.PackageSourceCredential.AsCredentialsItem() -> NuGet.Configuration.CredentialsItem
-~NuGet.Configuration.PackageSourceCredential.Equals(NuGet.Configuration.PackageSourceCredential other) -> bool
+NuGet.Configuration.PackageSourceCredential.AsCredentialsItem() -> NuGet.Configuration.CredentialsItem!
+NuGet.Configuration.PackageSourceCredential.Equals(NuGet.Configuration.PackageSourceCredential? other) -> bool
 NuGet.Configuration.PackageSourceCredential.IsPasswordClearText.get -> bool
 NuGet.Configuration.PackageSourceCredential.IsValid() -> bool
-~NuGet.Configuration.PackageSourceCredential.PackageSourceCredential(string source, string username, string passwordText, bool isPasswordClearText, string validAuthenticationTypesText) -> void
-~NuGet.Configuration.PackageSourceCredential.Password.get -> string
-~NuGet.Configuration.PackageSourceCredential.PasswordText.get -> string
-~NuGet.Configuration.PackageSourceCredential.Source.get -> string
-~NuGet.Configuration.PackageSourceCredential.ToICredentials() -> System.Net.ICredentials
-~NuGet.Configuration.PackageSourceCredential.Username.get -> string
-~NuGet.Configuration.PackageSourceCredential.ValidAuthenticationTypes.get -> System.Collections.Generic.IEnumerable<string>
-~NuGet.Configuration.PackageSourceCredential.ValidAuthenticationTypesText.get -> string
+NuGet.Configuration.PackageSourceCredential.PackageSourceCredential(string! source, string! username, string! passwordText, bool isPasswordClearText, string? validAuthenticationTypesText) -> void
+NuGet.Configuration.PackageSourceCredential.Password.get -> string!
+NuGet.Configuration.PackageSourceCredential.PasswordText.get -> string!
+NuGet.Configuration.PackageSourceCredential.Source.get -> string!
+NuGet.Configuration.PackageSourceCredential.ToICredentials() -> System.Net.ICredentials!
+NuGet.Configuration.PackageSourceCredential.Username.get -> string!
+NuGet.Configuration.PackageSourceCredential.ValidAuthenticationTypes.get -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Configuration.PackageSourceCredential.ValidAuthenticationTypesText.get -> string?
 NuGet.Configuration.PackageSourceMapping
 NuGet.Configuration.PackageSourceMapping.GetConfiguredPackageSources(string! packageId) -> System.Collections.Generic.IReadOnlyList<string!>!
 NuGet.Configuration.PackageSourceMapping.IsEnabled.get -> bool
 NuGet.Configuration.PackageSourceMapping.PackageSourceMapping(System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<string!>!>! patterns) -> void
 NuGet.Configuration.PackageSourceMapping.SearchForPattern(string! packageId) -> string?
 NuGet.Configuration.PackageSourceMappingProvider
-~NuGet.Configuration.PackageSourceMappingProvider.GetPackageSourceMappingItems() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSourceMappingSourceItem>
-~NuGet.Configuration.PackageSourceMappingProvider.PackageSourceMappingProvider(NuGet.Configuration.ISettings settings) -> void
-~NuGet.Configuration.PackageSourceMappingProvider.PackageSourceMappingProvider(NuGet.Configuration.ISettings settings, bool shouldSkipSave) -> void
-~NuGet.Configuration.PackageSourceMappingProvider.SavePackageSourceMappings(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSourceMappingSourceItem> packageSourceMappingsSourceItems) -> void
+NuGet.Configuration.PackageSourceMappingProvider.GetPackageSourceMappingItems() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSourceMappingSourceItem!>!
+NuGet.Configuration.PackageSourceMappingProvider.PackageSourceMappingProvider(NuGet.Configuration.ISettings! settings) -> void
+NuGet.Configuration.PackageSourceMappingProvider.PackageSourceMappingProvider(NuGet.Configuration.ISettings! settings, bool shouldSkipSave) -> void
+NuGet.Configuration.PackageSourceMappingProvider.SavePackageSourceMappings(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSourceMappingSourceItem!>! packageSourceMappingsSourceItems) -> void
 NuGet.Configuration.PackageSourceMappingProvider.ShouldSkipSave.get -> bool
 NuGet.Configuration.PackageSourceMappingSourceItem
-~NuGet.Configuration.PackageSourceMappingSourceItem.PackageSourceMappingSourceItem(string name, System.Collections.Generic.IEnumerable<NuGet.Configuration.PackagePatternItem> packagePatternItems) -> void
-~NuGet.Configuration.PackageSourceMappingSourceItem.Patterns.get -> System.Collections.Generic.IList<NuGet.Configuration.PackagePatternItem>
-~NuGet.Configuration.PackageSourceMappingSourceItem.SetKey(string value) -> void
+NuGet.Configuration.PackageSourceMappingSourceItem.PackageSourceMappingSourceItem(string! name, System.Collections.Generic.IEnumerable<NuGet.Configuration.PackagePatternItem!>! packagePatternItems) -> void
+NuGet.Configuration.PackageSourceMappingSourceItem.Patterns.get -> System.Collections.Generic.IList<NuGet.Configuration.PackagePatternItem!>!
+NuGet.Configuration.PackageSourceMappingSourceItem.SetKey(string! value) -> void
 NuGet.Configuration.PackageSourceProvider
 NuGet.Configuration.PackageSourceProvider.ActivePackageSourceName.get -> string?
 NuGet.Configuration.PackageSourceProvider.AddPackageSource(NuGet.Configuration.PackageSource! source) -> void
@@ -209,28 +209,28 @@ NuGet.Configuration.PackageSourceProvider.SavePackageSources(System.Collections.
 NuGet.Configuration.PackageSourceProvider.Settings.get -> NuGet.Configuration.ISettings!
 NuGet.Configuration.PackageSourceProvider.UpdatePackageSource(NuGet.Configuration.PackageSource! source, bool updateCredentials, bool updateEnabled) -> void
 NuGet.Configuration.ProxyCache
-~NuGet.Configuration.ProxyCache.Add(System.Net.IWebProxy proxy) -> void
-~NuGet.Configuration.ProxyCache.GetCredential(System.Uri proxyAddress, string authType) -> System.Net.NetworkCredential
-~NuGet.Configuration.ProxyCache.GetProxy(System.Uri sourceUri) -> System.Net.IWebProxy
-~NuGet.Configuration.ProxyCache.GetUserConfiguredProxy() -> NuGet.Configuration.WebProxy
-~NuGet.Configuration.ProxyCache.ProxyCache(NuGet.Configuration.ISettings settings, NuGet.Common.IEnvironmentVariableReader environment) -> void
-~NuGet.Configuration.ProxyCache.UpdateCredential(System.Uri proxyAddress, System.Net.NetworkCredential credentials) -> void
+NuGet.Configuration.ProxyCache.Add(System.Net.IWebProxy? proxy) -> void
+NuGet.Configuration.ProxyCache.GetCredential(System.Uri! proxyAddress, string! authType) -> System.Net.NetworkCredential?
+NuGet.Configuration.ProxyCache.GetProxy(System.Uri! sourceUri) -> System.Net.IWebProxy?
+NuGet.Configuration.ProxyCache.GetUserConfiguredProxy() -> NuGet.Configuration.WebProxy?
+NuGet.Configuration.ProxyCache.ProxyCache(NuGet.Configuration.ISettings! settings, NuGet.Common.IEnvironmentVariableReader! environment) -> void
+NuGet.Configuration.ProxyCache.UpdateCredential(System.Uri! proxyAddress, System.Net.NetworkCredential! credentials) -> void
 NuGet.Configuration.ProxyCache.Version.get -> System.Guid
 NuGet.Configuration.RepositoryItem
-~NuGet.Configuration.RepositoryItem.Name.get -> string
-~NuGet.Configuration.RepositoryItem.Name.set -> void
-~NuGet.Configuration.RepositoryItem.Owners.get -> System.Collections.Generic.IList<string>
-~NuGet.Configuration.RepositoryItem.RepositoryItem(string name, string serviceIndex, params NuGet.Configuration.CertificateItem[] certificates) -> void
-~NuGet.Configuration.RepositoryItem.RepositoryItem(string name, string serviceIndex, string owners, params NuGet.Configuration.CertificateItem[] certificates) -> void
-~NuGet.Configuration.RepositoryItem.ServiceIndex.get -> string
+NuGet.Configuration.RepositoryItem.Name.get -> string!
+NuGet.Configuration.RepositoryItem.Name.set -> void
+NuGet.Configuration.RepositoryItem.Owners.get -> System.Collections.Generic.IList<string!>!
+NuGet.Configuration.RepositoryItem.RepositoryItem(string! name, string! serviceIndex, params NuGet.Configuration.CertificateItem![]! certificates) -> void
+NuGet.Configuration.RepositoryItem.RepositoryItem(string! name, string! serviceIndex, string? owners, params NuGet.Configuration.CertificateItem![]! certificates) -> void
+NuGet.Configuration.RepositoryItem.ServiceIndex.get -> string!
 NuGet.Configuration.SettingBase
 NuGet.Configuration.SettingBase.SettingBase() -> void
 NuGet.Configuration.SettingElement
-~NuGet.Configuration.SettingElement.AddAttribute(string attributeName, string value) -> void
-~NuGet.Configuration.SettingElement.AddOrUpdateAttribute(string attributeName, string value) -> void
-~NuGet.Configuration.SettingElement.MutableAttributes.get -> System.Collections.Generic.Dictionary<string, string>
+NuGet.Configuration.SettingElement.AddAttribute(string! attributeName, string! value) -> void
+NuGet.Configuration.SettingElement.AddOrUpdateAttribute(string! attributeName, string? value) -> void
+NuGet.Configuration.SettingElement.MutableAttributes.get -> System.Collections.Generic.Dictionary<string!, string!>!
 NuGet.Configuration.SettingElement.SettingElement() -> void
-~NuGet.Configuration.SettingElement.SettingElement(System.Collections.Generic.IReadOnlyDictionary<string, string> attributes) -> void
+NuGet.Configuration.SettingElement.SettingElement(System.Collections.Generic.IReadOnlyDictionary<string!, string!>? attributes) -> void
 NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingElementType.ActivePackageSource = 2 -> NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingElementType.Add = 9 -> NuGet.Configuration.SettingElementType
@@ -254,291 +254,285 @@ NuGet.Configuration.SettingElementType.StoreCert = 16 -> NuGet.Configuration.Set
 NuGet.Configuration.SettingElementType.Unknown = 0 -> NuGet.Configuration.SettingElementType
 NuGet.Configuration.SettingItem
 NuGet.Configuration.SettingItem.SettingItem() -> void
-~NuGet.Configuration.SettingItem.SettingItem(System.Collections.Generic.IReadOnlyDictionary<string, string> attributes) -> void
+NuGet.Configuration.SettingItem.SettingItem(System.Collections.Generic.IReadOnlyDictionary<string!, string!>? attributes) -> void
 NuGet.Configuration.SettingSection
-~NuGet.Configuration.SettingSection.GetFirstItemWithAttribute<T>(string attributeName, string expectedAttributeValue) -> T
-~NuGet.Configuration.SettingSection.Items.get -> System.Collections.Generic.IReadOnlyCollection<NuGet.Configuration.SettingItem>
-~NuGet.Configuration.SettingSection.SettingSection(string name, System.Collections.Generic.IReadOnlyDictionary<string, string> attributes, System.Collections.Generic.IEnumerable<NuGet.Configuration.SettingItem> children) -> void
+NuGet.Configuration.SettingSection.GetFirstItemWithAttribute<T>(string! attributeName, string! expectedAttributeValue) -> T?
+NuGet.Configuration.SettingSection.Items.get -> System.Collections.Generic.IReadOnlyCollection<NuGet.Configuration.SettingItem!>!
+NuGet.Configuration.SettingSection.SettingSection(string! name, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? attributes, System.Collections.Generic.IEnumerable<NuGet.Configuration.SettingItem!>? children) -> void
 NuGet.Configuration.SettingText
-~NuGet.Configuration.SettingText.SettingText(string value) -> void
-~NuGet.Configuration.SettingText.Value.get -> string
-~NuGet.Configuration.SettingText.Value.set -> void
+NuGet.Configuration.SettingText.SettingText(string! value) -> void
+NuGet.Configuration.SettingText.Value.get -> string!
+NuGet.Configuration.SettingText.Value.set -> void
 NuGet.Configuration.Settings
-~NuGet.Configuration.Settings.AddOrUpdate(string sectionName, NuGet.Configuration.SettingItem item) -> void
-~NuGet.Configuration.Settings.GetConfigFilePaths() -> System.Collections.Generic.IList<string>
-~NuGet.Configuration.Settings.GetConfigRoots() -> System.Collections.Generic.IList<string>
-~NuGet.Configuration.Settings.GetSection(string sectionName) -> NuGet.Configuration.SettingSection
-~NuGet.Configuration.Settings.Remove(string sectionName, NuGet.Configuration.SettingItem item) -> void
+NuGet.Configuration.Settings.AddOrUpdate(string! sectionName, NuGet.Configuration.SettingItem! item) -> void
+NuGet.Configuration.Settings.GetConfigFilePaths() -> System.Collections.Generic.IList<string!>!
+NuGet.Configuration.Settings.GetConfigRoots() -> System.Collections.Generic.IList<string!>!
+NuGet.Configuration.Settings.GetSection(string! sectionName) -> NuGet.Configuration.SettingSection?
+NuGet.Configuration.Settings.Remove(string! sectionName, NuGet.Configuration.SettingItem! item) -> void
 NuGet.Configuration.Settings.SaveToDisk() -> void
-~NuGet.Configuration.Settings.Settings(string root) -> void
-~NuGet.Configuration.Settings.Settings(string root, string fileName) -> void
-~NuGet.Configuration.Settings.Settings(string root, string fileName, bool isMachineWide) -> void
-NuGet.Configuration.Settings.SettingsChanged -> System.EventHandler
-~NuGet.Configuration.SettingsGroup<T>
-~NuGet.Configuration.SettingsGroup<T>.Children.get -> System.Collections.Generic.IList<T>
-NuGet.Configuration.SettingsGroup<T>.SettingsGroup() -> void
-~NuGet.Configuration.SettingsGroup<T>.SettingsGroup(System.Collections.Generic.IReadOnlyDictionary<string, string> attributes, System.Collections.Generic.IEnumerable<T> children) -> void
-~NuGet.Configuration.SettingsGroup<T>.TryGetChild(T expectedChild, out T currentChild) -> bool
+NuGet.Configuration.Settings.Settings(string! root) -> void
+NuGet.Configuration.Settings.Settings(string! root, string! fileName) -> void
+NuGet.Configuration.Settings.Settings(string! root, string! fileName, bool isMachineWide) -> void
+NuGet.Configuration.Settings.SettingsChanged -> System.EventHandler?
+NuGet.Configuration.SettingsGroup<T>
+NuGet.Configuration.SettingsGroup<T>.Children.get -> System.Collections.Generic.IList<T!>!
+NuGet.Configuration.SettingsGroup<T>.TryGetChild(T! expectedChild, out T? currentChild) -> bool
 NuGet.Configuration.SettingsLoadingContext
 NuGet.Configuration.SettingsLoadingContext.Dispose() -> void
 NuGet.Configuration.SettingsLoadingContext.SettingsLoadingContext() -> void
 NuGet.Configuration.SettingsUtility
 NuGet.Configuration.SourceItem
-~NuGet.Configuration.SourceItem.AllowInsecureConnections.get -> string
-~NuGet.Configuration.SourceItem.AllowInsecureConnections.set -> void
-~NuGet.Configuration.SourceItem.ProtocolVersion.get -> string
-~NuGet.Configuration.SourceItem.ProtocolVersion.set -> void
-~NuGet.Configuration.SourceItem.SourceItem(string key, string value) -> void
-~NuGet.Configuration.SourceItem.SourceItem(string key, string value, string protocolVersion) -> void
-~NuGet.Configuration.SourceItem.SourceItem(string key, string value, string protocolVersion, string allowInsecureConnections) -> void
+NuGet.Configuration.SourceItem.AllowInsecureConnections.get -> string?
+NuGet.Configuration.SourceItem.AllowInsecureConnections.set -> void
+NuGet.Configuration.SourceItem.ProtocolVersion.get -> string?
+NuGet.Configuration.SourceItem.ProtocolVersion.set -> void
+NuGet.Configuration.SourceItem.SourceItem(string! key, string! value) -> void
+NuGet.Configuration.SourceItem.SourceItem(string! key, string! value, string? protocolVersion) -> void
+NuGet.Configuration.SourceItem.SourceItem(string! key, string! value, string? protocolVersion, string? allowInsecureConnections) -> void
 NuGet.Configuration.StoreClientCertItem
 NuGet.Configuration.StoreClientCertItem.FindType.get -> System.Security.Cryptography.X509Certificates.X509FindType
-~NuGet.Configuration.StoreClientCertItem.FindValue.get -> string
-~NuGet.Configuration.StoreClientCertItem.StoreClientCertItem(string packageSource, string findValue, System.Security.Cryptography.X509Certificates.StoreLocation? storeLocation = null, System.Security.Cryptography.X509Certificates.StoreName? storeName = null, System.Security.Cryptography.X509Certificates.X509FindType? findBy = null) -> void
+NuGet.Configuration.StoreClientCertItem.FindValue.get -> string!
+NuGet.Configuration.StoreClientCertItem.StoreClientCertItem(string! packageSource, string! findValue, System.Security.Cryptography.X509Certificates.StoreLocation? storeLocation = null, System.Security.Cryptography.X509Certificates.StoreName? storeName = null, System.Security.Cryptography.X509Certificates.X509FindType? findBy = null) -> void
 NuGet.Configuration.StoreClientCertItem.StoreLocation.get -> System.Security.Cryptography.X509Certificates.StoreLocation
 NuGet.Configuration.StoreClientCertItem.StoreName.get -> System.Security.Cryptography.X509Certificates.StoreName
-~NuGet.Configuration.StoreClientCertItem.Update(string findValue, System.Security.Cryptography.X509Certificates.StoreLocation? storeLocation = null, System.Security.Cryptography.X509Certificates.StoreName? storeName = null, System.Security.Cryptography.X509Certificates.X509FindType? findBy = null) -> void
+NuGet.Configuration.StoreClientCertItem.Update(string? findValue, System.Security.Cryptography.X509Certificates.StoreLocation? storeLocation = null, System.Security.Cryptography.X509Certificates.StoreName? storeName = null, System.Security.Cryptography.X509Certificates.X509FindType? findBy = null) -> void
 NuGet.Configuration.TrustedSignerItem
-~NuGet.Configuration.TrustedSignerItem.Certificates.get -> System.Collections.Generic.IList<NuGet.Configuration.CertificateItem>
-~NuGet.Configuration.TrustedSignerItem.SetName(string value) -> void
-~NuGet.Configuration.TrustedSignerItem.TrustedSignerItem(string name, System.Collections.Generic.IEnumerable<NuGet.Configuration.CertificateItem> certificates) -> void
+NuGet.Configuration.TrustedSignerItem.Certificates.get -> System.Collections.Generic.IList<NuGet.Configuration.CertificateItem!>!
+NuGet.Configuration.TrustedSignerItem.SetName(string! value) -> void
+NuGet.Configuration.TrustedSignerItem.TrustedSignerItem(string! name, System.Collections.Generic.IEnumerable<NuGet.Configuration.CertificateItem!>! certificates) -> void
 NuGet.Configuration.UnknownItem
-~NuGet.Configuration.UnknownItem.Attributes.get -> System.Collections.Generic.IReadOnlyDictionary<string, string>
-~NuGet.Configuration.UnknownItem.Children.get -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.SettingBase>
-~NuGet.Configuration.UnknownItem.UnknownItem(string name, System.Collections.Generic.IReadOnlyDictionary<string, string> attributes, System.Collections.Generic.IEnumerable<NuGet.Configuration.SettingBase> children) -> void
+NuGet.Configuration.UnknownItem.Children.get -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.SettingBase!>!
+NuGet.Configuration.UnknownItem.UnknownItem(string! name, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? attributes, System.Collections.Generic.IEnumerable<NuGet.Configuration.SettingBase!>? children) -> void
 NuGet.Configuration.VirtualSettingSection
 NuGet.Configuration.WebProxy
-~NuGet.Configuration.WebProxy.BypassList.get -> System.Collections.Generic.IReadOnlyList<string>
-~NuGet.Configuration.WebProxy.BypassList.set -> void
-~NuGet.Configuration.WebProxy.Credentials.get -> System.Net.ICredentials
-~NuGet.Configuration.WebProxy.Credentials.set -> void
-~NuGet.Configuration.WebProxy.GetProxy(System.Uri destination) -> System.Uri
-~NuGet.Configuration.WebProxy.IsBypassed(System.Uri uri) -> bool
-~NuGet.Configuration.WebProxy.ProxyAddress.get -> System.Uri
-~NuGet.Configuration.WebProxy.WebProxy(System.Uri proxyAddress) -> void
-~NuGet.Configuration.WebProxy.WebProxy(string proxyAddress) -> void
+NuGet.Configuration.WebProxy.BypassList.get -> System.Collections.Generic.IReadOnlyList<string!>!
+NuGet.Configuration.WebProxy.BypassList.set -> void
+NuGet.Configuration.WebProxy.Credentials.get -> System.Net.ICredentials?
+NuGet.Configuration.WebProxy.Credentials.set -> void
+NuGet.Configuration.WebProxy.GetProxy(System.Uri! destination) -> System.Uri!
+NuGet.Configuration.WebProxy.IsBypassed(System.Uri! uri) -> bool
+NuGet.Configuration.WebProxy.ProxyAddress.get -> System.Uri!
+NuGet.Configuration.WebProxy.WebProxy(System.Uri! proxyAddress) -> void
+NuGet.Configuration.WebProxy.WebProxy(string! proxyAddress) -> void
 NuGet.Configuration.XPlatMachineWideSetting
-~NuGet.Configuration.XPlatMachineWideSetting.Settings.get -> NuGet.Configuration.ISettings
+NuGet.Configuration.XPlatMachineWideSetting.Settings.get -> NuGet.Configuration.ISettings!
 NuGet.Configuration.XPlatMachineWideSetting.XPlatMachineWideSetting() -> void
-~abstract NuGet.Configuration.ClientCertItem.Search() -> System.Collections.Generic.IEnumerable<System.Security.Cryptography.X509Certificates.X509Certificate>
-~abstract NuGet.Configuration.SettingBase.Clone() -> NuGet.Configuration.SettingBase
+abstract NuGet.Configuration.ClientCertItem.Search() -> System.Collections.Generic.IEnumerable<System.Security.Cryptography.X509Certificates.X509Certificate!>!
+abstract NuGet.Configuration.SettingBase.Clone() -> NuGet.Configuration.SettingBase!
 abstract NuGet.Configuration.SettingBase.IsEmpty() -> bool
-~const NuGet.Configuration.NuGetConstants.V2FeedUrl = "https://www.nuget.org/api/v2/" -> string
-~const NuGet.Configuration.NuGetConstants.V3FeedUrl = "https://api.nuget.org/v3/index.json" -> string
+abstract NuGet.Configuration.SettingElement.ElementName.get -> string!
+const NuGet.Configuration.NuGetConstants.V2FeedUrl = "https://www.nuget.org/api/v2/" -> string!
+const NuGet.Configuration.NuGetConstants.V3FeedUrl = "https://api.nuget.org/v3/index.json" -> string!
 const NuGet.Configuration.PackageSource.DefaultProtocolVersion = 2 -> int
 const NuGet.Configuration.PackageSource.MaxProtocolVersion = 3 -> int
-~override NuGet.Configuration.AddItem.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.AddItem.DisallowedValues.get -> System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IReadOnlyCollection<string>>
-~override NuGet.Configuration.AddItem.ElementName.get -> string
-~override NuGet.Configuration.AddItem.RequiredAttributes.get -> System.Collections.Generic.IReadOnlyCollection<string>
-~override NuGet.Configuration.AuthorItem.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.AuthorItem.ElementName.get -> string
-~override NuGet.Configuration.AuthorItem.Equals(object other) -> bool
+override NuGet.Configuration.AddItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.AddItem.DisallowedValues.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>!
+override NuGet.Configuration.AddItem.ElementName.get -> string!
+override NuGet.Configuration.AddItem.RequiredAttributes.get -> System.Collections.Generic.IReadOnlyCollection<string!>!
+override NuGet.Configuration.AuthorItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.AuthorItem.ElementName.get -> string!
+override NuGet.Configuration.AuthorItem.Equals(object? other) -> bool
 override NuGet.Configuration.AuthorItem.GetHashCode() -> int
-~override NuGet.Configuration.CertificateItem.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.CertificateItem.ElementName.get -> string
-~override NuGet.Configuration.CertificateItem.Equals(object other) -> bool
+override NuGet.Configuration.CertificateItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.CertificateItem.ElementName.get -> string!
+override NuGet.Configuration.CertificateItem.Equals(object? other) -> bool
 override NuGet.Configuration.CertificateItem.GetHashCode() -> int
-~override NuGet.Configuration.ClearItem.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.ClearItem.ElementName.get -> string
-~override NuGet.Configuration.ClearItem.Equals(object other) -> bool
+override NuGet.Configuration.ClearItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.ClearItem.ElementName.get -> string!
+override NuGet.Configuration.ClearItem.Equals(object? other) -> bool
 override NuGet.Configuration.ClearItem.GetHashCode() -> int
 override NuGet.Configuration.ClearItem.IsEmpty() -> bool
 override NuGet.Configuration.ClientCertItem.CanHaveChildren.get -> bool
-~override NuGet.Configuration.ClientCertItem.Equals(object other) -> bool
+override NuGet.Configuration.ClientCertItem.Equals(object? other) -> bool
 override NuGet.Configuration.ClientCertItem.GetHashCode() -> int
-~override NuGet.Configuration.CredentialsItem.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.CredentialsItem.ElementName.get -> string
-~override NuGet.Configuration.CredentialsItem.Equals(object other) -> bool
+override NuGet.Configuration.CredentialsItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.CredentialsItem.ElementName.get -> string!
+override NuGet.Configuration.CredentialsItem.Equals(object? other) -> bool
 override NuGet.Configuration.CredentialsItem.GetHashCode() -> int
 override NuGet.Configuration.CredentialsItem.IsEmpty() -> bool
-~override NuGet.Configuration.FileClientCertItem.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.FileClientCertItem.ElementName.get -> string
-~override NuGet.Configuration.FileClientCertItem.Search() -> System.Collections.Generic.IEnumerable<System.Security.Cryptography.X509Certificates.X509Certificate>
-~override NuGet.Configuration.OwnersItem.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.OwnersItem.ElementName.get -> string
-~override NuGet.Configuration.OwnersItem.Equals(object other) -> bool
+override NuGet.Configuration.FileClientCertItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.FileClientCertItem.ElementName.get -> string!
+override NuGet.Configuration.FileClientCertItem.Search() -> System.Collections.Generic.IEnumerable<System.Security.Cryptography.X509Certificates.X509Certificate!>!
+override NuGet.Configuration.OwnersItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.OwnersItem.ElementName.get -> string!
+override NuGet.Configuration.OwnersItem.Equals(object? other) -> bool
 override NuGet.Configuration.OwnersItem.GetHashCode() -> int
-~override NuGet.Configuration.PackagePatternItem.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.PackagePatternItem.ElementName.get -> string
-~override NuGet.Configuration.PackagePatternItem.Equals(object other) -> bool
+override NuGet.Configuration.PackagePatternItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.PackagePatternItem.ElementName.get -> string!
+override NuGet.Configuration.PackagePatternItem.Equals(object? other) -> bool
 override NuGet.Configuration.PackagePatternItem.GetHashCode() -> int
 override NuGet.Configuration.PackageSource.Equals(object? obj) -> bool
 override NuGet.Configuration.PackageSource.GetHashCode() -> int
 override NuGet.Configuration.PackageSource.ToString() -> string!
-~override NuGet.Configuration.PackageSourceCredential.Equals(object other) -> bool
+override NuGet.Configuration.PackageSourceCredential.Equals(object? other) -> bool
 override NuGet.Configuration.PackageSourceCredential.GetHashCode() -> int
 override NuGet.Configuration.PackageSourceMappingSourceItem.CanHaveChildren.get -> bool
-~override NuGet.Configuration.PackageSourceMappingSourceItem.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.PackageSourceMappingSourceItem.ElementName.get -> string
-~override NuGet.Configuration.PackageSourceMappingSourceItem.Equals(object other) -> bool
+override NuGet.Configuration.PackageSourceMappingSourceItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.PackageSourceMappingSourceItem.ElementName.get -> string!
+override NuGet.Configuration.PackageSourceMappingSourceItem.Equals(object? other) -> bool
 override NuGet.Configuration.PackageSourceMappingSourceItem.GetHashCode() -> int
-~override NuGet.Configuration.PackageSourceMappingSourceItem.RequiredAttributes.get -> System.Collections.Generic.IReadOnlyCollection<string>
-~override NuGet.Configuration.RepositoryItem.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.RepositoryItem.ElementName.get -> string
-~override NuGet.Configuration.RepositoryItem.Equals(object other) -> bool
+override NuGet.Configuration.PackageSourceMappingSourceItem.RequiredAttributes.get -> System.Collections.Generic.IReadOnlyCollection<string!>!
+override NuGet.Configuration.RepositoryItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.RepositoryItem.ElementName.get -> string!
+override NuGet.Configuration.RepositoryItem.Equals(object? other) -> bool
 override NuGet.Configuration.RepositoryItem.GetHashCode() -> int
 override NuGet.Configuration.SettingElement.IsEmpty() -> bool
-~override NuGet.Configuration.SettingSection.ElementName.get -> string
-~override NuGet.Configuration.SettingSection.ElementName.set -> void
-~override NuGet.Configuration.SettingSection.Equals(object other) -> bool
+override NuGet.Configuration.SettingSection.Equals(object? other) -> bool
 override NuGet.Configuration.SettingSection.GetHashCode() -> int
-~override NuGet.Configuration.SettingText.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.SettingText.Equals(object other) -> bool
+override NuGet.Configuration.SettingText.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.SettingText.Equals(object? other) -> bool
 override NuGet.Configuration.SettingText.GetHashCode() -> int
 override NuGet.Configuration.SettingText.IsEmpty() -> bool
 override NuGet.Configuration.SettingsGroup<T>.IsEmpty() -> bool
-~override NuGet.Configuration.SourceItem.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.StoreClientCertItem.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.StoreClientCertItem.ElementName.get -> string
-~override NuGet.Configuration.StoreClientCertItem.Search() -> System.Collections.Generic.IEnumerable<System.Security.Cryptography.X509Certificates.X509Certificate>
+override NuGet.Configuration.SourceItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.StoreClientCertItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.StoreClientCertItem.ElementName.get -> string!
+override NuGet.Configuration.StoreClientCertItem.Search() -> System.Collections.Generic.IEnumerable<System.Security.Cryptography.X509Certificates.X509Certificate!>!
 override NuGet.Configuration.TrustedSignerItem.CanHaveChildren.get -> bool
-~override NuGet.Configuration.UnknownItem.Clone() -> NuGet.Configuration.SettingBase
-~override NuGet.Configuration.UnknownItem.ElementName.get -> string
-~override NuGet.Configuration.UnknownItem.Equals(object other) -> bool
+override NuGet.Configuration.UnknownItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.UnknownItem.ElementName.get -> string!
+override NuGet.Configuration.UnknownItem.Equals(object? other) -> bool
 override NuGet.Configuration.UnknownItem.GetHashCode() -> int
 override NuGet.Configuration.UnknownItem.IsEmpty() -> bool
-~override NuGet.Configuration.VirtualSettingSection.Clone() -> NuGet.Configuration.SettingBase
-~override sealed NuGet.Configuration.AddItem.Equals(object other) -> bool
+override NuGet.Configuration.VirtualSettingSection.Clone() -> NuGet.Configuration.SettingBase!
+override sealed NuGet.Configuration.AddItem.Equals(object? other) -> bool
 override sealed NuGet.Configuration.AddItem.GetHashCode() -> int
 static NuGet.Configuration.ConfigurationDefaults.Instance.get -> NuGet.Configuration.ConfigurationDefaults!
-~static NuGet.Configuration.EncryptionUtility.DecryptString(string encryptedString) -> string
-~static NuGet.Configuration.EncryptionUtility.EncryptString(string value) -> string
-~static NuGet.Configuration.NuGetPathContext.Create(NuGet.Configuration.ISettings settings) -> NuGet.Configuration.NuGetPathContext
-~static NuGet.Configuration.NuGetPathContext.Create(string settingsRoot) -> NuGet.Configuration.NuGetPathContext
-~static NuGet.Configuration.NullSettings.Instance.get -> NuGet.Configuration.NullSettings
-~static NuGet.Configuration.PackageSourceCredential.FromUserInput(string source, string username, string password, bool storePasswordInClearText, string validAuthenticationTypesText) -> NuGet.Configuration.PackageSourceCredential
+static NuGet.Configuration.EncryptionUtility.DecryptString(string! encryptedString) -> string!
+static NuGet.Configuration.EncryptionUtility.EncryptString(string! value) -> string!
+static NuGet.Configuration.NuGetPathContext.Create(NuGet.Configuration.ISettings! settings) -> NuGet.Configuration.NuGetPathContext!
+static NuGet.Configuration.NuGetPathContext.Create(string! settingsRoot) -> NuGet.Configuration.NuGetPathContext!
+static NuGet.Configuration.NullSettings.Instance.get -> NuGet.Configuration.NullSettings!
+static NuGet.Configuration.PackageSourceCredential.FromUserInput(string! source, string! username, string! password, bool storePasswordInClearText, string? validAuthenticationTypesText) -> NuGet.Configuration.PackageSourceCredential!
 static NuGet.Configuration.PackageSourceMapping.GetPackageSourceMapping(NuGet.Configuration.ISettings! settings) -> NuGet.Configuration.PackageSourceMapping!
 static NuGet.Configuration.PackageSourceProvider.LoadPackageSources(NuGet.Configuration.ISettings! settings) -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>!
-~static NuGet.Configuration.ProxyCache.Instance.get -> NuGet.Configuration.ProxyCache
-~static NuGet.Configuration.Settings.ApplyEnvironmentTransform(string value) -> string
-~static NuGet.Configuration.Settings.GetFileNameAndItsRoot(string root, string settingsPath) -> System.Tuple<string, string>
-~static NuGet.Configuration.Settings.LoadDefaultSettings(string root) -> NuGet.Configuration.ISettings
-~static NuGet.Configuration.Settings.LoadDefaultSettings(string root, string configFileName, NuGet.Configuration.IMachineWideSettings machineWideSettings) -> NuGet.Configuration.ISettings
-~static NuGet.Configuration.Settings.LoadDefaultSettings(string root, string configFileName, NuGet.Configuration.IMachineWideSettings machineWideSettings, NuGet.Configuration.SettingsLoadingContext settingsLoadingContext) -> NuGet.Configuration.ISettings
-~static NuGet.Configuration.Settings.LoadImmutableSettingsGivenConfigPaths(System.Collections.Generic.IList<string> configFilePaths, NuGet.Configuration.SettingsLoadingContext settingsLoadingContext) -> NuGet.Configuration.ISettings
-~static NuGet.Configuration.Settings.LoadMachineWideSettings(string root, params string[] paths) -> NuGet.Configuration.ISettings
-~static NuGet.Configuration.Settings.LoadSettingsGivenConfigPaths(System.Collections.Generic.IList<string> configFilePaths) -> NuGet.Configuration.ISettings
-~static NuGet.Configuration.Settings.LoadSpecificSettings(string root, string configFileName) -> NuGet.Configuration.ISettings
-~static NuGet.Configuration.SettingsUtility.DeleteConfigValue(NuGet.Configuration.ISettings settings, string key) -> bool
-~static NuGet.Configuration.SettingsUtility.DeleteValue(NuGet.Configuration.ISettings settings, string section, string attributeKey, string attributeValue) -> bool
-~static NuGet.Configuration.SettingsUtility.GetConfigValue(NuGet.Configuration.ISettings settings, string key, bool decrypt = false, bool isPath = false) -> string
-~static NuGet.Configuration.SettingsUtility.GetDecryptedValueForAddItem(NuGet.Configuration.ISettings settings, string section, string key, bool isPath = false) -> string
-~static NuGet.Configuration.SettingsUtility.GetDefaultPushSource(NuGet.Configuration.ISettings settings) -> string
-~static NuGet.Configuration.SettingsUtility.GetEnabledSources(NuGet.Configuration.ISettings settings) -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource>
-~static NuGet.Configuration.SettingsUtility.GetFallbackPackageFolders(NuGet.Configuration.ISettings settings) -> System.Collections.Generic.IReadOnlyList<string>
-~static NuGet.Configuration.SettingsUtility.GetGlobalPackagesFolder(NuGet.Configuration.ISettings settings) -> string
-~static NuGet.Configuration.SettingsUtility.GetHttpCacheFolder() -> string
-~static NuGet.Configuration.SettingsUtility.GetMaxHttpRequest(NuGet.Configuration.ISettings settings) -> int
-~static NuGet.Configuration.SettingsUtility.GetPluginsCacheFolder() -> string
-~static NuGet.Configuration.SettingsUtility.GetRepositoryPath(NuGet.Configuration.ISettings settings) -> string
-~static NuGet.Configuration.SettingsUtility.GetRevocationMode(NuGet.Common.IEnvironmentVariableReader environmentVariableReader = null) -> NuGet.Common.RevocationMode
-~static NuGet.Configuration.SettingsUtility.GetSignatureValidationMode(NuGet.Configuration.ISettings settings) -> NuGet.Common.SignatureValidationMode
-~static NuGet.Configuration.SettingsUtility.GetUpdatePackageLastAccessTimeEnabledStatus(NuGet.Configuration.ISettings settings) -> bool
-~static NuGet.Configuration.SettingsUtility.GetValueForAddItem(NuGet.Configuration.ISettings settings, string section, string key, bool isPath = false) -> string
-~static NuGet.Configuration.SettingsUtility.SetConfigValue(NuGet.Configuration.ISettings settings, string key, string value, bool encrypt = false) -> void
-~static NuGet.Configuration.SettingsUtility.SetEncryptedValueForAddItem(NuGet.Configuration.ISettings settings, string section, string key, string value) -> void
-~static NuGet.Configuration.StoreClientCertItem.GetString(System.Security.Cryptography.X509Certificates.StoreLocation storeLocation) -> string
-~static NuGet.Configuration.StoreClientCertItem.GetString(System.Security.Cryptography.X509Certificates.StoreName storeName) -> string
-~static NuGet.Configuration.StoreClientCertItem.GetString(System.Security.Cryptography.X509Certificates.X509FindType type) -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.ActivePackageSourceSectionName -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.Add -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.AllowInsecureConnections -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.AllowUntrustedRoot -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.ApiKeys -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.Author -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.BeginIgnoreMarker -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.BindingRedirectsSection -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.Certificate -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.Clear -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.ClearTextPasswordAttribute -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.ClearTextPasswordToken -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.ClientCertificates -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.Config -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.Configuration -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.ConfigurationDefaultsFile -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.CredentialsSectionName -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.DefaultPackageManagementFormatKey -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.DefaultPushSource -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.DependencyVersion -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.DisabledPackageSources -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.DoNotShowPackageManagementSelectionKey -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.Enabled -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.EndIgnoreMarker -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.FailOnBindingRedirects -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.FallbackPackageFolders -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.FileCertificate -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.FindByAttribute -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.FindValueAttribute -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.Fingerprint -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.FingerprintAlgorithm -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.GlobalPackagesFolder -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.HashAlgorithm -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.HostKey -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.KeyAttribute -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.MaxHttpRequestsPerSource -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.NameAttribute -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.NoProxy -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.Owners -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.Package -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.PackageManagementSection -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.PackageRestore -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.PackageSourceAttribute -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.PackageSourceMapping -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.PackageSources -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.PasswordAttribute -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.PasswordKey -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.PasswordToken -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.PathAttribute -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.PatternAttribute -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.ProtocolVersionAttribute -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.Repository -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.RepositoryPath -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.ServiceIndex -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.SignatureValidationMode -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.SkipBindingRedirectsKey -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.StoreCertificate -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.StoreLocationAttribute -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.StoreNameAttribute -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.TrustedSigners -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.UpdatePackageLastAccessTime -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.UserKey -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.UsernameToken -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.ValidAuthenticationTypesToken -> string
-~static readonly NuGet.Configuration.ConfigurationConstants.ValueAttribute -> string
-~static readonly NuGet.Configuration.NuGetConstants.DefaultConfigContent -> string
-~static readonly NuGet.Configuration.NuGetConstants.DefaultGalleryServerUrl -> string
-~static readonly NuGet.Configuration.NuGetConstants.FeedName -> string
-~static readonly NuGet.Configuration.NuGetConstants.ManifestExtension -> string
-~static readonly NuGet.Configuration.NuGetConstants.ManifestSymbolsExtension -> string
-~static readonly NuGet.Configuration.NuGetConstants.NuGetHostName -> string
-~static readonly NuGet.Configuration.NuGetConstants.NuGetSolutionSettingsFolder -> string
-~static readonly NuGet.Configuration.NuGetConstants.NuGetSymbolHostName -> string
-~static readonly NuGet.Configuration.NuGetConstants.PackageExtension -> string
-~static readonly NuGet.Configuration.NuGetConstants.PackageReferenceFile -> string
-~static readonly NuGet.Configuration.NuGetConstants.PackageSpecFileName -> string
-~static readonly NuGet.Configuration.NuGetConstants.ReadmeExtension -> string
-~static readonly NuGet.Configuration.NuGetConstants.ReadmeFileName -> string
-~static readonly NuGet.Configuration.NuGetConstants.SnupkgExtension -> string
-~static readonly NuGet.Configuration.NuGetConstants.SymbolsExtension -> string
-~static readonly NuGet.Configuration.NuGetConstants.V1FeedUrl -> string
-~static readonly NuGet.Configuration.NuGetConstants.V2LegacyFeedUrl -> string
-~static readonly NuGet.Configuration.NuGetConstants.V2LegacyOfficialPackageSourceUrl -> string
+static NuGet.Configuration.ProxyCache.Instance.get -> NuGet.Configuration.ProxyCache!
+static NuGet.Configuration.Settings.ApplyEnvironmentTransform(string! value) -> string!
+static NuGet.Configuration.Settings.GetFileNameAndItsRoot(string! root, string! settingsPath) -> System.Tuple<string!, string!>!
+static NuGet.Configuration.Settings.LoadDefaultSettings(string? root) -> NuGet.Configuration.ISettings!
+static NuGet.Configuration.Settings.LoadDefaultSettings(string? root, string? configFileName, NuGet.Configuration.IMachineWideSettings? machineWideSettings) -> NuGet.Configuration.ISettings!
+static NuGet.Configuration.Settings.LoadDefaultSettings(string? root, string? configFileName, NuGet.Configuration.IMachineWideSettings? machineWideSettings, NuGet.Configuration.SettingsLoadingContext? settingsLoadingContext) -> NuGet.Configuration.ISettings!
+static NuGet.Configuration.Settings.LoadImmutableSettingsGivenConfigPaths(System.Collections.Generic.IList<string!>? configFilePaths, NuGet.Configuration.SettingsLoadingContext! settingsLoadingContext) -> NuGet.Configuration.ISettings!
+static NuGet.Configuration.Settings.LoadMachineWideSettings(string! root, params string![]! paths) -> NuGet.Configuration.ISettings!
+static NuGet.Configuration.Settings.LoadSettingsGivenConfigPaths(System.Collections.Generic.IList<string!>! configFilePaths) -> NuGet.Configuration.ISettings!
+static NuGet.Configuration.Settings.LoadSpecificSettings(string! root, string! configFileName) -> NuGet.Configuration.ISettings!
+static NuGet.Configuration.SettingsUtility.DeleteConfigValue(NuGet.Configuration.ISettings! settings, string! key) -> bool
+static NuGet.Configuration.SettingsUtility.DeleteValue(NuGet.Configuration.ISettings! settings, string! section, string! attributeKey, string! attributeValue) -> bool
+static NuGet.Configuration.SettingsUtility.GetConfigValue(NuGet.Configuration.ISettings! settings, string! key, bool decrypt = false, bool isPath = false) -> string?
+static NuGet.Configuration.SettingsUtility.GetDecryptedValueForAddItem(NuGet.Configuration.ISettings! settings, string! section, string! key, bool isPath = false) -> string?
+static NuGet.Configuration.SettingsUtility.GetDefaultPushSource(NuGet.Configuration.ISettings! settings) -> string?
+static NuGet.Configuration.SettingsUtility.GetEnabledSources(NuGet.Configuration.ISettings! settings) -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>!
+static NuGet.Configuration.SettingsUtility.GetFallbackPackageFolders(NuGet.Configuration.ISettings! settings) -> System.Collections.Generic.IReadOnlyList<string!>!
+static NuGet.Configuration.SettingsUtility.GetGlobalPackagesFolder(NuGet.Configuration.ISettings! settings) -> string!
+static NuGet.Configuration.SettingsUtility.GetHttpCacheFolder() -> string!
+static NuGet.Configuration.SettingsUtility.GetMaxHttpRequest(NuGet.Configuration.ISettings! settings) -> int
+static NuGet.Configuration.SettingsUtility.GetPluginsCacheFolder() -> string!
+static NuGet.Configuration.SettingsUtility.GetRepositoryPath(NuGet.Configuration.ISettings! settings) -> string?
+static NuGet.Configuration.SettingsUtility.GetRevocationMode(NuGet.Common.IEnvironmentVariableReader? environmentVariableReader = null) -> NuGet.Common.RevocationMode
+static NuGet.Configuration.SettingsUtility.GetSignatureValidationMode(NuGet.Configuration.ISettings! settings) -> NuGet.Common.SignatureValidationMode
+static NuGet.Configuration.SettingsUtility.GetUpdatePackageLastAccessTimeEnabledStatus(NuGet.Configuration.ISettings! settings) -> bool
+static NuGet.Configuration.SettingsUtility.GetValueForAddItem(NuGet.Configuration.ISettings! settings, string! section, string! key, bool isPath = false) -> string?
+static NuGet.Configuration.SettingsUtility.SetConfigValue(NuGet.Configuration.ISettings! settings, string! key, string? value, bool encrypt = false) -> void
+static NuGet.Configuration.SettingsUtility.SetEncryptedValueForAddItem(NuGet.Configuration.ISettings! settings, string! section, string! key, string? value) -> void
+static NuGet.Configuration.StoreClientCertItem.GetString(System.Security.Cryptography.X509Certificates.StoreLocation storeLocation) -> string!
+static NuGet.Configuration.StoreClientCertItem.GetString(System.Security.Cryptography.X509Certificates.StoreName storeName) -> string!
+static NuGet.Configuration.StoreClientCertItem.GetString(System.Security.Cryptography.X509Certificates.X509FindType type) -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.ActivePackageSourceSectionName -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.Add -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.AllowInsecureConnections -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.AllowUntrustedRoot -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.ApiKeys -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.Author -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.BeginIgnoreMarker -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.BindingRedirectsSection -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.Certificate -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.Clear -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.ClearTextPasswordAttribute -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.ClearTextPasswordToken -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.ClientCertificates -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.Config -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.Configuration -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.ConfigurationDefaultsFile -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.CredentialsSectionName -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.DefaultPackageManagementFormatKey -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.DefaultPushSource -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.DependencyVersion -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.DisabledPackageSources -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.DoNotShowPackageManagementSelectionKey -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.Enabled -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.EndIgnoreMarker -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.FailOnBindingRedirects -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.FallbackPackageFolders -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.FileCertificate -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.FindByAttribute -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.FindValueAttribute -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.Fingerprint -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.FingerprintAlgorithm -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.GlobalPackagesFolder -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.HashAlgorithm -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.HostKey -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.KeyAttribute -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.MaxHttpRequestsPerSource -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.NameAttribute -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.NoProxy -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.Owners -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.Package -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.PackageManagementSection -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.PackageRestore -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.PackageSourceAttribute -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.PackageSourceMapping -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.PackageSources -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.PasswordAttribute -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.PasswordKey -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.PasswordToken -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.PathAttribute -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.PatternAttribute -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.ProtocolVersionAttribute -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.Repository -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.RepositoryPath -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.ServiceIndex -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.SignatureValidationMode -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.SkipBindingRedirectsKey -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.StoreCertificate -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.StoreLocationAttribute -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.StoreNameAttribute -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.TrustedSigners -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.UpdatePackageLastAccessTime -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.UserKey -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.UsernameToken -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.ValidAuthenticationTypesToken -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.ValueAttribute -> string!
+static readonly NuGet.Configuration.NuGetConstants.DefaultConfigContent -> string!
+static readonly NuGet.Configuration.NuGetConstants.DefaultGalleryServerUrl -> string!
+static readonly NuGet.Configuration.NuGetConstants.FeedName -> string!
+static readonly NuGet.Configuration.NuGetConstants.ManifestExtension -> string!
+static readonly NuGet.Configuration.NuGetConstants.ManifestSymbolsExtension -> string!
+static readonly NuGet.Configuration.NuGetConstants.NuGetHostName -> string!
+static readonly NuGet.Configuration.NuGetConstants.NuGetSolutionSettingsFolder -> string!
+static readonly NuGet.Configuration.NuGetConstants.NuGetSymbolHostName -> string!
+static readonly NuGet.Configuration.NuGetConstants.PackageExtension -> string!
+static readonly NuGet.Configuration.NuGetConstants.PackageReferenceFile -> string!
+static readonly NuGet.Configuration.NuGetConstants.PackageSpecFileName -> string!
+static readonly NuGet.Configuration.NuGetConstants.ReadmeExtension -> string!
+static readonly NuGet.Configuration.NuGetConstants.ReadmeFileName -> string!
+static readonly NuGet.Configuration.NuGetConstants.SnupkgExtension -> string!
+static readonly NuGet.Configuration.NuGetConstants.SymbolsExtension -> string!
+static readonly NuGet.Configuration.NuGetConstants.V1FeedUrl -> string!
+static readonly NuGet.Configuration.NuGetConstants.V2LegacyFeedUrl -> string!
+static readonly NuGet.Configuration.NuGetConstants.V2LegacyOfficialPackageSourceUrl -> string!
 static readonly NuGet.Configuration.OwnersItem.OwnersListSeparator -> char
-~static readonly NuGet.Configuration.Settings.DefaultSettingsFileName -> string
-~static readonly NuGet.Configuration.Settings.OrderedSettingsFileNames -> string[]
-~static readonly NuGet.Configuration.Settings.SupportedMachineWideConfigExtension -> string[]
-~static readonly NuGet.Configuration.SettingsUtility.DefaultGlobalPackagesFolderPath -> string
-~virtual NuGet.Configuration.AddItem.GetValueAsPath() -> string
-~virtual NuGet.Configuration.AddItem.Value.get -> string
-~virtual NuGet.Configuration.AddItem.Value.set -> void
-~virtual NuGet.Configuration.PackageSourceMappingSourceItem.Key.get -> string
-~virtual NuGet.Configuration.SettingElement.AllowedAttributes.get -> System.Collections.Generic.IReadOnlyCollection<string>
-~virtual NuGet.Configuration.SettingElement.AllowedValues.get -> System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IReadOnlyCollection<string>>
-~virtual NuGet.Configuration.SettingElement.DisallowedValues.get -> System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IReadOnlyCollection<string>>
-~virtual NuGet.Configuration.SettingElement.ElementName.get -> string
-~virtual NuGet.Configuration.SettingElement.ElementName.set -> void
-~virtual NuGet.Configuration.SettingElement.RequiredAttributes.get -> System.Collections.Generic.IReadOnlyCollection<string>
+static readonly NuGet.Configuration.Settings.DefaultSettingsFileName -> string!
+static readonly NuGet.Configuration.Settings.OrderedSettingsFileNames -> string![]!
+static readonly NuGet.Configuration.Settings.SupportedMachineWideConfigExtension -> string![]!
+static readonly NuGet.Configuration.SettingsUtility.DefaultGlobalPackagesFolderPath -> string!
+virtual NuGet.Configuration.AddItem.GetValueAsPath() -> string!
+virtual NuGet.Configuration.AddItem.Value.get -> string!
+virtual NuGet.Configuration.AddItem.Value.set -> void
+virtual NuGet.Configuration.PackageSourceMappingSourceItem.Key.get -> string!
+virtual NuGet.Configuration.SettingElement.AllowedAttributes.get -> System.Collections.Generic.IReadOnlyCollection<string!>?
+virtual NuGet.Configuration.SettingElement.AllowedValues.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>?
+virtual NuGet.Configuration.SettingElement.DisallowedValues.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>?
+virtual NuGet.Configuration.SettingElement.RequiredAttributes.get -> System.Collections.Generic.IReadOnlyCollection<string!>?
 virtual NuGet.Configuration.SettingItem.CanHaveChildren.get -> bool
 virtual NuGet.Configuration.SettingsGroup<T>.CanBeCleared.get -> bool
-~virtual NuGet.Configuration.TrustedSignerItem.Name.get -> string
+virtual NuGet.Configuration.TrustedSignerItem.Name.get -> string!

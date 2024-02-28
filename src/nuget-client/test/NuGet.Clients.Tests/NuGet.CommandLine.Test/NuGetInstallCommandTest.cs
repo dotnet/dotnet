@@ -2137,6 +2137,42 @@ namespace NuGet.CommandLine.Test
             result.AllOutput.Should().Contain("You are running the 'install' operation with an 'HTTP' source");
         }
 
+        // https://github.com/NuGet/Home/issues/8594"
+        [SkipMono()]
+        public async Task InstallCommand_WithASourceThatReportsVulnerabilities_RaisesVulnerabilityWarnings()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource, sourceReportsVulnerabilities: true);
+
+            //Replace the default package source of folder to ServiceIndexUri
+            var settings = pathContext.Settings;
+            SimpleTestSettingsContext.RemoveSource(settings.XML, "source");
+            var section = SimpleTestSettingsContext.GetOrAddSection(settings.XML, "packageSources");
+            SimpleTestSettingsContext.AddEntry(section, "source", mockServer.ServiceIndexUri);
+            settings.Save();
+
+            // Arrange
+            var a1 = new SimpleTestPackageContext("a", "1.0.0");
+            var a2 = new SimpleTestPackageContext("a", "2.0.0");
+
+            SimpleTestPackageContext[] packages = [a1, a2];
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packages);
+
+            mockServer.Start();
+            var pathResolver = new PackagePathResolver(pathContext.SolutionRoot);
+
+            // Act
+            var r1 = RunInstall(pathContext, "a", 0, "-Version", "2.0.0", "-OutputDirectory", pathContext.SolutionRoot);
+
+            mockServer.Stop();
+
+            // Assert
+            var a1Nupkg = pathResolver.GetInstalledPackageFilePath(a1.Identity);
+
+            r1.Success.Should().BeTrue();
+            File.Exists(a1Nupkg).Should().BeFalse();
+        }
+
         public static CommandRunnerResult RunInstall(SimpleTestPathContext pathContext, string input, int expectedExitCode = 0, params string[] additionalArgs)
         {
             var nugetexe = Util.GetNuGetExePath();

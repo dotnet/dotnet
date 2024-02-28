@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace NuGet.Configuration
@@ -20,7 +21,7 @@ namespace NuGet.Configuration
         {
         }
 
-        internal VirtualSettingSection(string name, IReadOnlyDictionary<string, string> attributes, IEnumerable<SettingItem> children)
+        internal VirtualSettingSection(string name, IReadOnlyDictionary<string, string>? attributes, IEnumerable<SettingItem>? children)
             : base(name, attributes, children)
         {
         }
@@ -50,7 +51,7 @@ namespace NuGet.Configuration
                 {
                     if (item is UnknownItem unknown)
                     {
-                        unknown.Merge(currentItem as UnknownItem);
+                        unknown.Merge((UnknownItem)currentItem);
                     }
 
                     item.MergedWith = currentItem;
@@ -124,7 +125,7 @@ namespace NuGet.Configuration
             }
         }
 
-        private bool TryRemoveAllMergedWith(SettingItem currentSetting, out SettingItem undeletedItem)
+        private bool TryRemoveAllMergedWith(SettingItem currentSetting, [NotNullWhen(false)] out SettingItem? undeletedItem)
         {
             undeletedItem = null;
             var mergedSettings = new List<SettingItem>();
@@ -139,7 +140,7 @@ namespace NuGet.Configuration
             {
                 try
                 {
-                    elementToDelete.Parent.Remove(elementToDelete);
+                    elementToDelete.Parent!.Remove(elementToDelete);
                 }
                 // This means setting was merged with a machine wide settings.
                 catch
@@ -154,7 +155,7 @@ namespace NuGet.Configuration
 
         public override SettingBase Clone()
         {
-            return new VirtualSettingSection(ElementName, Attributes, Items.Select(s => s.Clone() as SettingItem));
+            return new VirtualSettingSection(ElementName, Attributes, Items.Select(s => (SettingItem)s.Clone()));
         }
     }
 }

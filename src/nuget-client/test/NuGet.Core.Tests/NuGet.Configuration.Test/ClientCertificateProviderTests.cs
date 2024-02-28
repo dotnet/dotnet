@@ -34,8 +34,8 @@ namespace NuGet.Configuration.Test
                 var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var packageSourceList = packageSourceProvider.LoadPackageSources().ToList();
                 Assert.Equal(1, packageSourceList.Count);
-                Assert.Equal(1, packageSourceList[0].ClientCertificates.Count);
-                Assert.Equal(testInfo.Certificate, packageSourceList[0].ClientCertificates[0]);
+                Assert.Equal(1, packageSourceList[0].ClientCertificates!.Count);
+                Assert.Equal(testInfo.Certificate, packageSourceList[0].ClientCertificates![0]);
             }
         }
 
@@ -51,7 +51,7 @@ namespace NuGet.Configuration.Test
                 var settings = testInfo.LoadSettingsFromConfigFile();
                 var clientCertificateProvider = new ClientCertificateProvider(settings);
                 clientCertificateProvider.AddOrUpdate(new StoreClientCertItem(testInfo.PackageSourceName,
-                                                                              testInfo.CertificateFindValue.ToString(),
+                                                                              testInfo.CertificateFindValue.ToString()!,
                                                                               testInfo.CertificateStoreLocation,
                                                                               testInfo.CertificateStoreName,
                                                                               testInfo.CertificateFindBy));
@@ -60,8 +60,8 @@ namespace NuGet.Configuration.Test
                 var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var packageSourceList = packageSourceProvider.LoadPackageSources().ToList();
                 Assert.Equal(1, packageSourceList.Count);
-                Assert.Equal(1, packageSourceList[0].ClientCertificates.Count);
-                Assert.Equal(testInfo.Certificate, packageSourceList[0].ClientCertificates[0]);
+                Assert.Equal(1, packageSourceList[0].ClientCertificates!.Count);
+                Assert.Equal(testInfo.Certificate, packageSourceList[0].ClientCertificates![0]);
             }
         }
 
@@ -115,7 +115,7 @@ namespace NuGet.Configuration.Test
 
             public ISettings LoadSettingsFromConfigFile()
             {
-                var directory = Path.GetDirectoryName(ConfigFile);
+                var directory = Path.GetDirectoryName(ConfigFile)!;
                 var filename = Path.GetFileName(ConfigFile);
                 return Settings.LoadSpecificSettings(directory, filename);
             }

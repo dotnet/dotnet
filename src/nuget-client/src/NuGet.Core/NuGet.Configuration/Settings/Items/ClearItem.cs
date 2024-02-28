@@ -33,7 +33,7 @@ namespace NuGet.Configuration
             return newItem;
         }
 
-        public override bool Equals(object other) => other is ClearItem;
+        public override bool Equals(object? other) => other is ClearItem;
         public override int GetHashCode() => ElementName.GetHashCode();
     }
 }

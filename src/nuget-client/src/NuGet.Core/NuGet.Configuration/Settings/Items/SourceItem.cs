@@ -7,7 +7,7 @@ namespace NuGet.Configuration
 {
     public sealed class SourceItem : AddItem
     {
-        public string ProtocolVersion
+        public string? ProtocolVersion
         {
             get
             {
@@ -21,7 +21,7 @@ namespace NuGet.Configuration
             set => AddOrUpdateAttribute(ConfigurationConstants.ProtocolVersionAttribute, value);
         }
 
-        public string AllowInsecureConnections
+        public string? AllowInsecureConnections
         {
             get
             {
@@ -40,12 +40,12 @@ namespace NuGet.Configuration
         {
         }
 
-        public SourceItem(string key, string value, string protocolVersion)
+        public SourceItem(string key, string value, string? protocolVersion)
             : this(key, value, protocolVersion, allowInsecureConnections: "")
         {
         }
 
-        public SourceItem(string key, string value, string protocolVersion, string allowInsecureConnections)
+        public SourceItem(string key, string value, string? protocolVersion, string? allowInsecureConnections)
             : base(key, value)
         {
             if (!string.IsNullOrEmpty(protocolVersion))

@@ -17,7 +17,7 @@ namespace NuGet.Configuration
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
-        public event EventHandler SettingsChanged
+        public event EventHandler? SettingsChanged
         {
             add
             {
@@ -43,7 +43,7 @@ namespace NuGet.Configuration
             return _settings.GetConfigRoots();
         }
 
-        public SettingSection GetSection(string sectionName)
+        public SettingSection? GetSection(string sectionName)
         {
             return _settings.GetSection(sectionName);
         }

@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
@@ -215,18 +216,37 @@ namespace Test.Utility
             };
         }
 
-        public MockResponse BuildV3IndexResponse(string serverUri)
+        public MockResponse BuildV3IndexResponseWithVulnerabilities(string serverUri)
         {
-            var indexJson = FeedUtilities.CreateIndexJson();
-
-            FeedUtilities.AddFlatContainerResource(indexJson, serverUri);
-            FeedUtilities.AddRegistrationResource(indexJson, serverUri);
+            JObject indexJson = CreateMinimalIndexJson(serverUri);
+            FeedUtilities.AddVulnerabilitiesResource(indexJson, serverUri);
 
             return new MockResponse
             {
                 ContentType = "text/javascript",
                 Content = Encoding.UTF8.GetBytes(indexJson.ToString())
             };
+
+        }
+
+        public MockResponse BuildV3IndexResponse(string serverUri)
+        {
+            JObject indexJson = CreateMinimalIndexJson(serverUri);
+
+            return new MockResponse
+            {
+                ContentType = "text/javascript",
+                Content = Encoding.UTF8.GetBytes(indexJson.ToString())
+            };
+        }
+
+        private static JObject CreateMinimalIndexJson(string serverUri)
+        {
+            var indexJson = FeedUtilities.CreateIndexJson();
+
+            FeedUtilities.AddFlatContainerResource(indexJson, serverUri);
+            FeedUtilities.AddRegistrationResource(indexJson, serverUri);
+            return indexJson;
         }
 
         public MockResponse BuildV2IndexResponse()

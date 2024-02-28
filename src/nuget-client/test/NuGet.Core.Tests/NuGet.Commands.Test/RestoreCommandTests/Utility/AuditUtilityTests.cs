@@ -47,9 +47,12 @@ public class AuditUtilityTests
         // Arrange
         string projectPath = "my.csproj";
         TestLogger logger = new TestLogger();
-
+        RestoreAuditProperties restoreAuditProperties = new()
+        {
+            EnableAudit = input
+        };
         // Act
-        bool actual = AuditUtility.ParseEnableValue(input, projectPath, logger);
+        bool actual = AuditUtility.ParseEnableValue(restoreAuditProperties, projectPath, logger);
 
         // Assert
         actual.Should().Be(expected);
@@ -483,7 +486,14 @@ public class AuditUtilityTests
 
         public async Task<AuditUtility> CheckPackageVulnerabilitiesAsync(CancellationToken cancellationToken)
         {
-            bool enabled = AuditUtility.ParseEnableValue(Enabled, ProjectFullPath, Log);
+            RestoreAuditProperties restoreAuditProperties = new()
+            {
+                EnableAudit = Enabled,
+                AuditLevel = Level,
+                AuditMode = Mode,
+            };
+
+            bool enabled = AuditUtility.ParseEnableValue(restoreAuditProperties, ProjectFullPath, Log);
             if (!enabled)
             {
                 throw new InvalidOperationException($"{nameof(Enabled)} must have a value that does not disable NuGetAudit.");
@@ -494,12 +504,6 @@ public class AuditUtilityTests
                 throw new InvalidOperationException($"{nameof(WithRestoreTarget)} must be called once");
             }
 
-            RestoreAuditProperties restoreAuditProperties = new()
-            {
-                EnableAudit = Enabled,
-                AuditLevel = Level,
-                AuditMode = Mode,
-            };
 
             var graphs = await CreateGraphsAsync();
 

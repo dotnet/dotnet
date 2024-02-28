@@ -246,7 +246,7 @@ namespace NuGet.Configuration.Test
             }
         }
 
-        private static string GetFileName(string path)
+        private static string? GetFileName(string path)
         {
             return path.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
         }

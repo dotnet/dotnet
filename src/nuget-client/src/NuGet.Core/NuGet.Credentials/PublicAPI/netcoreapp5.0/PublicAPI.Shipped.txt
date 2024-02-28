@@ -5,10 +5,10 @@ NuGet.Credentials.CredentialResponse.CredentialResponse(NuGet.Credentials.Creden
 ~NuGet.Credentials.CredentialResponse.Credentials.get -> System.Net.ICredentials
 NuGet.Credentials.CredentialResponse.Status.get -> NuGet.Credentials.CredentialStatus
 NuGet.Credentials.CredentialService
-~NuGet.Credentials.CredentialService.CredentialService(NuGet.Common.AsyncLazy<System.Collections.Generic.IEnumerable<NuGet.Credentials.ICredentialProvider>> providers, bool nonInteractive, bool handlesDefaultCredentials) -> void
-~NuGet.Credentials.CredentialService.GetCredentialsAsync(System.Uri uri, System.Net.IWebProxy proxy, NuGet.Configuration.CredentialRequestType type, string message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.ICredentials>
+NuGet.Credentials.CredentialService.CredentialService(NuGet.Common.AsyncLazy<System.Collections.Generic.IEnumerable<NuGet.Credentials.ICredentialProvider!>!>! providers, bool nonInteractive, bool handlesDefaultCredentials) -> void
+NuGet.Credentials.CredentialService.GetCredentialsAsync(System.Uri! uri, System.Net.IWebProxy? proxy, NuGet.Configuration.CredentialRequestType type, string! message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.ICredentials?>!
 NuGet.Credentials.CredentialService.HandlesDefaultCredentials.get -> bool
-~NuGet.Credentials.CredentialService.TryGetLastKnownGoodCredentialsFromCache(System.Uri uri, bool isProxy, out System.Net.ICredentials credentials) -> bool
+NuGet.Credentials.CredentialService.TryGetLastKnownGoodCredentialsFromCache(System.Uri! uri, bool isProxy, out System.Net.ICredentials? credentials) -> bool
 NuGet.Credentials.CredentialStatus
 NuGet.Credentials.CredentialStatus.ProviderNotApplicable = 1 -> NuGet.Credentials.CredentialStatus
 NuGet.Credentials.CredentialStatus.Success = 0 -> NuGet.Credentials.CredentialStatus

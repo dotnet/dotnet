@@ -721,7 +721,9 @@ namespace NuGet.Configuration
                     .Where(g => g.Count() > 1)
                     .Select(g => g.First())
                     .First();
-                throw new NuGetConfigurationException(string.Format(CultureInfo.CurrentCulture, Resources.ShowError_ConfigDuplicateDisabledSources, duplicatedKey.Key, duplicatedKey.Origin.ConfigFilePath), e);
+                string filePath = duplicatedKey.Origin?.ConfigFilePath ?? Resources.ShowError_UnknownOrigin;
+                string message = string.Format(CultureInfo.CurrentCulture, Resources.ShowError_ConfigDuplicateDisabledSources, duplicatedKey.Key, filePath);
+                throw new NuGetConfigurationException(message, e);
             }
 
             var credentialsSection = Settings.GetSection(ConfigurationConstants.CredentialsSectionName);

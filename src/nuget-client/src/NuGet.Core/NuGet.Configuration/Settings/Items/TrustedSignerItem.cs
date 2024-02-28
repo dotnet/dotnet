@@ -27,8 +27,6 @@ namespace NuGet.Configuration
             UpdateAttribute(ConfigurationConstants.NameAttribute, value);
         }
 
-        internal readonly IEnumerable<SettingBase> _parsedDescendants;
-
         protected TrustedSignerItem(string name, IEnumerable<CertificateItem> certificates)
             : base()
         {
@@ -55,10 +53,10 @@ namespace NuGet.Configuration
         internal TrustedSignerItem(XElement element, SettingsFile origin)
             : base(element, origin)
         {
-            _parsedDescendants = element.Nodes().Where(n => n is XElement || n is XText text && !string.IsNullOrWhiteSpace(text.Value))
+            IEnumerable<SettingBase> parsedDescendants = element.Nodes().Where(n => n is XElement || n is XText text && !string.IsNullOrWhiteSpace(text.Value))
                 .Select(e => SettingFactory.Parse(e, origin));
 
-            var parsedCertificates = _parsedDescendants.OfType<CertificateItem>().ToList();
+            var parsedCertificates = parsedDescendants.OfType<CertificateItem>().ToList();
 
             if (parsedCertificates.Count == 0)
             {
@@ -67,6 +65,26 @@ namespace NuGet.Configuration
             }
 
             Certificates = parsedCertificates;
+        }
+
+        internal TrustedSignerItem(XElement element, SettingsFile origin, IEnumerable<SettingBase> parsedDescendants)
+            : base(element, origin)
+        {
+            var parsedCertificates = parsedDescendants.OfType<CertificateItem>().ToList();
+
+            if (parsedCertificates.Count == 0)
+            {
+                throw new NuGetConfigurationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.UserSettings_UnableToParseConfigFile, Resources.TrustedSignerMustHaveCertificates, origin.ConfigFilePath));
+            }
+
+            Certificates = parsedCertificates;
+        }
+
+        internal static IEnumerable<SettingBase> ParseDescendants(XElement element, SettingsFile origin)
+        {
+            return element.Nodes().Where(n => n is XElement || n is XText text && !string.IsNullOrWhiteSpace(text.Value))
+                .Select(e => SettingFactory.Parse(e, origin));
         }
 
         internal override void SetOrigin(SettingsFile origin)
@@ -91,7 +109,7 @@ namespace NuGet.Configuration
 
         internal override void Update(SettingItem other)
         {
-            var trustedSigner = other as TrustedSignerItem;
+            var trustedSigner = (TrustedSignerItem)other;
 
             if (!trustedSigner.Certificates.Any())
             {

@@ -26,9 +26,9 @@ namespace NuGet.Configuration
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="uri" /> is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        Task<ICredentials> GetCredentialsAsync(
+        Task<ICredentials?> GetCredentialsAsync(
             Uri uri,
-            IWebProxy proxy,
+            IWebProxy? proxy,
             CredentialRequestType type,
             string message,
             CancellationToken cancellationToken);
@@ -49,7 +49,7 @@ namespace NuGet.Configuration
         bool TryGetLastKnownGoodCredentialsFromCache(
             Uri uri,
             bool isProxy,
-            out ICredentials credentials);
+            out ICredentials? credentials);
 
         /// <summary>
         /// Gets a value indicating whether this credential service wants to handle "default credentials" specially,

@@ -22,7 +22,7 @@ namespace NuGet.Configuration
         /// <summary>
         /// Occurs when a file is read.
         /// </summary>
-        internal event EventHandler<string> FileRead;
+        internal event EventHandler<string>? FileRead;
 
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
@@ -70,7 +70,7 @@ namespace NuGet.Configuration
                     var fileInfo = new FileInfo(key);
 
                     // Load the settings file, this will throw an exception if something is wrong with the file
-                    var settingsFile = new SettingsFile(fileInfo.DirectoryName, fileInfo.Name, isMachineWide, isReadOnly);
+                    var settingsFile = new SettingsFile(fileInfo.DirectoryName!, fileInfo.Name, isMachineWide, isReadOnly);
 
                     // Fire the FileRead event so unit tests can detect when a file was actually read versus cached
                     FileRead?.Invoke(this, fileInfo.FullName);

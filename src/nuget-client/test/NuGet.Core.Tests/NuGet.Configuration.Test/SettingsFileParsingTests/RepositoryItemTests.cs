@@ -167,8 +167,8 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as RepositoryItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (RepositoryItem)section.Items.First();
 
                 var expectedItem = new RepositoryItem("repositoryName", "https://api.test/index/",
                     new CertificateItem("abcdefg", Common.HashAlgorithmName.SHA256, allowUntrustedRoot: true));
@@ -199,8 +199,8 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as RepositoryItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (RepositoryItem)section.Items.First();
 
                 var expectedItem = new RepositoryItem("repositoryName", "https://api.test/index/", "test;text",
                     new CertificateItem("abcdefg", Common.HashAlgorithmName.SHA256, allowUntrustedRoot: true));
@@ -230,10 +230,10 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as RepositoryItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (RepositoryItem)section.Items.First();
 
-                var updatedItem = item.Clone() as RepositoryItem;
+                var updatedItem = (RepositoryItem)item.Clone();
                 updatedItem.Certificates.Add(new CertificateItem("xyz", Common.HashAlgorithmName.SHA256));
 
                 item.Update(updatedItem);
@@ -279,11 +279,11 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.Last() as RepositoryItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (RepositoryItem)section.Items.Last();
                 item.Certificates.Count.Should().Be(2);
 
-                var updatedItem = item.Clone() as RepositoryItem;
+                var updatedItem = (RepositoryItem)item.Clone();
                 updatedItem.Certificates.RemoveAt(1);
 
                 item.Update(updatedItem);
@@ -328,11 +328,11 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as RepositoryItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (RepositoryItem)section.Items.First();
                 item.Certificates.Count.Should().Be(1);
 
-                var updatedItem = item.Clone() as RepositoryItem;
+                var updatedItem = (RepositoryItem)item.Clone();
                 updatedItem.Certificates.Clear();
 
                 var ex = Record.Exception(() => item.Update(updatedItem));
@@ -366,10 +366,10 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as RepositoryItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (RepositoryItem)section.Items.First();
 
-                var updatedItem = item.Clone() as RepositoryItem;
+                var updatedItem = (RepositoryItem)item.Clone();
                 var cert = updatedItem.Certificates.First();
                 cert.HashAlgorithm = Common.HashAlgorithmName.SHA384;
 
@@ -414,11 +414,11 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as RepositoryItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (RepositoryItem)section.Items.First();
                 item.Owners.Count.Should().Be(0);
 
-                var updatedItem = item.Clone() as RepositoryItem;
+                var updatedItem = (RepositoryItem)item.Clone();
                 updatedItem.Owners.Add("owner1");
 
                 item.Update(updatedItem);
@@ -464,11 +464,11 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as RepositoryItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (RepositoryItem)section.Items.First();
                 item.Owners.Count.Should().Be(1);
 
-                var updatedItem = item.Clone() as RepositoryItem;
+                var updatedItem = (RepositoryItem)item.Clone();
                 updatedItem.Owners.AddRange(new[] { "owner2", "owner3" });
 
                 item.Update(updatedItem);
@@ -514,11 +514,11 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as RepositoryItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (RepositoryItem)section.Items.First();
                 item.Owners.Count.Should().Be(2);
 
-                var updatedItem = item.Clone() as RepositoryItem;
+                var updatedItem = (RepositoryItem)item.Clone();
                 updatedItem.Owners.RemoveAt(1);
 
                 item.Update(updatedItem);
@@ -565,11 +565,11 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as RepositoryItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (RepositoryItem)section.Items.First();
                 item.Owners.Count.Should().Be(2);
 
-                var updatedItem = item.Clone() as RepositoryItem;
+                var updatedItem = (RepositoryItem)item.Clone();
                 updatedItem.Owners.Clear();
 
                 item.Update(updatedItem);
@@ -614,10 +614,10 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as RepositoryItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (RepositoryItem)section.Items.First();
 
-                var updatedItem = item.Clone() as RepositoryItem;
+                var updatedItem = (RepositoryItem)item.Clone();
                 updatedItem.Name = "newName";
 
                 item.Update(updatedItem);
@@ -697,12 +697,12 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
+                section!.Items.Count.Should().Be(1);
                 var item = section.Items.First();
                 item.IsCopy().Should().BeFalse();
                 item.Origin.Should().NotBeNull();
 
-                var clone = item.Clone() as RepositoryItem;
+                var clone = (RepositoryItem)item.Clone();
                 clone.IsCopy().Should().BeTrue();
                 clone.Origin.Should().NotBeNull();
                 SettingsTestUtils.DeepEquals(clone, item).Should().BeTrue();

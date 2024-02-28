@@ -141,14 +141,14 @@ namespace NuGet.Configuration.Test
             var proxyCache = new ProxyCache(settings, environment.Object);
 
             // Act
-            var proxy = proxyCache.GetUserConfiguredProxy() as WebProxy;
+            var proxy = proxyCache.GetUserConfiguredProxy();
 
             // Assert
             AssertProxy(host, username, password, proxy);
-            Assert.Equal(bypassedAddresses, proxy.BypassList);
+            Assert.Equal(bypassedAddresses, proxy!.BypassList);
         }
 
-        private static void AssertProxy(string proxyAddress, string username, string password, WebProxy actual)
+        private static void AssertProxy(string proxyAddress, string? username, string? password, WebProxy? actual)
         {
             Assert.NotNull(actual);
             Assert.Equal(proxyAddress, actual.ProxyAddress.OriginalString);

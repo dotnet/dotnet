@@ -9,6 +9,6 @@ namespace NuGet.Configuration
     public interface IProxyCache
     {
         void Add(IWebProxy proxy);
-        IWebProxy GetProxy(Uri uri);
+        IWebProxy? GetProxy(Uri uri);
     }
 }

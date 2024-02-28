@@ -101,7 +101,7 @@ namespace NuGet.Configuration.Test
         {
             var settingsLoadingContext = new SettingsLoadingContext();
 
-            Action action = () => settingsLoadingContext.GetOrCreateSettingsFile(filePath: null);
+            Action action = () => settingsLoadingContext.GetOrCreateSettingsFile(filePath: null!);
 
             action.Should()
                 .Throw<ArgumentNullException>()
@@ -121,7 +121,7 @@ namespace NuGet.Configuration.Test
 
             settingsLoadingContext.Dispose();
 
-            Action action = () => settingsLoadingContext.GetOrCreateSettingsFile(filePath: null);
+            Action action = () => settingsLoadingContext.GetOrCreateSettingsFile(filePath: null!);
 
             action.Should()
                 .Throw<ObjectDisposedException>()

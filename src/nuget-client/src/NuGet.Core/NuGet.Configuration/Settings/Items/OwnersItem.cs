@@ -83,7 +83,7 @@ namespace NuGet.Configuration
             return element;
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             if (other is OwnersItem owners)
             {
@@ -102,7 +102,7 @@ namespace NuGet.Configuration
 
         internal override void Update(SettingItem other)
         {
-            var owners = other as OwnersItem;
+            var owners = (OwnersItem)other;
 
             if (!owners.Content.Any())
             {
@@ -125,7 +125,7 @@ namespace NuGet.Configuration
                     if (Node != null)
                     {
                         _content.SetNode(_content.AsXNode());
-                        (Node as XElement).Add(_content.Node);
+                        ((XElement)Node).Add(_content.Node);
                         Origin.IsDirty = true;
                     }
                 }

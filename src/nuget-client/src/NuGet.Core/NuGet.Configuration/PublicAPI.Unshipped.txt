@@ -1,12 +1,18 @@
 #nullable enable
 NuGet.Configuration.ConfigurationDefaults.DefaultAuditSources.get -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource!>!
 NuGet.Configuration.IPackageSourceProvider.LoadAuditSources() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource!>!
+NuGet.Configuration.NuGetPathContext.FallbackPackageFolders.init -> void
+NuGet.Configuration.NuGetPathContext.HttpCacheFolder.init -> void
+NuGet.Configuration.NuGetPathContext.UserPackageFolder.init -> void
 NuGet.Configuration.PackageSourceProvider.LoadAuditSources() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.PackageSource!>!
 NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings! settings, NuGet.Configuration.ConfigurationDefaults! configurationDefaults) -> void
 NuGet.Configuration.PackageSourceProvider.PackageSourceProvider(NuGet.Configuration.ISettings! settings, NuGet.Configuration.ConfigurationDefaults! configurationDefaults, bool enablePackageSourcesChangedEvent) -> void
 NuGet.Configuration.SettingElementType.AuditSources = 20 -> NuGet.Configuration.SettingElementType
-~NuGet.Configuration.SettingElement.ConfigPath.get -> string
-~NuGet.Configuration.SettingItem.GetAttributes() -> System.Collections.Generic.IReadOnlyDictionary<string, string>
-~NuGet.Configuration.Settings.GetAllSettingSections() -> System.Collections.Generic.IEnumerable<string>
-~static NuGet.Configuration.ConfigurationConstants.GetConfigKeys() -> System.Collections.Generic.IReadOnlyList<string>
-~static readonly NuGet.Configuration.ConfigurationConstants.AuditSources -> string
+NuGet.Configuration.SettingElement.ConfigPath.get -> string?
+NuGet.Configuration.SettingItem.GetAttributes() -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+NuGet.Configuration.Settings.GetAllSettingSections() -> System.Collections.Generic.IEnumerable<string!>!
+NuGet.Configuration.SettingsGroup<T>.SettingsGroup(string! name) -> void
+NuGet.Configuration.SettingsGroup<T>.SettingsGroup(string! name, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? attributes, System.Collections.Generic.IEnumerable<T!>? children) -> void
+override NuGet.Configuration.SettingsGroup<T>.ElementName.get -> string!
+static NuGet.Configuration.ConfigurationConstants.GetConfigKeys() -> System.Collections.Generic.IReadOnlyList<string!>!
+static readonly NuGet.Configuration.ConfigurationConstants.AuditSources -> string!

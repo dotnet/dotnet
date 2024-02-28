@@ -8,11 +8,11 @@ namespace NuGet.Configuration
 {
     public abstract class SettingBase
     {
-        internal XNode Node { get; private set; }
+        internal XNode? Node { get; private set; }
 
-        internal ISettingsGroup Parent { get; set; }
+        internal ISettingsGroup? Parent { get; set; }
 
-        internal SettingsFile Origin { get; private set; }
+        internal SettingsFile? Origin { get; private set; }
 
         internal SettingBase(XNode node, SettingsFile origin)
         {
@@ -43,7 +43,7 @@ namespace NuGet.Configuration
         /// <summary>
         /// Gives the representation of this setting as an XNode object
         /// </summary>
-        internal virtual XNode AsXNode() => Node;
+        internal virtual XNode? AsXNode() => Node;
 
         /// <summary>
         /// Creates a shallow copy of the setting.
@@ -84,7 +84,10 @@ namespace NuGet.Configuration
             if (!IsCopy() && !IsAbstract())
             {
                 XElementUtility.RemoveIndented(Node);
-                Origin.IsDirty = true;
+                if (Origin != null)
+                {
+                    Origin.IsDirty = true;
+                }
 
                 Node = null;
             }

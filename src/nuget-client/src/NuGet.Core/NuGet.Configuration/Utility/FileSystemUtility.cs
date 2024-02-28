@@ -30,7 +30,7 @@ namespace NuGet.Configuration
 
         internal static void AddFile(string fullPath, Action<Stream> writeToStream)
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+            Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
             using (Stream outputStream = File.Create(fullPath))
             {
                 writeToStream(outputStream);
@@ -62,7 +62,7 @@ namespace NuGet.Configuration
             return File.Exists(Path.Combine(root, file));
         }
 
-        internal static IEnumerable<string> GetFilesRelativeToRoot(string root, string path = "", string[] filters = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
+        internal static IEnumerable<string> GetFilesRelativeToRoot(string root, string path = "", string[]? filters = null, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             path = EnsureTrailingSlash(Path.Combine(root, path));
             if (filters == null || !filters.Any())

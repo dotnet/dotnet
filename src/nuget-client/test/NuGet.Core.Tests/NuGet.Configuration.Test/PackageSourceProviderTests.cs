@@ -290,7 +290,7 @@ namespace NuGet.Configuration.Test
                 File.WriteAllText(settingsFile.FullName, configContents);
 
                 var settings = Settings.LoadSettings(
-                    settingsFile.Directory,
+                    settingsFile.Directory!,
                     machineWideSettings: null,
                     loadUserWideSettings: false,
                     useTestingGlobalPath: false);
@@ -568,7 +568,7 @@ namespace NuGet.Configuration.Test
                 var disabledPackagesSection = settings.GetSection("disabledPackageSources");
                 disabledPackagesSection.Should().NotBeNull();
 
-                var expectedDisabledSources = disabledPackagesSection?.Items.ToList();
+                var expectedDisabledSources = disabledPackagesSection!.Items.ToList();
 
                 var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
                 var packageSourceList = packageSourceProvider.LoadPackageSources().ToList();
@@ -585,7 +585,7 @@ namespace NuGet.Configuration.Test
                 var actualDisabledSourcesSection = newSettings.GetSection("disabledPackageSources");
                 actualDisabledSourcesSection.Should().NotBeNull();
 
-                var actualDisabledSources = actualDisabledSourcesSection?.Items.ToList();
+                var actualDisabledSources = actualDisabledSourcesSection!.Items.ToList();
 
                 Assert.Equal(expectedDisabledSources.Count, actualDisabledSources.Count);
                 foreach (var item in expectedDisabledSources)
@@ -627,7 +627,7 @@ namespace NuGet.Configuration.Test
                 var disabledPackagesSection = settings.GetSection("disabledPackageSources");
                 disabledPackagesSection.Should().NotBeNull();
 
-                var disabledSources = disabledPackagesSection?.Items.Select(c => c as AddItem).ToList();
+                var disabledSources = disabledPackagesSection!.Items.Select(c => (AddItem)c).ToList();
 
                 // Pre-Assert
                 Assert.Equal(2, disabledSources.Count);
@@ -657,7 +657,7 @@ namespace NuGet.Configuration.Test
                 disabledPackagesSection = newSettings.GetSection("disabledPackageSources");
                 disabledPackagesSection.Should().NotBeNull();
 
-                disabledSources = disabledPackagesSection?.Items.Select(c => c as AddItem).ToList();
+                disabledSources = disabledPackagesSection!.Items.Select(c => (AddItem)c).ToList();
 
                 Assert.Equal(1, disabledSources.Count);
                 Assert.Equal("Microsoft and .NET", disabledSources[0].Key);
@@ -1067,10 +1067,10 @@ namespace NuGet.Configuration.Test
                 // Assert
                 var packageSourcesSection = settings.GetSection("packageSources");
                 packageSourcesSection.Should().NotBeNull();
-                packageSourcesSection.Items.Count.Should().Be(3);
+                packageSourcesSection!.Items.Count.Should().Be(3);
                 packageSourcesSection.Items.Should().AllBeOfType<SourceItem>();
 
-                var children = packageSourcesSection.Items.Select(c => c as SourceItem).ToList();
+                var children = packageSourcesSection.Items.Select(c => (SourceItem)c).ToList();
                 children[0].Key.Should().Be("one");
                 children[0].ProtocolVersion.Should().BeNullOrEmpty();
                 children[1].Key.Should().Be("two");
@@ -1110,10 +1110,10 @@ namespace NuGet.Configuration.Test
                 // Assert
                 var packageSourcesSection = settings.GetSection("packageSources");
                 packageSourcesSection.Should().NotBeNull();
-                packageSourcesSection.Items.Count.Should().Be(2);
+                packageSourcesSection!.Items.Count.Should().Be(2);
                 packageSourcesSection.Items.Should().AllBeOfType<SourceItem>();
 
-                var children = packageSourcesSection.Items.Select(c => c as SourceItem).ToList();
+                var children = packageSourcesSection.Items.Select(c => (SourceItem)c).ToList();
                 children[0].Key.Should().Be("Source2-Name");
                 children[0].ProtocolVersion.Should().BeNullOrEmpty();
                 children[1].Key.Should().Be("Source1-Name");
@@ -1146,10 +1146,10 @@ namespace NuGet.Configuration.Test
                 // Assert
                 var packageSourcesSection = settings.GetSection("packageSources");
                 packageSourcesSection.Should().NotBeNull();
-                packageSourcesSection.Items.Count.Should().Be(3);
+                packageSourcesSection!.Items.Count.Should().Be(3);
                 packageSourcesSection.Items.Should().AllBeOfType<SourceItem>();
 
-                var children = packageSourcesSection.Items.Select(c => c as SourceItem).ToList();
+                var children = packageSourcesSection.Items.Select(c => (SourceItem)c).ToList();
                 children[0].Key.Should().Be("one");
                 children[0].ProtocolVersion.Should().BeNullOrEmpty();
                 children[1].Key.Should().Be("two");
@@ -1159,11 +1159,11 @@ namespace NuGet.Configuration.Test
 
                 var disabledPackageSourcesSection = settings.GetSection("disabledPackageSources");
                 disabledPackageSourcesSection.Should().NotBeNull();
-                disabledPackageSourcesSection.Items.Count.Should().Be(1);
+                disabledPackageSourcesSection!.Items.Count.Should().Be(1);
 
                 var two = disabledPackageSourcesSection.Items.FirstOrDefault() as AddItem;
                 two.Should().NotBeNull();
-                two.Key.Should().Be("two");
+                two!.Key.Should().Be("two");
                 two.Value.Should().Be("true");
             }
         }
@@ -1197,10 +1197,10 @@ namespace NuGet.Configuration.Test
                 // Assert
                 var packageSourcesSection = settings.GetSection("packageSources");
                 packageSourcesSection.Should().NotBeNull();
-                packageSourcesSection.Items.Count.Should().Be(3);
+                packageSourcesSection!.Items.Count.Should().Be(3);
                 packageSourcesSection.Items.Should().AllBeOfType<SourceItem>();
 
-                var children = packageSourcesSection.Items.Select(c => c as SourceItem).ToList();
+                var children = packageSourcesSection.Items.Select(c => (SourceItem)c).ToList();
                 children[0].Key.Should().Be("one");
                 children[0].ProtocolVersion.Should().BeNullOrEmpty();
                 children[1].Key.Should().Be("twoname");
@@ -1214,10 +1214,10 @@ namespace NuGet.Configuration.Test
 
                 var sourcesCredentialsSection = settings.GetSection("packageSourceCredentials");
                 sourcesCredentialsSection.Should().NotBeNull();
-                sourcesCredentialsSection.Items.Count.Should().Be(1);
+                sourcesCredentialsSection!.Items.Count.Should().Be(1);
                 var two = sourcesCredentialsSection.Items.FirstOrDefault() as CredentialsItem;
                 two.Should().NotBeNull();
-                two.ElementName.Should().Be("twoname");
+                two!.ElementName.Should().Be("twoname");
                 two.Username.Should().Be("User");
                 two.IsPasswordClearText.Should().BeFalse();
                 two.Password.Should().Be(encryptedPassword);
@@ -1252,10 +1252,10 @@ namespace NuGet.Configuration.Test
                 // Assert
                 var packageSourcesSection = settings.GetSection("packageSources");
                 packageSourcesSection.Should().NotBeNull();
-                packageSourcesSection.Items.Count.Should().Be(3);
+                packageSourcesSection!.Items.Count.Should().Be(3);
                 packageSourcesSection.Items.Should().AllBeOfType<SourceItem>();
 
-                var children = packageSourcesSection.Items.Select(c => c as SourceItem).ToList();
+                var children = packageSourcesSection.Items.Select(c => (SourceItem)c).ToList();
                 children[0].Key.Should().Be("one");
                 children[0].ProtocolVersion.Should().BeNullOrEmpty();
                 children[1].Key.Should().Be("twoname");
@@ -1269,10 +1269,10 @@ namespace NuGet.Configuration.Test
 
                 var sourcesCredentialsSection = settings.GetSection("packageSourceCredentials");
                 sourcesCredentialsSection.Should().NotBeNull();
-                sourcesCredentialsSection.Items.Count.Should().Be(1);
+                sourcesCredentialsSection!.Items.Count.Should().Be(1);
                 var two = sourcesCredentialsSection.Items.FirstOrDefault() as CredentialsItem;
                 two.Should().NotBeNull();
-                two.ElementName.Should().Be("twoname");
+                two!.ElementName.Should().Be("twoname");
                 two.Username.Should().Be("User");
                 two.IsPasswordClearText.Should().BeTrue();
                 two.Password.Should().Be("password");
@@ -1810,7 +1810,7 @@ namespace NuGet.Configuration.Test
 
                 File.WriteAllText(Path.Combine(directory.Path, "machinewide.config"), machineWideContents);
                 var additionalConfigPath = Path.Combine(directory.Path, "TestingGlobalPath", "config", "contoso.nuget.config");
-                Directory.CreateDirectory(Path.GetDirectoryName(additionalConfigPath));
+                Directory.CreateDirectory(Path.GetDirectoryName(additionalConfigPath)!);
                 File.WriteAllText(additionalConfigPath, additionalConfigContents);
 
                 var machineWideSetting = new Settings(directory.Path, "machinewide.config", isMachineWide: true);
@@ -2227,7 +2227,7 @@ namespace NuGet.Configuration.Test
             target.PackageSourcesChanged += (s, e) => { eventRun = true; };
 
             // Act
-            setting.Raise(s => s.SettingsChanged += null, (EventArgs)null);
+            setting.Raise(s => s.SettingsChanged += null, (EventArgs?)null);
 
             // Assert
             Assert.Equal(subscribeToEvent, eventRun);
@@ -2254,10 +2254,10 @@ namespace NuGet.Configuration.Test
 
             // Act
             PackageSourceProvider psp = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
-            PackageSource source = psp.GetPackageSourceBySource(sourceUrl);
+            PackageSource? source = psp.GetPackageSourceBySource(sourceUrl);
 
             // Assert
-            source.Name.Should().Be("s1");
+            source!.Name.Should().Be("s1");
         }
 
         [Fact]
@@ -2447,7 +2447,7 @@ namespace NuGet.Configuration.Test
             Assert.True(ps.IsOfficial == isOfficial);
         }
 
-        private void AssertCredentials(PackageSourceCredential actual, string source, string userName, string passwordText, bool isPasswordClearText = true)
+        private void AssertCredentials(PackageSourceCredential? actual, string source, string userName, string passwordText, bool isPasswordClearText = true)
         {
             Assert.NotNull(actual);
             Assert.Equal(source, actual.Source);
@@ -2460,7 +2460,7 @@ namespace NuGet.Configuration.Test
         {
             var settingsFile = new FileInfo(Path.Combine(directory.Path, "TestingGlobalPath", "NuGet.Config"));
 
-            settingsFile.Directory.Create();
+            settingsFile.Directory!.Create();
 
             File.WriteAllText(settingsFile.FullName, @"<?xml version=""1.0"" encoding=""utf-8""?><configuration />");
         }

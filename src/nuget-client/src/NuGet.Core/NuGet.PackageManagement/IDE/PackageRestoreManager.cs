@@ -17,7 +17,9 @@ using NuGet.Packaging.PackageExtraction;
 using NuGet.Packaging.Signing;
 using NuGet.ProjectManagement;
 using NuGet.ProjectManagement.Projects;
+using NuGet.ProjectModel;
 using NuGet.Protocol.Core.Types;
+using NuGet.Shared;
 
 namespace NuGet.PackageManagement
 {
@@ -180,6 +182,7 @@ namespace NuGet.PackageManagement
         /// Restores missing packages for the entire solution
         /// </summary>
         /// <returns></returns>
+        [Obsolete("This method is deprecated to reduce complexity, please use one of the other RestoreMissingPackagesAsync methods.")]
         public virtual async Task<PackageRestoreResult> RestoreMissingPackagesInSolutionAsync(
             string solutionDirectory,
             INuGetProjectContext nuGetProjectContext,
@@ -224,6 +227,8 @@ namespace NuGet.PackageManagement
             ILogger logger,
             CancellationToken token)
         {
+            if (nuGetProjectContext == null) throw new ArgumentNullException(nameof(nuGetProjectContext));
+
             var packageReferencesDictionary = await GetPackagesReferencesDictionaryAsync(token);
 
             // When this method is called, the step to compute if a package is missing is implicit. Assume it is true
@@ -253,16 +258,15 @@ namespace NuGet.PackageManagement
             }
         }
 
+        [Obsolete("This method is deprecated to reduce complexity, please use one of the other RestoreMissingPackagesAsync methods.")]
         public virtual Task<PackageRestoreResult> RestoreMissingPackagesAsync(string solutionDirectory,
             IEnumerable<PackageRestoreData> packages,
             INuGetProjectContext nuGetProjectContext,
             PackageDownloadContext downloadContext,
             CancellationToken token)
         {
-            if (packages == null)
-            {
-                throw new ArgumentNullException(nameof(packages));
-            }
+            if (packages == null) throw new ArgumentNullException(nameof(packages));
+            if (nuGetProjectContext == null) throw new ArgumentNullException(nameof(nuGetProjectContext));
 
             var nuGetPackageManager = GetNuGetPackageManager(solutionDirectory);
 
@@ -274,6 +278,8 @@ namespace NuGet.PackageManagement
                 PackageRestoreFailedEvent,
                 sourceRepositories: SourceRepositoryProvider.GetRepositories(),
                 maxNumberOfParallelTasks: PackageManagementConstants.DefaultMaxDegreeOfParallelism,
+                enableNuGetAudit: true,
+                restoreAuditProperties: new Dictionary<string, RestoreAuditProperties>(),
                 logger: NullLogger.Instance);
 
             if (nuGetProjectContext.PackageExtractionContext == null)
@@ -361,9 +367,12 @@ namespace NuGet.PackageManagement
 
             ActivityCorrelationId.StartNew();
 
+            List<SourceRepository> sourceRepositories = packageRestoreContext.SourceRepositories.AsList();
+
             var missingPackages = packageRestoreContext.Packages.Where(p => p.IsMissing).ToList();
             if (!missingPackages.Any())
             {
+                await RunNuGetAudit(packageRestoreContext, sourceRepositories);
                 return new PackageRestoreResult(true, Enumerable.Empty<PackageIdentity>());
             }
 
@@ -376,7 +385,7 @@ namespace NuGet.PackageManagement
 
             packageRestoreContext.Token.ThrowIfCancellationRequested();
 
-            foreach (SourceRepository enabledSource in packageRestoreContext.SourceRepositories)
+            foreach (SourceRepository enabledSource in sourceRepositories)
             {
                 PackageSource source = enabledSource.PackageSource;
                 if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
@@ -398,9 +407,24 @@ namespace NuGet.PackageManagement
                 packageRestoreContext,
                 nuGetProjectContext);
 
+            await RunNuGetAudit(packageRestoreContext, sourceRepositories);
+
             return new PackageRestoreResult(
                 attemptedPackages.All(p => p.Restored),
                 attemptedPackages.Select(p => p.Package.PackageIdentity).ToList());
+        }
+
+        private static async Task RunNuGetAudit(PackageRestoreContext packageRestoreContext, List<SourceRepository> sourceRepositories)
+        {
+            if (packageRestoreContext.EnableNuGetAudit)
+            {
+                using SourceCacheContext sourceCacheContext = new();
+                var auditUtility = new AuditChecker(
+                    sourceRepositories,
+                    sourceCacheContext,
+                    packageRestoreContext.Logger);
+                await auditUtility.CheckPackageVulnerabilitiesAsync(packageRestoreContext.Packages, packageRestoreContext.RestoreAuditProperties, packageRestoreContext.Token);
+            }
         }
 
         /// <summary>

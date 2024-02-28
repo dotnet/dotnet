@@ -35,7 +35,7 @@ namespace NuGet.Configuration.Test
                 var settingsFile = new SettingsFile(mockBaseDirectory);
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
-                var items = section.Items.ToList();
+                var items = section!.Items.ToList();
 
                 items.Count.Should().Be(1);
 
@@ -86,7 +86,7 @@ namespace NuGet.Configuration.Test
                 var settingsFile = new SettingsFile(mockBaseDirectory);
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
-                var items = section.Items.ToList();
+                var items = section!.Items.ToList();
 
                 items.Count.Should().Be(3);
 
@@ -125,7 +125,7 @@ namespace NuGet.Configuration.Test
                 var settingsFile = new SettingsFile(mockBaseDirectory);
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
-                var items = section.Items.ToList();
+                var items = section!.Items.ToList();
 
                 items.Count.Should().Be(3);
 
@@ -177,7 +177,7 @@ namespace NuGet.Configuration.Test
                 var settingsFile = new SettingsFile(mockBaseDirectory);
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
-                var items = section.Items.ToList();
+                var items = section!.Items.ToList();
 
                 items.Count.Should().Be(3);
 

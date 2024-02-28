@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
@@ -113,11 +114,15 @@ namespace NuGet.Configuration
 
             try
             {
-                XDocument config = null;
-                ExecuteSynchronized(() =>
+                XDocument config = ExecuteSynchronized(() =>
                 {
-                    config = FileSystemUtility.GetOrCreateDocument(CreateDefaultConfig(), ConfigFilePath);
+                    return FileSystemUtility.GetOrCreateDocument(CreateDefaultConfig(), ConfigFilePath);
                 });
+
+                if (config.Root is null)
+                {
+                    throw new InvalidOperationException("The root element of the configuration file is null.");
+                }
 
                 _xDocument = config;
 
@@ -134,7 +139,7 @@ namespace NuGet.Configuration
         /// </summary>
         /// <param name="sectionName">name to match sections</param>
         /// <returns>null if no section with the given name was found</returns>
-        public SettingSection GetSection(string sectionName)
+        public SettingSection? GetSection(string sectionName)
         {
             return _rootElement.GetSection(sectionName);
         }
@@ -169,9 +174,10 @@ namespace NuGet.Configuration
         {
             if (IsDirty)
             {
-                ExecuteSynchronized(() =>
+                _ = ExecuteSynchronized(() =>
                 {
                     FileSystemUtility.AddFile(ConfigFilePath, _xDocument.Save);
+                    return 0;
                 });
 
                 IsDirty = false;
@@ -185,7 +191,7 @@ namespace NuGet.Configuration
         /// It should be used only when intended. For most purposes you should be able to use
         /// GetSection(...) instead.
         /// </remarks>
-        internal bool TryGetSection(string sectionName, out SettingSection section)
+        internal bool TryGetSection(string sectionName, [NotNullWhen(true)] out SettingSection? section)
         {
             return _rootElement.Sections.TryGetValue(sectionName, out section);
         }
@@ -201,13 +207,14 @@ namespace NuGet.Configuration
             return new XDocument(configurationElement.AsXNode());
         }
 
-        private void ExecuteSynchronized(Action ioOperation)
+        private T ExecuteSynchronized<T>(Func<T> ioOperation)
         {
+            T? result = default;
             ConcurrencyUtilities.ExecuteWithFileLocked(filePath: ConfigFilePath, action: () =>
             {
                 try
                 {
-                    ioOperation();
+                    result = ioOperation();
                 }
                 catch (InvalidOperationException e)
                 {
@@ -233,6 +240,10 @@ namespace NuGet.Configuration
                         string.Format(CultureInfo.CurrentCulture, Resources.Unknown_Config_Exception, ConfigFilePath, e.Message), e);
                 }
             });
+#pragma warning disable CS8603 // Possible null reference return.
+            // Code isn't designed to work will nullable checks enabled.
+            return result;
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         private static class TraceEvents

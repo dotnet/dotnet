@@ -17,7 +17,7 @@ namespace NuGet.Configuration
     {
         private IReadOnlyList<string> _bypassList = Array.Empty<string>();
 
-        private Regex[] _regExBypassList; // can be null
+        private Regex[]? _regExBypassList;
 
         public WebProxy(string proxyAddress)
         {
@@ -27,6 +27,7 @@ namespace NuGet.Configuration
             }
 
             ProxyAddress = CreateProxyUri(proxyAddress);
+            BypassList = Array.Empty<string>();
         }
 
         public WebProxy(Uri proxyAddress)
@@ -37,11 +38,12 @@ namespace NuGet.Configuration
             }
 
             ProxyAddress = proxyAddress;
+            BypassList = Array.Empty<string>();
         }
 
         public Uri ProxyAddress { get; private set; }
 
-        public ICredentials Credentials { get; set; }
+        public ICredentials? Credentials { get; set; }
 
         public IReadOnlyList<string> BypassList
         {
@@ -92,11 +94,6 @@ namespace NuGet.Configuration
 
         private static Uri CreateProxyUri(string address)
         {
-            if (address == null)
-            {
-                return null;
-            }
-
             if (address.IndexOf("://", StringComparison.Ordinal) == -1)
             {
                 address = "http://" + address;

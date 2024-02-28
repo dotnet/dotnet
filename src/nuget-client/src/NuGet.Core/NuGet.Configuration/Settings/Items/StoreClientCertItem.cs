@@ -78,7 +78,7 @@ namespace NuGet.Configuration
                 storeLocation = DefaultStoreLocation.ToString();
             }
 
-            AddAttribute(ConfigurationConstants.StoreLocationAttribute, storeLocation);
+            AddAttribute(ConfigurationConstants.StoreLocationAttribute, storeLocation!);
 
             var storeName = element.Attribute(XName.Get(ConfigurationConstants.StoreNameAttribute))?.Value;
             if (string.IsNullOrWhiteSpace(storeName))
@@ -86,7 +86,7 @@ namespace NuGet.Configuration
                 storeName = DefaultStoreName.ToString();
             }
 
-            AddAttribute(ConfigurationConstants.StoreNameAttribute, storeName);
+            AddAttribute(ConfigurationConstants.StoreNameAttribute, storeName!);
 
             var findBy = element.Attribute(XName.Get(ConfigurationConstants.FindByAttribute))?.Value;
             if (string.IsNullOrWhiteSpace(findBy))
@@ -94,7 +94,7 @@ namespace NuGet.Configuration
                 findBy = GetString(DefaultFindBy);
             }
 
-            AddAttribute(ConfigurationConstants.FindByAttribute, findBy);
+            AddAttribute(ConfigurationConstants.FindByAttribute, findBy!);
 
             var findValue = element.Attribute(XName.Get(ConfigurationConstants.FindValueAttribute))?.Value;
             if (string.IsNullOrWhiteSpace(findValue))
@@ -102,7 +102,7 @@ namespace NuGet.Configuration
                 throw new ArgumentException(Resources.Argument_Cannot_Be_Null_Or_Empty);
             }
 
-            AddAttribute(ConfigurationConstants.FindValueAttribute, findValue);
+            AddAttribute(ConfigurationConstants.FindValueAttribute, findValue!);
         }
 
         public override string ElementName => ConfigurationConstants.StoreCertificate;
@@ -260,7 +260,7 @@ namespace NuGet.Configuration
             }
         }
 
-        public void Update(string findValue,
+        public void Update(string? findValue,
                            StoreLocation? storeLocation = null,
                            StoreName? storeName = null,
                            X509FindType? findBy = null)

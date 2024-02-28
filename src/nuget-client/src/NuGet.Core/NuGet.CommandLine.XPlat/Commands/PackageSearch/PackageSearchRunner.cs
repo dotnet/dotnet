@@ -33,12 +33,14 @@ namespace NuGet.CommandLine.XPlat
 
             if (packageSearchArgs.Format == PackageSearchFormat.Json)
             {
-                packageSearchResultRenderer = new PackageSearchResultJsonRenderer(packageSearchArgs.Logger, packageSearchArgs.Verbosity);
+                packageSearchResultRenderer = new PackageSearchResultJsonRenderer(packageSearchArgs.Logger, packageSearchArgs.Verbosity, packageSearchArgs.ExactMatch);
             }
             else
             {
                 packageSearchResultRenderer = new PackageSearchResultTableRenderer(packageSearchArgs.SearchTerm, packageSearchArgs.Logger, packageSearchArgs.Verbosity, packageSearchArgs.ExactMatch);
             }
+
+            packageSearchResultRenderer.Start();
 
             try
             {
@@ -46,8 +48,7 @@ namespace NuGet.CommandLine.XPlat
             }
             catch (ArgumentException ex)
             {
-                packageSearchResultRenderer.Start();
-                packageSearchResultRenderer.RenderProblem(new PackageSearchProblem(PackageSearchProblemType.Error, ex.Message));
+                packageSearchResultRenderer.Add(new PackageSearchProblem(PackageSearchProblemType.Error, ex.Message));
                 packageSearchResultRenderer.Finish();
 
                 return 1;
@@ -57,8 +58,7 @@ namespace NuGet.CommandLine.XPlat
 
             if (listEndpoints == null || listEndpoints.Count == 0)
             {
-                packageSearchResultRenderer.Start();
-                packageSearchResultRenderer.RenderProblem(new PackageSearchProblem(PackageSearchProblemType.Error, Strings.Error_NoSource));
+                packageSearchResultRenderer.Add(new PackageSearchProblem(PackageSearchProblemType.Error, Strings.Error_NoSource));
                 packageSearchResultRenderer.Finish();
 
                 return 1;
@@ -77,7 +77,6 @@ namespace NuGet.CommandLine.XPlat
                 searchRequests.Add(searchTask, packageSource);
             }
 
-            packageSearchResultRenderer.Start();
 
             while (searchRequests.Count > 0)
             {

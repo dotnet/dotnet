@@ -112,8 +112,8 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as OwnersItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (OwnersItem)section.Items.First();
 
                 var expectedItem = new OwnersItem("test;text;owner");
                 SettingsTestUtils.DeepEquals(item, expectedItem).Should().BeTrue();
@@ -140,10 +140,10 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as OwnersItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (OwnersItem)section.Items.First();
 
-                var updatedItem = item.Clone() as OwnersItem;
+                var updatedItem = (OwnersItem)item.Clone();
                 updatedItem.Content.Clear();
                 updatedItem.Content.Add("abc");
 
@@ -184,10 +184,10 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as OwnersItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (OwnersItem)section.Items.First();
 
-                var updatedItem = item.Clone() as OwnersItem;
+                var updatedItem = (OwnersItem)item.Clone();
                 updatedItem.Content.Clear();
 
                 var ex = Record.Exception(() => item.Update(updatedItem));
@@ -252,7 +252,7 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
+                section!.Items.Count.Should().Be(1);
                 var item = section.Items.First();
                 item.IsCopy().Should().BeFalse();
                 item.Origin.Should().NotBeNull();
