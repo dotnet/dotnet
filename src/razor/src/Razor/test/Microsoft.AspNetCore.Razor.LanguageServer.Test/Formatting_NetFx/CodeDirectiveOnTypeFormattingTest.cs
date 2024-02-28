@@ -13,6 +13,59 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 public class CodeDirectiveOnTypeFormattingTest(ITestOutputHelper testOutput) : FormattingTestBase(testOutput)
 {
     [Fact]
+    public async Task FormatsIfStatementInComponent()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+                    @using Microsoft.AspNetCore.Components.Forms
+
+                    @if (true)
+                    {
+                        <InputSelect TValue="string" DisplayName="asdf">
+                            <option>asdf</option>
+                        </InputSelect>
+                    }$$
+                    """,
+            expected: """
+                    @using Microsoft.AspNetCore.Components.Forms
+                    
+                    @if (true)
+                    {
+                        <InputSelect TValue="string" DisplayName="asdf">
+                            <option>asdf</option>
+                        </InputSelect>
+                    }
+                    """,
+            triggerCharacter: '}');
+    }
+
+    [Fact]
+    public async Task FormatsIfStatementInComponent2()
+    {
+        await RunOnTypeFormattingTestAsync(
+            input: """
+                    @using Microsoft.AspNetCore.Components.Forms
+
+                    @if (true)
+                    {<InputSelect TValue="string" DisplayName="asdf">
+                            <option>asdf</option>
+                        </InputSelect>
+                    }$$
+                    """,
+            expected: """
+                    @using Microsoft.AspNetCore.Components.Forms
+                    
+                    @if (true)
+                    {
+                        <InputSelect TValue="string" DisplayName="asdf">
+                            <option>asdf</option>
+                        </InputSelect>
+                    }
+                    """,
+            triggerCharacter: '}');
+    }
+
+    [Fact]
     public async Task CloseCurly_Class_SingleLineAsync()
     {
         await RunOnTypeFormattingTestAsync(

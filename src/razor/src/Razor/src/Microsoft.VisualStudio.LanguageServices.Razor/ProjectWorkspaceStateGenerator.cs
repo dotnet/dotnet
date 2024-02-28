@@ -169,6 +169,9 @@ internal sealed class ProjectWorkspaceStateGenerator(
                     var tagHelpers = await _tagHelperResolver.GetTagHelpersAsync(workspaceProject, projectSnapshot, cancellationToken).ConfigureAwait(false);
                     watch.Stop();
 
+                    // don't report success if the work was cancelled
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     _telemetryReporter.ReportEvent("taghelperresolve/end", Severity.Normal,
                         new Property("id", telemetryId),
                         new Property("ellapsedms", watch.ElapsedMilliseconds),

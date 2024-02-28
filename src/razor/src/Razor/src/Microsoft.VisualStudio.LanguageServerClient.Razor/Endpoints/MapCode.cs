@@ -30,20 +30,24 @@ internal partial class RazorCustomMessageTarget
         {
             TextDocument = request.Identifier.TextDocumentIdentifier.WithUri(delegationDetails.Value.ProjectedUri),
             Contents = request.Contents,
-            FocusLocations = request.FocusLocations
+            FocusLocations = request.FocusLocations,
         };
 
         var mapCodeParams = new VSInternalMapCodeParams()
         {
-            Mappings = [mappings]
+            Mappings = [mappings],
+            MapCodeCorrelationId = request.MapCodeCorrelationId,
         };
 
         var textBuffer = delegationDetails.Value.TextBuffer;
+        var lspMethodName = VSInternalMethods.WorkspaceMapCodeName;
+        var languageServerName = delegationDetails.Value.LanguageServerName;
+        using var _ = _telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, request.MapCodeCorrelationId);
 
         var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalMapCodeParams, WorkspaceEdit?>(
             textBuffer,
-            VSInternalMethods.WorkspaceMapCodeName,
-            delegationDetails.Value.LanguageServerName,
+            lspMethodName,
+            languageServerName,
             SupportsMapCode,
             mapCodeParams,
             cancellationToken).ConfigureAwait(false);

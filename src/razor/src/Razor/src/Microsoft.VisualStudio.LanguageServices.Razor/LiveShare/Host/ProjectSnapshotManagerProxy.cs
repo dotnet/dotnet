@@ -141,8 +141,6 @@ internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, IColl
 
     private void OnChanged(ProjectChangeEventProxyArgs args)
     {
-        _dispatcher.AssertDispatcherThread();
-
         if (_disposed)
         {
             return;
