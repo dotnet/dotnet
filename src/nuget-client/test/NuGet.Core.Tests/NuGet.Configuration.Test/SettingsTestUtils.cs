@@ -82,19 +82,19 @@ namespace NuGet.Configuration.Test
         {
             if (setting1 is SettingSection)
             {
-                return Section_DeepEquals(setting1 as SettingSection, setting2 as SettingSection);
+                return Section_DeepEquals((SettingSection)setting1, (SettingSection)setting2);
             }
             else if (setting1 is AddItem)
             {
-                return AddItem_DeepEquals(setting1 as AddItem, setting2 as AddItem);
+                return AddItem_DeepEquals((AddItem)setting1, (AddItem)setting2);
             }
             else if (setting1 is CredentialsItem)
             {
-                return CredentialsItem_DeepEquals(setting1 as CredentialsItem, setting2 as CredentialsItem);
+                return CredentialsItem_DeepEquals((CredentialsItem)setting1, (CredentialsItem)setting2);
             }
             else if (setting1 is UnknownItem)
             {
-                return UnkownItem_DeepEquals(setting1 as UnknownItem, setting2 as UnknownItem);
+                return UnkownItem_DeepEquals((UnknownItem)setting1, (UnknownItem)setting2);
             }
             else if (setting1 is ClearItem clear1)
             {
@@ -106,35 +106,35 @@ namespace NuGet.Configuration.Test
             }
             else if (setting1 is RepositoryItem)
             {
-                return RepositoryItem_DeepEquals(setting1 as RepositoryItem, setting2 as RepositoryItem);
+                return RepositoryItem_DeepEquals((RepositoryItem)setting1, (RepositoryItem)setting2);
             }
             else if (setting1 is AuthorItem)
             {
-                return AuthorItem_DeepEquals(setting1 as AuthorItem, setting2 as AuthorItem);
+                return AuthorItem_DeepEquals((AuthorItem)setting1, (AuthorItem)setting2);
             }
             else if (setting1 is OwnersItem)
             {
-                return OwnersItem_DeepEquals(setting1 as OwnersItem, setting2 as OwnersItem);
+                return OwnersItem_DeepEquals((OwnersItem)setting1, (OwnersItem)setting2);
             }
             else if (setting1 is CertificateItem)
             {
-                return CertificateItem_DeepEquals(setting1 as CertificateItem, setting2 as CertificateItem);
+                return CertificateItem_DeepEquals((CertificateItem)setting1, (CertificateItem)setting2);
             }
             else if (setting1 is StoreClientCertItem)
             {
-                return StoreClientCertItem_DeepEquals(setting1 as StoreClientCertItem, setting2 as StoreClientCertItem);
+                return StoreClientCertItem_DeepEquals((StoreClientCertItem)setting1, (StoreClientCertItem)setting2);
             }
             else if (setting1 is FileClientCertItem)
             {
-                return FileClientCertItem_DeepEquals(setting1 as FileClientCertItem, setting2 as FileClientCertItem);
+                return FileClientCertItem_DeepEquals((FileClientCertItem)setting1, (FileClientCertItem)setting2);
             }
             else if (setting1 is PackagePatternItem)
             {
-                return PackagePatternItem_DeepEquals(setting1 as PackagePatternItem, setting2 as PackagePatternItem);
+                return PackagePatternItem_DeepEquals((PackagePatternItem)setting1, (PackagePatternItem)setting2);
             }
             else if (setting2 is PackageSourceMappingSourceItem)
             {
-                return PackageSourceMappingSourceItem_Equals(setting1 as PackageSourceMappingSourceItem, setting2 as PackageSourceMappingSourceItem);
+                return PackageSourceMappingSourceItem_Equals((PackageSourceMappingSourceItem)setting1, (PackageSourceMappingSourceItem)setting2);
             }
 
             return false;

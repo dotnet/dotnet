@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <!-- Since we're including these DLLs in the package, we mark them as private assets so they're not also dependencies -->
-    <ProjectReference Include="..\..\..\Compiler\Microsoft.CodeAnalysis.Razor\src\Microsoft.CodeAnalysis.Razor.Compiler.CSharp.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\..\..\Compiler\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj" PrivateAssets="all"/>
     <ProjectReference Include="..\Microsoft.AspNetCore.Razor.ProjectEngineHost\Microsoft.AspNetCore.Razor.ProjectEngineHost.csproj" PrivateAssets="all" />
   </ItemGroup>
 
@@ -27,13 +27,9 @@
     in the compiler packages, but will be unable to find packages with the same version.
 
     This means we end up with the package for this project including the following additional DLLs:
-      * Microsoft.CodeAnalysis.Razor.Compiler.Mvc.dll
-      * Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version1_X.dll
-      * Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version2_X.dll
-      * Microsoft.CodeAnalysis.Razor.Compiler.Language.dll
+      * Microsoft.CodeAnalysis.Razor.Compiler.dll
       * Microsoft.AspNetCore.Razor.ProjectEngineHost.dll
       * Microsoft.AspNetCore.Razor.Utilities.Shared.dll
-      * Microsoft.CodeAnalysis.Razor.Compiler.CSharp.dll
 
     (and Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace.dll obviously)
   -->

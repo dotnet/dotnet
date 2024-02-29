@@ -457,6 +457,15 @@ namespace NuGet.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File location not known.
+        /// </summary>
+        internal static string ShowError_UnknownOrigin {
+            get {
+                return ResourceManager.GetString("ShowError_UnknownOrigin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Text elements should not be empty..
         /// </summary>
         internal static string TextShouldNotBeEmpty {

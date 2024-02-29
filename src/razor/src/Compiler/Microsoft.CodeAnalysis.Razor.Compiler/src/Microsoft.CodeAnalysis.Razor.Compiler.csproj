@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Razor is a markup syntax for adding server-side logic to web pages. This package contains the Razor compiler.</Description>
+    <TargetFrameworks>$(DefaultNetCoreTargetFramework);netstandard2.0</TargetFrameworks>
+    <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <!--
+      RS2008: Enable analyzer release tracking
+      RS1036: Specify analyzer banned API enforcement setting
+    -->
+    <NoWarn>$(NoWarn);RS2008;RS1036</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(SharedSourceRoot)\Microsoft.AspNetCore.Razor.Utilities.Shared\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="CSharp\*.resx" Namespace="Microsoft.CodeAnalysis.Razor" />
+    <EmbeddedResource Update="Language\*.resx" Namespace="Microsoft.AspNetCore.Razor.Language" />
+    <EmbeddedResource Update="Mvc\*.resx" Namespace="Microsoft.AspNetCore.Mvc.Razor.Extensions" />
+    <EmbeddedResource Update="Mvc.Version1_X\*.resx" Namespace="Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X" />
+    <EmbeddedResource Update="Mvc.Version2_X\*.resx" Namespace="Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X" />
+    <EmbeddedResource Update="SourceGenerators\Diagnostics\*.resx" Namespace="Microsoft.NET.Sdk.Razor.SourceGenerators.Diagnostics" />
+  </ItemGroup>
+
+</Project>

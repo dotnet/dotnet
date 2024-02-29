@@ -98,8 +98,6 @@ public abstract partial class ToolingTestBase : IAsyncLifetime
 
         // Give this thread a name, so it's easier to find in the VS Threads window.
         Thread.CurrentThread.Name ??= "Main Thread";
-
-        ThrowingTraceListener.AddToListeners();
     }
 
     Task IAsyncLifetime.InitializeAsync() => InitializeAsync();

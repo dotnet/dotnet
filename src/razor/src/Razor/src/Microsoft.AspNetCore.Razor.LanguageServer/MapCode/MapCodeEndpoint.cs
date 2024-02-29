@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.MapCode.Mappers;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
 using Microsoft.CodeAnalysis.Text;
@@ -37,11 +38,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
 internal sealed class MapCodeEndpoint(
     IRazorDocumentMappingService documentMappingService,
     IDocumentContextFactory documentContextFactory,
-    IClientConnection clientConnection) : IRazorDocumentlessRequestHandler<VSInternalMapCodeParams, WorkspaceEdit?>, ICapabilitiesProvider
+    IClientConnection clientConnection,
+    ITelemetryReporter telemetryReporter) : IRazorDocumentlessRequestHandler<VSInternalMapCodeParams, WorkspaceEdit?>, ICapabilitiesProvider
 {
     private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
     private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
     private readonly IClientConnection _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
+    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter ?? throw new ArgumentNullException(nameof(telemetryReporter));
 
     public bool MutatesSolutionState => false;
 
@@ -51,22 +54,30 @@ internal sealed class MapCodeEndpoint(
     }
 
     public async Task<WorkspaceEdit?> HandleRequestAsync(
-        VSInternalMapCodeParams request,
+        VSInternalMapCodeParams mapperParams,
         RazorRequestContext context,
         CancellationToken cancellationToken)
     {
         // TO-DO: Apply updates to the workspace before doing mapping. This is currently
         // unimplemented by the client, so we won't bother doing anything for now until
         // we determine what kinds of updates the client will actually send us.
-        Debug.Assert(request.Updates is null);
+        Debug.Assert(mapperParams.Updates is null);
 
-        if (request.Updates is not null)
+        if (mapperParams.Updates is not null)
         {
             return null;
         }
 
+        var mapCodeCorrelationId = mapperParams.MapCodeCorrelationId ?? Guid.NewGuid();
+        using var ts = _telemetryReporter.TrackLspRequest(VSInternalMethods.WorkspaceMapCodeName, LanguageServerConstants.RazorLanguageServerName, mapCodeCorrelationId);
+
+        return await HandleMappingsAsync(mapperParams.Mappings, mapCodeCorrelationId, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<WorkspaceEdit?> HandleMappingsAsync(VSInternalMapCodeMapping[] mappings, Guid mapCodeCorrelationId, CancellationToken cancellationToken)
+    { 
         using var _ = ArrayBuilderPool<TextDocumentEdit>.GetPooledObject(out var changes);
-        foreach (var mapping in request.Mappings)
+        foreach (var mapping in mappings)
         {
             if (mapping.TextDocument is null || mapping.FocusLocations is null)
             {
@@ -97,7 +108,7 @@ internal sealed class MapCodeEndpoint(
                 var codeToMap = await newSnapshot.GetGeneratedOutputAsync().ConfigureAwait(false);
 
                 var mappingSuccess = await TryMapCodeAsync(
-                    codeToMap, mapping.FocusLocations, changes, documentContext, cancellationToken).ConfigureAwait(false);
+                    codeToMap, mapping.FocusLocations, changes, mapCodeCorrelationId, documentContext, cancellationToken).ConfigureAwait(false);
 
                 // Mapping failed. Let the client's built-in fallback mapper handle mapping.
                 if (!mappingSuccess)
@@ -119,6 +130,7 @@ internal sealed class MapCodeEndpoint(
         RazorCodeDocument codeToMap,
         Location[][] locations,
         ImmutableArray<TextDocumentEdit>.Builder changes,
+        Guid mapCodeCorrelationId,
         VersionedDocumentContext documentContext,
         CancellationToken cancellationToken)
     {
@@ -135,7 +147,7 @@ internal sealed class MapCodeEndpoint(
         }
 
         var mappingSuccess = await TryMapCodeAsync(
-            locations, nodesToMap, changes, documentContext, cancellationToken).ConfigureAwait(false);
+            locations, nodesToMap, mapCodeCorrelationId, changes, documentContext, cancellationToken).ConfigureAwait(false);
         if (!mappingSuccess)
         {
             return false;
@@ -148,6 +160,7 @@ internal sealed class MapCodeEndpoint(
     private async Task<bool> TryMapCodeAsync(
         Location[][] focusLocations,
         List<SyntaxNode> nodesToMap,
+        Guid mapCodeCorrelationId,
         ImmutableArray<TextDocumentEdit>.Builder changes,
         VersionedDocumentContext documentContext,
         CancellationToken cancellationToken)
@@ -189,7 +202,12 @@ internal sealed class MapCodeEndpoint(
                         }
 
                         var csharpMappingSuccessful = await TrySendCSharpDelegatedMappingRequestAsync(
-                            documentContext.Identifier, csharpBody, csharpFocusLocations, changes, cancellationToken).ConfigureAwait(false);
+                            documentContext.Identifier,
+                            csharpBody,
+                            csharpFocusLocations,
+                            mapCodeCorrelationId,
+                            changes,
+                            cancellationToken).ConfigureAwait(false);
 
                         // If C# delegation fails, we'll default to the client's fallback mapper.
                         if (!csharpMappingSuccessful)
@@ -287,12 +305,14 @@ internal sealed class MapCodeEndpoint(
         TextDocumentIdentifierAndVersion textDocumentIdentifier,
         SyntaxNode nodeToMap,
         Location[][] focusLocations,
+        Guid mapCodeCorrelationId,
         ImmutableArray<TextDocumentEdit>.Builder changes,
         CancellationToken cancellationToken)
     {
         var delegatedRequest = new DelegatedMapCodeParams(
             textDocumentIdentifier,
             RazorLanguageKind.CSharp,
+            mapCodeCorrelationId,
             [nodeToMap.ToFullString()],
             FocusLocations: focusLocations);
 

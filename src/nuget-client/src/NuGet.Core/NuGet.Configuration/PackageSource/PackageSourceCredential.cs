@@ -44,7 +44,7 @@ namespace NuGet.Configuration
         /// Comma-delimited list of authentication types the credential is valid for as stored in the config file.
         /// If null or empty, all authentication types are valid. Example: 'basic,negotiate'
         /// </summary>
-        public string ValidAuthenticationTypesText { get; }
+        public string? ValidAuthenticationTypesText { get; }
 
         /// <summary>
         /// Retrieves password in clear text. Decrypts on-demand.
@@ -67,7 +67,7 @@ namespace NuGet.Configuration
                 }
                 else
                 {
-                    return PasswordText;
+                    return PasswordText!;
                 }
             }
         }
@@ -94,7 +94,7 @@ namespace NuGet.Configuration
         /// Comma-delimited list of authentication types the credential is valid for as stored in the config file.
         /// If null or empty, all authentication types are valid. Example: 'basic,negotiate'
         /// </param>
-        public PackageSourceCredential(string source, string username, string passwordText, bool isPasswordClearText, string validAuthenticationTypesText)
+        public PackageSourceCredential(string source, string username, string passwordText, bool isPasswordClearText, string? validAuthenticationTypesText)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Username = username ?? throw new ArgumentNullException(nameof(username));
@@ -134,7 +134,7 @@ namespace NuGet.Configuration
             string username,
             string password,
             bool storePasswordInClearText,
-            string validAuthenticationTypesText)
+            string? validAuthenticationTypesText)
         {
             if (source == null)
             {
@@ -194,11 +194,11 @@ namespace NuGet.Configuration
         /// <returns>
         /// Enumeration of valid authentication types. If empty, all authentication types are valid.
         /// </returns>
-        private static IEnumerable<string> ParseAuthTypeFilterString(string str)
+        private static IEnumerable<string> ParseAuthTypeFilterString(string? str)
         {
             return string.IsNullOrWhiteSpace(str)
                 ? Enumerable.Empty<string>()
-                : str.Split(',').Select(x => x.Trim()).Where(x => x != string.Empty);
+                : str!.Split(',').Select(x => x.Trim()).Where(x => x != string.Empty);
         }
 
 
@@ -207,7 +207,7 @@ namespace NuGet.Configuration
             return new CredentialsItem(Source, Username, PasswordText, IsPasswordClearText, ValidAuthenticationTypesText);
         }
 
-        public bool Equals(PackageSourceCredential other)
+        public bool Equals(PackageSourceCredential? other)
         {
             if (other == null)
             {
@@ -225,7 +225,7 @@ namespace NuGet.Configuration
                 IsPasswordClearText == other.IsPasswordClearText;
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             return Equals(other as PackageSourceCredential);
         }

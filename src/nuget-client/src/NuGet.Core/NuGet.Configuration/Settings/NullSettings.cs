@@ -10,11 +10,11 @@ namespace NuGet.Configuration
 {
     public class NullSettings : ISettings
     {
-        public event EventHandler SettingsChanged = delegate { };
+        public event EventHandler? SettingsChanged = delegate { };
 
         public static NullSettings Instance { get; } = new NullSettings();
 
-        public SettingSection GetSection(string sectionName) => null;
+        public SettingSection? GetSection(string sectionName) => null;
 
         public void AddOrUpdate(string sectionName, SettingItem item) => throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resources.InvalidNullSettingsOperation, nameof(AddOrUpdate)));
 

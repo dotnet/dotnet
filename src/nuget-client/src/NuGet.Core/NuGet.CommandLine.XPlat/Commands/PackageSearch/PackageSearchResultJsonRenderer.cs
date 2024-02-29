@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
 
@@ -13,7 +14,7 @@ namespace NuGet.CommandLine.XPlat
         private ILoggerWithColor _logger;
         private PackageSearchVerbosity _verbosity;
         private bool _exactMatch;
-        private PackageSearchMainOutput _packageSearchMainOutput;
+        private SearchMainOutput _packageSearchMainOutput;
 
         public PackageSearchResultJsonRenderer(ILoggerWithColor loggerWithColor, PackageSearchVerbosity verbosity, bool exactMatch)
         {
@@ -21,6 +22,7 @@ namespace NuGet.CommandLine.XPlat
             _verbosity = verbosity;
             _exactMatch = exactMatch;
         }
+
         public void Add(PackageSource source, IEnumerable<IPackageSearchMetadata> completedSearch)
         {
             PackageSearchResult packageSearchResult = new PackageSearchResult(source.Name);
@@ -47,20 +49,21 @@ namespace NuGet.CommandLine.XPlat
             var options = new JsonSerializerOptions
             {
                 WriteIndented = true,
-                Converters = { new SearchResultPackagesConverter(_verbosity, _exactMatch) }
+                Converters = { new SearchResultPackagesConverter(_verbosity, _exactMatch) },
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
             var json = JsonSerializer.Serialize(_packageSearchMainOutput, options);
             _logger.LogMinimal(json);
         }
 
-        public void RenderProblem(PackageSearchProblem packageSearchProblem)
+        public void Add(PackageSearchProblem packageSearchProblem)
         {
             _packageSearchMainOutput.Problems.Add(packageSearchProblem);
         }
 
         public void Start()
         {
-            _packageSearchMainOutput = new PackageSearchMainOutput();
+            _packageSearchMainOutput = new SearchMainOutput();
         }
     }
 }

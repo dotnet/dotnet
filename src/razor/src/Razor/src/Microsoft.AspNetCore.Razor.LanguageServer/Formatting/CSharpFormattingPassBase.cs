@@ -554,6 +554,7 @@ internal abstract class CSharpFormattingPassBase : FormattingPassBase
             // Open brace is a child of the C# code block that is the directive itself
             if (owner is RazorMetaCodeSyntax &&
                 owner.Parent is CSharpCodeBlockSyntax codeBlock &&
+                codeBlock.Children.Count > 3 &&
                 owner == codeBlock.Children[3] &&
                 // CSharpCodeBlock -> RazorDirectiveBody -> RazorDirective
                 codeBlock.Parent?.Parent is RazorDirectiveSyntax directive2 &&
