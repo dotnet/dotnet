@@ -32,10 +32,10 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Projects
             var projectAdapter = new Mock<IVsProjectAdapter>();
             projectAdapter.SetupGet(a => a.VsHierarchy)
                 .Returns(hierarchy.Object);
-            projectAdapter.Setup(a => a.IsCapabilityMatchAsync(NuGet.VisualStudio.IDE.ProjectCapabilities.Cps))
-                .Returns(Task.FromResult(true));
-            projectAdapter.Setup(a => a.IsCapabilityMatchAsync(NuGet.VisualStudio.IDE.ProjectCapabilities.PackageReferences))
-                .Returns(Task.FromResult(false));
+            projectAdapter.Setup(a => a.IsCapabilityMatch(NuGet.VisualStudio.IDE.ProjectCapabilities.Cps))
+                .Returns(true);
+            projectAdapter.Setup(a => a.IsCapabilityMatch(NuGet.VisualStudio.IDE.ProjectCapabilities.PackageReferences))
+                .Returns(false);
 
             var nugetProjectContext = new Mock<INuGetProjectContext>();
 
@@ -54,8 +54,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Projects
 
             // Assert
             Assert.Null(actual);
-            projectAdapter.Verify(a => a.IsCapabilityMatchAsync(NuGet.VisualStudio.IDE.ProjectCapabilities.Cps), Times.Once);
-            projectAdapter.Verify(a => a.IsCapabilityMatchAsync(NuGet.VisualStudio.IDE.ProjectCapabilities.PackageReferences), Times.Once);
+            projectAdapter.Verify(a => a.IsCapabilityMatch(NuGet.VisualStudio.IDE.ProjectCapabilities.Cps), Times.Once);
+            projectAdapter.Verify(a => a.IsCapabilityMatch(NuGet.VisualStudio.IDE.ProjectCapabilities.PackageReferences), Times.Once);
         }
     }
 }
