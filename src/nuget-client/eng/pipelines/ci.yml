@@ -71,9 +71,21 @@ parameters:
   type: boolean
   default: true
 
-extends:
-  template: templates/pipeline.yml
+resources:
+  pipelines:
+  - pipeline: DartLab
+    source: DartLab
+    branch: main
+  repositories:
+  - repository: DartLabTemplates
+    type: git
+    name: DartLab.Templates
+    ref: refs/heads/main
+
+stages:
+- template: templates/pipeline.yml
   parameters:
+    isOfficialBuild: false
     ApexAgentCleanup: ${{parameters.ApexAgentCleanup}}
     DartLabEnvironment: ${{parameters.DartLabEnvironment}}
     E2EPart1AgentCleanup: ${{parameters.E2EPart1AgentCleanup}}
