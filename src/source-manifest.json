@@ -13,10 +13,10 @@
       "commitSha": "1dd4b3265f01a50b20522fd3d7f3cd315db5be6b"
     },
     {
-      "packageVersion": "9.0.0-preview.3.24126.9",
+      "packageVersion": "9.0.0-preview.3.24128.1",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "6a8083a9c4a6f28c21c8564e08d56bbe48e6b16b"
+      "commitSha": "099bc84939fec64e803ec173dac6aa8ceb46a8cc"
     },
     {
       "packageVersion": "0.11.4-alpha.24120.1",
@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "40a35d1365617e2d2ac0b1f94ae1fcc325312b6c"
+      "commitSha": "fa0ea056f271cd914708dac3d5854020220769f9"
     },
     {
       "packageVersion": "17.10.0-preview-24127-03",
@@ -79,10 +79,10 @@
       "commitSha": "6009531090c927a8e61da9a0f97bdd5eb6f01a47"
     },
     {
-      "packageVersion": "7.0.0-preview.24127.7",
+      "packageVersion": "7.0.0-preview.24128.3",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "59180c27a58b4f95da28041373ddabdc6894814f"
+      "commitSha": "dd6010b970ff5da905f74f28808024de93269648"
     },
     {
       "packageVersion": "4.10.0-3.24127.10",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-preview.3.24128.18",
+      "packageVersion": "9.0.100-preview.3.24128.26",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "3786af275c8169a6a1c3214acf94971ed17188c1"
+      "commitSha": "d6313b61b9559a2f7196ee29339a50046a5f43a4"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24127.2",
@@ -175,10 +175,10 @@
       "commitSha": "a070c5f4d82e5232937595e2b6db9a9ba2d90a05"
     },
     {
-      "packageVersion": "9.0.0-preview.24119.2",
+      "packageVersion": "9.0.0-preview.24126.1",
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
-      "commitSha": "3ae12c7ded587740bb113b453b5a738c5017681d"
+      "commitSha": "9f7ab07fc4914f76048d54d79afaee3bf89d7ede"
     },
     {
       "packageVersion": "1.0.0-beta.23475.1",
