@@ -65,6 +65,9 @@ must be applied via [patches](patches). See [below](#patches) for more info on p
 1. Validate the version of the NuGet packages and binaries produced by the build. See the contents of
 `./artifacts/packages/<build_configuration>/NonShipping/Microsoft.SourceBuild.Intermediate.source-build-externals.x.y.z-dev.nupkg`
 
+1. After the PR is merged to update a component, coordination is often needed in the darc dependency flows. The source-build-external update
+may need to flow in at the same time as the cooresponding changes in product repos which take a dependency on the new component version.
+
 ## Patches
 
 When creating/updating patches, it is desirable to backport the changes whenever feasible as this reduces
