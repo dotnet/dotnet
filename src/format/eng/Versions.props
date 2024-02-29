@@ -19,8 +19,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- command-line-api -->
-    <SystemCommandLineVersion>2.0.0-beta4.24123.1</SystemCommandLineVersion>
-    <SystemCommandLineRenderingVersion>0.4.0-alpha.24123.1</SystemCommandLineRenderingVersion>
+    <SystemCommandLineVersion>2.0.0-beta4.24126.1</SystemCommandLineVersion>
+    <SystemCommandLineRenderingVersion>0.4.0-alpha.24126.1</SystemCommandLineRenderingVersion>
     <!-- corefx -->
     <MicrosoftVisualBasicVersion>10.3.0</MicrosoftVisualBasicVersion>
     <!-- msbuild -->
@@ -30,7 +30,7 @@
     <!-- In order tests against the same version of NuGet as the SDK. We have to set this to match. -->
     <NuGetVersion>6.9.0-preview.1.54</NuGetVersion>
     <!-- roslyn -->
-    <MicrosoftCodeAnalysisVersion>4.10.0-2.24122.4</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisVersion>4.10.0-2.24127.1</MicrosoftCodeAnalysisVersion>
     <!-- roslyn-sdk -->
     <MicrosoftCodeAnalysisAnalyzerTestingVersion>1.1.2-beta1.22216.1</MicrosoftCodeAnalysisAnalyzerTestingVersion>
     <!-- runtime -->

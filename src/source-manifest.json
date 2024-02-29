@@ -49,10 +49,10 @@
       "commitSha": "0f3e462442af5fe65271e3185d5b645ad40a6041"
     },
     {
-      "packageVersion": "9.0.512705",
+      "packageVersion": "9.0.512801",
       "path": "format",
       "remoteUri": "https://github.com/dotnet/format",
-      "commitSha": "236ba60f6cf92de9f4d48d5bec2b4e80c3e441e7"
+      "commitSha": "de0824fccb49f4c23a9a55c6d35b1f1fb23bcfa5"
     },
     {
       "packageVersion": "8.0.300-beta.24127.3",
@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "83bf55b04751babb518a435bcb82dfc38dc429c7"
+      "commitSha": "40a35d1365617e2d2ac0b1f94ae1fcc325312b6c"
     },
     {
       "packageVersion": "17.10.0-preview-24127-03",
@@ -73,10 +73,10 @@
       "commitSha": "6f44380e4fdea6ddf5c11f48efeb25c2bf181e62"
     },
     {
-      "packageVersion": "6.10.0-preview.2.49",
+      "packageVersion": "6.10.0-preview.2.52",
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "5ecd0be8cb73db807189427eb8e0f7bfd334c1e0"
+      "commitSha": "6009531090c927a8e61da9a0f97bdd5eb6f01a47"
     },
     {
       "packageVersion": "7.0.0-preview.24127.7",
@@ -109,16 +109,16 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-preview.3.24128.10",
+      "packageVersion": "9.0.100-preview.3.24128.18",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "57f2e94b72a334b998377a69e4503194dfbdbe56"
+      "commitSha": "3786af275c8169a6a1c3214acf94971ed17188c1"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24112.1",
+      "packageVersion": "9.0.0-alpha.1.24127.2",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "ddfb60463c966af55fd0e222c2266170e83d1324"
+      "commitSha": "88f13afba58a6c455039d71bbdd2cff3d847b236"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24127.3",
@@ -151,10 +151,10 @@
       "commitSha": "1591b24326caa98288e04e18e5c1b75c36c917c1"
     },
     {
-      "packageVersion": "17.10.0-preview-24123-01",
+      "packageVersion": "17.10.0-preview-24126-02",
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "f2323247155845f00166ebeca5cffdebff410b49"
+      "commitSha": "39c7dd12c7ec24d0552513e84d95476f2077ca33"
     },
     {
       "packageVersion": "9.0.0-preview.3.24127.1",

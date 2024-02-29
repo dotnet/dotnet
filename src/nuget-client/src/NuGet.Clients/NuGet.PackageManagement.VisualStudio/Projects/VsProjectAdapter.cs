@@ -265,10 +265,9 @@ namespace NuGet.PackageManagement.VisualStudio
             return frameworkStrings.FirstOrDefault();
         }
 
-        public async Task<bool> IsCapabilityMatchAsync(string capabilityExpression)
+        public bool IsCapabilityMatch(string capabilityExpression)
         {
-            await _threadingService.JoinableTaskFactory.SwitchToMainThreadAsync();
-
+            ThreadHelper.ThrowIfNotOnUIThread();
             return VsHierarchy.IsCapabilityMatch(capabilityExpression);
         }
 

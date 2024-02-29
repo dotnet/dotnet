@@ -64,8 +64,19 @@ parameters:
   type: boolean
   default: true
 
-extends:
-  template: templates/pipeline.yml
+resources:
+  pipelines:
+  - pipeline: DartLab
+    source: DartLab
+    branch: main
+  repositories:
+  - repository: DartLabTemplates
+    type: git
+    name: DartLab.Templates
+    ref: refs/heads/main
+
+stages:
+- template: templates/pipeline.yml
   parameters:
     isOfficialBuild: true
     DartLabEnvironment: ${{parameters.DartLabEnvironment}}

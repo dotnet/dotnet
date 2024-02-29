@@ -1,4 +1,3 @@
-
 parameters:
 - name: isOfficialBuild
   type: boolean
@@ -74,33 +73,6 @@ parameters:
   displayName: Run Mono tests on Mac
   type: boolean
   default: false
-
-resources:
-  pipelines:
-  - pipeline: DartLab
-    source: DartLab
-    branch: main
-  repositories:
-  - repository: DartLabTemplates
-    type: git
-    name: DartLab.Templates
-    ref: refs/heads/main
-
-variables:
-  BINLOG_DIRECTORY: $(Build.StagingDirectory)/binlog
-  DOTNET_NOLOGO: 1
-  NUGET_EXPERIMENTAL_CHAIN_BUILD_RETRY_POLICY: 3,1000
-  Codeql.Enabled: ${{ parameters.isOfficialBuild }}
-  Codeql.TSAEnabled: ${{ parameters.isOfficialBuild }}
-  RunApexTests: ${{ parameters.RunApexTests }}
-  RunBuildForPublishing: ${{ parameters.RunBuildForPublishing }}
-  RunCrossFrameworkTestsOnWindows: ${{ parameters.RunCrossFrameworkTestsOnWindows }}
-  RunEndToEndTests: ${{ parameters.RunEndToEndTests }}
-  RunFunctionalTestsOnWindows: ${{ parameters.RunFunctionalTestsOnWindows }}
-  RunSourceBuild: ${{ parameters.RunSourceBuild }}
-  RunTestsOnLinux: ${{ parameters.RunTestsOnLinux }}
-  RunTestsOnMac: ${{ parameters.RunTestsOnMac }}
-  RunMonoTestsOnMac: ${{ parameters.RunMonoTestsOnMac }}
 
 stages:
 - stage: Initialize

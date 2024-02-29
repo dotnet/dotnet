@@ -50,6 +50,7 @@ namespace NuGet.SolutionRestoreManager
         private readonly IRestoreEventsPublisher _restoreEventsPublisher;
         private readonly ISolutionRestoreChecker _solutionUpToDateChecker;
         private readonly IVsNuGetProgressReporter _nuGetProgressReporter;
+        private readonly IAuditCheckResultCachingService _auditResultCachingService;
 
         private RestoreOperationLogger _logger;
         private INuGetProjectContext _nuGetProjectContext;
@@ -63,8 +64,9 @@ namespace NuGet.SolutionRestoreManager
         private Dictionary<string, object> _trackingData;
 
         // relevant to packages.config restore only
-        private int _missingPackagesCount;
+        private int _missingPackagesCount = 0;
         private int _currentCount;
+        private AuditCheckResult _auditCheckResult;
 
         /// <summary>
         /// Restore end status. For testing purposes
@@ -79,7 +81,8 @@ namespace NuGet.SolutionRestoreManager
             IRestoreEventsPublisher restoreEventsPublisher,
             ISettings settings,
             ISolutionRestoreChecker solutionRestoreChecker,
-            IVsNuGetProgressReporter nuGetProgressReporter)
+            IVsNuGetProgressReporter nuGetProgressReporter,
+            IAuditCheckResultCachingService auditResultCachingService)
             : this(AsyncServiceProvider.GlobalProvider,
                   packageRestoreManager,
                   solutionManager,
@@ -87,7 +90,8 @@ namespace NuGet.SolutionRestoreManager
                   restoreEventsPublisher,
                   settings,
                   solutionRestoreChecker,
-                  nuGetProgressReporter
+                  nuGetProgressReporter,
+                  auditResultCachingService
                 )
         { }
 
@@ -99,7 +103,8 @@ namespace NuGet.SolutionRestoreManager
             IRestoreEventsPublisher restoreEventsPublisher,
             ISettings settings,
             ISolutionRestoreChecker solutionRestoreChecker,
-            IVsNuGetProgressReporter nuGetProgressReporter)
+            IVsNuGetProgressReporter nuGetProgressReporter,
+            IAuditCheckResultCachingService auditResultCachingService)
         {
             Assumes.Present(asyncServiceProvider);
             Assumes.Present(packageRestoreManager);
@@ -109,6 +114,7 @@ namespace NuGet.SolutionRestoreManager
             Assumes.Present(settings);
             Assumes.Present(solutionRestoreChecker);
             Assumes.Present(nuGetProgressReporter);
+            Assumes.Present(auditResultCachingService);
 
             _asyncServiceProvider = asyncServiceProvider;
             _packageRestoreManager = packageRestoreManager;
@@ -119,6 +125,7 @@ namespace NuGet.SolutionRestoreManager
             _packageRestoreConsent = new PackageRestoreConsent(_settings);
             _solutionUpToDateChecker = solutionRestoreChecker;
             _nuGetProgressReporter = nuGetProgressReporter;
+            _auditResultCachingService = auditResultCachingService;
         }
 
 
@@ -372,6 +379,7 @@ namespace NuGet.SolutionRestoreManager
                 NumLocalFeeds,
                 hasNuGetOrg,
                 hasVSOfflineFeed);
+            _auditCheckResult?.AddMetricsToTelemetry(restoreTelemetryEvent);
 
             TelemetryActivity.EmitTelemetryEvent(restoreTelemetryEvent);
 
@@ -672,8 +680,12 @@ namespace NuGet.SolutionRestoreManager
                 }
 
                 _packageCount += packages.Count;
-                var missingPackagesList = packages.Where(p => p.IsMissing).ToList();
-                _missingPackagesCount = missingPackagesList.Count;
+                _missingPackagesCount = 0;
+                foreach (PackageRestoreData package in packages)
+                {
+                    if (package.IsMissing) _missingPackagesCount++;
+                }
+
                 if (_missingPackagesCount > 0)
                 {
                     // Only show the wait dialog, when there are some packages to restore
@@ -683,7 +695,8 @@ namespace NuGet.SolutionRestoreManager
                             // Display the restore opt out message if it has not been shown yet
                             await l.WriteHeaderAsync();
 
-                            await RestoreMissingPackagesInSolutionAsync(solutionDirectory, packages, l, t);
+                            PackageRestoreResult packageRestoreResult = await RestoreMissingPackagesInSolutionAsync(solutionDirectory, packages, l, t);
+                            _auditCheckResult = packageRestoreResult?.AuditCheckResult;
                         },
                         token);
 
@@ -691,6 +704,31 @@ namespace NuGet.SolutionRestoreManager
                     if (_status == NuGetOperationStatus.NoOp) // if there's any error, _status != NoOp
                     {
                         _status = NuGetOperationStatus.Succeeded;
+                    }
+                    _auditResultCachingService.LastAuditCheckResult = _auditCheckResult;
+                }
+                else
+                {
+                    if (!_auditResultCachingService.HasAuditBeenCachedAtLeastOnce) // Perf: Run audit check only if it has not been run before.
+                    {
+                        using SourceCacheContext sourceCacheContext = new();
+                        List<SourceRepository> sourceRepositories = _sourceRepositoryProvider.GetRepositories().AsList();
+                        Dictionary<string, RestoreAuditProperties> auditProperties = GetRestoreAuditProperties(allProjects);
+
+                        AuditChecker auditChecker = new(sourceRepositories, sourceCacheContext, _logger);
+                        AuditCheckResult result = await auditChecker.CheckPackageVulnerabilitiesAsync(packages, auditProperties, token);
+                        _auditResultCachingService.LastAuditCheckResult = result;
+                    }
+                    else
+                    {
+                        _auditCheckResult = _auditResultCachingService.LastAuditCheckResult;
+                        if (_auditCheckResult != null)
+                        {
+                            foreach (var warning in _auditCheckResult.Warnings)
+                            {
+                                _logger.Log(warning);
+                            }
+                        }
                     }
                 }
 
@@ -708,6 +746,30 @@ namespace NuGet.SolutionRestoreManager
             await _packageRestoreManager.RaisePackagesMissingEventForSolutionAsync(
                 solutionDirectory,
                 token);
+        }
+
+        private static Dictionary<string, RestoreAuditProperties> GetRestoreAuditProperties(IEnumerable<NuGetProject> projects)
+        {
+            var restoreAuditProperties = new Dictionary<string, RestoreAuditProperties>(PathUtility.GetStringComparerBasedOnOS());
+
+            foreach (var nuGetProject in projects.NoAllocEnumerate())
+            {
+                if (nuGetProject.ProjectStyle == ProjectStyle.PackagesConfig)
+                {
+                    var msbuildProject = (MSBuildNuGetProject)nuGetProject;
+                    var nuGetProjectName = (string)msbuildProject.GetMetadataOrNull(NuGetProjectMetadataKeys.Name);
+                    var nugetAudit = (string)msbuildProject.GetMetadataOrNull(ProjectBuildProperties.NuGetAudit);
+                    var auditLevel = (string)msbuildProject.GetMetadataOrNull(ProjectBuildProperties.NuGetAuditLevel);
+                    var auditProperties = new RestoreAuditProperties()
+                    {
+                        EnableAudit = nugetAudit,
+                        AuditLevel = auditLevel,
+                    };
+                    restoreAuditProperties.Add(nuGetProjectName, auditProperties);
+                }
+            }
+
+            return restoreAuditProperties;
         }
 
         private void ValidatePackagesConfigLockFiles(IEnumerable<NuGetProject> allProjects, CancellationToken token)
@@ -763,7 +825,7 @@ namespace NuGet.SolutionRestoreManager
             }
         }
 
-        private async Task RestoreMissingPackagesInSolutionAsync(
+        private async Task<PackageRestoreResult> RestoreMissingPackagesInSolutionAsync(
             string solutionDirectory,
             IEnumerable<PackageRestoreData> packages,
             ILogger logger,
@@ -781,13 +843,14 @@ namespace NuGet.SolutionRestoreManager
                     ClientPolicyContext = ClientPolicyContext.GetClientPolicy(_settings, logger)
                 };
 
-                await _packageRestoreManager.RestoreMissingPackagesAsync(
+                PackageRestoreResult packageRestoreResult = await _packageRestoreManager.RestoreMissingPackagesAsync(
                     solutionDirectory,
                     packages,
                     _nuGetProjectContext,
                     downloadContext,
                     logger,
                     token);
+                return packageRestoreResult;
             }
         }
 

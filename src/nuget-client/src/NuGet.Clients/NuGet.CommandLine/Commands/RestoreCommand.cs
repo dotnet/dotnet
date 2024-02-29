@@ -486,7 +486,7 @@ namespace NuGet.CommandLine
         private static Dictionary<string, RestoreAuditProperties> GetRestoreAuditProperties(PackageRestoreInputs packageRestoreInputs)
         {
             Dictionary<string, RestoreAuditProperties> restoreAuditProperties = new(PathUtility.GetStringComparerBasedOnOS());
-            foreach (PackageSpec project in packageRestoreInputs.ProjectReferenceLookup.Projects)
+            foreach (PackageSpec project in packageRestoreInputs.ProjectReferenceLookup.Projects.NoAllocEnumerate())
             {
                 if (project.RestoreMetadata?.ProjectStyle == ProjectStyle.PackagesConfig)
                 {

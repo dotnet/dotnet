@@ -293,9 +293,9 @@ NuGet.PackageManagement.PackageRestoreManager.PackageRestoreFailedEvent -> Syste
 NuGet.PackageManagement.PackageRestoreManager.PackageRestoredEvent -> System.EventHandler<NuGet.PackageManagement.PackageRestoredEventArgs>
 NuGet.PackageManagement.PackageRestoreManager.PackagesMissingStatusChanged -> System.EventHandler<NuGet.PackageManagement.PackagesMissingStatusEventArgs>
 NuGet.PackageManagement.PackageRestoreResult
-~NuGet.PackageManagement.PackageRestoreResult.PackageRestoreResult(bool restored, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity> restoredPackages) -> void
 NuGet.PackageManagement.PackageRestoreResult.Restored.get -> bool
-~NuGet.PackageManagement.PackageRestoreResult.RestoredPackages.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity>
+NuGet.PackageManagement.PackageRestoreResult.PackageRestoreResult(bool restored, System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity!>! restoredPackages) -> void
+NuGet.PackageManagement.PackageRestoreResult.RestoredPackages.get -> System.Collections.Generic.IEnumerable<NuGet.Packaging.Core.PackageIdentity!>!
 NuGet.PackageManagement.PackageRestoredEventArgs
 ~NuGet.PackageManagement.PackageRestoredEventArgs.Package.get -> NuGet.Packaging.Core.PackageIdentity
 ~NuGet.PackageManagement.PackageRestoredEventArgs.PackageRestoredEventArgs(NuGet.Packaging.Core.PackageIdentity packageIdentity, bool restored) -> void
