@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!-- Adding same as used in TPv1 Refer: /src/vset/Agile/TestPlatform/RocksteadyCLI/app.manifest -->
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
   <!-- The assemblyIdentity node is needed to fix a binding problem on Win2003 (PS72518) -->
@@ -7,6 +7,8 @@
     <application>
       <!-- Windows 10 -->
       <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}"/>
+      <!-- Enables Xaml Islands -->
+      <maxversiontested Id="10.0.18362.0"/>
       <!-- Windows 8.1 -->
       <supportedOS Id="{1f676c76-80e1-4239-95bb-83d0f6d0da78}"/>
       <!-- Windows Vista -->
