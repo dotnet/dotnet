@@ -88,7 +88,7 @@ namespace NuGet.PackageManagement
                 CreateWarnings(packagesWithKnownVulnerabilities, auditSettings, ref Sev0Matches, ref Sev1Matches, ref Sev2Matches, ref Sev3Matches, ref InvalidSevMatches, ref packagesWithReportedAdvisories) :
                 Array.Empty<ILogMessage>();
 
-            foreach (var warning in warnings)
+            foreach (var warning in warnings.NoAllocEnumerate())
             {
                 _logger.Log(warning);
             }
