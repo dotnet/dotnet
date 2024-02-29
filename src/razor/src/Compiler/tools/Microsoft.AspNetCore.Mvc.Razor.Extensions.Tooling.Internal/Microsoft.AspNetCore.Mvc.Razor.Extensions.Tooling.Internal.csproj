@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>Transport package for Razor extension binaries. For internal use only.</Description>
@@ -10,13 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X\src\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version1_X.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\..\Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X\src\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version2_X.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\..\Microsoft.AspNetCore.Mvc.Razor.Extensions\src\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\Microsoft.CodeAnalysis.Razor.Compiler\src\Microsoft.CodeAnalysis.Razor.Compiler.csproj" ReferenceOutputAssembly="false" />
 
-    <Content Include="$(ArtifactsDir)bin\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version1_X\$(Configuration)\netstandard2.0\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version1_X.dll" PackagePath="lib\$(TargetFramework)" />
-    <Content Include="$(ArtifactsDir)bin\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version2_X\$(Configuration)\netstandard2.0\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.Version2_X.dll" PackagePath="lib\$(TargetFramework)" />
-    <Content Include="$(ArtifactsDir)bin\Microsoft.CodeAnalysis.Razor.Compiler.Mvc\$(Configuration)\netstandard2.0\Microsoft.CodeAnalysis.Razor.Compiler.Mvc.dll" PackagePath="lib\$(TargetFramework)" />
+    <Content Include="$(ArtifactsDir)bin\Microsoft.CodeAnalysis.Razor.Compiler\$(Configuration)\netstandard2.0\Microsoft.CodeAnalysis.Razor.Compiler.dll" PackagePath="lib\$(TargetFramework)" />
   </ItemGroup>
 
 </Project>

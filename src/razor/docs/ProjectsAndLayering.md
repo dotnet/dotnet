@@ -54,14 +54,9 @@ This project is shared between all layers (both compiler and tooling) to provide
 
 ### Compiler
 
-- Target Framework: `netstandard2.0`
+- Target Framework: `net8.0;netstandard2.0`
 - Projects:
-  - Microsoft.AspNetCore.Mvc.Razor.Extensions
-  - Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X
-  - Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X
-  - Microsoft.AspNetCore.Razor.Language
-  - Microsoft.CodeAnalysis.Razor
-  - Microsoft.NET.Sdk.Razor.SourceGenerators
+  - Microsoft.CodeAnalysis.Razor.Compiler
 
 ### Tooling Core
 

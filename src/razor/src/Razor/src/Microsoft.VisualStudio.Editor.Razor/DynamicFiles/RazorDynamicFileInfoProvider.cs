@@ -106,7 +106,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
 
         // This endpoint is called either when:
         //  1. LSP: File is closed
-        //  2. Non-LSP: File is Supressed
+        //  2. Non-LSP: File is Suppressed
         // We report, diagnostics are not supported, to Roslyn in these cases
         documentContainer.SetSupportsDiagnostics(false);
 
@@ -233,7 +233,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         }
     }
 
-    public Task<RazorDynamicFileInfo?> GetDynamicFileInfoAsync(ProjectId projectId, string? projectFilePath, string filePath, CancellationToken cancellationToken)
+    public async Task<RazorDynamicFileInfo?> GetDynamicFileInfoAsync(ProjectId projectId, string? projectFilePath, string filePath, CancellationToken cancellationToken)
     {
         if (projectFilePath is null)
         {
@@ -250,17 +250,20 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         var projectKey = TryFindProjectKeyForProjectId(projectId);
         if (projectKey is not { } razorProjectKey)
         {
-            return Task.FromResult<RazorDynamicFileInfo?>(null);
+            return null;
         }
 
-        _fallbackProjectManager.DynamicFileAdded(projectId, razorProjectKey, projectFilePath, filePath);
+        await _fallbackProjectManager
+            .DynamicFileAddedAsync(projectId, razorProjectKey, projectFilePath, filePath, cancellationToken)
+            .ConfigureAwait(false);
 
         var key = new Key(projectId, filePath);
         var entry = _entries.GetOrAdd(key, _createEmptyEntry);
-        return Task.FromResult<RazorDynamicFileInfo?>(entry.Current);
+
+        return entry.Current;
     }
 
-    public Task RemoveDynamicFileInfoAsync(ProjectId projectId, string? projectFilePath, string filePath, CancellationToken cancellationToken)
+    public async Task RemoveDynamicFileInfoAsync(ProjectId projectId, string? projectFilePath, string filePath, CancellationToken cancellationToken)
     {
         if (projectFilePath is null)
         {
@@ -275,10 +278,12 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         var projectKey = TryFindProjectKeyForProjectId(projectId);
         if (projectKey is not { } razorProjectKey)
         {
-            return Task.CompletedTask;
+            return;
         }
 
-        _fallbackProjectManager.DynamicFileRemoved(projectId, razorProjectKey, projectFilePath, filePath);
+        await _fallbackProjectManager
+            .DynamicFileRemovedAsync(projectId, razorProjectKey, projectFilePath, filePath, cancellationToken)
+            .ConfigureAwait(false);
 
         // ---------------------------------------------------------- NOTE & CAUTION --------------------------------------------------------------
         //
@@ -292,7 +297,6 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
 
         var key = new Key(projectId, filePath);
         _entries.TryRemove(key, out _);
-        return Task.CompletedTask;
     }
 
     public TestAccessor GetTestAccessor() => new(this);
