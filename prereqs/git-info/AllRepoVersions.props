@@ -17,8 +17,8 @@
     <diagnosticsOutputPackageVersion>8.0.0-preview.24116.1</diagnosticsOutputPackageVersion>
     <emsdkGitCommitHash>f87c7165942d0bb19fc6ee33a55b49d574ec142a</emsdkGitCommitHash>
     <emsdkOutputPackageVersion>9.0.0-preview.2.24123.4</emsdkOutputPackageVersion>
-    <formatGitCommitHash>f361e8be8d95b276c192416c923ceb0d8e6c6a2f</formatGitCommitHash>
-    <formatOutputPackageVersion>9.0.512701</formatOutputPackageVersion>
+    <formatGitCommitHash>c1c02fdd0840d72fa7adfdb0e0713f26ade83bbf</formatGitCommitHash>
+    <formatOutputPackageVersion>9.0.512707</formatOutputPackageVersion>
     <fsharpGitCommitHash>b57dee7cec971021547a7b8a36a46d7271fea99e</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.300-beta.24127.3</fsharpOutputPackageVersion>
     <installerGitCommitHash>a7533dce5ef0e0b6fdeed49af421e0856ffe91e3</installerGitCommitHash>
