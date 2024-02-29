@@ -30,15 +30,15 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/emsdk`  
 *[dotnet/emsdk@0f3e462](https://github.com/dotnet/emsdk/tree/0f3e462442af5fe65271e3185d5b645ad40a6041)*
 - `src/format`  
-*[dotnet/format@236ba60](https://github.com/dotnet/format/tree/236ba60f6cf92de9f4d48d5bec2b4e80c3e441e7)*
+*[dotnet/format@de0824f](https://github.com/dotnet/format/tree/de0824fccb49f4c23a9a55c6d35b1f1fb23bcfa5)*
 - `src/fsharp`  
 *[dotnet/fsharp@b57dee7](https://github.com/dotnet/fsharp/tree/b57dee7cec971021547a7b8a36a46d7271fea99e)*
 - `src/installer`  
-*[dotnet/installer@83bf55b](https://github.com/dotnet/installer/tree/83bf55b04751babb518a435bcb82dfc38dc429c7)*
+*[dotnet/installer@40a35d1](https://github.com/dotnet/installer/tree/40a35d1365617e2d2ac0b1f94ae1fcc325312b6c)*
 - `src/msbuild`  
 *[dotnet/msbuild@6f44380](https://github.com/dotnet/msbuild/tree/6f44380e4fdea6ddf5c11f48efeb25c2bf181e62)*
 - `src/nuget-client`  
-*[nuget/nuget.client@5ecd0be](https://github.com/nuget/nuget.client/tree/5ecd0be8cb73db807189427eb8e0f7bfd334c1e0)*
+*[nuget/nuget.client@6009531](https://github.com/nuget/nuget.client/tree/6009531090c927a8e61da9a0f97bdd5eb6f01a47)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/tree/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
@@ -52,9 +52,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@bfde902](https://github.com/dotnet/scenario-tests/tree/bfde902a10d7b672f4fc7e844198ede405dbb9c6)*
 - `src/sdk`  
-*[dotnet/sdk@57f2e94](https://github.com/dotnet/sdk/tree/57f2e94b72a334b998377a69e4503194dfbdbe56)*
+*[dotnet/sdk@3786af2](https://github.com/dotnet/sdk/tree/3786af275c8169a6a1c3214acf94971ed17188c1)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@ddfb604](https://github.com/dotnet/source-build-externals/tree/ddfb60463c966af55fd0e222c2266170e83d1324)*
+*[dotnet/source-build-externals@88f13af](https://github.com/dotnet/source-build-externals/tree/88f13afba58a6c455039d71bbdd2cff3d847b236)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
@@ -94,7 +94,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/test-templates`  
 *[dotnet/test-templates@1591b24](https://github.com/dotnet/test-templates/tree/1591b24326caa98288e04e18e5c1b75c36c917c1)*
 - `src/vstest`  
-*[microsoft/vstest@f232324](https://github.com/microsoft/vstest/tree/f2323247155845f00166ebeca5cffdebff410b49)*
+*[microsoft/vstest@39c7dd1](https://github.com/microsoft/vstest/tree/39c7dd12c7ec24d0552513e84d95476f2077ca33)*
 - `src/windowsdesktop`  
 *[dotnet/windowsdesktop@1bc08ed](https://github.com/dotnet/windowsdesktop/tree/1bc08ed0478bd4f65f97471ea675de5e8b68b45c)*
 - `src/winforms`  

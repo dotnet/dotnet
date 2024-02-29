@@ -168,7 +168,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             return Enumerable.Empty<(string ItemId, string[] ItemMetadata)>();
         }
 
-        public Task<bool> IsCapabilityMatchAsync(string capabilityExpression)
+        public bool IsCapabilityMatch(string capabilityExpression)
         {
             throw new NotImplementedException();
         }
