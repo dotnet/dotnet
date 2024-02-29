@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "fa0ea056f271cd914708dac3d5854020220769f9"
+      "commitSha": "7165a6ef5e9008fb32d6d2fc8aaa47c59e4a4972"
     },
     {
       "packageVersion": "17.10.0-preview-24127-03",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-preview.3.24128.26",
+      "packageVersion": "9.0.100-preview.3.24128.28",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "d6313b61b9559a2f7196ee29339a50046a5f43a4"
+      "commitSha": "58afd1622a764902f34994342271f17cc1bef9c2"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24127.2",
@@ -139,10 +139,10 @@
       "commitSha": "71a20ad4aaedc284ef2d9a7302f5d2ec4df7dca3"
     },
     {
-      "packageVersion": "9.0.100-preview.3.24127.5",
+      "packageVersion": "9.0.100-preview.3.24128.4",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "4b65d9c92a80a4a7de20b36a87ee9fd2921fdf2d"
+      "commitSha": "b63ff5ac82544258f7462049f735d691e8af8fd6"
     },
     {
       "packageVersion": "1.1.0-rc.24120.2",
@@ -157,22 +157,22 @@
       "commitSha": "39c7dd12c7ec24d0552513e84d95476f2077ca33"
     },
     {
-      "packageVersion": "9.0.0-preview.3.24127.1",
+      "packageVersion": "9.0.0-preview.3.24128.3",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "1bc08ed0478bd4f65f97471ea675de5e8b68b45c"
+      "commitSha": "630848705db7a1f585ce4898a7067464cd2738c6"
     },
     {
-      "packageVersion": "9.0.0-preview.3.24126.2",
+      "packageVersion": "9.0.0-preview.3.24127.3",
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "bddaf6672d6db7a79bf3d827a36c251f099a3258"
+      "commitSha": "db743c12c82bfe6f1265bc20a5a97c6ecfa68ba2"
     },
     {
-      "packageVersion": "9.0.0-preview.3.24126.3",
+      "packageVersion": "9.0.0-preview.3.24127.2",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "a070c5f4d82e5232937595e2b6db9a9ba2d90a05"
+      "commitSha": "d4d3ab8a86a71baed25b9eb076affd9c93bb9298"
     },
     {
       "packageVersion": "9.0.0-preview.24126.1",
