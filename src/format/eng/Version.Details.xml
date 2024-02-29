@@ -34,14 +34,14 @@
       <Uri>https://github.com/dotnet/msbuild</Uri>
       <Sha>d6990bcfaf520c0d215a194fad0617f7efad68b4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis" Version="4.10.0-2.24122.4">
+    <Dependency Name="Microsoft.CodeAnalysis" Version="4.10.0-2.24127.1">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>e1e80baced0414568955fb8925cfe710b9d5f009</Sha>
+      <Sha>b701a39ca8ccec581a7949d3bcc9931a2088deee</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.roslyn" Version="4.10.0-2.24122.4">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.roslyn" Version="4.10.0-2.24127.1">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>e1e80baced0414568955fb8925cfe710b9d5f009</Sha>
+      <Sha>b701a39ca8ccec581a7949d3bcc9931a2088deee</Sha>
       <SourceBuild RepoName="roslyn" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
@@ -81,18 +81,18 @@
       <SourceBuild RepoName="runtime" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.command-line-api" Version="0.1.512301">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.command-line-api" Version="0.1.512601">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
-      <Sha>94ef1b035c73904f2240b3b3b0de6c4890dab6d8</Sha>
+      <Sha>5ea97af07263ea3ef68a18557c8aa3f7e3200bda</Sha>
       <SourceBuild RepoName="command-line-api" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="System.CommandLine" Version="2.0.0-beta4.24123.1">
+    <Dependency Name="System.CommandLine" Version="2.0.0-beta4.24126.1">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
-      <Sha>94ef1b035c73904f2240b3b3b0de6c4890dab6d8</Sha>
+      <Sha>5ea97af07263ea3ef68a18557c8aa3f7e3200bda</Sha>
     </Dependency>
-    <Dependency Name="System.CommandLine.Rendering" Version="0.4.0-alpha.24123.1">
+    <Dependency Name="System.CommandLine.Rendering" Version="0.4.0-alpha.24126.1">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
-      <Sha>94ef1b035c73904f2240b3b3b0de6c4890dab6d8</Sha>
+      <Sha>5ea97af07263ea3ef68a18557c8aa3f7e3200bda</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
