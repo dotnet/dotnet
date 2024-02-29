@@ -32,7 +32,6 @@ namespace NuGet.CommandLine.Xplat.Tests
   ""searchResult"": [
     {{
       ""sourceName"": ""MockSource"",
-      ""problems"": null,
       ""packages"": []
     }}
   ]
@@ -71,13 +70,11 @@ namespace NuGet.CommandLine.Xplat.Tests
   ""searchResult"": [
     {{
       ""sourceName"": ""MockSource"",
-      ""problems"": null,
       ""packages"": [
         {{
           ""id"": ""NuGet.Versioning"",
           ""latestVersion"": ""4.3.0"",
-          ""totalDownloads"": 123456,
-          ""owners"": null
+          ""totalDownloads"": 123456
         }}
       ]
     }}
@@ -118,19 +115,16 @@ namespace NuGet.CommandLine.Xplat.Tests
   ""searchResult"": [
     {{
       ""sourceName"": ""MockSource"",
-      ""problems"": null,
       ""packages"": [
         {{
           ""id"": ""NuGet.Versioning"",
           ""latestVersion"": ""4.3.0"",
-          ""totalDownloads"": 123456,
-          ""owners"": null
+          ""totalDownloads"": 123456
         }},
         {{
           ""id"": ""NuGet.Versioning"",
           ""latestVersion"": ""4.3.0"",
-          ""totalDownloads"": 123456,
-          ""owners"": null
+          ""totalDownloads"": 123456
         }}
       ]
     }}

@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Commands;
@@ -273,6 +272,7 @@ namespace NuGet.CommandLine
 
             List<PackageRestoreData> packageRestoreData = new();
             bool areAnyPackagesMissing = false;
+            Dictionary<string, RestoreAuditProperties> restoreAuditProperties = null;
 
             if (packageRestoreInputs.RestoringWithSolutionFile)
             {
@@ -283,7 +283,7 @@ namespace NuGet.CommandLine
                 {
                     foreach (PackageReference packageReference in GetInstalledPackageReferences(configFile))
                     {
-                        if (configToProjectPath.TryGetValue(configFile, out string projectPath))
+                        if (!configToProjectPath.TryGetValue(configFile, out string projectPath))
                         {
                             projectPath = configFile;
                         }
@@ -303,6 +303,7 @@ namespace NuGet.CommandLine
                     packageRestoreData.Add(new PackageRestoreData(package.Key, package.Value, !exists));
                     areAnyPackagesMissing |= !exists;
                 }
+                restoreAuditProperties = GetRestoreAuditProperties(packageRestoreInputs);
 
             }
             else if (packageRestoreInputs.PackagesConfigFiles.Count > 0)
@@ -324,14 +325,33 @@ namespace NuGet.CommandLine
 
                     throw new InvalidOperationException(message);
                 }
+                restoreAuditProperties = new(PathUtility.GetStringComparerBasedOnOS());
+
+                string referenceFile = packageReferenceFile;
+                // If restoring with a csproj directly, ensure we read the audit configuration.
+                if (packageRestoreInputs.ProjectFiles.Count > 0)
+                {
+                    var packageSpec = packageRestoreInputs.ProjectReferenceLookup.GetProjectSpec(packageRestoreInputs.ProjectFiles.First());
+                    if (packageSpec != null)
+                    {
+                        referenceFile = packageSpec.FilePath;
+                        restoreAuditProperties.Add(referenceFile, packageSpec.RestoreMetadata.RestoreAuditProperties);
+                    }
+                }
 
                 foreach (PackageReference packageReference in GetInstalledPackageReferences(packageReferenceFile))
                 {
                     bool exists = nuGetPackageManager.PackageExistsInPackagesFolder(packageReference.PackageIdentity, packageSaveMode);
-                    packageRestoreData.Add(new PackageRestoreData(packageReference, [packageReferenceFile], !exists));
+                    packageRestoreData.Add(new PackageRestoreData(packageReference, [referenceFile], !exists));
                     areAnyPackagesMissing |= !exists;
                 }
             }
+
+            var packageSources = GetPackageSources(Settings);
+
+            var repositories = packageSources
+                .Select(sourceRepositoryProvider.CreateRepository)
+                .ToList();
 
             if (!areAnyPackagesMissing)
             {
@@ -350,6 +370,15 @@ namespace NuGet.CommandLine
                     packagesFolderPath,
                     restoreSummaries);
 
+                using SourceCacheContext cacheContext = new();
+
+                var auditUtility = new AuditChecker(
+                    repositories,
+                    cacheContext,
+                    Console);
+
+                await auditUtility.CheckPackageVulnerabilitiesAsync(packageRestoreData, restoreAuditProperties, CancellationToken.None);
+
                 if (restoreSummaries.Count == 0)
                 {
                     restoreSummaries.Add(new RestoreSummary(success: true));
@@ -357,12 +386,6 @@ namespace NuGet.CommandLine
 
                 return restoreSummaries;
             }
-
-            var packageSources = GetPackageSources(Settings);
-
-            var repositories = packageSources
-                .Select(sourceRepositoryProvider.CreateRepository)
-                .ToArray();
 
             var installCount = 0;
             var failedEvents = new ConcurrentQueue<PackageRestoreFailedEventArgs>();
@@ -378,6 +401,8 @@ namespace NuGet.CommandLine
                 maxNumberOfParallelTasks: DisableParallelProcessing
                         ? 1
                         : PackageManagementConstants.DefaultMaxDegreeOfParallelism,
+                enableNuGetAudit: true,
+                restoreAuditProperties,
                 logger: collectorLogger);
 
             CheckRequireConsent();
@@ -456,6 +481,20 @@ namespace NuGet.CommandLine
             }
 
             return configToProjectPath;
+        }
+
+        private static Dictionary<string, RestoreAuditProperties> GetRestoreAuditProperties(PackageRestoreInputs packageRestoreInputs)
+        {
+            Dictionary<string, RestoreAuditProperties> restoreAuditProperties = new(PathUtility.GetStringComparerBasedOnOS());
+            foreach (PackageSpec project in packageRestoreInputs.ProjectReferenceLookup.Projects)
+            {
+                if (project.RestoreMetadata?.ProjectStyle == ProjectStyle.PackagesConfig)
+                {
+                    restoreAuditProperties.Add(project.FilePath, project.RestoreMetadata.RestoreAuditProperties);
+                }
+            }
+
+            return restoreAuditProperties;
         }
 
         /// <summary>

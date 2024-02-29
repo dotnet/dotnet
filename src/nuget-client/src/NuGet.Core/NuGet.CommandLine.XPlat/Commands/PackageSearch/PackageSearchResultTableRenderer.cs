@@ -97,17 +97,17 @@ namespace NuGet.CommandLine.XPlat
                     string projectUri = "N/A";
                     string deprecation = "N/A";
 
-                    if (result.Vulnerabilities != null && result.Vulnerabilities.Any())
+                    if (result.Vulnerabilities?.Any() ?? false)
                     {
                         vulnerable = "True";
                     }
 
-                    if (result.ProjectUrl != null)
+                    if (result.ProjectUrl is not null)
                     {
                         projectUri = result.ProjectUrl.ToString();
                     }
 
-                    if (packageDeprecationMetadata != null)
+                    if (packageDeprecationMetadata is not null)
                     {
                         deprecation = packageDeprecationMetadata.Message;
                     }
@@ -129,7 +129,7 @@ namespace NuGet.CommandLine.XPlat
             }
         }
 
-        public void RenderProblem(PackageSearchProblem packageSearchProblem)
+        public void Add(PackageSearchProblem packageSearchProblem)
         {
             if (packageSearchProblem.ProblemType == PackageSearchProblemType.Error)
             {

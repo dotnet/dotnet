@@ -345,7 +345,6 @@ namespace NuGet.CommandLine.Xplat.Tests
   ""searchResult"": [
     {{
       ""sourceName"": ""{ServerWithMultipleEndpoints.Uri}v3/index.json"",
-      ""problems"": null,
       ""packages"": [
         {{
           ""id"": ""Fake.Newtonsoft.Json"",
@@ -353,7 +352,6 @@ namespace NuGet.CommandLine.Xplat.Tests
           ""totalDownloads"": 531607259,
           ""owners"": ""James Newton-King"",
           ""description"": ""My description."",
-          ""vulnerable"": null,
           ""projectUrl"": ""http://myuri/"",
           ""deprecation"": ""This package has been deprecated""
         }}
@@ -368,7 +366,6 @@ namespace NuGet.CommandLine.Xplat.Tests
   ""searchResult"": [
     {{
       ""sourceName"": ""{ServerWithMultipleEndpoints.Uri}v3/index.json"",
-      ""problems"": null,
       ""packages"": [
         {{
           ""id"": ""Fake.Newtonsoft.Json"",
@@ -387,7 +384,6 @@ namespace NuGet.CommandLine.Xplat.Tests
   ""searchResult"": [
     {{
       ""sourceName"": ""{ServerWithMultipleEndpoints.Uri}v3/index.json"",
-      ""problems"": null,
       ""packages"": [
         {{
           ""id"": ""Fake.Newtonsoft.Json"",

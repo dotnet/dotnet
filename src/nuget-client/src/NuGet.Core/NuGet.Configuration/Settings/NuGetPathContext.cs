@@ -12,17 +12,17 @@ namespace NuGet.Configuration
         /// <summary>
         /// Fallback package folders. There many be zero or more of these.
         /// </summary>
-        public IReadOnlyList<string> FallbackPackageFolders { get; internal set; }
+        public required IReadOnlyList<string> FallbackPackageFolders { get; init; }
 
         /// <summary>
         /// User global packages folder.
         /// </summary>
-        public string UserPackageFolder { get; internal set; }
+        public required string UserPackageFolder { get; init; }
 
         /// <summary>
         /// User level http cache.
         /// </summary>
-        public string HttpCacheFolder { get; internal set; }
+        public required string HttpCacheFolder { get; init; }
 
         /// <summary>
         /// Load paths from already loaded settings.

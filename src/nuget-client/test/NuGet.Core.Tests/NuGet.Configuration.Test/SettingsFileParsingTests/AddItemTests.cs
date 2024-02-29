@@ -74,7 +74,7 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("section");
                 section.Should().NotBeNull();
 
-                var children = section.Items.ToList();
+                var children = section!.Items.ToList();
 
                 children.Should().NotBeEmpty();
                 children.Count.Should().Be(1);
@@ -106,11 +106,11 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as AddItem;
+                var element = (AddItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
                 // Assert
-                SettingsTestUtils.DeepEquals(element, expectedSetting).Should().BeTrue();
+                SettingsTestUtils.DeepEquals(element!, expectedSetting).Should().BeTrue();
             }
         }
 
@@ -137,11 +137,11 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as AddItem;
+                var element = (AddItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
                 // Assert
-                SettingsTestUtils.DeepEquals(element, expectedSetting).Should().BeTrue();
+                SettingsTestUtils.DeepEquals(element!, expectedSetting).Should().BeTrue();
             }
         }
 
@@ -172,11 +172,11 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var value = section.Items.FirstOrDefault() as AddItem;
+                var value = (AddItem?)section!.Items.FirstOrDefault();
                 value.Should().NotBeNull();
 
                 // Assert
-                SettingsTestUtils.DeepEquals(value, expectedSetting).Should().BeTrue();
+                SettingsTestUtils.DeepEquals(value!, expectedSetting).Should().BeTrue();
             }
         }
 
@@ -231,18 +231,18 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("Section");
                 section.Should().NotBeNull();
 
-                var element = section.Items.FirstOrDefault() as AddItem;
+                var element = (AddItem?)section!.Items.FirstOrDefault();
                 element.Should().NotBeNull();
 
-                element.Value = "newValue";
+                element!.Value = "newValue";
                 element.Value.Should().Be("newValue");
 
                 var section2 = settingsFile.GetSection("Section");
                 section2.Should().NotBeNull();
 
-                var element2 = section2.Items.FirstOrDefault() as AddItem;
+                var element2 = (AddItem?)section2!.Items.FirstOrDefault();
                 element2.Should().NotBeNull();
-                element2.Value.Should().Be("value1");
+                element2!.Value.Should().Be("value1");
 
                 settingsFile.AddOrUpdate("Section", element);
                 settingsFile.SaveToDisk();
@@ -250,9 +250,9 @@ namespace NuGet.Configuration.Test
                 var section3 = settingsFile.GetSection("Section");
                 section3.Should().NotBeNull();
 
-                var element3 = section.Items.FirstOrDefault() as AddItem;
+                var element3 = (AddItem?)section!.Items.FirstOrDefault();
                 element3.Should().NotBeNull();
-                element3.Value.Should().Be("newValue");
+                element3!.Value.Should().Be("newValue");
 
                 var updatedFileHash = SettingsTestUtils.GetFileHash(Path.Combine(mockBaseDirectory, nugetConfigPath));
                 updatedFileHash.Should().NotBeEquivalentTo(configFileHash);
@@ -307,7 +307,7 @@ namespace NuGet.Configuration.Test
 
                 // Assert
                 section.Should().NotBeNull();
-                section.Items.Should().NotBeEmpty();
+                section!.Items.Should().NotBeEmpty();
                 section.Items.Should().AllBeOfType<AddItem>();
 
                 if (RuntimeEnvironmentHelper.IsWindows)
@@ -316,25 +316,25 @@ namespace NuGet.Configuration.Test
 
                     var item = section.GetFirstItemWithAttribute<AddItem>("key", "key1");
                     item.Should().NotBeNull();
-                    item.GetValueAsPath().Should().Be(new DirectoryInfo(Path.Combine(mockBaseDirectory, @"..\value1")).FullName);
+                    item!.GetValueAsPath().Should().Be(new DirectoryInfo(Path.Combine(mockBaseDirectory, @"..\value1")).FullName);
                     item = section.GetFirstItemWithAttribute<AddItem>("key", "key2");
                     item.Should().NotBeNull();
-                    item.GetValueAsPath().Should().Be(Path.Combine(mockBaseDirectory, @"a\b\c"));
+                    item!.GetValueAsPath().Should().Be(Path.Combine(mockBaseDirectory, @"a\b\c"));
                     item = section.GetFirstItemWithAttribute<AddItem>("key", "key3");
                     item.Should().NotBeNull();
-                    item.GetValueAsPath().Should().Be(new DirectoryInfo(Path.Combine(mockBaseDirectory, @".\a\b\c")).FullName);
+                    item!.GetValueAsPath().Should().Be(new DirectoryInfo(Path.Combine(mockBaseDirectory, @".\a\b\c")).FullName);
                     item = section.GetFirstItemWithAttribute<AddItem>("key", "key4");
                     item.Should().NotBeNull();
-                    item.GetValueAsPath().Should().Be(@"c:\value2");
+                    item!.GetValueAsPath().Should().Be(@"c:\value2");
                     item = section.GetFirstItemWithAttribute<AddItem>("key", "key5");
                     item.Should().NotBeNull();
-                    item.GetValueAsPath().Should().Be(@"http://value3");
+                    item!.GetValueAsPath().Should().Be(@"http://value3");
                     item = section.GetFirstItemWithAttribute<AddItem>("key", "key6");
                     item.Should().NotBeNull();
-                    item.GetValueAsPath().Should().Be(@"\\a\b\c");
+                    item!.GetValueAsPath().Should().Be(@"\\a\b\c");
                     item = section.GetFirstItemWithAttribute<AddItem>("key", "key7");
                     item.Should().NotBeNull();
-                    item.GetValueAsPath().Should().Be(Path.Combine(Path.GetPathRoot(mockBaseDirectory), @"a\b\c"));
+                    item!.GetValueAsPath().Should().Be(Path.Combine(Path.GetPathRoot(mockBaseDirectory)!, @"a\b\c"));
                 }
                 else
                 {
@@ -342,19 +342,19 @@ namespace NuGet.Configuration.Test
 
                     var item = section.GetFirstItemWithAttribute<AddItem>("key", "key1");
                     item.Should().NotBeNull();
-                    item.GetValueAsPath().Should().Be(new DirectoryInfo(Path.Combine(mockBaseDirectory, @"../value1")).FullName);
+                    item!.GetValueAsPath().Should().Be(new DirectoryInfo(Path.Combine(mockBaseDirectory, @"../value1")).FullName);
                     item = section.GetFirstItemWithAttribute<AddItem>("key", "key2");
                     item.Should().NotBeNull();
-                    item.GetValueAsPath().Should().Be(Path.Combine(mockBaseDirectory, @"a/b/c"));
+                    item!.GetValueAsPath().Should().Be(Path.Combine(mockBaseDirectory, @"a/b/c"));
                     item = section.GetFirstItemWithAttribute<AddItem>("key", "key3");
                     item.Should().NotBeNull();
-                    item.GetValueAsPath().Should().Be(new DirectoryInfo(Path.Combine(mockBaseDirectory, @"./a/b/c")).FullName);
+                    item!.GetValueAsPath().Should().Be(new DirectoryInfo(Path.Combine(mockBaseDirectory, @"./a/b/c")).FullName);
                     item = section.GetFirstItemWithAttribute<AddItem>("key", "key5");
                     item.Should().NotBeNull();
-                    item.GetValueAsPath().Should().Be(@"http://value3");
+                    item!.GetValueAsPath().Should().Be(@"http://value3");
                     item = section.GetFirstItemWithAttribute<AddItem>("key", "key7");
                     item.Should().NotBeNull();
-                    item.GetValueAsPath().Should().Be(@"/a/b/c");
+                    item!.GetValueAsPath().Should().Be(@"/a/b/c");
                 }
             }
         }
@@ -405,12 +405,12 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
+                section!.Items.Count.Should().Be(1);
                 var item = section.Items.First();
                 item.IsCopy().Should().BeFalse();
                 item.Origin.Should().NotBeNull();
 
-                var clone = item.Clone() as AddItem;
+                var clone = (AddItem)item.Clone();
                 clone.IsCopy().Should().BeTrue();
                 clone.Origin.Should().NotBeNull();
                 SettingsTestUtils.DeepEquals(clone, item).Should().BeTrue();

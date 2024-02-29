@@ -153,8 +153,8 @@ namespace NuGet.Configuration.Test
                 var section = settingsFile.GetSection("SectionName");
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as CertificateItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (CertificateItem)section.Items.First();
 
                 var expectedItem = new CertificateItem("abcdefg", Common.HashAlgorithmName.SHA256, allowUntrustedRoot: true);
                 SettingsTestUtils.DeepEquals(item, expectedItem).Should().BeTrue();
@@ -181,10 +181,10 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as CertificateItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (CertificateItem)section.Items.First();
 
-                var updatedItem = item.Clone() as CertificateItem;
+                var updatedItem = (CertificateItem)item.Clone();
                 updatedItem.HashAlgorithm = Common.HashAlgorithmName.SHA512;
 
                 item.Update(updatedItem);
@@ -224,10 +224,10 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
-                var item = section.Items.First() as CertificateItem;
+                section!.Items.Count.Should().Be(1);
+                var item = (CertificateItem)section.Items.First();
 
-                var updatedItem = item.Clone() as CertificateItem;
+                var updatedItem = (CertificateItem)item.Clone();
                 updatedItem.AllowUntrustedRoot = false;
 
                 item.Update(updatedItem);
@@ -293,7 +293,7 @@ namespace NuGet.Configuration.Test
                 settingsFile.TryGetSection("SectionName", out var section).Should().BeTrue();
                 section.Should().NotBeNull();
 
-                section.Items.Count.Should().Be(1);
+                section!.Items.Count.Should().Be(1);
                 var item = section.Items.First();
                 item.IsCopy().Should().BeFalse();
                 item.Origin.Should().NotBeNull();

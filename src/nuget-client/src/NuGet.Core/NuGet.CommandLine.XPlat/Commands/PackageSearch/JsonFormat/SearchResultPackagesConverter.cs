@@ -46,12 +46,11 @@ namespace NuGet.CommandLine.XPlat
                 {
                     writer.WriteNumber(JsonProperties.DownloadCount, (decimal)value.DownloadCount);
                 }
-                else
-                {
-                    writer.WriteNull(JsonProperties.DownloadCount);
-                }
 
-                writer.WriteString(JsonProperties.Owners, value.Owners);
+                if (value.Owners is not null)
+                {
+                    writer.WriteString(JsonProperties.Owners, value.Owners);
+                }
             }
 
             if (_verbosity == PackageSearchVerbosity.Detailed)
@@ -62,10 +61,6 @@ namespace NuGet.CommandLine.XPlat
                 {
                     writer.WriteBoolean("vulnerable", true);
                 }
-                else
-                {
-                    writer.WriteNull("vulnerable");
-                }
 
                 writer.WriteString(JsonProperties.ProjectUrl, value.ProjectUrl.ToString());
 
@@ -74,10 +69,6 @@ namespace NuGet.CommandLine.XPlat
                 if (packageDeprecationMetadata != null)
                 {
                     writer.WriteString(JsonProperties.Deprecation, packageDeprecationMetadata.Message);
-                }
-                else
-                {
-                    writer.WriteNull(JsonProperties.Deprecation);
                 }
             }
 

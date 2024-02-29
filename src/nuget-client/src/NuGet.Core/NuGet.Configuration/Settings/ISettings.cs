@@ -16,7 +16,7 @@ namespace NuGet.Configuration
         /// </summary>
         /// <param name="sectionName">name to match sections</param>
         /// <returns>null if no section with the given name was found</returns>
-        SettingSection GetSection(string sectionName);
+        SettingSection? GetSection(string sectionName);
 
         /// <summary>
         /// Adds or updates the given <paramref name="item"/> to the settings.
@@ -47,7 +47,7 @@ namespace NuGet.Configuration
         /// <summary>
         /// Event raised when the setting have been changed.
         /// </summary>
-        event EventHandler SettingsChanged;
+        event EventHandler? SettingsChanged;
 
         /// <summary>
         /// Get a list of all the paths of the settings files used as part of this settings object. The paths are ordered with the closest one to user first.
