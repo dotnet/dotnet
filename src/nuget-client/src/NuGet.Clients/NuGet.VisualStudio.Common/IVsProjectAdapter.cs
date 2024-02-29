@@ -76,6 +76,6 @@ namespace NuGet.VisualStudio
         /// <summary>
         /// See <see cref="Microsoft.VisualStudio.Shell.PackageUtilities.IsCapabilityMatch(IVsHierarchy, string)"/>
         /// </summary>
-        Task<bool> IsCapabilityMatchAsync(string capabilityExpression);
+        bool IsCapabilityMatch(string capabilityExpression);
     }
 }
