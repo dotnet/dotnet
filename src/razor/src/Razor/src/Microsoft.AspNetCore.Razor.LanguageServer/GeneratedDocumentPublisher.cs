@@ -89,7 +89,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
             throw new ArgumentNullException(nameof(sourceText));
         }
 
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         // If our generated documents don't have unique file paths, then using project key information is problematic for the client.
         // For example, when a document moves from the Misc Project to a real project, we will update it here, and each version would
@@ -156,7 +156,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
             throw new ArgumentNullException(nameof(sourceText));
         }
 
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         if (!_publishedHtmlData.TryGetValue(filePath, out var previouslyPublishedData))
         {
@@ -207,7 +207,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
             return;
         }
 
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         Assumes.NotNull(_projectSnapshotManager);
 

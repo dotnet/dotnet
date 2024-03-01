@@ -2,9 +2,10 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Editor.Razor.Documents;
 using Moq;
@@ -13,7 +14,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor;
 
-public class ImportDocumentManagerIntegrationTest : ProjectSnapshotManagerDispatcherTestBase
+public class ImportDocumentManagerIntegrationTest : VisualStudioTestBase
 {
     private readonly string _directoryPath;
     private readonly string _projectPath;
@@ -35,7 +36,7 @@ public class ImportDocumentManagerIntegrationTest : ProjectSnapshotManagerDispat
     }
 
     [UIFact]
-    public void Changed_TrackerChanged_ResultsInChangedHavingCorrectArgs()
+    public async Task Changed_TrackerChanged_ResultsInChangedHavingCorrectArgs()
     {
         // Arrange
         var testImportsPath = Path.Combine(_directoryPath, "_ViewImports.cshtml");
@@ -76,8 +77,17 @@ public class ImportDocumentManagerIntegrationTest : ProjectSnapshotManagerDispat
 
         var called = false;
         var manager = new ImportDocumentManager(Dispatcher, fileChangeTrackerFactoryMock.Object);
-        manager.OnSubscribed(tracker);
-        manager.OnSubscribed(anotherTracker);
+
+        await RunOnDispatcherAsync(() =>
+        {
+            manager.OnSubscribed(tracker);
+        });
+
+        await RunOnDispatcherAsync(() =>
+        {
+            manager.OnSubscribed(anotherTracker);
+        });
+
         manager.Changed += (sender, args) =>
         {
             called = true;
@@ -91,7 +101,10 @@ public class ImportDocumentManagerIntegrationTest : ProjectSnapshotManagerDispat
         };
 
         // Act
-        fileChangeTracker1Mock.Raise(t => t.Changed += null, new FileChangeEventArgs(testImportsPath, FileChangeKind.Changed));
+        await RunOnDispatcherAsync(() =>
+        {
+            fileChangeTracker1Mock.Raise(t => t.Changed += null, new FileChangeEventArgs(testImportsPath, FileChangeKind.Changed));
+        });
 
         // Assert
         Assert.True(called);

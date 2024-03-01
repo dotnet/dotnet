@@ -38,7 +38,7 @@ internal class RazorFileSynchronizer : IRazorFileChangeListener
             throw new ArgumentNullException(nameof(filePath));
         }
 
-        _projectSnapshotManagerDispatcher.AssertDispatcherThread();
+        _projectSnapshotManagerDispatcher.AssertRunningOnDispatcher();
 
         switch (kind)
         {

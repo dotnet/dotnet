@@ -112,7 +112,7 @@ internal class WorkspaceProjectStateChangeDetector(
             {
                 case WorkspaceChangeKind.ProjectAdded:
                     await _dispatcher
-                        .RunOnDispatcherThreadAsync(
+                        .RunAsync(
                             static (arg, _) =>
                             {
                                 var (@this, eventArgs) = arg;
@@ -130,7 +130,7 @@ internal class WorkspaceProjectStateChangeDetector(
                 case WorkspaceChangeKind.ProjectChanged:
                 case WorkspaceChangeKind.ProjectReloaded:
                     await _dispatcher
-                        .RunOnDispatcherThreadAsync(
+                        .RunAsync(
                             static (arg, _) =>
                             {
                                 var (@this, eventArgs) = arg;
@@ -147,7 +147,7 @@ internal class WorkspaceProjectStateChangeDetector(
 
                 case WorkspaceChangeKind.ProjectRemoved:
                     await _dispatcher
-                        .RunOnDispatcherThreadAsync(
+                        .RunAsync(
                             static (arg, _) =>
                             {
                                 var (@this, eventArgs) = arg;
@@ -167,7 +167,7 @@ internal class WorkspaceProjectStateChangeDetector(
 
                 case WorkspaceChangeKind.DocumentAdded:
                     await _dispatcher
-                        .RunOnDispatcherThreadAsync(
+                        .RunAsync(
                             static (arg, _) =>
                             {
                                 var (@this, eventArgs) = arg;
@@ -206,7 +206,7 @@ internal class WorkspaceProjectStateChangeDetector(
 
                 case WorkspaceChangeKind.DocumentRemoved:
                     await _dispatcher
-                        .RunOnDispatcherThreadAsync(
+                        .RunAsync(
                             static (arg, _) =>
                             {
                                 var (@this, eventArgs) = arg;
@@ -245,7 +245,7 @@ internal class WorkspaceProjectStateChangeDetector(
                 case WorkspaceChangeKind.DocumentChanged:
                 case WorkspaceChangeKind.DocumentReloaded:
                     await _dispatcher
-                        .RunOnDispatcherThreadAsync(
+                        .RunAsync(
                             static (arg, _) =>
                             {
                                 var (@this, eventArgs) = arg;
@@ -291,7 +291,7 @@ internal class WorkspaceProjectStateChangeDetector(
                 case WorkspaceChangeKind.SolutionReloaded:
                 case WorkspaceChangeKind.SolutionRemoved:
                     await _dispatcher
-                        .RunOnDispatcherThreadAsync(
+                        .RunAsync(
                             static (arg, _) =>
                             {
                                 var (@this, eventArgs) = arg;
@@ -535,7 +535,7 @@ internal class WorkspaceProjectStateChangeDetector(
 
         public override ValueTask ProcessAsync(CancellationToken cancellationToken)
         {
-            var task = _dispatcher.RunOnDispatcherThreadAsync(
+            var task = _dispatcher.RunAsync(
                 static (arg, ct) =>
                 {
                     var @this = arg;

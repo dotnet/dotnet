@@ -25,7 +25,7 @@ using RazorDiagnosticFactory = Microsoft.AspNetCore.Razor.Language.RazorDiagnost
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Diagnostics;
 
-public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
+public class RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
     private static readonly RazorDiagnostic[] s_emptyRazorDiagnostics = [];
     private static readonly RazorDiagnostic[] s_singleRazorDiagnostic =
@@ -49,25 +49,31 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         }
     ];
 
-    private readonly IProjectSnapshotManager _projectManager;
-    private readonly IDocumentSnapshot _closedDocument;
-    private readonly IDocumentSnapshot _openedDocument;
-    private readonly RazorCodeDocument _testCodeDocument;
-    private readonly Uri _openedDocumentUri;
+    // These fields are initialized by InitializeAsync()
+#nullable disable
+    private IProjectSnapshotManager _projectManager;
+    private IDocumentSnapshot _closedDocument;
+    private IDocumentSnapshot _openedDocument;
+    private RazorCodeDocument _testCodeDocument;
+    private Uri _openedDocumentUri;
+#nullable enable
 
-    public RazorDiagnosticsPublisherTest(ITestOutputHelper testOutput)
-        : base(testOutput)
+    protected override async Task InitializeAsync()
     {
         var testProjectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
         var hostProject = new HostProject("C:/project/project.csproj", "C:/project/obj", RazorConfiguration.Default, "TestRootNamespace");
-        testProjectManager.ProjectAdded(hostProject);
         var sourceText = SourceText.From(string.Empty);
         var textAndVersion = TextAndVersion.Create(sourceText, VersionStamp.Default);
         var openedHostDocument = new HostDocument("C:/project/open_document.cshtml", "C:/project/open_document.cshtml");
-        testProjectManager.DocumentAdded(hostProject.Key, openedHostDocument, TextLoader.From(textAndVersion));
-        testProjectManager.DocumentOpened(hostProject.Key, openedHostDocument.FilePath, sourceText);
         var closedHostDocument = new HostDocument("C:/project/closed_document.cshtml", "C:/project/closed_document.cshtml");
-        testProjectManager.DocumentAdded(hostProject.Key, closedHostDocument, TextLoader.From(textAndVersion));
+
+        await RunOnDispatcherAsync(() =>
+        {
+            testProjectManager.ProjectAdded(hostProject);
+            testProjectManager.DocumentAdded(hostProject.Key, openedHostDocument, TextLoader.From(textAndVersion));
+            testProjectManager.DocumentOpened(hostProject.Key, openedHostDocument.FilePath, sourceText);
+            testProjectManager.DocumentAdded(hostProject.Key, closedHostDocument, TextLoader.From(textAndVersion));
+        });
 
         var openedDocument = testProjectManager.GetProjects()[0].GetDocument(openedHostDocument.FilePath);
         Assert.NotNull(openedDocument);
@@ -117,13 +123,13 @@ public class RazorDiagnosticsPublisherTest : LanguageServerTestBase
         };
 
         publisher.Initialize(_projectManager);
-        await RunOnDispatcherThreadAsync(() =>
+        await RunOnDispatcherAsync(() =>
             publisher.DocumentProcessed(_testCodeDocument, processedOpenDocument));
         Assert.True(publisher.NotifyBackgroundWorkCompleting.Wait(TimeSpan.FromSeconds(2)));
         publisher.NotifyBackgroundWorkCompleting.Reset();
 
         // Act
-        await RunOnDispatcherThreadAsync(() =>
+        await RunOnDispatcherAsync(() =>
             publisher.DocumentProcessed(_testCodeDocument, processedOpenDocument));
         publisher.BlockBackgroundWorkCompleting.Set();
 

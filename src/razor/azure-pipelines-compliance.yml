@@ -17,6 +17,8 @@ variables:
   SignType: test
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   _DevDivDropAccessToken: $(System.AccessToken)
+  Codeql.Enabled: false
+  Codeql.SkipTaskAutoInjection: true
 
 steps:
 - template: eng/pipelines/checkout-windows-task.yml

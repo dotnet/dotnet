@@ -163,10 +163,10 @@ public abstract partial class ToolingTestBase : IAsyncLifetime
         => throw new NotSupportedException($"Override {nameof(CreateDispatcher)} in order to use the {nameof(Dispatcher)} property in this test.");
 
     protected Task RunOnDispatcherAsync(Action action)
-        => Dispatcher.RunOnDispatcherThreadAsync(action, DisposalToken);
+        => Dispatcher.RunAsync(action, DisposalToken);
 
     protected Task<T> RunOnDispatcherAsync<T>(Func<T> func)
-        => Dispatcher.RunOnDispatcherThreadAsync(func, DisposalToken);
+        => Dispatcher.RunAsync(func, DisposalToken);
 
     /// <summary>
     ///  Register an <see cref="IDisposable"/> instance to be disposed when the test completes.

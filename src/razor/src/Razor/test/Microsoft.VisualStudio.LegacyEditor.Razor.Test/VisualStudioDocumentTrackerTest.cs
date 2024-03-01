@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis;
@@ -23,7 +23,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor;
 
-public class VisualStudioDocumentTrackerTest : ProjectSnapshotManagerDispatcherWorkspaceTestBase
+public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
 {
     private readonly ITextBuffer _textBuffer;
     private readonly string _filePath;
@@ -88,53 +88,53 @@ public class VisualStudioDocumentTrackerTest : ProjectSnapshotManagerDispatcherW
     }
 
     [UIFact]
-    public void Subscribe_NoopsIfAlreadySubscribed()
+    public async Task Subscribe_NoopsIfAlreadySubscribed()
     {
         // Arrange
         var callCount = 0;
         _documentTracker.ContextChanged += (sender, args) => callCount++;
-        _documentTracker.Subscribe();
+        await RunOnDispatcherAsync(_documentTracker.Subscribe);
 
         // Act
-        _documentTracker.Subscribe();
+        await RunOnDispatcherAsync(_documentTracker.Subscribe);
 
         // Assert
         Assert.Equal(1, callCount);
     }
 
     [UIFact]
-    public void Unsubscribe_NoopsIfAlreadyUnsubscribed()
+    public async Task Unsubscribe_NoopsIfAlreadyUnsubscribed()
     {
         // Arrange
         var callCount = 0;
-        _documentTracker.Subscribe();
+        await RunOnDispatcherAsync(_documentTracker.Subscribe);
         _documentTracker.ContextChanged += (sender, args) => callCount++;
-        _documentTracker.Unsubscribe();
+        await RunOnDispatcherAsync(_documentTracker.Unsubscribe);
 
         // Act
-        _documentTracker.Unsubscribe();
+        await RunOnDispatcherAsync(_documentTracker.Unsubscribe);
 
         // Assert
         Assert.Equal(1, callCount);
     }
 
     [UIFact]
-    public void Unsubscribe_NoopsIfSubscribeHasBeenCalledMultipleTimes()
+    public async Task Unsubscribe_NoopsIfSubscribeHasBeenCalledMultipleTimes()
     {
         // Arrange
         var callCount = 0;
-        _documentTracker.Subscribe();
-        _documentTracker.Subscribe();
+        await RunOnDispatcherAsync(_documentTracker.Subscribe);
+        await RunOnDispatcherAsync(_documentTracker.Subscribe);
         _documentTracker.ContextChanged += (sender, args) => callCount++;
 
         // Act - 1
-        _documentTracker.Unsubscribe();
+        await RunOnDispatcherAsync(_documentTracker.Unsubscribe);
 
         // Assert - 1
         Assert.Equal(0, callCount);
 
         // Act - 2
-        _documentTracker.Unsubscribe();
+        await RunOnDispatcherAsync(_documentTracker.Unsubscribe);
 
         // Assert - 2
         Assert.Equal(1, callCount);
@@ -160,10 +160,13 @@ public class VisualStudioDocumentTrackerTest : ProjectSnapshotManagerDispatcherW
     }
 
     [UIFact]
-    public void ProjectManager_Changed_ProjectAdded_TriggersContextChanged()
+    public async Task ProjectManager_Changed_ProjectAdded_TriggersContextChanged()
     {
         // Arrange
-        _projectManager.ProjectAdded(_hostProject);
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectAdded(_hostProject);
+        });
 
         var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_hostProject.Key), ProjectChangeKind.ProjectAdded);
 
@@ -176,17 +179,23 @@ public class VisualStudioDocumentTrackerTest : ProjectSnapshotManagerDispatcherW
         };
 
         // Act
-        _documentTracker.ProjectManager_Changed(_projectManager, e);
+        await RunOnDispatcherAsync(() =>
+        {
+            _documentTracker.ProjectManager_Changed(_projectManager, e);
+        });
 
         // Assert
         Assert.True(called);
     }
 
     [UIFact]
-    public void ProjectManager_Changed_ProjectChanged_TriggersContextChanged()
+    public async Task ProjectManager_Changed_ProjectChanged_TriggersContextChanged()
     {
         // Arrange
-        _projectManager.ProjectAdded(_hostProject);
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectAdded(_hostProject);
+        });
 
         var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_hostProject.Key), ProjectChangeKind.ProjectChanged);
 
@@ -199,20 +208,30 @@ public class VisualStudioDocumentTrackerTest : ProjectSnapshotManagerDispatcherW
         };
 
         // Act
-        _documentTracker.ProjectManager_Changed(_projectManager, e);
+        await RunOnDispatcherAsync(() =>
+        {
+            _documentTracker.ProjectManager_Changed(_projectManager, e);
+        });
 
         // Assert
         Assert.True(called);
     }
 
     [UIFact]
-    public void ProjectManager_Changed_ProjectRemoved_TriggersContextChanged_WithEphemeralProject()
+    public async Task ProjectManager_Changed_ProjectRemoved_TriggersContextChanged_WithEphemeralProject()
     {
         // Arrange
-        _projectManager.ProjectAdded(_hostProject);
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectAdded(_hostProject);
+        });
 
         var project = _projectManager.GetLoadedProject(_hostProject.Key);
-        _projectManager.ProjectRemoved(_hostProject.Key);
+
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectRemoved(_hostProject.Key);
+        });
 
         var e = new ProjectChangeEventArgs(project!, null!, ProjectChangeKind.ProjectRemoved);
 
@@ -226,17 +245,23 @@ public class VisualStudioDocumentTrackerTest : ProjectSnapshotManagerDispatcherW
         };
 
         // Act
-        _documentTracker.ProjectManager_Changed(_projectManager, e);
+        await RunOnDispatcherAsync(() =>
+        {
+            _documentTracker.ProjectManager_Changed(_projectManager, e);
+        });
 
         // Assert
         Assert.True(called);
     }
 
     [UIFact]
-    public void ProjectManager_Changed_IgnoresUnknownProject()
+    public async Task ProjectManager_Changed_IgnoresUnknownProject()
     {
         // Arrange
-        _projectManager.ProjectAdded(_otherHostProject);
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectAdded(_otherHostProject);
+        });
 
         var e = new ProjectChangeEventArgs(null!, _projectManager.GetLoadedProject(_otherHostProject.Key), ProjectChangeKind.ProjectChanged);
 
@@ -244,14 +269,17 @@ public class VisualStudioDocumentTrackerTest : ProjectSnapshotManagerDispatcherW
         _documentTracker.ContextChanged += (sender, args) => called = true;
 
         // Act
-        _documentTracker.ProjectManager_Changed(_projectManager, e);
+        await RunOnDispatcherAsync(() =>
+        {
+            _documentTracker.ProjectManager_Changed(_projectManager, e);
+        });
 
         // Assert
         Assert.False(called);
     }
 
     [UIFact]
-    public void Import_Changed_ImportAssociatedWithDocument_TriggersContextChanged()
+    public async Task Import_Changed_ImportAssociatedWithDocument_TriggersContextChanged()
     {
         // Arrange
         var called = false;
@@ -264,14 +292,17 @@ public class VisualStudioDocumentTrackerTest : ProjectSnapshotManagerDispatcherW
         var importChangedArgs = new ImportChangedEventArgs("path/to/import", FileChangeKind.Changed, [_filePath]);
 
         // Act
-        _documentTracker.Import_Changed(null!, importChangedArgs);
+        await RunOnDispatcherAsync(() =>
+        {
+            _documentTracker.Import_Changed(null!, importChangedArgs);
+        });
 
         // Assert
         Assert.True(called);
     }
 
     [UIFact]
-    public void Import_Changed_UnrelatedImport_DoesNothing()
+    public async Task Import_Changed_UnrelatedImport_DoesNothing()
     {
         // Arrange
         _documentTracker.ContextChanged += (sender, args) => throw new InvalidOperationException();
@@ -279,18 +310,21 @@ public class VisualStudioDocumentTrackerTest : ProjectSnapshotManagerDispatcherW
         var importChangedArgs = new ImportChangedEventArgs("path/to/import", FileChangeKind.Changed, ["path/to/differentfile"]);
 
         // Act & Assert (Does not throw)
-        _documentTracker.Import_Changed(null!, importChangedArgs);
+        await RunOnDispatcherAsync(() =>
+        {
+            _documentTracker.Import_Changed(null!, importChangedArgs);
+        });
     }
 
     [UIFact]
-    public void Subscribe_SetsSupportedProjectAndTriggersContextChanged()
+    public async Task Subscribe_SetsSupportedProjectAndTriggersContextChanged()
     {
         // Arrange
         var called = false;
         _documentTracker.ContextChanged += (sender, args) => called = true;
 
         // Act
-        _documentTracker.Subscribe();
+        await RunOnDispatcherAsync(_documentTracker.Subscribe);
 
         // Assert
         Assert.True(called);
@@ -298,12 +332,12 @@ public class VisualStudioDocumentTrackerTest : ProjectSnapshotManagerDispatcherW
     }
 
     [UIFact]
-    public void Unsubscribe_ResetsSupportedProjectAndTriggersContextChanged()
+    public async Task Unsubscribe_ResetsSupportedProjectAndTriggersContextChanged()
     {
         // Arrange
 
         // Subscribe once to set supported project
-        _documentTracker.Subscribe();
+        await RunOnDispatcherAsync(_documentTracker.Subscribe);
 
         var called = false;
         _documentTracker.ContextChanged += (sender, args) =>
@@ -313,7 +347,7 @@ public class VisualStudioDocumentTrackerTest : ProjectSnapshotManagerDispatcherW
         };
 
         // Act
-        _documentTracker.Unsubscribe();
+        await RunOnDispatcherAsync(_documentTracker.Unsubscribe);
 
         // Assert
         Assert.False(_documentTracker.IsSupportedProject);
@@ -419,43 +453,52 @@ public class VisualStudioDocumentTrackerTest : ProjectSnapshotManagerDispatcherW
     }
 
     [UIFact]
-    public void Subscribed_InitializesEphemeralProjectSnapshot()
+    public async Task Subscribed_InitializesEphemeralProjectSnapshot()
     {
         // Arrange
 
         // Act
-        _documentTracker.Subscribe();
+        await RunOnDispatcherAsync(_documentTracker.Subscribe);
 
         // Assert
         Assert.IsType<EphemeralProjectSnapshot>(_documentTracker.ProjectSnapshot);
     }
 
     [UIFact]
-    public void Subscribed_InitializesRealProjectSnapshot()
+    public async Task Subscribed_InitializesRealProjectSnapshot()
     {
         // Arrange
-        _projectManager.ProjectAdded(_hostProject);
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectAdded(_hostProject);
+        });
 
         // Act
-        _documentTracker.Subscribe();
+        await RunOnDispatcherAsync(_documentTracker.Subscribe);
 
         // Assert
         Assert.IsType<ProjectSnapshot>(_documentTracker.ProjectSnapshot);
     }
 
     [UIFact]
-    public void Subscribed_ListensToProjectChanges()
+    public async Task Subscribed_ListensToProjectChanges()
     {
         // Arrange
-        _projectManager.ProjectAdded(_hostProject);
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectAdded(_hostProject);
 
-        _documentTracker.Subscribe();
+            _documentTracker.Subscribe();
+        });
 
         var args = new List<ContextChangeEventArgs>();
         _documentTracker.ContextChanged += (sender, e) => args.Add(e);
 
         // Act
-        _projectManager.ProjectConfigurationChanged(_updatedHostProject);
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectConfigurationChanged(_updatedHostProject);
+        });
 
         // Assert
         var snapshot = Assert.IsType<ProjectSnapshot>(_documentTracker.ProjectSnapshot);
@@ -467,18 +510,24 @@ public class VisualStudioDocumentTrackerTest : ProjectSnapshotManagerDispatcherW
     }
 
     [UIFact]
-    public void Subscribed_ListensToProjectRemoval()
+    public async Task Subscribed_ListensToProjectRemoval()
     {
         // Arrange
-        _projectManager.ProjectAdded(_hostProject);
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectAdded(_hostProject);
 
-        _documentTracker.Subscribe();
+            _documentTracker.Subscribe();
+        });
 
         var args = new List<ContextChangeEventArgs>();
         _documentTracker.ContextChanged += (sender, e) => args.Add(e);
 
         // Act
-        _projectManager.ProjectRemoved(_hostProject.Key);
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectRemoved(_hostProject.Key);
+        });
 
         // Assert
         Assert.IsType<EphemeralProjectSnapshot>(_documentTracker.ProjectSnapshot);

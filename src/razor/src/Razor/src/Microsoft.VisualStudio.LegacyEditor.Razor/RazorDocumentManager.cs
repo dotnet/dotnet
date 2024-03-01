@@ -48,7 +48,7 @@ internal sealed class RazorDocumentManager(
             {
                 // tracker.Subscribe() accesses the project snapshot manager, which needs to be run on the
                 // project snapshot manager's specialized thread.
-                await _dispatcher.RunOnDispatcherThreadAsync(() => tracker.Subscribe(), CancellationToken.None).ConfigureAwait(false);
+                await _dispatcher.RunAsync(() => tracker.Subscribe(), CancellationToken.None).ConfigureAwait(false);
             }
         }
     }
@@ -72,7 +72,7 @@ internal sealed class RazorDocumentManager(
                 {
                     // tracker.Unsubscribe() should be in sync with tracker.Subscribe(). The latter of needs to be run
                     // on the project snapshot manager's specialized thread, so we run both on it.
-                    await _dispatcher.RunOnDispatcherThreadAsync(() => documentTracker.Unsubscribe(), CancellationToken.None).ConfigureAwait(false);
+                    await _dispatcher.RunAsync(() => documentTracker.Unsubscribe(), CancellationToken.None).ConfigureAwait(false);
                 }
             }
         }

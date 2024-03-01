@@ -10,8 +10,6 @@ variables:
   value: AspNetCore
 - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
   value: true
-- name: Codeql.Enabled
-  value: true
 - name: LogLevel
   value: 'All'
 - name: RunIntegrationTests
@@ -39,9 +37,15 @@ variables:
     value: '[Auto Insertion]'
   - name: Insertion.TitleSuffix
     value: ''
+  - name: Codeql.Enabled
+    value: true
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: _InternalRuntimeDownloadArgs
     value: ''
+  - name: Codeql.Enabled
+    value: false
+  - name: Codeql.SkipTaskAutoInjection
+    value: true
 
 trigger:
   batch: true

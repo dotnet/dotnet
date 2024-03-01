@@ -120,7 +120,7 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger(
             return;
         }
 
-        await _dispatcher.RunOnDispatcherThreadAsync(() =>
+        await _dispatcher.RunAsync(() =>
         {
             if (_projectManager is null)
             {

@@ -60,7 +60,7 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
         var existingConfigurationFiles = GetExistingConfigurationFiles(workspaceDirectory);
 
         _logger.LogDebug("Triggering events for existing project configuration files");
-        await _dispatcher.RunOnDispatcherThreadAsync(() =>
+        await _dispatcher.RunAsync(() =>
         {
             foreach (var configurationFilePath in existingConfigurationFiles)
             {
@@ -161,7 +161,7 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
 
     private void FileSystemWatcher_ProjectConfigurationFileEvent_Background(string physicalFilePath, RazorFileChangeKind kind)
     {
-        _ = _dispatcher.RunOnDispatcherThreadAsync(
+        _ = _dispatcher.RunAsync(
             () => FileSystemWatcher_ProjectConfigurationFileEvent(physicalFilePath, kind),
             CancellationToken.None);
     }
