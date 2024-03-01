@@ -43,7 +43,7 @@ internal class CohostTextDocumentSyncHandler(
         // TODO: This is to support the non-cohost server and should eventually be removed, and replaced with code that
         //       directly triggers creation/deletion of the invisible buffers we use for generated files, as necessary,
         //       rather than using the "project system" because we don't want the project system to actually exist!
-        await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(() =>
+        await _projectSnapshotManagerDispatcher.RunAsync(() =>
         {
             switch (context.Method)
             {

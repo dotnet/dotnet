@@ -22,9 +22,9 @@ namespace Microsoft.VisualStudio.LanguageServices.Razor.ProjectSystem;
 
 public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
 {
-    private FallbackProjectManager _fallbackProjectManger;
-    private TestProjectSnapshotManager _projectManager;
-    private TestProjectConfigurationFilePathStore _projectConfigurationFilePathStore;
+    private readonly FallbackProjectManager _fallbackProjectManger;
+    private readonly TestProjectSnapshotManager _projectManager;
+    private readonly TestProjectConfigurationFilePathStore _projectConfigurationFilePathStore;
 
     public FallbackProjectManagerTest(ITestOutputHelper testOutputHelper)
         : base(testOutputHelper)
@@ -49,12 +49,23 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
     [UIFact]
     public async Task DynamicFileAdded_KnownProject_DoesNothing()
     {
-        var hostProject = new HostProject(SomeProject.FilePath, SomeProject.IntermediateOutputPath, RazorConfiguration.Default, "RootNamespace", "DisplayName");
-        _projectManager.ProjectAdded(hostProject);
+        var hostProject = new HostProject(
+            SomeProject.FilePath,
+            SomeProject.IntermediateOutputPath,
+            RazorConfiguration.Default,
+            "RootNamespace",
+            "DisplayName");
+
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectAdded(hostProject);
+        });
 
         var projectId = ProjectId.CreateNewId();
-        var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
-            .WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(Path.Combine(SomeProject.IntermediateOutputPath, "SomeProject.dll")));
+        var projectInfo = ProjectInfo.Create(
+            projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
+            .WithCompilationOutputInfo(
+                new CompilationOutputInfo().WithAssemblyPath(Path.Combine(SomeProject.IntermediateOutputPath, "SomeProject.dll")));
         Workspace.TryApplyChanges(Workspace.CurrentSolution.AddProject(projectInfo));
 
         await _fallbackProjectManger.DynamicFileAddedAsync(
@@ -72,7 +83,8 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
     public async Task DynamicFileAdded_UnknownProject_Adds()
     {
         var projectId = ProjectId.CreateNewId();
-        var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
+        var projectInfo = ProjectInfo.Create(
+            projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
             .WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(Path.Combine(SomeProject.IntermediateOutputPath, "SomeProject.dll")))
             .WithDefaultNamespace("RootNamespace");
 
@@ -100,7 +112,8 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
     public async Task DynamicFileAdded_UnknownToKnownProject_NotFallbackHostProject()
     {
         var projectId = ProjectId.CreateNewId();
-        var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
+        var projectInfo = ProjectInfo.Create(
+            projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
             .WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(Path.Combine(SomeProject.IntermediateOutputPath, "SomeProject.dll")))
             .WithDefaultNamespace("RootNamespace");
 
@@ -116,8 +129,17 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         var project = Assert.Single(_projectManager.GetProjects());
         Assert.IsType<FallbackHostProject>(((ProjectSnapshot)project).HostProject);
 
-        var hostProject = new HostProject(SomeProject.FilePath, SomeProject.IntermediateOutputPath, RazorConfiguration.Default, "RootNamespace", "DisplayName");
-        _projectManager.ProjectConfigurationChanged(hostProject);
+        var hostProject = new HostProject(
+            SomeProject.FilePath,
+            SomeProject.IntermediateOutputPath,
+            RazorConfiguration.Default,
+            "RootNamespace",
+            "DisplayName");
+
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectConfigurationChanged(hostProject);
+        });
 
         project = Assert.Single(_projectManager.GetProjects());
         Assert.IsNotType<FallbackHostProject>(((ProjectSnapshot)project).HostProject);
@@ -127,7 +149,8 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
     public async Task DynamicFileAdded_TrackedProject_AddsDocuments()
     {
         var projectId = ProjectId.CreateNewId();
-        var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
+        var projectInfo = ProjectInfo.Create(
+            projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
             .WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(Path.Combine(SomeProject.IntermediateOutputPath, "SomeProject.dll")))
             .WithDefaultNamespace("RootNamespace");
 
@@ -171,7 +194,8 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
     public async Task DynamicFileAdded_TrackedProject_IgnoresDocumentFromOutsideCone()
     {
         var projectId = ProjectId.CreateNewId();
-        var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
+        var projectInfo = ProjectInfo.Create(
+            projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
             .WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(Path.Combine(SomeProject.IntermediateOutputPath, "SomeProject.dll")))
             .WithDefaultNamespace("RootNamespace");
 
@@ -201,8 +225,8 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
 
         var project = Assert.Single(_projectManager.GetProjects());
 
-        Assert.Collection(project.DocumentFilePaths,
-            f => Assert.Equal(SomeProjectFile1.FilePath, f));
+        Assert.Single(project.DocumentFilePaths,
+            filePath => filePath == SomeProjectFile1.FilePath);
 
         Assert.Equal(SomeProjectFile1.TargetPath, project.GetDocument(SomeProjectFile1.FilePath)!.TargetPath);
     }
@@ -211,7 +235,8 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
     public async Task DynamicFileAdded_UnknownProject_SetsConfigurationFileStore()
     {
         var projectId = ProjectId.CreateNewId();
-        var projectInfo = ProjectInfo.Create(projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
+        var projectInfo = ProjectInfo.Create(
+            projectId, VersionStamp.Default, "DisplayName", "AssemblyName", LanguageNames.CSharp, filePath: SomeProject.FilePath)
             .WithCompilationOutputInfo(new CompilationOutputInfo().WithAssemblyPath(Path.Combine(SomeProject.IntermediateOutputPath, "SomeProject.dll")))
             .WithDefaultNamespace("RootNamespace");
 

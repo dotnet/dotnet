@@ -30,7 +30,7 @@ internal class GeneratedDocumentSynchronizer : DocumentProcessedListener
 
     public override void DocumentProcessed(RazorCodeDocument codeDocument, IDocumentSnapshot document)
     {
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         if (!_documentVersionCache.TryGetDocumentVersion(document, out var hostDocumentVersion))
         {

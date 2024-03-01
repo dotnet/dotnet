@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
-using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
@@ -23,7 +23,7 @@ using ItemReference = Microsoft.CodeAnalysis.Razor.ProjectSystem.ManagedProjectS
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-public class FallbackWindowsRazorProjectHostTest : ProjectSnapshotManagerDispatcherWorkspaceTestBase
+public class FallbackWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
 {
     private readonly ItemCollection _referenceItems;
     private readonly TestProjectSnapshotManager _projectManager;

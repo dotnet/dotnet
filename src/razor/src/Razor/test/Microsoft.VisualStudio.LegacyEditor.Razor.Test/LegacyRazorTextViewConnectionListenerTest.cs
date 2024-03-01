@@ -3,7 +3,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Xunit;
@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor;
 
-public class LegacyRazorTextViewConnectionListenerTest(ITestOutputHelper testOutput) : ProjectSnapshotManagerDispatcherTestBase(testOutput)
+public class LegacyRazorTextViewConnectionListenerTest(ITestOutputHelper testOutput) : VisualStudioTestBase(testOutput)
 {
     [UIFact]
     public void SubjectBuffersConnected_CallsRazorDocumentManager_OnTextViewOpened()

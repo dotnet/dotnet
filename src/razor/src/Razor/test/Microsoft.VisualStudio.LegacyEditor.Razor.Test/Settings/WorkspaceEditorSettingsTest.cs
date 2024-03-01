@@ -4,7 +4,7 @@
 using System;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Accessors;
-using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.VisualStudio.Editor.Razor.Settings;
 using Moq;
@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor.Settings;
 
-public class WorkspaceEditorSettingsTest(ITestOutputHelper testOutput) : ProjectSnapshotManagerDispatcherTestBase(testOutput)
+public class WorkspaceEditorSettingsTest(ITestOutputHelper testOutput) : VisualStudioTestBase(testOutput)
 {
     [Fact]
     public void InitialSettingsAreClientSettingsManagerDefault()

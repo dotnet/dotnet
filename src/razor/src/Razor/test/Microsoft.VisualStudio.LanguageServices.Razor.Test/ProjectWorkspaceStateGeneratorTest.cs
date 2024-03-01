@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,19 +11,17 @@ using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
-using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.Test;
 
-public class ProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerDispatcherTestBase
+public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
 {
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
     private readonly TestTagHelperResolver _tagHelperResolver;
@@ -35,17 +32,13 @@ public class ProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerDispatch
     public ProjectWorkspaceStateGeneratorTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _projectEngineFactoryProvider = Mock.Of<IProjectEngineFactoryProvider>(MockBehavior.Strict);
+        _projectEngineFactoryProvider = StrictMock.Of<IProjectEngineFactoryProvider>();
 
         _tagHelperResolver = new TestTagHelperResolver(
-            ImmutableArray.Create(TagHelperDescriptorBuilder.Create("ResolvableTagHelper", "TestAssembly").Build()));
-
-        var testServices = TestServices.Create([], []);
-        var workspace = TestWorkspace.Create(testServices);
-        AddDisposable(workspace);
+            [TagHelperDescriptorBuilder.Create("ResolvableTagHelper", "TestAssembly").Build()]);
 
         var projectId = ProjectId.CreateNewId("Test");
-        var solution = workspace.CurrentSolution.AddProject(ProjectInfo.Create(
+        var solution = Workspace.CurrentSolution.AddProject(ProjectInfo.Create(
             projectId,
             VersionStamp.Default,
             "Test",
@@ -55,45 +48,53 @@ public class ProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerDispatch
         _workspaceProject = solution.GetProject(projectId).AssumeNotNull();
         _projectSnapshot = new ProjectSnapshot(
             ProjectState.Create(_projectEngineFactoryProvider, TestProjectData.SomeProject, ProjectWorkspaceState.Default));
-        _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create(ImmutableArray.Create(
-            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()));
+        _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create(
+            [TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()]);
     }
 
     private IProjectSnapshotManagerAccessor CreateProjectManagerAccessor()
     {
         var projectManager = new TestProjectSnapshotManager(_projectEngineFactoryProvider, Dispatcher);
-        var mock = new Mock<IProjectSnapshotManagerAccessor>(MockBehavior.Strict);
-        mock.SetupGet(x => x.Instance).Returns(projectManager);
 
-        return mock.Object;
+        return StrictMock.Of<IProjectSnapshotManagerAccessor>(x =>
+            x.Instance == projectManager);
     }
 
     [UIFact]
-    public void Dispose_MakesUpdateNoop()
+    public async Task Dispose_MakesUpdateNoop()
     {
         // Arrange
         var projectManagerAccessor = CreateProjectManagerAccessor();
-        using var stateGenerator = new ProjectWorkspaceStateGenerator(projectManagerAccessor, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
+        using var stateGenerator = new ProjectWorkspaceStateGenerator(
+            projectManagerAccessor, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
         stateGenerator.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
 
         // Act
         stateGenerator.Dispose();
-        stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
+
+        await RunOnDispatcherAsync(() =>
+        {
+            stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
+        });
 
         // Assert
         Assert.Empty(stateGenerator.Updates);
     }
 
     [UIFact]
-    public void Update_StartsUpdateTask()
+    public async Task Update_StartsUpdateTask()
     {
         // Arrange
         var projectManagerAccessor = CreateProjectManagerAccessor();
-        using var stateGenerator = new ProjectWorkspaceStateGenerator(projectManagerAccessor, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
+        using var stateGenerator = new ProjectWorkspaceStateGenerator(
+            projectManagerAccessor, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
         stateGenerator.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
 
         // Act
-        stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
+        await RunOnDispatcherAsync(() =>
+        {
+            stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
+        });
 
         // Assert
         var update = Assert.Single(stateGenerator.Updates);
@@ -101,17 +102,26 @@ public class ProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerDispatch
     }
 
     [UIFact]
-    public void Update_SoftCancelsIncompleteTaskForSameProject()
+    public async Task Update_SoftCancelsIncompleteTaskForSameProject()
     {
         // Arrange
         var projectManagerAccessor = CreateProjectManagerAccessor();
-        using var stateGenerator = new ProjectWorkspaceStateGenerator(projectManagerAccessor, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
+        using var stateGenerator = new ProjectWorkspaceStateGenerator(
+            projectManagerAccessor, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
         stateGenerator.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
-        stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
+
+        await RunOnDispatcherAsync(() =>
+        {
+            stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
+        });
+
         var initialUpdate = stateGenerator.Updates.Single().Value;
 
         // Act
-        stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
+        await RunOnDispatcherAsync(() =>
+        {
+            stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
+        });
 
         // Assert
         Assert.True(initialUpdate.Cts.IsCancellationRequested);
@@ -122,13 +132,21 @@ public class ProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerDispatch
     {
         // Arrange
         var projectManagerAccessor = CreateProjectManagerAccessor();
-        using var stateGenerator = new ProjectWorkspaceStateGenerator(projectManagerAccessor, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
+        using var stateGenerator = new ProjectWorkspaceStateGenerator(
+            projectManagerAccessor, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
         stateGenerator.NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false);
-        projectManagerAccessor.Instance.ProjectAdded(_projectSnapshot.HostProject);
-        projectManagerAccessor.Instance.ProjectWorkspaceStateChanged(_projectSnapshot.Key, _projectWorkspaceStateWithTagHelpers);
+
+        await RunOnDispatcherAsync(() =>
+        {
+            projectManagerAccessor.Instance.ProjectAdded(_projectSnapshot.HostProject);
+            projectManagerAccessor.Instance.ProjectWorkspaceStateChanged(_projectSnapshot.Key, _projectWorkspaceStateWithTagHelpers);
+        });
 
         // Act
-        stateGenerator.Update(workspaceProject: null, _projectSnapshot, DisposalToken);
+        await RunOnDispatcherAsync(() =>
+        {
+            stateGenerator.Update(workspaceProject: null, _projectSnapshot, DisposalToken);
+        });
 
         // Jump off the UI thread so the background work can complete.
         await Task.Run(() => stateGenerator.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));
@@ -144,12 +162,20 @@ public class ProjectWorkspaceStateGeneratorTest : ProjectSnapshotManagerDispatch
     {
         // Arrange
         var projectManagerAccessor = CreateProjectManagerAccessor();
-        using var stateGenerator = new ProjectWorkspaceStateGenerator(projectManagerAccessor, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
+        using var stateGenerator = new ProjectWorkspaceStateGenerator(
+            projectManagerAccessor, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
         stateGenerator.NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false);
-        projectManagerAccessor.Instance.ProjectAdded(_projectSnapshot.HostProject);
+
+        await RunOnDispatcherAsync(() =>
+        {
+            projectManagerAccessor.Instance.ProjectAdded(_projectSnapshot.HostProject);
+        });
 
         // Act
-        stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
+        await RunOnDispatcherAsync(() =>
+        {
+            stateGenerator.Update(_workspaceProject, _projectSnapshot, DisposalToken);
+        });
 
         // Jump off the UI thread so the background work can complete.
         await Task.Run(() => stateGenerator.NotifyBackgroundWorkCompleted.Wait(TimeSpan.FromSeconds(3)));

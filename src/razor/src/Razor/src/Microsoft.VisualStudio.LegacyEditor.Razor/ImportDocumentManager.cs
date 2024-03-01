@@ -32,7 +32,7 @@ internal sealed class ImportDocumentManager(
             throw new ArgumentNullException(nameof(documentTracker));
         }
 
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         var filePath = documentTracker.FilePath;
         var projectSnapshot = documentTracker.ProjectSnapshot.AssumeNotNull();
@@ -70,7 +70,7 @@ internal sealed class ImportDocumentManager(
             throw new ArgumentNullException(nameof(documentTracker));
         }
 
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         var filePath = documentTracker.FilePath;
         var projectSnapshot = documentTracker.ProjectSnapshot.AssumeNotNull();
@@ -120,7 +120,7 @@ internal sealed class ImportDocumentManager(
 
     private void FileChangeTracker_Changed(object sender, FileChangeEventArgs args)
     {
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         if (_importTrackerCache.TryGetValue(args.FilePath, out var importTracker))
         {
