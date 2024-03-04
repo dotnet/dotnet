@@ -7,6 +7,11 @@
         <target state="translated">値を null または空の文字列にすることはできません。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Directive">
+        <source>directive</source>
+        <target state="new">directive</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DirectiveSnippetDescription">
         <source>Insert a directive code snippet
 [Tab] to navigate between elements, [Enter] to complete</source>

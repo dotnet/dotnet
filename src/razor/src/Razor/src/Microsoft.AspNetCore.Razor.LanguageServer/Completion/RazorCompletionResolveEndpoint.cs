@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -50,7 +49,9 @@ internal class RazorCompletionResolveEndpoint : IVSCompletionResolveEndpoint, IC
 
             // See if this is the right completion list for this corresponding completion item. We cross-check this based on label only given that
             // is what users interact with.
-            if (cacheEntry.CompletionList.Items.Any(completion => string.Equals(completionItem.Label, completion.Label, StringComparison.Ordinal)))
+            if (cacheEntry.CompletionList.Items.Any(completion => completionItem.Label == completion.Label &&
+              // Check the Kind as well, e.g. we may have a Razor snippet and a C# keyword with the same label, etc.
+                                                                  completionItem.Kind == completion.Kind))
             {
                 originalRequestContext = cacheEntry.Context;
                 containingCompletionList = cacheEntry.CompletionList;
