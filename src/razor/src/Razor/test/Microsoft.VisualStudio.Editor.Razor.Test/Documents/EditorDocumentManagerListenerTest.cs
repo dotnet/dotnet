@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -17,7 +18,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 
-public class EditorDocumentManagerListenerTest : ProjectSnapshotManagerDispatcherTestBase
+public class EditorDocumentManagerListenerTest : VisualStudioTestBase
 {
     private readonly string _projectFilePath;
     private readonly ProjectKey _projectKey;

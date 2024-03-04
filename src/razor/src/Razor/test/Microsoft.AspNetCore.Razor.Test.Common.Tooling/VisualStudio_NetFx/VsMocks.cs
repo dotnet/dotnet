@@ -2,8 +2,10 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.Build.Tasks;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.VisualStudio.Editor.Razor;
+using Microsoft.VisualStudio.LanguageServerClient.Razor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 using Moq;
@@ -15,20 +17,32 @@ internal static class VsMocks
     public static ITextBuffer CreateTextBuffer(bool core)
         => CreateTextBuffer(core ? ContentTypes.RazorCore : ContentTypes.NonRazor);
 
-    public static ITextBuffer CreateTextBuffer(IContentType contentType, PropertyCollection? propertyCollection = null)
+    public static ITextBuffer CreateTextBuffer(PropertyCollection? properties = null)
     {
-        propertyCollection ??= new PropertyCollection();
+        properties ??= new PropertyCollection();
 
         return StrictMock.Of<ITextBuffer>(b =>
-            b.ContentType == contentType &&
-            b.Properties == propertyCollection);
+            b.Properties == properties);
+    }
+
+    public static ITextBuffer CreateTextBuffer(IContentType contentType, PropertyCollection? properties = null)
+    {
+        var buffer = CreateTextBuffer(properties);
+
+        Mock.Get(buffer)
+            .SetupGet(x => x.ContentType)
+            .Returns(contentType);
+
+        return buffer;
     }
 
     internal static class ContentTypes
     {
         public static readonly IContentType LegacyRazorCore = Create(RazorConstants.LegacyCoreContentType);
         public static readonly IContentType RazorCore = Create(RazorLanguage.CoreContentType);
+        public static readonly IContentType RazorLSP = Create(RazorConstants.RazorLSPContentTypeName);
         public static readonly IContentType NonRazor = StrictMock.Of<IContentType>(c => c.IsOfType(It.IsAny<string>()) == false);
+        public static readonly IContentType CSharp = CreateCSharp();
 
         public static IContentType Create(params string[] types)
         {
@@ -37,6 +51,19 @@ internal static class VsMocks
                 .Returns((string type) => Array.IndexOf(types, type) >= 0);
 
             return mock.Object;
+        }
+
+        private static IContentType CreateCSharp()
+        {
+            var contentType = Create(RazorLSPConstants.CSharpContentTypeName);
+            var mock = Mock.Get(contentType);
+
+            mock.SetupGet(x => x.TypeName)
+                .Returns(RazorLSPConstants.CSharpContentTypeName);
+            mock.SetupGet(x => x.DisplayName)
+                .Returns(RazorLSPConstants.CSharpContentTypeName);
+
+            return contentType;
         }
     }
 

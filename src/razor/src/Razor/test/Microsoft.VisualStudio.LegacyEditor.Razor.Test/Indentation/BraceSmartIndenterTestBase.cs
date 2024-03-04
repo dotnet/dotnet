@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor.Indentation;
 
-public class BraceSmartIndenterTestBase(ITestOutputHelper testOutput) : ProjectSnapshotManagerDispatcherTestBase(testOutput)
+public class BraceSmartIndenterTestBase(ITestOutputHelper testOutput) : VisualStudioTestBase(testOutput)
 {
     private protected static IVisualStudioDocumentTracker CreateDocumentTracker(Func<ITextBuffer> bufferAccessor, ITextView? focusedTextView)
     {

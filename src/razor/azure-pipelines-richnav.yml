@@ -6,6 +6,10 @@ variables:
 - template: /eng/common/templates/variables/pool-providers.yml
 - name: Build.Repository.Clean
   value: true
+- name: Codeql.Enabled
+  value: false
+- name: Codeql.SkipTaskAutoInjection
+  value: true
 
 trigger:
   branches:

@@ -1,11 +1,9 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -19,7 +17,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor;
 
-public class RazorDocumentManagerTest : ProjectSnapshotManagerDispatcherTestBase
+public class RazorDocumentManagerTest : VisualStudioTestBase
 {
     private const string FilePath = "C:/Some/Path/TestDocumentTracker.cshtml";
     private const string ProjectPath = "C:/Some/Path/TestProject.csproj";
@@ -34,10 +32,10 @@ public class RazorDocumentManagerTest : ProjectSnapshotManagerDispatcherTestBase
         var projectManagerMock = new StrictMock<ProjectSnapshotManagerBase>();
         projectManagerMock
             .Setup(p => p.GetAllProjectKeys(It.IsAny<string>()))
-            .Returns(ImmutableArray<ProjectKey>.Empty);
+            .Returns([]);
         projectManagerMock
             .Setup(p => p.GetProjects())
-            .Returns(ImmutableArray<IProjectSnapshot>.Empty);
+            .Returns([]);
 
         IProjectSnapshot? projectResult = null;
         projectManagerMock
@@ -224,7 +222,8 @@ public class RazorDocumentManagerTest : ProjectSnapshotManagerDispatcherTestBase
         var documentManager = new RazorDocumentManager(editorFactoryService, Dispatcher, JoinableTaskContext);
 
         // Populate the text views
-        documentTracker.Subscribe();
+        await RunOnDispatcherAsync(documentTracker.Subscribe);
+
         documentTracker.AddTextView(textView1);
         documentTracker.AddTextView(textView2);
 

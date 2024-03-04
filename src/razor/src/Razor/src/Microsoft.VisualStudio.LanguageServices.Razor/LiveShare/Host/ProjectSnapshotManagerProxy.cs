@@ -110,7 +110,7 @@ internal class ProjectSnapshotManagerProxy : IProjectSnapshotManagerProxy, IColl
 
     private void ProjectSnapshotManager_Changed(object sender, ProjectChangeEventArgs args)
     {
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         if (_disposed)
         {

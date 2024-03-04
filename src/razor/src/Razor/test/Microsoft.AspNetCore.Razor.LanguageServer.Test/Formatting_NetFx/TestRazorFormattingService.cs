@@ -34,7 +34,7 @@ internal static class TestRazorFormattingService
         var versionCache = new DocumentVersionCache();
         if (documentSnapshot is not null)
         {
-            await dispatcher.RunOnDispatcherThreadAsync(() =>
+            await dispatcher.RunAsync(() =>
             {
                 versionCache.TrackDocumentVersion(documentSnapshot, version: 1);
             }, CancellationToken.None);

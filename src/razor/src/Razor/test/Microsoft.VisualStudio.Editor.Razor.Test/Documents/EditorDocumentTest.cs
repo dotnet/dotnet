@@ -3,6 +3,7 @@
 
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -12,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 
-public class EditorDocumentTest : ProjectSnapshotManagerDispatcherTestBase
+public class EditorDocumentTest : VisualStudioTestBase
 {
     private readonly IEditorDocumentManager _documentManager;
     private readonly string _projectFilePath;

@@ -47,7 +47,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
 
     private protected override ProjectSnapshotManagerDispatcher CreateDispatcher()
     {
-        var dispatcher = new LSPProjectSnapshotManagerDispatcher(LoggerFactory);
+        var dispatcher = new LSPProjectSnapshotManagerDispatcher(ErrorReporter);
         AddDisposable(dispatcher);
 
         return dispatcher;
@@ -127,12 +127,6 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         monitor.SetupGet(m => m.CurrentValue).Returns(new RazorLSPOptions(enableFormatting, true, InsertSpaces: true, TabSize: 4, autoShowCompletion, autoListParams, formatOnType, autoInsertAttributeQuotes, colorBackground, commitElementsWithSpace));
         return monitor.Object;
     }
-
-    protected Task RunOnDispatcherThreadAsync(Action action)
-        => Dispatcher.RunOnDispatcherThreadAsync(action, DisposalToken);
-
-    protected Task<T> RunOnDispatcherThreadAsync<T>(Func<T> func)
-        => Dispatcher.RunOnDispatcherThreadAsync(func, DisposalToken);
 
     private class ThrowingRazorSpanMappingService : IRazorSpanMappingService
     {

@@ -4,6 +4,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.Language.Intellisense;
@@ -17,7 +18,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor.Completion;
 
-public class RazorDirectiveAttributeCompletionSourceTest(ITestOutputHelper testOutput) : ProjectSnapshotManagerDispatcherTestBase(testOutput)
+public class RazorDirectiveAttributeCompletionSourceTest(ITestOutputHelper testOutput) : VisualStudioTestBase(testOutput)
 {
     [Fact]
     public async Task GetDescriptionAsync_NoDescriptionData_ReturnsEmptyString()
