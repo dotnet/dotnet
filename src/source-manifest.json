@@ -55,16 +55,16 @@
       "commitSha": "5d6a90b3aad3674a64c669bbb5a742993f3ad47c"
     },
     {
-      "packageVersion": "8.0.300-beta.24127.3",
+      "packageVersion": "8.0.300-beta.24152.1",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "b57dee7cec971021547a7b8a36a46d7271fea99e"
+      "commitSha": "ea8ef6edee63929f44026c79f94c9e6ffe6dcd62"
     },
     {
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "5e463f8a7c0c354cf72cc52aa01e89c227caf5db"
+      "commitSha": "1f23db25f3ebade102a338496f7d46a1128307f3"
     },
     {
       "packageVersion": "17.10.0-preview-24127-03",
@@ -85,10 +85,10 @@
       "commitSha": "d4c396a9c9e31d027789a55a61f5509cadc6e0e0"
     },
     {
-      "packageVersion": "4.10.0-3.24129.8",
+      "packageVersion": "4.10.0-3.24151.8",
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "2e244dde6c965ffa8cabb248c4105d3704e3bcdf"
+      "commitSha": "8537440d8c831b8533a18f6530945ee91c243e1b"
     },
     {
       "packageVersion": "3.11.0-beta1.24122.1",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-preview.2.24153.1",
+      "packageVersion": "9.0.100-preview.2.24153.7",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "db73c8d3e2d0c4f4aeabb7727a03590d35823641"
+      "commitSha": "3f17fe73c73b83903a6baf13ac024f34c9fc53ae"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24112.1",
