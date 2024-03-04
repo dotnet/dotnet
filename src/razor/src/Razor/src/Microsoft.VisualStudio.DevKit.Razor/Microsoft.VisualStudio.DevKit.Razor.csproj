@@ -52,11 +52,11 @@
 
       <!-- Transform RuntimeIdentifierForPublish items to project items to pass to MSBuild task -->
       <ProjectToPublish Include="@(RuntimeIdentifierForPublish->'$(MSBuildProjectFullPath)')">
-        <AdditionalProperties>_IsPublishing=true;NoBuild=true;PublishRuntimeIdentifier=%(RuntimeIdentifierForPublish.Identity);PublishDir=$(RidsPublishDir)%(RuntimeIdentifierForPublish.Identity)\;TargetFramework=$(PublishTargetFramework);SelfContained=false;AppendRuntimeIdentifierToOutputPath=false</AdditionalProperties>
+        <AdditionalProperties>RuntimeIdentifier=%(RuntimeIdentifierForPublish.Identity);PublishDir=$(RidsPublishDir)%(RuntimeIdentifierForPublish.Identity)\;TargetFramework=$(PublishTargetFramework);SelfContained=false</AdditionalProperties>
       </ProjectToPublish>
 
       <ProjectToPublish_PlatformAgnostic Include="$(MSBuildProjectFullPath)">
-        <AdditionalProperties>_IsPublishing=true;NoBuild=true;PublishDir=$(RidsPublishDir)\PlatformAgnostic\;UseAppHost=false;TargetFramework=$(PublishTargetFramework);SelfContained=false;AppendRuntimeIdentifierToOutputPath=false</AdditionalProperties>
+        <AdditionalProperties>PublishDir=$(RidsPublishDir)\PlatformAgnostic\;UseAppHost=false;TargetFramework=$(PublishTargetFramework);SelfContained=false</AdditionalProperties>
       </ProjectToPublish_PlatformAgnostic>
     </ItemGroup>
 

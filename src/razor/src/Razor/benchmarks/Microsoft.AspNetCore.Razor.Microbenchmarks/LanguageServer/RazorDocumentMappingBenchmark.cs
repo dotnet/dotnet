@@ -48,7 +48,7 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
 
         var targetPath = "/Components/Pages/Generated.razor";
 
-        DocumentSnapshot = GetDocumentSnapshot(projectFilePath, _filePath, targetPath);
+        DocumentSnapshot = await GetDocumentSnapshotAsync(projectFilePath, _filePath, targetPath);
 
         var codeDocument = await DocumentSnapshot.GetGeneratedOutputAsync();
         CSharpDocument = codeDocument.GetCSharpDocument();

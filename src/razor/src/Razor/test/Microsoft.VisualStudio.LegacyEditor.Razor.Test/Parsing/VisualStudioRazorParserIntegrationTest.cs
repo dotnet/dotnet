@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Language.Intellisense;
@@ -24,7 +25,7 @@ using SystemDebugger = System.Diagnostics.Debugger;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor.Parsing;
 
-public class VisualStudioRazorParserIntegrationTest : ProjectSnapshotManagerDispatcherTestBase
+public class VisualStudioRazorParserIntegrationTest : VisualStudioTestBase
 {
     private const string TestLinePragmaFileName = @"C:\This\Path\Is\Just\For\Line\Pragmas.cshtml";
     private const string TestProjectPath = @"C:\This\Path\Is\Just\For\Project.csproj";

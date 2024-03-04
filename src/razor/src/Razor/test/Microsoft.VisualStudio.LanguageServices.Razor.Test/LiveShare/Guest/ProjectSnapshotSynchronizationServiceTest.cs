@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LiveShare.Razor.Test;
@@ -19,7 +19,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 
-public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerDispatcherWorkspaceTestBase
+public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTestBase
 {
     private readonly CollaborationSession _sessionContext;
     private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor;
@@ -73,7 +73,7 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
         await synchronizationService.InitializeAsync(DisposalToken);
 
         // Assert
-        var projects = await Dispatcher.RunOnDispatcherThreadAsync(
+        var projects = await Dispatcher.RunAsync(
             _projectManagerAccessor.Instance.GetProjects, DisposalToken);
         var project = Assert.Single(projects);
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
@@ -110,7 +110,7 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
         await synchronizationService.UpdateGuestProjectManagerAsync(args);
 
         // Assert
-        var projects = await Dispatcher.RunOnDispatcherThreadAsync(
+        var projects = await Dispatcher.RunAsync(
             _projectManagerAccessor.Instance.GetProjects, DisposalToken);
         var project = Assert.Single(projects);
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
@@ -143,7 +143,7 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
             JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
 
-        await Dispatcher.RunOnDispatcherThreadAsync(
+        await Dispatcher.RunAsync(
             () => _projectManagerAccessor.Instance.ProjectAdded(hostProject),
             DisposalToken);
         var args = new ProjectChangeEventProxyArgs(olderHandle, newer: null, ProjectProxyChangeKind.ProjectRemoved);
@@ -152,7 +152,7 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
         await synchronizationService.UpdateGuestProjectManagerAsync(args);
 
         // Assert
-        var projects = await Dispatcher.RunOnDispatcherThreadAsync(
+        var projects = await Dispatcher.RunAsync(
             _projectManagerAccessor.Instance.GetProjects, DisposalToken);
         Assert.Empty(projects);
     }
@@ -182,7 +182,7 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
             ErrorReporter,
             JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
-        await Dispatcher.RunOnDispatcherThreadAsync(() =>
+        await Dispatcher.RunAsync(() =>
         {
             var projectManager = _projectManagerAccessor.Instance;
             projectManager.ProjectAdded(hostProject);
@@ -194,7 +194,7 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
         await synchronizationService.UpdateGuestProjectManagerAsync(args);
 
         // Assert
-        var projects = await Dispatcher.RunOnDispatcherThreadAsync(
+        var projects = await Dispatcher.RunAsync(
             _projectManagerAccessor.Instance.GetProjects, DisposalToken);
         var project = Assert.Single(projects);
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
@@ -227,7 +227,7 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
             ErrorReporter,
             JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
-        await Dispatcher.RunOnDispatcherThreadAsync(() =>
+        await Dispatcher.RunAsync(() =>
         {
             var projectManager = _projectManagerAccessor.Instance;
             projectManager.ProjectAdded(hostProject);
@@ -239,7 +239,7 @@ public class ProjectSnapshotSynchronizationServiceTest : ProjectSnapshotManagerD
         await synchronizationService.UpdateGuestProjectManagerAsync(args);
 
         // Assert
-        var projects = await Dispatcher.RunOnDispatcherThreadAsync(
+        var projects = await Dispatcher.RunAsync(
             _projectManagerAccessor.Instance.GetProjects, DisposalToken);
         var project = Assert.Single(projects);
         Assert.Equal("/guest/path/project.csproj", project.FilePath);

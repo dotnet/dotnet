@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Language.Intellisense;
@@ -17,7 +18,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor.Parsing;
 
-public class VisualStudioRazorParserTest : ProjectSnapshotManagerDispatcherTestBase
+public class VisualStudioRazorParserTest : VisualStudioTestBase
 {
     private readonly IProjectSnapshot _projectSnapshot;
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;

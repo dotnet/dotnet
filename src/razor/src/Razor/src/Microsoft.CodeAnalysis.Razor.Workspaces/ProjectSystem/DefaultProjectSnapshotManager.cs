@@ -381,26 +381,16 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
 
     private void NotifyListeners(IProjectSnapshot? older, IProjectSnapshot? newer, string? documentFilePath, ProjectChangeKind kind)
     {
+        // Change notifications should always be sent on the dispatcher.
+        _dispatcher.AssertRunningOnDispatcher();
+
         NotifyListeners(new ProjectChangeEventArgs(older, newer, documentFilePath, kind, IsSolutionClosing));
     }
 
     // virtual so it can be overridden in tests
     protected virtual void NotifyListeners(ProjectChangeEventArgs e)
     {
-        // For now, consumers of the Changed event often assume the threaded
-        // behavior and can error. Once that is fixed we can remove this.
-        // https://github.com/dotnet/razor/issues/9162
-        if (_dispatcher.IsDispatcherThread)
-        {
-            NotifyListenersCore(e);
-        }
-        else
-        {
-            _ = _dispatcher.RunOnDispatcherThreadAsync(() =>
-            {
-                NotifyListenersCore(e);
-            }, CancellationToken.None);
-        }
+        NotifyListenersCore(e);
     }
 
     private void NotifyListenersCore(ProjectChangeEventArgs e)
@@ -449,6 +439,9 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
                 return false;
             }
 
+            // We're about to mutate, so assert that we're on the dispatcher thread.
+            _dispatcher.AssertRunningOnDispatcher();
+
             var state = ProjectState.Create(
                 _projectEngineFactoryProvider,
                 projectAddedAction.HostProject,
@@ -485,6 +478,10 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
                 {
                     oldSnapshot = entry.GetSnapshot();
                     newSnapshot = newEntry?.GetSnapshot() ?? oldSnapshot;
+
+                    // We're about to mutate, so assert that we're on the dispatcher thread.
+                    _dispatcher.AssertRunningOnDispatcher();
+
                     using (upgradeableLock.EnterWriteLock())
                     {
                         if (newEntry is null)

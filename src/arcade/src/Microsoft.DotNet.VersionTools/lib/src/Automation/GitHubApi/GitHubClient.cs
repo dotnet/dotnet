@@ -245,7 +245,7 @@ namespace Microsoft.DotNet.VersionTools.Automation.GitHubApi
                 }
                 if (queryResponse.TotalCount > 1)
                 {
-                    IEnumerable<int> allIds = queryResponse.Items.Select(item => item.Id);
+                    IEnumerable<long> allIds = queryResponse.Items.Select(item => item.Id);
                     Trace.TraceInformation($"Found multiple pull requests with head {headPrefix}. On this page, found {string.Join(", ", allIds)}");
                 }
 

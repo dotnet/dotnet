@@ -6,6 +6,7 @@ using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Deployment.DotNet.Releases;
+using NuGet.Versioning;
 using Xunit;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
@@ -47,6 +48,21 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             ITaskItem workloadSetPackageItem = new TaskItem(Path.Combine(TestAssetsPath, "microsoft.net.workloads.9.0.100.9.0.100-baseline.1.23464.1.nupkg"));
 
             Assert.Throws<ArgumentOutOfRangeException>(() => { WorkloadSetPackage p = new(workloadSetPackageItem, PackageRootDirectory, new Version("256.12.3")); });
+        }
+
+        [WindowsOnlyTheory]
+        [InlineData("8.0.200", "8.200.0", "8.0.200")]
+        [InlineData("8.0.200", "8.201.0", "8.0.201")]
+        [InlineData("8.0.200", "8.203.1", "8.0.203.1")]
+        [InlineData("9.0.100-preview.2", "9.100.0-preview.2.3.4.5.6.7.8", "9.0.100-preview.2.3.4.5.6.7.8")]
+        [InlineData("8.0.200", "8.201.1-preview", "8.0.201.1-preview")]
+        [InlineData("8.0.200", "8.201.1-preview.2", "8.0.201.1-preview.2")]
+        [InlineData("8.0.200", "8.201.0-servicing.23015", "8.0.201-servicing.23015")]
+        public void ItCanComputeWorkloadSetVersion(string sdkFeatureBand, string packageVersion, string expectedWorkloadSetVerion)
+        {
+            string workloadSetVersion = WorkloadSetPackage.GetWorkloadSetVersion(new ReleaseVersion(sdkFeatureBand), new NuGetVersion(packageVersion));
+
+            Assert.Equal(expectedWorkloadSetVerion, workloadSetVersion);
         }
     }
 }
