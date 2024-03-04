@@ -43,7 +43,7 @@ internal class ProjectSnapshotSynchronizationService(
     {
         _hostProjectManagerProxy.Changed -= HostProxyProjectManager_Changed;
 
-        await _dispatcher.DispatcherScheduler;
+        await _dispatcher.Scheduler;
 
         var projectManager = _projectManagerAccessor.Instance;
 
@@ -69,7 +69,7 @@ internal class ProjectSnapshotSynchronizationService(
     // Internal for testing
     internal async ValueTask UpdateGuestProjectManagerAsync(ProjectChangeEventProxyArgs args)
     {
-        await _dispatcher.DispatcherScheduler;
+        await _dispatcher.Scheduler;
 
         var projectManager = _projectManagerAccessor.Instance;
 
@@ -118,7 +118,7 @@ internal class ProjectSnapshotSynchronizationService(
 
     private async Task InitializeGuestProjectManagerAsync(IReadOnlyList<ProjectSnapshotHandleProxy> projectHandles)
     {
-        await _dispatcher.DispatcherScheduler;
+        await _dispatcher.Scheduler;
 
         var projectManager = _projectManagerAccessor.Instance;
 

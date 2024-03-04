@@ -31,6 +31,10 @@ variables:
   value: 1
 - name: LogLevel
   value: 'All'
+- name: Codeql.Enabled
+  value: false
+- name: Codeql.SkipTaskAutoInjection
+  value: true
 
 stages:
 - template: \stages\visual-studio\agent.yml@DartLabTemplates

@@ -110,7 +110,7 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
             throw new ArgumentNullException(nameof(document));
         }
 
-        _projectSnapshotManagerDispatcher.AssertDispatcherThread();
+        _projectSnapshotManagerDispatcher.AssertRunningOnDispatcher();
 
         lock (_work)
         {
@@ -140,7 +140,7 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
 
     private async Task DocumentClosedTimer_TickAsync(CancellationToken cancellationToken)
     {
-        await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
+        await _projectSnapshotManagerDispatcher.RunAsync(
             ClearClosedDocuments,
             cancellationToken).ConfigureAwait(false);
     }

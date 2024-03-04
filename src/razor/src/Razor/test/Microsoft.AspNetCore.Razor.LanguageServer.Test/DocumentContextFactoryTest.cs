@@ -23,16 +23,16 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
     private static readonly string s_baseDirectory = PathUtilities.CreateRootedPath("path", "to");
 
     private readonly IDocumentVersionCache _documentVersionCache;
-    private readonly TestProjectSnapshotManager _projectSnapshotManagerBase;
-    private readonly TestProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
+    private readonly TestProjectSnapshotManager _projectManager;
+    private readonly TestProjectSnapshotManagerAccessor _projectManagerAccessor;
 
     public DocumentContextFactoryTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
         _documentVersionCache = new DocumentVersionCache();
 
-        _projectSnapshotManagerBase = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
-        _projectSnapshotManagerAccessor = new TestProjectSnapshotManagerAccessor(_projectSnapshotManagerBase);
+        _projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
+        _projectManagerAccessor = new TestProjectSnapshotManagerAccessor(_projectManager);
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var filePath = FilePathNormalizer.Normalize(Path.Combine(s_baseDirectory, "file.cshtml"));
         var uri = new Uri(filePath);
 
-        var factory = new DocumentContextFactory(_projectSnapshotManagerAccessor, new TestDocumentResolver(), _documentVersionCache, LoggerFactory);
+        var factory = new DocumentContextFactory(_projectManagerAccessor, new TestDocumentResolver(), _documentVersionCache, LoggerFactory);
 
         // Act
         var documentContext = factory.TryCreate(uri);
@@ -58,7 +58,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var filePath = FilePathNormalizer.Normalize(Path.Combine(s_baseDirectory, "file.cshtml"));
         var uri = new Uri(filePath);
 
-        var factory = new DocumentContextFactory(_projectSnapshotManagerAccessor, new TestDocumentResolver(), _documentVersionCache, LoggerFactory);
+        var factory = new DocumentContextFactory(_projectManagerAccessor, new TestDocumentResolver(), _documentVersionCache, LoggerFactory);
 
         // Act
         var documentContext = factory.TryCreateForOpenDocument(uri);
@@ -76,7 +76,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
 
         var documentSnapshot = TestDocumentSnapshot.Create(filePath);
         var documentResolver = new TestDocumentResolver(documentSnapshot);
-        var factory = new DocumentContextFactory(_projectSnapshotManagerAccessor, documentResolver, _documentVersionCache, LoggerFactory);
+        var factory = new DocumentContextFactory(_projectManagerAccessor, documentResolver, _documentVersionCache, LoggerFactory);
 
         // Act
         var documentContext = factory.TryCreateForOpenDocument(uri);
@@ -96,7 +96,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create(string.Empty, documentSnapshot.FilePath));
         documentSnapshot.With(codeDocument);
         var documentResolver = new TestDocumentResolver(documentSnapshot);
-        var factory = new DocumentContextFactory(_projectSnapshotManagerAccessor, documentResolver, _documentVersionCache, LoggerFactory);
+        var factory = new DocumentContextFactory(_projectManagerAccessor, documentResolver, _documentVersionCache, LoggerFactory);
 
         // Act
         var documentContext = factory.TryCreate(uri);
@@ -108,7 +108,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
     }
 
     [Fact]
-    public void TryCreateAsync_WithProjectContext_Resolves()
+    public async Task TryCreateAsync_WithProjectContext_Resolves()
     {
         // Arrange
         var filePath = FilePathNormalizer.Normalize(Path.Combine(s_baseDirectory, "file.cshtml"));
@@ -120,12 +120,16 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create(string.Empty, documentSnapshot.FilePath));
         documentSnapshot.With(codeDocument);
         var documentResolver = new TestDocumentResolver(documentSnapshot);
-        var factory = new DocumentContextFactory(_projectSnapshotManagerAccessor, documentResolver, _documentVersionCache, LoggerFactory);
+        var factory = new DocumentContextFactory(_projectManagerAccessor, documentResolver, _documentVersionCache, LoggerFactory);
 
         var hostProject = new HostProject(projectFilePath, intermediateOutputPath, RazorConfiguration.Default, rootNamespace: null);
-        _projectSnapshotManagerBase.ProjectAdded(hostProject);
         var hostDocument = new HostDocument(filePath, "file.cshtml");
-        _projectSnapshotManagerBase.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(filePath));
+
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectAdded(hostProject);
+            _projectManager.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(filePath));
+        });
 
         // Act
         var documentContext = factory.TryCreate(uri, new VisualStudio.LanguageServer.Protocol.VSProjectContext { Id = hostProject.Key.Id });
@@ -136,7 +140,7 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
     }
 
     [Fact]
-    public void TryCreateAsync_WithProjectContext_DoesntUseSnapshotResolver()
+    public async Task TryCreateAsync_WithProjectContext_DoesntUseSnapshotResolver()
     {
         // Arrange
         var filePath = FilePathNormalizer.Normalize(Path.Combine(s_baseDirectory, "file.cshtml"));
@@ -148,12 +152,16 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create(string.Empty, documentSnapshot.FilePath));
         documentSnapshot.With(codeDocument);
         var documentResolverMock = new Mock<ISnapshotResolver>(MockBehavior.Strict);
-        var factory = new DocumentContextFactory(_projectSnapshotManagerAccessor, documentResolverMock.Object, _documentVersionCache, LoggerFactory);
+        var factory = new DocumentContextFactory(_projectManagerAccessor, documentResolverMock.Object, _documentVersionCache, LoggerFactory);
 
         var hostProject = new HostProject(projectFilePath, intermediateOutputPath, RazorConfiguration.Default, rootNamespace: null);
-        _projectSnapshotManagerBase.ProjectAdded(hostProject);
         var hostDocument = new HostDocument(filePath, "file.cshtml");
-        _projectSnapshotManagerBase.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(filePath));
+
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectAdded(hostProject);
+            _projectManager.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(filePath));
+        });
 
         // Act
         var documentContext = factory.TryCreate(uri, new VisualStudio.LanguageServer.Protocol.VSProjectContext { Id = hostProject.Key.Id });
@@ -175,8 +183,8 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var codeDocument = RazorCodeDocument.Create(RazorSourceDocument.Create(string.Empty, documentSnapshot.FilePath));
         documentSnapshot.With(codeDocument);
         var documentResolver = new TestDocumentResolver(documentSnapshot);
-        await Dispatcher.RunOnDispatcherThreadAsync(() => _documentVersionCache.TrackDocumentVersion(documentSnapshot, version: 1337), DisposalToken);
-        var factory = new DocumentContextFactory(_projectSnapshotManagerAccessor, documentResolver, _documentVersionCache, LoggerFactory);
+        await Dispatcher.RunAsync(() => _documentVersionCache.TrackDocumentVersion(documentSnapshot, version: 1337), DisposalToken);
+        var factory = new DocumentContextFactory(_projectManagerAccessor, documentResolver, _documentVersionCache, LoggerFactory);
 
         // Act
         var documentContext = factory.TryCreateForOpenDocument(uri);

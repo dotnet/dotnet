@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.Text;
@@ -15,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 
-public class EditorDocumentManagerTest : ProjectSnapshotManagerDispatcherTestBase
+public class EditorDocumentManagerTest : VisualStudioTestBase
 {
     private readonly TestEditorDocumentManager _manager;
     private readonly ProjectKey _projectKey1;

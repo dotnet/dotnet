@@ -45,7 +45,7 @@ namespace Microsoft.DotNet.VersionTools.Automation.GitHubApi
 
     public class GitHubIssue
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public int Number { get; set; }
     }
 

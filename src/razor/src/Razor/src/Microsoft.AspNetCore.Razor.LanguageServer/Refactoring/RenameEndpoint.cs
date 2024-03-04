@@ -156,7 +156,7 @@ internal sealed class RenameEndpoint(
         using var _ = StringHashSetPool.GetPooledObject(out var documentPaths);
 
         var projects = await _projectSnapshotManagerDispatcher
-            .RunOnDispatcherThreadAsync(() => _projectSnapshotManager.GetProjects(), cancellationToken)
+            .RunAsync(() => _projectSnapshotManager.GetProjects(), cancellationToken)
             .ConfigureAwait(false);
 
         foreach (var project in projects)

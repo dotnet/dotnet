@@ -53,7 +53,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
             throw new ArgumentNullException(nameof(projectSnapshot));
         }
 
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         if (_disposed)
         {
@@ -195,7 +195,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
                     new Property("id", telemetryId),
                     new Property("result", "error"));
 
-                await _dispatcher.RunOnDispatcherThreadAsync(
+                await _dispatcher.RunAsync(
                    () => _errorReporter.ReportError(ex, projectSnapshot),
                    // Don't allow errors to be cancelled
                    CancellationToken.None).ConfigureAwait(false);
@@ -208,7 +208,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
                 return;
             }
 
-            await _dispatcher.RunOnDispatcherThreadAsync(
+            await _dispatcher.RunAsync(
                 () =>
                 {
                     if (cancellationToken.IsCancellationRequested)
@@ -228,7 +228,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
         catch (Exception ex)
         {
             // This is something totally unexpected, let's just send it over to the project manager.
-            await _dispatcher.RunOnDispatcherThreadAsync(
+            await _dispatcher.RunAsync(
                 () => _errorReporter.ReportError(ex),
                 // Don't allow errors to be cancelled
                 CancellationToken.None).ConfigureAwait(false);
@@ -255,7 +255,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
 
     private void ReportWorkspaceStateChange(ProjectKey projectKey, ProjectWorkspaceState workspaceStateChange)
     {
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         _projectManagerAccessor.Instance.ProjectWorkspaceStateChanged(projectKey, workspaceStateChange);
     }

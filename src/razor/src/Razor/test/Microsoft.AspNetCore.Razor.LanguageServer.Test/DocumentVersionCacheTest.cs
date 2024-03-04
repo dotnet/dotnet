@@ -64,7 +64,7 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
         var textAndVersion = TextAndVersion.Create(text, textVersion);
         cache.TrackDocumentVersion(document, 1337);
 
-        await RunOnDispatcherThreadAsync(() =>
+        await RunOnDispatcherAsync(() =>
         {
             projectSnapshotManager.ProjectAdded(document.ProjectInternal.HostProject);
             projectSnapshotManager.DocumentAdded(document.ProjectInternal.Key, document.State.HostDocument, TextLoader.From(textAndVersion));
@@ -77,7 +77,7 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
         Assert.True(result);
 
         // Act - 2
-        await RunOnDispatcherThreadAsync(() =>
+        await RunOnDispatcherAsync(() =>
             projectSnapshotManager.DocumentRemoved(document.ProjectInternal.Key, document.State.HostDocument));
         result = cache.TryGetDocumentVersion(document, out _);
 
@@ -99,7 +99,7 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
         var textAndVersion = TextAndVersion.Create(text, textVersion);
         cache.TrackDocumentVersion(document, 1337);
 
-        await RunOnDispatcherThreadAsync(() =>
+        await RunOnDispatcherAsync(() =>
         {
             projectSnapshotManager.ProjectAdded(document.ProjectInternal.HostProject);
             projectSnapshotManager.DocumentAdded(document.ProjectInternal.Key, document.State.HostDocument, TextLoader.From(textAndVersion));
@@ -114,7 +114,7 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
         Assert.True(projectSnapshotManager.IsDocumentOpen(document.FilePath));
 
         // Act - 2
-        await RunOnDispatcherThreadAsync(() =>
+        await RunOnDispatcherAsync(() =>
             projectSnapshotManager.DocumentRemoved(document.ProjectInternal.Key, document.State.HostDocument));
         result = cache.TryGetDocumentVersion(document, out _);
 
@@ -137,7 +137,7 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
         cache.TrackDocumentVersion(document, 1337);
         var textLoader = TextLoader.From(textAndVersion);
 
-        await RunOnDispatcherThreadAsync(() =>
+        await RunOnDispatcherAsync(() =>
         {
             projectSnapshotManager.ProjectAdded(document.ProjectInternal.HostProject);
             projectSnapshotManager.DocumentAdded(document.ProjectInternal.Key, document.State.HostDocument, textLoader);
@@ -150,7 +150,7 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
         Assert.True(result);
 
         // Act - 2
-        await RunOnDispatcherThreadAsync(() =>
+        await RunOnDispatcherAsync(() =>
             projectSnapshotManager.DocumentClosed(document.ProjectInternal.HostProject.Key, document.State.HostDocument.FilePath, textLoader));
         result = cache.TryGetDocumentVersion(document, out var version);
 
@@ -265,7 +265,7 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
             RazorConfiguration.Default,
             projectWorkspaceState: null);
 
-        var document1 = await RunOnDispatcherThreadAsync(() =>
+        var document1 = await RunOnDispatcherAsync(() =>
         {
             projectSnapshotManager.ProjectAdded(project1.HostProject);
             return projectSnapshotManager.CreateAndAddDocument(project1, @"C:\path\to\file.razor");
@@ -289,7 +289,7 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
             RazorConfiguration.Default,
             projectWorkspaceState: null);
 
-        var document2 = await RunOnDispatcherThreadAsync(() =>
+        var document2 = await RunOnDispatcherAsync(() =>
         {
             projectSnapshotManager.ProjectAdded(project2.HostProject);
             projectSnapshotManager.CreateAndAddDocument(project2, @"C:\path\to\file.razor");

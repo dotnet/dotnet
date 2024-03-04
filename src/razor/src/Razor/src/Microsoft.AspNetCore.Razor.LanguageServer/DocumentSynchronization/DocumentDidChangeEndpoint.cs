@@ -57,7 +57,7 @@ internal class DocumentDidChangeEndpoint(
         var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
         sourceText = ApplyContentChanges(request.ContentChanges, sourceText);
 
-        await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
+        await _projectSnapshotManagerDispatcher.RunAsync(
             () => _projectService.UpdateDocument(documentContext.FilePath, sourceText, request.TextDocument.Version),
             cancellationToken).ConfigureAwait(false);
     }
