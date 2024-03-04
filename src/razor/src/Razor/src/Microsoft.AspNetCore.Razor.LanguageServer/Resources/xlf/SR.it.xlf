@@ -102,6 +102,11 @@
         <target state="translated">"Riattiva i completamenti..."</target>
         <note />
       </trans-unit>
+      <trans-unit id="Statement">
+        <source>statement</source>
+        <target state="new">statement</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">
         <source>Razor TagHelper Attribute Glyph</source>
         <target state="translated">Glifo attributo TagHelper Razor</target>

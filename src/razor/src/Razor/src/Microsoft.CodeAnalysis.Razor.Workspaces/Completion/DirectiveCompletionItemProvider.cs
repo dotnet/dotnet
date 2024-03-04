@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
@@ -27,11 +28,15 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
         CSharpCodeParser.AddTagHelperDirectiveDescriptor,
         CSharpCodeParser.RemoveTagHelperDirectiveDescriptor,
         CSharpCodeParser.TagHelperPrefixDirectiveDescriptor,
+        CSharpCodeParser.UsingDirectiveDescriptor
     };
+
+    // Test accessor
+    internal static IEnumerable<DirectiveDescriptor> DefaultDirectives => s_defaultDirectives;
 
     // internal for testing
     // Do not forget to update both insert and display text !important
-    internal static readonly IReadOnlyDictionary<string, (string InsertText, string DisplayText)> s_singleLineDirectiveSnippets = new Dictionary<string, (string InsertText, string DisplayText)>(StringComparer.Ordinal)
+    internal static readonly FrozenDictionary<string, (string InsertText, string DisplayText)> s_singleLineDirectiveSnippets = new Dictionary<string, (string InsertText, string DisplayText)>(StringComparer.Ordinal)
     {
         ["addTagHelper"] = ("addTagHelper ${1:*}, ${2:Microsoft.AspNetCore.Mvc.TagHelpers}", "addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers"),
         ["attribute"] = ("attribute [${1:Authorize}]$0", "attribute [Authorize]"),
@@ -45,8 +50,10 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
         ["preservewhitespace"] = ("preservewhitespace ${1:true}$0", "preservewhitespace true"),
         ["removeTagHelper"] = ("removeTagHelper ${1:*}, ${2:Microsoft.AspNetCore.Mvc.TagHelpers}", "removeTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers"),
         ["tagHelperPrefix"] = ("tagHelperPrefix ${1:prefix}$0", "tagHelperPrefix prefix"),
-        ["typeparam"] = ("typeparam ${1:T}$0", "typeparam T")
-    };
+        ["typeparam"] = ("typeparam ${1:T}$0", "typeparam T"),
+        ["using"] = ("using ${1:MyNamespace}$0", "using MyNamespace")
+    }
+    .ToFrozenDictionary();
 
     public ImmutableArray<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
     {
@@ -145,6 +152,10 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
                 completionDisplayText,
                 directive.Directive,
                 RazorCompletionItemKind.Directive,
+                // Make sort text one less than display text so if there are any delegated completion items
+                // with the same display text in the combined completion list, they will be sorted below
+                // our items.
+                sortText: completionDisplayText,
                 commitCharacters: commitCharacters,
                 isSnippet: false);
             var completionDescription = new DirectiveCompletionDescription(directive.Description);
@@ -154,9 +165,11 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
             if (s_singleLineDirectiveSnippets.TryGetValue(directive.Directive, out var snippetTexts))
             {
                 var snippetCompletionItem = new RazorCompletionItem(
-                    $"{completionDisplayText} ...",
+                    $"{completionDisplayText} {SR.Directive} ...",
                     snippetTexts.InsertText,
                     RazorCompletionItemKind.Directive,
+                    // Use the same sort text here as the directive completion item so both items are grouped together
+                    sortText: completionDisplayText,
                     commitCharacters: commitCharacters,
                     isSnippet: true);
 
