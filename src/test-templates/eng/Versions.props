@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project>
   <PropertyGroup Label="Version settings">
     <VersionPrefix>1.1.0</VersionPrefix>
     <VsixVersionPrefix>17.3.2</VsixVersionPrefix>
@@ -8,7 +7,6 @@
   <PropertyGroup Label="Arcade settings">
     <!-- Opt-in to Arcade tools for building VSIX projects. -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
-    <UsingToolNetFrameworkReferenceAssemblies>true</UsingToolNetFrameworkReferenceAssemblies>
   </PropertyGroup>
   <PropertyGroup Label="Dependencies settings">
     <MicrosoftInternalCreateUnitTestVersion>17.0.0-preview-1-30928-1112</MicrosoftInternalCreateUnitTestVersion>
