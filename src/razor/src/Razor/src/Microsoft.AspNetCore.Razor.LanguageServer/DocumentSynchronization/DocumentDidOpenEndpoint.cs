@@ -29,7 +29,7 @@ internal class DocumentDidOpenEndpoint : IRazorNotificationHandler<DidOpenTextDo
     {
         var sourceText = SourceText.From(request.TextDocument.Text);
 
-        await _projectSnapshotManagerDispatcher.RunOnDispatcherThreadAsync(
+        await _projectSnapshotManagerDispatcher.RunAsync(
             () => _projectService.OpenDocument(request.TextDocument.Uri.GetAbsoluteOrUNCPath(), sourceText, request.TextDocument.Version),
             cancellationToken).ConfigureAwait(false);
     }

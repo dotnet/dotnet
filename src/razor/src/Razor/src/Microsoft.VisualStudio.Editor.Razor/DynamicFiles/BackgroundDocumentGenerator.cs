@@ -132,7 +132,7 @@ internal class BackgroundDocumentGenerator(
             return;
         }
 
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         lock (Work)
         {
@@ -233,7 +233,7 @@ internal class BackgroundDocumentGenerator(
 
             // This is something totally unexpected, let's just send it over to the workspace.
             await _dispatcher
-                .RunOnDispatcherThreadAsync(
+                .RunAsync(
                     () => _projectManager.ReportError(ex),
                     CancellationToken.None)
                 .ConfigureAwait(false);
@@ -246,7 +246,7 @@ internal class BackgroundDocumentGenerator(
 
         Assumes.NotNull(_projectManager);
 
-        _dispatcher.RunOnDispatcherThreadAsync(
+        _dispatcher.RunAsync(
             () => _projectManager.ReportError(ex, project),
             CancellationToken.None).Forget();
     }

@@ -52,7 +52,7 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
         TargetPath = "/Components/Pages/FormattingTest.razor";
 
         var documentUri = new Uri(filePath);
-        var documentSnapshot = GetDocumentSnapshot(ProjectFilePath, filePath, TargetPath);
+        var documentSnapshot = await GetDocumentSnapshotAsync(ProjectFilePath, filePath, TargetPath);
         DocumentContext = new VersionedDocumentContext(documentUri, documentSnapshot, projectContext: null, version: 1);
 
         var text = await DocumentSnapshot.GetTextAsync().ConfigureAwait(false);
@@ -112,7 +112,7 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
 
     private async Task UpdateDocumentAsync(int newVersion, IDocumentSnapshot documentSnapshot)
     {
-        await ProjectSnapshotManagerDispatcher!.RunOnDispatcherThreadAsync(
+        await ProjectSnapshotManagerDispatcher!.RunAsync(
             () => VersionCache!.TrackDocumentVersion(documentSnapshot, newVersion), CancellationToken.None).ConfigureAwait(false);
     }
 

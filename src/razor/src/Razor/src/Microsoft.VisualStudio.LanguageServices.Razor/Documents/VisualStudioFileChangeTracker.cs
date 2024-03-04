@@ -49,7 +49,7 @@ internal class VisualStudioFileChangeTracker : IFileChangeTracker, IVsFreeThread
 
     public void StartListening()
     {
-        _projectSnapshotManagerDispatcher.AssertDispatcherThread();
+        _projectSnapshotManagerDispatcher.AssertRunningOnDispatcher();
 
         if (_fileChangeAdviseTask is not null)
         {
@@ -88,7 +88,7 @@ internal class VisualStudioFileChangeTracker : IFileChangeTracker, IVsFreeThread
 
     public void StopListening()
     {
-        _projectSnapshotManagerDispatcher.AssertDispatcherThread();
+        _projectSnapshotManagerDispatcher.AssertRunningOnDispatcher();
 
         if (_fileChangeAdviseTask is null || _fileChangeUnadviseTask?.IsCompleted == false)
         {

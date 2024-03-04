@@ -23,7 +23,7 @@ public class RazorFileSynchronizerTest(ITestOutputHelper testOutput) : LanguageS
         var synchronizer = new RazorFileSynchronizer(Dispatcher, projectService.Object);
 
         // Act
-        await RunOnDispatcherThreadAsync(() =>
+        await RunOnDispatcherAsync(() =>
             synchronizer.RazorFileChanged(filePath, RazorFileChangeKind.Added));
 
         // Assert
@@ -40,7 +40,7 @@ public class RazorFileSynchronizerTest(ITestOutputHelper testOutput) : LanguageS
         var synchronizer = new RazorFileSynchronizer(Dispatcher, projectService.Object);
 
         // Act
-        await RunOnDispatcherThreadAsync(() =>
+        await RunOnDispatcherAsync(() =>
             synchronizer.RazorFileChanged(filePath, RazorFileChangeKind.Added));
 
         // Assert
@@ -57,7 +57,7 @@ public class RazorFileSynchronizerTest(ITestOutputHelper testOutput) : LanguageS
         var synchronizer = new RazorFileSynchronizer(Dispatcher, projectService.Object);
 
         // Act
-        await RunOnDispatcherThreadAsync(() =>
+        await RunOnDispatcherAsync(() =>
             synchronizer.RazorFileChanged(filePath, RazorFileChangeKind.Removed));
 
         // Assert
@@ -74,7 +74,7 @@ public class RazorFileSynchronizerTest(ITestOutputHelper testOutput) : LanguageS
         var synchronizer = new RazorFileSynchronizer(Dispatcher, projectService.Object);
 
         // Act
-        await RunOnDispatcherThreadAsync(() =>
+        await RunOnDispatcherAsync(() =>
             synchronizer.RazorFileChanged(filePath, RazorFileChangeKind.Removed));
 
         // Assert

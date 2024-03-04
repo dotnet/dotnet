@@ -1,6 +1,6 @@
 ﻿<Project>
 
-  <Target Name="_PublishLanguageServerRids" AfterTargets="Pack" Condition="'$(DotNetBuildFromSource)' != 'true' and '$(ArcadeBuildFromSource)' != 'true'">
+  <Target Name="_PublishLanguageServerRids" AfterTargets="Pack" Condition="'$(DotNetBuildFromSource)' != 'true'">
     <PropertyGroup>
       <BuildAnalyzersSolutionPath>$(MSBuildThisFileDirectory)..\BuildAnalyzers.sln</BuildAnalyzersSolutionPath>
       <LanguageServerProject>$(MSBuildThisFileDirectory)..\src\Razor\src\rzls\rzls.csproj</LanguageServerProject>
@@ -15,7 +15,7 @@
              Targets="PublishAllRids" />
   </Target>
 
-  <Target Name="_PublishDevKitTelemetryRids" AfterTargets="Pack" Condition="'$(DotNetBuildFromSource)' != 'true' and '$(ArcadeBuildFromSource)' != 'true'">
+  <Target Name="_PublishDevKitTelemetryRids" AfterTargets="Pack" Condition="'$(DotNetBuildFromSource)' != 'true'">
     <PropertyGroup>
       <DevKitTelemetryProject>$(MSBuildThisFileDirectory)..\src\Razor\src\Microsoft.VisualStudio.DevKit.Razor\Microsoft.VisualStudio.DevKit.Razor.csproj</DevKitTelemetryProject>
       <RazorSolutionPath>$(MSBuildThisFileDirectory)..\Razor.sln</RazorSolutionPath>

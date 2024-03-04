@@ -3,7 +3,6 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
@@ -19,7 +18,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor.Completion;
 
-public class RazorDirectiveCompletionSourceProviderTest(ITestOutputHelper testOutput) : ProjectSnapshotManagerDispatcherTestBase(testOutput)
+public class RazorDirectiveCompletionSourceProviderTest(ITestOutputHelper testOutput) : VisualStudioTestBase(testOutput)
 {
     private static readonly IContentType s_razorContentType = VsMocks.ContentTypes.Create(RazorLanguage.ContentType, RazorConstants.LegacyContentType);
 

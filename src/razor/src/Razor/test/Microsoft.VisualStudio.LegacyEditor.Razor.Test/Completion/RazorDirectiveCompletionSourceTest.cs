@@ -24,7 +24,7 @@ using WorkspacesSR = Microsoft.CodeAnalysis.Razor.Workspaces.Resources.SR;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor.Completion;
 
-public class RazorDirectiveCompletionSourceTest(ITestOutputHelper testOutput) : ProjectSnapshotManagerDispatcherTestBase(testOutput)
+public class RazorDirectiveCompletionSourceTest(ITestOutputHelper testOutput) : VisualStudioTestBase(testOutput)
 {
     private static readonly ImmutableArray<DirectiveDescriptor> s_defaultDirectives = ImmutableArray.Create(
     [

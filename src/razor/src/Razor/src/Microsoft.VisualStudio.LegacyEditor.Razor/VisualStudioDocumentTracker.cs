@@ -185,7 +185,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
 
     public void Subscribe()
     {
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         if (_subscribeCount++ > 0)
         {
@@ -206,7 +206,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
 
     private IProjectSnapshot GetOrCreateProject(string projectPath)
     {
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         var projectManager = _projectManagerAccessor.Instance;
 
@@ -223,7 +223,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
 
     public void Unsubscribe()
     {
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         if (_subscribeCount == 0 || _subscribeCount-- > 1)
         {
@@ -258,7 +258,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
             return;
         }
 
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         if (_projectPath is not null &&
             string.Equals(_projectPath, e.ProjectFilePath, StringComparison.OrdinalIgnoreCase))
@@ -312,7 +312,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
     // Internal for testing
     internal void Import_Changed(object sender, ImportChangedEventArgs args)
     {
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         foreach (var path in args.AssociatedDocuments)
         {

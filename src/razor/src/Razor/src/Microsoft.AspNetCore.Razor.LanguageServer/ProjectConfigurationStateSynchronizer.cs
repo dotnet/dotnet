@@ -47,7 +47,7 @@ internal class ProjectConfigurationStateSynchronizer : IProjectConfigurationFile
             throw new ArgumentNullException(nameof(args));
         }
 
-        _projectSnapshotManagerDispatcher.AssertDispatcherThread();
+        _projectSnapshotManagerDispatcher.AssertRunningOnDispatcher();
 
         switch (args.Kind)
         {

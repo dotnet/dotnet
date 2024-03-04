@@ -256,13 +256,13 @@ internal abstract partial class WindowsRazorProjectHostBase : OnceInitializedOnc
     [MemberNotNull(nameof(_projectManager))]
     protected ProjectSnapshotManagerBase GetProjectManager()
     {
-        _dispatcher.AssertDispatcherThread();
+        _dispatcher.AssertRunningOnDispatcher();
 
         return _projectManager ??= _projectManagerAccessor.Instance;
     }
 
     protected Task UpdateAsync(Action action, CancellationToken cancellationToken)
-        => _dispatcher.RunOnDispatcherThreadAsync(action, cancellationToken);
+        => _dispatcher.RunAsync(action, cancellationToken);
 
     protected void UninitializeProjectUnsafe(ProjectKey projectKey)
     {
