@@ -854,6 +854,8 @@ function MSBuild-Core() {
       Write-Host "See log: $buildLog" -ForegroundColor DarkGray
     }
 
+    Write-Host "productBuild: $productBuild"
+    Write-Host "properties: $properties"
     # When running on Azure Pipelines, override the returned exit code to avoid double logging.
     # Skip this when the build is a child of the VMR orchestrator build.
     if ($ci -and $env:SYSTEM_TEAMPROJECT -ne $null -and !$productBuild -and $properties -notlike "*DotNetBuildRepo=true*") {
