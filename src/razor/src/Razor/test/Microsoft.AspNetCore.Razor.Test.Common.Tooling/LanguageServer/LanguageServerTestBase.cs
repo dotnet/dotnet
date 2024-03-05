@@ -121,10 +121,10 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         return new VersionedDocumentContext(uri, snapshot, projectContext: null, version: 0);
     }
 
-    internal static IOptionsMonitor<RazorLSPOptions> GetOptionsMonitor(bool enableFormatting = true, bool autoShowCompletion = true, bool autoListParams = true, bool formatOnType = true, bool autoInsertAttributeQuotes = true, bool colorBackground = false, bool commitElementsWithSpace = true)
+    internal static IOptionsMonitor<RazorLSPOptions> GetOptionsMonitor(bool enableFormatting = true, bool autoShowCompletion = true, bool autoListParams = true, bool formatOnType = true, bool autoInsertAttributeQuotes = true, bool colorBackground = false, bool codeBlockBraceOnNextLine = false, bool commitElementsWithSpace = true)
     {
         var monitor = new Mock<IOptionsMonitor<RazorLSPOptions>>(MockBehavior.Strict);
-        monitor.SetupGet(m => m.CurrentValue).Returns(new RazorLSPOptions(enableFormatting, true, InsertSpaces: true, TabSize: 4, autoShowCompletion, autoListParams, formatOnType, autoInsertAttributeQuotes, colorBackground, commitElementsWithSpace));
+        monitor.SetupGet(m => m.CurrentValue).Returns(new RazorLSPOptions(enableFormatting, true, InsertSpaces: true, TabSize: 4, autoShowCompletion, autoListParams, formatOnType, autoInsertAttributeQuotes, colorBackground, codeBlockBraceOnNextLine, commitElementsWithSpace));
         return monitor.Object;
     }
 
