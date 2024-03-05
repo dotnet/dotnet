@@ -91,26 +91,26 @@
       <Sha>e1ad9117a4dac3b0f5f2a7e2b10b43b7016379b9</Sha>
       <SourceBuild RepoName="aspnetcore" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="9.0.100-preview.2.24153.7">
+    <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="9.0.100-preview.2.24154.18">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>3f17fe73c73b83903a6baf13ac024f34c9fc53ae</Sha>
+      <Sha>e14d4862b6200f0d66cd8f03be27f6e07ae13f2b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="9.0.100-preview.2.24153.7">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="9.0.100-preview.2.24154.18">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>3f17fe73c73b83903a6baf13ac024f34c9fc53ae</Sha>
+      <Sha>e14d4862b6200f0d66cd8f03be27f6e07ae13f2b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="9.0.100-preview.2.24153.7">
+    <Dependency Name="Microsoft.NET.Sdk" Version="9.0.100-preview.2.24154.18">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>3f17fe73c73b83903a6baf13ac024f34c9fc53ae</Sha>
+      <Sha>e14d4862b6200f0d66cd8f03be27f6e07ae13f2b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="9.0.100-preview.2.24153.7">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="9.0.100-preview.2.24154.18">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>3f17fe73c73b83903a6baf13ac024f34c9fc53ae</Sha>
+      <Sha>e14d4862b6200f0d66cd8f03be27f6e07ae13f2b</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.sdk" Version="9.0.100-preview.2.24153.7">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.sdk" Version="9.0.100-preview.2.24154.18">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>3f17fe73c73b83903a6baf13ac024f34c9fc53ae</Sha>
+      <Sha>e14d4862b6200f0d66cd8f03be27f6e07ae13f2b</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.2.1" Version="1.0.2-beta4.22406.1">
