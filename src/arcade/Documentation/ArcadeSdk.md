@@ -425,6 +425,20 @@ Example
 
 Note: defining `runtimes` in your global.json will signal to Arcade to install a local version of the SDK for the runtimes to use rather than depending on a matching global SDK.
 
+We include `tools/dotnet` to install the SDK version requested and `sdk` to ensure that SDK (or a slightly newer one) is what's used in builds. we want that alignment to avoid unexpected issues, especially in servicing.
+
+```json
+{
+  "sdk": {
+    "version": "7.0.116",
+    "rollForward": "latestFeature"
+  },
+  "tools": {
+    "dotnet": "7.0.116"
+  }
+}
+```
+
 ### /NuGet.config
 
 `/NuGet.config` file is present and specifies the MyGet feed to retrieve Arcade SDK from and other feeds required by the repository like so:

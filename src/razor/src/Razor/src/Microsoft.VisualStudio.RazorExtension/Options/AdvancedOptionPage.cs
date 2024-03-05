@@ -21,6 +21,7 @@ internal class AdvancedOptionPage : DialogPage
     private bool? _autoClosingTags;
     private bool? _autoInsertAttributeQuotes;
     private bool? _colorBackground;
+    private bool? _codeBlockBraceOnNextLine;
     private bool? _commitElementsWithSpace;
     private SnippetSetting? _snippets;
     private LogLevel? _logLevel;
@@ -79,6 +80,15 @@ internal class AdvancedOptionPage : DialogPage
     {
         get => _colorBackground ?? _optionsStorage.Value.ColorBackground;
         set => _colorBackground = value;
+    }
+
+    [LocCategory(nameof(VSPackage.Formatting))]
+    [LocDescription(nameof(VSPackage.Setting_CodeBlockBraceOnNextLineDescription))]
+    [LocDisplayName(nameof(VSPackage.Setting_CodeBlockBraceOnNextLineDisplayName))]
+    public bool CodeBlockBraceOnNextLine
+    {
+        get => _codeBlockBraceOnNextLine ?? _optionsStorage.Value.CodeBlockBraceOnNextLine;
+        set => _codeBlockBraceOnNextLine = value;
     }
 
     [LocCategory(nameof(VSPackage.Completion))]

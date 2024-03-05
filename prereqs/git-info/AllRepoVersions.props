@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <arcadeGitCommitHash>87d89025bdd8827c016e4083660d31f497670e5c</arcadeGitCommitHash>
-    <arcadeOutputPackageVersion>9.0.0-beta.24151.5</arcadeOutputPackageVersion>
+    <arcadeGitCommitHash>010fecb0832fd4f0a39012ebd0859afc4bca750d</arcadeGitCommitHash>
+    <arcadeOutputPackageVersion>9.0.0-beta.24154.2</arcadeOutputPackageVersion>
     <aspireGitCommitHash>fa3e45ee2a76c81e7a4876c6bef05282e35243f1</aspireGitCommitHash>
     <aspireOutputPackageVersion>9.0.0-preview.1.24151.2</aspireOutputPackageVersion>
-    <aspnetcoreGitCommitHash>2c0ee4c870556d823ea5a0b35a8ba1b8ae81142c</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>9.0.0-preview.3.24154.8</aspnetcoreOutputPackageVersion>
+    <aspnetcoreGitCommitHash>32b772a470e3c7dc147d3d124c32199bb3e7b6bc</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>9.0.0-preview.3.24154.12</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>0d0bc8e0f47fdae9834e1eac678f364c50946133</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.4-alpha.24120.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>5ea97af07263ea3ef68a18557c8aa3f7e3200bda</commandlineapiGitCommitHash>
@@ -21,24 +21,24 @@
     <formatOutputPackageVersion>9.0.515401</formatOutputPackageVersion>
     <fsharpGitCommitHash>ca66024e6da7cced9921216763386bd43f400fbf</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.300-beta.24154.4</fsharpOutputPackageVersion>
-    <installerGitCommitHash>75494d3ada6624c411116d4c6e52daaf49154ee7</installerGitCommitHash>
+    <installerGitCommitHash>0da99fef6fb631662ebb0d6195998f722013c9a8</installerGitCommitHash>
     <installerOutputPackageVersion>9.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>6f44380e4fdea6ddf5c11f48efeb25c2bf181e62</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.10.0-preview-24127-03</msbuildOutputPackageVersion>
     <nugetclientGitCommitHash>6009531090c927a8e61da9a0f97bdd5eb6f01a47</nugetclientGitCommitHash>
     <nugetclientOutputPackageVersion>6.10.0-preview.2.52</nugetclientOutputPackageVersion>
-    <razorGitCommitHash>d4c396a9c9e31d027789a55a61f5509cadc6e0e0</razorGitCommitHash>
-    <razorOutputPackageVersion>7.0.0-preview.24151.1</razorOutputPackageVersion>
+    <razorGitCommitHash>c126dfc208bca863b378ae32f8c5cd3f271cbff6</razorGitCommitHash>
+    <razorOutputPackageVersion>7.0.0-preview.24154.9</razorOutputPackageVersion>
     <roslynanalyzersGitCommitHash>3e60082c94c17f12b5fa28a972be99bac0cae8e6</roslynanalyzersGitCommitHash>
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.24154.1</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>8537440d8c831b8533a18f6530945ee91c243e1b</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.10.0-3.24151.8</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>8510651bc6b5181cf258664c2d0b4b4ff4de1c61</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>9.0.0-preview.3.24154.9</runtimeOutputPackageVersion>
+    <runtimeGitCommitHash>0df43f2952e83077f62d9235bd453ae0eba66803</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>9.0.0-preview.3.24154.10</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>bfde902a10d7b672f4fc7e844198ede405dbb9c6</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24057.2</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>d8e924540fa415a8b8fa7cb666174c5a97138147</sdkGitCommitHash>
-    <sdkOutputPackageVersion>9.0.100-preview.3.24154.24</sdkOutputPackageVersion>
+    <sdkGitCommitHash>765ad969248cdceaf976a27b512e8abc43ed2d19</sdkGitCommitHash>
+    <sdkOutputPackageVersion>9.0.100-preview.3.24155.3</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>7fbf7ef59ca7ddcfa92269ef84e3fcb7544f8699</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24151.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>936b4a4b4b8a74b65098983660c5814fb4afee15</sourcebuildreferencepackagesGitCommitHash>

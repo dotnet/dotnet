@@ -8,11 +8,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@87d8902](https://github.com/dotnet/arcade/tree/87d89025bdd8827c016e4083660d31f497670e5c)*
+*[dotnet/arcade@010fecb](https://github.com/dotnet/arcade/tree/010fecb0832fd4f0a39012ebd0859afc4bca750d)*
 - `src/aspire`  
 *[dotnet/aspire@fa3e45e](https://github.com/dotnet/aspire/tree/fa3e45ee2a76c81e7a4876c6bef05282e35243f1)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@2c0ee4c](https://github.com/dotnet/aspnetcore/tree/2c0ee4c870556d823ea5a0b35a8ba1b8ae81142c)*
+*[dotnet/aspnetcore@32b772a](https://github.com/dotnet/aspnetcore/tree/32b772a470e3c7dc147d3d124c32199bb3e7b6bc)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@e4fdb87](https://github.com/google/googletest/tree/e4fdb87e76b9fc4b01c54ad81aea19d6e994b994)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -34,7 +34,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@ca66024](https://github.com/dotnet/fsharp/tree/ca66024e6da7cced9921216763386bd43f400fbf)*
 - `src/installer`  
-*[dotnet/installer@75494d3](https://github.com/dotnet/installer/tree/75494d3ada6624c411116d4c6e52daaf49154ee7)*
+*[dotnet/installer@0da99fe](https://github.com/dotnet/installer/tree/0da99fef6fb631662ebb0d6195998f722013c9a8)*
 - `src/msbuild`  
 *[dotnet/msbuild@6f44380](https://github.com/dotnet/msbuild/tree/6f44380e4fdea6ddf5c11f48efeb25c2bf181e62)*
 - `src/nuget-client`  
@@ -42,17 +42,17 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/tree/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@d4c396a](https://github.com/dotnet/razor/tree/d4c396a9c9e31d027789a55a61f5509cadc6e0e0)*
+*[dotnet/razor@c126dfc](https://github.com/dotnet/razor/tree/c126dfc208bca863b378ae32f8c5cd3f271cbff6)*
 - `src/roslyn`  
 *[dotnet/roslyn@8537440](https://github.com/dotnet/roslyn/tree/8537440d8c831b8533a18f6530945ee91c243e1b)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@3e60082](https://github.com/dotnet/roslyn-analyzers/tree/3e60082c94c17f12b5fa28a972be99bac0cae8e6)*
 - `src/runtime`  
-*[dotnet/runtime@8510651](https://github.com/dotnet/runtime/tree/8510651bc6b5181cf258664c2d0b4b4ff4de1c61)*
+*[dotnet/runtime@0df43f2](https://github.com/dotnet/runtime/tree/0df43f2952e83077f62d9235bd453ae0eba66803)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@bfde902](https://github.com/dotnet/scenario-tests/tree/bfde902a10d7b672f4fc7e844198ede405dbb9c6)*
 - `src/sdk`  
-*[dotnet/sdk@d8e9245](https://github.com/dotnet/sdk/tree/d8e924540fa415a8b8fa7cb666174c5a97138147)*
+*[dotnet/sdk@765ad96](https://github.com/dotnet/sdk/tree/765ad969248cdceaf976a27b512e8abc43ed2d19)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@7fbf7ef](https://github.com/dotnet/source-build-externals/tree/7fbf7ef59ca7ddcfa92269ef84e3fcb7544f8699)*
     - `src/source-build-externals/src/abstractions-xunit`  
