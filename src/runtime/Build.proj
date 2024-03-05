@@ -15,4 +15,10 @@
     <MSBuild Projects="$(RepoTasksDir)tasks.proj"
              Targets="BuildIncrementally" />
   </Target>
+
+  <Target Name="FailBulid"
+          BeforeTargets="Build">
+    <Error Text="Fail the build!!!" />
+  </Target>
+
 </Project>
