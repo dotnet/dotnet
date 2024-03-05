@@ -44,7 +44,8 @@ internal sealed class FallbackProjectManager(
     {
         try
         {
-            if (_projectManagerAccessor.Instance.TryGetLoadedProject(razorProjectKey, out var project))
+            if (_projectManagerAccessor.TryGetInstance(out var projectSnapshotManager) &&
+                projectSnapshotManager.TryGetLoadedProject(razorProjectKey, out var project))
             {
                 if (project is ProjectSnapshot { HostProject: FallbackHostProject })
                 {
@@ -76,7 +77,8 @@ internal sealed class FallbackProjectManager(
     {
         try
         {
-            if (_projectManagerAccessor.Instance.TryGetLoadedProject(razorProjectKey, out var project) &&
+            if (_projectManagerAccessor.TryGetInstance(out var projectSnapshotManager) &&
+                projectSnapshotManager.TryGetLoadedProject(razorProjectKey, out var project) &&
                 project is ProjectSnapshot { HostProject: FallbackHostProject })
             {
                 // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications

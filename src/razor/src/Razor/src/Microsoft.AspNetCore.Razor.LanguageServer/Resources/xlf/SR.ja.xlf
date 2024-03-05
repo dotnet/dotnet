@@ -104,7 +104,7 @@
       </trans-unit>
       <trans-unit id="Statement">
         <source>statement</source>
-        <target state="new">statement</target>
+        <target state="translated">ステートメント</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">

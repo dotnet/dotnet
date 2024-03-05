@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -38,5 +39,11 @@ internal sealed class LspProjectSnapshotManagerAccessor(
 
             return _instance;
         }
+    }
+
+    public bool TryGetInstance([NotNullWhen(true)] out ProjectSnapshotManagerBase? instance)
+    {
+        instance = _instance;
+        return instance is not null;
     }
 }

@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
@@ -180,6 +181,14 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
 
     internal class TestProjectSnapshotManagerAccessor(ProjectSnapshotManagerBase instance) : IProjectSnapshotManagerAccessor
     {
-        public ProjectSnapshotManagerBase Instance => instance;
+        private readonly ProjectSnapshotManagerBase _instance = instance;
+
+        public ProjectSnapshotManagerBase Instance => _instance;
+
+        public bool TryGetInstance([NotNullWhen(true)] out ProjectSnapshotManagerBase instance)
+        {
+            instance = _instance;
+            return instance is not null;
+        }
     }
 }
