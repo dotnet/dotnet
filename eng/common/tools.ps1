@@ -862,8 +862,10 @@ function MSBuild-Core() {
       Write-PipelineSetResult -Result "Failed" -Message "msbuild execution failed."
       # Exiting with an exit code causes the azure pipelines task to log yet another "noise" error
       # The above Write-PipelineSetResult will cause the task to be marked as failure without adding yet another error
+      Write-Host "wrong exit code"
       ExitWithExitCode 0
     } else {
+      Write-Host "right exit code: $exitCode"
       ExitWithExitCode $exitCode
     }
   }
