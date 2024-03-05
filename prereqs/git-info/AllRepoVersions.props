@@ -19,9 +19,9 @@
     <emsdkOutputPackageVersion>9.0.0-preview.2.24123.4</emsdkOutputPackageVersion>
     <formatGitCommitHash>5d6a90b3aad3674a64c669bbb5a742993f3ad47c</formatGitCommitHash>
     <formatOutputPackageVersion>9.0.512802</formatOutputPackageVersion>
-    <fsharpGitCommitHash>ea8ef6edee63929f44026c79f94c9e6ffe6dcd62</fsharpGitCommitHash>
-    <fsharpOutputPackageVersion>8.0.300-beta.24152.1</fsharpOutputPackageVersion>
-    <installerGitCommitHash>7431d9859dd3f8b53ac8104e4f9a48bdd6d6ad56</installerGitCommitHash>
+    <fsharpGitCommitHash>ca66024e6da7cced9921216763386bd43f400fbf</fsharpGitCommitHash>
+    <fsharpOutputPackageVersion>8.0.300-beta.24154.4</fsharpOutputPackageVersion>
+    <installerGitCommitHash>1aa497b81a545f7ce3ec08eaaf80e03dfdb2433b</installerGitCommitHash>
     <installerOutputPackageVersion>9.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>6f44380e4fdea6ddf5c11f48efeb25c2bf181e62</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.10.0-preview-24127-03</msbuildOutputPackageVersion>
@@ -37,8 +37,8 @@
     <runtimeOutputPackageVersion>9.0.0-preview.2.24128.5</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>bfde902a10d7b672f4fc7e844198ede405dbb9c6</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.24057.2</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>e14d4862b6200f0d66cd8f03be27f6e07ae13f2b</sdkGitCommitHash>
-    <sdkOutputPackageVersion>9.0.100-preview.2.24154.18</sdkOutputPackageVersion>
+    <sdkGitCommitHash>9b406718ea6d96a748158049a1a314dde434daa5</sdkGitCommitHash>
+    <sdkOutputPackageVersion>9.0.100-preview.2.24154.20</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>ddfb60463c966af55fd0e222c2266170e83d1324</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.24112.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>539af5d8ae183d4fe61e8b2f8f4a8505c8a765a7</sourcebuildreferencepackagesGitCommitHash>
