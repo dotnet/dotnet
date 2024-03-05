@@ -1,4 +1,8 @@
 {
+  "sdk": {
+    "version": "9.0.100-preview.1.24101.2",
+    "rollForward": "latestFeature"
+  },
   "tools": {
     "dotnet": "9.0.100-preview.1.24101.2"
   },
