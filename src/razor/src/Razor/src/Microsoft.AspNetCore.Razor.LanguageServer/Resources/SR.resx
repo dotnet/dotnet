@@ -195,4 +195,7 @@
   <data name="Version_Should_Not_Be_Null" xml:space="preserve">
     <value>Provided version should not be null.</value>
   </data>
+  <data name="Statement" xml:space="preserve">
+    <value>statement</value>
+  </data>
 </root>
