@@ -17,6 +17,7 @@ internal static class SyntaxConstants
     public static class CSharp
     {
         public const int UsingKeywordLength = 5;
+        public const string UsingKeyword = "using";
         public const string TagHelperPrefixKeyword = "tagHelperPrefix";
         public const string AddTagHelperKeyword = "addTagHelper";
         public const string RemoveTagHelperKeyword = "removeTagHelper";

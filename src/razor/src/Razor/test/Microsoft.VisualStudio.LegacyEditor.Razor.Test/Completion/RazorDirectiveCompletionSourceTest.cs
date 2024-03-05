@@ -30,7 +30,8 @@ public class RazorDirectiveCompletionSourceTest(ITestOutputHelper testOutput) : 
     [
         CSharpCodeParser.AddTagHelperDirectiveDescriptor,
         CSharpCodeParser.RemoveTagHelperDirectiveDescriptor,
-        CSharpCodeParser.TagHelperPrefixDirectiveDescriptor
+        CSharpCodeParser.TagHelperPrefixDirectiveDescriptor,
+        CSharpCodeParser.UsingDirectiveDescriptor
     ]);
 
     private readonly IRazorCompletionFactsService _completionFactsService = new RazorCompletionFactsService([new DirectiveCompletionItemProvider()]);
@@ -120,7 +121,9 @@ public class RazorDirectiveCompletionSourceTest(ITestOutputHelper testOutput) : 
             item => AssertRazorCompletionItem(s_defaultDirectives[1], item, completionSource, isSnippet: false),
             item => AssertRazorCompletionItem(s_defaultDirectives[1], item, completionSource, isSnippet: true),
             item => AssertRazorCompletionItem(s_defaultDirectives[2], item, completionSource, isSnippet: false),
-            item => AssertRazorCompletionItem(s_defaultDirectives[2], item, completionSource, isSnippet: true));
+            item => AssertRazorCompletionItem(s_defaultDirectives[2], item, completionSource, isSnippet: true),
+            item => AssertRazorCompletionItem(s_defaultDirectives[3], item, completionSource, isSnippet: false),
+            item => AssertRazorCompletionItem(s_defaultDirectives[3], item, completionSource, isSnippet: true));
     }
 
     [Fact]
@@ -184,7 +187,7 @@ public class RazorDirectiveCompletionSourceTest(ITestOutputHelper testOutput) : 
 
     private static void AssertRazorCompletionItem(DirectiveDescriptor directive, CompletionItem item, IAsyncCompletionSource source, bool isSnippet = false)
     {
-        var expectedDisplayText = isSnippet ? directive.Directive + " ..." : directive.Directive;
+        var expectedDisplayText = isSnippet ? directive.Directive + " directive ..." : directive.Directive;
         AssertRazorCompletionItem(expectedDisplayText, directive, item, source, isSnippet: isSnippet);
     }
 

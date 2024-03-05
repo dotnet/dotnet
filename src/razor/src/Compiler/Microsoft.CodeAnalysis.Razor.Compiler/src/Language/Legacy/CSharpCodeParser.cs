@@ -30,6 +30,14 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
             builder.Description = Resources.AddTagHelperDirective_Description;
         });
 
+    internal static readonly DirectiveDescriptor UsingDirectiveDescriptor = DirectiveDescriptor.CreateDirective(
+        SyntaxConstants.CSharp.UsingKeyword,
+        DirectiveKind.SingleLine,
+        builder =>
+        {
+            builder.Description = Resources.UsingDirective_Description;
+        });
+
     internal static readonly DirectiveDescriptor RemoveTagHelperDirectiveDescriptor = DirectiveDescriptor.CreateDirective(
         SyntaxConstants.CSharp.RemoveTagHelperKeyword,
         DirectiveKind.SingleLine,

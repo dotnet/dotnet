@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -594,5 +594,8 @@
   </data>
   <data name="DirectiveExpectsIdentifierOrExpression" xml:space="preserve">
     <value>The '{0}' directive expects an identifier or explicit razor expression ("@()").</value>
+  </data>
+  <data name="UsingDirective_Description" xml:space="preserve">
+    <value>Adds the C# using directive to the generated view.</value>
   </data>
 </root>
