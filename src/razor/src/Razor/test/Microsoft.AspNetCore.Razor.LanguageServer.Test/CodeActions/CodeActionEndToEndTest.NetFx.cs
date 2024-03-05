@@ -719,6 +719,7 @@ public class CodeActionEndToEndTest(ITestOutputHelper testOutput) : SingleServer
             FormatOnType: true,
             AutoInsertAttributeQuotes: true,
             ColorBackground: false,
+            CodeBlockBraceOnNextLine: false,
             CommitElementsWithSpace: true);
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         await optionsMonitor.UpdateAsync(razorLSPOptions, CancellationToken.None);

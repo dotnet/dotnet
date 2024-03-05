@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -192,7 +193,9 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
             yield break;
         }
 
-        var projects = _projectSnapshotManagerAccessor.Instance.GetProjects();
+        var projects = _projectSnapshotManagerAccessor.TryGetInstance(out var projectSnapshotManager)
+            ? projectSnapshotManager.GetProjects()
+            : ImmutableArray<IProjectSnapshot>.Empty;
 
         var inAny = false;
         var normalizedDocumentPath = FilePathService.GetProjectSystemFilePath(hostDocumentUri);
