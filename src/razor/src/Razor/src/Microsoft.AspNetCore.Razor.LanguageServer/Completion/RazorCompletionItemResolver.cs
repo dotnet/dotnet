@@ -39,7 +39,29 @@ internal class RazorCompletionItemResolver : CompletionItemResolver
             return null;
         }
 
-        var associatedRazorCompletion = razorCompletionResolveContext.CompletionItems.FirstOrDefault(completion => string.Equals(completion.DisplayText, completionItem.Label, StringComparison.Ordinal));
+        var associatedRazorCompletion = razorCompletionResolveContext.CompletionItems.FirstOrDefault(completion =>
+        {
+            if (completion.DisplayText != completionItem.Label)
+            {
+                return false;
+            }
+
+            // We may have items of different types with the same label (e.g. snippet and keyword)
+            if (clientCapabilities is not null)
+            {
+                // CompletionItem.Kind and RazorCompletionItem.Kind are not compatible/comparable, so we need to convert
+                // Razor completion item to VS completion item (as logic to convert just the kind is not easy to separate from
+                // the rest of the conversion logic) prior to comparing them
+                if (RazorCompletionListProvider.TryConvert(completion, clientCapabilities, out var convertedRazorCompletionItem))
+                {
+                    return completionItem.Kind == convertedRazorCompletionItem.Kind;
+                }
+            }
+
+            // If display text matches but we couldn't convert razor completion item to VS completion item for some reason,
+            // do what previous version of the code did and return true.
+            return true;
+        });
         if (associatedRazorCompletion is null)
         {
             return null;
