@@ -102,6 +102,11 @@
         <target state="translated">"Ponownie wyzwalaj uzupełniania..."</target>
         <note />
       </trans-unit>
+      <trans-unit id="Statement">
+        <source>statement</source>
+        <target state="new">statement</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">
         <source>Razor TagHelper Attribute Glyph</source>
         <target state="translated">Symbol atrybutu pomocnika tagów składni Razor</target>
