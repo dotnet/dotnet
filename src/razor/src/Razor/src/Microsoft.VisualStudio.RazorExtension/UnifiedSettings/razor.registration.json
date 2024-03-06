@@ -61,6 +61,20 @@
         }
       }
     },
+    "textEditor.razor.advanced.codeBlockBraceOnNextLine": {
+      "type": "boolean",
+      "default": false,
+      "title": "@Setting_CodeBlockBraceOnNextLinedDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "description": "@Setting_CodeBlockBraceOnNextLinedDescription;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "migration": {
+        "pass": {
+          "input": {
+            "store": "VsUserSettingsRegistry",
+            "path": "Razor\\CodeBlockBraceOnNextLined"
+          }
+        }
+      }
+    },
     "textEditor.razor.advanced.commitElementsWithSpace": {
       "type": "boolean",
       "default": true,

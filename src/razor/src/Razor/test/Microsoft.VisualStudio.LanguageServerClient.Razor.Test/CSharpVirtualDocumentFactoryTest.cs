@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
@@ -79,6 +80,40 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
             uriProvider,
             _filePathService,
             StrictMock.Of<IProjectSnapshotManagerAccessor>(),
+            TestLanguageServerFeatureOptions.Instance,
+            LoggerFactory,
+            telemetryReporter: null!);
+
+        // Act
+        var result = factory.TryCreateMultipleFor(_nonRazorLSPBuffer, out var virtualDocuments);
+
+        // Assert
+        Assert.False(result);
+        Assert.Null(virtualDocuments);
+    }
+
+    [Fact]
+    public void TryCreateMultipleFor_NoProjectSnapshotManager_ReturnsFalse()
+    {
+        // Arrange
+        var uri = new Uri("C:/path/to/file.razor");
+        var uriProvider = StrictMock.Of<FileUriProvider>(x =>
+            x.GetOrCreate(It.IsAny<ITextBuffer>()) == uri);
+
+        var projectManagerAccessorMock = new StrictMock<IProjectSnapshotManagerAccessor>();
+
+        ProjectSnapshotManagerBase? instance = null;
+        projectManagerAccessorMock
+            .Setup(x => x.TryGetInstance(out instance))
+            .Returns(false);
+
+        var factory = new CSharpVirtualDocumentFactory(
+            _contentTypeRegistryService,
+            _textBufferFactoryService,
+            _textDocumentFactoryService,
+            uriProvider,
+            _filePathService,
+            projectManagerAccessorMock.Object,
             TestLanguageServerFeatureOptions.Instance,
             LoggerFactory,
             telemetryReporter: null!);
@@ -166,8 +201,17 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
             projectManager.CreateAndAddDocument(project2, @"C:\path\to\file.razor");
         });
 
-        var projectManagerAccessor = StrictMock.Of<IProjectSnapshotManagerAccessor>(a =>
-            a.Instance == projectManager);
+        var projectManagerAccessorMock = new StrictMock<IProjectSnapshotManagerAccessor>();
+        projectManagerAccessorMock
+            .SetupGet(x => x.Instance)
+            .Returns(projectManager);
+
+        ProjectSnapshotManagerBase? instance = projectManager;
+        projectManagerAccessorMock
+            .Setup(x => x.TryGetInstance(out instance))
+            .Returns(true);
+
+        var projectManagerAccessor = projectManagerAccessorMock.Object;
 
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
         var filePathService = new FilePathService(languageServerFeatureOptions);

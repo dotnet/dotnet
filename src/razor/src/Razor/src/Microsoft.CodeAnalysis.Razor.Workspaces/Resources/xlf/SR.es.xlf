@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="Directive">
         <source>directive</source>
-        <target state="new">directive</target>
+        <target state="translated">directiva</target>
         <note />
       </trans-unit>
       <trans-unit id="DirectiveSnippetDescription">
