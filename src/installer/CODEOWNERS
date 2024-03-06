@@ -4,5 +4,5 @@
 /.devcontainer/ @dotnet/source-build-internal
 /eng/SourceBuild* @dotnet/source-build-internal
 /src/snaps/ @rbhanda
-/src/SourceBuild/ @dotnet/source-build-internal
+/src/SourceBuild/ @dotnet/source-build-internal @dotnet/product-construction
 /src/VirtualMonoRepo/ @dotnet/product-construction
