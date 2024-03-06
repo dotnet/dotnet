@@ -162,6 +162,12 @@
   <data name="Setting_AutoInsertAttributeQuotesDisplayName" xml:space="preserve">
     <value>Auto Insert Attribute Quotes</value>
   </data>
+  <data name="Setting_CodeBlockBraceOnNextLineDescription" xml:space="preserve">
+    <value>Forces the open brace after an @code or @functions directive to be on the following line</value>
+  </data>
+  <data name="Setting_CodeBlockBraceOnNextLineDisplayName" xml:space="preserve">
+    <value>Code/Functions block open brace on next line</value>
+  </data>
   <data name="Setting_ColorBackgroundDescription" xml:space="preserve">
     <value>If true, gives C# code in Razor files a background color</value>
   </data>

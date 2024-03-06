@@ -34,13 +34,21 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
 
         _projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher);
 
-        var projectManagerAccessor = StrictMock.Of<IProjectSnapshotManagerAccessor>(a =>
-            a.Instance == _projectManager);
+        var projectManagerAccessorMock = new StrictMock<IProjectSnapshotManagerAccessor>();
+
+        projectManagerAccessorMock
+            .SetupGet(x => x.Instance)
+            .Returns(_projectManager);
+
+        ProjectSnapshotManagerBase? instanceResult = _projectManager;
+        projectManagerAccessorMock
+            .Setup(x => x.TryGetInstance(out instanceResult))
+            .Returns(true);
 
         _fallbackProjectManger = new FallbackProjectManager(
             _projectConfigurationFilePathStore,
             languageServerFeatureOptions,
-            projectManagerAccessor,
+            projectManagerAccessorMock.Object,
             Dispatcher,
             WorkspaceProvider,
             NoOpTelemetryReporter.Instance);

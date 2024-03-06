@@ -95,8 +95,14 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         }
         else
         {
-            ExtractVSCodeOptions(result, out var enableFormatting, out var autoClosingTags, out var commitElementsWithSpace);
-            return new RazorLSPOptions(enableFormatting, autoClosingTags, commitElementsWithSpace, ClientSettings.Default);
+            ExtractVSCodeOptions(result, out var enableFormatting, out var autoClosingTags, out var commitElementsWithSpace, out var codeBlockBraceOnNextLine);
+            return RazorLSPOptions.Default with
+            {
+                EnableFormatting = enableFormatting,
+                AutoClosingTags = autoClosingTags,
+                CommitElementsWithSpace = commitElementsWithSpace,
+                CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine
+            };
         }
     }
 
@@ -104,13 +110,15 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         JObject[] result,
         out bool enableFormatting,
         out bool autoClosingTags,
-        out bool commitElementsWithSpace)
+        out bool commitElementsWithSpace,
+        out bool codeBlockBraceOnNextLine)
     {
         var razor = result[0];
         var html = result[1];
 
         enableFormatting = RazorLSPOptions.Default.EnableFormatting;
         autoClosingTags = RazorLSPOptions.Default.AutoClosingTags;
+        codeBlockBraceOnNextLine = RazorLSPOptions.Default.CodeBlockBraceOnNextLine;
         // Deliberately not using the "default" here because we want a different default for VS Code, as
         // this matches VS Code's html servers commit behaviour
         commitElementsWithSpace = false;
@@ -119,10 +127,17 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         {
             if (razor.TryGetValue("format", out var parsedFormat))
             {
-                if (parsedFormat is JObject jObject &&
-                    jObject.TryGetValue("enable", out var parsedEnableFormatting))
+                if (parsedFormat is JObject jObject)
                 {
-                    enableFormatting = GetObjectOrDefault(parsedEnableFormatting, enableFormatting);
+                    if (jObject.TryGetValue("enable", out var parsedEnableFormatting))
+                    {
+                        enableFormatting = GetObjectOrDefault(parsedEnableFormatting, enableFormatting);
+                    }
+
+                    if (jObject.TryGetValue("codeBlockBraceOnNextLine", out var parsedCodeBlockBraceOnNextLine))
+                    {
+                        codeBlockBraceOnNextLine = GetObjectOrDefault(parsedCodeBlockBraceOnNextLine, codeBlockBraceOnNextLine);
+                    }
                 }
             }
 

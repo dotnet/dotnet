@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.ComponentModel.Composition;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -58,5 +59,11 @@ internal sealed class VisualStudioProjectSnapshotManagerAccessor(
                     .GetRequiredService<IProjectSnapshotManager>();
             }
         }
+    }
+
+    public bool TryGetInstance([NotNullWhen(true)] out ProjectSnapshotManagerBase? instance)
+    {
+        instance = _projectManager;
+        return instance is not null;
     }
 }
