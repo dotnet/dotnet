@@ -36,7 +36,7 @@ namespace NuGet.CommandLine.XPlat
             Description = Strings.ConfigSetConfigValueDescription,
         };
 
-        private static CliArgument<string> AllOrConfigKeyOption = new CliArgument<string>(name: "all-or-config-key")
+        private static CliArgument<string> AllOrConfigKeyArgument = new CliArgument<string>(name: "all-or-config-key")
         {
             Arity = ArgumentArity.ZeroOrOne,
             HelpName = Strings.ConfigGetAllOrConfigKeyDescription,
@@ -130,8 +130,8 @@ namespace NuGet.CommandLine.XPlat
 
         private static void RegisterOptionsForCommandConfigPaths(CliCommand cmd, Func<ILogger> getLogger)
         {
-            cmd.Add(WorkingDirectory);
-            cmd.Add(HelpOption);
+            cmd.Options.Add(WorkingDirectory);
+            cmd.Options.Add(HelpOption);
             // Create handler delegate handler for cmd
             cmd.SetAction((parseResult, cancellationToken) =>
             {
@@ -160,10 +160,10 @@ namespace NuGet.CommandLine.XPlat
 
         private static void RegisterOptionsForCommandConfigGet(CliCommand cmd, Func<ILogger> getLogger)
         {
-            cmd.Add(AllOrConfigKeyOption);
-            cmd.Add(WorkingDirectory);
-            cmd.Add(ShowPathOption);
-            cmd.Add(HelpOption);
+            cmd.Arguments.Add(AllOrConfigKeyArgument);
+            cmd.Options.Add(WorkingDirectory);
+            cmd.Options.Add(ShowPathOption);
+            cmd.Options.Add(HelpOption);
 
             // Create handler delegate handler for cmd
             cmd.SetAction((parseResult, cancellationToken) =>
@@ -171,7 +171,7 @@ namespace NuGet.CommandLine.XPlat
                 int exitCode;
                 var args = new ConfigGetArgs()
                 {
-                    AllOrConfigKey = parseResult.GetValue(AllOrConfigKeyOption),
+                    AllOrConfigKey = parseResult.GetValue(AllOrConfigKeyArgument),
                     WorkingDirectory = parseResult.GetValue(WorkingDirectory),
                     ShowPath = parseResult.GetValue(ShowPathOption),
                 };
@@ -194,10 +194,10 @@ namespace NuGet.CommandLine.XPlat
 
         private static void RegisterOptionsForCommandConfigSet(CliCommand cmd, Func<ILogger> getLogger)
         {
-            cmd.Add(SetConfigKeyArgument);
-            cmd.Add(ConfigValueArgument);
-            cmd.Add(ConfigFileOption);
-            cmd.Add(HelpOption);
+            cmd.Arguments.Add(SetConfigKeyArgument);
+            cmd.Arguments.Add(ConfigValueArgument);
+            cmd.Options.Add(ConfigFileOption);
+            cmd.Options.Add(HelpOption);
             // Create handler delegate handler for cmd
             cmd.SetAction((parseResult, cancellationToken) =>
             {
@@ -227,9 +227,9 @@ namespace NuGet.CommandLine.XPlat
 
         private static void RegisterOptionsForCommandConfigUnset(CliCommand cmd, Func<ILogger> getLogger)
         {
-            cmd.Add(UnsetConfigKeyArgument);
-            cmd.Add(ConfigFileOption);
-            cmd.Add(HelpOption);
+            cmd.Arguments.Add(UnsetConfigKeyArgument);
+            cmd.Options.Add(ConfigFileOption);
+            cmd.Options.Add(HelpOption);
             // Create handler delegate handler for cmd
             cmd.SetAction((parseResult, cancellationToken) =>
             {

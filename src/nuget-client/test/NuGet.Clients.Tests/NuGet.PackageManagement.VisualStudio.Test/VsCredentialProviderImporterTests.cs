@@ -3,10 +3,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.VisualStudio.ComponentModelHost;
+using Microsoft.VisualStudio.Sdk.TestFramework;
+using Microsoft.VisualStudio.Shell;
+using Moq;
 using NuGet.VisualStudio;
 using Xunit;
 
@@ -49,43 +54,43 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         }
     }
 
-    public class VsCredentialProviderImporterTests
+    [Collection(MockedVS.Collection)]
+    public class VsCredentialProviderImporterTests : MockedVSCollectionTests
     {
-        private readonly StringBuilder _testErrorOutput = new StringBuilder();
         private readonly List<string> _errorMessages = new List<string>();
         private readonly Action<Exception, string> _errorDelegate;
 
-        public VsCredentialProviderImporterTests()
+        public VsCredentialProviderImporterTests(GlobalServiceProvider globalServiceProvider)
+    : base(globalServiceProvider)
         {
             _errorDelegate = (e, s) => _errorMessages.Add(s);
         }
 
-        private void TestableErrorWriter(string s)
+        [Fact]
+        public async Task WhenVstsIntializerSucceeds_AndNoServicesAvailable_ReturnsEmptyList()
         {
-            _testErrorOutput.AppendLine(s);
-        }
+            var componentModel = new Mock<IComponentModel>();
+            componentModel.SetupGet(x => x.DefaultCompositionService).Returns(Mock.Of<ICompositionService>());
+            AddService<SComponentModel>(Task.FromResult((object)componentModel.Object));
 
-        private VsCredentialProviderImporter GetTestableImporter()
-        {
-            var importer = new VsCredentialProviderImporter(
-                _errorDelegate,
-                initializer: () => { });
+            // Arrange
+            var importer = new VsCredentialProviderImporter(_errorDelegate);
 
-            return importer;
+            // Act & Assert
+            IReadOnlyCollection<Credentials.ICredentialProvider> providers = await importer.GetProvidersAsync();
+            providers.Should().BeEmpty();
+            _errorMessages.Should().BeEmpty();
         }
 
         [Fact]
-        public void WhenVstsIntializerThrows_ThenExceptionBubblesOut()
+        public async Task WhenVstsIntializerThrows_ThenExceptionBubblesOut()
         {
             // Arrange
-            var exception = new ArgumentException();
-            var importer = new VsCredentialProviderImporter(
-                _errorDelegate,
-                () => { throw exception; });
+            var importer = new VsCredentialProviderImporter(_errorDelegate);
 
             // Act & Assert
-            var actual = Assert.Throws<ArgumentException>(() => importer.GetProviders());
-            Assert.Same(exception, actual);
+            await Assert.ThrowsAsync<ServiceUnavailableException>(() => importer.GetProvidersAsync());
+            _errorMessages.Should().BeEmpty();
         }
     }
 }

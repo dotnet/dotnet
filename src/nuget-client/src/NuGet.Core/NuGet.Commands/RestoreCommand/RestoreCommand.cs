@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -191,7 +192,11 @@ namespace NuGet.Commands
                         telemetry.StartIntervalMeasure();
                         bool noOp;
                         TimeSpan? cacheFileAge;
+
+                        if (NuGetEventSource.IsEnabled) TraceEvents.CalcNoOpRestoreStart(_request.Project.FilePath);
                         (cacheFile, noOp, cacheFileAge) = EvaluateCacheFile();
+                        if (NuGetEventSource.IsEnabled) TraceEvents.CalcNoOpRestoreStop(_request.Project.FilePath);
+
                         telemetry.TelemetryEvent[NoOpCacheFileEvaluationResult] = noOp;
                         telemetry.EndIntervalMeasure(NoOpCacheFileEvaluateDuration);
                         if (noOp)
@@ -278,12 +283,14 @@ namespace NuGet.Commands
                     using (telemetry.StartIndependentInterval(GenerateRestoreGraphDuration))
                     {
                         // Restore
+                        if (NuGetEventSource.IsEnabled) TraceEvents.BuildRestoreGraphStart(_request.Project.FilePath);
                         graphs = await ExecuteRestoreAsync(
                         _request.DependencyProviders.GlobalPackages,
                         _request.DependencyProviders.FallbackPackageFolders,
                         contextForProject,
                         token,
                         telemetry);
+                        if (NuGetEventSource.IsEnabled) TraceEvents.BuildRestoreGraphStop(_request.Project.FilePath);
                     }
                 }
                 else
@@ -316,12 +323,14 @@ namespace NuGet.Commands
 
                 telemetry.StartIntervalMeasure();
                 // Create assets file
+                if (NuGetEventSource.IsEnabled) TraceEvents.BuildAssetsFileStart(_request.Project.FilePath);
                 LockFile assetsFile = BuildAssetsFile(
                     _request.ExistingLockFile,
                     _request.Project,
                     graphs,
                     localRepositories,
                     contextForProject);
+                if (NuGetEventSource.IsEnabled) TraceEvents.BuildAssetsFileStop(_request.Project.FilePath);
                 telemetry.EndIntervalMeasure(GenerateAssetsFileDuration);
 
                 IList<CompatibilityCheckResult> checkResults = null;
@@ -1412,6 +1421,85 @@ namespace NuGet.Commands
                 project,
                 msbuildProjectPath: null,
                 projectReferences: Enumerable.Empty<string>());
+        }
+
+        private static class TraceEvents
+        {
+            private const string EventNameBuildAssetsFile = "RestoreCommand/BuildAssetsFile";
+            private const string EventNameBuildRestoreGraph = "RestoreCommand/BuildRestoreGraph";
+            private const string EventNameCalcNoOpRestore = "RestoreCommand/CalcNoOpRestore";
+
+            public static void BuildAssetsFileStart(string filePath)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Performance |
+                                NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Start
+                };
+
+                NuGetEventSource.Instance.Write(EventNameBuildAssetsFile, eventOptions, new { FilePath = filePath });
+            }
+
+            public static void BuildAssetsFileStop(string filePath)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Performance |
+                                NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Stop
+                };
+
+                NuGetEventSource.Instance.Write(EventNameBuildAssetsFile, eventOptions, new { FilePath = filePath });
+            }
+
+            public static void BuildRestoreGraphStart(string filePath)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Performance |
+                                NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Start
+                };
+
+                NuGetEventSource.Instance.Write(EventNameBuildRestoreGraph, eventOptions, new { FilePath = filePath });
+            }
+
+            public static void BuildRestoreGraphStop(string filePath)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Performance |
+                                NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Stop
+                };
+
+                NuGetEventSource.Instance.Write(EventNameBuildRestoreGraph, eventOptions, new { FilePath = filePath });
+            }
+
+            public static void CalcNoOpRestoreStart(string filePath)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Performance |
+                                NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Start
+                };
+
+                NuGetEventSource.Instance.Write(EventNameCalcNoOpRestore, eventOptions, new { FilePath = filePath });
+            }
+
+            public static void CalcNoOpRestoreStop(string filePath)
+            {
+                var eventOptions = new EventSourceOptions
+                {
+                    Keywords = NuGetEventSource.Keywords.Performance |
+                                NuGetEventSource.Keywords.Restore,
+                    Opcode = EventOpcode.Stop
+                };
+
+                NuGetEventSource.Instance.Write(EventNameCalcNoOpRestore, eventOptions, new { FilePath = filePath });
+            }
         }
     }
 }

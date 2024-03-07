@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using Newtonsoft.Json;
 using NuGet.Common;
 using NuGet.Frameworks;
@@ -93,7 +94,11 @@ namespace NuGet.ProjectModel
             }
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))
+#if NET5_0_OR_GREATER
             using (var textWriter = new StreamWriter(fileStream))
+#else
+            using (var textWriter = new NoAllocNewLineStreamWriter(fileStream))
+#endif
             using (var jsonWriter = new JsonTextWriter(textWriter))
             using (var writer = new JsonObjectWriter(jsonWriter))
             {

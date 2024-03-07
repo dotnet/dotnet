@@ -530,7 +530,6 @@ static NuGet.Common.CryptoHashUtility.ConvertToOid(this NuGet.Common.HashAlgorit
 static NuGet.Common.CryptoHashUtility.ConvertToOidString(this NuGet.Common.HashAlgorithmName hashAlgorithmName) -> string!
 static NuGet.Common.CryptoHashUtility.ConvertToOidString(this NuGet.Common.SignatureAlgorithmName signatureAlgorithmName) -> string!
 static NuGet.Common.CryptoHashUtility.ConvertToSystemSecurityHashAlgorithmName(this NuGet.Common.HashAlgorithmName hashAlgorithmName) -> System.Security.Cryptography.HashAlgorithmName
-static NuGet.Common.CryptoHashUtility.GenerateUniqueToken(string! caseInsensitiveKey) -> string!
 static NuGet.Common.CryptoHashUtility.GetHashAlgorithm(NuGet.Common.HashAlgorithmName hashAlgorithmName) -> System.Security.Cryptography.HashAlgorithm!
 static NuGet.Common.CryptoHashUtility.GetHashAlgorithm(string! hashAlgorithmName) -> System.Security.Cryptography.HashAlgorithm!
 static NuGet.Common.CryptoHashUtility.GetHashAlgorithmName(string! hashAlgorithm) -> NuGet.Common.HashAlgorithmName
