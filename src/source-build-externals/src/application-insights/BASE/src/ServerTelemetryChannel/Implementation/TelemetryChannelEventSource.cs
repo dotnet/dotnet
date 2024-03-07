@@ -456,9 +456,9 @@
         {
             this.WriteEvent(
                 64,
-                limit.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? string.Empty,
-                attempted.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? string.Empty,
-                accepted.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? string.Empty,
+                limit,
+                attempted,
+                accepted,
                 this.ApplicationName);
         }
 
@@ -513,9 +513,9 @@
                 this.ApplicationName);
         }
 
-        [Event(71, Message = "TransmissionDataLossError. Telemetry items are being lost here as the response code is not in the whitelisted set of retriable codes." +
+        [Event(71, Message = "TransmissionDataLossError. Telemetry items are being lost here as the response code is not in the subset of retriable codes." +
                              "TransmissionId: {0}. Status Code: {1}.", Level = EventLevel.Warning)]
-        public void TransmissionDataNotRetriedForNonWhitelistedResponse(string transmissionId, string status, string appDomainName = "Incorrect")
+        public void TransmissionDataNotRetriedForIgnoredStatusCode(string transmissionId, string status, string appDomainName = "Incorrect")
         {
             this.WriteEvent(
                 71,

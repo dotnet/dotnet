@@ -15,6 +15,11 @@
 
     internal class AzureSdkDiagnosticsEventHandler : DiagnosticsEventHandlerBase
     {
+        // Microsoft.DocumentDB is an Azure Resource Provider namespace. We use it as a dependency span as-is
+        // and portal will take care about visualizing it properly.
+        private const string CosmosDBResourceProviderNs = "Microsoft.DocumentDB";
+        private const string ClientCosmosDbDependencyType = CosmosDBResourceProviderNs;
+        private const string InternalCosmosDbDependencyType = "InProc | " + CosmosDBResourceProviderNs;
 #if NET452
         private static readonly DateTimeOffset EpochStart = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
 #endif
@@ -89,12 +94,22 @@
 
                     this.SetCommonProperties(evnt.Key, evnt.Value, currentActivity, telemetry);
 
-                    if (telemetry is DependencyTelemetry dependency && dependency.Type == RemoteDependencyConstants.HTTP)
+                    if (telemetry is DependencyTelemetry dependency)
                     {
-                        SetHttpProperties(currentActivity, dependency);
-                        if (evnt.Value != null)
+                        if (dependency.Type == RemoteDependencyConstants.HTTP)
                         {
-                            dependency.SetOperationDetail(evnt.Value.GetType().FullName, evnt.Value);
+                            SetHttpProperties(currentActivity, dependency);
+                            if (evnt.Value != null)
+                            {
+                                dependency.SetOperationDetail(evnt.Value.GetType().FullName, evnt.Value);
+                            }
+                        }
+                        else if (dependency.Type == ClientCosmosDbDependencyType || dependency.Type == InternalCosmosDbDependencyType)
+                        {
+                            // Internal cosmos spans come from SDK in Gateway mode - they are
+                            // logical operations. AppMap then uses HTTP spans to build cosmos node and 
+                            // metrics on the edge
+                            SetCosmosDbProperties(currentActivity, dependency);
                         }
                     }
 
@@ -323,6 +338,64 @@
         {
             return dependencyType != null && (dependencyType.EndsWith(RemoteDependencyConstants.AzureEventHubs, StringComparison.Ordinal) ||
                          dependencyType.EndsWith(RemoteDependencyConstants.AzureServiceBus, StringComparison.Ordinal));
+        }
+
+        private static void SetCosmosDbProperties(Activity activity, DependencyTelemetry telemetry)
+        {
+            string dbAccount = null;
+            string dbName = null;
+            string dbOperation = null;
+            string dbContainer = null;
+
+            foreach (var tag in activity.Tags)
+            {
+                if (tag.Key == "db.name")
+                {
+                    dbName = tag.Value;
+                }
+                else if (tag.Key == "db.operation")
+                {
+                    dbOperation = tag.Value;
+                }
+                else if (tag.Key == "net.peer.name")
+                {
+                    dbAccount = tag.Value;
+                }
+                else if (tag.Key == "db.cosmosdb.container")
+                {
+                    dbContainer = tag.Value;
+                }
+                else if (tag.Key == "db.cosmosdb.status_code")
+                {
+                    telemetry.ResultCode = tag.Value;
+                    continue;
+                }
+                else if (!tag.Key.StartsWith("db.cosmosdb.", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+                
+                telemetry.Properties[tag.Key] = tag.Value;
+            }
+
+            // similar to SqlClientDiagnosticSourceListener
+            telemetry.Target = JoinNullable(dbAccount, dbName);
+            telemetry.Name = JoinNullable(dbContainer, dbOperation);
+        }
+
+        private static string JoinNullable(string first, string second)
+        {
+            if (first == null)
+            {
+                return second ?? String.Empty;
+            }
+
+            if (second == null)
+            {
+                return first;
+            }
+
+            return String.Concat(first, " | ", second);
         }
 
         private static void SetMessagingProperties(Activity activity, OperationTelemetry telemetry)

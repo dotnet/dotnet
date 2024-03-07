@@ -27,10 +27,24 @@ namespace Microsoft.ApplicationInsights.TestFramework
                 listener.EnableEvents(eventSource, EventLevel.Verbose, (EventKeywords)AllKeywords);
                 try
                 {
+                    var guid = Guid.NewGuid();
+                    EventSource.SetCurrentThreadActivityId(guid);
+
                     object[] eventArguments = GenerateEventArguments(eventMethod);
                     eventMethod.Invoke(eventSource, eventArguments);
 
-                    EventWrittenEventArgs actualEvent = listener.Messages.First();
+                    EventWrittenEventArgs actualEvent = listener.Messages.FirstOrDefault(x => x.ActivityId == guid);
+
+                    if (actualEvent == null)
+                    {
+                        throw new Exception("Listener failed to collect event.");
+                    }
+                    else if (actualEvent.EventId == 0)
+                    {
+                        // an error occurred
+                        throw new Exception(actualEvent.Message);
+                    }
+
                     VerifyEventId(eventMethod, actualEvent);
                     VerifyEventLevel(eventMethod, actualEvent);
                     VerifyEventMessage(eventMethod, actualEvent, eventArguments);

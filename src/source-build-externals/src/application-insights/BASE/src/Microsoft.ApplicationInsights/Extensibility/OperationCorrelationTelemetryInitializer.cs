@@ -46,15 +46,6 @@
                         telemetryProp.Properties.Add(TracestatePropertyKey, currentActivity.TraceStateString);
                     }
 
-                    // update proactive sampling decision if Activity is recorded
-                    // sampling processor may change the decision
-                    if (currentActivity.Recorded &&
-                        telemetryItem is ISupportAdvancedSampling supportSamplingTelemetry &&
-                        supportSamplingTelemetry.ProactiveSamplingDecision == SamplingDecision.None)
-                    {
-                        supportSamplingTelemetry.ProactiveSamplingDecision = SamplingDecision.SampledIn;
-                    }
-
                     if (string.IsNullOrEmpty(itemOperationContext.Id))
                     {
                         if (currentActivity.IdFormat == ActivityIdFormat.W3C)

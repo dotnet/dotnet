@@ -1150,7 +1150,11 @@
         }
 
         [TestMethod]
+#if NET7_0_OR_GREATER
+        [ExpectedExceptionWithMessage(typeof(ArgumentException), "Failed to parse configuration value. Property: 'IntegerProperty' Reason: The input string '123a' was not in a correct format.")]
+#else
         [ExpectedExceptionWithMessage(typeof(ArgumentException), "Failed to parse configuration value. Property: 'IntegerProperty' Reason: Input string was not in a correct format.")]
+#endif
         public void LoadPropertiesThrowsExceptionWithPropertyName()
         {
             // parsing this integer will throw "System.FormatException: Input string was not in a correct format."
@@ -1167,7 +1171,11 @@
         }
 
         [TestMethod]
+#if NET7_0_OR_GREATER
+        [ExpectedExceptionWithMessage(typeof(ArgumentException), "Failed to parse configuration value. Property: 'IntegerProperty' Reason: The input string '123a' was not in a correct format.")]
+#else
         [ExpectedExceptionWithMessage(typeof(ArgumentException), "Failed to parse configuration value. Property: 'IntegerProperty' Reason: Input string was not in a correct format.")]
+#endif
         public void LoadProperties_TelemetryClientThrowsException()
         {
             string testConfig = Configuration(

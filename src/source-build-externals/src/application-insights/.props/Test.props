@@ -16,11 +16,20 @@
           - net4.7.2
           - net4.8.0
           - netcoreapp3.1 (EoL Dec 2022)
-          - net5.0 (EoL Feb 2022)
-          - net6.0 (GA Nov 2021)
+          - net6.0 (EoL Nov 2024)
+          - net7.0 (GA Nov 2022)
     -->
-    <TargetFrameworks>net462;net472;net480;netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
-    <TargetFrameworks Condition="$(OS) != 'Windows_NT'">netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+
+    <SupportedFrameworks_NetCore>net8.0;net7.0;net6.0;netcoreapp3.1;</SupportedFrameworks_NetCore>
+    <SupportedFrameworks_NetFx Condition="$(OS) == 'Windows_NT'">net481;net480;net472;net462;</SupportedFrameworks_NetFx>
+    <LegacyFrameworks_NetFx Condition="$(OS) == 'Windows_NT'">net46;net452;</LegacyFrameworks_NetFx>
+    
+    <TargetFrameworks>$(SupportedFrameworks_NetCore)$(SupportedFrameworks_NetFx)</TargetFrameworks>
+    <TargetFrameworks_WithLegacy>$(SupportedFrameworks_NetCore)$(SupportedFrameworks_NetFx)$(LegacyFrameworks_NetFx)</TargetFrameworks_WithLegacy>
+    <TargetFrameworks_NetCoreOnly>$(SupportedFrameworks_NetCore)</TargetFrameworks_NetCoreOnly>
+    <TargetFrameworks_NetFrameworkOnly>$(SupportedFrameworks_NetFx)$(LegacyFrameworks_NetFx)</TargetFrameworks_NetFrameworkOnly>
+    
+    <TargetFrameworks_LatestNetFramework>net481</TargetFrameworks_LatestNetFramework>
   </PropertyGroup>
 
   <PropertyGroup>

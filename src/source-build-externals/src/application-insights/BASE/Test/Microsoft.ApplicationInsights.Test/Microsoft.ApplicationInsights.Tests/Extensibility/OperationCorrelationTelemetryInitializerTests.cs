@@ -285,6 +285,7 @@
             currentActivity.Stop();
         }
 
+        [Ignore("ProactiveSamplingDecision is removed and won't work")]
         [TestMethod]
         public void InitializeWithActivityRecorded()
         {
@@ -299,6 +300,7 @@
             currentActivity.Stop();
         }
 
+        [Ignore("ProactiveSamplingDecision is removed and won't work")]
         [TestMethod]
         public void InitializeWithActivityRecordedOperationIdSet()
         {

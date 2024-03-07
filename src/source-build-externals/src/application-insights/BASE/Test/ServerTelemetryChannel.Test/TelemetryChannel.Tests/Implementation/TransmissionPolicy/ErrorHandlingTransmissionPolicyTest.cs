@@ -215,7 +215,7 @@ namespace Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.Implement
                     Assert.AreEqual(1, traces.Count);
                     Assert.AreEqual(69, traces[0].EventId); // failed to send
                     Assert.AreEqual("Data loss", traces[0].Payload[1]);
-                    // Sets flush task to failure on not whitelisted status code
+                    // Sets flush task to failure on ignored status code
                     Assert.IsFalse(failedTransmission.IsFlushAsyncInProgress);
                 }
             }
@@ -248,7 +248,7 @@ namespace Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.Implement
                     Assert.AreEqual(1, traces.Count);
                     Assert.AreEqual(69, traces[0].EventId); // failed to send
                     Assert.AreEqual("Unknown Exception Message", traces[0].Payload[1]);
-                    // Sets flush task to failure on not whitelisted status code
+                    // Sets flush task to failure on ignored status code
                     Assert.IsFalse(failedTransmission.IsFlushAsyncInProgress);
                 }
             }
@@ -256,7 +256,7 @@ namespace Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.Implement
             [TestMethod]
             public void LogsWarningWhenDataLossIntentional()
             {
-                // ErrorHandlingTransmissionPolicy does retry only for a whitelisted set of status codes. For 
+                // ErrorHandlingTransmissionPolicy does retry only for a selected subset of status codes. For 
                 // others telemetry is dropped. This test is to validate that those are logged.
                 using (var listener = new TestEventListener())
                 {

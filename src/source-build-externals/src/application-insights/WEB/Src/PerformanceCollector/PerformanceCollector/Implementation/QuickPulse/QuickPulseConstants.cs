@@ -64,7 +64,7 @@
         /// Service endpoint redirect.
         /// </summary>
         /// <remarks>Contains a URI of the service endpoint we must permanently use <b>for the particular resource</b>.</remarks>
-        internal const string XMsQpsServiceEndpointRedirectHeaderName = "x-ms-qps-service-endpoint-redirect";
+        internal const string XMsQpsServiceEndpointRedirectHeaderName = "x-ms-qps-service-endpoint-redirect-v2";
 
         /// <summary>
         /// The following authentication headers must be received and submitted back to the service with no modification.

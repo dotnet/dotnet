@@ -7,5 +7,6 @@
         internal static string DiagnosticSourceDesktop = "dsd";
         internal static string DiagnosticSourceCore = "dsc";
         internal static string DiagnosticSourceListener = "dsl";
+        internal static string DiagnosticSourceListenerAzure = "dsaz";
     }
 }

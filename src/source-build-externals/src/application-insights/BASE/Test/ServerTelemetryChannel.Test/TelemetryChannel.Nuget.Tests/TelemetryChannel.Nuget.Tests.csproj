@@ -3,8 +3,9 @@
 
   <PropertyGroup>
     <!-- TargetFrameworks are defined in Test.props, but can be overridden here if needed. -->
+    <TargetFrameworks>$(TargetFrameworks_LatestNetFramework)</TargetFrameworks>
+    
     <ProjectGuid>{21CB9A8A-F25B-4DEB-92CB-ACB6920EB8BC}</ProjectGuid>
-    <TargetFrameworks>net480</TargetFrameworks>
     <AssemblyName>TelemetryChannel.Nuget.Tests</AssemblyName>
   </PropertyGroup>
 

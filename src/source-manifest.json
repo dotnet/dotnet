@@ -115,10 +115,10 @@
       "commitSha": "7d89f5b0b212633418a28c6ab1a343e178f42ba5"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24151.1",
+      "packageVersion": "9.0.0-alpha.1.24154.2",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "7fbf7ef59ca7ddcfa92269ef84e3fcb7544f8699"
+      "commitSha": "60a35f5b8ce2839e56457164844d91fc89622c6a"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24155.1",
@@ -216,7 +216,7 @@
     {
       "path": "source-build-externals/src/application-insights",
       "remoteUri": "https://github.com/Microsoft/ApplicationInsights-dotnet",
-      "commitSha": "5e2e7ddda961ec0e16a75b1ae0a37f6a13c777f5"
+      "commitSha": "43825e06a22cdfb702fc199a7ba99a7d541d48c6"
     },
     {
       "path": "source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet",

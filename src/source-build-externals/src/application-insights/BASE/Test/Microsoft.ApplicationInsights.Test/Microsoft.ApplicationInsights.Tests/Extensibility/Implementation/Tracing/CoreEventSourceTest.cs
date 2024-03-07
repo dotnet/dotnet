@@ -36,7 +36,7 @@
         /// 
         /// To run this test:
         /// dotnet build /p:Redfield=True ".\dotnet\BASE\Microsoft.ApplicationInsights.sln"
-        /// dotnet test ".\bin\Debug\test\Microsoft.ApplicationInsights.Tests\net5.0\Microsoft.ApplicationInsights.Tests.dll" --filter Name~VerifyRedfieldEventSourceName
+        /// dotnet test ".\bin\Debug\test\Microsoft.ApplicationInsights.Tests\net6.0\Microsoft.ApplicationInsights.Tests.dll" --filter Name~VerifyRedfieldEventSourceName
         /// </summary>
         [TestMethod]
         public void VerifyRedfieldEventSourceName()
