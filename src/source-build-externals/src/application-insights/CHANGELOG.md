@@ -2,15 +2,35 @@
 
 ## VNext
 
+## Version 2.22.0
+- no changes since beta.
+
+## Version 2.22.0-beta4
+- [Added support to read diagnostics config from the path defined in environment variable.](https://github.com/microsoft/ApplicationInsights-dotnet/pull/2769)
+
+## Version 2.22.0-beta3
+- [Do not report CosmosDB transport-level calls](https://github.com/microsoft/ApplicationInsights-dotnet/pull/2789)
+- [Fixed an adaptive sampling issue that caused incorrect item count when an `Activity` Recorded flags were modified externally, when enabled side-by-side with OpenTelemetry or other solutions.](https://github.com/microsoft/ApplicationInsights-dotnet/issues/2742)
+
+## Version 2.22.0-beta2
+- [Upgrade System.Diagnostics.PerformanceCounter to version 6.0.0 to address CVE-2021-24112](https://github.com/microsoft/ApplicationInsights-dotnet/pull/2707)
+- [Report internal dependencies from Cosmos SDK as InProc and align with Cosmos SDK EventSource changes](https://github.com/microsoft/ApplicationInsights-dotnet/pull/2712)
+
+## Version 2.22.0-beta1
+- Update endpoint redirect header name for QuickPulse module to v2
+- AzureSdkDiagnosticListener modified to use sdkversion prefix "rdddsaz" instead of "dotnet".
+- [ILogger logs with LogLevel.None severity are now ignored by ApplicationInsightsLogger](https://github.com/microsoft/ApplicationInsights-dotnet/pull/2667). Fixes ([#2666](https://github.com/microsoft/ApplicationInsights-dotnet/issues/2666))
+- [Fix ExceptionTelemetry clears all Context when updating Exception property](https://github.com/microsoft/ApplicationInsights-dotnet/issues/2086)
+- [Support dependency tracking and diagnostics events for Microsoft.Azure.Cosmos v3](https://github.com/microsoft/ApplicationInsights-dotnet/pull/2635)
 
 ## Version 2.21.0
 - no changes since beta.
 
 ## Version 2.21.0-beta3
 - [Remove two unnecessary .NET Standard 1.x dependencies.](https://github.com/microsoft/ApplicationInsights-dotnet/pull/2613)
-- Address vulnerability in `Newtonsoft.Json` ([GHSA-5crp-9r3c-p9vr](https://github.com/advisories/GHSA-5crp-9r3c-p9vr)). 
+- Address vulnerability in `Newtonsoft.Json` ([GHSA-5crp-9r3c-p9vr](https://github.com/advisories/GHSA-5crp-9r3c-p9vr)).
   Mitigation is to upgrade dependencies in `Microsoft.ApplicationInsights.AspNetCore` ([#2615](https://github.com/microsoft/ApplicationInsights-dotnet/pull/2615))
-  - Upgrade `Microsoft.Extensions.Configuration.Json` from v2.1.0 to v3.1.0. 
+  - Upgrade `Microsoft.Extensions.Configuration.Json` from v2.1.0 to v3.1.0.
   - Upgrade `System.Text.Encodings.Web` from 4.5.1 to 4.7.2.
 
 ## Version 2.21.0-beta2
@@ -213,7 +233,7 @@
 - NETCORE: Update to Base/Web/Logging SDK to 2.12.0-beta1
 
 ----------
-# Before 2.12.0, our SDKs had separate repositories. 
+# Before 2.12.0, our SDKs had separate repositories.
 ----------
 
 ## Version 2.11.0
@@ -328,7 +348,7 @@ message and exception type of underlying `System.Exception` object that user wan
 - BASE: [Move the implementation of the extraction of auto-collected (aka standard) metrics from internal legacy APIs to the recently shipped metric aggregation APIs.](https://github.com/Microsoft/ApplicationInsights-dotnet/issues/806)
 - BASE: [Fix: NullReferenceException in ExceptionConverter.GetStackFrame if StackFrame.GetMethod() is null](https://github.com/Microsoft/ApplicationInsights-dotnet/issues/819)
 
-## Version 2.7.0-beta1 
+## Version 2.7.0-beta1
 - BASE: [Extend the Beta period for Metrics Pre-Aggregation features shipped in 2.6.0-beta3.](https://github.com/Microsoft/ApplicationInsights-dotnet/issues/785)
 - BASE: [New: Added TryGetOperationDetail to DependencyTelemetry to facilitate advanced ITelemetryInitializer scenarios.  Allows ITelemetryInitializer implementations to specify fields that would otherwise not be sent automatically to the backend.](https://github.com/Microsoft/ApplicationInsights-dotnet-server/issues/900)
 
@@ -336,7 +356,7 @@ message and exception type of underlying `System.Exception` object that user wan
 - BASE: [Revert changed namespace: `SamplingPercentageEstimatorSettings`, `AdaptiveSamplingPercentageEvaluatedCallback`](https://github.com/Microsoft/ApplicationInsights-dotnet/issues/727)
 - BASE: [Add netstandard2.0 target for TelemetryChannel which doesn't have a dependency on Newtonsoft.Json ](https://github.com/Microsoft/ApplicationInsights-dotnet/issues/800)
 
-## Version 2.6.1 
+## Version 2.6.1
 - BASE: [Extend the Beta period for Metrics Pre-Aggregation features shipped in 2.6.0-beta3.](https://github.com/Microsoft/ApplicationInsights-dotnet/issues/785)
 - BASE: [Fix: changed namespace SamplingPercentageEstimatorSettings](https://github.com/Microsoft/ApplicationInsights-dotnet/issues/727)
 
@@ -358,7 +378,7 @@ message and exception type of underlying `System.Exception` object that user wan
 - BASE: [Finalize the architecture for adding default heartbeat properties (supporting proposal from Issue #636).](https://github.com/Microsoft/ApplicationInsights-dotnet/issues/666).
 
 ## Version 2.5.1
-- BASE: Fix for missing TelemetryContext. Thank you to our community for discovering and reporting this issue! 
+- BASE: Fix for missing TelemetryContext. Thank you to our community for discovering and reporting this issue!
   [Logic bug within Initialize() in TelemetryContext](https://github.com/Microsoft/ApplicationInsights-dotnet/issues/692),
   [Dependency correlation is broken after upgrade to .NET SDK 2.5](https://github.com/Microsoft/ApplicationInsights-dotnet/issues/706),
   [Lost many context fields in 2.5.0](https://github.com/Microsoft/ApplicationInsights-dotnet/issues/708)
@@ -366,7 +386,7 @@ message and exception type of underlying `System.Exception` object that user wan
 ## Version 2.5.0-beta2
 - BASE: Remove calculation of sampling-score based on Context.User.Id [Issue #625](https://github.com/Microsoft/ApplicationInsights-dotnet/issues/625)
 - BASE: New sdk-driven "heartbeat" functionality added which sends health status at pre-configured intervals. See [extending heartbeat properties doc for more information](./docs/ExtendingHeartbeatProperties.md)
-- BASE: Fixes a bug in ServerTelemetryChannel which caused application to crash on non-windows platforms. 
+- BASE: Fixes a bug in ServerTelemetryChannel which caused application to crash on non-windows platforms.
 			[Details on fix and workaround #654](https://github.com/Microsoft/ApplicationInsights-dotnet/issues/654)
 			Original issue (https://github.com/Microsoft/ApplicationInsights-aspnetcore/issues/551)
 - BASE: [Fixed a bug with the `AdaptiveSamplingTelemetryProcessor` that would cause starvation over time. Issue #756 (dotnet-server)](https://github.com/Microsoft/ApplicationInsights-dotnet-server/issues/756)
@@ -421,7 +441,7 @@ message and exception type of underlying `System.Exception` object that user wan
 
 ## Version 2.3.0-beta1
 - BASE: Added metric aggregation functionality via MetricManager and Metric classes.
-- BASE: Exposed a source field on RequestTelemetry. This can be used to store a representation of the component that issued the incoming http request. 
+- BASE: Exposed a source field on RequestTelemetry. This can be used to store a representation of the component that issued the incoming http request.
 
 ## Version 2.2.0
 - BASE: Includes all changes since 2.1.0 stable release.
@@ -443,7 +463,7 @@ message and exception type of underlying `System.Exception` object that user wan
 ## Version 2.2.0-beta3
 
 - BASE: Read InstrumentationKey from environment variable APPINSIGHTS_INSTRUMENTATIONKEY if it is was not provided inline. If provided it overrides what is set though configuration file. (Feature is not available in PCL version of SDK).
-- BASE: Context properties `NetworkType`, `ScreenResolution` and `Language` marked as obsolete. Please use custom properties to report network type, screen resolution and language. Values stored in these properties will be send as custom properties. 
+- BASE: Context properties `NetworkType`, `ScreenResolution` and `Language` marked as obsolete. Please use custom properties to report network type, screen resolution and language. Values stored in these properties will be send as custom properties.
 - BASE: Dependency type was updated to reflect the latest developments in Application Insights Application Map feature. You can set a new field - `Target`. `CommandName` was renamed to `Data` for consistency with the Application Analytics schema. `DependencyKind` will never be send any more and will not be set to "Other" by default. Also there are two more constructors for `DependencyTelemetry` item.
 - BASE: Type `SessionStateTelemetry` was marked obsolete. Use `IsFirst` flag in `SessionContext` to indicate that the session is just started.
 - BASE: Type `PerformanceCounterTelemetry` was marked obsolete. Use `MetricTelemetry` instead.
@@ -468,7 +488,7 @@ message and exception type of underlying `System.Exception` object that user wan
 ## Version 2.2.0-beta1
 
 - BASE: Add ExceptionTelemetry.Message property. If it is provided it is used instead of Exception.Message property for the outer-most exception.
-- BASE: Telemetry types can be excluded from sampling by specifing ExcludedTypes property. 
+- BASE: Telemetry types can be excluded from sampling by specifing ExcludedTypes property.
 - BASE: ServerTelemetryChannel: changed backoff logic to be less aggressive, added diagnostics event when backoff logic kicks in and added more tracing. (Done to address issues when data stops flowing till application gets restarted)
 
 ## Version 2.1.0-beta4
@@ -485,7 +505,7 @@ message and exception type of underlying `System.Exception` object that user wan
 
 ## Version 2.0.1
 
-- BASE: Add Win Phone, Win Store and UWP targets that include 1.2.3 version of ApplicationInsights.dll. It is included to prevent applications that upgrade to 2.0.0 from crashing. In any case using this nuget for Win Phone, Win Store and UWP targets is not recommended and not supported. 
+- BASE: Add Win Phone, Win Store and UWP targets that include 1.2.3 version of ApplicationInsights.dll. It is included to prevent applications that upgrade to 2.0.0 from crashing. In any case using this nuget for Win Phone, Win Store and UWP targets is not recommended and not supported.
 
 ## Version 2.0.0
 
@@ -494,13 +514,13 @@ message and exception type of underlying `System.Exception` object that user wan
 
 ## Version 2.0.0-rc1
 
-- BASE: Writing telemetry items to debug output can be disabled with ```IsTracingDisabled``` property on ```TelemetryDebugWriter```. 
+- BASE: Writing telemetry items to debug output can be disabled with ```IsTracingDisabled``` property on ```TelemetryDebugWriter```.
 Telemetry items that were filtered out by sampling are now indicated in debug output. Custom telemetry processors can now invoke
 method ```WriteTelemetry``` on ```TelemetryDebugWriter``` with ```filteredBy``` parameter to indicate in debug output that an
 item is being filtered out.
 - BASE: DependencyTelemetry.Async property was removed.
 - BASE: DependencyTelemetry.Count property was removed.
-- BASE: When configuration is loaded from ApplicationInsights.config incorrect and broken elements are skipped. That includes both high level elements like TelemetryInitializers as well as individual properties.  
+- BASE: When configuration is loaded from ApplicationInsights.config incorrect and broken elements are skipped. That includes both high level elements like TelemetryInitializers as well as individual properties.
 - BASE: Internal Application Insights SDK traces will be marked as synthetic and have `SyntheticSource` equals to 'SDKTelemetry'.
 - BASE: UserContext.AcquisitionDate property was removed.
 - BASE: UserContext.StoreRegion property was removed.
@@ -610,8 +630,8 @@ No release notes for older versions available.
 ## Version 2.11.0-beta1
 - WEB: [Add support for Event Counter collection.](https://github.com/Microsoft/ApplicationInsights-dotnet-server/issues/1222)
 - WEB: [Support for Process CPU and Process Memory perf counters in all platforms including Linux.](https://github.com/microsoft/ApplicationInsights-dotnet-server/issues/1189)
-- WEB: [Azure Web App for Windows Containers to use regular PerfCounter mechanism.](https://github.com/microsoft/ApplicationInsights-dotnet-server/pull/1167) 
-- WEB: Experimental: [Defer populating RequestTelemetry properties.](https://github.com/Microsoft/ApplicationInsights-dotnet-server/issues/1173) 
+- WEB: [Azure Web App for Windows Containers to use regular PerfCounter mechanism.](https://github.com/microsoft/ApplicationInsights-dotnet-server/pull/1167)
+- WEB: Experimental: [Defer populating RequestTelemetry properties.](https://github.com/Microsoft/ApplicationInsights-dotnet-server/issues/1173)
 - WEB: [Fix: Replaced non-threadsafe HashSet with ConcurrentDictionary in RequestTrackingTelemetryModule.IsHandlerToFilter](https://github.com/microsoft/ApplicationInsights-dotnet-server/pull/1211)
 - WEB: SDL: [Guard against malicious headers in quickpulse](https://github.com/microsoft/ApplicationInsights-dotnet-server/pull/1191)
 
@@ -789,7 +809,7 @@ No release notes for older versions available.
 ## Version 2.4.0-beta1
 - WEB: Report status code for the dependencies failed with non-protocol issue like DNS resolution or SSL shakeup problems.
 - WEB: Implemented automatic telemetry correlation: all telemetry reported within the scope of the request is correlated to RequestTelemetry reported for the request.
-- WEB: Implemented [Correlation HTTP protocol](https://github.com/lmolkova/correlation/blob/master/http_protocol_proposal_v1.md): default headers to pass Operation Root Id and Parent Id were changed. This version is backward compatible with previously supported headers. 
+- WEB: Implemented [Correlation HTTP protocol](https://github.com/lmolkova/correlation/blob/master/http_protocol_proposal_v1.md): default headers to pass Operation Root Id and Parent Id were changed. This version is backward compatible with previously supported headers.
 - WEB: Implemented injection into the HTTP stack for .NET 4.6 to leverage DiagnosticSource to gain access to the WebRequest and WebResponse objects for header injections, without the need of using the profiler.
 - WEB: Dependency to System.Diagnostics.DiagnosticsSource package is added for Web SDK on .NET 4.5.
 - WEB: Improvements to exception statistics, e.g. 2 of each type of exception will be output via TrackException
@@ -810,9 +830,9 @@ No release notes for older versions available.
   ```
   customMetrics
   | where timestamp > ago(5d)
-  | where name == "Exceptions thrown" 
-  | extend type = tostring(customDimensions.type), method = tostring(customDimensions.method), operation = tostring(customDimensions.operation) 
-  | summarize sum(value), sum(valueCount) by type, method, operation 
+  | where name == "Exceptions thrown"
+  | extend type = tostring(customDimensions.type), method = tostring(customDimensions.method), operation = tostring(customDimensions.operation)
+  | summarize sum(value), sum(valueCount) by type, method, operation
   ```
 - WEB: Add dependency collection for System.Data.SqlClient.SqlConnection.Open and System.Data.SqlClient.SqlConnection.OpenAsync by Profiler instrumentation. Dependencies are sent only for failed connections.
 - WEB: Top 5 CPU reporting for Live Metrics Stream (aka QuickPulse). QuickPulseTelemetryModule now reports the names and CPU consumption values of top 5 CPU consuming processes.
@@ -847,7 +867,7 @@ No release notes for older versions available.
 
 ## Version 2.2.0-beta2
 
-- WEB: DependencyCollection nuget package was updated to Agent.Intercept nuget version 2.0.1. Agent.Intercept nuget was updated to EventSource.Redist version 1.1.28. 
+- WEB: DependencyCollection nuget package was updated to Agent.Intercept nuget version 2.0.1. Agent.Intercept nuget was updated to EventSource.Redist version 1.1.28.
 - WEB: SQL dependencies will have SQL error message being added to custom properties collection if application uses profiler instrumentation (either instrumented with StatusMonitor or just have StatusMonitor on the box with the app)
 - WEB: Allow all characters in custom counters ReportAs property.
 - WEB: QuickPulse (Live Metrics Stream) was updated to include Live Failures
@@ -856,7 +876,7 @@ No release notes for older versions available.
 
 - WEB: ResultCode for successful Sql calls will be collected as 0 (before it was not sent).
 - WEB: Fixed ResultCode sometimes not being collected for failed dependencies
-- WEB: RequestTelemetry.UserAgent is collected automatically. 
+- WEB: RequestTelemetry.UserAgent is collected automatically.
 
 ## Version 2.1.0-beta4
 
@@ -869,7 +889,7 @@ No release notes for older versions available.
 
 ## Version 2.1.0-beta2
 - WEB: Http requests to LiveMetricsStream (Feature not surfaced in UI yet) backend were tracked as dependencies. They will be filtered out starting this version.
-- WEB: There are no other changes 
+- WEB: There are no other changes
 
 ## Version 2.1.0-beta1
 
@@ -877,7 +897,7 @@ No release notes for older versions available.
 - WEB: Upgraded to depend on Microsoft.Bcl nuget version 1.1.10
 - WEB: LiveMetricsStream feature is introduced (Not surfaced in UI yet)
 
-## Version 2.0.0 
+## Version 2.0.0
 - WEB: Performance counter collection is no longer supported when running under IIS Express.
 
 ## Version 2.0.0-rc1
@@ -890,9 +910,9 @@ No release notes for older versions available.
 
 **Web:**
 
-- WEB: WebApps AlwaysOn requests with ResponseCode less than 400 will be filtered out. 
-- WEB: User agent and request handler filters can be configured. Previous behavior filtered out only a default set of request handlers and user agent strings, 
-  now custom filters can be added to the ApplicationInsights.config file through the ```TelemetryProcessors``` section. 
+- WEB: WebApps AlwaysOn requests with ResponseCode less than 400 will be filtered out.
+- WEB: User agent and request handler filters can be configured. Previous behavior filtered out only a default set of request handlers and user agent strings,
+  now custom filters can be added to the ApplicationInsights.config file through the ```TelemetryProcessors``` section.
   Telemetry for requests with HttpContext.Current that matches these filters will not be sent.
 - WEB: If multiple simultaneous calls are made on a ```SqlCommand``` object, only one dependency is recorded. The second
   call will be failed immediately by ```SqlCommand``` and will not be recorded as a dependency.
@@ -949,16 +969,16 @@ No release notes for older versions available.
 
 **Web:**
 
-- WEB: Moved telemetry initializers and telemetry modules from separate sub-namespaces to the root 
+- WEB: Moved telemetry initializers and telemetry modules from separate sub-namespaces to the root
   `Microsoft.ApplicationInsights.Extensibility.Web` namespace.
-- WEB: Removed "Web" prefix from names of telemetry initializers and telemetry modules because it is already included in the 
+- WEB: Removed "Web" prefix from names of telemetry initializers and telemetry modules because it is already included in the
   `Microsoft.ApplicationInsights.Extensibility.Web` namespace name.
-- WEB: Moved `DeviceContextInitializer` from the `Microsoft.ApplicationInsights` assembly to the 
+- WEB: Moved `DeviceContextInitializer` from the `Microsoft.ApplicationInsights` assembly to the
   `Microsoft.ApplicationInsights.Extensibility.Web` assembly and converted it to an `ITelemetryInitializer`.
 
 **Dependencies:**
 
-- WEB: Change namespace and assembly names from `Microsoft.ApplicationInsights.Extensibility.RuntimeTelemetry` to 
+- WEB: Change namespace and assembly names from `Microsoft.ApplicationInsights.Extensibility.RuntimeTelemetry` to
   `Microsoft.ApplicationInsights.Extensibility.DependencyCollector` for consistency with the name of the NuGet package.
 - WEB: Rename `RemoteDependencyModule` to `DependencyTrackingTelemetryModule`.
 
@@ -998,11 +1018,11 @@ No release notes for older versions available.
 
 ## Version 2.11.0
 - LOGGING: Update Base SDK to 2.11.0
-- LOGGING: Update System.Diagnostics.DiagnosticSource to 4.6.0. 
+- LOGGING: Update System.Diagnostics.DiagnosticSource to 4.6.0.
 
 ## Version 2.11.0-beta2
 - LOGGING: Update Base SDK to version 2.11.0-beta2
-- LOGGING: Update System.Diagnostics.DiagnosticSource to 4.6.0-preview7. 
+- LOGGING: Update System.Diagnostics.DiagnosticSource to 4.6.0-preview7.
 
 ### Version 2.11.0-beta1
 - LOGGING: Update Base SDK to version 2.11.0-beta1
@@ -1053,7 +1073,7 @@ No release notes for older versions available.
 ### Version 2.5.0
 - LOGGING: Update Application Insights API reference to 2.5.0
 - LOGGING: Removed framework 4.0 support
-- LOGGING: For EventSourceTelemetryModule, allows black list the event sources. Drops the events to those in the list.
+- LOGGING: For EventSourceTelemetryModule, allows configuring disabled event sources. Drops the events to those in the list.
 - LOGGING: [Fix Deadlock over EventSourceTelemetryModule](https://github.com/Microsoft/ApplicationInsights-dotnet-logging/issues/109)
 - LOGGING: [Extensibel payload handler](https://github.com/Microsoft/ApplicationInsights-dotnet-logging/pull/111)
 - LOGGING: [Add ProviderName and ProviderGuid properties to TraceTelemetry](https://github.com/Microsoft/ApplicationInsights-dotnet-logging/pull/120)
@@ -1091,7 +1111,7 @@ No release notes for older versions available.
 
 - LOGGING: Bug fixes
 - LOGGING: log4Net: Collect log4net properties as custom properties. UserName is not a custom property any more (It is collected as telemetry.Context.User.Id). Timestamp is not a custom property any more.
-- LOGGING: NLog: Collect NLog properties as custom properties. SequenceID is not a custom property any more (It is collected as telemetry.Sequence). Timestamp is not a custom property any more. 
+- LOGGING: NLog: Collect NLog properties as custom properties. SequenceID is not a custom property any more (It is collected as telemetry.Sequence). Timestamp is not a custom property any more.
 
 ### Version 1.2.5
 - LOGGING: First open source version: References Application Insights API version 1.2.3 or higher.
@@ -1156,7 +1176,7 @@ No release notes for older versions available.
 
 ## Version 2.7.0-beta3
 - NETCORE: [Enables Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider by default. If ApplicationInsightsLoggerProvider was enabled previously using ILoggerFactory extension method, please remove it to prevent duplicate logs.](https://github.com/Microsoft/ApplicationInsights-aspnetcore/issues/854)
-- NETCORE: [Remove reference to Microsoft.Extensions.DiagnosticAdapter and use DiagnosticSource subscription APIs directly](https://github.com/Microsoft/ApplicationInsights-aspnetcore/pull/852) 
+- NETCORE: [Remove reference to Microsoft.Extensions.DiagnosticAdapter and use DiagnosticSource subscription APIs directly](https://github.com/Microsoft/ApplicationInsights-aspnetcore/pull/852)
 - NETCORE: [Fix: NullReferenceException in ApplicationInsightsLogger.Log when exception contains a Data entry with a null value](https://github.com/Microsoft/ApplicationInsights-aspnetcore/issues/848)
 - NETCORE: [Performance fixes for GetUri, SetKeyHeaderValue, ConcurrentDictionary use and Telemetry Initializers](https://github.com/Microsoft/ApplicationInsights-aspnetcore/pull/864)
 
@@ -1197,7 +1217,7 @@ No release notes for older versions available.
 Applicable if using additional Sinks to forward telemetry to:
 - NETCORE: [Default TelemetryProcessors are added to the DefaultSink instead of common TelemetryProcessor pipeline.](https://github.com/Microsoft/ApplicationInsights-aspnetcore/issues/752)
 - NETCORE: [TelemetryProcessors added via AddTelemetryProcesor extension method are added to the DefaultSink instead of common TelemetryProcessor pipeline.](https://github.com/Microsoft/ApplicationInsights-aspnetcore/issues/752)
-  
+
 
 ## Version 2.5.0-beta1
 - NETCORE: [Adds opt-in support for W3C distributed tracing standard](https://github.com/Microsoft/ApplicationInsights-aspnetcore/pull/735)

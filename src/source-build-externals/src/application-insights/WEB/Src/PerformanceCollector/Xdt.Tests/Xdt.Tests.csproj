@@ -3,9 +3,10 @@
 
   <PropertyGroup>
     <!-- TargetFrameworks are defined in Test.props, but can be overridden here if needed. -->
+    <TargetFrameworks>$(TargetFrameworks_LatestNetFramework)</TargetFrameworks>
+    
     <RootNamespace>Xdt.Tests</RootNamespace>
     <AssemblyName>Xdt.Tests</AssemblyName>
-    <TargetFrameworks>net480</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   

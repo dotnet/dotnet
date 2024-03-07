@@ -18,7 +18,7 @@ namespace NuGet.ProjectModel.Test
 
         public HashObjectWriterTests()
         {
-            _hashFunc = new Sha512HashFunction();
+            _hashFunc = new FnvHash64Function();
             _writer = new HashObjectWriter(_hashFunc);
         }
 
@@ -65,7 +65,7 @@ namespace NuGet.ProjectModel.Test
         {
             _writer.WriteObjectStart();
 
-            const string expectedHash = "wtA8bvsWw/gGSw0FnkX5UfF0hCGmIlcaUgCd3MKmcIUeGtAmn72B1FhW+iD/rNCB3SD+znYRQgvvtJ65hLwjyg==";
+            const string expectedHash = "uhgChkz2Y68=";
             string actualHash = _writer.GetHash();
 
             Assert.Equal(expectedHash, actualHash);
@@ -97,8 +97,8 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Theory]
-        [InlineData("", "z6NXo38IFDLUr7F/bIoub9q2RcWGd9G0kd0sZ2LrUsjAAOxeICRcA8sN6CZR1kIMrZl/AluqG57zeTOuEBQ1Bw==")]
-        [InlineData(PropertyName, "7NPeUey7AxorbVFFvKtffuKjuI3T9fqrDmyP9jMRFaMIQZdiMqy4+dvV2ci7nhuZjOXx5qdfiIns7wluMZYjlQ==")]
+        [InlineData("", "1fyYPzTw+J4=")]
+        [InlineData(PropertyName, "aEkDaamOy8A=")]
         public void WriteObjectStart_WithName_WithValidName_WritesObjectStart(string name, string expectedHash)
         {
             _writer.WriteObjectStart();
@@ -160,8 +160,8 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Theory]
-        [InlineData("", -1, "Py0m1BAc1GMLdv3VwUlClC/IwVxlRDmvpmUpLV1aQeFXw/eJsxWsbS/xi/Lu/HxvoufXcjJmlljwfe/B/aIccQ==")]
-        [InlineData(PropertyName, 1, "Z7FWuyPxOQ7v6uelHNSbq7no7P2EXqJRh0k6ONDfevPFA3yycn77N+keqUWo9rq6efTrRpjaKxKuvhdas2tzfg==")]
+        [InlineData("", -1, "5vr8D8iI2Lg=")]
+        [InlineData(PropertyName, 1, "dtICaalIy8A=")]
         public void WriteNameValue_WithIntValue_WithValidValue_WritesNameValue(string name, int value, string expectedHash)
         {
             _writer.WriteObjectStart();
@@ -198,8 +198,8 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Theory]
-        [InlineData("", true, "MuWFFw3nbGG78iKZZPcYZVMFfn8pxOZA3gBgB2KKL5Lysc/SX/xo5csUe9gvavVgis2wsA3EqJ8ZJkgU6s3SCA==")]
-        [InlineData(PropertyName, false, "/prsw57A47qiwYscCHCc5UJZdEJtaxpyeagaTzwlIDbFf0CSFJeU4EIqSBvh3q9iy9SwRk3Q+RGQH7KjrhvohQ==")]
+        [InlineData("", true, "rE+NQworCkw=")]
+        [InlineData(PropertyName, false, "0rT5fJwG03I=")]
         public void WriteNameValue_WithBoolValue_WithValidValue_WritesNameValue(string name, bool value, string expectedHash)
         {
             _writer.WriteObjectStart();
@@ -236,9 +236,9 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Theory]
-        [InlineData("", "", "y119K+M0qb7ZuOPtqhZB3oSq3qICw6ulw46gpooqe+mgd11zySkL+dONrIm8asZiUOWKa1Vo8lSp0c4Df92gHQ==")]
-        [InlineData(PropertyName, null, "KYuQ62iFQ/6Cd6svsq38bCPZq2HUZJae+e8kyvFpxkjpBMGOa/88lvo++bIb2zHL7eO5MJN9I8r1/kwe0lSctg==")]
-        [InlineData(PropertyName, "b", "kQ/OLQaqRdPBgNd/wzuUuTmSoCW13jaonYx5//arvLFtDo85lv5kfr1ATCol6HH9lDFtNS44X/HSjSI7xnxSDA==")]
+        [InlineData("", "", "OAojEMgFBbk=")]
+        [InlineData(PropertyName, null, "ViPwxht58Ok=")]
+        [InlineData(PropertyName, "b", "kwmmpEQYi7g=")]
         public void WriteNameValue_WithStringValue_WithValidValue_WritesNameValue(string name, string value, string expectedHash)
         {
             _writer.WriteObjectStart();
@@ -275,8 +275,8 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Theory]
-        [InlineData("", null, "bAe84bYqI4pvIFTbU9k55dzFYneWYlLw6w2Hbbw9F71iXKv9CYdVl6WE20O73WP2Gs8N1jY8vNLnpRy2uSOkIw==")]
-        [InlineData(PropertyName, "b", "6lWKPWARIKyDadU74W5+bb7W7/1mFLyZaljfm4UpudCTeiny7dbPU5hB/C63Xt6LDpqbjtLvoxS0hiWIbWGvkA==")]
+        [InlineData("", null, "uFlSEcjwabo=")]
+        [InlineData(PropertyName, "b", "Td9cKXXB7Gk=")]
         public void WriteNameArray_WithValidValues_WritesNameArray(string name, string value, string expectedHash)
         {
             IEnumerable<string> values = value == null ? Enumerable.Empty<string>() : new[] { value };
@@ -295,7 +295,7 @@ namespace NuGet.ProjectModel.Test
             _writer.WriteObjectStart();
             _writer.WriteNameArray(PropertyName, new string[] { null });
 
-            const string expectedHash = "BqvCuFre4Siu1xS8bzI6rXbSTCoNBI/bqGRvUTFDtUAVlDGfDg5cqeBosLcw5sboEHqOFOb/MqJBOyK1Xj5Ueg==";
+            const string expectedHash = "6JqdqL+bz8M=";
             string actualHash = _writer.GetHash();
 
             Assert.Equal(expectedHash, actualHash);
@@ -327,7 +327,7 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Theory]
-        [InlineData(PropertyName, "b", "6lWKPWARIKyDadU74W5+bb7W7/1mFLyZaljfm4UpudCTeiny7dbPU5hB/C63Xt6LDpqbjtLvoxS0hiWIbWGvkA==")]
+        [InlineData(PropertyName, "b", "Td9cKXXB7Gk=")]
         public void WriteNonEmptyNameArray_WithValidValues_WritesNameArray(string name, string value, string expectedHash)
         {
             IEnumerable<string> values = value == null ? Enumerable.Empty<string>() : new[] { value };
@@ -341,7 +341,7 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Theory]
-        [InlineData(PropertyName, "b", "6lWKPWARIKyDadU74W5+bb7W7/1mFLyZaljfm4UpudCTeiny7dbPU5hB/C63Xt6LDpqbjtLvoxS0hiWIbWGvkA==")]
+        [InlineData(PropertyName, "b", "Td9cKXXB7Gk=")]
         public void WriteNonEmptyNameArray_WithEmptyValues_DoesNotWriteNameArray(string name, string value, string expectedHash)
         {
             IEnumerable<string> values = value == null ? Enumerable.Empty<string>() : new[] { value };
@@ -362,7 +362,7 @@ namespace NuGet.ProjectModel.Test
             _writer.WriteObjectStart();
             _writer.WriteNonEmptyNameArray(PropertyName, new string[] { null });
 
-            const string expectedHash = "BqvCuFre4Siu1xS8bzI6rXbSTCoNBI/bqGRvUTFDtUAVlDGfDg5cqeBosLcw5sboEHqOFOb/MqJBOyK1Xj5Ueg==";
+            const string expectedHash = "6JqdqL+bz8M=";
             string actualHash = _writer.GetHash();
 
             Assert.Equal(expectedHash, actualHash);
@@ -371,7 +371,7 @@ namespace NuGet.ProjectModel.Test
         [Fact]
         public void GetHash_WithNoOtherChanges_ReturnsDefaultValue()
         {
-            const string expectedHash = "z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg==";
+            const string expectedHash = "AAAAAAAAAAA=";
             string actualHash = _writer.GetHash();
 
             Assert.Equal(expectedHash, actualHash);
@@ -388,7 +388,7 @@ namespace NuGet.ProjectModel.Test
             _writer.WriteObjectEnd();
             _writer.WriteObjectEnd();
 
-            const string expectedHash = "TGP0LarTsGYQ2bqAC8lWyRQR+JsKzsO0Y+h6w7mtTj6mBOLTy8Dr0ZypSgzwzD9xuddh2ceDT7fEXve5ohuNeQ==";
+            const string expectedHash = "heVVAmQ95DE=";
             string actualHash = _writer.GetHash();
 
             Assert.Equal(expectedHash, actualHash);

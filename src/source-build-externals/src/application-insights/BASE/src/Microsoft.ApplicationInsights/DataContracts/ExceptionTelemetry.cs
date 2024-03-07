@@ -449,7 +449,15 @@
 
                 this.Data = new ExceptionInfo(exceptions.Select(ex => new ExceptionDetailsInfo(ex)), this.SeverityLevel,
                     this.ProblemId, this.Properties, this.Metrics);
-                this.context = new TelemetryContext(this.Data.Properties);
+
+                if (this.context == null)
+                {
+                    this.context = new TelemetryContext(this.Data.Properties);
+                }
+                else
+                {
+                    this.context = this.context.DeepClone(this.Data.Properties);
+                }
             }
             catch (Exception ex)
             {

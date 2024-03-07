@@ -30,9 +30,19 @@ namespace NuGet.Commands
         private const string DoubleSlash = "//";
 
         /// <summary>
-        /// Convert MSBuild items to a DependencyGraphSpec.
+        /// Creates a <see cref="DependencyGraphSpec" /> from the specified MSBuild items.
         /// </summary>
+        /// <param name="items">An <see cref="IEnumerable{T}" /> of <see cref="IMSBuildItem" /> objects representing the MSBuild items gathered for restore.</param>
         public static DependencyGraphSpec GetDependencySpec(IEnumerable<IMSBuildItem> items)
+        {
+            return GetDependencySpec(items, readOnly: false);
+        }
+        /// <summary>
+        /// Creates a <see cref="DependencyGraphSpec" /> from the specified MSBuild items.
+        /// </summary>
+        /// <param name="items">An <see cref="IEnumerable{T}" /> of <see cref="IMSBuildItem" /> objects representing the MSBuild items gathered for restore.</param>
+        /// <param name="readOnly"><see langword="true" /> to indicate that the <see cref="DependencyGraphSpec" /> is considered read-only and won't be changed, otherwise <see langword="false" />.</param>
+        public static DependencyGraphSpec GetDependencySpec(IEnumerable<IMSBuildItem> items, bool readOnly)
         {
             if (items == null)
             {
@@ -44,7 +54,7 @@ namespace NuGet.Commands
             // To workaround this unique names should be compared based on the OS.
             var uniqueNameComparer = PathUtility.GetStringComparerBasedOnOS();
 
-            var graphSpec = new DependencyGraphSpec();
+            var graphSpec = new DependencyGraphSpec(readOnly);
             var itemsById = new Dictionary<string, List<IMSBuildItem>>(uniqueNameComparer);
             var restoreSpecs = new HashSet<string>(uniqueNameComparer);
             var validForRestore = new HashSet<string>(uniqueNameComparer);

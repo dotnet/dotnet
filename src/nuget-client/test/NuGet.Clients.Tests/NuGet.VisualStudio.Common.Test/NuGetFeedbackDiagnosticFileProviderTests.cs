@@ -9,6 +9,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using Newtonsoft.Json.Linq;
 using NuGet.Commands;
@@ -320,11 +321,26 @@ namespace NuGet.VisualStudio.Common.Test
                 DependencyGraphSpec vsFeedbackDgSpec = DependencyGraphSpec.Load(Path.Combine(extractPath, dgSpecFileName));
                 Assert.Equal(dgSpec.Projects.Count, vsFeedbackDgSpec.Projects.Count);
                 Assert.Equal(dgSpec.Projects[0].RestoreMetadata.Sources.Count, vsFeedbackDgSpec.Projects[0].RestoreMetadata.Sources.Count);
-                string hashedSource = CryptoHashUtility.GenerateUniqueToken(privateRepositoryPath);
+                var hmac = NuGetFeedbackDiagnosticFileProvider.CreateHMACSHA256();
+                string hashedSource = NuGetFeedbackDiagnosticFileProvider.ComputeHash(hmac, privateRepositoryPath);
                 Assert.Equal(hashedSource, vsFeedbackDgSpec.Projects[0].RestoreMetadata.Sources[0].Source);
                 // dgSpec.Save replaces source name with source.
                 Assert.Equal(hashedSource, vsFeedbackDgSpec.Projects[0].RestoreMetadata.Sources[0].Name);
             }
+        }
+
+        [Fact]
+        public void ComputeHash_WithNuGetOrgUrl_ReturnsKnownHash()
+        {
+            // Arrange
+            var hmac = NuGetFeedbackDiagnosticFileProvider.CreateHMACSHA256();
+            var source = "https://api.nuget.org/v3/index.json";
+
+            // Act
+            var hash = NuGetFeedbackDiagnosticFileProvider.ComputeHash(hmac, source);
+
+            // Assert
+            hash.Should().Be("6BA80C99934CF77597030870B3693F1DCD1D38F13DB8D4988B44BF4DF9E2B976");
         }
     }
 }

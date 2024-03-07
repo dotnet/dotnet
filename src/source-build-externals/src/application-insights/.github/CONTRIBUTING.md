@@ -6,12 +6,13 @@
 
 ## Solutions
 
-- **Everything.sln** - this will build all projects and all tests.
-- **ProjectsForSigning.sln** - this builds all shipping projects.
-- **BASE\Microsoft.ApplicationInsights.sln** - this builds the Base SDK and ServerTelemetryChannel.
-- **WEB\Microsoft.ApplicationInsights.Web.sln** - this builds the ASP.NET projects.
-- **NETCORE\ApplicationInsights.AspNetCore.sln** - this builds the .NET Core projects.
-- **LOGGING\Logging.sln** - this builds the logging adapters.
+- **Everything.sln** - this contains all projects and all tests.
+- **ProjectsForSigning.sln** - this contains all shipping projects without tests.
+- **BASE\Microsoft.ApplicationInsights.sln** - this contains the Base SDK and ServerTelemetryChannel.
+- **WEB\src\Microsoft.ApplicationInsights.Web.sln** - this contains the ASP.NET projects.
+- **NETCORE\ApplicationInsights.AspNetCore.sln** - this contains the .NET Core projects.
+- **LOGGING\Logging.sln** - this contains the logging adapters.
+- **examples\Examples.sln** - this contains example apps which demonstrate configuration concepts.
 
 ## Pre-requisites:
 
@@ -20,12 +21,19 @@ To successfully build the sources on your machine, make sure you've installed th
 - Visual Studio 2022 Community, Professional or Enterprise
 - .NET SDKs (https://dotnet.microsoft.com/download)
     - .NET Framework 4.5.2
+    - .NET Framework 4.6.0
+    - .NET Framework 4.6.1
     - .NET Framework 4.6.2
     - .NET Framework 4.7.2
-    - .NET Framework 4.8
+    - .NET Framework 4.8.0
+    - .NET Framework 4.8.1
     - .NET Core 3.1
-    - .NET 5
     - .NET 6
+    - .NET 7
+
+Note: .NET has an annual release cycle and we include the preview version in our test matrix.
+Visual Studio requires a setting to compile using these preview versions:
+  - Tools > Options > Environment > Preview Features > "Use previews of the .NET SDK".
 
 ## Build
 

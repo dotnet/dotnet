@@ -6,6 +6,10 @@ const Microsoft.ApplicationInsights.Common.InjectionGuardConstants.RequestHeader
 const Microsoft.ApplicationInsights.Common.InjectionGuardConstants.TraceParentHeaderMaxLength = 55 -> int
 const Microsoft.ApplicationInsights.Common.InjectionGuardConstants.TraceStateHeaderMaxLength = 512 -> int
 const Microsoft.ApplicationInsights.Common.InjectionGuardConstants.TraceStateMaxPairs = 32 -> int
+const Microsoft.ApplicationInsights.DependencyCollector.OperationDetailConstants.HttpRequestOperationDetailName = "HttpRequest" -> string
+const Microsoft.ApplicationInsights.DependencyCollector.OperationDetailConstants.HttpResponseHeadersOperationDetailName = "HttpResponseHeaders" -> string
+const Microsoft.ApplicationInsights.DependencyCollector.OperationDetailConstants.HttpResponseOperationDetailName = "HttpResponse" -> string
+const Microsoft.ApplicationInsights.DependencyCollector.OperationDetailConstants.SqlCommandOperationDetailName = "SqlCommand" -> string
 const Microsoft.ApplicationInsights.W3C.W3CConstants.ApplicationIdTraceStateField = "cid-v1" -> string
 const Microsoft.ApplicationInsights.W3C.W3CConstants.AzureTracestateNamespace = "az" -> string
 const Microsoft.ApplicationInsights.W3C.W3CConstants.TraceParentHeader = "traceparent" -> string
@@ -19,6 +23,7 @@ Microsoft.ApplicationInsights.Common.ActiveSubsciptionManager.IsActive(object su
 Microsoft.ApplicationInsights.Common.ConditionalWeakTableExtensions
 Microsoft.ApplicationInsights.Common.InjectionGuardConstants
 Microsoft.ApplicationInsights.Common.StringUtilities
+Microsoft.ApplicationInsights.DependencyCollector.DependencyTelemetryExtensions
 Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule
 Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.DependencyTrackingTelemetryModule() -> void
 Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule.DisableDiagnosticSourceInstrumentation.get -> bool
@@ -46,6 +51,7 @@ Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryMod
 Microsoft.ApplicationInsights.DependencyCollector.HttpDependenciesParsingTelemetryInitializer
 Microsoft.ApplicationInsights.DependencyCollector.HttpDependenciesParsingTelemetryInitializer.HttpDependenciesParsingTelemetryInitializer() -> void
 Microsoft.ApplicationInsights.DependencyCollector.HttpDependenciesParsingTelemetryInitializer.Initialize(Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+Microsoft.ApplicationInsights.DependencyCollector.OperationDetailConstants
 Microsoft.ApplicationInsights.DependencyCollector.TelemetryExtensionsForDependencyCollector
 Microsoft.ApplicationInsights.W3C.W3CActivityExtensions
 Microsoft.ApplicationInsights.W3C.W3CConstants
@@ -57,6 +63,9 @@ static Microsoft.ApplicationInsights.Common.StringUtilities.EnforceMaxLength(str
 static Microsoft.ApplicationInsights.Common.StringUtilities.FormatRequestId(string traceId, string spanId) -> string
 static Microsoft.ApplicationInsights.Common.StringUtilities.GenerateSpanId() -> string
 static Microsoft.ApplicationInsights.Common.StringUtilities.GenerateTraceId() -> string
+static Microsoft.ApplicationInsights.DependencyCollector.DependencyTelemetryExtensions.TryGetHttpRequestOperationDetail(this Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry telemetry, out System.Net.Http.HttpRequestMessage message) -> bool
+static Microsoft.ApplicationInsights.DependencyCollector.DependencyTelemetryExtensions.TryGetHttpResponseHeadersOperationDetail(this Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry telemetry, out System.Net.WebHeaderCollection headers) -> bool
+static Microsoft.ApplicationInsights.DependencyCollector.DependencyTelemetryExtensions.TryGetHttpResponseOperationDetail(this Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry telemetry, out System.Net.Http.HttpResponseMessage message) -> bool
 static Microsoft.ApplicationInsights.DependencyCollector.TelemetryExtensionsForDependencyCollector.AssociateTelemetryWithSqlRequest(this Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry telemetry, System.Data.SqlClient.SqlCommand sqlRequest) -> Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry
 static Microsoft.ApplicationInsights.DependencyCollector.TelemetryExtensionsForDependencyCollector.AssociateTelemetryWithWebRequest(this Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry telemetry, System.Net.WebRequest webRequest, bool setCookies = false, bool setCorrelationContext = false) -> Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry
 static Microsoft.ApplicationInsights.W3C.W3CActivityExtensions.GenerateW3CContext(this System.Diagnostics.Activity activity) -> System.Diagnostics.Activity

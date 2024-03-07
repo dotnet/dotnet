@@ -5,12 +5,15 @@
     using System.IO;
     using System.Text;
     using System.Text.RegularExpressions;
+    using Microsoft.ApplicationInsights.Extensibility.Implementation.Platform;
 
     internal class SelfDiagnosticsConfigParser
     {
         public const string ConfigFileName = "ApplicationInsightsDiagnostics.json";
         private const int FileSizeLowerLimit = 1024;  // Lower limit for log file size in KB: 1MB
         private const int FileSizeUpperLimit = 128 * 1024;  // Upper limit for log file size in KB: 128MB
+
+        private const string LogDiagnosticsEnvironmentVariable = "APPLICATIONINSIGHTS_LOG_DIAGNOSTICS";
 
         /// <summary>
         /// ConfigBufferSize is the maximum bytes of config file that will be read.
@@ -40,8 +43,15 @@
             {
                 var configFilePath = ConfigFileName;
 
-                // First check using current working directory
-                if (!File.Exists(configFilePath))
+                // First, check whether the enviornment variable was set.
+                if (PlatformSingleton.Current.TryGetEnvironmentVariable(LogDiagnosticsEnvironmentVariable, out string logDiagnosticsPath))
+                {
+                    configFilePath = Path.Combine(logDiagnosticsPath, ConfigFileName);
+                    logDirectory = logDiagnosticsPath;
+                }
+
+                // Second, check using current working directory.
+                else if (!File.Exists(configFilePath))
                 {
 #if NET452
                     configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigFileName);
@@ -49,7 +59,7 @@
                     configFilePath = Path.Combine(AppContext.BaseDirectory, ConfigFileName);
 #endif
 
-                    // Second check using application base directory
+                    // Third, check using application base directory.
                     if (!File.Exists(configFilePath))
                     {
                         return false;
@@ -67,7 +77,8 @@
 
                     file.Read(buffer, 0, buffer.Length);
                     string configJson = Encoding.UTF8.GetString(buffer);
-                    if (!TryParseLogDirectory(configJson, out logDirectory))
+                    
+                    if (logDirectory == null && !TryParseLogDirectory(configJson, out logDirectory))
                     {
                         return false;
                     }

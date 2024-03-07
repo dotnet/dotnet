@@ -36,8 +36,8 @@ namespace IntegrationTests.WebApp.Controllers
             return "value";
         }
 
-        [HttpGet("Empty")]
-        public ActionResult Empty()
+        [HttpGet("GetEmpty")]
+        public ActionResult GetEmpty()
         {
             return new OkResult();
         }

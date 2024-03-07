@@ -104,7 +104,7 @@ namespace NuGet.Protocol.Plugins
                     processId = process.Id;
                 }
 
-                var fileName = $"NuGet_PluginLogFor_{Path.GetFileNameWithoutExtension(file.Name)}_{DateTime.UtcNow.Ticks:x}_{Process.GetCurrentProcess().Id}.log";
+                var fileName = $"NuGet_PluginLogFor_{Path.GetFileNameWithoutExtension(file.Name)}_{DateTime.UtcNow.Ticks:x}_{processId}.log";
                 var filePath = Path.Combine(_logDirectoryPath, fileName);
                 var stream = File.Open(filePath, FileMode.Create, FileAccess.Write, FileShare.Read);
 

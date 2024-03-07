@@ -112,7 +112,7 @@ namespace NuGet.Commands
         /// <param name="framework">Target graph for which no warning should be thrown.</param>
         public void AddRangeOfCodes(IEnumerable<NuGetLogCode> codes, string libraryId, NuGetFramework framework)
         {
-            foreach (var code in codes)
+            foreach (var code in codes.NoAllocEnumerate())
             {
                 Add(code, libraryId, framework);
             }

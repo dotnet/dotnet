@@ -438,6 +438,19 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Fact]
+        public void ProjectRestoreMetadataEqualityAccountsForDuplicates()
+        {
+            // Arrange
+            var left = CreateProjectRestoreMetadata();
+            var right = CreateProjectRestoreMetadata();
+            left.Sources = new List<PackageSource>() { new PackageSource("http://api.nuget.org/v3/index.json"), new PackageSource("C:\\source"), new PackageSource("http://api.nuget.org/v3/index.json") };
+            right.Sources = new List<PackageSource>() { new PackageSource("C:\\source"), new PackageSource("http://api.nuget.org/v3/index.json"), new PackageSource("http://api.nuget.org/v3/index.json") };
+
+            // Act & Assert
+            Assert.Equal(left, right);
+        }
+
+        [Fact]
         public void ProjectRestoreMetadataCloneChangeCentralPackageVersionsEnabledTest()
         {
             // Arrange

@@ -44,15 +44,15 @@ namespace NuGet.PackageManagement.VisualStudio
             var credentialProviders = new List<ICredentialProvider>();
             var webProxy = await _asyncServiceProvider.GetServiceAsync<SVsWebProxy, IVsWebProxy>();
 
-            TryAddCredentialProviders(
+            await TryAddCredentialProvidersAsync(
                 credentialProviders,
                 Strings.CredentialProviderFailed_VisualStudioAccountProvider,
-                () =>
+                async () =>
                 {
                     var importer = new VsCredentialProviderImporter(
                         (exception, failureMessage) => LogCredentialProviderError(exception, failureMessage));
 
-                    return importer.GetProviders();
+                    return await importer.GetProvidersAsync();
                 });
 
             TryAddCredentialProviders(
@@ -91,14 +91,14 @@ namespace NuGet.PackageManagement.VisualStudio
 
             // Initialize the credential service.
             var credentialService = new CredentialService(
-                new AsyncLazy<IEnumerable<ICredentialProvider>>(() => System.Threading.Tasks.Task.FromResult((IEnumerable<ICredentialProvider>)credentialProviders)),
+                new AsyncLazy<IEnumerable<ICredentialProvider>>(() => Task.FromResult((IEnumerable<ICredentialProvider>)credentialProviders)),
                 nonInteractive: nonInteractive,
                 handlesDefaultCredentials: PreviewFeatureSettings.DefaultCredentialsAfterCredentialProviders);
 
             return credentialService;
         }
 
-        private async System.Threading.Tasks.Task TryAddCredentialProvidersAsync(
+        private async Task TryAddCredentialProvidersAsync(
             List<ICredentialProvider> credentialProviders,
             string failureMessage,
             Func<Task<IEnumerable<ICredentialProvider>>> factory)

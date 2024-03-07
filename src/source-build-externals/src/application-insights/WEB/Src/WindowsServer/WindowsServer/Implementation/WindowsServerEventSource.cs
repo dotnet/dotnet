@@ -135,7 +135,7 @@
             this.WriteEvent(13, exception, this.applicationNameProvider.Name);
         }
 
-        [Event(14, Message = "Unknown error occured in {0}. Exception: {0}", Level = EventLevel.Error)]
+        [Event(14, Message = "Unknown error occured in {0}. Exception: {1}", Level = EventLevel.Error)]
         public void UnknownErrorOccured(string source, string exception, string applicationName = "Incorrect")
         {
             this.WriteEvent(14, source, exception, this.applicationNameProvider.Name);

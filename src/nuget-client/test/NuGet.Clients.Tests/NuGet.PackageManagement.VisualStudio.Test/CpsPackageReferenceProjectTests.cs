@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Threading;
@@ -44,8 +43,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         public CpsPackageReferenceProjectTests(GlobalServiceProvider globalServiceProvider)
             : base(globalServiceProvider)
         {
-            var componentModel = new Mock<IComponentModel>();
-
             var mockOutputConsoleUtility = OutputConsoleUtility.GetMock();
             _outputConsoleProviderMock = mockOutputConsoleUtility.mockIOutputConsoleProvider;
             _outputConsoleProvider = new Lazy<IOutputConsoleProvider>(() => _outputConsoleProviderMock.Object);

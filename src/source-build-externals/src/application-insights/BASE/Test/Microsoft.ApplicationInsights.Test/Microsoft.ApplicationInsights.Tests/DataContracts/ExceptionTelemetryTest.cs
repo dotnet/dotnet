@@ -265,6 +265,30 @@
             Assert.AreEqual(nextException.Message, testExceptionTelemetry.ExceptionDetailsInfoList.First().Message);
         }
 
+        [TestMethod]
+        public void ExceptionPropertySetterPreservesContext()
+        {
+            // ARRANGE
+            Exception constructorException = new Exception("ConstructorException");
+            var testExceptionTelemetry = new ExceptionTelemetry(constructorException);
+
+            const string expectedAccountId = "AccountId";
+            testExceptionTelemetry.Context.User.AccountId = expectedAccountId;
+            const string expectedAuthenticatedUserId = "AuthUserId";
+            testExceptionTelemetry.Context.User.AuthenticatedUserId = expectedAuthenticatedUserId;
+            const string expectedUserAgent = "ExceptionComponent";
+            testExceptionTelemetry.Context.User.UserAgent = expectedUserAgent;
+
+            // ACT
+            Exception nextException = new Exception("NextException");
+            testExceptionTelemetry.Exception = nextException;
+
+            // ASSERT
+            Assert.AreEqual(expectedAccountId, testExceptionTelemetry.Context.User.AccountId);
+            Assert.AreEqual(expectedAuthenticatedUserId, testExceptionTelemetry.Context.User.AuthenticatedUserId);
+            Assert.AreEqual(expectedUserAgent, testExceptionTelemetry.Context.User.UserAgent);
+        }
+
 #pragma warning disable 618
         [TestMethod]
         public void HandledAtReturnsUnhandledByDefault()

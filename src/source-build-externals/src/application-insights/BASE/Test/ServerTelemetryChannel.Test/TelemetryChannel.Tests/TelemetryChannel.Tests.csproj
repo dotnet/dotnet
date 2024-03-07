@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <!-- TargetFrameworks are defined in Test.props, but can be overridden here if needed. -->
-    <TargetFrameworks Condition="$(OS) == 'Windows_NT'">net452;net46;net461;$(TargetFrameworks)</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks_WithLegacy)</TargetFrameworks>
     
     <AssemblyName>Microsoft.ApplicationInsights.TelemetryChannel.Tests</AssemblyName>
   </PropertyGroup>

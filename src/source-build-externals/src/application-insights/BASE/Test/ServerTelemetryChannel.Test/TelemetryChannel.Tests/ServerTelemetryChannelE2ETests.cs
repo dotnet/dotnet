@@ -502,7 +502,7 @@ namespace Microsoft.ApplicationInsights.WindowsServer.Channel
                     Assert.IsTrue(traces.Count > 0);
                     // 400 is the response code.
                     Assert.AreEqual("400", traces[0].Payload[1]);
-                    // Returns failure, non-whitelisted error code.
+                    // Returns failure, non-retriable error code.
                     Assert.IsFalse(flushResult);
                 }
             }

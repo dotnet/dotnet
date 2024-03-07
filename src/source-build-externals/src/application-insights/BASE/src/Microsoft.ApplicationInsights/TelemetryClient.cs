@@ -683,6 +683,9 @@
         /// <summary>
         /// Asynchronously Flushes the in-memory buffer and any metrics being pre-aggregated.
         /// </summary>
+        /// <remarks>
+        /// <a href="https://go.microsoft.com/fwlink/?linkid=525722#flushing-data">Learn more</a>
+        /// </remarks>
         /// <returns>
         /// Returns true when telemetry data is transferred out of process (application insights server or local storage) and are emitted before the flush invocation.
         /// Returns false when transfer of telemetry data to server has failed with non-retriable http status.
