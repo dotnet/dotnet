@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="9.0.100-preview.3.24155.14">
+    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="9.0.100-preview.3.24156.11">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>feba0d6189798b4a44f21860050f57595de3234a</Sha>
+      <Sha>7e0a26c3983aff37c8b526f45b15c851f8df3d8c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Mocks" Version="9.0.100-preview.3.24155.14">
+    <Dependency Name="Microsoft.TemplateEngine.Mocks" Version="9.0.100-preview.3.24156.11">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>feba0d6189798b4a44f21860050f57595de3234a</Sha>
+      <Sha>7e0a26c3983aff37c8b526f45b15c851f8df3d8c</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.templating" Version="9.0.100-preview.3.24155.14">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.templating" Version="9.0.100-preview.3.24156.11">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>feba0d6189798b4a44f21860050f57595de3234a</Sha>
+      <Sha>7e0a26c3983aff37c8b526f45b15c851f8df3d8c</Sha>
       <SourceBuild RepoName="templating" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Ref" Version="9.0.0-preview.3.24155.8">
@@ -87,14 +87,14 @@
       <Sha>641c6a0e65bac6f7809e4e2415b9d60c11dcf493</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="dotnet-format" Version="9.0.515501">
+    <Dependency Name="dotnet-format" Version="9.0.515601">
       <Uri>https://github.com/dotnet/format</Uri>
-      <Sha>165a007e8b2f25f040838789a8d3db09e30dd013</Sha>
+      <Sha>87c757a75d7619e8153b1ac114f11b5dbab4497d</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.format" Version="9.0.515501">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.format" Version="9.0.515601">
       <Uri>https://github.com/dotnet/format</Uri>
-      <Sha>165a007e8b2f25f040838789a8d3db09e30dd013</Sha>
+      <Sha>87c757a75d7619e8153b1ac114f11b5dbab4497d</Sha>
       <SourceBuild RepoName="format" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.10.0-3.24155.13">
@@ -241,26 +241,26 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>33fe041f6402dcc0760fae43ab4c66bf17d24287</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="9.0.0-preview.3.24155.3">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="9.0.0-preview.3.24156.13">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>75ec22d7c0602d92e583fe729239becabbe51cd8</Sha>
+      <Sha>a144fd1eb11a8075b6c91a5a14226ed5e2ac0468</Sha>
       <SourceBuildTarball RepoName="windowsdesktop" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.9.0" Version="9.0.0-preview.3.24155.3">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.9.0" Version="9.0.0-preview.3.24156.13">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>75ec22d7c0602d92e583fe729239becabbe51cd8</Sha>
+      <Sha>a144fd1eb11a8075b6c91a5a14226ed5e2ac0468</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="9.0.0-preview.3.24155.3">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="9.0.0-preview.3.24156.13">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>75ec22d7c0602d92e583fe729239becabbe51cd8</Sha>
+      <Sha>a144fd1eb11a8075b6c91a5a14226ed5e2ac0468</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.9.0" Version="9.0.0-preview.3.24155.3">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.9.0" Version="9.0.0-preview.3.24156.13">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>75ec22d7c0602d92e583fe729239becabbe51cd8</Sha>
+      <Sha>a144fd1eb11a8075b6c91a5a14226ed5e2ac0468</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="9.0.0-preview.3.24154.3" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
+    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="9.0.0-preview.3.24155.1" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
       <Uri>https://github.com/dotnet/wpf</Uri>
-      <Sha>906eb2878bbe4d5f86e77e9a0d4f85815e9f5aaf</Sha>
+      <Sha>00b91f99b673541e8b05f9de14c0ff1786bf6c9d</Sha>
     </Dependency>
     <Dependency Name="Microsoft.AspNetCore.App.Ref" Version="9.0.0-preview.3.24155.10">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
@@ -356,18 +356,18 @@
       <Sha>a86209be9faeafe337633ab1746df7bc19a83538</Sha>
       <SourceBuild RepoName="xdt" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0-preview.24155.3">
+    <Dependency Name="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0-preview.24156.1">
       <Uri>https://github.com/dotnet/roslyn-analyzers</Uri>
-      <Sha>4af06010a6699f5ee8f8d5a6c6091ba23f8fceeb</Sha>
+      <Sha>7b1f39d7b8bd81d003898c49d0320682b6f06c54</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.11.0-beta1.24155.3">
+    <Dependency Name="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.11.0-beta1.24156.1">
       <Uri>https://github.com/dotnet/roslyn-analyzers</Uri>
-      <Sha>4af06010a6699f5ee8f8d5a6c6091ba23f8fceeb</Sha>
+      <Sha>7b1f39d7b8bd81d003898c49d0320682b6f06c54</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.roslyn-analyzers" Version="3.11.0-beta1.24155.3">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.roslyn-analyzers" Version="3.11.0-beta1.24156.1">
       <Uri>https://github.com/dotnet/roslyn-analyzers</Uri>
-      <Sha>4af06010a6699f5ee8f8d5a6c6091ba23f8fceeb</Sha>
+      <Sha>7b1f39d7b8bd81d003898c49d0320682b6f06c54</Sha>
       <SourceBuild RepoName="roslyn-analyzers" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta4.24126.1">
