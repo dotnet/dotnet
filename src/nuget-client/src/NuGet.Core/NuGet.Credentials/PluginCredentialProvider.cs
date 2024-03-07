@@ -250,7 +250,7 @@ namespace NuGet.Credentials
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var process = Process.Start(startInfo);
+            using var process = Process.Start(startInfo);
             if (process == null)
             {
                 throw PluginException.CreateNotStartedMessage(Path);

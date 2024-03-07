@@ -37,7 +37,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                         framework = NuGetFrameworkFormatter.Instance.Deserialize(ref reader, options);
                         break;
                     case PackagesPropertyName:
-                        packageDependencies = options.Resolver.GetFormatter<IEnumerable<PackageDependency>>().Deserialize(ref reader, options);
+                        packageDependencies = options.Resolver.GetFormatter<IEnumerable<PackageDependency>>()!.Deserialize(ref reader, options);
                         break;
                     default:
                         reader.Skip();
@@ -57,7 +57,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             writer.Write(TargetFrameworkPropertyName);
             NuGetFrameworkFormatter.Instance.Serialize(ref writer, value.TargetFramework, options);
             writer.Write(PackagesPropertyName);
-            options.Resolver.GetFormatter<IEnumerable<PackageDependency>>().Serialize(ref writer, value.Packages, options);
+            options.Resolver.GetFormatter<IEnumerable<PackageDependency>>()!.Serialize(ref writer, value.Packages, options);
         }
     }
 }

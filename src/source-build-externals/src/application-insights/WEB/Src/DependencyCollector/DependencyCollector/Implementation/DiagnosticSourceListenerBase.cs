@@ -113,7 +113,7 @@ namespace Microsoft.ApplicationInsights.DependencyCollector.Implementation
         {
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);

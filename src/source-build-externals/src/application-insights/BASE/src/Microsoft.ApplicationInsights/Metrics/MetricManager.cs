@@ -8,8 +8,8 @@
     using Microsoft.ApplicationInsights.Metrics.Extensibility;
 
     /// <summary>A metric manager coordinates metrics aggregation at a specific scope.
-    /// It keeps track of the known metrics and is ultimataly respnsibe for correctly
-    /// initializeing metric data time series.
+    /// It keeps track of the known metrics and is ultimately responsibe for correctly
+    /// initializing metric data time series.
     /// Note that a metric manager deals with zero dimensional time series.
     /// Metric objects are multidimensional collections of such series and the manager 
     /// merely holds a collection of such containers for its scope.</summary>

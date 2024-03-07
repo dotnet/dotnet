@@ -48,6 +48,11 @@ namespace NuGet.Common
             /// The event keyword for tracing events related to the NuGet-based MSBuild project SDK resolver.
             /// </summary>
             public const EventKeywords SdkResolver = (EventKeywords)16;
+
+            /// <summary>
+            /// The event keyword for tracing events related to restore.
+            /// </summary>
+            public const EventKeywords Restore = (EventKeywords)32;
         }
     }
 }

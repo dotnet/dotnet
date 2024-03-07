@@ -75,7 +75,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                     switch (reader.ReadString())
                     {
                         case CodePropertyName:
-                            code = options.Resolver.GetFormatter<NuGetLogCode>().Deserialize(ref reader, options);
+                            code = options.Resolver.GetFormatter<NuGetLogCode>()!.Deserialize(ref reader, options);
                             break;
 
                         case EndColumnNumberPropertyName:
@@ -91,7 +91,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                             break;
 
                         case LevelPropertyName:
-                            logLevel = options.Resolver.GetFormatter<LogLevel>().Deserialize(ref reader, options);
+                            logLevel = options.Resolver.GetFormatter<LogLevel>()!.Deserialize(ref reader, options);
                             break;
 
                         case LibraryIdPropertyName:
@@ -139,7 +139,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                             break;
 
                         case TimePropertyName:
-                            time = options.Resolver.GetFormatter<DateTimeOffset>().Deserialize(ref reader, options);
+                            time = options.Resolver.GetFormatter<DateTimeOffset>()!.Deserialize(ref reader, options);
                             break;
 
                         case TypeNamePropertyName:
@@ -147,7 +147,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                             break;
 
                         case WarningLevelPropertyName:
-                            warningLevel = options.Resolver.GetFormatter<WarningLevel>().Deserialize(ref reader, options);
+                            warningLevel = options.Resolver.GetFormatter<WarningLevel>()!.Deserialize(ref reader, options);
                             break;
 
                         default:
@@ -285,17 +285,17 @@ namespace NuGet.VisualStudio.Internal.Contracts
             writer.Write(TypeNamePropertyName);
             writer.Write(value.GetType().Name);
             writer.Write(CodePropertyName);
-            options.Resolver.GetFormatter<NuGetLogCode>().Serialize(ref writer, value.Code, options);
+            options.Resolver.GetFormatter<NuGetLogCode>()!.Serialize(ref writer, value.Code, options);
             writer.Write(LevelPropertyName);
-            options.Resolver.GetFormatter<LogLevel>().Serialize(ref writer, value.Level, options);
+            options.Resolver.GetFormatter<LogLevel>()!.Serialize(ref writer, value.Level, options);
             writer.Write(MessagePropertyName);
             writer.Write(value.Message);
             writer.Write(ProjectPathPropertyName);
             writer.Write(value.ProjectPath);
             writer.Write(TimePropertyName);
-            options.Resolver.GetFormatter<DateTimeOffset>().Serialize(ref writer, value.Time, options);
+            options.Resolver.GetFormatter<DateTimeOffset>()!.Serialize(ref writer, value.Time, options);
             writer.Write(WarningLevelPropertyName);
-            options.Resolver.GetFormatter<WarningLevel>().Serialize(ref writer, value.WarningLevel, options);
+            options.Resolver.GetFormatter<WarningLevel>()!.Serialize(ref writer, value.WarningLevel, options);
         }
 
         private void Serialize(ref MessagePackWriter writer, LogMessage logMessage, MessagePackSerializerOptions options)

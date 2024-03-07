@@ -290,7 +290,7 @@ namespace NuGet.Commands
             NodeWarningProperties nodeWarningProperties)
         {
             // Add all the project's dependencies to the Queue with the merged WarningPropertiesCollection
-            foreach (var dependency in dependencies)
+            foreach (var dependency in dependencies.NoAllocEnumerate())
             {
                 var queueNode = new DependencyNode(
                     dependency.Name,

@@ -153,7 +153,11 @@ namespace NuGet.ProjectModel
 
         public void Write(Stream stream, LockFile lockFile)
         {
+#if NET5_0_OR_GREATER
             using (var textWriter = new StreamWriter(stream))
+#else
+            using (var textWriter = new NoAllocNewLineStreamWriter(stream))
+#endif
             {
                 Write(textWriter, lockFile);
             }
@@ -889,7 +893,8 @@ namespace NuGet.ProjectModel
 
         private static void WritePathArray(JsonWriter writer, string property, IEnumerable<string> items)
         {
-            if (items.Any())
+            using var itemsEnumerator = items.NoAllocEnumerate().GetEnumerator();
+            if (itemsEnumerator.MoveNext())
             {
                 var orderedItems = items
                     .Select(f => GetPathWithForwardSlashes(f))

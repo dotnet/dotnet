@@ -190,7 +190,7 @@ namespace NuGet.ProjectModel
                    osStringComparer.Equals(OutputPath, other.OutputPath) &&
                    osStringComparer.Equals(ProjectName, other.ProjectName) &&
                    osStringComparer.Equals(ProjectUniqueName, other.ProjectUniqueName) &&
-                   Sources.OrderedEquals(other.Sources.Distinct(), source => source.Source, StringComparer.OrdinalIgnoreCase) &&
+                   GetSources(Sources).SetEqualsWithNullCheck(GetSources(other.Sources), StringComparer.OrdinalIgnoreCase) &&
                    osStringComparer.Equals(PackagesPath, other.PackagesPath) &&
                    ConfigFilePaths.OrderedEquals(other.ConfigFilePaths, filePath => filePath, osStringComparer, osStringComparer) &&
                    FallbackFolders.OrderedEquals(other.FallbackFolders, fallbackFolder => fallbackFolder, osStringComparer, osStringComparer) &&
@@ -208,6 +208,20 @@ namespace NuGet.ProjectModel
                    EqualityUtility.EqualsWithNullCheck(CentralPackageVersionOverrideDisabled, other.CentralPackageVersionOverrideDisabled) &&
                    EqualityUtility.EqualsWithNullCheck(CentralPackageTransitivePinningEnabled, other.CentralPackageTransitivePinningEnabled) &&
                    RestoreAuditProperties == other.RestoreAuditProperties;
+        }
+
+        private HashSet<string> GetSources(IList<PackageSource> sources)
+        {
+#if NETSTANDARD2_0
+            var setSources = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+#else
+            var setSources = new HashSet<string>(sources.Count, StringComparer.OrdinalIgnoreCase);
+#endif
+            for (var i = 0; i < sources.Count; i++)
+            {
+                setSources.Add(sources[i].Source);
+            }
+            return setSources;
         }
 
         public virtual ProjectRestoreMetadata Clone()

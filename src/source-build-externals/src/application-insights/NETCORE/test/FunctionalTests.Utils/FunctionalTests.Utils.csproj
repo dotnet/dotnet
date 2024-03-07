@@ -2,7 +2,9 @@
   <Import Project="$(PropsRoot)\Test.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+    <!-- TargetFrameworks are defined in Test.props, but can be overridden here if needed. -->
+    <TargetFrameworks>$(TargetFrameworks_NetCoreOnly)</TargetFrameworks>
+    
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>FunctionalTests.Utils</AssemblyName>
     <PackageId>FunctionalTests.Utils</PackageId>

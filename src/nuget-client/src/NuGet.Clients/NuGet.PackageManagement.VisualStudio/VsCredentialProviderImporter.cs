@@ -5,9 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Globalization;
-using System.Linq;
-using EnvDTE;
-using Microsoft.VisualStudio.ComponentModelHost;
+using System.Threading.Tasks;
 using NuGet.Credentials;
 using NuGet.VisualStudio;
 
@@ -20,7 +18,6 @@ namespace NuGet.PackageManagement.VisualStudio
     public class VsCredentialProviderImporter
     {
         private readonly Action<Exception, string> _errorDelegate;
-        private readonly Action _initializer;
 
         /// <summary>
         /// Constructor
@@ -29,23 +26,8 @@ namespace NuGet.PackageManagement.VisualStudio
         /// <param name="errorDelegate">Used to write error messages to the user.</param>
         public VsCredentialProviderImporter(
             Action<Exception, string> errorDelegate)
-            : this(errorDelegate, initializer: null)
-        {
-        }
-
-        /// <summary>
-        /// Constructor, allows changing initializer Action for testing purposes
-        /// </summary>
-        /// <param name="dte">DTE instance, used to determine the Visual Studio version.</param>
-        /// <param name="errorDelegate">Used to write error messages to the user.</param>
-        /// <param name="initializer">Init method used to supply MEF imports. Should only
-        /// be supplied by tests.</param>
-        public VsCredentialProviderImporter(
-            Action<Exception, string> errorDelegate,
-            Action initializer)
         {
             _errorDelegate = errorDelegate ?? throw new ArgumentNullException(nameof(errorDelegate));
-            _initializer = initializer ?? Initialize;
         }
 
         // The export from TeamExplorer uses a named contract, so we need to import this one separately.
@@ -66,11 +48,11 @@ namespace NuGet.PackageManagement.VisualStudio
         /// matching any extension named CredentialProvider.*.exe.
         /// </summary>
         /// <returns>An enumeration of plugin providers</returns>
-        public IReadOnlyCollection<ICredentialProvider> GetProviders()
+        public async Task<IReadOnlyCollection<ICredentialProvider>> GetProvidersAsync()
         {
             var results = new List<ICredentialProvider>();
 
-            _initializer();
+            await InitializeAsync();
 
             TryImportCredentialProviders(results, VisualStudioAccountProviders);
             TryImportCredentialProviders(results, ImportedProviders);
@@ -107,16 +89,9 @@ namespace NuGet.PackageManagement.VisualStudio
             }
         }
 
-        private static bool HasImportedVstsProvider(IEnumerable<ICredentialProvider> results)
+        private async Task InitializeAsync()
         {
-            return results.FirstOrDefault(p => p.Id.EndsWith(
-                ".NuGetCredentialProvider.VisualStudioAccountProvider",
-                StringComparison.OrdinalIgnoreCase)) != null;
-        }
-
-        private void Initialize()
-        {
-            var componentModel = NuGetUIThreadHelper.JoinableTaskFactory.Run(ServiceLocator.GetComponentModelAsync);
+            var componentModel = await ServiceLocator.GetComponentModelAsync();
             // ensure we satisfy our imports
             componentModel?.DefaultCompositionService.SatisfyImportsOnce(this);
         }

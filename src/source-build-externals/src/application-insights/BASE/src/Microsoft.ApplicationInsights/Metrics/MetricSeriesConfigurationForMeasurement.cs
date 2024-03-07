@@ -9,7 +9,7 @@
 #pragma warning disable CA1034 // "Do not nest type" - part of the public API and too late to change.
 
     /// <summary>Abstracts the configuration for a metric series aggregated using the "measurement" aggregation kind.
-    /// A mear=surement is best suited for metrics describing sizes or durations.
+    /// A measurement is best suited for metrics describing sizes or durations.
     /// It contains the Min, Max, Sum and Count of values tracked during an aggregation period.</summary>
     public class MetricSeriesConfigurationForMeasurement : IMetricSeriesConfiguration
     {

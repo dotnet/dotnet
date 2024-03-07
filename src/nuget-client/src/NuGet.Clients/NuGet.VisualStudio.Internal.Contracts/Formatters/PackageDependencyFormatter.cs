@@ -37,7 +37,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                 switch (reader.ReadString())
                 {
                     case ExcludePropertyName:
-                        exclude = options.Resolver.GetFormatter<IReadOnlyList<string>>().Deserialize(ref reader, options);
+                        exclude = options.Resolver.GetFormatter<IReadOnlyList<string>>()!.Deserialize(ref reader, options);
                         break;
 
                     case IdPropertyName:
@@ -45,7 +45,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                         break;
 
                     case IncludePropertyName:
-                        include = options.Resolver.GetFormatter<IReadOnlyList<string>>().Deserialize(ref reader, options);
+                        include = options.Resolver.GetFormatter<IReadOnlyList<string>>()!.Deserialize(ref reader, options);
                         break;
 
                     case VersionRangePropertyName:
@@ -71,9 +71,9 @@ namespace NuGet.VisualStudio.Internal.Contracts
             writer.Write(VersionRangePropertyName);
             VersionRangeFormatter.Instance.Serialize(ref writer, value.VersionRange, options);
             writer.Write(IncludePropertyName);
-            options.Resolver.GetFormatter<IReadOnlyList<string>>().Serialize(ref writer, value.Include, options);
+            options.Resolver.GetFormatter<IReadOnlyList<string>>()!.Serialize(ref writer, value.Include, options);
             writer.Write(ExcludePropertyName);
-            options.Resolver.GetFormatter<IReadOnlyList<string>>().Serialize(ref writer, value.Exclude, options);
+            options.Resolver.GetFormatter<IReadOnlyList<string>>()!.Serialize(ref writer, value.Exclude, options);
         }
     }
 }

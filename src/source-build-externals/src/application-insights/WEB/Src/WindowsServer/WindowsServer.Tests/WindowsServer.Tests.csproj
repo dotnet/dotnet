@@ -3,9 +3,10 @@
 
   <PropertyGroup>
     <!-- TargetFrameworks are defined in Test.props, but can be overridden here if needed. -->
+    <TargetFrameworks>$(TargetFrameworks_WithLegacy)</TargetFrameworks>
+    
     <AssemblyName>Microsoft.AI.WindowsServer.Tests</AssemblyName>
     <RootNamespace>Microsoft.ApplicationInsights.Tests</RootNamespace>
-    <TargetFrameworks>net452;$(TargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

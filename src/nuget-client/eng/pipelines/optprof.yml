@@ -130,7 +130,7 @@ stages:
           $branchName = "$(resources.pipeline.ComponentBuildUnderTest.sourceBranch)"
           $branchName = $branchName.Replace('refs/heads/', '')
 
-          $RunSettingsURI = "https://vsdrop.corp.microsoft.com/file/v1/RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$branchName/$(resources.pipeline.ComponentBuildUnderTest.runID);NuGet.OptProfV2.runsettings"
+          $RunSettingsURI = "https://vsdrop.microsoft.com/file/v1/RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$branchName/$(resources.pipeline.ComponentBuildUnderTest.runID);NuGet.OptProfV2.runsettings"
           Write-Host "RunSettingsURI: $RunSettingsURI"
           # non-output variable for VS config in the configure machine job
           # output variable for test execution job

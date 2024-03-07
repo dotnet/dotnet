@@ -3261,6 +3261,53 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             }
         }
 
+        [Fact]
+        public async Task ExecuteAsync_ProjectWithDuplicateSources_SkipsWritingAssetsFileWhenUpToDate()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var projectName = "TestProject";
+            pathContext.Settings.AddSource("extra-source", pathContext.PackageSource);
+            ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(settings, projectName, pathContext.SolutionRoot, "net472", "a");
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext("a", "1.0.0"));
+
+            var logger = new TestLogger();
+
+            // Pre-Conditions
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+            var restoreCommand = new RestoreCommand(request);
+            RestoreResult result = await restoreCommand.ExecuteAsync();
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+            await result.CommitAsync(logger, CancellationToken.None);
+            result.LogMessages.Should().HaveCount(0);
+            DateTime assetsFileWriteTime = GetFileLastWriteTime(result.LockFilePath);
+
+            // Act
+            var forceRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+            forceRequest.AllowNoOp = false;
+            var forceRestoreCommand = new RestoreCommand(forceRequest);
+            RestoreResult forceResult = await forceRestoreCommand.ExecuteAsync();
+            await forceResult.CommitAsync(logger, CancellationToken.None);
+
+            // Assert
+            forceResult.Success.Should().BeTrue(because: logger.ShowMessages());
+            var currentWriteTime = GetFileLastWriteTime(result.LockFilePath);
+            currentWriteTime.Should().Be(assetsFileWriteTime);
+
+            static DateTime GetFileLastWriteTime(string path)
+            {
+                var fileInfo = new FileInfo(path);
+                fileInfo.Exists.Should().BeTrue();
+                return fileInfo.LastWriteTimeUtc;
+            }
+        }
+
         private static TargetFrameworkInformation CreateTargetFrameworkInformation(List<LibraryDependency> dependencies, List<CentralPackageVersion> centralVersionsDependencies, NuGetFramework framework = null)
         {
             NuGetFramework nugetFramework = framework ?? new NuGetFramework("net40");

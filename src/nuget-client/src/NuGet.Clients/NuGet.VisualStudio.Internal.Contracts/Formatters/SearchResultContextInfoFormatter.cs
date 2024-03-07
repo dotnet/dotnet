@@ -38,10 +38,10 @@ namespace NuGet.VisualStudio.Internal.Contracts
                         hasMoreItems = reader.ReadBoolean();
                         break;
                     case PackageSearchItemsPropertyName:
-                        packageSearchItems = options.Resolver.GetFormatter<IReadOnlyCollection<PackageSearchMetadataContextInfo>>().Deserialize(ref reader, options);
+                        packageSearchItems = options.Resolver.GetFormatter<IReadOnlyCollection<PackageSearchMetadataContextInfo>>()!.Deserialize(ref reader, options);
                         break;
                     case SourceLoadingStatusPropertyName:
-                        sourceLoadingStatus = options.Resolver.GetFormatter<IReadOnlyDictionary<string, LoadingStatus>>().Deserialize(ref reader, options);
+                        sourceLoadingStatus = options.Resolver.GetFormatter<IReadOnlyDictionary<string, LoadingStatus>>()!.Deserialize(ref reader, options);
                         break;
                     case OperationIdPropertyName:
                         if (!reader.TryReadNil())
@@ -71,7 +71,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             writer.Write(HasMoreItemsPropertyName);
             writer.Write(value.HasMoreItems);
             writer.Write(SourceLoadingStatusPropertyName);
-            options.Resolver.GetFormatter<IReadOnlyDictionary<string, LoadingStatus>>().Serialize(ref writer, value.SourceLoadingStatus, options);
+            options.Resolver.GetFormatter<IReadOnlyDictionary<string, LoadingStatus>>()!.Serialize(ref writer, value.SourceLoadingStatus, options);
             writer.Write(OperationIdPropertyName);
             if (value.OperationId.HasValue)
             {
@@ -83,7 +83,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
 
             writer.Write(PackageSearchItemsPropertyName);
-            options.Resolver.GetFormatter<IReadOnlyCollection<PackageSearchMetadataContextInfo>>().Serialize(ref writer, value.PackageSearchItems, options);
+            options.Resolver.GetFormatter<IReadOnlyCollection<PackageSearchMetadataContextInfo>>()!.Serialize(ref writer, value.PackageSearchItems, options);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace IntegrationTests.Tests
         {
             // Arrange
             var client = _factory.CreateClient();
-            var path = "Home/Empty";
+            var path = "Home/GetEmpty";
             var url = client.BaseAddress + path;
 
             // Act
