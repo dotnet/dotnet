@@ -1,34 +1,24 @@
-From 8aa9fe051882d9581df936828070c9ddd099bc88 Mon Sep 17 00:00:00 2001
-From: Matt Mitchell <mmitche@microsoft.com>
-Date: Tue, 18 Jul 2023 12:29:29 -0700
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Ella Hathaway <67609881+ellahathaway@users.noreply.github.com>
+Date: Mon, 4 Mar 2024 19:12:01 +0000
 Subject: [PATCH] Eliminate prebuilts
 
 ---
- .props/Product.props | 11 -----------
- 1 file changed, 11 deletions(-)
+ .props/Product.props | 4 ----
+ 1 file changed, 4 deletions(-)
 
 diff --git a/.props/Product.props b/.props/Product.props
-index f81957c0..32475340 100644
+index e97b6eff..b33ceca5 100644
 --- a/.props/Product.props
 +++ b/.props/Product.props
-@@ -27,17 +27,6 @@
-       <PrivateAssets>All</PrivateAssets>
+@@ -28,10 +28,6 @@
      </PackageReference>
    </ItemGroup>
--
--  <ItemGroup>
--    <!--Build Infrastructure-->
--    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="0.4.1">
--      <PrivateAssets>All</PrivateAssets>
--    </PackageReference>
--  </ItemGroup>
--
+ 
 -  <ItemGroup>
 -    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
 -  </ItemGroup>
-   
+-
    <PropertyGroup>
      <!-- Enable all the latest CA rules from 'Microsoft.CodeAnalysis.NetAnalyzers' as build warnings by default -->
--- 
-2.41.0.windows.2
-
+ 

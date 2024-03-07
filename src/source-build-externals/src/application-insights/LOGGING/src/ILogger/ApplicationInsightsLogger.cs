@@ -65,7 +65,7 @@ namespace Microsoft.Extensions.Logging.ApplicationInsights
         /// </returns>
         public bool IsEnabled(LogLevel logLevel)
         {
-            return this.telemetryClient.IsEnabled();
+            return logLevel != LogLevel.None && this.telemetryClient.IsEnabled();
         }
 
         /// <summary>

@@ -282,7 +282,13 @@
         [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
         private static void PrepareFirstActivity()
         {
+#if REDFIELD
+            // Redfield uses an older version of Diagnostic Source in which Activity is not Disposable.
+            var activity = new Activity("Microsoft.ApplicationInsights.Init");
+#else
             using var activity = new Activity("Microsoft.ApplicationInsights.Init");
+#endif
+
             activity.Start();
             activity.Stop();
         }

@@ -16,9 +16,3 @@ The PR will trigger build, unit tests, and functional tests automatically. Pleas
 
 ### Notes for authors:
 - FxCop and other analyzers will fail the build. To see these errors yourself, compile localy using the Release configuration.
-
-### Notes for reviewers:
-
-- We support [comment build triggers](https://docs.microsoft.com/azure/devops/pipelines/repos/github?view=azure-devops&tabs=yaml#comment-triggers)
-  - `/AzurePipelines run` will queue all builds
-  - `/AzurePipelines run <pipeline-name>` will queue a specific build

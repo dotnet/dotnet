@@ -51,6 +51,11 @@ catch(Exception ex)
 }
 ``` 
 
+### Flushing
+When your application is shutting down, we recommend Flushing the `TelemetryClient` to clear the buffer and prevent telemetry from being lost.
+
+Please review our examples here: [Flushing data](https://learn.microsoft.com/azure/azure-monitor/app/api-custom-events-metrics#flushing-data).
+
 ## Telemetry Channels
 Telemetry channels are responsible for sending the telemetry data to the designated place. Optional features can be provided by the telemetry channels, for example, buffering the data and sending in them in batches, persisting the data to a local storage in case of transmission failure (e.g. network outage), traffic shaping and retry mechanisms
 

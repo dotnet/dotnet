@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.Tracing;
     using System.Linq;
     using System.Net.Http;
     using Microsoft.ApplicationInsights.Channel;
@@ -1263,6 +1264,290 @@
             }
         }
 
+        [TestMethod]
+        public void AzureCosmosDbSpansAreCollected()
+        {
+            using (var listener = new DiagnosticListener("Azure.Cosmos"))
+            using (var module = new DependencyTrackingTelemetryModule())
+            {
+                module.Initialize(this.configuration);
+
+                var exception = new InvalidOperationException();
+                Activity sendActivity = new Activity("Azure.Cosmos.ReadItems")
+                    .AddTag("net.peer.name", "my.documents.azure.com")
+                    .AddTag("db.name", "database")
+                    .AddTag("db.operation", "ReadItems")
+                    .AddTag("db.cosmosdb.container", "container")
+                    .AddTag("kind", "client")
+                    .AddTag("az.namespace", "Microsoft.DocumentDB");
+
+                listener.StartActivity(sendActivity, null);
+                listener.Write("Azure.Cosmos.ReadItems.Exception", exception);
+                sendActivity.AddTag("db.cosmosdb.status_code", "503");
+                listener.StopActivity(sendActivity, null);
+
+                var telemetry = this.sentItems.Last();
+
+                Assert.IsNotNull(telemetry);
+                Assert.IsNull(telemetry.Context.Operation.ParentId);
+                Assert.AreEqual(sendActivity.TraceId.ToHexString(), telemetry.Context.Operation.Id);
+
+                DependencyTelemetry dependency = telemetry as DependencyTelemetry;
+                Assert.IsFalse(dependency.Success.Value);
+                Assert.AreEqual(exception.ToInvariantString(), dependency.Properties["Error"]);
+                Assert.AreEqual(sendActivity.SpanId.ToHexString(), dependency.Id);
+                Assert.AreEqual("container | ReadItems", dependency.Name);
+                Assert.AreEqual("my.documents.azure.com | database", dependency.Target);
+                Assert.AreEqual("503", dependency.ResultCode);
+                Assert.AreEqual("Microsoft.DocumentDB", dependency.Type);
+                Assert.IsTrue(String.IsNullOrEmpty(dependency.Data));
+
+                Assert.IsTrue(dependency.Properties.ContainsKey("db.name"));
+                Assert.IsTrue(dependency.Properties.ContainsKey("db.operation"));
+                Assert.IsTrue(dependency.Properties.ContainsKey("net.peer.name"));
+                Assert.IsTrue(dependency.Properties.ContainsKey("db.cosmosdb.container"));
+                Assert.AreEqual("container", dependency.Properties["db.cosmosdb.container"]);
+                Assert.AreEqual("database", dependency.Properties["db.name"]);
+                Assert.AreEqual("ReadItems", dependency.Properties["db.operation"]);
+                Assert.AreEqual("my.documents.azure.com", dependency.Properties["net.peer.name"]);
+            }
+        }
+
+        [TestMethod]
+        public void AzureCosmosDbSpansErrorsAreCollected()
+        {
+            using (var listener = new DiagnosticListener("Azure.Cosmos"))
+            using (var module = new DependencyTrackingTelemetryModule())
+            {
+                module.Initialize(this.configuration);
+
+                var exception = new InvalidOperationException();
+                Activity sendActivity = new Activity("Azure.Cosmos.ReadItems")
+                    .AddTag("net.peer.name", "my.documents.azure.com")
+                    .AddTag("db.name", "database")
+                    .AddTag("db.operation", "ReadItems")
+                    .AddTag("db.cosmosdb.container", "container")
+                    .AddTag("kind", "client")
+                    .AddTag("az.namespace", "Microsoft.DocumentDB");
+
+                listener.StartActivity(sendActivity, null);
+
+                sendActivity.AddTag("db.cosmosdb.status_code", "200");
+                listener.StopActivity(sendActivity, null);
+
+                var telemetry = this.sentItems.Last();
+
+                Assert.IsNotNull(telemetry);
+                Assert.IsNull(telemetry.Context.Operation.ParentId);
+                Assert.AreEqual(sendActivity.TraceId.ToHexString(), telemetry.Context.Operation.Id);
+
+                DependencyTelemetry dependency = telemetry as DependencyTelemetry;
+                Assert.IsTrue(dependency.Success.Value);
+                Assert.AreEqual(sendActivity.SpanId.ToHexString(), dependency.Id);
+                Assert.AreEqual("container | ReadItems", dependency.Name);
+                Assert.AreEqual("my.documents.azure.com | database", dependency.Target);
+                Assert.AreEqual("200", dependency.ResultCode);
+                Assert.AreEqual("Microsoft.DocumentDB", dependency.Type);
+            }
+        }
+
+        [TestMethod]
+        public void AzureCosmosDbSpansAreCollectedWithExtraAttributes()
+        {
+            using (var listener = new DiagnosticListener("Azure.Cosmos"))
+            using (var module = new DependencyTrackingTelemetryModule())
+            {
+                module.Initialize(this.configuration);
+
+                var exception = new InvalidOperationException();
+                Activity sendActivity = new Activity("Azure.Cosmos.ReadItems")
+                    .AddTag("kind", "client")
+                    .AddTag("net.peer.name", "my.documents.azure.com")
+                    .AddTag("db.name", "database")
+                    .AddTag("db.operation", "ReadItems")
+                    .AddTag("db.cosmosdb.container", "container")
+                    .AddTag("db.cosmosdb.retry_count", "2")
+                    .AddTag("db.cosmosdb.connection_mode", "Direct")
+                    .AddTag("db.cosmosdb.item_count", "42")
+                    .AddTag("db.cosmosdb.request_charge", "0.123")
+                    .AddTag("foo", "bar")
+                    .AddTag("az.namespace", "Microsoft.DocumentDB");
+
+                listener.StartActivity(sendActivity, null);
+                sendActivity.AddTag("db.cosmosdb.status_code", "503");
+                listener.StopActivity(sendActivity, null);
+
+                var telemetry = this.sentItems.Last();
+                DependencyTelemetry dependency = telemetry as DependencyTelemetry;
+                Assert.AreEqual("container | ReadItems", dependency.Name);
+                Assert.AreEqual("my.documents.azure.com | database", dependency.Target);
+                Assert.AreEqual("503", dependency.ResultCode);
+                Assert.AreEqual("Microsoft.DocumentDB", dependency.Type);
+                Assert.AreEqual("2", dependency.Properties["db.cosmosdb.retry_count"]);
+                Assert.AreEqual("0.123", dependency.Properties["db.cosmosdb.request_charge"]);
+                Assert.AreEqual("Direct", dependency.Properties["db.cosmosdb.connection_mode"]);
+                Assert.AreEqual("42", dependency.Properties["db.cosmosdb.item_count"]);
+
+                Assert.AreEqual("container", dependency.Properties["db.cosmosdb.container"]);
+                Assert.AreEqual("database", dependency.Properties["db.name"]);
+                Assert.AreEqual("ReadItems", dependency.Properties["db.operation"]);
+                Assert.AreEqual("my.documents.azure.com", dependency.Properties["net.peer.name"]);
+                Assert.IsFalse(dependency.Properties.ContainsKey("foo"));
+                Assert.IsFalse(dependency.Properties.ContainsKey("db.system"));
+            }
+        }
+
+        [TestMethod]
+        public void AzureCosmosDbInternalSpansHaveInProcType()
+        {
+            using (var listener = new DiagnosticListener("Azure.Cosmos"))
+            using (var module = new DependencyTrackingTelemetryModule())
+            {
+                module.Initialize(this.configuration);
+
+                Activity sendActivity = new Activity("Azure.Cosmos.ReadItems")
+                    .AddTag("kind", "internal")
+                    .AddTag("net.peer.name", "my.documents.azure.com")
+                    .AddTag("db.name", "database")
+                    .AddTag("db.operation", "ReadItems")
+                    .AddTag("db.cosmosdb.container", "container")
+                    .AddTag("az.namespace", "Microsoft.DocumentDB");
+
+                listener.StartActivity(sendActivity, null);
+                sendActivity.AddTag("db.cosmosdb.status_code", "200");
+                listener.StopActivity(sendActivity, null);
+
+                var telemetry = this.sentItems.Last();
+                DependencyTelemetry dependency = telemetry as DependencyTelemetry;
+                Assert.AreEqual("container | ReadItems", dependency.Name);
+                Assert.AreEqual("my.documents.azure.com | database", dependency.Target);
+                Assert.AreEqual("200", dependency.ResultCode);
+                Assert.AreEqual("InProc | Microsoft.DocumentDB", dependency.Type);
+                Assert.AreEqual("database", dependency.Properties["db.name"]);
+                Assert.AreEqual("ReadItems", dependency.Properties["db.operation"]);
+                Assert.AreEqual("my.documents.azure.com", dependency.Properties["net.peer.name"]);
+            }
+        }
+
+        [TestMethod]
+        public void AzureCosmosDbRequestsAreNotCollected()
+        {
+            using (var operations = new DiagnosticListener("Azure.Cosmos.Operation"))
+            using (var requests = new DiagnosticListener("Azure.Cosmos.Request"))
+            using (var module = new DependencyTrackingTelemetryModule())
+            {
+                module.Initialize(this.configuration);
+
+                Activity sendActivity = new Activity("Azure.Cosmos.Operation.ReadItems")
+                    .AddTag("kind", "client")
+                    .AddTag("net.peer.name", "my.documents.azure.com")
+                    .AddTag("db.name", "database")
+                    .AddTag("db.operation", "ReadItems")
+                    .AddTag("db.cosmosdb.container", "container")
+                    .AddTag("az.namespace", "Microsoft.DocumentDB");
+
+                operations.StartActivity(sendActivity, null);
+
+                Activity rntbdCall = new Activity("Azure.Cosmos.Request.Read")
+                                    .AddTag("kind", "client")
+                                    .AddTag("net.peer.name", "my.documents.azure.com")
+                                    .AddTag("db.name", "database")
+                                    .AddTag("db.operation", "ReadItems")
+                                    .AddTag("db.cosmosdb.container", "container")
+                                    .AddTag("az.namespace", "Microsoft.DocumentDB");
+                requests.StartActivity(rntbdCall, null);
+
+                rntbdCall.AddTag("db.cosmosdb.status_code", "200");
+                sendActivity.AddTag("db.cosmosdb.status_code", "200");
+                
+                requests.StopActivity(rntbdCall, null);
+                operations.StopActivity(sendActivity, null);
+
+                Assert.AreEqual(1, this.sentItems.Count);
+                var operation = this.sentItems.Last();
+                DependencyTelemetry dependency = operation as DependencyTelemetry;
+                Assert.AreEqual("container | ReadItems", dependency.Name);
+                Assert.AreEqual("ReadItems", dependency.Properties["db.operation"]);
+            }
+        }
+
+#if !NET452
+        [TestMethod]
+        public void AzureCosmosDbSpansAreCollectedWithLogs()
+        {
+            // .NET452 does not support setting custom EventSource and Cosmos DB SDK does not have targets below net461
+            // so no point in testing net452.
+            // but we still need to test .NET framework versions that support setting event source name
+            // but fallback to depednencycollector dependency net452 target 
+            using (var listener = new DiagnosticListener("Azure.Cosmos"))
+            using (var module = new DependencyTrackingTelemetryModule())
+            {
+                module.Initialize(this.configuration);
+
+                var exception = new InvalidOperationException();
+                Activity sendActivity = new Activity("Azure.Cosmos.ReadItems")
+                    .AddTag("kind", "client")
+                    .AddTag("net.peer.name", "my.documents.azure.com")
+                    .AddTag("db.name", "database")
+                    .AddTag("db.operation", "ReadItems")
+                    .AddTag("db.cosmosdb.container", "container")
+                    .AddTag("az.namespace", "Microsoft.DocumentDB");
+
+                listener.StartActivity(sendActivity, null);
+
+                CosmosDbEventSource.Singleton.RecordVerbose("verbose message - ignored");
+                CosmosDbEventSource.Singleton.RecordInfo("info message");
+                CosmosDbEventSource.Singleton.RecordWarn("warn message");
+                CosmosDbEventSource.Singleton.RecordError("error message");
+                CosmosDbEventSource.Singleton.RecordWarnNoMessage("payload only");
+                CosmosDbEventSource.Singleton.RecordWarnNoMessageTwoArguments("payload1", "payload2");
+                CosmosDbEventSource.Singleton.RecordWarnNoMessageTwoArguments("payload1", null);
+                listener.StopActivity(sendActivity, null);
+
+                var dependency = this.sentItems.Single(t => t is DependencyTelemetry) as DependencyTelemetry;
+                var logs = this.sentItems
+                    .Where(t => t is TraceTelemetry)
+                    .Select(t => t as TraceTelemetry)
+                    .ToList();
+
+                Assert.IsTrue(dependency.Success.Value);
+                Assert.IsTrue(String.IsNullOrEmpty(dependency.ResultCode));
+                Assert.AreEqual(6, logs.Count);
+
+                Assert.AreEqual("info message", logs[0].Message);
+                Assert.AreEqual("warn message", logs[1].Message);
+                Assert.AreEqual("error message", logs[2].Message);
+                Assert.AreEqual("payload only", logs[3].Message);
+                Assert.AreEqual("payload1, payload2", logs[4].Message);
+                Assert.AreEqual("payload1, ", logs[5].Message);
+
+                Assert.AreEqual(SeverityLevel.Information, logs[0].SeverityLevel);
+                Assert.AreEqual(SeverityLevel.Warning, logs[1].SeverityLevel);
+                Assert.AreEqual(SeverityLevel.Error, logs[2].SeverityLevel);
+                
+                Assert.AreEqual(dependency.Id, logs[0].Context.Operation.ParentId);
+                Assert.AreEqual(dependency.Id, logs[1].Context.Operation.ParentId);
+                Assert.AreEqual(dependency.Id, logs[2].Context.Operation.ParentId);
+
+                Assert.AreEqual(dependency.Context.Operation.Id, logs[0].Context.Operation.Id);
+                Assert.AreEqual(dependency.Context.Operation.Id, logs[1].Context.Operation.Id);
+                Assert.AreEqual(dependency.Context.Operation.Id, logs[2].Context.Operation.Id);
+
+                Assert.AreEqual("3", logs[0].Properties["EventId"]);
+                Assert.AreEqual("2", logs[1].Properties["EventId"]);
+                Assert.AreEqual("1", logs[2].Properties["EventId"]);
+
+#if NET5_0_OR_GREATER || NETCOREAPP2_0_OR_GREATER
+                // DependencyCollector has net452 and netstandard20 targets
+                // test targets that falls back to net452 dependency would not have EventName available
+                // because EventSource on .NET 4.5.2 does not support it
+                Assert.AreEqual("RecordInfo", logs[0].Properties["EventName"]);
+                Assert.AreEqual("RecordWarn", logs[1].Properties["EventName"]);
+                Assert.AreEqual("RecordError", logs[2].Properties["EventName"]);
+#endif
+            }
+        }
+#endif
 
         private T TrackOperation<T>(
             DiagnosticListener listener,
@@ -1330,5 +1615,54 @@
             [JsonProperty("id")]
             public string Id { get; set; }
         }
+
+#if !NET452
+        class CosmosDbEventSource : EventSource
+        {
+            private CosmosDbEventSource()
+                : base("Azure-Cosmos-Operation-Request-Diagnostics")
+            {
+            }
+
+            public static CosmosDbEventSource Singleton { get; } = new CosmosDbEventSource();
+
+            [Event(1, Level = EventLevel.Error, Message = "{0}")]
+            public void RecordError(string diagnostics)
+            {
+                this.WriteEvent(1, diagnostics);
+            }
+
+            [Event(2, Level = EventLevel.Warning, Message = "{0}")]
+            public void RecordWarn(string diagnostics)
+            {
+                this.WriteEvent(2, diagnostics);
+            }
+
+            [Event(3, Level = EventLevel.Informational, Message = "{0}")]
+            public void RecordInfo(string diagnostics)
+            {
+                this.WriteEvent(3, diagnostics);
+            }
+
+            [Event(4, Level = EventLevel.Warning)]
+            public void RecordWarnNoMessage(string diagnostics)
+            {
+                this.WriteEvent(4, diagnostics);
+            }
+
+            [Event(5, Level = EventLevel.Warning)]
+            public void RecordWarnNoMessageTwoArguments(string diagnostics1, string diagnostics2)
+            {
+                this.WriteEvent(5, diagnostics1, diagnostics2);
+            }
+
+
+            [Event(6, Level = EventLevel.Verbose, Message = "{0}")]
+            public void RecordVerbose(string diagnostics)
+            {
+                this.WriteEvent(6, diagnostics);
+            }
+        }
+#endif
     }
 }

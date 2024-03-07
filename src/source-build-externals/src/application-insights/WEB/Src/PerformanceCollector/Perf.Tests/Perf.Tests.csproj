@@ -3,8 +3,8 @@
 
   <PropertyGroup>
     <!-- TargetFrameworks are defined in Test.props, but can be overridden here if needed. -->
-    <!--<TargetFrameworks>net452;netcoreapp3.1</TargetFrameworks>-->
-    <TargetFrameworks>net452;$(TargetFrameworks)</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks_WithLegacy)</TargetFrameworks>
+    
     <AssemblyName>Microsoft.AI.PerformanceCollector.Tests</AssemblyName>
     <RootNamespace>Microsoft.ApplicationInsights.Tests</RootNamespace>
   </PropertyGroup>

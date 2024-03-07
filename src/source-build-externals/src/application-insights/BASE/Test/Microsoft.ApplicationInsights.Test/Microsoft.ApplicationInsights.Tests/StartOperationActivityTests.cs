@@ -467,7 +467,7 @@
                 Assert.IsFalse(telemetry.Properties.ContainsKey("tracestate"));
             }
 
-            Assert.AreEqual(activity.Recorded ? SamplingDecision.SampledIn : SamplingDecision.None, (telemetry as ISupportAdvancedSampling).ProactiveSamplingDecision);
+            Assert.AreEqual(SamplingDecision.None, (telemetry as ISupportAdvancedSampling).ProactiveSamplingDecision);
         }
     }
 }

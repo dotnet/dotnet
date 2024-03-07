@@ -96,6 +96,7 @@ namespace Microsoft.ApplicationInsights
             testLogger.LogTrace("Trace");
             testLogger.LogWarning("Warning");
             testLogger.LogDebug("Debug");
+            testLogger.Log(LogLevel.None, "None");
 
             Assert.AreEqual(7, itemsReceived.Count);
 
@@ -123,6 +124,37 @@ namespace Microsoft.ApplicationInsights
             Assert.AreEqual("Trace", (itemsReceived[4] as TraceTelemetry).Message);
             Assert.AreEqual("Warning", (itemsReceived[5] as TraceTelemetry).Message);
             Assert.AreEqual("Debug", (itemsReceived[6] as TraceTelemetry).Message);
+        }
+
+        /// <summary>
+        /// Ensures that <see cref="ApplicationInsightsLogger"/> is invoked when user logs using <see cref="ILogger"/>.
+        /// </summary>
+        [TestMethod]
+        [TestCategory("ILogger")]
+        public void ApplicationInsightsLoggerIsNotInvokedWhenUsingILoggerAndTelemetryIsDisabled()
+        {
+            List<ITelemetry> itemsReceived = new List<ITelemetry>();
+
+            IServiceProvider serviceProvider = ILoggerIntegrationTests.SetupApplicationInsightsLoggerIntegration((telemetryItem, telemetryProcessor) =>
+            {
+                itemsReceived.Add(telemetryItem);
+            }, configuration =>
+            {
+                configuration.DisableTelemetry = true;
+            });
+
+            ILogger<ILoggerIntegrationTests> testLogger = serviceProvider.GetRequiredService<ILogger<ILoggerIntegrationTests>>();
+
+            testLogger.LogInformation("Testing");
+            testLogger.LogError(new Exception("ExceptionMessage"), "LoggerMessage");
+            testLogger.LogInformation(new EventId(100, "TestEvent"), "TestingEvent");
+            testLogger.LogCritical("Critical");
+            testLogger.LogTrace("Trace");
+            testLogger.LogWarning("Warning");
+            testLogger.LogDebug("Debug");
+            testLogger.Log(LogLevel.None, "None");
+
+            Assert.AreEqual(0, itemsReceived.Count);
         }
 
         /// <summary>

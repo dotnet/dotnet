@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <!-- TargetFrameworks are defined in Test.props, but can be overridden here if needed. -->
-    <TargetFrameworks>netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks_NetCoreOnly)</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

@@ -65,6 +65,10 @@ ipch/
 *.vsp
 *.vspx
 
+# Visual Studio live unit testing config
+*.lutconfig
+*.lutignore
+
 # Guidance Automation Toolkit
 *.gpState
 

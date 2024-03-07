@@ -6,24 +6,24 @@
   </Target>
 
   <PropertyGroup>
-    <!-- 
-      Semantic Version. See http://semver.org for full details. 
-      Update for every public release. 
+    <!--
+      Semantic Version. See http://semver.org for full details.
+      Update for every public release.
     -->
     <SemanticVersionMajor>2</SemanticVersionMajor>
-    <SemanticVersionMinor>21</SemanticVersionMinor> <!-- If changing the Minor version, also update the Date value. -->
+    <SemanticVersionMinor>22</SemanticVersionMinor> <!-- If changing the Minor version, also update the Date value. -->
     <SemanticVersionPatch>0</SemanticVersionPatch>
     <PreReleaseMilestone></PreReleaseMilestone> <!--Valid values: beta1, beta2, EMPTY for stable -->
     <PreReleaseMilestone Condition="'$(Redfield)' == 'True'">redfield</PreReleaseMilestone>
     <PreReleaseMilestone Condition="'$(NightlyBuild)' == 'True'">nightly</PreReleaseMilestone> <!-- Overwrite this property for nightly builds from the DEVELOP branch. -->
-    <!-- 
-      Date when Semantic Version was changed. 
+    <!--
+      Date when Semantic Version was changed.
       Update for every MINOR release.
-      NOTE!!!!!! Do not update when updating PreReleaseMilestone update 
-      as it will restart file versions so 2.4.0-beta1 may have higher 
+      NOTE!!!!!! Do not update when updating PreReleaseMilestone update
+      as it will restart file versions so 2.4.0-beta1 may have higher
       file version (like 2.4.0.2222) than 2.4.0-beta2 (like 2.4.0.1111)
     -->
-    <SemanticVersionDate>2021-12-17</SemanticVersionDate>
+    <SemanticVersionDate>2022-07-20</SemanticVersionDate>
 
     <!--
       BuildNumber uniquely identifies all builds (The max allowed value is UInt16.MaxValue = 65535).
@@ -36,8 +36,8 @@
 
     <VersionPrefix>$(SemanticVersionMajor).$(SemanticVersionMinor).$(SemanticVersionPatch)</VersionPrefix>
     <VersionSuffix>$(PreReleaseMilestone)</VersionSuffix>
-    <AssemblyVersion>$(VersionPrefix).$(BuildNumber)</AssemblyVersion> 
-    <FileVersion>$(AssemblyVersion)</FileVersion> 
+    <AssemblyVersion>$(VersionPrefix).$(BuildNumber)</AssemblyVersion>
+    <FileVersion>$(AssemblyVersion)</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(PackageVersion)'==''">
@@ -47,7 +47,7 @@
   </PropertyGroup>
 
     <ItemGroup>
-    <!-- 
+    <!--
       AssemblyVersion and AssemblyFileVersion attributes are generated automatically for every build.
       NuGet package version is derived from AssemblyFileVersion.
     -->

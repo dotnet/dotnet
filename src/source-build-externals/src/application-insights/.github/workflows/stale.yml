@@ -12,7 +12,7 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v4.0.0
+      - uses: actions/stale@v6.0.1
         id: stale
         with:
           stale-issue-message: 'This issue is stale because it has been open 300 days with no activity. Remove stale label or this will be closed in 7 days. Commenting will instruct the bot to automatically remove the label.'

@@ -101,10 +101,10 @@
                         break;
                     default:                        
                         // We are losing data here but that is intentional as the response code is
-                        // not in the whitelisted set to attempt retry.
-                        TelemetryChannelEventSource.Log.TransmissionDataNotRetriedForNonWhitelistedResponse(e.Transmission.Id,
+                        // not in the subset to attempt retry.
+                        TelemetryChannelEventSource.Log.TransmissionDataNotRetriedForIgnoredStatusCode(e.Transmission.Id,
                             httpWebResponseWrapper.StatusCode.ToString(CultureInfo.InvariantCulture));
-                        // For non white listed response, set the result of FlushAsync to false.
+                        // For ignored status codes, set the result of FlushAsync to false.
                         e.Transmission.IsFlushAsyncInProgress = false;
                         break;
                 }
