@@ -44,12 +44,6 @@ The following is an attempt to document how the current switches work, their cur
   - **Values and their intended purposes**
     - **True** – The inner repo build is executing. This switch is not intended for product repos to use to control anything but their build behavior. Typically, this is used to activate or deactivate behavior that should only be executed on an inner build and nowhere else. This switch is also only present when building repos that use arcade.
     - **False/Empty** – Not executing in the inner build, or not a repo that uses arcade based infra.
-- **ArcadeBuildVertical (true/false/empty)** – PoC switch
-  - **Phases** – Outer Repo Build, Inner Repo Build
-  - **Infrastructure or Product Use** – Infrastructure
-  - **Values and their intended purposes**
-    - **True** – This is essentially "ArcadeBuildFromSource" but without activating much of the Linux distro partner build behavior. For instance, prebuilts are checked but not reported, DotNetBuildVertical is passed to the inner build, DotNetBuildOffline is not passed, etc. Basically, this is "build using the source-build infrastructure, but without strict behavior).
-  - **False/Empty** – The outer or inner repo build is not executing.
 - **DotNetBuildFromSource** (true/false/empty)
   - **Phases** - Orchestrator, Inner Repo Build
   - **Infrastructure or Product Use?** - Both
@@ -62,12 +56,6 @@ The following is an attempt to document how the current switches work, their cur
   - **Infrastructure or Product Use?** – Infrastructure
   - Values and their intended purposes 
     - False/Empty – Removes online sources from the repo’s NuGet.config files.
-- **DotNetBuildVertical**
-  - **Phases** - Inner Repo, Outer Repo Build, Orchestrator
-  - **Infrastructure or Product Use?** - Product and Infrastructure
-  - Values and their intended purposes
-    - **True** – Building the product in vertical PoC mode. Automatically excludes test and test utility projects from being built, excludes restoring and building projects that have the "ExcludeFromVerticalBuild" property set.
-    - **False** – Not building in vertical PoC mode.
 - **DotNetBuildFromSourceFlavor**
   - **Phases** – Outer Repo Build, Inner Repo Build
   - **Infrastructure or Product Use?** – Product and Infrastructure
@@ -79,12 +67,6 @@ The following is an attempt to document how the current switches work, their cur
   - **Infrastructure or Product Use?** - Product
   - **Values and their intended purposes.**
     - **True** – If true and DotNetBuildFromSource is true, no targets should be executed for the project. Causes the standard Arcade empty targets to be imported. No restore, no build. Standard test projects set this implicitly.
-    - **False/Empty** – Default behavior is used.
-- **ExcludeFromVerticalBuild**
-  - **Phases** - Inner Repo Build
-  - **Infrastructure or Product Use?** - Product
-  - **Values and their intended purposes.**
-    - **True** – If true and DotNetBuildVertical is true, no targets should be executed for the project. Causes the standard Arcade empty targets to be imported. No restore, no build. Standard test projects set this implicitly.
     - **False/Empty** – Default behavior is used.
 - **OfficialBuilder**
   - **Phases** – Inner Repo Build
@@ -143,7 +125,7 @@ The following context controls will be implemented. These controls should be use
 | -------- | -------- | -------- | -------- |
 | DotNetBuildInnerRepo | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the inner repo build. This is equivalent to `ArcadeInnerBuildFromSource``. |
 | DotNetBuildOrchestrator | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within the orchestrator, outer repo build, and inner repo build.<br/>This is roughly equivalent to `DotNetBuildFromSourceFlavor` as `Product`` in the current control set. |
-| DotNetBuildRepo | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within outer repo build or inner repo build phases.<br/>This is essentially `ArcadeBuildFromSource` or `ArcadeBuildVertical.` |
+| DotNetBuildRepo | "true", "false", "" | "" | When "true", indicates that the infrastructure is executing within outer repo build or inner repo build phases.<br/>This is essentially the same as the legacy `ArcadeBuildFromSource`. |
 
 ### Resource Controls
 
