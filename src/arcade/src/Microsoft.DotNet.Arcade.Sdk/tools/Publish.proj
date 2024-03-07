@@ -291,7 +291,6 @@
 
   <!-- Import the publish targets when in the inner or outer repo builds. -->
   <Import Project="SourceBuild/SourceBuildArcadePublish.targets" Condition="'$(ArcadeBuildFromSource)' == 'true' or 
-                                                                            '$(ArcadeBuildVertical)' == 'true' or 
                                                                             '$(DotNetBuildRepo)' == 'true'" />
 
 </Project>
