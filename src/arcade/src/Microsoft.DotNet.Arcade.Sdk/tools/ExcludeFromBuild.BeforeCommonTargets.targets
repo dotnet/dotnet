@@ -4,7 +4,6 @@
   <!--  This file sets properties that enable skipping of a project build if desired.
         Cases where we might skip include:
         - Source-build mode and "ExcludeFromSourceBuild" is set.
-        - Vertical-build mode and "ExcludeFromVerticalBuild" is set.
         - Non source-build mode and "ExcludeFromBuild" is set
         - Target filtering is used and the target filters set "ExcludeFromBuild".
         - .NET product build (DotNetBuild) and "ExcludeFromDotNetBuild" is set.
@@ -34,7 +33,6 @@
     <ExcludeFromSourceBuild Condition="'$(ExcludeFromSourceBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromSourceBuild>
 
     <ExcludeFromDotNetBuild Condition="'$(ExcludeFromDotNetBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromDotNetBuild>
-    <ExcludeFromVerticalBuild Condition="'$(ExcludeFromVerticalBuild)' == '' and '$(DotNetBuildTests)' != 'true'">true</ExcludeFromVerticalBuild>
   </PropertyGroup>
 
   <!--
@@ -51,7 +49,6 @@
     <_SuppressAllTargets>false</_SuppressAllTargets>
     <!-- Legacy switches-->
     <_SuppressAllTargets Condition="'$(DotNetBuildFromSource)' == 'true' and '$(ExcludeFromSourceBuild)' == 'true'">true</_SuppressAllTargets>
-    <_SuppressAllTargets Condition="'$(DotNetBuildVertical)' == 'true' and '$(ExcludeFromVerticalBuild)' == 'true'">true</_SuppressAllTargets>
     <!-- New .NET build switches -->
     <_SuppressAllTargets Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(ExcludeFromSourceOnlyBuild)' == 'true'">true</_SuppressAllTargets>
     <_SuppressAllTargets Condition="'$(DotNetBuild)' == 'true' and '$(ExcludeFromDotNetBuild)' == 'true'">true</_SuppressAllTargets>

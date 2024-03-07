@@ -38,17 +38,13 @@
        Switches are separated by legacy vs. new.
 
        This looks complicated right now, but will get simpler as legacy switches disappear:
-       - ArcadeBuildVertical/DotNetBuildVertical disappears:
-         ($(ArcadeInnerBuildFromSource)' != 'true' and '$(DotNetBuildFromSourceFlavor)' != 'Product')) and 
-         ('$(DotNetBuildSourceOnly)' != 'true' or ('$(DotNetBuildPhase)' == 'Repo' and '$(DotNetBuildOrchestrator)' != 'true')
-
        - ArcadeInnerBuildFromSource/DotNetBuildFromSource disappear:
          ('$(DotNetBuildSourceOnly)' != 'true' or ('$(DotNetBuildPhase)' == 'Repo' and '$(DotNetBuildOrchestrator)' != 'true')
   -->
 
   <PropertyGroup>
     <_ImportOrUseTooling>false</_ImportOrUseTooling>
-    <_ImportOrUseTooling Condition="('$(ArcadeBuildVertical)' == 'true' or ('$(ArcadeInnerBuildFromSource)' != 'true' and '$(DotNetBuildFromSourceFlavor)' != 'Product')) and 
+    <_ImportOrUseTooling Condition="('$(ArcadeInnerBuildFromSource)' != 'true' and '$(DotNetBuildFromSourceFlavor)' != 'Product') and 
                                     ('$(DotNetBuildSourceOnly)' != 'true' or ('$(DotNetBuildPhase)' == 'Repo' and '$(DotNetBuildOrchestrator)' != 'true'))">true</_ImportOrUseTooling>
   </PropertyGroup>
 
@@ -87,7 +83,6 @@
   </Target>
 
   <Import Project="SourceBuild/SourceBuildArcadeTools.targets" Condition="'$(ArcadeBuildFromSource)' == 'true' or
-                                                                          '$(ArcadeBuildVertical)' == 'true' or
                                                                           '$(DotNetBuildRepo)' == 'true' or
                                                                           '$(SetUpSourceBuildIntermediateNupkgCache)' == 'true'" />
 
