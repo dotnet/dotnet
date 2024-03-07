@@ -67,6 +67,7 @@ namespace NuGet.SolutionRestoreManager
         private int _missingPackagesCount = 0;
         private int _currentCount;
         private AuditCheckResult _auditCheckResult;
+        private bool _solutionHasVulnerabilities;
 
         /// <summary>
         /// Restore end status. For testing purposes
@@ -264,6 +265,9 @@ namespace NuGet.SolutionRestoreManager
                         _restoreEventsPublisher.OnSolutionRestoreCompleted(
                             new SolutionRestoredEventArgs(_status, solutionDirectory));
                     }
+
+                    // Display info bar in SolutionExplorer if there is a vulnerability during restore.
+                    await _vulnerabilitiesFoundService.Value.ReportVulnerabilitiesAsync(_solutionHasVulnerabilities, token);
                 }
                 catch (OperationCanceledException)
                 {
@@ -505,8 +509,7 @@ namespace NuGet.SolutionRestoreManager
                                     isRestoreSucceeded = restoreSummaries.All(summary => summary.Success == true);
                                     _noOpProjectsCount += restoreSummaries.Where(summary => summary.NoOpRestore == true).Count();
                                     _solutionUpToDateChecker.SaveRestoreStatus(restoreSummaries);
-                                    // Display info bar in SolutionExplorer if there is a vulnerability during restore.
-                                    await _vulnerabilitiesFoundService.Value.ReportVulnerabilitiesAsync(AnyProjectHasVulnerablePackageWarning(restoreSummaries), t);
+                                    _solutionHasVulnerabilities |= AnyProjectHasVulnerablePackageWarning(restoreSummaries);
                                 }
                                 catch
                                 {
@@ -731,6 +734,7 @@ namespace NuGet.SolutionRestoreManager
                         }
                     }
                 }
+                _solutionHasVulnerabilities |= _auditCheckResult?.Warnings.Count > 0;
 
                 ValidatePackagesConfigLockFiles(allProjects, token);
             }

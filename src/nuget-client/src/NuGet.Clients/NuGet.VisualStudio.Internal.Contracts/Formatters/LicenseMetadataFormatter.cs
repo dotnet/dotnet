@@ -42,7 +42,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                     case TypePropertyName:
                         if (!reader.TryReadNil())
                         {
-                            type = options.Resolver.GetFormatter<LicenseType>().Deserialize(ref reader, options);
+                            type = options.Resolver.GetFormatter<LicenseType>()!.Deserialize(ref reader, options);
                         }
                         break;
                     case LicensePropertyName:
@@ -58,11 +58,11 @@ namespace NuGet.VisualStudio.Internal.Contracts
                     case WarningsAndErrorsPropertyName:
                         if (!reader.TryReadNil())
                         {
-                            warningsAndErrors = options.Resolver.GetFormatter<IReadOnlyList<string>>().Deserialize(ref reader, options);
+                            warningsAndErrors = options.Resolver.GetFormatter<IReadOnlyList<string>>()!.Deserialize(ref reader, options);
                         }
                         break;
                     case VersionPropertyName:
-                        version = options.Resolver.GetFormatter<Version>().Deserialize(ref reader, options);
+                        version = options.Resolver.GetFormatter<Version>()!.Deserialize(ref reader, options);
                         break;
                     default:
                         reader.Skip();
@@ -81,7 +81,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
         {
             writer.WriteMapHeader(count: 5);
             writer.Write(TypePropertyName);
-            options.Resolver.GetFormatter<LicenseType>().Serialize(ref writer, value.Type, options);
+            options.Resolver.GetFormatter<LicenseType>()!.Serialize(ref writer, value.Type, options);
 
             writer.Write(LicensePropertyName);
             writer.Write(value.License);
@@ -96,11 +96,11 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
             else
             {
-                options.Resolver.GetFormatter<IReadOnlyList<string>>().Serialize(ref writer, value.WarningsAndErrors, options);
+                options.Resolver.GetFormatter<IReadOnlyList<string>>()!.Serialize(ref writer, value.WarningsAndErrors, options);
             }
 
             writer.Write(VersionPropertyName);
-            options.Resolver.GetFormatter<Version>().Serialize(ref writer, value.Version, options);
+            options.Resolver.GetFormatter<Version>()!.Serialize(ref writer, value.Version, options);
         }
     }
 }

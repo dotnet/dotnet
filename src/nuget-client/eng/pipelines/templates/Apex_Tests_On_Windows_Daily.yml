@@ -29,7 +29,7 @@ stages:
           value: $[dependencies.TestMachineConfiguration.outputs['Setbasebuilddrop.BaseBuildDrop']]
       runSettingsURI: $(RunSettingsURI)
       visualStudioBootstrapperURI: $(VsBootstrapperUrl)  
-      baseVisualStudioBootstrapperURI: https://vsdrop.corp.microsoft.com/file/v1/$(VisualStudio.BaseBuild.ProductsDropName);bootstrappers/Enterprise/vs_enterprise.exe
+      baseVisualStudioBootstrapperURI: https://vsdrop.microsoft.com/file/v1/$(VisualStudio.BaseBuild.ProductsDropName);bootstrappers/Enterprise/vs_enterprise.exe
       candidateBaselineBuilds: $(BaselineBuildCommitIds)
       testLabPoolName: VS-Platform
       dartLabEnvironment: ${{parameters.DartLabEnvironment}}
@@ -190,7 +190,7 @@ stages:
                 $buildInfoJson = (Get-Content $buildInfoJsonFilePath -Raw) | ConvertFrom-Json
                 $branchName = $buildInfoJson.BuildBranch
 
-                $RunSettingsURI = "https://vsdrop.corp.microsoft.com/file/v1/RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$branchName/$(resources.pipeline.ComponentBuildUnderTest.runID);NuGet.Tests.Apex.Daily.runsettings"
+                $RunSettingsURI = "https://vsdrop.microsoft.com/file/v1/RunSettings/$(System.TeamProject)/$(Build.Repository.Name)/$branchName/$(resources.pipeline.ComponentBuildUnderTest.runID);NuGet.Tests.Apex.Daily.runsettings"
                 Write-Host "RunSettingsURI: $RunSettingsURI"
                 Set-AzurePipelinesVariable 'RunSettingsURI' $RunSettingsURI
                 Set-AzurePipelinesVariable -IsOutput 'RunSettingsURI' $RunSettingsURI

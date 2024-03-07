@@ -165,7 +165,7 @@ namespace NuGet.RuntimeModel
             // Manually enumerate the IEnumerable so we only write the name
             // when there are corresponding values and avoid potentially expensive
             // multiple enumeration.
-            var enumerator = values.GetEnumerator();
+            var enumerator = values.NoAllocEnumerate().GetEnumerator();
             if (!enumerator.MoveNext())
             {
                 return;

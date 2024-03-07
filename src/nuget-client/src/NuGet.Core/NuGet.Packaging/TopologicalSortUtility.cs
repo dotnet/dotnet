@@ -143,8 +143,9 @@ namespace NuGet.Packaging
             {
                 var dependencies = package.DependencyIds ?? Array.Empty<string>();
 
-                foreach (var id in dependencies)
+                for (var i = 0; i < dependencies.Length; i++)
                 {
+                    var id = dependencies[i];
                     if (lookup.TryGetValue(id, out var dependencyPackage))
                     {
                         // Mark the current package as a parent
@@ -160,7 +161,7 @@ namespace NuGet.Packaging
                         var packageChildren = package.Children;
                         if (packageChildren == null)
                         {
-                            packageChildren = new List<ItemDependencyInfo>();
+                            packageChildren = new List<ItemDependencyInfo>(dependencies.Length - i);
                             package.Children = packageChildren;
                         }
                         packageChildren.Add(dependencyPackage);

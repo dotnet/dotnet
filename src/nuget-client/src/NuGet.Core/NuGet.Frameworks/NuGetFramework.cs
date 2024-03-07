@@ -198,7 +198,7 @@ namespace NuGet.Frameworks
             // Check for rewrites
             var framework = mappings.GetShortNameReplacement(this);
 
-            var sb = new StringBuilder();
+            var sb = StringBuilderPool.Shared.Rent(256);
 
             if (IsSpecificFramework)
             {
@@ -292,12 +292,13 @@ namespace NuGet.Frameworks
                 sb.Append(Framework);
             }
 
-            return sb.ToString().ToLowerInvariant();
+            return StringBuilderPool.Shared.ToStringAndReturn(sb).ToLowerInvariant();
         }
 
         private static string GetDisplayVersion(Version version)
         {
-            var sb = new StringBuilder(string.Format(CultureInfo.InvariantCulture, "{0}.{1}", version.Major, version.Minor));
+            var sb = StringBuilderPool.Shared.Rent(256);
+            sb.AppendFormat(CultureInfo.InvariantCulture, "{0}.{1}", version.Major, version.Minor);
 
             if (version.Build > 0
                 || version.Revision > 0)
@@ -310,7 +311,7 @@ namespace NuGet.Frameworks
                 }
             }
 
-            return sb.ToString();
+            return StringBuilderPool.Shared.ToStringAndReturn(sb);
         }
 
         private static string GetLettersAndDigitsOnly(string s)

@@ -64,7 +64,11 @@ namespace NuGet.ProjectModel
 
         public static void Write(Stream stream, CacheFile cacheFile)
         {
+#if NET5_0_OR_GREATER
             using (var textWriter = new StreamWriter(stream))
+#else
+            using (var textWriter = new NoAllocNewLineStreamWriter(stream))
+#endif
             {
                 Write(textWriter, cacheFile);
             }

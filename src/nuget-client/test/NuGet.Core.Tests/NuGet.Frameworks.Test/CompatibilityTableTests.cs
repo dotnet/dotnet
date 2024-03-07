@@ -3,10 +3,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using NuGet.Frameworks;
 using Xunit;
 
-namespace NuGet.Test
+namespace NuGet.Frameworks.Test
 {
     public class CompatibilityTableTests
     {

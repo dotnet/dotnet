@@ -5,11 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Moq;
-using NuGet.Frameworks;
 using Xunit;
 using static NuGet.Frameworks.FrameworkConstants.FrameworkIdentifiers;
 
-namespace NuGet.Test
+namespace NuGet.Frameworks.Test
 {
     public class FrameworkNameProviderTests
     {

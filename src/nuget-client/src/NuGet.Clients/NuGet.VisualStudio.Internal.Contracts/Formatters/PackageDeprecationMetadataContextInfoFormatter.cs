@@ -35,7 +35,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                         message = reader.ReadString();
                         break;
                     case ReasonsPropertyName:
-                        reasons = reader.TryReadNil() ? null : options.Resolver.GetFormatter<IReadOnlyCollection<string>>().Deserialize(ref reader, options);
+                        reasons = reader.TryReadNil() ? null : options.Resolver.GetFormatter<IReadOnlyCollection<string>>()!.Deserialize(ref reader, options);
                         break;
                     case AlternatePackageMetadataPropertyName:
                         alternatePackageMetadataContextInfo = reader.TryReadNil() ? null : AlternatePackageMetadataContextInfoFormatter.Instance.Deserialize(ref reader, options);
@@ -61,7 +61,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
             else
             {
-                options.Resolver.GetFormatter<IReadOnlyCollection<string>>().Serialize(ref writer, value.Reasons, options);
+                options.Resolver.GetFormatter<IReadOnlyCollection<string>>()!.Serialize(ref writer, value.Reasons, options);
             }
 
             writer.Write(AlternatePackageMetadataPropertyName);

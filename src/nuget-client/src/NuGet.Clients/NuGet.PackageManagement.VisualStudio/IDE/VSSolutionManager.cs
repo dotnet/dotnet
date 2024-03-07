@@ -542,8 +542,11 @@ namespace NuGet.PackageManagement.VisualStudio
         private static object GetVSSolutionProperty(IVsSolution vsSolution, int propId)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            ErrorHandler.ThrowOnFailure(vsSolution.GetProperty(propId, out object value));
-            return value;
+            if (ErrorHandler.Succeeded(vsSolution.GetProperty(propId, out object value)))
+            {
+                return value;
+            }
+            return null;
         }
 
         private object GetVSSolutionProperty(int propId)

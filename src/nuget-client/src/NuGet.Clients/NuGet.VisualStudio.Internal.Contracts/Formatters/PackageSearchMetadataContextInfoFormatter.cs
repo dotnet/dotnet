@@ -88,7 +88,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                     case IconUrlPropertyName:
                         if (!reader.TryReadNil())
                         {
-                            iconUrl = options.Resolver.GetFormatter<Uri>().Deserialize(ref reader, options);
+                            iconUrl = options.Resolver.GetFormatter<Uri>()!.Deserialize(ref reader, options);
                         }
                         break;
                     case TitlePropertyName:
@@ -100,19 +100,19 @@ namespace NuGet.VisualStudio.Internal.Contracts
                     case LicenseMetadataPropertyName:
                         if (!reader.TryReadNil())
                         {
-                            licenseMetadata = options.Resolver.GetFormatter<LicenseMetadata>().Deserialize(ref reader, options);
+                            licenseMetadata = options.Resolver.GetFormatter<LicenseMetadata>()!.Deserialize(ref reader, options);
                         }
                         break;
                     case LicenseUrlPropertyName:
                         if (!reader.TryReadNil())
                         {
-                            licenseUrl = options.Resolver.GetFormatter<Uri>().Deserialize(ref reader, options);
+                            licenseUrl = options.Resolver.GetFormatter<Uri>()!.Deserialize(ref reader, options);
                         }
                         break;
                     case ProjectUrlPropertyName:
                         if (!reader.TryReadNil())
                         {
-                            projectUrl = options.Resolver.GetFormatter<Uri>().Deserialize(ref reader, options);
+                            projectUrl = options.Resolver.GetFormatter<Uri>()!.Deserialize(ref reader, options);
                         }
                         break;
                     case PackagePathPropertyName:
@@ -121,7 +121,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                     case PublishedPropertyName:
                         if (!reader.TryReadNil())
                         {
-                            published = options.Resolver.GetFormatter<DateTimeOffset>().Deserialize(ref reader, options);
+                            published = options.Resolver.GetFormatter<DateTimeOffset>()!.Deserialize(ref reader, options);
                         }
                         break;
                     case OwnersPropertyName:
@@ -130,13 +130,13 @@ namespace NuGet.VisualStudio.Internal.Contracts
                     case ReportAbuseUrlPropertyName:
                         if (!reader.TryReadNil())
                         {
-                            reportAbuseUrl = options.Resolver.GetFormatter<Uri>().Deserialize(ref reader, options);
+                            reportAbuseUrl = options.Resolver.GetFormatter<Uri>()!.Deserialize(ref reader, options);
                         }
                         break;
                     case PackageDetailsUrlPropertyName:
                         if (!reader.TryReadNil())
                         {
-                            packageDetailsUrl = options.Resolver.GetFormatter<Uri>().Deserialize(ref reader, options);
+                            packageDetailsUrl = options.Resolver.GetFormatter<Uri>()!.Deserialize(ref reader, options);
                         }
                         break;
                     case RequireLicenseAcceptancePropertyName:
@@ -154,7 +154,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
                     case RecommenderVersionPropertyName:
                         if (!reader.TryReadNil())
                         {
-                            recommenderVersion = options.Resolver.GetFormatter<(string, string)>().Deserialize(ref reader, options);
+                            recommenderVersion = options.Resolver.GetFormatter<(string, string)>()!.Deserialize(ref reader, options);
                         }
                         break;
                     case DownloadCountPropertyName:
@@ -166,13 +166,13 @@ namespace NuGet.VisualStudio.Internal.Contracts
                     case DependencySetsPropertyName:
                         if (!reader.TryReadNil())
                         {
-                            dependencySets = options.Resolver.GetFormatter<IReadOnlyCollection<PackageDependencyGroup>>().Deserialize(ref reader, options);
+                            dependencySets = options.Resolver.GetFormatter<IReadOnlyCollection<PackageDependencyGroup>>()!.Deserialize(ref reader, options);
                         }
                         break;
                     case VulnerabilitiesPropertyName:
                         if (!reader.TryReadNil())
                         {
-                            vulnerabilities = options.Resolver.GetFormatter<IReadOnlyCollection<PackageVulnerabilityMetadataContextInfo>>().Deserialize(ref reader, options);
+                            vulnerabilities = options.Resolver.GetFormatter<IReadOnlyCollection<PackageVulnerabilityMetadataContextInfo>>()!.Deserialize(ref reader, options);
                         }
                         break;
                     case IsListedPropertyName:
@@ -231,7 +231,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
             else
             {
-                options.Resolver.GetFormatter<Uri>().Serialize(ref writer, value.IconUrl, options);
+                options.Resolver.GetFormatter<Uri>()!.Serialize(ref writer, value.IconUrl, options);
             }
 
             writer.Write(TagsPropertyName);
@@ -254,7 +254,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
             else
             {
-                options.Resolver.GetFormatter<LicenseMetadata>().Serialize(ref writer, value.LicenseMetadata, options);
+                options.Resolver.GetFormatter<LicenseMetadata>()!.Serialize(ref writer, value.LicenseMetadata, options);
             }
 
             writer.Write(LicenseUrlPropertyName);
@@ -264,7 +264,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
             else
             {
-                options.Resolver.GetFormatter<Uri>().Serialize(ref writer, value.LicenseUrl, options);
+                options.Resolver.GetFormatter<Uri>()!.Serialize(ref writer, value.LicenseUrl, options);
             }
 
             writer.Write(OwnersPropertyName);
@@ -278,7 +278,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
             else
             {
-                options.Resolver.GetFormatter<Uri>().Serialize(ref writer, value.ProjectUrl, options);
+                options.Resolver.GetFormatter<Uri>()!.Serialize(ref writer, value.ProjectUrl, options);
             }
 
             writer.Write(PublishedPropertyName);
@@ -288,7 +288,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
             else
             {
-                options.Resolver.GetFormatter<DateTimeOffset>().Serialize(ref writer, value.Published.Value, options);
+                options.Resolver.GetFormatter<DateTimeOffset>()!.Serialize(ref writer, value.Published.Value, options);
             }
 
             writer.Write(ReportAbuseUrlPropertyName);
@@ -298,7 +298,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
             else
             {
-                options.Resolver.GetFormatter<Uri>().Serialize(ref writer, value.ReportAbuseUrl, options);
+                options.Resolver.GetFormatter<Uri>()!.Serialize(ref writer, value.ReportAbuseUrl, options);
             }
 
             writer.Write(PackageDetailsUrlPropertyName);
@@ -308,7 +308,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
             else
             {
-                options.Resolver.GetFormatter<Uri>().Serialize(ref writer, value.PackageDetailsUrl, options);
+                options.Resolver.GetFormatter<Uri>()!.Serialize(ref writer, value.PackageDetailsUrl, options);
             }
 
             writer.Write(PackagePathPropertyName);
@@ -333,7 +333,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
             else
             {
-                options.Resolver.GetFormatter<IReadOnlyCollection<PackageDependencyGroup>>().Serialize(ref writer, value.DependencySets, options);
+                options.Resolver.GetFormatter<IReadOnlyCollection<PackageDependencyGroup>>()!.Serialize(ref writer, value.DependencySets, options);
             }
 
             writer.Write(DownloadCountPropertyName);
@@ -353,7 +353,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
             else
             {
-                options.Resolver.GetFormatter<IReadOnlyCollection<PackageVulnerabilityMetadataContextInfo>>().Serialize(ref writer, value.Vulnerabilities, options);
+                options.Resolver.GetFormatter<IReadOnlyCollection<PackageVulnerabilityMetadataContextInfo>>()!.Serialize(ref writer, value.Vulnerabilities, options);
             }
 
             writer.Write(IsRecommendedPropertyName);
@@ -366,7 +366,7 @@ namespace NuGet.VisualStudio.Internal.Contracts
             }
             else
             {
-                options.Resolver.GetFormatter<(string, string)>().Serialize(ref writer, value.RecommenderVersion.Value, options);
+                options.Resolver.GetFormatter<(string, string)>()!.Serialize(ref writer, value.RecommenderVersion.Value, options);
             }
         }
     }
