@@ -129,18 +129,18 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>becc4bd157cd6608b51a5ffe414a5d2de6330272</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.24151.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.24158.2">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>36fdfebe8af73ed1c2ff796750984f1ebf6230b5</Sha>
+      <Sha>b27ce8a9d5b1931cb91cbc20a16d15bd7231c792</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rc.24151.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rc.24158.2">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>36fdfebe8af73ed1c2ff796750984f1ebf6230b5</Sha>
+      <Sha>b27ce8a9d5b1931cb91cbc20a16d15bd7231c792</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.test-templates" Version="1.1.0-rc.24151.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.test-templates" Version="1.1.0-rc.24158.2">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>36fdfebe8af73ed1c2ff796750984f1ebf6230b5</Sha>
+      <Sha>b27ce8a9d5b1931cb91cbc20a16d15bd7231c792</Sha>
       <SourceBuild RepoName="test-templates" ManagedOnly="true" />
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
@@ -243,17 +243,17 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24156.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.24157.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f1ef2a8544824e9f4395f88e6b453d6fc2826d72</Sha>
+      <Sha>2215d18d04a6565e9133c15ece7df7161fdf1e8e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="9.0.0-beta.24156.2">
+    <Dependency Name="Microsoft.DotNet.CMake.Sdk" Version="9.0.0-beta.24157.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f1ef2a8544824e9f4395f88e6b453d6fc2826d72</Sha>
+      <Sha>2215d18d04a6565e9133c15ece7df7161fdf1e8e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="9.0.0-beta.24156.2">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Installers" Version="9.0.0-beta.24157.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f1ef2a8544824e9f4395f88e6b453d6fc2826d72</Sha>
+      <Sha>2215d18d04a6565e9133c15ece7df7161fdf1e8e</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.24157.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
@@ -263,14 +263,14 @@
       <Uri>https://github.com/dotnet/arcade-services</Uri>
       <Sha>049ed7fcb1a7038d20e160b798606c64f743058c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.24156.2">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.24157.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f1ef2a8544824e9f4395f88e6b453d6fc2826d72</Sha>
+      <Sha>2215d18d04a6565e9133c15ece7df7161fdf1e8e</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24156.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.arcade" Version="9.0.0-beta.24157.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>f1ef2a8544824e9f4395f88e6b453d6fc2826d72</Sha>
+      <Sha>2215d18d04a6565e9133c15ece7df7161fdf1e8e</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Logging.Console" Version="9.0.0-alpha.1.23612.13">
