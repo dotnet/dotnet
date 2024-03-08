@@ -2,15 +2,19 @@
 #pragma warning disable 1591
 namespace Test
 {
-    #line hidden
+    #line default
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Components.RouteAttribute("/MyPage")]
     [global::Microsoft.AspNetCore.Components.RouteAttribute("/AnotherRoute/{id}")]
+    #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
+    #nullable disable
     {
         #pragma warning disable 219
         private void __RazorDirectiveTokenHelpers__() {

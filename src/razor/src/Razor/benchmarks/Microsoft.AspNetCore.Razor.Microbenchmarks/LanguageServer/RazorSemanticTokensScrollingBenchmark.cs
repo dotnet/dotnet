@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using static Microsoft.AspNetCore.Razor.Microbenchmarks.LanguageServer.RazorSemanticTokensBenchmark;
@@ -76,10 +77,6 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
     [Benchmark(Description = "Razor Semantic Tokens Range Scrolling")]
     public async Task RazorSemanticTokensRangeScrollingAsync()
     {
-        var textDocumentIdentifier = new TextDocumentIdentifier()
-        {
-            Uri = DocumentUri
-        };
         var cancellationToken = CancellationToken.None;
         var documentVersion = 1;
 
@@ -87,23 +84,16 @@ public class RazorSemanticTokensScrollingBenchmark : RazorLanguageServerBenchmar
 
         var documentLineCount = Range.End.Line;
 
-        var clientConnection = RazorLanguageServer.GetRequiredService<IClientConnection>();
-
         var lineCount = 0;
         while (lineCount != documentLineCount)
         {
             var newLineCount = Math.Min(lineCount + WindowSize, documentLineCount);
-            var range = new Range
-            {
-                Start = new Position(lineCount, 0),
-                End = new Position(newLineCount, 0)
-            };
+            var span = new LinePositionSpan(new LinePosition(lineCount, 0), new LinePosition(newLineCount, 0));
             await RazorSemanticTokenService!.GetSemanticTokensAsync(
-                clientConnection,
-                textDocumentIdentifier,
-                range,
                 DocumentContext,
+                span,
                 colorBackground: false,
+                Guid.Empty,
                 cancellationToken);
 
             lineCount = newLineCount;

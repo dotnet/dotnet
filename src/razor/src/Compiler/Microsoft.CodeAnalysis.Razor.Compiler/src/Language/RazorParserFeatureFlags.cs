@@ -33,14 +33,14 @@ internal sealed class RazorParserFeatureFlags(
         var allowCSharpInMarkupAttributeArea = true;
         var allowNullableForgivenessOperator = false;
 
-        if (version.CompareTo(RazorLanguageVersion.Version_2_1) >= 0)
+        if (version >= RazorLanguageVersion.Version_2_1)
         {
             // Added in 2.1
             allowMinimizedBooleanTagHelperAttributes = true;
             allowHtmlCommentsInTagHelpers = true;
         }
 
-        if (version.CompareTo(RazorLanguageVersion.Version_3_0) >= 0)
+        if (version >= RazorLanguageVersion.Version_3_0)
         {
             // Added in 3.0
             allowComponentFileKind = true;
@@ -55,7 +55,7 @@ internal sealed class RazorParserFeatureFlags(
             allowCSharpInMarkupAttributeArea = false;
         }
 
-        if (version.CompareTo(RazorLanguageVersion.Experimental) >= 0)
+        if (version >= RazorLanguageVersion.Experimental)
         {
             allowConditionalDataDashAttributes = true;
         }

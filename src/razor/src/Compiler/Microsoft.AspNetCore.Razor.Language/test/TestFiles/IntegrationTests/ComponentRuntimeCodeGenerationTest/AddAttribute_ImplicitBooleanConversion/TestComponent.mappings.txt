@@ -2,7 +2,7 @@
 |
     private MyClass<string> c = new();
 |
-Generated Location: (1148:36,7 [42] )
+Generated Location: (1232:40,7 [42] )
 |
     private MyClass<string> c = new();
 |

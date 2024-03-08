@@ -2,7 +2,7 @@
 |
     bool Foo { get; set; }
 |
-Generated Location: (2277:65,7 [30] )
+Generated Location: (2324:67,7 [30] )
 |
     bool Foo { get; set; }
 |

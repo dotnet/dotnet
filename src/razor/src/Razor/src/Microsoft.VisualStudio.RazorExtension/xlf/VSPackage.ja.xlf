@@ -64,12 +64,12 @@
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
         <source>Forces the open brace after an @code or @functions directive to be on the following line</source>
-        <target state="new">Forces the open brace after an @code or @functions directive to be on the following line</target>
+        <target state="translated">@code または @functions ディレクティブの後の始め中かっこを強制的に次の行にする</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
         <source>Code/Functions block open brace on next line</source>
-        <target state="new">Code/Functions block open brace on next line</target>
+        <target state="translated">コード/関数は、次の行で始め中かっこをブロックします</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">

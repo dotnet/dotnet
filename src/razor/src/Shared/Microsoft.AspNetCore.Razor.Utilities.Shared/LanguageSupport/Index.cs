@@ -149,4 +149,13 @@ internal readonly struct Index : IEquatable<Index>
         => throw new ArgumentOutOfRangeException("value", SR.Non_negative_number_required);
 }
 
+#else
+
+using System;
+using System.Runtime.CompilerServices;
+
+#pragma warning disable RS0016 // Add public types and members to the declared API (this is a supporting forwarder for an internal polyfill API)
+[assembly: TypeForwardedTo(typeof(Index))]
+#pragma warning restore RS0016 // Add public types and members to the declared API
+
 #endif

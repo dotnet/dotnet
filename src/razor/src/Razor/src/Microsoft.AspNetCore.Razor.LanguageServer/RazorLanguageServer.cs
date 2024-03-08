@@ -128,13 +128,13 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
         services.AddLifeCycleServices(this, _clientConnection, _lspServerActivationTracker);
 
         services.AddDiagnosticServices();
-        services.AddSemanticTokensServices(featureOptions);
+        services.AddSemanticTokensServices();
         services.AddDocumentManagementServices(featureOptions);
         services.AddCompletionServices(featureOptions);
         services.AddFormattingServices();
         services.AddCodeActionsServices();
         services.AddOptionsServices(_lspOptions);
-        services.AddHoverServices(featureOptions);
+        services.AddHoverServices();
         services.AddTextDocumentServices();
 
         // Auto insert
@@ -183,11 +183,8 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
             services.AddHandler<RazorBreakpointSpanEndpoint>();
             services.AddHandler<RazorProximityExpressionsEndpoint>();
 
-            if (!featureOptions.UseRazorCohostServer)
-            {
-                services.AddHandlerWithCapabilities<DocumentColorEndpoint>();
-                services.AddSingleton<IDocumentColorService, DocumentColorService>();
-            }
+            services.AddHandlerWithCapabilities<DocumentColorEndpoint>();
+            services.AddSingleton<IDocumentColorService, DocumentColorService>();
 
             services.AddHandler<ColorPresentationEndpoint>();
             services.AddHandlerWithCapabilities<FoldingRangeEndpoint>();
@@ -197,13 +194,10 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
             services.AddHandlerWithCapabilities<DocumentSymbolEndpoint>();
             services.AddHandlerWithCapabilities<MapCodeEndpoint>();
 
-            if (!featureOptions.UseRazorCohostServer)
-            {
-                services.AddSingleton<IInlayHintService, InlayHintService>();
+            services.AddSingleton<IInlayHintService, InlayHintService>();
 
-                services.AddHandlerWithCapabilities<InlayHintEndpoint>();
-                services.AddHandler<InlayHintResolveEndpoint>();
-            }
+            services.AddHandlerWithCapabilities<InlayHintEndpoint>();
+            services.AddHandler<InlayHintResolveEndpoint>();
         }
     }
 

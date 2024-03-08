@@ -1,16 +1,16 @@
 ﻿Source Location: (37:0,37 [53] x:\dir\subdir\Test\TestComponent.cshtml)
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (1044:26,37 [53] )
+Generated Location: (1128:30,37 [53] )
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
 
 Source Location: (15:0,15 [2] x:\dir\subdir\Test\TestComponent.cshtml)
 |P2|
-Generated Location: (1532:40,15 [2] )
+Generated Location: (1616:44,15 [2] )
 |P2|
 
 Source Location: (92:0,92 [2] x:\dir\subdir\Test\TestComponent.cshtml)
 |P1|
-Generated Location: (1825:49,92 [2] )
+Generated Location: (1909:53,92 [2] )
 |P1|
 
 Source Location: (115:3,1 [94] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -19,7 +19,7 @@ Source Location: (115:3,1 [94] x:\dir\subdir\Test\TestComponent.cshtml)
 
     [Parameter]public string P2 {get; set;}
 |
-Generated Location: (2231:67,1 [94] )
+Generated Location: (2315:71,1 [94] )
 |
     [Parameter]public string P1 {get; set;}
 

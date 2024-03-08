@@ -2,7 +2,7 @@
 #pragma warning disable 1591
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 {
-    #line hidden
+    #line default
 #nullable restore
 #line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
 using System.Collections.Generic;

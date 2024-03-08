@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System;
 using System.Collections.Immutable;
 using System.IO;
 using System.Threading.Tasks;
@@ -289,10 +288,9 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
         var changedProjectInfo = new RazorProjectInfo(
             "/path/to/obj/project.razor.bin",
             "path/to/project.csproj",
-            RazorConfiguration.Create(
-                RazorLanguageVersion.Experimental,
+            new(RazorLanguageVersion.Experimental,
                 "TestConfiguration",
-                Array.Empty<RazorExtension>()),
+                Extensions: []),
             rootNamespace: "TestRootNamespace2",
             displayName: "project",
             ProjectWorkspaceState.Create(LanguageVersion.CSharp6),
@@ -373,10 +371,9 @@ public class ProjectConfigurationStateSynchronizerTest(ITestOutputHelper testOut
         var changedProjectInfo = new RazorProjectInfo(
             "/path/to/obj/project.razor.bin",
             "path/to/project.csproj",
-            RazorConfiguration.Create(
-                RazorLanguageVersion.Experimental,
+            new(RazorLanguageVersion.Experimental,
                 "TestConfiguration",
-                Array.Empty<RazorExtension>()),
+                Extensions: []),
             rootNamespace: "TestRootNamespace2",
             displayName: "project",
             ProjectWorkspaceState.Create(LanguageVersion.CSharp6),

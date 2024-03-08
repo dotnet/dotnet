@@ -5,7 +5,7 @@
 [assembly:global::Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure.RazorPageAttribute(@"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PageWithNamespace.cshtml", typeof(Test.Namespace.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace), null)]
 namespace Test.Namespace
 {
-    #line hidden
+    #line default
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,6 +13,8 @@ namespace Test.Namespace
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"92c481f9b1b9a31021ed6835c8d889f2ac9590a6abd9eaadbab6c046b2638d62", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PageWithNamespace.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_PageWithNamespace : global::Microsoft.AspNetCore.Mvc.RazorPages.Page
     {

@@ -39,6 +39,13 @@ internal class OnAutoInsertEndpoint(
 
     protected override string CustomMessageTarget => CustomMessageNames.RazorOnAutoInsertEndpointName;
 
+    /// <summary>
+    /// Used to to send request to Html even when it is in a Razor context, for example
+    /// for component attributes that are a Razor context, but we want to treat them as Html for auto-inserting quotes
+    /// after typing equals for attribute values.
+    /// </summary>
+    protected override IDocumentPositionInfoStrategy DocumentPositionInfoStrategy => PreferHtmlInAttributeValuesDocumentPositionInfoStrategy.Instance;
+
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
         var triggerCharacters = _onAutoInsertProviders.Select(provider => provider.TriggerCharacter);

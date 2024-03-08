@@ -308,6 +308,8 @@ public abstract class IntegrationTestBase
         {
             b.Phases.Insert(0, new ConfigureCodeRenderingPhase(LineEnding));
 
+            b.RegisterExtensions();
+
             configure?.Invoke(b);
 
             // Allow the test to do custom things with tag helpers, but do the default thing most of the time.

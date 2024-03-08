@@ -4,7 +4,6 @@
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -16,14 +15,10 @@ public class RazorConfigurationSerializationTest(ITestOutputHelper testOutput) :
     public void RazorConfigurationJsonConverter_Serialization_CanRoundTrip()
     {
         // Arrange
-        var configuration = new ProjectSystemRazorConfiguration(
+        var configuration = new RazorConfiguration(
             RazorLanguageVersion.Version_1_1,
             "Test",
-            new[]
-            {
-                new ProjectSystemRazorExtension("Test-Extension1"),
-                new ProjectSystemRazorExtension("Test-Extension2"),
-            });
+            [new("Test-Extension1"), new("Test-Extension2")]);
 
         // Act
         var json = JsonDataConvert.SerializeObject(configuration, ObjectWriters.WriteProperties);

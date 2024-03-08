@@ -1,10 +1,10 @@
 ﻿Source Location: (8:0,8 [19] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/_ViewImports.cshtml)
 |IHtmlHelper<TModel>|
-Generated Location: (1151:24,0 [19] )
+Generated Location: (1189:26,0 [19] )
 |IHtmlHelper<TModel>|
 
 Source Location: (28:0,28 [6] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/_ViewImports.cshtml)
 |Helper|
-Generated Location: (1444:34,22 [6] )
+Generated Location: (1482:36,22 [6] )
 |Helper|
 

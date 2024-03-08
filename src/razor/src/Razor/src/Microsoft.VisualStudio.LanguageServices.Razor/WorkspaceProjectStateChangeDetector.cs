@@ -113,9 +113,9 @@ internal class WorkspaceProjectStateChangeDetector(
                 case WorkspaceChangeKind.ProjectAdded:
                     await _dispatcher
                         .RunAsync(
-                            static (arg, _) =>
+                            static state =>
                             {
-                                var (@this, eventArgs) = arg;
+                                var (@this, eventArgs) = state;
                                 var projectId = eventArgs.ProjectId.AssumeNotNull();
                                 var newSolution = eventArgs.NewSolution;
 
@@ -131,9 +131,9 @@ internal class WorkspaceProjectStateChangeDetector(
                 case WorkspaceChangeKind.ProjectReloaded:
                     await _dispatcher
                         .RunAsync(
-                            static (arg, _) =>
+                            static state =>
                             {
-                                var (@this, eventArgs) = arg;
+                                var (@this, eventArgs) = state;
                                 var projectId = eventArgs.ProjectId.AssumeNotNull();
                                 var newSolution = eventArgs.NewSolution;
 
@@ -148,9 +148,9 @@ internal class WorkspaceProjectStateChangeDetector(
                 case WorkspaceChangeKind.ProjectRemoved:
                     await _dispatcher
                         .RunAsync(
-                            static (arg, _) =>
+                            static state =>
                             {
-                                var (@this, eventArgs) = arg;
+                                var (@this, eventArgs) = state;
                                 var projectId = eventArgs.ProjectId.AssumeNotNull();
                                 var oldSolution = eventArgs.OldSolution;
 
@@ -168,9 +168,9 @@ internal class WorkspaceProjectStateChangeDetector(
                 case WorkspaceChangeKind.DocumentAdded:
                     await _dispatcher
                         .RunAsync(
-                            static (arg, _) =>
+                            static state =>
                             {
-                                var (@this, eventArgs) = arg;
+                                var (@this, eventArgs) = state;
                                 var projectId = eventArgs.ProjectId.AssumeNotNull();
                                 var documentId = eventArgs.DocumentId.AssumeNotNull();
                                 var newSolution = eventArgs.NewSolution;
@@ -207,9 +207,9 @@ internal class WorkspaceProjectStateChangeDetector(
                 case WorkspaceChangeKind.DocumentRemoved:
                     await _dispatcher
                         .RunAsync(
-                            static (arg, _) =>
+                            static state =>
                             {
-                                var (@this, eventArgs) = arg;
+                                var (@this, eventArgs) = state;
                                 var projectId = eventArgs.ProjectId.AssumeNotNull();
                                 var documentId = eventArgs.DocumentId.AssumeNotNull();
                                 var oldSolution = eventArgs.OldSolution;
@@ -246,9 +246,9 @@ internal class WorkspaceProjectStateChangeDetector(
                 case WorkspaceChangeKind.DocumentReloaded:
                     await _dispatcher
                         .RunAsync(
-                            static (arg, _) =>
+                            static state =>
                             {
-                                var (@this, eventArgs) = arg;
+                                var (@this, eventArgs) = state;
                                 var projectId = eventArgs.ProjectId.AssumeNotNull();
                                 var documentId = eventArgs.DocumentId.AssumeNotNull();
                                 var oldSolution = eventArgs.OldSolution;
@@ -292,9 +292,9 @@ internal class WorkspaceProjectStateChangeDetector(
                 case WorkspaceChangeKind.SolutionRemoved:
                     await _dispatcher
                         .RunAsync(
-                            static (arg, _) =>
+                            static state =>
                             {
-                                var (@this, eventArgs) = arg;
+                                var (@this, eventArgs) = state;
                                 var oldSolution = eventArgs.OldSolution;
                                 var newSolution = eventArgs.NewSolution;
 
@@ -536,12 +536,12 @@ internal class WorkspaceProjectStateChangeDetector(
         public override ValueTask ProcessAsync(CancellationToken cancellationToken)
         {
             var task = _dispatcher.RunAsync(
-                static (arg, ct) =>
+                static state =>
                 {
-                    var @this = arg;
-                    @this._workspaceStateGenerator.Update(@this._workspaceProject, @this._projectSnapshot, ct);
+                    var (@this, cancellationToken) = state;
+                    @this._workspaceStateGenerator.Update(@this._workspaceProject, @this._projectSnapshot, cancellationToken);
                 },
-                arg: this,
+                state: (this, cancellationToken),
                 cancellationToken);
 
             return new ValueTask(task);

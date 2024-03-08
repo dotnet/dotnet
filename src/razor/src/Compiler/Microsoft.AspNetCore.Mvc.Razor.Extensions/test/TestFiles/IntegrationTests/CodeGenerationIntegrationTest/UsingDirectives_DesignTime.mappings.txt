@@ -1,20 +1,20 @@
 ﻿Source Location: (1:0,1 [27] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml)
 |using System.ComponentModel|
-Generated Location: (528:14,0 [27] )
+Generated Location: (529:14,0 [27] )
 |using System.ComponentModel|
 
 Source Location: (31:1,1 [24] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml)
 |using System.Collections|
-Generated Location: (718:21,0 [24] )
+Generated Location: (690:19,0 [24] )
 |using System.Collections|
 
 Source Location: (58:2,1 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml)
 |using System|
-Generated Location: (905:28,0 [12] )
+Generated Location: (848:24,0 [12] )
 |using System|
 
 Source Location: (73:3,1 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml)
 |using System|
-Generated Location: (1080:35,0 [12] )
+Generated Location: (994:29,0 [12] )
 |using System|
 
