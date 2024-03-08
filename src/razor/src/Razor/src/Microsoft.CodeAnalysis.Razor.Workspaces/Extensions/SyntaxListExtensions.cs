@@ -4,9 +4,12 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.Language;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+namespace Microsoft.CodeAnalysis.Razor.Workspaces;
+
+// Inside namespace, to avoid ambiguity with Microsoft.CodeAnalysis.*
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal static class SyntaxListExtensions
 {
@@ -51,9 +54,9 @@ internal static class SyntaxListExtensions
         // If there is no whitespace between the directive and the brace then there will only be
         // three children and the brace should be the first child
         brace = null;
-        if (children.FirstOrDefault(c => c.Kind == Language.SyntaxKind.RazorMetaCode) is RazorMetaCodeSyntax metaCode)
+        if (children.FirstOrDefault(c => c.Kind == SyntaxKind.RazorMetaCode) is RazorMetaCodeSyntax metaCode)
         {
-            var token = metaCode.MetaCode.SingleOrDefault(m => m.Kind == Language.SyntaxKind.LeftBrace);
+            var token = metaCode.MetaCode.SingleOrDefault(m => m.Kind == SyntaxKind.LeftBrace);
             if (token != null)
             {
                 brace = metaCode;
@@ -67,9 +70,9 @@ internal static class SyntaxListExtensions
         // If there is no whitespace between the directive and the brace then there will only be
         // three children and the brace should be the last child
         brace = null;
-        if (children.LastOrDefault(c => c.Kind == Language.SyntaxKind.RazorMetaCode) is RazorMetaCodeSyntax metaCode)
+        if (children.LastOrDefault(c => c.Kind == SyntaxKind.RazorMetaCode) is RazorMetaCodeSyntax metaCode)
         {
-            var token = metaCode.MetaCode.SingleOrDefault(m => m.Kind == Language.SyntaxKind.RightBrace);
+            var token = metaCode.MetaCode.SingleOrDefault(m => m.Kind == SyntaxKind.RightBrace);
             if (token != null)
             {
                 brace = metaCode;
@@ -83,7 +86,7 @@ internal static class SyntaxListExtensions
         brace = null;
         if (children.TryGetOpenBraceNode(out var metacode))
         {
-            var token = metacode.MetaCode.SingleOrDefault(m => m.Kind == Language.SyntaxKind.LeftBrace);
+            var token = metacode.MetaCode.SingleOrDefault(m => m.Kind == SyntaxKind.LeftBrace);
             if (token != null)
             {
                 brace = token;
@@ -98,7 +101,7 @@ internal static class SyntaxListExtensions
         brace = null;
         if (children.TryGetCloseBraceNode(out var metacode))
         {
-            var token = metacode.MetaCode.SingleOrDefault(m => m.Kind == Language.SyntaxKind.RightBrace);
+            var token = metacode.MetaCode.SingleOrDefault(m => m.Kind == SyntaxKind.RightBrace);
             if (token != null)
             {
                 brace = token;

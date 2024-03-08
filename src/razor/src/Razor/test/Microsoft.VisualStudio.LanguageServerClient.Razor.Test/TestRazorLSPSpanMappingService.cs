@@ -7,12 +7,12 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Test;
 
@@ -40,7 +40,7 @@ internal class TestRazorLSPSpanMappingService : IRazorSpanMappingService
 
     public async Task<ImmutableArray<RazorMappedSpanResult>> MapSpansAsync(Document document, IEnumerable<TextSpan> spans, CancellationToken cancellationToken)
     {
-        var projectedRanges = spans.Select(span => span.AsRange(_csharpSourceText)).ToArray();
+        var projectedRanges = spans.Select(span => span.ToRange(_csharpSourceText)).ToArray();
         var mappedResult = await _mappingProvider.MapToDocumentRangesAsync(
             RazorLanguageKind.CSharp, _razorUri, projectedRanges, _cancellationToken);
 

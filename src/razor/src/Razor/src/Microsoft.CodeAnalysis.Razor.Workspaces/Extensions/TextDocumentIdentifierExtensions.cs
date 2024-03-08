@@ -3,7 +3,7 @@
 
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
 internal static class TextDocumentIdentifierExtensions
 {

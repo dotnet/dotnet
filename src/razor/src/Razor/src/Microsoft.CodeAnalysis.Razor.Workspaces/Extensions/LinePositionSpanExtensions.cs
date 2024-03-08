@@ -3,7 +3,7 @@
 
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
 internal static class LinePositionSpanExtensions
 {

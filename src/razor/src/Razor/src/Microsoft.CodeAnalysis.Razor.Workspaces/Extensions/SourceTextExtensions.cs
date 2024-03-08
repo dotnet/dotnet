@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
+namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
 internal static class SourceTextExtensions
 {
