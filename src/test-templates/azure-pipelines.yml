@@ -14,45 +14,15 @@ variables:
 - name: CodeQL.Enabled
   value: false
 - name: _RunAsInternal
-  value: ${{ and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}
+  value: False
 - name: _RunAsPublic
-  value: ${{ eq(variables._RunAsInternal, False) }}
+  value: True
 - name: _SignType
   value: test
 - name: _SignArgs
   value: ''
 - name: _Sign
   value: False
-- name: _InternalBuildArgs
-  value: ' '
-
-# Produce real signed binaries for Internal builds
-- ${{ if eq(variables._RunAsInternal, True) }}:
-  # Group gives access to $microsoft-symbol-server-pat and $symweb-symbol-server-pat
-  - group: DotNet-Symbol-Server-Pats
-  # Publish-Build-Assets provides: MaestroAccessToken, BotAccount-dotnet-maestro-bot-PAT
-  - group: Publish-Build-Assets
-  # Group gives access to $dn-bot-devdiv-drop-rw-code-rw and dn-bot-dnceng-build-rw-code-rw
-  - group: DotNet-VSTS-Infra-Access
-  - group: DotNet-DevDiv-Insertion-Workflow-Variables
-  - name: _SignType
-    value: real
-  - name: _SignArgs
-    value: /p:DotNetSignType=$(_SignType) /p:TeamName=$(_TeamName) /p:Sign=$(_Sign)
-  - name: _Sign
-    value: True
-  - name: _VisualStudioDropName
-    value: Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
-  - name: _InternalBuildArgs
-    value: /p:DotNetSignType=$(_SignType)
-      /p:TeamName=$(_TeamName)
-      /p:VisualStudioDropName=$(_VisualStudioDropName)
-      /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
-      /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
-      /p:DotNetPublishUsingPipelines=true
-      /p:DotNetArtifactsCategory=.NETCore
-      /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
-      /p:GenerateSbom=true
 
 stages:
 - stage: build
@@ -73,33 +43,21 @@ stages:
       jobs:
       - job: Windows
         pool:
-          # For public or PR jobs, use the hosted pool.  For internal jobs use the internal pool.
-          # Will eventually change this to two BYOC pools.
-          ${{ if eq(variables._RunAsPublic, True) }}:
-            name: NetCore-Public
-            demands: ImageOverride -equals windows.vs2022preview.amd64.open
-          ${{ if eq(variables._RunAsInternal, True) }}:
-            name: NetCore1ESPool-Internal
-            demands: ImageOverride -equals windows.vs2022preview.amd64
+          name: NetCore-Public
+          demands: ImageOverride -equals windows.vs2022preview.amd64.open
         strategy:
           matrix:
             Release:
               _BuildConfig: Release
-            ${{ if eq(variables._RunAsPublic, True) }}:
-              Debug:
-                _BuildConfig: Debug
+            Debug:
+              _BuildConfig: Debug
         steps:
         - checkout: self
           clean: true
 
-        # Restore internal tools required for SBOM generation
-        - ${{ if eq(variables._RunAsInternal, True) }}:
-          - template: /eng/restore-internal-tools.yml
-
         - script: eng\common\cibuild.cmd
             -configuration $(_BuildConfig)
             -prepareMachine
-            $(_InternalBuildArgs)
           displayName: Build
 
         - task: PublishBuildArtifacts@1
@@ -113,21 +71,3 @@ stages:
           inputs:
             command: test
             projects: 'test\Microsoft.TestTemplates.Acceptance.Tests.sln'
-
-        - ${{ if eq(variables._RunAsInternal, True) }}:
-          - script: dir /S artifacts\VSSetup\$(_BuildConfig)\Insertion
-            displayName: 'List Insertion files to upload'
-
-          - task: ms-vseng.MicroBuildTasks.4305a8de-ba66-4d8b-b2d1-0dc4ecbbf5e8.MicroBuildUploadVstsDropFolder@1
-            displayName: Upload Azure DevOps Drop
-            inputs:
-              DropName: $(_VisualStudioDropName)
-              DropFolder: 'artifacts\VSSetup\$(_BuildConfig)\Insertion'
-              AccessToken: $(dn-bot-devdiv-drop-rw-code-rw)
-            condition: succeeded()
-
-- ${{ if eq(variables._RunAsInternal, True) }}:
-  - template: \eng\common\templates\post-build\post-build.yml
-    parameters:
-      enableSourceLinkValidation: false
-      publishingInfraVersion: 3
