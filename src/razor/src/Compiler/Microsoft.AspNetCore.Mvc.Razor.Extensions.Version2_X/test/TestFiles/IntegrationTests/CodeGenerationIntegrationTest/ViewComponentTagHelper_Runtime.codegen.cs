@@ -5,7 +5,7 @@
 [assembly:global::Microsoft.AspNetCore.Mvc.Razor.Compilation.RazorViewAttribute(@"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelper.cshtml", typeof(AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ViewComponentTagHelper))]
 namespace AspNetCore
 {
-    #line hidden
+    #line default
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,6 +13,8 @@ namespace AspNetCore
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"9ef17a17b6e1fedefe92b2dd4e87273d3ae73d9b1f8b2ad44ce57c5611f991d3", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelper.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ViewComponentTagHelper : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic>
     {

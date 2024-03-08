@@ -5,7 +5,7 @@
 [assembly:global::Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure.RazorPageAttribute(@"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml", typeof(AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_RazorPagesWithRouteTemplate), @"/About")]
 namespace AspNetCore
 {
-    #line hidden
+    #line default
     using System;
     using System.Collections.Generic;
     using System.Linq;

@@ -2,7 +2,7 @@
 #pragma warning disable 1591
 namespace AspNetCore
 {
-    #line hidden
+    #line default
     using TModel = global::System.Object;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,18 +13,12 @@ namespace AspNetCore
 #line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
 using System.ComponentModel;
 
-#line default
-#line hidden
 #line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
 using System.Collections;
 
-#line default
-#line hidden
 #line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
 using System;
 
-#line default
-#line hidden
 #line 4 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
 using System;
 

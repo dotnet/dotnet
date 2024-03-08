@@ -2,11 +2,11 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 
@@ -20,7 +20,7 @@ internal static class RazorCodeDocumentExtensions
             _ => throw new System.InvalidOperationException(),
         };
 
-    public static bool TryGetMinimalCSharpRange(this RazorCodeDocument codeDocument, Range razorRange, [NotNullWhen(true)] out Range? csharpRange)
+    public static bool TryGetMinimalCSharpRange(this RazorCodeDocument codeDocument, LinePositionSpan razorRange, out LinePositionSpan csharpRange)
     {
         SourceSpan? minGeneratedSpan = null;
         SourceSpan? maxGeneratedSpan = null;
@@ -53,16 +53,16 @@ internal static class RazorCodeDocumentExtensions
         if (minGeneratedSpan is not null && maxGeneratedSpan is not null)
         {
             var csharpSourceText = codeDocument.GetCSharpSourceText();
-            var startRange = minGeneratedSpan.Value.ToRange(csharpSourceText);
-            var endRange = maxGeneratedSpan.Value.ToRange(csharpSourceText);
+            var startRange = minGeneratedSpan.Value.ToLinePositionSpan(csharpSourceText);
+            var endRange = maxGeneratedSpan.Value.ToLinePositionSpan(csharpSourceText);
 
-            csharpRange = new Range { Start = startRange.Start, End = endRange.End };
+            csharpRange = new LinePositionSpan(startRange.Start, endRange.End);
             Debug.Assert(csharpRange.Start.CompareTo(csharpRange.End) <= 0, "Range.Start should not be larger than Range.End");
 
             return true;
         }
 
-        csharpRange = null;
+        csharpRange = default;
         return false;
     }
 }

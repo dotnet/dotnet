@@ -191,7 +191,7 @@ public class ProjectStateGeneratedOutputTest : WorkspaceTestBase
     public async Task ProjectWorkspaceStateChange_WithProjectWorkspaceState_CSharpLanguageVersionChange_DoesNotCacheOutput()
     {
         // Arrange
-        var csharp8ValidConfiguration = RazorConfiguration.Create(RazorLanguageVersion.Version_3_0, _hostProject.Configuration.ConfigurationName, _hostProject.Configuration.Extensions);
+        var csharp8ValidConfiguration = new RazorConfiguration(RazorLanguageVersion.Version_3_0, _hostProject.Configuration.ConfigurationName, _hostProject.Configuration.Extensions);
         var hostProject = new HostProject(TestProjectData.SomeProject.FilePath, TestProjectData.SomeProject.IntermediateOutputPath, csharp8ValidConfiguration, TestProjectData.SomeProject.RootNamespace);
         var originalWorkspaceState = ProjectWorkspaceState.Create(_someTagHelpers, LanguageVersion.CSharp7);
         var original =

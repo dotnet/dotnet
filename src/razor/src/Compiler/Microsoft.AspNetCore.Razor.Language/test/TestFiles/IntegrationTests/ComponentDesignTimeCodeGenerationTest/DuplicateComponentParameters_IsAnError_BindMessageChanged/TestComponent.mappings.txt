@@ -1,28 +1,28 @@
 ﻿Source Location: (31:0,31 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 |(s) => {}|
-Generated Location: (1210:25,31 [9] )
+Generated Location: (1294:29,31 [9] )
 |(s) => {}|
 
 Source Location: (59:0,59 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |message|
-Generated Location: (1542:34,59 [7] )
+Generated Location: (1626:38,59 [7] )
 |message|
 
 Source Location: (13:0,13 [14] x:\dir\subdir\Test\TestComponent.cshtml)
 |MessageChanged|
-Generated Location: (2587:50,13 [14] )
+Generated Location: (2671:54,13 [14] )
 |MessageChanged|
 
 Source Location: (49:0,49 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |Message|
-Generated Location: (2847:59,49 [7] )
+Generated Location: (2931:63,49 [7] )
 |Message|
 
 Source Location: (84:1,12 [30] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     string message = "hi";
 |
-Generated Location: (3267:77,12 [30] )
+Generated Location: (3351:81,12 [30] )
 |
     string message = "hi";
 |

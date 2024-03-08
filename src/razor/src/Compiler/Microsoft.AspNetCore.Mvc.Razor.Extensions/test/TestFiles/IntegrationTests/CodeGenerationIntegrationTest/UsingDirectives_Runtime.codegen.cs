@@ -4,7 +4,7 @@
 [assembly: global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemAttribute(typeof(AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_UsingDirectives), @"mvc.1.0.view", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml")]
 namespace AspNetCore
 {
-    #line hidden
+    #line default
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Threading.Tasks;
@@ -15,22 +15,16 @@ namespace AspNetCore
 #line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
 using System.ComponentModel;
 
-#line default
-#line hidden
 #nullable disable
 #nullable restore
 #line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
 using System.Collections;
 
-#line default
-#line hidden
 #nullable disable
 #nullable restore
 #line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
 using System;
 
-#line default
-#line hidden
 #nullable disable
 #nullable restore
 #line 4 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"

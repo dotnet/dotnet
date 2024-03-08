@@ -3,7 +3,7 @@
     public int ParentValue { get; set; } = 42;
     public EventCallback UpdateValue { get; set; }
 |
-Generated Location: (2084:39,7 [102] )
+Generated Location: (2168:43,7 [102] )
 |
     public int ParentValue { get; set; } = 42;
     public EventCallback UpdateValue { get; set; }

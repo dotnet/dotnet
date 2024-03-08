@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
@@ -41,15 +40,15 @@ public class DefaultProjectSnapshotProjectEngineFactoryTest : ToolingTestBase
 
         var hostProject_For_2_1 = new HostProject(
             projectFilePath, intermediateOutputPath,
-            new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "MVC-2.1", Array.Empty<RazorExtension>()), "Test");
+            new(RazorLanguageVersion.Version_2_1, "MVC-2.1", Extensions: []), "Test");
 
         var hostProject_For_3_0 = new HostProject(
             projectFilePath, intermediateOutputPath,
-            new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_3_0, "MVC-3.0", Array.Empty<RazorExtension>()), "Test");
+            new(RazorLanguageVersion.Version_3_0, "MVC-3.0", Extensions: []), "Test");
 
         var hostProject_For_UnknownConfiguration = new HostProject(
             projectFilePath, intermediateOutputPath,
-            new ProjectSystemRazorConfiguration(RazorLanguageVersion.Version_2_1, "Random-0.1", Array.Empty<RazorExtension>()), rootNamespace: null);
+            new(RazorLanguageVersion.Version_2_1, "Random-0.1", Extensions: []), rootNamespace: null);
 
         var projectEngineFactoryProvider = Mock.Of<IProjectEngineFactoryProvider>(MockBehavior.Strict);
 

@@ -65,6 +65,38 @@ public class RuntimeNodeWriterTest : RazorProjectEngineTestBase
 #line 1 ""test.cshtml""
 using System;
 
+#nullable disable
+",
+            csharp,
+            ignoreLineEndingDifferences: true);
+    }
+
+    [Fact]
+    public void WriteUsingDirective_WithSourceAndLineDirectives_WritesContentWithLinePragmaAndMapping()
+    {
+        // Arrange
+        var codeWriter = new CodeWriter();
+        var writer = new RuntimeNodeWriter();
+        using var context = TestCodeRenderingContext.CreateRuntime();
+
+        var node = new UsingDirectiveIntermediateNode()
+        {
+            Content = "System",
+            Source = new SourceSpan("test.cshtml", 0, 0, 0, 3),
+            AppendLineDefaultAndHidden = true,
+        };
+
+        // Act
+        writer.WriteUsingDirective(context, node);
+
+        // Assert
+        var csharp = context.CodeWriter.GenerateCode();
+        Assert.Equal(
+@"
+#nullable restore
+#line 1 ""test.cshtml""
+using System;
+
 #line default
 #line hidden
 #nullable disable

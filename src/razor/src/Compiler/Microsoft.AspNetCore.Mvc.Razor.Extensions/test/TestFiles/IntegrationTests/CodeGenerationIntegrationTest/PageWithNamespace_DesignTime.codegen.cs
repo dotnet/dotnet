@@ -2,7 +2,7 @@
 #pragma warning disable 1591
 namespace Test.Namespace
 {
-    #line hidden
+    #line default
     using TModel = global::System.Object;
     using global::System;
     using global::System.Collections.Generic;
@@ -11,6 +11,8 @@ namespace Test.Namespace
     using global::Microsoft.AspNetCore.Mvc;
     using global::Microsoft.AspNetCore.Mvc.Rendering;
     using global::Microsoft.AspNetCore.Mvc.ViewFeatures;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/PageWithNamespace.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]
     #nullable restore

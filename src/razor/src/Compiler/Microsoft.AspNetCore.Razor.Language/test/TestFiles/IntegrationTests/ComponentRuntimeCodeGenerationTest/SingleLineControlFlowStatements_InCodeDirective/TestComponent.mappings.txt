@@ -6,7 +6,7 @@
         if (__builder == null) output = "Builder is null!";
         else output = "Builder is not null!";
 |
-Generated Location: (866:26,7 [213] )
+Generated Location: (913:28,7 [213] )
 |
     void RenderChildComponent(RenderTreeBuilder __builder)
     {
@@ -18,7 +18,7 @@ Generated Location: (866:26,7 [213] )
 Source Location: (305:9,0 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |    }
 |
-Generated Location: (1490:48,0 [7] )
+Generated Location: (1537:50,0 [7] )
 |    }
 |
 

@@ -164,6 +164,6 @@ internal class CohostProjectSnapshot : IProjectSnapshot
             razorLanguageVersion = RazorLanguageVersion.Latest;
         }
 
-        return RazorConfiguration.Create(razorLanguageVersion, configurationName, Enumerable.Empty<RazorExtension>(), useConsolidatedMvcViews: true);
+        return new(razorLanguageVersion, configurationName, Extensions: [], UseConsolidatedMvcViews: true);
     }
 }

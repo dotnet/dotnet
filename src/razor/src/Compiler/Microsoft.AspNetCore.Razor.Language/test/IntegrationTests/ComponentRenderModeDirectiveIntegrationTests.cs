@@ -122,7 +122,7 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
     {
         var compilationResult = CompileToCSharp("""
             @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.Server
-            """, configuration: Configuration.WithVersion(RazorLanguageVersion.Version_7_0));
+            """, configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 });
 
         Assert.Empty(compilationResult.Diagnostics);
 
@@ -144,7 +144,7 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
             {
                 string rendermode = "Something";
             }
-            """, configuration: Configuration.WithVersion(RazorLanguageVersion.Version_7_0));
+            """, configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 });
 
         Assert.Empty(compilationResult.Diagnostics);
 
@@ -162,7 +162,7 @@ public class ComponentRenderModeDirectiveIntegrationTests : RazorIntegrationTest
             {
                 string rendermode = "Something";
             }
-            """, configuration: Configuration.WithVersion(RazorLanguageVersion.Version_8_0));
+            """, configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Version_8_0 });
 
         Assert.Empty(compilationResult.Diagnostics);
 

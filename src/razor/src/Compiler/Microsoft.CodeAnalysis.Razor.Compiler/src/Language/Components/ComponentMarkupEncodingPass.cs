@@ -61,7 +61,7 @@ internal class ComponentMarkupEncodingPass : ComponentIntermediateNodePassBase, 
 
         public Rewriter(RazorLanguageVersion version)
         {
-            _avoidEncodingScripts = version.CompareTo(RazorLanguageVersion.Version_8_0) >= 0;
+            _avoidEncodingScripts = version >= RazorLanguageVersion.Version_8_0;
         }
 
         public override void VisitMarkupElement(MarkupElementIntermediateNode node)

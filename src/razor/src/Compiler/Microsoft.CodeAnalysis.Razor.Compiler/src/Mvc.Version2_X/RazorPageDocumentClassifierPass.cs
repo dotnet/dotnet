@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -17,7 +16,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
     public static readonly string RouteTemplateKey = "RouteTemplate";
 
     private static readonly RazorProjectEngine LeadingDirectiveParsingEngine = RazorProjectEngine.Create(
-        RazorConfiguration.Create(RazorLanguageVersion.Version_2_1, "leading-directive-parser", Array.Empty<RazorExtension>()),
+        new(RazorLanguageVersion.Version_2_1, "leading-directive-parser", Extensions: []),
         RazorProjectFileSystem.Create("/"),
         builder =>
         {

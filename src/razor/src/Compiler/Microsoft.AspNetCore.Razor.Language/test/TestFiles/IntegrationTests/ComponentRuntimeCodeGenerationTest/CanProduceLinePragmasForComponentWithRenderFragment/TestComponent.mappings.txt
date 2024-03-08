@@ -2,7 +2,7 @@
 |if (!Collapsed)
   {
 |
-Generated Location: (1175:31,3 [22] )
+Generated Location: (1259:35,3 [22] )
 |if (!Collapsed)
   {
 |
@@ -10,7 +10,7 @@ Generated Location: (1175:31,3 [22] )
 Source Location: (180:7,0 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |  }
 |
-Generated Location: (1650:49,0 [5] )
+Generated Location: (1734:53,0 [5] )
 |  }
 |
 
@@ -18,7 +18,7 @@ Source Location: (201:10,1 [83] x:\dir\subdir\Test\TestComponent.cshtml)
 |
   [Parameter]
   public RenderFragment ChildContent { get; set; } = (context) => |
-Generated Location: (1865:59,1 [83] )
+Generated Location: (1949:63,1 [83] )
 |
   [Parameter]
   public RenderFragment ChildContent { get; set; } = (context) => |
@@ -32,7 +32,7 @@ Source Location: (301:13,0 [177] x:\dir\subdir\Test\TestComponent.cshtml)
     Collapsed = !Collapsed;
   }
 |
-Generated Location: (2320:77,0 [177] )
+Generated Location: (2404:81,0 [177] )
 |  [Parameter]
   public bool Collapsed { get; set; }
   string ActionText { get => Collapsed ? "Expand" : "Collapse"; }

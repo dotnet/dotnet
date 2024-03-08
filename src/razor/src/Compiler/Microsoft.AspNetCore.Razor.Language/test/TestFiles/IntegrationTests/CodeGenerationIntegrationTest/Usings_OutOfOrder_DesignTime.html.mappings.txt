@@ -1,0 +1,126 @@
+﻿Source Location: (16:0,16 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+|
+
+|
+Generated Location: (16:0,16 [4] )
+|
+
+|
+
+Source Location: (30:2,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+| |
+Generated Location: (30:2,10 [1] )
+| |
+
+Source Location: (55:4,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+|
+
+|
+Generated Location: (55:4,1 [4] )
+|
+
+|
+
+Source Location: (92:6,33 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+|
+
+|
+Generated Location: (92:6,33 [4] )
+|
+
+|
+
+Source Location: (106:8,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+| |
+Generated Location: (106:8,10 [1] )
+| |
+
+Source Location: (131:10,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+|
+
+|
+Generated Location: (131:10,1 [4] )
+|
+
+|
+
+Source Location: (148:12,13 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+|
+
+|
+Generated Location: (148:12,13 [4] )
+|
+
+|
+
+Source Location: (172:14,20 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+|
+|
+Generated Location: (172:14,20 [2] )
+|
+|
+
+Source Location: (202:15,28 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+|
+
+|
+Generated Location: (202:15,28 [4] )
+|
+
+|
+
+Source Location: (216:17,10 [1] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+| |
+Generated Location: (216:17,10 [1] )
+| |
+
+Source Location: (241:19,1 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+|
+
+|
+Generated Location: (241:19,1 [4] )
+|
+
+|
+
+Source Location: (287:21,42 [4] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+|
+
+|
+Generated Location: (287:21,42 [4] )
+|
+
+|
+
+Source Location: (452:26,1 [32] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+|
+
+<p>Path's full type name is |
+Generated Location: (452:26,1 [32] )
+|
+
+<p>Path's full type name is |
+
+Source Location: (506:28,50 [40] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+|</p>
+<p>Foo's actual full type name is |
+Generated Location: (506:28,50 [40] )
+|</p>
+<p>Foo's actual full type name is |
+
+Source Location: (567:29,55 [8] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+|</p>
+
+|
+Generated Location: (567:29,55 [8] )
+|</p>
+
+|
+
+Source Location: (593:31,18 [2] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml)
+|
+|
+Generated Location: (593:31,18 [2] )
+|
+|
+
