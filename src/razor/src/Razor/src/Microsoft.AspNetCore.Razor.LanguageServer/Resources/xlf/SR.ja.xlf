@@ -72,11 +72,6 @@
         <target state="translated">イベント ハンドラー '{0}' の生成</target>
         <note />
       </trans-unit>
-      <trans-unit id="Invalid_Offset">
-        <source>Invalid offset.</source>
-        <target state="translated">無効なオフセットです。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">Razor 言語サービスが正しく構成されていません。言語サービス '{0}' がありません。</target>
@@ -85,16 +80,6 @@
       <trans-unit id="Not_Available_In">
         <source>Not available in</source>
         <target state="translated">次では使用できません:</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PositionCharacter_Outside_Range">
-        <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">'{2}' の {1} 範囲外の文字 '{0}' がクエリされました。ドキュメントが最新ではない可能性があります。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PositionLine_Outside_Range">
-        <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">'{2}' の {1} 範囲外の行 '{0}' がクエリされました。ドキュメントが最新ではない可能性があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="ReTrigger_Completions_Title">

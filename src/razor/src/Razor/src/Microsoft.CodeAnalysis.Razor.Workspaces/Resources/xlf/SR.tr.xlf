@@ -19,6 +19,21 @@
 öğeler arasında gezinmek için [Tab], tamamlamak için [Enter] seçeneğini belirleyin</target>
         <note />
       </trans-unit>
+      <trans-unit id="Invalid_Offset">
+        <source>Invalid offset.</source>
+        <target state="new">Invalid offset.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PositionCharacter_Outside_Range">
+        <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
+        <target state="new">Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PositionLine_Outside_Range">
+        <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
+        <target state="new">Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

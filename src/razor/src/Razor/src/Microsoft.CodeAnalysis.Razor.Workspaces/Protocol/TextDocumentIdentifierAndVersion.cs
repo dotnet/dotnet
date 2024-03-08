@@ -3,10 +3,10 @@
 
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+namespace Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 
 /// <summary>
-/// A seralizable pairing of <see cref="TextDocumentIdentifier"/> and a version. This
+/// A serializable pairing of <see cref="TextDocumentIdentifier"/> and a version. This
 /// should be used over <see cref="VersionedTextDocumentIdentifier"/> because when serializing
 /// and deserializing that class, if the <see cref="TextDocumentIdentifier"/> is a <see cref="VSTextDocumentIdentifier"/>
 /// it will lose the project context information.
