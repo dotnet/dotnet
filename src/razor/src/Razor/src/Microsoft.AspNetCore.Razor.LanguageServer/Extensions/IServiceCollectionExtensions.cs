@@ -114,29 +114,21 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton(sp => new Lazy<RazorTranslateDiagnosticsService>(sp.GetRequiredService<RazorTranslateDiagnosticsService>));
     }
 
-    public static void AddHoverServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
+    public static void AddHoverServices(this IServiceCollection services)
     {
-        // Hover services aren't needed in a cohosted world
-        if (featureOptions.UseRazorCohostServer)
-        {
-            return;
-        }
-
         services.AddHandlerWithCapabilities<HoverEndpoint>();
 
         services.AddSingleton<IHoverService, HoverService>();
     }
 
-    public static void AddSemanticTokensServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
+    public static void AddSemanticTokensServices(this IServiceCollection services)
     {
-        if (!featureOptions.UseRazorCohostServer)
-        {
-            services.AddHandlerWithCapabilities<SemanticTokensRangeEndpoint>();
-            // Ensure that we don't add the default service if something else has added one.
-            services.TryAddSingleton<IRazorSemanticTokensInfoService, RazorSemanticTokensInfoService>();
+        services.AddHandlerWithCapabilities<SemanticTokensRangeEndpoint>();
+        // Ensure that we don't add the default service if something else has added one.
+        services.TryAddSingleton<IRazorSemanticTokensInfoService, RazorSemanticTokensInfoService>();
+        services.AddSingleton<ICSharpSemanticTokensProvider, LSPCSharpSemanticTokensProvider>();
 
-            services.AddSingleton<RazorSemanticTokensLegendService>();
-        }
+        services.AddSingleton<RazorSemanticTokensLegendService>();
 
         services.AddHandler<RazorSemanticTokensRefreshEndpoint>();
 
@@ -240,12 +232,7 @@ internal static class IServiceCollectionExtensions
             services.AddSingleton<DocumentProcessedListener, RazorDiagnosticsPublisher>();
         }
 
-        // Don't generate documents in the language server if cohost is enabled, let cohost do it.
-        if (!featureOptions.UseRazorCohostServer)
-        {
-            services.AddSingleton<DocumentProcessedListener, GeneratedDocumentSynchronizer>();
-        }
-
+        services.AddSingleton<DocumentProcessedListener, GeneratedDocumentSynchronizer>();
         services.AddSingleton<DocumentProcessedListener, CodeDocumentReferenceHolder>();
 
         services.AddSingleton<IProjectSnapshotManagerAccessor, LspProjectSnapshotManagerAccessor>();

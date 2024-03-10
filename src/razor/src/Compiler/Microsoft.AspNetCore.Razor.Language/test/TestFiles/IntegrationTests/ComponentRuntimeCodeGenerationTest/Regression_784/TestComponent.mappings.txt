@@ -6,7 +6,7 @@
     {
     }
 |
-Generated Location: (1590:46,7 [130] )
+Generated Location: (1637:48,7 [130] )
 |
     public string ParentBgColor { get; set; } = "#FFFFFF";
 

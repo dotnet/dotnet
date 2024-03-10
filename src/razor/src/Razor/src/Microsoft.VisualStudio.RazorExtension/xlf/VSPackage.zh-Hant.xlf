@@ -64,12 +64,12 @@
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
         <source>Forces the open brace after an @code or @functions directive to be on the following line</source>
-        <target state="new">Forces the open brace after an @code or @functions directive to be on the following line</target>
+        <target state="translated">強制 @code 或 @functions 指示詞後方的左大括號位於下列行</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
         <source>Code/Functions block open brace on next line</source>
-        <target state="new">Code/Functions block open brace on next line</target>
+        <target state="translated">程式碼/函數區塊左大括弧在下一行</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">

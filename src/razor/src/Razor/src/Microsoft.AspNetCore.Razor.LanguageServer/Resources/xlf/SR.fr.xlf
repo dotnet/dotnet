@@ -72,11 +72,6 @@
         <target state="translated">Générer le gestionnaire d’événements '{0}'</target>
         <note />
       </trans-unit>
-      <trans-unit id="Invalid_Offset">
-        <source>Invalid offset.</source>
-        <target state="translated">Décalage non valide.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">Les services de langage Razor ne sont pas configurés correctement, le service de langage «{0}» manquant.</target>
@@ -85,16 +80,6 @@
       <trans-unit id="Not_Available_In">
         <source>Not available in</source>
         <target state="translated">Non disponible dans</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PositionCharacter_Outside_Range">
-        <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">Le caractère « {0} » en dehors de la plage {1} de « {2} » a été interrogé. Le document n’est peut-être pas à jour.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PositionLine_Outside_Range">
-        <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">La ligne «{0}» en dehors de la plage{1} de «{2}» a été interrogée. Le document n’est peut-être pas à jour.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReTrigger_Completions_Title">

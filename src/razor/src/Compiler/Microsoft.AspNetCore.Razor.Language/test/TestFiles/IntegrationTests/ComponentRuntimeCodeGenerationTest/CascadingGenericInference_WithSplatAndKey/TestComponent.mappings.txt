@@ -1,15 +1,15 @@
 ﻿Source Location: (2:0,2 [60] x:\dir\subdir\Test\TestComponent.cshtml)
 | var parentKey = new object(); var childKey = new object(); |
-Generated Location: (642:17,2 [60] )
+Generated Location: (726:21,2 [60] )
 | var parentKey = new object(); var childKey = new object(); |
 
 Source Location: (145:2,19 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |childKey|
-Generated Location: (1704:44,19 [8] )
+Generated Location: (1788:48,19 [8] )
 |childKey|
 
 Source Location: (78:1,13 [9] x:\dir\subdir\Test\TestComponent.cshtml)
 |parentKey|
-Generated Location: (1913:54,13 [9] )
+Generated Location: (1997:58,13 [9] )
 |parentKey|
 

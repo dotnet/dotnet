@@ -7,19 +7,18 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;
-using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
 using RazorMapToDocumentRangesResponse = Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping.RazorMapToDocumentRangesResponse;
-using ServerRangeExtensions = Microsoft.AspNetCore.Razor.LanguageServer.Extensions.RangeExtensions;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
@@ -64,7 +63,7 @@ public class RazorLSPSpanMappingServiceTest : ToolingTestBase
 
         var textSnapshot = new StringTextSnapshot(s_mockGeneratedContent, 1);
 
-        var textSpanAsRange = textSpan.AsRange(_sourceTextGenerated);
+        var textSpanAsRange = textSpan.ToRange(_sourceTextGenerated);
         var mappedRange = new Range()
         {
             Start = new Position(2, 1),
@@ -115,7 +114,7 @@ public class RazorLSPSpanMappingServiceTest : ToolingTestBase
 
         var textSnapshot = new StringTextSnapshot(s_mockGeneratedContent, 1);
 
-        var textSpanAsRange = textSpan.AsRange(_sourceTextGenerated);
+        var textSpanAsRange = textSpan.ToRange(_sourceTextGenerated);
 
         var documentMappingProvider = new Mock<LSPDocumentMappingProvider>(MockBehavior.Strict);
         documentMappingProvider.Setup(dmp => dmp.MapToDocumentRangesAsync(It.IsAny<RazorLanguageKind>(), It.IsAny<Uri>(), It.IsAny<Range[]>(), It.IsAny<CancellationToken>()))
@@ -143,7 +142,7 @@ public class RazorLSPSpanMappingServiceTest : ToolingTestBase
     {
         // Arrange
         var sourceTextRazor = SourceText.From("");
-        var response = new RazorMapToDocumentRangesResponse { Ranges = new Range[] { ServerRangeExtensions.UndefinedRange } };
+        var response = new RazorMapToDocumentRangesResponse { Ranges = new Range[] { RangeExtensions.UndefinedRange } };
 
         // Act
         var results = RazorLSPSpanMappingService.GetMappedSpanResults(_mockDocumentUri.LocalPath, sourceTextRazor, response);

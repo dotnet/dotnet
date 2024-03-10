@@ -2,7 +2,7 @@
 |
     private MyClass c = new();
 |
-Generated Location: (1228:31,7 [34] )
+Generated Location: (1312:35,7 [34] )
 |
     private MyClass c = new();
 |

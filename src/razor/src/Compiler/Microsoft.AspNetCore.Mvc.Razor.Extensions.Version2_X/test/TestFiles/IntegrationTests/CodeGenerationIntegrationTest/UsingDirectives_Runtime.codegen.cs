@@ -5,7 +5,7 @@
 [assembly:global::Microsoft.AspNetCore.Mvc.Razor.Compilation.RazorViewAttribute(@"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml", typeof(AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_UsingDirectives))]
 namespace AspNetCore
 {
-    #line hidden
+    #line default
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -15,18 +15,12 @@ namespace AspNetCore
 #line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
 using System.ComponentModel;
 
-#line default
-#line hidden
 #line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
 using System.Collections;
 
-#line default
-#line hidden
 #line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
 using System;
 
-#line default
-#line hidden
 #line 4 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
 using System;
 

@@ -406,7 +406,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public async Task PackageSearchRunner_WhenSourceIsInvalid_ReturnsExitCodeOne()
+        public async Task PackageSearchRunner_WhenSourceIsInvalid_ReturnsErrorExitCode()
         {
             // Arrange
             ISettings settings = Settings.LoadDefaultSettings(
@@ -434,7 +434,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                 cancellationToken: System.Threading.CancellationToken.None);
 
             // Assert
-            Assert.Equal(1, exitCode);
+            Assert.Equal(ExitCodes.Error, exitCode);
             Assert.Contains(expectedError, StoredErrorMessage);
         }
 
@@ -467,7 +467,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                 cancellationToken: System.Threading.CancellationToken.None);
 
             // Assert
-            Assert.Equal(0, exitCode);
+            Assert.Equal(ExitCodes.Success, exitCode);
             Assert.Contains(expectedError, StoredErrorMessage);
         }
 
@@ -504,7 +504,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                     cancellationToken: cts.Token);
 
             // Assert
-            Assert.Equal(0, exitCode);
+            Assert.Equal(ExitCodes.Success, exitCode);
             Assert.Contains(expectedError, StoredErrorMessage);
         }
     }

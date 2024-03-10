@@ -4,9 +4,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NuspecFile Condition=" '$(DotNetBuildFromSource)' != 'true' ">Microsoft.TestPlatform.CLI.nuspec</NuspecFile>
-    <NuspecFile Condition=" '$(DotNetBuildFromSource)' == 'true' AND '$(DotNetBuildFromSourceFlavor)' != 'Product' ">Microsoft.TestPlatform.CLI.sourcebuild.nuspec</NuspecFile>
-    <NuspecFile Condition=" '$(DotNetBuildFromSource)' == 'true' AND '$(DotNetBuildFromSourceFlavor)' == 'Product' ">Microsoft.TestPlatform.CLI.sourcebuild.product.nuspec</NuspecFile>
+    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' != 'true' ">Microsoft.TestPlatform.CLI.nuspec</NuspecFile>
+    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' != 'true'">Microsoft.TestPlatform.CLI.sourcebuild.nuspec</NuspecFile>
+    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">Microsoft.TestPlatform.CLI.sourcebuild.product.nuspec</NuspecFile>
     <IsPackable>true</IsPackable>
     <!-- This package is included even in source build -->
     <ExcludeFromSourceBuild>false</ExcludeFromSourceBuild>
@@ -53,7 +53,7 @@
     <ProjectReference Include="..\..\Microsoft.TestPlatform.TestHostProvider\Microsoft.TestPlatform.TestHostProvider.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(DotNetBuildFromSource)' != 'true' ">
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <ProjectReference Include="..\..\DataCollectors\DumpMinitool\DumpMinitool.csproj" />
     <ProjectReference Include="..\..\DataCollectors\DumpMinitool.arm64\DumpMinitool.arm64.csproj" />
     <ProjectReference Include="..\..\DataCollectors\DumpMinitool.x86\DumpMinitool.x86.csproj" />
@@ -61,7 +61,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.ComponentModel.Composition" Version="$(SystemComponentModelCompositionVersion)" GeneratePathProperty="true" />
-    <PackageReference Include="Microsoft.CodeCoverage.IO" Version="$(MicrosoftCodeCoverageIOVersion)" GeneratePathProperty="true" Condition=" '$(DotNetBuildFromSource)' != 'true' " />
+    <PackageReference Include="Microsoft.CodeCoverage.IO" Version="$(MicrosoftCodeCoverageIOVersion)" GeneratePathProperty="true" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="$(MicrosoftDiagnosticsNETCoreClientVersion)" PrivateAssets="All" GeneratePathProperty="true" />
@@ -81,7 +81,7 @@
       <MicrosoftInternalDia Include="$(PkgMicrosoft_Internal_Dia)\tools\net451\**\*"></MicrosoftInternalDia>
     </ItemGroup>
 
-    <Copy SourceFiles="@(MicrosoftCodeCoverageIO)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.IO\%(RecursiveDir)%(Filename)%(Extension)" Condition=" '$(DotNetBuildFromSource)' != 'true' " />
+    <Copy SourceFiles="@(MicrosoftCodeCoverageIO)" DestinationFiles="$(OutDir)\Microsoft.CodeCoverage.IO\%(RecursiveDir)%(Filename)%(Extension)" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <Copy SourceFiles="@(MicrosoftExtensionsDependencyModel)" DestinationFiles="$(OutDir)\Microsoft.Extensions.DependencyModel\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftExtensionsFileSystemGlobbing)" DestinationFiles="$(OutDir)\Microsoft.Extensions.FileSystemGlobbing\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(NewtonsoftJson)" DestinationFiles="$(OutDir)\Newtonsoft.Json\%(RecursiveDir)%(Filename)%(Extension)" />

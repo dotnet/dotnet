@@ -64,12 +64,12 @@
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
         <source>Forces the open brace after an @code or @functions directive to be on the following line</source>
-        <target state="new">Forces the open brace after an @code or @functions directive to be on the following line</target>
+        <target state="translated">Wymusza, aby otwierający nawias klamrowy po dyrektywie @code lub @functions był w następującym wierszu</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
         <source>Code/Functions block open brace on next line</source>
-        <target state="new">Code/Functions block open brace on next line</target>
+        <target state="translated">Otwierający nawias klamrowy bloku kody/funkcji w następnym wierszu</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">

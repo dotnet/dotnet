@@ -39,7 +39,7 @@ public class SerializationTest(ITestOutputHelper testOutput) : ToolingTestBase(t
         Assert.Equal("vsls://some/path/project.csproj", deserializedHandle.FilePath.ToString());
         Assert.Equal(projectWorkspaceState, deserializedHandle.ProjectWorkspaceState);
         Assert.Equal(expectedConfiguration.ConfigurationName, deserializedHandle.Configuration.ConfigurationName);
-        Assert.Equal(expectedConfiguration.Extensions.Count, deserializedHandle.Configuration.Extensions.Count);
+        Assert.Equal(expectedConfiguration.Extensions.Length, deserializedHandle.Configuration.Extensions.Length);
         Assert.Equal(expectedConfiguration.LanguageVersion, deserializedHandle.Configuration.LanguageVersion);
         Assert.Equal(expectedRootNamespace, deserializedHandle.RootNamespace);
     }

@@ -30,4 +30,8 @@
     <EmbeddedResource Update="SourceGenerators\Diagnostics\*.resx" Namespace="Microsoft.NET.Sdk.Razor.SourceGenerators.Diagnostics" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="RazorSourceGenerator.razorencconfig" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

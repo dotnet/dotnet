@@ -12,7 +12,7 @@
     <AssemblyName>testhost.x86</AssemblyName>
     <TargetFrameworks>net7.0;$(NetCoreAppMinimum);$(NetFrameworkMinimum);net47;net471;net472;net48</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <RuntimeIdentifier Condition="'$(DotNetBuildFromSource)' != 'true'">win7-x86</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(DotNetBuildSourceOnly)' != 'true'">win7-x86</RuntimeIdentifier>
     <Prefer32Bit Condition=" $(TargetFramework.StartsWith('net4')) ">true</Prefer32Bit>
     <OutputType>Exe</OutputType>
     <IsTestProject>false</IsTestProject>
@@ -44,7 +44,7 @@
     </ProjectReference>
 
     <!-- CVE-2019-0657, CVE-2019-0980 and CVE-2019-0981 mitigation -->
-    <PackageReference Include="System.Private.Uri" Version="$(SystemUriVersion)" Condition="'$(DotNetBuildFromSource)' != 'true'"/>
+    <PackageReference Include="System.Private.Uri" Version="$(SystemUriVersion)" Condition="'$(DotNetBuildSourceOnly)' != 'true'"/>
     <PackageReference Include="Microsoft.NETCore.Targets" Version="1.1.4" Condition=" $(TargetFramework.StartsWith('net4')) " />
     <!-- CVE-2019-0657, CVE-2019-0980 and CVE-2019-0981 mitigation -->
   </ItemGroup>

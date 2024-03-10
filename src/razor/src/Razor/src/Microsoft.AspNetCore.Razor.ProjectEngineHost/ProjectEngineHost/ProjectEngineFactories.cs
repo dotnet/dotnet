@@ -11,15 +11,16 @@ internal static partial class ProjectEngineFactories
 
     public static IProjectEngineFactory Default { get; } = new DefaultProjectEngineFactory();
 
-    public static IProjectEngineFactory MVC_1_0 { get; } = new ProjectEngineFactory("MVC-1.0", "Microsoft.CodeAnalysis.Razor.Compiler");
-    public static IProjectEngineFactory MVC_1_1 { get; } = new ProjectEngineFactory("MVC-1.1", "Microsoft.CodeAnalysis.Razor.Compiler");
-    public static IProjectEngineFactory MVC_2_0 { get; } = new ProjectEngineFactory("MVC-2.0", "Microsoft.CodeAnalysis.Razor.Compiler");
-    public static IProjectEngineFactory MVC_2_1 { get; } = new ProjectEngineFactory("MVC-2.1", "Microsoft.CodeAnalysis.Razor.Compiler");
-    public static IProjectEngineFactory MVC_3_0 { get; } = new ProjectEngineFactory("MVC-3.0", "Microsoft.CodeAnalysis.Razor.Compiler");
+    public static IProjectEngineFactory MVC_1_0 { get; } = new ProjectEngineFactory("MVC-1.0");
+    public static IProjectEngineFactory MVC_1_1 { get; } = new ProjectEngineFactory("MVC-1.1");
+    public static IProjectEngineFactory MVC_2_0 { get; } = new ProjectEngineFactory("MVC-2.0");
+    public static IProjectEngineFactory MVC_2_1 { get; } = new ProjectEngineFactory("MVC-2.1");
+    public static IProjectEngineFactory MVC_3_0 { get; } = new ProjectEngineFactory("MVC-3.0");
 
     public static IProjectEngineFactory Unsupported { get; } = new ProjectEngineFactory_Unsupported();
 
-    public static ImmutableArray<IProjectEngineFactory> All { get; } = ImmutableArray.Create(
+    public static ImmutableArray<IProjectEngineFactory> All { get; } =
+    [
         // Razor based configurations
         Default,
         MVC_1_0,
@@ -27,8 +28,10 @@ internal static partial class ProjectEngineFactories
         MVC_2_0,
         MVC_2_1,
         MVC_3_0,
+
         // Unsupported (Legacy/System.Web.Razor)
-        Unsupported);
+        Unsupported
+    ];
 
     public static IProjectEngineFactoryProvider DefaultProvider { get; } = new ProjectEngineFactoryProvider(All);
 }

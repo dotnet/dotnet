@@ -4,7 +4,7 @@
 
     public void UpdateValue(int value) => ParentValue = value;
 |
-Generated Location: (1461:39,7 [116] )
+Generated Location: (1545:43,7 [116] )
 |
     public int ParentValue { get; set; } = 42;
 

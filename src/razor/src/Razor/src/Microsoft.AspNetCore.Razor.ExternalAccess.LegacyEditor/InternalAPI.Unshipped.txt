@@ -1,6 +1,41 @@
 ﻿#nullable enable
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.Deconstruct(out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan Span, out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan BlockSpan, out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.SpanKind SpanKind, out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.BlockKind BlockKind, out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.AcceptedCharacters AcceptedCharacters) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.Equals(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan other) -> bool
 Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDocumentContext.Prefix.get -> string?
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.<Clone>$() -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.Deconstruct(out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan Span, out string! NewText) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.Equals(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange? other) -> bool
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping.<Clone>$() -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping!
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping.Deconstruct(out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan OriginalSpan, out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan GeneratedSpan) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping.Equals(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping? other) -> bool
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.Deconstruct(out string? FilePath, out int AbsoluteIndex, out int LineIndex, out int CharacterIndex, out int Length, out int LineCount, out int EndCharacterIndex) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan.Deconstruct(out Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan Span, out System.Collections.Immutable.ImmutableArray<Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperDescriptor!> TagHelpers) -> void
+Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan.Equals(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan other) -> bool
+override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.GetHashCode() -> int
+override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.Equals(object? obj) -> bool
+override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.GetHashCode() -> int
+override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.ToString() -> string!
+override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping.Equals(object? obj) -> bool
+override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping.GetHashCode() -> int
+override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping.ToString() -> string!
+override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan.GetHashCode() -> int
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.operator !=(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan left, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan right) -> bool
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.operator ==(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan left, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan right) -> bool
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.operator !=(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange? left, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange? right) -> bool
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange.operator ==(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange? left, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceChange? right) -> bool
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping.operator !=(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping? left, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping? right) -> bool
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping.operator ==(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping? left, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceMapping? right) -> bool
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.operator !=(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan left, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan right) -> bool
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.operator ==(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan left, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan right) -> bool
 static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.GetWrappedTagHelperFactsService() -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperFactsService!
 static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapClientSettingsManager(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorEditorSettingsManager!
 *REMOVED*static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapEditorSettingsManager(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorEditorSettingsManager!
 *REMOVED*static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorWrapperFactory.WrapTagHelperFactsService(object! obj) -> Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.IRazorTagHelperFactsService!
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan.operator !=(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan left, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan right) -> bool
+static Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan.operator ==(Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan left, Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan right) -> bool
+~override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.Equals(object obj) -> bool
+~override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.ClassifiedSpan.ToString() -> string
+~override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.Equals(object obj) -> bool
+~override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.RazorSourceSpan.ToString() -> string
+~override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan.Equals(object obj) -> bool
+~override Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.TagHelperSpan.ToString() -> string
