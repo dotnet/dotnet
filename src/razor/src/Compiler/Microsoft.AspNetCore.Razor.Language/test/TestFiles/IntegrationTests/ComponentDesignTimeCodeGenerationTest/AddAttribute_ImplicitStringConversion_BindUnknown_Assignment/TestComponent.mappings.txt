@@ -1,6 +1,6 @@
 ﻿Source Location: (26:0,26 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |c1 = c2|
-Generated Location: (947:25,26 [7] )
+Generated Location: (1031:29,26 [7] )
 |c1 = c2|
 
 Source Location: (48:2,7 [68] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -8,7 +8,7 @@ Source Location: (48:2,7 [68] x:\dir\subdir\Test\TestComponent.cshtml)
     private MyClass c1 = new();
     private MyClass c2 = new();
 |
-Generated Location: (1636:46,7 [68] )
+Generated Location: (1720:50,7 [68] )
 |
     private MyClass c1 = new();
     private MyClass c2 = new();

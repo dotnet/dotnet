@@ -531,7 +531,7 @@ internal static class CodeWriterExtensions
         return new CSharpCodeWritingScope(writer);
     }
 
-    public static IDisposable BuildLinePragma(this CodeWriter writer, SourceSpan? span, CodeRenderingContext context)
+    public static IDisposable BuildLinePragma(this CodeWriter writer, SourceSpan? span, CodeRenderingContext context, bool suppressLineDefaultAndHidden = false)
     {
         if (string.IsNullOrEmpty(span?.FilePath))
         {
@@ -540,7 +540,7 @@ internal static class CodeWriterExtensions
         }
 
         var sourceSpan = RemapFilePathIfNecessary(span.Value, context);
-        return new LinePragmaWriter(writer, sourceSpan, context, 0, false);
+        return new LinePragmaWriter(writer, sourceSpan, context, 0, useEnhancedLinePragma: false, suppressLineDefaultAndHidden);
     }
 
     public static IDisposable BuildEnhancedLinePragma(this CodeWriter writer, SourceSpan? span, CodeRenderingContext context, int characterOffset = 0)
@@ -717,13 +717,15 @@ internal static class CodeWriterExtensions
         private readonly int _sourceLineIndex;
         private readonly int _startLineIndex;
         private readonly string _sourceFilePath;
+        private readonly bool _suppressLineDefaultAndHidden;
 
         public LinePragmaWriter(
             CodeWriter writer,
             SourceSpan span,
             CodeRenderingContext context,
             int characterOffset,
-            bool useEnhancedLinePragma = false)
+            bool useEnhancedLinePragma = false,
+            bool suppressLineDefaultAndHidden = false)
         {
             if (writer == null)
             {
@@ -732,6 +734,7 @@ internal static class CodeWriterExtensions
 
             _writer = writer;
             _context = context;
+            _suppressLineDefaultAndHidden = suppressLineDefaultAndHidden;
             _startIndent = _writer.CurrentIndent;
             _sourceFilePath = span.FilePath;
             _sourceLineIndex = span.LineIndex;
@@ -780,9 +783,12 @@ internal static class CodeWriterExtensions
             var linePragma = new LinePragma(_sourceLineIndex, lineCount, _sourceFilePath);
             _context.AddLinePragma(linePragma);
 
-            _writer
-                .WriteLine("#line default")
-                .WriteLine("#line hidden");
+            if (!_suppressLineDefaultAndHidden)
+            {
+                _writer
+                    .WriteLine("#line default")
+                    .WriteLine("#line hidden");
+            }
 
             if (!_context.Options.SuppressNullabilityEnforcement)
             {

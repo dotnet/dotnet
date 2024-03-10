@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -32,9 +31,9 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
 
     public override void WriteUsingDirective(CodeRenderingContext context, UsingDirectiveIntermediateNode node)
     {
-        if (node.Source.HasValue)
+        if (node.Source is { FilePath: not null } sourceSpan)
         {
-            using (context.CodeWriter.BuildLinePragma(node.Source.Value, context))
+            using (context.CodeWriter.BuildLinePragma(sourceSpan, context, suppressLineDefaultAndHidden: !node.AppendLineDefaultAndHidden))
             {
                 context.CodeWriter.WriteUsing(node.Content);
             }
@@ -42,6 +41,12 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
         else
         {
             context.CodeWriter.WriteUsing(node.Content);
+
+            if (node.AppendLineDefaultAndHidden)
+            {
+                context.CodeWriter.WriteLine("#line default");
+                context.CodeWriter.WriteLine("#line hidden");
+            }
         }
     }
 

@@ -3,7 +3,7 @@
     [Parameter]
     public int Count { get; set; }
 |
-Generated Location: (1023:27,1 [55] )
+Generated Location: (1107:31,1 [55] )
 |
     [Parameter]
     public int Count { get; set; }
@@ -11,6 +11,6 @@ Generated Location: (1023:27,1 [55] )
 
 Source Location: (80:5,14 [53] x:\dir\subdir\Test\TestComponent.cshtml)
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (1744:46,14 [53] )
+Generated Location: (1828:50,14 [53] )
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
 

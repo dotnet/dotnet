@@ -4,7 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;
 

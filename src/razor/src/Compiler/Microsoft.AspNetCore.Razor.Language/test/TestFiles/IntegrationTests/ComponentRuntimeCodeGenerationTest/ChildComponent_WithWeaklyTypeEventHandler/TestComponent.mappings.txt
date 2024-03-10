@@ -2,7 +2,7 @@
 |
     private Action<MouseEventArgs> OnClick { get; set; }
 |
-Generated Location: (1338:37,7 [60] )
+Generated Location: (1385:39,7 [60] )
 |
     private Action<MouseEventArgs> OnClick { get; set; }
 |

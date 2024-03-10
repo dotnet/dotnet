@@ -1,6 +1,6 @@
 ﻿Source Location: (11:0,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |TChild|
-Generated Location: (534:20,0 [6] )
+Generated Location: (558:21,0 [6] )
 |TChild|
 
 Source Location: (97:4,1 [138] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -8,7 +8,7 @@ Source Location: (97:4,1 [138] x:\dir\subdir\Test\TestComponent.cshtml)
         [Parameter] public TChild ChildItem { get; set; }
         [Parameter] public EventCallback<TChild> MyChildEvent { get; set; }
 |
-Generated Location: (1494:51,1 [138] )
+Generated Location: (1541:53,1 [138] )
 |
         [Parameter] public TChild ChildItem { get; set; }
         [Parameter] public EventCallback<TChild> MyChildEvent { get; set; }

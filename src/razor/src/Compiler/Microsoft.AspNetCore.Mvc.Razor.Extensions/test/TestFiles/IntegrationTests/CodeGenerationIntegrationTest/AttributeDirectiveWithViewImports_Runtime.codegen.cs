@@ -4,7 +4,7 @@
 [assembly: global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemAttribute(typeof(AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_AttributeDirectiveWithViewImports), @"mvc.1.0.view", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirectiveWithViewImports.cshtml")]
 namespace AspNetCore
 {
-    #line hidden
+    #line default
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Threading.Tasks;

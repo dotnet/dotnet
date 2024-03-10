@@ -991,7 +991,7 @@ namespace Test
     public void IncludesMinimizedAttributeValueParameterBeforeLanguageVersion5()
     {
         // Arrange
-        _configuration = RazorConfiguration.Create(
+        _configuration = new(
             RazorLanguageVersion.Version_3_0,
             base.Configuration.ConfigurationName,
             base.Configuration.Extensions);
@@ -1385,7 +1385,7 @@ namespace Test
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
     public void AddAttribute_ImplicitStringConversion_TypeInference()
     {
-        _configuration = base.Configuration.WithVersion(RazorLanguageVersion.Version_7_0);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 };
 
         AdditionalSyntaxTrees.Add(Parse("""
             using Microsoft.AspNetCore.Components;
@@ -1436,7 +1436,7 @@ namespace Test
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
     public void AddAttribute_ImplicitStringConversion_Bind()
     {
-        _configuration = base.Configuration.WithVersion(RazorLanguageVersion.Version_7_0);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 };
 
         AdditionalSyntaxTrees.Add(Parse("""
             using Microsoft.AspNetCore.Components;
@@ -1490,7 +1490,7 @@ namespace Test
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
     public void AddAttribute_ImplicitStringConversion_CustomEvent()
     {
-        _configuration = base.Configuration.WithVersion(RazorLanguageVersion.Version_7_0);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 };
 
         AdditionalSyntaxTrees.Add(Parse("""
             using Microsoft.AspNetCore.Components;
@@ -1545,7 +1545,7 @@ namespace Test
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
     public void AddAttribute_ImplicitStringConversion_BindUnknown()
     {
-        _configuration = base.Configuration.WithVersion(RazorLanguageVersion.Version_7_0);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 };
 
         AdditionalSyntaxTrees.Add(Parse("""
             using Microsoft.AspNetCore.Components;
@@ -1578,7 +1578,7 @@ namespace Test
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
     public void AddAttribute_ImplicitStringConversion_BindUnknown_Assignment()
     {
-        _configuration = base.Configuration.WithVersion(RazorLanguageVersion.Version_7_0);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 };
 
         AdditionalSyntaxTrees.Add(Parse("""
             using Microsoft.AspNetCore.Components;
@@ -1612,7 +1612,7 @@ namespace Test
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/aspnetcore/issues/18042")]
     public void AddAttribute_ImplicitBooleanConversion()
     {
-        _configuration = base.Configuration.WithVersion(RazorLanguageVersion.Version_7_0);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 };
 
         AdditionalSyntaxTrees.Add(Parse("""
             using Microsoft.AspNetCore.Components;
@@ -3926,11 +3926,11 @@ namespace Test
     [IntegrationTestFact]
     public void BindToComponent_WithGetSet_ProducesErrorOnOlderLanguageVersions()
     {
-        _configuration = RazorConfiguration.Create(
+        _configuration = new(
             RazorLanguageVersion.Version_6_0,
             "unnamed",
-            Array.Empty<RazorExtension>(),
-            false);
+            Extensions: [],
+            UseConsolidatedMvcViews: false);
 
         // Arrange
         AdditionalSyntaxTrees.Add(Parse(@"
@@ -4875,6 +4875,95 @@ namespace AnotherTest
 
         // Assert
         Assert.Collection(generated.Diagnostics, d => { Assert.Equal("RZ1038", d.Id); });
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/7169")]
+    public void InheritsDirective_NullableReferenceType()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse("""
+            namespace Test;
+
+            public class BaseComponent<T> : Microsoft.AspNetCore.Components.ComponentBase
+            {
+                protected T _field = default!;
+            }
+            """));
+
+        // Act
+        var generated = CompileToCSharp("""
+            @inherits BaseComponent<string?>
+
+            <h1>My component</h1>
+            @(_field.ToString())
+            """,
+            nullableEnable: true);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        var compiled = CompileToAssembly(generated, throwOnFailure: false);
+        if (DesignTime)
+        {
+            compiled.Diagnostics.Verify(
+                // x:\dir\subdir\Test\TestComponent.cshtml(4,7): warning CS8602: Dereference of a possibly null reference.
+                // __o = _field.ToString();
+                Diagnostic(ErrorCode.WRN_NullReferenceReceiver, "_field").WithLocation(4, 7));
+        }
+        else
+        {
+            compiled.Diagnostics.Verify(
+                // x:\dir\subdir\Test\TestComponent.cshtml(4,3): warning CS8602: Dereference of a possibly null reference.
+                // __builder.AddContent(1, _field.ToString());
+                Diagnostic(ErrorCode.WRN_NullReferenceReceiver, "_field").WithLocation(4, 3));
+        }
+    }
+
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/7169")]
+    public void InheritsDirective_NullableReferenceType_NullableDisabled()
+    {
+        // Arrange
+        AdditionalSyntaxTrees.Add(Parse("""
+            namespace Test;
+
+            public class BaseComponent<T> : Microsoft.AspNetCore.Components.ComponentBase
+            {
+                protected T _field;
+            }
+            """));
+
+        // Act
+        var generated = CompileToCSharp("""
+            @inherits BaseComponent<string?>
+
+            <h1>My component</h1>
+            @(_field.ToString())
+            """,
+            nullableEnable: false,
+            throwOnFailure: false);
+
+        // Assert
+        Assert.Empty(generated.Diagnostics);
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        var compiled = CompileToAssembly(generated, throwOnFailure: false);
+        if (DesignTime)
+        {
+            compiled.Diagnostics.Verify(
+                // x:\dir\subdir\Test\TestComponent.cshtml(1,21): warning CS8669: The annotation for nullable reference types should only be used in code within a '#nullable' annotations context. Auto-generated code requires an explicit '#nullable' directive in source.
+                // BaseComponent<string?> __typeHelper = default!;
+                Diagnostic(ErrorCode.WRN_MissingNonNullTypesContextForAnnotationInGeneratedCode, "?").WithLocation(1, 21),
+                // (14,62): warning CS8669: The annotation for nullable reference types should only be used in code within a '#nullable' annotations context. Auto-generated code requires an explicit '#nullable' directive in source.
+                //     public partial class TestComponent : BaseComponent<string?>
+                Diagnostic(ErrorCode.WRN_MissingNonNullTypesContextForAnnotationInGeneratedCode, "?").WithLocation(14, 62));
+        }
+        else
+        {
+            compiled.Diagnostics.Verify(
+                // (14,62): warning CS8669: The annotation for nullable reference types should only be used in code within a '#nullable' annotations context. Auto-generated code requires an explicit '#nullable' directive in source.
+                //     public partial class TestComponent : BaseComponent<string?>
+                Diagnostic(ErrorCode.WRN_MissingNonNullTypesContextForAnnotationInGeneratedCode, "?").WithLocation(14, 62));
+        }
     }
 
     #endregion
@@ -9063,7 +9152,7 @@ namespace Test
     public void Legacy_3_1_LeadingWhiteSpace_WithDirective()
     {
         // Arrange/Act
-        _configuration = RazorConfiguration.Create(
+        _configuration = new(
             RazorLanguageVersion.Version_3_0,
             base.Configuration.ConfigurationName,
             base.Configuration.Extensions);
@@ -9084,7 +9173,7 @@ namespace Test
     public void Legacy_3_1_LeadingWhiteSpace_WithCSharpExpression()
     {
         // Arrange/Act
-        _configuration = RazorConfiguration.Create(
+        _configuration = new(
             RazorLanguageVersion.Version_3_0,
             base.Configuration.ConfigurationName,
             base.Configuration.Extensions);
@@ -9105,7 +9194,7 @@ namespace Test
     public void Legacy_3_1_LeadingWhiteSpace_WithComponent()
     {
         // Arrange
-        _configuration = RazorConfiguration.Create(
+        _configuration = new(
             RazorLanguageVersion.Version_3_0,
             base.Configuration.ConfigurationName,
             base.Configuration.Extensions);
@@ -9141,7 +9230,7 @@ namespace Test
     public void Legacy_3_1_TrailingWhiteSpace_WithDirective()
     {
         // Arrange/Act
-        _configuration = RazorConfiguration.Create(
+        _configuration = new(
             RazorLanguageVersion.Version_3_0,
             base.Configuration.ConfigurationName,
             base.Configuration.Extensions);
@@ -9163,7 +9252,7 @@ namespace Test
     public void Legacy_3_1_TrailingWhiteSpace_WithCSharpExpression()
     {
         // Arrange/Act
-        _configuration = RazorConfiguration.Create(
+        _configuration = new(
             RazorLanguageVersion.Version_3_0,
             base.Configuration.ConfigurationName,
             base.Configuration.Extensions);
@@ -9185,7 +9274,7 @@ namespace Test
     public void Legacy_3_1_TrailingWhiteSpace_WithComponent()
     {
         // Arrange
-        _configuration = RazorConfiguration.Create(
+        _configuration = new(
             RazorLanguageVersion.Version_3_0,
             base.Configuration.ConfigurationName,
             base.Configuration.Extensions);
@@ -9219,7 +9308,7 @@ namespace Test
     public void Legacy_3_1_Whitespace_BetweenElementAndFunctions()
     {
         // Arrange
-        _configuration = RazorConfiguration.Create(
+        _configuration = new(
             RazorLanguageVersion.Version_3_0,
             base.Configuration.ConfigurationName,
             base.Configuration.Extensions);
@@ -9242,7 +9331,7 @@ namespace Test
     public void Legacy_3_1_WhiteSpace_InsideAttribute_InMarkupBlock()
     {
         // Arrange
-        _configuration = RazorConfiguration.Create(
+        _configuration = new(
             RazorLanguageVersion.Version_3_0,
             base.Configuration.ConfigurationName,
             base.Configuration.Extensions);
@@ -9260,7 +9349,7 @@ namespace Test
     public void Legacy_3_1_WhiteSpace_InMarkupInFunctionsBlock()
     {
         // Arrange
-        _configuration = RazorConfiguration.Create(
+        _configuration = new(
             RazorLanguageVersion.Version_3_0,
             base.Configuration.ConfigurationName,
             base.Configuration.Extensions);
@@ -10219,12 +10308,12 @@ namespace Test
             //                               x
             Diagnostic(ErrorCode.ERR_SyntaxError, "").WithArguments(",").WithLocation(1, 32),
             DesignTime
-            // (23,91): error CS1501: No overload for method 'TypeCheck' takes 2 arguments
+            // (27,91): error CS1501: No overload for method 'TypeCheck' takes 2 arguments
             //             __o = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.String>(
-            ? Diagnostic(ErrorCode.ERR_BadArgCount, "TypeCheck<global::System.String>").WithArguments("TypeCheck", "2").WithLocation(23, 91)
-            // (17,138): error CS1501: No overload for method 'TypeCheck' takes 2 arguments
+            ? Diagnostic(ErrorCode.ERR_BadArgCount, "TypeCheck<global::System.String>").WithArguments("TypeCheck", "2").WithLocation(27, 91)
+            // (21,138): error CS1501: No overload for method 'TypeCheck' takes 2 arguments
             //             __builder.AddComponentParameter(1, "StringProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.String>(
-            : Diagnostic(ErrorCode.ERR_BadArgCount, "TypeCheck<global::System.String>").WithArguments("TypeCheck", "2").WithLocation(17, 138));
+            : Diagnostic(ErrorCode.ERR_BadArgCount, "TypeCheck<global::System.String>").WithArguments("TypeCheck", "2").WithLocation(21, 138));
         Assert.NotEmpty(generated.Diagnostics);
     }
 
@@ -10340,7 +10429,7 @@ namespace Test
         var generated = CompileToCSharp("""
             <script>alert("Hello");</script>
             """,
-            configuration: Configuration.WithVersion(RazorLanguageVersion.Parse(langVersion)));
+            configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Parse(langVersion) });
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         CompileToAssembly(generated);
@@ -10352,7 +10441,7 @@ namespace Test
         var generated = CompileToCSharp("""
             <script>alert("Hello");</script>
             """,
-            configuration: Configuration.WithVersion(RazorLanguageVersion.Version_7_0));
+            configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 });
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         CompileToAssembly(generated);
@@ -10473,7 +10562,7 @@ Time: @DateTime.Now
     {
         var generated = CompileToCSharp("""
                 @rendermode Microsoft.AspNetCore.Components.Web.RenderMode.Server
-                """, throwOnFailure: true);    
+                """, throwOnFailure: true);
 
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
@@ -10898,12 +10987,12 @@ Time: @DateTime.Now
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         var result = CompileToAssembly(generated, throwOnFailure: false);
         result.Diagnostics.Verify(DesignTime
-            // (39,85): error CS7036: There is no argument given that corresponds to the required parameter 'value' of 'RuntimeHelpers.TypeCheck<T>(T)'
+            // (41,85): error CS7036: There is no argument given that corresponds to the required parameter 'value' of 'RuntimeHelpers.TypeCheck<T>(T)'
             //             global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>();
-            ? Diagnostic(ErrorCode.ERR_NoCorrespondingArgument, "TypeCheck<string>").WithArguments("value", "Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<T>(T)").WithLocation(39, 85)
-            // (34,105): error CS7036: There is no argument given that corresponds to the required parameter 'value' of 'RuntimeHelpers.TypeCheck<T>(T)'
+            ? Diagnostic(ErrorCode.ERR_NoCorrespondingArgument, "TypeCheck<string>").WithArguments("value", "Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<T>(T)").WithLocation(41, 85)
+            // (36,105): error CS7036: There is no argument given that corresponds to the required parameter 'value' of 'RuntimeHelpers.TypeCheck<T>(T)'
             //             string __formName = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>();
-            : Diagnostic(ErrorCode.ERR_NoCorrespondingArgument, "TypeCheck<string>").WithArguments("value", "Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<T>(T)").WithLocation(34, 105));
+            : Diagnostic(ErrorCode.ERR_NoCorrespondingArgument, "TypeCheck<string>").WithArguments("value", "Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<T>(T)").WithLocation(36, 105));
     }
 
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
@@ -10944,7 +11033,7 @@ Time: @DateTime.Now
             <div method="post" @onsubmit="() => { }" @formname="named-form-handler"></div>
             <div method="post" @onsubmit="() => { }" @formname="@("named-form-handler")"></div>
             """,
-            configuration: Configuration.WithVersion(RazorLanguageVersion.Version_7_0));
+            configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 });
 
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
@@ -11006,7 +11095,7 @@ Time: @DateTime.Now
             <TestComponent method="post" @onsubmit="() => { }" @formname="named-form-handler" />
             <TestComponent method="post" @onsubmit="() => { }" @formname="@("named-form-handler")" />
             """,
-            configuration: Configuration.WithVersion(RazorLanguageVersion.Version_7_0));
+            configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 });
 
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
@@ -11046,7 +11135,7 @@ Time: @DateTime.Now
                 [Parameter] public T Parameter { get; set; }
             }
             """,
-            configuration: Configuration.WithVersion(RazorLanguageVersion.Version_7_0));
+            configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 });
 
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
@@ -11256,7 +11345,7 @@ Time: @DateTime.Now
             @using Microsoft.AspNetCore.Components.Web
             <form method="post" @onsubmit="() => { }" @formname="named-form-handler"></form>
             """,
-            configuration: Configuration.WithVersion(RazorLanguageVersion.Version_7_0));
+            configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 });
 
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);

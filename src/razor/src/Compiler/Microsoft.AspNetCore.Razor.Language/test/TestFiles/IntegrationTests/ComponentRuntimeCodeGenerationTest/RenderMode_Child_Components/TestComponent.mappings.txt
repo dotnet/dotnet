@@ -1,31 +1,31 @@
 ﻿Source Location: (28:0,28 [53] x:\dir\subdir\Test\TestComponent.cshtml)
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (827:19,28 [53] )
+Generated Location: (911:23,28 [53] )
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
 
 Source Location: (117:1,32 [53] x:\dir\subdir\Test\TestComponent.cshtml)
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (1350:30,32 [53] )
+Generated Location: (1434:34,32 [53] )
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
 
 Source Location: (210:2,36 [53] x:\dir\subdir\Test\TestComponent.cshtml)
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (1894:41,36 [53] )
+Generated Location: (1978:45,36 [53] )
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
 
 Source Location: (320:4,29 [53] x:\dir\subdir\Test\TestComponent.cshtml)
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (2628:58,29 [53] )
+Generated Location: (2712:62,29 [53] )
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
 
 Source Location: (413:5,36 [53] x:\dir\subdir\Test\TestComponent.cshtml)
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (3172:69,36 [53] )
+Generated Location: (3256:73,36 [53] )
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
 
 Source Location: (508:6,36 [53] x:\dir\subdir\Test\TestComponent.cshtml)
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (3778:82,36 [53] )
+Generated Location: (3862:86,36 [53] )
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
 
 Source Location: (617:11,1 [73] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -33,7 +33,7 @@ Source Location: (617:11,1 [73] x:\dir\subdir\Test\TestComponent.cshtml)
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 |
-Generated Location: (4439:102,1 [73] )
+Generated Location: (4523:106,1 [73] )
 |
     [Parameter]
     public RenderFragment ChildContent { get; set; }

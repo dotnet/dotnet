@@ -166,7 +166,7 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
                 _foundNonHtml = true;
             }
 
-            if (_version.CompareTo(RazorLanguageVersion.Version_7_0) <= 0 &&
+            if (_version <= RazorLanguageVersion.Version_7_0 &&
                 string.Equals("script", node.TagName, StringComparison.OrdinalIgnoreCase))
             {
                 // Treat script tags as non-HTML in .NET 7 and earlier.

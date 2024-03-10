@@ -7,10 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
-using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Workspaces.InlayHints;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
 
@@ -27,11 +27,13 @@ internal sealed class InlayHintService(IRazorDocumentMappingService documentMapp
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var csharpDocument = codeDocument.GetCSharpDocument();
 
+        var span = range.ToLinePositionSpan();
+
         // We are given a range by the client, but our mapping only succeeds if the start and end of the range can both be mapped
         // to C#. Since that doesn't logically match what we want from inlay hints, we instead get the minimum range of mappable
         // C# to get hints for. We'll filter that later, to remove the sections that can't be mapped back.
-        if (!_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, range, out var projectedRange) &&
-            !codeDocument.TryGetMinimalCSharpRange(range, out projectedRange))
+        if (!_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, span, out var projectedLinePositionSpan) &&
+            !codeDocument.TryGetMinimalCSharpRange(span, out projectedLinePositionSpan))
         {
             // There's no C# in the range.
             return null;
@@ -41,7 +43,7 @@ internal sealed class InlayHintService(IRazorDocumentMappingService documentMapp
         // the results, much like folding ranges.
         var delegatedRequest = new DelegatedInlayHintParams(
             Identifier: documentContext.Identifier,
-            ProjectedRange: projectedRange,
+            ProjectedRange: projectedLinePositionSpan.ToRange(),
             ProjectedKind: RazorLanguageKind.CSharp
         );
 

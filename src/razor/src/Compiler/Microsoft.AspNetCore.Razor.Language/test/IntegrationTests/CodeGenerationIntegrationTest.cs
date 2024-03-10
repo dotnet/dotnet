@@ -85,6 +85,9 @@ public class CodeGenerationIntegrationTest(bool designTime = false)
     public void Usings() => RunTest();
 
     [IntegrationTestFact]
+    public void Usings_OutOfOrder() => RunTest();
+
+    [IntegrationTestFact]
     public void ImplicitExpressionAtEOF() => RunTest();
 
     [IntegrationTestFact]
