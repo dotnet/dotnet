@@ -31,7 +31,7 @@ namespace NuGet
         /// <summary>
         /// Initializes a new instance of the <see cref="ResultCache{TKey, TValue}" /> class with the specified key comparer.
         /// </summary>
-        /// <param name="comparer">An <see cref="IEqualityComparer{T}" to use when comparing keys.</param>
+        /// <param name="comparer">An <see cref="IEqualityComparer{T}" /> to use when comparing keys.</param>
         public TaskResultCache(IEqualityComparer<TKey> comparer)
         {
             _cache = new(comparer);

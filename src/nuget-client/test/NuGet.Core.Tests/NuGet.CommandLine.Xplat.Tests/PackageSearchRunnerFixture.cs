@@ -10,9 +10,9 @@ namespace NuGet.CommandLine.Xplat.Tests
         public string SinglePackageQueryResponse { get; private set; }
         public string ExactMatchMetadataResponse { get; private set; }
         public MockServer ServerWithMultipleEndpoints { get; private set; }
-        internal string ExpectedSearchResultDetailed { get; set; }
-        internal string ExpectedSearchResultNormal { get; set; }
-        internal string ExpectedSearchResultMinimal { get; set; }
+        public string ExpectedSearchResultDetailed { get; set; }
+        public string ExpectedSearchResultNormal { get; set; }
+        public string ExpectedSearchResultMinimal { get; set; }
 
         public PackageSearchRunnerFixture()
         {
