@@ -102,15 +102,27 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         // In each lowering piece above, namespaces were tracked. We render them here to ensure every
         // lowering action has a chance to add a source location to a namespace. Ultimately, closest wins.
         var index = 0;
+
+        UsingDirectiveIntermediateNode lastDirective = null;
         foreach (var reference in usingReferences)
         {
             var @using = new UsingDirectiveIntermediateNode()
             {
                 Content = reference.Namespace,
-                Source = reference.Source,
+                Source = reference.Source
             };
 
             builder.Insert(index++, @using);
+
+            lastDirective = @using;
+        }
+
+        if (lastDirective is not null)
+        {
+            // Using directives can be emitted without "#line hidden" regions between them, to allow Roslyn to add
+            // new directives as necessary, but we want to append one on the last using, so things go back to
+            // normal for whatever comes next.
+            lastDirective.AppendLineDefaultAndHidden = true;
         }
 
         PostProcessImportedDirectives(document);

@@ -22,6 +22,7 @@ namespace Microsoft.AspNetCore.Razor.PooledObjects;
 ///  continue to be used, even if the arrays shrinks and has fewer than 4 elements.
 /// </summary>
 [NonCopyable]
+[CollectionBuilder(typeof(PooledArrayBuilder), nameof(PooledArrayBuilder.Create))]
 internal partial struct PooledArrayBuilder<T> : IDisposable
 {
     public static PooledArrayBuilder<T> Empty => default;
@@ -211,7 +212,18 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
 
     public void AddRange(ImmutableArray<T> items)
     {
-        if (items.Length == 0)
+        AddRange(items.AsSpan());
+    }
+
+    // Necessary to avoid conflict with AddRange(IEnumerable<T>) and AddRange(ReadOnlySpan<T>).
+    public void AddRange(T[] items)
+    {
+        AddRange(items.AsSpan());
+    }
+
+    public void AddRange(ReadOnlySpan<T> items)
+    {
+        if (items.IsEmpty)
         {
             return;
         }

@@ -3,7 +3,7 @@
     public string UserName { get; set; }
     public bool UserIsActive { get; set; }
 |
-Generated Location: (1712:41,7 [88] )
+Generated Location: (1796:45,7 [88] )
 |
     public string UserName { get; set; }
     public bool UserIsActive { get; set; }

@@ -4,7 +4,7 @@
 using System;
 using System.Linq;
 using System.Runtime.Serialization;
-using Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 using Microsoft.Extensions.Internal;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.DocumentMapping;

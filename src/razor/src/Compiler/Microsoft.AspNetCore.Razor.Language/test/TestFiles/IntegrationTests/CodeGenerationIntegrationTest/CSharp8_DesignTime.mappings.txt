@@ -1,6 +1,6 @@
 ﻿Source Location: (1:0,1 [32] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
 |using System.Collections.Generic|
-Generated Location: (249:7,0 [32] )
+Generated Location: (250:7,0 [32] )
 |using System.Collections.Generic|
 
 Source Location: (39:2,2 [396] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
@@ -25,7 +25,7 @@ Source Location: (39:2,2 [396] TestFiles/IntegrationTests/CodeGenerationIntegrat
         return TestEnum.First;
     }
 |
-Generated Location: (914:26,2 [396] )
+Generated Location: (915:26,2 [396] )
 |
     IAsyncEnumerable<bool> GetAsyncEnumerable()
     {
@@ -50,12 +50,12 @@ Generated Location: (914:26,2 [396] )
 
 Source Location: (441:24,1 [11] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
 |words[1..2]|
-Generated Location: (1469:52,6 [11] )
+Generated Location: (1470:52,6 [11] )
 |words[1..2]|
 
 Source Location: (456:25,2 [13] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
 |words[^2..^0]|
-Generated Location: (1642:59,6 [13] )
+Generated Location: (1643:59,6 [13] )
 |words[^2..^0]|
 
 Source Location: (476:27,2 [121] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
@@ -65,7 +65,7 @@ Source Location: (476:27,2 [121] TestFiles/IntegrationTests/CodeGenerationIntegr
     TestEnum.Second => "The Second!",
     _ => "The others",
 }|
-Generated Location: (1817:66,6 [121] )
+Generated Location: (1818:66,6 [121] )
 |testEnum switch
 {
     TestEnum.First => "The First!",
@@ -77,36 +77,36 @@ Source Location: (603:34,1 [56] TestFiles/IntegrationTests/CodeGenerationIntegra
 |await foreach (var val in GetAsyncEnumerable())
 {
     |
-Generated Location: (2095:78,1 [56] )
+Generated Location: (2096:78,1 [56] )
 |await foreach (var val in GetAsyncEnumerable())
 {
     |
 
 Source Location: (660:36,5 [3] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
 |val|
-Generated Location: (2312:87,6 [3] )
+Generated Location: (2313:87,6 [3] )
 |val|
 
 Source Location: (663:36,8 [3] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
 |
 }|
-Generated Location: (2479:94,8 [3] )
+Generated Location: (2480:94,8 [3] )
 |
 }|
 
 Source Location: (671:39,1 [12] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
 |Person!.Name|
-Generated Location: (2643:102,6 [12] )
+Generated Location: (2644:102,6 [12] )
 |Person!.Name|
 
 Source Location: (686:40,1 [20] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
 |People![0]!.Name![1]|
-Generated Location: (2817:109,6 [20] )
+Generated Location: (2818:109,6 [20] )
 |People![0]!.Name![1]|
 
 Source Location: (709:41,1 [21] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
 |DoSomething!(Person!)|
-Generated Location: (2999:116,6 [21] )
+Generated Location: (3000:116,6 [21] )
 |DoSomething!(Person!)|
 
 Source Location: (746:43,12 [480] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml)
@@ -134,7 +134,7 @@ Source Location: (746:43,12 [480] TestFiles/IntegrationTests/CodeGenerationInteg
         public string? Name { get; set; }
     }
 |
-Generated Location: (3237:125,12 [480] )
+Generated Location: (3238:125,12 [480] )
 |
     enum TestEnum
     {

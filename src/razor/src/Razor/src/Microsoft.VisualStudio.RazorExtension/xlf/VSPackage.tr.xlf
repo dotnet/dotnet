@@ -64,12 +64,12 @@
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDescription">
         <source>Forces the open brace after an @code or @functions directive to be on the following line</source>
-        <target state="new">Forces the open brace after an @code or @functions directive to be on the following line</target>
+        <target state="translated">Açık küme ayracını bir @code veya @functions yönergesinden sonra aşağıdaki satırda olmaya zorlar</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_CodeBlockBraceOnNextLineDisplayName">
         <source>Code/Functions block open brace on next line</source>
-        <target state="new">Code/Functions block open brace on next line</target>
+        <target state="translated">Sonraki satırda Kod/İşlevler blok açma küme ayracı</target>
         <note />
       </trans-unit>
       <trans-unit id="Setting_ColorBackgroundDescription">

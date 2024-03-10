@@ -4,7 +4,7 @@
 
     public void Increment(MyType type) => counter++;
 |
-Generated Location: (1282:30,7 [84] )
+Generated Location: (1366:34,7 [84] )
 |
     private int counter;
 

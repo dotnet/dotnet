@@ -39,7 +39,7 @@
     <MicrosoftExtensionsDependencyModelPackageVersion>3.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftFakesVersion>17.9.0-beta.24058.4</MicrosoftFakesVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.10.4-preview.24122.4</MicrosoftInternalCodeCoverageVersion>
+    <MicrosoftInternalCodeCoverageVersion>17.10.4-preview.24157.11</MicrosoftInternalCodeCoverageVersion>
     <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.8.34518.129</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
     <MicrosoftVisualStudioInteropVersion>17.10.525-preview.1</MicrosoftVisualStudioInteropVersion>
@@ -47,7 +47,7 @@
     <MicrosoftVSUtilitiesInternalVersion>16.3.42</MicrosoftVSUtilitiesInternalVersion>
     <MicrosoftVSSDKBuildToolsVersion>17.4.2124</MicrosoftVSSDKBuildToolsVersion>
     <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
-    <NewtonsoftJsonVersion Condition="'$(DotNetBuildFromSource)' == 'true'">13.0.3</NewtonsoftJsonVersion>
+    <NewtonsoftJsonVersion Condition="'$(DotNetBuildSourceOnly)' == 'true'">13.0.3</NewtonsoftJsonVersion>
     <SystemCollectionsImmutableVersion>1.5.0</SystemCollectionsImmutableVersion>
     <SystemComponentModelCompositionVersion>4.5.0</SystemComponentModelCompositionVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>

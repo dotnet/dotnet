@@ -1,5 +1,5 @@
 ﻿Source Location: (7:0,7 [30] TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Model.cshtml)
 |System.Collections.IEnumerable|
-Generated Location: (1153:24,0 [30] )
+Generated Location: (1191:26,0 [30] )
 |System.Collections.IEnumerable|
 

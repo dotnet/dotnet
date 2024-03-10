@@ -2,12 +2,10 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 using StreamJsonRpc;
 
@@ -19,8 +17,6 @@ internal partial class RazorCustomMessageTarget
     [JsonRpcMethod(CustomMessageNames.RazorUpdateHtmlBufferEndpoint, UseSingleObjectParameterDeserialization = true)]
     public async Task UpdateHtmlBufferAsync(UpdateBufferRequest request, CancellationToken cancellationToken)
     {
-        Debug.Assert(!_languageServerFeatureOptions.UseRazorCohostServer);
-
         if (request is null)
         {
             throw new ArgumentNullException(nameof(request));

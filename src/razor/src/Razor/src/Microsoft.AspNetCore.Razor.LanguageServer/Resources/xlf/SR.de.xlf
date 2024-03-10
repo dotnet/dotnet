@@ -72,11 +72,6 @@
         <target state="translated">Ereignishandler "{0}" generieren</target>
         <note />
       </trans-unit>
-      <trans-unit id="Invalid_Offset">
-        <source>Invalid offset.</source>
-        <target state="translated">Ungültiger Offset.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Language_Services_Missing_Service">
         <source>Razor language services not configured properly, missing language service '{0}'.</source>
         <target state="translated">Razor-Sprachdienste sind nicht ordnungsgemäß konfiguriert, der Sprachdienst "{0}" fehlt.</target>
@@ -85,16 +80,6 @@
       <trans-unit id="Not_Available_In">
         <source>Not available in</source>
         <target state="translated">Nicht verfügbar in</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PositionCharacter_Outside_Range">
-        <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">Das Zeichen "{0}" außerhalb des {1} Bereichs von "{2}" wurde abgefragt. Das Dokument ist möglicherweise nicht auf dem neuesten Stand.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="PositionLine_Outside_Range">
-        <source>Line '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="translated">Die Zeile "{0}" außerhalb des {1} Bereichs von "{2}" wurde abgefragt. Das Dokument ist möglicherweise nicht auf dem neuesten Stand.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReTrigger_Completions_Title">

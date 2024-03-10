@@ -4,7 +4,7 @@
 
     public Task UpdateValue(int value) { ParentValue = value; return Task.CompletedTask; }
 |
-Generated Location: (1486:39,7 [144] )
+Generated Location: (1570:43,7 [144] )
 |
     public int ParentValue { get; set; } = 42;
 

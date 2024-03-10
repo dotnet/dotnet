@@ -52,9 +52,7 @@ public class MEFComponentTests(ITestOutputHelper testOutputHelper) : AbstractRaz
     private static bool IsAllowedFailure(string error)
     {
         return
-            // We have a little issue with LiveShare at the moment. Doesn't seem to affect user scenarios
-            error.Contains("Microsoft.VisualStudio.LiveShare.Razor.LiveShareProjectCapabilityResolver") ||
-            error.Contains("Microsoft.VisualStudio.LiveShare.Razor.Guest.GuestProjectPathProvider") ||
-            error.Contains("Microsoft.VisualStudio.LiveShare.Razor.Guest.LiveShareSessionAccessor");
+            // No allowed failures. Yay!
+            false;
     }
 }

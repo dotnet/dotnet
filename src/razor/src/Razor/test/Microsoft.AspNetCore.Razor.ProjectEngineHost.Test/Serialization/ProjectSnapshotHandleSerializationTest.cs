@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -29,14 +28,9 @@ public class ProjectSnapshotHandleSerializationTest(ITestOutputHelper testOutput
         var projectId = ProjectId.CreateNewId();
         var expectedSnapshot = new ProjectSnapshotHandle(
             projectId,
-            new ProjectSystemRazorConfiguration(
-                RazorLanguageVersion.Version_1_1,
+            new(RazorLanguageVersion.Version_1_1,
                 "Test",
-                new[]
-                {
-                    new ProjectSystemRazorExtension("Test-Extension1"),
-                    new ProjectSystemRazorExtension("Test-Extension2"),
-                }),
+                [new("Test-Extension1"), new("Test-Extension2")]),
             "Test");
 
         // Act

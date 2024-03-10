@@ -4,7 +4,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <IsPackable Condition=" '$(DotNetBuildFromSource)' != 'true' ">true</IsPackable>
+    <IsPackable Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</IsPackable>
     <NuspecFile>Microsoft.NET.Test.Sdk.nuspec</NuspecFile>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.NET.Test.Sdk</PackageId>

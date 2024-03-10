@@ -3,7 +3,7 @@
     private MyClass c1 = new();
     private MyClass c2 = new();
 |
-Generated Location: (1246:31,7 [68] )
+Generated Location: (1330:35,7 [68] )
 |
     private MyClass c1 = new();
     private MyClass c2 = new();

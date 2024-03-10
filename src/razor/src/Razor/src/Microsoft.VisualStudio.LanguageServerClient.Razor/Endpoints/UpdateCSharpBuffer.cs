@@ -20,8 +20,6 @@ internal partial class RazorCustomMessageTarget
     [JsonRpcMethod(CustomMessageNames.RazorUpdateCSharpBufferEndpoint, UseSingleObjectParameterDeserialization = true)]
     public async Task UpdateCSharpBufferAsync(UpdateBufferRequest request, CancellationToken cancellationToken)
     {
-        Debug.Assert(!_languageServerFeatureOptions.UseRazorCohostServer);
-
         if (request is null)
         {
             throw new ArgumentNullException(nameof(request));

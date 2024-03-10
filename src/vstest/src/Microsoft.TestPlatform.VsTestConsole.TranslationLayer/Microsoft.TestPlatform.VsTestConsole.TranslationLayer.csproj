@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <IsPackable Condition=" '$(DotNetBuildFromSource)' != 'true' ">true</IsPackable>
+    <IsPackable Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</IsPackable>
     <NuspecFile>Microsoft.TestPlatform.VsTestConsole.TranslationLayer.nuspec</NuspecFile>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.TranslationLayer</PackageId>

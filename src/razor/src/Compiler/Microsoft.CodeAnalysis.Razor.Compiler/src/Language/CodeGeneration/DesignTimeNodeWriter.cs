@@ -13,9 +13,9 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
 {
     public override void WriteUsingDirective(CodeRenderingContext context, UsingDirectiveIntermediateNode node)
     {
-        if (node.Source.HasValue)
+        if (node.Source is { FilePath: not null } sourceSpan)
         {
-            using (context.CodeWriter.BuildLinePragma(node.Source.Value, context))
+            using (context.CodeWriter.BuildLinePragma(sourceSpan, context, suppressLineDefaultAndHidden: !node.AppendLineDefaultAndHidden))
             {
                 context.AddSourceMappingFor(node);
                 context.CodeWriter.WriteUsing(node.Content);
@@ -24,6 +24,12 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
         else
         {
             context.CodeWriter.WriteUsing(node.Content);
+
+            if (node.AppendLineDefaultAndHidden)
+            {
+                context.CodeWriter.WriteLine("#line default");
+                context.CodeWriter.WriteLine("#line hidden");
+            }
         }
     }
 
