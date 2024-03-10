@@ -4,7 +4,7 @@
 [assembly: global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemAttribute(typeof(Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_CSharp8_Runtime), @"default", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml")]
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 {
-    #line hidden
+    #line default
 #nullable restore
 #line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
 using System.Collections.Generic;

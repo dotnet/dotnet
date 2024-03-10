@@ -21,10 +21,7 @@ public class InstrumentationPassIntegrationTest : IntegrationTestBase
     public InstrumentationPassIntegrationTest()
         : base(layer: TestProject.Layer.Compiler, generateBaselines: null, projectDirectoryHint: "Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X")
     {
-        Configuration = RazorConfiguration.Create(
-            RazorLanguageVersion.Version_2_0,
-            "MVC-2.1",
-            new[] { new AssemblyExtension("MVC-2.1", typeof(ExtensionInitializer).Assembly) });
+        Configuration = new(RazorLanguageVersion.Version_2_0, "MVC-2.1", Extensions: []);
     }
 
     protected override CSharpCompilation BaseCompilation => DefaultBaseCompilation;

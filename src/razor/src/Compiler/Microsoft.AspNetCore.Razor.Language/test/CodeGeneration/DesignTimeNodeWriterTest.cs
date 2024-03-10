@@ -67,6 +67,42 @@ public class DesignTimeNodeWriterTest : RazorProjectEngineTestBase
 #line 1 ""test.cshtml""
 using System;
 
+#nullable disable
+",
+            csharp,
+            ignoreLineEndingDifferences: true);
+    }
+
+    [Fact]
+    public void WriteUsingDirective_WithSourceAndLineDirectives_WritesContentWithLinePragmaAndMapping()
+    {
+        // Arrange
+        var writer = new DesignTimeNodeWriter();
+        using var context = TestCodeRenderingContext.CreateDesignTime();
+
+        var originalSpan = new SourceSpan("test.cshtml", 0, 0, 0, 6);
+        var generatedSpan = new SourceSpan(null, 38 + Environment.NewLine.Length * 3, 3, 0, 6);
+        var expectedSourceMapping = new SourceMapping(originalSpan, generatedSpan);
+        var node = new UsingDirectiveIntermediateNode()
+        {
+            Content = "System",
+            Source = originalSpan,
+            AppendLineDefaultAndHidden = true
+        };
+
+        // Act
+        writer.WriteUsingDirective(context, node);
+
+        // Assert
+        var mapping = Assert.Single(((DefaultCodeRenderingContext)context).SourceMappings);
+        Assert.Equal(expectedSourceMapping, mapping);
+        var csharp = context.CodeWriter.GenerateCode();
+        Assert.Equal(
+@"
+#nullable restore
+#line 1 ""test.cshtml""
+using System;
+
 #line default
 #line hidden
 #nullable disable

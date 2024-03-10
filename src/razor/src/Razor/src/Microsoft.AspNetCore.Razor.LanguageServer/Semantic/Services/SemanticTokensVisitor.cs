@@ -6,9 +6,8 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
-using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Extensions;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
@@ -31,14 +30,11 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
         _colorCodeBackground = colorCodeBackground;
     }
 
-    public static ImmutableArray<SemanticRange> GetSemanticRanges(RazorCodeDocument razorCodeDocument, Range range, RazorSemanticTokensLegendService razorSemanticTokensLegendService, bool colorCodeBackground)
+    public static ImmutableArray<SemanticRange> GetSemanticRanges(RazorCodeDocument razorCodeDocument, TextSpan textSpan, RazorSemanticTokensLegendService razorSemanticTokensLegendService, bool colorCodeBackground)
     {
-        var sourceText = razorCodeDocument.GetSourceText();
-        var rangeAsTextSpan = range.ToTextSpan(sourceText);
-
         using var _ = ArrayBuilderPool<SemanticRange>.GetPooledObject(out var builder);
 
-        var visitor = new SemanticTokensVisitor(builder, razorCodeDocument, rangeAsTextSpan, razorSemanticTokensLegendService, colorCodeBackground);
+        var visitor = new SemanticTokensVisitor(builder, razorCodeDocument, textSpan, razorSemanticTokensLegendService, colorCodeBackground);
 
         visitor.Visit(razorCodeDocument.GetSyntaxTree().Root);
 

@@ -49,7 +49,7 @@ public static class RazorExtensions
         // The default C# language version for what this Razor configuration supports.
         builder.SetCSharpLanguageVersion(LanguageVersion.CSharp8);
 
-        if (builder.Configuration.LanguageVersion.CompareTo(RazorLanguageVersion.Version_6_0) >= 0)
+        if (builder.Configuration.LanguageVersion >= RazorLanguageVersion.Version_6_0)
         {
             builder.Features.Add(new CreateNewOnMetadataUpdateAttributePass());
         }

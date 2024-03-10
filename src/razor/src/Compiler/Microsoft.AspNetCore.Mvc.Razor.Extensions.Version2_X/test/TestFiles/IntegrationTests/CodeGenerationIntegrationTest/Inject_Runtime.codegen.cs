@@ -5,7 +5,7 @@
 [assembly:global::Microsoft.AspNetCore.Mvc.Razor.Compilation.RazorViewAttribute(@"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inject.cshtml", typeof(AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Inject))]
 namespace AspNetCore
 {
-    #line hidden
+    #line default
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,6 +13,8 @@ namespace AspNetCore
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"f0ec78e6ab6def57bd9067e564edaa84059a8ecb9a3c1766a148a7df3096b7b0", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inject.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Inject : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic>
     {

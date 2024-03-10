@@ -24,7 +24,7 @@ public static class CompilerFeatures
             throw new ArgumentNullException(nameof(builder));
         }
 
-        if (builder.Configuration.LanguageVersion.CompareTo(RazorLanguageVersion.Version_3_0) >= 0)
+        if (builder.Configuration.LanguageVersion >= RazorLanguageVersion.Version_3_0)
         {
             builder.Features.Add(new BindTagHelperDescriptorProvider());
             builder.Features.Add(new ComponentTagHelperDescriptorProvider());
@@ -36,7 +36,7 @@ public static class CompilerFeatures
             builder.Features.Add(new DefaultTypeNameFeature());
         }
 
-        if (builder.Configuration.LanguageVersion.CompareTo(RazorLanguageVersion.Version_8_0) >= 0)
+        if (builder.Configuration.LanguageVersion >= RazorLanguageVersion.Version_8_0)
         {
             builder.Features.Add(new RenderModeTagHelperDescriptorProvider());
             builder.Features.Add(new FormNameTagHelperDescriptorProvider());

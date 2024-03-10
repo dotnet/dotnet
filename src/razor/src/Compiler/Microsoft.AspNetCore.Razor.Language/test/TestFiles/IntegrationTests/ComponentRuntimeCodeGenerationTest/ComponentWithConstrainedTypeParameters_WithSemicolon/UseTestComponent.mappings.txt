@@ -5,7 +5,7 @@
     static Tag tag2 = new Tag() { description = "Another description."};
     List<Tag> items = new List<Tag>() { tag1, tag2 };
 |
-Generated Location: (1825:62,7 [268] )
+Generated Location: (1872:64,7 [268] )
 |
     Image item1 = new Image() { id = 1, url="https://example.com"};
     static Tag tag1 = new Tag() { description = "A description."};

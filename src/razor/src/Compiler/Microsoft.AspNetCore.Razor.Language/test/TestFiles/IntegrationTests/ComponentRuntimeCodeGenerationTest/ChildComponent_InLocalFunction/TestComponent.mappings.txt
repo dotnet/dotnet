@@ -3,7 +3,7 @@
     void RenderChildComponent()
     {
 |
-Generated Location: (813:24,2 [42] )
+Generated Location: (860:26,2 [42] )
 |
     void RenderChildComponent()
     {
@@ -12,12 +12,12 @@ Generated Location: (813:24,2 [42] )
 Source Location: (121:5,0 [7] x:\dir\subdir\Test\TestComponent.cshtml)
 |    }
 |
-Generated Location: (1083:35,0 [7] )
+Generated Location: (1130:37,0 [7] )
 |    }
 |
 
 Source Location: (135:8,2 [25] x:\dir\subdir\Test\TestComponent.cshtml)
 | RenderChildComponent(); |
-Generated Location: (1212:42,2 [25] )
+Generated Location: (1259:44,2 [25] )
 | RenderChildComponent(); |
 

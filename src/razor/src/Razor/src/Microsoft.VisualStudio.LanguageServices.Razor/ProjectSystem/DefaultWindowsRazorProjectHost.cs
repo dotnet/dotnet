@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem;
 using Microsoft.VisualStudio.ProjectSystem.Properties;
@@ -153,7 +154,7 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
             return false;
         }
 
-        configuration = new ProjectSystemRazorConfiguration(languageVersion, configurationItem.Key, extensions);
+        configuration = new(languageVersion, configurationItem.Key, extensions);
         return true;
     }
 
@@ -257,23 +258,24 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
     internal static bool TryGetExtensions(
         string[] extensionNames,
         IImmutableDictionary<string, IProjectRuleSnapshot> state,
-        out ProjectSystemRazorExtension[] extensions)
+        out ImmutableArray<RazorExtension> extensions)
     {
         // The list of extensions might not be present, because the configuration may not have any.
         state.TryGetValue(Rules.RazorExtension.PrimaryDataSourceItemType, out var rule);
 
         var items = rule?.Items ?? ImmutableDictionary<string, IImmutableDictionary<string, string>>.Empty;
-        var extensionList = new List<ProjectSystemRazorExtension>();
+
+        using var builder = new PooledArrayBuilder<RazorExtension>();
         foreach (var item in items)
         {
             var extensionName = item.Key;
             if (extensionNames.Contains(extensionName))
             {
-                extensionList.Add(new ProjectSystemRazorExtension(extensionName));
+                builder.Add(new(extensionName));
             }
         }
 
-        extensions = extensionList.ToArray();
+        extensions = builder.DrainToImmutable();
         return true;
     }
 

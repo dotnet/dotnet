@@ -34,7 +34,7 @@ internal static partial class ObjectReaders
             return interned;
         }
 
-        // We cache all our stings here to prevent them from balooning memory in our Descriptors.
+        // We cache all our stings here to prevent them from ballooning memory in our Descriptors.
         return s_stringCache.GetOrAddValue(str);
     }
 
@@ -42,18 +42,18 @@ internal static partial class ObjectReaders
     {
         var configurationName = reader.ReadNonNullString(nameof(RazorConfiguration.ConfigurationName));
         var languageVersionText = reader.ReadNonNullString(nameof(RazorConfiguration.LanguageVersion));
-        var extensions = reader.ReadArrayOrEmpty(nameof(RazorConfiguration.Extensions),
+        var extensions = reader.ReadImmutableArrayOrEmpty(nameof(RazorConfiguration.Extensions),
             static r =>
             {
                 var extensionName = r.ReadNonNullString();
-                return new SerializedRazorExtension(extensionName);
+                return new RazorExtension(extensionName);
             });
 
         var languageVersion = RazorLanguageVersion.TryParse(languageVersionText, out var version)
             ? version
             : RazorLanguageVersion.Version_2_1;
 
-        return RazorConfiguration.Create(languageVersion, configurationName, extensions);
+        return new(languageVersion, configurationName, extensions);
     }
 
     public static RazorDiagnostic ReadDiagnostic(JsonDataReader reader)

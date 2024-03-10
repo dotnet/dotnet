@@ -22,4 +22,5 @@ public enum ErrorCode
     ERR_NoCorrespondingArgument = 7036,
     WRN_NullReferenceReceiver = 8602,
     WRN_UninitializedNonNullableField = 8618,
+    WRN_MissingNonNullTypesContextForAnnotationInGeneratedCode = 8669,
 }

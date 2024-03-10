@@ -3,7 +3,7 @@
     [Parameter]
     public decimal TestDecimal { get; set; }
 |
-Generated Location: (1462:40,7 [65] )
+Generated Location: (1546:44,7 [65] )
 |
     [Parameter]
     public decimal TestDecimal { get; set; }

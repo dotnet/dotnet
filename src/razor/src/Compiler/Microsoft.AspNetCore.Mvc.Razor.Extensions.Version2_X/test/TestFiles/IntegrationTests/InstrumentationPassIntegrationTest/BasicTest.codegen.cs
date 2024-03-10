@@ -5,7 +5,7 @@
 [assembly:global::Microsoft.AspNetCore.Mvc.Razor.Compilation.RazorViewAttribute(@"/TestFiles/IntegrationTests/InstrumentationPassIntegrationTest/BasicTest.cshtml", typeof(AspNetCore.TestFiles_IntegrationTests_InstrumentationPassIntegrationTest_BasicTest))]
 namespace AspNetCore
 {
-    #line hidden
+    #line default
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,6 +13,8 @@ namespace AspNetCore
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    #line default
+    #line hidden
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"0b74a41c8d96c43904d510d22f53726a6462f225ce6c59ed2ef8e0c4c0c0e757", @"/TestFiles/IntegrationTests/InstrumentationPassIntegrationTest/BasicTest.cshtml")]
     public class TestFiles_IntegrationTests_InstrumentationPassIntegrationTest_BasicTest : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic>
     {
