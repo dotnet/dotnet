@@ -1,0 +1,311 @@
+# Branches that trigger a build on commit
+trigger:
+  branches:
+    include:
+    - main
+    - rel/*
+    exclude:
+    - rel/15.*
+    - rel/16.*
+    - rel/17.0
+    - rel/17.1
+    - rel/17.2
+    - rel/17.3
+    - rel/17.4
+    - rel/17.5
+    - rel/17.6
+
+# Branch(es) that trigger(s) build(s) on PR
+pr:
+  branches:
+    include:
+    - main
+    - rel/*
+  paths:
+    exclude:
+      - .github/*
+      - .devcontainer/*
+      - docs/*
+      - .markdownlint.json
+      - .markdownlintignore
+      - CODE_OF_CONDUCT.md
+      - CONTRIBUTING.md
+      - README.md
+      - SECURITY.md
+
+parameters:
+- name: isRTM
+  displayName: "Produce RTM version?"
+  type: boolean
+  default: False
+- name: SDLEnabled
+  displayName: "Run SDL validation"
+  type: boolean
+  default: False
+
+- name: otherOsPools
+  type: object
+  default:
+  - name: netcore1espool-internal
+    image: 1es-ubuntu-2204-pt
+    os: linux
+  - name: Azure Pipelines
+    image: macOS-11
+    os: macOS
+
+variables:
+  - template: /eng/common/templates-official/variables/pool-providers.yml@self
+  # Cannot use key:value syntax in root defined variables
+  - name: _TeamName
+    value: TestPlatformTeam
+  - name: Codeql.Enabled
+    value: true
+  - name: _RunAsInternal
+    value: True
+  - name: _RunAsPublic
+    value: False
+  - name: _ReleaseVersionKind
+    value: ''
+  # Arcade is using global cache of nugets in non-windows build
+  # under some circumstances, but we don't respect that in our code and try to find them
+  # in .packages. Force the location of packages to that folder.
+  - name: NUGET_PACKAGES
+    value: '$(Build.SourcesDirectory)/.packages/'
+  # Publish Logs seems to depend on this name of variable, so we define it
+  # even when we don't use matrix.
+  - name: _BuildConfig
+    value: Release
+
+  - ${{ if eq(parameters.isRTM, True) }}:
+    - name: _ReleaseVersionKind
+      value: release
+
+  # Group gives access to $microsoft-symbol-server-pat and $symweb-symbol-server-pat
+  - group: DotNet-Symbol-Server-Pats
+  # Group gives access to $dn-bot-devdiv-drop-rw-code-rw and dn-bot-dnceng-build-rw-code-rw
+  - group: DotNet-VSTS-Infra-Access
+  - name: _DevDivDropAccessToken
+    value: $(dn-bot-devdiv-drop-rw-code-rw)
+  - name: _SignType
+    value: real
+  - name: _SignArgs
+    value: /p:DotNetSignType=$(_SignType) /p:TeamName=$(_TeamName) /p:Sign=$(_Sign)
+  - name: _Sign
+    value: True
+  - name: VisualStudioDropName
+    value: Products/$(System.TeamProject)/$(Build.DefinitionName)/$(Build.SourceBranchName)/$(Build.BuildNumber)
+  - name: _InternalBuildArgs
+    # IncludeSourceRevisionInInformationalVersion prevents ProductVersion (on file), and AssemblyInformationalVersion
+    # from appending +<commitId>, which breaks DTAAgent.
+    value: /p:DotNetSignType=$(_SignType)
+      /p:TeamName=$(_TeamName)
+      /p:DotNetFinalVersionKind=$(_ReleaseVersionKind)
+      /p:DotNetPublishUsingPipelines=true
+      /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
+      /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+      /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+      /p:VisualStudioDropName=$(VisualStudioDropName)
+      /p:GenerateSbom=true
+      /p:IncludeSourceRevisionInInformationalVersion=false
+
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    pool:
+      name: netcore1espool-internal
+      image: 1es-windows-2022-pt
+      os: windows
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - stage: build
+      displayName: Build
+      jobs:
+
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
+        parameters:
+          enableMicrobuild: true
+          enablePublishBuildArtifacts: true
+          enablePublishBuildAssets: true
+          enablePublishUsingPipelines: true
+          enablePublishTestResults: true
+          testResultsFormat: 'vstest'
+          enableTelemetry: true
+          enableSourceBuild: true
+          jobs:
+          - job: Windows
+            timeoutInMinutes: 120
+            pool:
+              name: netcore1espool-internal
+              demands: ImageOverride -equals 1es-windows-2022-pt
+            steps:
+            # This steps help to understand versions of .NET runtime installed on the machine,
+            # which is useful to diagnose some governance issues.
+            - task: DotNetCoreCLI@2
+              displayName: 'dotnet --info'
+              inputs:
+                command: custom
+                custom: '--info'
+
+            # Restore internal tools required for SBOM generation
+            - template: /eng/restore-internal-tools.yml
+
+            - powershell: eng\common\CIBuild.cmd
+                -configuration Release
+                -prepareMachine
+                $(_InternalBuildArgs)
+                /p:Test=false
+                /p:SourceBranchName=$(Build.SourceBranchName)
+              name: Build
+              displayName: Build
+
+            # -ci is allowing to import some environment variables and some required configurations
+            # -nobl avoid overwriting binlog of the main Build
+            - script: Test.cmd
+                -configuration Release
+                -ci
+                -nobl
+              name: Test
+              displayName: Test
+
+            # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
+            # through the console or trx
+            - task: 1ES.PublishBuildArtifacts@1
+              displayName: 'Publish Test Results folders'
+              inputs:
+                PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
+                ArtifactName: TestResults
+              condition: failed()
+
+            - task: 1ES.PublishBuildArtifacts@1
+              displayName: 'Publish VSSetup'
+              inputs:
+                PathtoPublish: '$(Build.SourcesDirectory)/artifacts/VSSetup/Release'
+                ArtifactName: VSSetupArtifacts
+          
+          - ${{ each pool in parameters.otherOsPools }}:
+            - job: ${{ pool.os }}
+              dependsOn: Windows
+              workspace:
+                clean: all
+              pool:
+                name: ${{ pool.name }}
+                demands: ImageOverride -equals ${{ pool.image }}
+                os: ${{ pool.os }}
+                image: ${{ pool.image }}
+              steps:
+              - checkout: self
+                fetchDepth: 1
+                clean: true
+
+              # Build but don't pack, packing does not work on non-windows and we want to test what we built on Windows
+              # anyway. Because that is what we will publish.
+              - script: ./build.sh
+                  --configuration Release
+                  --ci
+                name: Build
+                displayName: Build
+
+              # Download the built packages into local package source, as if we built them on this machine.
+              - task: DownloadPipelineArtifact@2
+                displayName: Download Package Artifacts
+                inputs:
+                  artifactName: PackageArtifacts
+                  targetPath: '$(Build.SourcesDirectory)/artifacts/packages/Release/Shipping'
+
+              - script: ./test.sh
+                  --configuration Release
+                  --ci
+                name: Test
+                displayName: Test
+
+              # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
+              # through the console or trx
+              - task: 1ES.PublishBuildArtifacts@1
+                displayName: 'Publish Test Results folders'
+                inputs:
+                  PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
+                  ArtifactName: TestResults
+                condition: failed()
+
+          - job: Publish
+            dependsOn: 
+              - ${{ each pool in parameters.otherOsPools }}:
+                - ${{ pool.os }}
+            pool:
+                name: $(DncEngInternalBuildPool)
+                demands: ImageOverride -equals 1es-windows-2022-pt
+                os: windows
+            steps:
+              # The template job needs a log, otherwise it writes a warning. We can disable log uploading only for
+              # the whole stage, which is not what we want to do. So we write an empty file instead.
+              - pwsh: 'New-Item -Type file -Force "$(Build.SourcesDirectory)/artifacts/log/Release/empty.log"'
+                name: 'Add_empty_logfile'
+              # Download the built packages into local package source, as if we built them on this machine.
+              - task: DownloadPipelineArtifact@2
+                displayName: Download Package Artifacts
+                inputs:
+                  artifactName: PackageArtifacts
+                  targetPath: '$(Build.SourcesDirectory)/artifacts/packages/Release/Shipping'
+
+              - task: DownloadPipelineArtifact@2
+                displayName: Download VSSetup Artifacts
+                inputs:
+                  artifactName: VSSetupArtifacts
+                  targetPath: '$(Build.SourcesDirectory)/artifacts/VSSetup/Release'
+
+              - task: NuGetAuthenticate@1
+                displayName: 'NuGet Authenticate to dotnet-tools and test-tools feeds'
+
+              - task:  1ES.PublishNuget@1
+                displayName: 'Publish NuGet packages to dotnet-tools feed'
+                inputs:
+                  packageParentPath: '$(Build.SourcesDirectory)'
+                  packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
+                  publishVstsFeed: 'public/dotnet-tools'
+
+              - task:  1ES.PublishNuget@1
+                displayName: 'Publish NuGet packages to test-tools feed'
+                inputs:
+                  packageParentPath: '$(Build.SourcesDirectory)'
+                  packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
+                  publishVstsFeed: 'public/test-tools'
+
+              # Publishes setup VSIXes to a drop.
+              # Note: The insertion tool looks for the display name of this task in the logs.
+              - task: 1ES.MicroBuildVstsDrop@1
+                displayName: Upload VSTS Drop
+                inputs:
+                  dropName: $(VisualStudioDropName)
+                  dropFolder: 'artifacts\VSSetup\Release\Insertion'
+                  accessToken: $(_DevDivDropAccessToken)
+                condition: succeeded()
+
+              - task: 1ES.PublishBuildArtifacts@1
+                displayName: Publish Artifact VSSetup
+                inputs:
+                  PathtoPublish: 'artifacts\VSSetup\Release'
+                  ArtifactName: 'VSSetup'
+                condition: succeeded()
+
+      - template: /eng/common/templates-official/job/onelocbuild.yml@self
+        parameters:
+          GitHubOrg: microsoft
+          MirrorRepo: vstest
+          LclSource: lclFilesfromPackage
+          LclPackageId: 'LCL-JUNO-PROD-VSTEST'
+
+    - template: eng\common\templates-official\post-build\post-build.yml@self
+      parameters:
+        publishingInfraVersion: 3
+        SDLValidationParameters:
+          enable: false
+          continueOnError: false
+          params: ' -SourceToolsList @("policheck","credscan")'

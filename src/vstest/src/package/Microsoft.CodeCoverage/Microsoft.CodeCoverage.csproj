@@ -4,7 +4,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <IsPackable Condition=" '$(DotNetBuildFromSource)' != 'true' ">true</IsPackable>
+    <IsPackable Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</IsPackable>
     <NuspecFile>Microsoft.CodeCoverage.nuspec</NuspecFile>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.CodeCoverage</PackageId>

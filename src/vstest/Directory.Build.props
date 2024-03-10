@@ -78,7 +78,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <!-- Prevent warning about deprecated target frameworks -->
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
-    <DefineConstants Condition=" '$(DotNetBuildFromSource)' == 'true' ">$(DefineConstants);DOTNET_BUILD_FROM_SOURCE</DefineConstants>
+    <DefineConstants Condition=" '$(DotNetBuildSourceOnly)' == 'true' ">$(DefineConstants);DOTNET_BUILD_FROM_SOURCE</DefineConstants>
     <!-- PDB -->
     <DebugSymbols>true</DebugSymbols>
     <DebugType>embedded</DebugType>

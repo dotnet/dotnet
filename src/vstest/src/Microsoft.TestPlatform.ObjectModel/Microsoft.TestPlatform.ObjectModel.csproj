@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <IsPackable Condition=" '$(DotNetBuildFromSource)' != 'true' ">true</IsPackable>
+    <IsPackable Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</IsPackable>
     <NuspecFile>Microsoft.TestPlatform.ObjectModel.nuspec</NuspecFile>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.ObjectModel</PackageId>

@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <IsPackable Condition=" '$(DotNetBuildFromSource)' != 'true' ">true</IsPackable>
+    <IsPackable Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</IsPackable>
     <NuspecFile>Microsoft.TestPlatform.AdapterUtilities.nuspec</NuspecFile>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.AdapterUtilities</PackageId>
@@ -21,7 +21,7 @@
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(DotNetBuildFromSource)' != 'true'">
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <!-- CVE-2019-0657 mitigation -->
     <PackageReference Include="System.Private.Uri" Version="$(SystemUriVersion)" />
     <!-- / CVE-2019-0657 mitigation -->
