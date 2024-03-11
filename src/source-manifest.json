@@ -7,10 +7,10 @@
       "commitSha": "f4538b1f8ff5ceb197aea509f3f61872b217b09e"
     },
     {
-      "packageVersion": "9.0.0-preview.1.24151.2",
+      "packageVersion": "9.0.0-preview.1.24160.10",
       "path": "aspire",
       "remoteUri": "https://github.com/dotnet/aspire",
-      "commitSha": "fa3e45ee2a76c81e7a4876c6bef05282e35243f1"
+      "commitSha": "11947620e257657946e4232085d8db8e2aa4a36e"
     },
     {
       "packageVersion": "9.0.0-preview.3.24158.2",
