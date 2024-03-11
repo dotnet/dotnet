@@ -26,7 +26,7 @@
       </trans-unit>
       <trans-unit id="PositionCharacter_Outside_Range">
         <source>Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</source>
-        <target state="new">Character '{0}' outside of the {1} range of '{2}' was queried. The document may not be up to date.</target>
+        <target state="translated">Запрошен символ "{0}" за пределами диапазона {1} "{2}". Возможно, документ не обновлен.</target>
         <note />
       </trans-unit>
       <trans-unit id="PositionLine_Outside_Range">

@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
     <PackageType>MSBuildSdk</PackageType>
     <IsPackable>true</IsPackable>
