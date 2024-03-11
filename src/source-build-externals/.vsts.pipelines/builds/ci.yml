@@ -7,7 +7,6 @@ trigger:
   paths:
     exclude:
     - '*.md'
-
 pr:
   branches:
     include:
@@ -16,49 +15,62 @@ pr:
   paths:
     exclude:
     - '*.md'
-
 variables:
-  - name: Codeql.Enable
-    value: true
-
-stages:
-- stage: build
-  displayName: Build
-  jobs:
-  - template: /eng/common/templates/jobs/jobs.yml
-    parameters:
-      enablePublishUsingPipelines: true
-      enablePublishBuildAssets: true
-      artifacts:
-        publish:
-          artifacts: true
-          manifests: true
+- template: /eng/common/templates-official/variables/pool-providers.yml
+- name: TeamName
+  value: DotNetSourceBuild
+- name: Codeql.Enable
+  value: true
+resources:
+  repositories:
+  - repository: MicroBuildTemplate
+    type: git
+    name: 1ESPipelineTemplates/MicroBuildTemplate
+    ref: refs/tags/release
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
+  parameters:
+    sdl:
+      sourceAnalysisPool:
+        name: $(DncEngInternalBuildPool)
+        image: 1es-windows-2022-pt
+        os: windows
+      suppression:
+          suppressionFile: $(Build.SourcesDirectory)\.vsts.pipelines\guardian\.gdnsuppress
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - stage: build
+      displayName: Build
       jobs:
-
-      - job: SourceBuild_Managed
-        displayName: Source-Build (Managed)
-        pool:
-          ${{ if eq(variables['System.TeamProject'], 'public') }}:
-            name: NetCore-Public
-            demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
-          ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-            name: NetCore1ESPool-Internal
-            demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8'
-        workspace:
-          clean: all
-        variables:
-        - name: _BuildConfig
-          value: Release
-        steps:
-        - checkout: self
-          submodules: recursive
-        - template: /eng/common/templates/steps/source-build.yml
-
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-  - template: /eng/common/templates/post-build/post-build.yml
-    parameters:
-      publishingInfraVersion: 3
-      enableSourceLinkValidation: true
-      enableSigningValidation: false
-
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
+        parameters:
+          enablePublishUsingPipelines: true
+          enablePublishBuildAssets: true
+          artifacts:
+            publish:
+              artifacts: true
+              manifests: true
+          jobs:
+          - job: SourceBuild_Managed
+            displayName: Source-Build (Managed)
+            pool:
+              name: $(DncEngInternalBuildPool)
+              image: 1es-ubuntu-2204-pt
+              os: linux
+            container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8'
+            workspace:
+              clean: all
+            variables:
+            - name: _BuildConfig
+              value: Release
+            steps:
+            - checkout: self
+              submodules: recursive
+            - template: /eng/common/templates-official/steps/source-build.yml
+    - ${{ if notin(variables['Build.Reason'], 'PullRequest') }}:
+      - template: /eng/common/templates-official/post-build/post-build.yml@self
+        parameters:
+          publishingInfraVersion: 3
+          enableSourceLinkValidation: true
+          enableSigningValidation: false

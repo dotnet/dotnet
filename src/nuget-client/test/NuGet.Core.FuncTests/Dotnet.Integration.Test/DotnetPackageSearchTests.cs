@@ -34,16 +34,16 @@ namespace Dotnet.Integration.Test
             using (var pathContext = new SimpleTestPathContext())
             {
                 // Arrange
-                var args = new string[] { "package", "search", "json", "--source", $"{_packageSearchRunnerFixture.ServerWithMultipleEndpoints.Uri}v3/index.json", "--format", "json" };
+                var args = new string[] { "package", "search", "json", "--take", "10", "--prerelease", "--source", $"{_packageSearchRunnerFixture.ServerWithMultipleEndpoints.Uri}v3/index.json", "--format", "json" };
 
                 // Act
                 var result = _testFixture.RunDotnetExpectSuccess(pathContext.PackageSource, string.Join(" ", args));
 
                 // Assert
                 Assert.Equal(0, result.ExitCode);
-                Assert.Contains("\"total downloads\": 531607259,", result.AllOutput);
-                Assert.Contains("\"owners\": \"James Newton-King\",", result.AllOutput);
-                Assert.Contains("\"total downloads\": 531607259,", result.AllOutput);
+                Assert.Contains("\"id\": \"Fake.Newtonsoft.Json\",", result.AllOutput);
+                Assert.Contains("\"owners\": \"James Newton-King\"", result.AllOutput);
+                Assert.Contains("\"totalDownloads\": 531607259,", result.AllOutput);
                 Assert.Contains("\"latestVersion\": \"12.0.3\"", result.AllOutput);
             }
         }
