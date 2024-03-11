@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "6bb25edf8ef1d12f0445da086dea8f3984b39ea6"
+      "commitSha": "2146770858bd431d27efe8b58a717264e75f5f39"
     },
     {
       "packageVersion": "17.10.0-preview-24127-03",
@@ -79,10 +79,10 @@
       "commitSha": "2fdd0d41e33c3354de2750fe154b56751a6682aa"
     },
     {
-      "packageVersion": "7.0.0-preview.24159.3",
+      "packageVersion": "7.0.0-preview.24160.1",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "7df391184e830e57ec2342a752075b65ba0d7083"
+      "commitSha": "fdae95005b62553d97ee1682a06086ab51a141a5"
     },
     {
       "packageVersion": "4.10.0-3.24158.5",
@@ -97,10 +97,10 @@
       "commitSha": "7b1f39d7b8bd81d003898c49d0320682b6f06c54"
     },
     {
-      "packageVersion": "9.0.0-preview.3.24159.6",
+      "packageVersion": "9.0.0-preview.3.24160.2",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "82dac28143be0740d795f434db9b70f61b3b7a04"
+      "commitSha": "8bd4f6fe252395455969c7b3e76f40b36764c4a9"
     },
     {
       "packageVersion": "9.0.0-preview.24057.2",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-preview.3.24160.2",
+      "packageVersion": "9.0.100-preview.3.24160.10",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "2f074e5a6810a5e72fab2ae46258d8c39bcbdbaf"
+      "commitSha": "1d87b710796dc03b78c4d0b272e4edfd6d98d806"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24158.2",
@@ -127,7 +127,7 @@
       "commitSha": "768378e775fc5ddc99d41f2c4d1c78182f326ea7"
     },
     {
-      "packageVersion": "9.0.0-beta.24158.1",
+      "packageVersion": "9.0.0-beta.24159.1",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
       "commitSha": "4af34e7dc1755e8a26fcbde95073895e279da09d"
@@ -157,10 +157,10 @@
       "commitSha": "316167369cea59e0ad6ece2a39d94a3a6d49cf12"
     },
     {
-      "packageVersion": "9.0.0-preview.3.24159.2",
+      "packageVersion": "9.0.0-preview.3.24160.1",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "ff40a612f38ae132cc6d474dd18bc1cbe7fb2242"
+      "commitSha": "35941ed48463df7c601a2c6850d150685fa7de55"
     },
     {
       "packageVersion": "9.0.0-preview.3.24158.3",
