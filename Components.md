@@ -8,7 +8,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@2215d18](https://github.com/dotnet/arcade/tree/2215d18d04a6565e9133c15ece7df7161fdf1e8e)*
+*[dotnet/arcade@f4538b1](https://github.com/dotnet/arcade/tree/f4538b1f8ff5ceb197aea509f3f61872b217b09e)*
 - `src/aspire`  
 *[dotnet/aspire@fa3e45e](https://github.com/dotnet/aspire/tree/fa3e45ee2a76c81e7a4876c6bef05282e35243f1)*
 - `src/aspnetcore`  

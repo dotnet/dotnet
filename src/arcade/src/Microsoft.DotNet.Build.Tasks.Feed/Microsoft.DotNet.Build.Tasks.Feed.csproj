@@ -7,7 +7,6 @@
     <DevelopmentDependency>true</DevelopmentDependency>
     <IsBuildTaskProject>true</IsBuildTaskProject>
     <PackageType>MSBuildSdk</PackageType>
-    <ExcludeFromSourceBuild>true</ExcludeFromSourceBuild>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
   </PropertyGroup>
 
