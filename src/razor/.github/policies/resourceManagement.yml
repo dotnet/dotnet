@@ -166,6 +166,18 @@ configuration:
       description: '[Issues] Tag all non-milestone issues as "untriaged"'
     - if:
       - payloadType: Issues
+      - or:
+        - isAction:
+            action: Closed
+        - isPartOfAnyMilestone
+      - hasLabel:
+          label: untriaged
+      then:
+      - removeLabel:
+          label: untriaged
+      description: '[Issues] Issues with milestone should be removed from "untriaged" tag'
+    - if:
+      - payloadType: Issues
       - isAction:
           action: Opened
       - or:
