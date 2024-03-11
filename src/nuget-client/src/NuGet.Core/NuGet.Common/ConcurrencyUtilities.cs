@@ -117,8 +117,12 @@ namespace NuGet.Common
             }
         }
 
-        public static void ExecuteWithFileLocked(string filePath,
-            Action action)
+        public static void ExecuteWithFileLocked(string filePath, Action action)
+        {
+            ExecuteWithFileLocked(filePath, action, AcquireFileStream, NumberOfRetries);
+        }
+
+        internal static void ExecuteWithFileLocked(string filePath, Action action, Func<string, FileStream> acquireFileStream, int numberOfRetries)
         {
             if (string.IsNullOrEmpty(filePath))
             {
@@ -129,7 +133,7 @@ namespace NuGet.Common
             try
             {
                 // limit the number of unauthorized, this should be around 30 seconds.
-                var unauthorizedAttemptsLeft = NumberOfRetries;
+                var unauthorizedAttemptsLeft = numberOfRetries;
 
                 while (true)
                 {
@@ -141,7 +145,7 @@ namespace NuGet.Common
                         {
                             lockPath = FileLockPath(filePath);
 
-                            fs = AcquireFileStream(lockPath);
+                            fs = acquireFileStream(lockPath);
                         }
                         catch (DirectoryNotFoundException)
                         {
