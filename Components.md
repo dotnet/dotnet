@@ -34,7 +34,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@661d88a](https://github.com/dotnet/fsharp/tree/661d88ab1975665fbe8c580e7e2dab01bf264c27)*
 - `src/installer`  
-*[dotnet/installer@2146770](https://github.com/dotnet/installer/tree/2146770858bd431d27efe8b58a717264e75f5f39)*
+*[dotnet/installer@e911f5c](https://github.com/dotnet/installer/tree/e911f5c82cc02aea96e227596e16c830d54cf03a)*
 - `src/msbuild`  
 *[dotnet/msbuild@6f44380](https://github.com/dotnet/msbuild/tree/6f44380e4fdea6ddf5c11f48efeb25c2bf181e62)*
 - `src/nuget-client`  
@@ -46,13 +46,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn`  
 *[dotnet/roslyn@026c963](https://github.com/dotnet/roslyn/tree/026c96327b02c5ce4d3208f821e02d2ffa825312)*
 - `src/roslyn-analyzers`  
-*[dotnet/roslyn-analyzers@7b1f39d](https://github.com/dotnet/roslyn-analyzers/tree/7b1f39d7b8bd81d003898c49d0320682b6f06c54)*
+*[dotnet/roslyn-analyzers@94749ce](https://github.com/dotnet/roslyn-analyzers/tree/94749ce487be31b74bae5629b5af5d2392377f6d)*
 - `src/runtime`  
-*[dotnet/runtime@8bd4f6f](https://github.com/dotnet/runtime/tree/8bd4f6fe252395455969c7b3e76f40b36764c4a9)*
+*[dotnet/runtime@3eb8c7f](https://github.com/dotnet/runtime/tree/3eb8c7f1086b79b28a27b57a935f97be3b7fcccb)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@bfde902](https://github.com/dotnet/scenario-tests/tree/bfde902a10d7b672f4fc7e844198ede405dbb9c6)*
 - `src/sdk`  
-*[dotnet/sdk@1d87b71](https://github.com/dotnet/sdk/tree/1d87b710796dc03b78c4d0b272e4edfd6d98d806)*
+*[dotnet/sdk@464e4b3](https://github.com/dotnet/sdk/tree/464e4b34f20df0eef957ef6b2c9c8eea23b415b6)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@16ece46](https://github.com/dotnet/source-build-externals/tree/16ece46ae00dd1e8ac30a360d3dd03a6a682db41)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -90,7 +90,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@71a20ad](https://github.com/dotnet/symreader/tree/71a20ad4aaedc284ef2d9a7302f5d2ec4df7dca3)*
 - `src/templating`  
-*[dotnet/templating@042839d](https://github.com/dotnet/templating/tree/042839d3b806fe7095c4ef580c77d54e9a74dbea)*
+*[dotnet/templating@f9c0073](https://github.com/dotnet/templating/tree/f9c0073656bb4cd5a40e5edad65e35b3d0cbaf5a)*
 - `src/test-templates`  
 *[dotnet/test-templates@b27ce8a](https://github.com/dotnet/test-templates/tree/b27ce8a9d5b1931cb91cbc20a16d15bd7231c792)*
 - `src/vstest`  

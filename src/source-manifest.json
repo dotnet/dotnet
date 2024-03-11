@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "2146770858bd431d27efe8b58a717264e75f5f39"
+      "commitSha": "e911f5c82cc02aea96e227596e16c830d54cf03a"
     },
     {
       "packageVersion": "17.10.0-preview-24127-03",
@@ -91,16 +91,16 @@
       "commitSha": "026c96327b02c5ce4d3208f821e02d2ffa825312"
     },
     {
-      "packageVersion": "3.11.0-beta1.24156.1",
+      "packageVersion": "3.11.0-beta1.24158.2",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "7b1f39d7b8bd81d003898c49d0320682b6f06c54"
+      "commitSha": "94749ce487be31b74bae5629b5af5d2392377f6d"
     },
     {
-      "packageVersion": "9.0.0-preview.3.24160.2",
+      "packageVersion": "9.0.0-preview.3.24160.3",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "8bd4f6fe252395455969c7b3e76f40b36764c4a9"
+      "commitSha": "3eb8c7f1086b79b28a27b57a935f97be3b7fcccb"
     },
     {
       "packageVersion": "9.0.0-preview.24057.2",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-preview.3.24160.10",
+      "packageVersion": "9.0.100-preview.3.24161.2",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "1d87b710796dc03b78c4d0b272e4edfd6d98d806"
+      "commitSha": "464e4b34f20df0eef957ef6b2c9c8eea23b415b6"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24158.2",
@@ -139,10 +139,10 @@
       "commitSha": "71a20ad4aaedc284ef2d9a7302f5d2ec4df7dca3"
     },
     {
-      "packageVersion": "9.0.100-preview.3.24158.2",
+      "packageVersion": "9.0.100-preview.3.24160.4",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "042839d3b806fe7095c4ef580c77d54e9a74dbea"
+      "commitSha": "f9c0073656bb4cd5a40e5edad65e35b3d0cbaf5a"
     },
     {
       "packageVersion": "1.1.0-rc.24158.2",
