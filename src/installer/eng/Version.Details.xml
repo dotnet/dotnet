@@ -255,13 +255,13 @@
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>f4538b1f8ff5ceb197aea509f3f61872b217b09e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.24157.2">
+    <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.24161.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>049ed7fcb1a7038d20e160b798606c64f743058c</Sha>
+      <Sha>287772f0ae8b40573f97342eb83fdeee7a136bea</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.24157.2">
+    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.24161.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>049ed7fcb1a7038d20e160b798606c64f743058c</Sha>
+      <Sha>287772f0ae8b40573f97342eb83fdeee7a136bea</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XliffTasks" Version="9.0.0-beta.24159.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
