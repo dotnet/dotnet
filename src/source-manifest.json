@@ -7,10 +7,10 @@
       "commitSha": "f4538b1f8ff5ceb197aea509f3f61872b217b09e"
     },
     {
-      "packageVersion": "9.0.0-preview.1.24151.2",
+      "packageVersion": "9.0.0-preview.1.24160.10",
       "path": "aspire",
       "remoteUri": "https://github.com/dotnet/aspire",
-      "commitSha": "fa3e45ee2a76c81e7a4876c6bef05282e35243f1"
+      "commitSha": "11947620e257657946e4232085d8db8e2aa4a36e"
     },
     {
       "packageVersion": "9.0.0-preview.3.24158.2",
@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "c027b1b9470f46e3ac7d55c0988a7727adba1ea4"
+      "commitSha": "1907e00d6fdd84579d81d61a9c7272027db4a8bb"
     },
     {
       "packageVersion": "17.10.0-preview-24127-03",
@@ -79,10 +79,10 @@
       "commitSha": "2fdd0d41e33c3354de2750fe154b56751a6682aa"
     },
     {
-      "packageVersion": "7.0.0-preview.24160.1",
+      "packageVersion": "7.0.0-preview.24160.2",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "fdae95005b62553d97ee1682a06086ab51a141a5"
+      "commitSha": "43b4713af08b6686a6deef64ade4b7238f10c140"
     },
     {
       "packageVersion": "4.10.0-3.24158.5",
@@ -97,10 +97,10 @@
       "commitSha": "94749ce487be31b74bae5629b5af5d2392377f6d"
     },
     {
-      "packageVersion": "9.0.0-preview.3.24160.3",
+      "packageVersion": "9.0.0-preview.3.24161.1",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "3eb8c7f1086b79b28a27b57a935f97be3b7fcccb"
+      "commitSha": "2909fe8a13b361bd83727cef1af9360a0949ad2b"
     },
     {
       "packageVersion": "9.0.0-preview.24057.2",
@@ -109,10 +109,10 @@
       "commitSha": "bfde902a10d7b672f4fc7e844198ede405dbb9c6"
     },
     {
-      "packageVersion": "9.0.100-preview.3.24161.2",
+      "packageVersion": "9.0.100-preview.3.24161.8",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "464e4b34f20df0eef957ef6b2c9c8eea23b415b6"
+      "commitSha": "be2654e7f453bf795bd9a73965fd4e76435bc170"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24158.2",
@@ -121,10 +121,10 @@
       "commitSha": "16ece46ae00dd1e8ac30a360d3dd03a6a682db41"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24155.1",
+      "packageVersion": "9.0.0-alpha.1.24161.2",
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "768378e775fc5ddc99d41f2c4d1c78182f326ea7"
+      "commitSha": "8d6e9cf10f64ff8fc02e434b516f6ca87c4b7215"
     },
     {
       "packageVersion": "9.0.0-beta.24159.1",
