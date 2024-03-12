@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="Info_TestProps"  BeforeTargets="Build" Condition=" $(Internal_Logging) == 'true' ">
+    <Message Text="Info: Test.props imported by $(MSBuildProjectName)." Importance="high"/>
+  </Target>
+
+  <Import Project=".\_Common.props" />
+
+  <PropertyGroup>
+    <!-- Our test matrix includes every currently supported version of .NET
+          - net4.5.2 (EoL April 2022)
+          - net4.6.0 (EoL April 2022)
+          - net4.6.1 (EoL April 2022)
+          - net4.6.2
+          - net4.7.2
+          - net4.8.0
+          - netcoreapp3.1 (EoL Dec 2022)
+          - net5.0 (EoL Feb 2022)
+          - net6.0 (GA Nov 2021)
+    -->
+    <TargetFrameworks>net462;net472;net480;netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="$(OS) != 'Windows_NT'">netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+
+    <!-- 
+      We have a significant backlog of analyzer issues in the Test projects. Turning these off for now. 
+      https://docs.microsoft.com/en-us/visualstudio/code-quality/disable-code-analysis?view=vs-2022#net-framework-projects
+      https://docs.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#analysismode
+    -->
+    <AnalysisMode>None</AnalysisMode>
+    <RunAnalyzers>false</RunAnalyzers>
+  </PropertyGroup>
+
+  <PropertyGroup>
+        <NoWarn>$(NoWarn),CS0618</NoWarn> <!-- Instrumentation Key based APIs have been marked Obsolete. No plans to update the tests at this time. -->
+  </PropertyGroup>
+
+</Project>
