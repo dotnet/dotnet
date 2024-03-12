@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Razor.DynamicFiles;
@@ -48,7 +47,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     public async Task ProcessDocument_LongDocumentParse_DoesNotUpdateAfterSuppress()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher);
+        var projectManager = CreateProjectSnapshotManager();
 
         await RunOnDispatcherAsync(() =>
         {
@@ -74,7 +73,6 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         queue.Initialize(projectManager);
 
         // We trigger enqueued notifications via adding/opening to the project manager
-        projectManager.AllowNotifyListeners = true;
 
         // Act & Assert
         await RunOnDispatcherAsync(() =>
@@ -105,7 +103,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     public async Task ProcessDocument_SwallowsIOExceptions()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher);
+        var projectManager = CreateProjectSnapshotManager();
 
         await RunOnDispatcherAsync(() =>
         {
@@ -148,7 +146,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     public async Task ProcessDocument_SwallowsUnauthorizedAccessExceptions()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher);
+        var projectManager = CreateProjectSnapshotManager();
 
         await RunOnDispatcherAsync(() =>
         {
@@ -191,7 +189,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     public async Task Queue_ProcessesNotifications_AndGoesBackToSleep()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher);
+        var projectManager = CreateProjectSnapshotManager();
 
         await RunOnDispatcherAsync(() =>
         {
@@ -237,7 +235,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     public async Task Queue_ProcessesNotifications_AndRestarts()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher);
+        var projectManager = CreateProjectSnapshotManager();
 
         await RunOnDispatcherAsync(() =>
         {
@@ -311,10 +309,8 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     public async Task DocumentChanged_ReparsesRelatedFiles()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher)
-        {
-            AllowNotifyListeners = true,
-        };
+        var projectManager = CreateProjectSnapshotManager();
+
         var documents = new[]
         {
             TestProjectData.SomeProjectComponentFile1,
@@ -381,10 +377,7 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
     public async Task DocumentRemoved_ReparsesRelatedFiles()
     {
         // Arrange
-        var projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher)
-        {
-            AllowNotifyListeners = true,
-        };
+        var projectManager = CreateProjectSnapshotManager();
 
         await RunOnDispatcherAsync(() =>
         {

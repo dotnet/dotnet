@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -12,10 +11,10 @@ using Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Moq;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
@@ -24,7 +23,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
 public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput) : LanguageServerTestBase(testOutput)
 {
-    private static readonly IProjectSnapshotManagerAccessor s_projectSnapshotManager = CreateProjectSnapshotManagerAccessor();
+    private static readonly IProjectSnapshotManagerAccessor s_projectManagerAccessor = CreateProjectSnapshotManagerAccessor();
 
     [Fact]
     public async Task Handle_SearchFound_GenericComponent()
@@ -32,7 +31,7 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
         // Arrange
         var tagHelperDescriptor1 = CreateRazorComponentTagHelperDescriptor("First", "First.Components", "Component1", typeName: "Component1<TItem>");
         var tagHelperDescriptor2 = CreateRazorComponentTagHelperDescriptor("Second", "Second.Components", "Component3", typeName: "Component3<TItem>");
-        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectSnapshotManager, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectManagerAccessor, LoggerFactory);
 
         // Act
         var documentSnapshot1 = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor1);
@@ -49,7 +48,7 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
         // Arrange
         var tagHelperDescriptor1 = CreateRazorComponentTagHelperDescriptor("First", "First.Components", "Component1");
         var tagHelperDescriptor2 = CreateRazorComponentTagHelperDescriptor("Second", "Second.Components", "Component3");
-        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectSnapshotManager, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectManagerAccessor, LoggerFactory);
 
         // Act
         var documentSnapshot1 = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor1);
@@ -65,7 +64,7 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("First", "Test", "Component2");
-        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectSnapshotManager, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectManagerAccessor, LoggerFactory);
 
         // Act
         var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
@@ -79,7 +78,7 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("Third", "First.Components", "Component3");
-        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectSnapshotManager, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectManagerAccessor, LoggerFactory);
 
         // Act
         var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
@@ -93,7 +92,7 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("First", "First.Components", "Component2");
-        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectSnapshotManager, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectManagerAccessor, LoggerFactory);
 
         // Act
         var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
@@ -107,7 +106,7 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("First", "First.Components", "Component3");
-        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectSnapshotManager, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectManagerAccessor, LoggerFactory);
 
         // Act
         var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
@@ -121,7 +120,7 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var tagHelperDescriptor = CreateRazorComponentTagHelperDescriptor("AssemblyName", "Test", "Component2");
-        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectSnapshotManager, LoggerFactory);
+        var searchEngine = new DefaultRazorComponentSearchEngine(s_projectManagerAccessor, LoggerFactory);
 
         // Act
         var documentSnapshot = await searchEngine.TryLocateComponentAsync(tagHelperDescriptor);
@@ -147,7 +146,7 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
     {
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath, relativePath: filePath);
         var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty, builder => builder.AddDirective(NamespaceDirective.Directive));
-        var codeDocument = projectEngine.Process(sourceDocument, FileKinds.Component, importSources: default, Array.Empty<TagHelperDescriptor>());
+        var codeDocument = projectEngine.Process(sourceDocument, FileKinds.Component, importSources: default, tagHelpers: []);
 
         var namespaceNode = (NamespaceDeclarationIntermediateNode)codeDocument
             .GetDocumentIntermediateNode()
@@ -155,27 +154,28 @@ public class DefaultRazorComponentSearchEngineTest(ITestOutputHelper testOutput)
             .FirstOrDefault(n => n is NamespaceDeclarationIntermediateNode);
         namespaceNode.Content = rootNamespaceName;
 
-        var documentSnapshot = Mock.Of<IDocumentSnapshot>(d =>
+        return StrictMock.Of<IDocumentSnapshot>(d =>
             d.GetGeneratedOutputAsync() == Task.FromResult(codeDocument) &&
             d.FilePath == filePath &&
-            d.FileKind == FileKinds.Component, MockBehavior.Strict);
-        return documentSnapshot;
+            d.FileKind == FileKinds.Component);
     }
 
     internal static IProjectSnapshotManagerAccessor CreateProjectSnapshotManagerAccessor()
     {
-        var firstProject = Mock.Of<IProjectSnapshot>(p =>
+        var firstProject = StrictMock.Of<IProjectSnapshot>(p =>
             p.FilePath == "c:/First/First.csproj" &&
             p.DocumentFilePaths == new[] { "c:/First/Component1.razor", "c:/First/Component2.razor" } &&
             p.GetDocument("c:/First/Component1.razor") == CreateRazorDocumentSnapshot("", "c:/First/Component1.razor", "First.Components") &&
-            p.GetDocument("c:/First/Component2.razor") == CreateRazorDocumentSnapshot("@namespace Test", "c:/First/Component2.razor", "Test"), MockBehavior.Strict);
+            p.GetDocument("c:/First/Component2.razor") == CreateRazorDocumentSnapshot("@namespace Test", "c:/First/Component2.razor", "Test"));
 
-        var secondProject = Mock.Of<IProjectSnapshot>(p =>
+        var secondProject = StrictMock.Of<IProjectSnapshot>(p =>
             p.FilePath == "c:/Second/Second.csproj" &&
             p.DocumentFilePaths == new[] { "c:/Second/Component3.razor" } &&
-            p.GetDocument("c:/Second/Component3.razor") == CreateRazorDocumentSnapshot("", "c:/Second/Component3.razor", "Second.Components"), MockBehavior.Strict);
+            p.GetDocument("c:/Second/Component3.razor") == CreateRazorDocumentSnapshot("", "c:/Second/Component3.razor", "Second.Components"));
 
-        var projectSnapshotManager = Mock.Of<ProjectSnapshotManagerBase>(p => p.GetProjects() == new[] { firstProject, secondProject }.ToImmutableArray(), MockBehavior.Strict);
+        var projectSnapshotManager = StrictMock.Of<ProjectSnapshotManagerBase>(p =>
+            p.GetProjects() == new[] { firstProject, secondProject }.ToImmutableArray());
+
         return new TestProjectSnapshotManagerAccessor(projectSnapshotManager);
     }
 

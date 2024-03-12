@@ -44,10 +44,7 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
         var documentServiceFactory = new RazorDocumentServiceProviderFactory();
         var editorFeatureDetector = StrictMock.Of<LSPEditorFeatureDetector>();
 
-        _projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher)
-        {
-            AllowNotifyListeners = true
-        };
+        _projectManager = CreateProjectSnapshotManager();
 
         var hostProject = new HostProject(@"C:\project.csproj", @"C:\obj", RazorConfiguration.Default, rootNamespace: "TestNamespace");
         var hostDocument1 = new HostDocument(@"C:\document1.razor", "document1.razor", FileKinds.Component);
@@ -67,13 +64,11 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
 
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
         var filePathService = new FilePathService(languageServerFeatureOptions);
-        var projectManagerAccessor = StrictMock.Of<IProjectSnapshotManagerAccessor>(a =>
-            a.Instance == _projectManager);
 
         var fallbackProjectManager = new FallbackProjectManager(
             StrictMock.Of<ProjectConfigurationFilePathStore>(),
             languageServerFeatureOptions,
-            projectManagerAccessor,
+            _projectManager.GetAccessor(),
             Dispatcher,
             WorkspaceProvider,
             NoOpTelemetryReporter.Instance);

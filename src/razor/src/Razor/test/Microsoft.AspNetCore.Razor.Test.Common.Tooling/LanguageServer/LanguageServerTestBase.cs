@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.ProjectEngineHost;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
@@ -52,6 +54,18 @@ public abstract class LanguageServerTestBase : ToolingTestBase
 
         return dispatcher;
     }
+
+    private protected TestProjectSnapshotManager CreateProjectSnapshotManager()
+        => CreateProjectSnapshotManager(triggers: [], ProjectEngineFactories.DefaultProvider);
+
+    private protected TestProjectSnapshotManager CreateProjectSnapshotManager(IProjectSnapshotChangeTrigger[] triggers)
+        => CreateProjectSnapshotManager(triggers, ProjectEngineFactories.DefaultProvider);
+
+    private protected TestProjectSnapshotManager CreateProjectSnapshotManager(IProjectEngineFactoryProvider projectEngineFactoryProvider)
+        => CreateProjectSnapshotManager(triggers: [], projectEngineFactoryProvider);
+
+    private protected TestProjectSnapshotManager CreateProjectSnapshotManager(IProjectSnapshotChangeTrigger[] triggers, IProjectEngineFactoryProvider projectEngineFactoryProvider)
+        => new(triggers, projectEngineFactoryProvider, Dispatcher, ErrorReporter);
 
     internal RazorRequestContext CreateRazorRequestContext(VersionedDocumentContext? documentContext, ILspServices? lspServices = null)
     {

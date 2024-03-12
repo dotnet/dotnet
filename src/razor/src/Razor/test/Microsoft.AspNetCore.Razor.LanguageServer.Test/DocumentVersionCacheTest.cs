@@ -1,11 +1,14 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+#if NETFRAMEWORK
 using System;
 using System.Collections.Generic;
+#endif
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Xunit;
 using Xunit.Abstractions;
@@ -313,13 +316,5 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
         (actualDocument, actualVersion) = entries[1];
         Assert.Same(document2, actualDocument);
         Assert.Equal(1337, actualVersion);
-    }
-
-    private TestProjectSnapshotManager CreateProjectSnapshotManager()
-    {
-        var result = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
-        result.AllowNotifyListeners = true;
-
-        return result;
     }
 }

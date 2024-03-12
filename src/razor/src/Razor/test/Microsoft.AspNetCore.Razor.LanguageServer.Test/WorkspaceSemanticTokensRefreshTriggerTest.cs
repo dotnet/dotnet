@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Xunit;
 using Xunit.Abstractions;
@@ -21,8 +22,7 @@ public class WorkspaceSemanticTokensRefreshTriggerTest : LanguageServerTestBase
     public WorkspaceSemanticTokensRefreshTriggerTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
-        _projectManager.AllowNotifyListeners = true;
+        _projectManager = CreateProjectSnapshotManager();
     }
 
     protected override async Task InitializeAsync()
