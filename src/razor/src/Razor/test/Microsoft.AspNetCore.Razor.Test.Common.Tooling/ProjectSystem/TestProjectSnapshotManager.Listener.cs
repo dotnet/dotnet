@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 
@@ -45,22 +44,6 @@ internal partial class TestProjectSnapshotManager
         private void ProjectManager_Changed(object? sender, ProjectChangeEventArgs e)
         {
             _notifications.Add(e);
-        }
-
-        public void AssertNoNotifications()
-        {
-            Assert.Empty(_notifications);
-        }
-
-        public void AssertNotifications(params Action<Inspector>[] inspectors)
-        {
-            Assert.Equal(_notifications.Count, inspectors.Length);
-
-            for (var i = 0; i < _notifications.Count; i++)
-            {
-                var inspector = inspectors[i];
-                inspector(new(_notifications[i]));
-            }
         }
     }
 }

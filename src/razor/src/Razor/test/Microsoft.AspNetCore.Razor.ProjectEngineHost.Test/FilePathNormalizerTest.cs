@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Xunit;
@@ -239,5 +240,23 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestB
 
         // Assert
         Assert.Equal("C:/path/to/document.cshtml", normalized);
+    }
+
+    [OSSkipConditionTheory(["OSX", "Linux"])]
+    [InlineData(@"C:\path\to\document.cshtml")]
+    [InlineData(@"c:\path\to\document.cshtml")]
+    [InlineData("C:/path/to/document.cshtml")]
+    [InlineData("c:/path/to/document.cshtml")]
+    public void Comparer_CaseInsensitiveDictionary(string fileName)
+    {
+        var dictionary = new Dictionary<string, bool>(FilePathNormalizingComparer.Instance)
+        {
+            { "C:/path/to/document.cshtml", true },
+            { "C:/path/to/document1.cshtml", true },
+            { "C:/path/to/document2.cshtml", true }
+        };
+
+        Assert.True(dictionary.ContainsKey(fileName));
+        Assert.True(dictionary.TryGetValue(fileName, out _));
     }
 }
