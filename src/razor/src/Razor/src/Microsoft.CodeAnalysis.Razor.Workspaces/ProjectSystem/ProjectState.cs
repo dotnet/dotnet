@@ -31,8 +31,8 @@ internal class ProjectState
         ProjectDifference.DocumentAdded |
         ProjectDifference.DocumentRemoved;
 
-    private static readonly ImmutableDictionary<string, DocumentState> s_emptyDocuments = ImmutableDictionary.Create<string, DocumentState>(FilePathNormalizer.Comparer);
-    private static readonly ImmutableDictionary<string, ImmutableArray<string>> s_emptyImportsToRelatedDocuments = ImmutableDictionary.Create<string, ImmutableArray<string>>(FilePathNormalizer.Comparer);
+    private static readonly ImmutableDictionary<string, DocumentState> s_emptyDocuments = ImmutableDictionary.Create<string, DocumentState>(FilePathNormalizingComparer.Instance);
+    private static readonly ImmutableDictionary<string, ImmutableArray<string>> s_emptyImportsToRelatedDocuments = ImmutableDictionary.Create<string, ImmutableArray<string>>(FilePathNormalizingComparer.Instance);
     private readonly object _lock;
 
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
@@ -360,7 +360,7 @@ internal class ProjectState
             return this;
         }
 
-        var documents = Documents.ToImmutableDictionary(kvp => kvp.Key, kvp => kvp.Value.WithConfigurationChange(), FilePathNormalizer.Comparer);
+        var documents = Documents.ToImmutableDictionary(kvp => kvp.Key, kvp => kvp.Value.WithConfigurationChange(), FilePathNormalizingComparer.Instance);
 
         // If the host project has changed then we need to recompute the imports map
         var importsToRelatedDocuments = s_emptyImportsToRelatedDocuments;
@@ -388,7 +388,7 @@ internal class ProjectState
         }
 
         var difference = ProjectDifference.ProjectWorkspaceStateChanged;
-        var documents = Documents.ToImmutableDictionary(kvp => kvp.Key, kvp => kvp.Value.WithProjectWorkspaceStateChange(), FilePathNormalizer.Comparer);
+        var documents = Documents.ToImmutableDictionary(kvp => kvp.Key, kvp => kvp.Value.WithProjectWorkspaceStateChange(), FilePathNormalizingComparer.Instance);
         var state = new ProjectState(this, difference, HostProject, projectWorkspaceState, documents, ImportsToRelatedDocuments);
         return state;
     }
@@ -448,7 +448,7 @@ internal class ProjectState
         {
             var itemTargetPath = importItem.FilePath.Replace('/', '\\').TrimStart('\\');
 
-            if (FilePathNormalizer.Comparer.Equals(itemTargetPath, targetPath))
+            if (FilePathNormalizingComparer.Instance.Equals(itemTargetPath, targetPath))
             {
                 // We've normalized the original importItem.FilePath into the HostDocument.TargetPath. For instance, if the HostDocument.TargetPath
                 // was '/_Imports.razor' it'd be normalized down into '_Imports.razor'. The purpose of this method is to get the associated document
