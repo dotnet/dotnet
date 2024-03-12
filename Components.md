@@ -34,7 +34,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@212eaf7](https://github.com/dotnet/fsharp/tree/212eaf7fac2d837c51dc49e477a599ebea68338b)*
 - `src/installer`  
-*[dotnet/installer@ec52c10](https://github.com/dotnet/installer/tree/ec52c109e542659d37dc4c4cb669fadcd1167540)*
+*[dotnet/installer@986cd8e](https://github.com/dotnet/installer/tree/986cd8e87e84681dfa2dc11efa85ce2a2b15176e)*
 - `src/msbuild`  
 *[dotnet/msbuild@276f781](https://github.com/dotnet/msbuild/tree/276f781fa868f553bed33a0a01fc54108c84c672)*
 - `src/nuget-client`  
@@ -86,7 +86,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/xunit/tools/media`  
     *[xunit/media@5738b6e](https://github.com/xunit/media/tree/5738b6e86f08e0389c4392b939c20e3eca2d9822)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@8d6e9cf](https://github.com/dotnet/source-build-reference-packages/tree/8d6e9cf10f64ff8fc02e434b516f6ca87c4b7215)*
+*[dotnet/source-build-reference-packages@c0b5d69](https://github.com/dotnet/source-build-reference-packages/tree/c0b5d69a1a1513528c77fffff708c7502d57c35c)*
 - `src/sourcelink`  
 *[dotnet/sourcelink@4af34e7](https://github.com/dotnet/sourcelink/tree/4af34e7dc1755e8a26fcbde95073895e279da09d)*
 - `src/symreader`  
@@ -94,7 +94,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/templating`  
 *[dotnet/templating@d09013f](https://github.com/dotnet/templating/tree/d09013f6c8c17e4c124869f467dada469829911e)*
 - `src/test-templates`  
-*[dotnet/test-templates@b27ce8a](https://github.com/dotnet/test-templates/tree/b27ce8a9d5b1931cb91cbc20a16d15bd7231c792)*
+*[dotnet/test-templates@785fafc](https://github.com/dotnet/test-templates/tree/785fafc79e66b509ccc116867b84c21e494930b8)*
 - `src/vstest`  
 *[microsoft/vstest@3161673](https://github.com/microsoft/vstest/tree/316167369cea59e0ad6ece2a39d94a3a6d49cf12)*
 - `src/windowsdesktop`  
