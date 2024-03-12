@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(PropsRoot)\Product.props" />
+
+  <PropertyGroup>
+    <RootNamespace>Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector</RootNamespace>
+    <AssemblyName>Microsoft.AI.PerfCounterCollector</AssemblyName>
+    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition="$(OS) != 'Windows_NT'">netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--Nupkg properties-->
+    <PackageId>Microsoft.ApplicationInsights.PerfCounterCollector</PackageId>
+    <Title>Application Insights Performance Counters Collector</Title>
+    <Description>Application Insights Performance Counters Collector allows you to send data collected by Performance Counters to Application Insights. Privacy statement: https://go.microsoft.com/fwlink/?LinkId=512156</Description>
+    <PackageTags>Azure Monitoring Analytics ApplicationInsights Telemetry ASP.NET ASMX Web Azure Server Services ASPX Websites Performance Counters Performance Collection</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--Common Dependencies-->
+    <ProjectReference Include="..\..\..\..\BASE\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
+    <!--Framework References-->
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="1.0.0" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--Nuget Transforms (install.xdt, uninstall.xdt, config.transform): "nupkg\content\<framework>\*.*-->
+    <Content Include="ApplicationInsights.config.transform" />
+    <Content Include="ApplicationInsights.config.install.xdt" />
+    <Content Include="ApplicationInsights.config.uninstall.xdt" />
+    <Content Include="Microsoft.ApplicationInsights.PerfCounterCollector.targets" PackagePath="build" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+  <Import Project="..\..\Common\Common.projitems" Label="Shared" />
+  <Import Project="..\Perf.Shared.NetFull\Perf.Shared.NetFull.projitems" Label="Shared" Condition="'$(TargetFramework)' == 'net452'" />
+  <Import Project="..\Perf.Shared.NetStandard\Perf.Shared.NetStandard.projitems" Label="Shared" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
+
+</Project>

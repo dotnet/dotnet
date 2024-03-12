@@ -1,0 +1,11 @@
+﻿<?xml version="1.0"?>
+<ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <TelemetryModules xdt:Transform="InsertIfMissing">
+    <Add Type="Microsoft.ApplicationInsights.DiagnosticSourceListener.DiagnosticSourceTelemetryModule, Microsoft.ApplicationInsights.DiagnosticSourceListener" xdt:Locator="Match(Type)" xdt:Transform="InsertIfMissing">
+      <Sources>
+        <!-- Replace/add your own DiagnosticSources as necessary. -->
+        <Add Name="MyCompany.MyApplication.MyDiagnosticSource" />
+      </Sources>
+    </Add>
+  </TelemetryModules>
+</ApplicationInsights>

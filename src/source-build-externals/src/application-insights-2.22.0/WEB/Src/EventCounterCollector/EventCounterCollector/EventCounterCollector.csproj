@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(PropsRoot)\Product.props" />
+
+  <PropertyGroup>
+    <RootNamespace>Microsoft.ApplicationInsights.Extensibility.EventCounterCollector</RootNamespace>
+    <AssemblyName>Microsoft.AI.EventCounterCollector</AssemblyName>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--Nupkg properties-->
+    <PackageId>Microsoft.ApplicationInsights.EventCounterCollector</PackageId>
+    <Title>Application Insights Event Counter Collector</Title>
+    <Description>Application Insights Event Counter Collector allows you to send data sent from EventCounters to Application Insights. Privacy statement: https://go.microsoft.com/fwlink/?LinkId=512156</Description>
+    <PackageTags>Azure Monitoring Analytics ApplicationInsights Telemetry ASP.NET aspnetcore Web Azure Server Services ASPX Websites Event Counters Performance Collection</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--Common Dependencies-->
+    <ProjectReference Include="..\..\..\..\BASE\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
+  <Import Project="..\..\..\Src\Common\Common.projitems" Label="Shared" />
+
+</Project>

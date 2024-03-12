@@ -1,0 +1,25 @@
+# Syntax: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
+# Github Actions Stale: https://github.com/actions/stale
+# Description: The purpose of this action is to close stale issues and PRs.
+
+name: Stale Issues and PRs
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *' # End of every day
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v4.0.0
+        id: stale
+        with:
+          stale-issue-message: 'This issue is stale because it has been open 300 days with no activity. Remove stale label or this will be closed in 7 days. Commenting will instruct the bot to automatically remove the label.'
+          stale-pr-message: 'This PR is stale because it has been open 300 days with no activity. Remove stale label or this will be closed in 7 days. Commenting will instruct the bot to automatically remove the label.'
+          operations-per-run: 400
+          days-before-stale: 300
+          days-before-close: 7
+          stale-issue-label: 'stale'
+          stale-pr-label: 'stale'
+          exempt-all-milestones: true

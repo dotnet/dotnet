@@ -1,0 +1,12 @@
+Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener
+Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener.ApplicationInsightsTraceListener() -> void
+Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener.ApplicationInsightsTraceListener(string instrumentationKey) -> void
+override Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener.Flush() -> void
+override Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener.IsThreadSafe.get -> bool
+override Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener.TraceData(System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, object data) -> void
+override Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener.TraceData(System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, params object[] data) -> void
+override Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener.TraceEvent(System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id) -> void
+override Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener.TraceEvent(System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, string format, params object[] args) -> void
+override Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener.TraceEvent(System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, string message) -> void
+override Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener.Write(string message) -> void
+override Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener.WriteLine(string message) -> void
