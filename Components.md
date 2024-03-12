@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@1194762](https://github.com/dotnet/aspire/tree/11947620e257657946e4232085d8db8e2aa4a36e)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@b3b8dff](https://github.com/dotnet/aspnetcore/tree/b3b8dffff4d092058b2d8942268b498cbfdb14ec)*
+*[dotnet/aspnetcore@1ee58ec](https://github.com/dotnet/aspnetcore/tree/1ee58ec0d8837ac310c9ef9e784a35bf3027dbd5)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@e1a38bc](https://github.com/google/googletest/tree/e1a38bc3707741d249fa22d2064552a08e37555b)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -34,7 +34,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@212eaf7](https://github.com/dotnet/fsharp/tree/212eaf7fac2d837c51dc49e477a599ebea68338b)*
 - `src/installer`  
-*[dotnet/installer@8363d61](https://github.com/dotnet/installer/tree/8363d6180ab8f1d0fd2112d948dd1bc536017923)*
+*[dotnet/installer@9e29ef5](https://github.com/dotnet/installer/tree/9e29ef5e2fb6ae7615e28eac4a9cb72be1905b39)*
 - `src/msbuild`  
 *[dotnet/msbuild@6f44380](https://github.com/dotnet/msbuild/tree/6f44380e4fdea6ddf5c11f48efeb25c2bf181e62)*
 - `src/nuget-client`  
@@ -42,17 +42,17 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/tree/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@4844fbc](https://github.com/dotnet/razor/tree/4844fbcd15015c2a9756e300ddffee76cba0aff9)*
+*[dotnet/razor@6c04d30](https://github.com/dotnet/razor/tree/6c04d3094f791ba68c30ae0db8aca39e2cf7c155)*
 - `src/roslyn`  
 *[dotnet/roslyn@fc58c2a](https://github.com/dotnet/roslyn/tree/fc58c2a81d4e9f3e0f9d46aa7143ba499363463a)*
 - `src/roslyn-analyzers`  
-*[dotnet/roslyn-analyzers@94749ce](https://github.com/dotnet/roslyn-analyzers/tree/94749ce487be31b74bae5629b5af5d2392377f6d)*
+*[dotnet/roslyn-analyzers@d98dd32](https://github.com/dotnet/roslyn-analyzers/tree/d98dd32d7cd4274bea98b147032b73a4eb051f2c)*
 - `src/runtime`  
 *[dotnet/runtime@efa2b78](https://github.com/dotnet/runtime/tree/efa2b78175388a656893d0e9becc408d99afe445)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@bfde902](https://github.com/dotnet/scenario-tests/tree/bfde902a10d7b672f4fc7e844198ede405dbb9c6)*
 - `src/sdk`  
-*[dotnet/sdk@188fe2e](https://github.com/dotnet/sdk/tree/188fe2e0a2b8e98eedf03bc796045540009085fa)*
+*[dotnet/sdk@7cb5b12](https://github.com/dotnet/sdk/tree/7cb5b1212551a4db68992ddb500344779d90cca6)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@16ece46](https://github.com/dotnet/source-build-externals/tree/16ece46ae00dd1e8ac30a360d3dd03a6a682db41)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -96,11 +96,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/vstest`  
 *[microsoft/vstest@3161673](https://github.com/microsoft/vstest/tree/316167369cea59e0ad6ece2a39d94a3a6d49cf12)*
 - `src/windowsdesktop`  
-*[dotnet/windowsdesktop@35941ed](https://github.com/dotnet/windowsdesktop/tree/35941ed48463df7c601a2c6850d150685fa7de55)*
+*[dotnet/windowsdesktop@44e12ec](https://github.com/dotnet/windowsdesktop/tree/44e12ece1bfc7800e8ec69f422eb60062de8b00e)*
 - `src/winforms`  
-*[dotnet/winforms@bd6b531](https://github.com/dotnet/winforms/tree/bd6b531f3baf0db39cd301f2cfb0128381f37dab)*
+*[dotnet/winforms@bfc23d4](https://github.com/dotnet/winforms/tree/bfc23d4c7b17ab3ece28faedd603501e2ada9d6c)*
 - `src/wpf`  
-*[dotnet/wpf@8dc0343](https://github.com/dotnet/wpf/tree/8dc0343c350d3b7736710cacb306790bde0394d0)*
+*[dotnet/wpf@09e859d](https://github.com/dotnet/wpf/tree/09e859df29f1f8775155b65f39b3bbf9c27e0a02)*
 - `src/xdt`  
 *[dotnet/xdt@a86209b](https://github.com/dotnet/xdt/tree/a86209be9faeafe337633ab1746df7bc19a83538)*
 - `src/xliff-tasks`  

@@ -1228,12 +1228,15 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         });
 
         // Assert
-        listener.AssertNotifications(
+
+        // AddProject iterates through a dictionary to migrate documents, so the order of the documents is not deterministic. In the real world
+        // the adds and removes are interleaved per document
+        listener.OrderBy(e => e.Kind).ThenBy(e => e.DocumentFilePath).AssertNotifications(
             x => x.ProjectAdded(ProjectFilePath, newProjectKey),
-            x => x.DocumentRemoved(DocumentFilePath2, miscProject.Key),
+            x => x.DocumentAdded(DocumentFilePath1, newProjectKey),
             x => x.DocumentAdded(DocumentFilePath2, newProjectKey),
             x => x.DocumentRemoved(DocumentFilePath1, miscProject.Key),
-            x => x.DocumentAdded(DocumentFilePath1, newProjectKey));
+            x => x.DocumentRemoved(DocumentFilePath2, miscProject.Key));
     }
 
     private static TextLoader CreateEmptyTextLoader()
