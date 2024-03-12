@@ -404,35 +404,7 @@ internal class RazorProjectService(
         return normalizedFilePath;
     }
 
-    // Internal for testing
-    internal void TryMigrateDocumentsFromRemovedProject(IProjectSnapshot project)
-    {
-        _projectSnapshotManagerDispatcher.AssertRunningOnDispatcher();
-
-        var miscellaneousProject = _snapshotResolver.GetMiscellaneousProject();
-
-        foreach (var documentFilePath in project.DocumentFilePaths)
-        {
-            if (project.GetDocument(documentFilePath) is not DocumentSnapshot documentSnapshot)
-            {
-                continue;
-            }
-
-            var toProject = _snapshotResolver.FindPotentialProjects(documentFilePath).FirstOrDefault()
-                ?? miscellaneousProject;
-
-            var textLoader = new DocumentSnapshotTextLoader(documentSnapshot);
-            var defaultToProject = toProject;
-            var newHostDocument = new HostDocument(documentSnapshot.FilePath, documentSnapshot.TargetPath, documentSnapshot.FileKind);
-
-            _logger.LogInformation("Migrating '{documentFilePath}' from the '{project.Key}' project to '{toProject.KEy}' project.",
-                documentFilePath, project.Key, toProject.Key);
-            _projectSnapshotManagerAccessor.Instance.DocumentAdded(defaultToProject.Key, newHostDocument, textLoader);
-        }
-    }
-
-    // Internal for testing
-    internal void TryMigrateMiscellaneousDocumentsToProject()
+    private void TryMigrateMiscellaneousDocumentsToProject()
     {
         _projectSnapshotManagerDispatcher.AssertRunningOnDispatcher();
 

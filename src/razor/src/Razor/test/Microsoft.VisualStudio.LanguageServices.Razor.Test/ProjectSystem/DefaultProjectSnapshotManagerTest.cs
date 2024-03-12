@@ -9,9 +9,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Text;
 using Moq;
@@ -56,7 +56,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         var someTagHelpers = ImmutableArray.Create(
             TagHelperDescriptorBuilder.Create("Test1", "TestAssembly").Build());
 
-        _projectManager = new TestProjectSnapshotManager(triggers: [], ProjectEngineFactoryProvider, Dispatcher);
+        _projectManager = CreateProjectSnapshotManager();
 
         _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create(someTagHelpers);
 
@@ -75,7 +75,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         var triggers = new[] { defaultPriorityTrigger, highPriorityTrigger };
 
         // Act
-        var projectManager = new TestProjectSnapshotManager(triggers, ProjectEngineFactoryProvider, Dispatcher);
+        var projectManager = CreateProjectSnapshotManager(triggers);
 
         // Assert
         Assert.Equal(["highPriority", "lowPriority"], initializedOrder);
@@ -90,7 +90,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectAdded(s_hostProject);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -99,11 +99,12 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        Assert.Single(snapshot.DocumentFilePaths,
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        Assert.Single(project.DocumentFilePaths,
             filePath => filePath == s_documents[0].FilePath);
 
-        Assert.Equal(ProjectChangeKind.DocumentAdded, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.DocumentAdded());
     }
 
     [UIFact]
@@ -115,7 +116,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectAdded(s_hostProject);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -124,13 +125,14 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
         Assert.Single(
-            snapshot.DocumentFilePaths,
+            project.DocumentFilePaths,
             filePath => filePath == s_documents[0].FilePath &&
-                        snapshot.GetDocument(filePath).AssumeNotNull().FileKind == FileKinds.Legacy);
+                        project.GetDocument(filePath).AssumeNotNull().FileKind == FileKinds.Legacy);
 
-        Assert.Equal(ProjectChangeKind.DocumentAdded, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.DocumentAdded());
     }
 
     [UIFact]
@@ -142,7 +144,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectAdded(s_hostProject);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -151,13 +153,14 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
         Assert.Single(
-            snapshot.DocumentFilePaths,
+            project.DocumentFilePaths,
             filePath => filePath == s_documents[3].FilePath &&
-                        snapshot.GetDocument(filePath).AssumeNotNull().FileKind == FileKinds.Component);
+                        project.GetDocument(filePath).AssumeNotNull().FileKind == FileKinds.Component);
 
-        Assert.Equal(ProjectChangeKind.DocumentAdded, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.DocumentAdded());
     }
 
     [UIFact]
@@ -170,7 +173,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.DocumentAdded(s_hostProject.Key, s_documents[0], null!);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -179,24 +182,27 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        Assert.Single(snapshot.DocumentFilePaths,
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        Assert.Single(project.DocumentFilePaths,
             filePath => filePath == s_documents[0].FilePath);
 
-        Assert.Null(_projectManager.ListenersNotifiedOf);
+        listener.AssertNoNotifications();
     }
 
     [UIFact]
-    public void DocumentAdded_IgnoresUnknownProject()
+    public async Task DocumentAdded_IgnoresUnknownProject()
     {
         // Arrange
 
         // Act
-        _projectManager.DocumentAdded(s_hostProject.Key, s_documents[0], null!);
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.DocumentAdded(s_hostProject.Key, s_documents[0], null!);
+        });
 
         // Assert
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        Assert.Null(snapshot);
+        var projectKeys = _projectManager.GetAllProjectKeys(s_hostProject.FilePath);
+        Assert.Empty(projectKeys);
     }
 
     [UIFact]
@@ -208,8 +214,6 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectAdded(s_hostProject);
         });
 
-        _projectManager.Reset();
-
         // Act
         await RunOnDispatcherAsync(() =>
         {
@@ -217,8 +221,9 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        var document = snapshot.GetDocument(snapshot.DocumentFilePaths.Single());
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        var documentFilePath = Assert.Single(project.DocumentFilePaths);
+        var document = project.GetDocument(documentFilePath);
         Assert.NotNull(document);
 
         var text = await document.GetTextAsync();
@@ -234,8 +239,6 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectAdded(s_hostProject);
         });
 
-        _projectManager.Reset();
-
         var expected = SourceText.From("Hello");
 
         // Act
@@ -245,9 +248,9 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        var filePath = Assert.Single(snapshot.DocumentFilePaths);
-        var document = snapshot.GetDocument(filePath);
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        var documentFilePath = Assert.Single(project.DocumentFilePaths);
+        var document = project.GetDocument(documentFilePath);
         Assert.NotNull(document);
 
         var actual = await document.GetTextAsync();
@@ -264,9 +267,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectWorkspaceStateChanged(s_hostProject.Key, _projectWorkspaceStateWithTagHelpers);
         });
 
-        _projectManager.Reset();
-
-        var originalTagHelpers = await _projectManager.GetSnapshot(s_hostProject).GetTagHelpersAsync(DisposalToken);
+        var originalTagHelpers = await _projectManager.GetLoadedProject(s_hostProject.Key).GetTagHelpersAsync(DisposalToken);
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -275,7 +276,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        var newTagHelpers = await _projectManager.GetSnapshot(s_hostProject).GetTagHelpersAsync(DisposalToken);
+        var newTagHelpers = await _projectManager.GetLoadedProject(s_hostProject.Key).GetTagHelpersAsync(DisposalToken);
 
         Assert.Equal(originalTagHelpers.Length, newTagHelpers.Length);
         for (var i = 0; i < originalTagHelpers.Length; i++)
@@ -293,10 +294,8 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectAdded(s_hostProject);
         });
 
-        _projectManager.Reset();
-
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        var projectEngine = snapshot.GetProjectEngine();
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        var projectEngine = project.GetProjectEngine();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -305,8 +304,8 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        snapshot = _projectManager.GetSnapshot(s_hostProject);
-        Assert.Same(projectEngine, snapshot.GetProjectEngine());
+        project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        Assert.Same(projectEngine, project.GetProjectEngine());
     }
 
     [UIFact]
@@ -321,7 +320,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.DocumentAdded(s_hostProject.Key, s_documents[2], null!);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -330,13 +329,14 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
         Assert.Collection(
-            snapshot.DocumentFilePaths.OrderBy(f => f),
+            project.DocumentFilePaths.OrderBy(f => f),
             f => Assert.Equal(s_documents[2].FilePath, f),
             f => Assert.Equal(s_documents[0].FilePath, f));
 
-        Assert.Equal(ProjectChangeKind.DocumentRemoved, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.DocumentRemoved());
     }
 
     [UIFact]
@@ -348,7 +348,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectAdded(s_hostProject);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -357,10 +357,10 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        Assert.Empty(snapshot.DocumentFilePaths);
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        Assert.Empty(project.DocumentFilePaths);
 
-        Assert.Null(_projectManager.ListenersNotifiedOf);
+        listener.AssertNoNotifications();
     }
 
     [UIFact]
@@ -375,8 +375,8 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        Assert.Null(snapshot);
+        var projectKeys = _projectManager.GetAllProjectKeys(s_hostProject.FilePath);
+        Assert.Empty(projectKeys);
     }
 
     [UIFact]
@@ -392,9 +392,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.DocumentAdded(s_hostProject.Key, s_documents[2], null!);
         });
 
-        _projectManager.Reset();
-
-        var originalTagHelpers = await _projectManager.GetSnapshot(s_hostProject).GetTagHelpersAsync(CancellationToken.None);
+        var originalTagHelpers = await _projectManager.GetLoadedProject(s_hostProject.Key).GetTagHelpersAsync(DisposalToken);
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -403,7 +401,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        var newTagHelpers = await _projectManager.GetSnapshot(s_hostProject).GetTagHelpersAsync(CancellationToken.None);
+        var newTagHelpers = await _projectManager.GetLoadedProject(s_hostProject.Key).GetTagHelpersAsync(DisposalToken);
 
         Assert.Equal(originalTagHelpers.Length, newTagHelpers.Length);
         for (var i = 0; i < originalTagHelpers.Length; i++)
@@ -424,10 +422,8 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.DocumentAdded(s_hostProject.Key, s_documents[2], null!);
         });
 
-        _projectManager.Reset();
-
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        var projectEngine = snapshot.GetProjectEngine();
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        var projectEngine = project.GetProjectEngine();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -436,9 +432,10 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        snapshot = _projectManager.GetSnapshot(s_hostProject);
-        Assert.Same(projectEngine, snapshot.GetProjectEngine());
+        project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        Assert.Same(projectEngine, project.GetProjectEngine());
     }
+
     [UIFact]
     public async Task DocumentOpened_UpdatesDocument()
     {
@@ -449,7 +446,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.DocumentAdded(s_hostProject.Key, s_documents[0], null!);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -458,10 +455,13 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        Assert.Equal(ProjectChangeKind.DocumentChanged, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.DocumentChanged());
 
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        var text = await snapshot.GetDocument(s_documents[0].FilePath)!.GetTextAsync();
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        var document = project.GetDocument(s_documents[0].FilePath);
+        Assert.NotNull(document);
+        var text = await document.GetTextAsync();
         Assert.Same(_sourceText, text);
 
         Assert.True(_projectManager.IsDocumentOpen(s_documents[0].FilePath));
@@ -478,7 +478,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.DocumentOpened(s_hostProject.Key, s_documents[0].FilePath, _sourceText);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         var expected = SourceText.From("Hi");
         var textAndVersion = TextAndVersion.Create(expected, VersionStamp.Create());
@@ -492,10 +492,13 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        Assert.Equal(ProjectChangeKind.DocumentChanged, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.DocumentChanged());
 
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        var text = await snapshot.GetDocument(s_documents[0].FilePath)!.GetTextAsync();
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        var document = project.GetDocument(s_documents[0].FilePath);
+        Assert.NotNull(document);
+        var text = await document.GetTextAsync();
         Assert.Same(expected, text);
         Assert.False(_projectManager.IsDocumentOpen(s_documents[0].FilePath));
     }
@@ -510,7 +513,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.DocumentAdded(s_hostProject.Key, s_documents[0], null!);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         var expected = SourceText.From("Hi");
         var textAndVersion = TextAndVersion.Create(expected, VersionStamp.Create());
@@ -522,10 +525,13 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        Assert.Equal(ProjectChangeKind.DocumentChanged, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.DocumentChanged());
 
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        var text = await snapshot.GetDocument(s_documents[0].FilePath)!.GetTextAsync();
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        var document = project.GetDocument(s_documents[0].FilePath);
+        Assert.NotNull(document);
+        var text = await document.GetTextAsync();
         Assert.Same(expected, text);
     }
 
@@ -540,7 +546,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.DocumentOpened(s_hostProject.Key, s_documents[0].FilePath, _sourceText);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         var expected = SourceText.From("Hi");
 
@@ -551,10 +557,13 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        Assert.Equal(ProjectChangeKind.DocumentChanged, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.DocumentChanged());
 
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        var text = await snapshot.GetDocument(s_documents[0].FilePath)!.GetTextAsync();
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        var document = project.GetDocument(s_documents[0].FilePath);
+        Assert.NotNull(document);
+        var text = await document.GetTextAsync();
         Assert.Same(expected, text);
     }
 
@@ -569,7 +578,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.DocumentOpened(s_hostProject.Key, s_documents[0].FilePath, _sourceText);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         var expected = SourceText.From("Hi");
         var textAndVersion = TextAndVersion.Create(expected, VersionStamp.Create());
@@ -581,10 +590,13 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        Assert.Equal(ProjectChangeKind.DocumentChanged, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.DocumentChanged());
 
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        var text = await snapshot.GetDocument(s_documents[0].FilePath)!.GetTextAsync();
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        var document = project.GetDocument(s_documents[0].FilePath);
+        Assert.NotNull(document);
+        var text = await document.GetTextAsync();
         Assert.Same(expected, text);
     }
 
@@ -592,6 +604,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
     public async Task ProjectAdded_WithoutWorkspaceProject_NotifiesListeners()
     {
         // Arrange
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -600,7 +613,8 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        Assert.Equal(ProjectChangeKind.ProjectAdded, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.ProjectAdded());
     }
 
     [UIFact]
@@ -612,7 +626,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectAdded(s_hostProject);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -621,7 +635,8 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        Assert.Equal(ProjectChangeKind.ProjectChanged, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.ProjectChanged());
     }
 
     [UIFact]
@@ -634,7 +649,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectWorkspaceStateChanged(s_hostProject.Key, _projectWorkspaceStateWithTagHelpers);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -643,7 +658,8 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        Assert.Equal(ProjectChangeKind.ProjectChanged, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.ProjectChanged());
     }
 
     [UIFact]
@@ -655,10 +671,8 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectAdded(s_hostProject);
         });
 
-        _projectManager.Reset();
-
-        var snapshot = _projectManager.GetSnapshot(s_hostProject);
-        var projectEngine = snapshot.GetProjectEngine();
+        var project = _projectManager.GetLoadedProject(s_hostProject.Key);
+        var projectEngine = project.GetProjectEngine();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -667,14 +681,15 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        snapshot = _projectManager.GetSnapshot(s_hostProjectWithConfigurationChange);
-        Assert.NotSame(projectEngine, snapshot.GetProjectEngine());
+        project = _projectManager.GetLoadedProject(s_hostProjectWithConfigurationChange.Key);
+        Assert.NotSame(projectEngine, project.GetProjectEngine());
     }
 
     [UIFact]
     public async Task ProjectConfigurationChanged_IgnoresUnknownProject()
     {
         // Arrange
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -685,7 +700,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         // Assert
         Assert.Empty(_projectManager.GetProjects());
 
-        Assert.Null(_projectManager.ListenersNotifiedOf);
+        listener.AssertNoNotifications();
     }
 
     [UIFact]
@@ -697,7 +712,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectAdded(s_hostProject);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -708,13 +723,15 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         // Assert
         Assert.Empty(_projectManager.GetProjects());
 
-        Assert.Equal(ProjectChangeKind.ProjectRemoved, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.ProjectRemoved());
     }
 
     [UIFact]
     public void ProjectWorkspaceStateChanged_WithoutHostProject_IgnoresWorkspaceState()
     {
         // Arrange
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         _projectManager.ProjectWorkspaceStateChanged(s_hostProject.Key, _projectWorkspaceStateWithTagHelpers);
@@ -722,7 +739,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         // Assert
         Assert.Empty(_projectManager.GetProjects());
 
-        Assert.Null(_projectManager.ListenersNotifiedOf);
+        listener.AssertNoNotifications();
     }
 
     [UIFact]
@@ -734,7 +751,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectAdded(s_hostProject);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -743,7 +760,8 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        Assert.Equal(ProjectChangeKind.ProjectChanged, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.ProjectChanged());
     }
 
     [UIFact]
@@ -756,7 +774,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectWorkspaceStateChanged(s_hostProject.Key, ProjectWorkspaceState.Default);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -765,7 +783,8 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        Assert.Equal(ProjectChangeKind.ProjectChanged, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.ProjectChanged());
     }
 
     [UIFact]
@@ -779,7 +798,8 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectAdded(s_hostProject);
         });
 
-        _projectManager.Reset();
+        using var listener = _projectManager.ListenToNotifications();
+
         _projectManager.Changed += (sender, args) =>
         {
             // These conditions will result in a triply nested change notification of Add -> Change -> Remove all within the .Change chain.
@@ -794,9 +814,6 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             }
         };
 
-        _projectManager.Changed += (sender, args) => listenerNotifications.Add(args.Kind);
-        _projectManager.NotifyChangedEvents = true;
-
         // Act
         await RunOnDispatcherAsync(() =>
         {
@@ -804,7 +821,10 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        Assert.Equal(new[] { ProjectChangeKind.DocumentAdded, ProjectChangeKind.DocumentChanged, ProjectChangeKind.DocumentRemoved }, listenerNotifications);
+        listener.AssertNotifications(
+            x => x.DocumentAdded(),
+            x => x.DocumentChanged(),
+            x => x.DocumentRemoved());
     }
 
     [UIFact]
@@ -816,10 +836,7 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
             _projectManager.ProjectAdded(s_hostProject);
         });
 
-        _projectManager.Reset();
-
-        _projectManager.Changed += (sender, args) => Assert.True(args.SolutionIsClosing);
-        _projectManager.NotifyChangedEvents = true;
+        using var listener = _projectManager.ListenToNotifications();
 
         var textLoader = new Mock<TextLoader>(MockBehavior.Strict);
 
@@ -831,44 +848,10 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         });
 
         // Assert
-        Assert.Equal(ProjectChangeKind.DocumentAdded, _projectManager.ListenersNotifiedOf);
+        listener.AssertNotifications(
+            x => x.DocumentAdded(solutionIsClosing: true));
+
         textLoader.Verify(d => d.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()), Times.Never());
-    }
-
-    private class TestProjectSnapshotManager(
-        IEnumerable<IProjectSnapshotChangeTrigger> triggers,
-        IProjectEngineFactoryProvider projectEngineFactoryProvider,
-        ProjectSnapshotManagerDispatcher dispatcher)
-        : DefaultProjectSnapshotManager(triggers, projectEngineFactoryProvider, dispatcher, Mock.Of<IErrorReporter>(MockBehavior.Strict))
-    {
-        public ProjectChangeKind? ListenersNotifiedOf { get; private set; }
-
-        public bool NotifyChangedEvents { get; set; }
-
-        public ProjectSnapshot GetSnapshot(HostProject hostProject)
-        {
-            return GetProjects().Cast<ProjectSnapshot>().FirstOrDefault(s => s.FilePath == hostProject.FilePath);
-        }
-
-        public ProjectSnapshot GetSnapshot(Project workspaceProject)
-        {
-            return GetProjects().Cast<ProjectSnapshot>().FirstOrDefault(s => s.FilePath == workspaceProject.FilePath);
-        }
-
-        public void Reset()
-        {
-            ListenersNotifiedOf = null;
-        }
-
-        protected override void NotifyListeners(ProjectChangeEventArgs e)
-        {
-            ListenersNotifiedOf = e.Kind;
-
-            if (NotifyChangedEvents)
-            {
-                base.NotifyListeners(e);
-            }
-        }
     }
 
     private class InitializeInspectionTrigger(Action initializeNotification) : IProjectSnapshotChangeTrigger
