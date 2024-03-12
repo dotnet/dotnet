@@ -1,0 +1,6 @@
+Microsoft.ApplicationInsights.Log4NetAppender.ApplicationInsightsAppender
+Microsoft.ApplicationInsights.Log4NetAppender.ApplicationInsightsAppender.ApplicationInsightsAppender() -> void
+Microsoft.ApplicationInsights.Log4NetAppender.ApplicationInsightsAppender.InstrumentationKey.get -> string
+Microsoft.ApplicationInsights.Log4NetAppender.ApplicationInsightsAppender.InstrumentationKey.set -> void
+override Microsoft.ApplicationInsights.Log4NetAppender.ApplicationInsightsAppender.ActivateOptions() -> void
+override Microsoft.ApplicationInsights.Log4NetAppender.ApplicationInsightsAppender.Flush(int millisecondsTimeout) -> bool

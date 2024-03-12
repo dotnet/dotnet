@@ -1,0 +1,18 @@
+artifact_publish_options:
+  publish_to_legacy_artifacts: false
+  publish_to_pipeline_artifacts: true
+  publish_to_cloudvault_artifacts: false
+
+static_analysis_options:
+  credscan_options:
+    disable_tool_scan: false
+    fail_on_error: true
+  binskim_options:
+    disable_tool_scan: false
+    fail_on_error: true
+    files_to_scan:
+      - from: 'bin'
+  policheck_options:
+    disable_tool_scan: false
+    fail_on_error: true
+    scan_comments: true

@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<Task>
+  <TaskName>AI SDK</TaskName>
+  
+  <Target>DLL_PATH</Target>
+  <ResultFile>POLICHECK_PATH\PolicheckResults.xml</ResultFile>
+  <LocalName>AI-SDK-BC_tfsmladm_DLL_PATH</LocalName>
+  <CustomRulesDBPath />
+  <TermTables>
+<TermTable Type="0" Name="Galician" LCID="1110" />
+    <TermTable Type="0" Name="Finnish" LCID="1035" />
+    <TermTable Type="0" Name="Lithuanian" LCID="1063" />
+    <TermTable Type="0" Name="Telugu" LCID="1098" />
+    <TermTable Type="0" Name="Norwegian (Nynorsk)" LCID="2068" />
+    <TermTable Type="0" Name="Bangla – India" LCID="1093" />
+    <TermTable Type="0" Name="Georgian" LCID="1079" />
+    <TermTable Type="0" Name="Serbian (Cyrillic)" LCID="3098" />
+    <TermTable Type="0" Name="Kinyarwanda" LCID="135" />
+    <TermTable Type="0" Name="Ukrainian" LCID="1058" />
+    <TermTable Type="0" Name="isiXhosa" LCID="1076" />
+    <TermTable Type="0" Name="Punjabi" LCID="1094" />
+    <TermTable Type="0" Name="Quechua (Peru)" LCID="3179" />
+    <TermTable Type="0" Name="Gujarati" LCID="1095" />
+    <TermTable Type="0" Name="Central Kurdish" LCID="146" />
+    <TermTable Type="0" Name="Tatar" LCID="1092" />
+    <TermTable Type="0" Name="Chinese (Traditional) - Hong Kong SAR" LCID="3076" />
+    <TermTable Type="0" Name="German" LCID="1031" />
+    <TermTable Type="0" Name="Urdu" LCID="1056" />
+    <TermTable Type="0" Name="Konkani" LCID="1111" />
+    <TermTable Type="0" Name="Chinese (Simplified)" LCID="2052" />
+    <TermTable Type="0" Name="Vietnamese" LCID="1066" />
+    <TermTable Type="0" Name="Uyghur" LCID="128" />
+    <TermTable Type="0" Name="Mongolian" LCID="1104" />
+    <TermTable Type="0" Name="Russian" LCID="1049" />
+    <TermTable Type="0" Name="Sesotho sa Leboa" LCID="1132" />
+    <TermTable Type="0" Name="Setswana" LCID="1074" />
+    <TermTable Type="0" Name="Tigrinya" LCID="115" />
+    <TermTable Type="0" Name="Chinese (Traditional) - Taiwan" LCID="1028" />
+    <TermTable Type="0" Name="Pashto" LCID="1123" />
+    <TermTable Type="0" Name="Lao" LCID="1108" />
+    <TermTable Type="0" Name="Dari" LCID="1164" />
+    <TermTable Type="0" Name="Indonesian" LCID="1057" />
+    <TermTable Type="0" Name="Cherokee" LCID="1169" />
+    <TermTable Type="0" Name="Yoruba" LCID="1130" />
+    <TermTable Type="0" Name="Turkmen" LCID="1090" />
+    <TermTable Type="0" Name="Hausa" LCID="1128" />
+    <TermTable Type="0" Name="Latvian" LCID="1062" />
+    <TermTable Type="0" Name="Portuguese - Brazil" LCID="1046" />
+    <TermTable Type="0" Name="Kazakh" LCID="1087" />
+    <TermTable Type="0" Name="Irish" LCID="2108" />
+    <TermTable Type="0" Name="Azerbaijani" LCID="1068" />
+    <TermTable Type="0" Name="Albanian" LCID="1052" />
+    <TermTable Type="0" Name="Japanese" LCID="1041" />
+    <TermTable Type="0" Name="Bosnian - Latin" LCID="5146" />
+    <TermTable Type="0" Name="Nepali" LCID="1121" />
+    <TermTable Type="0" Name="Amharic" LCID="1118" />
+    <TermTable Type="0" Name="Hindi" LCID="1081" />
+    <TermTable Type="0" Name="Dutch" LCID="1043" />
+    <TermTable Type="0" Name="Malayalam" LCID="1100" />
+    <TermTable Type="0" Name="Swedish" LCID="1053" />
+    <TermTable Type="0" Name="Kyrgyz" LCID="1088" />
+    <TermTable Type="0" Name="Malay" LCID="1086" />
+    <TermTable Type="0" Name="French" LCID="1036" />
+    <TermTable Type="0" Name="Maltese" LCID="1082" />
+    <TermTable Type="0" Name="Tamil" LCID="1097" />
+    <TermTable Type="0" Name="Kannada" LCID="1099" />
+    <TermTable Type="0" Name="Filipino" LCID="1124" />
+    <TermTable Type="0" Name="Afrikaans" LCID="1078" />
+    <TermTable Type="0" Name="Valencian" LCID="2051" />
+    <TermTable Type="0" Name="Odia" LCID="1096" />
+    <TermTable Type="0" Name="Igbo" LCID="1136" />
+    <TermTable Type="0" Name="Wolof" LCID="136" />
+    <TermTable Type="0" Name="Inuktitut" LCID="1117" />
+    <TermTable Type="0" Name="isiZulu" LCID="1077" />
+    <TermTable Type="0" Name="Thai" LCID="1054" />
+    <TermTable Type="0" Name="Spanish" LCID="1034" />
+    <TermTable Type="0" Name="Danish" LCID="1030" />
+    <TermTable Type="0" Name="Croatian" LCID="1050" />
+    <TermTable Type="0" Name="Turkish" LCID="1055" />
+    <TermTable Type="0" Name="K'iche'" LCID="134" />
+    <TermTable Type="0" Name="Belarusian" LCID="35" />
+    <TermTable Type="0" Name="Punjabi (Pakistan)" LCID="2118" />
+    <TermTable Type="0" Name="Tajik" LCID="40" />
+    <TermTable Type="0" Name="Scottish Gaelic" LCID="145" />
+    <TermTable Type="0" Name="Romanian" LCID="1048" />
+    <TermTable Type="0" Name="Basque" LCID="1069" />
+    <TermTable Type="0" Name="Hungarian" LCID="1038" />
+    <TermTable Type="0" Name="Sindhi" LCID="2137" />
+    <TermTable Type="0" Name="Welsh" LCID="1106" />
+    <TermTable Type="0" Name="Pulaar" LCID="1171" />
+    <TermTable Type="0" Name="Persian" LCID="1065" />
+    <TermTable Type="0" Name="Maori" LCID="1153" />
+    <TermTable Type="0" Name="Khmer" LCID="1107" />
+    <TermTable Type="0" Name="Slovenian" LCID="1060" />
+    <TermTable Type="0" Name="English" LCID="9" />
+    <TermTable Type="0" Name="Polish" LCID="1045" />
+    <TermTable Type="0" Name="Arabic" LCID="14337" />
+    <TermTable Type="0" Name="Serbian (Latin)" LCID="2074" />
+    <TermTable Type="0" Name="Luxembourgish" LCID="1134" />
+    <TermTable Type="0" Name="Assamese" LCID="1101" />
+    <TermTable Type="0" Name="Portuguese - Portugal" LCID="2070" />
+    <TermTable Type="0" Name="Czech" LCID="1029" />
+    <TermTable Type="0" Name="Greek" LCID="1032" />
+    <TermTable Type="0" Name="Sesotho" LCID="1072" />
+    <TermTable Type="0" Name="Armenian" LCID="1067" />
+    <TermTable Type="0" Name="Bosnian - Cyrillic" LCID="8218" />
+    <TermTable Type="0" Name="Estonian" LCID="1061" />
+    <TermTable Type="0" Name="Catalan" LCID="1027" />
+    <TermTable Type="0" Name="Uzbek" LCID="1091" />
+    <TermTable Type="0" Name="Hebrew" LCID="1037" />
+    <TermTable Type="0" Name="Icelandic" LCID="1039" />
+    <TermTable Type="0" Name="Sinhala" LCID="1115" />
+    <TermTable Type="0" Name="Norwegian (Bokmål)" LCID="1044" />
+    <TermTable Type="0" Name="Macedonian" LCID="1071" />
+    <TermTable Type="0" Name="Marathi" LCID="1102" />
+    <TermTable Type="0" Name="Slovak" LCID="1051" />
+    <TermTable Type="0" Name="Korean" LCID="1042" />
+    <TermTable Type="0" Name="Bulgarian" LCID="1026" />
+    <TermTable Type="0" Name="Breton" LCID="1150" />
+    <TermTable Type="0" Name="Italian" LCID="1040" />
+    <TermTable Type="0" Name="Bangla - Bangladesh" LCID="2117" />
+    <TermTable Type="0" Name="Serbian (Cyrillic, Bosnia and Herzegovina)" LCID="7194" />
+    <TermTable Type="0" Name="Global" LCID="127" />
+  </TermTables>
+  
+  <ScanType>File</ScanType>
+  <SOMConfigurationEnabled>True</SOMConfigurationEnabled>
+  <LogEnabled>False</LogEnabled>
+  <TargetType>0</TargetType>
+  <SeverityFilters><Severity Type="1" Enabled="1"></Severity><Severity Type="2" Enabled="1"></Severity><Severity Type="3" Enabled="1"></Severity><Severity Type="4" Enabled="1"></Severity></SeverityFilters>
+  <TermClassifications />
+  <HistoryManagement Enabled="0">
+    <PreviousVersion>0</PreviousVersion>
+    <Version>0</Version>
+    <RootDirectory />
+  </HistoryManagement>
+  <Exclusions><GlobalExclusions><GlobalExclusion Name="Enable Exclusions" Enabled="0"></GlobalExclusion><GlobalExclusion Name="Enable Context Exception"  Enabled="1"></GlobalExclusion></GlobalExclusions><PersonalExclusions><PersonalExclusion Name="Enable Exclusion" Enabled="0"></PersonalExclusion><PersonalExclusion Name="Enable File Exception" Enabled="0"></PersonalExclusion><PersonalExclusion Name="Enable Context Exception" Enabled="0"></PersonalExclusion><PersonalExclusion Name="Enable File  Context Exception" Enabled="0"></PersonalExclusion></PersonalExclusions></Exclusions>
+  <CustomFTSetsPath />
+  <CodeComments Enabled="0" />
+  <SkipUnchangedFiles Enabled="0" />
+  <IncludeSubDirectories Enabled="1" />
+</Task>

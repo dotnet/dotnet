@@ -1,0 +1,11 @@
+﻿<?xml version="1.0"?>
+<ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <TelemetryModules xdt:Transform="InsertIfMissing">
+    <Add Type="Microsoft.ApplicationInsights.EventSourceListener.EventSourceTelemetryModule, Microsoft.ApplicationInsights.EventSourceListener" xdt:Locator="Match(Type)" xdt:Transform="InsertIfMissing">
+      <Sources>
+        <!-- Replace/add your own EventSources as necessary. -->
+        <Add Name="MyCompany-MyApplication-MyEventSource" Level="Warning"/>
+      </Sources>
+    </Add>
+  </TelemetryModules>
+</ApplicationInsights>

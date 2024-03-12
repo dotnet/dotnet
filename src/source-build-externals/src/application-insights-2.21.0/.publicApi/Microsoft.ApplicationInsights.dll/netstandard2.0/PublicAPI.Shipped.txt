@@ -1,0 +1,1033 @@
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Context.get -> Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.DeepClone() -> Microsoft.ApplicationInsights.Channel.ITelemetry
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Duration.get -> System.TimeSpan
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Duration.set -> void
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Extension.get -> Microsoft.ApplicationInsights.Extensibility.IExtension
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Extension.set -> void
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Id.get -> string
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Id.set -> void
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Metrics.get -> System.Collections.Generic.IDictionary<string, double>
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Name.get -> string
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Name.set -> void
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Properties.get -> System.Collections.Generic.IDictionary<string, string>
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Sequence.get -> string
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Sequence.set -> void
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.SerializeData(Microsoft.ApplicationInsights.Extensibility.ISerializationWriter serializationWriter) -> void
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Success.get -> bool?
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Success.set -> void
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Timestamp.get -> System.DateTimeOffset
+abstract Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Timestamp.set -> void
+const Microsoft.ApplicationInsights.DataContracts.TelemetryContext.FlagDropIdentifiers = 2097152 -> long
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Cloud.RoleInstance = "TelemetryContext.Cloud.RoleInstance" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Cloud.RoleName = "TelemetryContext.Cloud.RoleName" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Component.Version = "TelemetryContext.Component.Version" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Device.Id = "TelemetryContext.Device.Id" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Device.Language = "TelemetryContext.Device.Language" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Device.Model = "TelemetryContext.Device.Model" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Device.NetworkType = "TelemetryContext.Device.NetworkType" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Device.OemName = "TelemetryContext.Device.OemName" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Device.OperatingSystem = "TelemetryContext.Device.OperatingSystem" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Device.ScreenResolution = "TelemetryContext.Device.ScreenResolution" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Device.Type = "TelemetryContext.Device.Type" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.InstrumentationKey = "TelemetryContext.InstrumentationKey" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Location.Ip = "TelemetryContext.Location.Ip" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Operation.CorrelationVector = "TelemetryContext.Operation.CorrelationVector" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Operation.Id = "TelemetryContext.Operation.Id" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Operation.Name = "TelemetryContext.Operation.Name" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Operation.ParentId = "TelemetryContext.Operation.ParentId" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Operation.SyntheticSource = "TelemetryContext.Operation.SyntheticSource" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Session.Id = "TelemetryContext.Session.Id" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Session.IsFirst = "TelemetryContext.Session.IsFirst" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.User.AccountId = "TelemetryContext.User.AccountId" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.User.AuthenticatedUserId = "TelemetryContext.User.AuthenticatedUserId" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.User.Id = "TelemetryContext.User.Id" -> string
+const Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.User.UserAgent = "TelemetryContext.User.UserAgent" -> string
+const Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MaxDimensionsCount = 10 -> int
+Microsoft.ApplicationInsights.Channel.IAsyncFlushable
+Microsoft.ApplicationInsights.Channel.IAsyncFlushable.FlushAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
+Microsoft.ApplicationInsights.Channel.InMemoryChannel
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.BacklogSize.get -> int
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.BacklogSize.set -> void
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.DeveloperMode.get -> bool?
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.DeveloperMode.set -> void
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.Dispose() -> void
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.EndpointAddress.get -> string
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.EndpointAddress.set -> void
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.Flush() -> void
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.Flush(System.TimeSpan timeout) -> void
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.FlushAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.InMemoryChannel() -> void
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.MaxTelemetryBufferCapacity.get -> int
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.MaxTelemetryBufferCapacity.set -> void
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.Send(Microsoft.ApplicationInsights.Channel.ITelemetry item) -> void
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.SendingInterval.get -> System.TimeSpan
+Microsoft.ApplicationInsights.Channel.InMemoryChannel.SendingInterval.set -> void
+Microsoft.ApplicationInsights.Channel.ITelemetry
+Microsoft.ApplicationInsights.Channel.ITelemetry.Context.get -> Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+Microsoft.ApplicationInsights.Channel.ITelemetry.DeepClone() -> Microsoft.ApplicationInsights.Channel.ITelemetry
+Microsoft.ApplicationInsights.Channel.ITelemetry.Extension.get -> Microsoft.ApplicationInsights.Extensibility.IExtension
+Microsoft.ApplicationInsights.Channel.ITelemetry.Extension.set -> void
+Microsoft.ApplicationInsights.Channel.ITelemetry.Sanitize() -> void
+Microsoft.ApplicationInsights.Channel.ITelemetry.Sequence.get -> string
+Microsoft.ApplicationInsights.Channel.ITelemetry.Sequence.set -> void
+Microsoft.ApplicationInsights.Channel.ITelemetry.SerializeData(Microsoft.ApplicationInsights.Extensibility.ISerializationWriter serializationWriter) -> void
+Microsoft.ApplicationInsights.Channel.ITelemetry.Timestamp.get -> System.DateTimeOffset
+Microsoft.ApplicationInsights.Channel.ITelemetry.Timestamp.set -> void
+Microsoft.ApplicationInsights.Channel.ITelemetryChannel
+Microsoft.ApplicationInsights.Channel.ITelemetryChannel.DeveloperMode.get -> bool?
+Microsoft.ApplicationInsights.Channel.ITelemetryChannel.DeveloperMode.set -> void
+Microsoft.ApplicationInsights.Channel.ITelemetryChannel.EndpointAddress.get -> string
+Microsoft.ApplicationInsights.Channel.ITelemetryChannel.EndpointAddress.set -> void
+Microsoft.ApplicationInsights.Channel.ITelemetryChannel.Flush() -> void
+Microsoft.ApplicationInsights.Channel.ITelemetryChannel.Send(Microsoft.ApplicationInsights.Channel.ITelemetry item) -> void
+Microsoft.ApplicationInsights.Channel.SamplingScoreGenerator
+Microsoft.ApplicationInsights.Channel.Transmission
+Microsoft.ApplicationInsights.Channel.Transmission.Content.get -> byte[]
+Microsoft.ApplicationInsights.Channel.Transmission.ContentEncoding.get -> string
+Microsoft.ApplicationInsights.Channel.Transmission.ContentType.get -> string
+Microsoft.ApplicationInsights.Channel.Transmission.EndpointAddress.get -> System.Uri
+Microsoft.ApplicationInsights.Channel.Transmission.Id.get -> string
+Microsoft.ApplicationInsights.Channel.Transmission.TelemetryItems.get -> System.Collections.Generic.ICollection<Microsoft.ApplicationInsights.Channel.ITelemetry>
+Microsoft.ApplicationInsights.Channel.Transmission.Timeout.get -> System.TimeSpan
+Microsoft.ApplicationInsights.Channel.Transmission.Transmission() -> void
+Microsoft.ApplicationInsights.Channel.Transmission.Transmission(System.Uri address, byte[] content, string contentType, string contentEncoding, System.TimeSpan timeout = default(System.TimeSpan)) -> void
+Microsoft.ApplicationInsights.Channel.Transmission.Transmission(System.Uri address, System.Collections.Generic.ICollection<Microsoft.ApplicationInsights.Channel.ITelemetry> telemetryItems, System.TimeSpan timeout = default(System.TimeSpan)) -> void
+Microsoft.ApplicationInsights.Channel.Transmission.TransmissionStatusEvent.get -> System.EventHandler<Microsoft.ApplicationInsights.Channel.TransmissionStatusEventArgs>
+Microsoft.ApplicationInsights.Channel.Transmission.TransmissionStatusEvent.set -> void
+Microsoft.ApplicationInsights.Channel.TransmissionStatusEventArgs
+Microsoft.ApplicationInsights.Channel.TransmissionStatusEventArgs.Response.get -> Microsoft.ApplicationInsights.Extensibility.Implementation.HttpWebResponseWrapper
+Microsoft.ApplicationInsights.Channel.TransmissionStatusEventArgs.ResponseDurationInMs.get -> long
+Microsoft.ApplicationInsights.Channel.TransmissionStatusEventArgs.TransmissionStatusEventArgs(Microsoft.ApplicationInsights.Extensibility.Implementation.HttpWebResponseWrapper response) -> void
+Microsoft.ApplicationInsights.Channel.TransmissionStatusEventArgs.TransmissionStatusEventArgs(Microsoft.ApplicationInsights.Extensibility.Implementation.HttpWebResponseWrapper response, long responseDurationInMs) -> void
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.AvailabilityTelemetry() -> void
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.AvailabilityTelemetry(string name, System.DateTimeOffset timeStamp, System.TimeSpan duration, string runLocation, bool success, string message = null) -> void
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Context.get -> Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.DeepClone() -> Microsoft.ApplicationInsights.Channel.ITelemetry
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Duration.get -> System.TimeSpan
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Duration.set -> void
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Extension.get -> Microsoft.ApplicationInsights.Extensibility.IExtension
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Extension.set -> void
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Id.get -> string
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Id.set -> void
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Message.get -> string
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Message.set -> void
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Metrics.get -> System.Collections.Generic.IDictionary<string, double>
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Name.get -> string
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Name.set -> void
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Properties.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.RunLocation.get -> string
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.RunLocation.set -> void
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Sequence.get -> string
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Sequence.set -> void
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.SerializeData(Microsoft.ApplicationInsights.Extensibility.ISerializationWriter serializationWriter) -> void
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Success.get -> bool
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Success.set -> void
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Timestamp.get -> System.DateTimeOffset
+Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry.Timestamp.set -> void
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.CommandName.get -> string
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.CommandName.set -> void
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Data.get -> string
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Data.set -> void
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.DependencyKind.get -> string
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.DependencyKind.set -> void
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.DependencyTelemetry() -> void
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.DependencyTelemetry(string dependencyName, string data, System.DateTimeOffset startTime, System.TimeSpan duration, bool success) -> void
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.DependencyTelemetry(string dependencyTypeName, string target, string dependencyName, string data) -> void
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.DependencyTelemetry(string dependencyTypeName, string target, string dependencyName, string data, System.DateTimeOffset startTime, System.TimeSpan duration, string resultCode, bool success) -> void
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.DependencyTypeName.get -> string
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.DependencyTypeName.set -> void
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.ItemTypeFlag.get -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.ProactiveSamplingDecision.get -> Microsoft.ApplicationInsights.DataContracts.SamplingDecision
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.ProactiveSamplingDecision.set -> void
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.ResultCode.get -> string
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.ResultCode.set -> void
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.SetOperationDetail(string key, object detail) -> void
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Target.get -> string
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Target.set -> void
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.TryGetOperationDetail(string key, out object detail) -> bool
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Type.get -> string
+Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Type.set -> void
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.Context.get -> Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.DeepClone() -> Microsoft.ApplicationInsights.Channel.ITelemetry
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.EventTelemetry() -> void
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.EventTelemetry(string name) -> void
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.Extension.get -> Microsoft.ApplicationInsights.Extensibility.IExtension
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.Extension.set -> void
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.ItemTypeFlag.get -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.Metrics.get -> System.Collections.Generic.IDictionary<string, double>
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.Name.get -> string
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.Name.set -> void
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.ProactiveSamplingDecision.get -> Microsoft.ApplicationInsights.DataContracts.SamplingDecision
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.ProactiveSamplingDecision.set -> void
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.Properties.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.Sequence.get -> string
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.Sequence.set -> void
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.SerializeData(Microsoft.ApplicationInsights.Extensibility.ISerializationWriter serializationWriter) -> void
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.Timestamp.get -> System.DateTimeOffset
+Microsoft.ApplicationInsights.DataContracts.EventTelemetry.Timestamp.set -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionDetailsInfo
+Microsoft.ApplicationInsights.DataContracts.ExceptionDetailsInfo.ExceptionDetailsInfo(int id, int outerId, string typeName, string message, bool hasFullStack, string stack, System.Collections.Generic.IEnumerable<Microsoft.ApplicationInsights.DataContracts.StackFrame> parsedStack) -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionDetailsInfo.Message.get -> string
+Microsoft.ApplicationInsights.DataContracts.ExceptionDetailsInfo.Message.set -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionDetailsInfo.TypeName.get -> string
+Microsoft.ApplicationInsights.DataContracts.ExceptionDetailsInfo.TypeName.set -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionHandledAt
+Microsoft.ApplicationInsights.DataContracts.ExceptionHandledAt.Platform = 2 -> Microsoft.ApplicationInsights.DataContracts.ExceptionHandledAt
+Microsoft.ApplicationInsights.DataContracts.ExceptionHandledAt.Unhandled = 0 -> Microsoft.ApplicationInsights.DataContracts.ExceptionHandledAt
+Microsoft.ApplicationInsights.DataContracts.ExceptionHandledAt.UserCode = 1 -> Microsoft.ApplicationInsights.DataContracts.ExceptionHandledAt
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.Context.get -> Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.DeepClone() -> Microsoft.ApplicationInsights.Channel.ITelemetry
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.Exception.get -> System.Exception
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.Exception.set -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.ExceptionDetailsInfoList.get -> System.Collections.Generic.IReadOnlyList<Microsoft.ApplicationInsights.DataContracts.ExceptionDetailsInfo>
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.ExceptionTelemetry() -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.ExceptionTelemetry(System.Collections.Generic.IEnumerable<Microsoft.ApplicationInsights.DataContracts.ExceptionDetailsInfo> exceptionDetailsInfoList, Microsoft.ApplicationInsights.DataContracts.SeverityLevel? severityLevel, string problemId, System.Collections.Generic.IDictionary<string, string> properties, System.Collections.Generic.IDictionary<string, double> measurements) -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.ExceptionTelemetry(System.Exception exception) -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.Extension.get -> Microsoft.ApplicationInsights.Extensibility.IExtension
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.Extension.set -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.HandledAt.get -> Microsoft.ApplicationInsights.DataContracts.ExceptionHandledAt
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.HandledAt.set -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.ItemTypeFlag.get -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.Message.get -> string
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.Message.set -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.Metrics.get -> System.Collections.Generic.IDictionary<string, double>
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.ProactiveSamplingDecision.get -> Microsoft.ApplicationInsights.DataContracts.SamplingDecision
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.ProactiveSamplingDecision.set -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.ProblemId.get -> string
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.ProblemId.set -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.Properties.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.Sequence.get -> string
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.Sequence.set -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.SerializeData(Microsoft.ApplicationInsights.Extensibility.ISerializationWriter serializationWriter) -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.SetParsedStack(System.Diagnostics.StackFrame[] frames) -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.SeverityLevel.get -> Microsoft.ApplicationInsights.DataContracts.SeverityLevel?
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.SeverityLevel.set -> void
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.Timestamp.get -> System.DateTimeOffset
+Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry.Timestamp.set -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WriteComma() -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WriteEndArray() -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WriteEndObject() -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WriteProperty(string name, bool? value) -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WriteProperty(string name, double? value) -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WriteProperty(string name, int? value) -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WriteProperty(string name, string value) -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WriteProperty(string name, System.Collections.Generic.IDictionary<string, double> values) -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WriteProperty(string name, System.Collections.Generic.IDictionary<string, string> values) -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WriteProperty(string name, System.DateTimeOffset? value) -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WriteProperty(string name, System.TimeSpan? value) -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WritePropertyName(string name) -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WriteRawValue(object value) -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WriteStartArray() -> void
+Microsoft.ApplicationInsights.DataContracts.IJsonWriter.WriteStartObject() -> void
+Microsoft.ApplicationInsights.DataContracts.ISupportAdvancedSampling
+Microsoft.ApplicationInsights.DataContracts.ISupportAdvancedSampling.ItemTypeFlag.get -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.ISupportAdvancedSampling.ProactiveSamplingDecision.get -> Microsoft.ApplicationInsights.DataContracts.SamplingDecision
+Microsoft.ApplicationInsights.DataContracts.ISupportAdvancedSampling.ProactiveSamplingDecision.set -> void
+Microsoft.ApplicationInsights.DataContracts.ISupportMetrics
+Microsoft.ApplicationInsights.DataContracts.ISupportMetrics.Metrics.get -> System.Collections.Generic.IDictionary<string, double>
+Microsoft.ApplicationInsights.DataContracts.ISupportProperties
+Microsoft.ApplicationInsights.DataContracts.ISupportProperties.Properties.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.ApplicationInsights.DataContracts.ISupportSampling
+Microsoft.ApplicationInsights.DataContracts.ISupportSampling.SamplingPercentage.get -> double?
+Microsoft.ApplicationInsights.DataContracts.ISupportSampling.SamplingPercentage.set -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Context.get -> Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Count.get -> int?
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Count.set -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.DeepClone() -> Microsoft.ApplicationInsights.Channel.ITelemetry
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Extension.get -> Microsoft.ApplicationInsights.Extensibility.IExtension
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Extension.set -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Max.get -> double?
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Max.set -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.MetricNamespace.get -> string
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.MetricNamespace.set -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.MetricTelemetry() -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.MetricTelemetry(string metricName, double metricValue) -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.MetricTelemetry(string metricNamespace, string name, int count, double sum, double min, double max, double standardDeviation) -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.MetricTelemetry(string name, int count, double sum, double min, double max, double standardDeviation) -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Min.get -> double?
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Min.set -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Name.get -> string
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Name.set -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Properties.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Sequence.get -> string
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Sequence.set -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.SerializeData(Microsoft.ApplicationInsights.Extensibility.ISerializationWriter serializationWriter) -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.StandardDeviation.get -> double?
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.StandardDeviation.set -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Sum.get -> double
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Sum.set -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Timestamp.get -> System.DateTimeOffset
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Timestamp.set -> void
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Value.get -> double
+Microsoft.ApplicationInsights.DataContracts.MetricTelemetry.Value.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Context.get -> Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.DeepClone() -> Microsoft.ApplicationInsights.Channel.ITelemetry
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.DomProcessing.get -> System.TimeSpan
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.DomProcessing.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Duration.get -> System.TimeSpan
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Duration.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Extension.get -> Microsoft.ApplicationInsights.Extensibility.IExtension
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Extension.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Id.get -> string
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Id.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.ItemTypeFlag.get -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Metrics.get -> System.Collections.Generic.IDictionary<string, double>
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Name.get -> string
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Name.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.NetworkConnect.get -> System.TimeSpan
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.NetworkConnect.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.PageViewPerformanceTelemetry() -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.PageViewPerformanceTelemetry(string pageName) -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.PerfTotal.get -> System.TimeSpan
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.PerfTotal.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.ProactiveSamplingDecision.get -> Microsoft.ApplicationInsights.DataContracts.SamplingDecision
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.ProactiveSamplingDecision.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Properties.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.ReceivedResponse.get -> System.TimeSpan
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.ReceivedResponse.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.SentRequest.get -> System.TimeSpan
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.SentRequest.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Sequence.get -> string
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Sequence.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.SerializeData(Microsoft.ApplicationInsights.Extensibility.ISerializationWriter serializationWriter) -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Timestamp.get -> System.DateTimeOffset
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Timestamp.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Url.get -> System.Uri
+Microsoft.ApplicationInsights.DataContracts.PageViewPerformanceTelemetry.Url.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Context.get -> Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.DeepClone() -> Microsoft.ApplicationInsights.Channel.ITelemetry
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Duration.get -> System.TimeSpan
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Duration.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Extension.get -> Microsoft.ApplicationInsights.Extensibility.IExtension
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Extension.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Id.get -> string
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Id.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.ItemTypeFlag.get -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Metrics.get -> System.Collections.Generic.IDictionary<string, double>
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Name.get -> string
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Name.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.PageViewTelemetry() -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.PageViewTelemetry(string pageName) -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.ProactiveSamplingDecision.get -> Microsoft.ApplicationInsights.DataContracts.SamplingDecision
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.ProactiveSamplingDecision.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Properties.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Sequence.get -> string
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Sequence.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.SerializeData(Microsoft.ApplicationInsights.Extensibility.ISerializationWriter serializationWriter) -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Timestamp.get -> System.DateTimeOffset
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Timestamp.set -> void
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Url.get -> System.Uri
+Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry.Url.set -> void
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.CategoryName.get -> string
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.CategoryName.set -> void
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.Context.get -> Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.CounterName.get -> string
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.CounterName.set -> void
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.DeepClone() -> Microsoft.ApplicationInsights.Channel.ITelemetry
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.Extension.get -> Microsoft.ApplicationInsights.Extensibility.IExtension
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.Extension.set -> void
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.InstanceName.get -> string
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.InstanceName.set -> void
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.PerformanceCounterTelemetry() -> void
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.PerformanceCounterTelemetry(string categoryName, string counterName, string instanceName, double value) -> void
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.Properties.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.Sequence.get -> string
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.Sequence.set -> void
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.SerializeData(Microsoft.ApplicationInsights.Extensibility.ISerializationWriter serializationWriter) -> void
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.Timestamp.get -> System.DateTimeOffset
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.Timestamp.set -> void
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.Value.get -> double
+Microsoft.ApplicationInsights.DataContracts.PerformanceCounterTelemetry.Value.set -> void
+Microsoft.ApplicationInsights.DataContracts.RequestTelemetry
+Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.HttpMethod.get -> string
+Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.HttpMethod.set -> void
+Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.ItemTypeFlag.get -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.ProactiveSamplingDecision.get -> Microsoft.ApplicationInsights.DataContracts.SamplingDecision
+Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.ProactiveSamplingDecision.set -> void
+Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.RequestTelemetry() -> void
+Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.RequestTelemetry(string name, System.DateTimeOffset startTime, System.TimeSpan duration, string responseCode, bool success) -> void
+Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.ResponseCode.get -> string
+Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.ResponseCode.set -> void
+Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Source.get -> string
+Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Source.set -> void
+Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Url.get -> System.Uri
+Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Url.set -> void
+Microsoft.ApplicationInsights.DataContracts.SamplingDecision
+Microsoft.ApplicationInsights.DataContracts.SamplingDecision.None = 0 -> Microsoft.ApplicationInsights.DataContracts.SamplingDecision
+Microsoft.ApplicationInsights.DataContracts.SamplingDecision.SampledIn = 1 -> Microsoft.ApplicationInsights.DataContracts.SamplingDecision
+Microsoft.ApplicationInsights.DataContracts.SamplingDecision.SampledOut = 2 -> Microsoft.ApplicationInsights.DataContracts.SamplingDecision
+Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes.Availability = 1024 -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes.Event = 1 -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes.Exception = 2 -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes.Message = 4 -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes.Metric = 8 -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes.None = 0 -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes.PageView = 16 -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes.PageViewPerformance = 32 -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes.PerformanceCounter = 64 -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes.RemoteDependency = 128 -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes.Request = 256 -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes.SessionState = 512 -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.SessionState
+Microsoft.ApplicationInsights.DataContracts.SessionState.End = 1 -> Microsoft.ApplicationInsights.DataContracts.SessionState
+Microsoft.ApplicationInsights.DataContracts.SessionState.Start = 0 -> Microsoft.ApplicationInsights.DataContracts.SessionState
+Microsoft.ApplicationInsights.DataContracts.SessionStateTelemetry
+Microsoft.ApplicationInsights.DataContracts.SessionStateTelemetry.Context.get -> Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+Microsoft.ApplicationInsights.DataContracts.SessionStateTelemetry.DeepClone() -> Microsoft.ApplicationInsights.Channel.ITelemetry
+Microsoft.ApplicationInsights.DataContracts.SessionStateTelemetry.Extension.get -> Microsoft.ApplicationInsights.Extensibility.IExtension
+Microsoft.ApplicationInsights.DataContracts.SessionStateTelemetry.Extension.set -> void
+Microsoft.ApplicationInsights.DataContracts.SessionStateTelemetry.Sequence.get -> string
+Microsoft.ApplicationInsights.DataContracts.SessionStateTelemetry.Sequence.set -> void
+Microsoft.ApplicationInsights.DataContracts.SessionStateTelemetry.SerializeData(Microsoft.ApplicationInsights.Extensibility.ISerializationWriter serializationWriter) -> void
+Microsoft.ApplicationInsights.DataContracts.SessionStateTelemetry.SessionStateTelemetry() -> void
+Microsoft.ApplicationInsights.DataContracts.SessionStateTelemetry.SessionStateTelemetry(Microsoft.ApplicationInsights.DataContracts.SessionState state) -> void
+Microsoft.ApplicationInsights.DataContracts.SessionStateTelemetry.State.get -> Microsoft.ApplicationInsights.DataContracts.SessionState
+Microsoft.ApplicationInsights.DataContracts.SessionStateTelemetry.State.set -> void
+Microsoft.ApplicationInsights.DataContracts.SessionStateTelemetry.Timestamp.get -> System.DateTimeOffset
+Microsoft.ApplicationInsights.DataContracts.SessionStateTelemetry.Timestamp.set -> void
+Microsoft.ApplicationInsights.DataContracts.SeverityLevel
+Microsoft.ApplicationInsights.DataContracts.SeverityLevel.Critical = 4 -> Microsoft.ApplicationInsights.DataContracts.SeverityLevel
+Microsoft.ApplicationInsights.DataContracts.SeverityLevel.Error = 3 -> Microsoft.ApplicationInsights.DataContracts.SeverityLevel
+Microsoft.ApplicationInsights.DataContracts.SeverityLevel.Information = 1 -> Microsoft.ApplicationInsights.DataContracts.SeverityLevel
+Microsoft.ApplicationInsights.DataContracts.SeverityLevel.Verbose = 0 -> Microsoft.ApplicationInsights.DataContracts.SeverityLevel
+Microsoft.ApplicationInsights.DataContracts.SeverityLevel.Warning = 2 -> Microsoft.ApplicationInsights.DataContracts.SeverityLevel
+Microsoft.ApplicationInsights.DataContracts.StackFrame
+Microsoft.ApplicationInsights.DataContracts.StackFrame.StackFrame(string assembly, string fileName, int level, int line, string method) -> void
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.Cloud.get -> Microsoft.ApplicationInsights.Extensibility.Implementation.CloudContext
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.Component.get -> Microsoft.ApplicationInsights.Extensibility.Implementation.ComponentContext
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.Device.get -> Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.Flags.get -> long
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.Flags.set -> void
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.GlobalProperties.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.InstrumentationKey.get -> string
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.InstrumentationKey.set -> void
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.Location.get -> Microsoft.ApplicationInsights.Extensibility.Implementation.LocationContext
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.Operation.get -> Microsoft.ApplicationInsights.Extensibility.Implementation.OperationContext
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.Properties.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.Session.get -> Microsoft.ApplicationInsights.Extensibility.Implementation.SessionContext
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.StoreRawObject(string key, object rawObject, bool keepForInitializationOnly = true) -> void
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.TelemetryContext() -> void
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.TryGetRawObject(string key, out object rawObject) -> bool
+Microsoft.ApplicationInsights.DataContracts.TelemetryContext.User.get -> Microsoft.ApplicationInsights.Extensibility.Implementation.UserContext
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.Context.get -> Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.DeepClone() -> Microsoft.ApplicationInsights.Channel.ITelemetry
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.Extension.get -> Microsoft.ApplicationInsights.Extensibility.IExtension
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.Extension.set -> void
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.ItemTypeFlag.get -> Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.Message.get -> string
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.Message.set -> void
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.ProactiveSamplingDecision.get -> Microsoft.ApplicationInsights.DataContracts.SamplingDecision
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.ProactiveSamplingDecision.set -> void
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.Properties.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.Sequence.get -> string
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.Sequence.set -> void
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.SerializeData(Microsoft.ApplicationInsights.Extensibility.ISerializationWriter serializationWriter) -> void
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.SeverityLevel.get -> Microsoft.ApplicationInsights.DataContracts.SeverityLevel?
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.SeverityLevel.set -> void
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.Timestamp.get -> System.DateTimeOffset
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.Timestamp.set -> void
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.TraceTelemetry() -> void
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.TraceTelemetry(string message) -> void
+Microsoft.ApplicationInsights.DataContracts.TraceTelemetry.TraceTelemetry(string message, Microsoft.ApplicationInsights.DataContracts.SeverityLevel severityLevel) -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.AutocollectedMetricsExtractor(Microsoft.ApplicationInsights.Extensibility.ITelemetryProcessor nextProcessorInPipeline) -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.Dispose() -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.Initialize(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration) -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxDependencyCloudRoleInstanceValuesToDiscover.get -> int
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxDependencyCloudRoleInstanceValuesToDiscover.set -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxDependencyCloudRoleNameValuesToDiscover.get -> int
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxDependencyCloudRoleNameValuesToDiscover.set -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxDependencyResultCodesToDiscover.get -> int
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxDependencyResultCodesToDiscover.set -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxDependencyTargetValuesToDiscover.get -> int
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxDependencyTargetValuesToDiscover.set -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxDependencyTypesToDiscover.get -> int
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxDependencyTypesToDiscover.set -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxExceptionCloudRoleInstanceValuesToDiscover.get -> int
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxExceptionCloudRoleInstanceValuesToDiscover.set -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxExceptionCloudRoleNameValuesToDiscover.get -> int
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxExceptionCloudRoleNameValuesToDiscover.set -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxRequestCloudRoleInstanceValuesToDiscover.get -> int
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxRequestCloudRoleInstanceValuesToDiscover.set -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxRequestCloudRoleNameValuesToDiscover.get -> int
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxRequestCloudRoleNameValuesToDiscover.set -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxRequestResponseCodeValuesToDiscover.get -> int
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxRequestResponseCodeValuesToDiscover.set -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxTraceCloudRoleInstanceValuesToDiscover.get -> int
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxTraceCloudRoleInstanceValuesToDiscover.set -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxTraceCloudRoleNameValuesToDiscover.get -> int
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.MaxTraceCloudRoleNameValuesToDiscover.set -> void
+Microsoft.ApplicationInsights.Extensibility.AutocollectedMetricsExtractor.Process(Microsoft.ApplicationInsights.Channel.ITelemetry item) -> void
+Microsoft.ApplicationInsights.Extensibility.IApplicationIdProvider
+Microsoft.ApplicationInsights.Extensibility.IApplicationIdProvider.TryGetApplicationId(string instrumentationKey, out string applicationId) -> bool
+Microsoft.ApplicationInsights.Extensibility.IExtension
+Microsoft.ApplicationInsights.Extensibility.IExtension.DeepClone() -> Microsoft.ApplicationInsights.Extensibility.IExtension
+Microsoft.ApplicationInsights.Extensibility.Implementation.ApplicationId.ApplicationInsightsApplicationIdProvider
+Microsoft.ApplicationInsights.Extensibility.Implementation.ApplicationId.ApplicationInsightsApplicationIdProvider.ApplicationInsightsApplicationIdProvider() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.ApplicationId.ApplicationInsightsApplicationIdProvider.Dispose() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.ApplicationId.ApplicationInsightsApplicationIdProvider.ProfileQueryEndpoint.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.ApplicationId.ApplicationInsightsApplicationIdProvider.ProfileQueryEndpoint.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.ApplicationId.ApplicationInsightsApplicationIdProvider.TryGetApplicationId(string instrumentationKey, out string applicationId) -> bool
+Microsoft.ApplicationInsights.Extensibility.Implementation.ApplicationId.DictionaryApplicationIdProvider
+Microsoft.ApplicationInsights.Extensibility.Implementation.ApplicationId.DictionaryApplicationIdProvider.Defined.get -> System.Collections.Generic.IReadOnlyDictionary<string, string>
+Microsoft.ApplicationInsights.Extensibility.Implementation.ApplicationId.DictionaryApplicationIdProvider.Defined.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.ApplicationId.DictionaryApplicationIdProvider.DictionaryApplicationIdProvider() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.ApplicationId.DictionaryApplicationIdProvider.Next.get -> Microsoft.ApplicationInsights.Extensibility.IApplicationIdProvider
+Microsoft.ApplicationInsights.Extensibility.Implementation.ApplicationId.DictionaryApplicationIdProvider.Next.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.ApplicationId.DictionaryApplicationIdProvider.TryGetApplicationId(string instrumentationKey, out string applicationId) -> bool
+Microsoft.ApplicationInsights.Extensibility.Implementation.CloudContext
+Microsoft.ApplicationInsights.Extensibility.Implementation.CloudContext.RoleInstance.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.CloudContext.RoleInstance.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.CloudContext.RoleName.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.CloudContext.RoleName.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.ComponentContext
+Microsoft.ApplicationInsights.Extensibility.Implementation.ComponentContext.Version.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.ComponentContext.Version.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.Id.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.Id.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.Language.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.Language.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.Model.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.Model.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.NetworkType.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.NetworkType.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.OemName.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.OemName.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.OperatingSystem.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.OperatingSystem.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.ScreenResolution.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.ScreenResolution.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.Type.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.DeviceContext.Type.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Endpoints.EndpointContainer
+Microsoft.ApplicationInsights.Extensibility.Implementation.Endpoints.EndpointContainer.Ingestion.get -> System.Uri
+Microsoft.ApplicationInsights.Extensibility.Implementation.Endpoints.EndpointContainer.Live.get -> System.Uri
+Microsoft.ApplicationInsights.Extensibility.Implementation.Endpoints.EndpointContainer.Profiler.get -> System.Uri
+Microsoft.ApplicationInsights.Extensibility.Implementation.Endpoints.EndpointContainer.Snapshot.get -> System.Uri
+Microsoft.ApplicationInsights.Extensibility.Implementation.Experimental.ExperimentalFeaturesExtension
+Microsoft.ApplicationInsights.Extensibility.Implementation.HttpWebResponseWrapper
+Microsoft.ApplicationInsights.Extensibility.Implementation.HttpWebResponseWrapper.Content.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.HttpWebResponseWrapper.Content.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.HttpWebResponseWrapper.HttpWebResponseWrapper() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.HttpWebResponseWrapper.RetryAfterHeader.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.HttpWebResponseWrapper.RetryAfterHeader.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.HttpWebResponseWrapper.StatusCode.get -> int
+Microsoft.ApplicationInsights.Extensibility.Implementation.HttpWebResponseWrapper.StatusCode.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.HttpWebResponseWrapper.StatusDescription.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.HttpWebResponseWrapper.StatusDescription.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.InternalContext
+Microsoft.ApplicationInsights.Extensibility.Implementation.InternalContext.AgentVersion.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.InternalContext.AgentVersion.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.InternalContext.NodeName.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.InternalContext.NodeName.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.InternalContext.SdkVersion.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.InternalContext.SdkVersion.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.JsonSerializer
+Microsoft.ApplicationInsights.Extensibility.Implementation.LocationContext
+Microsoft.ApplicationInsights.Extensibility.Implementation.LocationContext.Ip.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.LocationContext.Ip.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationContext
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationContext.CorrelationVector.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationContext.CorrelationVector.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationContext.Id.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationContext.Id.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationContext.Name.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationContext.Name.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationContext.ParentId.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationContext.ParentId.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationContext.SyntheticSource.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationContext.SyntheticSource.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.OperationTelemetry() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.Sanitize() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.StartTime.get -> System.DateTimeOffset
+Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry.StartTime.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.SessionContext
+Microsoft.ApplicationInsights.Extensibility.Implementation.SessionContext.Id.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.SessionContext.Id.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.SessionContext.IsFirst.get -> bool?
+Microsoft.ApplicationInsights.Extensibility.Implementation.SessionContext.IsFirst.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.TaskTimer
+Microsoft.ApplicationInsights.Extensibility.Implementation.TaskTimer.Cancel() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.TaskTimer.Delay.get -> System.TimeSpan
+Microsoft.ApplicationInsights.Extensibility.Implementation.TaskTimer.Delay.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.TaskTimer.Dispose() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.TaskTimer.IsStarted.get -> bool
+Microsoft.ApplicationInsights.Extensibility.Implementation.TaskTimer.Start(System.Func<System.Threading.Tasks.Task> elapsed) -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.TaskTimer.TaskTimer() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryConfigurationExtensions
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryContextExtensions
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryDebugWriter
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryDebugWriter.TelemetryDebugWriter() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryExtensions
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryModules
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryModules.Modules.get -> System.Collections.Generic.IList<Microsoft.ApplicationInsights.Extensibility.ITelemetryModule>
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryModules.TelemetryModules() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryProcessorChain
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryProcessorChain.Dispose() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryProcessorChain.Process(Microsoft.ApplicationInsights.Channel.ITelemetry item) -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryProcessorChainBuilder
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryProcessorChainBuilder.Build() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryProcessorChainBuilder.TelemetryProcessorChainBuilder(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration) -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryProcessorChainBuilder.TelemetryProcessorChainBuilder(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration, Microsoft.ApplicationInsights.Extensibility.TelemetrySink telemetrySink) -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryProcessorChainBuilder.Use(System.Func<Microsoft.ApplicationInsights.Extensibility.ITelemetryProcessor, Microsoft.ApplicationInsights.Extensibility.ITelemetryProcessor> telemetryProcessorFactory) -> Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryProcessorChainBuilder
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.AddHeartbeatProperty(string propertyName, string propertyValue, bool isHealthy) -> bool
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.DiagnosticsInstrumentationKey.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.DiagnosticsInstrumentationKey.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.DiagnosticsTelemetryModule() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.Dispose() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.ExcludedHeartbeatProperties.get -> System.Collections.Generic.IList<string>
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.ExcludedHeartbeatPropertyProviders.get -> System.Collections.Generic.IList<string>
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.HeartbeatInterval.get -> System.TimeSpan
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.HeartbeatInterval.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.Initialize(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration) -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.IsHeartbeatEnabled.get -> bool
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.IsHeartbeatEnabled.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.SetHeartbeatProperty(string propertyName, string propertyValue = null, bool? isHealthy = null) -> bool
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.Severity.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.DiagnosticsTelemetryModule.Severity.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.Extensions
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.FileDiagnosticsTelemetryModule
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.FileDiagnosticsTelemetryModule.Dispose() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.FileDiagnosticsTelemetryModule.FileDiagnosticsTelemetryModule() -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.FileDiagnosticsTelemetryModule.Initialize(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration) -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.FileDiagnosticsTelemetryModule.LogFileName.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.FileDiagnosticsTelemetryModule.LogFileName.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.FileDiagnosticsTelemetryModule.LogFilePath.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.FileDiagnosticsTelemetryModule.LogFilePath.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.FileDiagnosticsTelemetryModule.Severity.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.FileDiagnosticsTelemetryModule.Severity.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.IHeartbeatPropertyManager
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.IHeartbeatPropertyManager.AddHeartbeatProperty(string propertyName, string propertyValue, bool isHealthy) -> bool
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.IHeartbeatPropertyManager.ExcludedHeartbeatProperties.get -> System.Collections.Generic.IList<string>
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.IHeartbeatPropertyManager.ExcludedHeartbeatPropertyProviders.get -> System.Collections.Generic.IList<string>
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.IHeartbeatPropertyManager.HeartbeatInterval.get -> System.TimeSpan
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.IHeartbeatPropertyManager.HeartbeatInterval.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.IHeartbeatPropertyManager.IsHeartbeatEnabled.get -> bool
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.IHeartbeatPropertyManager.IsHeartbeatEnabled.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.IHeartbeatPropertyManager.SetHeartbeatProperty(string propertyName, string propertyValue = null, bool? isHealthy = null) -> bool
+Microsoft.ApplicationInsights.Extensibility.Implementation.UserContext
+Microsoft.ApplicationInsights.Extensibility.Implementation.UserContext.AccountId.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.UserContext.AccountId.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.UserContext.AuthenticatedUserId.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.UserContext.AuthenticatedUserId.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.UserContext.Id.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.UserContext.Id.set -> void
+Microsoft.ApplicationInsights.Extensibility.Implementation.UserContext.UserAgent.get -> string
+Microsoft.ApplicationInsights.Extensibility.Implementation.UserContext.UserAgent.set -> void
+Microsoft.ApplicationInsights.Extensibility.IOperationHolder<T>
+Microsoft.ApplicationInsights.Extensibility.IOperationHolder<T>.Telemetry.get -> T
+Microsoft.ApplicationInsights.Extensibility.ISerializableWithWriter
+Microsoft.ApplicationInsights.Extensibility.ISerializableWithWriter.Serialize(Microsoft.ApplicationInsights.Extensibility.ISerializationWriter serializationWriter) -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteEndObject() -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteProperty(Microsoft.ApplicationInsights.Extensibility.ISerializableWithWriter value) -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteProperty(string name, bool? value) -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteProperty(string name, double? value) -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteProperty(string name, int? value) -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteProperty(string name, Microsoft.ApplicationInsights.Extensibility.ISerializableWithWriter value) -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteProperty(string name, string value) -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteProperty(string name, System.Collections.Generic.IDictionary<string, double> items) -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteProperty(string name, System.Collections.Generic.IDictionary<string, string> items) -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteProperty(string name, System.Collections.Generic.IList<Microsoft.ApplicationInsights.Extensibility.ISerializableWithWriter> items) -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteProperty(string name, System.Collections.Generic.IList<string> items) -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteProperty(string name, System.DateTimeOffset? value) -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteProperty(string name, System.TimeSpan? value) -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteStartObject() -> void
+Microsoft.ApplicationInsights.Extensibility.ISerializationWriter.WriteStartObject(string name) -> void
+Microsoft.ApplicationInsights.Extensibility.ITelemetryInitializer
+Microsoft.ApplicationInsights.Extensibility.ITelemetryInitializer.Initialize(Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+Microsoft.ApplicationInsights.Extensibility.ITelemetryModule
+Microsoft.ApplicationInsights.Extensibility.ITelemetryModule.Initialize(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration) -> void
+Microsoft.ApplicationInsights.Extensibility.ITelemetryProcessor
+Microsoft.ApplicationInsights.Extensibility.ITelemetryProcessor.Process(Microsoft.ApplicationInsights.Channel.ITelemetry item) -> void
+Microsoft.ApplicationInsights.Extensibility.OperationCorrelationTelemetryInitializer
+Microsoft.ApplicationInsights.Extensibility.OperationCorrelationTelemetryInitializer.Initialize(Microsoft.ApplicationInsights.Channel.ITelemetry telemetryItem) -> void
+Microsoft.ApplicationInsights.Extensibility.OperationCorrelationTelemetryInitializer.OperationCorrelationTelemetryInitializer() -> void
+Microsoft.ApplicationInsights.Extensibility.SdkInternalOperationsMonitor
+Microsoft.ApplicationInsights.Extensibility.SequencePropertyInitializer
+Microsoft.ApplicationInsights.Extensibility.SequencePropertyInitializer.Initialize(Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+Microsoft.ApplicationInsights.Extensibility.SequencePropertyInitializer.SequencePropertyInitializer() -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.ApplicationIdProvider.get -> Microsoft.ApplicationInsights.Extensibility.IApplicationIdProvider
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.ApplicationIdProvider.set -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.ConnectionString.get -> string
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.ConnectionString.set -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.DefaultTelemetrySink.get -> Microsoft.ApplicationInsights.Extensibility.TelemetrySink
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.DisableTelemetry.get -> bool
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.DisableTelemetry.set -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.Dispose() -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.EndpointContainer.get -> Microsoft.ApplicationInsights.Extensibility.Implementation.Endpoints.EndpointContainer
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.ExperimentalFeatures.get -> System.Collections.Generic.IList<string>
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.InstrumentationKey.get -> string
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.InstrumentationKey.set -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.SetAzureTokenCredential(object tokenCredential) -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.TelemetryChannel.get -> Microsoft.ApplicationInsights.Channel.ITelemetryChannel
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.TelemetryChannel.set -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.TelemetryConfiguration() -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.TelemetryConfiguration(string instrumentationKey) -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.TelemetryConfiguration(string instrumentationKey, Microsoft.ApplicationInsights.Channel.ITelemetryChannel channel) -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.TelemetryInitializers.get -> System.Collections.Generic.IList<Microsoft.ApplicationInsights.Extensibility.ITelemetryInitializer>
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.TelemetryProcessorChainBuilder.get -> Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryProcessorChainBuilder
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.TelemetryProcessors.get -> System.Collections.ObjectModel.ReadOnlyCollection<Microsoft.ApplicationInsights.Extensibility.ITelemetryProcessor>
+Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.TelemetrySinks.get -> System.Collections.Generic.IList<Microsoft.ApplicationInsights.Extensibility.TelemetrySink>
+Microsoft.ApplicationInsights.Extensibility.TelemetrySink
+Microsoft.ApplicationInsights.Extensibility.TelemetrySink.Dispose() -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetrySink.Initialize(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration) -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetrySink.Name.get -> string
+Microsoft.ApplicationInsights.Extensibility.TelemetrySink.Name.set -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetrySink.Process(Microsoft.ApplicationInsights.Channel.ITelemetry item) -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetrySink.TelemetryChannel.get -> Microsoft.ApplicationInsights.Channel.ITelemetryChannel
+Microsoft.ApplicationInsights.Extensibility.TelemetrySink.TelemetryChannel.set -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetrySink.TelemetryProcessorChainBuilder.get -> Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryProcessorChainBuilder
+Microsoft.ApplicationInsights.Extensibility.TelemetrySink.TelemetryProcessorChainBuilder.set -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetrySink.TelemetryProcessors.get -> System.Collections.ObjectModel.ReadOnlyCollection<Microsoft.ApplicationInsights.Extensibility.ITelemetryProcessor>
+Microsoft.ApplicationInsights.Extensibility.TelemetrySink.TelemetrySink() -> void
+Microsoft.ApplicationInsights.Extensibility.TelemetrySink.TelemetrySink(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration telemetryConfiguration, Microsoft.ApplicationInsights.Channel.ITelemetryChannel telemetryChannel = null) -> void
+Microsoft.ApplicationInsights.Extensibility.W3C.W3CActivityExtensions
+Microsoft.ApplicationInsights.Extensibility.W3C.W3COperationCorrelationTelemetryInitializer
+Microsoft.ApplicationInsights.Extensibility.W3C.W3COperationCorrelationTelemetryInitializer.Initialize(Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+Microsoft.ApplicationInsights.Extensibility.W3C.W3COperationCorrelationTelemetryInitializer.W3COperationCorrelationTelemetryInitializer() -> void
+Microsoft.ApplicationInsights.Extensibility.W3C.W3CUtilities
+Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.Metric.GetAllSeries() -> System.Collections.Generic.IReadOnlyList<System.Collections.Generic.KeyValuePair<string[], Microsoft.ApplicationInsights.Metrics.MetricSeries>>
+Microsoft.ApplicationInsights.Metric.GetDimensionValues(int dimensionNumber) -> System.Collections.Generic.IReadOnlyCollection<string>
+Microsoft.ApplicationInsights.Metric.Identifier.get -> Microsoft.ApplicationInsights.Metrics.MetricIdentifier
+Microsoft.ApplicationInsights.Metric.SeriesCount.get -> int
+Microsoft.ApplicationInsights.Metric.TrackValue(double metricValue) -> void
+Microsoft.ApplicationInsights.Metric.TrackValue(double metricValue, string dimension1Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(double metricValue, string dimension1Value, string dimension2Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(double metricValue, string dimension1Value, string dimension2Value, string dimension3Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(double metricValue, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(double metricValue, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(double metricValue, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(double metricValue, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value, string dimension7Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(double metricValue, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value, string dimension7Value, string dimension8Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(double metricValue, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value, string dimension7Value, string dimension8Value, string dimension9Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(double metricValue, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value, string dimension7Value, string dimension8Value, string dimension9Value, string dimension10Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(object metricValue) -> void
+Microsoft.ApplicationInsights.Metric.TrackValue(object metricValue, string dimension1Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(object metricValue, string dimension1Value, string dimension2Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(object metricValue, string dimension1Value, string dimension2Value, string dimension3Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(object metricValue, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(object metricValue, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(object metricValue, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(object metricValue, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value, string dimension7Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(object metricValue, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value, string dimension7Value, string dimension8Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(object metricValue, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value, string dimension7Value, string dimension8Value, string dimension9Value) -> bool
+Microsoft.ApplicationInsights.Metric.TrackValue(object metricValue, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value, string dimension7Value, string dimension8Value, string dimension9Value, string dimension10Value) -> bool
+Microsoft.ApplicationInsights.Metric.TryGetDataSeries(out Microsoft.ApplicationInsights.Metrics.MetricSeries series) -> bool
+Microsoft.ApplicationInsights.Metric.TryGetDataSeries(out Microsoft.ApplicationInsights.Metrics.MetricSeries series, bool createIfNotExists, params string[] dimensionValues) -> bool
+Microsoft.ApplicationInsights.Metric.TryGetDataSeries(out Microsoft.ApplicationInsights.Metrics.MetricSeries series, string dimension1Value) -> bool
+Microsoft.ApplicationInsights.Metric.TryGetDataSeries(out Microsoft.ApplicationInsights.Metrics.MetricSeries series, string dimension1Value, string dimension2Value) -> bool
+Microsoft.ApplicationInsights.Metric.TryGetDataSeries(out Microsoft.ApplicationInsights.Metrics.MetricSeries series, string dimension1Value, string dimension2Value, string dimension3Value) -> bool
+Microsoft.ApplicationInsights.Metric.TryGetDataSeries(out Microsoft.ApplicationInsights.Metrics.MetricSeries series, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value) -> bool
+Microsoft.ApplicationInsights.Metric.TryGetDataSeries(out Microsoft.ApplicationInsights.Metrics.MetricSeries series, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value) -> bool
+Microsoft.ApplicationInsights.Metric.TryGetDataSeries(out Microsoft.ApplicationInsights.Metrics.MetricSeries series, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value) -> bool
+Microsoft.ApplicationInsights.Metric.TryGetDataSeries(out Microsoft.ApplicationInsights.Metrics.MetricSeries series, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value, string dimension7Value) -> bool
+Microsoft.ApplicationInsights.Metric.TryGetDataSeries(out Microsoft.ApplicationInsights.Metrics.MetricSeries series, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value, string dimension7Value, string dimension8Value) -> bool
+Microsoft.ApplicationInsights.Metric.TryGetDataSeries(out Microsoft.ApplicationInsights.Metrics.MetricSeries series, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value, string dimension7Value, string dimension8Value, string dimension9Value) -> bool
+Microsoft.ApplicationInsights.Metric.TryGetDataSeries(out Microsoft.ApplicationInsights.Metrics.MetricSeries series, string dimension1Value, string dimension2Value, string dimension3Value, string dimension4Value, string dimension5Value, string dimension6Value, string dimension7Value, string dimension8Value, string dimension9Value, string dimension10Value) -> bool
+Microsoft.ApplicationInsights.MetricAggregationScope
+Microsoft.ApplicationInsights.MetricAggregationScope.TelemetryClient = 1 -> Microsoft.ApplicationInsights.MetricAggregationScope
+Microsoft.ApplicationInsights.MetricAggregationScope.TelemetryConfiguration = 0 -> Microsoft.ApplicationInsights.MetricAggregationScope
+Microsoft.ApplicationInsights.MetricConfigurations
+Microsoft.ApplicationInsights.MetricConfigurationsExtensions
+Microsoft.ApplicationInsights.MetricDimensionNames
+Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext
+Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Cloud
+Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Component
+Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Device
+Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Location
+Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Operation
+Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.Session
+Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext.User
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricSeriesAggregator
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricSeriesAggregator.CompleteAggregation(System.DateTimeOffset periodEnd) -> Microsoft.ApplicationInsights.Metrics.MetricAggregate
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricSeriesAggregator.CreateAggregateUnsafe(System.DateTimeOffset periodEnd) -> Microsoft.ApplicationInsights.Metrics.MetricAggregate
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricSeriesAggregator.DataSeries.get -> Microsoft.ApplicationInsights.Metrics.MetricSeries
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricSeriesAggregator.Reset(System.DateTimeOffset periodStart) -> void
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricSeriesAggregator.Reset(System.DateTimeOffset periodStart, Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricValueFilter valueFilter) -> void
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricSeriesAggregator.TrackValue(double metricValue) -> void
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricSeriesAggregator.TrackValue(object metricValue) -> void
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricSeriesAggregator.TryRecycle() -> bool
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricTelemetryPipeline
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricTelemetryPipeline.FlushAsync(System.Threading.CancellationToken cancelToken) -> System.Threading.Tasks.Task
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricTelemetryPipeline.TrackAsync(Microsoft.ApplicationInsights.Metrics.MetricAggregate metricAggregate, System.Threading.CancellationToken cancelToken) -> System.Threading.Tasks.Task
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricValueFilter
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricValueFilter.WillConsume(Microsoft.ApplicationInsights.Metrics.MetricSeries dataSeries, double metricValue) -> bool
+Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricValueFilter.WillConsume(Microsoft.ApplicationInsights.Metrics.MetricSeries dataSeries, object metricValue) -> bool
+Microsoft.ApplicationInsights.Metrics.Extensibility.MetricAggregationCycleKind
+Microsoft.ApplicationInsights.Metrics.Extensibility.MetricAggregationCycleKind.Custom = 2 -> Microsoft.ApplicationInsights.Metrics.Extensibility.MetricAggregationCycleKind
+Microsoft.ApplicationInsights.Metrics.Extensibility.MetricAggregationCycleKind.Default = 0 -> Microsoft.ApplicationInsights.Metrics.Extensibility.MetricAggregationCycleKind
+Microsoft.ApplicationInsights.Metrics.Extensibility.MetricAggregationCycleKind.QuickPulse = 1 -> Microsoft.ApplicationInsights.Metrics.Extensibility.MetricAggregationCycleKind
+Microsoft.ApplicationInsights.Metrics.Extensibility.MetricConfigurationExtensions
+Microsoft.ApplicationInsights.Metrics.Extensibility.MetricExtensions
+Microsoft.ApplicationInsights.Metrics.Extensibility.MetricSeriesExtensions
+Microsoft.ApplicationInsights.Metrics.Extensibility.TelemetryClientExtensions
+Microsoft.ApplicationInsights.Metrics.IMetricSeriesConfiguration
+Microsoft.ApplicationInsights.Metrics.IMetricSeriesConfiguration.CreateNewAggregator(Microsoft.ApplicationInsights.Metrics.MetricSeries dataSeries, Microsoft.ApplicationInsights.Metrics.Extensibility.MetricAggregationCycleKind aggregationCycleKind) -> Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricSeriesAggregator
+Microsoft.ApplicationInsights.Metrics.IMetricSeriesConfiguration.RequiresPersistentAggregation.get -> bool
+Microsoft.ApplicationInsights.Metrics.MetricAggregate
+Microsoft.ApplicationInsights.Metrics.MetricAggregate.AggregationKindMoniker.get -> string
+Microsoft.ApplicationInsights.Metrics.MetricAggregate.AggregationPeriodDuration.get -> System.TimeSpan
+Microsoft.ApplicationInsights.Metrics.MetricAggregate.AggregationPeriodDuration.set -> void
+Microsoft.ApplicationInsights.Metrics.MetricAggregate.AggregationPeriodStart.get -> System.DateTimeOffset
+Microsoft.ApplicationInsights.Metrics.MetricAggregate.AggregationPeriodStart.set -> void
+Microsoft.ApplicationInsights.Metrics.MetricAggregate.Data.get -> System.Collections.Generic.IDictionary<string, object>
+Microsoft.ApplicationInsights.Metrics.MetricAggregate.Dimensions.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.ApplicationInsights.Metrics.MetricAggregate.GetDataValue<T>(string dataKey, T defaultValue) -> T
+Microsoft.ApplicationInsights.Metrics.MetricAggregate.MetricAggregate(string metricNamespace, string metricId, string aggregationKindMoniker) -> void
+Microsoft.ApplicationInsights.Metrics.MetricAggregate.MetricId.get -> string
+Microsoft.ApplicationInsights.Metrics.MetricAggregate.MetricNamespace.get -> string
+Microsoft.ApplicationInsights.Metrics.MetricConfiguration
+Microsoft.ApplicationInsights.Metrics.MetricConfiguration.GetValuesPerDimensionLimit(int dimensionNumber) -> int
+Microsoft.ApplicationInsights.Metrics.MetricConfiguration.MetricConfiguration(int seriesCountLimit, int valuesPerDimensionLimit, Microsoft.ApplicationInsights.Metrics.IMetricSeriesConfiguration seriesConfig) -> void
+Microsoft.ApplicationInsights.Metrics.MetricConfiguration.MetricConfiguration(int seriesCountLimit, System.Collections.Generic.IEnumerable<int> valuesPerDimensionLimits, Microsoft.ApplicationInsights.Metrics.IMetricSeriesConfiguration seriesConfig) -> void
+Microsoft.ApplicationInsights.Metrics.MetricConfiguration.SeriesConfig.get -> Microsoft.ApplicationInsights.Metrics.IMetricSeriesConfiguration
+Microsoft.ApplicationInsights.Metrics.MetricConfiguration.SeriesCountLimit.get -> int
+Microsoft.ApplicationInsights.Metrics.MetricConfigurationForMeasurement
+Microsoft.ApplicationInsights.Metrics.MetricConfigurationForMeasurement.MetricConfigurationForMeasurement(int seriesCountLimit, int valuesPerDimensionLimit, Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement seriesConfig) -> void
+Microsoft.ApplicationInsights.Metrics.MetricConfigurationForMeasurement.MetricConfigurationForMeasurement(int seriesCountLimit, System.Collections.Generic.IEnumerable<int> valuesPerDimensionLimits, Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement seriesConfig) -> void
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.DimensionsCount.get -> int
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.Equals(Microsoft.ApplicationInsights.Metrics.MetricIdentifier otherMetricIdentifier) -> bool
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.GetDimensionName(int dimensionNumber) -> string
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.GetDimensionNames() -> System.Collections.Generic.IEnumerable<string>
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricId.get -> string
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricIdentifier(string metricId) -> void
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricIdentifier(string metricNamespace, string metricId) -> void
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricIdentifier(string metricNamespace, string metricId, string dimension1Name) -> void
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricIdentifier(string metricNamespace, string metricId, string dimension1Name, string dimension2Name) -> void
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricIdentifier(string metricNamespace, string metricId, string dimension1Name, string dimension2Name, string dimension3Name) -> void
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricIdentifier(string metricNamespace, string metricId, string dimension1Name, string dimension2Name, string dimension3Name, string dimension4Name) -> void
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricIdentifier(string metricNamespace, string metricId, string dimension1Name, string dimension2Name, string dimension3Name, string dimension4Name, string dimension5Name) -> void
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricIdentifier(string metricNamespace, string metricId, string dimension1Name, string dimension2Name, string dimension3Name, string dimension4Name, string dimension5Name, string dimension6Name) -> void
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricIdentifier(string metricNamespace, string metricId, string dimension1Name, string dimension2Name, string dimension3Name, string dimension4Name, string dimension5Name, string dimension6Name, string dimension7Name) -> void
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricIdentifier(string metricNamespace, string metricId, string dimension1Name, string dimension2Name, string dimension3Name, string dimension4Name, string dimension5Name, string dimension6Name, string dimension7Name, string dimension8Name) -> void
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricIdentifier(string metricNamespace, string metricId, string dimension1Name, string dimension2Name, string dimension3Name, string dimension4Name, string dimension5Name, string dimension6Name, string dimension7Name, string dimension8Name, string dimension9Name) -> void
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricIdentifier(string metricNamespace, string metricId, string dimension1Name, string dimension2Name, string dimension3Name, string dimension4Name, string dimension5Name, string dimension6Name, string dimension7Name, string dimension8Name, string dimension9Name, string dimension10Name) -> void
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricIdentifier(string metricNamespace, string metricId, System.Collections.Generic.IList<string> dimensionNames) -> void
+Microsoft.ApplicationInsights.Metrics.MetricIdentifier.MetricNamespace.get -> string
+Microsoft.ApplicationInsights.Metrics.MetricManager
+Microsoft.ApplicationInsights.Metrics.MetricManager.CreateNewSeries(Microsoft.ApplicationInsights.Metrics.MetricIdentifier metricIdentifier, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> dimensionNamesAndValues, Microsoft.ApplicationInsights.Metrics.IMetricSeriesConfiguration config) -> Microsoft.ApplicationInsights.Metrics.MetricSeries
+Microsoft.ApplicationInsights.Metrics.MetricManager.CreateNewSeries(string metricNamespace, string metricId, Microsoft.ApplicationInsights.Metrics.IMetricSeriesConfiguration config) -> Microsoft.ApplicationInsights.Metrics.MetricSeries
+Microsoft.ApplicationInsights.Metrics.MetricManager.CreateNewSeries(string metricNamespace, string metricId, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string>> dimensionNamesAndValues, Microsoft.ApplicationInsights.Metrics.IMetricSeriesConfiguration config) -> Microsoft.ApplicationInsights.Metrics.MetricSeries
+Microsoft.ApplicationInsights.Metrics.MetricManager.Flush() -> void
+Microsoft.ApplicationInsights.Metrics.MetricManager.MetricManager(Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricTelemetryPipeline telemetryPipeline) -> void
+Microsoft.ApplicationInsights.Metrics.MetricManager.Metrics.get -> Microsoft.ApplicationInsights.Metrics.MetricsCollection
+Microsoft.ApplicationInsights.Metrics.MetricsCollection
+Microsoft.ApplicationInsights.Metrics.MetricsCollection.Clear() -> void
+Microsoft.ApplicationInsights.Metrics.MetricsCollection.Contains(Microsoft.ApplicationInsights.Metric metric) -> bool
+Microsoft.ApplicationInsights.Metrics.MetricsCollection.Contains(Microsoft.ApplicationInsights.Metrics.MetricIdentifier metricIdentifier) -> bool
+Microsoft.ApplicationInsights.Metrics.MetricsCollection.CopyTo(Microsoft.ApplicationInsights.Metric[] array, int arrayIndex) -> void
+Microsoft.ApplicationInsights.Metrics.MetricsCollection.Count.get -> int
+Microsoft.ApplicationInsights.Metrics.MetricsCollection.GetEnumerator() -> System.Collections.Generic.IEnumerator<Microsoft.ApplicationInsights.Metric>
+Microsoft.ApplicationInsights.Metrics.MetricsCollection.GetOrCreate(Microsoft.ApplicationInsights.Metrics.MetricIdentifier metricIdentifier, Microsoft.ApplicationInsights.Metrics.MetricConfiguration metricConfiguration) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.Metrics.MetricsCollection.IsReadOnly.get -> bool
+Microsoft.ApplicationInsights.Metrics.MetricsCollection.Remove(Microsoft.ApplicationInsights.Metric metric) -> bool
+Microsoft.ApplicationInsights.Metrics.MetricsCollection.Remove(Microsoft.ApplicationInsights.Metrics.MetricIdentifier metricIdentifier) -> bool
+Microsoft.ApplicationInsights.Metrics.MetricsCollection.Remove(Microsoft.ApplicationInsights.Metrics.MetricIdentifier metricIdentifier, out Microsoft.ApplicationInsights.Metric removedMetric) -> bool
+Microsoft.ApplicationInsights.Metrics.MetricsCollection.TryGet(Microsoft.ApplicationInsights.Metrics.MetricIdentifier metricIdentifier, out Microsoft.ApplicationInsights.Metric metric) -> bool
+Microsoft.ApplicationInsights.Metrics.MetricSeries
+Microsoft.ApplicationInsights.Metrics.MetricSeries.DimensionNamesAndValues.get -> System.Collections.Generic.IReadOnlyDictionary<string, string>
+Microsoft.ApplicationInsights.Metrics.MetricSeries.MetricIdentifier.get -> Microsoft.ApplicationInsights.Metrics.MetricIdentifier
+Microsoft.ApplicationInsights.Metrics.MetricSeries.TrackValue(double metricValue) -> void
+Microsoft.ApplicationInsights.Metrics.MetricSeries.TrackValue(object metricValue) -> void
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.AggregateKindConstants
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.AggregateKindConstants.AggregateKindDataKeys.get -> Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.AggregateKindConstants.DataKeysConstants
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.AggregateKindConstants.AggregateKindMoniker.get -> string
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.AggregateKindConstants.DataKeysConstants
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.AggregateKindConstants.DataKeysConstants.Count.get -> string
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.AggregateKindConstants.DataKeysConstants.Max.get -> string
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.AggregateKindConstants.DataKeysConstants.Min.get -> string
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.AggregateKindConstants.DataKeysConstants.StdDev.get -> string
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.AggregateKindConstants.DataKeysConstants.Sum.get -> string
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.CreateNewAggregator(Microsoft.ApplicationInsights.Metrics.MetricSeries dataSeries, Microsoft.ApplicationInsights.Metrics.Extensibility.MetricAggregationCycleKind aggregationCycleKind) -> Microsoft.ApplicationInsights.Metrics.Extensibility.IMetricSeriesAggregator
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.Equals(Microsoft.ApplicationInsights.Metrics.IMetricSeriesConfiguration other) -> bool
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.Equals(Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement other) -> bool
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.MetricSeriesConfigurationForMeasurement(bool restrictToUInt32Values) -> void
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.RequiresPersistentAggregation.get -> bool
+Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.RestrictToUInt32Values.get -> bool
+Microsoft.ApplicationInsights.Metrics.TelemetryConfigurationExtensions
+Microsoft.ApplicationInsights.OperationTelemetryExtensions
+Microsoft.ApplicationInsights.TelemetryClient
+Microsoft.ApplicationInsights.TelemetryClient.Context.get -> Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+Microsoft.ApplicationInsights.TelemetryClient.Flush() -> void
+Microsoft.ApplicationInsights.TelemetryClient.FlushAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(Microsoft.ApplicationInsights.Metrics.MetricIdentifier metricIdentifier) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(Microsoft.ApplicationInsights.Metrics.MetricIdentifier metricIdentifier, Microsoft.ApplicationInsights.Metrics.MetricConfiguration metricConfiguration) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(Microsoft.ApplicationInsights.Metrics.MetricIdentifier metricIdentifier, Microsoft.ApplicationInsights.Metrics.MetricConfiguration metricConfiguration, Microsoft.ApplicationInsights.MetricAggregationScope aggregationScope) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId, Microsoft.ApplicationInsights.Metrics.MetricConfiguration metricConfiguration) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId, Microsoft.ApplicationInsights.Metrics.MetricConfiguration metricConfiguration, Microsoft.ApplicationInsights.MetricAggregationScope aggregationScope) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId, string dimension1Name) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId, string dimension1Name, Microsoft.ApplicationInsights.Metrics.MetricConfiguration metricConfiguration) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId, string dimension1Name, Microsoft.ApplicationInsights.Metrics.MetricConfiguration metricConfiguration, Microsoft.ApplicationInsights.MetricAggregationScope aggregationScope) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId, string dimension1Name, string dimension2Name) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId, string dimension1Name, string dimension2Name, Microsoft.ApplicationInsights.Metrics.MetricConfiguration metricConfiguration) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId, string dimension1Name, string dimension2Name, Microsoft.ApplicationInsights.Metrics.MetricConfiguration metricConfiguration, Microsoft.ApplicationInsights.MetricAggregationScope aggregationScope) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId, string dimension1Name, string dimension2Name, string dimension3Name) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId, string dimension1Name, string dimension2Name, string dimension3Name, Microsoft.ApplicationInsights.Metrics.MetricConfiguration metricConfiguration) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId, string dimension1Name, string dimension2Name, string dimension3Name, Microsoft.ApplicationInsights.Metrics.MetricConfiguration metricConfiguration, Microsoft.ApplicationInsights.MetricAggregationScope aggregationScope) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId, string dimension1Name, string dimension2Name, string dimension3Name, string dimension4Name) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId, string dimension1Name, string dimension2Name, string dimension3Name, string dimension4Name, Microsoft.ApplicationInsights.Metrics.MetricConfiguration metricConfiguration) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.GetMetric(string metricId, string dimension1Name, string dimension2Name, string dimension3Name, string dimension4Name, Microsoft.ApplicationInsights.Metrics.MetricConfiguration metricConfiguration, Microsoft.ApplicationInsights.MetricAggregationScope aggregationScope) -> Microsoft.ApplicationInsights.Metric
+Microsoft.ApplicationInsights.TelemetryClient.Initialize(Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+Microsoft.ApplicationInsights.TelemetryClient.InitializeInstrumentationKey(Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+Microsoft.ApplicationInsights.TelemetryClient.InstrumentationKey.get -> string
+Microsoft.ApplicationInsights.TelemetryClient.InstrumentationKey.set -> void
+Microsoft.ApplicationInsights.TelemetryClient.IsEnabled() -> bool
+Microsoft.ApplicationInsights.TelemetryClient.TelemetryClient() -> void
+Microsoft.ApplicationInsights.TelemetryClient.TelemetryClient(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TelemetryConfiguration.get -> Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration
+Microsoft.ApplicationInsights.TelemetryClient.Track(Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackAvailability(Microsoft.ApplicationInsights.DataContracts.AvailabilityTelemetry telemetry) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackAvailability(string name, System.DateTimeOffset timeStamp, System.TimeSpan duration, string runLocation, bool success, string message = null, System.Collections.Generic.IDictionary<string, string> properties = null, System.Collections.Generic.IDictionary<string, double> metrics = null) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackDependency(Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry telemetry) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackDependency(string dependencyName, string data, System.DateTimeOffset startTime, System.TimeSpan duration, bool success) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackDependency(string dependencyTypeName, string dependencyName, string data, System.DateTimeOffset startTime, System.TimeSpan duration, bool success) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackDependency(string dependencyTypeName, string target, string dependencyName, string data, System.DateTimeOffset startTime, System.TimeSpan duration, string resultCode, bool success) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackEvent(Microsoft.ApplicationInsights.DataContracts.EventTelemetry telemetry) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackEvent(string eventName, System.Collections.Generic.IDictionary<string, string> properties = null, System.Collections.Generic.IDictionary<string, double> metrics = null) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackException(Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry telemetry) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackException(System.Exception exception, System.Collections.Generic.IDictionary<string, string> properties = null, System.Collections.Generic.IDictionary<string, double> metrics = null) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackMetric(Microsoft.ApplicationInsights.DataContracts.MetricTelemetry telemetry) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackMetric(string name, double value, System.Collections.Generic.IDictionary<string, string> properties = null) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackPageView(Microsoft.ApplicationInsights.DataContracts.PageViewTelemetry telemetry) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackPageView(string name) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackRequest(Microsoft.ApplicationInsights.DataContracts.RequestTelemetry request) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackRequest(string name, System.DateTimeOffset startTime, System.TimeSpan duration, string responseCode, bool success) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackTrace(Microsoft.ApplicationInsights.DataContracts.TraceTelemetry telemetry) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackTrace(string message) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackTrace(string message, Microsoft.ApplicationInsights.DataContracts.SeverityLevel severityLevel) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackTrace(string message, Microsoft.ApplicationInsights.DataContracts.SeverityLevel severityLevel, System.Collections.Generic.IDictionary<string, string> properties) -> void
+Microsoft.ApplicationInsights.TelemetryClient.TrackTrace(string message, System.Collections.Generic.IDictionary<string, string> properties) -> void
+Microsoft.ApplicationInsights.TelemetryClientExtensions
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Context.get -> Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.DeepClone() -> Microsoft.ApplicationInsights.Channel.ITelemetry
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Duration.get -> System.TimeSpan
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Duration.set -> void
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Extension.get -> Microsoft.ApplicationInsights.Extensibility.IExtension
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Extension.set -> void
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Id.get -> string
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Id.set -> void
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Metrics.get -> System.Collections.Generic.IDictionary<string, double>
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Name.get -> string
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Name.set -> void
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Properties.get -> System.Collections.Generic.IDictionary<string, string>
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Sequence.get -> string
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Sequence.set -> void
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.SerializeData(Microsoft.ApplicationInsights.Extensibility.ISerializationWriter serializationWriter) -> void
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Success.get -> bool?
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Success.set -> void
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Timestamp.get -> System.DateTimeOffset
+override Microsoft.ApplicationInsights.DataContracts.DependencyTelemetry.Timestamp.set -> void
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Context.get -> Microsoft.ApplicationInsights.DataContracts.TelemetryContext
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.DeepClone() -> Microsoft.ApplicationInsights.Channel.ITelemetry
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Duration.get -> System.TimeSpan
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Duration.set -> void
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Extension.get -> Microsoft.ApplicationInsights.Extensibility.IExtension
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Extension.set -> void
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Id.get -> string
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Id.set -> void
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Metrics.get -> System.Collections.Generic.IDictionary<string, double>
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Name.get -> string
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Name.set -> void
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Properties.get -> System.Collections.Generic.IDictionary<string, string>
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Sequence.get -> string
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Sequence.set -> void
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.SerializeData(Microsoft.ApplicationInsights.Extensibility.ISerializationWriter serializationWriter) -> void
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Success.get -> bool?
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Success.set -> void
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Timestamp.get -> System.DateTimeOffset
+override Microsoft.ApplicationInsights.DataContracts.RequestTelemetry.Timestamp.set -> void
+override Microsoft.ApplicationInsights.Metrics.MetricConfiguration.Equals(object obj) -> bool
+override Microsoft.ApplicationInsights.Metrics.MetricConfiguration.GetHashCode() -> int
+override Microsoft.ApplicationInsights.Metrics.MetricIdentifier.Equals(object otherObj) -> bool
+override Microsoft.ApplicationInsights.Metrics.MetricIdentifier.GetHashCode() -> int
+override Microsoft.ApplicationInsights.Metrics.MetricIdentifier.ToString() -> string
+override Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.Equals(object obj) -> bool
+override Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.GetHashCode() -> int
+static Microsoft.ApplicationInsights.Channel.SamplingScoreGenerator.GetSamplingScore(Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> double
+static Microsoft.ApplicationInsights.Channel.SamplingScoreGenerator.GetSamplingScore(string value) -> double
+static Microsoft.ApplicationInsights.Extensibility.Implementation.Experimental.ExperimentalFeaturesExtension.EvaluateExperimentalFeature(this Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration telemetryConfiguration, string featureName) -> bool
+static Microsoft.ApplicationInsights.Extensibility.Implementation.JsonSerializer.CompressionType.get -> string
+static Microsoft.ApplicationInsights.Extensibility.Implementation.JsonSerializer.ContentType.get -> string
+static Microsoft.ApplicationInsights.Extensibility.Implementation.JsonSerializer.ConvertToByteArray(string telemetryItems, bool compress = true) -> byte[]
+static Microsoft.ApplicationInsights.Extensibility.Implementation.JsonSerializer.Deserialize(byte[] telemetryItemsData, bool compress = true) -> string
+static Microsoft.ApplicationInsights.Extensibility.Implementation.JsonSerializer.Serialize(System.Collections.Generic.IEnumerable<Microsoft.ApplicationInsights.Channel.ITelemetry> telemetryItems, bool compress = true) -> byte[]
+static Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryConfigurationExtensions.GetLastObservedSamplingPercentage(this Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration, Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes samplingItemType) -> double
+static Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryConfigurationExtensions.SetLastObservedSamplingPercentage(this Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration, Microsoft.ApplicationInsights.DataContracts.SamplingTelemetryItemTypes samplingItemType, double value) -> void
+static Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryContextExtensions.GetInternalContext(this Microsoft.ApplicationInsights.DataContracts.TelemetryContext context) -> Microsoft.ApplicationInsights.Extensibility.Implementation.InternalContext
+static Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryDebugWriter.IsTracingDisabled.get -> bool
+static Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryDebugWriter.IsTracingDisabled.set -> void
+static Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryDebugWriter.WriteTelemetry(Microsoft.ApplicationInsights.Channel.ITelemetry telemetry, string filteredBy = null) -> void
+static Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryExtensions.GetEnvelopeName(this Microsoft.ApplicationInsights.Channel.ITelemetry telemetry) -> string
+static Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryExtensions.TrySetEnvelopeName(this Microsoft.ApplicationInsights.Channel.ITelemetry telemetry, string envelopeName) -> bool
+static Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryModules.Instance.get -> Microsoft.ApplicationInsights.Extensibility.Implementation.TelemetryModules
+static Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.Extensions.ToInvariantString(this System.Exception exception) -> string
+static Microsoft.ApplicationInsights.Extensibility.SdkInternalOperationsMonitor.Enter() -> void
+static Microsoft.ApplicationInsights.Extensibility.SdkInternalOperationsMonitor.Exit() -> void
+static Microsoft.ApplicationInsights.Extensibility.SdkInternalOperationsMonitor.IsEntered() -> bool
+static Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.Active.get -> Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration
+static Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.CreateDefault() -> Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration
+static Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.CreateFromConfiguration(string config) -> Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration
+static Microsoft.ApplicationInsights.Extensibility.W3C.W3CActivityExtensions.GenerateW3CContext(this System.Diagnostics.Activity activity) -> System.Diagnostics.Activity
+static Microsoft.ApplicationInsights.Extensibility.W3C.W3CActivityExtensions.GetParentSpanId(this System.Diagnostics.Activity activity) -> string
+static Microsoft.ApplicationInsights.Extensibility.W3C.W3CActivityExtensions.GetSpanId(this System.Diagnostics.Activity activity) -> string
+static Microsoft.ApplicationInsights.Extensibility.W3C.W3CActivityExtensions.GetTraceId(this System.Diagnostics.Activity activity) -> string
+static Microsoft.ApplicationInsights.Extensibility.W3C.W3CActivityExtensions.GetTraceparent(this System.Diagnostics.Activity activity) -> string
+static Microsoft.ApplicationInsights.Extensibility.W3C.W3CActivityExtensions.GetTracestate(this System.Diagnostics.Activity activity) -> string
+static Microsoft.ApplicationInsights.Extensibility.W3C.W3CActivityExtensions.IsW3CActivity(this System.Diagnostics.Activity activity) -> bool
+static Microsoft.ApplicationInsights.Extensibility.W3C.W3CActivityExtensions.SetTraceparent(this System.Diagnostics.Activity activity, string value) -> void
+static Microsoft.ApplicationInsights.Extensibility.W3C.W3CActivityExtensions.SetTracestate(this System.Diagnostics.Activity activity, string value) -> void
+static Microsoft.ApplicationInsights.Extensibility.W3C.W3CActivityExtensions.UpdateContextOnActivity(this System.Diagnostics.Activity activity) -> System.Diagnostics.Activity
+static Microsoft.ApplicationInsights.Extensibility.W3C.W3CActivityExtensions.UpdateTelemetry(this System.Diagnostics.Activity activity, Microsoft.ApplicationInsights.Channel.ITelemetry telemetry, bool forceUpdate) -> void
+static Microsoft.ApplicationInsights.Extensibility.W3C.W3CUtilities.GenerateTraceId() -> string
+static Microsoft.ApplicationInsights.MetricConfigurationsExtensions.Measurement(this Microsoft.ApplicationInsights.MetricConfigurations metricConfigPresets) -> Microsoft.ApplicationInsights.Metrics.MetricConfigurationForMeasurement
+static Microsoft.ApplicationInsights.MetricConfigurationsExtensions.SetDefaultForMeasurement(this Microsoft.ApplicationInsights.MetricConfigurations metricConfigPresets, Microsoft.ApplicationInsights.Metrics.MetricConfigurationForMeasurement defaultConfigurationForMeasurement) -> void
+static Microsoft.ApplicationInsights.Metrics.Extensibility.MetricConfigurationExtensions.Constants(this Microsoft.ApplicationInsights.Metrics.MetricConfigurationForMeasurement measurementConfig) -> Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.AggregateKindConstants
+static Microsoft.ApplicationInsights.Metrics.Extensibility.MetricConfigurationExtensions.Constants(this Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement measurementConfig) -> Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.AggregateKindConstants
+static Microsoft.ApplicationInsights.Metrics.Extensibility.MetricExtensions.GetConfiguration(this Microsoft.ApplicationInsights.Metric metric) -> Microsoft.ApplicationInsights.Metrics.MetricConfiguration
+static Microsoft.ApplicationInsights.Metrics.Extensibility.MetricSeriesExtensions.GetConfiguration(this Microsoft.ApplicationInsights.Metrics.MetricSeries metricSeries) -> Microsoft.ApplicationInsights.Metrics.IMetricSeriesConfiguration
+static Microsoft.ApplicationInsights.Metrics.Extensibility.TelemetryClientExtensions.GetMetricManager(this Microsoft.ApplicationInsights.TelemetryClient telemetryClient, Microsoft.ApplicationInsights.MetricAggregationScope aggregationScope) -> Microsoft.ApplicationInsights.Metrics.MetricManager
+static Microsoft.ApplicationInsights.Metrics.MetricIdentifier.DefaultMetricNamespace.get -> string
+static Microsoft.ApplicationInsights.Metrics.MetricIdentifier.DefaultMetricNamespace.set -> void
+static Microsoft.ApplicationInsights.Metrics.TelemetryConfigurationExtensions.GetMetricManager(this Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration telemetryPipeline) -> Microsoft.ApplicationInsights.Metrics.MetricManager
+static Microsoft.ApplicationInsights.OperationTelemetryExtensions.GenerateOperationId(this Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry telemetry) -> void
+static Microsoft.ApplicationInsights.OperationTelemetryExtensions.Start(this Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry telemetry) -> void
+static Microsoft.ApplicationInsights.OperationTelemetryExtensions.Start(this Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry telemetry, long timestamp) -> void
+static Microsoft.ApplicationInsights.OperationTelemetryExtensions.Stop(this Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry telemetry) -> void
+static Microsoft.ApplicationInsights.OperationTelemetryExtensions.Stop(this Microsoft.ApplicationInsights.Extensibility.Implementation.OperationTelemetry telemetry, long timestamp) -> void
+static Microsoft.ApplicationInsights.TelemetryClientExtensions.StartOperation<T>(this Microsoft.ApplicationInsights.TelemetryClient telemetryClient, string operationName) -> Microsoft.ApplicationInsights.Extensibility.IOperationHolder<T>
+static Microsoft.ApplicationInsights.TelemetryClientExtensions.StartOperation<T>(this Microsoft.ApplicationInsights.TelemetryClient telemetryClient, string operationName, string operationId, string parentOperationId = null) -> Microsoft.ApplicationInsights.Extensibility.IOperationHolder<T>
+static Microsoft.ApplicationInsights.TelemetryClientExtensions.StartOperation<T>(this Microsoft.ApplicationInsights.TelemetryClient telemetryClient, System.Diagnostics.Activity activity) -> Microsoft.ApplicationInsights.Extensibility.IOperationHolder<T>
+static Microsoft.ApplicationInsights.TelemetryClientExtensions.StartOperation<T>(this Microsoft.ApplicationInsights.TelemetryClient telemetryClient, T operationTelemetry) -> Microsoft.ApplicationInsights.Extensibility.IOperationHolder<T>
+static Microsoft.ApplicationInsights.TelemetryClientExtensions.StopOperation<T>(this Microsoft.ApplicationInsights.TelemetryClient telemetryClient, Microsoft.ApplicationInsights.Extensibility.IOperationHolder<T> operation) -> void
+static readonly Microsoft.ApplicationInsights.Extensibility.Implementation.TaskTimer.InfiniteTimeSpan -> System.TimeSpan
+static readonly Microsoft.ApplicationInsights.Extensibility.TelemetrySink.DefaultSinkName -> string
+static readonly Microsoft.ApplicationInsights.MetricConfigurations.Common -> Microsoft.ApplicationInsights.MetricConfigurations
+virtual Microsoft.ApplicationInsights.Channel.InMemoryChannel.Dispose(bool disposing) -> void
+virtual Microsoft.ApplicationInsights.Channel.Transmission.CreateRequest(System.Uri address) -> System.Net.WebRequest
+virtual Microsoft.ApplicationInsights.Channel.Transmission.CreateRequestMessage(System.Uri address, System.IO.Stream contentStream) -> System.Net.Http.HttpRequestMessage
+virtual Microsoft.ApplicationInsights.Channel.Transmission.SendAsync() -> System.Threading.Tasks.Task<Microsoft.ApplicationInsights.Extensibility.Implementation.HttpWebResponseWrapper>
+virtual Microsoft.ApplicationInsights.Channel.Transmission.Split(System.Func<int, int> calculateLength) -> System.Tuple<Microsoft.ApplicationInsights.Channel.Transmission, Microsoft.ApplicationInsights.Channel.Transmission>
+virtual Microsoft.ApplicationInsights.Extensibility.Implementation.TaskTimer.Dispose(bool disposing) -> void
+virtual Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing.FileDiagnosticsTelemetryModule.Dispose(bool disposeManaged = true) -> void
+virtual Microsoft.ApplicationInsights.Metrics.MetricConfiguration.Equals(Microsoft.ApplicationInsights.Metrics.MetricConfiguration other) -> bool

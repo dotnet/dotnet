@@ -1,0 +1,68 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(PropsRoot)\Product.props" />
+
+  <PropertyGroup>
+    <AssemblyName>Microsoft.ApplicationInsights.AspNetCore</AssemblyName>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+
+    <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">netstandard2.0</TargetFrameworks>
+    <DefineConstants>$(DefineConstants);AI_ASPNETCORE_WEB;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--Nupkg properties-->
+    <PackageId>Microsoft.ApplicationInsights.AspNetCore</PackageId>
+    <AssemblyTitle>Application Insights for ASP.NET Core Web Applications</AssemblyTitle>
+    <Title>Application Insights for ASP.NET Core Web Applications</Title>
+    <Description>Application Insights for ASP.NET Core web applications. See https://azure.microsoft.com/documentation/articles/app-insights-asp-net-five/ for more information. Privacy statement: https://go.microsoft.com/fwlink/?LinkId=512156</Description>
+    <PackageTags>$(PackageTags)aspnetcore;</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+    <NoWarn>1701;1702</NoWarn>
+  </PropertyGroup>
+
+  <Import Project="..\Shared\Shared.projitems" Label="Shared" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BASE\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
+    <ProjectReference Include="..\..\..\BASE\src\ServerTelemetryChannel\TelemetryChannel.csproj" />
+    <ProjectReference Include="..\..\..\WEB\Src\DependencyCollector\DependencyCollector\DependencyCollector.csproj" />
+    <ProjectReference Include="..\..\..\WEB\Src\PerformanceCollector\PerformanceCollector\Perf.csproj" />
+    <ProjectReference Include="..\..\..\WEB\Src\WindowsServer\WindowsServer\WindowsServer.csproj" />
+    <ProjectReference Include="..\..\..\WEB\Src\EventCounterCollector\EventCounterCollector\EventCounterCollector.csproj" />
+    <ProjectReference Include="..\..\..\LOGGING\src\ILogger\ILogger.csproj" />
+    
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+    Microsoft.AspNetCore.Http has a vulnerability https://msrc.microsoft.com/update-guide/vulnerability/CVE-2020-1045
+    System.Text.Encodings.Web has a vulnerability https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-26701 
+    
+    These are both implicit dependencies from Microsoft.AspNetCore.Hosting.
+    (Microsoft.AspNetCore.Hosting > Microsoft.AspNetCore.Http)
+    (Microsoft.AspNetCore.Hosting > Microsoft.AspNetCore.Hosting.Abstractions > Microsoft.AspNetCore.Http.Abstractions > System.Text.Encodings.Web)
+    -->
+    
+    <!--
+    Taking a dependency on Microsoft.AspNetCore.Hosting v2.2.0 would resolve this issue, but would also break support for NetCore v2.1.
+    Instead I'm taking a direct dependency on the fixed version Microsoft.AspNetCore.Http.
+    We can remove this when NetCore v2.1 reaches EOL on August 21, 2021.
+    -->
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.22" />
+
+    <!-- 
+    We must take a temporary dependency on this newer version until Microsoft.AspNetCore.Hosting updates their dependencies.
+    -->
+    <PackageReference Include="System.Text.Encodings.Web" Version="4.7.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
+</Project>

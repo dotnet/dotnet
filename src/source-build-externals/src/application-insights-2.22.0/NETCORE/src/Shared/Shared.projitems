@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>d56f2979-d6bc-4ef2-bb9b-4077b3290599</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Microsoft.ApplicationInsights.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ApplicationInsightsExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ApplicationInsightsServiceOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DependencyCollectionOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\ITelemetryModuleConfigurator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\ITelemetryProcessorFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\NoOpTelemetryModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\TelemetryConfigurationOptionsSetup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\TelemetryModuleConfigurator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\TelemetryProcessorFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internals\ApplicationNameProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TelemetryInitializers\ComponentVersionTelemetryInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TelemetryInitializers\DomainNameRoleInstanceTelemetryInitializer.cs" />
+  </ItemGroup>
+</Project>

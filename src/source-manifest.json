@@ -64,7 +64,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "adac2d8eb27d153f5fdcb70802b7cc5de520bbec"
+      "commitSha": "350cc87c679b9f159468d3b2b552aa286a60dd5e"
     },
     {
       "packageVersion": "17.10.0-preview-24161-02",
@@ -115,10 +115,10 @@
       "commitSha": "9df94f0bab218a74fa3746da91f19949a7c74eea"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.24158.2",
+      "packageVersion": "9.0.0-alpha.1.24161.3",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "16ece46ae00dd1e8ac30a360d3dd03a6a682db41"
+      "commitSha": "472629e451a5a87410ea3670606f7235a4dd5a02"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24161.2",
@@ -214,8 +214,13 @@
       "commitSha": "b75d54d73b141709f805c2001b16f3dd4d71539d"
     },
     {
-      "path": "source-build-externals/src/application-insights",
-      "remoteUri": "https://github.com/Microsoft/ApplicationInsights-dotnet",
+      "path": "source-build-externals/src/application-insights-2.21.0",
+      "remoteUri": "https://github.com/microsoft/ApplicationInsights-dotnet",
+      "commitSha": "5e2e7ddda961ec0e16a75b1ae0a37f6a13c777f5"
+    },
+    {
+      "path": "source-build-externals/src/application-insights-2.22.0",
+      "remoteUri": "https://github.com/microsoft/ApplicationInsights-dotnet",
       "commitSha": "43825e06a22cdfb702fc199a7ba99a7d541d48c6"
     },
     {

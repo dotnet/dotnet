@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="Info_AnalyzerSettingsProps"  BeforeTargets="Build" Condition=" $(Internal_Logging) == 'true' ">
+    <Message Text="Info: AnalyzerSettings.props imported by $(MSBuildProjectName)." Importance="high"/>
+  </Target>
+
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>$(RulesetsRoot)\ApplicationInsightsSDKRules.ruleset</CodeAnalysisRuleSet>
+
+    <!-- Microsoft recommends that we disable CodeAnalysis in favor of FxCop Analyzers. aka.ms/fxcopanalyzers -->
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
+
+    <StyleCopEnabled>true</StyleCopEnabled>
+    
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition=" '$(Configuration)' == 'Release' ">
+      <PropertyGroup>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <StyleCopTreatErrorsAsWarnings>true</StyleCopTreatErrorsAsWarnings>
+      </PropertyGroup>
+    </When>
+    <When Condition=" '$(Configuration)' != 'Release' ">
+      <PropertyGroup>
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+        <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
+</Project>

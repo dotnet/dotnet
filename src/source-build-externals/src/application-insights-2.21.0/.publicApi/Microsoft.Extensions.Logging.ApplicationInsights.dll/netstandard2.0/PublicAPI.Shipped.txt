@@ -1,0 +1,24 @@
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLogger
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLogger.ApplicationInsightsLogger(string categoryName, Microsoft.ApplicationInsights.TelemetryClient telemetryClient, Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerOptions applicationInsightsLoggerOptions) -> void
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLogger.BeginScope<TState>(TState state) -> System.IDisposable
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLogger.IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) -> bool
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLogger.Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, System.Exception exception, System.Func<TState, System.Exception, string> formatter) -> void
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerOptions
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerOptions.ApplicationInsightsLoggerOptions() -> void
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerOptions.FlushOnDispose.get -> bool
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerOptions.FlushOnDispose.set -> void
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerOptions.IncludeScopes.get -> bool
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerOptions.IncludeScopes.set -> void
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerOptions.TrackExceptionsAsExceptionTelemetry.get -> bool
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerOptions.TrackExceptionsAsExceptionTelemetry.set -> void
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider.ApplicationInsightsLoggerProvider(Microsoft.Extensions.Options.IOptions<Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration> telemetryConfigurationOptions, Microsoft.Extensions.Options.IOptions<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerOptions> applicationInsightsLoggerOptions) -> void
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider.CreateLogger(string categoryName) -> Microsoft.Extensions.Logging.ILogger
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider.Dispose() -> void
+Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider.SetScopeProvider(Microsoft.Extensions.Logging.IExternalScopeProvider externalScopeProvider) -> void
+Microsoft.Extensions.Logging.ApplicationInsightsLoggingBuilderExtensions
+static Microsoft.Extensions.Logging.ApplicationInsightsLoggingBuilderExtensions.AddApplicationInsights(this Microsoft.Extensions.Logging.ILoggingBuilder builder) -> Microsoft.Extensions.Logging.ILoggingBuilder
+static Microsoft.Extensions.Logging.ApplicationInsightsLoggingBuilderExtensions.AddApplicationInsights(this Microsoft.Extensions.Logging.ILoggingBuilder builder, string instrumentationKey) -> Microsoft.Extensions.Logging.ILoggingBuilder
+static Microsoft.Extensions.Logging.ApplicationInsightsLoggingBuilderExtensions.AddApplicationInsights(this Microsoft.Extensions.Logging.ILoggingBuilder builder, string instrumentationKey, System.Action<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerOptions> configureApplicationInsightsLoggerOptions) -> Microsoft.Extensions.Logging.ILoggingBuilder
+static Microsoft.Extensions.Logging.ApplicationInsightsLoggingBuilderExtensions.AddApplicationInsights(this Microsoft.Extensions.Logging.ILoggingBuilder builder, System.Action<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerOptions> configureApplicationInsightsLoggerOptions) -> Microsoft.Extensions.Logging.ILoggingBuilder
+virtual Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider.Dispose(bool releasedManagedResources) -> void

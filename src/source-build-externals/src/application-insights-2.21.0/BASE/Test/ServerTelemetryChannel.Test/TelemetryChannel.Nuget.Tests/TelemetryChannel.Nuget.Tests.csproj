@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(PropsRoot)\Test.props" />
+
+  <PropertyGroup>
+    <!-- TargetFrameworks are defined in Test.props, but can be overridden here if needed. -->
+    <ProjectGuid>{21CB9A8A-F25B-4DEB-92CB-ACB6920EB8BC}</ProjectGuid>
+    <TargetFrameworks>net480</TargetFrameworks>
+    <AssemblyName>TelemetryChannel.Nuget.Tests</AssemblyName>
+  </PropertyGroup>
+
+  <!-- This can be removed. Requires update to .yml -->
+  <PropertyGroup Condition="$(OS) != 'Windows_NT'">
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <TargetFrameworks>netstandard1.3</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(OS) == 'Windows_NT'">
+    <ProjectReference Include="..\..\..\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
+    <PackageReference Include="Microsoft.Web.Xdt" Version="2.1.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
+    <PackageReference Include="CompareNETObjects" Version="4.59.0" />
+    <PackageReference Include="Castle.Core" Version="4.4.0" />
+    <ProjectReference Include="..\..\..\src\ServerTelemetryChannel\TelemetryChannel.csproj" />
+    <EmbeddedResource Include="..\..\..\src\ServerTelemetryChannel\ApplicationInsights.config.install.xdt">
+      <Link>Resources\ApplicationInsights.config.install.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\..\src\ServerTelemetryChannel\ApplicationInsights.config.transform">
+      <Link>Resources\ApplicationInsights.config.transform</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\..\src\ServerTelemetryChannel\ApplicationInsights.config.uninstall.xdt">
+      <Link>Resources\ApplicationInsights.config.uninstall.xdt</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>
