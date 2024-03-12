@@ -1,0 +1,12 @@
+﻿{
+  "ApplicationInsights": {
+    "RequestCollectionOptions": {
+      "InjectResponseHeaders": true,
+      "TrackExceptions": true,
+      "EnableW3CDistributedTracing": true
+    },
+    "DependencyCollectionOptions": {
+      "EnableLegacyCorrelationHeadersInjection": true
+    }
+  }
+}

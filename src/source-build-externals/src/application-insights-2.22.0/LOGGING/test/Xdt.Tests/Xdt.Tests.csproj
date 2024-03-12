@@ -1,0 +1,93 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(PropsRoot)\Test.props" />
+
+  <PropertyGroup>
+    <!-- TargetFrameworks are defined in Test.props, but can be overridden here if needed. -->
+    <RootNamespace>Xdt.Tests</RootNamespace>
+    <AssemblyName>Xdt.Tests</AssemblyName>
+    <TargetFrameworks>net480</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
+    <PackageReference Include="Microsoft.Web.Xdt" Version="3.0.0" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\src\TraceListener\app.config.install.xdt">
+      <Link>Resources\TraceListener\app.config.install.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\TraceListener\app.config.uninstall.xdt">
+      <Link>Resources\TraceListener\app.config.uninstall.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\TraceListener\web.config.install.xdt">
+      <Link>Resources\TraceListener\web.config.install.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\TraceListener\web.config.uninstall.xdt">
+      <Link>Resources\TraceListener\web.config.uninstall.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\Log4NetAppender\web.config.install.xdt">
+      <Link>Resources\Log4Net\web.config.install.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\Log4NetAppender\web.config.uninstall.xdt">
+      <Link>Resources\Log4Net\web.config.uninstall.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\Log4NetAppender\app.config.install.xdt">
+      <Link>Resources\Log4Net\app.config.install.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\Log4NetAppender\app.config.uninstall.xdt">
+      <Link>Resources\Log4Net\app.config.uninstall.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\NLogTarget\app.config.install.xdt">
+      <Link>Resources\NLog\app.config.install.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\NLogTarget\app.config.uninstall.xdt">
+      <Link>Resources\NLog\app.config.uninstall.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\NLogTarget\web.config.install.xdt">
+      <Link>Resources\NLog\web.config.install.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\NLogTarget\web.config.uninstall.xdt">
+      <Link>Resources\NLog\web.config.uninstall.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\DiagnosticSourceListener\ApplicationInsights.config.install.xdt">
+      <Link>Resources\DiagnosticSourceListener\ApplicationInsights.config.install.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\DiagnosticSourceListener\ApplicationInsights.config.uninstall.xdt">
+      <Link>Resources\DiagnosticSourceListener\ApplicationInsights.config.uninstall.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\EventSourceListener\ApplicationInsights.config.install.xdt">
+      <Link>Resources\EventSourceListener\ApplicationInsights.config.install.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\EventSourceListener\ApplicationInsights.config.uninstall.xdt">
+      <Link>Resources\EventSourceListener\ApplicationInsights.config.uninstall.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\EtwCollector\ApplicationInsights.config.install.xdt">
+      <Link>Resources\EtwCollector\ApplicationInsights.config.install.xdt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\EtwCollector\ApplicationInsights.config.uninstall.xdt">
+      <Link>Resources\EtwCollector\ApplicationInsights.config.uninstall.xdt</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Log4Net\TestDataSet.xml" />
+    <EmbeddedResource Include="Resources\NLog\TestDataSet.xml" />
+    <EmbeddedResource Include="Resources\TraceListener\TestDataSet.xml" />
+    <EmbeddedResource Include="Resources\DiagnosticSourceListener\TestDataSet.xml" />
+    <EmbeddedResource Include="Resources\EventSourceListener\TestDataSet.xml" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\EtwCollector\TestDataSet.xml" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BASE\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
+  </ItemGroup>
+
+</Project>
