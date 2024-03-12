@@ -6,14 +6,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Telemetry;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Test.Common.TestProjectData;
@@ -32,23 +30,12 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         var languageServerFeatureOptions = TestLanguageServerFeatureOptions.Instance;
         _projectConfigurationFilePathStore = new TestProjectConfigurationFilePathStore();
 
-        _projectManager = new TestProjectSnapshotManager(ProjectEngineFactoryProvider, Dispatcher);
-
-        var projectManagerAccessorMock = new StrictMock<IProjectSnapshotManagerAccessor>();
-
-        projectManagerAccessorMock
-            .SetupGet(x => x.Instance)
-            .Returns(_projectManager);
-
-        ProjectSnapshotManagerBase? instanceResult = _projectManager;
-        projectManagerAccessorMock
-            .Setup(x => x.TryGetInstance(out instanceResult))
-            .Returns(true);
+        _projectManager = CreateProjectSnapshotManager();
 
         _fallbackProjectManger = new FallbackProjectManager(
             _projectConfigurationFilePathStore,
             languageServerFeatureOptions,
-            projectManagerAccessorMock.Object,
+            _projectManager.GetAccessor(),
             Dispatcher,
             WorkspaceProvider,
             NoOpTelemetryReporter.Instance);

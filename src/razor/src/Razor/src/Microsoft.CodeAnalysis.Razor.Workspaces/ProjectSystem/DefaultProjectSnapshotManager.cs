@@ -384,13 +384,7 @@ internal class DefaultProjectSnapshotManager : ProjectSnapshotManagerBase
         // Change notifications should always be sent on the dispatcher.
         _dispatcher.AssertRunningOnDispatcher();
 
-        NotifyListeners(new ProjectChangeEventArgs(older, newer, documentFilePath, kind, IsSolutionClosing));
-    }
-
-    // virtual so it can be overridden in tests
-    protected virtual void NotifyListeners(ProjectChangeEventArgs e)
-    {
-        NotifyListenersCore(e);
+        NotifyListenersCore(new ProjectChangeEventArgs(older, newer, documentFilePath, kind, IsSolutionClosing));
     }
 
     private void NotifyListenersCore(ProjectChangeEventArgs e)

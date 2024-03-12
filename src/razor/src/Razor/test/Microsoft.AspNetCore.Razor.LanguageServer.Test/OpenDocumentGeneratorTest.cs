@@ -42,7 +42,7 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
     public async Task DocumentAdded_IgnoresClosedDocument()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
+        var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
         var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
 
@@ -50,7 +50,6 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
         {
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
-            projectManager.AllowNotifyListeners = true;
 
             queue.Initialize(projectManager);
 
@@ -66,7 +65,7 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
     public async Task DocumentChanged_IgnoresClosedDocument()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
+        var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
         var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
 
@@ -74,7 +73,6 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
         {
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
-            projectManager.AllowNotifyListeners = true;
             projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
 
             queue.Initialize(projectManager);
@@ -91,7 +89,7 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
     public async Task DocumentChanged_ProcessesOpenDocument()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
+        var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
         var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
 
@@ -99,7 +97,6 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
         {
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
-            projectManager.AllowNotifyListeners = true;
             projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
             projectManager.DocumentOpened(_hostProject1.Key, _documents[0].FilePath, SourceText.From(string.Empty));
 
@@ -119,7 +116,7 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
     public async Task ProjectChanged_IgnoresClosedDocument()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
+        var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
         var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
 
@@ -127,7 +124,6 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
         {
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
-            projectManager.AllowNotifyListeners = true;
             projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
 
             queue.Initialize(projectManager);
@@ -145,7 +141,7 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
     public async Task ProjectChanged_ProcessesOpenDocument()
     {
         // Arrange
-        var projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
+        var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
         var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
 
@@ -153,7 +149,6 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
         {
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
-            projectManager.AllowNotifyListeners = true;
             projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
             projectManager.DocumentOpened(_hostProject1.Key, _documents[0].FilePath, SourceText.From(string.Empty));
 

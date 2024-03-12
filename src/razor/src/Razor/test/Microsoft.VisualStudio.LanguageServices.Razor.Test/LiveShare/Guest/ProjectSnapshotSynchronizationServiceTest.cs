@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -11,7 +10,6 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LiveShare.Razor.Test;
 using Moq;
 using Xunit;
@@ -22,7 +20,7 @@ namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTestBase
 {
     private readonly CollaborationSession _sessionContext;
-    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor;
+    private readonly TestProjectSnapshotManager _projectManager;
     private readonly ProjectWorkspaceState _projectWorkspaceStateWithTagHelpers;
 
     public ProjectSnapshotSynchronizationServiceTest(ITestOutputHelper testOutput)
@@ -30,19 +28,10 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
     {
         _sessionContext = new TestCollaborationSession(isHost: false);
 
-        var projectManager = new TestProjectSnapshotManager(
-            ProjectEngineFactoryProvider,
-            Dispatcher);
+        _projectManager = CreateProjectSnapshotManager();
 
-        var projectManagerAccessorMock = new StrictMock<IProjectSnapshotManagerAccessor>();
-        projectManagerAccessorMock
-            .SetupGet(x => x.Instance)
-            .Returns(projectManager);
-
-        _projectManagerAccessor = projectManagerAccessorMock.Object;
-
-        _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create(ImmutableArray.Create(
-            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()));
+        _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create(
+            tagHelpers: [TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()]);
     }
 
     [UIFact]
@@ -64,7 +53,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         var synchronizationService = new ProjectSnapshotSynchronizationService(
             _sessionContext,
             hostProjectManagerProxyMock.Object,
-            _projectManagerAccessor,
+            _projectManager.GetAccessor(),
             Dispatcher,
             ErrorReporter,
             JoinableTaskFactory);
@@ -73,8 +62,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         await synchronizationService.InitializeAsync(DisposalToken);
 
         // Assert
-        var projects = await Dispatcher.RunAsync(
-            _projectManagerAccessor.Instance.GetProjects, DisposalToken);
+        var projects = _projectManager.GetProjects();
         var project = Assert.Single(projects);
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
         Assert.Same(RazorConfiguration.Default, project.Configuration);
@@ -100,7 +88,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         var synchronizationService = new ProjectSnapshotSynchronizationService(
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
-            _projectManagerAccessor,
+            _projectManager.GetAccessor(),
             Dispatcher,
             ErrorReporter,
             JoinableTaskFactory);
@@ -110,8 +98,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         await synchronizationService.UpdateGuestProjectManagerAsync(args);
 
         // Assert
-        var projects = await Dispatcher.RunAsync(
-            _projectManagerAccessor.Instance.GetProjects, DisposalToken);
+        var projects = _projectManager.GetProjects();
         var project = Assert.Single(projects);
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
         Assert.Same(RazorConfiguration.Default, project.Configuration);
@@ -137,23 +124,24 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         var synchronizationService = new ProjectSnapshotSynchronizationService(
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
-            _projectManagerAccessor,
+            _projectManager.GetAccessor(),
             Dispatcher,
             ErrorReporter,
             JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
 
-        await Dispatcher.RunAsync(
-            () => _projectManagerAccessor.Instance.ProjectAdded(hostProject),
-            DisposalToken);
+        await RunOnDispatcherAsync(() =>
+        {
+            _projectManager.ProjectAdded(hostProject);
+        });
+
         var args = new ProjectChangeEventProxyArgs(olderHandle, newer: null, ProjectProxyChangeKind.ProjectRemoved);
 
         // Act
         await synchronizationService.UpdateGuestProjectManagerAsync(args);
 
         // Assert
-        var projects = await Dispatcher.RunAsync(
-            _projectManagerAccessor.Instance.GetProjects, DisposalToken);
+        var projects = _projectManager.GetProjects();
         Assert.Empty(projects);
     }
 
@@ -177,25 +165,25 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         var synchronizationService = new ProjectSnapshotSynchronizationService(
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
-            _projectManagerAccessor,
+            _projectManager.GetAccessor(),
             Dispatcher,
             ErrorReporter,
             JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
-        await Dispatcher.RunAsync(() =>
+
+        await RunOnDispatcherAsync(() =>
         {
-            var projectManager = _projectManagerAccessor.Instance;
-            projectManager.ProjectAdded(hostProject);
-            projectManager.ProjectConfigurationChanged(hostProject);
-        }, DisposalToken);
+            _projectManager.ProjectAdded(hostProject);
+            _projectManager.ProjectConfigurationChanged(hostProject);
+        });
+
         var args = new ProjectChangeEventProxyArgs(oldHandle, newHandle, ProjectProxyChangeKind.ProjectChanged);
 
         // Act
         await synchronizationService.UpdateGuestProjectManagerAsync(args);
 
         // Assert
-        var projects = await Dispatcher.RunAsync(
-            _projectManagerAccessor.Instance.GetProjects, DisposalToken);
+        var projects = _projectManager.GetProjects();
         var project = Assert.Single(projects);
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
         Assert.Same(newConfiguration, project.Configuration);
@@ -222,25 +210,25 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         var synchronizationService = new ProjectSnapshotSynchronizationService(
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
-            _projectManagerAccessor,
+            _projectManager.GetAccessor(),
             Dispatcher,
             ErrorReporter,
             JoinableTaskFactory);
         var hostProject = new HostProject("/guest/path/project.csproj", "/guest/path/obj", RazorConfiguration.Default, "project");
-        await Dispatcher.RunAsync(() =>
+
+        await RunOnDispatcherAsync(() =>
         {
-            var projectManager = _projectManagerAccessor.Instance;
-            projectManager.ProjectAdded(hostProject);
-            projectManager.ProjectWorkspaceStateChanged(hostProject.Key, oldHandle.ProjectWorkspaceState);
-        }, DisposalToken);
+            _projectManager.ProjectAdded(hostProject);
+            _projectManager.ProjectWorkspaceStateChanged(hostProject.Key, oldHandle.ProjectWorkspaceState);
+        });
+
         var args = new ProjectChangeEventProxyArgs(oldHandle, newHandle, ProjectProxyChangeKind.ProjectChanged);
 
         // Act
         await synchronizationService.UpdateGuestProjectManagerAsync(args);
 
         // Assert
-        var projects = await Dispatcher.RunAsync(
-            _projectManagerAccessor.Instance.GetProjects, DisposalToken);
+        var projects = _projectManager.GetProjects();
         var project = Assert.Single(projects);
         Assert.Equal("/guest/path/project.csproj", project.FilePath);
         Assert.Same(RazorConfiguration.Default, project.Configuration);

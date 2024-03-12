@@ -4,9 +4,8 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor.Razor.Settings;
 using Microsoft.VisualStudio.LegacyEditor.Razor.Settings;
 using Microsoft.VisualStudio.Text;
@@ -22,34 +21,14 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
     private const string FilePath = "C:/Some/Path/TestDocumentTracker.cshtml";
     private const string ProjectPath = "C:/Some/Path/TestProject.csproj";
 
-    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor;
+    private readonly TestProjectSnapshotManager _projectManager;
     private readonly IWorkspaceEditorSettings _workspaceEditorSettings;
     private readonly IImportDocumentManager _importDocumentManager;
 
     public RazorDocumentManagerTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var projectManagerMock = new StrictMock<ProjectSnapshotManagerBase>();
-        projectManagerMock
-            .Setup(p => p.GetAllProjectKeys(It.IsAny<string>()))
-            .Returns([]);
-        projectManagerMock
-            .Setup(p => p.GetProjects())
-            .Returns([]);
-
-        IProjectSnapshot? projectResult = null;
-        projectManagerMock
-            .Setup(p => p.TryGetLoadedProject(It.IsAny<ProjectKey>(), out projectResult))
-            .Returns(false);
-
-        var projectManager = projectManagerMock.Object;
-
-        var projectManagerAccessorMock = new StrictMock<IProjectSnapshotManagerAccessor>();
-        projectManagerAccessorMock
-            .SetupGet(x => x.Instance)
-            .Returns(projectManager);
-
-        _projectManagerAccessor = projectManagerAccessorMock.Object;
+        _projectManager = CreateProjectSnapshotManager();
 
         _workspaceEditorSettings = new WorkspaceEditorSettings(
             StrictMock.Of<IClientSettingsManager>());
@@ -89,7 +68,7 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
             JoinableTaskContext,
             FilePath,
             ProjectPath,
-            _projectManagerAccessor,
+            _projectManager.GetAccessor(),
             _workspaceEditorSettings,
             ProjectEngineFactories.DefaultProvider,
             coreTextBuffer,
@@ -118,7 +97,7 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
             JoinableTaskContext,
             FilePath,
             ProjectPath,
-            _projectManagerAccessor,
+            _projectManager.GetAccessor(),
             _workspaceEditorSettings,
             ProjectEngineFactories.DefaultProvider,
             coreTextBuffer,
@@ -167,7 +146,7 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
             JoinableTaskContext,
             FilePath,
             ProjectPath,
-            _projectManagerAccessor,
+            _projectManager.GetAccessor(),
             _workspaceEditorSettings,
             ProjectEngineFactories.DefaultProvider,
             coreTextBuffer,
@@ -177,7 +156,7 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
         coreTextBuffer.Properties.AddProperty(typeof(IVisualStudioDocumentTracker), documentTracker);
 
         documentTracker = new VisualStudioDocumentTracker(
-            Dispatcher, JoinableTaskContext, FilePath, ProjectPath, _projectManagerAccessor, _workspaceEditorSettings,
+            Dispatcher, JoinableTaskContext, FilePath, ProjectPath, _projectManager.GetAccessor(), _workspaceEditorSettings,
             ProjectEngineFactories.DefaultProvider, nonCoreTextBuffer, _importDocumentManager);
         documentTracker.AddTextView(textView1);
         documentTracker.AddTextView(textView2);
@@ -211,7 +190,7 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
             JoinableTaskContext,
             FilePath,
             ProjectPath,
-            _projectManagerAccessor,
+            _projectManager.GetAccessor(),
             _workspaceEditorSettings,
             ProjectEngineFactories.DefaultProvider,
             coreTextBuffer,
