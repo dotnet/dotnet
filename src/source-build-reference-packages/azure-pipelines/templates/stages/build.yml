@@ -1,0 +1,67 @@
+parameters:
+  engCommonTemplatesDir: ''
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - job: Linux
+    pool:
+      ${{ if eq(variables['System.TeamProject'], 'public') }}:
+        name: $(DncEngPublicBuildPool)
+        demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+      ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+        name: $(DncEngInternalBuildPool)
+        image: 1es-ubuntu-2204-pt
+        os: linux
+    container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
+    steps:
+    - template: ${{ parameters.engCommonTemplatesDir }}/steps/source-build.yml
+
+    - script: $(Build.SourcesDirectory)/test.sh
+      displayName: Run Tests
+
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      inputs:
+        testResultsFormat: 'xUnit'
+        testResultsFiles: '**/artifacts/TestResults/Release/*.xml'
+        testRunTitle: 'Linux_SBRP_tests'
+      condition: always()
+
+  ## The job below is a temporary workaround for running the tests on Windows.
+  ## Currently, the source-build-reference-packages repository does not support building on Windows, but it is capable of running the generate tooling tests on Windows.
+  ## This job should be modified once the source-build-reference-packages repository supports building on Windows by transitioning to the template above.
+  - job: Windows
+    pool:
+      ${{ if eq(variables['System.TeamProject'], 'public') }}:
+        name: $(DncEngPublicBuildPool)
+        demands: ImageOverride -equals 1es-windows-2022-open
+      ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+        name: $(DncEngInternalBuildPool)
+        image: 1es-windows-2022-pt
+        os: windows
+    container: mcr.microsoft.com/windows/servercore:ltsc2022
+    steps:
+    - checkout: self
+      clean: true
+
+    - script: $(Build.SourcesDirectory)/test.cmd
+      displayName: Run Tests
+
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      inputs:
+        testResultsFormat: 'xUnit'
+        testResultsFiles: '**/artifacts/TestResults/Release/*.xml'
+        testRunTitle: 'Windows_SBRP_tests'
+      condition: always()
+  - ${{ if and(eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - template: /eng/common/templates-official/job/publish-build-assets.yml@self
+      parameters:
+        dependsOn:
+        - Linux
+        - Windows
+        publishUsingPipelines: true
+        publishAssetsImmediately: true
+        enablePublishBuildArtifacts: true
