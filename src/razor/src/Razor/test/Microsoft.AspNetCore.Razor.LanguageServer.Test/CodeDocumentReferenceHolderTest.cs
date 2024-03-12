@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -26,8 +27,7 @@ public class CodeDocumentReferenceHolderTest : LanguageServerTestBase
     public CodeDocumentReferenceHolderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _projectManager = TestProjectSnapshotManager.Create(Dispatcher, ErrorReporter);
-        _projectManager.AllowNotifyListeners = true;
+        _projectManager = CreateProjectSnapshotManager();
         _referenceHolder = new CodeDocumentReferenceHolder();
         _referenceHolder.Initialize(_projectManager);
 

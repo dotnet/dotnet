@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+namespace Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 
 internal class TestProjectSnapshot : ProjectSnapshot
 {

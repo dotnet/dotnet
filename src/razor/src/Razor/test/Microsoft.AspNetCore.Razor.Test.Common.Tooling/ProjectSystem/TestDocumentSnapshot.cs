@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Immutable;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -12,7 +11,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+namespace Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 
 internal class TestDocumentSnapshot : DocumentSnapshot
 {

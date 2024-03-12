@@ -37,7 +37,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
         rootNamespace: null);
 
     private readonly Project _workspaceProject;
-    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor;
+    private readonly TestProjectSnapshotManager _projectManager;
     private readonly IWorkspaceProvider _workspaceProvider;
 
     public OutOfProcTagHelperResolverTest(ITestOutputHelper testOutput)
@@ -63,13 +63,7 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
             CreateFactory("Test-2"));
 
         var projectEngineFactoryProvider = new ProjectEngineFactoryProvider(customFactories);
-        var projectManager = new TestProjectSnapshotManager(projectEngineFactoryProvider, Dispatcher);
-
-        var projectManagerAccessorMock = new StrictMock<IProjectSnapshotManagerAccessor>();
-        projectManagerAccessorMock
-            .SetupGet(x => x.Instance)
-            .Returns(projectManager);
-        _projectManagerAccessor = projectManagerAccessorMock.Object;
+        _projectManager = CreateProjectSnapshotManager(projectEngineFactoryProvider);
 
         static IProjectEngineFactory CreateFactory(string configurationName)
         {
@@ -88,10 +82,10 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
         // Arrange
         await RunOnDispatcherAsync(() =>
         {
-            _projectManagerAccessor.Instance.ProjectAdded(s_hostProject_For_2_0);
+            _projectManager.ProjectAdded(s_hostProject_For_2_0);
         });
 
-        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(s_hostProject_For_2_0.Key);
+        var projectSnapshot = _projectManager.GetLoadedProject(s_hostProject_For_2_0.Key);
 
         var calledOutOfProcess = false;
 
@@ -120,10 +114,10 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
         // Arrange
         await RunOnDispatcherAsync(() =>
         {
-            _projectManagerAccessor.Instance.ProjectAdded(s_hostProject_For_NonSerializableConfiguration);
+            _projectManager.ProjectAdded(s_hostProject_For_NonSerializableConfiguration);
         });
 
-        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(s_hostProject_For_2_0.Key);
+        var projectSnapshot = _projectManager.GetLoadedProject(s_hostProject_For_2_0.Key);
 
         var calledInProcess = false;
 
@@ -152,10 +146,10 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
         // Arrange
         await RunOnDispatcherAsync(() =>
         {
-            _projectManagerAccessor.Instance.ProjectAdded(s_hostProject_For_2_0);
+            _projectManager.ProjectAdded(s_hostProject_For_2_0);
         });
 
-        var projectSnapshot = _projectManagerAccessor.Instance.GetLoadedProject(s_hostProject_For_2_0.Key);
+        var projectSnapshot = _projectManager.GetLoadedProject(s_hostProject_For_2_0.Key);
 
         var calledOutOfProcess = false;
         var calledInProcess = false;
