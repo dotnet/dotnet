@@ -112,11 +112,6 @@
         <target state="translated">Se ha intentado visitar un RazorMetaCode distinto de "{" o "}".</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unknown_mapping_behavior">
-        <source>Unknown mapping behavior</source>
-        <target state="translated">Comportamiento de asignación desconocido</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Version_Should_Not_Be_Null">
         <source>Provided version should not be null.</source>
         <target state="translated">La versión proporcionada no debe ser null.</target>

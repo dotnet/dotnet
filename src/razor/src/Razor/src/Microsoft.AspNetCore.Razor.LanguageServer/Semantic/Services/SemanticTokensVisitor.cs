@@ -16,21 +16,21 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 {
     private readonly ImmutableArray<SemanticRange>.Builder _semanticRanges;
     private readonly RazorCodeDocument _razorCodeDocument;
-    private readonly RazorSemanticTokensLegendService _razorSemanticTokensLegendService;
+    private readonly ISemanticTokensLegendService _semanticTokensLegend;
     private readonly bool _colorCodeBackground;
 
     private bool _addRazorCodeModifier;
 
-    private SemanticTokensVisitor(ImmutableArray<SemanticRange>.Builder semanticRanges, RazorCodeDocument razorCodeDocument, TextSpan? range, RazorSemanticTokensLegendService razorSemanticTokensLegendService, bool colorCodeBackground)
+    private SemanticTokensVisitor(ImmutableArray<SemanticRange>.Builder semanticRanges, RazorCodeDocument razorCodeDocument, TextSpan? range, ISemanticTokensLegendService semanticTokensLegend, bool colorCodeBackground)
         : base(range)
     {
         _semanticRanges = semanticRanges;
         _razorCodeDocument = razorCodeDocument;
-        _razorSemanticTokensLegendService = razorSemanticTokensLegendService;
+        _semanticTokensLegend = semanticTokensLegend;
         _colorCodeBackground = colorCodeBackground;
     }
 
-    public static ImmutableArray<SemanticRange> GetSemanticRanges(RazorCodeDocument razorCodeDocument, TextSpan textSpan, RazorSemanticTokensLegendService razorSemanticTokensLegendService, bool colorCodeBackground)
+    public static ImmutableArray<SemanticRange> GetSemanticRanges(RazorCodeDocument razorCodeDocument, TextSpan textSpan, ISemanticTokensLegendService razorSemanticTokensLegendService, bool colorCodeBackground)
     {
         using var _ = ArrayBuilderPool<SemanticRange>.GetPooledObject(out var builder);
 
@@ -58,12 +58,12 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     public override void VisitMarkupLiteralAttributeValue(MarkupLiteralAttributeValueSyntax node)
     {
-        AddSemanticRange(node, _razorSemanticTokensLegendService.TokenTypes.MarkupAttributeValue);
+        AddSemanticRange(node, _semanticTokensLegend.TokenTypes.MarkupAttributeValue);
     }
 
     public override void VisitMarkupAttributeBlock(MarkupAttributeBlockSyntax node)
     {
-        var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+        var tokenTypes = _semanticTokensLegend.TokenTypes;
 
         Visit(node.NamePrefix);
         AddSemanticRange(node.Name, tokenTypes.MarkupAttribute);
@@ -77,7 +77,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     public override void VisitMarkupStartTag(MarkupStartTagSyntax node)
     {
-        var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+        var tokenTypes = _semanticTokensLegend.TokenTypes;
 
         if (node.IsMarkupTransition)
         {
@@ -105,7 +105,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     public override void VisitMarkupEndTag(MarkupEndTagSyntax node)
     {
-        var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+        var tokenTypes = _semanticTokensLegend.TokenTypes;
 
         if (node.IsMarkupTransition)
         {
@@ -132,7 +132,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     public override void VisitMarkupCommentBlock(MarkupCommentBlockSyntax node)
     {
-        var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+        var tokenTypes = _semanticTokensLegend.TokenTypes;
 
         AddSemanticRange(node.Children[0], tokenTypes.MarkupCommentPunctuation);
 
@@ -156,7 +156,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
     public override void VisitMarkupMinimizedAttributeBlock(MarkupMinimizedAttributeBlockSyntax node)
     {
         Visit(node.NamePrefix);
-        AddSemanticRange(node.Name, _razorSemanticTokensLegendService.TokenTypes.MarkupAttribute);
+        AddSemanticRange(node.Name, _semanticTokensLegend.TokenTypes.MarkupAttribute);
     }
 
     #endregion HTML
@@ -165,7 +165,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     public override void VisitCSharpStatementBody(CSharpStatementBodySyntax node)
     {
-        var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+        var tokenTypes = _semanticTokensLegend.TokenTypes;
 
         using (ColorCSharpBackground())
         {
@@ -194,7 +194,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
                 CSharpExpressionLiteralSyntax { LiteralTokens: [{ Kind: SyntaxKind.RightParenthesis } closeParen] },
             ])
         {
-            var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+            var tokenTypes = _semanticTokensLegend.TokenTypes;
 
             using (ColorCSharpBackground())
             {
@@ -217,7 +217,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     public override void VisitCSharpExplicitExpressionBody(CSharpExplicitExpressionBodySyntax node)
     {
-        var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+        var tokenTypes = _semanticTokensLegend.TokenTypes;
 
         using (ColorCSharpBackground())
         {
@@ -238,7 +238,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     public override void VisitRazorCommentBlock(RazorCommentBlockSyntax node)
     {
-        var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+        var tokenTypes = _semanticTokensLegend.TokenTypes;
 
         AddSemanticRange(node.StartCommentTransition, tokenTypes.RazorCommentTransition);
         AddSemanticRange(node.StartCommentStar, tokenTypes.RazorCommentStar);
@@ -251,7 +251,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
     {
         if (node.Kind == SyntaxKind.RazorMetaCode)
         {
-            AddSemanticRange(node, _razorSemanticTokensLegendService.TokenTypes.RazorTransition);
+            AddSemanticRange(node, _semanticTokensLegend.TokenTypes.RazorTransition);
         }
         else
         {
@@ -264,7 +264,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
         // We can't provide colors for CSharp because if we both provided them then they would overlap, which violates the LSP spec.
         if (node.Keyword.Kind != SyntaxKind.CSharpStatementLiteral)
         {
-            AddSemanticRange(node.Keyword, _razorSemanticTokensLegendService.TokenTypes.RazorDirective);
+            AddSemanticRange(node.Keyword, _semanticTokensLegend.TokenTypes.RazorDirective);
         }
         else
         {
@@ -276,7 +276,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     public override void VisitMarkupTagHelperStartTag(MarkupTagHelperStartTagSyntax node)
     {
-        var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+        var tokenTypes = _semanticTokensLegend.TokenTypes;
 
         AddSemanticRange(node.OpenAngle, tokenTypes.MarkupTagDelimiter);
         if (node.Bang != null)
@@ -306,7 +306,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     public override void VisitMarkupTagHelperEndTag(MarkupTagHelperEndTagSyntax node)
     {
-        var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+        var tokenTypes = _semanticTokensLegend.TokenTypes;
 
         AddSemanticRange(node.OpenAngle, tokenTypes.MarkupTagDelimiter);
         AddSemanticRange(node.ForwardSlash, tokenTypes.MarkupTagDelimiter);
@@ -340,13 +340,13 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
         }
         else
         {
-            AddSemanticRange(node.Name, _razorSemanticTokensLegendService.TokenTypes.MarkupAttribute);
+            AddSemanticRange(node.Name, _semanticTokensLegend.TokenTypes.MarkupAttribute);
         }
     }
 
     public override void VisitMarkupTagHelperAttribute(MarkupTagHelperAttributeSyntax node)
     {
-        var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+        var tokenTypes = _semanticTokensLegend.TokenTypes;
 
         Visit(node.NamePrefix);
         if (node.TagHelperAttributeInfo.Bound)
@@ -374,7 +374,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
         {
             if (child.Kind == SyntaxKind.MarkupTextLiteral)
             {
-                AddSemanticRange(child, _razorSemanticTokensLegendService.TokenTypes.MarkupAttributeValue);
+                AddSemanticRange(child, _semanticTokensLegend.TokenTypes.MarkupAttributeValue);
             }
             else
             {
@@ -385,7 +385,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     public override void VisitMarkupTagHelperDirectiveAttribute(MarkupTagHelperDirectiveAttributeSyntax node)
     {
-        var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+        var tokenTypes = _semanticTokensLegend.TokenTypes;
 
         if (node.TagHelperAttributeInfo.Bound)
         {
@@ -413,7 +413,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     public override void VisitMarkupMinimizedTagHelperDirectiveAttribute(MarkupMinimizedTagHelperDirectiveAttributeSyntax node)
     {
-        var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+        var tokenTypes = _semanticTokensLegend.TokenTypes;
 
         if (node.TagHelperAttributeInfo.Bound)
         {
@@ -439,12 +439,12 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
         {
             using (ColorCSharpBackground())
             {
-                AddSemanticRange(node, _razorSemanticTokensLegendService.TokenTypes.RazorTransition);
+                AddSemanticRange(node, _semanticTokensLegend.TokenTypes.RazorTransition);
             }
         }
         else
         {
-            AddSemanticRange(node, _razorSemanticTokensLegendService.TokenTypes.RazorTransition);
+            AddSemanticRange(node, _semanticTokensLegend.TokenTypes.RazorTransition);
         }
     }
 
@@ -452,7 +452,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
     {
         using (ColorCSharpBackground())
         {
-            AddSemanticRange(node, _razorSemanticTokensLegendService.TokenTypes.RazorTransition);
+            AddSemanticRange(node, _semanticTokensLegend.TokenTypes.RazorTransition);
         }
     }
 
@@ -460,7 +460,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     private int GetElementSemanticKind(SyntaxNode node)
     {
-        var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+        var tokenTypes = _semanticTokensLegend.TokenTypes;
 
         var semanticKind = IsComponent(node) ? tokenTypes.RazorComponentElement : tokenTypes.RazorTagHelperElement;
         return semanticKind;
@@ -468,7 +468,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     private int GetAttributeSemanticKind(SyntaxNode node)
     {
-        var tokenTypes = _razorSemanticTokensLegendService.TokenTypes;
+        var tokenTypes = _semanticTokensLegend.TokenTypes;
 
         var semanticKind = IsComponent(node) ? tokenTypes.RazorComponentAttribute : tokenTypes.RazorTagHelperAttribute;
         return semanticKind;
@@ -539,7 +539,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
         var source = _razorCodeDocument.Source;
         var range = node.GetLinePositionSpan(source);
-        var tokenModifier = _addRazorCodeModifier ? _razorSemanticTokensLegendService.TokenModifiers.RazorCodeModifier : 0;
+        var tokenModifier = _addRazorCodeModifier ? _semanticTokensLegend.TokenModifiers.RazorCodeModifier : 0;
 
         // LSP spec forbids multi-line tokens, so we need to split this up.
         if (range.Start.Line != range.End.Line)

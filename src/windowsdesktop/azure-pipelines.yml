@@ -7,109 +7,114 @@ trigger:
     - internal/release/*
     - experimental/*
 
-pr:
-- main
-- release/*
-- experimental/*
-
 name: $(Date:yyyyMMdd)$(Rev:.r)
 
 variables:
-  - name: TeamName
-    value: dotnet-core-acquisition
+- name: TeamName
+  value: dotnet-core-acquisition
   # Skip Running CI tests
-  - name: SkipTests
-    value: false
+- name: SkipTests
+  value: false
   # Set Official Build Id
-  - name: OfficialBuildId
-    value: $(Build.BuildNumber)
-  - ${{ if or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), eq(variables['Build.Reason'], 'Manual')) }}:
-    - name: PostBuildSign
-      value: false
-  - ${{ else }}:
-    - name: PostBuildSign
-      value: true
+- name: OfficialBuildId
+  value: $(Build.BuildNumber)
+- ${{ if or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), eq(variables['Build.Reason'], 'Manual')) }}:
+  - name: PostBuildSign
+    value: false
+- ${{ else }}:
+  - name: PostBuildSign
+    value: true
 
   # Set the target blob feed for package publish during official and validation builds.
-  - name: _DotNetArtifactsCategory
-    value: .NETCore
-  - name: _DotNetValidationArtifactsCategory
-    value: .NETCoreValidation
+- name: _DotNetArtifactsCategory
+  value: .NETCore
+- name: _DotNetValidationArtifactsCategory
+  value: .NETCoreValidation
 
   # Produce test-signed build for PR and Public builds
-  - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-    - name: SignType
-      value: test
+- name: SignType
+  value: $[ coalesce(variables.OfficialSignType, 'real') ]
 
-  # Set up non-PR build from internal project
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    - name: SignType
-      value: $[ coalesce(variables.OfficialSignType, 'real') ]
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    featureFlags:
+      autoBaseline: true
+    pool:
+      name: NetCore1ESPool-Internal
+      image: 1es-windows-2022-pt
+      os: windows
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - stage: Build
+      jobs:
 
-stages:
-- stage: Build
-  jobs:
+      # Windows x64
+      - template: /eng/pipelines/jobs/windows-build.yml@self
+        parameters:
+          name: win_x64
+          targetArchitecture: x64
 
-  # Windows x64
-  - template: /eng/pipelines/jobs/windows-build.yml
-    parameters:
-      name: win_x64
-      targetArchitecture: x64
+      # Windows x86
+      - template: /eng/pipelines/jobs/windows-build.yml@self
+        parameters:
+          name: win_x86
+          targetArchitecture: x86
 
-  # Windows x86
-  - template: /eng/pipelines/jobs/windows-build.yml
-    parameters:
-      name: win_x86
-      targetArchitecture: x86
+      # Windows arm64
+      - template: /eng/pipelines/jobs/windows-build.yml@self
+        parameters:
+          name: win_arm64
+          targetArchitecture: arm64
 
-  # Windows arm64
-  - template: /eng/pipelines/jobs/windows-build.yml
-    parameters:
-      name: win_arm64
-      targetArchitecture: arm64
+    - stage: PrepareForPublish
+      displayName: Prepare for Publish
+      dependsOn: Build
+      jobs:
+      # Prep artifacts: sign them and upload pipeline artifacts expected by stages-based publishing.
+      - template: /eng/pipelines/jobs/prepare-signed-artifacts.yml@self
+        parameters:
+          PublishRidAgnosticPackagesFromJobName: win_x64
+      # Publish to Build Asset Registry in order to generate the ReleaseConfigs artifact.
+      - template: /eng/common/templates-official/job/publish-build-assets.yml@self
+        parameters:
+          publishUsingPipelines: true
+          publishAssetsImmediately: true
+          dependsOn: PrepareSignedArtifacts
+          pool:
+            name: NetCore1ESPool-Internal
+            demands: ImageOverride -equals windows.vs2022preview.amd64
 
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-  - stage: PrepareForPublish
-    displayName: Prepare for Publish
-    dependsOn: Build
-    jobs:
-    # Prep artifacts: sign them and upload pipeline artifacts expected by stages-based publishing.
-    - template: /eng/pipelines/jobs/prepare-signed-artifacts.yml
+    # Stages-based publishing entry point
+    - template: /eng/common/templates-official/post-build/post-build.yml@self
       parameters:
-        PublishRidAgnosticPackagesFromJobName: win_x64
-    # Publish to Build Asset Registry in order to generate the ReleaseConfigs artifact.
-    - template: /eng/common/templates/job/publish-build-assets.yml
-      parameters:
-        publishUsingPipelines: true
+        publishingInfraVersion: 3
+        validateDependsOn:
+        - PrepareForPublish
+        enableSymbolValidation: false
+        enableSigningValidation: false
+        enableNugetValidation: false
+        enableSourceLinkValidation: false
         publishAssetsImmediately: true
-        dependsOn: PrepareSignedArtifacts
-        pool:
-          name: NetCore1ESPool-Internal
-          demands: ImageOverride -equals windows.vs2022preview.amd64
 
-  # Stages-based publishing entry point
-  - template: /eng/common/templates/post-build/post-build.yml
-    parameters:
-      publishingInfraVersion: 3
-      validateDependsOn:
-      - PrepareForPublish
-      enableSymbolValidation: false
-      enableSigningValidation: false
-      enableNugetValidation: false
-      enableSourceLinkValidation: false
-      publishAssetsImmediately: true
-
-      SDLValidationParameters:
-        enable: false
-        params: >-
-          -SourceToolsList @("policheck","credscan")
-          -TsaInstanceURL https://devdiv.visualstudio.com/
-          -TsaProjectName DEVDIV
-          -TsaNotificationEmail wffteam@microsoft.com
-          -TsaCodebaseAdmin REDMOND\advolker
-          -TsaBugAreaPath "DevDiv\NET Fundamentals\WindowsDesktop"
-          -TsaIterationPath DevDiv
-          -TsaRepositoryName WindowsDesktop
-          -TsaCodebaseName WindowsDesktop
-          -TsaOnboard $True
-          -TsaPublish $True
+        SDLValidationParameters:
+          enable: false
+          params: >-
+            -SourceToolsList @("policheck","credscan")
+            -TsaInstanceURL https://devdiv.visualstudio.com/
+            -TsaProjectName DEVDIV
+            -TsaNotificationEmail wffteam@microsoft.com
+            -TsaCodebaseAdmin REDMOND\advolker
+            -TsaBugAreaPath "DevDiv\NET Fundamentals\WindowsDesktop"
+            -TsaIterationPath DevDiv
+            -TsaRepositoryName WindowsDesktop
+            -TsaCodebaseName WindowsDesktop
+            -TsaOnboard $True
+            -TsaPublish $True

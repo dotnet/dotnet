@@ -34,6 +34,11 @@
         <target state="translated">La línea '{0}' se consultó fuera del {1} rango de '{2}'. Es posible que el documento no esté actualizado.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Unknown_mapping_behavior">
+        <source>Unknown mapping behavior</source>
+        <target state="new">Unknown mapping behavior</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

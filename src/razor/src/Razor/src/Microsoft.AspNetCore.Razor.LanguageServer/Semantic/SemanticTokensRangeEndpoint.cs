@@ -6,8 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.AspNetCore.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
@@ -15,13 +15,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 [RazorLanguageServerEndpoint(Methods.TextDocumentSemanticTokensRangeName)]
 internal sealed class SemanticTokensRangeEndpoint(
     IRazorSemanticTokensInfoService semanticTokensInfoService,
-    RazorSemanticTokensLegendService razorSemanticTokensLegendService,
+    ISemanticTokensLegendService semanticTokensLegendService,
     RazorLSPOptionsMonitor razorLSPOptionsMonitor,
     ITelemetryReporter? telemetryReporter)
     : IRazorRequestHandler<SemanticTokensRangeParams, SemanticTokens?>, ICapabilitiesProvider
 {
     private readonly IRazorSemanticTokensInfoService _semanticTokensInfoService = semanticTokensInfoService;
-    private readonly RazorSemanticTokensLegendService _razorSemanticTokensLegendService = razorSemanticTokensLegendService;
+    private readonly ISemanticTokensLegendService _semanticTokensLegendService = semanticTokensLegendService;
     private readonly RazorLSPOptionsMonitor _razorLSPOptionsMonitor = razorLSPOptionsMonitor;
     private readonly ITelemetryReporter? _telemetryReporter = telemetryReporter;
 
@@ -29,7 +29,7 @@ internal sealed class SemanticTokensRangeEndpoint(
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {
-        serverCapabilities.EnableSemanticTokens(_razorSemanticTokensLegendService.Legend);
+        serverCapabilities.EnableSemanticTokens(_semanticTokensLegendService);
     }
 
     public TextDocumentIdentifier GetTextDocumentIdentifier(SemanticTokensRangeParams request)

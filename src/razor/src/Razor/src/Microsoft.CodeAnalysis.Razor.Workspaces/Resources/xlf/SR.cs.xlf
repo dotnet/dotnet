@@ -34,6 +34,11 @@
         <target state="translated">Proběhl dotaz na řádek {0} mimo rozsah {1} {2}. Dokument nemusí být aktuální.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Unknown_mapping_behavior">
+        <source>Unknown mapping behavior</source>
+        <target state="new">Unknown mapping behavior</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

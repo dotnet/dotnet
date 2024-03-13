@@ -4,7 +4,6 @@
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)/src/Humanizer/bin/Release</PackagesOutput>
     <NuGetConfigFile>$(ProjectDirectory)/src/NuGet.config</NuGetConfigFile>
-    <HumanizerCorePackageVersion>2.14.1</HumanizerCorePackageVersion>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
@@ -21,7 +20,7 @@
       <PackCommandArgs>$(BuildCommandArgs)</PackCommandArgs>
       <PackCommandArgs>$(PackCommandArgs) /p:NuspecFile=$(ProjectDirectory)NuSpecs/Humanizer.Core.nuspec</PackCommandArgs>
       <PackCommandArgs>$(PackCommandArgs) /p:NuspecBasePath=$(ProjectDirectory)src/</PackCommandArgs>
-      <PackCommandArgs>$(PackCommandArgs) /p:NuspecProperties=Version=$(HumanizerCorePackageVersion)</PackCommandArgs>
+      <PackCommandArgs>$(PackCommandArgs) /p:NuspecProperties=Version=$(HumanizerReleaseVersion)</PackCommandArgs>
     </PropertyGroup>
 
     <Exec Command="$(DotnetToolCommand) restore /bl:restore.binlog $(BuildCommandArgs) $(RedirectRepoOutputToLog)"
