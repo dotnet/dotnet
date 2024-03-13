@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "fd13ff1ff98ba8ba98d527bcf262aabb4e39f55f"
+      "commitSha": "154d74e0ce6a4189c7b2b848d011e03c55572917"
     },
     {
       "packageVersion": "17.8.5-preview-24055-02",
@@ -109,10 +109,10 @@
       "commitSha": "413c870a447075a90b8827353acb28ed37bab9dc"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.23577.6",
+      "packageVersion": "8.0.0-alpha.1.24161.1",
       "path": "source-build-externals",
-      "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-source-build-externals",
-      "commitSha": "0f0f1f0f33830f27ed0ff357145d2464b96b1a3e"
+      "remoteUri": "https://github.com/dotnet/source-build-externals",
+      "commitSha": "00fb7841c80b44262646e57bcfbe90a1b7bc3151"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23565.1",
@@ -191,7 +191,7 @@
     },
     {
       "path": "source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
-      "remoteUri": "https://dnceng@dev.azure.com/dnceng/internal/_git/azure-identitymodel",
+      "remoteUri": "https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git",
       "commitSha": "a607fa5e0005a6178cf1d2fed4fa0f8179cdb186"
     },
     {
@@ -200,9 +200,14 @@
       "commitSha": "0d59611784841735a7778a67aa6e9d8d000c861f"
     },
     {
-      "path": "source-build-externals/src/docker-creds-provider",
+      "path": "source-build-externals/src/docker-creds-provider-2.2.0",
       "remoteUri": "https://github.com/mthalman/docker-creds-provider",
       "commitSha": "5701f6667c1fbd805684857baaa860383bbdfed7"
+    },
+    {
+      "path": "source-build-externals/src/docker-creds-provider-2.2.1",
+      "remoteUri": "https://github.com/mthalman/docker-creds-provider",
+      "commitSha": "b381eafbeecb1039f5839fc98ef45e7b3e52dee9"
     },
     {
       "path": "source-build-externals/src/humanizer",

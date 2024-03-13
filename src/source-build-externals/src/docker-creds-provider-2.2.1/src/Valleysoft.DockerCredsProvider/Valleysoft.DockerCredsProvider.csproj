@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks Condition=" '$(TargetFrameworks)' == '' ">netstandard2.0;net6.0</TargetFrameworks>
+    <RootNamespace>Valleysoft.DockerCredsProvider</RootNamespace>
+    <LangVersion>10.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Valleysoft.DockerCredsProvider</PackageId>
+    <Title>Docker Creds Provider</Title>
+    <Description>Wrapper library for retrieving Docker credentials as specified in the Docker config file.</Description>
+    <PackageTags>docker</PackageTags>
+    <Authors>Matt Thalman and Contributors</Authors>
+    <RepositoryUrl>https://github.com/mthalman/docker-creds-provider</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="6.0.0" />
+  </ItemGroup>
+
+</Project>

@@ -1,9 +1,12 @@
+<!--
+  Defines the common configuration used by multiple versions of docker-creds-provider.
+-->
+
 <Project>
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)/src/Valleysoft.DockerCredsProvider/bin/$(Configuration)/</PackagesOutput>
-    <DockerCredsProviderPackageVersion>2.2.0</DockerCredsProviderPackageVersion>
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
