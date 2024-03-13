@@ -2,10 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces.ProjectSystem;
+namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal interface IUpdateProjectAction
 {

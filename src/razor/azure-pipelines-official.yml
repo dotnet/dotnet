@@ -1,0 +1,489 @@
+﻿#
+# See https://docs.microsoft.com/azure/devops/pipelines/yaml-schema for reference.
+#
+
+variables:
+- template: /eng/common/templates-official/variables/pool-providers.yml@self
+- name: Build.Repository.Clean
+  value: true
+- name: _TeamName
+  value: AspNetCore
+- name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+  value: true
+- name: LogLevel
+  value: 'All'
+- name: RunIntegrationTests
+  value: false
+- ${{ if ne(variables['System.TeamProject'], 'public') }}:
+  - group: DotNetBuilds storage account read tokens
+  - name: _InternalRuntimeDownloadArgs
+    value: /p:DotNetRuntimeSourceFeed=https://dotnetbuilds.blob.core.windows.net/internal
+            /p:DotNetRuntimeSourceFeedKey=$(dotnetbuilds-internal-container-read-token-base64)
+
+  - group: DotNet-DevDiv-Insertion-Workflow-Variables
+  - name: _DevDivDropAccessToken
+    value: $(dn-bot-devdiv-drop-rw-code-rw)
+
+  - group: DotNet-Roslyn-Insertion-Variables
+  - name: Razor.GitHubEmail
+    value: dotnet-build-bot@microsoft.com
+  - name: Razor.GitHubToken
+    value: $(AccessToken-dotnet-build-bot-public-repo)
+  - name: Razor.GitHubUserName
+    value: dotnet-build-bot
+  - name: Insertion.CreateDraftPR
+    value: true
+  - name: Insertion.TitlePrefix
+    value: '[Auto Insertion]'
+  - name: Insertion.TitleSuffix
+    value: ''
+  - name: Codeql.Enabled
+    value: true
+- ${{ if eq(variables['System.TeamProject'], 'public') }}:
+  - name: _InternalRuntimeDownloadArgs
+    value: ''
+  - name: Codeql.Enabled
+    value: false
+  - name: Codeql.SkipTaskAutoInjection
+    value: true
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+      - main-vs-deps
+      - release/*
+      - internal/release/3.*
+
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - '*'
+
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    featureFlags:
+      autoBaseline: true
+    sdl:
+      sourceAnalysisPool:
+        name: NetCore1ESPool-Svc-Internal
+        image: 1es-windows-2022-pt
+        os: windows
+      sbom:
+        enabled: false
+    pool:
+      name: NetCore1ESPool-Svc-Internal
+      image: windows.vs2022preview.amd64
+      os: windows
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - stage: build
+      displayName: Build
+      jobs:
+      - ${{ if and(and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+        - template: /eng/common/templates-official/job/onelocbuild.yml@self
+          parameters:
+            LclSource: lclFilesfromPackage
+            LclPackageId: 'LCL-JUNO-PROD-RAZORTOOL'
+            MirrorRepo: razor
+
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
+        parameters:
+          enablePublishBuildArtifacts: false
+          enablePublishTestResults: false
+          enablePublishUsingPipelines: false
+          enableSourcebuild: true
+          jobs:
+          # Code check
+          - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+            - job: Code_check
+              displayName: Code check
+              pool:
+                ${{ if eq(variables['System.TeamProject'], 'public') }}:
+                  name: $(DncEngPublicBuildPool)
+                  demands: ImageOverride -equals windows.vs2022preview.amd64.open
+                ${{ if ne(variables['System.TeamProject'], 'public') }}:
+                  name: $(DncEngInternalBuildPool)
+                  demands: ImageOverride -equals windows.vs2022preview.amd64
+              steps:
+              - task: NuGetCommand@2
+                displayName: 'Clear NuGet caches'
+                condition: succeeded()
+                inputs:
+                  command: custom
+                  arguments: 'locals all -clear'
+              - ${{ if ne(variables['System.TeamProject'], 'public') }}:
+                - task: PowerShell@2
+                  displayName: Setup Private Feeds Credentials
+                  inputs:
+                    filePath: $(Build.SourcesDirectory)/eng/common/SetupNugetSources.ps1
+                    arguments: -ConfigFile $(Build.SourcesDirectory)/NuGet.config -Password $Env:Token
+                  env:
+                    Token: $(dn-bot-dnceng-artifact-feeds-rw)
+              - powershell: ./restore.cmd -msbuildEngine dotnet -ci $(_InternalRuntimeDownloadArgs); ./eng/scripts/CodeCheck.ps1 -ci
+                displayName: Run eng/scripts/CodeCheck.ps1
+
+      # Windows based jobs. This needs to be separate from Unix based jobs because it generates
+      # TRX files. That can only be toggled at the top level template level, not at the individual
+      # job.
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
+        parameters:
+          enablePublishBuildArtifacts: false
+          enablePublishTestResults: true
+          enableTelemetry: true
+          helixRepo: dotnet/razor
+          helixType: build.product/
+          # enableMicrobuild can't be read from a user-defined variable (Azure DevOps limitation)
+          ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+            enableMicrobuild: true
+            enablePublishBuildAssets: true
+            enablePublishUsingPipelines: true
+
+          jobs:
+          - job: Windows
+            timeoutInMinutes: 120
+            pool:
+              ${{ if eq(variables['System.TeamProject'], 'public') }}:
+                name: $(DncEngPublicBuildPool)
+                demands: ImageOverride -equals windows.vs2022preview.amd64.open
+              ${{ if ne(variables['System.TeamProject'], 'public') }}:
+                name: $(DncEngInternalBuildPool)
+                demands: ImageOverride -equals windows.vs2022preview.amd64
+            strategy:
+              matrix:
+                ${{ if eq(variables['System.TeamProject'], 'public') }}:
+                  debug:
+                    _BuildConfig: Debug
+                    _PublishArgs: ''
+                  release:
+                    _BuildConfig: Release
+                    _PublishArgs: ''
+                ${{ if ne(variables['System.TeamProject'], 'public') }}:
+                  release:
+                    _BuildConfig: Release
+                    ${{ if in(variables['Build.Reason'], 'PullRequest') }}:
+                      _PublishArgs: ''
+                    ${{ if notin(variables['Build.Reason'], 'PullRequest') }}:
+                      _PublishArgs: /p:DotNetPublishUsingPipelines=true
+
+            variables:
+            - _BuildArgs: ''
+            - XUNIT_LOGS: '$(Build.SourcesDirectory)\artifacts\log\$(_BuildConfig)'
+            - __VSNeverShowWhatsNew: 1
+
+            # Variables for internal Official builds
+            - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+              - _SignType: real
+              - _BuildArgs: /p:DotNetSignType=$(_SignType) /p:TeamName=$(_TeamName)
+                  /p:OfficialBuildId=$(Build.BuildNumber)
+                  /p:ManifestBuildBranch=$(Build.SourceBranchName)
+                  /p:ManifestBuildNumber=$(Build.BuildNumber)
+                  /p:VisualStudioDropName=Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
+                  /p:GenerateSbom=true
+
+            steps:
+            - task: NuGetCommand@2
+              displayName: 'Clear NuGet caches'
+              condition: succeeded()
+              inputs:
+                command: custom
+                arguments: 'locals all -clear'
+
+            - ${{ if ne(variables['System.TeamProject'], 'public') }}:
+              - template: /eng/restore-internal-tools.yml
+
+            - powershell: ./eng/scripts/InstallProcDump.ps1
+              displayName: Install ProcDump
+
+            - powershell: ./eng/scripts/StartDumpCollectionForHangingBuilds.ps1
+                $(ProcDumpPath)procdump.exe artifacts/log/$(_BuildConfig)
+                (Get-Date).AddMinutes(60)
+                devenv, xunit.console, xunit.console.x86
+              displayName: Start background dump collection
+
+            - ${{ if ne(variables['System.TeamProject'], 'public') }}:
+              - task: PowerShell@2
+                displayName: Setup Private Feeds Credentials
+                inputs:
+                  filePath: $(Build.SourcesDirectory)/eng/common/SetupNugetSources.ps1
+                  arguments: -ConfigFile $(Build.SourcesDirectory)/NuGet.config -Password $Env:Token
+                env:
+                  Token: $(dn-bot-dnceng-artifact-feeds-rw)
+
+            # Don't create a binary log until we can customize the name
+            # https://github.com/dotnet/arcade/pull/12988
+            - script: eng\cibuild.cmd
+                -configuration $(_BuildConfig)
+                -msbuildEngine vs
+                -prepareMachine
+                -restore
+                -nobl
+              name: Restore
+              displayName: Restore
+              condition: succeeded()
+
+            - powershell: eng\SetupVSHive.ps1
+              displayName: Setup VS Hive
+
+            - script: eng\cibuild.cmd
+                -configuration $(_BuildConfig)
+                -msbuildEngine vs
+                -prepareMachine
+                -build
+                -pack
+                -publish
+                -sign
+                $(_BuildArgs)
+                $(_PublishArgs)
+                $(_InternalRuntimeDownloadArgs)
+              name: Build
+              displayName: Build and Deploy
+              condition: succeeded()
+
+            - script: eng\CIBuild.cmd
+                -configuration $(_BuildConfig)
+                -prepareMachine
+                -test
+                -nobl
+              name: Run_Unit_Tests
+              displayName: Run Unit Tests
+              condition: and(succeeded(), in(variables['Build.Reason'], 'PullRequest'))
+
+            - script: eng\CIBuild.cmd
+                -configuration $(_BuildConfig)
+                -prepareMachine
+                -integrationTest
+              name: Run_Integration_Tests
+              displayName: Run Integration Tests
+              condition: and(eq(variables['RunIntegrationTests'], true), succeeded(), in(variables['Build.Reason'], 'PullRequest'))
+
+            - powershell: ./eng/scripts/FinishDumpCollectionForHangingBuilds.ps1 artifacts/log/$(_BuildConfig)
+              displayName: Finish background dump collection
+              continueOnError: true
+              condition: always()
+
+            - task: 1ES.PublishPipelineArtifact@1
+              inputs:
+                targetPath: artifacts/log/$(_BuildConfig)
+                artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) Logs
+              displayName: Publish Build Artifacts
+              condition: always()
+
+            - task: 1ES.PublishPipelineArtifact@1
+              inputs:
+                targetPath: artifacts/TestResults/$(_BuildConfig)
+                artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) TestResults
+              displayName: Publish Test Artifacts
+              condition: in(variables['Build.Reason'], 'PullRequest')
+
+            # Publish an artifact that the RoslynInsertionTool is able to find by its name.
+            - task: 1ES.PublishPipelineArtifact@1
+              inputs:
+                targetPath: artifacts\VSSetup\$(_BuildConfig)
+                artifact: VSSetup
+              displayName: Publish VSSetup
+              condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
+
+            - task: 1ES.PublishPipelineArtifact@1
+              inputs:
+                targetPath: artifacts\packages\$(_BuildConfig)
+                artifact: Packages_$(Agent.Os)_$(_BuildConfig)
+              displayName: Publish package artifacts
+              condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
+
+            - powershell: Write-Host "##vso[task.setvariable variable=VisualStudio.DropName]Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)"
+              displayName: Setting VisualStudio.DropName variable
+
+            # Publishes setup VSIXes to a drop.
+            # Note: The insertion tool looks for the display name of this task in the logs.
+            - ${{ if ne(variables['System.TeamProject'], 'public') }}:
+              - task: 1ES.MicroBuildVstsDrop@1
+                displayName: Upload VSTS Drop
+                inputs:
+                  dropName: $(VisualStudio.DropName)
+                  dropFolder: 'artifacts\VSSetup\$(_BuildConfig)\Insertion'
+                  accessToken: $(_DevDivDropAccessToken)
+                continueOnError: true
+                condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
+
+      # Unix jobs done as a group since they share the same test results format.
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
+        parameters:
+          enablePublishBuildArtifacts: false
+          enablePublishTestResults: true
+          enableTelemetry: true
+          testResultsFormat: xunit
+          helixRepo: dotnet/razor
+          helixType: build.product/
+          jobs:
+          - job: macOS
+            pool:
+              name: Azure Pipelines
+              image: macOS-12
+              os: macOS
+            strategy:
+              matrix:
+                release:
+                  _BuildConfig: Release
+                ${{ if eq(variables['System.TeamProject'], 'public') }}:
+                  debug:
+                    _BuildConfig: Debug
+
+            variables:
+            - _BuildArgs: ''
+            # Variables for internal Official builds
+            - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+              - _BuildArgs: /p:DotNetPublishUsingPipelines=true
+                  /p:OfficialBuildId=$(Build.BuildNumber)
+
+            steps:
+            - ${{ if ne(variables['System.TeamProject'], 'public') }}:
+              - task: Bash@3
+                displayName: Setup Private Feeds Credentials
+                inputs:
+                  filePath: $(Build.SourcesDirectory)/eng/common/SetupNugetSources.sh
+                  arguments: $(Build.SourcesDirectory)/NuGet.config $Token
+                env:
+                  Token: $(dn-bot-dnceng-artifact-feeds-rw)
+
+            - script: eng/cibuild.sh
+                --restore
+                --build
+                --pack
+                --publish
+                --configuration $(_BuildConfig)
+                --prepareMachine
+                --test
+                $(_BuildArgs)
+                $(_InternalRuntimeDownloadArgs)
+              name: Build
+              displayName: Restore, Build and Test
+              condition: succeeded()
+
+            - task: 1ES.PublishPipelineArtifact@1
+              inputs:
+                targetPath: artifacts/TestResults/$(_BuildConfig)
+                artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) TestResults
+              displayName: Publish Test Results
+              condition: always()
+
+          - job: Linux
+            pool:
+              ${{ if eq(variables['System.TeamProject'], 'public') }}:
+                name: NetCore-Public
+                demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+              ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+                name: $(DncEngInternalBuildPool)
+                demands: ImageOverride -equals 1es-ubuntu-2004-pt
+              os: linux
+
+            strategy:
+              matrix:
+                release:
+                  _BuildConfig: Release
+                ${{ if eq(variables['System.TeamProject'], 'public') }}:
+                  debug:
+                    _BuildConfig: Debug
+
+            variables:
+            - LC_ALL: 'en_US.UTF-8'
+            - LANG: 'en_US.UTF-8'
+            - LANGUAGE: 'en_US.UTF-8'
+            - _BuildArgs: ''
+
+            # Variables for internal Official builds
+            - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+              - _BuildArgs: /p:DotNetPublishUsingPipelines=true
+                  /p:OfficialBuildId=$(Build.BuildNumber)
+
+            steps:
+            - ${{ if ne(variables['System.TeamProject'], 'public') }}:
+              - task: Bash@3
+                displayName: Setup Private Feeds Credentials
+                inputs:
+                  filePath: $(Build.SourcesDirectory)/eng/common/SetupNugetSources.sh
+                  arguments: $(Build.SourcesDirectory)/NuGet.config $Token
+                env:
+                  Token: $(dn-bot-dnceng-artifact-feeds-rw)
+
+            - script: eng/cibuild.sh
+                --restore
+                --build
+                --pack
+                --publish
+                --configuration $(_BuildConfig)
+                --prepareMachine
+                --test
+                $(_BuildArgs)
+                $(_InternalRuntimeDownloadArgs)
+              name: Build
+              displayName: Restore, Build and Test
+              condition: succeeded()
+
+            - task: 1ES.PublishPipelineArtifact@1
+              inputs:
+                targetPath: artifacts/TestResults/$(_BuildConfig)/
+                artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) TestResults
+              displayName: Publish Test Results
+              condition: always()
+
+    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+      - template: /eng/common/templates-official/post-build/post-build.yml@self
+        parameters:
+          publishingInfraVersion: 3
+          enableSigningValidation: false
+          enableNugetValidation: false
+          SDLValidationParameters:
+            enable: true
+            params: >-
+              -SourceToolsList @("policheck","credscan")
+              -ArtifactToolsList @("binskim")
+              -BinskimAdditionalRunConfigParams @("IgnorePdbLoadError < True","Recurse < True")
+              -TsaInstanceURL $(_TsaInstanceURL)
+              -TsaProjectName $(_TsaProjectName)
+              -TsaNotificationEmail $(_TsaNotificationEmail)
+              -TsaCodebaseAdmin $(_TsaCodebaseAdmin)
+              -TsaBugAreaPath $(_TsaBugAreaPath)
+              -TsaIterationPath $(_TsaIterationPath)
+              -TsaRepositoryName "Razor-Tooling"
+              -TsaCodebaseName "Razor-Tooling"
+              -TsaPublish $True
+
+      - stage: insert
+        dependsOn: publish_using_darc
+        displayName: Insert to VS
+        jobs:
+        - job: insert
+          displayName: Insert to VS
+          pool:
+            name: NetCore1ESPool-Svc-Internal
+            demands: ImageOverride -equals windows.vs2022.amd64
+          steps:
+          - download: current
+            artifact: VSSetup
+          - powershell: |
+              $branchName = "$(Build.SourceBranch)".Substring("refs/heads/".Length)
+              Write-Host "##vso[task.setvariable variable=ComponentBranchName]$branchName"
+            displayName: Get Branch Name
+          - template: /eng/pipelines/insert.yml@self
+            parameters:
+              buildUserName: "dn-bot@microsoft.com"
+              buildPassword: $(dn-bot-devdiv-build-e-code-full-release-e-packaging-r)
+              componentUserName: "dn-bot@microsoft.com"
+              componentPassword: $(dn-bot-dnceng-build-e-code-full-release-e-packaging-r)
+              componentBuildProjectName: internal
+              sourceBranch: "$(ComponentBranchName)"
+              publishDataURI: "https://dev.azure.com/dnceng/internal/_apis/git/repositories/dotnet-razor/items?path=/eng/config/PublishData.json&api-version=6.0"
+              publishDataAccessToken: "$(System.AccessToken)"
+              dropPath: '$(Pipeline.Workspace)\VSSetup'

@@ -34,6 +34,11 @@
         <target state="translated">La ligne «{0}» en dehors de la plage{1} de «{2}» a été interrogée. Le document n’est peut-être pas à jour.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Unknown_mapping_behavior">
+        <source>Unknown mapping behavior</source>
+        <target state="new">Unknown mapping behavior</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

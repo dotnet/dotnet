@@ -4,7 +4,7 @@
 using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer;
+namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
 /// <summary>
 /// Represents a position in a document. If <see cref="LanguageKind"/> is Razor then the position will be

@@ -34,6 +34,11 @@
         <target state="translated">Запрошена строка "{0}" за пределами диапазона {1} "{2}". Возможно, документ не обновлен.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Unknown_mapping_behavior">
+        <source>Unknown mapping behavior</source>
+        <target state="new">Unknown mapping behavior</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>
