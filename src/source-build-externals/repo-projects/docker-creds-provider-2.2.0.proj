@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <DockerCredsProviderPackageVersion>2.2.0</DockerCredsProviderPackageVersion>
+    <DockerCredsProviderReleaseVersion>2.2.0</DockerCredsProviderReleaseVersion>
   </PropertyGroup>
 
   <Import Project="docker-creds-provider.targets" />

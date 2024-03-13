@@ -8,4 +8,18 @@
     <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
     <PreReleaseVersionIteration>1</PreReleaseVersionIteration>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <AbstractionsXunitReleaseVersion>2.0.3</AbstractionsXunitReleaseVersion>
+    <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>7.1.2</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
+    <CssParserReleaseVersionSuffix>20230414.1</CssParserReleaseVersionSuffix>
+    <HumanizerReleaseVersion>2.14.1</HumanizerReleaseVersion>
+    <MSBuildLocatorReleaseVersion>1.6.10</MSBuildLocatorReleaseVersion>
+    <SpectreConsoleReleaseVersion>0.48.0</SpectreConsoleReleaseVersion>
+    <XunitReleaseVersion>2.4.2</XunitReleaseVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <MicrosoftBuildVersion>15.7.179</MicrosoftBuildVersion>
+  </PropertyGroup>
 </Project>
