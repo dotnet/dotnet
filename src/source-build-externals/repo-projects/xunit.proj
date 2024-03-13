@@ -14,9 +14,8 @@
     <Target Name="RepoBuild">
       <PropertyGroup>
         <BuildAndRestoreProject>$(ProjectDirectory)/xunit-notests.slnf</BuildAndRestoreProject>
-        <XunitVersion>2.4.2</XunitVersion>
         <BuildCommandArgs>/p:Configuration=$(Configuration)</BuildCommandArgs>
-        <BuildCommandArgs>$(BuildCommandArgs) /p:PackageVersion=$(XunitVersion)</BuildCommandArgs>
+        <BuildCommandArgs>$(BuildCommandArgs) /p:PackageVersion=$(XunitReleaseVersion)</BuildCommandArgs>
         <BuildCommandArgs>$(BuildCommandArgs) /p:DelaySign=$(DelaySign)</BuildCommandArgs>
         <BuildCommandArgs>$(BuildCommandArgs) /p:PublicSign=$(PublicSign)</BuildCommandArgs>
         <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
@@ -31,7 +30,7 @@
            two separate items in the item group -->
       <ItemGroup>
         <PackEnvironmentVariables Include="@(EnvironmentVariables)" />
-        <PackEnvironmentVariables Include="NuspecProperties=PackageVersion=$(XunitVersion)%3BConfiguration=$(Configuration)"/>
+        <PackEnvironmentVariables Include="NuspecProperties=PackageVersion=$(XunitReleaseVersion)%3BConfiguration=$(Configuration)"/>
 
         <PackProjectAndNuspec Include="$(ProjectDirectory)/src/xunit.execution/xunit.execution.csproj">
           <NuspecFile>$(ProjectDirectory)/src/xunit.extensibility.execution.nuspec</NuspecFile>
@@ -69,4 +68,4 @@
     </Target>
   
   </Project>
-  
+
