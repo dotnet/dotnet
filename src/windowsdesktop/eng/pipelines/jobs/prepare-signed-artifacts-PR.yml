@@ -15,19 +15,6 @@ jobs:
     clean: all
 
   steps:
-
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    - task: NuGetAuthenticate@1
-
-    - task: MicroBuildSigningPlugin@2
-      displayName: Install MicroBuild plugin for Signing
-      inputs:
-        signType: $(SignType)
-        zipSources: false
-        feedSource: https://dnceng.pkgs.visualstudio.com/_packaging/MicroBuildToolset/nuget/v3/index.json
-      condition: and(succeeded(),
-                     in(variables['SignType'], 'real', 'test'))
-
   - task: DownloadBuildArtifacts@0
     displayName: Download IntermediateUnsignedArtifacts
     inputs:

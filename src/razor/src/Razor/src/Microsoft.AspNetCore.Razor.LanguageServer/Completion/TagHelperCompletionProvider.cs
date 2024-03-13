@@ -57,7 +57,7 @@ internal class TagHelperCompletionProvider : IRazorCompletionItemProvider
         {
             // This provider is trying to find the nearest Start or End tag. Most of the time, that's a level up, but if the index the user is typing at
             // is a token of a start or end tag directly, we already have the node we want.
-            MarkupStartTagSyntax or MarkupEndTagSyntax or MarkupTagHelperStartTagSyntax or MarkupTagHelperEndTagSyntax => owner,
+            MarkupStartTagSyntax or MarkupEndTagSyntax or MarkupTagHelperStartTagSyntax or MarkupTagHelperEndTagSyntax or MarkupTagHelperAttributeSyntax => owner,
             // Either the parent is a context we can handle, or it's not and we shouldn't show completions.
             _ => owner.Parent
         };

@@ -16,7 +16,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) /p:DelaySign=$(DelaySign)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:PublicSign=$(PublicSign)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:EnablePackageValidation=false</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=1.6.10</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(MSBuildLocatorReleaseVersion)</BuildCommandArgs>
     </PropertyGroup>
 
     <Exec Command="$(DotnetToolCommand) restore /bl:restore.binlog $(BuildCommandArgs)"

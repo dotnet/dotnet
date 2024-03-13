@@ -50,6 +50,9 @@
     <MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>6.0.2-servicing.22064.6</MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>6.0.1</MicrosoftNETCorePlatformsPackageVersion>
     <MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>9.0.0-alpha.1.24155.1</MicrosoftSourceBuildIntermediatesourcebuildreferencepackagesPackageVersion>
+    <MicrosoftSourceBuildIntermediatearcadePackageVersion>8.0.0-beta.24161.1</MicrosoftSourceBuildIntermediatearcadePackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23475.1</MicrosoftDotNetXliffTasksPackageVersion>
+    <MicrosoftSourceBuildIntermediatexlifftasksPackageVersion>1.0.0-beta.23475.1</MicrosoftSourceBuildIntermediatexlifftasksPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>4.10.0-2.24112.8</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>4.10.0-2.24112.8</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
     <MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>4.10.0-2.24112.8</MicrosoftCodeAnalysisExternalAccessRazorPackageVersion>
@@ -69,9 +72,6 @@
     <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>4.10.0-2.24112.8</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
     <MicrosoftSourceBuildIntermediateroslynPackageVersion>4.10.0-2.24112.8</MicrosoftSourceBuildIntermediateroslynPackageVersion>
     <MicrosoftVisualStudioLanguageServicesPackageVersion>4.10.0-2.24112.8</MicrosoftVisualStudioLanguageServicesPackageVersion>
-    <MicrosoftSourceBuildIntermediatearcadePackageVersion>8.0.0-beta.24158.4</MicrosoftSourceBuildIntermediatearcadePackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>1.0.0-beta.23475.1</MicrosoftDotNetXliffTasksPackageVersion>
-    <MicrosoftSourceBuildIntermediatexlifftasksPackageVersion>1.0.0-beta.23475.1</MicrosoftSourceBuildIntermediatexlifftasksPackageVersion>
     <!--
       Exception - Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages are not updated by automation,
       but are present in Version.Details.xml for source-build PVP flow. See the comment in Version.Details.xml for more information.

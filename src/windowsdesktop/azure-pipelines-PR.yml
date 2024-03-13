@@ -37,14 +37,8 @@ variables:
     value: .NETCoreValidation
 
   # Produce test-signed build for PR and Public builds
-  - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-    - name: SignType
-      value: test
-
-  # Set up non-PR build from internal project
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    - name: SignType
-      value: $[ coalesce(variables.OfficialSignType, 'real') ]
+  - name: SignType
+    value: test
 
 stages:
 - stage: Build
@@ -67,49 +61,3 @@ stages:
     parameters:
       name: win_arm64
       targetArchitecture: arm64
-
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-  - stage: PrepareForPublish
-    displayName: Prepare for Publish
-    dependsOn: Build
-    jobs:
-    # Prep artifacts: sign them and upload pipeline artifacts expected by stages-based publishing.
-    - template: /eng/pipelines/jobs/prepare-signed-artifacts-PR.yml
-      parameters:
-        PublishRidAgnosticPackagesFromJobName: win_x64
-    # Publish to Build Asset Registry in order to generate the ReleaseConfigs artifact.
-    - template: /eng/common/templates/job/publish-build-assets.yml
-      parameters:
-        publishUsingPipelines: true
-        publishAssetsImmediately: true
-        dependsOn: PrepareSignedArtifacts
-        pool:
-          name: NetCore1ESPool-Internal
-          demands: ImageOverride -equals windows.vs2022preview.amd64
-
-  # Stages-based publishing entry point
-  - template: /eng/common/templates/post-build/post-build.yml
-    parameters:
-      publishingInfraVersion: 3
-      validateDependsOn:
-      - PrepareForPublish
-      enableSymbolValidation: false
-      enableSigningValidation: false
-      enableNugetValidation: false
-      enableSourceLinkValidation: false
-      publishAssetsImmediately: true
-
-      SDLValidationParameters:
-        enable: false
-        params: >-
-          -SourceToolsList @("policheck","credscan")
-          -TsaInstanceURL https://devdiv.visualstudio.com/
-          -TsaProjectName DEVDIV
-          -TsaNotificationEmail wffteam@microsoft.com
-          -TsaCodebaseAdmin REDMOND\advolker
-          -TsaBugAreaPath "DevDiv\NET Fundamentals\WindowsDesktop"
-          -TsaIterationPath DevDiv
-          -TsaRepositoryName WindowsDesktop
-          -TsaCodebaseName WindowsDesktop
-          -TsaOnboard $True
-          -TsaPublish $True

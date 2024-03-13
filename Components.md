@@ -8,11 +8,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@39839f3](https://github.com/dotnet/arcade/tree/39839f3007d9f3bbabf7a4b6a96ef5dd6be9e5ac)*
+*[dotnet/arcade@1c8e12b](https://github.com/dotnet/arcade/tree/1c8e12b71c28f5dc6626b529b08abefdbb7ca6e8)*
 - `src/aspire`  
 *[dotnet/aspire@1194762](https://github.com/dotnet/aspire/tree/11947620e257657946e4232085d8db8e2aa4a36e)*
 - `src/aspnetcore`  
-*[dotnet/aspnetcore@1ee58ec](https://github.com/dotnet/aspnetcore/tree/1ee58ec0d8837ac310c9ef9e784a35bf3027dbd5)*
+*[dotnet/aspnetcore@702ba39](https://github.com/dotnet/aspnetcore/tree/702ba39ace967037a3f726765732e3e63f80907e)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@e1a38bc](https://github.com/google/googletest/tree/e1a38bc3707741d249fa22d2064552a08e37555b)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -34,27 +34,27 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@212eaf7](https://github.com/dotnet/fsharp/tree/212eaf7fac2d837c51dc49e477a599ebea68338b)*
 - `src/installer`  
-*[dotnet/installer@f51a2d9](https://github.com/dotnet/installer/tree/f51a2d95a57550e190a9cd87d33f3337da2e7370)*
+*[dotnet/installer@3354919](https://github.com/dotnet/installer/tree/33549194e255cbaff0eda0d3cf688677b07e42ba)*
 - `src/msbuild`  
-*[dotnet/msbuild@276f781](https://github.com/dotnet/msbuild/tree/276f781fa868f553bed33a0a01fc54108c84c672)*
+*[dotnet/msbuild@0326fd7](https://github.com/dotnet/msbuild/tree/0326fd7c9e131c4c26bac3c0f72a43ef9fd2812c)*
 - `src/nuget-client`  
 *[nuget/nuget.client@2fdd0d4](https://github.com/nuget/nuget.client/tree/2fdd0d41e33c3354de2750fe154b56751a6682aa)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
     *[NuGet/NuGet.Build.Localization@f15db7b](https://github.com/NuGet/NuGet.Build.Localization/tree/f15db7b7c6f5affbea268632ef8333d2687c8031)*
 - `src/razor`  
-*[dotnet/razor@6c04d30](https://github.com/dotnet/razor/tree/6c04d3094f791ba68c30ae0db8aca39e2cf7c155)*
+*[dotnet/razor@abef543](https://github.com/dotnet/razor/tree/abef543a4598d8e032a05cfe6b82bfa818c5cf90)*
 - `src/roslyn`  
-*[dotnet/roslyn@c3565da](https://github.com/dotnet/roslyn/tree/c3565da812d99adf841cb96a764a27d8a93e22ef)*
+*[dotnet/roslyn@629715c](https://github.com/dotnet/roslyn/tree/629715c09402f5e741da2faa03cc4b56f74d3c8d)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@d98dd32](https://github.com/dotnet/roslyn-analyzers/tree/d98dd32d7cd4274bea98b147032b73a4eb051f2c)*
 - `src/runtime`  
-*[dotnet/runtime@efa2b78](https://github.com/dotnet/runtime/tree/efa2b78175388a656893d0e9becc408d99afe445)*
+*[dotnet/runtime@e4fceb3](https://github.com/dotnet/runtime/tree/e4fceb3ae5598ae3b1e0941c43d6108983e1c048)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@bfde902](https://github.com/dotnet/scenario-tests/tree/bfde902a10d7b672f4fc7e844198ede405dbb9c6)*
 - `src/sdk`  
-*[dotnet/sdk@9df94f0](https://github.com/dotnet/sdk/tree/9df94f0bab218a74fa3746da91f19949a7c74eea)*
+*[dotnet/sdk@df3dbf6](https://github.com/dotnet/sdk/tree/df3dbf6df434b0f11dcaff545d16f5957647633c)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@472629e](https://github.com/dotnet/source-build-externals/tree/472629e451a5a87410ea3670606f7235a4dd5a02)*
+*[dotnet/source-build-externals@3167c0a](https://github.com/dotnet/source-build-externals/tree/3167c0a9379f52145af31057aca31f45528eb123)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights-2.21.0`  
@@ -88,23 +88,23 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/source-build-reference-packages`  
 *[dotnet/source-build-reference-packages@c0b5d69](https://github.com/dotnet/source-build-reference-packages/tree/c0b5d69a1a1513528c77fffff708c7502d57c35c)*
 - `src/sourcelink`  
-*[dotnet/sourcelink@4af34e7](https://github.com/dotnet/sourcelink/tree/4af34e7dc1755e8a26fcbde95073895e279da09d)*
+*[dotnet/sourcelink@9f8f48c](https://github.com/dotnet/sourcelink/tree/9f8f48c984083a71e3b75a3f11f96d0ec55d6b05)*
 - `src/symreader`  
 *[dotnet/symreader@71a20ad](https://github.com/dotnet/symreader/tree/71a20ad4aaedc284ef2d9a7302f5d2ec4df7dca3)*
 - `src/templating`  
-*[dotnet/templating@d09013f](https://github.com/dotnet/templating/tree/d09013f6c8c17e4c124869f467dada469829911e)*
+*[dotnet/templating@d70834b](https://github.com/dotnet/templating/tree/d70834b2168645e0f40556d677780e2cbd4d7d6b)*
 - `src/test-templates`  
 *[dotnet/test-templates@785fafc](https://github.com/dotnet/test-templates/tree/785fafc79e66b509ccc116867b84c21e494930b8)*
 - `src/vstest`  
 *[microsoft/vstest@3161673](https://github.com/microsoft/vstest/tree/316167369cea59e0ad6ece2a39d94a3a6d49cf12)*
 - `src/windowsdesktop`  
-*[dotnet/windowsdesktop@44e12ec](https://github.com/dotnet/windowsdesktop/tree/44e12ece1bfc7800e8ec69f422eb60062de8b00e)*
+*[dotnet/windowsdesktop@afac333](https://github.com/dotnet/windowsdesktop/tree/afac3334f4087044a6ac73450bc79c281fe8e833)*
 - `src/winforms`  
-*[dotnet/winforms@bfc23d4](https://github.com/dotnet/winforms/tree/bfc23d4c7b17ab3ece28faedd603501e2ada9d6c)*
+*[dotnet/winforms@a255995](https://github.com/dotnet/winforms/tree/a255995a9062ea71cea983787cc1201e0b44466a)*
 - `src/wpf`  
-*[dotnet/wpf@09e859d](https://github.com/dotnet/wpf/tree/09e859df29f1f8775155b65f39b3bbf9c27e0a02)*
+*[dotnet/wpf@3e014e5](https://github.com/dotnet/wpf/tree/3e014e541aaa580cfa0e7e01a4201757cf36a968)*
 - `src/xdt`  
-*[dotnet/xdt@a86209b](https://github.com/dotnet/xdt/tree/a86209be9faeafe337633ab1746df7bc19a83538)*
+*[dotnet/xdt@310db85](https://github.com/dotnet/xdt/tree/310db85daf545c0732aa10c37b75570d6c59ea34)*
 - `src/xliff-tasks`  
 *[dotnet/xliff-tasks@73f0850](https://github.com/dotnet/xliff-tasks/tree/73f0850939d96131c28cf6ea6ee5aacb4da0083a)*
 <!-- component list end -->

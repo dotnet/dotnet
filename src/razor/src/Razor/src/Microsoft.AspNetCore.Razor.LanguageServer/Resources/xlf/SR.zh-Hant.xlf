@@ -112,11 +112,6 @@
         <target state="translated">嘗試瀏覽 '{' or '}' 除外的 RazorMetaCode。</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unknown_mapping_behavior">
-        <source>Unknown mapping behavior</source>
-        <target state="translated">未知的對應行為</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Version_Should_Not_Be_Null">
         <source>Provided version should not be null.</source>
         <target state="translated">提供的版本不應為 Null。</target>

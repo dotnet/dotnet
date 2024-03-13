@@ -3,6 +3,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Mapping;
