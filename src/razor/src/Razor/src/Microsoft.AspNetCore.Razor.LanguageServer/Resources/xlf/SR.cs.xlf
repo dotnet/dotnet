@@ -112,11 +112,6 @@
         <target state="translated">Došlo k pokusu navštívit RazorMetaCode jiný než { nebo }.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unknown_mapping_behavior">
-        <source>Unknown mapping behavior</source>
-        <target state="translated">Neznámé chování mapování</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Version_Should_Not_Be_Null">
         <source>Provided version should not be null.</source>
         <target state="translated">Zadaná verze nemůže být null.</target>

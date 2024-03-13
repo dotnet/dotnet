@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-public class RazorSemanticTokensLegendTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
+public class RazorSemanticTokensLegendServiceTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
     [Fact]
     public void RazorModifiers_MustStartAfterRoslyn()

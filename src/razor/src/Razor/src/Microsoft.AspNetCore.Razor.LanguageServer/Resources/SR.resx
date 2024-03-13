@@ -174,9 +174,6 @@
   <data name="TagHelper_Element_Glyph" xml:space="preserve">
     <value>Razor TagHelper Element Glyph</value>
   </data>
-  <data name="Unknown_mapping_behavior" xml:space="preserve">
-    <value>Unknown mapping behavior</value>
-  </data>
   <data name="Unknown_ProjectChangeKind" xml:space="preserve">
     <value>Unknown ProjectChangeKind {0}</value>
   </data>

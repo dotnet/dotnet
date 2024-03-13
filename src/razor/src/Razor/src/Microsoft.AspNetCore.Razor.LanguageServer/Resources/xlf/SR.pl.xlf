@@ -112,11 +112,6 @@
         <target state="translated">Podjęto próbę odwiedzenia elementu MetaCode składni Razor innego niż "{"or"}".</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unknown_mapping_behavior">
-        <source>Unknown mapping behavior</source>
-        <target state="translated">Nieznane zachowanie mapowania</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Version_Should_Not_Be_Null">
         <source>Provided version should not be null.</source>
         <target state="translated">Podana wersja nie może mieć wartości null.</target>

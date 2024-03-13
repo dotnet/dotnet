@@ -1170,7 +1170,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
 
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
         builder.AppendLine("//line,characterPos,length,tokenType,modifier,text");
-        var legendArray = TestRazorSemanticTokensLegendService.Instance.Legend.TokenTypes;
+        var legendArray = TestRazorSemanticTokensLegendService.Instance.TokenTypes.All;
         var prevLength = 0;
         var lineIndex = 0;
         var lineOffset = 0;

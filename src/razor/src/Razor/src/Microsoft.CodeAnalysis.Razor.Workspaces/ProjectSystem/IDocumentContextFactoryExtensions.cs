@@ -5,7 +5,7 @@ using System;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer;
+namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal static class IDocumentContextFactoryExtensions
 {
