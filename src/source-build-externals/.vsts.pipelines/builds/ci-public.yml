@@ -1,0 +1,52 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*
+  paths:
+    exclude:
+    - '*.md'
+
+pr:
+  branches:
+    include:
+    - main
+    - release/*
+  paths:
+    exclude:
+    - '*.md'
+
+variables:
+  - template: /eng/common/templates/variables/pool-providers.yml
+  - name: Codeql.Enable
+    value: true
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enablePublishUsingPipelines: true
+      enablePublishBuildAssets: true
+      artifacts:
+        publish:
+          artifacts: true
+          manifests: true
+      jobs:
+      - job: SourceBuild_Managed
+        displayName: Source-Build (Managed)
+        pool:
+          name: $(DncEngPublicBuildPool)
+          demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8'
+        workspace:
+          clean: all
+        variables:
+        - name: _BuildConfig
+          value: Release
+        steps:
+        - checkout: self
+          submodules: recursive
+        - template: /eng/common/templates/steps/source-build.yml

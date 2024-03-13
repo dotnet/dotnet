@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      packageVersion:
+        description: 'Package version'
+        required: true
+
+defaults:
+  run:
+    working-directory: src
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: "6.0.x"
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Test
+        run: dotnet test --no-restore -v normal -c Release -r test-results -l trx
+        
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v2.1.4
+        if: always()
+        with:
+          name: test-results
+          path: src/test-results/*
+
+      - name: Pack
+        env:
+          PACKAGE_VERSION: ${{ github.event.inputs.packageVersion }}
+        run: dotnet pack -c Release -p:Version=$PACKAGE_VERSION Valleysoft.DockerCredsProvider
+      
+      - name: Publish Package
+        run: dotnet nuget push "Valleysoft.DockerCredsProvider/bin/Release/*.nupkg" -k ${{secrets.NUGET_ORG_API_KEY}} -s https://nuget.org
