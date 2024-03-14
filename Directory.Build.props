@@ -4,6 +4,7 @@
     <Configuration Condition="$(Configuration) == ''">Release</Configuration>
     <DotNetBuildOrchestrator>true</DotNetBuildOrchestrator>
     <RootRepo>dotnet</RootRepo>
+    <SkipErrorOnPrebuilts>true</SkipErrorOnPrebuilts>
   </PropertyGroup>
 
   <PropertyGroup Label="CalculateTargetOS">
