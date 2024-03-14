@@ -50,7 +50,7 @@ terms *Test*, *Test Case* and *Test Suite*, so beware of misunderstanding these.
 
 Historically, GoogleTest started to use the term *Test Case* for grouping
 related tests, whereas current publications, including International Software
-Testing Qualifications Board ([ISTQB](http://www.istqb.org/)) materials and
+Testing Qualifications Board ([ISTQB](https://www.istqb.org/)) materials and
 various textbooks on software quality, use the term
 *[Test Suite][istqb test suite]* for this.
 
@@ -68,13 +68,13 @@ deprecated and refactored away.
 So please be aware of the different definitions of the terms:
 
 
-Meaning                                                                              | GoogleTest Term         | [ISTQB](http://www.istqb.org/) Term
+Meaning                                                                              | GoogleTest Term         | [ISTQB](https://www.istqb.org/) Term
 :----------------------------------------------------------------------------------- | :---------------------- | :----------------------------------
 Exercise a particular program path with specific input values and verify the results | [TEST()](#simple-tests) | [Test Case][istqb test case]
 
 
-[istqb test case]: http://glossary.istqb.org/en/search/test%20case
-[istqb test suite]: http://glossary.istqb.org/en/search/test%20suite
+[istqb test case]: https://glossary.istqb.org/en_US/term/test-case-2
+[istqb test suite]: https://glossary.istqb.org/en_US/term/test-suite-1-3
 
 ## Basic Concepts
 
@@ -210,7 +210,7 @@ objects for several different tests.
 
 To create a fixture:
 
-1.  Derive a class from `::testing::Test` . Start its body with `protected:`, as
+1.  Derive a class from `testing::Test` . Start its body with `protected:`, as
     we'll want to access fixture members from sub-classes.
 2.  Inside the class, declare any objects you plan to use.
 3.  If necessary, write a default constructor or `SetUp()` function to prepare
@@ -271,7 +271,7 @@ First, define a fixture class. By convention, you should give it the name
 `FooTest` where `Foo` is the class being tested.
 
 ```c++
-class QueueTest : public ::testing::Test {
+class QueueTest : public testing::Test {
  protected:
   void SetUp() override {
      // q0_ remains empty
@@ -402,7 +402,7 @@ namespace project {
 namespace {
 
 // The fixture for testing class Foo.
-class FooTest : public ::testing::Test {
+class FooTest : public testing::Test {
  protected:
   // You can remove any or all of the following functions if their bodies would
   // be empty.
@@ -450,14 +450,14 @@ TEST_F(FooTest, DoesXyz) {
 }  // namespace my
 
 int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
+  testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
 ```
 
-The `::testing::InitGoogleTest()` function parses the command line for
-GoogleTest flags, and removes all recognized flags. This allows the user to
-control a test program's behavior via various flags, which we'll cover in the
+The `testing::InitGoogleTest()` function parses the command line for GoogleTest
+flags, and removes all recognized flags. This allows the user to control a test
+program's behavior via various flags, which we'll cover in the
 [AdvancedGuide](advanced.md). You **must** call this function before calling
 `RUN_ALL_TESTS()`, or the flags won't be properly initialized.
 
