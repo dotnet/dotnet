@@ -76,7 +76,7 @@
     <PackageVersion Include="JetBrains.Annotations" Version="2018.2.1" />
     <PackageVersion Include="LZMA-SDK" Version="19.0.0" />
     <PackageVersion Include="McMaster.Extensions.CommandLineUtils" Version="2.3.0" />
-    <PackageVersion Include="Microsoft.ApplicationInsights" Version="2.22.0" />
+    <PackageVersion Include="Microsoft.ApplicationInsights" Version="2.21.0" />
     <PackageVersion Include="Microsoft.Data.OData" Version="5.8.4" />
     <PackageVersion Include="Microsoft.DataServices.Client" Version="$(MicrosoftDataServicesClientVersion)" />
     <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="1.0.5" />
