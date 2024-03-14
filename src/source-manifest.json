@@ -112,7 +112,7 @@
       "packageVersion": "9.0.100-preview.3.24163.4",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "df3dbf6df434b0f11dcaff545d16f5957647633c"
+      "commitSha": "8704b616a150de5ff32eac8077a2794d4bd5b692"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24162.1",
@@ -189,11 +189,6 @@
   ],
   "submodules": [
     {
-      "path": "aspnetcore/src/submodules/googletest",
-      "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "e1a38bc3707741d249fa22d2064552a08e37555b"
-    },
-    {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
       "remoteUri": "https://github.com/aspnet/MessagePack-CSharp.git",
       "commitSha": "ecc4e18ad7a0c7db51cd7e3d2997a291ed01444d"
@@ -204,9 +199,19 @@
       "commitSha": "1bcb78ca694568f7993d9d385eee0687ad0f5dfe"
     },
     {
+      "path": "aspnetcore/src/submodules/googletest",
+      "remoteUri": "https://github.com/google/googletest",
+      "commitSha": "e1a38bc3707741d249fa22d2064552a08e37555b"
+    },
+    {
       "path": "nuget-client/submodules/NuGet.Build.Localization",
       "remoteUri": "https://github.com/NuGet/NuGet.Build.Localization.git",
       "commitSha": "f15db7b7c6f5affbea268632ef8333d2687c8031"
+    },
+    {
+      "path": "source-build-externals/src/MSBuildLocator",
+      "remoteUri": "https://github.com/microsoft/MSBuildLocator",
+      "commitSha": "e0281df33274ac3c3e22acc9b07dcb4b31d57dc0"
     },
     {
       "path": "source-build-externals/src/abstractions-xunit",
@@ -247,11 +252,6 @@
       "path": "source-build-externals/src/humanizer",
       "remoteUri": "https://github.com/Humanizr/Humanizer",
       "commitSha": "3ebc38de585fc641a04b0e78ed69468453b0f8a1"
-    },
-    {
-      "path": "source-build-externals/src/MSBuildLocator",
-      "remoteUri": "https://github.com/microsoft/MSBuildLocator",
-      "commitSha": "e0281df33274ac3c3e22acc9b07dcb4b31d57dc0"
     },
     {
       "path": "source-build-externals/src/newtonsoft-json",

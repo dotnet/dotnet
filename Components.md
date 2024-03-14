@@ -13,12 +13,12 @@ To enable full offline source-building of the VMR, we have no other choice than 
 *[dotnet/aspire@1194762](https://github.com/dotnet/aspire/tree/11947620e257657946e4232085d8db8e2aa4a36e)*
 - `src/aspnetcore`  
 *[dotnet/aspnetcore@702ba39](https://github.com/dotnet/aspnetcore/tree/702ba39ace967037a3f726765732e3e63f80907e)*
-    - `src/aspnetcore/src/submodules/googletest`  
-    *[google/googletest@e1a38bc](https://github.com/google/googletest/tree/e1a38bc3707741d249fa22d2064552a08e37555b)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
     *[aspnet/MessagePack-CSharp@ecc4e18](https://github.com/aspnet/MessagePack-CSharp/tree/ecc4e18ad7a0c7db51cd7e3d2997a291ed01444d)*
     - `src/aspnetcore/src/submodules/Node-Externals`  
     *[dotnet/Node-Externals@1bcb78c](https://github.com/dotnet/Node-Externals/tree/1bcb78ca694568f7993d9d385eee0687ad0f5dfe)*
+    - `src/aspnetcore/src/submodules/googletest`  
+    *[google/googletest@e1a38bc](https://github.com/google/googletest/tree/e1a38bc3707741d249fa22d2064552a08e37555b)*
 - `src/cecil`  
 *[dotnet/cecil@ba53c75](https://github.com/dotnet/cecil/tree/ba53c75483aa4980a332fa48e61076f80adfec40)*
 - `src/command-line-api`  
@@ -52,9 +52,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@bfde902](https://github.com/dotnet/scenario-tests/tree/bfde902a10d7b672f4fc7e844198ede405dbb9c6)*
 - `src/sdk`  
-*[dotnet/sdk@df3dbf6](https://github.com/dotnet/sdk/tree/df3dbf6df434b0f11dcaff545d16f5957647633c)*
+*[dotnet/sdk@8704b61](https://github.com/dotnet/sdk/tree/8704b616a150de5ff32eac8077a2794d4bd5b692)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@3167c0a](https://github.com/dotnet/source-build-externals/tree/3167c0a9379f52145af31057aca31f45528eb123)*
+    - `src/source-build-externals/src/MSBuildLocator`  
+    *[microsoft/MSBuildLocator@e0281df](https://github.com/microsoft/MSBuildLocator/tree/e0281df33274ac3c3e22acc9b07dcb4b31d57dc0)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights-2.21.0`  
@@ -71,8 +73,6 @@ To enable full offline source-building of the VMR, we have no other choice than 
     *[mthalman/docker-creds-provider@6c73fa4](https://github.com/mthalman/docker-creds-provider/tree/6c73fa4784795ae07f49305a057abf5c473d2adb)*
     - `src/source-build-externals/src/humanizer`  
     *[Humanizr/Humanizer@3ebc38d](https://github.com/Humanizr/Humanizer/tree/3ebc38de585fc641a04b0e78ed69468453b0f8a1)*
-    - `src/source-build-externals/src/MSBuildLocator`  
-    *[microsoft/MSBuildLocator@e0281df](https://github.com/microsoft/MSBuildLocator/tree/e0281df33274ac3c3e22acc9b07dcb4b31d57dc0)*
     - `src/source-build-externals/src/newtonsoft-json`  
     *[JamesNK/Newtonsoft.Json@0a2e291](https://github.com/JamesNK/Newtonsoft.Json/tree/0a2e291c0d9c0c7675d445703e51750363a549ef)*
     - `src/source-build-externals/src/spectre-console`  
