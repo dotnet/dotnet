@@ -43,10 +43,10 @@
       "commitSha": "5ce78f66d89ea529e459abddb129ab36cb5bd936"
     },
     {
-      "packageVersion": "8.0.3-servicing.24108.3",
+      "packageVersion": "8.0.4-servicing.24156.2",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "9a29abdd764a4de0f253ed368871877a47725247"
+      "commitSha": "1639670c6547454278f51afc5c74e20f8acc7abd"
     },
     {
       "packageVersion": "8.0.511601",
@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "d34748c30b33ee134e65e33828250827633cf780"
+      "commitSha": "d0a110f3f62d254eea515d3a2b621aa9a34be153"
     },
     {
       "packageVersion": "17.8.5-preview-24055-02",
@@ -97,16 +97,16 @@
       "commitSha": "b4d9a1334d5189172977ba8fddd00bda70161e4a"
     },
     {
-      "packageVersion": "8.0.3-servicing.24114.23",
+      "packageVersion": "8.0.4-servicing.24162.12",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "9f4b1f5d664afdfc80e1508ab7ed099dff210fbd"
+      "commitSha": "5cff8b8eb04adfca21ccdec7e88b9ee7b3952fee"
     },
     {
-      "packageVersion": "8.0.103-servicing.24116.86",
+      "packageVersion": "8.0.104-servicing.24163.30",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "413c870a447075a90b8827353acb28ed37bab9dc"
+      "commitSha": "2f4164c25cc5777023364dc8d86f4271d1fb92b6"
     },
     {
       "packageVersion": "8.0.0-alpha.1.24161.1",
@@ -133,10 +133,10 @@
       "commitSha": "2c8079e2e8e78c0cd11ac75a32014756136ecdb9"
     },
     {
-      "packageVersion": "8.0.103-servicing.24115.27",
+      "packageVersion": "8.0.104-servicing.24163.9",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "8e0e60adf58a813c3b8eee5eef465447116eef4e"
+      "commitSha": "b500bd1ad9484c2f8fe02eea50f2c4d035ca6783"
     },
     {
       "packageVersion": "1.1.0-rc.23410.2",
