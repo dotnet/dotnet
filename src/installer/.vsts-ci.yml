@@ -1,3 +1,5 @@
+# Pipeline: https://dnceng.visualstudio.com/internal/_build?definitionId=286
+
 trigger:
   batch: true
   branches:
@@ -23,339 +25,369 @@ variables:
   - group: DotNet-Installer-SDLValidation-Params
   - name: _PublishUsingPipelines
     value: true
-
 - name: _InternalRuntimeDownloadArgs
   value: ''
-
 - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
   - group: DotNetBuilds storage account read tokens
   - name: _InternalRuntimeDownloadArgs
     value: /p:DotNetRuntimeSourceFeed=https://dotnetbuilds.blob.core.windows.net/internal
       /p:DotNetRuntimeSourceFeedKey=$(dotnetbuilds-internal-container-read-token-base64)
       /p:dotnetbuilds-internal-container-read-token-base64=$(dotnetbuilds-internal-container-read-token-base64)
+- template: /eng/common/templates-official/variables/pool-providers.yml
 
-- template: /eng/common/templates/variables/pool-providers.yml
+resources:
+  repositories:
+  - repository: 1esPipelines
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
 
-stages:
-- stage: Build
-  jobs:
-  # This job is for build retry configuration.
-  - job: Publish_Build_Configuration
-    pool:
-      ${{ if eq(variables['System.TeamProject'], 'public') }}:
-        name: $(DncEngPublicBuildPool)
-        demands: ImageOverride -equals windows.vs2022preview.amd64.open
-      ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
+  parameters:
+    containers:
+      alpine319WithNode:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.19-WithNode
+      cblMariner20Fpm:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-fpm
+      centosStream8:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
+      debian11Amd64:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:debian-11-amd64
+      fedora39:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-39
+      ubuntu2204:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04
+      ubuntu2204CrossArmAlpine:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-arm-alpine
+      ubuntu2204DebPkg:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-debpkg
+    sdl:
+      sourceAnalysisPool:
         name: $(DncEngInternalBuildPool)
-        demands: ImageOverride -equals windows.vs2022preview.amd64
-    steps:
-    - publish: $(Build.SourcesDirectory)\eng\buildConfiguration
-      artifact: buildConfiguration
-      displayName: Publish Build Config
-  
-  ## PR-only jobs
-  
-  - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-    
-    ## Windows
-
-    - template: eng/build.yml
-      parameters:
-        agentOs: Windows_NT
-        jobName: Build_Debug_x64
-        buildConfiguration: Debug
-        buildArchitecture: x64
-        additionalBuildParameters: '/p:PublishInternalAsset=true'
-        runTests: true
-
-    ## Linux
-
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_Ubuntu_22_04_Debug_x64
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04'
-        buildConfiguration: Debug
-        buildArchitecture: x64
-        linuxPortable: true
-        runTests: true
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_Fedora_39_Debug_x64
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-39'
-        buildConfiguration: Debug
-        buildArchitecture: x64
-        linuxPortable: true
-        runTests: true
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_CentOS_8_Stream_Debug_x64
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8'
-        buildConfiguration: Debug
-        buildArchitecture: x64
-        linuxPortable: false
-        runTests: true
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_Debian_11_Debug_x64
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:debian-11-amd64'
-        buildConfiguration: Debug
-        buildArchitecture: x64
-        additionalBuildParameters: '/p:BuildSdkDeb=true'
-        linuxPortable: false
-        runTests: true
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_Arm64_Debug
-        buildConfiguration: Debug
-        buildArchitecture: arm64
-        runtimeIdentifier: 'linux-arm64'
-        linuxPortable: true
-        # Never run tests on arm64
-        runTests: false
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_Linux_musl_Debug_x64
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.19-WithNode'
-        buildConfiguration: Debug
-        buildArchitecture: x64
-        runtimeIdentifier: 'linux-musl-x64'
-        # Pass in HostOSName when running on alpine
-        additionalBuildParameters: '/p:HostOSName="linux-musl"'
-        linuxPortable: false
-        runTests: true
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_LinuxPortable_Release_x64
-        buildConfiguration: Release
-        buildArchitecture: x64
-        linuxPortable: true
-        runTests: true
-
-    # MacOS
-
-    - template: eng/build.yml
-      parameters:
-        agentOs: Darwin
-        jobName: Build_Release_x64
-        buildConfiguration: Release
-        buildArchitecture: x64
-        runTests: true
-
-  ## Official/PGO instrumentation Builds
-  
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    
-    ## Windows
-
-    - template: eng/build.yml
-      parameters:
-        agentOs: Windows_NT
-        jobName: Build_Release_x64
-        buildConfiguration: Release
-        buildArchitecture: x64
-        additionalBuildParameters: '/p:PublishInternalAsset=true'
-        runTests: false
-    - template: eng/build.yml
-      parameters:
-        agentOs: Windows_NT
-        jobName: Build_Release_x86
-        buildConfiguration: Release
-        buildArchitecture: x86
-        runTests: false
-    - template: eng/build.yml
-      parameters:
-        agentOs: Windows_NT
-        jobName: Build_Release_arm64
-        buildConfiguration: Release
-        buildArchitecture: arm64
-        runTests: false
-
-    ## Linux 
-
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_Arm_Release
-        buildConfiguration: Release
-        buildArchitecture: arm
-        runtimeIdentifier: 'linux-arm'
-        linuxPortable: true
-        runTests: false
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_Arm64_Release
-        buildConfiguration: Release
-        buildArchitecture: arm64
-        runtimeIdentifier: 'linux-arm64'
-        linuxPortable: true
-        runTests: false
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_Linux_musl_Release_arm
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-arm-alpine'
-        buildConfiguration: Release
-        buildArchitecture: arm
-        runtimeIdentifier: 'linux-musl-arm'
-        additionalBuildParameters: '/p:OSName="linux-musl"'
-        linuxPortable: false
-        runTests: false
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_Linux_musl_Release_arm64
-        buildConfiguration: Release
-        buildArchitecture: arm64
-        runtimeIdentifier: 'linux-musl-arm64'
-        additionalBuildParameters: '/p:OSName="linux-musl"'
-        linuxPortable: false
-        runTests: false
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_Linux_musl_Release_x64
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.19-WithNode'
-        buildConfiguration: Release
-        buildArchitecture: x64
-        runtimeIdentifier: 'linux-musl-x64'
-        # Pass in HostOSName when running on alpine
-        additionalBuildParameters: '/p:HostOSName="linux-musl"'
-        linuxPortable: false
-        runTests: false
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_Linux_Portable_Deb_Release_x64
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-debpkg'
-        buildConfiguration: Release
-        buildArchitecture: x64
-        # Do not publish zips and tarballs. The linux-x64 binaries are
-        # already published by Build_LinuxPortable_Release_x64
-        additionalBuildParameters: '/p:PublishBinariesAndBadge=false /p:BuildSdkDeb=true'
-        linuxPortable: true
-        runTests: false
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_Linux_Portable_Rpm_Release_x64
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-fpm'
-        buildConfiguration: Release
-        buildArchitecture: x64
-        # Do not publish zips and tarballs. The linux-x64 binaries are
-        # already published by Build_LinuxPortable_Release_x64
-        additionalBuildParameters: '/p:PublishBinariesAndBadge=false /p:IsRPMBasedDistro=true'
-        linuxPortable: true
-        runTests: false
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_Linux_Portable_Rpm_Release_Arm64
-        container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-fpm'
-        buildConfiguration: Release
-        buildArchitecture: arm64
-        runtimeIdentifier: 'linux-arm64'
-        # Do not publish zips and tarballs. The linux-x64 binaries are
-        # already published by Build_LinuxPortable_Release_x64
-        additionalBuildParameters: '/p:PublishBinariesAndBadge=false /p:CLIBUILD_SKIP_TESTS=true  /p:IsRPMBasedDistro=true'
-        linuxPortable: true
-        runTests: false
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        jobName: Build_LinuxPortable_Release_x64
-        buildConfiguration: Release
-        buildArchitecture: x64
-        linuxPortable: true
-        runTests: false
-
-    # MacOS
-
-    - template: eng/build.yml
-      parameters:
-        agentOs: Darwin
-        jobName: Build_Release_x64
-        buildConfiguration: Release
-        buildArchitecture: x64
-        runTests: false
-    - template: eng/build.yml
-      parameters:
-        agentOs: Darwin
-        jobName: Build_Release_arm64
-        runtimeIdentifier: 'osx-arm64'
-        buildConfiguration: Release
-        buildArchitecture: arm64
-        runTests: false
-
-    ## Windows PGO Instrumentation builds
-
-    - template: eng/build.yml
-      parameters:
-        agentOs: Windows_NT
-        pgoInstrument: true
-        jobName: Build_Release_x64
-        buildConfiguration: Release
-        buildArchitecture: x64
-        additionalBuildParameters: '/p:PublishInternalAsset=true'
-        runTests: false
-    - template: eng/build.yml
-      parameters:
-        agentOs: Windows_NT
-        pgoInstrument: true
-        jobName: Build_Release_x86
-        buildConfiguration: Release
-        buildArchitecture: x86
-        runTests: false
-    - template: eng/build.yml
-      parameters:
-        agentOs: Windows_NT
-        pgoInstrument: true
-        jobName: Build_Release_arm64
-        buildConfiguration: Release
-        buildArchitecture: arm64
-        runTests: false
-
-    ## Linux PGO Instrumentation builds
-
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        pgoInstrument: true
-        jobName: Build_LinuxPortable_Release_x64
-        buildConfiguration: Release
-        buildArchitecture: x64
-        linuxPortable: true
-        runTests: false
-
-    - template: eng/build.yml
-      parameters:
-        agentOs: Linux
-        pgoInstrument: true
-        jobName: Build_Release_arm64
-        buildConfiguration: Release
-        buildArchitecture: arm64
-        linuxPortable: true
-        runTests: false
-
-  - template: /eng/common/templates/jobs/source-build.yml
-
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-  - stage: Publish
-    dependsOn:
-    - Build
-    jobs:
-    - template: /eng/common/templates/job/publish-build-assets.yml
-      parameters:
-        publishUsingPipelines: true
-        publishAssetsImmediately: true
+        image: 1es-windows-2022
+        os: windows
+      # https://docs.opensource.microsoft.com/tools/cg/component-detection/variables/
+      componentgovernance:
+        # This should be uncommented when a fix is available.
+        # See: https://dev.azure.com/mseng/1ES/_workitems/edit/2159448
+        # failOnAlert: false
+        # This should be removed when failOnAlert works properly.
+        ignoreDirectories: '.packages'
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - stage: Build
+      jobs:
+      # Build Retry Configuration
+      - job: Publish_Build_Configuration
         pool:
+          ${{ if eq(variables['System.TeamProject'], 'public') }}:
+            name: $(DncEngPublicBuildPool)
+            image: 1es-windows-2022-open
+            os: windows
           ${{ if eq(variables['System.TeamProject'], 'internal') }}:
             name: $(DncEngInternalBuildPool)
-            demands: ImageOverride -equals windows.vs2022.amd64
+            image: 1es-windows-2022
+            os: windows
+        steps:
+        - task: 1ES.PublishPipelineArtifact@1
+          displayName: Publish Build Config
+          inputs:
+            targetPath: $(Build.SourcesDirectory)\eng\buildConfiguration
+            artifactName: buildConfiguration
+
+        # PR-only jobs
+      - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+        # Windows
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Windows_NT
+            jobName: Build_Debug_x64
+            buildConfiguration: Debug
+            buildArchitecture: x64
+            additionalBuildParameters: '/p:PublishInternalAsset=true'
+            runTests: true
+
+        # Linux
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_Ubuntu_22_04_Debug_x64
+            container: ubuntu2204
+            buildConfiguration: Debug
+            buildArchitecture: x64
+            linuxPortable: true
+            runTests: true
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_Fedora_39_Debug_x64
+            container: fedora39
+            buildConfiguration: Debug
+            buildArchitecture: x64
+            linuxPortable: true
+            runTests: true
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_CentOS_8_Stream_Debug_x64
+            container: centosStream8
+            buildConfiguration: Debug
+            buildArchitecture: x64
+            linuxPortable: false
+            runTests: true
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_Debian_11_Debug_x64
+            container: debian11Amd64
+            buildConfiguration: Debug
+            buildArchitecture: x64
+            additionalBuildParameters: '/p:BuildSdkDeb=true'
+            linuxPortable: false
+            runTests: true
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_Arm64_Debug
+            buildConfiguration: Debug
+            buildArchitecture: arm64
+            runtimeIdentifier: 'linux-arm64'
+            linuxPortable: true
+            # Never run tests on arm64
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_Linux_musl_Debug_x64
+            container: alpine319WithNode
+            buildConfiguration: Debug
+            buildArchitecture: x64
+            runtimeIdentifier: 'linux-musl-x64'
+            # Pass in HostOSName when running on alpine
+            additionalBuildParameters: '/p:HostOSName="linux-musl"'
+            linuxPortable: false
+            runTests: true
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_LinuxPortable_Release_x64
+            buildConfiguration: Release
+            buildArchitecture: x64
+            linuxPortable: true
+            runTests: true
+
+        # MacOS
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Darwin
+            jobName: Build_Release_x64
+            buildConfiguration: Release
+            buildArchitecture: x64
+            runTests: true
+
+      # Official/PGO instrumentation Builds
+      - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+        # Windows
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Windows_NT
+            jobName: Build_Release_x64
+            buildConfiguration: Release
+            buildArchitecture: x64
+            additionalBuildParameters: '/p:PublishInternalAsset=true'
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Windows_NT
+            jobName: Build_Release_x86
+            buildConfiguration: Release
+            buildArchitecture: x86
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Windows_NT
+            jobName: Build_Release_arm64
+            buildConfiguration: Release
+            buildArchitecture: arm64
+            runTests: false
+
+        # Linux
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_Arm_Release
+            buildConfiguration: Release
+            buildArchitecture: arm
+            runtimeIdentifier: 'linux-arm'
+            linuxPortable: true
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_Arm64_Release
+            buildConfiguration: Release
+            buildArchitecture: arm64
+            runtimeIdentifier: 'linux-arm64'
+            linuxPortable: true
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_Linux_musl_Release_arm
+            container: ubuntu2204CrossArmAlpine
+            buildConfiguration: Release
+            buildArchitecture: arm
+            runtimeIdentifier: 'linux-musl-arm'
+            additionalBuildParameters: '/p:OSName="linux-musl"'
+            linuxPortable: false
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_Linux_musl_Release_arm64
+            buildConfiguration: Release
+            buildArchitecture: arm64
+            runtimeIdentifier: 'linux-musl-arm64'
+            additionalBuildParameters: '/p:OSName="linux-musl"'
+            linuxPortable: false
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_Linux_musl_Release_x64
+            container: alpine319WithNode
+            buildConfiguration: Release
+            buildArchitecture: x64
+            runtimeIdentifier: 'linux-musl-x64'
+            # Pass in HostOSName when running on alpine
+            additionalBuildParameters: '/p:HostOSName="linux-musl"'
+            linuxPortable: false
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_Linux_Portable_Deb_Release_x64
+            container: ubuntu2204DebPkg
+            buildConfiguration: Release
+            buildArchitecture: x64
+            # Do not publish zips and tarballs. The linux-x64 binaries are
+            # already published by Build_LinuxPortable_Release_x64
+            additionalBuildParameters: '/p:PublishBinariesAndBadge=false /p:BuildSdkDeb=true'
+            linuxPortable: true
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_Linux_Portable_Rpm_Release_x64
+            container: cblMariner20Fpm
+            buildConfiguration: Release
+            buildArchitecture: x64
+            # Do not publish zips and tarballs. The linux-x64 binaries are
+            # already published by Build_LinuxPortable_Release_x64
+            additionalBuildParameters: '/p:PublishBinariesAndBadge=false /p:IsRPMBasedDistro=true'
+            linuxPortable: true
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_Linux_Portable_Rpm_Release_Arm64
+            container: cblMariner20Fpm
+            buildConfiguration: Release
+            buildArchitecture: arm64
+            runtimeIdentifier: 'linux-arm64'
+            # Do not publish zips and tarballs. The linux-x64 binaries are
+            # already published by Build_LinuxPortable_Release_x64
+            additionalBuildParameters: '/p:PublishBinariesAndBadge=false /p:CLIBUILD_SKIP_TESTS=true  /p:IsRPMBasedDistro=true'
+            linuxPortable: true
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            jobName: Build_LinuxPortable_Release_x64
+            buildConfiguration: Release
+            buildArchitecture: x64
+            linuxPortable: true
+            runTests: false
+
+        # MacOS
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Darwin
+            jobName: Build_Release_x64
+            buildConfiguration: Release
+            buildArchitecture: x64
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Darwin
+            jobName: Build_Release_arm64
+            runtimeIdentifier: 'osx-arm64'
+            buildConfiguration: Release
+            buildArchitecture: arm64
+            runTests: false
+
+        # Windows PGO Instrumentation
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Windows_NT
+            pgoInstrument: true
+            jobName: Build_Release_x64
+            buildConfiguration: Release
+            buildArchitecture: x64
+            additionalBuildParameters: '/p:PublishInternalAsset=true'
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Windows_NT
+            pgoInstrument: true
+            jobName: Build_Release_x86
+            buildConfiguration: Release
+            buildArchitecture: x86
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Windows_NT
+            pgoInstrument: true
+            jobName: Build_Release_arm64
+            buildConfiguration: Release
+            buildArchitecture: arm64
+            runTests: false
+
+        # Linux PGO Instrumentation
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            pgoInstrument: true
+            jobName: Build_LinuxPortable_Release_x64
+            buildConfiguration: Release
+            buildArchitecture: x64
+            linuxPortable: true
+            runTests: false
+        - template: eng/build.yml@self
+          parameters:
+            agentOs: Linux
+            pgoInstrument: true
+            jobName: Build_Release_arm64
+            buildConfiguration: Release
+            buildArchitecture: arm64
+            linuxPortable: true
+            runTests: false
+
+        # Source Build
+        - template: /eng/common/templates-official/jobs/source-build.yml@self
+
+    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+      - stage: Publish
+        dependsOn:
+        - Build
+        jobs:
+        - template: /eng/common/templates-official/job/publish-build-assets.yml@self
+          parameters:
+            publishUsingPipelines: true
+            publishAssetsImmediately: true
+            pool:
+              name: $(DncEngInternalBuildPool)
+              image: 1es-windows-2022
+              os: windows
