@@ -19,16 +19,16 @@ namespace Test
         {
             global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_0(__builder, 0, 1, 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                              ParentValue
+#line (1,31)-(1,42) "x:\dir\subdir\Test\TestComponent.cshtml"
+ParentValue
 
 #line default
 #line hidden
 #nullable disable
             , 2, global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                            UpdateValue
+#line (1,61)-(1,72) "x:\dir\subdir\Test\TestComponent.cshtml"
+UpdateValue
 
 #line default
 #line hidden
@@ -37,8 +37,8 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (2,8)-(6,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     public CustomValue ParentValue { get; set; } = new CustomValue();
 
     public void UpdateValue(CustomValue value) => ParentValue = value;
@@ -46,6 +46,7 @@ namespace Test
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 namespace __Blazor.Test.TestComponent

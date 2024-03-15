@@ -1,5 +1,5 @@
 ﻿Source Location: (28:0,28 [53] x:\dir\subdir\Test\TestComponent.cshtml)
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
-Generated Location: (911:23,28 [53] )
+Generated Location: (895:23,0 [53] )
 |Microsoft.AspNetCore.Components.Web.RenderMode.Server|
 

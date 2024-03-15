@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.ComponentWithEditorRequiredParameters>(0);
             __builder.AddMultipleAttributes(1, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Collections.Generic.IEnumerable<global::System.Collections.Generic.KeyValuePair<string, object>>>(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                      new Dictionary<string, object>()
+#line (1,55)-(1,87) "x:\dir\subdir\Test\TestComponent.cshtml"
+new Dictionary<string, object>()
 
 #line default
 #line hidden

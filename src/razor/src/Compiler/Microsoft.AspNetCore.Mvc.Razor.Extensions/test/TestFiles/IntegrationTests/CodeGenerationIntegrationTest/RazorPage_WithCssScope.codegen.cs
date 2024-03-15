@@ -50,13 +50,14 @@ namespace AspNetCore
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
 #nullable restore
-#line 3 "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
-  
+#line (3,3)-(5,1) "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
+
     ViewData["Title"] = "Home page";
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("<div TestCssScope class=\"text-center\">\r\n    <h1 TestCssScope class=\"display-4\">Welcome</h1>\r\n    <p TestCssScope>Learn about<a TestCssScope href= \"https://docs.microsoft.com/aspnet/core\" > building Web apps with ASP.NET Core</a>.</p>\r\n</div>\r\n");
             __tagHelperExecutionContext = __tagHelperScopeManager.Begin("all", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
             }

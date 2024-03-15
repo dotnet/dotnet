@@ -36,7 +36,7 @@
       </trans-unit>
       <trans-unit id="Unknown_mapping_behavior">
         <source>Unknown mapping behavior</source>
-        <target state="new">Unknown mapping behavior</target>
+        <target state="translated">Comportement de mappage inconnu</target>
         <note />
       </trans-unit>
     </body>

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
 using Xunit.Abstractions;
 using static Microsoft.AspNetCore.Razor.Test.Common.TestProjectData;
@@ -30,12 +31,20 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
         var languageServerFeatureOptions = TestLanguageServerFeatureOptions.Instance;
         _projectConfigurationFilePathStore = new TestProjectConfigurationFilePathStore();
 
+        var serviceProvider = VsMocks.CreateServiceProvider(static b =>
+            b.AddComponentModel(static b =>
+            {
+                var startupInitializer = new RazorStartupInitializer([]);
+                b.AddExport(startupInitializer);
+            }));
+
         _projectManager = CreateProjectSnapshotManager();
 
         _fallbackProjectManger = new FallbackProjectManager(
+            serviceProvider,
             _projectConfigurationFilePathStore,
             languageServerFeatureOptions,
-            _projectManager.GetAccessor(),
+            _projectManager,
             Dispatcher,
             WorkspaceProvider,
             NoOpTelemetryReporter.Instance);

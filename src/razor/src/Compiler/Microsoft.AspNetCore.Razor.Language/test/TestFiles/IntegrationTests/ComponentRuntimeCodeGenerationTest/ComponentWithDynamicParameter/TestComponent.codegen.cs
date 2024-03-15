@@ -18,20 +18,22 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
             __builder.OpenElement(0, "strong");
+            __builder.AddContent(1, 
 #nullable restore
-#line (1,10)-(1,21) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder.AddContent(1, TestDynamic);
+#line (1,10)-(1,21) "x:\dir\subdir\Test\TestComponent.cshtml"
+TestDynamic
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.CloseElement();
             __builder.AddMarkupContent(2, "\r\n\r\n");
             __builder.OpenComponent<global::Test.TestComponent>(3);
             __builder.AddComponentParameter(4, "TestDynamic", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<dynamic>(
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-                            4
+#line (3,29)-(3,30) "x:\dir\subdir\Test\TestComponent.cshtml"
+4
 
 #line default
 #line hidden
@@ -41,14 +43,15 @@ __builder.AddContent(1, TestDynamic);
         }
         #pragma warning restore 1998
 #nullable restore
-#line 5 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (5,8)-(8,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     [Parameter]
     public dynamic TestDynamic { get; set; }
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

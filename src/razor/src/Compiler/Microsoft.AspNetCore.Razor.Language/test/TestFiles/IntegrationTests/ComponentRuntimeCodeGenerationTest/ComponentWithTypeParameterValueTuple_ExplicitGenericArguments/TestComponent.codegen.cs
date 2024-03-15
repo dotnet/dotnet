@@ -13,7 +13,7 @@ namespace Test
     #nullable restore
     public partial class TestComponent<
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,12)-(1,19) "x:\dir\subdir\Test\TestComponent.cshtml"
 TDomain
 
 #line default
@@ -21,7 +21,7 @@ TDomain
 #nullable disable
     ,
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (2,12)-(2,18) "x:\dir\subdir\Test\TestComponent.cshtml"
 TValue
 
 #line default
@@ -29,14 +29,14 @@ TValue
 #nullable disable
     > : global::Microsoft.AspNetCore.Components.ComponentBase
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,20)-(1,42) "x:\dir\subdir\Test\TestComponent.cshtml"
 where TDomain : struct
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (2,19)-(2,40) "x:\dir\subdir\Test\TestComponent.cshtml"
 where TValue : struct
 
 #line default
@@ -50,8 +50,8 @@ where TValue : struct
             __builder.OpenComponent<global::Test.TestComponent<decimal, decimal>>(0);
             __builder.AddComponentParameter(1, "Data", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Collections.Generic.List<(decimal Domain, decimal Value)>>(
 #nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
-                     null
+#line (4,22)-(4,26) "x:\dir\subdir\Test\TestComponent.cshtml"
+null
 
 #line default
 #line hidden
@@ -61,14 +61,15 @@ where TValue : struct
         }
         #pragma warning restore 1998
 #nullable restore
-#line 6 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (6,8)-(9,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     [Parameter]
     public List<(TDomain Domain, TValue Value)> Data { get; set; }
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

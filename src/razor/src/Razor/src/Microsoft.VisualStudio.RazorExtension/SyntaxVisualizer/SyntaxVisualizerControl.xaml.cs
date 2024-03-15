@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.AspNetCore.Razor.Language;
@@ -502,7 +501,7 @@ internal partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTable
 
         var filePath = hostDocumentUri.GetAbsoluteOrUNCPath().Replace('/', '\\');
 
-        var codeDocument = _joinableTaskFactory.Run(() => _codeDocumentProvider.GetRazorCodeDocumentAsync(filePath, CancellationToken.None));
+        var codeDocument = _joinableTaskFactory.Run(() => _codeDocumentProvider.GetRazorCodeDocumentAsync(filePath));
         if (codeDocument is null)
         {
             return null;

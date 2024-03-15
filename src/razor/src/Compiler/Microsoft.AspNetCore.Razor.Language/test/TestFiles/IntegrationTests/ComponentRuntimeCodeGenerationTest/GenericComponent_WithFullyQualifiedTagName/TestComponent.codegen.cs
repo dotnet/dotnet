@@ -19,21 +19,23 @@ namespace Test
         {
             global::__Blazor.Test.TestComponent.TypeInference.CreateTest_MyComponent_0(__builder, 0, 1, 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                          "hi"
+#line (1,27)-(1,31) "x:\dir\subdir\Test\TestComponent.cshtml"
+"hi"
 
 #line default
 #line hidden
 #nullable disable
             , 2, (context) => (__builder2) => {
                 __builder2.OpenElement(3, "div");
+                __builder2.AddContent(4, 
 #nullable restore
-#line (2,9)-(2,26) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder2.AddContent(4, context.ToLower());
+#line (2,9)-(2,26) "x:\dir\subdir\Test\TestComponent.cshtml"
+context.ToLower()
 
 #line default
 #line hidden
 #nullable disable
+                );
                 __builder2.CloseElement();
             }
             );

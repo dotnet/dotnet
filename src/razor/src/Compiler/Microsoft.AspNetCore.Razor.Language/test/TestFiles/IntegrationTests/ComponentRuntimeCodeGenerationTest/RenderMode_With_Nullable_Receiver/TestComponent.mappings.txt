@@ -1,6 +1,6 @@
 ﻿Source Location: (280:9,30 [20] x:\dir\subdir\Test\TestComponent.cshtml)
 |Container.RenderMode|
-Generated Location: (912:23,28 [20] )
+Generated Location: (897:23,0 [20] )
 |Container.RenderMode|
 
 Source Location: (8:1,1 [239] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -12,7 +12,7 @@ Source Location: (8:1,1 [239] x:\dir\subdir\Test\TestComponent.cshtml)
 
     RenderModeContainer? Container => null;
 |
-Generated Location: (1221:35,1 [239] )
+Generated Location: (1217:36,0 [239] )
 |
     public class RenderModeContainer
     {

@@ -4,12 +4,12 @@
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.CodeAnalysis.Host;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-internal interface IProjectSnapshotManager : ILanguageService
+internal interface IProjectSnapshotManager
 {
+    event EventHandler<ProjectChangeEventArgs> PriorityChanged;
     event EventHandler<ProjectChangeEventArgs> Changed;
 
     ImmutableArray<IProjectSnapshot> GetProjects();

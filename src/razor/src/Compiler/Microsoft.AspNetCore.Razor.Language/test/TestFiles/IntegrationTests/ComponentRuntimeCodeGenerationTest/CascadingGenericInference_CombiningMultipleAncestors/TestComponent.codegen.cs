@@ -20,8 +20,8 @@ namespace Test
             {
                 global::__Blazor.Test.TestComponent.TypeInference.CreateParentOne_0_CaptureParameters(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                   int.MaxValue
+#line (1,20)-(1,32) "x:\dir\subdir\Test\TestComponent.cshtml"
+int.MaxValue
 
 #line default
 #line hidden
@@ -31,8 +31,8 @@ namespace Test
                     {
                         global::__Blazor.Test.TestComponent.TypeInference.CreateParentTwo_1_CaptureParameters(
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                        "Hello"
+#line (2,25)-(2,32) "x:\dir\subdir\Test\TestComponent.cshtml"
+"Hello"
 
 #line default
 #line hidden

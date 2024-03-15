@@ -9,12 +9,13 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-using Microsoft.AspNetCore.Components.Web;
+#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+using Microsoft.AspNetCore.Components.Web
 
 #line default
 #line hidden
 #nullable disable
+    ;
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
@@ -26,8 +27,8 @@ using Microsoft.AspNetCore.Components.Web;
             __builder.AddAttribute(1, "method", (object)("post"));
             __builder.AddAttribute(2, "onsubmit", (object)(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                        () => { }
+#line (2,41)-(2,50) "x:\dir\subdir\Test\TestComponent.cshtml"
+() => { }
 
 #line default
 #line hidden
@@ -40,8 +41,8 @@ using Microsoft.AspNetCore.Components.Web;
             __builder.AddAttribute(6, "method", (object)("post"));
             __builder.AddAttribute(7, "onsubmit", (object)(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                        () => { }
+#line (3,41)-(3,50) "x:\dir\subdir\Test\TestComponent.cshtml"
+() => { }
 
 #line default
 #line hidden
@@ -49,8 +50,8 @@ using Microsoft.AspNetCore.Components.Web;
             )));
             __builder.AddAttribute(8, "@formname", (object)(
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                                "named-form-handler"
+#line (3,65)-(3,85) "x:\dir\subdir\Test\TestComponent.cshtml"
+"named-form-handler"
 
 #line default
 #line hidden

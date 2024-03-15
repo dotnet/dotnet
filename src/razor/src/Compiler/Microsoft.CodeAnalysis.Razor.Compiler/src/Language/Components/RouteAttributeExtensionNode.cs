@@ -1,20 +1,14 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal sealed class RouteAttributeExtensionNode : ExtensionIntermediateNode
+internal sealed class RouteAttributeExtensionNode(string template) : ExtensionIntermediateNode
 {
-    public RouteAttributeExtensionNode(ReadOnlyMemory<char> template)
-    {
-        Template = template;
-    }
-
-    public ReadOnlyMemory<char> Template { get; }
+    public string Template { get; } = template;
 
     public override IntermediateNodeCollection Children => IntermediateNodeCollection.ReadOnly;
 
@@ -22,13 +16,22 @@ internal sealed class RouteAttributeExtensionNode : ExtensionIntermediateNode
 
     public override void WriteNode(CodeTarget target, CodeRenderingContext context)
     {
-        context.CodeWriter.Write("[");
-        context.CodeWriter.Write("global::");
+        context.CodeWriter.Write("[global::");
         context.CodeWriter.Write(ComponentsApi.RouteAttribute.FullTypeName);
-        context.CodeWriter.Write("(\"");
-        context.CodeWriter.Write(Template);
-        context.CodeWriter.Write("\")");
-        context.CodeWriter.Write("]");
-        context.CodeWriter.WriteLine();
+        if (context.Options.DesignTime)
+        {
+            context.CodeWriter.Write("(");
+            context.CodeWriter.Write(Template);
+        }
+        else
+        {
+            context.CodeWriter.WriteLine("(");
+            context.CodeWriter.WriteLine("// language=Route,Component");
+            using (context.CodeWriter.BuildEnhancedLinePragma(Source, context))
+            {
+                context.CodeWriter.WriteLine(Template);
+            }
+        }
+        context.CodeWriter.WriteLine(")]");
     }
 }

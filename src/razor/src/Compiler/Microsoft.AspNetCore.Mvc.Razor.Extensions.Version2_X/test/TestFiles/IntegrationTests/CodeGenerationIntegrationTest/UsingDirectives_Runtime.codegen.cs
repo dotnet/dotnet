@@ -12,20 +12,24 @@ namespace AspNetCore
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
-#line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
-using System.ComponentModel;
+#line (1,2)-(2,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
+using System.ComponentModel
 
-#line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
-using System.Collections;
+    ;
+#line (2,2)-(3,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
+using System.Collections
 
-#line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
-using System;
+    ;
+#line (3,2)-(4,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
+using System
 
-#line 4 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
-using System;
+    ;
+#line (4,2)-(4,14) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml"
+using System
 
 #line default
 #line hidden
+    ;
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"9194971d2fb7908a02b02841f18655ccc0908a204c2fa948e8dc7e947269da86", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/UsingDirectives.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_UsingDirectives : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<dynamic>
     {

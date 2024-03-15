@@ -5,35 +5,28 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 
 [Export(typeof(RazorCodeDocumentProvidingSnapshotChangeTrigger))]
-[Export(typeof(IProjectSnapshotChangeTrigger))]
-internal class RazorCodeDocumentProvidingSnapshotChangeTrigger : IProjectSnapshotChangeTrigger
+[Export(typeof(IRazorStartupService))]
+internal class RazorCodeDocumentProvidingSnapshotChangeTrigger : IRazorStartupService
 {
     private readonly HashSet<string> _openDocuments = new(FilePathComparer.Instance);
     private readonly Dictionary<string, ProjectKey> _documentProjectMap = new(FilePathComparer.Instance);
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher;
-    private ProjectSnapshotManagerBase? _projectManager;
+    private readonly IProjectSnapshotManager _projectManager;
 
     public event EventHandler<string>? DocumentReady;
 
     [ImportingConstructor]
-    public RazorCodeDocumentProvidingSnapshotChangeTrigger(ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher)
-    {
-        _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
-    }
-
-    public void Initialize(ProjectSnapshotManagerBase projectManager)
+    public RazorCodeDocumentProvidingSnapshotChangeTrigger(IProjectSnapshotManager projectManager)
     {
         _projectManager = projectManager;
-
         _projectManager.Changed += ProjectManager_Changed;
     }
 
@@ -67,7 +60,7 @@ internal class RazorCodeDocumentProvidingSnapshotChangeTrigger : IProjectSnapsho
         }
     }
 
-    public async Task<RazorCodeDocument?> GetRazorCodeDocumentAsync(string filePath, CancellationToken cancellationToken)
+    public async Task<RazorCodeDocument?> GetRazorCodeDocumentAsync(string filePath)
     {
         if (!_documentProjectMap.TryGetValue(filePath, out var projectKey))
         {
@@ -75,21 +68,7 @@ internal class RazorCodeDocumentProvidingSnapshotChangeTrigger : IProjectSnapsho
             return null;
         }
 
-        var project = await _projectSnapshotManagerDispatcher.RunAsync(
-            () =>
-            {
-                if (_projectManager is { } projectManager &&
-                    projectManager.TryGetLoadedProject(projectKey, out var project))
-                {
-                    return project;
-                }
-                else
-                {
-                    return null;
-                }
-            }, cancellationToken);
-
-        if (project is null)
+        if (!_projectManager.TryGetLoadedProject(projectKey, out var project))
         {
             return null;
         }

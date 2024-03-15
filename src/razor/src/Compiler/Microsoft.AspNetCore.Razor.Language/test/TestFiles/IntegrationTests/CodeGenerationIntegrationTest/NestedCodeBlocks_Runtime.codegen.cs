@@ -12,29 +12,32 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
 #nullable restore
-#line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedCodeBlocks.cshtml"
- if(foo) {
+#line (1,2)-(2,5) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedCodeBlocks.cshtml"
+if(foo) {
     
 
 #line default
 #line hidden
 #nullable disable
+
 #nullable restore
-#line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedCodeBlocks.cshtml"
-     if(bar) {
+#line (2,6)-(3,6) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedCodeBlocks.cshtml"
+if(bar) {
     }
 
 #line default
 #line hidden
 #nullable disable
+
 #nullable restore
-#line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedCodeBlocks.cshtml"
-     
+#line (3,6)-(4,2) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NestedCodeBlocks.cshtml"
+
 }
 
 #line default
 #line hidden
 #nullable disable
+
         }
         #pragma warning restore 1998
     }

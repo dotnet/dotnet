@@ -5,7 +5,7 @@ using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LiveShare.Razor.Serialization;
 using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json;
@@ -19,7 +19,7 @@ namespace Microsoft.VisualStudio.LiveShare.Razor.Host;
     Role = ServiceRole.RemoteService)]
 [method: ImportingConstructor]
 internal class ProjectSnapshotManagerProxyFactory(
-    IProjectSnapshotManagerAccessor projectManagerAccessor,
+    IProjectSnapshotManager projectManager,
     ProjectSnapshotManagerDispatcher dispatcher,
     JoinableTaskContext joinableTaskContext) : ICollaborationServiceFactory
 {
@@ -29,7 +29,7 @@ internal class ProjectSnapshotManagerProxyFactory(
         serializer.Converters.RegisterRazorLiveShareConverters();
 
         var service = new ProjectSnapshotManagerProxy(
-            session, projectManagerAccessor.Instance, dispatcher, joinableTaskContext.Factory);
+            session, projectManager, dispatcher, joinableTaskContext.Factory);
         return Task.FromResult<ICollaborationService>(service);
     }
 }

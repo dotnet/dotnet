@@ -29,8 +29,8 @@ namespace Test
             __builder.AddAttribute(6, "@onsubmit", "() => { }");
             string __formName1_1 = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>(
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                       "named-form-handler"
+#line (2,56)-(2,76) "x:\dir\subdir\Test\TestComponent.cshtml"
+"named-form-handler"
 
 #line default
 #line hidden

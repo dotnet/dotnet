@@ -2,7 +2,7 @@
 |if (true)
 {
     |
-Generated Location: (829:23,1 [18] )
+Generated Location: (838:23,0 [18] )
 |if (true)
 {
     |
@@ -11,7 +11,7 @@ Source Location: (66:3,38 [5] x:\dir\subdir\Test\TestComponent.cshtml)
 |
 }
 |
-Generated Location: (1070:33,38 [5] )
+Generated Location: (1054:34,0 [5] )
 |
 }
 |

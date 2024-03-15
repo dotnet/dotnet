@@ -1,8 +1,25 @@
-﻿Source Location: (170:4,12 [35] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (1:0,1 [43] x:\dir\subdir\Test\TestComponent.cshtml)
+|using Microsoft.AspNetCore.Components.Web
+|
+Generated Location: (371:12,0 [43] )
+|using Microsoft.AspNetCore.Components.Web
+|
+
+Source Location: (130:2,79 [8] x:\dir\subdir\Test\TestComponent.cshtml)
+|() => {}|
+Generated Location: (1212:31,0 [8] )
+|() => {}|
+
+Source Location: (86:2,35 [4] x:\dir\subdir\Test\TestComponent.cshtml)
+|text|
+Generated Location: (1486:40,0 [4] )
+|text|
+
+Source Location: (170:4,12 [35] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     private string text = "hi";
 |
-Generated Location: (2065:53,12 [35] )
+Generated Location: (1990:54,0 [35] )
 |
     private string text = "hi";
 |

@@ -72,12 +72,10 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
         Dispatcher = new LSPProjectSnapshotManagerDispatcher(ErrorReporter);
     }
 
-    internal DefaultProjectSnapshotManager CreateProjectSnapshotManager()
+    internal ProjectSnapshotManager CreateProjectSnapshotManager()
     {
-        return new DefaultProjectSnapshotManager(
-            triggers: [],
+        return new ProjectSnapshotManager(
             projectEngineFactoryProvider: StaticProjectEngineFactoryProvider.Instance,
-            dispatcher: Dispatcher,
-            errorReporter: ErrorReporter);
+            dispatcher: Dispatcher);
     }
 }

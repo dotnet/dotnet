@@ -24,52 +24,63 @@ namespace AspNetCoreGeneratedDocument
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
 #nullable restore
-#line 1 "Views/Home/Index.cshtml"
-   var msg = "What's up"; 
+#line (1,3)-(1,27) "Views/Home/Index.cshtml"
+ var msg = "What's up"; 
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("<script>console.log(\'");
+            Write(
 #nullable restore
-#line (2,23)-(2,26) 6 "Views/Home/Index.cshtml"
-Write(msg);
+#line (2,23)-(2,26) "Views/Home/Index.cshtml"
+msg
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\');</script>\r\n<div>console.log(\'");
+            Write(
 #nullable restore
-#line (3,20)-(3,23) 6 "Views/Home/Index.cshtml"
-Write(msg);
+#line (3,20)-(3,23) "Views/Home/Index.cshtml"
+msg
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\');</div>\r\n<script>console.log(\'No variable\');</script>\r\n<div>console.log(\'No variable\');</div>\r\n<script>\r\n    console.log(\'");
+            Write(
 #nullable restore
-#line (7,19)-(7,22) 6 "Views/Home/Index.cshtml"
-Write(msg);
+#line (7,19)-(7,22) "Views/Home/Index.cshtml"
+msg
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\');\r\n</script>\r\n<div>\r\n    console.log(\'");
+            Write(
 #nullable restore
-#line (10,19)-(10,22) 6 "Views/Home/Index.cshtml"
-Write(msg);
+#line (10,19)-(10,22) "Views/Home/Index.cshtml"
+msg
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\');\r\n</div>\r\n<script>\r\n    console.log(\'No variable\');\r\n</script>\r\n<div>\r\n    console.log(\'No variable\');\r\n</div>\r\n");
+            Write(
 #nullable restore
-#line (18,3)-(18,78) 6 "Views/Home/Index.cshtml"
-Write(await Html.RenderComponentAsync<MyApp.Shared.Component1>(RenderMode.Static));
+#line (18,3)-(18,78) "Views/Home/Index.cshtml"
+await Html.RenderComponentAsync<MyApp.Shared.Component1>(RenderMode.Static)
 
 #line default
 #line hidden
 #nullable disable
+            );
         }
         #pragma warning restore 1998
         #nullable restore

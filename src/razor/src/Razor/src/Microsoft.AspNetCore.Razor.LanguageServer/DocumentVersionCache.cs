@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -15,25 +16,22 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 //       server, so it doesn't clean up after itself well. In the long run, this hopefully won't matter, as we can remove it
 //       but leaving this note here because you never know.
 [Export(typeof(IDocumentVersionCache)), Shared]
-[method: ImportingConstructor]
-internal sealed partial class DocumentVersionCache() : IDocumentVersionCache, IProjectSnapshotChangeTrigger
+internal sealed partial class DocumentVersionCache : IDocumentVersionCache, IRazorStartupService
 {
     internal const int MaxDocumentTrackingCount = 20;
 
     private readonly Dictionary<string, List<DocumentEntry>> _documentLookup_NeedsLock = new(FilePathComparer.Instance);
     private readonly ReadWriterLocker _lock = new();
-    private ProjectSnapshotManagerBase? _projectSnapshotManager;
+    private readonly IProjectSnapshotManager _projectManager;
 
-    private ProjectSnapshotManagerBase ProjectSnapshotManager
-        => _projectSnapshotManager ?? throw new InvalidOperationException("ProjectSnapshotManager accessed before Initialized was called.");
-
-    public void Initialize(ProjectSnapshotManagerBase projectManager)
+    [ImportingConstructor]
+    public DocumentVersionCache(IProjectSnapshotManager projectManager)
     {
-        _projectSnapshotManager = projectManager;
-        ProjectSnapshotManager.Changed += ProjectSnapshotManager_Changed;
+        _projectManager = projectManager;
+        _projectManager.Changed += ProjectManager_Changed;
     }
 
-    private void ProjectSnapshotManager_Changed(object? sender, ProjectChangeEventArgs args)
+    private void ProjectManager_Changed(object? sender, ProjectChangeEventArgs args)
     {
         // Don't do any work if the solution is closing
         if (args.SolutionIsClosing)
@@ -48,7 +46,7 @@ internal sealed partial class DocumentVersionCache() : IDocumentVersionCache, IP
             using (_lock.EnterUpgradeableReadLock())
             {
                 if (_documentLookup_NeedsLock.ContainsKey(documentFilePath) &&
-                    !ProjectSnapshotManager.IsDocumentOpen(documentFilePath))
+                    !_projectManager.IsDocumentOpen(documentFilePath))
                 {
                     using (_lock.EnterWriteLock())
                     {
@@ -61,7 +59,7 @@ internal sealed partial class DocumentVersionCache() : IDocumentVersionCache, IP
 
         // Any event that has a project may have changed the state of the documents
         // and therefore requires us to mark all existing documents as latest.
-        if (!ProjectSnapshotManager.TryGetLoadedProject(args.ProjectKey, out var project))
+        if (!_projectManager.TryGetLoadedProject(args.ProjectKey, out var project))
         {
             // Project no longer loaded, so there's no work to do.
             return;

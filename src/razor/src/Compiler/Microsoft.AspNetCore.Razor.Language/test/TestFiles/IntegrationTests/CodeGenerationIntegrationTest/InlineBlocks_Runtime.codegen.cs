@@ -16,30 +16,32 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
             WriteAttributeValue("", 43, new Microsoft.AspNetCore.Mvc.Razor.HelperResult(async(__razor_attribute_value_writer) => {
                 PushWriter(__razor_attribute_value_writer);
 #nullable restore
-#line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml"
-              if(link != null) { 
+#line (2,15)-(2,34) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml"
+if(link != null) { 
 
 #line default
 #line hidden
 #nullable disable
+                Write(
 #nullable restore
-#line (2,35)-(2,39) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml"
-Write(link);
+#line (2,35)-(2,39) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml"
+link
 
 #line default
 #line hidden
 #nullable disable
+                );
 #nullable restore
-#line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml"
-                                       } else { 
+#line (2,39)-(2,49) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml"
+ } else { 
 
 #line default
 #line hidden
 #nullable disable
                 WriteLiteral("#");
 #nullable restore
-#line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml"
-                                                               }
+#line (2,63)-(2,65) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/InlineBlocks.cshtml"
+ }
 
 #line default
 #line hidden

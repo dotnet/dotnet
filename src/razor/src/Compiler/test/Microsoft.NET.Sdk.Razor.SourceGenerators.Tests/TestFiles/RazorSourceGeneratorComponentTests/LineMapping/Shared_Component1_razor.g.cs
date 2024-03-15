@@ -20,19 +20,21 @@ namespace MyApp.Shared
         {
             __builder.OpenElement(0, "p");
             __builder.AddContent(1, "The solution to all problems is: ");
+            __builder.AddContent(2, 
 #nullable restore
-#line (1,39)-(1,50) 24 "Shared/Component1.razor"
-__builder.AddContent(2, RaiseHere());
+#line (1,39)-(1,50) "Shared/Component1.razor"
+RaiseHere()
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.CloseElement();
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "Shared/Component1.razor"
- 
+#line (3,2)-(9,1) "Shared/Component1.razor"
+
     private int magicNumber = RaiseHere();
     private static int RaiseHere()
     {
@@ -42,6 +44,7 @@ __builder.AddContent(2, RaiseHere());
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

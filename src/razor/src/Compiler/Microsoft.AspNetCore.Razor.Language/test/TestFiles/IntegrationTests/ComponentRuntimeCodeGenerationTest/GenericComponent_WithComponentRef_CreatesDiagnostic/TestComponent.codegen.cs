@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.MyComponent<int>>(0);
             __builder.AddComponentParameter(1, "Item", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<int>(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                             3
+#line (1,30)-(1,31) "x:\dir\subdir\Test\TestComponent.cshtml"
+3
 
 #line default
 #line hidden
@@ -29,26 +29,28 @@ namespace Test
             ));
             __builder.AddComponentReferenceCapture(2, (__value) => {
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                      _my = (Test.MyComponent<int>)__value;
+#line (1,39)-(1,42) "x:\dir\subdir\Test\TestComponent.cshtml"
+_my
 
 #line default
 #line hidden
 #nullable disable
+                 = (Test.MyComponent<int>)__value;
             }
             );
             __builder.CloseComponent();
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (3,8)-(6,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     private MyComponent<int> _my;
     public void Foo() { System.GC.KeepAlive(_my); }
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

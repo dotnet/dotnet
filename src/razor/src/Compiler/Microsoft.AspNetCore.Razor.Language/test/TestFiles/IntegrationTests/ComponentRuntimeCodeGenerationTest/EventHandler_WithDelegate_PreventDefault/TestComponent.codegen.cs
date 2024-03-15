@@ -9,12 +9,13 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-using Microsoft.AspNetCore.Components.Web;
+#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+using Microsoft.AspNetCore.Components.Web
 
 #line default
 #line hidden
 #nullable disable
+    ;
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
@@ -25,8 +26,8 @@ using Microsoft.AspNetCore.Components.Web;
             __builder.OpenElement(0, "input");
             __builder.AddAttribute(1, "onfocus", global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::Microsoft.AspNetCore.Components.Web.FocusEventArgs>(this, 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                 OnFocus
+#line (2,18)-(2,25) "x:\dir\subdir\Test\TestComponent.cshtml"
+OnFocus
 
 #line default
 #line hidden
@@ -34,8 +35,8 @@ using Microsoft.AspNetCore.Components.Web;
             ));
             __builder.AddEventPreventDefaultAttribute(2, "onfocus", 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                   ShouldPreventDefault()
+#line (2,52)-(2,74) "x:\dir\subdir\Test\TestComponent.cshtml"
+ShouldPreventDefault()
 
 #line default
 #line hidden
@@ -45,8 +46,8 @@ using Microsoft.AspNetCore.Components.Web;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (3,8)-(7,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     void OnFocus(FocusEventArgs e) { }
 
     bool ShouldPreventDefault() { return false; }
@@ -54,6 +55,7 @@ using Microsoft.AspNetCore.Components.Web;
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

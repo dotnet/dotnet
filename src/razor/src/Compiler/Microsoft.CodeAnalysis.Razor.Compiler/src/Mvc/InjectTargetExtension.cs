@@ -24,38 +24,50 @@ public class InjectTargetExtension : IInjectTargetExtension
             throw new ArgumentNullException(nameof(node));
         }
 
-        var property = $"public {node.TypeName} {node.MemberName} {{ get; private set; }}";
-        if (!context.Options.SuppressNullabilityEnforcement)
+        if (!context.Options.DesignTime && !string.IsNullOrWhiteSpace(node.TypeSource?.FilePath))
         {
-            property += " = default!;";
-        }
-
-        if (node.Source.HasValue)
-        {
-            using (context.CodeWriter.BuildLinePragma(node.Source.Value, context))
+            context.CodeWriter.WriteLine(RazorInjectAttribute);
+            context.CodeWriter.WriteAutoPropertyDeclaration(["public"], node.TypeName, node.MemberName, node.TypeSource, node.MemberSource, context, privateSetter: true);
+            if (!context.Options.SuppressNullabilityEnforcement)
             {
-                WriteProperty();
+                context.CodeWriter.WriteLine(" = default!;");
             }
         }
         else
         {
-            WriteProperty();
-        }
-
-        void WriteProperty()
-        {
+            var property = $"public {node.TypeName} {node.MemberName} {{ get; private set; }}";
             if (!context.Options.SuppressNullabilityEnforcement)
             {
-                context.CodeWriter.WriteLine("#nullable restore");
+                property += " = default!;";
             }
 
-            context.CodeWriter
-                .WriteLine(RazorInjectAttribute)
-                .WriteLine(property);
-
-            if (!context.Options.SuppressNullabilityEnforcement)
+            if (node.Source.HasValue)
             {
-                context.CodeWriter.WriteLine("#nullable disable");
+                using (context.CodeWriter.BuildLinePragma(node.Source.Value, context))
+                {
+                    WriteProperty();
+                }
+            }
+            else
+            {
+                WriteProperty();
+            }
+
+            void WriteProperty()
+            {
+                if (!context.Options.SuppressNullabilityEnforcement)
+                {
+                    context.CodeWriter.WriteLine("#nullable restore");
+                }
+
+                context.CodeWriter
+                    .WriteLine(RazorInjectAttribute)
+                    .WriteLine(property);
+
+                if (!context.Options.SuppressNullabilityEnforcement)
+                {
+                    context.CodeWriter.WriteLine("#nullable disable");
+                }
             }
         }
     }

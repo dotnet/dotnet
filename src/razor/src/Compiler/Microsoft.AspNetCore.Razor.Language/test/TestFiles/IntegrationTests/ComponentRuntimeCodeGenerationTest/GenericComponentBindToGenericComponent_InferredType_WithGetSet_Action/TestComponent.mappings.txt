@@ -1,7 +1,17 @@
 ﻿Source Location: (11:0,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |TParam|
-Generated Location: (462:16,0 [6] )
+Generated Location: (474:16,0 [6] )
 |TParam|
+
+Source Location: (49:1,30 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|ParentValue|
+Generated Location: (985:30,0 [11] )
+|ParentValue|
+
+Source Location: (79:1,60 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|UpdateValue|
+Generated Location: (1330:38,0 [11] )
+|UpdateValue|
 
 Source Location: (103:2,7 [128] x:\dir\subdir\Test\TestComponent.cshtml)
 |
@@ -9,7 +19,7 @@ Source Location: (103:2,7 [128] x:\dir\subdir\Test\TestComponent.cshtml)
 
     public void UpdateValue(TParam value) { ParentValue = value; }
 |
-Generated Location: (1604:48,7 [128] )
+Generated Location: (1553:48,0 [128] )
 |
     public TParam ParentValue { get; set; } = default;
 

@@ -19,9 +19,7 @@ namespace System.Windows.Forms.Design;
 /// </summary>
 public partial class ControlDesigner : ComponentDesigner
 {
-#pragma warning disable IDE1006 // Naming Styles - Public API
     protected static readonly Point InvalidPoint = new(int.MinValue, int.MinValue);
-#pragma warning restore IDE1006
 
     private static uint s_currentProcessId;
     private IDesignerHost _host;                        // the host for our designer
@@ -209,8 +207,7 @@ public partial class ControlDesigner : ComponentDesigner
 
     private IDesignerTarget DesignerTarget { get; set; }
 
-    private Dictionary<IntPtr, bool> SubclassedChildWindows
-        => _subclassedChildren ??= [];
+    private Dictionary<IntPtr, bool> SubclassedChildWindows => _subclassedChildren ??= [];
 
     /// <summary>
     ///  Retrieves a set of rules concerning the movement capabilities of a component. This should be one or more
@@ -1565,14 +1562,29 @@ public partial class ControlDesigner : ComponentDesigner
     ///  Called each time the cursor needs to be set.
     /// </summary>
     /// <remarks>
-    /// The ControlDesigner behavior here will set the cursor to one of three things:
-    ///
-    ///  1.  If the toolbox service has a tool selected, it will allow the toolbox service to set the cursor.
-    ///  2.  If the selection UI service shows a locked selection, or if there is no location property on the
-    ///  control, then the default arrow will be set.
-    ///  3.  Otherwise, the four headed arrow will be set to indicate that the component can be clicked and moved.
-    ///  4.  If the user is currently dragging a component, the crosshair cursor will be used instead of the four
-    ///  headed arrow.
+    ///  <para>
+    ///   The ControlDesigner behavior here will set the cursor to one of three things:
+    ///  </para>
+    ///  <list type="number">
+    ///   <item>
+    ///    <description>
+    ///     If the toolbox service has a tool selected, it will allow the toolbox service to set the cursor.
+    ///    </description>
+    ///   </item>
+    ///   <item>
+    ///    <description>
+    ///     If the selection UI service shows a locked selection, or if there is no location property on the
+    ///     control, then the default arrow will be set. Otherwise, the four headed arrow will be set to indicate that
+    ///     the component can be clicked and moved.
+    ///    </description>
+    ///   </item>
+    ///   <item>
+    ///    <description>
+    ///     If the user is currently dragging a component, the crosshair cursor will be used instead of the four
+    ///     headed arrow.
+    ///    </description>
+    ///   </item>
+    ///  </list>
     /// </remarks>
     protected virtual void OnSetCursor()
     {

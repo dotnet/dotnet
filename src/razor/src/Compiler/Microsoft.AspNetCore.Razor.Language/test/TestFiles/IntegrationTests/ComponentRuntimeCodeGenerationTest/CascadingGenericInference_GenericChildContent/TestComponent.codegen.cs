@@ -20,8 +20,8 @@ namespace Test
             {
                 global::__Blazor.Test.TestComponent.TypeInference.CreateGrid_0_CaptureParameters(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-               Array.Empty<DateTime>()
+#line (1,16)-(1,39) "x:\dir\subdir\Test\TestComponent.cshtml"
+Array.Empty<DateTime>()
 
 #line default
 #line hidden
@@ -29,13 +29,15 @@ namespace Test
                 , out var __typeInferenceArg_0___arg0);
                 global::__Blazor.Test.TestComponent.TypeInference.CreateGrid_0(__builder, 0, 1, __typeInferenceArg_0___arg0, 2, (__builder2) => {
                     global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_1(__builder2, 3, __typeInferenceArg_0___arg0, 4, (context) => (__builder3) => {
+                        __builder3.AddContent(5, 
 #nullable restore
-#line (1,51)-(1,63) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder3.AddContent(5, context.Year);
+#line (1,51)-(1,63) "x:\dir\subdir\Test\TestComponent.cshtml"
+context.Year
 
 #line default
 #line hidden
 #nullable disable
+                        );
                     }
                     );
                 }

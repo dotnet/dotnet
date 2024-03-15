@@ -39,15 +39,15 @@ public class DefaultProjectSnapshotProjectEngineFactoryTest : ToolingTestBase
 
         var hostProject_For_2_1 = new HostProject(
             projectFilePath, intermediateOutputPath,
-            new(RazorLanguageVersion.Version_2_1, "MVC-2.1", Extensions: []), "Test");
+            new(RazorLanguageVersion.Version_2_1, "MVC-2.1", Extensions: [], ForceRuntimeCodeGeneration: false), "Test");
 
         var hostProject_For_3_0 = new HostProject(
             projectFilePath, intermediateOutputPath,
-            new(RazorLanguageVersion.Version_3_0, "MVC-3.0", Extensions: []), "Test");
+            new(RazorLanguageVersion.Version_3_0, "MVC-3.0", Extensions: [], ForceRuntimeCodeGeneration: false), "Test");
 
         var hostProject_For_UnknownConfiguration = new HostProject(
             projectFilePath, intermediateOutputPath,
-            new(RazorLanguageVersion.Version_2_1, "Random-0.1", Extensions: []), rootNamespace: null);
+            new(RazorLanguageVersion.Version_2_1, "Random-0.1", Extensions: [], ForceRuntimeCodeGeneration: false), rootNamespace: null);
 
         _snapshot_For_1_0 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject_For_1_0, ProjectWorkspaceState.Default));
         _snapshot_For_1_1 = new ProjectSnapshot(ProjectState.Create(ProjectEngineFactories.DefaultProvider, hostProject_For_1_1, ProjectWorkspaceState.Default));

@@ -11,6 +11,7 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 internal abstract class ProjectSnapshotManagerBase : IProjectSnapshotManager
 {
+    public abstract event EventHandler<ProjectChangeEventArgs> PriorityChanged;
     public abstract event EventHandler<ProjectChangeEventArgs> Changed;
 
     public abstract ImmutableArray<IProjectSnapshot> GetProjects();
@@ -44,12 +45,6 @@ internal abstract class ProjectSnapshotManagerBase : IProjectSnapshotManager
     internal abstract void ProjectWorkspaceStateChanged(ProjectKey projectKey, ProjectWorkspaceState? projectWorkspaceState);
 
     internal abstract void ProjectRemoved(ProjectKey projectKey);
-
-    internal abstract void ReportError(Exception exception);
-
-    internal abstract void ReportError(Exception exception, IProjectSnapshot project);
-
-    internal abstract void ReportError(Exception exception, ProjectKey projectKey);
 
     internal abstract void SolutionOpened();
 

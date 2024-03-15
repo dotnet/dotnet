@@ -152,15 +152,14 @@ internal static class CodeWriterExtensions
         return writer;
     }
 
-    public static CodeWriter WriteEnhancedLineNumberDirective(this CodeWriter writer, SourceSpan span, int characterOffset)
+    public static CodeWriter WriteEnhancedLineNumberDirective(this CodeWriter writer, SourceSpan span, int characterOffset = 0)
     {
         // All values here need to be offset by 1 since #line uses a 1-indexed numbering system.
         var lineNumberAsString = (span.LineIndex + 1).ToString(CultureInfo.InvariantCulture);
         var characterStartAsString = (span.CharacterIndex + 1).ToString(CultureInfo.InvariantCulture);
         var lineEndAsString = (span.LineIndex + 1 + span.LineCount).ToString(CultureInfo.InvariantCulture);
         var characterEndAsString = (span.EndCharacterIndex + 1).ToString(CultureInfo.InvariantCulture);
-        var characterOffsetAsString = characterOffset.ToString(CultureInfo.InvariantCulture);
-        return writer.Write("#line (")
+        writer.Write("#line (")
             .Write(lineNumberAsString)
             .Write(",")
             .Write(characterStartAsString)
@@ -168,9 +167,16 @@ internal static class CodeWriterExtensions
             .Write(lineEndAsString)
             .Write(",")
             .Write(characterEndAsString)
-            .Write(") ")
-            .Write(characterOffsetAsString)
-            .Write(" \"").Write(span.FilePath).WriteLine("\"");
+            .Write(") ");
+
+        // an offset of zero is indicated by its absence. 
+        if (characterOffset != 0)
+        {
+            var characterOffsetAsString = characterOffset.ToString(CultureInfo.InvariantCulture);
+            writer.Write(characterOffsetAsString).Write(" ");
+        }
+
+        return writer.Write("\"").Write(span.FilePath).WriteLine("\"");
     }
 
     public static CodeWriter WriteLineNumberDirective(this CodeWriter writer, SourceSpan span)
@@ -331,7 +337,7 @@ internal static class CodeWriterExtensions
             .WriteEndMethodInvocation(endLine);
     }
 
-    public static CodeWriter WriteAutoPropertyDeclaration(this CodeWriter writer, IList<string> modifiers, string typeName, string propertyName)
+    public static CodeWriter WriteAutoPropertyDeclaration(this CodeWriter writer, IList<string> modifiers, string typeName, string propertyName, SourceSpan? typeSpan = null, SourceSpan? propertySpan = null, CodeRenderingContext context = null, bool privateSetter = false)
     {
         if (modifiers == null)
         {
@@ -354,13 +360,33 @@ internal static class CodeWriterExtensions
             writer.Write(" ");
         }
 
-        writer.Write(typeName);
+        WriteToken(writer, typeName, typeSpan, context);
         writer.Write(" ");
-        writer.Write(propertyName);
-        writer.Write(" { get; set; }");
+        WriteToken(writer, propertyName, propertySpan, context);
+        writer.Write(" { get;");
+        if (privateSetter)
+        {
+            writer.Write(" private");
+        }
+        writer.Write(" set; }");
         writer.WriteLine();
 
         return writer;
+
+        static void WriteToken(CodeWriter writer, string content, SourceSpan? span, CodeRenderingContext context)
+        {
+            if (span is not null && context?.Options.DesignTime == false)
+            {
+                using (writer.BuildEnhancedLinePragma(span, context))
+                {
+                    writer.Write(content);
+                }
+            }
+            else
+            {
+                writer.Write(content);
+            }
+        }
     }
 
     public static CSharpCodeWritingScope BuildScope(this CodeWriter writer)
@@ -392,10 +418,21 @@ internal static class CodeWriterExtensions
         return scope;
     }
 
-    public static CSharpCodeWritingScope BuildNamespace(this CodeWriter writer, string name)
+    public static CSharpCodeWritingScope BuildNamespace(this CodeWriter writer, string name, SourceSpan? span, CodeRenderingContext context)
     {
-        writer.Write("namespace ").WriteLine(name);
-
+        writer.Write("namespace ");
+        if (context.Options.DesignTime || span is null)
+        {
+            writer.WriteLine(name);
+        }
+        else
+        {
+            writer.WriteLine();
+            using (writer.BuildEnhancedLinePragma(span, context))
+            {
+                writer.WriteLine(name);
+            }
+        }
         return new CSharpCodeWritingScope(writer);
     }
 
@@ -434,11 +471,7 @@ internal static class CodeWriterExtensions
                 var typeParameter = typeParameters[i];
                 if (typeParameter.ParameterNameSource is { } source)
                 {
-                    using (writer.BuildLinePragma(source, context))
-                    {
-                        context.AddSourceMappingFor(source);
-                        writer.Write(typeParameter.ParameterName);
-                    }
+                    WriteWithPragma(writer, typeParameter.ParameterName, context, source);
                 }
                 else
                 {
@@ -489,11 +522,7 @@ internal static class CodeWriterExtensions
                     if (typeParameter.ConstraintsSource is { } source)
                     {
                         Debug.Assert(context != null);
-                        using (writer.BuildLinePragma(source, context))
-                        {
-                            context.AddSourceMappingFor(source);
-                            writer.Write(constraint);
-                        }
+                        WriteWithPragma(writer, constraint, context, source);
                     }
                     else
                     {
@@ -510,6 +539,25 @@ internal static class CodeWriterExtensions
         }
 
         return new CSharpCodeWritingScope(writer);
+
+        static void WriteWithPragma(CodeWriter writer, string content, CodeRenderingContext context, SourceSpan source)
+        {
+            if (context.Options.DesignTime)
+            {
+                using (writer.BuildLinePragma(source, context))
+                {
+                    context.AddSourceMappingFor(source);
+                    writer.Write(content);
+                }
+            }
+            else
+            {
+                using (writer.BuildEnhancedLinePragma(source, context))
+                {
+                    writer.Write(content);
+                }
+            }
+        }
     }
 
     public static CSharpCodeWritingScope BuildMethodDeclaration(
@@ -543,7 +591,7 @@ internal static class CodeWriterExtensions
         return new LinePragmaWriter(writer, sourceSpan, context, 0, useEnhancedLinePragma: false, suppressLineDefaultAndHidden);
     }
 
-    public static IDisposable BuildEnhancedLinePragma(this CodeWriter writer, SourceSpan? span, CodeRenderingContext context, int characterOffset = 0)
+    public static IDisposable BuildEnhancedLinePragma(this CodeWriter writer, SourceSpan? span, CodeRenderingContext context, int characterOffset = 0, bool suppressLineDefaultAndHidden = false)
     {
         if (string.IsNullOrEmpty(span?.FilePath))
         {
@@ -552,7 +600,7 @@ internal static class CodeWriterExtensions
         }
 
         var sourceSpan = RemapFilePathIfNecessary(span.Value, context);
-        return new LinePragmaWriter(writer, sourceSpan, context, characterOffset, useEnhancedLinePragma: true);
+        return new LinePragmaWriter(writer, sourceSpan, context, characterOffset, useEnhancedLinePragma: true, suppressLineDefaultAndHidden);
     }
 
     private static SourceSpan RemapFilePathIfNecessary(SourceSpan sourceSpan, CodeRenderingContext context)
@@ -714,9 +762,8 @@ internal static class CodeWriterExtensions
         private readonly CodeWriter _writer;
         private readonly CodeRenderingContext _context;
         private readonly int _startIndent;
-        private readonly int _sourceLineIndex;
         private readonly int _startLineIndex;
-        private readonly string _sourceFilePath;
+        private readonly SourceSpan _span;
         private readonly bool _suppressLineDefaultAndHidden;
 
         public LinePragmaWriter(
@@ -727,6 +774,8 @@ internal static class CodeWriterExtensions
             bool useEnhancedLinePragma = false,
             bool suppressLineDefaultAndHidden = false)
         {
+            Debug.Assert(context.Options.DesignTime || useEnhancedLinePragma, "Runtime generation should only use enhanced line pragmas");
+
             if (writer == null)
             {
                 throw new ArgumentNullException(nameof(writer));
@@ -736,17 +785,17 @@ internal static class CodeWriterExtensions
             _context = context;
             _suppressLineDefaultAndHidden = suppressLineDefaultAndHidden;
             _startIndent = _writer.CurrentIndent;
-            _sourceFilePath = span.FilePath;
-            _sourceLineIndex = span.LineIndex;
             _writer.CurrentIndent = 0;
+            _span = span;
+
+            var endsWithNewline = _writer.LastChar is '\n';
+            if (!endsWithNewline)
+            {
+                _writer.WriteLine();
+            }
 
             if (!_context.Options.SuppressNullabilityEnforcement)
             {
-                var endsWithNewline = _writer.LastChar is '\n';
-                if (!endsWithNewline)
-                {
-                    _writer.WriteLine();
-                }
                 _writer.WriteLine("#nullable restore");
             }
 
@@ -759,9 +808,18 @@ internal static class CodeWriterExtensions
                 WriteLineNumberDirective(writer, span);
             }
 
-
             // Capture the line index after writing the #line directive.
             _startLineIndex = writer.Location.LineIndex;
+
+            if (useEnhancedLinePragma)
+            {
+                // If the caller requested an enhanced line directive, but we fell back to regular ones, write out the extra padding that is required
+                if (!_context.Options.UseEnhancedLinePragma)
+                {
+                    context.CodeWriter.WritePadding(0, span, context);
+                }
+                context.AddSourceMappingFor(span);
+            }
         }
 
         public void Dispose()
@@ -780,7 +838,7 @@ internal static class CodeWriterExtensions
             }
 
             var lineCount = _writer.Location.LineIndex - _startLineIndex;
-            var linePragma = new LinePragma(_sourceLineIndex, lineCount, _sourceFilePath);
+            var linePragma = new LinePragma(_span.LineIndex, lineCount, _span.FilePath, _span.EndCharacterIndex, _span.EndCharacterIndex, _span.CharacterIndex);
             _context.AddLinePragma(linePragma);
 
             if (!_suppressLineDefaultAndHidden)

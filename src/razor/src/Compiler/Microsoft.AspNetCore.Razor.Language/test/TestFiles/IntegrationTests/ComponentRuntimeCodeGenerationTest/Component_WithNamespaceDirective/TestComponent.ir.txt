@@ -1,5 +1,5 @@
 ﻿Document - 
-    NamespaceDeclaration -  - AnotherTest
+    NamespaceDeclaration - (24:1,11 [11] x:\dir\subdir\Test\TestComponent.cshtml) - AnotherTest
         UsingDirective - (3:1,1 [22] ) - global::System
         UsingDirective - (26:2,1 [42] ) - global::System.Collections.Generic
         UsingDirective - (69:3,1 [27] ) - global::System.Linq

@@ -18,19 +18,20 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-  
+#line (1,3)-(3,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
   var myValue = "Expression value";
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.OpenElement(0, "elem");
             __builder.AddAttribute(1, "data-abc", "Literal value");
             __builder.AddAttribute(2, "data-def", 
 #nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                          myValue
+#line (4,43)-(4,50) "x:\dir\subdir\Test\TestComponent.cshtml"
+myValue
 
 #line default
 #line hidden

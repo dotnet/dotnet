@@ -40,13 +40,15 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
             __InputTagHelper = CreateTagHelper<global::InputTagHelper>();
             __tagHelperExecutionContext.Add(__InputTagHelper);
             BeginWriteTagHelperAttribute();
+            WriteLiteral(
 #nullable restore
-#line (4,24)-(4,29) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithPrefix.cshtml"
-WriteLiteral(Hello);
+#line (4,24)-(4,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/TagHelpersWithPrefix.cshtml"
+Hello
 
 #line default
 #line hidden
 #nullable disable
+            );
             __tagHelperStringValueBuffer = EndWriteTagHelperAttribute();
             __InputTagHelper.BoundProp = __tagHelperStringValueBuffer;
             __tagHelperExecutionContext.AddTagHelperAttribute("bound", __InputTagHelper.BoundProp, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);

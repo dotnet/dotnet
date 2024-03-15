@@ -12,13 +12,14 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
             WriteLiteral("This is markup\r\n\r\n");
+            Write(
 #nullable restore
-#line (3,2)-(3,2) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyImplicitExpression.cshtml"
-Write();
+#line (3,2)-(3,2) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyImplicitExpression.cshtml"
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("!");
         }
         #pragma warning restore 1998

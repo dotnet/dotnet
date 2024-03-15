@@ -9,7 +9,7 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Microsoft.AspNetCore.Components.RenderTree;
 
 #line default
@@ -23,30 +23,33 @@ using Microsoft.AspNetCore.Components.RenderTree;
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-  
+#line (2,3)-(5,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     void RenderChildComponent()
     {
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.OpenComponent<global::Test.MyComponent>(0);
             __builder.CloseComponent();
 #nullable restore
-#line 6 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (6,1)-(7,1) "x:\dir\subdir\Test\TestComponent.cshtml"
     }
 
 #line default
 #line hidden
 #nullable disable
+
 #nullable restore
-#line 9 "x:\dir\subdir\Test\TestComponent.cshtml"
-   RenderChildComponent(); 
+#line (9,3)-(9,28) "x:\dir\subdir\Test\TestComponent.cshtml"
+ RenderChildComponent(); 
 
 #line default
 #line hidden
 #nullable disable
+
         }
         #pragma warning restore 1998
     }

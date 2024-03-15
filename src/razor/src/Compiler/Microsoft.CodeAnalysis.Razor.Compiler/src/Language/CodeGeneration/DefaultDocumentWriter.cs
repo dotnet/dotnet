@@ -135,7 +135,7 @@ internal class DefaultDocumentWriter : DocumentWriter
 
         public override void VisitNamespaceDeclaration(NamespaceDeclarationIntermediateNode node)
         {
-            using (Context.CodeWriter.BuildNamespace(node.Content))
+            using (Context.CodeWriter.BuildNamespace(node.Content, node.Source, Context))
             {
                 if (node.Children.OfType<UsingDirectiveIntermediateNode>().Any())
                 {

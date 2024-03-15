@@ -18,17 +18,18 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-   var parentKey = new object(); var childKey = new object(); 
+#line (1,3)-(1,63) "x:\dir\subdir\Test\TestComponent.cshtml"
+ var parentKey = new object(); var childKey = new object(); 
 
 #line default
 #line hidden
 #nullable disable
+
             {
                 global::__Blazor.Test.TestComponent.TypeInference.CreateGrid_0_CaptureParameters(
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                 Array.Empty<DateTime>()
+#line (2,34)-(2,57) "x:\dir\subdir\Test\TestComponent.cshtml"
+Array.Empty<DateTime>()
 
 #line default
 #line hidden
@@ -37,30 +38,32 @@ namespace Test
                 global::__Blazor.Test.TestComponent.TypeInference.CreateGrid_0(__builder, 0, 1, __typeInferenceArg_0___arg0, 2, (__builder2) => {
                     global::__Blazor.Test.TestComponent.TypeInference.CreateColumn_1(__builder2, 3, __typeInferenceArg_0___arg0, 4, "Hello", 5, 
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                     DateTime.MinValue
+#line (3,54)-(3,71) "x:\dir\subdir\Test\TestComponent.cshtml"
+DateTime.MinValue
 
 #line default
 #line hidden
 #nullable disable
                     , 6, 
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-                   childKey
+#line (3,20)-(3,28) "x:\dir\subdir\Test\TestComponent.cshtml"
+childKey
 
 #line default
 #line hidden
 #nullable disable
+
                     );
                 }
                 , 7, 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-             parentKey
+#line (2,14)-(2,23) "x:\dir\subdir\Test\TestComponent.cshtml"
+parentKey
 
 #line default
 #line hidden
 #nullable disable
+
                 );
                 __typeInferenceArg_0___arg0 = default;
             }

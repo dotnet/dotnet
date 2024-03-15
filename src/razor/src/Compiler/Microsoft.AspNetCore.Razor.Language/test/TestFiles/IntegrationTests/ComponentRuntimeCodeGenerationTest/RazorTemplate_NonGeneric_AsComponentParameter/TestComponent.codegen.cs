@@ -18,27 +18,29 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-   RenderFragment template = 
+#line (1,3)-(1,30) "x:\dir\subdir\Test\TestComponent.cshtml"
+ RenderFragment template = 
 
 #line default
 #line hidden
 #nullable disable
+
             (__builder2) => {
                 __builder2.AddMarkupContent(0, "<div>Joey</div>");
             }
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                             ; 
+#line (1,46)-(1,48) "x:\dir\subdir\Test\TestComponent.cshtml"
+; 
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.OpenComponent<global::Test.MyComponent>(1);
             __builder.AddComponentParameter(2, "Person", 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                      template
+#line (2,23)-(2,31) "x:\dir\subdir\Test\TestComponent.cshtml"
+template
 
 #line default
 #line hidden

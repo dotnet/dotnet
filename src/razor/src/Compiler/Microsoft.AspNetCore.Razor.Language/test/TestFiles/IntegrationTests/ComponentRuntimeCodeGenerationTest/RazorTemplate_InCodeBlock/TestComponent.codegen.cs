@@ -18,36 +18,40 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-  
+#line (1,3)-(2,44) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     RenderFragment<Person> p = (person) => 
 
 #line default
 #line hidden
 #nullable disable
+
             (__builder2) => {
                 __builder2.OpenElement(0, "div");
+                __builder2.AddContent(1, 
 #nullable restore
-#line (2,51)-(2,62) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder2.AddContent(1, person.Name);
+#line (2,51)-(2,62) "x:\dir\subdir\Test\TestComponent.cshtml"
+person.Name
 
 #line default
 #line hidden
 #nullable disable
+                );
                 __builder2.CloseElement();
             }
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                                   ;
+#line (2,68)-(3,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+;
 
 #line default
 #line hidden
 #nullable disable
+
         }
         #pragma warning restore 1998
 #nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (4,8)-(9,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     class Person
     {
         public string Name { get; set; }
@@ -56,6 +60,7 @@ __builder2.AddContent(1, person.Name);
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

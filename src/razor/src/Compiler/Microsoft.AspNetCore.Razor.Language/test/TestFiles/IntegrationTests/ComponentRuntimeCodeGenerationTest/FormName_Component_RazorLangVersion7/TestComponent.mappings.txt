@@ -1,0 +1,22 @@
+﻿Source Location: (1:0,1 [43] x:\dir\subdir\Test\TestComponent.cshtml)
+|using Microsoft.AspNetCore.Components.Web
+|
+Generated Location: (371:12,0 [43] )
+|using Microsoft.AspNetCore.Components.Web
+|
+
+Source Location: (84:1,40 [9] x:\dir\subdir\Test\TestComponent.cshtml)
+|() => { }|
+Generated Location: (1178:30,0 [9] )
+|() => { }|
+
+Source Location: (170:2,40 [9] x:\dir\subdir\Test\TestComponent.cshtml)
+|() => { }|
+Generated Location: (1816:44,0 [9] )
+|() => { }|
+
+Source Location: (194:2,64 [20] x:\dir\subdir\Test\TestComponent.cshtml)
+|"named-form-handler"|
+Generated Location: (2039:53,0 [20] )
+|"named-form-handler"|
+
