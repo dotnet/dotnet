@@ -245,7 +245,7 @@ jobs:
             echo "##vso[task.setvariable variable=additionalBuildArgs]--with-sdk /vmr/.dotnet"
           fi
 
-          docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./eng/prep-source-build.sh $customPrepArgs
+          docker run --rm -v "$(sourcesPath):/vmr" -w /vmr ${{ parameters.container }} ./prep-source-build.sh $customPrepArgs
         displayName: Prep the Build
 
     - script: |

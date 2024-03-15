@@ -68,7 +68,7 @@ jobs:
     matrix: $[ dependencies.Setup.outputs['GetMatrix.matrix'] ]
   steps:
 
-  - script: $(Build.SourcesDirectory)/eng/prep-source-build.sh --no-artifacts --no-bootstrap --no-prebuilts --no-binary-tooling
+  - script: $(Build.SourcesDirectory)/prep-source-build.sh --no-artifacts --no-bootstrap --no-prebuilts --no-binary-tooling
     displayName: 'Install .NET SDK'
 
   - task: PipAuthenticate@1
