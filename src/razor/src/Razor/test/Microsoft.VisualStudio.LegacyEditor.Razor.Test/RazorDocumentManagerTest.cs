@@ -68,7 +68,7 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
             JoinableTaskContext,
             FilePath,
             ProjectPath,
-            _projectManager.GetAccessor(),
+            _projectManager,
             _workspaceEditorSettings,
             ProjectEngineFactories.DefaultProvider,
             coreTextBuffer,
@@ -97,7 +97,7 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
             JoinableTaskContext,
             FilePath,
             ProjectPath,
-            _projectManager.GetAccessor(),
+            _projectManager,
             _workspaceEditorSettings,
             ProjectEngineFactories.DefaultProvider,
             coreTextBuffer,
@@ -146,7 +146,7 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
             JoinableTaskContext,
             FilePath,
             ProjectPath,
-            _projectManager.GetAccessor(),
+            _projectManager,
             _workspaceEditorSettings,
             ProjectEngineFactories.DefaultProvider,
             coreTextBuffer,
@@ -156,7 +156,7 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
         coreTextBuffer.Properties.AddProperty(typeof(IVisualStudioDocumentTracker), documentTracker);
 
         documentTracker = new VisualStudioDocumentTracker(
-            Dispatcher, JoinableTaskContext, FilePath, ProjectPath, _projectManager.GetAccessor(), _workspaceEditorSettings,
+            Dispatcher, JoinableTaskContext, FilePath, ProjectPath, _projectManager, _workspaceEditorSettings,
             ProjectEngineFactories.DefaultProvider, nonCoreTextBuffer, _importDocumentManager);
         documentTracker.AddTextView(textView1);
         documentTracker.AddTextView(textView2);
@@ -190,7 +190,7 @@ public class RazorDocumentManagerTest : VisualStudioTestBase
             JoinableTaskContext,
             FilePath,
             ProjectPath,
-            _projectManager.GetAccessor(),
+            _projectManager,
             _workspaceEditorSettings,
             ProjectEngineFactories.DefaultProvider,
             coreTextBuffer,

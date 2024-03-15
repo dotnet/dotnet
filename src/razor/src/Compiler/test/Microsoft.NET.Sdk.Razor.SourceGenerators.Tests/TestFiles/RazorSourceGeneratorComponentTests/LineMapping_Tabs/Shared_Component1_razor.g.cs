@@ -20,29 +20,33 @@ namespace MyApp.Shared
         {
             __builder.OpenElement(0, "div");
 #nullable restore
-#line 2 "Shared/Component1.razor"
-  if (true)
+#line (2,3)-(4,3) "Shared/Component1.razor"
+if (true)
 	{
 		
 
 #line default
 #line hidden
 #nullable disable
+
+            __builder.AddContent(1, 
 #nullable restore
-#line (4,5)-(4,11) 24 "Shared/Component1.razor"
-__builder.AddContent(1, "code");
+#line (4,5)-(4,11) "Shared/Component1.razor"
+"code"
 
 #line default
 #line hidden
 #nullable disable
+            );
 #nullable restore
-#line 4 "Shared/Component1.razor"
-           
+#line (4,12)-(6,1) "Shared/Component1.razor"
+
 	}
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.CloseElement();
         }
         #pragma warning restore 1998

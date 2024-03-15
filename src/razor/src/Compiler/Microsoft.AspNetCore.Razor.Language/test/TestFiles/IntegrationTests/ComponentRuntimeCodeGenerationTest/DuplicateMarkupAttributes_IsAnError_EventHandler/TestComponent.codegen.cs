@@ -9,12 +9,13 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-using Microsoft.AspNetCore.Components.Web;
+#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+using Microsoft.AspNetCore.Components.Web
 
 #line default
 #line hidden
 #nullable disable
+    ;
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
@@ -27,8 +28,8 @@ using Microsoft.AspNetCore.Components.Web;
             __builder.AddAttribute(2, "onclick", "test()");
             __builder.AddAttribute(3, "onclick", global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::Microsoft.AspNetCore.Components.Web.MouseEventArgs>(this, 
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                () => {}
+#line (3,33)-(3,41) "x:\dir\subdir\Test\TestComponent.cshtml"
+() => {}
 
 #line default
 #line hidden

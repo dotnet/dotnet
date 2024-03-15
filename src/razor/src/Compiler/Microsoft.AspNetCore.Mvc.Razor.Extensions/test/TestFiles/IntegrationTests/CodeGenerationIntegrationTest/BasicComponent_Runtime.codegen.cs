@@ -21,32 +21,35 @@ namespace __GeneratedComponent
             __builder.OpenElement(0, "div");
             __builder.AddAttribute(1, "class", 
 #nullable restore
-#line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicComponent.cshtml"
-             this.ToString()
+#line (2,14)-(2,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicComponent.cshtml"
+this.ToString()
 
 #line default
 #line hidden
 #nullable disable
             );
             __builder.AddMarkupContent(2, "\r\n    Hello world\r\n    ");
+            __builder.AddContent(3, 
 #nullable restore
-#line (4,6)-(4,35) 24 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicComponent.cshtml"
-__builder.AddContent(3, string.Format("{0}", "Hello"));
+#line (4,6)-(4,35) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicComponent.cshtml"
+string.Format("{0}", "Hello")
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.CloseElement();
         }
         #pragma warning restore 1998
 #nullable restore
-#line 7 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicComponent.cshtml"
-            
+#line (7,13)-(9,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/BasicComponent.cshtml"
+
     void IDisposable.Dispose(){ }
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

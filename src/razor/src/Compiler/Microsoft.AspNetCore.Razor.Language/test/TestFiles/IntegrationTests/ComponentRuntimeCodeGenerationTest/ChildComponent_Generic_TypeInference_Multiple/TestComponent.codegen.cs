@@ -19,8 +19,8 @@ namespace Test
         {
             global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_0(__builder, 0, 1, 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                     "hi"
+#line (1,22)-(1,26) "x:\dir\subdir\Test\TestComponent.cshtml"
+"hi"
 
 #line default
 #line hidden
@@ -29,8 +29,8 @@ namespace Test
             __builder.AddMarkupContent(2, "\r\n");
             global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_1(__builder, 3, 4, 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                     "how are you?"
+#line (2,22)-(2,36) "x:\dir\subdir\Test\TestComponent.cshtml"
+"how are you?"
 
 #line default
 #line hidden
@@ -39,8 +39,8 @@ namespace Test
             __builder.AddMarkupContent(5, "\r\n");
             global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_2(__builder, 6, 7, 
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-                     "bye!"
+#line (3,22)-(3,28) "x:\dir\subdir\Test\TestComponent.cshtml"
+"bye!"
 
 #line default
 #line hidden

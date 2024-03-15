@@ -9,12 +9,13 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-using Microsoft.AspNetCore.Components.Web;
+#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+using Microsoft.AspNetCore.Components.Web
 
 #line default
 #line hidden
 #nullable disable
+    ;
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
@@ -26,8 +27,8 @@ using Microsoft.AspNetCore.Components.Web;
             __builder.AddAttribute(1, "method", "post");
             __builder.AddAttribute(2, "onsubmit", global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                               () => { }
+#line (2,32)-(2,41) "x:\dir\subdir\Test\TestComponent.cshtml"
+() => { }
 
 #line default
 #line hidden
@@ -35,34 +36,37 @@ using Microsoft.AspNetCore.Components.Web;
             ));
             string __formName = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>(
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                      x
+#line (2,55)-(2,56) "x:\dir\subdir\Test\TestComponent.cshtml"
+x
 
 #line default
 #line hidden
 #nullable disable
             );
+            __builder.AddContent(3, 
 #nullable restore
-#line (2,70)-(2,71) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder.AddContent(3, y);
+#line (2,70)-(2,71) "x:\dir\subdir\Test\TestComponent.cshtml"
+y
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.AddAttribute(4, "@formname");
             __builder.AddNamedEvent("onsubmit", __formName);
             __builder.CloseElement();
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (3,8)-(6,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     string x = "a";
     string y = "b";
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

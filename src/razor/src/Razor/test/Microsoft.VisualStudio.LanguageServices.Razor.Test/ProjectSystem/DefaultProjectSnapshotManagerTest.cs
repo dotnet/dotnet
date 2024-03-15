@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -64,18 +63,20 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
     }
 
     [UIFact]
-    public void Initialize_DoneInCorrectOrderBasedOnInitializePriorityPriority()
+    public async Task Initialize_DoneInCorrectOrderBasedOnInitializePriorityPriority()
     {
         // Arrange
         var initializedOrder = new List<string>();
-        var highPriorityTrigger = new PriorityInitializeInspectionTrigger(() => initializedOrder.Add("highPriority"));
-        var defaultPriorityTrigger = new InitializeInspectionTrigger(() => initializedOrder.Add("lowPriority"));
-
-        // Building this list in the wrong order so we can verify priority matters
-        var triggers = new[] { defaultPriorityTrigger, highPriorityTrigger };
+        var projectManager = CreateProjectSnapshotManager();
+        projectManager.Changed += delegate { initializedOrder.Add("lowPriority"); };
+        projectManager.PriorityChanged += delegate { initializedOrder.Add("highPriority"); };
 
         // Act
-        var projectManager = CreateProjectSnapshotManager(triggers);
+        await RunOnDispatcherAsync(() =>
+        {
+            projectManager.ProjectAdded(
+                new("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, rootNamespace: null));
+        });
 
         // Assert
         Assert.Equal(["highPriority", "lowPriority"], initializedOrder);
@@ -853,17 +854,4 @@ public class DefaultProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
 
         textLoader.Verify(d => d.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()), Times.Never());
     }
-
-    private class InitializeInspectionTrigger(Action initializeNotification) : IProjectSnapshotChangeTrigger
-    {
-        private readonly Action _initializeNotification = initializeNotification;
-
-        public void Initialize(ProjectSnapshotManagerBase projectManager)
-        {
-            _initializeNotification();
-        }
-    }
-
-    private class PriorityInitializeInspectionTrigger(Action initializeNotification)
-        : InitializeInspectionTrigger(initializeNotification), IPriorityProjectSnapshotChangeTrigger;
 }

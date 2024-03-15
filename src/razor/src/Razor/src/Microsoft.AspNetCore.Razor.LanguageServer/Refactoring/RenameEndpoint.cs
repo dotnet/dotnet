@@ -29,7 +29,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Refactoring;
 internal sealed class RenameEndpoint(
     ProjectSnapshotManagerDispatcher dispatcher,
     RazorComponentSearchEngine componentSearchEngine,
-    IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+    IProjectSnapshotManager projectManager,
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IRazorDocumentMappingService documentMappingService,
     IClientConnection clientConnection,
@@ -40,8 +40,8 @@ internal sealed class RenameEndpoint(
         clientConnection,
         loggerFactory.CreateLogger<RenameEndpoint>()), ICapabilitiesProvider
 {
-    private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher = dispatcher;
-    private readonly IProjectSnapshotManager _projectSnapshotManager = projectSnapshotManagerAccessor.Instance;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
+    private readonly IProjectSnapshotManager _projectManager = projectManager;
     private readonly RazorComponentSearchEngine _componentSearchEngine = componentSearchEngine;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
@@ -154,8 +154,8 @@ internal sealed class RenameEndpoint(
         using var documentSnapshots = new PooledArrayBuilder<IDocumentSnapshot?>();
         using var _ = StringHashSetPool.GetPooledObject(out var documentPaths);
 
-        var projects = await _projectSnapshotManagerDispatcher
-            .RunAsync(() => _projectSnapshotManager.GetProjects(), cancellationToken)
+        var projects = await _dispatcher
+            .RunAsync(() => _projectManager.GetProjects(), cancellationToken)
             .ConfigureAwait(false);
 
         foreach (var project in projects)

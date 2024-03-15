@@ -9,24 +9,27 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\_Imports.razor"
-using System.Text;
+#line (1,2)-(2,1) "x:\dir\subdir\Test\_Imports.razor"
+using System.Text
 
 #nullable disable
+    ;
 #nullable restore
-#line 2 "x:\dir\subdir\Test\_Imports.razor"
-using System.Reflection;
+#line (2,2)-(3,1) "x:\dir\subdir\Test\_Imports.razor"
+using System.Reflection
 
 #line default
 #line hidden
 #nullable disable
+    ;
 #nullable restore
-#line 3 "x:\dir\subdir\Test\_Imports.razor"
+#line (3,12)-(3,26) "x:\dir\subdir\Test\_Imports.razor"
 [Serializable]
 
 #line default
 #line hidden
 #nullable disable
+
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable

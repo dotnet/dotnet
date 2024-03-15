@@ -23,7 +23,7 @@ internal partial class RazorCustomMessageTarget
         // as the generated file will only be in one project, so we can just use our own ProjectContexts. This makes other things much
         // easier because we're not trying to understand Roslyn concepts.
 
-        var projects = _projectSnapshotManagerAccessor.Instance.GetProjects();
+        var projects = _projectManager.GetProjects();
 
         using var projectContexts = new PooledArrayBuilder<VSProjectContext>(capacity: projects.Length);
 

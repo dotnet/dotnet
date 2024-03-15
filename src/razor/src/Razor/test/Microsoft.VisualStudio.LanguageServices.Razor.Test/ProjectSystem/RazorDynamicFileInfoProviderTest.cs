@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Razor.DynamicFiles;
 using Moq;
 using Xunit;
@@ -65,18 +66,25 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
         var filePathService = new FilePathService(languageServerFeatureOptions);
 
+        var serviceProvider = VsMocks.CreateServiceProvider(static b =>
+            b.AddComponentModel(static b =>
+            {
+                var startupInitializer = new RazorStartupInitializer([]);
+                b.AddExport(startupInitializer);
+            }));
+
         var fallbackProjectManager = new FallbackProjectManager(
+            serviceProvider,
             StrictMock.Of<ProjectConfigurationFilePathStore>(),
             languageServerFeatureOptions,
-            _projectManager.GetAccessor(),
+            _projectManager,
             Dispatcher,
             WorkspaceProvider,
             NoOpTelemetryReporter.Instance);
 
         _provider = new RazorDynamicFileInfoProvider(
-            documentServiceFactory, editorFeatureDetector, filePathService, WorkspaceProvider, fallbackProjectManager);
+            documentServiceFactory, editorFeatureDetector, filePathService, WorkspaceProvider, _projectManager, fallbackProjectManager);
         _testAccessor = _provider.GetTestAccessor();
-        _provider.Initialize(_projectManager);
 
         var lspDocumentContainerMock = new StrictMock<IDynamicDocumentContainer>();
         lspDocumentContainerMock

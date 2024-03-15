@@ -12,111 +12,132 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
             WriteLiteral("\r\n<section>\r\n    <h1>Basic Asynchronous Expression Test</h1>\r\n    <p>Basic Asynchronous Expression: ");
+            Write(
 #nullable restore
-#line (10,40)-(10,51) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
-Write(await Foo());
+#line (10,40)-(10,51) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
+await Foo()
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n    <p>Basic Asynchronous Template: ");
+            Write(
 #nullable restore
-#line (11,39)-(11,50) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
-Write(await Foo());
+#line (11,39)-(11,50) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
+await Foo()
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n    <p>Basic Asynchronous Statement: ");
 #nullable restore
-#line 12 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
-                                        await Foo(); 
+#line (12,40)-(12,54) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
+ await Foo(); 
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("</p>\r\n    <p>Basic Asynchronous Statement Nested: ");
             WriteLiteral(" <b>");
+            Write(
 #nullable restore
-#line (13,52)-(13,63) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
-Write(await Foo());
+#line (13,52)-(13,63) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
+await Foo()
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</b> ");
             WriteLiteral("</p>\r\n    <p>Basic Incomplete Asynchronous Statement: ");
+            Write(
 #nullable restore
-#line (14,50)-(14,55) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
-Write(await);
+#line (14,50)-(14,55) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
+await
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n</section>\r\n\r\n<section>\r\n    <h1>Advanced Asynchronous Expression Test</h1>\r\n    <p>Advanced Asynchronous Expression: ");
+            Write(
 #nullable restore
-#line (19,43)-(19,58) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
-Write(await Foo(1, 2));
+#line (19,43)-(19,58) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
+await Foo(1, 2)
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n    <p>Advanced Asynchronous Expression Extended: ");
+            Write(
 #nullable restore
-#line (20,52)-(20,71) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
-Write(await Foo.Bar(1, 2));
+#line (20,52)-(20,71) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
+await Foo.Bar(1, 2)
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n    <p>Advanced Asynchronous Template: ");
+            Write(
 #nullable restore
-#line (21,42)-(21,64) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
-Write(await Foo("bob", true));
+#line (21,42)-(21,64) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
+await Foo("bob", true)
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n    <p>Advanced Asynchronous Statement: ");
 #nullable restore
-#line 22 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
-                                           await Foo(something, hello: "world"); 
+#line (22,43)-(22,82) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
+ await Foo(something, hello: "world"); 
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("</p>\r\n    <p>Advanced Asynchronous Statement Extended: ");
 #nullable restore
-#line 23 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
-                                                    await Foo.Bar(1, 2) 
+#line (23,52)-(23,73) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
+ await Foo.Bar(1, 2) 
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("</p>\r\n    <p>Advanced Asynchronous Statement Nested: ");
             WriteLiteral(" <b>");
+            Write(
 #nullable restore
-#line (24,55)-(24,82) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
-Write(await Foo(boolValue: false));
+#line (24,55)-(24,82) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
+await Foo(boolValue: false)
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</b> ");
             WriteLiteral("</p>\r\n    <p>Advanced Incomplete Asynchronous Statement: ");
+            Write(
 #nullable restore
-#line (25,53)-(25,72) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
-Write(await ("wrrronggg"));
+#line (25,53)-(25,72) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
+await ("wrrronggg")
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n</section>");
         }
         #pragma warning restore 1998
 #nullable restore
-#line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
-            
+#line (1,13)-(6,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Await.cshtml"
+
     public async Task<string> Foo()
     {
         return "Bar";
@@ -125,6 +146,7 @@ Write(await ("wrrronggg"));
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

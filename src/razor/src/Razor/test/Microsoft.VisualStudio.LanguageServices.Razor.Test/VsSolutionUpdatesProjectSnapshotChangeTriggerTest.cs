@@ -87,11 +87,13 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
 
         var serviceProvider = VsMocks.CreateServiceProvider(b =>
             b.AddService<SVsSolutionBuildManager>(buildManagerMock.Object));
+        var projectManager = CreateProjectSnapshotManager();
 
         // Note: We're careful to use a using statement with a block to allow
         // the call to UnadviseUpdateSolutionEvents() to be verified after disposal.
         using (var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
             serviceProvider,
+            projectManager,
             StrictMock.Of<IProjectWorkspaceStateGenerator>(),
             _workspaceProvider,
             Dispatcher,
@@ -99,10 +101,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         {
             var testAccessor = trigger.GetTestAccessor();
 
-            var projectManager = CreateProjectSnapshotManager();
-            trigger.Initialize(projectManager);
-
-            await testAccessor.InitializeTask.AssumeNotNull();
+            await testAccessor.InitializeTask;
         }
 
         buildManagerMock.Verify();
@@ -130,8 +129,11 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
                 return buildManagerMock.Object;
             }));
 
+        var projectManager = CreateProjectSnapshotManager();
+
         using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
             serviceProvider,
+            projectManager,
             StrictMock.Of<IProjectWorkspaceStateGenerator>(),
             _workspaceProvider,
             Dispatcher,
@@ -143,10 +145,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         {
             Assert.False(JoinableTaskContext.IsOnMainThread);
 
-            var projectManager = CreateProjectSnapshotManager();
-            trigger.Initialize(projectManager);
-
-            await testAccessor.InitializeTask.AssumeNotNull();
+            await testAccessor.InitializeTask;
         });
     }
 
@@ -176,6 +175,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
 
         using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
             serviceProvider,
+            projectManager,
             workspaceStateGenerator,
             _workspaceProvider,
             Dispatcher,
@@ -183,7 +183,6 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
 
         var testAccessor = trigger.GetTestAccessor();
 
-        trigger.Initialize(projectManager);
         trigger.UpdateProjectCfg_Done(vsHierarchyMock.Object, pCfgProj: null!, pCfgSln: null!, dwAction: 0, fSuccess: 0, fCancel: 0);
 
         // UpdateProjectCfg_Done will call OnProjectBuiltAsync(). The test accessor
@@ -223,11 +222,11 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
 
         using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
             serviceProvider,
+            projectManager,
             workspaceStateGenerator,
             _workspaceProvider,
             Dispatcher,
             JoinableTaskContext);
-        trigger.Initialize(projectManager);
 
         var vsHierarchyMock = new StrictMock<IVsHierarchy>();
         var vsProjectMock = vsHierarchyMock.As<IVsProject>();
@@ -274,11 +273,11 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
 
         using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
             serviceProvider,
+            projectManager,
             workspaceStateGenerator,
             _workspaceProvider,
             Dispatcher,
             JoinableTaskContext);
-        trigger.Initialize(projectManager);
 
         var testAccessor = trigger.GetTestAccessor();
 
@@ -311,11 +310,11 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
 
         using var trigger = new VsSolutionUpdatesProjectSnapshotChangeTrigger(
             serviceProvider,
+            projectManager,
             workspaceStateGenerator,
             _workspaceProvider,
             Dispatcher,
             JoinableTaskContext);
-        trigger.Initialize(projectManager);
 
         var testAccessor = trigger.GetTestAccessor();
 

@@ -74,9 +74,8 @@ internal class RazorHtmlWriter : SyntaxWalker, IDisposable
     public static RazorHtmlDocument? GetHtmlDocument(RazorCodeDocument codeDocument)
     {
         var options = codeDocument.GetCodeGenerationOptions();
-        if (options == null || !options.DesignTime)
+        if (options == null)
         {
-            // Not needed in run time. This pass generates the backing HTML document that is used to provide HTML intellisense.
             return null;
         }
 

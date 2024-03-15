@@ -11,66 +11,82 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         #pragma warning disable 1998
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
+            Write(
 #nullable restore
-#line (2,6)-(2,19) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
-Write(ViewBag?.Data);
+#line (2,6)-(2,19) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
+ViewBag?.Data
 
 #line default
 #line hidden
 #nullable disable
+            );
+            Write(
 #nullable restore
-#line (3,6)-(3,28) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
-Write(ViewBag.IntIndexer?[0]);
+#line (3,6)-(3,28) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
+ViewBag.IntIndexer?[0]
 
 #line default
 #line hidden
 #nullable disable
+            );
+            Write(
 #nullable restore
-#line (4,6)-(4,32) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
-Write(ViewBag.StrIndexer?["key"]);
+#line (4,6)-(4,32) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
+ViewBag.StrIndexer?["key"]
 
 #line default
 #line hidden
 #nullable disable
+            );
+            Write(
 #nullable restore
-#line (5,6)-(5,47) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
-Write(ViewBag?.Method(Value?[23]?.More)?["key"]);
+#line (5,6)-(5,47) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
+ViewBag?.Method(Value?[23]?.More)?["key"]
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\r\n");
+            Write(
 #nullable restore
-#line (8,2)-(8,15) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
-Write(ViewBag?.Data);
+#line (8,2)-(8,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
+ViewBag?.Data
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\r\n");
+            Write(
 #nullable restore
-#line (9,2)-(9,24) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
-Write(ViewBag.IntIndexer?[0]);
+#line (9,2)-(9,24) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
+ViewBag.IntIndexer?[0]
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\r\n");
+            Write(
 #nullable restore
-#line (10,2)-(10,28) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
-Write(ViewBag.StrIndexer?["key"]);
+#line (10,2)-(10,28) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
+ViewBag.StrIndexer?["key"]
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\r\n");
+            Write(
 #nullable restore
-#line (11,2)-(11,43) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
-Write(ViewBag?.Method(Value?[23]?.More)?["key"]);
+#line (11,2)-(11,43) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/NullConditionalExpressions.cshtml"
+ViewBag?.Method(Value?[23]?.More)?["key"]
 
 #line default
 #line hidden
 #nullable disable
+            );
         }
         #pragma warning restore 1998
     }

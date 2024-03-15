@@ -22,14 +22,7 @@ namespace Test
         #pragma warning restore 1998
         private sealed class __PrivateComponentRenderModeAttribute : global::Microsoft.AspNetCore.Components.RenderModeAttribute
         {
-            private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl => 
-#nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-            Microsoft.AspNetCore.Components.Web.RenderMode.Server
-
-#line default
-#line hidden
-#nullable disable
+            private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl => Microsoft.AspNetCore.Components.Web.RenderMode.Server
             ;
             public override global::Microsoft.AspNetCore.Components.IComponentRenderMode Mode => ModeImpl;
         }

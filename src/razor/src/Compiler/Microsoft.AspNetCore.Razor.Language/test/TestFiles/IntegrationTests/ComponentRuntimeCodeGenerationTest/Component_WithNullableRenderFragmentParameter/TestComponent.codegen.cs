@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.ComponentWithNullableRenderFragment>(0);
             __builder.AddComponentParameter(1, "Header", (global::Microsoft.AspNetCore.Components.RenderFragment)(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                              Header
+#line (1,47)-(1,53) "x:\dir\subdir\Test\TestComponent.cshtml"
+Header
 
 #line default
 #line hidden
@@ -31,13 +31,14 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (2,8)-(4,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
 	[Parameter] public RenderFragment Header { get; set; }
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

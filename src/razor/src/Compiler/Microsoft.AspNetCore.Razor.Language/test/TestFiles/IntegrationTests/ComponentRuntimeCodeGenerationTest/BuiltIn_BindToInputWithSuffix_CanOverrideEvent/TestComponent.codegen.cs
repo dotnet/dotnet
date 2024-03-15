@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenElement(0, "input");
             __builder.AddAttribute(1, "value", global::Microsoft.AspNetCore.Components.BindConverter.FormatValue(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                     CurrentDate
+#line (1,22)-(1,33) "x:\dir\subdir\Test\TestComponent.cshtml"
+CurrentDate
 
 #line default
 #line hidden
@@ -33,13 +33,14 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (2,8)-(4,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     public DateTime CurrentDate { get; set; } = new DateTime(2018, 1, 1);
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

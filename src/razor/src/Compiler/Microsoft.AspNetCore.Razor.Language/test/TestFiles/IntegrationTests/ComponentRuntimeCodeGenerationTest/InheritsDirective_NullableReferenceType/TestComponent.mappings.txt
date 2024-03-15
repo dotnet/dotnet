@@ -1,0 +1,5 @@
+﻿Source Location: (61:3,2 [17] x:\dir\subdir\Test\TestComponent.cshtml)
+|_field.ToString()|
+Generated Location: (815:23,0 [17] )
+|_field.ToString()|
+

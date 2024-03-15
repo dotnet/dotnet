@@ -26,7 +26,7 @@ public class ProjectMutationBenchmark : ProjectSnapshotManagerBenchmarkBase
         ProjectManager = CreateProjectSnapshotManager();
     }
 
-    private DefaultProjectSnapshotManager ProjectManager { get; set; }
+    private ProjectSnapshotManager ProjectManager { get; set; }
 
     [Benchmark(Description = "Does thread contention add/remove of documents", OperationsPerInvoke = 100)]
     public async Task ProjectMutation_Mutates100kFilesAsync()

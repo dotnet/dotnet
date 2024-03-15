@@ -53,11 +53,13 @@ namespace AspNetCore
             EndContext();
             BeginContext(61, 7, false);
             BeginContext(61, 7, false);
-#line (3,3)-(3,10) 6 "TestFiles/IntegrationTests/InstrumentationPassIntegrationTest/BasicTest.cshtml"
-Write("Hello");
+            Write(
+#line (3,3)-(3,10) "TestFiles/IntegrationTests/InstrumentationPassIntegrationTest/BasicTest.cshtml"
+"Hello"
 
 #line default
 #line hidden
+            );
             EndContext();
             EndContext();
             BeginContext(69, 2, true);
@@ -82,11 +84,13 @@ Write("Hello");
                 __tagHelperExecutionContext.Add(__InputTagHelper);
                 __InputTagHelper.FooProp = (string)__tagHelperAttribute_0.Value;
                 __tagHelperExecutionContext.AddTagHelperAttribute(__tagHelperAttribute_0);
-#line 5 "TestFiles/IntegrationTests/InstrumentationPassIntegrationTest/BasicTest.cshtml"
-__InputTagHelper.BarProp = DateTime.Now;
+                __InputTagHelper.BarProp = 
+#line (5,30)-(5,42) "TestFiles/IntegrationTests/InstrumentationPassIntegrationTest/BasicTest.cshtml"
+DateTime.Now
 
 #line default
 #line hidden
+                ;
                 __tagHelperExecutionContext.AddTagHelperAttribute("date", __InputTagHelper.BarProp, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
                 __tagHelperExecutionContext.AddHtmlAttribute(__tagHelperAttribute_1);
                 await __tagHelperRunner.RunAsync(__tagHelperExecutionContext);
@@ -129,20 +133,28 @@ __InputTagHelper.BarProp = DateTime.Now;
             EndContext();
             BeginContext(217, 29, false);
             BeginContext(217, 29, false);
-#line (9,2)-(9,6) 6 "TestFiles/IntegrationTests/InstrumentationPassIntegrationTest/BasicTest.cshtml"
-Write(Foo(item => new global::Microsoft.AspNetCore.Mvc.Razor.HelperResult(async(__razor_template_writer) => {
-    PushWriter(__razor_template_writer);
-    BeginContext(222, 24, true);
-    BeginContext(222, 24, true);
-    WriteLiteral("<span>Hello world</span>");
-    EndContext();
-    EndContext();
-    PopWriter();
-}
-)));
+            Write(
+#line (9,2)-(9,6) "TestFiles/IntegrationTests/InstrumentationPassIntegrationTest/BasicTest.cshtml"
+Foo(
 
 #line default
 #line hidden
+            item => new global::Microsoft.AspNetCore.Mvc.Razor.HelperResult(async(__razor_template_writer) => {
+                PushWriter(__razor_template_writer);
+                BeginContext(222, 24, true);
+                BeginContext(222, 24, true);
+                WriteLiteral("<span>Hello world</span>");
+                EndContext();
+                EndContext();
+                PopWriter();
+            }
+            )
+#line (9,31)-(9,32) "TestFiles/IntegrationTests/InstrumentationPassIntegrationTest/BasicTest.cshtml"
+)
+
+#line default
+#line hidden
+            );
             EndContext();
             EndContext();
         }

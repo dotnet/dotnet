@@ -19,8 +19,8 @@ namespace Test
         {
             global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_0(__builder, 0, 1, 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                          Selected
+#line (1,27)-(1,35) "x:\dir\subdir\Test\TestComponent.cshtml"
+Selected
 
 #line default
 #line hidden
@@ -29,13 +29,14 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (3,8)-(5,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     string[] Selected { get; set; } = Array.Empty<string>();
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 namespace __Blazor.Test.TestComponent

@@ -2,7 +2,7 @@
 |
     public void MyEventHandler() {}
 |
-Generated Location: (1032:27,7 [39] )
+Generated Location: (1035:27,0 [39] )
 |
     public void MyEventHandler() {}
 |

@@ -63,7 +63,7 @@ public class VisualStudioDocumentTrackerTest : VisualStudioWorkspaceTestBase
             JoinableTaskFactory.Context,
             _filePath,
             projectPath,
-            _projectManager.GetAccessor(),
+            _projectManager,
             workspaceEditorSettings,
             ProjectEngineFactoryProvider,
             _textBuffer,

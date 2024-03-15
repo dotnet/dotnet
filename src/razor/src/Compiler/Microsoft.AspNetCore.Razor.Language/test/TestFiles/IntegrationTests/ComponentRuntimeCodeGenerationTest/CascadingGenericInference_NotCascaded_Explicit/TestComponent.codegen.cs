@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.Grid<DateTime>>(0);
             __builder.AddComponentParameter(1, "Items", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Collections.Generic.IEnumerable<DateTime>>(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                Array.Empty<DateTime>()
+#line (1,33)-(1,56) "x:\dir\subdir\Test\TestComponent.cshtml"
+Array.Empty<DateTime>()
 
 #line default
 #line hidden

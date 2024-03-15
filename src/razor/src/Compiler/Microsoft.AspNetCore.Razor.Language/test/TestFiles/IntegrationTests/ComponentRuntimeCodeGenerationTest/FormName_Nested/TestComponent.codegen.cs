@@ -9,12 +9,13 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-using Microsoft.AspNetCore.Components.Web;
+#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+using Microsoft.AspNetCore.Components.Web
 
 #line default
 #line hidden
 #nullable disable
+    ;
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
@@ -26,8 +27,8 @@ using Microsoft.AspNetCore.Components.Web;
             __builder.AddAttribute(1, "method", "post");
             __builder.AddAttribute(2, "onsubmit", global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                               () => { }
+#line (2,32)-(2,41) "x:\dir\subdir\Test\TestComponent.cshtml"
+() => { }
 
 #line default
 #line hidden
@@ -43,8 +44,8 @@ using Microsoft.AspNetCore.Components.Web;
                 __builder2.AddAttribute(7, "method", "post");
                 __builder2.AddAttribute(8, "onsubmit", global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
 #nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                   () => { }
+#line (4,36)-(4,45) "x:\dir\subdir\Test\TestComponent.cshtml"
+() => { }
 
 #line default
 #line hidden
@@ -60,8 +61,8 @@ using Microsoft.AspNetCore.Components.Web;
                     __builder3.AddAttribute(13, "method", "post");
                     __builder3.AddAttribute(14, "onsubmit", global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
 #nullable restore
-#line 6 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                       () => { }
+#line (6,40)-(6,49) "x:\dir\subdir\Test\TestComponent.cshtml"
+() => { }
 
 #line default
 #line hidden
@@ -78,8 +79,8 @@ using Microsoft.AspNetCore.Components.Web;
                 __builder2.AddAttribute(17, "method", "post");
                 __builder2.AddAttribute(18, "onsubmit", global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.EventArgs>(this, 
 #nullable restore
-#line 8 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                   () => { }
+#line (8,36)-(8,45) "x:\dir\subdir\Test\TestComponent.cshtml"
+() => { }
 
 #line default
 #line hidden
@@ -94,13 +95,14 @@ using Microsoft.AspNetCore.Components.Web;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 10 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (10,8)-(12,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     [Parameter] public RenderFragment ChildContent { get; set; }
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

@@ -13,8 +13,8 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         {
             WriteLiteral("<body>\r\n");
 #nullable restore
-#line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
-      
+#line (2,7)-(8,9) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
+
         var nameLookup = new Dictionary<string, (string FirstName, string LastName, object Extra)>()
         {
             ["John Doe"] = ("John", "Doe", true)
@@ -25,9 +25,10 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #line default
 #line hidden
 #nullable disable
+
 #nullable restore
-#line 8 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
-                                                     
+#line (8,54)-(14,5) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
+
 
         int Sixteen = 0b0001_0000;
         long BillionsAndBillions = 100_000_000_000;
@@ -38,10 +39,11 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n");
 #nullable restore
-#line 16 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
-     if (nameLookup.TryGetValue("John Doe", out var entry))
+#line (16,6)-(23,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
+if (nameLookup.TryGetValue("John Doe", out var entry))
     {
         if (entry.Extra is bool alive)
         {
@@ -52,27 +54,32 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("    <p>\r\n        Here\'s a very unique number: ");
+            Write(
 #nullable restore
-#line (24,40)-(24,102) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
-Write(1.618_033_988_749_894_848_204_586_834_365_638_117_720_309_179M);
+#line (24,40)-(24,102) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
+1.618_033_988_749_894_848_204_586_834_365_638_117_720_309_179M
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\r\n    </p>\r\n\r\n    <div>\r\n        ");
+            Write(
 #nullable restore
-#line (28,11)-(28,45) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
-Write((First: "John", Last: "Doe").First);
+#line (28,11)-(28,45) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
+(First: "John", Last: "Doe").First
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral(" ");
             WriteLiteral("\r\n    </div>\r\n\r\n");
 #nullable restore
-#line 31 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
-     switch (entry.Extra)
+#line (31,6)-(43,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp7.cshtml"
+switch (entry.Extra)
     {
         case int age:
             // Do something
@@ -88,6 +95,7 @@ Write((First: "John", Last: "Doe").First);
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("</body>");
         }
         #pragma warning restore 1998

@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -13,7 +14,11 @@ public class InjectIntermediateNode : ExtensionIntermediateNode
 {
     public string TypeName { get; set; }
 
+    public SourceSpan? TypeSource { get; set; }
+
     public string MemberName { get; set; }
+
+    public SourceSpan? MemberSource { get; set; }
 
     public override IntermediateNodeCollection Children => IntermediateNodeCollection.ReadOnly;
 

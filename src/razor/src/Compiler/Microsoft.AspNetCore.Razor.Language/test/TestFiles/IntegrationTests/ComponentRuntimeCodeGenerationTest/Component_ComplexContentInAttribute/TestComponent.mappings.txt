@@ -1,4 +1,9 @@
-﻿Source Location: (52:2,7 [67] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (30:0,30 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+|MyEnum|
+Generated Location: (975:23,0 [6] )
+|MyEnum|
+
+Source Location: (52:2,7 [67] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     public enum MyEnum
     {
@@ -6,7 +11,7 @@
         Two
     }
 |
-Generated Location: (1235:34,7 [67] )
+Generated Location: (1220:34,0 [67] )
 |
     public enum MyEnum
     {

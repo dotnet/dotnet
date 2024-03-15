@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.CoolnessMeter>(0);
             __builder.AddComponentParameter(1, "Coolness", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                           "very-cool"
+#line (1,28)-(1,39) "x:\dir\subdir\Test\TestComponent.cshtml"
+"very-cool"
 
 #line default
 #line hidden

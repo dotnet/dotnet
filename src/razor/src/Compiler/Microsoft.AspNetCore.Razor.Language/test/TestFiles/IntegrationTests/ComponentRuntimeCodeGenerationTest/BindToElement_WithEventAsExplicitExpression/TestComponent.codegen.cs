@@ -18,17 +18,18 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-   var x = "anotherevent"; 
+#line (1,3)-(1,28) "x:\dir\subdir\Test\TestComponent.cshtml"
+ var x = "anotherevent"; 
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.OpenElement(0, "div");
             __builder.AddAttribute(1, "myvalue", global::Microsoft.AspNetCore.Components.BindConverter.FormatValue(
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                   ParentValue
+#line (2,20)-(2,31) "x:\dir\subdir\Test\TestComponent.cshtml"
+ParentValue
 
 #line default
 #line hidden
@@ -36,8 +37,8 @@ namespace Test
             ));
             __builder.AddAttribute(2, 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                     x.ToString()
+#line (2,54)-(2,66) "x:\dir\subdir\Test\TestComponent.cshtml"
+x.ToString()
 
 #line default
 #line hidden
@@ -48,13 +49,14 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (3,8)-(5,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     public string ParentValue { get; set; } = "hi";
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

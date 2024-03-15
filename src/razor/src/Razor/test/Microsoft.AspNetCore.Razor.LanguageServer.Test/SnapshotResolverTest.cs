@@ -43,7 +43,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         var documentFilePath = @"C:\path\to\document.cshtml";
         var normalizedFilePath = "C:/path/to/document.cshtml";
         var projectManager = CreateProjectSnapshotManager();
-        var snapshotResolver = new SnapshotResolver(projectManager.GetAccessor(), LoggerFactory);
+        var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         await RunOnDispatcherAsync(() =>
         {
@@ -74,7 +74,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         // Arrange
         var documentFilePath = @"C:\path\to\document.cshtml";
         var projectManager = CreateProjectSnapshotManager();
-        var snapshotResolver = new SnapshotResolver(projectManager.GetAccessor(), LoggerFactory);
+        var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         // Act
         IDocumentSnapshot? document = null;
@@ -94,7 +94,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
         var projectManager = CreateProjectSnapshotManager();
-        var snapshotResolver = new SnapshotResolver(projectManager.GetAccessor(), LoggerFactory);
+        var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         // Act
         IProjectSnapshot[]? projects = null;
@@ -115,7 +115,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
         var projectManager = CreateProjectSnapshotManager();
-        var snapshotResolver = new SnapshotResolver(projectManager.GetAccessor(), LoggerFactory);
+        var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         await RunOnDispatcherAsync(() =>
         {
@@ -161,7 +161,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         // Arrange
         var documentFilePath = "C:/path/to/document.cshtml";
         var projectManager = CreateProjectSnapshotManager();
-        var snapshotResolver = new SnapshotResolver(projectManager.GetAccessor(), LoggerFactory);
+        var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         await RunOnDispatcherAsync(() =>
         {
@@ -197,7 +197,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
             return expectedProject;
         });
 
-        var snapshotResolver = new SnapshotResolver(projectManager.GetAccessor(), LoggerFactory);
+        var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         // Act
         IProjectSnapshot[]? projects = null;
@@ -221,7 +221,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         documentFilePath = FilePathNormalizer.Normalize(documentFilePath);
 
         var projectManager = CreateProjectSnapshotManager();
-        var snapshotResolver = new SnapshotResolver(projectManager.GetAccessor(), LoggerFactory);
+        var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         var miscProject = await RunOnDispatcherAsync(() =>
         {
@@ -252,7 +252,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         // Arrange
         var documentFilePath = "c:/path/to/document.cshtml";
         var projectManager = CreateProjectSnapshotManager();
-        var snapshotResolver = new SnapshotResolver(projectManager.GetAccessor(), LoggerFactory);
+        var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         var ownerProject = await RunOnDispatcherAsync(() =>
         {
@@ -281,7 +281,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
-        var snapshotResolver = new SnapshotResolver(projectManager.GetAccessor(), LoggerFactory);
+        var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         // Act
         var project = await RunOnDispatcherAsync(snapshotResolver.GetMiscellaneousProject);
@@ -296,7 +296,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
     {
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
-        var snapshotResolver = new SnapshotResolver(projectManager.GetAccessor(), LoggerFactory);
+        var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         // Act
         var project = await RunOnDispatcherAsync(snapshotResolver.GetMiscellaneousProject);
@@ -311,7 +311,7 @@ public class SnapshotResolverTest(ITestOutputHelper testOutput) : LanguageServer
         filePath = FilePathNormalizer.Normalize(filePath);
 
         var projectManager = CreateProjectSnapshotManager();
-        var snapshotResolver = new SnapshotResolver(projectManager.GetAccessor(), LoggerFactory);
+        var snapshotResolver = new SnapshotResolver(projectManager, LoggerFactory);
 
         if (addToMiscellaneous)
         {

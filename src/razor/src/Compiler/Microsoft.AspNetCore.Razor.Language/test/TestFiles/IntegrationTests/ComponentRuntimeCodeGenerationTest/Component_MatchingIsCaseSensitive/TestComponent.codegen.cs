@@ -24,8 +24,8 @@ namespace Test
             __builder.AddComponentParameter(3, "intproperty", "1");
             __builder.AddComponentParameter(4, "BoolProperty", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Boolean>(
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                           true
+#line (3,44)-(3,48) "x:\dir\subdir\Test\TestComponent.cshtml"
+true
 
 #line default
 #line hidden

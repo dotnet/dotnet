@@ -1,5 +1,17 @@
-﻿Source Location: (11:0,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (20:1,1 [12] x:\dir\subdir\Test\TestComponent.cshtml)
+|using Test
+|
+Generated Location: (371:12,0 [12] )
+|using Test
+|
+
+Source Location: (11:0,11 [6] x:\dir\subdir\Test\TestComponent.cshtml)
 |TChild|
-Generated Location: (558:21,0 [6] )
+Generated Location: (586:22,0 [6] )
 |TChild|
+
+Source Location: (69:2,37 [16] x:\dir\subdir\Test\TestComponent.cshtml)
+|(TChild x) => {}|
+Generated Location: (1359:37,0 [16] )
+|(TChild x) => {}|
 

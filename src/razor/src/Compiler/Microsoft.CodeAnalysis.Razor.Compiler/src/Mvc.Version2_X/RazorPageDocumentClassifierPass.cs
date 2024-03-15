@@ -101,6 +101,8 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
         {
             Key = RouteTemplateKey,
             Value = pageDirective.RouteTemplate,
+            Source = pageDirective.Source,
+            ValueStringSyntax = "Route"
         };
         // Metadata attributes need to be inserted right before the class declaration.
         @namespace.Children.Insert(classIndex, metadataAttributeNode);

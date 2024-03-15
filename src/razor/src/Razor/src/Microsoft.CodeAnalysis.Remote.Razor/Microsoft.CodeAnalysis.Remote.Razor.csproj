@@ -20,6 +20,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AdditionalFiles Include="$(RepoRoot)eng\BannedSymbols.MEFv1.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Microsoft.CodeAnalysis.Razor.Workspaces\Microsoft.CodeAnalysis.Razor.Workspaces.csproj" />
   </ItemGroup>
 

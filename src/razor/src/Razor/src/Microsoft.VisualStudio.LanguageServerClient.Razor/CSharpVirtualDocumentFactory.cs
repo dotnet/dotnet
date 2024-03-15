@@ -34,7 +34,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
     private static IContentType? s_csharpContentType;
     private readonly FileUriProvider _fileUriProvider;
     private readonly FilePathService _filePathService;
-    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
+    private readonly IProjectSnapshotManager _projectManager;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
     private readonly ILogger _logger;
     private readonly ITelemetryReporter _telemetryReporter;
@@ -46,7 +46,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
         ITextDocumentFactoryService textDocumentFactory,
         FileUriProvider fileUriProvider,
         FilePathService filePathService,
-        IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+        IProjectSnapshotManager projectManager,
         LanguageServerFeatureOptions languageServerFeatureOptions,
         IRazorLoggerFactory loggerFactory,
         ITelemetryReporter telemetryReporter)
@@ -54,7 +54,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
     {
         _fileUriProvider = fileUriProvider;
         _filePathService = filePathService;
-        _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
+        _projectManager = projectManager;
         _languageServerFeatureOptions = languageServerFeatureOptions;
         _logger = loggerFactory.CreateLogger<CSharpVirtualDocumentFactory>();
         _telemetryReporter = telemetryReporter;
@@ -193,9 +193,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
             yield break;
         }
 
-        var projects = _projectSnapshotManagerAccessor.TryGetInstance(out var projectSnapshotManager)
-            ? projectSnapshotManager.GetProjects()
-            : ImmutableArray<IProjectSnapshot>.Empty;
+        var projects = _projectManager.GetProjects();
 
         var inAny = false;
         var normalizedDocumentPath = FilePathService.GetProjectSystemFilePath(hostDocumentUri);

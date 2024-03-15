@@ -22,24 +22,26 @@ namespace Test
             __builder.AddComponentParameter(2, "ParamAfter", "after");
             __builder.SetKey(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                        someDate.Day
+#line (1,41)-(1,53) "x:\dir\subdir\Test\TestComponent.cshtml"
+someDate.Day
 
 #line default
 #line hidden
 #nullable disable
+
             );
             __builder.CloseComponent();
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (3,8)-(5,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     private DateTime someDate = DateTime.Now;
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

@@ -293,6 +293,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
+        AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
 
     [Fact]
@@ -326,6 +327,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
+        AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
 
     [Fact]
@@ -360,6 +362,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
+        AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
 
     [Fact]

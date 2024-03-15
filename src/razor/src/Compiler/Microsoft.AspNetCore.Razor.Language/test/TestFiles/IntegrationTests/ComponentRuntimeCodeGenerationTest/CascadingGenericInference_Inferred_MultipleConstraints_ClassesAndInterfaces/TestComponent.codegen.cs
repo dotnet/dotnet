@@ -9,7 +9,7 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Models;
 
 #line default
@@ -25,8 +25,8 @@ using Models;
             __builder.OpenComponent<global::Test.Grid<WeatherForecast>>(0);
             __builder.AddComponentParameter(1, "Items", 
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                       Array.Empty<WeatherForecast>()
+#line (3,40)-(3,70) "x:\dir\subdir\Test\TestComponent.cshtml"
+Array.Empty<WeatherForecast>()
 
 #line default
 #line hidden

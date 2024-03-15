@@ -1,8 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System;
 using System.IO;
 using System.Text;
+using System.Windows.Documents;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,6 +24,8 @@ public class MEFComponentTests(ITestOutputHelper testOutputHelper) : AbstractRaz
 
         Assert.True(File.Exists(mefErrorFile), "Expected ComponentModelCache error file to exist");
 
+        var errors = new StringBuilder();
+
         var section = new StringBuilder();
         foreach (var line in File.ReadLines(mefErrorFile))
         {
@@ -32,9 +36,9 @@ public class MEFComponentTests(ITestOutputHelper testOutputHelper) : AbstractRaz
                 var error = section.ToString();
                 section.Clear();
 
-                if (error.Contains("Razor"))
+                if (error.Contains("Razor") && !IsAllowedFailure(error))
                 {
-                    Assert.True(IsAllowedFailure(error), "Unexpected MEF failure: " + line);
+                    errors.AppendLine(error);
                 }
             }
             else if (line.Equals("----------- Used assemblies -----------"))
@@ -47,6 +51,8 @@ public class MEFComponentTests(ITestOutputHelper testOutputHelper) : AbstractRaz
                 section.AppendLine(line);
             }
         }
+
+        Assert.True(errors.Length == 0, $"Unexpected MEF failures: {Environment.NewLine}{errors}");
     }
 
     private static bool IsAllowedFailure(string error)

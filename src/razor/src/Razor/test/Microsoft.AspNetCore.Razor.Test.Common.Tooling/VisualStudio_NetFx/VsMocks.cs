@@ -2,8 +2,11 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.Build.Tasks;
+using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServerClient.Razor;
 using Microsoft.VisualStudio.Text;
@@ -86,6 +89,8 @@ internal static class VsMocks
             where T : class;
         void AddService(Type serviceType, object? serviceInstance);
         void AddService(Type serviceType, Func<object?> getServiceCallback);
+
+        void AddComponentModel(Action<IComponentModelBuilder>? configure = null);
     }
 
     private class ServiceProviderBuilder : IServiceProviderBuilder
@@ -126,6 +131,71 @@ internal static class VsMocks
         {
             Mock.Setup<object?>(x => x.GetService(serviceType))
                 .Returns(() => getServiceCallback());
+        }
+
+        public void AddComponentModel(Action<IComponentModelBuilder>? configure = null)
+        {
+            AddService<SComponentModel>(CreateComponentModel(configure));
+        }
+    }
+
+    public static IComponentModel CreateComponentModel(Action<IComponentModelBuilder>? configure = null)
+    {
+        var builder = new ComponentModelBuilder();
+        configure?.Invoke(builder);
+        return builder.Mock.Object;
+    }
+
+    public interface IComponentModelBuilder
+    {
+        void AddExport<T>(T instance)
+            where T : class;
+        void AddExport<T>(Func<T> getInstanceCallback)
+            where T : class;
+    }
+
+    private class ComponentModelBuilder : IComponentModelBuilder
+    {
+        private readonly Dictionary<string, Func<object>> _contractNameToExportMap = new();
+
+        public void AddExport<T>(T instance)
+            where T : class
+        {
+            _contractNameToExportMap.Add(typeof(T).FullName, () => instance);
+        }
+
+        public void AddExport<T>(Func<T> getInstanceCallback)
+            where T : class
+        {
+            _contractNameToExportMap.Add(typeof(T).FullName, () => getInstanceCallback());
+        }
+
+        public StrictMock<IComponentModel> Mock
+        {
+            get
+            {
+                var mock = new StrictMock<IComponentModel>();
+
+                mock.SetupGet(x => x.DefaultExportProvider)
+                    .Returns(new SimpleExportProvider(_contractNameToExportMap));
+
+                return mock;
+            }
+        }
+
+        private class SimpleExportProvider(Dictionary<string, Func<object>> contractNameToExportMap) : ExportProvider
+        {
+            protected override IEnumerable<Export> GetExportsCore(ImportDefinition definition, AtomicComposition atomicComposition)
+            {
+                var contractName = definition.ContractName;
+
+                if (!contractNameToExportMap.TryGetValue(contractName, out var exportValueGetter))
+                {
+                    throw new InvalidOperationException($"Failed to find export with contract name, '{contractName}'");
+                }
+
+                yield return new Export(contractName, exportValueGetter);
+            }
         }
     }
 }

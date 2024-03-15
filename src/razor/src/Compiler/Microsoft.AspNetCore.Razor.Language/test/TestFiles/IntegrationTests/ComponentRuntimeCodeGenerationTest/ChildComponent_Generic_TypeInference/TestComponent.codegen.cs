@@ -19,8 +19,8 @@ namespace Test
         {
             global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_0(__builder, 0, 1, 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                     "hi"
+#line (1,22)-(1,26) "x:\dir\subdir\Test\TestComponent.cshtml"
+"hi"
 
 #line default
 #line hidden

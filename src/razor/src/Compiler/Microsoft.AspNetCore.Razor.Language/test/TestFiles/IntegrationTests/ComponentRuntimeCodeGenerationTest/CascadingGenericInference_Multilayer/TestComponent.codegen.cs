@@ -20,8 +20,8 @@ namespace Test
             {
                 global::__Blazor.Test.TestComponent.TypeInference.CreateAncestor_0_CaptureParameters(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                   Array.Empty<DateTime>()
+#line (1,20)-(1,43) "x:\dir\subdir\Test\TestComponent.cshtml"
+Array.Empty<DateTime>()
 
 #line default
 #line hidden

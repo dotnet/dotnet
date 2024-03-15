@@ -430,35 +430,32 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
             }
             else
             {
-                using (context.CodeWriter.BuildLinePragma(node.Source, context))
+                context.CodeWriter.WriteStartAssignment(GetPropertyAccessor(node));
+
+                if (node.BoundAttribute.IsEnum &&
+                    node.Children.Count == 1 &&
+                    node.Children.First() is IntermediateToken token &&
+                    token.IsCSharp)
                 {
-                    context.CodeWriter.WriteStartAssignment(GetPropertyAccessor(node));
-
-                    if (node.BoundAttribute.IsEnum &&
-                        node.Children.Count == 1 &&
-                        node.Children.First() is IntermediateToken token &&
-                        token.IsCSharp)
-                    {
-                        context.CodeWriter
-                            .Write("global::")
-                            .Write(node.BoundAttribute.TypeName)
-                            .Write(".");
-                    }
-
-                    if (node.Children.Count == 0 &&
-                        node.AttributeStructure == AttributeStructure.Minimized &&
-                        node.BoundAttribute.ExpectsBooleanValue(node.AttributeName))
-                    {
-                        // If this is a minimized boolean attribute, set the value to true.
-                        context.CodeWriter.Write("true");
-                    }
-                    else
-                    {
-                        RenderTagHelperAttributeInline(context, node, node.Source);
-                    }
-
-                    context.CodeWriter.WriteLine(";");
+                    context.CodeWriter
+                        .Write("global::")
+                        .Write(node.BoundAttribute.TypeName)
+                        .Write(".");
                 }
+
+                if (node.Children.Count == 0 &&
+                    node.AttributeStructure == AttributeStructure.Minimized &&
+                    node.BoundAttribute.ExpectsBooleanValue(node.AttributeName))
+                {
+                    // If this is a minimized boolean attribute, set the value to true.
+                    context.CodeWriter.Write("true");
+                }
+                else
+                {
+                    RenderTagHelperAttributeInline(context, node, node.Source);
+                }
+
+                context.CodeWriter.WriteLine(";");
             }
         }
 
@@ -567,12 +564,22 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
         }
         else if (node is IntermediateToken token)
         {
-            if (context.Options.DesignTime && node.Source != null)
+            if (context.Options.DesignTime)
             {
-                context.AddSourceMappingFor(node);
-            }
+                if (node.Source != null)
+                {
+                    context.AddSourceMappingFor(node);
+                }
 
-            context.CodeWriter.Write(token.Content);
+                context.CodeWriter.Write(token.Content);
+            }
+            else
+            {
+                using (context.CodeWriter.BuildEnhancedLinePragma(token.Source, context))
+                {
+                    context.CodeWriter.Write(token.Content);
+                }
+            }
         }
         else if (node is CSharpCodeIntermediateNode)
         {

@@ -6,12 +6,13 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 {
     #line default
 #nullable restore
-#line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
-using System.Collections.Generic;
+#line (1,2)-(2,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
+using System.Collections.Generic
 
 #line default
 #line hidden
 #nullable disable
+    ;
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"4c55c366b179d82f3d2800004985646e9bf0edbf993e2f4a94cbb70079823905", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_CSharp8_Runtime
     {
@@ -20,8 +21,8 @@ using System.Collections.Generic;
         {
             WriteLiteral("\r\n");
 #nullable restore
-#line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
-  
+#line (3,3)-(23,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
+
     IAsyncEnumerable<bool> GetAsyncEnumerable()
     {
         return null;
@@ -45,90 +46,107 @@ using System.Collections.Generic;
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n");
+            Write(
 #nullable restore
-#line (25,2)-(25,13) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
-Write(words[1..2]);
+#line (25,2)-(25,13) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
+words[1..2]
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\r\n");
+            Write(
 #nullable restore
-#line (26,3)-(26,16) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
-Write(words[^2..^0]);
+#line (26,3)-(26,16) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
+words[^2..^0]
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\r\n\r\n");
+            Write(
 #nullable restore
-#line (28,3)-(33,2) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
-Write(testEnum switch
+#line (28,3)-(33,2) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
+testEnum switch
 {
     TestEnum.First => "The First!",
     TestEnum.Second => "The Second!",
     _ => "The others",
-});
+}
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\r\n\r\n");
 #nullable restore
-#line 35 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
- await foreach (var val in GetAsyncEnumerable())
+#line (35,2)-(37,5) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
+await foreach (var val in GetAsyncEnumerable())
 {
     
 
 #line default
 #line hidden
 #nullable disable
+
+            Write(
 #nullable restore
-#line (37,6)-(37,9) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
-Write(val);
+#line (37,6)-(37,9) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
+val
 
 #line default
 #line hidden
 #nullable disable
+            );
 #nullable restore
-#line 37 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
-        
+#line (37,9)-(39,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
+
 }
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n");
+            Write(
 #nullable restore
-#line (40,2)-(40,14) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
-Write(Person!.Name);
+#line (40,2)-(40,14) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
+Person!.Name
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\r\n");
+            Write(
 #nullable restore
-#line (41,2)-(41,22) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
-Write(People![0]!.Name![1]);
+#line (41,2)-(41,22) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
+People![0]!.Name![1]
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\r\n");
+            Write(
 #nullable restore
-#line (42,2)-(42,23) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
-Write(DoSomething!(Person!));
+#line (42,2)-(42,23) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
+DoSomething!(Person!)
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\r\n\r\n");
         }
         #pragma warning restore 1998
 #nullable restore
-#line 44 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
-            
+#line (44,13)-(67,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CSharp8.cshtml"
+
     enum TestEnum
     {
         First,
@@ -155,6 +173,7 @@ Write(DoSomething!(Person!));
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

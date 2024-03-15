@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
@@ -19,16 +18,16 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 [Export(typeof(ISnapshotResolver)), Shared]
 internal sealed class SnapshotResolver : ISnapshotResolver
 {
-    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
+    private readonly ProjectSnapshotManagerBase _projectManager;
     private readonly ILogger _logger;
 
     // Internal for testing
     internal readonly HostProject MiscellaneousHostProject;
 
     [ImportingConstructor]
-    public SnapshotResolver(IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor, IRazorLoggerFactory loggerFactory)
+    public SnapshotResolver(ProjectSnapshotManagerBase projectManager, IRazorLoggerFactory loggerFactory)
     {
-        _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor ?? throw new ArgumentNullException(nameof(projectSnapshotManagerAccessor));
+        _projectManager = projectManager;
         _logger = loggerFactory.CreateLogger<SnapshotResolver>();
 
         var miscellaneousProjectPath = Path.Combine(TempDirectory.Instance.DirectoryPath, "__MISC_RAZOR_PROJECT__");
@@ -44,7 +43,7 @@ internal sealed class SnapshotResolver : ISnapshotResolver
             throw new ArgumentNullException(nameof(documentFilePath));
         }
 
-        var projects = _projectSnapshotManagerAccessor.Instance.GetProjects();
+        var projects = _projectManager.GetProjects();
         var normalizedDocumentPath = FilePathNormalizer.Normalize(documentFilePath);
         foreach (var projectSnapshot in projects)
         {
@@ -64,10 +63,10 @@ internal sealed class SnapshotResolver : ISnapshotResolver
 
     public IProjectSnapshot GetMiscellaneousProject()
     {
-        if (!_projectSnapshotManagerAccessor.Instance.TryGetLoadedProject(MiscellaneousHostProject.Key, out var miscellaneousProject))
+        if (!_projectManager.TryGetLoadedProject(MiscellaneousHostProject.Key, out var miscellaneousProject))
         {
-            _projectSnapshotManagerAccessor.Instance.ProjectAdded(MiscellaneousHostProject);
-            miscellaneousProject = _projectSnapshotManagerAccessor.Instance.GetLoadedProject(MiscellaneousHostProject.Key);
+            _projectManager.ProjectAdded(MiscellaneousHostProject);
+            miscellaneousProject = _projectManager.GetLoadedProject(MiscellaneousHostProject.Key);
         }
 
         return miscellaneousProject;
@@ -105,7 +104,7 @@ internal sealed class SnapshotResolver : ISnapshotResolver
             return true;
         }
 
-        _logger.LogTrace("{documentFilePath} not found in {documents}", documentFilePath, _projectSnapshotManagerAccessor.Instance.GetProjects().SelectMany(p => p.DocumentFilePaths));
+        _logger.LogTrace("{documentFilePath} not found in {documents}", documentFilePath, _projectManager.GetProjects().SelectMany(p => p.DocumentFilePaths));
 
         documentSnapshot = null;
         return false;

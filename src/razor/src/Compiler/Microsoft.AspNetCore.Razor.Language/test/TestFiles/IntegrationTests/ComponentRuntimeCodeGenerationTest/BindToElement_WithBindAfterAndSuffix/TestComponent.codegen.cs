@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenElement(0, "div");
             __builder.AddAttribute(1, "myvalue", global::Microsoft.AspNetCore.Components.BindConverter.FormatValue(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                     ParentValue
+#line (1,22)-(1,33) "x:\dir\subdir\Test\TestComponent.cshtml"
+ParentValue
 
 #line default
 #line hidden
@@ -29,8 +29,8 @@ namespace Test
             ));
             __builder.AddAttribute(2, "myevent", global::Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredBindSetter(callback: __value => { ParentValue = __value; return global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeAsynchronousDelegate(callback: 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                       DoSomething
+#line (1,56)-(1,67) "x:\dir\subdir\Test\TestComponent.cshtml"
+DoSomething
 
 #line default
 #line hidden
@@ -41,8 +41,8 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (3,8)-(10,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     public string ParentValue { get; set; } = "hi";
 
     Task DoSomething()
@@ -53,6 +53,7 @@ namespace Test
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

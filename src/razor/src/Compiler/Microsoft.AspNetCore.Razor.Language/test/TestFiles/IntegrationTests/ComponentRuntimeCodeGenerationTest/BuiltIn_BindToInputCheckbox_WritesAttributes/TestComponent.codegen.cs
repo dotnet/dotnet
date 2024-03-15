@@ -21,8 +21,8 @@ namespace Test
             __builder.AddAttribute(1, "type", "checkbox");
             __builder.AddAttribute(2, "@bind", 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                               Enabled
+#line (1,32)-(1,39) "x:\dir\subdir\Test\TestComponent.cshtml"
+Enabled
 
 #line default
 #line hidden
@@ -32,13 +32,14 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (2,8)-(4,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     public bool Enabled { get; set; }
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

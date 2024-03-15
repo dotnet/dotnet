@@ -1,5 +1,5 @@
 ﻿Document - 
-    NamespaceDeclaration -  - New.Test
+    NamespaceDeclaration - (57:2,11 [8] x:\dir\subdir\Test\_Imports.razor) - New.Test
         UsingDirective - (3:1,1 [20] ) - global::System
         UsingDirective - (26:2,1 [40] ) - global::System.Collections.Generic
         UsingDirective - (69:3,1 [25] ) - global::System.Linq

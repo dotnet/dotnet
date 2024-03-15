@@ -20,12 +20,13 @@ namespace Test
             __builder.OpenComponent<global::Test.TestComponent>(0);
             global::Microsoft.AspNetCore.Components.IComponentRenderMode __renderMode = 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                            null
+#line (1,29)-(1,33) "x:\dir\subdir\Test\TestComponent.cshtml"
+null
 
 #line default
 #line hidden
 #nullable disable
+
             ;
             __builder.AddComponentRenderMode(__renderMode);
             __builder.CloseComponent();

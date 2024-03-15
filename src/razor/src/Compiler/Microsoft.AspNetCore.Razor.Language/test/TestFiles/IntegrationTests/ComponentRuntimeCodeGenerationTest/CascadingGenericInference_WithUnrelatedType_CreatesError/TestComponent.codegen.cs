@@ -20,8 +20,8 @@ namespace Test
             {
                 global::__Blazor.Test.TestComponent.TypeInference.CreateGrid_0_CaptureParameters(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-               new Dictionary<int, string>()
+#line (1,16)-(1,45) "x:\dir\subdir\Test\TestComponent.cshtml"
+new Dictionary<int, string>()
 
 #line default
 #line hidden

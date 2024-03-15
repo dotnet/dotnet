@@ -26,10 +26,25 @@ namespace AspNetCore
         {
         }
         #pragma warning restore 1998
-        #nullable restore
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
-        public IHtmlHelper<dynamic> Helper { get; private set; } = default!;
-        #nullable disable
+        public 
+#nullable restore
+#line (1,9)-(1,20) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/_ViewImports.cshtml"
+IHtmlHelper<dynamic>
+
+#line default
+#line hidden
+#nullable disable
+         
+#nullable restore
+#line (1,29)-(1,35) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/_ViewImports.cshtml"
+Helper
+
+#line default
+#line hidden
+#nullable disable
+         { get; private set; }
+         = default!;
         #nullable restore
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; } = default!;

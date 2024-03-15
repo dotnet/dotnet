@@ -22,8 +22,8 @@ namespace Microsoft.VisualStudio.Razor.DynamicFiles;
 
 [Export(typeof(IRazorDynamicFileInfoProvider))]
 [Export(typeof(IRazorDynamicFileInfoProviderInternal))]
-[Export(typeof(IProjectSnapshotChangeTrigger))]
-internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInternal, IRazorDynamicFileInfoProvider, IProjectSnapshotChangeTrigger
+[Export(typeof(IRazorStartupService))]
+internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInternal, IRazorDynamicFileInfoProvider, IRazorStartupService
 {
     private readonly ConcurrentDictionary<Key, Entry> _entries;
     private readonly Func<Key, Entry> _createEmptyEntry;
@@ -39,6 +39,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         LSPEditorFeatureDetector lspEditorFeatureDetector,
         FilePathService filePathService,
         IWorkspaceProvider workspaceProvider,
+        IProjectSnapshotManager projectManager,
         FallbackProjectManager fallbackProjectManager)
     {
         _factory = factory;
@@ -48,14 +49,11 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         _fallbackProjectManager = fallbackProjectManager;
         _entries = new ConcurrentDictionary<Key, Entry>();
         _createEmptyEntry = (key) => new Entry(CreateEmptyInfo(key));
+
+        projectManager.Changed += ProjectManager_Changed;
     }
 
     public event EventHandler<string>? Updated;
-
-    public void Initialize(ProjectSnapshotManagerBase projectManager)
-    {
-        projectManager.Changed += ProjectManager_Changed;
-    }
 
     // Called by us to update LSP document entries
     public void UpdateLSPFileInfo(Uri documentUri, IDynamicDocumentContainer documentContainer)

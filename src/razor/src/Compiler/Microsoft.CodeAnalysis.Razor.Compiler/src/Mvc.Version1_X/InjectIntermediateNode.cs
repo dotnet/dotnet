@@ -16,6 +16,10 @@ public class InjectIntermediateNode : ExtensionIntermediateNode
 
     public string MemberName { get; set; }
 
+    public SourceSpan? TypeSource { get; set; }
+
+    public SourceSpan? MemberSource { get; set; }
+
     public override IntermediateNodeCollection Children => IntermediateNodeCollection.ReadOnly;
 
     public override void Accept(IntermediateNodeVisitor visitor)

@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Settings;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Editor.Razor.Settings;
 using Microsoft.VisualStudio.LegacyEditor.Razor.Settings;
@@ -27,7 +26,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
     private readonly JoinableTaskContext _joinableTaskContext;
     private readonly string _filePath;
     private readonly string _projectPath;
-    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor;
+    private readonly IProjectSnapshotManager _projectManager;
     private readonly IWorkspaceEditorSettings _workspaceEditorSettings;
     private readonly ITextBuffer _textBuffer;
     private readonly IImportDocumentManager _importDocumentManager;
@@ -44,62 +43,22 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
         JoinableTaskContext joinableTaskContext,
         string filePath,
         string projectPath,
-        IProjectSnapshotManagerAccessor projectManagerAccessor,
+        IProjectSnapshotManager projectManager,
         IWorkspaceEditorSettings workspaceEditorSettings,
         IProjectEngineFactoryProvider projectEngineFactoryProvider,
         ITextBuffer textBuffer,
         IImportDocumentManager importDocumentManager)
     {
-        if (dispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(dispatcher));
-        }
-
-        if (joinableTaskContext is null)
-        {
-            throw new ArgumentNullException(nameof(joinableTaskContext));
-        }
-
         if (string.IsNullOrEmpty(filePath))
         {
             throw new ArgumentException(SR.ArgumentCannotBeNullOrEmpty, nameof(filePath));
-        }
-
-        if (projectPath is null)
-        {
-            throw new ArgumentNullException(nameof(projectPath));
-        }
-
-        if (projectManagerAccessor is null)
-        {
-            throw new ArgumentNullException(nameof(projectManagerAccessor));
-        }
-
-        if (workspaceEditorSettings is null)
-        {
-            throw new ArgumentNullException(nameof(workspaceEditorSettings));
-        }
-
-        if (projectEngineFactoryProvider is null)
-        {
-            throw new ArgumentNullException(nameof(projectEngineFactoryProvider));
-        }
-
-        if (textBuffer is null)
-        {
-            throw new ArgumentNullException(nameof(textBuffer));
-        }
-
-        if (importDocumentManager is null)
-        {
-            throw new ArgumentNullException(nameof(importDocumentManager));
         }
 
         _dispatcher = dispatcher;
         _joinableTaskContext = joinableTaskContext;
         _filePath = filePath;
         _projectPath = projectPath;
-        _projectManagerAccessor = projectManagerAccessor;
+        _projectManager = projectManager;
         _workspaceEditorSettings = workspaceEditorSettings;
         _textBuffer = textBuffer;
         _importDocumentManager = importDocumentManager;
@@ -194,7 +153,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
         _projectSnapshot = GetOrCreateProject(_projectPath);
         _isSupportedProject = true;
 
-        _projectManagerAccessor.Instance.Changed += ProjectManager_Changed;
+        _projectManager.Changed += ProjectManager_Changed;
         _workspaceEditorSettings.Changed += EditorSettingsManager_Changed;
         _importDocumentManager.Changed += Import_Changed;
 
@@ -207,12 +166,10 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
     {
         _dispatcher.AssertRunningOnDispatcher();
 
-        var projectManager = _projectManagerAccessor.Instance;
-
-        var projectKeys = projectManager.GetAllProjectKeys(projectPath);
+        var projectKeys = _projectManager.GetAllProjectKeys(projectPath);
 
         if (projectKeys.Length == 0 ||
-            !projectManager.TryGetLoadedProject(projectKeys[0], out var project))
+            !_projectManager.TryGetLoadedProject(projectKeys[0], out var project))
         {
             return new EphemeralProjectSnapshot(_projectEngineFactoryProvider, projectPath);
         }
@@ -231,7 +188,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
 
         _importDocumentManager.OnUnsubscribed(this);
 
-        _projectManagerAccessor.Instance.Changed -= ProjectManager_Changed;
+        _projectManager.Changed -= ProjectManager_Changed;
         _workspaceEditorSettings.Changed -= EditorSettingsManager_Changed;
         _importDocumentManager.Changed -= Import_Changed;
 
@@ -263,7 +220,7 @@ internal sealed class VisualStudioDocumentTracker : IVisualStudioDocumentTracker
             string.Equals(_projectPath, e.ProjectFilePath, StringComparison.OrdinalIgnoreCase))
         {
             // This will be the new snapshot unless the project was removed.
-            if (!_projectManagerAccessor.Instance.TryGetLoadedProject(e.ProjectKey, out _projectSnapshot))
+            if (!_projectManager.TryGetLoadedProject(e.ProjectKey, out _projectSnapshot))
             {
                 _projectSnapshot = null;
             }
