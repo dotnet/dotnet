@@ -179,6 +179,7 @@
       <_allowBuildFromSourcePackage Include="Microsoft.Build.Utilities.Core" />
       <_allowBuildFromSourcePackage Include="Microsoft.Build" />
       <_allowBuildFromSourcePackage Include="Microsoft.CSharp" />
+      <_allowBuildFromSourcePackage Include="Microsoft.DotNet.Build.Tasks.Feed" />
       <_allowBuildFromSourcePackage Include="Microsoft.Extensions.CommandLineUtils.Sources" />
       <_allowBuildFromSourcePackage Include="Microsoft.Extensions.FileProviders.Abstractions" />
       <_allowBuildFromSourcePackage Include="Microsoft.Extensions.FileSystemGlobbing" />

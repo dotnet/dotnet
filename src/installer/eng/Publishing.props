@@ -135,7 +135,12 @@
       <IsStableBuild Condition="'$(DotNetFinalVersionKind)' == 'release'">true</IsStableBuild>
     </PropertyGroup>
 
+    <!--
+      Delete PushToAzureDevOpsArtifacts task and remove condition from PushToBuildStorage task
+      after this repo picks up arcade with the following change: https://github.com/dotnet/arcade/pull/14559
+    -->
     <PushToAzureDevOpsArtifacts
+      Condition="'$(DotNetBuildOrchestrator)' != 'true'"
       AzureDevOpsCollectionUri="$(SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)"
       AzureDevOpsProject="$(SYSTEM_TEAMPROJECT)"
       AzureDevOpsBuildId="$(BUILD_BUILDID)"
@@ -154,5 +159,31 @@
       PublishFlatContainer="true"
       IsStableBuild="$(IsStableBuild)"
       PublishingVersion="3" />
+
+    <PushToBuildStorage
+      Condition="'$(DotNetBuildOrchestrator)' == 'true'"
+      AzureDevOpsCollectionUri="$(SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)"
+      AzureDevOpsProject="$(SYSTEM_TEAMPROJECT)"
+      AzureDevOpsBuildId="$(BUILD_BUILDID)"
+      ItemsToPush="@(SdkAssetsToPushToBlobFeed);@(ChecksumsToPushToBlobFeed)"
+      ItemsToSign="@(ItemsToSignPostBuild)"
+      CertificatesSignInfo="@(CertificatesSignInfo)"
+      StrongNameSignInfo="@(StrongNameSignInfo)"
+      FileSignInfo="@(FileSignInfo)"
+      FileExtensionSignInfo="@(FileExtensionSignInfo)"
+      ManifestBuildData="@(ManifestBuildData)"
+      ManifestRepoName="$(BUILD_REPOSITORY_NAME)"
+      ManifestBranch="$(BUILD_SOURCEBRANCH)"
+      ManifestBuildId="$(BUILD_BUILDNUMBER)"
+      ManifestCommit="$(BUILD_SOURCEVERSION)"
+      AssetManifestPath="$(InstallersAssetManifestFilePath)"
+      PublishFlatContainer="true"
+      IsStableBuild="$(IsStableBuild)"
+      PublishingVersion="3"
+      PushToLocalStorage="$(PushToLocalStorage)"
+      AssetsLocalStorageDir="$(SourceBuiltAssetsDir)"
+      ShippingPackagesLocalStorageDir="$(SourceBuiltShippingPackagesDir)"
+      NonShippingPackagesLocalStorageDir="$(SourceBuiltNonShippingPackagesDir)"
+      AssetManifestsLocalStorageDir="$(SourceBuiltAssetManifestsDir)" />
   </Target>
 </Project>
