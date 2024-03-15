@@ -62,6 +62,41 @@
              Properties="Configuration=$(BuildConfiguration);DotNetBuildFromSource=true"
              Targets="PackXPlat" />
 
+    <ItemGroup>
+      <_AfterSourceBuildProperties Include="_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild" />
+      <_AfterSourceBuildProperties Include="ArcadeBuildFromSource=true"/>
+      <_AfterSourceBuildProperties Include="ArcadeInnerBuildFromSource=true"/>
+    </ItemGroup>
+
+    <MSbuild Projects="$(ArcadeDir)/SourceBuild/AfterSourceBuild.proj"
+             Properties="@(_AfterSourceBuildProperties)"
+            />
+
+    <ItemGroup>
+      <_PublishProperties Include="_NETCORE_ENGINEERING_TELEMETRY=Publish" />
+      <_PublishProperties Include="Configuration=$(Configuration)" />
+      <_PublishProperties Include="ArcadeBuildFromSource=$(ArcadeBuildFromSource)" />
+      <_PublishProperties Include="ArcadeInnerBuildFromSource=true" />
+      <_PublishProperties Include="DotNetBuildFromSource=$(DotNetBuildFromSource)" />
+      <_PublishProperties Include="DotNetBuildFromSourceFlavor=$(DotNetBuildFromSourceFlavor)" />
+      <_PublishProperties Include="DotNetBuildInnerRepo=true" />
+      <_PublishProperties Include="DotNetBuildOrchestrator=$(DotNetBuildOrchestrator)" />
+      <_PublishProperties Include="DotNetBuildPhase=InnerRepo" />
+      <_PublishProperties Include="DotNetBuildRepo=$(DotNetBuildRepo)" />
+      <_PublishProperties Include="DotNetBuildSourceOnly=$(DotNetBuildSourceOnly)" />
+      <_PublishProperties Include="DotNetPublishUsingPipelines=true" />
+      <_PublishProperties Include="PublishToSymbolServer=false" />
+      <_PublishProperties Include="AssetsLocalStorageDir=$(SourceBuiltAssetsDir)" />
+      <_PublishProperties Include="ShippingPackagesLocalStorageDir=$(SourceBuiltShippingPackagesDir)" />
+      <_PublishProperties Include="NonShippingPackagesLocalStorageDir=$(SourceBuiltNonShippingPackagesDir)" />
+      <_PublishProperties Include="AssetManifestsLocalStorageDir=$(SourceBuiltAssetManifestsDir)" />
+    </ItemGroup>
+
+    <MSBuild Projects="$(ArcadeDir)Publish.proj"
+             Properties="@(_PublishProperties)"
+             Targets="Publish"
+             Condition="'$(DotNetBuildOrchestrator)' == 'true'" />
+
   </Target>
 
   <Target Name="ApplySourceBuildPatchFiles">

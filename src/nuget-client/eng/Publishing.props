@@ -2,12 +2,15 @@
 <Project>
   <PropertyGroup>
     <PublishingVersion>3</PublishingVersion>
+    <ProducesDotNetReleaseShippingAssets>true</ProducesDotNetReleaseShippingAssets>
     <PublishDependsOnTargets>$(PublishDependsOnTargets);_PublishPackages</PublishDependsOnTargets>
   </PropertyGroup>
 
   <ItemGroup>
     <_PackagesToPublish Remove="@(_PackagesToPublish)" />
-    <_PackagesToPublish Include="$(ArtifactsPackagesDir)**\*.nupkg" UploadPathSegment="Runtime" Condition="'$(DotNetBuildRepo)' == 'true'" />
+    <_PackagesToPublish Include="$(ArtifactsDir)nupkgs/*.nupkg" UploadPathSegment="nuget-client" Condition="'$(DotNetBuildFromSource)' == 'true'" />
+    <_SymbolsPackages Include="$(ArtifactsDir)nupkgs/*.symbols.nupkg" />
+    <_PackagesToPublish Remove="@(_SymbolsPackages)" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
   </ItemGroup>
 
   <Target Name="_PublishPackages">
