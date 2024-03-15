@@ -1,0 +1,36 @@
+parameters:
+- name: imageOs
+  type: string
+  values:
+  - linux
+  - windows
+- name: imageName
+  type: string
+
+jobs:
+- job:
+  displayName: Run Tests (${{ parameters.imageOs }})
+  pool:
+    ${{ if eq(variables['System.TeamProject'], 'public') }}:
+      name: $(DncEngPublicBuildPool)
+    ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      name: $(DncEngInternalBuildPool)
+    image: ${{ parameters.imageName }}
+    os: ${{ parameters.imageOs }}
+  steps:
+  - checkout: self
+    clean: true
+  - ${{ if eq(parameters.imageOs, 'windows') }}:
+    - script: $(Build.SourcesDirectory)/test.cmd
+      displayName: Windows NT GenerateScript Tests
+  - ${{ if eq(parameters.imageOs, 'linux') }}:
+    - script: $(Build.SourcesDirectory)/test.sh
+      displayName: Linux GenerateScript Tests
+  - task: PublishTestResults@2
+    displayName: Publish Test Results
+    inputs:
+      testRunner: xUnit
+      testResultsFiles: 'artifacts/TestResults/Debug/*.xml'
+      testRunTitle: '$(imageOs)_GenerateScript_tests'
+      configuration: Debug
+    condition: always()

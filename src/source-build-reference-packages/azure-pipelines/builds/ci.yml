@@ -12,36 +12,30 @@ pr:
     - release/*
 
 variables:
-  - name: Codeql.Enabled
-    value: true
+- template: /azure-pipelines/templates/variables/common.yml
 
-stages:
-- stage: build
-  displayName: Build
-  jobs:
-  - template: /eng/common/templates/jobs/jobs.yml
-    parameters:
-      enablePublishUsingPipelines: true
-      enablePublishBuildArtifacts: true
-      enablePublishBuildAssets: true
-      publishAssetsImmediately: true
-      artifacts:
-        publish:
-          artifacts: true
-          manifests: true
-      enableSourceBuild: true
-  - template: /azure-pipelines/builds/generatescript-tests.yml
-    parameters:
-      buildConfiguration: Debug
+resources:
+  repositories:
+  - repository: MicroBuildTemplate
+    type: git
+    name: 1ESPipelineTemplates/MicroBuildTemplate
+    ref: refs/tags/release
 
-# Based on - https://github.com/dotnet/arcade/blob/9b3f304c7bc9fd4d11be9ca0b466b83e98d2a191/Documentation/CorePackages/Publishing.md#moving-away-from-the-legacy-pushtoblobfeed-task
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-  - template: /eng/common/templates/post-build/post-build.yml
-    parameters:
-      publishingInfraVersion: 3
-      publishAssetsImmediately: true
-      enableSourceLinkValidation: false
-      #Nuget and Signing Validation are not needed as we only produce a transport package.
-      enableSigningValidation: false
-      enableNugetValidation: false
-
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
+  parameters:
+    sdl:
+      sourceAnalysisPool:
+        name: $(DncEngInternalBuildPool)
+        image: 1es-windows-2022
+        os: windows
+    pool:
+      name: $(DncEngInternalBuildPool)
+      image: 1es-ubuntu-2204
+      os: linux
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - template: /azure-pipelines/templates/stages/build.yml
+      parameters:
+        engCommonTemplatesDir: ${{ variables.EngCommonTemplatesDir }}
