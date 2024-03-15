@@ -16,9 +16,10 @@
   <PropertyGroup>
     <BuildCommand Condition="'$(BuildCommand)' == '' and '$(IsUtilityProject)' != 'true'">$(BuildScript) $(BuildActions) $(BuildArgs)</BuildCommand>
 
-    <!-- MinimalConsoleLogOutput determines if the repository build should be logged to a separate file or directly to the console. -->
+    <!-- MinimalConsoleLogOutput determines if the repository build should be logged to a separate file or directly to the console.
+         Enable it by default as with prallel repository builds the log becomes non-readable. -->
     <RepoConsoleLogFile>$(ArtifactsLogDir)$(RepositoryName).log</RepoConsoleLogFile>
-    <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == '' and '$(ContinuousIntegrationBuild)' == 'true'">true</MinimalConsoleLogOutput>
+    <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">$(BuildInParallel)</MinimalConsoleLogOutput>
 
     <PackageReportDataFile>$(PackageReportDir)prebuilt-usage.xml</PackageReportDataFile>
     <ProjectAssetsJsonArchiveFile>$(PackageReportDir)all-project-assets-json-files.zip</ProjectAssetsJsonArchiveFile>
@@ -495,7 +496,7 @@
   <!-- Copy restored packages from inner build to ensure they're included in the
        main build prebuilt check -->
   <Target Name="CopyInnerBuildRestoredPackages"
-          Condition="'$(IsUtilityProject)' != 'true'">
+          Condition="'$(IsUtilityProject)' != 'true' and '$(DotNetBuildSourceOnly)' == 'true'">
     <ItemGroup>
       <_InnerPackageCacheFiles Include="$(ProjectDirectory)artifacts/sb/package-cache/**/*" />
     </ItemGroup>
