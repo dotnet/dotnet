@@ -1,6 +1,4 @@
-#
-# See https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema for details on this file.
-#
+# Pipeline: https://dnceng.visualstudio.com/internal/_build?definitionId=1224
 
 schedules:
 # Cron timezone is UTC.
