@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.MyComponent>(0);
             __builder.AddComponentParameter(1, "Prop", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                   1
+#line (1,20)-(1,21) "x:\dir\subdir\Test\TestComponent.cshtml"
+1
 
 #line default
 #line hidden

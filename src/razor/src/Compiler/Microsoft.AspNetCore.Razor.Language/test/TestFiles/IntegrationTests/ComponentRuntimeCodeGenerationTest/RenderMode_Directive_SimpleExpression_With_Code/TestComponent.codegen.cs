@@ -21,24 +21,26 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
- 
+#line (4,2)-(7,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     [Parameter]
     public int Count { get; set; }
 
 #line default
 #line hidden
 #nullable disable
+
         private sealed class __PrivateComponentRenderModeAttribute : global::Microsoft.AspNetCore.Components.RenderModeAttribute
         {
             private static global::Microsoft.AspNetCore.Components.IComponentRenderMode ModeImpl => 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-              Microsoft.AspNetCore.Components.Web.RenderMode.Server
+#line (1,15)-(1,68) "x:\dir\subdir\Test\TestComponent.cshtml"
+Microsoft.AspNetCore.Components.Web.RenderMode.Server
 
 #line default
 #line hidden
 #nullable disable
+
             ;
             public override global::Microsoft.AspNetCore.Components.IComponentRenderMode Mode => ModeImpl;
         }

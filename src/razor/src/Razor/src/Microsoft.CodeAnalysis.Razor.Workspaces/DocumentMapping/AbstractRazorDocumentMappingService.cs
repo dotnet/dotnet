@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -22,8 +21,6 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
-[Export(typeof(IRazorDocumentMappingService)), Shared]
-[method: ImportingConstructor]
 internal abstract class AbstractRazorDocumentMappingService(
     FilePathService filePathService,
     IDocumentContextFactory documentContextFactory,

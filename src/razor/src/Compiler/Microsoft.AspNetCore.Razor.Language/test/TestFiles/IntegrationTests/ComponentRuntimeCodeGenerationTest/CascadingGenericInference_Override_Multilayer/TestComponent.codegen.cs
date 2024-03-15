@@ -20,8 +20,8 @@ namespace Test
             {
                 global::__Blazor.Test.TestComponent.TypeInference.CreateTreeNode_0_CaptureParameters(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                 DateTime.Now
+#line (1,18)-(1,30) "x:\dir\subdir\Test\TestComponent.cshtml"
+DateTime.Now
 
 #line default
 #line hidden
@@ -31,8 +31,8 @@ namespace Test
                     {
                         global::__Blazor.Test.TestComponent.TypeInference.CreateTreeNode_1_CaptureParameters(
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                     System.Threading.Thread.CurrentThread
+#line (2,22)-(2,59) "x:\dir\subdir\Test\TestComponent.cshtml"
+System.Threading.Thread.CurrentThread
 
 #line default
 #line hidden

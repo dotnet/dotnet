@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.MyComponent>(0);
             __builder.AddComponentParameter(1, "Value", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.Int32>(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                              ParentValue
+#line (1,31)-(1,42) "x:\dir\subdir\Test\TestComponent.cshtml"
+ParentValue
 
 #line default
 #line hidden
@@ -29,8 +29,8 @@ namespace Test
             ));
             __builder.AddComponentParameter(2, "ValueChanged", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<global::System.Int32>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<global::System.Int32>(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredBindSetter(callback: __value => { ParentValue = __value; return global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.InvokeAsynchronousDelegate(callback: 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                              UpdateValue
+#line (1,63)-(1,74) "x:\dir\subdir\Test\TestComponent.cshtml"
+UpdateValue
 
 #line default
 #line hidden
@@ -40,8 +40,8 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (2,8)-(6,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     public int ParentValue { get; set; } = 42;
 
     public Task UpdateValue() => Task.CompletedTask;
@@ -49,6 +49,7 @@ namespace Test
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

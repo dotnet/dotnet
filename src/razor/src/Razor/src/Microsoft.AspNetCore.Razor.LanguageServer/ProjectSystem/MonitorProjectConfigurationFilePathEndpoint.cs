@@ -20,7 +20,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 [RazorLanguageServerEndpoint(LanguageServerConstants.RazorMonitorProjectConfigurationFilePathEndpoint)]
 internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationHandler<MonitorProjectConfigurationFilePathParams>, IDisposable
 {
-    private readonly IProjectSnapshotManagerAccessor _projectSnapshotManagerAccessor;
+    private readonly ProjectSnapshotManagerBase _projectManager;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly WorkspaceDirectoryPathResolver _workspaceDirectoryPathResolver;
     private readonly IEnumerable<IProjectConfigurationFileChangeListener> _listeners;
@@ -34,14 +34,14 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
     public bool MutatesSolutionState => false;
 
     public MonitorProjectConfigurationFilePathEndpoint(
-        IProjectSnapshotManagerAccessor projectSnapshotManagerAccessor,
+        ProjectSnapshotManagerBase projectManager,
         ProjectSnapshotManagerDispatcher dispatcher,
         WorkspaceDirectoryPathResolver workspaceDirectoryPathResolver,
         IEnumerable<IProjectConfigurationFileChangeListener> listeners,
         LanguageServerFeatureOptions options,
         IRazorLoggerFactory loggerFactory)
     {
-        _projectSnapshotManagerAccessor = projectSnapshotManagerAccessor;
+        _projectManager = projectManager;
         _dispatcher = dispatcher;
         _workspaceDirectoryPathResolver = workspaceDirectoryPathResolver;
         _listeners = listeners;
@@ -180,7 +180,7 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
         {
             await _dispatcher.RunAsync(() =>
             {
-                _projectSnapshotManagerAccessor.Instance.ProjectRemoved(ProjectKey.FromString(projectKeyId));
+                _projectManager.ProjectRemoved(ProjectKey.FromString(projectKeyId));
             }, cancellationToken).ConfigureAwait(false);
         }
     }

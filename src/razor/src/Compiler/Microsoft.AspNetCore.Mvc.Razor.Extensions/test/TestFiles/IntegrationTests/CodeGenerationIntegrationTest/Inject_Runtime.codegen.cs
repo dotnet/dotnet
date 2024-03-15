@@ -26,10 +26,25 @@ namespace AspNetCore
         {
         }
         #pragma warning restore 1998
-        #nullable restore
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
-        public MyApp MyPropertyName { get; private set; } = default!;
-        #nullable disable
+        public 
+#nullable restore
+#line (1,9)-(1,14) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inject.cshtml"
+MyApp
+
+#line default
+#line hidden
+#nullable disable
+         
+#nullable restore
+#line (1,15)-(1,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Inject.cshtml"
+MyPropertyName
+
+#line default
+#line hidden
+#nullable disable
+         { get; private set; }
+         = default!;
         #nullable restore
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; } = default!;

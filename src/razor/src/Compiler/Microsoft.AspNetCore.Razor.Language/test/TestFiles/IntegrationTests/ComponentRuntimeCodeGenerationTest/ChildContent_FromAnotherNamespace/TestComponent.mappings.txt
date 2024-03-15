@@ -1,0 +1,17 @@
+﻿Source Location: (1:0,1 [19] x:\dir\subdir\Test\TestComponent.cshtml)
+|using AnotherTest
+|
+Generated Location: (371:12,0 [19] )
+|using AnotherTest
+|
+
+Source Location: (119:6,13 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|context|
+Generated Location: (1500:37,0 [7] )
+|context|
+
+Source Location: (276:12,13 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|context|
+Generated Location: (2438:59,0 [7] )
+|context|
+

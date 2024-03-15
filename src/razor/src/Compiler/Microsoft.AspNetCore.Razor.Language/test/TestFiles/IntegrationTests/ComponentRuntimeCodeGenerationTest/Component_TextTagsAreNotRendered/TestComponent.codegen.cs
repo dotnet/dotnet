@@ -20,23 +20,25 @@ namespace Test
             __builder.OpenComponent<global::Test.Counter>(0);
             __builder.CloseComponent();
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
- if (true)
+#line (2,2)-(4,5) "x:\dir\subdir\Test\TestComponent.cshtml"
+if (true)
 {
     
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.AddContent(1, "This text is rendered");
 #nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                      
+#line (4,39)-(6,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
 }
 
 #line default
 #line hidden
 #nullable disable
+
         }
         #pragma warning restore 1998
     }

@@ -4,6 +4,7 @@
 using System;
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem.VS;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -11,28 +12,25 @@ using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
-[Export(typeof(IProjectSnapshotChangeTrigger))]
-internal class VisualStudioSolutionCloseChangeTrigger : IProjectSnapshotChangeTrigger, IVsSolutionEvents3, IDisposable
+[Export(typeof(IRazorStartupService))]
+internal class VisualStudioSolutionCloseChangeTrigger : IRazorStartupService, IVsSolutionEvents3, IDisposable
 {
     private IVsSolution? _solution;
     private readonly IServiceProvider _serviceProvider;
+    private readonly ProjectSnapshotManagerBase _projectManager;
     private readonly JoinableTaskContext _joinableTaskContext;
 
     private uint _cookie;
-    private ProjectSnapshotManagerBase? _projectSnapshotManager;
 
     [ImportingConstructor]
     public VisualStudioSolutionCloseChangeTrigger(
        [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
+       ProjectSnapshotManagerBase projectManager,
        JoinableTaskContext joinableTaskContext)
     {
         _serviceProvider = serviceProvider;
+        _projectManager = projectManager;
         _joinableTaskContext = joinableTaskContext;
-    }
-
-    public void Initialize(ProjectSnapshotManagerBase projectManager)
-    {
-        _projectSnapshotManager = projectManager;
 
         _ = _joinableTaskContext.Factory.RunAsync(async () =>
         {
@@ -53,19 +51,19 @@ internal class VisualStudioSolutionCloseChangeTrigger : IProjectSnapshotChangeTr
 
     public int OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
     {
-        _projectSnapshotManager?.SolutionOpened();
+        _projectManager.SolutionOpened();
         return VSConstants.S_OK;
     }
 
     public int OnBeforeCloseSolution(object pUnkReserved)
     {
-        _projectSnapshotManager?.SolutionClosed();
+        _projectManager.SolutionClosed();
         return VSConstants.S_OK;
     }
 
     public int OnAfterCloseSolution(object pUnkReserved)
     {
-        _projectSnapshotManager?.SolutionOpened();
+        _projectManager.SolutionOpened();
         return VSConstants.S_OK;
     }
 

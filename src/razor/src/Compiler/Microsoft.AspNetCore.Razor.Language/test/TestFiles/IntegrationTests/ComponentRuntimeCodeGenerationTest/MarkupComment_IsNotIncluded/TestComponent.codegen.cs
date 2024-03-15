@@ -18,21 +18,24 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-  
+#line (1,3)-(3,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
   var myValue = "Expression value";
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.OpenElement(0, "div");
+            __builder.AddContent(1, 
 #nullable restore
-#line (4,7)-(4,14) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder.AddContent(1, myValue);
+#line (4,7)-(4,14) "x:\dir\subdir\Test\TestComponent.cshtml"
+myValue
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.CloseElement();
         }
         #pragma warning restore 1998

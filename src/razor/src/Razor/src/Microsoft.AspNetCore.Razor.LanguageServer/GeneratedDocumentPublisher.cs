@@ -17,45 +17,28 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, IProjectSnapshotChangeTrigger
+internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, IRazorStartupService
 {
     private readonly Dictionary<DocumentKey, PublishData> _publishedCSharpData;
     private readonly Dictionary<string, PublishData> _publishedHtmlData;
-    private readonly IClientConnection _clientConnection;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-    private readonly ILogger _logger;
+    private readonly ProjectSnapshotManagerBase _projectManager;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
-    private ProjectSnapshotManagerBase? _projectSnapshotManager;
+    private readonly IClientConnection _clientConnection;
+    private readonly LanguageServerFeatureOptions _options;
+    private readonly ILogger _logger;
 
     public GeneratedDocumentPublisher(
+        ProjectSnapshotManagerBase projectManager,
         ProjectSnapshotManagerDispatcher dispatcher,
         IClientConnection clientConnection,
-        LanguageServerFeatureOptions languageServerFeatureOptions,
+        LanguageServerFeatureOptions options,
         IRazorLoggerFactory loggerFactory)
     {
-        if (dispatcher is null)
-        {
-            throw new ArgumentNullException(nameof(dispatcher));
-        }
 
-        if (clientConnection is null)
-        {
-            throw new ArgumentNullException(nameof(clientConnection));
-        }
-
-        if (languageServerFeatureOptions is null)
-        {
-            throw new ArgumentNullException(nameof(languageServerFeatureOptions));
-        }
-
-        if (loggerFactory is null)
-        {
-            throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
+        _projectManager = projectManager;
         _dispatcher = dispatcher;
         _clientConnection = clientConnection;
-        _languageServerFeatureOptions = languageServerFeatureOptions;
+        _options = options;
         _logger = loggerFactory.CreateLogger<GeneratedDocumentPublisher>();
         _publishedCSharpData = new Dictionary<DocumentKey, PublishData>();
 
@@ -64,17 +47,8 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
         // as they are only tracking a single Html file for each Razor file path, thus edits need to be correct or we'll
         // get out of sync.
         _publishedHtmlData = new Dictionary<string, PublishData>(FilePathComparer.Instance);
-    }
 
-    public void Initialize(ProjectSnapshotManagerBase projectManager)
-    {
-        if (projectManager is null)
-        {
-            throw new ArgumentNullException(nameof(projectManager));
-        }
-
-        _projectSnapshotManager = projectManager;
-        _projectSnapshotManager.Changed += ProjectSnapshotManager_Changed;
+        _projectManager.Changed += ProjectManager_Changed;
     }
 
     public void PublishCSharp(ProjectKey projectKey, string filePath, SourceText sourceText, int hostDocumentVersion)
@@ -95,7 +69,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
         // For example, when a document moves from the Misc Project to a real project, we will update it here, and each version would
         // have a different project key. On the receiving end however, there is only one file path, therefore one version of the contents,
         // so we must ensure we only have a single document to compute diffs from, or things get out of sync.
-        if (!_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath)
+        if (!_options.IncludeProjectKeyInGeneratedFilePath)
         {
             projectKey = default;
         }
@@ -199,7 +173,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
         _ = _clientConnection.SendNotificationAsync(CustomMessageNames.RazorUpdateHtmlBufferEndpoint, request, CancellationToken.None);
     }
 
-    private void ProjectSnapshotManager_Changed(object? sender, ProjectChangeEventArgs args)
+    private void ProjectManager_Changed(object? sender, ProjectChangeEventArgs args)
     {
         // Don't do any work if the solution is closing
         if (args.SolutionIsClosing)
@@ -209,16 +183,16 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
 
         _dispatcher.AssertRunningOnDispatcher();
 
-        Assumes.NotNull(_projectSnapshotManager);
+        Assumes.NotNull(_projectManager);
 
         switch (args.Kind)
         {
             case ProjectChangeKind.DocumentChanged:
                 Assumes.NotNull(args.DocumentFilePath);
-                if (!_projectSnapshotManager.IsDocumentOpen(args.DocumentFilePath))
+                if (!_projectManager.IsDocumentOpen(args.DocumentFilePath))
                 {
                     // Document closed, evict published source text, unless the server doesn't want us to.
-                    if (_languageServerFeatureOptions.UpdateBuffersForClosedDocuments)
+                    if (_options.UpdateBuffersForClosedDocuments)
                     {
                         // Some clients want us to keep generating code even if the document is closed, so if we evict our data,
                         // even though we don't send a didChange for it, the next didChange will be wrong.
@@ -226,7 +200,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
                     }
 
                     var projectKey = args.ProjectKey;
-                    if (!_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath)
+                    if (!_options.IncludeProjectKeyInGeneratedFilePath)
                     {
                         projectKey = default;
                     }
@@ -260,7 +234,7 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
                     // When a project is removed, we have to remove all published C# source for files in the project because if it comes back,
                     // or a new one comes back with the same name, we want it to start with a clean slate. We only do this if the project key
                     // is part of the generated file name though, because otherwise a project with the same name is effectively the same project.
-                    if (!_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath)
+                    if (!_options.IncludeProjectKeyInGeneratedFilePath)
                     {
                         break;
                     }

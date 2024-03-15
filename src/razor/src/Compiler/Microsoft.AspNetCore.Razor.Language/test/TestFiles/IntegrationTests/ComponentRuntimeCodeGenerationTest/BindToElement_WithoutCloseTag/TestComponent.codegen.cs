@@ -21,8 +21,8 @@ namespace Test
             __builder.OpenElement(1, "input");
             __builder.AddAttribute(2, "@bind", 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                 ParentValue
+#line (2,18)-(2,29) "x:\dir\subdir\Test\TestComponent.cshtml"
+ParentValue
 
 #line default
 #line hidden
@@ -33,13 +33,14 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (4,8)-(6,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     public string ParentValue { get; set; } = "hi";
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

@@ -11,7 +11,7 @@
         UsingDirective - (135:5,1 [42] ) - Microsoft.AspNetCore.Mvc.Rendering
         UsingDirective - (178:6,1 [45] ) - Microsoft.AspNetCore.Mvc.ViewFeatures
         UsingDirective - (36:3,1 [43] RazorPagesWithRouteTemplate.cshtml) - Microsoft.AspNetCore.Mvc.RazorPages
-        RazorCompiledItemMetadataAttribute - 
+        RazorCompiledItemMetadataAttribute - (6:0,6 [8] RazorPagesWithRouteTemplate.cshtml)
         RazorSourceChecksumAttribute - 
         ClassDeclaration -  - public - TestFiles_IntegrationTests_CodeGenerationIntegrationTest_RazorPagesWithRouteTemplate - global::Microsoft.AspNetCore.Mvc.RazorPages.Page - 
             MethodDeclaration -  - public async override - global::System.Threading.Tasks.Task - ExecuteAsync

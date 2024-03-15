@@ -13,18 +13,20 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         {
             WriteLiteral("\r\n");
             WriteLiteral("\r\nHere\'s a random number: ");
+            Write(
 #nullable restore
-#line (12,26)-(12,37) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/FunctionsBlock.cshtml"
-Write(RandomInt());
+#line (12,26)-(12,37) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/FunctionsBlock.cshtml"
+RandomInt()
 
 #line default
 #line hidden
 #nullable disable
+            );
         }
         #pragma warning restore 1998
 #nullable restore
-#line 5 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/FunctionsBlock.cshtml"
-            
+#line (5,13)-(10,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/FunctionsBlock.cshtml"
+
     Random _rand = new Random();
     private int RandomInt() {
         return _rand.Next();
@@ -33,6 +35,7 @@ Write(RandomInt());
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

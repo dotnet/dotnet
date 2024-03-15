@@ -9,17 +9,19 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\_Imports.razor"
-using System.Text;
+#line (1,2)-(2,1) "x:\dir\subdir\Test\_Imports.razor"
+using System.Text
 
 #nullable disable
+    ;
 #nullable restore
-#line 2 "x:\dir\subdir\Test\_Imports.razor"
-using System.Reflection;
+#line (2,2)-(3,1) "x:\dir\subdir\Test\_Imports.razor"
+using System.Reflection
 
 #line default
 #line hidden
 #nullable disable
+    ;
     [global::Microsoft.AspNetCore.Components.LayoutAttribute(typeof(MainLayout))]
     #nullable restore
     public partial class _Imports : System.Object
@@ -28,13 +30,15 @@ using System.Reflection;
         #pragma warning disable 1998
         protected void Execute()
         {
+            __builder.AddContent(0, 
 #nullable restore
-#line (5,2)-(5,5) 24 "x:\dir\subdir\Test\_Imports.razor"
-__builder.AddContent(0, Foo);
+#line (5,2)-(5,5) "x:\dir\subdir\Test\_Imports.razor"
+Foo
 
 #line default
 #line hidden
 #nullable disable
+            );
         }
         #pragma warning restore 1998
     }

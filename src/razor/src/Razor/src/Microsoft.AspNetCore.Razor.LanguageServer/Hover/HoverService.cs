@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -25,8 +24,6 @@ using VisualStudioMarkupKind = Microsoft.VisualStudio.LanguageServer.Protocol.Ma
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Hover;
 
-[Export(typeof(IHoverService))]
-[method: ImportingConstructor]
 internal sealed class HoverService(
     LSPTagHelperTooltipFactory lspTagHelperTooltipFactory,
     VSLSPTagHelperTooltipFactory vsLspTagHelperTooltipFactory,

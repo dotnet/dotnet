@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.MyComponent<CustomValue>>(0);
             __builder.AddComponentParameter(1, "Value", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<CustomValue>(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                   ParentValue
+#line (1,52)-(1,63) "x:\dir\subdir\Test\TestComponent.cshtml"
+ParentValue
 
 #line default
 #line hidden
@@ -29,8 +29,8 @@ namespace Test
             ));
             __builder.AddComponentParameter(2, "ValueChanged", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::Microsoft.AspNetCore.Components.EventCallback<CustomValue>>(global::Microsoft.AspNetCore.Components.EventCallback.Factory.Create<CustomValue>(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                                                 UpdateValue
+#line (1,82)-(1,93) "x:\dir\subdir\Test\TestComponent.cshtml"
+UpdateValue
 
 #line default
 #line hidden
@@ -40,14 +40,15 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (2,8)-(5,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     public CustomValue ParentValue { get; set; } = new CustomValue();
     public EventCallback<CustomValue> UpdateValue { get; set; }
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

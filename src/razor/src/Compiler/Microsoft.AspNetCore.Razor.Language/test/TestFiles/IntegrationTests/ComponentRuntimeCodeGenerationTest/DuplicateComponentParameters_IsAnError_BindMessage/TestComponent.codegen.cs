@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.MyComponent>(0);
             __builder.AddComponentParameter(1, "Message", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.String>(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                       message
+#line (1,24)-(1,31) "x:\dir\subdir\Test\TestComponent.cshtml"
+message
 
 #line default
 #line hidden
@@ -29,8 +29,8 @@ namespace Test
             ));
             __builder.AddComponentParameter(2, "Message", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.String>(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                message
+#line (1,49)-(1,56) "x:\dir\subdir\Test\TestComponent.cshtml"
+message
 
 #line default
 #line hidden
@@ -42,13 +42,14 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-            
+#line (2,13)-(4,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     string message = "hi";
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

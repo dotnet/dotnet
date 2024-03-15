@@ -6,33 +6,37 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 {
     #line hidden
 #nullable restore
-#line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml"
-           [System.Runtime.InteropServices.DllImport("user32.dll")]
+#line (1,12)-(1,68) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml"
+[System.Runtime.InteropServices.DllImport("user32.dll")]
 
 #line default
 #line hidden
 #nullable disable
+
 #nullable restore
-#line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml"
-           [assembly: AssemblyTitleAttribute("Some assembly")]
+#line (2,12)-(2,63) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml"
+[assembly: AssemblyTitleAttribute("Some assembly")]
 
 #line default
 #line hidden
 #nullable disable
+
 #nullable restore
-#line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml"
-           [DllImport("user32.dll", SetLastError=false, ExactSpelling=false)]
+#line (3,12)-(3,78) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml"
+[DllImport("user32.dll", SetLastError=false, ExactSpelling=false)]
 
 #line default
 #line hidden
 #nullable disable
+
 #nullable restore
-#line 4 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml"
-           [Conditional("DEBUG"), Conditional("TEST1")]
+#line (4,12)-(4,56) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml"
+[Conditional("DEBUG"), Conditional("TEST1")]
 
 #line default
 #line hidden
 #nullable disable
+
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"182a864a99c94c5a3bbb535723dfb08ad1a97865628ed562e8f2c949e7098074", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/AttributeDirective.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_AttributeDirective_Runtime
     {

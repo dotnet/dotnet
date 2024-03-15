@@ -19,16 +19,16 @@ namespace Test
         {
             global::__Blazor.Test.TestComponent.TypeInference.CreateMyComponent_0(__builder, 0, 1, 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                      18
+#line (1,39)-(1,41) "x:\dir\subdir\Test\TestComponent.cshtml"
+18
 
 #line default
 #line hidden
 #nullable disable
             , 2, 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                        Value
+#line (1,25)-(1,30) "x:\dir\subdir\Test\TestComponent.cshtml"
+Value
 
 #line default
 #line hidden
@@ -37,13 +37,14 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (2,8)-(4,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     string Value;
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 namespace __Blazor.Test.TestComponent

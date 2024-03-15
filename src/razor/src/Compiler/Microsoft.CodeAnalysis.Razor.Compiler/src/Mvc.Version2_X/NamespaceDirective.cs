@@ -13,7 +13,7 @@ namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
 
 public static class NamespaceDirective
 {
-    private static readonly char[] Separators = new char[] { '\\', '/' };
+    private static readonly char[] Separators = ['\\', '/'];
 
     public static readonly DirectiveDescriptor Directive = DirectiveDescriptor.CreateDirective(
         "namespace",
@@ -104,7 +104,7 @@ public static class NamespaceDirective
         }
 
         // OK so that this point we know that the 'imports' file containing this directive is in the directory
-        // hierarchy of this soure file. This is the case where we can append a suffix to the baseNamespace.
+        // hierarchy of this source file. This is the case where we can append a suffix to the baseNamespace.
         //
         // Everything so far has just been defensiveness on our part.
 

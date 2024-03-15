@@ -1,8 +1,18 @@
-﻿Source Location: (135:1,7 [50] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|ParentValue|
+Generated Location: (965:23,0 [11] )
+|ParentValue|
+
+Source Location: (60:0,60 [62] x:\dir\subdir\Test\TestComponent.cshtml)
+|(value => { ParentValue = value; return Task.CompletedTask; })|
+Generated Location: (1231:32,0 [62] )
+|(value => { ParentValue = value; return Task.CompletedTask; })|
+
+Source Location: (135:1,7 [50] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     public int ParentValue { get; set; } = 42;
 |
-Generated Location: (1594:43,7 [50] )
+Generated Location: (1532:43,0 [50] )
 |
     public int ParentValue { get; set; } = 42;
 |

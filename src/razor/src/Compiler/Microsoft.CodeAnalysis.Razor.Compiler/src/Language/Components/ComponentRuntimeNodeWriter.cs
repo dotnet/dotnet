@@ -59,19 +59,11 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             return;
         }
 
-        IDisposable linePragmaScope = null;
-        if (node.Source != null)
-        {
-            linePragmaScope = context.CodeWriter.BuildLinePragma(node.Source.Value, context);
-            context.CodeWriter.WritePadding(0, node.Source.Value, context);
-        }
-
         for (var i = 0; i < node.Children.Count; i++)
         {
             if (node.Children[i] is IntermediateToken token && token.IsCSharp)
             {
-                context.AddSourceMappingFor(token);
-                context.CodeWriter.Write(token.Content);
+                WriteCSharpToken(context, token);
             }
             else
             {
@@ -80,14 +72,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             }
         }
 
-        if (linePragmaScope != null)
-        {
-            linePragmaScope.Dispose();
-        }
-        else
-        {
-            context.CodeWriter.WriteLine();
-        }
+        context.CodeWriter.WriteLine();
     }
 
     public override void WriteCSharpExpression(CodeRenderingContext context, CSharpExpressionIntermediateNode node)
@@ -105,30 +90,26 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
         var sourceSequenceAsString = _sourceSequence.ToString(CultureInfo.InvariantCulture);
         var methodInvocation = _scopeStack.BuilderVarName + '.' + ComponentsApi.RenderTreeBuilder.AddContent + '(' + sourceSequenceAsString;
         _sourceSequence++;
-        var parameterSeparatorLength = 2;
 
-        using (context.CodeWriter.BuildEnhancedLinePragma(node.Source.Value, context, methodInvocation.Length + parameterSeparatorLength))
+        // Since we're not in the middle of writing an element, this must evaluate as some
+        // text to display
+        context.CodeWriter
+            .Write(methodInvocation)
+            .WriteParameterSeparator();
+
+        for (var i = 0; i < node.Children.Count; i++)
         {
-            // Since we're not in the middle of writing an element, this must evaluate as some
-            // text to display
-            context.CodeWriter
-                .Write(methodInvocation)
-                .WriteParameterSeparator();
-
-            for (var i = 0; i < node.Children.Count; i++)
+            if (node.Children[i] is IntermediateToken token && token.IsCSharp)
             {
-                if (node.Children[i] is IntermediateToken token && token.IsCSharp)
-                {
-                    WriteCSharpToken(context, token, includeLinePragma: false);
-                }
-                else
-                {
-                    // There may be something else inside the expression like a Template or another extension node.
-                    context.RenderNode(node.Children[i]);
-                }
+                WriteCSharpToken(context, token);
             }
-            context.CodeWriter.WriteEndMethodInvocation();
+            else
+            {
+                // There may be something else inside the expression like a Template or another extension node.
+                context.RenderNode(node.Children[i]);
+            }
         }
+        context.CodeWriter.WriteEndMethodInvocation();
     }
 
     public override void WriteCSharpExpressionAttributeValue(CodeRenderingContext context, CSharpExpressionAttributeValueIntermediateNode node)
@@ -350,9 +331,13 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
         if (node.Source is { FilePath: not null } sourceSpan)
         {
-            using (context.CodeWriter.BuildLinePragma(sourceSpan, context, suppressLineDefaultAndHidden: !node.AppendLineDefaultAndHidden))
+            using (context.CodeWriter.BuildEnhancedLinePragma(node.Source.Value, context, suppressLineDefaultAndHidden: !node.AppendLineDefaultAndHidden))
             {
-                context.CodeWriter.WriteUsing(node.Content);
+                context.CodeWriter.WriteUsing(node.Content, endLine: node.HasExplicitSemicolon);
+            }
+            if (!node.HasExplicitSemicolon)
+            {
+                context.CodeWriter.WriteLine(";");
             }
         }
         else
@@ -1203,7 +1188,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
         }
     }
 
-    private static void WriteCSharpToken(CodeRenderingContext context, IntermediateToken token, bool includeLinePragma = true)
+    private static void WriteCSharpToken(CodeRenderingContext context, IntermediateToken token)
     {
         if (string.IsNullOrWhiteSpace(token.Content))
         {
@@ -1216,16 +1201,9 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             return;
         }
 
-        if (includeLinePragma)
+        using (context.CodeWriter.BuildEnhancedLinePragma(token.Source, context))
         {
-            using (context.CodeWriter.BuildLinePragma(token.Source, context))
-            {
-                context.CodeWriter.WritePadding(0, token.Source.Value, context);
-                context.CodeWriter.Write(token.Content);
-            }
-            return;
+            context.CodeWriter.Write(token.Content);
         }
-
-        context.CodeWriter.Write(token.Content);
     }
 }

@@ -18,44 +18,50 @@ namespace Test
         protected override void BuildRenderTree(global::Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-   RenderFragment<Test.Context> template = (context) => 
+#line (1,3)-(1,57) "x:\dir\subdir\Test\TestComponent.cshtml"
+ RenderFragment<Test.Context> template = (context) => 
 
 #line default
 #line hidden
 #nullable disable
+
             (__builder2) => {
                 __builder2.OpenElement(0, "li");
                 __builder2.AddContent(1, "#");
+                __builder2.AddContent(2, 
 #nullable restore
-#line (1,64)-(1,77) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder2.AddContent(2, context.Index);
+#line (1,64)-(1,77) "x:\dir\subdir\Test\TestComponent.cshtml"
+context.Index
 
 #line default
 #line hidden
 #nullable disable
+                );
                 __builder2.AddContent(3, " - ");
+                __builder2.AddContent(4, 
 #nullable restore
-#line (1,81)-(1,103) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder2.AddContent(4, context.Item.ToLower());
+#line (1,81)-(1,103) "x:\dir\subdir\Test\TestComponent.cshtml"
+context.Item.ToLower()
 
 #line default
 #line hidden
 #nullable disable
+                );
                 __builder2.CloseElement();
             }
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                                                                           ; 
+#line (1,108)-(1,110) "x:\dir\subdir\Test\TestComponent.cshtml"
+; 
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.OpenComponent<global::Test.MyComponent>(5);
             __builder.AddComponentParameter(6, "Template", (global::Microsoft.AspNetCore.Components.RenderFragment<Test.Context>)(
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                        template
+#line (2,25)-(2,33) "x:\dir\subdir\Test\TestComponent.cshtml"
+template
 
 #line default
 #line hidden

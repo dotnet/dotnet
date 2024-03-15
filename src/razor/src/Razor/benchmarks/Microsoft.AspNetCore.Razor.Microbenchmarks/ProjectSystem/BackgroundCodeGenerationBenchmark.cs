@@ -35,7 +35,7 @@ public class BackgroundCodeGenerationBenchmark : ProjectSnapshotManagerBenchmark
 
     private List<Task> Tasks { get; } = new List<Task>();
 
-    private DefaultProjectSnapshotManager ProjectManager { get; set; }
+    private ProjectSnapshotManager ProjectManager { get; set; }
 
     [Benchmark(Description = "Generates the code for 100 files", OperationsPerInvoke = 100)]
     public async Task BackgroundCodeGeneration_Generate100FilesAsync()

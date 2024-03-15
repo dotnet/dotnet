@@ -1,0 +1,5 @@
+﻿Source Location: (14:0,14 [24] x:\dir\subdir\Test\TestComponent.cshtml)
+|() => new List<string>()|
+Generated Location: (850:23,0 [24] )
+|() => new List<string>()|
+

@@ -6,42 +6,49 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 {
     #line default
 #nullable restore
-#line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-using System.IO;
+#line (1,2)-(2,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+using System.IO
 
 #nullable disable
+    ;
 #nullable restore
-#line 7 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-using Foo = System.Text.Encoding;
+#line (7,2)-(8,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+using Foo = System.Text.Encoding
 
 #nullable disable
+    ;
 #nullable restore
-#line 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-using System;
+#line (13,2)-(14,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+using System
 
 #nullable disable
+    ;
 #nullable restore
-#line 15 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-using static System;
+#line (15,2)-(16,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+using static System
 
 #nullable disable
+    ;
 #nullable restore
-#line 16 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-using static System.Console;
+#line (16,2)-(17,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+using static System.Console
 
 #nullable disable
+    ;
 #nullable restore
-#line 22 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-using static global::System.Text.Encoding;
+#line (22,2)-(23,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+using static global::System.Text.Encoding
 
 #nullable disable
+    ;
 #nullable restore
-#line 32 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-using System.Text;
+#line (32,2)-(33,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+using System.Text
 
 #line default
 #line hidden
 #nullable disable
+    ;
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"a3144fef15024ccbbb19682bfb110b149c637f2ae64b4499962195e7612ba274", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_Usings_OutOfOrder_Runtime
     {
@@ -57,57 +64,65 @@ using System.Text;
             WriteLiteral("\r\n");
             WriteLiteral("\r\n");
 #nullable restore
-#line 24 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-   
+#line (24,3)-(27,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+ 
     using var disposable = (IDisposable)ViewData["disposable"];
     using System.IDisposable otherDisposable = (IDisposable)ViewData["otherdisposable"];
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n<p>Path\'s full type name is ");
+            Write(
 #nullable restore
-#line (29,30)-(29,51) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-Write(typeof(Path).FullName);
+#line (29,30)-(29,51) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+typeof(Path).FullName
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n<p>Foo\'s actual full type name is ");
+            Write(
 #nullable restore
-#line (30,36)-(30,56) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-Write(typeof(Foo).FullName);
+#line (30,36)-(30,56) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+typeof(Foo).FullName
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n\r\n");
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-            
+#line (3,13)-(5,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+
     // functions 1
 
 #line default
 #line hidden
 #nullable disable
+
 #nullable restore
-#line 9 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-            
+#line (9,13)-(11,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+
     // functions 2
 
 #line default
 #line hidden
 #nullable disable
+
 #nullable restore
-#line 18 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
-            
+#line (18,13)-(20,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Usings_OutOfOrder.cshtml"
+
     // functions 3
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

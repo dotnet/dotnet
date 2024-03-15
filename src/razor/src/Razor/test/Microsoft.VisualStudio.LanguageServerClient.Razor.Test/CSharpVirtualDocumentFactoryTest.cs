@@ -79,7 +79,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
             _textDocumentFactoryService,
             uriProvider,
             _filePathService,
-            StrictMock.Of<IProjectSnapshotManagerAccessor>(),
+            StrictMock.Of<IProjectSnapshotManager>(),
             TestLanguageServerFeatureOptions.Instance,
             LoggerFactory,
             telemetryReporter: null!);
@@ -100,20 +100,13 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
         var uriProvider = StrictMock.Of<FileUriProvider>(x =>
             x.GetOrCreate(It.IsAny<ITextBuffer>()) == uri);
 
-        var projectManagerAccessorMock = new StrictMock<IProjectSnapshotManagerAccessor>();
-
-        ProjectSnapshotManagerBase? instance = null;
-        projectManagerAccessorMock
-            .Setup(x => x.TryGetInstance(out instance))
-            .Returns(false);
-
         var factory = new CSharpVirtualDocumentFactory(
             _contentTypeRegistryService,
             _textBufferFactoryService,
             _textDocumentFactoryService,
             uriProvider,
             _filePathService,
-            projectManagerAccessorMock.Object,
+            StrictMock.Of<IProjectSnapshotManager>(),
             TestLanguageServerFeatureOptions.Instance,
             LoggerFactory,
             telemetryReporter: null!);
@@ -151,7 +144,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
             _textDocumentFactoryService,
             uriProvider,
             _filePathService,
-            projectManager.GetAccessor(),
+            projectManager,
             TestLanguageServerFeatureOptions.Instance,
             LoggerFactory,
             telemetryReporter: null!);
@@ -206,7 +199,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
             _textDocumentFactoryService,
             uriProvider,
             filePathService,
-            projectManager.GetAccessor(),
+            projectManager,
             languageServerFeatureOptions,
             LoggerFactory,
             telemetryReporter: null!);

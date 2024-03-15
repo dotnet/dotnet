@@ -8,7 +8,7 @@ namespace Test
     using global::System.Linq;
     using global::System.Threading.Tasks;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
 using Microsoft.AspNetCore.Components;
 
 #line default
@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Components;
     #nullable restore
     public partial class TestComponent<
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (2,12)-(2,17) "x:\dir\subdir\Test\TestComponent.cshtml"
 TItem
 
 #line default
@@ -31,52 +31,60 @@ TItem
         {
             __builder.AddMarkupContent(0, "<h1>Item</h1>\r\n\r\n");
             __builder.OpenElement(1, "p");
+            __builder.AddContent(2, 
 #nullable restore
-#line (6,5)-(6,25) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder.AddContent(2, ChildContent(Items1));
+#line (6,5)-(6,25) "x:\dir\subdir\Test\TestComponent.cshtml"
+ChildContent(Items1)
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.CloseElement();
 #nullable restore
-#line 8 "x:\dir\subdir\Test\TestComponent.cshtml"
- foreach (var item in Items2)
+#line (8,2)-(10,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+foreach (var item in Items2)
 {
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.OpenElement(3, "p");
+            __builder.AddContent(4, 
 #nullable restore
-#line (10,9)-(10,27) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder.AddContent(4, ChildContent(item));
+#line (10,9)-(10,27) "x:\dir\subdir\Test\TestComponent.cshtml"
+ChildContent(item)
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.CloseElement();
 #nullable restore
-#line 11 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (11,1)-(12,1) "x:\dir\subdir\Test\TestComponent.cshtml"
 }
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.OpenElement(5, "p");
+            __builder.AddContent(6, 
 #nullable restore
-#line (13,5)-(13,27) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder.AddContent(6, ChildContent(Items3()));
+#line (13,5)-(13,27) "x:\dir\subdir\Test\TestComponent.cshtml"
+ChildContent(Items3())
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.CloseElement();
         }
         #pragma warning restore 1998
 #nullable restore
-#line 15 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (15,8)-(20,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     [Parameter] public TItem[] Items1 { get; set; }
     [Parameter] public List<TItem[]> Items2 { get; set; }
     [Parameter] public Func<TItem[]> Items3 { get; set; }
@@ -85,6 +93,7 @@ __builder.AddContent(6, ChildContent(Items3()));
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

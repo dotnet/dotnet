@@ -40,6 +40,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             @"C:\path\to\project.csproj", ProjectWorkspaceState.Create(CodeAnalysis.CSharp.LanguageVersion.Preview));
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
@@ -52,7 +53,6 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             _active = true,
         };
 
-        publisher.Initialize(projectManager);
         projectConfigurationFilePathStore.Set(expectedProjectSnapshot.Key, expectedConfigurationFilePath);
         var documentRemovedArgs = ProjectChangeEventArgs.CreateTestInstance(
             initialProjectSnapshot, initialProjectSnapshot, documentFilePath: @"C:\path\to\file.razor", ProjectChangeKind.DocumentRemoved);
@@ -60,8 +60,8 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             initialProjectSnapshot, expectedProjectSnapshot, documentFilePath: null!, ProjectChangeKind.ProjectChanged);
 
         // Act
-        publisher.ProjectSnapshotManager_Changed(null!, documentRemovedArgs);
-        publisher.ProjectSnapshotManager_Changed(null!, projectChangedArgs);
+        publisher.ProjectManager_Changed(null!, documentRemovedArgs);
+        publisher.ProjectManager_Changed(null!, projectChangedArgs);
 
         // Assert
         var stalePublishTask = Assert.Single(publisher.DeferredPublishTasks);
@@ -86,13 +86,12 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         });
 
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) => attemptedToSerialize = true)
         {
             EnqueueDelay = 10,
         };
-
-        publisher.Initialize(projectManager);
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -123,13 +122,12 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         });
 
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) => attemptedToSerialize = true)
         {
             EnqueueDelay = 10,
         };
-
-        publisher.Initialize(projectManager);
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -164,6 +162,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         projectConfigurationFilePathStore.Set(projectSnapshot.Key, expectedConfigurationFilePath);
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
@@ -173,8 +172,6 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         {
             EnqueueDelay = 10,
         };
-
-        publisher.Initialize(projectManager);
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -209,6 +206,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         projectConfigurationFilePathStore.Set(projectSnapshot.Key, expectedConfigurationFilePath);
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
@@ -220,8 +218,6 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             EnqueueDelay = 10000, // Long enqueue delay to make sure this test doesn't pass due to slow running, but broken product code
             _active = true
         };
-
-        publisher.Initialize(projectManager);
 
         // Act
         await RunOnDispatcherAsync(() =>
@@ -248,6 +244,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var projectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", ProjectWorkspaceState.Create(CodeAnalysis.CSharp.LanguageVersion.CSharp7_3));
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
@@ -260,12 +257,11 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             _active = true,
         };
 
-        publisher.Initialize(projectManager);
         projectConfigurationFilePathStore.Set(projectSnapshot.Key, expectedConfigurationFilePath);
         var args = ProjectChangeEventArgs.CreateTestInstance(projectSnapshot, projectSnapshot, documentFilePath: null!, changeKind);
 
         // Act
-        publisher.ProjectSnapshotManager_Changed(null!, args);
+        publisher.ProjectManager_Changed(null!, args);
 
         // Assert
         var kvp = Assert.Single(publisher.DeferredPublishTasks);
@@ -286,6 +282,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var aboutToChange = false;
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
@@ -303,10 +300,9 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             _active = true,
         };
 
-        publisher.Initialize(projectManager);
         projectConfigurationFilePathStore.Set(projectSnapshot.Key, expectedConfigurationFilePath);
         var args = ProjectChangeEventArgs.CreateTestInstance(projectSnapshot, projectSnapshot, documentFilePath: null!, ProjectChangeKind.ProjectChanged);
-        publisher.ProjectSnapshotManager_Changed(null!, args);
+        publisher.ProjectManager_Changed(null!, args);
 
         // Flush publish task
         var kvp = Assert.Single(publisher.DeferredPublishTasks);
@@ -318,7 +314,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             projectSnapshot, changedProjectSnapshot, documentFilePath: null!, ProjectChangeKind.ProjectChanged);
 
         // Act
-        publisher.ProjectSnapshotManager_Changed(null!, changedTagHelpersArgs);
+        publisher.ProjectManager_Changed(null!, changedTagHelpersArgs);
 
         // Assert
         Assert.Empty(publisher.DeferredPublishTasks);
@@ -336,6 +332,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var projectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj");
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) => attemptedToSerialize = true)
         {
@@ -343,13 +340,12 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             _active = true,
         };
 
-        publisher.Initialize(projectManager);
         projectConfigurationFilePathStore.Set(projectSnapshot.Key, expectedConfigurationFilePath);
         publisher.EnqueuePublish(projectSnapshot);
         var args = ProjectChangeEventArgs.CreateTestInstance(projectSnapshot, newer: null!, documentFilePath: null!, ProjectChangeKind.ProjectRemoved);
 
         // Act
-        publisher.ProjectSnapshotManager_Changed(null!, args);
+        publisher.ProjectManager_Changed(null!, args);
 
         // Assert
         var kvp = Assert.Single(publisher.DeferredPublishTasks);
@@ -370,6 +366,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var secondSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", [@"C:\path\to\file.cshtml"]);
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
@@ -382,7 +379,6 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             _active = true,
         };
 
-        publisher.Initialize(projectManager);
         projectConfigurationFilePathStore.Set(firstSnapshot.Key, expectedConfigurationFilePath);
 
         // Act
@@ -407,6 +403,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var secondSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj", [@"C:\path\to\file.cshtml"]);
         var expectedConfigurationFilePath = @"C:\path\to\objbin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
@@ -420,7 +417,6 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             _active = true,
         };
 
-        publisher.Initialize(projectManager);
         projectConfigurationFilePathStore.Set(secondSnapshot.Key, expectedConfigurationFilePath);
 
         // Act
@@ -452,6 +448,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
 
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
@@ -465,7 +462,6 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             _active = true,
         };
 
-        publisher.Initialize(projectManager);
         projectConfigurationFilePathStore.Set(firstSnapshot.Key, expectedConfigurationFilePath);
 
         // Act
@@ -484,13 +480,11 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var projectManager = CreateProjectSnapshotManager();
         var projectConfigurationFilePathStore = new DefaultProjectConfigurationFilePathStore();
 
-        var publisher = new TestRazorProjectInfoPublisher(
-            projectConfigurationFilePathStore)
+        var publisher = new TestRazorProjectInfoPublisher(projectManager, projectConfigurationFilePathStore)
         {
             _active = true,
         };
 
-        publisher.Initialize(projectManager);
         var omniSharpProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj");
 
         // Act & Assert
@@ -508,6 +502,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var omniSharpProjectSnapshot = CreateProjectSnapshot(@"C:\path\to\project.csproj");
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
@@ -519,7 +514,6 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             _active = true,
         };
 
-        publisher.Initialize(projectManager);
         projectConfigurationFilePathStore.Set(omniSharpProjectSnapshot.Key, expectedConfigurationFilePath);
 
         // Act
@@ -540,6 +534,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
 
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
@@ -550,7 +545,6 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             _active = true,
         };
 
-        publisher.Initialize(projectManager);
         var projectFilePath = @"C:\path\to\project.csproj";
         var hostProject = new HostProject(projectFilePath, Path.Combine(Path.GetDirectoryName(projectFilePath), "obj"), RazorConfiguration.Default, "TestRootNamespace");
         projectConfigurationFilePathStore.Set(hostProject.Key, expectedConfigurationFilePath);
@@ -578,6 +572,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
 
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
@@ -588,7 +583,6 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             _active = true,
         };
 
-        publisher.Initialize(projectManager);
         var hostProject = new HostProject(@"C:\path\to\project.csproj", @"C:\path\to\obj", RazorConfiguration.Default, "TestRootNamespace");
         projectConfigurationFilePathStore.Set(hostProject.Key, expectedConfigurationFilePath);
 
@@ -609,13 +603,11 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var projectManager = CreateProjectSnapshotManager();
         var projectConfigurationFilePathStore = new DefaultProjectConfigurationFilePathStore();
 
-        var publisher = new TestRazorProjectInfoPublisher(
-            projectConfigurationFilePathStore)
+        var publisher = new TestRazorProjectInfoPublisher(projectManager, projectConfigurationFilePathStore)
         {
             _active = true,
         };
 
-        publisher.Initialize(projectManager);
         var hostProject = new HostProject(@"C:\path\to\project.csproj", @"C:\path\to\obj", RazorConfiguration.Default, "TestRootNamespace");
         await RunOnDispatcherAsync(
             () => projectManager.ProjectAdded(hostProject));
@@ -638,6 +630,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var expectedConfigurationFilePath = @"C:\path\to\obj\bin\Debug\project.razor.bin";
 
         var publisher = new TestRazorProjectInfoPublisher(
+            projectManager,
             projectConfigurationFilePathStore,
             onSerializeToFile: (snapshot, configurationFilePath) =>
             {
@@ -649,7 +642,6 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
             _active = true,
         };
 
-        publisher.Initialize(projectManager);
         var projectFilePath = @"C:\path\to\project.csproj";
         var hostProject = new HostProject(
             projectFilePath,
@@ -684,12 +676,13 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
     }
 
     private class TestRazorProjectInfoPublisher(
+        ProjectSnapshotManagerBase projectManager,
         ProjectConfigurationFilePathStore projectStatePublishFilePathStore,
         Action<IProjectSnapshot, string>? onSerializeToFile = null,
         bool shouldSerialize = true,
         bool useRealShouldSerialize = false,
         bool configurationFileExists = true)
-        : RazorProjectInfoPublisher(s_lspEditorFeatureDetector.Object, projectStatePublishFilePathStore, TestRazorLogger.Instance)
+        : RazorProjectInfoPublisher(s_lspEditorFeatureDetector.Object, projectManager, projectStatePublishFilePathStore, TestRazorLogger.Instance)
     {
         private static readonly StrictMock<LSPEditorFeatureDetector> s_lspEditorFeatureDetector = new();
 

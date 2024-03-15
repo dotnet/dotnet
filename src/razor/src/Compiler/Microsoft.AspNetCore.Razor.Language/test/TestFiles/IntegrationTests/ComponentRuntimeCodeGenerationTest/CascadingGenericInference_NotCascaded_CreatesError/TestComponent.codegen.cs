@@ -19,8 +19,8 @@ namespace Test
         {
             global::__Blazor.Test.TestComponent.TypeInference.CreateGrid_0(__builder, 0, 1, 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-               Array.Empty<DateTime>()
+#line (1,16)-(1,39) "x:\dir\subdir\Test\TestComponent.cshtml"
+Array.Empty<DateTime>()
 
 #line default
 #line hidden

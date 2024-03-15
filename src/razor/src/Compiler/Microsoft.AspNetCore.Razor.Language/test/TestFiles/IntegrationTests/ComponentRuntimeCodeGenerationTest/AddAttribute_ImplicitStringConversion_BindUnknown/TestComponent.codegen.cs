@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.MyComponent>(0);
             __builder.AddAttribute(1, "Value", (object)(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                          c
+#line (1,27)-(1,28) "x:\dir\subdir\Test\TestComponent.cshtml"
+c
 
 #line default
 #line hidden
@@ -32,13 +32,14 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (3,8)-(5,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     private MyClass c = new();
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

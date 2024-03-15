@@ -558,16 +558,14 @@ Render Children
         Assert.True(context.Options.RemapLinePragmaPathsOnWindows);
         Assert.True(context.Options.UseEnhancedLinePragma);
 
-        var node = new CSharpExpressionIntermediateNode()
-        {
-            // Create a fake source span, so we can check it correctly maps in the #line below
-            Source = new SourceSpan(fileName, 0, 2, 3, 6, 1, 2),
-        };
+        var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
         builder.Add(new IntermediateToken()
         {
             Content = "i++",
             Kind = TokenKind.CSharp,
+            // Create a fake source span, so we can check it correctly maps in the #line below
+            Source = new SourceSpan(fileName, 0, 2, 3, 6, 1, 2),
         });
 
         writer.WriteCSharpExpression(context, node);
@@ -575,14 +573,15 @@ Render Children
         var csharp = context.CodeWriter.GenerateCode();
         Assert.Equal(
             $"""
-
+            Write(
             #nullable restore
-            #line (3,4)-(4,3) 6 "{expectedFileName}"
-            Write(i++);
+            #line (3,4)-(4,3) "{expectedFileName}"
+            i++
 
             #line default
             #line hidden
             #nullable disable
+            );
 
             """,
             csharp,

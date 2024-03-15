@@ -13,12 +13,20 @@ namespace AspNetCore
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
-#line 4 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
-using Microsoft.AspNetCore.Mvc.RazorPages;
+#line (4,2)-(5,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
+using Microsoft.AspNetCore.Mvc.RazorPages
 
 #line default
 #line hidden
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("RouteTemplate", "/About")]
+    ;
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("RouteTemplate", 
+    // language=Route
+#line (1,7)-(1,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
+"/About"
+
+#line default
+#line hidden
+    )]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"da9a31551104c58f287a17de26f4a3aa316e7e17fb9ed06e39692c4f45fb133a", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_RazorPagesWithRouteTemplate : global::Microsoft.AspNetCore.Mvc.RazorPages.Page
     {
@@ -35,19 +43,21 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
             WriteLiteral("\r\n<h1>New Customer ");
             EndContext();
             BeginContext(213, 10, false);
-#line 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
-            Write(Model.Name);
+            Write(
+#line (13,19)-(13,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
+Model.Name
 
 #line default
 #line hidden
+            );
             EndContext();
             BeginContext(223, 7, true);
             WriteLiteral("</h1>\r\n");
             EndContext();
         }
         #pragma warning restore 1998
-#line 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
-            
+#line (6,13)-(11,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
+
     public class NewModel : PageModel
     {
         public string Name { get; set; }
@@ -55,6 +65,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 #line default
 #line hidden
+
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]

@@ -11,13 +11,14 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         #pragma warning disable 1998
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
+            Write(
 #nullable restore
-#line (2,6)-(2,6) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyImplicitExpressionInCode.cshtml"
-Write();
+#line (2,6)-(2,6) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EmptyImplicitExpressionInCode.cshtml"
 
 #line default
 #line hidden
 #nullable disable
+            );
         }
         #pragma warning restore 1998
     }

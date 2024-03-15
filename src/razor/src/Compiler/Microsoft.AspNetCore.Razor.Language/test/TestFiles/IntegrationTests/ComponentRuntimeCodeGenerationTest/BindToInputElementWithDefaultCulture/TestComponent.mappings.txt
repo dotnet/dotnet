@@ -1,8 +1,20 @@
-﻿Source Location: (121:2,7 [44] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (1:0,1 [28] x:\dir\subdir\Test\TestComponent.cshtml)
+|using System.Globalization
+|
+Generated Location: (371:12,0 [28] )
+|using System.Globalization
+|
+
+Source Location: (64:1,35 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|ParentValue|
+Generated Location: (1085:30,0 [11] )
+|ParentValue|
+
+Source Location: (121:2,7 [44] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     public int ParentValue { get; set; }
 |
-Generated Location: (1579:42,7 [44] )
+Generated Location: (1575:43,0 [44] )
 |
     public int ParentValue { get; set; }
 |

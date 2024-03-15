@@ -9,17 +9,19 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-using Microsoft.AspNetCore.Components.Web;
+#line (1,2)-(2,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+using Microsoft.AspNetCore.Components.Web
 
 #nullable disable
+    ;
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-using Microsoft.AspNetCore.Components.Rendering;
+#line (2,2)-(3,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+using Microsoft.AspNetCore.Components.Rendering
 
 #line default
 #line hidden
 #nullable disable
+    ;
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable
@@ -32,8 +34,8 @@ using Microsoft.AspNetCore.Components.Rendering;
             __builder.AddAttribute(2, "with-attributes", "yes");
             __builder.AddAttribute(3, "with-csharp-attribute-value", 
 #nullable restore
-#line 4 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                             123
+#line (4,62)-(4,65) "x:\dir\subdir\Test\TestComponent.cshtml"
+123
 
 #line default
 #line hidden
@@ -49,35 +51,38 @@ using Microsoft.AspNetCore.Components.Rendering;
             ));
             __builder.AddComponentReferenceCapture(10, (__value) => {
 #nullable restore
-#line 7 "x:\dir\subdir\Test\TestComponent.cshtml"
-                              myComponentReference = (Test.TemplatedComponent)__value;
+#line (7,31)-(7,51) "x:\dir\subdir\Test\TestComponent.cshtml"
+myComponentReference
 
 #line default
 #line hidden
 #nullable disable
+                 = (Test.TemplatedComponent)__value;
             }
             );
             __builder.CloseComponent();
             __builder.CloseElement();
 #nullable restore
-#line 11 "x:\dir\subdir\Test\TestComponent.cshtml"
- if (DateTime.Now.Year > 1950)
+#line (11,2)-(13,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+if (DateTime.Now.Year > 1950)
 {
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.OpenElement(11, "with-ref-capture");
             __builder.AddAttribute(12, "some-attr");
             __builder.AddAttribute(13, "TestCssScope");
             __builder.AddElementReferenceCapture(14, (__value) => {
 #nullable restore
-#line 13 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                      myElementReference = __value;
+#line (13,39)-(13,57) "x:\dir\subdir\Test\TestComponent.cshtml"
+myElementReference
 
 #line default
 #line hidden
 #nullable disable
+                 = __value;
             }
             );
             __builder.AddContent(15, "Content");
@@ -88,8 +93,8 @@ using Microsoft.AspNetCore.Components.Rendering;
             __builder.AddAttribute(19, "another-attr", "Another attr value");
             __builder.AddAttribute(20, "value", global::Microsoft.AspNetCore.Components.BindConverter.FormatValue(
 #nullable restore
-#line 14 "x:\dir\subdir\Test\TestComponent.cshtml"
-                              myVariable
+#line (14,31)-(14,41) "x:\dir\subdir\Test\TestComponent.cshtml"
+myVariable
 
 #line default
 #line hidden
@@ -100,17 +105,18 @@ using Microsoft.AspNetCore.Components.Rendering;
             __builder.AddAttribute(22, "TestCssScope");
             __builder.CloseElement();
 #nullable restore
-#line 15 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (15,1)-(16,1) "x:\dir\subdir\Test\TestComponent.cshtml"
 }
 
 #line default
 #line hidden
 #nullable disable
+
         }
         #pragma warning restore 1998
 #nullable restore
-#line 17 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (17,8)-(26,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     ElementReference myElementReference;
     TemplatedComponent myComponentReference;
     string myVariable;
@@ -123,11 +129,12 @@ using Microsoft.AspNetCore.Components.Rendering;
 #line default
 #line hidden
 #nullable disable
+
         __builder.OpenElement(23, "li");
         __builder.AddAttribute(24, "data-index", 
 #nullable restore
-#line 26 "x:\dir\subdir\Test\TestComponent.cshtml"
-                            i
+#line (26,29)-(26,30) "x:\dir\subdir\Test\TestComponent.cshtml"
+i
 
 #line default
 #line hidden
@@ -135,16 +142,18 @@ using Microsoft.AspNetCore.Components.Rendering;
         );
         __builder.AddAttribute(25, "TestCssScope");
         __builder.AddContent(26, "Something ");
+        __builder.AddContent(27, 
 #nullable restore
-#line (26,42)-(26,43) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder.AddContent(27, i);
+#line (26,42)-(26,43) "x:\dir\subdir\Test\TestComponent.cshtml"
+i
 
 #line default
 #line hidden
 #nullable disable
+        );
         __builder.CloseElement();
 #nullable restore
-#line 27 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (27,1)-(33,1) "x:\dir\subdir\Test\TestComponent.cshtml"
         }
 
         System.GC.KeepAlive(myElementReference);
@@ -155,6 +164,7 @@ __builder.AddContent(27, i);
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

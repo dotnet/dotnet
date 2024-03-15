@@ -18,55 +18,69 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
-[Export(typeof(IProjectSnapshotChangeTrigger))]
-[method: ImportingConstructor]
-internal class WorkspaceProjectStateChangeDetector(
-    IProjectWorkspaceStateGenerator workspaceStateGenerator,
-    LanguageServerFeatureOptions options,
-    IWorkspaceProvider workspaceProvider,
-    ProjectSnapshotManagerDispatcher dispatcher,
-    IErrorReporter errorReporter) : IProjectSnapshotChangeTrigger, IDisposable
+[Export(typeof(IRazorStartupService))]
+internal class WorkspaceProjectStateChangeDetector : IRazorStartupService, IDisposable
 {
     private static readonly TimeSpan s_batchingDelay = TimeSpan.FromSeconds(1);
 
-    private readonly IProjectWorkspaceStateGenerator _workspaceStateGenerator = workspaceStateGenerator;
-    private readonly LanguageServerFeatureOptions _options = options;
-    private readonly IWorkspaceProvider _workspaceProvider = workspaceProvider;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
-    private readonly IErrorReporter _errorReporter = errorReporter;
+    private readonly IProjectWorkspaceStateGenerator _workspaceStateGenerator;
+    private readonly IProjectSnapshotManager _projectManager;
+    private readonly LanguageServerFeatureOptions _options;
+    private readonly IWorkspaceProvider _workspaceProvider;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
+    private readonly IErrorReporter _errorReporter;
 
     private readonly object _disposedLock = new();
     private readonly object _workQueueAccessLock = new();
 
     private BatchingWorkQueue? _workQueue;
-    private ProjectSnapshotManagerBase? _projectManager;
     private bool _disposed;
 
-    private ProjectSnapshotManagerBase ProjectSnapshotManager
-        => _projectManager ?? throw new InvalidOperationException($"ProjectManager was accessed before Initialize was called");
+    [ImportingConstructor]
+    public WorkspaceProjectStateChangeDetector(
+        IProjectWorkspaceStateGenerator workspaceStateGenerator,
+        IProjectSnapshotManager projectManager,
+        LanguageServerFeatureOptions options,
+        IWorkspaceProvider workspaceProvider,
+        ProjectSnapshotManagerDispatcher dispatcher,
+        IErrorReporter errorReporter)
+    {
+        _workspaceStateGenerator = workspaceStateGenerator;
+        _projectManager = projectManager;
+        _options = options;
+        _workspaceProvider = workspaceProvider;
+        _dispatcher = dispatcher;
+        _errorReporter = errorReporter;
+
+        Initialize();
+    }
 
     // Internal for testing
     internal WorkspaceProjectStateChangeDetector(
         IProjectWorkspaceStateGenerator workspaceStateGenerator,
+        IProjectSnapshotManager projectManager,
         LanguageServerFeatureOptions options,
         IWorkspaceProvider workspaceProvider,
         IErrorReporter errorReporter,
         ProjectSnapshotManagerDispatcher dispatcher,
         BatchingWorkQueue workQueue)
-        : this(workspaceStateGenerator, options, workspaceProvider, dispatcher, errorReporter)
     {
+        _workspaceStateGenerator = workspaceStateGenerator;
+        _projectManager = projectManager;
+        _options = options;
+        _workspaceProvider = workspaceProvider;
+        _dispatcher = dispatcher;
+        _errorReporter = errorReporter;
         _workQueue = workQueue;
+
+        Initialize();
     }
 
-    public ManualResetEventSlim? NotifyWorkspaceChangedEventComplete { get; set; }
-
-    public void Initialize(ProjectSnapshotManagerBase projectManager)
+    private void Initialize()
     {
-        _projectManager = projectManager;
-
         EnsureWorkQueue();
 
-        projectManager.Changed += ProjectManager_Changed;
+        _projectManager.Changed += ProjectManager_Changed;
 
         var workspace = _workspaceProvider.GetWorkspace();
         workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
@@ -75,6 +89,8 @@ internal class WorkspaceProjectStateChangeDetector(
         // immediately adds projects we want to be able to handle those projects.
         InitializeSolution(workspace.CurrentSolution);
     }
+
+    public ManualResetEventSlim? NotifyWorkspaceChangedEventComplete { get; set; }
 
     private void EnsureWorkQueue()
     {
@@ -487,7 +503,7 @@ internal class WorkspaceProjectStateChangeDetector(
             return false;
         }
 
-        return ProjectSnapshotManager.TryGetLoadedProject(projectKey, out projectSnapshot);
+        return _projectManager.TryGetLoadedProject(projectKey, out projectSnapshot);
     }
 
     public void Dispose()

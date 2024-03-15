@@ -215,6 +215,15 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
                     Assert.True(foundMatchingPragma, $"No line pragma found for code '{content}' at line {classifiedSpan.Span.LineIndex + 1}.");
                 }
             }
+
+            // check that the pragmas in the main document have matching span maps and are enhanced
+            var pragmasInDocument = linePragmas.Where(p => p.FilePath == codeDocument.Source.FilePath).ToArray();
+
+            foreach(var pragma in pragmasInDocument)
+            {
+               Assert.NotNull(pragma.EndCharacterIndex);
+            }
+            Assert.Equal(pragmasInDocument.Length, csharpDocument.SourceMappings.Length);
         }
     }
 

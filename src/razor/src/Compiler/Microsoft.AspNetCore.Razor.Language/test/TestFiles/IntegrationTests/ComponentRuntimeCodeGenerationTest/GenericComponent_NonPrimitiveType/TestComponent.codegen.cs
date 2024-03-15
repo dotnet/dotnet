@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.MyComponent<CustomType>>(0);
             __builder.AddComponentParameter(1, "Item", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<CustomType>(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                      new CustomType()
+#line (1,39)-(1,55) "x:\dir\subdir\Test\TestComponent.cshtml"
+new CustomType()
 
 #line default
 #line hidden

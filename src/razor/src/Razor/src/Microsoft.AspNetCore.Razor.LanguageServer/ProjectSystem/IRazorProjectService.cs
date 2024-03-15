@@ -23,7 +23,7 @@ internal interface IRazorProjectService
         string intermediateOutputPath,
         RazorConfiguration? configuration,
         string? rootNamespace,
-        string displayName);
+        string? displayName = null);
 
     void UpdateProject(
         ProjectKey projectKey,

@@ -21,7 +21,7 @@ namespace Microsoft.VisualStudio.LanguageServices.Razor;
 [Export(typeof(IProjectWorkspaceStateGenerator))]
 [method: ImportingConstructor]
 internal sealed class ProjectWorkspaceStateGenerator(
-    IProjectSnapshotManagerAccessor projectManagerAccessor,
+    ProjectSnapshotManagerBase projectManager,
     ITagHelperResolver tagHelperResolver,
     ProjectSnapshotManagerDispatcher dispatcher,
     IErrorReporter errorReporter,
@@ -31,7 +31,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
     // Internal for testing
     internal readonly Dictionary<ProjectKey, UpdateItem> Updates = new();
 
-    private readonly IProjectSnapshotManagerAccessor _projectManagerAccessor = projectManagerAccessor;
+    private readonly ProjectSnapshotManagerBase _projectManager = projectManager;
     private readonly ITagHelperResolver _tagHelperResolver = tagHelperResolver;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
     private readonly IErrorReporter _errorReporter = errorReporter;
@@ -257,7 +257,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
     {
         _dispatcher.AssertRunningOnDispatcher();
 
-        _projectManagerAccessor.Instance.ProjectWorkspaceStateChanged(projectKey, workspaceStateChange);
+        _projectManager.ProjectWorkspaceStateChanged(projectKey, workspaceStateChange);
     }
 
     private void OnStartingBackgroundWork()

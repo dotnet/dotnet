@@ -13,13 +13,23 @@ namespace AspNetCore
     using global::Microsoft.AspNetCore.Mvc.Rendering;
     using global::Microsoft.AspNetCore.Mvc.ViewFeatures;
 #nullable restore
-#line 4 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
-using Microsoft.AspNetCore.Mvc.RazorPages;
+#line (4,2)-(5,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
+using Microsoft.AspNetCore.Mvc.RazorPages
 
 #line default
 #line hidden
 #nullable disable
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("RouteTemplate", "/About")]
+    ;
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("RouteTemplate", 
+    // language=Route
+#nullable restore
+#line (1,7)-(1,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
+"/About"
+
+#line default
+#line hidden
+#nullable disable
+    )]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"da9a31551104c58f287a17de26f4a3aa316e7e17fb9ed06e39692c4f45fb133a", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]
@@ -33,19 +43,21 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
             WriteLiteral("\r\n");
             WriteLiteral("\r\n");
             WriteLiteral("\r\n<h1>New Customer ");
+            Write(
 #nullable restore
-#line (13,19)-(13,29) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
-Write(Model.Name);
+#line (13,19)-(13,29) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
+Model.Name
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</h1>\r\n");
         }
         #pragma warning restore 1998
 #nullable restore
-#line 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
-            
+#line (6,13)-(11,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPagesWithRouteTemplate.cshtml"
+
     public class NewModel : PageModel
     {
         public string Name { get; set; }
@@ -54,6 +66,7 @@ Write(Model.Name);
 #line default
 #line hidden
 #nullable disable
+
         #nullable restore
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; } = default!;

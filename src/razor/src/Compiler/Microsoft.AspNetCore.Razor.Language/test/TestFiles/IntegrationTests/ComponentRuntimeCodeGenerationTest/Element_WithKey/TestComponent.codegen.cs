@@ -22,25 +22,27 @@ namespace Test
             __builder.AddAttribute(2, "attributeafter", "after");
             __builder.SetKey(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                     someObject
+#line (1,38)-(1,48) "x:\dir\subdir\Test\TestComponent.cshtml"
+someObject
 
 #line default
 #line hidden
 #nullable disable
+
             );
             __builder.AddContent(3, "Hello");
             __builder.CloseElement();
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (3,8)-(5,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     private object someObject = new object();
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

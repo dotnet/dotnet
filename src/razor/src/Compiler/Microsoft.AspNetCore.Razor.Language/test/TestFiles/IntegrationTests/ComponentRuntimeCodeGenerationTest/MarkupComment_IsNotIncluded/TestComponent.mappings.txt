@@ -2,8 +2,13 @@
 |
   var myValue = "Expression value";
 |
-Generated Location: (726:21,2 [39] )
+Generated Location: (734:21,0 [39] )
 |
   var myValue = "Expression value";
 |
+
+Source Location: (50:3,6 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|myValue|
+Generated Location: (990:32,0 [7] )
+|myValue|
 

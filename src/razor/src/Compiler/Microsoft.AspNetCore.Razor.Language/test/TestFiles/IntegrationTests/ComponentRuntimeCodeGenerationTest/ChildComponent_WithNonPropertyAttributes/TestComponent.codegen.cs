@@ -21,8 +21,8 @@ namespace Test
             __builder.AddComponentParameter(1, "some-attribute", "foo");
             __builder.AddComponentParameter(2, "another-attribute", 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                       43.ToString()
+#line (1,56)-(1,69) "x:\dir\subdir\Test\TestComponent.cshtml"
+43.ToString()
 
 #line default
 #line hidden

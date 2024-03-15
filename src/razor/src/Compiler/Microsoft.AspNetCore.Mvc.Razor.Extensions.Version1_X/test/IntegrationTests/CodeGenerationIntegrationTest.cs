@@ -25,7 +25,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
     protected override RazorConfiguration Configuration { get; }
 
-    protected override CSharpParseOptions CSharpParseOptions => base.CSharpParseOptions.WithLanguageVersion(LanguageVersion.CSharp8);
+    protected override CSharpParseOptions CSharpParseOptions => base.CSharpParseOptions.WithLanguageVersion(LanguageVersion.CSharp10);
 
     [Fact]
     public void InvalidNamespaceAtEOF_DesignTime()
@@ -41,8 +41,8 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
 
-        var diagnotics = compiled.CodeDocument.GetCSharpDocument().Diagnostics;
-        Assert.Equal("RZ1007", Assert.Single(diagnotics).Id);
+        var diagnostics = compiled.CodeDocument.GetCSharpDocument().Diagnostics;
+        Assert.Equal("RZ1007", Assert.Single(diagnostics).Id);
     }
 
     [Fact]
@@ -309,8 +309,8 @@ public class ThisShouldBeGenerated
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
 
-        var diagnotics = compiled.CodeDocument.GetCSharpDocument().Diagnostics;
-        Assert.Equal("RZ2001", Assert.Single(diagnotics).Id);
+        var diagnostics = compiled.CodeDocument.GetCSharpDocument().Diagnostics;
+        Assert.Equal("RZ2001", Assert.Single(diagnostics).Id);
     }
 
     [Fact]
@@ -365,6 +365,94 @@ public class AllTagHelper : {{typeof(TagHelper).FullName}}
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
+        AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
+    }
+
+    [Fact]
+    public void Inject_Runtime()
+    {
+        // Arrange
+        AddCSharpSyntaxTree(@"
+            public class MyApp
+            {
+                public string MyProperty { get; set; }
+            }
+");
+
+        var projectItem = CreateProjectItemFromFile();
+
+        // Act
+        var compiled = CompileToAssembly(projectItem, designTime: false);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
+        AssertLinePragmas(compiled.CodeDocument, designTime: false);
+        AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
+    }
+
+    [Fact]
+    public void InjectWithModel_Runtime()
+    {
+        // Arrange
+        AddCSharpSyntaxTree(@"
+            public class MyModel
+            {
+
+            }
+
+            public class MyService<TModel>
+            {
+                public string Html { get; set; }
+            }
+
+            public class MyApp
+            {
+                public string MyProperty { get; set; }
+}");
+
+        var projectItem = CreateProjectItemFromFile();
+
+        // Act
+        var compiled = CompileToAssembly(projectItem, designTime: false);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
+        AssertLinePragmas(compiled.CodeDocument, designTime: false);
+        AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
+    }
+
+    [Fact]
+    public void InjectWithSemicolon_Runtime()
+    {
+        // Arrange
+        AddCSharpSyntaxTree(@"
+            public class MyModel
+            {
+
+            }
+
+            public class MyApp
+            {
+                public string MyProperty { get; set; }
+            }
+
+            public class MyService<TModel>
+            {
+                public string Html { get; set; }
+            }
+");
+
+        var projectItem = CreateProjectItemFromFile();
+
+        // Act
+        var compiled = CompileToAssembly(projectItem, designTime: false);
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
+        AssertLinePragmas(compiled.CodeDocument, designTime: false);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
 }

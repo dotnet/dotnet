@@ -2410,16 +2410,19 @@ internal class CSharpCodeParser : TokenizerBackedParser<CSharpTokenizer>
                 .Where(s => s.Kind != SyntaxKind.CSharpComment && s.Kind != SyntaxKind.Whitespace && s.Kind != SyntaxKind.NewLine);
 
             SetAcceptedCharacters(AcceptedCharactersInternal.AnyExceptNewline);
+
+            // Optional ";"
+            bool hasExplicitSemicolon = false;
+            if (EnsureCurrent())
+            {
+                hasExplicitSemicolon = TryAccept(SyntaxKind.Semicolon);
+            }
+
             chunkGenerator = new AddImportChunkGenerator(
                 string.Concat(usingContentTokens.Select(s => s.Content)),
                 string.Concat(parsedNamespaceTokens.Select(s => s.Content)),
-                isStatic);
-
-            // Optional ";"
-            if (EnsureCurrent())
-            {
-                TryAccept(SyntaxKind.Semicolon);
-            }
+                isStatic,
+                hasExplicitSemicolon);
 
             CompleteBlock();
             Debug.Assert(directiveBuilder.Count == 0, "We should not have built any blocks so far.");

@@ -13,11 +13,12 @@ namespace AspNetCore
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
-#line 5 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPages.cshtml"
-using Microsoft.AspNetCore.Mvc.RazorPages;
+#line (5,2)-(6,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPages.cshtml"
+using Microsoft.AspNetCore.Mvc.RazorPages
 
 #line default
 #line hidden
+    ;
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"676265931c358e22efce0fe9ebd76cc3a7d2a5c12d37384e13aec92aa7667663", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPages.cshtml")]
     public class TestFiles_IntegrationTests_CodeGenerationIntegrationTest_RazorPages : global::Microsoft.AspNetCore.Mvc.RazorPages.Page
     {
@@ -82,11 +83,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
                 WriteLiteral("\r\n        <label class=\"col-md-2 control-label\">");
                 EndContext();
                 BeginContext(661, 10, false);
-#line 29 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPages.cshtml"
-                                         Write(Model.Name);
+                Write(
+#line (29,48)-(29,58) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPages.cshtml"
+Model.Name
 
 #line default
 #line hidden
+                );
                 EndContext();
                 BeginContext(671, 18, true);
                 WriteLiteral("</label>\r\n        ");
@@ -172,8 +175,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
             EndContext();
         }
         #pragma warning restore 1998
-#line 7 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPages.cshtml"
-            
+#line (7,13)-(23,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorPages.cshtml"
+
     public class NewModel : PageModel
     {
         public IActionResult OnPost(Customer customer)
@@ -192,6 +195,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 #line default
 #line hidden
+
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.ViewFeatures.IModelExpressionProvider ModelExpressionProvider { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]

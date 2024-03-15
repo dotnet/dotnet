@@ -9,11 +9,12 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
 internal class AddImportChunkGenerator : SpanChunkGenerator
 {
-    public AddImportChunkGenerator(string usingContent, string parsedNamespace, bool isStatic)
+    public AddImportChunkGenerator(string usingContent, string parsedNamespace, bool isStatic, bool hasExplicitSemicolon)
     {
         Namespace = usingContent;
         ParsedNamespace = parsedNamespace;
         IsStatic = isStatic;
+        HasExplicitSemicolon = hasExplicitSemicolon;
     }
 
     public string Namespace { get; }
@@ -21,6 +22,8 @@ internal class AddImportChunkGenerator : SpanChunkGenerator
     public string ParsedNamespace { get; }
 
     public bool IsStatic { get; }
+
+    public bool HasExplicitSemicolon { get; }
 
     public override string ToString()
     {

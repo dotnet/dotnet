@@ -4718,6 +4718,19 @@ namespace Test3
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
         CompileToAssembly(generated, throwOnFailure: false);
     }
+    
+    [IntegrationTestFact]
+    public void Component_WithMultipleUsingDirectives()
+    {
+        var generated = CompileToCSharp(@"
+@using System.IO ;@using Microsoft.AspNetCore.Components
+; @using System.Reflection;");
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
 
     [IntegrationTestFact]
     public void ChildContent_FromAnotherNamespace()
@@ -4806,6 +4819,19 @@ namespace AnotherTest
 </HeaderComponent>
 <FooterComponent Footer='feet'>
 </FooterComponent>
+");
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact]
+    public void Component_WithNamespaceDirective_WithWhitespace()
+    {
+        var generated = CompileToCSharp(@"
+@namespace              My.Custom.Namespace
 ");
 
         // Assert
@@ -10843,9 +10869,13 @@ Time: @DateTime.Now
         var result = CompileToAssembly(generated, throwOnFailure: false);
 
         result.Diagnostics.Verify(
+            DesignTime
             // x:\dir\subdir\Test\TestComponent.cshtml(10,29): warning CS8602: Dereference of a possibly null reference.
             //                             Container.RenderMode
-            Diagnostic(ErrorCode.WRN_NullReferenceReceiver, "Container").WithLocation(10, 29)
+            ? Diagnostic(ErrorCode.WRN_NullReferenceReceiver, "Container").WithLocation(10, 29)
+            // x:\dir\subdir\Test\TestComponent.cshtml(10,31): warning CS8602: Dereference of a possibly null reference.
+            //                             Container.RenderMode
+            : Diagnostic(ErrorCode.WRN_NullReferenceReceiver, "Container").WithLocation(10, 31)
             );
     }
 
@@ -10990,9 +11020,9 @@ Time: @DateTime.Now
             // (41,85): error CS7036: There is no argument given that corresponds to the required parameter 'value' of 'RuntimeHelpers.TypeCheck<T>(T)'
             //             global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>();
             ? Diagnostic(ErrorCode.ERR_NoCorrespondingArgument, "TypeCheck<string>").WithArguments("value", "Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<T>(T)").WithLocation(41, 85)
-            // (36,105): error CS7036: There is no argument given that corresponds to the required parameter 'value' of 'RuntimeHelpers.TypeCheck<T>(T)'
+            // (37,105): error CS7036: There is no argument given that corresponds to the required parameter 'value' of 'RuntimeHelpers.TypeCheck<T>(T)'
             //             string __formName = global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<string>();
-            : Diagnostic(ErrorCode.ERR_NoCorrespondingArgument, "TypeCheck<string>").WithArguments("value", "Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<T>(T)").WithLocation(36, 105));
+            : Diagnostic(ErrorCode.ERR_NoCorrespondingArgument, "TypeCheck<string>").WithArguments("value", "Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<T>(T)").WithLocation(37, 105));
     }
 
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/9077")]
@@ -11346,6 +11376,31 @@ Time: @DateTime.Now
             <form method="post" @onsubmit="() => { }" @formname="named-form-handler"></form>
             """,
             configuration: Configuration with { LanguageVersion = RazorLanguageVersion.Version_7_0 });
+
+        // Assert
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
+    [IntegrationTestFact]
+    public void InjectDirective()
+    {
+        // Act
+        var generated = CompileToCSharp("""
+            @using System.Text
+            @inject string Value1
+            @inject       StringBuilder          Value2
+            @inject int Value3;
+            @inject double Value4
+
+            <div>
+                Content
+            </div>
+
+            @inject float Value5
+
+            """);
 
         // Assert
         AssertDocumentNodeMatchesBaseline(generated.CodeDocument);

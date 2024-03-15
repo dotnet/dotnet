@@ -36,13 +36,15 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
             WriteLiteral("\r\n<");
             WriteLiteral("div class=\"randomNonTagHelperAttribute\">\r\n    <");
             WriteLiteral("p class=\"Hello World\" ");
+            Write(
 #nullable restore
-#line (4,30)-(4,42) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml"
-Write(DateTime.Now);
+#line (4,30)-(4,42) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml"
+DateTime.Now
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral(">\r\n        <");
             WriteLiteral("input type=\"text\" />\r\n        <");
             WriteLiteral("em>Not a TagHelper: </");
@@ -55,24 +57,28 @@ Write(DateTime.Now);
             __TestNamespace_InputTagHelper2 = CreateTagHelper<global::TestNamespace.InputTagHelper2>();
             __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper2);
             BeginWriteTagHelperAttribute();
+            WriteLiteral(
 #nullable restore
-#line (6,52)-(6,64) 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml"
-WriteLiteral(DateTime.Now);
+#line (6,52)-(6,64) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml"
+DateTime.Now
 
 #line default
 #line hidden
 #nullable disable
+            );
             __tagHelperStringValueBuffer = EndWriteTagHelperAttribute();
             __TestNamespace_InputTagHelper.Type = __tagHelperStringValueBuffer;
             __tagHelperExecutionContext.AddTagHelperAttribute("type", __TestNamespace_InputTagHelper.Type, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
             __TestNamespace_InputTagHelper2.Type = __TestNamespace_InputTagHelper.Type;
+            __TestNamespace_InputTagHelper2.Checked = 
 #nullable restore
-#line 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml"
-__TestNamespace_InputTagHelper2.Checked = true;
+#line (6,75)-(6,79) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/EscapedTagHelpers.cshtml"
+true
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("checked", __TestNamespace_InputTagHelper2.Checked, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
             await __tagHelperRunner.RunAsync(__tagHelperExecutionContext);
             if (!__tagHelperExecutionContext.Output.IsContentModified)
