@@ -1,0 +1,42 @@
+parameters:
+  engCommonTemplatesDir: ''
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: ${{ parameters.engCommonTemplatesDir }}/jobs/jobs.yml
+    parameters:
+      enablePublishUsingPipelines: true
+      enablePublishBuildArtifacts: true
+      enablePublishBuildAssets: true
+      publishAssetsImmediately: true
+      artifacts:
+        publish:
+          artifacts: true
+          manifests: true
+      enableSourceBuild: true
+  - template: /azure-pipelines/templates/jobs/generatescript-tests.yml
+    parameters:
+      imageOs: windows
+      ${{ if eq(variables['System.TeamProject'], 'public') }}:
+        imageName: 1es-windows-2022-open
+      ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+        imageName: 1es-windows-2022
+  - template: /azure-pipelines/templates/jobs/generatescript-tests.yml
+    parameters:
+      imageOs: linux
+      ${{ if eq(variables['System.TeamProject'], 'public') }}:
+        imageName: Build.Ubuntu.1804.Amd64.Open
+      ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+        imageName: 1es-ubuntu-2204
+# Based on - https://github.com/dotnet/arcade/blob/9b3f304c7bc9fd4d11be9ca0b466b83e98d2a191/Documentation/CorePackages/Publishing.md#moving-away-from-the-legacy-pushtoblobfeed-task
+- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+  - template: ${{ parameters.engCommonTemplatesDir }}/post-build/post-build.yml
+    parameters:
+      publishingInfraVersion: 3
+      publishAssetsImmediately: true
+      enableSourceLinkValidation: false
+      #Nuget and Signing Validation are not needed as we only produce a transport package.
+      enableSigningValidation: false
+      enableNugetValidation: false
