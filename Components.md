@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@359b95b](https://github.com/dotnet/installer/tree/359b95bc8a798e8849e66a6f6ec6b210641e17b4)*
+*[dotnet/installer@771a489](https://github.com/dotnet/installer/tree/771a489ac9dc85337862a5139623d7348e26baa6)*
 - `src/msbuild`  
 *[dotnet/msbuild@b5265ef](https://github.com/dotnet/msbuild/tree/b5265ef370a651f8c3458110b804e5cbf869eeb5)*
 - `src/nuget-client`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@38f2042](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC38f2042434044be9a09065b23b7ef342a313a498)*
 - `src/sdk`  
-*[_git/dotnet-sdk@d2323ac](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GCd2323acf9ef535e2f939bdd8cd1c085d5ea0a625)*
+*[_git/dotnet-sdk@4e79d82](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC4e79d82d46cce3daaea31b006deb3c8653b0c937)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@00fb784](https://github.com/dotnet/source-build-externals/tree/00fb7841c80b44262646e57bcfbe90a1b7bc3151)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -84,7 +84,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@2c8079e](https://github.com/dotnet/symreader/tree/2c8079e2e8e78c0cd11ac75a32014756136ecdb9)*
 - `src/templating`  
-*[dotnet/templating@b500bd1](https://github.com/dotnet/templating/tree/b500bd1ad9484c2f8fe02eea50f2c4d035ca6783)*
+*[dotnet/templating@55510cd](https://github.com/dotnet/templating/tree/55510cd204b895df1870a0d59aa6b7030cf4f5cd)*
 - `src/test-templates`  
 *[dotnet/test-templates@1e5f360](https://github.com/dotnet/test-templates/tree/1e5f3603af2277910aad946736ee23283e7f3e16)*
 - `src/vstest`  
