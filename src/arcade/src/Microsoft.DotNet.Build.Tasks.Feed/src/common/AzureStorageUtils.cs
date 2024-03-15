@@ -8,6 +8,8 @@ using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
 using Azure.Storage.Sas;
 using Microsoft.Arcade.Common;
+using Microsoft.Build.Framework;
+using MsBuildUtils = Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,6 +34,17 @@ namespace Microsoft.DotNet.Build.CloudTestTasks
         {
             {".svg", "no-cache"}
         };
+
+        /// <summary>
+        ///  Enum describing the states of a given package on a feed
+        /// </summary>
+        public enum PackageFeedStatus
+        {
+            DoesNotExist,
+            ExistsAndIdenticalToLocal,
+            ExistsAndDifferent,
+            Unknown
+        }
 
         // Save the credential so we can sign SAS tokens
         private readonly StorageSharedKeyCredential _credential;
@@ -167,6 +180,125 @@ namespace Microsoft.DotNet.Build.CloudTestTasks
             }
 
             return headers;
+        }
+
+        /// <summary>
+        ///     Determine whether a local package is the same as a package on an AzDO feed.
+        /// </summary>
+        /// <param name="localPackageFullPath"></param>
+        /// <param name="packageContentUrl"></param>
+        /// <param name="client"></param>
+        /// <param name="log"></param>
+        /// <returns></returns>
+        /// <remarks>
+        ///     Open a stream to the local file and an http request to the package. There are a couple possibilities:
+        ///     - The returned headers include a content MD5 header, in which case we can
+        ///       hash the local file and just compare those.
+        ///     - No content MD5 hash, and the streams must be compared in blocks. This is a bit trickier to do efficiently,
+        ///       since we do not necessarily want to read all bytes if we can help it. Thus, we should compare in blocks.  However,
+        ///       the streams make no guarantee that they will return a full block each time when read operations are performed, so we
+        ///       must be sure to only compare the minimum number of bytes returned.
+        /// </remarks>
+        public static async Task<PackageFeedStatus> CompareLocalPackageToFeedPackage(
+            string localPackageFullPath,
+            string packageContentUrl,
+            HttpClient client,
+            MsBuildUtils.TaskLoggingHelper log)
+        {
+            return await CompareLocalPackageToFeedPackage(
+                localPackageFullPath,
+                packageContentUrl,
+                client,
+                log,
+                GeneralUtils.CreateDefaultRetryHandler());
+        }
+
+        /// <summary>
+        ///     Determine whether a local package is the same as a package on an AzDO feed.
+        /// </summary>
+        /// <param name="localPackageFullPath"></param>
+        /// <param name="packageContentUrl"></param>
+        /// <param name="client"></param>
+        /// <param name="log"></param>
+        /// <param name="retryHandler"></param>
+        /// <returns></returns>
+        /// <remarks>
+        ///     Open a stream to the local file and an http request to the package. There are a couple possibilities:
+        ///     - The returned headers include a content MD5 header, in which case we can
+        ///       hash the local file and just compare those.
+        ///     - No content MD5 hash, and the streams must be compared in blocks. This is a bit trickier to do efficiently,
+        ///       since we do not necessarily want to read all bytes if we can help it. Thus, we should compare in blocks.  However,
+        ///       the streams make no guarantee that they will return a full block each time when read operations are performed, so we
+        ///       must be sure to only compare the minimum number of bytes returned.
+        /// </remarks>
+        public static async Task<PackageFeedStatus> CompareLocalPackageToFeedPackage(
+            string localPackageFullPath,
+            string packageContentUrl,
+            HttpClient client,
+            MsBuildUtils.TaskLoggingHelper log,
+            IRetryHandler retryHandler)
+        {
+            log.LogMessage($"Getting package content from {packageContentUrl} and comparing to {localPackageFullPath}");
+
+            PackageFeedStatus result = PackageFeedStatus.Unknown;
+
+            bool success = await retryHandler.RunAsync(async attempt =>
+            {
+                try
+                {
+                    using (Stream localFileStream = File.OpenRead(localPackageFullPath))
+                    using (HttpResponseMessage response = await client.GetAsync(packageContentUrl))
+                    {
+                        response.EnsureSuccessStatusCode();
+
+                        // Check the headers for content length and md5 
+                        bool md5HeaderAvailable = response.Headers.TryGetValues("Content-MD5", out var md5);
+                        bool lengthHeaderAvailable = response.Headers.TryGetValues("Content-Length", out var contentLength);
+
+                        if (lengthHeaderAvailable && long.Parse(contentLength.Single()) != localFileStream.Length)
+                        {
+                            log.LogMessage(MessageImportance.Low, $"Package '{localPackageFullPath}' has different length than remote package '{packageContentUrl}'.");
+                            result = PackageFeedStatus.ExistsAndDifferent;
+                            return true;
+                        }
+
+                        if (md5HeaderAvailable)
+                        {
+                            var localMD5 = AzureStorageUtils.CalculateMD5(localPackageFullPath);
+                            if (!localMD5.Equals(md5.Single(), StringComparison.OrdinalIgnoreCase))
+                            {
+                                log.LogMessage(MessageImportance.Low, $"Package '{localPackageFullPath}' has different MD5 hash than remote package '{packageContentUrl}'.");
+                            }
+
+                            result = PackageFeedStatus.ExistsAndDifferent;
+                            return true;
+                        }
+
+                        const int BufferSize = 64 * 1024;
+
+                        // Otherwise, compare the streams
+                        var remoteStream = await response.Content.ReadAsStreamAsync();
+                        var streamsMatch = await GeneralUtils.CompareStreamsAsync(localFileStream, remoteStream, BufferSize);
+                        result = streamsMatch ? PackageFeedStatus.ExistsAndIdenticalToLocal : PackageFeedStatus.ExistsAndDifferent;
+                        return true;
+                    }
+                }
+                // String based comparison because the status code isn't exposed in HttpRequestException
+                // see here: https://github.com/dotnet/runtime/issues/23648
+                catch (Exception e) when (e is HttpRequestException || e is TaskCanceledException)
+                {
+                    if (e.Message.Contains("404 (Not Found)"))
+                    {
+                        result = PackageFeedStatus.DoesNotExist;
+                        return true;
+                    }
+
+                    // Retry this. Could be an http client timeout, 500, etc.
+                    return false;
+                }
+            });
+
+            return result;
         }
     }
 }

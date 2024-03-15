@@ -4,7 +4,6 @@
 using FluentAssertions;
 using Microsoft.DotNet.VersionTools.Automation;
 using Moq;
-using NuGet.Packaging.Core;
 using NuGet.Versioning;
 using System.IO;
 using System;
@@ -22,7 +21,7 @@ public class VersionTrimmingOperationTests
     {
         var nupkgInfoFactory = new Mock<INupkgInfoFactory>();
         nupkgInfoFactory.Setup(m => m.CreateNupkgInfo(It.IsAny<string>()))
-            .Returns(new NupkgInfo(new PackageIdentity("id", new NuGetVersion("8.0.0-dev"))));
+            .Returns(new NupkgInfo(new PackageIdentity("id", "8.0.0-dev")));
 
         var fileProxy = new Mock<IFileProxy>();
         fileProxy.Setup(m => m.Move(It.IsAny<string>(), It.IsAny<string>())).Verifiable();
