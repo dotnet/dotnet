@@ -172,6 +172,8 @@ extends:
                 -configuration Release
                 -ci
                 -nobl
+                -integrationTest
+                -performanceTest
               name: Test
               displayName: Test
 
@@ -223,6 +225,8 @@ extends:
               - script: ./test.sh
                   --configuration Release
                   --ci
+                  --integrationTest
+                  --performanceTest
                 name: Test
                 displayName: Test
 
