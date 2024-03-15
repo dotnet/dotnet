@@ -22,12 +22,13 @@ namespace Test
             __builder.AddAttribute(2, "attributeafter", "after");
             __builder.AddElementReferenceCapture(3, (__value) => {
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                     myElem = __value;
+#line (1,38)-(1,44) "x:\dir\subdir\Test\TestComponent.cshtml"
+myElem
 
 #line default
 #line hidden
 #nullable disable
+                 = __value;
             }
             );
             __builder.AddContent(4, "Hello");
@@ -35,14 +36,15 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (3,8)-(6,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     private Microsoft.AspNetCore.Components.ElementReference myElem;
     public void Foo() { System.GC.KeepAlive(myElem); }
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

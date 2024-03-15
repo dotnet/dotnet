@@ -4,6 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServerClient.Razor;
@@ -36,26 +37,24 @@ internal partial class RazorProjectSystemInProcess
 
     public async Task WaitForProjectFileAsync(string projectFilePath, CancellationToken cancellationToken)
     {
-        var accessor = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManagerAccessor>(cancellationToken);
-        var projectSnapshotManager = accessor.Instance;
-        Assert.NotNull(accessor);
+        var projectManager = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManager>(cancellationToken);
+        Assert.NotNull(projectManager);
         await Helper.RetryAsync(ct =>
         {
-            var projectKeys = projectSnapshotManager.GetAllProjectKeys(projectFilePath);
+            var projectKeys = projectManager.GetAllProjectKeys(projectFilePath);
             if (projectKeys.Length == 0)
             {
                 return Task.FromResult(false);
             }
 
-            return Task.FromResult(projectSnapshotManager.TryGetLoadedProject(projectKeys[0], out _));
+            return Task.FromResult(projectManager.TryGetLoadedProject(projectKeys[0], out _));
         }, TimeSpan.FromMilliseconds(100), cancellationToken);
     }
 
     public async Task WaitForRazorFileInProjectAsync(string projectFilePath, string filePath, CancellationToken cancellationToken)
     {
-        var accessor = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManagerAccessor>(cancellationToken);
-        var projectSnapshotManager = accessor.Instance;
-        Assert.NotNull(accessor);
+        var projectSnapshotManager = await TestServices.Shell.GetComponentModelServiceAsync<IProjectSnapshotManager>(cancellationToken);
+        Assert.NotNull(projectSnapshotManager);
         await Helper.RetryAsync(ct =>
         {
             var projectKeys = projectSnapshotManager.GetAllProjectKeys(projectFilePath);

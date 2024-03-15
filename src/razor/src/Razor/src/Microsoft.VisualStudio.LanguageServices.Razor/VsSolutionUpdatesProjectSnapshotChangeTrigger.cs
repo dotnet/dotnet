@@ -18,32 +18,39 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
-[Export(typeof(IProjectSnapshotChangeTrigger))]
-[method: ImportingConstructor]
-internal class VsSolutionUpdatesProjectSnapshotChangeTrigger(
-    [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-    IProjectWorkspaceStateGenerator workspaceStateGenerator,
-    IWorkspaceProvider workspaceProvider,
-    ProjectSnapshotManagerDispatcher dispatcher,
-    JoinableTaskContext joinableTaskContext) : IProjectSnapshotChangeTrigger, IVsUpdateSolutionEvents2, IDisposable
+[Export(typeof(IRazorStartupService))]
+internal class VsSolutionUpdatesProjectSnapshotChangeTrigger : IRazorStartupService, IVsUpdateSolutionEvents2, IDisposable
 {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
-    private readonly IProjectWorkspaceStateGenerator _workspaceStateGenerator = workspaceStateGenerator;
-    private readonly IWorkspaceProvider _workspaceProvider = workspaceProvider;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
-    private readonly JoinableTaskFactory _jtf = joinableTaskContext.Factory;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IProjectSnapshotManager _projectManager;
+    private readonly IProjectWorkspaceStateGenerator _workspaceStateGenerator;
+    private readonly IWorkspaceProvider _workspaceProvider;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
+    private readonly JoinableTaskFactory _jtf;
+    private readonly JoinableTask _initializeTask;
 
-    private ProjectSnapshotManagerBase? _projectManager;
     private CancellationTokenSource? _activeSolutionCancellationTokenSource = new();
     private uint _updateCookie;
     private IVsSolutionBuildManager? _solutionBuildManager;
 
-    private JoinableTask? _initializeTask;
     private Task? _projectBuiltTask;
 
-    public void Initialize(ProjectSnapshotManagerBase projectManager)
+    [ImportingConstructor]
+    public VsSolutionUpdatesProjectSnapshotChangeTrigger(
+        [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
+        IProjectSnapshotManager projectManager,
+        IProjectWorkspaceStateGenerator workspaceStateGenerator,
+        IWorkspaceProvider workspaceProvider,
+        ProjectSnapshotManagerDispatcher dispatcher,
+        JoinableTaskContext joinableTaskContext)
     {
+        _serviceProvider = serviceProvider;
         _projectManager = projectManager;
+        _workspaceStateGenerator = workspaceStateGenerator;
+        _workspaceProvider = workspaceProvider;
+        _dispatcher = dispatcher;
+        _jtf = joinableTaskContext.Factory;
+
         _projectManager.Changed += ProjectManager_Changed;
 
         _initializeTask = _jtf.RunAsync(async () =>
@@ -149,7 +156,7 @@ internal class VsSolutionUpdatesProjectSnapshotChangeTrigger(
 
     internal sealed class TestAccessor(VsSolutionUpdatesProjectSnapshotChangeTrigger instance)
     {
-        public JoinableTask? InitializeTask => instance._initializeTask;
+        public JoinableTask InitializeTask => instance._initializeTask;
         public Task? OnProjectBuiltTask => instance._projectBuiltTask;
 
         public Task OnProjectBuiltAsync(IVsHierarchy projectHierarchy, CancellationToken cancellationToken)

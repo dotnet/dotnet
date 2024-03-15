@@ -13,12 +13,13 @@ namespace AspNetCore
     using global::Microsoft.AspNetCore.Mvc.Rendering;
     using global::Microsoft.AspNetCore.Mvc.ViewFeatures;
 #nullable restore
-#line 2 "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
-using TestNamespace;
+#line (2,2)-(3,1) "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
+using TestNamespace
 
 #line default
 #line hidden
 #nullable disable
+    ;
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"Sha256", @"b354ee3595811e9701f9c464ddf35ccb31360a3799b7bb4279192f084591a4fe", @"/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/test.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemMetadataAttribute("Identifier", "/TestFiles/IntegrationTests/CodeGenerationIntegrationTest/test.cshtml")]
     [global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdateAttribute]
@@ -31,21 +32,25 @@ using TestNamespace;
         {
             WriteLiteral("\r\n");
             WriteLiteral("\r\n<h1>");
+            Write(
 #nullable restore
-#line (5,6)-(5,17) 6 "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
-Write(Model?.Name);
+#line (5,6)-(5,17) "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
+Model?.Name
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</h1>\r\n\r\n<h2>");
+            Write(
 #nullable restore
-#line (7,6)-(7,20) 6 "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
-Write(Model?.Address);
+#line (7,6)-(7,20) "TestFiles\IntegrationTests\CodeGenerationIntegrationTest\test.cshtml"
+Model?.Address
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</h2>");
         }
         #pragma warning restore 1998

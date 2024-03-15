@@ -1,9 +1,19 @@
-﻿Source Location: (105:1,7 [138] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (51:0,51 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|ParentValue|
+Generated Location: (969:23,0 [11] )
+|ParentValue|
+
+Source Location: (81:0,81 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|UpdateValue|
+Generated Location: (1540:32,0 [11] )
+|UpdateValue|
+
+Source Location: (105:1,7 [138] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     public CustomValue ParentValue { get; set; } = new CustomValue();
     public EventCallback<CustomValue> UpdateValue { get; set; }
 |
-Generated Location: (1910:43,7 [138] )
+Generated Location: (1805:43,0 [138] )
 |
     public CustomValue ParentValue { get; set; } = new CustomValue();
     public EventCallback<CustomValue> UpdateValue { get; set; }

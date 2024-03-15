@@ -21,8 +21,8 @@ namespace Test
             __builder.OpenElement(1, "elem");
             __builder.AddAttribute(2, "attr", 
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-                Foo
+#line (3,17)-(3,20) "x:\dir\subdir\Test\TestComponent.cshtml"
+Foo
 
 #line default
 #line hidden
@@ -34,14 +34,15 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 7 "x:\dir\subdir\Test\TestComponent.cshtml"
-           
+#line (7,12)-(9,5) "x:\dir\subdir\Test\TestComponent.cshtml"
+
         int Foo = 18;
     
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

@@ -20,12 +20,6 @@ internal class ComponentPageDirective
             builder.Description = ComponentResources.PageDirective_Description;
         });
 
-    private ComponentPageDirective(string routeTemplate, IntermediateNode directiveNode)
-    {
-        RouteTemplate = routeTemplate;
-        DirectiveNode = directiveNode;
-    }
-
     public string RouteTemplate { get; }
 
     public IntermediateNode DirectiveNode { get; }

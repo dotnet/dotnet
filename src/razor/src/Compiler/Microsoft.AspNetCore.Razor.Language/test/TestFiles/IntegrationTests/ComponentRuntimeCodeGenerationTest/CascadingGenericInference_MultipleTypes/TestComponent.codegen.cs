@@ -20,16 +20,16 @@ namespace Test
             {
                 global::__Blazor.Test.TestComponent.TypeInference.CreateParent_0_CaptureParameters(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                new System.Collections.Generic.Dictionary<int, string>()
+#line (1,17)-(1,73) "x:\dir\subdir\Test\TestComponent.cshtml"
+new System.Collections.Generic.Dictionary<int, string>()
 
 #line default
 #line hidden
 #nullable disable
                 , out var __typeInferenceArg_0___arg0, 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                                                   DateTime.MinValue
+#line (1,84)-(1,101) "x:\dir\subdir\Test\TestComponent.cshtml"
+DateTime.MinValue
 
 #line default
 #line hidden
@@ -38,8 +38,8 @@ namespace Test
                 global::__Blazor.Test.TestComponent.TypeInference.CreateParent_0(__builder, 0, 1, __typeInferenceArg_0___arg0, 2, __typeInferenceArg_0___arg1, 3, (__builder2) => {
                     global::__Blazor.Test.TestComponent.TypeInference.CreateChild_1(__builder2, 4, __typeInferenceArg_0___arg1, __typeInferenceArg_0___arg0, __typeInferenceArg_0___arg0, 5, 
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-                             new[] { 'a', 'b', 'c' }
+#line (2,30)-(2,53) "x:\dir\subdir\Test\TestComponent.cshtml"
+new[] { 'a', 'b', 'c' }
 
 #line default
 #line hidden

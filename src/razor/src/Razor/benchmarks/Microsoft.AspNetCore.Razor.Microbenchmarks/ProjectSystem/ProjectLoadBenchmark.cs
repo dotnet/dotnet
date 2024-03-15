@@ -18,7 +18,7 @@ public class ProjectLoadBenchmark : ProjectSnapshotManagerBenchmarkBase
         ProjectManager = CreateProjectSnapshotManager();
     }
 
-    private DefaultProjectSnapshotManager ProjectManager { get; set; }
+    private ProjectSnapshotManager ProjectManager { get; set; }
 
     [Benchmark(Description = "Initializes a project and 100 files", OperationsPerInvoke = 100)]
     public async Task ProjectLoad_AddProjectAnd100Files()

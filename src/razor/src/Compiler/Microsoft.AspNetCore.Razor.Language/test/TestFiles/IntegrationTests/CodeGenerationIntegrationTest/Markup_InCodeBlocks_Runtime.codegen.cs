@@ -13,8 +13,8 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         {
             WriteLiteral("\r\n");
 #nullable restore
-#line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
-  
+#line (2,3)-(10,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+
     var people = new Person[]
     {
         new Person() { Name = "Taylor", Age = 95, }
@@ -26,43 +26,49 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("        <div>");
+            Write(
 #nullable restore
-#line (10,15)-(10,26) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
-Write(person.Name);
+#line (10,15)-(10,26) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+person.Name
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</div>\r\n");
 #nullable restore
-#line 11 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+#line (11,1)-(12,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
     }
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n");
 #nullable restore
-#line 14 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
-   PrintName(people[0]) 
+#line (14,3)-(14,25) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+ PrintName(people[0]) 
 
 #line default
 #line hidden
 #nullable disable
+
 #nullable restore
-#line 15 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
-   AnnounceBirthday(people[0]); 
+#line (15,3)-(15,33) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+ AnnounceBirthday(people[0]); 
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n");
         }
         #pragma warning restore 1998
 #nullable restore
-#line 17 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
-            
+#line (17,13)-(21,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+
     void AnnounceBirthday(Person person)
     {
         var formatted = $"Mr. {person.Name}";
@@ -70,43 +76,50 @@ Write(person.Name);
 #line default
 #line hidden
 #nullable disable
+
         WriteLiteral("        <div>\r\n            <h3>Happy birthday ");
+        Write(
 #nullable restore
-#line (22,34)-(22,43) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
-Write(formatted);
+#line (22,34)-(22,43) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+formatted
 
 #line default
 #line hidden
 #nullable disable
+        );
         WriteLiteral("!</h3>\r\n        </div>\r\n");
         WriteLiteral("        <ul>\r\n");
 #nullable restore
-#line 26 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
-         for (var i = 0; i < person.Age / 10; i++)
+#line (26,10)-(28,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+for (var i = 0; i < person.Age / 10; i++)
         {
 
 #line default
 #line hidden
 #nullable disable
+
         WriteLiteral("            <li>");
+        Write(
 #nullable restore
-#line (28,19)-(28,20) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
-Write(i);
+#line (28,19)-(28,20) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+i
 
 #line default
 #line hidden
 #nullable disable
+        );
         WriteLiteral(" Happy birthday!</li>\r\n");
 #nullable restore
-#line 29 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+#line (29,1)-(30,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
         }
 
 #line default
 #line hidden
 #nullable disable
+
         WriteLiteral("        </ul>\r\n");
 #nullable restore
-#line 31 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+#line (31,1)-(37,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
 
         if (person.Age < 20)
         {
@@ -117,9 +130,10 @@ Write(i);
 #line default
 #line hidden
 #nullable disable
+
         WriteLiteral("        <h4>Secret message</h4>\r\n");
 #nullable restore
-#line 38 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
+#line (38,1)-(45,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Markup_InCodeBlocks.cshtml"
     }
 
     class Person
@@ -131,6 +145,7 @@ Write(i);
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

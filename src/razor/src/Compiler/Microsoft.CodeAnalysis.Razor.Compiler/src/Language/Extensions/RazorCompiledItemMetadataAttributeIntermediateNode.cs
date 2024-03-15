@@ -26,6 +26,11 @@ public class RazorCompiledItemMetadataAttributeIntermediateNode : ExtensionInter
     /// </summary>
     public string Value { get; set; }
 
+    /// <summary>
+    /// Gets or sets an optional string syntax for the <see cref="Value"/>
+    /// </summary>
+    public string ValueStringSyntax { get; set; }
+
     public override void Accept(IntermediateNodeVisitor visitor)
     {
         if (visitor == null)
@@ -62,5 +67,6 @@ public class RazorCompiledItemMetadataAttributeIntermediateNode : ExtensionInter
     {
         formatter.WriteProperty(nameof(Key), Key);
         formatter.WriteProperty(nameof(Value), Value);
+        formatter.WriteProperty(nameof(ValueStringSyntax), ValueStringSyntax);
     }
 }

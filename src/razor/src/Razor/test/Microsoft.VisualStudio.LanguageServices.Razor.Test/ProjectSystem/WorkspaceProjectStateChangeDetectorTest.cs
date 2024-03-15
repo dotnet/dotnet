@@ -135,13 +135,12 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     {
         // Arrange
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
-        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue);
+        var projectManager = CreateProjectSnapshotManager();
+        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue);
         _workQueueTestAccessor.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
         _workQueueTestAccessor.NotifyBackgroundWorkStarting = new ManualResetEventSlim(initialState: false);
 
         Workspace.TryApplyChanges(_solutionWithTwoProjects);
-
-        var projectManager = CreateProjectSnapshotManager([detector]);
 
         await RunOnDispatcherAsync(() =>
         {
@@ -179,14 +178,13 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     {
         // Arrange
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
-        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue)
+        var projectManager = CreateProjectSnapshotManager();
+        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue)
         {
             NotifyWorkspaceChangedEventComplete = new ManualResetEventSlim(initialState: false),
         };
 
         _workQueueTestAccessor.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
-
-        var projectManager = CreateProjectSnapshotManager([detector]);
 
         await RunOnDispatcherAsync(() =>
         {
@@ -230,14 +228,13 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     {
         // Arrange
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
-        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue)
+        var projectManager = CreateProjectSnapshotManager();
+        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue)
         {
             NotifyWorkspaceChangedEventComplete = new ManualResetEventSlim(initialState: false),
         };
 
         _workQueueTestAccessor.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
-
-        var projectManager = CreateProjectSnapshotManager([detector]);
 
         await RunOnDispatcherAsync(() =>
         {
@@ -283,12 +280,11 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     {
         // Arrange
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
-        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue)
+        var projectManager = CreateProjectSnapshotManager();
+        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue)
         {
             NotifyWorkspaceChangedEventComplete = new ManualResetEventSlim(initialState: false),
         };
-
-        var projectManager = CreateProjectSnapshotManager([detector]);
 
         await RunOnDispatcherAsync(() =>
         {
@@ -320,12 +316,11 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     {
         // Arrange
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
-        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue)
+        var projectManager = CreateProjectSnapshotManager();
+        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue)
         {
             NotifyWorkspaceChangedEventComplete = new ManualResetEventSlim(initialState: false),
         };
-
-        var projectManager = CreateProjectSnapshotManager([detector]);
 
         await RunOnDispatcherAsync(() =>
         {
@@ -365,10 +360,9 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     {
         // Arrange
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
-        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue);
+        var projectManager = CreateProjectSnapshotManager();
+        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue);
         _workQueueTestAccessor.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
-
-        var projectManager = CreateProjectSnapshotManager([detector]);
 
         await RunOnDispatcherAsync(() =>
         {
@@ -399,12 +393,11 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     {
         // Arrange
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
-        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue);
+        var projectManager = CreateProjectSnapshotManager();
+        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue);
         _workQueueTestAccessor.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
 
         Workspace.TryApplyChanges(_solutionWithTwoProjects);
-
-        var projectManager = CreateProjectSnapshotManager([detector]);
 
         await RunOnDispatcherAsync(() =>
         {
@@ -437,12 +430,11 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     {
         // Arrange
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
-        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue);
+        var projectManager = CreateProjectSnapshotManager();
+        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue);
         _workQueueTestAccessor.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
 
         Workspace.TryApplyChanges(_solutionWithTwoProjects);
-
-        var projectManager = CreateProjectSnapshotManager([detector]);
 
         await RunOnDispatcherAsync(() =>
         {
@@ -475,12 +467,11 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     {
         // Arrange
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
-        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue);
+        var projectManager = CreateProjectSnapshotManager();
+        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue);
         _workQueueTestAccessor.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
 
         Workspace.TryApplyChanges(_solutionWithTwoProjects);
-
-        var projectManager = CreateProjectSnapshotManager([detector]);
 
         await RunOnDispatcherAsync(() =>
         {
@@ -513,12 +504,11 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     {
         // Arrange
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
-        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue);
+        var projectManager = CreateProjectSnapshotManager();
+        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue);
         _workQueueTestAccessor.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
 
         Workspace.TryApplyChanges(_solutionWithTwoProjects);
-
-        var projectManager = CreateProjectSnapshotManager([detector]);
 
         await RunOnDispatcherAsync(() =>
         {
@@ -568,12 +558,11 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     {
         // Arrange
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
-        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue)
+        var projectManager = CreateProjectSnapshotManager();
+        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue)
         {
             NotifyWorkspaceChangedEventComplete = new ManualResetEventSlim(initialState: false),
         };
-
-        var projectManager = CreateProjectSnapshotManager([detector]);
 
         await RunOnDispatcherAsync(() =>
         {
@@ -599,12 +588,11 @@ public class WorkspaceProjectStateChangeDetectorTest : VisualStudioWorkspaceTest
     {
         // Arrange
         var workspaceStateGenerator = new TestProjectWorkspaceStateGenerator();
-        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue)
+        var projectManager = CreateProjectSnapshotManager();
+        var detector = new WorkspaceProjectStateChangeDetector(workspaceStateGenerator, projectManager, TestLanguageServerFeatureOptions.Instance, WorkspaceProvider, ErrorReporter, Dispatcher, _workQueue)
         {
             NotifyWorkspaceChangedEventComplete = new ManualResetEventSlim(initialState: false),
         };
-
-        var projectManager = CreateProjectSnapshotManager([detector]);
 
         await RunOnDispatcherAsync(() =>
         {

@@ -38,15 +38,15 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
     public async Task Handle_Disposed_Noops()
     {
         // Arrange
-        var projectSnapshotManagerAccessor = Mock.Of<IProjectSnapshotManagerAccessor>(MockBehavior.Strict);
+        var projectManager = CreateProjectSnapshotManager();
         var directoryPathResolver = new Mock<WorkspaceDirectoryPathResolver>(MockBehavior.Strict);
         directoryPathResolver.Setup(resolver => resolver.Resolve())
             .Throws<Exception>();
         var configurationFileEndpoint = new MonitorProjectConfigurationFilePathEndpoint(
-            projectSnapshotManagerAccessor,
+            projectManager,
             Dispatcher,
             directoryPathResolver.Object,
-            Enumerable.Empty<IProjectConfigurationFileChangeListener>(),
+            listeners: [],
             TestLanguageServerFeatureOptions.Instance,
             LoggerFactory);
         configurationFileEndpoint.Dispose();
@@ -70,15 +70,15 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
     public async Task Handle_ConfigurationFilePath_UntrackedMonitorNoops()
     {
         // Arrange
-        var projectSnapshotManagerAccessor = Mock.Of<IProjectSnapshotManagerAccessor>(MockBehavior.Strict);
+        var projectManager = CreateProjectSnapshotManager();
         var directoryPathResolver = new Mock<WorkspaceDirectoryPathResolver>(MockBehavior.Strict);
         directoryPathResolver.Setup(resolver => resolver.Resolve())
             .Throws<Exception>();
         var configurationFileEndpoint = new MonitorProjectConfigurationFilePathEndpoint(
-            projectSnapshotManagerAccessor,
+            projectManager,
             Dispatcher,
             directoryPathResolver.Object,
-            Enumerable.Empty<IProjectConfigurationFileChangeListener>(),
+            listeners: [],
             TestLanguageServerFeatureOptions.Instance,
             LoggerFactory);
 
@@ -100,13 +100,15 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
     public async Task Handle_ConfigurationFilePath_TrackedMonitor_StopsMonitor()
     {
         // Arrange
+        var projectManager = CreateProjectSnapshotManager();
         var detector = new TestFileChangeDetector();
         var configurationFileEndpoint = new TestMonitorProjectConfigurationFilePathEndpoint(
             () => detector,
             Dispatcher,
             _directoryPathResolver,
-            Enumerable.Empty<IProjectConfigurationFileChangeListener>(),
-            LoggerFactory);
+            listeners: [],
+            LoggerFactory,
+            projectManager);
 
         var debugDirectory = PathUtilities.CreateRootedPath("externaldir", "obj", "Debug");
         var projectKeyDirectory = PathUtilities.CreateRootedPath("dir", "obj");
@@ -137,13 +139,15 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
     public async Task Handle_InWorkspaceDirectory_Noops()
     {
         // Arrange
+        var projectManager = CreateProjectSnapshotManager();
         var detector = new TestFileChangeDetector();
         var configurationFileEndpoint = new TestMonitorProjectConfigurationFilePathEndpoint(
             () => detector,
             Dispatcher,
             _directoryPathResolver,
-            Enumerable.Empty<IProjectConfigurationFileChangeListener>(),
-            LoggerFactory);
+            listeners: [],
+            LoggerFactory,
+            projectManager);
 
         var debugDirectory = PathUtilities.CreateRootedPath("dir", "obj", "Debug");
         var projectKeyDirectory = PathUtilities.CreateRootedPath("dir", "obj");
@@ -167,13 +171,15 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
     public async Task Handle_InWorkspaceDirectory_MonitorsIfLanguageFeatureOptionSet()
     {
         // Arrange
+        var projectManager = CreateProjectSnapshotManager();
         var detector = new TestFileChangeDetector();
         var configurationFileEndpoint = new TestMonitorProjectConfigurationFilePathEndpoint(
             () => detector,
             Dispatcher,
             _directoryPathResolver,
-            Enumerable.Empty<IProjectConfigurationFileChangeListener>(),
+            listeners: [],
             LoggerFactory,
+            projectManager,
             options: new TestLanguageServerFeatureOptions(monitorWorkspaceFolderForConfigurationFiles: false));
 
         var debugDirectory = PathUtilities.CreateRootedPath("dir", "obj", "Debug");
@@ -198,13 +204,15 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
     public async Task Handle_DuplicateMonitors_Noops()
     {
         // Arrange
+        var projectManager = CreateProjectSnapshotManager();
         var detector = new TestFileChangeDetector();
         var configurationFileEndpoint = new TestMonitorProjectConfigurationFilePathEndpoint(
             () => detector,
             Dispatcher,
             _directoryPathResolver,
-            Enumerable.Empty<IProjectConfigurationFileChangeListener>(),
-            LoggerFactory);
+            listeners: [],
+            LoggerFactory,
+            projectManager);
 
         var debugDirectory = PathUtilities.CreateRootedPath("externaldir", "obj", "Debug");
         var projectKeyDirectory = PathUtilities.CreateRootedPath("dir", "obj");
@@ -230,13 +238,15 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
     public async Task Handle_ChangedConfigurationOutputPath_StartsWithNewPath()
     {
         // Arrange
+        var projectManager = CreateProjectSnapshotManager();
         var detector = new TestFileChangeDetector();
         var configurationFileEndpoint = new TestMonitorProjectConfigurationFilePathEndpoint(
             () => detector,
             Dispatcher,
             _directoryPathResolver,
-            Enumerable.Empty<IProjectConfigurationFileChangeListener>(),
-            LoggerFactory);
+            listeners: [],
+            LoggerFactory,
+            projectManager);
 
         var debugDirectory = PathUtilities.CreateRootedPath("externaldir", "obj", "Debug");
         var releaseDirectory = PathUtilities.CreateRootedPath("externaldir", "obj", "Release");
@@ -270,13 +280,15 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
     public async Task Handle_ChangedConfigurationExternalToInternal_StopsWithoutRestarting()
     {
         // Arrange
+        var projectManager = CreateProjectSnapshotManager();
         var detector = new TestFileChangeDetector();
         var configurationFileEndpoint = new TestMonitorProjectConfigurationFilePathEndpoint(
             () => detector,
             Dispatcher,
             _directoryPathResolver,
-            Enumerable.Empty<IProjectConfigurationFileChangeListener>(),
-            LoggerFactory);
+            listeners: [],
+            LoggerFactory,
+            projectManager);
 
         var debugDirectory = PathUtilities.CreateRootedPath("externaldir", "obj", "Debug");
         var releaseDirectory = PathUtilities.CreateRootedPath("dir", "obj", "Release");
@@ -310,6 +322,7 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
     public async Task Handle_ProjectPublished()
     {
         // Arrange
+        var projectManager = CreateProjectSnapshotManager();
         var callCount = 0;
         var projectOpenDebugDetector = new TestFileChangeDetector();
         var releaseDetector = new TestFileChangeDetector();
@@ -319,8 +332,9 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
             () => detectors[callCount++],
             Dispatcher,
             _directoryPathResolver,
-            Enumerable.Empty<IProjectConfigurationFileChangeListener>(),
-            LoggerFactory);
+            listeners: [],
+            LoggerFactory,
+            projectManager);
 
         var debugDirectory = PathUtilities.CreateRootedPath("externaldir1", "obj", "Debug");
         var releaseDirectory = PathUtilities.CreateRootedPath("externaldir1", "obj", "Release");
@@ -365,6 +379,7 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
     public async Task Handle_MultipleProjects_StartedAndStopped()
     {
         // Arrange
+        var projectManager = CreateProjectSnapshotManager();
         var callCount = 0;
         var debug1Detector = new TestFileChangeDetector();
         var debug2Detector = new TestFileChangeDetector();
@@ -374,8 +389,9 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
             () => detectors[callCount++],
             Dispatcher,
             _directoryPathResolver,
-            Enumerable.Empty<IProjectConfigurationFileChangeListener>(),
-            LoggerFactory);
+            listeners: [],
+            LoggerFactory,
+            projectManager);
 
         var debugDirectory1 = PathUtilities.CreateRootedPath("externaldir1", "obj", "Debug");
         var releaseDirectory1 = PathUtilities.CreateRootedPath("externaldir1", "obj", "Release");
@@ -423,7 +439,7 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
     public async Task Handle_ConfigurationFilePath_TrackedMonitor_RemovesProject()
     {
         // Arrange
-        var projectSnapshotManagerAccessor = new Mock<IProjectSnapshotManagerAccessor>(MockBehavior.Strict);
+        var projectManager = CreateProjectSnapshotManager();
 
         var detector = new TestFileChangeDetector();
         var configurationFileEndpoint = new TestMonitorProjectConfigurationFilePathEndpoint(
@@ -432,16 +448,16 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
             _directoryPathResolver,
             Enumerable.Empty<IProjectConfigurationFileChangeListener>(),
             LoggerFactory,
-            options: new TestLanguageServerFeatureOptions(monitorWorkspaceFolderForConfigurationFiles: false),
-            accessor: projectSnapshotManagerAccessor.Object);
+            projectManager,
+            options: new TestLanguageServerFeatureOptions(monitorWorkspaceFolderForConfigurationFiles: false));
 
         var debugDirectory = PathUtilities.CreateRootedPath("externaldir", "obj", "Debug");
         var projectKeyDirectory = PathUtilities.CreateRootedPath("dir", "obj");
         var projectKey = TestProjectKey.Create(projectKeyDirectory);
 
-        projectSnapshotManagerAccessor
-            .Setup(a => a.Instance.ProjectRemoved(It.IsAny<ProjectKey>()))
-            .Callback((ProjectKey key) => Assert.Equal(projectKey, key));
+        //projectSnapshotManagerAccessor
+        //    .Setup(a => a.Instance.ProjectRemoved(It.IsAny<ProjectKey>()))
+        //    .Callback((ProjectKey key) => Assert.Equal(projectKey, key));
 
         var startRequest = new MonitorProjectConfigurationFilePathParams()
         {
@@ -464,42 +480,22 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
         Assert.Equal(1, detector.StopCount);
     }
 
-    private class TestMonitorProjectConfigurationFilePathEndpoint : MonitorProjectConfigurationFilePathEndpoint
+    private class TestMonitorProjectConfigurationFilePathEndpoint(
+        Func<IFileChangeDetector> fileChangeDetectorFactory,
+        ProjectSnapshotManagerDispatcher dispatcher,
+        WorkspaceDirectoryPathResolver workspaceDirectoryPathResolver,
+        IEnumerable<IProjectConfigurationFileChangeListener> listeners,
+        IRazorLoggerFactory loggerFactory,
+        ProjectSnapshotManagerBase projectManager,
+        LanguageServerFeatureOptions? options = null) : MonitorProjectConfigurationFilePathEndpoint(
+            projectManager,
+            dispatcher,
+            workspaceDirectoryPathResolver,
+            listeners,
+            options ?? TestLanguageServerFeatureOptions.Instance,
+            loggerFactory)
     {
-        private readonly Func<IFileChangeDetector> _fileChangeDetectorFactory;
-
-        public TestMonitorProjectConfigurationFilePathEndpoint(
-            ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-            WorkspaceDirectoryPathResolver workspaceDirectoryPathResolver,
-            IEnumerable<IProjectConfigurationFileChangeListener> listeners,
-            IRazorLoggerFactory loggerFactory)
-            : this(
-                fileChangeDetectorFactory: null!,
-                projectSnapshotManagerDispatcher,
-                workspaceDirectoryPathResolver,
-                listeners,
-                loggerFactory)
-        {
-        }
-
-        public TestMonitorProjectConfigurationFilePathEndpoint(
-            Func<IFileChangeDetector> fileChangeDetectorFactory,
-            ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
-            WorkspaceDirectoryPathResolver workspaceDirectoryPathResolver,
-            IEnumerable<IProjectConfigurationFileChangeListener> listeners,
-            IRazorLoggerFactory loggerFactory,
-            LanguageServerFeatureOptions? options = null,
-            IProjectSnapshotManagerAccessor? accessor = null)
-            : base(
-                accessor ?? Mock.Of<IProjectSnapshotManagerAccessor>(MockBehavior.Strict),
-                projectSnapshotManagerDispatcher,
-                workspaceDirectoryPathResolver,
-                listeners,
-                options ?? TestLanguageServerFeatureOptions.Instance,
-                loggerFactory)
-        {
-            _fileChangeDetectorFactory = fileChangeDetectorFactory ?? (() => Mock.Of<IFileChangeDetector>(MockBehavior.Strict));
-        }
+        private readonly Func<IFileChangeDetector> _fileChangeDetectorFactory = fileChangeDetectorFactory ?? (() => Mock.Of<IFileChangeDetector>(MockBehavior.Strict));
 
         protected override IFileChangeDetector CreateFileChangeDetector() => _fileChangeDetectorFactory();
     }

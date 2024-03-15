@@ -45,13 +45,14 @@ namespace AspNetCoreGeneratedDocument
         public async override global::System.Threading.Tasks.Task ExecuteAsync()
         {
 #nullable restore
-#line 2 "Views/Home/Index.cshtml"
-  
+#line (2,3)-(4,1) "Views/Home/Index.cshtml"
+
     var num = 42;
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n");
             __tagHelperExecutionContext = __tagHelperScopeManager.Begin("vc:test", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
             }
@@ -63,13 +64,15 @@ namespace AspNetCoreGeneratedDocument
             __tagHelperStringValueBuffer = EndWriteTagHelperAttribute();
             __TestViewComponentTagHelper.text = __tagHelperStringValueBuffer;
             __tagHelperExecutionContext.AddTagHelperAttribute("text", __TestViewComponentTagHelper.text, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
+            __TestViewComponentTagHelper.number = 
 #nullable restore
-#line 6 "Views/Home/Index.cshtml"
-__TestViewComponentTagHelper.number = num;
+#line (6,32)-(6,35) "Views/Home/Index.cshtml"
+num
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("number", __TestViewComponentTagHelper.number, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
             __TestViewComponentTagHelper.flag = true;
             __tagHelperExecutionContext.AddTagHelperAttribute("flag", __TestViewComponentTagHelper.flag, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.Minimized);

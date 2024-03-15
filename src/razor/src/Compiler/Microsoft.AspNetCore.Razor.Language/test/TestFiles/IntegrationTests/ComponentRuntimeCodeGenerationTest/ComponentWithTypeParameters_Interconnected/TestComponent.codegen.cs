@@ -13,7 +13,7 @@ namespace Test
     #nullable restore
     public partial class TestComponent<
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,12)-(1,14) "x:\dir\subdir\Test\TestComponent.cshtml"
 T1
 
 #line default
@@ -21,7 +21,7 @@ T1
 #nullable disable
     ,
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (2,12)-(2,14) "x:\dir\subdir\Test\TestComponent.cshtml"
 T2
 
 #line default
@@ -29,14 +29,14 @@ T2
 #nullable disable
     > : global::Microsoft.AspNetCore.Components.ComponentBase
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (1,15)-(1,31) "x:\dir\subdir\Test\TestComponent.cshtml"
 where T1 : C<T2>
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (2,15)-(2,35) "x:\dir\subdir\Test\TestComponent.cshtml"
 where T2 : D<T1, T2>
 
 #line default

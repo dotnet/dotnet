@@ -14,16 +14,17 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
             WriteLiteral("<p>This should ");
             WriteLiteral(" be shown</p>\r\n\r\n");
 #nullable restore
-#line 5 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
-                                       
+#line (5,40)-(6,21) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
+
     Exception foo = 
 
 #line default
 #line hidden
 #nullable disable
+
 #nullable restore
-#line 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
-                                                  null;
+#line (6,50)-(10,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
+ null;
     if(foo != null) {
         throw foo;
     }
@@ -31,30 +32,43 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n");
 #nullable restore
-#line 12 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
-   var bar = "@* bar *@"; 
+#line (12,3)-(12,27) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
+ var bar = "@* bar *@"; 
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("<p>But this should show the comment syntax: ");
+            Write(
 #nullable restore
-#line (13,46)-(13,49) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
-Write(bar);
+#line (13,46)-(13,49) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
+bar
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n\r\n");
+            Write(
 #nullable restore
-#line (15,3)-(15,4) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
-Write(ab);
+#line (15,3)-(15,4) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
+a
 
 #line default
 #line hidden
 #nullable disable
+#nullable restore
+#line (15,8)-(15,9) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/RazorComments.cshtml"
+b
+
+#line default
+#line hidden
+#nullable disable
+            );
             WriteLiteral("\r\n\r\n<input value=\"@*this razor comment is the actual value*@\" type=\"text\" />\r\n<input ");
             WriteLiteral(" type=\"text\" />\r\n");
         }

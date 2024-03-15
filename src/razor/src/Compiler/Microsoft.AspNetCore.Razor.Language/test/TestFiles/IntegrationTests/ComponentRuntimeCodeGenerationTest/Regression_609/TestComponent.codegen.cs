@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.User>(0);
             __builder.AddComponentParameter(1, "Name", 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                   UserName
+#line (1,20)-(1,28) "x:\dir\subdir\Test\TestComponent.cshtml"
+UserName
 
 #line default
 #line hidden
@@ -30,8 +30,8 @@ namespace Test
             __builder.AddComponentParameter(2, "NameChanged", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredEventCallback(this, __value => UserName = __value, UserName));
             __builder.AddComponentParameter(3, "IsActive", 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                              UserIsActive
+#line (1,47)-(1,59) "x:\dir\subdir\Test\TestComponent.cshtml"
+UserIsActive
 
 #line default
 #line hidden
@@ -42,14 +42,15 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (3,8)-(6,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     public string UserName { get; set; }
     public bool UserIsActive { get; set; }
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

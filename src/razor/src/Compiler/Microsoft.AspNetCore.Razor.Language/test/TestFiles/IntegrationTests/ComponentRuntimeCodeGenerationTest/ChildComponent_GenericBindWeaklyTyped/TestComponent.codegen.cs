@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.MyComponent<string>>(0);
             __builder.AddComponentParameter(1, "Item", 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                     Value
+#line (1,38)-(1,43) "x:\dir\subdir\Test\TestComponent.cshtml"
+Value
 
 #line default
 #line hidden
@@ -32,13 +32,14 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (2,8)-(4,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     string Value;
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

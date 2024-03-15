@@ -26,26 +26,28 @@ namespace Test
             ));
             __builder.AddComponentReferenceCapture(5, (__value) => {
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                   myInstance = (Test.MyComponent)__value;
+#line (1,20)-(1,30) "x:\dir\subdir\Test\TestComponent.cshtml"
+myInstance
 
 #line default
 #line hidden
 #nullable disable
+                 = (Test.MyComponent)__value;
             }
             );
             __builder.CloseComponent();
         }
         #pragma warning restore 1998
 #nullable restore
-#line 5 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (5,8)-(8,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     private Test.MyComponent myInstance;
     public void Foo() { System.GC.KeepAlive(myInstance); }
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

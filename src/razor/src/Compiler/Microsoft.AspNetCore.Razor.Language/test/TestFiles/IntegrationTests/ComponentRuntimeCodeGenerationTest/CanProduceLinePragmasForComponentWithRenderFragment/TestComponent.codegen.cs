@@ -23,62 +23,71 @@ namespace Test
             __builder.AddAttribute(3, "href", "#");
             __builder.AddAttribute(4, "@onclick", "Toggle");
             __builder.AddAttribute(5, "class", "col-12");
+            __builder.AddContent(6, 
 #nullable restore
-#line (2,47)-(2,57) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder.AddContent(6, ActionText);
+#line (2,47)-(2,57) "x:\dir\subdir\Test\TestComponent.cshtml"
+ActionText
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.CloseElement();
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-   if (!Collapsed)
+#line (3,4)-(5,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+if (!Collapsed)
   {
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.OpenElement(7, "div");
             __builder.AddAttribute(8, "class", "col-12 card card-body");
+            __builder.AddContent(9, 
 #nullable restore
-#line (6,8)-(6,20) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder.AddContent(9, ChildContent);
+#line (6,8)-(6,20) "x:\dir\subdir\Test\TestComponent.cshtml"
+ChildContent
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.CloseElement();
 #nullable restore
-#line 8 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (8,1)-(9,1) "x:\dir\subdir\Test\TestComponent.cshtml"
   }
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.CloseElement();
         }
         #pragma warning restore 1998
 #nullable restore
-#line 11 "x:\dir\subdir\Test\TestComponent.cshtml"
- 
+#line (11,2)-(13,67) "x:\dir\subdir\Test\TestComponent.cshtml"
+
   [Parameter]
   public RenderFragment ChildContent { get; set; } = (context) => 
 
 #line default
 #line hidden
 #nullable disable
+
         __builder.OpenElement(10, "p");
+        __builder.AddContent(11, 
 #nullable restore
-#line (13,71)-(13,78) 25 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder.AddContent(11, context);
+#line (13,71)-(13,78) "x:\dir\subdir\Test\TestComponent.cshtml"
+context
 
 #line default
 #line hidden
 #nullable disable
+        );
         __builder.CloseElement();
 #nullable restore
-#line 14 "x:\dir\subdir\Test\TestComponent.cshtml"
+#line (14,1)-(21,1) "x:\dir\subdir\Test\TestComponent.cshtml"
   [Parameter]
   public bool Collapsed { get; set; }
   string ActionText { get => Collapsed ? "Expand" : "Collapse"; }
@@ -90,6 +99,7 @@ __builder.AddContent(11, context);
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

@@ -20,33 +20,38 @@ namespace MyApp.Shared
         {
             __builder.AddMarkupContent(0, "Component:\r\n");
 #nullable restore
-#line 2 "Shared/Component1.razor"
-   var msg = "What's up"; 
+#line (2,3)-(2,27) "Shared/Component1.razor"
+ var msg = "What's up"; 
 
 #line default
 #line hidden
 #nullable disable
+
             __builder.OpenElement(1, "script");
             __builder.AddMarkupContent(2, "console.log(\'");
+            __builder.AddContent(3, 
 #nullable restore
-#line (3,23)-(3,26) 24 "Shared/Component1.razor"
-__builder.AddContent(3, msg);
+#line (3,23)-(3,26) "Shared/Component1.razor"
+msg
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.AddMarkupContent(4, "\');");
             __builder.CloseElement();
             __builder.AddMarkupContent(5, "\r\n");
             __builder.OpenElement(6, "div");
             __builder.AddContent(7, "console.log(\'");
+            __builder.AddContent(8, 
 #nullable restore
-#line (4,20)-(4,23) 24 "Shared/Component1.razor"
-__builder.AddContent(8, msg);
+#line (4,20)-(4,23) "Shared/Component1.razor"
+msg
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.AddContent(9, "\');");
             __builder.CloseElement();
             __builder.AddMarkupContent(10, "\r\n");
@@ -54,25 +59,29 @@ __builder.AddContent(8, msg);
             __builder.AddMarkupContent(12, "<div>console.log(\'No variable\');</div>\r\n");
             __builder.OpenElement(13, "script");
             __builder.AddMarkupContent(14, "\r\n    console.log(\'");
+            __builder.AddContent(15, 
 #nullable restore
-#line (8,19)-(8,22) 25 "Shared/Component1.razor"
-__builder.AddContent(15, msg);
+#line (8,19)-(8,22) "Shared/Component1.razor"
+msg
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.AddMarkupContent(16, "\');\r\n");
             __builder.CloseElement();
             __builder.AddMarkupContent(17, "\r\n");
             __builder.OpenElement(18, "div");
             __builder.AddMarkupContent(19, "\r\n    console.log(\'");
+            __builder.AddContent(20, 
 #nullable restore
-#line (11,19)-(11,22) 25 "Shared/Component1.razor"
-__builder.AddContent(20, msg);
+#line (11,19)-(11,22) "Shared/Component1.razor"
+msg
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.AddMarkupContent(21, "\');\r\n");
             __builder.CloseElement();
             __builder.AddMarkupContent(22, "\r\n");

@@ -9,7 +9,7 @@
         UsingDirective - (175:5,1 [50] ) - global::Microsoft.AspNetCore.Mvc.Rendering
         UsingDirective - (226:6,1 [53] ) - global::Microsoft.AspNetCore.Mvc.ViewFeatures
         UsingDirective - (36:3,1 [43] RazorPagesWithRouteTemplate.cshtml) - Microsoft.AspNetCore.Mvc.RazorPages
-        RazorCompiledItemMetadataAttribute - 
+        RazorCompiledItemMetadataAttribute - (6:0,6 [8] RazorPagesWithRouteTemplate.cshtml)
         RazorSourceChecksumAttribute - 
         RazorCompiledItemMetadataAttribute - 
         CreateNewOnMetadataUpdateAttribute - 

@@ -12,8 +12,8 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
 #nullable restore
-#line 1 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlock.cshtml"
-  
+#line (1,3)-(5,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/CodeBlock.cshtml"
+
     for(int i = 1; i <= 10; i++) {
         Output.Write("<p>Hello from C#, #" + i.ToString() + "</p>");
     }
@@ -21,6 +21,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
 #line default
 #line hidden
 #nullable disable
+
         }
         #pragma warning restore 1998
     }

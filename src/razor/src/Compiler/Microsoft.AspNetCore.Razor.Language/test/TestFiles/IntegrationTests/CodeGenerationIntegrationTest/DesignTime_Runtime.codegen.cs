@@ -13,67 +13,87 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles
         {
             WriteLiteral("<div>\r\n");
 #nullable restore
-#line 2 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
-             for(int i = 1; i <= 10; i++) {
+#line (2,14)-(3,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
+for(int i = 1; i <= 10; i++) {
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("    <p>This is item #");
+            Write(
 #nullable restore
-#line (3,23)-(3,24) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
-Write(i);
+#line (3,23)-(3,24) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
+i
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("</p>\r\n");
 #nullable restore
-#line 4 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
+#line (4,1)-(5,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
             }
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("</div>\r\n\r\n<p>\r\n");
+            Write(
 #nullable restore
-#line (8,3)-(8,15) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
-Write(Foo(Bar.Baz));
+#line (8,3)-(8,15) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
+Foo(Bar.Baz)
 
 #line default
 #line hidden
 #nullable disable
+            );
             WriteLiteral("\r\n");
+            Write(
 #nullable restore
-#line (9,2)-(9,6) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
-Write(Foo(item => new Template(async(__razor_template_writer) => {
-    PushWriter(__razor_template_writer);
-    WriteLiteral("<p>Bar ");
-#nullable restore
-#line (9,15)-(9,18) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
-Write(baz);
+#line (9,2)-(9,6) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
+Foo(
 
 #line default
 #line hidden
 #nullable disable
-    WriteLiteral(" Biz</p>");
-    PopWriter();
-}
-)));
+            item => new Template(async(__razor_template_writer) => {
+                PushWriter(__razor_template_writer);
+                WriteLiteral("<p>Bar ");
+                Write(
+#nullable restore
+#line (9,15)-(9,18) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
+baz
 
 #line default
 #line hidden
 #nullable disable
+                );
+                WriteLiteral(" Biz</p>");
+                PopWriter();
+            }
+            )
+#nullable restore
+#line (9,26)-(9,27) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
+)
+
+#line default
+#line hidden
+#nullable disable
+            );
             WriteLiteral("\r\n</p>\r\n\r\n");
             DefineSection("Footer", async() => {
                 WriteLiteral("\r\n    <p>Foo</p>\r\n    ");
+                Write(
 #nullable restore
-#line (14,6)-(14,9) 6 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
-Write(bar);
+#line (14,6)-(14,9) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/DesignTime.cshtml"
+bar
 
 #line default
 #line hidden
 #nullable disable
+                );
                 WriteLiteral("\r\n");
             }
             );

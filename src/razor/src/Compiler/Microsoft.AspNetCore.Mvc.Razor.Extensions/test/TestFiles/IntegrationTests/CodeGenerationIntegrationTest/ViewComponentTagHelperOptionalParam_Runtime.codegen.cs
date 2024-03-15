@@ -66,13 +66,15 @@ namespace AspNetCore
             );
             __OptionalTestViewComponentTagHelper = CreateTagHelper<global::AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ViewComponentTagHelperOptionalParam.__Generated__OptionalTestViewComponentTagHelper>();
             __tagHelperExecutionContext.Add(__OptionalTestViewComponentTagHelper);
+            __OptionalTestViewComponentTagHelper.showSecret = 
 #nullable restore
-#line 4 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
-__OptionalTestViewComponentTagHelper.showSecret = true;
+#line (4,33)-(4,37) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
+true
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("show-secret", __OptionalTestViewComponentTagHelper.showSecret, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
             await __tagHelperRunner.RunAsync(__tagHelperExecutionContext);
             if (!__tagHelperExecutionContext.Output.IsContentModified)
@@ -110,13 +112,15 @@ __OptionalTestViewComponentTagHelper.showSecret = true;
             __tagHelperStringValueBuffer = EndWriteTagHelperAttribute();
             __OptionalTestWithParamViewComponentTagHelper.secret = __tagHelperStringValueBuffer;
             __tagHelperExecutionContext.AddTagHelperAttribute("secret", __OptionalTestWithParamViewComponentTagHelper.secret, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
+            __OptionalTestWithParamViewComponentTagHelper.showSecret = 
 #nullable restore
-#line 7 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
-__OptionalTestWithParamViewComponentTagHelper.showSecret = true;
+#line (7,62)-(7,66) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
+true
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("show-secret", __OptionalTestWithParamViewComponentTagHelper.showSecret, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
             await __tagHelperRunner.RunAsync(__tagHelperExecutionContext);
             if (!__tagHelperExecutionContext.Output.IsContentModified)
@@ -144,29 +148,35 @@ __OptionalTestWithParamViewComponentTagHelper.showSecret = true;
             );
             __OptionalWithMultipleTypesViewComponentTagHelper = CreateTagHelper<global::AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ViewComponentTagHelperOptionalParam.__Generated__OptionalWithMultipleTypesViewComponentTagHelper>();
             __tagHelperExecutionContext.Add(__OptionalWithMultipleTypesViewComponentTagHelper);
+            __OptionalWithMultipleTypesViewComponentTagHelper.age = 
 #nullable restore
-#line 10 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
-__OptionalWithMultipleTypesViewComponentTagHelper.age = 12;
+#line (10,39)-(10,41) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
+12
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("age", __OptionalWithMultipleTypesViewComponentTagHelper.age, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
+            __OptionalWithMultipleTypesViewComponentTagHelper.favoriteDecimal = 
 #nullable restore
-#line 10 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
-__OptionalWithMultipleTypesViewComponentTagHelper.favoriteDecimal = 10.8;
+#line (10,61)-(10,65) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
+10.8
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("favorite-decimal", __OptionalWithMultipleTypesViewComponentTagHelper.favoriteDecimal, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
+            __OptionalWithMultipleTypesViewComponentTagHelper.favoriteLetter = 
 #nullable restore
-#line 10 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
-__OptionalWithMultipleTypesViewComponentTagHelper.favoriteLetter = 'a';
+#line (10,84)-(10,87) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
+'a'
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("favorite-letter", __OptionalWithMultipleTypesViewComponentTagHelper.favoriteLetter, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
             await __tagHelperRunner.RunAsync(__tagHelperExecutionContext);
             if (!__tagHelperExecutionContext.Output.IsContentModified)
@@ -181,21 +191,25 @@ __OptionalWithMultipleTypesViewComponentTagHelper.favoriteLetter = 'a';
             );
             __OptionalWithMultipleTypesViewComponentTagHelper = CreateTagHelper<global::AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ViewComponentTagHelperOptionalParam.__Generated__OptionalWithMultipleTypesViewComponentTagHelper>();
             __tagHelperExecutionContext.Add(__OptionalWithMultipleTypesViewComponentTagHelper);
+            __OptionalWithMultipleTypesViewComponentTagHelper.age = 
 #nullable restore
-#line 11 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
-__OptionalWithMultipleTypesViewComponentTagHelper.age = 12;
+#line (11,39)-(11,41) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
+12
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("age", __OptionalWithMultipleTypesViewComponentTagHelper.age, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
+            __OptionalWithMultipleTypesViewComponentTagHelper.favoriteDecimal = 
 #nullable restore
-#line 11 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
-__OptionalWithMultipleTypesViewComponentTagHelper.favoriteDecimal = 10.8;
+#line (11,61)-(11,65) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
+10.8
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("favorite-decimal", __OptionalWithMultipleTypesViewComponentTagHelper.favoriteDecimal, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
             await __tagHelperRunner.RunAsync(__tagHelperExecutionContext);
             if (!__tagHelperExecutionContext.Output.IsContentModified)
@@ -210,29 +224,35 @@ __OptionalWithMultipleTypesViewComponentTagHelper.favoriteDecimal = 10.8;
             );
             __OptionalWithMultipleTypesViewComponentTagHelper = CreateTagHelper<global::AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ViewComponentTagHelperOptionalParam.__Generated__OptionalWithMultipleTypesViewComponentTagHelper>();
             __tagHelperExecutionContext.Add(__OptionalWithMultipleTypesViewComponentTagHelper);
+            __OptionalWithMultipleTypesViewComponentTagHelper.age = 
 #nullable restore
-#line 12 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
-__OptionalWithMultipleTypesViewComponentTagHelper.age = 12;
+#line (12,39)-(12,41) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
+12
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("age", __OptionalWithMultipleTypesViewComponentTagHelper.age, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
+            __OptionalWithMultipleTypesViewComponentTagHelper.favoriteDecimal = 
 #nullable restore
-#line 12 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
-__OptionalWithMultipleTypesViewComponentTagHelper.favoriteDecimal = 10.8;
+#line (12,61)-(12,65) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
+10.8
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("favorite-decimal", __OptionalWithMultipleTypesViewComponentTagHelper.favoriteDecimal, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
+            __OptionalWithMultipleTypesViewComponentTagHelper.birthDate = 
 #nullable restore
-#line 12 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
-__OptionalWithMultipleTypesViewComponentTagHelper.birthDate = DateTime.Now;
+#line (12,79)-(12,91) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
+DateTime.Now
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("birth-date", __OptionalWithMultipleTypesViewComponentTagHelper.birthDate, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
             await __tagHelperRunner.RunAsync(__tagHelperExecutionContext);
             if (!__tagHelperExecutionContext.Output.IsContentModified)
@@ -247,29 +267,35 @@ __OptionalWithMultipleTypesViewComponentTagHelper.birthDate = DateTime.Now;
             );
             __OptionalWithMultipleTypesViewComponentTagHelper = CreateTagHelper<global::AspNetCore.TestFiles_IntegrationTests_CodeGenerationIntegrationTest_ViewComponentTagHelperOptionalParam.__Generated__OptionalWithMultipleTypesViewComponentTagHelper>();
             __tagHelperExecutionContext.Add(__OptionalWithMultipleTypesViewComponentTagHelper);
+            __OptionalWithMultipleTypesViewComponentTagHelper.age = 
 #nullable restore
-#line 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
-__OptionalWithMultipleTypesViewComponentTagHelper.age = 12;
+#line (13,39)-(13,41) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
+12
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("age", __OptionalWithMultipleTypesViewComponentTagHelper.age, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
+            __OptionalWithMultipleTypesViewComponentTagHelper.favoriteDecimal = 
 #nullable restore
-#line 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
-__OptionalWithMultipleTypesViewComponentTagHelper.favoriteDecimal = 10.8;
+#line (13,61)-(13,65) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
+10.8
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("favorite-decimal", __OptionalWithMultipleTypesViewComponentTagHelper.favoriteDecimal, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
+            __OptionalWithMultipleTypesViewComponentTagHelper.birthDate = 
 #nullable restore
-#line 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
-__OptionalWithMultipleTypesViewComponentTagHelper.birthDate = DateTime.Now;
+#line (13,79)-(13,91) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/ViewComponentTagHelperOptionalParam.cshtml"
+DateTime.Now
 
 #line default
 #line hidden
 #nullable disable
+            ;
             __tagHelperExecutionContext.AddTagHelperAttribute("birth-date", __OptionalWithMultipleTypesViewComponentTagHelper.birthDate, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
             await __tagHelperRunner.RunAsync(__tagHelperExecutionContext);
             if (!__tagHelperExecutionContext.Output.IsContentModified)

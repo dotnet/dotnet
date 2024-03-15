@@ -109,7 +109,9 @@ public class RazorProjectEngine
             throw new ArgumentNullException(nameof(projectItem));
         }
 
-        var codeDocument = CreateCodeDocumentDesignTimeCore(projectItem);
+        var codeDocument = Configuration.ForceRuntimeCodeGeneration
+            ? CreateCodeDocumentCore(projectItem)
+            : CreateCodeDocumentDesignTimeCore(projectItem);
         ProcessCore(codeDocument);
         return codeDocument;
     }
@@ -125,7 +127,9 @@ public class RazorProjectEngine
             throw new ArgumentNullException(nameof(source));
         }
 
-        var codeDocument = CreateCodeDocumentDesignTimeCore(source, fileKind, importSources, tagHelpers, configureParser: null, configureCodeGeneration: null);
+        var codeDocument = Configuration.ForceRuntimeCodeGeneration
+            ? CreateCodeDocumentCore(source, fileKind, importSources, tagHelpers, configureParser: null, configureCodeGeneration: null)
+            : CreateCodeDocumentDesignTimeCore(source, fileKind, importSources, tagHelpers, configureParser: null, configureCodeGeneration: null);
         ProcessCore(codeDocument);
         return codeDocument;
     }

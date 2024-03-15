@@ -1,8 +1,13 @@
-﻿Source Location: (54:1,7 [89] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (30:0,30 [11] x:\dir\subdir\Test\TestComponent.cshtml)
+|ParentValue|
+Generated Location: (837:22,0 [11] )
+|ParentValue|
+
+Source Location: (54:1,7 [89] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     public IEnumerable<DateTime> ParentValue { get; set; } = new [] { DateTime.Now };
 |
-Generated Location: (1315:32,7 [89] )
+Generated Location: (1300:32,0 [89] )
 |
     public IEnumerable<DateTime> ParentValue { get; set; } = new [] { DateTime.Now };
 |

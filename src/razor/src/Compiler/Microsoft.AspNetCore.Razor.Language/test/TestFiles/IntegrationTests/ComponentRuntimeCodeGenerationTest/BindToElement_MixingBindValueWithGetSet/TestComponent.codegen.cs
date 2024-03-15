@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenElement(0, "div");
             __builder.AddAttribute(1, "myvalue", global::Microsoft.AspNetCore.Components.BindConverter.FormatValue(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-             ParentValue
+#line (1,14)-(1,25) "x:\dir\subdir\Test\TestComponent.cshtml"
+ParentValue
 
 #line default
 #line hidden
@@ -29,27 +29,29 @@ namespace Test
             ));
             __builder.AddAttribute(2, "myevent", global::Microsoft.AspNetCore.Components.EventCallback.Factory.CreateBinder(this, global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.CreateInferredBindSetter(callback: 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                              UpdateValue
+#line (1,63)-(1,74) "x:\dir\subdir\Test\TestComponent.cshtml"
+UpdateValue
 
 #line default
 #line hidden
 #nullable disable
             , value: ParentValue), ParentValue));
             __builder.SetUpdatesAttributeName("myvalue");
+            __builder.AddContent(3, 
 #nullable restore
-#line (1,39)-(1,50) 24 "x:\dir\subdir\Test\TestComponent.cshtml"
-__builder.AddContent(3, ParentValue);
+#line (1,39)-(1,50) "x:\dir\subdir\Test\TestComponent.cshtml"
+ParentValue
 
 #line default
 #line hidden
 #nullable disable
+            );
             __builder.CloseElement();
         }
         #pragma warning restore 1998
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (2,8)-(6,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     public string ParentValue { get; set; } = "hi";
 
     public void UpdateValue(string value) => ParentValue = value;
@@ -57,6 +59,7 @@ __builder.AddContent(3, ParentValue);
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

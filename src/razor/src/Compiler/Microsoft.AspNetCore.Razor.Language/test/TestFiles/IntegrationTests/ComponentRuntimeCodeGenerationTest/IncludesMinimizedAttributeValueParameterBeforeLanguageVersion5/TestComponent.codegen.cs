@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenElement(0, "elem");
             __builder.AddAttribute(1, "normal-attr", 
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                     "val"
+#line (1,22)-(1,27) "x:\dir\subdir\Test\TestComponent.cshtml"
+"val"
 
 #line default
 #line hidden

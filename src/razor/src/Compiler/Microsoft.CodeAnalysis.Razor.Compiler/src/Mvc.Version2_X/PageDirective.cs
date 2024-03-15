@@ -24,15 +24,18 @@ public class PageDirective
             builder.Description = Resources.PageDirective_Description;
         });
 
-    private PageDirective(string routeTemplate, IntermediateNode directiveNode)
+    private PageDirective(string routeTemplate, IntermediateNode directiveNode, SourceSpan? source)
     {
         RouteTemplate = routeTemplate;
         DirectiveNode = directiveNode;
+        Source = source;
     }
 
     public string RouteTemplate { get; }
 
     public IntermediateNode DirectiveNode { get; }
+
+    public SourceSpan? Source { get; }
 
     public static RazorProjectEngineBuilder Register(RazorProjectEngineBuilder builder)
     {
@@ -61,12 +64,14 @@ public class PageDirective
 
         var tokens = visitor.DirectiveTokens.ToList();
         string routeTemplate = null;
+        SourceSpan? sourceSpan = null;
         if (tokens.Count > 0)
         {
             routeTemplate = TrimQuotes(tokens[0].Content);
+            sourceSpan = tokens[0].Source;
         }
 
-        pageDirective = new PageDirective(routeTemplate, visitor.DirectiveNode);
+        pageDirective = new PageDirective(routeTemplate, visitor.DirectiveNode, sourceSpan);
         return true;
     }
 

@@ -1,8 +1,18 @@
-﻿Source Location: (73:1,12 [30] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (23:0,23 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|message|
+Generated Location: (968:23,0 [7] )
+|message|
+
+Source Location: (48:0,48 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|message|
+Generated Location: (1291:32,0 [7] )
+|message|
+
+Source Location: (73:1,12 [30] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     string message = "hi";
 |
-Generated Location: (2301:45,12 [30] )
+Generated Location: (2253:45,0 [30] )
 |
     string message = "hi";
 |

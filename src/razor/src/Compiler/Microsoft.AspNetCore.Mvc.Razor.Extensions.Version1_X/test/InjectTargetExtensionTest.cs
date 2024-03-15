@@ -48,12 +48,18 @@ public class InjectTargetExtensionTest
         {
             TypeName = "PropertyType<ModelType>",
             MemberName = "PropertyName",
-            Source = new SourceSpan(
+            TypeSource = new SourceSpan(
                 filePath: "test-path",
-                absoluteIndex: 0,
+                absoluteIndex: 7,
                 lineIndex: 1,
-                characterIndex: 1,
-                length: 10)
+                characterIndex: 7,
+                length: 23),
+            MemberSource = new SourceSpan(
+                filePath: "test-path",
+                absoluteIndex: 31,
+                lineIndex: 1,
+                characterIndex: 31,
+                length: 12)
         };
 
         // Act
@@ -61,15 +67,25 @@ public class InjectTargetExtensionTest
 
         // Assert
         Assert.Equal("""
-
-            #nullable restore
-            #line 2 "test-path"
             [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
-            public PropertyType<ModelType> PropertyName { get; private set; }
-
+            public 
+            #nullable restore
+            #line (2,8)-(2,1) "test-path"
+            PropertyType<ModelType>
+            
             #line default
             #line hidden
             #nullable disable
+             
+            #nullable restore
+            #line (2,32)-(2,1) "test-path"
+            PropertyName
+            
+            #line default
+            #line hidden
+            #nullable disable
+             { get; private set; }
+             = default!;
 
             """,
             context.CodeWriter.GenerateCode());

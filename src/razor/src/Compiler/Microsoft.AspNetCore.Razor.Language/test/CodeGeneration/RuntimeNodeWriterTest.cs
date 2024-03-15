@@ -62,10 +62,11 @@ public class RuntimeNodeWriterTest : RazorProjectEngineTestBase
         Assert.Equal(
 @"
 #nullable restore
-#line 1 ""test.cshtml""
-using System;
+#line (1,1)-(1,1) ""test.cshtml""
+using System
 
 #nullable disable
+;
 ",
             csharp,
             ignoreLineEndingDifferences: true);
@@ -94,12 +95,13 @@ using System;
         Assert.Equal(
 @"
 #nullable restore
-#line 1 ""test.cshtml""
-using System;
+#line (1,1)-(1,1) ""test.cshtml""
+using System
 
 #line default
 #line hidden
 #nullable disable
+;
 ",
             csharp,
             ignoreLineEndingDifferences: true);
@@ -130,7 +132,8 @@ using System;
         // Assert
         var csharp = context.CodeWriter.GenerateCode();
         Assert.Equal(
-@"Test(i++);
+@"Test(
+i++);
 ",
             csharp,
             ignoreLineEndingDifferences: true);
@@ -147,15 +150,13 @@ using System;
         };
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var node = new CSharpExpressionIntermediateNode()
-        {
-            Source = new SourceSpan("test.cshtml", 0, 0, 0, 3, 0, 3),
-        };
+        var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
         builder.Add(new IntermediateToken()
         {
             Content = "i++",
             Kind = TokenKind.CSharp,
+            Source = new SourceSpan("test.cshtml", 0, 0, 0, 3, 0, 3),
         });
 
         // Act
@@ -164,14 +165,15 @@ using System;
         // Assert
         var csharp = context.CodeWriter.GenerateCode();
         Assert.Equal(
-@"
+@"Test(
 #nullable restore
-#line (1,1)-(1,4) 5 ""test.cshtml""
-Test(i++);
+#line (1,1)-(1,4) ""test.cshtml""
+i++
 
 #line default
 #line hidden
 #nullable disable
+);
 ",
             csharp,
             ignoreLineEndingDifferences: true);
@@ -208,7 +210,8 @@ Test(i++);
         // Assert
         var csharp = context.CodeWriter.GenerateCode();
         Assert.Equal(
-@"Test(iRender Children
+@"Test(
+iRender Children
 ++);
 ",
             csharp,
@@ -226,21 +229,20 @@ Test(i++);
         };
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var node = new CSharpExpressionIntermediateNode()
-        {
-            Source = new SourceSpan("test.cshtml", 8, 0, 8, 3, 0, 11),
-        };
+        var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
         builder.Add(new IntermediateToken()
         {
             Content = "i",
             Kind = TokenKind.CSharp,
+            Source = new SourceSpan("test.cshtml", 0, 0, 0, 1, 0, 1),
         });
         builder.Add(new MyExtensionIntermediateNode());
         builder.Add(new IntermediateToken()
         {
             Content = "++",
             Kind = TokenKind.CSharp,
+            Source = new SourceSpan("test.cshtml", 2, 0, 2, 2, 0, 4),
         });
 
         // Act
@@ -249,15 +251,23 @@ Test(i++);
         // Assert
         var csharp = context.CodeWriter.GenerateCode();
         Assert.Equal(
-@"
+@"Test(
 #nullable restore
-#line (1,9)-(1,12) 5 ""test.cshtml""
-Test(iRender Children
-++);
+#line (1,1)-(1,2) ""test.cshtml""
+i
 
 #line default
 #line hidden
 #nullable disable
+Render Children
+#nullable restore
+#line (1,3)-(1,5) ""test.cshtml""
+++
+
+#line default
+#line hidden
+#nullable disable
+);
 ",
             csharp,
             ignoreLineEndingDifferences: true);
@@ -323,15 +333,13 @@ Test(iRender Children
         var writer = new RuntimeNodeWriter();
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var node = new CSharpCodeIntermediateNode()
-        {
-            Source = new SourceSpan("test.cshtml", 0, 0, 0, 13),
-        };
+        var node = new CSharpCodeIntermediateNode();
         IntermediateNodeBuilder.Create(node)
             .Add(new IntermediateToken()
             {
                 Kind = TokenKind.CSharp,
                 Content = "if (true) { }",
+                Source = new SourceSpan("test.cshtml", 0, 0, 0, 13),
             });
 
         // Act
@@ -342,12 +350,13 @@ Test(iRender Children
         Assert.Equal(
 @"
 #nullable restore
-#line 1 ""test.cshtml""
+#line (1,1)-(1,1) ""test.cshtml""
 if (true) { }
 
 #line default
 #line hidden
 #nullable disable
+
 ",
             csharp,
             ignoreLineEndingDifferences: true);
@@ -361,15 +370,13 @@ if (true) { }
         var writer = new RuntimeNodeWriter();
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var node = new CSharpCodeIntermediateNode()
-        {
-            Source = new SourceSpan("test.cshtml", 0, 0, 0, 17),
-        };
+        var node = new CSharpCodeIntermediateNode();
         IntermediateNodeBuilder.Create(node)
             .Add(new IntermediateToken()
             {
                 Kind = TokenKind.CSharp,
                 Content = "    if (true) { }",
+                Source = new SourceSpan("test.cshtml", 0, 0, 0, 17)
             });
 
         // Act
@@ -380,12 +387,13 @@ if (true) { }
         Assert.Equal(
 @"
 #nullable restore
-#line 1 ""test.cshtml""
+#line (1,1)-(1,1) ""test.cshtml""
     if (true) { }
 
 #line default
 #line hidden
 #nullable disable
+
 ",
             csharp,
             ignoreLineEndingDifferences: true);
@@ -604,14 +612,15 @@ EndWriteAttribute();
         // Assert
         var csharp = context.CodeWriter.GenerateCode();
         Assert.Equal(
-@"
+@"WriteAttributeValue("" "", 27, 
 #nullable restore
-#line (1,28)-(1,35) 29 ""test.cshtml""
-WriteAttributeValue("" "", 27, false, 28, 6, false);
+#line (1,30)-(1,35) ""test.cshtml""
+false
 
 #line default
 #line hidden
 #nullable disable
+, 28, 6, false);
 ",
             csharp,
             ignoreLineEndingDifferences: true);
@@ -640,8 +649,8 @@ WriteAttributeValue("" "", 27, false, 28, 6, false);
 @"WriteAttributeValue("" "", 27, new Microsoft.AspNetCore.Mvc.Razor.HelperResult(async(__razor_attribute_value_writer) => {
     PushWriter(__razor_attribute_value_writer);
 #nullable restore
-#line 1 ""test.cshtml""
-                             if(@true){ }
+#line (1,30)-(1,42) ""test.cshtml""
+if(@true){ }
 
 #line default
 #line hidden

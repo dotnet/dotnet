@@ -9,14 +9,33 @@ namespace Test
     using global::System.Threading.Tasks;
     using global::Microsoft.AspNetCore.Components;
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-using Test2;
+#line (3,2)-(4,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+using Test2
 
 #line default
 #line hidden
 #nullable disable
-    [global::Microsoft.AspNetCore.Components.RouteAttribute("/MyPage")]
-    [global::Microsoft.AspNetCore.Components.RouteAttribute("/AnotherRoute/{id}")]
+    ;
+    [global::Microsoft.AspNetCore.Components.RouteAttribute(
+    // language=Route,Component
+#nullable restore
+#line (1,7)-(1,16) "x:\dir\subdir\Test\TestComponent.cshtml"
+"/MyPage"
+
+#line default
+#line hidden
+#nullable disable
+    )]
+    [global::Microsoft.AspNetCore.Components.RouteAttribute(
+    // language=Route,Component
+#nullable restore
+#line (2,7)-(2,27) "x:\dir\subdir\Test\TestComponent.cshtml"
+"/AnotherRoute/{id}"
+
+#line default
+#line hidden
+#nullable disable
+    )]
     #nullable restore
     public partial class TestComponent : global::Microsoft.AspNetCore.Components.ComponentBase
     #nullable disable

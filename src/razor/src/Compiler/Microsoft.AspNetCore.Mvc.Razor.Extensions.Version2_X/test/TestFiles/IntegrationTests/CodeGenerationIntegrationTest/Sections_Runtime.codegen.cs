@@ -48,12 +48,13 @@ namespace AspNetCore
             BeginContext(64, 2, true);
             WriteLiteral("\r\n");
             EndContext();
-#line 5 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
-   
+#line (5,3)-(7,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
+ 
     Layout = "_SectionTestLayout.cshtml";
 
 #line default
 #line hidden
+
             BeginContext(117, 26, true);
             WriteLiteral("\r\n<div>Some body</div>\r\n\r\n");
             EndContext();
@@ -67,11 +68,13 @@ namespace AspNetCore
                 );
                 __InputTestTagHelper = CreateTagHelper<global::InputTestTagHelper>();
                 __tagHelperExecutionContext.Add(__InputTestTagHelper);
-#line 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
-__InputTestTagHelper.For = ModelExpressionProvider.CreateModelExpression(ViewData, __model => __model.Date);
+                __InputTestTagHelper.For = ModelExpressionProvider.CreateModelExpression(ViewData, __model => __model.
+#line (13,22)-(13,26) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
+Date
 
 #line default
 #line hidden
+                );
                 __tagHelperExecutionContext.AddTagHelperAttribute("for", __InputTestTagHelper.For, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
                 await __tagHelperRunner.RunAsync(__tagHelperExecutionContext);
                 if (!__tagHelperExecutionContext.Output.IsContentModified)

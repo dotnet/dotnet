@@ -1,8 +1,13 @@
-﻿Source Location: (78:2,7 [46] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (56:0,56 [7] x:\dir\subdir\Test\TestComponent.cshtml)
+|myField|
+Generated Location: (996:23,0 [7] )
+|myField|
+
+Source Location: (78:2,7 [46] x:\dir\subdir\Test\TestComponent.cshtml)
 |
     private string myField = "Some Value";
 |
-Generated Location: (1498:35,7 [46] )
+Generated Location: (1457:35,0 [46] )
 |
     private string myField = "Some Value";
 |

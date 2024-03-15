@@ -44,18 +44,16 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
+        var queue = new TestOpenDocumentGenerator(projectManager, Dispatcher, ErrorReporter, listener);
 
-        await Dispatcher.RunAsync(() =>
+        await RunOnDispatcherAsync(() =>
         {
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
 
-            queue.Initialize(projectManager);
-
             // Act
             projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
-        }, DisposalToken);
+        });
 
         // Assert
         await Assert.ThrowsAsync<TaskCanceledException>(() => listener.GetProcessedDocumentAsync(cancelAfter: TimeSpan.FromMilliseconds(50)));
@@ -67,19 +65,17 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
+        var queue = new TestOpenDocumentGenerator(projectManager, Dispatcher, ErrorReporter, listener);
 
-        await Dispatcher.RunAsync(() =>
+        await RunOnDispatcherAsync(() =>
         {
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
             projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
 
-            queue.Initialize(projectManager);
-
             // Act
             projectManager.DocumentChanged(_hostProject1.Key, _documents[0].FilePath, SourceText.From("new"));
-        }, DisposalToken);
+        });
 
         // Assert
         await Assert.ThrowsAsync<TaskCanceledException>(() => listener.GetProcessedDocumentAsync(cancelAfter: TimeSpan.FromMilliseconds(50)));
@@ -91,20 +87,18 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
+        var queue = new TestOpenDocumentGenerator(projectManager, Dispatcher, ErrorReporter, listener);
 
-        await Dispatcher.RunAsync(() =>
+        await RunOnDispatcherAsync(() =>
         {
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
             projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
             projectManager.DocumentOpened(_hostProject1.Key, _documents[0].FilePath, SourceText.From(string.Empty));
 
-            queue.Initialize(projectManager);
-
             // Act
             projectManager.DocumentChanged(_hostProject1.Key, _documents[0].FilePath, SourceText.From("new"));
-        }, DisposalToken);
+        });
 
         // Assert
 
@@ -118,20 +112,18 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
+        var queue = new TestOpenDocumentGenerator(projectManager, Dispatcher, ErrorReporter, listener);
 
-        await Dispatcher.RunAsync(() =>
+        await RunOnDispatcherAsync(() =>
         {
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
             projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
 
-            queue.Initialize(projectManager);
-
             // Act
             projectManager.ProjectWorkspaceStateChanged(_hostProject1.Key,
                 ProjectWorkspaceState.Create(LanguageVersion.CSharp8));
-        }, DisposalToken);
+        });
 
         // Assert
         await Assert.ThrowsAsync<TaskCanceledException>(() => listener.GetProcessedDocumentAsync(cancelAfter: TimeSpan.FromMilliseconds(50)));
@@ -143,21 +135,19 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
         var listener = new TestDocumentProcessedListener();
-        var queue = new TestOpenDocumentGenerator(Dispatcher, ErrorReporter, listener);
+        var queue = new TestOpenDocumentGenerator(projectManager, Dispatcher, ErrorReporter, listener);
 
-        await Dispatcher.RunAsync(() =>
+        await RunOnDispatcherAsync(() =>
         {
             projectManager.ProjectAdded(_hostProject1);
             projectManager.ProjectAdded(_hostProject2);
             projectManager.DocumentAdded(_hostProject1.Key, _documents[0], null);
             projectManager.DocumentOpened(_hostProject1.Key, _documents[0].FilePath, SourceText.From(string.Empty));
 
-            queue.Initialize(projectManager);
-
             // Act
             projectManager.ProjectWorkspaceStateChanged(_hostProject1.Key,
                 ProjectWorkspaceState.Create(LanguageVersion.CSharp8));
-        }, DisposalToken);
+        });
 
         // Assert
 
@@ -165,16 +155,12 @@ public class OpenDocumentGeneratorTest : LanguageServerTestBase
         Assert.Equal(document.FilePath, _documents[0].FilePath);
     }
 
-    private class TestOpenDocumentGenerator : OpenDocumentGenerator
-    {
-        public TestOpenDocumentGenerator(
-            ProjectSnapshotManagerDispatcher dispatcher,
-            IErrorReporter errorReporter,
-            params DocumentProcessedListener[] listeners)
-            : base(listeners, dispatcher, TestLanguageServerFeatureOptions.Instance, errorReporter)
-        {
-        }
-    }
+    private class TestOpenDocumentGenerator(
+        ProjectSnapshotManagerBase projectManager,
+        ProjectSnapshotManagerDispatcher dispatcher,
+        IErrorReporter errorReporter,
+        params DocumentProcessedListener[] listeners)
+        : OpenDocumentGenerator(listeners, projectManager, dispatcher, TestLanguageServerFeatureOptions.Instance, errorReporter);
 
     private class TestDocumentProcessedListener : DocumentProcessedListener
     {

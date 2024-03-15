@@ -20,8 +20,8 @@ namespace Test
             {
                 global::__Blazor.Test.TestComponent.TypeInference.CreateParentComponent_0_CaptureParameters(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                            (1, 2)
+#line (1,29)-(1,35) "x:\dir\subdir\Test\TestComponent.cshtml"
+(1, 2)
 
 #line default
 #line hidden

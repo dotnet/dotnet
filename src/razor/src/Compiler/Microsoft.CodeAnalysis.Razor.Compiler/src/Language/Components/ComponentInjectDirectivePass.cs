@@ -32,14 +32,16 @@ internal class ComponentInjectDirectivePass : IntermediateNodePassBase, IRazorDi
             }
 
             var typeName = tokens[0].Content;
+            var typeSpan = tokens[0].Source;
             var memberName = tokens[1].Content;
+            var memberSpan = tokens[1].Source;
 
             if (!properties.Add(memberName))
             {
                 continue;
             }
 
-            classNode.Children.Add(new ComponentInjectIntermediateNode(typeName, memberName));
+            classNode.Children.Add(new ComponentInjectIntermediateNode(typeName, memberName, typeSpan, memberSpan));
         }
     }
 

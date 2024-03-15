@@ -1,6 +1,11 @@
-﻿Source Location: (49:0,49 [8] x:\dir\subdir\Test\TestComponent.cshtml)
+﻿Source Location: (37:0,37 [3] x:\dir\subdir\Test\TestComponent.cshtml)
+|Min|
+Generated Location: (899:24,0 [3] )
+|Min|
+
+Source Location: (49:0,49 [8] x:\dir\subdir\Test\TestComponent.cshtml)
 |_element|
-Generated Location: (1182:33,49 [8] )
+Generated Location: (1120:33,0 [8] )
 |_element|
 
 Source Location: (72:2,7 [164] x:\dir\subdir\Test\TestComponent.cshtml)
@@ -10,7 +15,7 @@ Source Location: (72:2,7 [164] x:\dir\subdir\Test\TestComponent.cshtml)
         [Parameter] public int Min { get; set; }
         public void Foo() { System.GC.KeepAlive(_element); }
     |
-Generated Location: (1449:45,7 [164] )
+Generated Location: (1408:46,0 [164] )
 |
         private ElementReference _element;
 

@@ -27,7 +27,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
 
     protected override RazorConfiguration Configuration { get; }
 
-    protected override CSharpParseOptions CSharpParseOptions => base.CSharpParseOptions.WithLanguageVersion(LanguageVersion.CSharp8);
+    protected override CSharpParseOptions CSharpParseOptions => base.CSharpParseOptions.WithLanguageVersion(LanguageVersion.Latest);
 
     #region Runtime
 
@@ -224,10 +224,10 @@ public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
     {
         // Arrange
         AddCSharpSyntaxTree(@"
-public class MyApp
-{
-    public string MyProperty { get; set; }
-}
+            public class MyApp
+            {
+                public string MyProperty { get; set; }
+            }
 ");
 
         var projectItem = CreateProjectItemFromFile();
@@ -238,6 +238,8 @@ public class MyApp
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
+        AssertLinePragmas(compiled.CodeDocument, designTime: false);
+        AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
 
     [Fact]
@@ -245,19 +247,19 @@ public class MyApp
     {
         // Arrange
         AddCSharpSyntaxTree(@"
-public class MyModel
-{
+            public class MyModel
+            {
 
-}
+            }
 
-public class MyService<TModel>
-{
-    public string Html { get; set; }
-}
+            public class MyService<TModel>
+            {
+                public string Html { get; set; }
+            }
 
-public class MyApp
-{
-    public string MyProperty { get; set; }
+            public class MyApp
+            {
+                public string MyProperty { get; set; }
 }");
 
         var projectItem = CreateProjectItemFromFile();
@@ -268,6 +270,8 @@ public class MyApp
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
+        AssertLinePragmas(compiled.CodeDocument, designTime: false);
+        AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
 
     [Fact]
@@ -275,20 +279,20 @@ public class MyApp
     {
         // Arrange
         AddCSharpSyntaxTree(@"
-public class MyModel
-{
+            public class MyModel
+            {
 
-}
+            }
 
-public class MyApp
-{
-    public string MyProperty { get; set; }
-}
+            public class MyApp
+            {
+                public string MyProperty { get; set; }
+            }
 
-public class MyService<TModel>
-{
-    public string Html { get; set; }
-}
+            public class MyService<TModel>
+            {
+                public string Html { get; set; }
+            }
 ");
 
         var projectItem = CreateProjectItemFromFile();
@@ -299,6 +303,8 @@ public class MyService<TModel>
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
+        AssertLinePragmas(compiled.CodeDocument, designTime: false);
+        AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
 
     [Fact]

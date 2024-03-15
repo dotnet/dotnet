@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.ComponentWithEditorRequiredParameters>(0);
             __builder.AddComponentParameter(1, "Property1", global::Microsoft.AspNetCore.Components.CompilerServices.RuntimeHelpers.TypeCheck<global::System.String>(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                                        myField
+#line (1,57)-(1,64) "x:\dir\subdir\Test\TestComponent.cshtml"
+myField
 
 #line default
 #line hidden
@@ -32,13 +32,14 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 3 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (3,8)-(5,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
     private string myField = "Some Value";
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

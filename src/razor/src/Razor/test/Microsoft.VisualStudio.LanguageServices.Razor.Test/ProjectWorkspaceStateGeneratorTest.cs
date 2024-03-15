@@ -55,7 +55,7 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
     {
         // Arrange
         using var stateGenerator = new ProjectWorkspaceStateGenerator(
-            _projectManager.GetAccessor(), _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
+            _projectManager, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
         stateGenerator.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
 
         // Act
@@ -75,7 +75,7 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
     {
         // Arrange
         using var stateGenerator = new ProjectWorkspaceStateGenerator(
-            _projectManager.GetAccessor(), _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
+            _projectManager, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
         stateGenerator.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
 
         // Act
@@ -94,7 +94,7 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
     {
         // Arrange
         using var stateGenerator = new ProjectWorkspaceStateGenerator(
-            _projectManager.GetAccessor(), _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
+            _projectManager, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
         stateGenerator.BlockBackgroundWorkStart = new ManualResetEventSlim(initialState: false);
 
         await RunOnDispatcherAsync(() =>
@@ -119,7 +119,7 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
     {
         // Arrange
         using var stateGenerator = new ProjectWorkspaceStateGenerator(
-            _projectManager.GetAccessor(), _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
+            _projectManager, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
         stateGenerator.NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false);
 
         await RunOnDispatcherAsync(() =>
@@ -148,7 +148,7 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
     {
         // Arrange
         using var stateGenerator = new ProjectWorkspaceStateGenerator(
-            _projectManager.GetAccessor(), _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
+            _projectManager, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
         stateGenerator.NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false);
 
         await RunOnDispatcherAsync(() =>

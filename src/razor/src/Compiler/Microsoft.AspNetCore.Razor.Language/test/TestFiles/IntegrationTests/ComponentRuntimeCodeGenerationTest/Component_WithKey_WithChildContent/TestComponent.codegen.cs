@@ -26,12 +26,13 @@ namespace Test
             ));
             __builder.SetKey(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                   123 + 456
+#line (1,20)-(1,29) "x:\dir\subdir\Test\TestComponent.cshtml"
+123 + 456
 
 #line default
 #line hidden
 #nullable disable
+
             );
             __builder.CloseComponent();
         }

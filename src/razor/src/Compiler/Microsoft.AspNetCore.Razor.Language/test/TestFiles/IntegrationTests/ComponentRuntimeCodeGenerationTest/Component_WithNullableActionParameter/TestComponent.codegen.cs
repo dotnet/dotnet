@@ -20,8 +20,8 @@ namespace Test
             __builder.OpenComponent<global::Test.ComponentWithNullableAction>(0);
             __builder.AddComponentParameter(1, "NullableAction", (global::System.Action)(
 #nullable restore
-#line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                              NullableAction
+#line (1,47)-(1,61) "x:\dir\subdir\Test\TestComponent.cshtml"
+NullableAction
 
 #line default
 #line hidden
@@ -31,14 +31,15 @@ namespace Test
         }
         #pragma warning restore 1998
 #nullable restore
-#line 2 "x:\dir\subdir\Test\TestComponent.cshtml"
-       
+#line (2,8)-(5,1) "x:\dir\subdir\Test\TestComponent.cshtml"
+
 	[Parameter]
 	public Action NullableAction { get; set; }
 
 #line default
 #line hidden
 #nullable disable
+
     }
 }
 #pragma warning restore 1591

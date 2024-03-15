@@ -48,13 +48,14 @@ namespace AspNetCore
             WriteLiteral("\r\n");
             WriteLiteral("\r\n");
 #nullable restore
-#line 5 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
-   
+#line (5,3)-(7,1) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
+ 
     Layout = "_SectionTestLayout.cshtml";
 
 #line default
 #line hidden
 #nullable disable
+
             WriteLiteral("\r\n<div>Some body</div>\r\n\r\n");
             DefineSection("Section1", async() => {
                 WriteLiteral("\r\n    <div>This is in Section 1</div>\r\n    ");
@@ -63,13 +64,15 @@ namespace AspNetCore
                 );
                 __InputTestTagHelper = CreateTagHelper<global::InputTestTagHelper>();
                 __tagHelperExecutionContext.Add(__InputTestTagHelper);
+                __InputTestTagHelper.For = ModelExpressionProvider.CreateModelExpression(ViewData, __model => __model.
 #nullable restore
-#line 13 "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
-__InputTestTagHelper.For = ModelExpressionProvider.CreateModelExpression(ViewData, __model => __model.Date);
+#line (13,22)-(13,26) "TestFiles/IntegrationTests/CodeGenerationIntegrationTest/Sections.cshtml"
+Date
 
 #line default
 #line hidden
 #nullable disable
+                );
                 __tagHelperExecutionContext.AddTagHelperAttribute("for", __InputTestTagHelper.For, global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
                 await __tagHelperRunner.RunAsync(__tagHelperExecutionContext);
                 if (!__tagHelperExecutionContext.Output.IsContentModified)

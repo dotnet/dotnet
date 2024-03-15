@@ -19,7 +19,7 @@ namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test.Serialization;
 
 public class SerializerValidationTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    [Theory]
+    [Theory(Skip = "https://github.com/dotnet/razor/issues/8202")]
     [InlineData("Kendo.Mvc.Examples.project.razor.json")]
     [InlineData("project.razor.json")]
     public void VerifyMessagePack_RazorProjectInfo(string resourceName)

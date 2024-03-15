@@ -53,7 +53,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         var synchronizationService = new ProjectSnapshotSynchronizationService(
             _sessionContext,
             hostProjectManagerProxyMock.Object,
-            _projectManager.GetAccessor(),
+            _projectManager,
             Dispatcher,
             ErrorReporter,
             JoinableTaskFactory);
@@ -88,7 +88,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         var synchronizationService = new ProjectSnapshotSynchronizationService(
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
-            _projectManager.GetAccessor(),
+            _projectManager,
             Dispatcher,
             ErrorReporter,
             JoinableTaskFactory);
@@ -124,7 +124,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         var synchronizationService = new ProjectSnapshotSynchronizationService(
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
-            _projectManager.GetAccessor(),
+            _projectManager,
             Dispatcher,
             ErrorReporter,
             JoinableTaskFactory);
@@ -165,7 +165,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         var synchronizationService = new ProjectSnapshotSynchronizationService(
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
-            _projectManager.GetAccessor(),
+            _projectManager,
             Dispatcher,
             ErrorReporter,
             JoinableTaskFactory);
@@ -210,7 +210,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         var synchronizationService = new ProjectSnapshotSynchronizationService(
             _sessionContext,
             StrictMock.Of<IProjectSnapshotManagerProxy>(),
-            _projectManager.GetAccessor(),
+            _projectManager,
             Dispatcher,
             ErrorReporter,
             JoinableTaskFactory);

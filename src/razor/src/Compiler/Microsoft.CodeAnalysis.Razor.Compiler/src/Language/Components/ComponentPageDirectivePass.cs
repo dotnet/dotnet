@@ -63,8 +63,7 @@ internal class ComponentPageDirectivePass : IntermediateNodePassBase, IRazorDire
 
             if (routeToken is { Content: ['"', '/', .., '"'] content })
             {
-                var template = content.AsMemory(1, content.Length - 2);
-                @namespace.Children.Insert(index++, new RouteAttributeExtensionNode(template));
+                @namespace.Children.Insert(index++, new RouteAttributeExtensionNode(content) { Source = routeToken.Source });
             }
             else
             {

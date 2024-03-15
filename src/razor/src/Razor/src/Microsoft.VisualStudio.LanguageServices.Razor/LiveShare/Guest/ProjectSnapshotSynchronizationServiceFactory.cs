@@ -5,7 +5,7 @@ using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.VisualStudio.LiveShare.Razor.Serialization;
 using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json;
@@ -15,7 +15,7 @@ namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 [ExportCollaborationService(typeof(ProjectSnapshotSynchronizationService), Scope = SessionScope.Guest)]
 [method: ImportingConstructor]
 internal class ProjectSnapshotSynchronizationServiceFactory(
-    IProjectSnapshotManagerAccessor projectManagerAccessor,
+    ProjectSnapshotManagerBase projectManager,
     ProjectSnapshotManagerDispatcher dispatcher,
     IErrorReporter errorReporter,
     JoinableTaskContext joinableTaskContext) : ICollaborationServiceFactory
@@ -31,7 +31,7 @@ internal class ProjectSnapshotSynchronizationServiceFactory(
         var synchronizationService = new ProjectSnapshotSynchronizationService(
             sessionContext,
             projectSnapshotManagerProxy,
-            projectManagerAccessor,
+            projectManager,
             dispatcher,
             errorReporter,
             joinableTaskContext.Factory);

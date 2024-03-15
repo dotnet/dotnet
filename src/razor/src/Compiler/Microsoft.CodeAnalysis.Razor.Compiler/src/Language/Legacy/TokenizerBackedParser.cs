@@ -647,21 +647,21 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
         return (TNode)node.SetAnnotations([annotation]);
     }
 
-    protected DisposableAction PushSpanContextConfig()
+    protected DisposableAction<(TokenizerBackedParser<TTokenizer>, SpanContextConfigAction?)> PushSpanContextConfig()
     {
         return PushSpanContextConfig(newConfig: (SpanContextConfigActionWithPreviousConfig?)null);
     }
 
-    protected DisposableAction PushSpanContextConfig(SpanContextConfigAction newConfig)
+    protected DisposableAction<(TokenizerBackedParser<TTokenizer>, SpanContextConfigAction?)> PushSpanContextConfig(SpanContextConfigAction newConfig)
     {
         return PushSpanContextConfig(newConfig == null ? null : (SpanEditHandlerBuilder? span, ref ISpanChunkGenerator? chunkGenerator, SpanContextConfigAction? _) => newConfig(span, ref chunkGenerator));
     }
 
-    protected DisposableAction PushSpanContextConfig(SpanContextConfigActionWithPreviousConfig? newConfig)
+    protected DisposableAction<(TokenizerBackedParser<TTokenizer>, SpanContextConfigAction?)> PushSpanContextConfig(SpanContextConfigActionWithPreviousConfig? newConfig)
     {
         var old = SpanContextConfig;
         ConfigureSpanContext(newConfig);
-        return new DisposableAction(() => SpanContextConfig = old);
+        return new DisposableAction<(TokenizerBackedParser<TTokenizer> Self, SpanContextConfigAction? Old)>(static arg => arg.Self.SpanContextConfig = arg.Old, arg: (this, old));
     }
 
     protected void ConfigureSpanContext(SpanContextConfigAction? config)

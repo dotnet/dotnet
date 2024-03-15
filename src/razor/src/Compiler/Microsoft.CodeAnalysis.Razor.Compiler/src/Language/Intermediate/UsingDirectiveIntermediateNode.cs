@@ -15,6 +15,8 @@ public sealed class UsingDirectiveIntermediateNode : IntermediateNode
 
     public string Content { get; set; }
 
+    public bool HasExplicitSemicolon { get; set; }
+
     public override void Accept(IntermediateNodeVisitor visitor)
     {
         if (visitor == null)
