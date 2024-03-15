@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.DotNet.SourceBuild.Tasks" Version="$(MicrosoftDotNetSourceBuildTasksVersion)" IsImplicitlyDefined="true" />
+    <PackageReference Condition="'$(DotNetBuildInnerRepo)' == 'true' and '$(DotNetBuildFromSourceFlavor)' == 'Product' and '$(_ImportOrUseTooling)' != 'true'" Include="Microsoft.DotNet.Build.Tasks.Feed" Version="$(MicrosoftDotNetBuildTasksFeedVersion)" IsImplicitlyDefined="true" />
   </ItemGroup>
 
   <!-- Because the condition here is rather complex, it should read as the following:

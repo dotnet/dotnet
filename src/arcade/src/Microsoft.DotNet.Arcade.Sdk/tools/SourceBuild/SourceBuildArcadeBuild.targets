@@ -80,6 +80,9 @@
       <InnerBuildArgs Condition="'$(DotNetPackageVersionPropsPath)' != ''">$(InnerBuildArgs) /p:DotNetPackageVersionPropsPath="$(DotNetPackageVersionPropsPath)"</InnerBuildArgs>
 
       <InnerBuildArgs>$(InnerBuildArgs) /p:FullAssemblySigningSupported=$(FullAssemblySigningSupported)</InnerBuildArgs>
+
+      <!-- We need to utilize publishing to copy packages, assets and manifest to shared source-build location. -->
+      <InnerBuildArgs>$(InnerBuildArgs) /p:DotNetPublishUsingPipelines=true</InnerBuildArgs>
     </PropertyGroup>
 
     <ItemGroup>

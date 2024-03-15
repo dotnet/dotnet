@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 using static Microsoft.DotNet.Build.Tasks.Feed.GeneralUtils;
+using static Microsoft.DotNet.Build.CloudTestTasks.AzureStorageUtils;
 using MsBuildUtils = Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
