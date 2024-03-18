@@ -46,7 +46,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\Microsoft.Arcade.Common\Microsoft.Arcade.Common.csproj" />
     <ProjectReference Include="..\Microsoft.DotNet.Deployment.Tasks.Links\Microsoft.DotNet.Deployment.Tasks.Links.csproj" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
-    <ProjectReference Include="..\Microsoft.DotNet.VersionTools\lib\Microsoft.DotNet.VersionTools.csproj" />
+    <ProjectReference Include="..\VersionTools\Microsoft.DotNet.VersionTools\Microsoft.DotNet.VersionTools.csproj" />
   </ItemGroup>
 
   <ItemGroup>

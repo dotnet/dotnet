@@ -63,11 +63,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.Build.Task
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.Build.Tasks.VisualStudio.Tests", "src\Microsoft.DotNet.Build.Tasks.VisualStudio.Tests\Microsoft.DotNet.Build.Tasks.VisualStudio.Tests.csproj", "{86D901E6-C054-445B-92EC-E267EBB16278}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.VersionTools", "src\Microsoft.DotNet.VersionTools\lib\Microsoft.DotNet.VersionTools.csproj", "{465F7F95-1774-40BE-8387-62C39BBD7141}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.VersionTools", "src\VersionTools\Microsoft.DotNet.VersionTools\Microsoft.DotNet.VersionTools.csproj", "{465F7F95-1774-40BE-8387-62C39BBD7141}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.VersionTools.Tests", "src\Microsoft.DotNet.VersionTools\tests\Microsoft.DotNet.VersionTools.Tests.csproj", "{4626A7D1-7AC0-4E21-9FED-083EF2A8194C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.VersionTools.Tests", "src\VersionTools\Microsoft.DotNet.VersionTools.Tests\Microsoft.DotNet.VersionTools.Tests.csproj", "{4626A7D1-7AC0-4E21-9FED-083EF2A8194C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.VersionTools.Tasks", "src\Microsoft.DotNet.VersionTools\tasks\Microsoft.DotNet.VersionTools.Tasks.csproj", "{0A6A6D3D-DE7A-4BC2-9799-9C77E4CE87FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.VersionTools.Tasks", "src\VersionTools\Microsoft.DotNet.VersionTools.Tasks\Microsoft.DotNet.VersionTools.Tasks.csproj", "{0A6A6D3D-DE7A-4BC2-9799-9C77E4CE87FB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.Git.IssueManager", "src\Microsoft.DotNet.Git.IssueManager\src\Microsoft.DotNet.Git.IssueManager.csproj", "{20F768D8-D724-4889-85AE-2D46188E731F}"
 EndProject
@@ -107,7 +107,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.SourceBuil
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.Internal.DependencyInjection.Testing", "src\Microsoft.DotNet.Internal.DependencyInjection.Testing\Microsoft.DotNet.Internal.DependencyInjection.Testing.csproj", "{5B75BEBE-58A8-409D-8069-5210E87AA99A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.VersionTools.Tasks.Tests", "src\Microsoft.DotNet.VersionTools.Tasks.Tests\Microsoft.DotNet.VersionTools.Tasks.Tests.csproj", "{E941EDE6-3FFB-4776-A4CE-750755D57817}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.VersionTools.Tasks.Tests", "src\VersionTools\Microsoft.DotNet.VersionTools.Tasks.Tests\Microsoft.DotNet.VersionTools.Tasks.Tests.csproj", "{E941EDE6-3FFB-4776-A4CE-750755D57817}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.ArcadeLogging", "src\Microsoft.DotNet.ArcadeLogging\Microsoft.DotNet.ArcadeLogging.csproj", "{73496668-336D-4D43-9093-C17862E78BCE}"
 EndProject
@@ -137,9 +137,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.XUnitAsser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.XUnitAssert.Tests", "src\Microsoft.DotNet.XUnitAssert\tests\Microsoft.DotNet.XUnitAssert.Tests.csproj", "{14462553-E4E1-4F67-B954-4BF24B1DAAFE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.VersionTools.Cli", "src\Microsoft.DotNet.VersionTools\tools\Microsoft.DotNet.VersionTools.Cli\Microsoft.DotNet.VersionTools.Cli.csproj", "{2B5044A5-FD64-4071-913A-6AF0AC8FF25C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.VersionTools.Cli", "src\VersionTools\Microsoft.DotNet.VersionTools.Cli\Microsoft.DotNet.VersionTools.Cli.csproj", "{2B5044A5-FD64-4071-913A-6AF0AC8FF25C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.VersionTools.Cli.Tests", "src\Microsoft.DotNet.VersionTools\tools\Microsoft.DotNet.VersionTools.Cli.Tests\Microsoft.DotNet.VersionTools.Cli.Tests.csproj", "{650B7526-7B8A-45B5-B14E-C16D828891B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.VersionTools.Cli.Tests", "src\VersionTools\Microsoft.DotNet.VersionTools.Cli.Tests\Microsoft.DotNet.VersionTools.Cli.Tests.csproj", "{650B7526-7B8A-45B5-B14E-C16D828891B2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DotNet.Tar", "src\Microsoft.DotNet.Tar\Microsoft.DotNet.Tar.csproj", "{B7489F31-1C2D-4FD9-BB42-6F8EF1340BAC}"
 EndProject

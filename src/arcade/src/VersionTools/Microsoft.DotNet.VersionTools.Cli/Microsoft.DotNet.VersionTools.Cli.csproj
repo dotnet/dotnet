@@ -9,13 +9,8 @@
     <Description>This package provides a CLI interface to the Microsoft.DotNet.VersionTools library.</Description>
   </PropertyGroup>
 
-  <!-- Don't include VersionTools.Cli in source-build until we find a reason to use it. -->
-  <PropertyGroup>
-    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
-  </PropertyGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\Microsoft.DotNet.VersionTools.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.VersionTools\Microsoft.DotNet.VersionTools.csproj" />
   </ItemGroup>
 
   <ItemGroup>

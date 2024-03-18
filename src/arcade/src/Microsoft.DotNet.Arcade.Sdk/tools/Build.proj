@@ -15,7 +15,6 @@
     DotNetBuildOrchestrator         Build the entire .NET stack.
     DotNetBuildSourceOnly           Build the repo as part of the entire .NET stack with no external dependencies.
     DotNetBuildFromSource           Building the entire stack from source with no external dependencies.
-    DotNetOutputBlobFeedDir         Directory to publish Source Build assets to (packages, symbol packages, installers, etc.).
     DotNetPublishUsingPipelines     Publish assets to Build Asset Registry.
     DotNetSymbolServerTokenMsdl     Personal access token for MSDL symbol server. Available from variable group DotNet-Symbol-Server-Pats.	
     DotNetSymbolServerTokenSymWeb   Personal access token for SymWeb symbol server. Available from variable group DotNet-Symbol-Server-Pats.	
@@ -77,11 +76,6 @@
   <ItemGroup Condition="'@(ProjectToBuild)' == ''">
     <ProjectToBuild Include="$(RepoRoot)*.sln" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <_DotNetOutputBlobFeedDir>$(DotNetOutputBlobFeedDir)</_DotNetOutputBlobFeedDir>
-    <_DotNetOutputBlobFeedDir Condition="'$(_DotNetOutputBlobFeedDir)' != '' and !HasTrailingSlash('$(_DotNetOutputBlobFeedDir)')">$(_DotNetOutputBlobFeedDir)\</_DotNetOutputBlobFeedDir>
-  </PropertyGroup>
 
   <Target Name="Execute">
     <Error Text="No projects were found to build. Either the 'Projects' property or 'ProjectToBuild' item group must be specified." Condition="'@(ProjectToBuild)' == ''"/>
@@ -166,7 +160,6 @@
 
     <ItemGroup>
       <_PublishProps Include="@(_CommonProps)"/>
-      <_PublishProps Include="DotNetOutputBlobFeedDir=$(_DotNetOutputBlobFeedDir)" Condition="'$(_DotNetOutputBlobFeedDir)' != ''" />
 
       <!-- Used in a few places in the stack to decide if publishing was enabled or not. -->
       <_PublishProps Include="Publish=$(Publish)"/>
