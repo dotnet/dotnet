@@ -12,8 +12,8 @@ stages:
           name: $(DncEngPublicBuildPool)
         ${{ else }}:
           name: $(DncEngInternalBuildPool)
-        image: 1es-windows-2022-pt
-        os: windows
+        image: 1es-ubuntu-2204
+        os: linux
 
     steps:
     - checkout: self
