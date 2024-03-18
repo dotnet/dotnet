@@ -42,7 +42,14 @@ parameters:
     name: $(defaultPoolName)
     image: 1es-windows-2022
     os: linux
-  
+
+- name: defaultPool_LinuxArm64
+  type: object
+  default:
+    image: Mariner-2-Docker-ARM64
+    os: linux
+    hostArchitecture: Arm64
+
 #### SOURCE-ONLY BUILD ####
 stages:
 - ${{ if parameters.isSourceOnlyBuild }}:
@@ -271,7 +278,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool: ${{ variables.defaultPoolNameLinuxArm64 }}
+            pool: ${{ parameters.defaultPool_LinuxArm64 }}
             container: ${{ variables.ubuntu2204ArmContainer }}
             buildFromArchive: false            # 🚫
             buildSourceOnly: true              # ✅
