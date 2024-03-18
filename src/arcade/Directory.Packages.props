@@ -25,6 +25,8 @@
     <PackageVersion Include="Microsoft.DotNet.SwaggerGenerator.MSBuild" Version="$(MicrosoftDotNetSwaggerGeneratorMSBuildVersion)" />
     <!-- arcade-services -->
     <PackageVersion Include="Microsoft.DotNet.Maestro.Client" Version="$(MicrosoftDotNetMaestroClientVersion)" />
+    <!-- command-line-api -->
+    <PackageVersion Include="System.CommandLine" Version="$(SystemCommandLineVersion)" />
     <!-- corefx -->
     <PackageVersion Include="Microsoft.Bcl.HashCode" Version="$(MicrosoftBclHashCodeVersion)" />
     <PackageVersion Include="System.Memory" Version="$(SystemMemoryVersion)" />
@@ -76,7 +78,7 @@
     <PackageVersion Include="JetBrains.Annotations" Version="2018.2.1" />
     <PackageVersion Include="LZMA-SDK" Version="19.0.0" />
     <PackageVersion Include="McMaster.Extensions.CommandLineUtils" Version="2.3.0" />
-    <PackageVersion Include="Microsoft.ApplicationInsights" Version="2.21.0" />
+    <PackageVersion Include="Microsoft.ApplicationInsights" Version="2.22.0" />
     <PackageVersion Include="Microsoft.Data.OData" Version="5.8.4" />
     <PackageVersion Include="Microsoft.DataServices.Client" Version="$(MicrosoftDataServicesClientVersion)" />
     <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="1.0.5" />
@@ -89,7 +91,6 @@
     <PackageVersion Include="Moq" Version="4.18.4" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Octokit" Version="10.0.0" />
-    <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.23307.1" />
     <PackageVersion Include="xunit" Version="$(XUnitVersion)" />
     <PackageVersion Include="xunit.abstractions" Version="2.0.3" />
     <PackageVersion Include="xunit.extensibility.core" Version="$(XUnitVersion)" />

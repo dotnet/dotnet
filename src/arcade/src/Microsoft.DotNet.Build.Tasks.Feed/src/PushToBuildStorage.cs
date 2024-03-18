@@ -3,6 +3,7 @@
 
 using Microsoft.Arcade.Common;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using Microsoft.DotNet.VersionTools.Automation;
 using Microsoft.DotNet.VersionTools.BuildManifest.Model;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +15,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
-    public class PushToAzureDevOpsArtifacts : MSBuildTaskBase
+    public class PushToBuildStorage : MSBuildTaskBase
     {
         [Required]
         public ITaskItem[] ItemsToPush { get; set; }
@@ -57,11 +58,28 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public bool IsReleaseOnlyPackageVersion { get; set; }
 
+        public string AssetsLocalStorageDir { get; set; }
+
+        public string ShippingPackagesLocalStorageDir { get; set; }
+
+        public string NonShippingPackagesLocalStorageDir { get; set; }
+
+        public string AssetManifestsLocalStorageDir { get; set; }
+
+        public bool PushToLocalStorage { get; set; }
+
         /// <summary>
         /// Which version should the build manifest be tagged with.
         /// By default he latest version is used.
         /// </summary>
         public string PublishingVersion { get; set; }
+
+        public enum ItemType
+        {
+            AssetManifest = 0,
+            PackageArtifact,
+            BlobArtifact
+        }
 
         public override void ConfigureServices(IServiceCollection collection)
         {
@@ -83,7 +101,22 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         {
             try
             {
-                Log.LogMessage(MessageImportance.High, "Performing push to Azure DevOps artifacts storage.");
+                if (PushToLocalStorage)
+                {
+                    if (string.IsNullOrEmpty(AssetsLocalStorageDir) ||
+                        string.IsNullOrEmpty(ShippingPackagesLocalStorageDir) ||
+                        string.IsNullOrEmpty(NonShippingPackagesLocalStorageDir) ||
+                        string.IsNullOrEmpty(AssetManifestsLocalStorageDir))
+                    {
+                        throw new Exception($"AssetsLocalStorageDir, ShippingPackagesLocalStorageDir, NonShippingPackagesLocalStorageDir and AssetManifestsLocalStorageDir need to be specified if PublishToLocalStorage is set to true");
+                    }
+
+                    Log.LogMessage(MessageImportance.High, "Performing push to local artifacts storage.");
+                }
+                else
+                {
+                    Log.LogMessage(MessageImportance.High, "Performing push to Azure DevOps artifacts storage.");
+                }
 
                 if (!string.IsNullOrWhiteSpace(AssetsTemporaryDirectory))
                 {
@@ -116,8 +149,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                                 continue;
                             }
 
-                            Log.LogMessage(MessageImportance.High,
-                                $"##vso[artifact.upload containerfolder=BlobArtifacts;artifactname=BlobArtifacts]{blobItem.ItemSpec}");
+                            PushToLocalStorageOrAzDO(ItemType.BlobArtifact, blobItem);
                         }
                     }
                     else
@@ -159,8 +191,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                                 continue;
                             }
 
-                            Log.LogMessage(MessageImportance.High,
-                                $"##vso[artifact.upload containerfolder=PackageArtifacts;artifactname=PackageArtifacts]{packagePath.ItemSpec}");
+                            PushToLocalStorageOrAzDO(ItemType.PackageArtifact, packagePath);
                         }
 
                         foreach (var blobItem in blobItems)
@@ -171,8 +202,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                                 continue;
                             }
 
-                            Log.LogMessage(MessageImportance.High,
-                                $"##vso[artifact.upload containerfolder=BlobArtifacts;artifactname=BlobArtifacts]{blobItem.ItemSpec}");
+                            PushToLocalStorageOrAzDO(ItemType.BlobArtifact, blobItem);
                         }
 
                         packageArtifacts = packageItems.Select(packageArtifactModelFactory.CreatePackageArtifactModel);
@@ -206,8 +236,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         IsReleaseOnlyPackageVersion,
                         signingInformationModel: signingInformationModel);
 
-                    Log.LogMessage(MessageImportance.High,
-                        $"##vso[artifact.upload containerfolder=AssetManifests;artifactname=AssetManifests]{AssetManifestPath}");
+                    PushToLocalStorageOrAzDO(ItemType.AssetManifest, new TaskItem(AssetManifestPath));
                 }
             }
             catch (Exception e)
@@ -216,6 +245,74 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
 
             return !Log.HasLoggedErrors;
+        }
+
+        private void PushToLocalStorageOrAzDO(ItemType itemType, ITaskItem item)
+        {
+            string path = item.ItemSpec;
+
+            if (PushToLocalStorage)
+            {
+                string filename = Path.GetFileName(path);
+                switch (itemType)
+                {
+                    case ItemType.AssetManifest:
+                        Directory.CreateDirectory(AssetManifestsLocalStorageDir);
+                        File.Copy(path, Path.Combine(AssetManifestsLocalStorageDir, filename), true);
+                        break;
+
+                    case ItemType.PackageArtifact:
+                        if (string.Equals(item.GetMetadata("IsShipping"), "true", StringComparison.OrdinalIgnoreCase))
+                        {
+                            Directory.CreateDirectory(ShippingPackagesLocalStorageDir);
+                            File.Copy(path, Path.Combine(ShippingPackagesLocalStorageDir, filename), true);
+                        }
+                        else
+                        {
+                            Directory.CreateDirectory(NonShippingPackagesLocalStorageDir);
+                            File.Copy(path, Path.Combine(NonShippingPackagesLocalStorageDir, filename), true);
+                        }
+                        break;
+
+                    case ItemType.BlobArtifact:
+                        string relativeBlobPath = item.GetMetadata("RelativeBlobPath");
+                        string destinationPath = Path.Combine(
+                                                    AssetsLocalStorageDir,
+                                                    string.IsNullOrEmpty(relativeBlobPath) ? filename : relativeBlobPath);
+
+                        Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
+                        File.Copy(path, destinationPath, true);
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(itemType));
+                }
+            }
+            else
+            {
+                // Push to AzDO artifacts storage
+
+                switch (itemType)
+                {
+                    case ItemType.AssetManifest:
+                        Log.LogMessage(MessageImportance.High,
+                            $"##vso[artifact.upload containerfolder=AssetManifests;artifactname=AssetManifests]{path}");
+                        break;
+
+                    case ItemType.PackageArtifact:
+                        Log.LogMessage(MessageImportance.High,
+                            $"##vso[artifact.upload containerfolder=PackageArtifacts;artifactname=PackageArtifacts]{path}");
+                        break;
+
+                    case ItemType.BlobArtifact:
+                        Log.LogMessage(MessageImportance.High,
+                            $"##vso[artifact.upload containerfolder=BlobArtifacts;artifactname=BlobArtifacts]{path}");
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(itemType));
+                }
+            }
         }
     }
 }

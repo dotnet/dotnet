@@ -15,7 +15,6 @@
     DotNetBuildOrchestrator         Build the entire .NET stack.
     DotNetBuildSourceOnly           Build the repo as part of the entire .NET stack with no external dependencies.
     DotNetBuildFromSource           Building the entire stack from source with no external dependencies.
-    DotNetOutputBlobFeedDir         Directory to publish Source Build assets to (packages, symbol packages, installers, etc.).
     DotNetPublishUsingPipelines     Publish assets to Build Asset Registry.
     DotNetSymbolServerTokenMsdl     Personal access token for MSDL symbol server. Available from variable group DotNet-Symbol-Server-Pats.	
     DotNetSymbolServerTokenSymWeb   Personal access token for SymWeb symbol server. Available from variable group DotNet-Symbol-Server-Pats.	
@@ -77,11 +76,6 @@
   <ItemGroup Condition="'@(ProjectToBuild)' == ''">
     <ProjectToBuild Include="$(RepoRoot)*.sln" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <_DotNetOutputBlobFeedDir>$(DotNetOutputBlobFeedDir)</_DotNetOutputBlobFeedDir>
-    <_DotNetOutputBlobFeedDir Condition="'$(_DotNetOutputBlobFeedDir)' != '' and !HasTrailingSlash('$(_DotNetOutputBlobFeedDir)')">$(_DotNetOutputBlobFeedDir)\</_DotNetOutputBlobFeedDir>
-  </PropertyGroup>
 
   <Target Name="Execute">
     <Error Text="No projects were found to build. Either the 'Projects' property or 'ProjectToBuild' item group must be specified." Condition="'@(ProjectToBuild)' == ''"/>
@@ -166,7 +160,6 @@
 
     <ItemGroup>
       <_PublishProps Include="@(_CommonProps)"/>
-      <_PublishProps Include="DotNetOutputBlobFeedDir=$(_DotNetOutputBlobFeedDir)" Condition="'$(_DotNetOutputBlobFeedDir)' != ''" />
 
       <!-- Used in a few places in the stack to decide if publishing was enabled or not. -->
       <_PublishProps Include="Publish=$(Publish)"/>
@@ -307,18 +300,27 @@
     <!--
       Publish artifacts. This should run in the following situations:
       - Regular single repo builds
-      - When running a the outer build phase of a source-only repo build, to properly publish the source-build intermediate nupkg.
+        - When running in the outer build phase of a source-only repo build, to properly publish the source-build intermediate nupkg.
+      - VMR builds
+        - When running in the inner build phase
 
       It shouldn't run:
-      - In any inner build
+      - In an inner build if running from single repo build.
       - In an outer build if running from the full product build.
     -->
+
+    <PropertyGroup>
+      <_VmrBuild Condition="'$(DotNetBuildFromSourceFlavor)' == 'Product' or '$(DotNetBuildOrchestrator)' == 'true'">true</_VmrBuild>
+      <_InnerRepoBuild Condition="'$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildPhase)' == 'InnerRepo'">true</_InnerRepoBuild>
+      <_ShouldRunPublish Condition="'$(_InnerRepoBuild)' == 'true' and '$(_VmrBuild)' == 'true'">true</_ShouldRunPublish>
+      <_ShouldRunPublish Condition="'$(_InnerRepoBuild)' != 'true' and '$(_VmrBuild)' != 'true'">true</_ShouldRunPublish>
+    </PropertyGroup>
+
+      <!-- Make sure we always publish in VMR build - working around runtime repo which sets Publish to false. -->
     <MSBuild Projects="Publish.proj"
              Properties="@(_PublishProps);_NETCORE_ENGINEERING_TELEMETRY=Publish"
              Targets="Publish"
-             Condition="'$(Publish)' == 'true' and
-                        ('$(ArcadeInnerBuildFromSource)' != 'true' and  '$(DotNetBuildFromSourceFlavor)' != 'Product') and 
-                        ('$(DotNetBuildPhase)' != 'Inner' and '$(DotNetBuildOrchestrator)' != 'true')"/>
+             Condition="'$(Publish)' == 'true' and '$(_ShouldRunPublish)' == 'true'"/>
   </Target>
 
 </Project>
