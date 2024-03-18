@@ -39,7 +39,7 @@ variables:
   value: Mariner-2-Docker-ARM64
 
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
-  - name: poolName
+  - name: defaultPoolName
     value: NetCore-Public-XL
   - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Public
@@ -49,10 +49,10 @@ variables:
     value: windows.vs2022.amd64.open
 - ${{ else }}:
   - ${{ if in(variables['Build.Reason'], 'PullRequest') }}:
-    - name: poolName
+    - name: defaultPoolName
       value: NetCore1ESPool-Internal-XL
   - ${{ else }}:
-    - name: poolName
+    - name: defaultPoolName
       value: $(DncEngInternalBuildPool)
   - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Internal

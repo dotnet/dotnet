@@ -32,14 +32,14 @@ parameters:
 - name: pool_Linux
   type: object
   default:
-    name: $(poolName)
+    name: $(defaultPoolName)
     image: $(poolImage_Linux)
     os: linux
 
 - name: pool_Windows
   type: object
   default:
-    name: $(poolName)
+    name: $(defaultPoolName)
     image: $(poolImage_Windows)
     os: windows
 
