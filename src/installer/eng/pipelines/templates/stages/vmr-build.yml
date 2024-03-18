@@ -56,7 +56,7 @@ parameters:
   default:
     name: Azure Pipelines
     image: $(defaultPoolNameMac)
-    os: macOS
+    os: macOs
 
 #### SOURCE-ONLY BUILD ####
 stages:
