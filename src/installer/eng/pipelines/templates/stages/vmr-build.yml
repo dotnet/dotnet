@@ -41,7 +41,7 @@ parameters:
   default:
     name: $(defaultPoolName)
     image: 1es-windows-2022
-    os: linux
+    os: windows
 
 - name: defaultPool_LinuxArm64
   type: object
