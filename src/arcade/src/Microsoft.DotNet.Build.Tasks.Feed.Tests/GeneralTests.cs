@@ -13,7 +13,6 @@ using Microsoft.DotNet.Build.Tasks.Feed.Model;
 using Microsoft.DotNet.Build.Tasks.Feed.Tests.TestDoubles;
 using Xunit;
 using static Microsoft.DotNet.Build.Tasks.Feed.GeneralUtils;
-using static Microsoft.DotNet.Build.CloudTestTasks.AzureStorageUtils;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 {
@@ -124,7 +123,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             var httpClient = FakeHttpClient.WithResponses(response);
 
-            var result = await CompareLocalPackageToFeedPackage(
+            var result = await GeneralUtils.CompareLocalPackageToFeedPackage(
                 localPackagePath,
                 packageContentUrl,
                 httpClient,
@@ -165,7 +164,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             var httpClient = FakeHttpClient.WithResponses(responses);
 
-            await CompareLocalPackageToFeedPackage(
+            await GeneralUtils.CompareLocalPackageToFeedPackage(
                 localPackagePath,
                 packageContentUrl,
                 httpClient,
