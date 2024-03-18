@@ -129,18 +129,18 @@
       <Uri>https://github.com/dotnet/test-templates</Uri>
       <Sha>becc4bd157cd6608b51a5ffe414a5d2de6330272</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.24162.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.8.0" Version="1.1.0-rc.24168.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>785fafc79e66b509ccc116867b84c21e494930b8</Sha>
+      <Sha>492de6f8db8c7f537119e4169bc2a4453eda6ccd</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rc.24162.1">
+    <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.9.0" Version="1.1.0-rc.24168.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>785fafc79e66b509ccc116867b84c21e494930b8</Sha>
+      <Sha>492de6f8db8c7f537119e4169bc2a4453eda6ccd</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.test-templates" Version="1.1.0-rc.24162.1">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.test-templates" Version="1.1.0-rc.24168.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
-      <Sha>785fafc79e66b509ccc116867b84c21e494930b8</Sha>
+      <Sha>492de6f8db8c7f537119e4169bc2a4453eda6ccd</Sha>
       <SourceBuild RepoName="test-templates" ManagedOnly="true" />
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
@@ -299,14 +299,14 @@
          aren't shipping, or those extensions packages depend on aspnetcore packages that won't ship. However, given the cost
          of maintaining this coherency path is high. This being toolset means that aspire is responsible for its own coherency.
     -->
-    <Dependency Name="Microsoft.NET.Sdk.Aspire.Manifest-9.0.100-preview.1" Version="9.0.0-preview.1.24160.10">
+    <Dependency Name="Microsoft.NET.Sdk.Aspire.Manifest-9.0.100-preview.1" Version="9.0.0-preview.2.24163.9">
       <Uri>https://github.com/dotnet/aspire</Uri>
-      <Sha>11947620e257657946e4232085d8db8e2aa4a36e</Sha>
+      <Sha>9faf59f870abdeb427c51c1380fce84d8163f2f0</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.aspire" Version="9.0.0-preview.1.24160.10">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.aspire" Version="9.0.0-preview.2.24163.9">
       <Uri>https://github.com/dotnet/aspire</Uri>
-      <Sha>11947620e257657946e4232085d8db8e2aa4a36e</Sha>
+      <Sha>9faf59f870abdeb427c51c1380fce84d8163f2f0</Sha>
       <SourceBuild RepoName="aspire" ManagedOnly="true" />
     </Dependency>
   </ToolsetDependencies>

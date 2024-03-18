@@ -38,6 +38,10 @@ variables:
     value: ''
   - name: _Sign
     value: false
+  - name: HelixApiAccessToken
+    value: ''
+  - name: _InternalBuildArgs
+    value: ''
 
 resources:
   containers:
