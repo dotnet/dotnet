@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) .NET Foundation and contributors. All rights reserved. Licensed under the MIT license. See License.txt in the project root for full license information. -->
 <Project>
-  <PropertyGroup>
-    <PublishingVersion>3</PublishingVersion>
-  </PropertyGroup>
 
   <PropertyGroup>
     <Product>Sdk</Product>
@@ -135,33 +130,7 @@
       <IsStableBuild Condition="'$(DotNetFinalVersionKind)' == 'release'">true</IsStableBuild>
     </PropertyGroup>
 
-    <!--
-      Delete PushToAzureDevOpsArtifacts task and remove condition from PushToBuildStorage task
-      after this repo picks up arcade with the following change: https://github.com/dotnet/arcade/pull/14559
-    -->
-    <PushToAzureDevOpsArtifacts
-      Condition="'$(DotNetBuildOrchestrator)' != 'true'"
-      AzureDevOpsCollectionUri="$(SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)"
-      AzureDevOpsProject="$(SYSTEM_TEAMPROJECT)"
-      AzureDevOpsBuildId="$(BUILD_BUILDID)"
-      ItemsToPush="@(SdkAssetsToPushToBlobFeed);@(ChecksumsToPushToBlobFeed)"
-      ItemsToSign="@(ItemsToSignPostBuild)"
-      CertificatesSignInfo="@(CertificatesSignInfo)"
-      StrongNameSignInfo="@(StrongNameSignInfo)"
-      FileSignInfo="@(FileSignInfo)"
-      FileExtensionSignInfo="@(FileExtensionSignInfo)"
-      ManifestBuildData="@(ManifestBuildData)"
-      ManifestRepoName="$(BUILD_REPOSITORY_NAME)"
-      ManifestBranch="$(BUILD_SOURCEBRANCH)"
-      ManifestBuildId="$(BUILD_BUILDNUMBER)"
-      ManifestCommit="$(BUILD_SOURCEVERSION)"
-      AssetManifestPath="$(InstallersAssetManifestFilePath)"
-      PublishFlatContainer="true"
-      IsStableBuild="$(IsStableBuild)"
-      PublishingVersion="3" />
-
     <PushToBuildStorage
-      Condition="'$(DotNetBuildOrchestrator)' == 'true'"
       AzureDevOpsCollectionUri="$(SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)"
       AzureDevOpsProject="$(SYSTEM_TEAMPROJECT)"
       AzureDevOpsBuildId="$(BUILD_BUILDID)"
@@ -186,4 +155,5 @@
       NonShippingPackagesLocalStorageDir="$(SourceBuiltNonShippingPackagesDir)"
       AssetManifestsLocalStorageDir="$(SourceBuiltAssetManifestsDir)" />
   </Target>
+
 </Project>
