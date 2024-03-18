@@ -48,8 +48,8 @@ parameters:
   default:
     name: $(poolName_LinuxArm64)
     image: $(poolImage_LinuxArm64)
-    os: linux
     hostArchitecture: Arm64
+    os: linux
 
 - name: pool_Mac
   type: object
