@@ -46,6 +46,7 @@ parameters:
 - name: defaultPool_LinuxArm64
   type: object
   default:
+    name: $(defaultPoolNameLinuxArm64)
     image: Mariner-2-Docker-ARM64
     os: linux
     hostArchitecture: Arm64
@@ -336,9 +337,7 @@ stages:
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
-        pool:
-          name: ${{ variables.defaultPoolName }}
-          demands: ${{ variables.defaultPoolDemandsWindows }}
+        pool: ${{ parameters.defaultPool_Windows }}
         targetOS: windows
         targetArchitecture: x64
 
