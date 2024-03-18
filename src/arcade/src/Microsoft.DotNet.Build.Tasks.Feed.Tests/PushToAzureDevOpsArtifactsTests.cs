@@ -12,6 +12,7 @@ using Microsoft.DotNet.VersionTools.BuildManifest.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
+using NuGet.Packaging.Core;
 using NuGet.Versioning;
 using System.Collections.Generic;
 using System.IO;
@@ -20,7 +21,7 @@ using Xunit;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 {
-    public class PushToBuildStorageTests
+    public class PushToAzureDevOpsArtifactsTests
     {
         private static string TARGET_MANIFEST_PATH = Path.Combine("C:", "manifests", "TestManifest.xml");
         private static string PACKAGE_A = Path.Combine("C:", "packages", "test-package-a.6.0.492.nupkg");
@@ -51,9 +52,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             }),
         };
 
-        private PushToBuildStorage ConstructPushToBuildStorageTask(bool setAdditionalData = true)
+        private PushToAzureDevOpsArtifacts ConstructPushToAzureDevOpsArtifactsTask(bool setAdditionalData = true)
         {
-            var task = new PushToBuildStorage
+            var task = new PushToAzureDevOpsArtifacts
             {
                 BuildEngine = new MockBuildEngine(),
                 AssetManifestPath = TARGET_MANIFEST_PATH,                
@@ -199,7 +200,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         public void HasRecordedPublishingVersion()
         {
             var expectedManifestContent = BuildExpectedManifestContent();
-            var task = ConstructPushToBuildStorageTask(setAdditionalData: false);
+            var task = ConstructPushToAzureDevOpsArtifactsTask(setAdditionalData: false);
             task.ItemsToPush = new TaskItem[0];
             task.IsStableBuild = false;
 
@@ -229,7 +230,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             var publishingInfraVersion = "456";
             var expectedManifestContent = BuildExpectedManifestContent(
                 publishingInfraVersion: publishingInfraVersion);
-            var task = ConstructPushToBuildStorageTask(setAdditionalData: false);
+            var task = ConstructPushToAzureDevOpsArtifactsTask(setAdditionalData: false);
             task.ItemsToPush = new TaskItem[0];
             task.IsStableBuild = false;
             task.PublishingVersion = publishingInfraVersion;
@@ -264,7 +265,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 isStable: true,
                 includePackages: true);
 
-            PushToBuildStorage task = ConstructPushToBuildStorageTask();
+            PushToAzureDevOpsArtifacts task = ConstructPushToAzureDevOpsArtifactsTask();
 
             // Mocks
             Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
@@ -278,11 +279,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             IList<string> actualNupkgInfoPath = new List<string>();
             nupkgInfoFactoryMock.Setup(m => m.CreateNupkgInfo(PACKAGE_A)).Returns(new NupkgInfo(new PackageIdentity(
                 id: Path.GetFileNameWithoutExtension(PACKAGE_A),
-                version: NUPKG_VERSION
+                version: new NuGetVersion(NUPKG_VERSION)
             )));
             nupkgInfoFactoryMock.Setup(m => m.CreateNupkgInfo(PACKAGE_B)).Returns(new NupkgInfo(new PackageIdentity(
                 id: Path.GetFileNameWithoutExtension(PACKAGE_B),
-                version: NUPKG_VERSION
+                version: new NuGetVersion(NUPKG_VERSION)
             )));
 
             // Dependency Injection setup
@@ -305,7 +306,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         [Fact]
         public void PublishFlatContainerManifest()
         {
-            PushToBuildStorage task = ConstructPushToBuildStorageTask();
+            PushToAzureDevOpsArtifacts task = ConstructPushToAzureDevOpsArtifactsTask();
             task.PublishFlatContainer = true;
 
             string expectedManifestContent = BuildExpectedManifestContent(
@@ -327,11 +328,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             IList<string> actualNupkgInfoPath = new List<string>();
             nupkgInfoFactoryMock.Setup(m => m.CreateNupkgInfo(PACKAGE_A)).Returns(new NupkgInfo(new PackageIdentity(
                 id: Path.GetFileNameWithoutExtension(PACKAGE_A),
-                version: NUPKG_VERSION
+                version: new NuGetVersion(NUPKG_VERSION)
             )));
             nupkgInfoFactoryMock.Setup(m => m.CreateNupkgInfo(PACKAGE_B)).Returns(new NupkgInfo(new PackageIdentity(
                 id: Path.GetFileNameWithoutExtension(PACKAGE_B),
-                version: NUPKG_VERSION
+                version: new NuGetVersion(NUPKG_VERSION)
             )));
 
             // Dependency Injection setup
@@ -354,7 +355,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         [Fact]
         public void IsNotStableBuildPath()
         {
-            PushToBuildStorage task = ConstructPushToBuildStorageTask();
+            PushToAzureDevOpsArtifacts task = ConstructPushToAzureDevOpsArtifactsTask();
             task.IsStableBuild = false;
 
             string expectedManifestContent = BuildExpectedManifestContent(
@@ -374,11 +375,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             Mock<INupkgInfoFactory> nupkgInfoFactoryMock = new Mock<INupkgInfoFactory>();
             nupkgInfoFactoryMock.Setup(m => m.CreateNupkgInfo(PACKAGE_A)).Returns(new NupkgInfo(new PackageIdentity(
                 id: Path.GetFileNameWithoutExtension(PACKAGE_A),
-                version: NUPKG_VERSION
+                version: new NuGetVersion(NUPKG_VERSION)
             )));
             nupkgInfoFactoryMock.Setup(m => m.CreateNupkgInfo(PACKAGE_B)).Returns(new NupkgInfo(new PackageIdentity(
                 id: Path.GetFileNameWithoutExtension(PACKAGE_B),
-                version: NUPKG_VERSION
+                version: new NuGetVersion(NUPKG_VERSION)
             )));
 
             // Dependency Injection setup
@@ -401,7 +402,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         [Fact]
         public void IsReleaseOnlyPackageVersionPath()
         {
-            PushToBuildStorage task = ConstructPushToBuildStorageTask();
+            PushToAzureDevOpsArtifacts task = ConstructPushToAzureDevOpsArtifactsTask();
             task.IsReleaseOnlyPackageVersion = true;
 
             string expectedManifestContent = BuildExpectedManifestContent(
@@ -424,11 +425,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             IList<string> actualNupkgInfoPath = new List<string>();
             nupkgInfoFactoryMock.Setup(m => m.CreateNupkgInfo(PACKAGE_A)).Returns(new NupkgInfo(new PackageIdentity(
                 id: Path.GetFileNameWithoutExtension(PACKAGE_A),
-                version: NUPKG_VERSION
+                version: new NuGetVersion(NUPKG_VERSION)
             )));
             nupkgInfoFactoryMock.Setup(m => m.CreateNupkgInfo(PACKAGE_B)).Returns(new NupkgInfo(new PackageIdentity(
                 id: Path.GetFileNameWithoutExtension(PACKAGE_B),
-                version: NUPKG_VERSION
+                version: new NuGetVersion(NUPKG_VERSION)
             )));
 
             // Dependency Injection setup
@@ -452,7 +453,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         [Fact]
         public void SigningInfoInManifest()
         {
-            PushToBuildStorage task = ConstructPushToBuildStorageTask();
+            PushToAzureDevOpsArtifacts task = ConstructPushToAzureDevOpsArtifactsTask();
             task.FileExtensionSignInfo = new ITaskItem[]
             {
                 new TaskItem(".dll", new Dictionary<string, string>
@@ -528,11 +529,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             IList<string> actualNupkgInfoPath = new List<string>();
             nupkgInfoFactoryMock.Setup(m => m.CreateNupkgInfo(PACKAGE_A)).Returns(new NupkgInfo(new PackageIdentity(
                 id: "test-package-a",
-                version: NUPKG_VERSION
+                version: new NuGetVersion(NUPKG_VERSION)
             )));
             nupkgInfoFactoryMock.Setup(m => m.CreateNupkgInfo(PACKAGE_B)).Returns(new NupkgInfo(new PackageIdentity(
                 id: "test-package-b",
-                version: NUPKG_VERSION
+                version: new NuGetVersion(NUPKG_VERSION)
             )));
 
             // Dependency Injection setup
@@ -556,7 +557,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         [Fact]
         public void AreDependenciesRegistered()
         {
-            PushToBuildStorage task = new PushToBuildStorage();
+            PushToAzureDevOpsArtifacts task = new PushToAzureDevOpsArtifacts();
 
             var collection = new ServiceCollection();
             task.ConfigureServices(collection);
