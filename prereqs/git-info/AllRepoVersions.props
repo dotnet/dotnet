@@ -3,8 +3,8 @@
   <PropertyGroup>
     <arcadeGitCommitHash>ace00d8719b8d1fdfd0cc05f71bb9af216338d27</arcadeGitCommitHash>
     <arcadeOutputPackageVersion>9.0.0-beta.24165.6</arcadeOutputPackageVersion>
-    <aspireGitCommitHash>11947620e257657946e4232085d8db8e2aa4a36e</aspireGitCommitHash>
-    <aspireOutputPackageVersion>9.0.0-preview.1.24160.10</aspireOutputPackageVersion>
+    <aspireGitCommitHash>9faf59f870abdeb427c51c1380fce84d8163f2f0</aspireGitCommitHash>
+    <aspireOutputPackageVersion>9.0.0-preview.2.24163.9</aspireOutputPackageVersion>
     <aspnetcoreGitCommitHash>268a2dfc29b33e3fdb73cbac6eb198c05314d77e</aspnetcoreGitCommitHash>
     <aspnetcoreOutputPackageVersion>9.0.0-preview.3.24163.1</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>ba53c75483aa4980a332fa48e61076f80adfec40</cecilGitCommitHash>
@@ -21,7 +21,7 @@
     <formatOutputPackageVersion>9.0.515801</formatOutputPackageVersion>
     <fsharpGitCommitHash>2c03643199368f07a3326709fc68abcbfc482a06</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.300-beta.24163.4</fsharpOutputPackageVersion>
-    <installerGitCommitHash>f7cf9370bb1d21ab53091ee9d089c717466a0516</installerGitCommitHash>
+    <installerGitCommitHash>63e7077f5d973c749ca06ca55a6739c68ccb2bff</installerGitCommitHash>
     <installerOutputPackageVersion>9.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>0764e8979bd4e98c85d0ef9ef8220a8b52bfe4b3</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.10.0-preview-24164-03</msbuildOutputPackageVersion>
@@ -49,8 +49,8 @@
     <symreaderOutputPackageVersion>2.1.0-beta.24105.1</symreaderOutputPackageVersion>
     <templatingGitCommitHash>c7b55045487ae6fb59938b68beb75e75f0c6cb52</templatingGitCommitHash>
     <templatingOutputPackageVersion>9.0.100-preview.3.24164.1</templatingOutputPackageVersion>
-    <testtemplatesGitCommitHash>785fafc79e66b509ccc116867b84c21e494930b8</testtemplatesGitCommitHash>
-    <testtemplatesOutputPackageVersion>1.1.0-rc.24162.1</testtemplatesOutputPackageVersion>
+    <testtemplatesGitCommitHash>492de6f8db8c7f537119e4169bc2a4453eda6ccd</testtemplatesGitCommitHash>
+    <testtemplatesOutputPackageVersion>1.1.0-rc.24168.1</testtemplatesOutputPackageVersion>
     <vstestGitCommitHash>c609e2c022b0087b227436a4debf45525eed00e9</vstestGitCommitHash>
     <vstestOutputPackageVersion>17.10.0-preview-24163-01</vstestOutputPackageVersion>
     <windowsdesktopGitCommitHash>ce44ae8e4ccfe04ff6d6447370c6038732d11439</windowsdesktopGitCommitHash>
