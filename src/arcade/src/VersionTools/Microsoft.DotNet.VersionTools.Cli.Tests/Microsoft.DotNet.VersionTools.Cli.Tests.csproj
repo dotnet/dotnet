@@ -10,12 +10,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\lib\Microsoft.DotNet.VersionTools.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="BuildManifest\VersionIdentifierTestsAssets.csv"
-          CopyToOutputDirectory="Always" />
+    <ProjectReference Include="..\Microsoft.DotNet.VersionTools\Microsoft.DotNet.VersionTools.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.VersionTools.Cli\Microsoft.DotNet.VersionTools.Cli.csproj" />
   </ItemGroup>
 
 </Project>
+

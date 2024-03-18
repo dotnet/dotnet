@@ -1,5 +1,5 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
-<Project DefaultTargets="AfterSourceBuild">
+<Project DefaultTargets="AfterSourceBuildInnerBuild;AfterSourceBuild">
 
   <Import Project="..\BuildStep.props" />
 
@@ -11,22 +11,23 @@
 
   <Import Project="$(MicrosoftDotNetSourceBuildTasksBuildDir)Microsoft.DotNet.SourceBuild.Tasks.props" />
 
+  <Target Name="AfterSourceBuildInnerBuild"
+          Condition="('$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildInnerRepo)' == 'true') and
+                     '$(DotNetBuildOrchestrator)' == 'true'"
+          DependsOnTargets="CreateRepoSymbolsArchive;ClearPreviousSBRP" />
+
+  <Target Name="ClearPreviousSBRP"
+          Condition="'$(GitHubRepositoryName)' == 'source-build-reference-packages'">
+    <!-- Building SBRP: At this point the References directory contains the previously-source-built SBRPs,
+         clear it before publishing current SBRPs.  This ensures n-1 SBRPs aren't required to build the product repos. -->
+    <RemoveDir Directories="$(ReferencePackageNupkgCacheDir)" />
+  </Target>
+
   <Target Name="AfterSourceBuild"
           Condition="'$(ArcadeInnerBuildFromSource)' != 'true' and '$(DotNetBuildInnerRepo)' != 'true'"
           DependsOnTargets="
             ReportPrebuiltUsage;
-            PackSourceBuildIntermediateNupkgs;
-            GetProductSourceBuildManifest" />
-
-  <!--
-    Repo build creates the manifest in SourceBuildIntermediate.proj,
-    however AfterSourceBuild runs in both repo and product builds.
-
-    AfterSourceBuild should only create the manifest in product build.
-  -->
-  <Target Name="GetProductSourceBuildManifest"
-          Condition="'$(DotNetBuildFromSourceFlavor)' == 'Product' or '$(DotNetBuildOrchestrator)' == 'true'"
-          DependsOnTargets="CreateRepoManifest" />
+            PackSourceBuildIntermediateNupkgs" />
 
   <Target Name="WritePrebuiltUsageData">
     <ItemGroup>

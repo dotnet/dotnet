@@ -3,23 +3,4 @@
 
   <Import Project="SourceBuildArcade.targets" />
 
-  <!--
-    If an inner source-build attempts to publish its packages, they could find their way onto a dev
-    feed and be used unintentionally by downstream repos and devs, or the duplicate packages could
-    break the build in a confusing way. This target should detect this and break the build in a
-    clear way, instead.
-
-    If this happens, it's likely caused by incompatible build scripts vs. the source-build job
-    template. Publish may need to be disabled in eng/DotNetBuild.props.
-  -->
-  <Target Name="EnsureSourceBuildInnerBuildDoesNotPublish"
-          Condition="'$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildInnerRepo)' == 'true'"
-          BeforeTargets="
-            Publish;
-            PublishSymbols;
-            PublishToSourceBuildStorage;
-            PublishToAzureDevOpsArtifacts">
-    <Error Text="Detected unexpected attempt by inner source-build to publish artifacts." />
-  </Target>
-
 </Project>

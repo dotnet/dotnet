@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Microsoft.Arcade.Common\Microsoft.Arcade.Common.csproj" />
-    <ProjectReference Include="..\lib\Microsoft.DotNet.VersionTools.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.VersionTools\Microsoft.DotNet.VersionTools.csproj" />
   </ItemGroup>
 
 </Project>

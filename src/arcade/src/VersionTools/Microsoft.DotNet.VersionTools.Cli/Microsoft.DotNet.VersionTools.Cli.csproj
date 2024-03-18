@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\Microsoft.DotNet.VersionTools.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.VersionTools\Microsoft.DotNet.VersionTools.csproj" />
   </ItemGroup>
 
   <ItemGroup>

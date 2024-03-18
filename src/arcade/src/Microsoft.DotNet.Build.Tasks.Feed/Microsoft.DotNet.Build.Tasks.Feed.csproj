@@ -7,16 +7,19 @@
     <DevelopmentDependency>true</DevelopmentDependency>
     <IsBuildTaskProject>true</IsBuildTaskProject>
     <PackageType>MSBuildSdk</PackageType>
-    <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <DefineConstants>$(DefineConstants);DOTNET_BUILD_SOURCE_ONLY</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Core" />
-    <PackageReference Include="Azure.Storage.Blobs" />
+    <PackageReference Include="Azure.Core" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+    <PackageReference Include="Azure.Storage.Blobs" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" />
 
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-    <PackageReference Include="Microsoft.SymbolUploader" />
+    <PackageReference Include="Microsoft.SymbolUploader" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
 
   <!-- Upgrade SymbolUploader's transitive NETStandard.Library dependency to avoid .NET Standard 1.x dependencies. -->
@@ -25,10 +28,11 @@
                       IsImplicitlyDefined="false"
                       PrivateAssets="all"
                       ExcludeAssets="runtime"
-                      VersionOverride="2.0.3" />
+                      VersionOverride="2.0.3"
+                      Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and '$(DotNetBuildSourceOnly)' != 'true'">
     <!-- Maestro.Client stopped supporting .NET 4.7.2 long ago.
          This functionality should eventually be moved into an arcade-services package,
          but for users consuming other functionality we'll still support 4.7.2 by ifdefing it out. -->
@@ -41,12 +45,43 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Microsoft.Arcade.Common\Microsoft.Arcade.Common.csproj" />
-    <ProjectReference Include="..\Microsoft.DotNet.Deployment.Tasks.Links\Microsoft.DotNet.Deployment.Tasks.Links.csproj" />
-    <ProjectReference Include="..\Microsoft.DotNet.VersionTools\lib\Microsoft.DotNet.VersionTools.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.Deployment.Tasks.Links\Microsoft.DotNet.Deployment.Tasks.Links.csproj" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+    <ProjectReference Include="..\VersionTools\Microsoft.DotNet.VersionTools\Microsoft.DotNet.VersionTools.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\Common\Internal\EnumExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <Compile Remove="src\AssetPublisherFactory.cs" />
+    <Compile Remove="src\AzureDevOpsArtifactFeed.cs" />
+    <Compile Remove="src\AzureDevOpsFeedPermission.cs" />
+    <Compile Remove="src\AzureDevOpsNugetFeedAssetPublisher.cs" />
+    <Compile Remove="src\AzureStorageAssetPublisher.cs" />
+    <Compile Remove="src\AzureStorageContainerAssetPublisher.cs" />
+    <Compile Remove="src\AzureStorageExtensions.cs" />
+    <Compile Remove="src\BlobFeedAction.cs" />
+    <Compile Remove="src\common\AssetComparer.cs" />
+    <Compile Remove="src\common\AzureConnectionStringBuildTask.cs" />
+    <Compile Remove="src\common\AzureStorageUtils.cs" />
+    <Compile Remove="src\common\CreateAzureContainer.cs" />
+    <Compile Remove="src\common\CreateAzureContainerIfNotExists.cs" />
+    <Compile Remove="src\common\CreateNewAzureContainer.cs" />
+    <Compile Remove="src\common\LatestLinksManager.cs" />
+    <Compile Remove="src\common\UploadToAzure.cs" />
+    <Compile Remove="src\model\PublishingConstants.cs" />
+    <Compile Remove="src\model\SetupTargetFeedConfigBase.cs" />
+    <Compile Remove="src\model\SetupTargetFeedConfigV3.cs" />
+    <Compile Remove="src\model\TargetChannelConfig.cs" />
+    <Compile Remove="src\model\TargetFeedConfig.cs" />
+    <Compile Remove="src\PublishArtifactsInManifest.cs" />
+    <Compile Remove="src\PublishArtifactsInManifestBase.cs" />
+    <Compile Remove="src\PublishArtifactsInManifestV3.cs" />
+    <Compile Remove="src\PublishSignedAssets.cs" />
+    <Compile Remove="src\PublishSymbolsHelper.cs" />
+    <Compile Remove="src\IAssetPublisher.cs" />
+    <Compile Remove="src\CreateAzureDevOpsFeed.cs" />
   </ItemGroup>
 
 </Project>
