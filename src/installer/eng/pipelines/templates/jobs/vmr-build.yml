@@ -101,7 +101,6 @@ jobs:
     condition: succeededOrFailed()
     dependsOn: ${{ parameters.reuseBuildArtifactsFrom }}_${{ parameters.architecture }}
   variables:
-  - template: /eng/common/templates-official/variables/pool-providers.yml@self
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
   - ${{ if and(not(parameters.isBuiltFromVmr), eq(variables['System.TeamProject'], 'internal'), not(startswith(parameters.vmrBranch, 'internal/release/')), not(eq(variables['Build.Reason'], 'PullRequest'))) }}:

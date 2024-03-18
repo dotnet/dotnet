@@ -28,6 +28,8 @@ parameters:
   default: false
 
 variables:
+- template: /eng/common/templates/variables/pool-providers.yml@self
+
 - ${{ if ne(parameters.vmrBranch, ' ') }}:
   - name: VmrBranch
     value: ${{ replace(parameters.vmrBranch, ' ', '') }}

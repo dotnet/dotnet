@@ -2,8 +2,6 @@ stages:
 - stage: Tag_n_Scan
   displayName: Tag & Scan
   dependsOn: []
-  variables:
-  - template: /eng/common/templates/variables/pool-providers.yml
   jobs:
   - job: Tag_n_Scan
     displayName: Tag & Scan
