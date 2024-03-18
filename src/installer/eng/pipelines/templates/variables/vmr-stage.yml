@@ -58,5 +58,5 @@ variables:
     value: Docker-Linux-Arm-Internal
   - name: poolName_Mac
     value: macos-13-arm64
-  - name: poolDemandsWindows
+  - name: poolDemands_Windows
     value: ImageOverride -equals windows.vs2022.amd64
