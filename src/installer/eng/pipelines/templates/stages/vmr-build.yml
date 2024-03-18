@@ -33,21 +33,20 @@ parameters:
   type: object
   default:
     name: $(defaultPoolName)
-    image: 1es-ubuntu-2004
+    image: $(defaultPoolImageLinux)
     os: linux
 
 - name: defaultPool_Windows
   type: object
   default:
     name: $(defaultPoolName)
-    image: 1es-windows-2022
-    os: windows
+    demands: $(defaultPoolDemandsWindows)
 
 - name: defaultPool_LinuxArm64
   type: object
   default:
     name: $(defaultPoolNameLinuxArm64)
-    image: Mariner-2-Docker-ARM64
+    image: $(defaultPoolImageLinuxArm64)
     os: linux
     hostArchitecture: Arm64
 
