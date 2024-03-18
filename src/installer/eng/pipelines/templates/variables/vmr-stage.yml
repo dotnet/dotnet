@@ -34,7 +34,7 @@ variables:
   value: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-webassembly
 
 - name: poolImage_Linux
-  value: 1es-ubuntu-2004
+  value: 1es-ubuntu-2204
 - name: poolImage_LinuxArm64
   value: Mariner-2-Docker-ARM64
 

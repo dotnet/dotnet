@@ -40,7 +40,7 @@ parameters:
   type: object
   default:
     name: $(poolName)
-    demands: $(poolDemands_Windows)
+    image: $(poolImage_Windows)
     os: windows
 
 - name: pool_LinuxArm64
