@@ -1,5 +1,5 @@
 parameters:
-- name: vmrBranch 
+- name: vmrBranch
   type: string
 
 variables:
