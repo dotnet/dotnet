@@ -51,6 +51,13 @@ parameters:
     os: linux
     hostArchitecture: Arm64
 
+- name: defaultPool_Mac
+  type: object
+  default:
+    name: Azure Pipelines
+    image: $(defaultPoolNameMac)
+    os: macOS
+
 #### SOURCE-ONLY BUILD ####
 stages:
 - ${{ if parameters.isSourceOnlyBuild }}:
@@ -480,8 +487,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: ios
             targetArchitecture: arm64
 
@@ -491,8 +497,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: ios
             targetArchitecture: arm64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -503,8 +508,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: iossimulator
             targetArchitecture: arm64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -515,8 +519,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: iossimulator
             targetArchitecture: x64
 
@@ -526,8 +529,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: iossimulator
             targetArchitecture: x64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -538,8 +540,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: maccatalyst
             targetArchitecture: arm64
 
@@ -549,8 +550,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: maccatalyst
             targetArchitecture: arm64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -561,8 +561,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: maccatalyst
             targetArchitecture: x64
 
@@ -572,8 +571,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: maccatalyst
             targetArchitecture: x64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -584,8 +582,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: tvos
             targetArchitecture: arm64
 
@@ -595,8 +592,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: tvos
             targetArchitecture: arm64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -607,8 +603,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: tvossimulator
             targetArchitecture: arm64
 
@@ -618,8 +613,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: tvossimulator
             targetArchitecture: arm64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -630,8 +624,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: tvossimulator
             targetArchitecture: x64
 
@@ -641,8 +634,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: tvossimulator
             targetArchitecture: x64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -665,8 +657,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: osx
             targetArchitecture: x64
 
@@ -676,8 +667,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             useMonoRuntime: true
             targetOS: osx
             targetArchitecture: x64
@@ -727,8 +717,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             targetOS: osx
             targetArchitecture: arm64
 
@@ -738,8 +727,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool:
-              vmImage: ${{ variables.defaultPoolNameMac }}
+            pool: ${{ parameters.defaultPool_Mac }}
             useMonoRuntime: true
             targetOS: osx
             targetArchitecture: arm64
