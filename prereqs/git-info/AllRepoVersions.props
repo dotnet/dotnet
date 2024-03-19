@@ -21,7 +21,7 @@
     <formatOutputPackageVersion>8.0.511601</formatOutputPackageVersion>
     <fsharpGitCommitHash>fc5e9eda234e2b69aa479f4f83faddc31fdd4da7</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.102-beta.24081.2</fsharpOutputPackageVersion>
-    <installerGitCommitHash>771a489ac9dc85337862a5139623d7348e26baa6</installerGitCommitHash>
+    <installerGitCommitHash>0dd236e6fa9f86bc25faf40b08cb96358e4038f7</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>b5265ef370a651f8c3458110b804e5cbf869eeb5</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.8.5-preview-24055-02</msbuildOutputPackageVersion>
@@ -33,10 +33,10 @@
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.23525.2</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>263571123fc3dc4a638e071234ac9fbf91913962</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.8.0-7.24067.24</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>38f2042434044be9a09065b23b7ef342a313a498</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>8.0.4-servicing.24163.26</runtimeOutputPackageVersion>
-    <sdkGitCommitHash>4e79d82d46cce3daaea31b006deb3c8653b0c937</sdkGitCommitHash>
-    <sdkOutputPackageVersion>8.0.104-servicing.24165.6</sdkOutputPackageVersion>
+    <runtimeGitCommitHash>a1a9440b48374c6d400287abbb56a4ac54d9b02f</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>8.0.4-servicing.24168.10</runtimeOutputPackageVersion>
+    <sdkGitCommitHash>bc3399f3c28ee2e3983d76a2592159705dd73925</sdkGitCommitHash>
+    <sdkOutputPackageVersion>8.0.104-servicing.24168.12</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>00fb7841c80b44262646e57bcfbe90a1b7bc3151</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.24161.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>79827eed138fd2575a8b24820b4f385ee4ffb6e6</sourcebuildreferencepackagesGitCommitHash>
