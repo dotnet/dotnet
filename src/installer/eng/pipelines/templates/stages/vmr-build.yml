@@ -61,6 +61,13 @@ parameters:
     image: $(poolName_Mac)
     os: macOS
 
+- name: pool_Mac_Public
+  type: object
+  default:
+    name: Azure Pipelines
+    vmImage: $(poolName_Mac)
+    os: macOS
+
 #### SOURCE-ONLY BUILD ####
 stages:
 - ${{ if parameters.isSourceOnlyBuild }}:
@@ -380,7 +387,10 @@ stages:
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: arm64
-        pool: ${{ parameters.pool_Mac }}
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          pool: ${{ parameters.pool_Mac_Public }}
+        ${{ else }}:
+          pool: ${{ parameters.pool_Mac }}
         targetOS: iossimulator
         targetArchitecture: arm64
 
@@ -489,7 +499,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: ios
             targetArchitecture: arm64
 
@@ -499,7 +512,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: ios
             targetArchitecture: arm64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -510,7 +526,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: iossimulator
             targetArchitecture: arm64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -521,7 +540,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: iossimulator
             targetArchitecture: x64
 
@@ -531,7 +553,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: iossimulator
             targetArchitecture: x64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -542,7 +567,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: maccatalyst
             targetArchitecture: arm64
 
@@ -552,7 +580,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: maccatalyst
             targetArchitecture: arm64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -563,7 +594,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: maccatalyst
             targetArchitecture: x64
 
@@ -573,7 +607,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: maccatalyst
             targetArchitecture: x64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -584,7 +621,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: tvos
             targetArchitecture: arm64
 
@@ -594,7 +634,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: tvos
             targetArchitecture: arm64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -605,7 +648,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: tvossimulator
             targetArchitecture: arm64
 
@@ -615,7 +661,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: tvossimulator
             targetArchitecture: arm64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -626,7 +675,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: tvossimulator
             targetArchitecture: x64
 
@@ -636,7 +688,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: tvossimulator
             targetArchitecture: x64
             extraProperties: /p:DotNetBuildRuntimeNativeAOTRuntimePack=true
@@ -659,7 +714,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: osx
             targetArchitecture: x64
 
@@ -669,7 +727,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: x64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             useMonoRuntime: true
             targetOS: osx
             targetArchitecture: x64
@@ -719,7 +780,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             targetOS: osx
             targetArchitecture: arm64
 
@@ -729,7 +793,10 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
             architecture: arm64
-            pool: ${{ parameters.pool_Mac }}
+            ${{ if eq(variables['System.TeamProject'], 'public') }}:
+              pool: ${{ parameters.pool_Mac_Public }}
+            ${{ else }}:
+              pool: ${{ parameters.pool_Mac }}
             useMonoRuntime: true
             targetOS: osx
             targetArchitecture: arm64
