@@ -130,28 +130,29 @@ jobs:
   templateContext:
     outputs:
     - output: pipelineArtifact
-      displayName: 'Publish BuildLogs'
+      displayName: Publish BuildLogs
       condition: succeededOrFailed()
-      targetPath: '$(Build.StagingDirectory)/BuildLogs'
+      targetPath: $(Build.StagingDirectory)/BuildLogs
       artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
 
     - output: pipelineArtifact
-      displayName: 'Publish Artifacts'
+      displayName: Publish Artifacts
       condition: and(succeededOrFailed(), eq(variables['hasAssets'], 'true'))
-      targetPath: '$(sourcesPath)/artifacts/assets/Release/'
+      targetPath: $(sourcesPath)/artifacts/assets/Release/
       artifactName: $(Agent.JobName)_Artifacts
 
     - ${{ if ne(parameters.buildSourceOnly, 'true') }}:
       - output: pipelineArtifact
-        displayName: 'Publish Packages'
-        targetPath: '$(sourcesPath)/artifacts/packages/Release/'
+        displayName: Publish Packages
+        targetPath: $(sourcesPath)/artifacts/packages/Release/
         artifactName: $(Agent.JobName)_Packages
 
-    - output: pipelineArtifact
-      displayName: 'Upload failed patches'
-      condition: failed()
-      targetPath: $(Agent.TempDirectory)
-      artifactName: $(System.JobDisplayName)_FailedPatches
+    - ${{ if not(parameters.isBuiltFromVmr) }}:
+      - output: pipelineArtifact
+        displayName: Upload failed patches
+        condition: failed()
+        targetPath: $(Agent.TempDirectory)
+        artifactName: $(System.JobDisplayName)_FailedPatches
 
   steps:
   - ${{ if not(parameters.isBuiltFromVmr) }}:
