@@ -34,6 +34,7 @@ parameters:
   default:
     name: $(defaultPoolName)
     image: $(poolImage_Linux)
+    demands: ImageOverride -equals $(poolImage_Linux)
     os: linux
 
 - name: pool_Windows
@@ -41,6 +42,7 @@ parameters:
   default:
     name: $(defaultPoolName)
     image: $(poolImage_Windows)
+    demands: ImageOverride -equals $(poolImage_Windows)
     os: windows
 
 - name: pool_LinuxArm64
@@ -48,6 +50,7 @@ parameters:
   default:
     name: $(poolName_LinuxArm64)
     image: $(poolImage_LinuxArm64)
+    demands: ImageOverride -equals $(poolImage_Linux)
     hostArchitecture: Arm64
     os: linux
 
