@@ -189,25 +189,14 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
                     _tabOrderCommand = menuCommandService.FindCommand(StandardCommands.TabOrder);
             }
 
-            if (_tabOrderCommand is not null)
-            {
-                return _tabOrderCommand.Checked;
-            }
-
-            return false;
+            return _tabOrderCommand is not null && _tabOrderCommand.Checked;
         }
     }
 
-    /// <summary>
-    /// </summary>
     [DefaultValue(true)]
     private bool TrayAutoArrange
     {
-        get
-        {
-            return _trayAutoArrange;
-        }
-
+        get => _trayAutoArrange;
         set
         {
             _trayAutoArrange = value;
@@ -218,16 +207,10 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         }
     }
 
-    /// <summary>
-    /// </summary>
     [DefaultValue(false)]
     private bool TrayLargeIcon
     {
-        get
-        {
-            return _trayLargeIcon;
-        }
-
+        get => _trayLargeIcon;
         set
         {
             _trayLargeIcon = value;
@@ -238,23 +221,10 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
         }
     }
 
-    /// <summary>
-    /// </summary>
     [DefaultValue(80)]
     private int TrayHeight
     {
-        get
-        {
-            if (_componentTray is not null)
-            {
-                return _componentTray.Height;
-            }
-            else
-            {
-                return _trayHeight;
-            }
-        }
-
+        get => _componentTray is not null ? _componentTray.Height : _trayHeight;
         set
         {
             _trayHeight = value;
@@ -267,21 +237,13 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
 
     /// <internalonly/>
     /// <summary>
-    /// Retrieves the control view instance for the given component.
-    /// For Win32 designer, this will often be the component itself.
+    ///  Retrieves the control view instance for the given component.
+    ///  For Win32 designer, this will often be the component itself.
     /// </summary>
     Control IOleDragClient.GetControlForComponent(object component)
     {
         Control c = GetControl(component);
-        if (c is not null)
-            return c;
-
-        if (_componentTray is not null)
-        {
-            return ((IOleDragClient)_componentTray).GetControlForComponent(component);
-        }
-
-        return null;
+        return c ?? (_componentTray is not null ? ((IOleDragClient)_componentTray).GetControlForComponent(component) : null);
     }
 
     internal virtual bool CanDropComponents(DragEventArgs de)
@@ -301,8 +263,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
             IDesignerHost host = (IDesignerHost)GetService(typeof(IDesignerHost));
             for (int i = 0; i < dragComps.Length; i++)
             {
-                IComponent comp = dragComps[i] as IComponent;
-                if (host is null || dragComps[i] is null || comp is null)
+                if (host is null || dragComps[i] is null || dragComps[i] is not IComponent comp)
                 {
                     continue;
                 }
@@ -942,22 +903,18 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
 
             // This is the mirror to logic in ParentControlDesigner.  The component should be
             // added somewhere, and this logic decides where.
-            //
 
             // LETS SEE IF WE ARE TOOLSTRIP in which case we want to get added
             // to the componentTray even though this is a control..
             // We should think of implementing an interface so that we can have many more
             // controls behaving like this.
-            //
-            ToolStripDesigner td = host.GetDesigner(component) as ToolStripDesigner;
 
-            if (td is null)
+            if (host.GetDesigner(component) is not ToolStripDesigner td)
             {
                 ControlDesigner cd = host.GetDesigner(component) as ControlDesigner;
                 if (cd is not null)
                 {
-                    Form form = cd.Control as Form;
-                    if (form is null || !form.TopLevel)
+                    if (cd.Control is not Form form || !form.TopLevel)
                     {
                         addControl = false;
                     }
@@ -1011,7 +968,10 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     private void OnComponentRemoved(object source, ComponentEventArgs ce)
     {
         // ToolStrip is designableAsControl but has a ComponentTray Entry ... so special case it out.
-        bool designableAsControl = (ce.Component is Control && !(ce.Component is ToolStrip)) && !(ce.Component is Form && ((Form)ce.Component).TopLevel);
+        bool designableAsControl = ce.Component is Control
+            && ce.Component is not ToolStrip
+            && !(ce.Component is Form form && form.TopLevel);
+
         if (!designableAsControl && _componentTray is not null)
         {
             _componentTray.RemoveComponent(ce.Component);
@@ -1116,9 +1076,7 @@ public partial class DocumentDesigner : ScrollableControlDesigner, IRootDesigner
     {
         Debug.WriteLineIf(AxToolSwitch.TraceVerbose, $"Checking to see if: {format} is supported.");
 
-        IDataObject dataObject = serializedData as IDataObject;
-
-        if (dataObject is null)
+        if (serializedData is not IDataObject dataObject)
         {
             Debug.Fail("Toolbox service didn't pass us a data object; that should never happen");
             return null;

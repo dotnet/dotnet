@@ -867,8 +867,7 @@ public partial class ToolStripPanel : ContainerControl, IArrangedElement
         ToolStripPanelRow? currentToolStripPanelRow = draggedControl.ToolStripPanelRow;
 
 #if DEBUG
-        bool debugModeOnly_ChangedContainers = currentToolStripPanelRow is not null ?
-                            (currentToolStripPanelRow.ToolStripPanel != this) : true;
+        bool debugModeOnly_ChangedContainers = currentToolStripPanelRow is null || (currentToolStripPanelRow.ToolStripPanel != this);
 #endif
 
         bool pointInCurrentRow = false;
@@ -1100,6 +1099,7 @@ public partial class ToolStripPanel : ContainerControl, IArrangedElement
 
     #endregion JoinAndMove
 
+#if DEBUG
     [Conditional("DEBUG")]
     private void Debug_VerifyOneToOneCellRowControlMatchup()
     {
@@ -1130,27 +1130,6 @@ public partial class ToolStripPanel : ContainerControl, IArrangedElement
                 }
             }
         }
-    }
-
-    [Conditional("DEBUG")]
-    private void Debug_PrintRows()
-    {
-        for (int i = 0; i < RowsInternal.Count; i++)
-        {
-            Debug.Write($"Row {i}: ");
-            for (int j = 0; j < RowsInternal[i].ControlsInternal.Count; j++)
-            {
-                Debug.Write($"[{RowsInternal[i].ControlsInternal[j].Name} {((ToolStripPanelCell)RowsInternal[i].Cells[j]).Margin}] ");
-            }
-
-            Debug.Write("\r\n");
-        }
-    }
-
-    [Conditional("DEBUG")]
-    private void Debug_VerifyCountRows()
-    {
-        Debug.Assert(RowsInternal.Count <= Controls.Count, "How did the number of rows get larger than the number of controls?");
     }
 
     [Conditional("DEBUG")]
@@ -1188,6 +1167,7 @@ public partial class ToolStripPanel : ContainerControl, IArrangedElement
             }
         }
     }
+#endif
 
     ArrangedElementCollection IArrangedElement.Children
     {
