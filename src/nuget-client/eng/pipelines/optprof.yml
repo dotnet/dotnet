@@ -20,6 +20,8 @@ resources:
   - pipeline: DartLab.OptProf
     source: DartLab.OptProf
     branch: main
+    tags:
+    - production
   repositories:
   - repository: DartLabTemplates
     type: git
@@ -28,7 +30,7 @@ resources:
   - repository: DartLabOptProfTemplates
     type: git
     name: DartLab.OptProf
-    ref: refs/heads/main
+    ref: refs/tags/Production
 
 parameters:
 # Whether or not commit should be tagged for manual deployments

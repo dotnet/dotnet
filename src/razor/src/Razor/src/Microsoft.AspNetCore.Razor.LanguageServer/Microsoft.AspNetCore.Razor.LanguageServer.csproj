@@ -13,6 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Yes, all MEF is banned here -->
+    <AdditionalFiles Include="$(RepoRoot)eng\BannedSymbols.MEFv1.txt" />
+    <AdditionalFiles Include="$(RepoRoot)eng\BannedSymbols.MEFv2.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Need this reference to avoid 'The C# language is not supported' error during formatting. -->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion)" />
     <PackageReference Include="Microsoft.CommonLanguageServerProtocol.Framework" Version="$(MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion)" />

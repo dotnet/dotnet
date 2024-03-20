@@ -62,7 +62,7 @@
              Properties="Configuration=$(BuildConfiguration);DotNetBuildFromSource=true"
              Targets="PackXPlat" />
 
-    <ItemGroup>
+    <ItemGroup Condition="'$(DotNetBuildOrchestrator)' == 'true'">
       <_AfterSourceBuildProperties Include="_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild" />
       <_AfterSourceBuildProperties Include="ArcadeBuildFromSource=true"/>
       <_AfterSourceBuildProperties Include="ArcadeInnerBuildFromSource=true"/>
@@ -70,9 +70,9 @@
 
     <MSbuild Projects="$(ArcadeDir)/SourceBuild/AfterSourceBuild.proj"
              Properties="@(_AfterSourceBuildProperties)"
-            />
+             Condition="'$(DotNetBuildOrchestrator)' == 'true'" />
 
-    <ItemGroup>
+    <ItemGroup Condition="'$(DotNetBuildOrchestrator)' == 'true'">
       <_PublishProperties Include="_NETCORE_ENGINEERING_TELEMETRY=Publish" />
       <_PublishProperties Include="Configuration=$(Configuration)" />
       <_PublishProperties Include="ArcadeBuildFromSource=$(ArcadeBuildFromSource)" />

@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Composition;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
@@ -16,8 +15,6 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-[Export(typeof(IDocumentContextFactory)), Shared]
-[method: ImportingConstructor]
 internal sealed class DocumentContextFactory(
     IProjectSnapshotManager projectManager,
     ISnapshotResolver snapshotResolver,

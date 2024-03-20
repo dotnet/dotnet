@@ -12,7 +12,7 @@ namespace System.Windows.Forms.Layout;
 
 internal partial class DefaultLayout : LayoutEngine
 {
-    internal static readonly DefaultLayout Instance = new();
+    internal static DefaultLayout Instance { get; } = new();
 
     private static readonly int s_layoutInfoProperty = PropertyStore.CreateKey();
     private static readonly int s_cachedBoundsProperty = PropertyStore.CreateKey();
@@ -366,7 +366,7 @@ internal partial class DefaultLayout : LayoutEngine
         return LocalAppContextSwitches.AnchorLayoutV2 && element is Control;
     }
 
-    private static void LayoutAnchoredControls(IArrangedElement container, bool updateAnchorInfoIfNeeded = false)
+    private static void LayoutAnchoredControls(IArrangedElement container)
     {
         Debug.WriteLineIf(CompModSwitches.RichLayout.TraceInfo, "\tAnchor Processing");
         Debug.WriteLineIf(CompModSwitches.RichLayout.TraceInfo, $"\t\tdisplayRect: {container.DisplayRectangle}");
