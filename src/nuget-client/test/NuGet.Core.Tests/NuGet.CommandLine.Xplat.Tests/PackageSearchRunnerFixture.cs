@@ -8,11 +8,13 @@ namespace NuGet.CommandLine.Xplat.Tests
     public class PackageSearchRunnerFixture
     {
         public string SinglePackageQueryResponse { get; private set; }
+        public string NullPackageMetadataResponse { get; private set; }
         public string ExactMatchMetadataResponse { get; private set; }
         public MockServer ServerWithMultipleEndpoints { get; private set; }
         public string ExpectedSearchResultDetailed { get; set; }
         public string ExpectedSearchResultNormal { get; set; }
         public string ExpectedSearchResultMinimal { get; set; }
+        public string ExpectedSearchResultNullInfoPackage { get; set; }
 
         public PackageSearchRunnerFixture()
         {
@@ -65,6 +67,15 @@ namespace NuGet.CommandLine.Xplat.Tests
                             ""@id"": ""https://api.nuget.org/v3/registration5-semver1/newtonsoft.json/3.5.8.json""
                         }}
                         ]
+                    }}
+                    ]
+                }}";
+
+            NullPackageMetadataResponse = $@"
+                {{
+                    ""data"": [
+                    {{
+                        ""id"": ""NullInfoPackage""
                     }}
                     ]
                 }}";
@@ -397,9 +408,24 @@ namespace NuGet.CommandLine.Xplat.Tests
             ExpectedSearchResultDetailed = NormalizeNewlines(detailedJson);
             ExpectedSearchResultMinimal = NormalizeNewlines(minimalJson);
             ExpectedSearchResultNormal = NormalizeNewlines(normalJson);
+            ExpectedSearchResultNullInfoPackage = NormalizeNewlines($@"{{
+  ""version"": 2,
+  ""problems"": [],
+  ""searchResult"": [
+    {{
+      ""sourceName"": ""{ServerWithMultipleEndpoints.Uri}v3/index.json"",
+      ""packages"": [
+        {{
+          ""id"": ""NullInfoPackage""
+        }}
+      ]
+    }}
+  ]
+}}");
 
             ServerWithMultipleEndpoints.Get.Add("/v3/index.json", r => index);
             ServerWithMultipleEndpoints.Get.Add("/v3/indexWithNoSearchResource.json", r => indexWithNoSearchResource);
+            ServerWithMultipleEndpoints.Get.Add($"/search/query?q=NullInfoPackage&skip=0&take=10&prerelease=true&semVerLevel=2.0.0", r => NullPackageMetadataResponse);
             ServerWithMultipleEndpoints.Get.Add($"/search/query?q=json&skip=0&take=10&prerelease=true&semVerLevel=2.0.0", r => SinglePackageQueryResponse);
             ServerWithMultipleEndpoints.Get.Add($"/search/query?q=json&skip=0&take=20&prerelease=false&semVerLevel=2.0.0", r => SinglePackageQueryResponse);
             ServerWithMultipleEndpoints.Get.Add($"/search/query?q=json&skip=5&take=10&prerelease=true&semVerLevel=2.0.0", r => SinglePackageQueryResponse);
