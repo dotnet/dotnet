@@ -10,6 +10,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Deployment.DotNet.Releases;
 using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
+using NuGet.Versioning;
 
 namespace Microsoft.DotNet.Build.Tasks.Workloads
 {
@@ -31,6 +32,14 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         }
 
         /// <summary>
+        /// Gets the 4-part version of the workload set.
+        /// </summary>
+        public string WorkloadSetVersion
+        {
+            get;
+        }
+
+        /// <summary>
         /// The SDK feature band version associated with this workload set package.
         /// </summary>
         public ReleaseVersion SdkFeatureBand
@@ -47,6 +56,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             MsiUtils.ValidateProductVersion(MsiVersion);
             SdkFeatureBand = GetSdkFeatureBandVersion(GetSdkVersion(Id));
             SwixPackageGroupId = $"{DefaultValues.PackageGroupPrefix}.NET.Workloads-{SdkFeatureBand.ToString(3)}";
+            WorkloadSetVersion = GetWorkloadSetVersion(SdkFeatureBand, PackageVersion);
         }
 
         /// <summary>
@@ -57,6 +67,28 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// <exception cref="FormatException" />
         internal static string GetSdkVersion(string packageId) =>
             GetSdkVersion(packageId, SdkFeatureBandSeparator);
+
+        /// <summary>
+        /// Computes the workload set version for the package.
+        /// </summary>
+        /// <param name="sdkFeatureBand">The featureband contained in the package ID.</param>
+        /// <param name="packageVersion">The NuGet version of package.</param>
+        /// <returns>The 3 or 4-part workload set version.</returns>
+        internal static string GetWorkloadSetVersion(ReleaseVersion sdkFeatureBand, NuGetVersion packageVersion)
+        {
+            // The SDK featureband and patch level is stored as the minor version of the workload set package. The SDK
+            // minor version comes from the SDK featureband version in the package ID since it's not stored in the package
+            // version.
+            string v = $"{sdkFeatureBand.Major}.{sdkFeatureBand.Minor}.{packageVersion.Minor}";
+
+            // Only non-zero patch levels are included to construct 4-part versions.
+            v += packageVersion.Patch > 0 ? $".{packageVersion.Patch}" : string.Empty;
+
+            // Include the package pre-release label if present.
+            v += string.IsNullOrWhiteSpace(packageVersion.Release) ? string.Empty : $"-{packageVersion.Release}";
+
+            return v;
+        }
 
         public override void Extract(IEnumerable<string> exclusionPatterns)
         {

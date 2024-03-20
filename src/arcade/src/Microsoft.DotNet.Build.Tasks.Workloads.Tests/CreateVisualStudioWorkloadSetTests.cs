@@ -59,6 +59,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             // Workload sets are SxS. Verify that we don't have an Upgrade table.
             Assert.False(MsiUtils.HasTable(msi.ItemSpec, "Upgrade"));
 
+            // Verify the workloadset version directory and only look at the long name version.
+            DirectoryRow versionDir = MsiUtils.GetAllDirectories(msi.ItemSpec).FirstOrDefault(d => string.Equals(d.Directory, "WorkloadSetVersionDir"));
+            Assert.NotNull(versionDir);
+            Assert.Contains("|9.0.0.100-baseline.1.23464.1", versionDir.DefaultDir);
+
             // Verify the SWIX authoring for one of the workload set MSIs. 
             ITaskItem workloadSetSwixItem = createWorkloadSetTask.SwixProjects.Where(s => s.ItemSpec.Contains(@"Microsoft.NET.Workloads.9.0.100.9.0.100-baseline.1.23464.1\x64")).FirstOrDefault();
             Assert.Equal(DefaultValues.PackageTypeMsiWorkloadSet, workloadSetSwixItem.GetMetadata(Metadata.PackageType));
