@@ -49,12 +49,6 @@
       "commitSha": "a5f4de78fca42544771977f8e8e04c4aa83e1d02"
     },
     {
-      "packageVersion": "9.0.515801",
-      "path": "format",
-      "remoteUri": "https://github.com/dotnet/format",
-      "commitSha": "91f60316ebd9c75d6be8b7f9b7c201bab17240c9"
-    },
-    {
       "packageVersion": "8.0.300-beta.24168.9",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
@@ -64,7 +58,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "eaacb55a770fdf9ecacb1e132da1845fb8160194"
+      "commitSha": "c2f20810fec96a9985afb721b18a47614a526674"
     },
     {
       "packageVersion": "17.10.0-preview-24165-03",
