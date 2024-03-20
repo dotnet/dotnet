@@ -8,7 +8,6 @@
     <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
     <PreReleaseVersionIteration>1</PreReleaseVersionIteration>
   </PropertyGroup>
-
   <PropertyGroup>
     <AbstractionsXunitReleaseVersion>2.0.3</AbstractionsXunitReleaseVersion>
     <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>7.1.2</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
@@ -18,7 +17,6 @@
     <SpectreConsoleReleaseVersion>0.48.0</SpectreConsoleReleaseVersion>
     <XunitReleaseVersion>2.4.2</XunitReleaseVersion>
   </PropertyGroup>
-
   <PropertyGroup>
     <MicrosoftBuildVersion>15.7.179</MicrosoftBuildVersion>
   </PropertyGroup>
