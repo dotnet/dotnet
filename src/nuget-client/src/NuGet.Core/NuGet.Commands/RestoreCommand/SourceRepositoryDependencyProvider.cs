@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -35,8 +36,11 @@ namespace NuGet.Commands
         private bool _isFallbackFolderSource;
         private bool _useLegacyAssetTargetFallbackBehavior;
 
-        private readonly TaskResultCache<LibraryRangeCacheKey, LibraryDependencyInfo> _dependencyInfoCache = new();
-        private readonly TaskResultCache<LibraryRange, LibraryIdentity> _libraryMatchCache = new();
+        private readonly ConcurrentDictionary<LibraryRangeCacheKey, AsyncLazy<LibraryDependencyInfo>> _dependencyInfoCache
+            = new ConcurrentDictionary<LibraryRangeCacheKey, AsyncLazy<LibraryDependencyInfo>>();
+
+        private readonly ConcurrentDictionary<LibraryRange, AsyncLazy<LibraryIdentity>> _libraryMatchCache
+            = new ConcurrentDictionary<LibraryRange, AsyncLazy<LibraryIdentity>>();
 
         // Limiting concurrent requests to limit the amount of files open at a time.
         private readonly static SemaphoreSlim _throttle = GetThrottleSemaphoreSlim(EnvironmentVariableWrapper.Instance);
@@ -202,15 +206,23 @@ namespace NuGet.Commands
 
             cancellationToken.ThrowIfCancellationRequested();
 
+            AsyncLazy<LibraryIdentity> result = null;
+
+            var action = new AsyncLazy<LibraryIdentity>(async () =>
+                await FindLibraryCoreAsync(libraryRange, cacheContext, logger, cancellationToken));
+
+            if (cacheContext.RefreshMemoryCache)
+            {
+                result = _libraryMatchCache.AddOrUpdate(libraryRange, action, (k, v) => action);
+            }
+            else
+            {
+                result = _libraryMatchCache.GetOrAdd(libraryRange, action);
+            }
+
             try
             {
-                LibraryIdentity result = await _libraryMatchCache.GetOrAddAsync(
-                    libraryRange,
-                    cacheContext.RefreshMemoryCache,
-                    static state => state.caller.FindLibraryCoreAsync(state.libraryRange, state.cacheContext, state.logger, state.cancellationToken),
-                    (caller: this, libraryRange, cacheContext, logger, cancellationToken), cancellationToken);
-
-                return result;
+                return await result;
             }
             catch (FatalProtocolException e)
             {
@@ -224,7 +236,6 @@ namespace NuGet.Commands
                     throw;
                 }
             }
-
             return null;
         }
 
@@ -234,6 +245,7 @@ namespace NuGet.Commands
             ILogger logger,
             CancellationToken cancellationToken)
         {
+
             await EnsureResource(cancellationToken);
 
             if (libraryRange.VersionRange?.MinVersion != null && libraryRange.VersionRange.IsMinInclusive && !libraryRange.VersionRange.IsFloating)
@@ -310,7 +322,7 @@ namespace NuGet.Commands
         /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        public Task<LibraryDependencyInfo> GetDependenciesAsync(
+        public async Task<LibraryDependencyInfo> GetDependenciesAsync(
             LibraryIdentity libraryIdentity,
             NuGetFramework targetFramework,
             SourceCacheContext cacheContext,
@@ -339,13 +351,23 @@ namespace NuGet.Commands
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            LibraryRangeCacheKey key = new(libraryIdentity, targetFramework);
+            AsyncLazy<LibraryDependencyInfo> result = null;
 
-            return _dependencyInfoCache.GetOrAddAsync(
-                key,
-                cacheContext.RefreshMemoryCache,
-                static state => state.caller.GetDependenciesCoreAsync(state.libraryIdentity, state.targetFramework, state.cacheContext, state.logger, state.cancellationToken),
-                (caller: this, libraryIdentity, targetFramework, cacheContext, logger, cancellationToken), cancellationToken);
+            var action = new AsyncLazy<LibraryDependencyInfo>(async () =>
+                await GetDependenciesCoreAsync(libraryIdentity, targetFramework, cacheContext, logger, cancellationToken));
+
+            var key = new LibraryRangeCacheKey(libraryIdentity, targetFramework);
+
+            if (cacheContext.RefreshMemoryCache)
+            {
+                result = _dependencyInfoCache.AddOrUpdate(key, action, (k, v) => action);
+            }
+            else
+            {
+                result = _dependencyInfoCache.GetOrAdd(key, action);
+            }
+
+            return await result;
         }
 
         private async Task<LibraryDependencyInfo> GetDependenciesCoreAsync(
@@ -390,12 +412,10 @@ namespace NuGet.Commands
                 _throttle?.Release();
             }
 
-            LibraryDependencyInfo libraryDependencyInfo = null;
-
             if (packageInfo == null)
             {
                 // Package was not found
-                libraryDependencyInfo = LibraryDependencyInfo.CreateUnresolved(match, targetFramework);
+                return LibraryDependencyInfo.CreateUnresolved(match, targetFramework);
             }
             else
             {
@@ -407,10 +427,8 @@ namespace NuGet.Commands
 
                 IEnumerable<LibraryDependency> dependencyGroup = GetDependencies(packageInfo, targetFramework);
 
-                libraryDependencyInfo = LibraryDependencyInfo.Create(originalIdentity, targetFramework, dependencies: dependencyGroup);
+                return LibraryDependencyInfo.Create(originalIdentity, targetFramework, dependencies: dependencyGroup);
             }
-
-            return libraryDependencyInfo;
         }
 
         /// <summary>
