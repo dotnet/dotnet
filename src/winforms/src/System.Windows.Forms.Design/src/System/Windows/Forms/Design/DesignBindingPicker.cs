@@ -90,9 +90,9 @@ namespace System.Windows.Forms.Design
     {
         private BindingPickerTree? _treeViewCtrl;   // Tree view that shows the available data sources and data members
         private BindingPickerLink _addNewCtrl;     // Link that invokes the "Add Project Data Source" wizard
-        private Panel _addNewPanel;    // Panel containing the "Add Project Data Source" link
+        private readonly Panel _addNewPanel;    // Panel containing the "Add Project Data Source" link
         private HelpTextLabel _helpTextCtrl;   // Label that displays helpful text as user mouses over tree view nodes
-        private Panel _helpTextPanel;  // Panel containing the help text label
+        private readonly Panel _helpTextPanel;  // Panel containing the help text label
 
         private IServiceProvider? _serviceProvider; // Current VS service provider
         private IWindowsFormsEditorService? _windowsFormsEditorService; // Service used to invoke the picker inside a modal dropdown
@@ -231,11 +231,13 @@ namespace System.Windows.Forms.Design
 
         private void InitTreeViewCtl()
         {
-            _treeViewCtrl = new BindingPickerTree();
-            _treeViewCtrl.HotTracking = true;
-            _treeViewCtrl.BackColor = SystemColors.Window;
-            _treeViewCtrl.ForeColor = SystemColors.WindowText;
-            _treeViewCtrl.BorderStyle = BorderStyle.None;
+            _treeViewCtrl = new BindingPickerTree
+            {
+                HotTracking = true,
+                BackColor = SystemColors.Window,
+                ForeColor = SystemColors.WindowText,
+                BorderStyle = BorderStyle.None
+            };
             _initialSize = _treeViewCtrl.Size;
             _treeViewCtrl.Dock = DockStyle.Fill;
             _treeViewCtrl.MouseMove += treeViewCtrl_MouseMove;
@@ -394,7 +396,7 @@ namespace System.Windows.Forms.Design
             _context = context;
             _showDataSources = showDataSources;
             _showDataMembers = showDataMembers;
-            _selectListMembers = showDataMembers ? selectListMembers : true;
+            _selectListMembers = !showDataMembers || selectListMembers;
             _rootDataSource = rootDataSource;
             _rootDataMember = rootDataMember;
 
@@ -1052,8 +1054,7 @@ namespace System.Windows.Forms.Design
         /// </devdoc>
         private void AddProjectDataSourceContents(TreeNodeCollection nodes, DataSourceNode projectDataSourceNode)
         {
-            DataSourceDescriptor? dataSourceDescriptor = projectDataSourceNode.DataSource as DataSourceDescriptor;
-            if (dataSourceDescriptor is null)
+            if (projectDataSourceNode.DataSource is not DataSourceDescriptor dataSourceDescriptor)
             {
                 return;
             }
@@ -1472,7 +1473,7 @@ namespace System.Windows.Forms.Design
         private static bool IsBindableDataSource(object? dataSource)
         {
             // Check for expected interfaces (require at least one)
-            if (!(dataSource is IListSource || dataSource is IList || dataSource is Array))
+            if (dataSource is not (IListSource or IList or Array))
             {
                 return false;
             }
@@ -2282,7 +2283,7 @@ namespace System.Windows.Forms.Design
         /// </summary>
         internal class DataSourceNode : BindingPickerNode
         {
-            private object? _dataSource;
+            private readonly object? _dataSource;
 
             public DataSourceNode(DesignBindingPicker picker, object? dataSource, string? nodeName) : base(picker, nodeName)
             {
@@ -2309,7 +2310,7 @@ namespace System.Windows.Forms.Design
                 {
                     // If data members are included in tree, only
                     // they can be selected, not data sources.
-                    return _picker is null ? false : !_picker._showDataMembers;
+                    return _picker is not null && !_picker._showDataMembers;
                 }
             }
 
@@ -2360,8 +2361,8 @@ namespace System.Windows.Forms.Design
 
         internal class DataMemberNode : DataSourceNode
         {
-            private bool _isList;
-            private string _dataMember;
+            private readonly bool _isList;
+            private readonly string _dataMember;
 
             public DataMemberNode(
                 DesignBindingPicker picker,
@@ -2640,9 +2641,8 @@ namespace System.Windows.Forms.Design
 
                 // Instance the project data source on the form, and point a BindingSource
                 // at the appropriate list member of the form instance
-                DataSourceDescriptor? dataSourceDescriptor = DataSource as DataSourceDescriptor;
 
-                if (dataSourceDescriptor is null)
+                if (DataSource is not DataSourceDescriptor dataSourceDescriptor)
                 {
                     return DesignBinding.Null;
                 }

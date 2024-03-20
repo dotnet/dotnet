@@ -16,7 +16,6 @@ internal sealed partial class DragAssistanceManager
     private readonly BehaviorService _behaviorService;
     private readonly IServiceProvider _serviceProvider;
     private readonly Graphics _graphics; // graphics to the adornerwindow
-    private readonly IntPtr _rootComponentHandle; // used for mapping window points of nested controls
     private Point _dragOffset; // the offset from the new drag pos compared to the last
     private Rectangle _cachedDragRect; // used to store drag rect between erasing & waiting to render
     private readonly Pen _edgePen = SystemPens.Highlight;
@@ -156,7 +155,6 @@ internal sealed partial class DragAssistanceManager
         }
 
         _backgroundImage = backgroundImage;
-        _rootComponentHandle = host.RootComponent is Control ? ((Control)host.RootComponent).Handle : IntPtr.Zero;
         _resizing = resizing;
         _ctrlDrag = ctrlDrag;
         Initialize(dragComponents, host);
@@ -190,7 +188,7 @@ internal sealed partial class DragAssistanceManager
             if (isTarget)
             {
                 // we will remove padding snaplines from targets - it doesn't make sense to snap to the target's padding lines
-                if (snapLine.Filter is not null && snapLine.Filter.StartsWith(SnapLine.Padding))
+                if (snapLine.Filter is not null && snapLine.Filter.StartsWith(SnapLine.Padding, StringComparison.Ordinal))
                 {
                     continue;
                 }
@@ -208,7 +206,7 @@ internal sealed partial class DragAssistanceManager
                 }
 
                 // store off the bounds in our dictionary, so if we draw snaplines we know the length of the line we need to remember different bounds based on what type of snapline this is.
-                if ((snapLine.Filter is not null) && snapLine.Filter.StartsWith(SnapLine.Padding))
+                if ((snapLine.Filter is not null) && snapLine.Filter.StartsWith(SnapLine.Padding, StringComparison.Ordinal))
                 {
                     _snapLineToBounds.Add(snapLine, controlRect);
                 }
@@ -581,7 +579,9 @@ internal sealed partial class DragAssistanceManager
     /// </summary>
     private static bool IsMarginOrPaddingSnapLine(SnapLine snapLine)
     {
-        return snapLine.Filter is not null && (snapLine.Filter.StartsWith(SnapLine.Margin) || snapLine.Filter.StartsWith(SnapLine.Padding));
+        return snapLine.Filter is not null
+            && (snapLine.Filter.StartsWith(SnapLine.Margin, StringComparison.Ordinal)
+                || snapLine.Filter.StartsWith(SnapLine.Padding, StringComparison.Ordinal));
     }
 
     /// <summary>
@@ -678,9 +678,8 @@ internal sealed partial class DragAssistanceManager
         // loop while we still have valid distance to check and try to find the smallest valid distance
         while (true)
         {
-            int distanceValue;
             // get the next smallest snapline index
-            int snapLineIndex = SmallestDistanceIndex(distances, direction, out distanceValue);
+            int snapLineIndex = SmallestDistanceIndex(distances, direction, out int distanceValue);
 
             if (snapLineIndex == INVALID_VALUE)
             {
@@ -746,7 +745,7 @@ internal sealed partial class DragAssistanceManager
         Pen currentPen;
         for (int i = 0; i < lines.Length; i++)
         {
-            if (lines[i].LineType == LineType.Margin || lines[i].LineType == LineType.Padding)
+            if (lines[i].LineType is LineType.Margin or LineType.Padding)
             {
                 currentPen = _edgePen;
                 if (lines[i].X1 == lines[i].X2)
@@ -855,7 +854,7 @@ internal sealed partial class DragAssistanceManager
         if (IsMarginOrPaddingSnapLine(snapLine))
         {
             // We already check if snapLine.Filter is not null inside IsMarginOrPaddingSnapLine.
-            type = snapLine.Filter!.StartsWith(SnapLine.Margin) ? LineType.Margin : LineType.Padding;
+            type = snapLine.Filter!.StartsWith(SnapLine.Margin, StringComparison.Ordinal) ? LineType.Margin : LineType.Padding;
         }
 
         // propagate the baseline through to the linetype
