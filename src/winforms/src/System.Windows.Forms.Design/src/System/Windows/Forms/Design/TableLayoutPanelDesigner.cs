@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 
 namespace System.Windows.Forms.Design;
 
-internal class TableLayoutPanelDesigner : FlowPanelDesigner
+internal partial class TableLayoutPanelDesigner : FlowPanelDesigner
 {
     private TableLayoutPanelBehavior _tlpBehavior;      // every resize col/row glyph is associated with this instance of behavior
     private Point _droppedCellPosition = InvalidPoint;  // used to insert new children
@@ -50,15 +50,7 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
 
     private int _ensureSuspendCount;
 
-    private TableLayoutPanelBehavior Behavior
-    {
-        get
-        {
-            _tlpBehavior ??= new TableLayoutPanelBehavior(Table, this, Component.Site);
-
-            return _tlpBehavior;
-        }
-    }
+    private TableLayoutPanelBehavior Behavior => _tlpBehavior ??= new TableLayoutPanelBehavior(Table, this, Component.Site);
 
     private TableLayoutColumnStyleCollection ColumnStyles => Table.ColumnStyles;
 
@@ -66,10 +58,7 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
 
     public int RowCount
     {
-        get
-        {
-            return Table.RowCount;
-        }
+        get => Table.RowCount;
         set
         {
             if (value <= 0 && !Undoing)
@@ -85,10 +74,7 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
 
     public int ColumnCount
     {
-        get
-        {
-            return Table.ColumnCount;
-        }
+        get => Table.ColumnCount;
         set
         {
             if (value <= 0 && !Undoing)
@@ -128,14 +114,8 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-    private DesignerTableLayoutControlCollection Controls
-    {
-        get
-        {
-            _controls ??= new DesignerTableLayoutControlCollection((TableLayoutPanel)Control);
-            return _controls;
-        }
-    }
+    private DesignerTableLayoutControlCollection Controls =>
+        _controls ??= new DesignerTableLayoutControlCollection((TableLayoutPanel)Control);
 
     private ContextMenuStrip DesignerContextMenuStrip
     {
@@ -168,13 +148,17 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
                 ToolStripDropDownMenu rowMenu = BuildMenu(true);
                 ToolStripDropDownMenu colMenu = BuildMenu(false);
 
-                _contextMenuRow = new ToolStripMenuItem();
-                _contextMenuRow.DropDown = rowMenu;
-                _contextMenuRow.Text = SR.TableLayoutPanelDesignerRowMenu;
+                _contextMenuRow = new ToolStripMenuItem
+                {
+                    DropDown = rowMenu,
+                    Text = SR.TableLayoutPanelDesignerRowMenu
+                };
 
-                _contextMenuCol = new ToolStripMenuItem();
-                _contextMenuCol.DropDown = colMenu;
-                _contextMenuCol.Text = SR.TableLayoutPanelDesignerColMenu;
+                _contextMenuCol = new ToolStripMenuItem
+                {
+                    DropDown = colMenu,
+                    Text = SR.TableLayoutPanelDesignerColMenu
+                };
 
                 group.Items.Insert(0, _contextMenuCol);
                 group.Items.Insert(0, _contextMenuRow);
@@ -657,10 +641,10 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
     {
         // set the table's default rows and columns
         PropertyDescriptor colProp = TypeDescriptor.GetProperties(Table)["ColumnCount"];
-        colProp?.SetValue(Table, DesignerUtils.DEFAULTCOLUMNCOUNT);
+        colProp?.SetValue(Table, DesignerUtils.s_defaultColumnCount);
 
         PropertyDescriptor rowProp = TypeDescriptor.GetProperties(Table)["RowCount"];
-        rowProp?.SetValue(Table, DesignerUtils.DEFAULTROWCOUNT);
+        rowProp?.SetValue(Table, DesignerUtils.s_defaultRowCount);
 
         // this will make sure we have styles created for every row & column
         EnsureAvailableStyles();
@@ -672,15 +656,15 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
     {
         // adjust the two absolutely positioned columns
         Table.ColumnStyles[0].SizeType = SizeType.Percent;
-        Table.ColumnStyles[0].Width = DesignerUtils.MINIMUMSTYLEPERCENT;
+        Table.ColumnStyles[0].Width = DesignerUtils.s_minimumStylePercent;
         Table.ColumnStyles[1].SizeType = SizeType.Percent;
-        Table.ColumnStyles[1].Width = DesignerUtils.MINIMUMSTYLEPERCENT;
+        Table.ColumnStyles[1].Width = DesignerUtils.s_minimumStylePercent;
 
         // adjust two absolutely positioned rows
         Table.RowStyles[0].SizeType = SizeType.Percent;
-        Table.RowStyles[0].Height = DesignerUtils.MINIMUMSTYLEPERCENT;
+        Table.RowStyles[0].Height = DesignerUtils.s_minimumStylePercent;
         Table.RowStyles[1].SizeType = SizeType.Percent;
-        Table.RowStyles[1].Height = DesignerUtils.MINIMUMSTYLEPERCENT;
+        Table.RowStyles[1].Height = DesignerUtils.s_minimumStylePercent;
     }
 
     /// <summary>
@@ -938,7 +922,7 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
                 PropChanging(_rowStyleProp);
                 for (int i = 0; i < colDifference; i++)
                 {
-                    Table.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, DesignerUtils.MINIMUMSTYLESIZE));
+                    Table.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, DesignerUtils.s_minimumStyleSize));
                 }
 
                 PropChanged(_rowStyleProp);
@@ -951,7 +935,7 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
                 PropChanging(_colStyleProp);
                 for (int i = 0; i < rowDifference; i++)
                 {
-                    Table.RowStyles.Add(new RowStyle(SizeType.Absolute, DesignerUtils.MINIMUMSTYLESIZE));
+                    Table.RowStyles.Add(new RowStyle(SizeType.Absolute, DesignerUtils.s_minimumStyleSize));
                 }
 
                 PropChanged(_colStyleProp);
@@ -1078,7 +1062,7 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
         GlyphCollection glyphs = base.GetGlyphs(selectionType);
 
         PropertyDescriptor prop = TypeDescriptor.GetProperties(Component)["Locked"];
-        bool locked = (prop is not null) ? ((bool)prop.GetValue(Component)) : false;
+        bool locked = (prop is not null) && ((bool)prop.GetValue(Component));
 
         // Before adding glyphs for every row/column, make sure we have a column/rowstyle for every column/row
         bool safeToRefresh = EnsureAvailableStyles();
@@ -1097,7 +1081,7 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
 
             int[] cw = Table.GetColumnWidths();
             int[] rh = Table.GetRowHeights();
-            int halfSize = DesignerUtils.RESIZEGLYPHSIZE / 2;
+            int halfSize = DesignerUtils.s_resizeGlyphSize / 2;
 
             bool isRTL = (Table.RightToLeft == RightToLeft.Yes);
             int startLoc = isRTL ? bounds.Right : bounds.X;
@@ -1123,7 +1107,7 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
                         startLoc += cw[i];// x offset of column line
                     }
 
-                    Rectangle gBounds = new(startLoc - halfSize, checkBounds.Top, DesignerUtils.RESIZEGLYPHSIZE, checkBounds.Height);
+                    Rectangle gBounds = new(startLoc - halfSize, checkBounds.Top, DesignerUtils.s_resizeGlyphSize, checkBounds.Height);
                     // Don't add glyphs for columns that are not within the clientrectangle.
                     if (!checkBounds.Contains(gBounds))
                     {
@@ -1150,13 +1134,13 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
                     }
 
                     startLoc += rh[i];// y offset of row line
-                    Rectangle gBounds = new(checkBounds.Left, startLoc - halfSize, checkBounds.Width, DesignerUtils.RESIZEGLYPHSIZE);
+                    Rectangle gBounds = new(checkBounds.Left, startLoc - halfSize, checkBounds.Width, DesignerUtils.s_resizeGlyphSize);
                     if (!checkBounds.Contains(gBounds))
                     {
                         continue;
                     }
 
-                    Debug.Assert(Table.RowStyles[i] is not null, "Table's RowStyle[" + i + "] is null!");
+                    Debug.Assert(Table.RowStyles[i] is not null, $"Table's RowStyle[{i}] is null!");
                     if (Table.RowStyles[i] is not null)
                     {
                         TableLayoutPanelResizeGlyph g = new(gBounds, Table.RowStyles[i], Cursors.HSplit, Behavior);
@@ -1202,19 +1186,11 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
         }
     }
 
-    protected override InheritanceAttribute InheritanceAttribute
-    {
-        get
-        {
-            if ((base.InheritanceAttribute == InheritanceAttribute.Inherited)
-                || (base.InheritanceAttribute == InheritanceAttribute.InheritedReadOnly))
-            {
-                return InheritanceAttribute.InheritedReadOnly;
-            }
-
-            return base.InheritanceAttribute;
-        }
-    }
+    protected override InheritanceAttribute InheritanceAttribute =>
+        (base.InheritanceAttribute == InheritanceAttribute.Inherited)
+            || (base.InheritanceAttribute == InheritanceAttribute.InheritedReadOnly)
+                ? InheritanceAttribute.InheritedReadOnly
+                : base.InheritanceAttribute;
 
     public override void InitializeNewComponent(IDictionary defaultValues)
     {
@@ -1704,7 +1680,7 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
                 if (rowProp is not null)
                 {
                     PropChanging(_rowStyleProp);
-                    Table.RowStyles.Insert(index, new RowStyle(SizeType.Absolute, DesignerUtils.MINIMUMSTYLESIZE));
+                    Table.RowStyles.Insert(index, new RowStyle(SizeType.Absolute, DesignerUtils.s_minimumStyleSize));
                     PropChanged(_rowStyleProp);
 
                     rowProp.SetValue(Table, Table.RowCount + 1);
@@ -1716,7 +1692,7 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
                 if (colProp is not null)
                 {
                     PropChanging(_colStyleProp);
-                    Table.ColumnStyles.Insert(index, new ColumnStyle(SizeType.Absolute, DesignerUtils.MINIMUMSTYLESIZE));
+                    Table.ColumnStyles.Insert(index, new ColumnStyle(SizeType.Absolute, DesignerUtils.s_minimumStyleSize));
                     PropChanged(_colStyleProp);
 
                     colProp.SetValue(Table, Table.ColumnCount + 1);
@@ -2030,11 +2006,11 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
                             styles[index].SizeType = SizeType.Percent;
                             if (isRow)
                             {
-                                Table.RowStyles[index].Height = DesignerUtils.MINIMUMSTYLEPERCENT;
+                                Table.RowStyles[index].Height = DesignerUtils.s_minimumStylePercent;
                             }
                             else
                             {
-                                Table.ColumnStyles[index].Width = DesignerUtils.MINIMUMSTYLEPERCENT;
+                                Table.ColumnStyles[index].Width = DesignerUtils.s_minimumStylePercent;
                             }
 
                             break;
@@ -2090,7 +2066,7 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
         }
     }
 
-    private static string ReplaceText(string text) => text is null ? null : Regex.Replace(text, @"\(\&.\)", "");
+    private static string ReplaceText(string text) => text is null ? null : ParenthesisRegex().Replace(text, "");
 
     private void OnVerbRemove(object sender, EventArgs e)
     {
@@ -2271,4 +2247,7 @@ internal class TableLayoutPanelDesigner : FlowPanelDesigner
             return base.SerializeCollection(manager, targetExpression, targetType, originalCollection, subset);
         }
     }
+
+    [GeneratedRegex(@"\(\&.\)")]
+    private static partial Regex ParenthesisRegex();
 }

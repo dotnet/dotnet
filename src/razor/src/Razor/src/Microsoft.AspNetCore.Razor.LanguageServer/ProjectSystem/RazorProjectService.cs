@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -24,8 +23,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
-[Export(typeof(IRazorProjectService)), Shared]
-[method: ImportingConstructor]
 internal class RazorProjectService(
     ProjectSnapshotManagerDispatcher dispatcher,
     RemoteTextLoaderFactory remoteTextLoaderFactory,

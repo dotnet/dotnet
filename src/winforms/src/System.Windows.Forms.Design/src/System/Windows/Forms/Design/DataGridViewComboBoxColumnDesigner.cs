@@ -7,7 +7,7 @@ using System.Collections;
 namespace System.Windows.Forms.Design;
 
 /// <summary>
-/// Provides a base designer for data grid view columns.
+///  Provides a base designer for data grid view columns.
 /// </summary>
 internal class DataGridViewComboBoxColumnDesigner : DataGridViewColumnDesigner
 {
@@ -91,9 +91,8 @@ internal class DataGridViewComboBoxColumnDesigner : DataGridViewColumnDesigner
             return false;
         }
 
-        return bindingManagerBase is null
-            ? false
-            : (bindingManagerBase.GetItemProperties()?[bindingMemberInfo.BindingField]) is not null;
+        return bindingManagerBase is not null
+            && (bindingManagerBase.GetItemProperties()?[bindingMemberInfo.BindingField]) is not null;
     }
 
     protected override void PreFilterProperties(IDictionary properties)

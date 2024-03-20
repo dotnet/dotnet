@@ -28,6 +28,10 @@
     <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="Microsoft.VisualStudio.RazorExtension.Custom" Path="Microsoft.VisualStudio.RazorExtension.Custom.pkgdef" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="Microsoft.CodeAnalysis.Razor.Compiler" Path="|Microsoft.CodeAnalysis.Razor.Compiler|" />
+    <Asset Type="Microsoft.ServiceHub.Service" d:Source="File" Path="Microsoft.VisualStudio.Razor.ClientInitialization64.servicehub.service.json" />
+    <Asset Type="Microsoft.ServiceHub.Service" d:Source="File" Path="Microsoft.VisualStudio.Razor.ClientInitialization64S.servicehub.service.json" />
+    <Asset Type="Microsoft.ServiceHub.Service" d:Source="File" Path="ServiceHubCore\Microsoft.VisualStudio.Razor.ClientInitializationCore64.servicehub.service.json" />
+    <Asset Type="Microsoft.ServiceHub.Service" d:Source="File" Path="ServiceHubCore\Microsoft.VisualStudio.Razor.ClientInitializationCore64S.servicehub.service.json" />
     <Asset Type="Microsoft.ServiceHub.Service" d:Source="File" Path="Microsoft.VisualStudio.Razor.TagHelperProvider64.servicehub.service.json" />
     <Asset Type="Microsoft.ServiceHub.Service" d:Source="File" Path="Microsoft.VisualStudio.Razor.TagHelperProvider64S.servicehub.service.json" />
     <Asset Type="Microsoft.ServiceHub.Service" d:Source="File" Path="ServiceHubCore\Microsoft.VisualStudio.Razor.TagHelperProviderCore64.servicehub.service.json" />
@@ -47,7 +51,6 @@
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="System.Runtime.CompilerServices.Unsafe.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="System.Threading.Channels.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.AspNetCore.Razor.LanguageServer.dll" />
-    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="Microsoft.AspNetCore.Razor.LanguageServer.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.AspNetCore.Razor.LanguageSupport.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.AspNetCore.Razor.LanguageServer.Protocol.dll" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" Path="Microsoft.CodeAnalysis.Razor.Compiler.dll" />

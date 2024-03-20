@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Composition;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
@@ -12,10 +11,6 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-// TODO: This has to be Shared for MEF to work, but this service was written assuming its lifetime was that of the language
-//       server, so it doesn't clean up after itself well. In the long run, this hopefully won't matter, as we can remove it
-//       but leaving this note here because you never know.
-[Export(typeof(IDocumentVersionCache)), Shared]
 internal sealed partial class DocumentVersionCache : IDocumentVersionCache, IRazorStartupService
 {
     internal const int MaxDocumentTrackingCount = 20;
@@ -24,7 +19,6 @@ internal sealed partial class DocumentVersionCache : IDocumentVersionCache, IRaz
     private readonly ReadWriterLocker _lock = new();
     private readonly IProjectSnapshotManager _projectManager;
 
-    [ImportingConstructor]
     public DocumentVersionCache(IProjectSnapshotManager projectManager)
     {
         _projectManager = projectManager;

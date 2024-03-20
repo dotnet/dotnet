@@ -12,9 +12,9 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
@@ -22,11 +22,11 @@ namespace Microsoft.CodeAnalysis.Remote.Razor;
 [Export(typeof(ITagHelperResolver))]
 [method: ImportingConstructor]
 internal class OutOfProcTagHelperResolver(
-    IWorkspaceProvider workspaceProvider,
+    IRemoteClientProvider remoteClientProvider,
     IErrorReporter errorReporter,
     ITelemetryReporter telemetryReporter) : ITagHelperResolver
 {
-    private readonly IWorkspaceProvider _workspaceProvider = workspaceProvider;
+    private readonly IRemoteClientProvider _remoteClientProvider = remoteClientProvider;
     private readonly IErrorReporter _errorReporter = errorReporter;
     private readonly CompilationTagHelperResolver _innerResolver = new(telemetryReporter);
     private readonly TagHelperResultCache _resultCache = new();
@@ -67,17 +67,7 @@ internal class OutOfProcTagHelperResolver(
 
     protected virtual async ValueTask<ImmutableArray<TagHelperDescriptor>> ResolveTagHelpersOutOfProcessAsync(Project workspaceProject, IProjectSnapshot projectSnapshot, CancellationToken cancellationToken)
     {
-        // We're being overly defensive here because the OOP host can return null for the client/session/operation
-        // when it's disconnected (user stops the process).
-        //
-        // This will change in the future to an easier to consume API but for VS RTM this is what we have.
-        var workspace = _workspaceProvider.GetWorkspace();
-
-        var remoteClient = await RazorRemoteHostClient.TryGetClientAsync(
-            workspace.Services,
-            RazorServiceDescriptors.TagHelperProviderServiceDescriptors,
-            RazorRemoteServiceCallbackDispatcherRegistry.Empty,
-            cancellationToken);
+        var remoteClient = await _remoteClientProvider.TryGetClientAsync(cancellationToken);
 
         if (remoteClient is null)
         {
