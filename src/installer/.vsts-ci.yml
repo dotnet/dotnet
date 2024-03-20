@@ -43,7 +43,10 @@ resources:
     ref: refs/tags/release
 
 extends:
-  template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
+  ${{ if notin(variables['Build.Reason'], 'PullRequest') }}:
+    template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
+  ${{ else }}:
+    template: v1/1ES.Unofficial.PipelineTemplate.yml@1esPipelines
   parameters:
     containers:
       alpine319WithNode:
@@ -67,15 +70,6 @@ extends:
         name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
         os: windows
-      # https://docs.opensource.microsoft.com/tools/cg/component-detection/variables/
-      componentgovernance:
-        # This should be uncommented when a fix is available.
-        # See: https://dev.azure.com/mseng/1ES/_workitems/edit/2159448
-        # failOnAlert: false
-        # This should be removed when failOnAlert works properly.
-        ignoreDirectories: '.packages'
-    customBuildTags:
-    - ES365AIMigrationTooling
     stages:
     - stage: Build
       jobs:
