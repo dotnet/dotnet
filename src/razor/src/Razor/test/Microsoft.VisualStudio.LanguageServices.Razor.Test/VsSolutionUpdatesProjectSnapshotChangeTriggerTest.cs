@@ -156,12 +156,12 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
 
         var expectedProjectPath = s_someProject.FilePath;
 
-        var expectedProjectSnapshot = await RunOnDispatcherAsync(() =>
+        var expectedProjectSnapshot = await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_someProject);
-            projectManager.ProjectAdded(s_someOtherProject);
+            updater.ProjectAdded(s_someProject);
+            updater.ProjectAdded(s_someOtherProject);
 
-            return projectManager.GetLoadedProject(s_someProject.Key);
+            return updater.GetLoadedProject(s_someProject.Key);
         });
 
         var serviceProvider = VsMocks.CreateServiceProvider();
@@ -189,10 +189,10 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         // provides a task we can wait on.
         await testAccessor.OnProjectBuiltTask.AssumeNotNull();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.SolutionClosed();
-            projectManager.ProjectRemoved(s_someProject.Key);
+            updater.SolutionClosed();
+            updater.ProjectRemoved(s_someProject.Key);
         });
 
         var update = Assert.Single(workspaceStateGenerator.UpdateQueue);
@@ -209,12 +209,12 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
 
         var expectedProjectPath = s_someProject.FilePath;
 
-        var expectedProjectSnapshot = await RunOnDispatcherAsync(() =>
+        var expectedProjectSnapshot = await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_someProject);
-            projectManager.ProjectAdded(s_someOtherProject);
+            updater.ProjectAdded(s_someProject);
+            updater.ProjectAdded(s_someOtherProject);
 
-            return projectManager.GetLoadedProject(s_someProject.Key);
+            return updater.GetLoadedProject(s_someProject.Key);
         });
 
         var serviceProvider = VsMocks.CreateServiceProvider();
@@ -263,9 +263,9 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
 
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(
+            updater.ProjectAdded(
                 new HostProject("/Some/Unknown/Path.csproj", "/Some/Unknown/obj", RazorConfiguration.Default, "Path"));
         });
 

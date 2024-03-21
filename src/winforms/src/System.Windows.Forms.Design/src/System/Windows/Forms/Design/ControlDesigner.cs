@@ -55,7 +55,6 @@ public partial class ControlDesigner : ComponentDesigner
     private int _lastClickMessagePositionX;
     private int _lastClickMessagePositionY;
 
-    private Point _downPos = Point.Empty;               // point used to track first down of a double click
     private event EventHandler DisposingHandler;
     private CollectionChangeEventHandler _dataBindingsCollectionChanged;
     private Exception _thrownException;
@@ -71,7 +70,6 @@ public partial class ControlDesigner : ComponentDesigner
     private static bool s_inContextMenu;
 
     private DockingActionList _dockingAction;
-    private StatusCommandUI _statusCommandUI;           // UI for setting the StatusBar Information..
     private Dictionary<IntPtr, bool> _subclassedChildren;
 
     protected BehaviorService BehaviorService => _behaviorService ??= GetService<BehaviorService>();
@@ -163,15 +161,11 @@ public partial class ControlDesigner : ComponentDesigner
 
     private string Name
     {
-        get
-        {
-            return Component.Site.Name;
-        }
+        get => Component.Site.Name;
         set
         {
-            // don't do anything here during loading, if a refactor changed it we don't want to do anything
-            IDesignerHost host = GetService(typeof(IDesignerHost)) as IDesignerHost;
-            if (host is null || (host is not null && !host.Loading))
+            // Don't do anything here during loading, if a refactor changed it we don't want to do anything.
+            if (GetService(typeof(IDesignerHost)) is not IDesignerHost host || (host is not null && !host.Loading))
             {
                 Component.Site.Name = value;
             }
@@ -183,18 +177,8 @@ public partial class ControlDesigner : ComponentDesigner
     ///  the component being designed is a control, and if it is it returns its parent.  This property can return
     ///  null if there is no parent component.
     /// </summary>
-    protected override IComponent ParentComponent
-    {
-        get
-        {
-            if (Component is Control c && c.Parent is not null)
-            {
-                return c.Parent;
-            }
-
-            return base.ParentComponent;
-        }
-    }
+    protected override IComponent ParentComponent =>
+        Component is Control c && c.Parent is not null ? c.Parent : base.ParentComponent;
 
     /// <summary>
     ///  Determines whether or not the ControlDesigner will allow SnapLine alignment during a drag operation when
@@ -490,16 +474,14 @@ public partial class ControlDesigner : ComponentDesigner
 
             DesignerTarget?.Dispose();
 
-            _downPos = Point.Empty;
-
             if (HasComponent)
             {
-                Control.ControlAdded -= new ControlEventHandler(OnControlAdded);
-                Control.ControlRemoved -= new ControlEventHandler(OnControlRemoved);
-                Control.ParentChanged -= new EventHandler(OnParentChanged);
-                Control.SizeChanged -= new EventHandler(OnSizeChanged);
-                Control.LocationChanged -= new EventHandler(OnLocationChanged);
-                Control.EnabledChanged -= new EventHandler(OnEnabledChanged);
+                Control.ControlAdded -= OnControlAdded;
+                Control.ControlRemoved -= OnControlRemoved;
+                Control.ParentChanged -= OnParentChanged;
+                Control.SizeChanged -= OnSizeChanged;
+                Control.LocationChanged -= OnLocationChanged;
+                Control.EnabledChanged -= OnEnabledChanged;
             }
         }
 
@@ -515,7 +497,7 @@ public partial class ControlDesigner : ComponentDesigner
 
         // No designer means we must replace the window target in this control.
         IWindowTarget oldTarget = e.Control.WindowTarget;
-        if (!(oldTarget is ChildWindowTarget))
+        if (oldTarget is not ChildWindowTarget)
         {
             e.Control.WindowTarget = new ChildWindowTarget(this, e.Control, oldTarget);
 
@@ -543,7 +525,7 @@ public partial class ControlDesigner : ComponentDesigner
     private void DataSource_ComponentRemoved(object sender, ComponentEventArgs e)
     {
         // It is possible to use the control designer with NON CONTROl types.
-        if (!(Component is Control ctl))
+        if (Component is not Control ctl)
         {
             return;
         }
@@ -1001,9 +983,6 @@ public partial class ControlDesigner : ComponentDesigner
 
         // And force some shadow properties that we change in the course of initializing the form.
         AllowDrop = Control.AllowDrop;
-
-        // update the Status Command
-        _statusCommandUI = new StatusCommandUI(component.Site);
     }
 
     // This is a workaround to some problems with the ComponentCache that we should fix. When this is removed
@@ -1705,7 +1684,7 @@ public partial class ControlDesigner : ComponentDesigner
                 }
             }
 
-            if (!(oldTarget is DesignerWindowTarget))
+            if (oldTarget is not DesignerWindowTarget)
             {
                 UnhookChildControls(child);
             }
@@ -2341,31 +2320,28 @@ public partial class ControlDesigner : ComponentDesigner
             return true;
         }
 
-        switch (msg)
+        return (uint)msg switch
         {
             // WM messages not covered by the above block
-            case PInvoke.WM_MOUSEHOVER:
-            case PInvoke.WM_MOUSELEAVE:
-            // WM_NC messages
-            case PInvoke.WM_NCMOUSEMOVE:
-            case PInvoke.WM_NCLBUTTONDOWN:
-            case PInvoke.WM_NCLBUTTONUP:
-            case PInvoke.WM_NCLBUTTONDBLCLK:
-            case PInvoke.WM_NCRBUTTONDOWN:
-            case PInvoke.WM_NCRBUTTONUP:
-            case PInvoke.WM_NCRBUTTONDBLCLK:
-            case PInvoke.WM_NCMBUTTONDOWN:
-            case PInvoke.WM_NCMBUTTONUP:
-            case PInvoke.WM_NCMBUTTONDBLCLK:
-            case PInvoke.WM_NCMOUSEHOVER:
-            case PInvoke.WM_NCMOUSELEAVE:
-            case PInvoke.WM_NCXBUTTONDOWN:
-            case PInvoke.WM_NCXBUTTONUP:
-            case PInvoke.WM_NCXBUTTONDBLCLK:
-                return true;
-            default:
-                return false;
-        }
+            PInvoke.WM_MOUSEHOVER
+                or PInvoke.WM_MOUSELEAVE
+                or PInvoke.WM_NCMOUSEMOVE
+                or PInvoke.WM_NCLBUTTONDOWN
+                or PInvoke.WM_NCLBUTTONUP
+                or PInvoke.WM_NCLBUTTONDBLCLK
+                or PInvoke.WM_NCRBUTTONDOWN
+                or PInvoke.WM_NCRBUTTONUP
+                or PInvoke.WM_NCRBUTTONDBLCLK
+                or PInvoke.WM_NCMBUTTONDOWN
+                or PInvoke.WM_NCMBUTTONUP
+                or PInvoke.WM_NCMBUTTONDBLCLK
+                or PInvoke.WM_NCMOUSEHOVER
+                or PInvoke.WM_NCMOUSELEAVE
+                or PInvoke.WM_NCXBUTTONDOWN
+                or PInvoke.WM_NCXBUTTONUP
+                or PInvoke.WM_NCXBUTTONDBLCLK => true,
+            _ => false,
+        };
     }
 
     private bool IsDoubleClick(int x, int y)

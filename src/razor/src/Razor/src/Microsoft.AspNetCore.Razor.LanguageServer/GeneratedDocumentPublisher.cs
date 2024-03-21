@@ -21,20 +21,19 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
 {
     private readonly Dictionary<DocumentKey, PublishData> _publishedCSharpData;
     private readonly Dictionary<string, PublishData> _publishedHtmlData;
-    private readonly ProjectSnapshotManagerBase _projectManager;
+    private readonly IProjectSnapshotManager _projectManager;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly IClientConnection _clientConnection;
     private readonly LanguageServerFeatureOptions _options;
     private readonly ILogger _logger;
 
     public GeneratedDocumentPublisher(
-        ProjectSnapshotManagerBase projectManager,
+        IProjectSnapshotManager projectManager,
         ProjectSnapshotManagerDispatcher dispatcher,
         IClientConnection clientConnection,
         LanguageServerFeatureOptions options,
         IRazorLoggerFactory loggerFactory)
     {
-
         _projectManager = projectManager;
         _dispatcher = dispatcher;
         _clientConnection = clientConnection;
@@ -182,8 +181,6 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
         }
 
         _dispatcher.AssertRunningOnDispatcher();
-
-        Assumes.NotNull(_projectManager);
 
         switch (args.Kind)
         {

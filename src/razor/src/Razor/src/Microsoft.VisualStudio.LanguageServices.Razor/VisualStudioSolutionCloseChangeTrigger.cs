@@ -3,6 +3,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Threading;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.ProjectSystem.VS;
@@ -17,7 +18,7 @@ internal class VisualStudioSolutionCloseChangeTrigger : IRazorStartupService, IV
 {
     private IVsSolution? _solution;
     private readonly IServiceProvider _serviceProvider;
-    private readonly ProjectSnapshotManagerBase _projectManager;
+    private readonly IProjectSnapshotManager _projectManager;
     private readonly JoinableTaskContext _joinableTaskContext;
 
     private uint _cookie;
@@ -25,7 +26,7 @@ internal class VisualStudioSolutionCloseChangeTrigger : IRazorStartupService, IV
     [ImportingConstructor]
     public VisualStudioSolutionCloseChangeTrigger(
        [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-       ProjectSnapshotManagerBase projectManager,
+       IProjectSnapshotManager projectManager,
        JoinableTaskContext joinableTaskContext)
     {
         _serviceProvider = serviceProvider;
@@ -51,19 +52,19 @@ internal class VisualStudioSolutionCloseChangeTrigger : IRazorStartupService, IV
 
     public int OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
     {
-        _projectManager.SolutionOpened();
+        _projectManager.UpdateAsync(static updater => updater.SolutionOpened(), CancellationToken.None).Forget();
         return VSConstants.S_OK;
     }
 
     public int OnBeforeCloseSolution(object pUnkReserved)
     {
-        _projectManager.SolutionClosed();
+        _projectManager.UpdateAsync(static updater => updater.SolutionClosed(), CancellationToken.None).Forget();
         return VSConstants.S_OK;
     }
 
     public int OnAfterCloseSolution(object pUnkReserved)
     {
-        _projectManager.SolutionOpened();
+        _projectManager.UpdateAsync(static updater => updater.SolutionOpened(), CancellationToken.None).Forget();
         return VSConstants.S_OK;
     }
 

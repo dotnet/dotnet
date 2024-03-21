@@ -49,9 +49,9 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_hostProject1);
+            updater.ProjectAdded(s_hostProject1);
         });
 
         // We utilize a task completion source here so we can "fake" a document parse taking a significant amount of time
@@ -73,16 +73,16 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         // We trigger enqueued notifications via adding/opening to the project manager
 
         // Act & Assert
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentAdded(s_hostProject1.Key, hostDocument, textLoader.Object);
+            updater.DocumentAdded(s_hostProject1.Key, hostDocument, textLoader.Object);
         });
 
         queue.NotifyBackgroundCapturedWorkload.Wait();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentOpened(s_hostProject1.Key, hostDocument.FilePath, SourceText.From(string.Empty));
+            updater.DocumentOpened(s_hostProject1.Key, hostDocument.FilePath, SourceText.From(string.Empty));
         });
 
         // Verify document was suppressed because it was opened
@@ -103,9 +103,9 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_hostProject1);
+            updater.ProjectAdded(s_hostProject1);
         });
 
         var textLoader = new StrictMock<TextLoader>();
@@ -113,9 +113,9 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             .Setup(loader => loader.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()))
             .Throws<FileNotFoundException>();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentAdded(s_hostProject1.Key, s_documents[0], textLoader.Object);
+            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], textLoader.Object);
         });
 
         var project = projectManager.GetLoadedProject(s_hostProject1.Key);
@@ -144,9 +144,9 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_hostProject1);
+            updater.ProjectAdded(s_hostProject1);
         });
 
         var textLoader = new StrictMock<TextLoader>();
@@ -154,9 +154,9 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             .Setup(loader => loader.LoadTextAndVersionAsync(It.IsAny<LoadTextOptions>(), It.IsAny<CancellationToken>()))
             .Throws<UnauthorizedAccessException>();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentAdded(s_hostProject1.Key, s_documents[0], textLoader.Object);
+            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], textLoader.Object);
         });
 
         var project = projectManager.GetLoadedProject(s_hostProject1.Key);
@@ -185,12 +185,12 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_hostProject1);
-            projectManager.ProjectAdded(s_hostProject2);
-            projectManager.DocumentAdded(s_hostProject1.Key, s_documents[0], null!);
-            projectManager.DocumentAdded(s_hostProject1.Key, s_documents[1], null!);
+            updater.ProjectAdded(s_hostProject1);
+            updater.ProjectAdded(s_hostProject2);
+            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], null!);
+            updater.DocumentAdded(s_hostProject1.Key, s_documents[1], null!);
         });
 
         var project = projectManager.GetLoadedProject(s_hostProject1.Key);
@@ -229,12 +229,12 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_hostProject1);
-            projectManager.ProjectAdded(s_hostProject2);
-            projectManager.DocumentAdded(s_hostProject1.Key, s_documents[0], null!);
-            projectManager.DocumentAdded(s_hostProject1.Key, s_documents[1], null!);
+            updater.ProjectAdded(s_hostProject1);
+            updater.ProjectAdded(s_hostProject2);
+            updater.DocumentAdded(s_hostProject1.Key, s_documents[0], null!);
+            updater.DocumentAdded(s_hostProject1.Key, s_documents[1], null!);
         });
 
         var project = projectManager.GetLoadedProject(s_hostProject1.Key);
@@ -307,12 +307,12 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
             TestProjectData.SomeProjectImportFile
         };
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_hostProject1);
+            updater.ProjectAdded(s_hostProject1);
             for (var i = 0; i < documents.Length; i++)
             {
-                projectManager.DocumentAdded(s_hostProject1.Key, documents[i], null!);
+                updater.DocumentAdded(s_hostProject1.Key, documents[i], null!);
             }
         });
 
@@ -329,9 +329,9 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         var changedSourceText = SourceText.From("@inject DateTime Time");
 
         // Act & Assert
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentChanged(s_hostProject1.Key, TestProjectData.SomeProjectImportFile.FilePath, changedSourceText);
+            updater.DocumentChanged(s_hostProject1.Key, TestProjectData.SomeProjectImportFile.FilePath, changedSourceText);
         });
 
         Assert.True(queue.IsScheduledOrRunning, "Queue should be scheduled during Enqueue");
@@ -368,11 +368,11 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(s_hostProject1);
-            projectManager.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectComponentFile1, null!);
-            projectManager.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectImportFile, null!);
+            updater.ProjectAdded(s_hostProject1);
+            updater.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectComponentFile1, null!);
+            updater.DocumentAdded(s_hostProject1.Key, TestProjectData.SomeProjectImportFile, null!);
         });
 
         var queue = new BackgroundDocumentGenerator(projectManager, Dispatcher, _dynamicFileInfoProvider, ErrorReporter)
@@ -386,9 +386,9 @@ public class BackgroundDocumentGeneratorTest(ITestOutputHelper testOutput) : Vis
         };
 
         // Act & Assert
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentRemoved(s_hostProject1.Key, TestProjectData.SomeProjectImportFile);
+            updater.DocumentRemoved(s_hostProject1.Key, TestProjectData.SomeProjectImportFile);
         });
 
         Assert.True(queue.IsScheduledOrRunning, "Queue should be scheduled during Enqueue");

@@ -31,10 +31,9 @@ public class ProjectMutationBenchmark : ProjectSnapshotManagerBenchmarkBase
     [Benchmark(Description = "Does thread contention add/remove of documents", OperationsPerInvoke = 100)]
     public async Task ProjectMutation_Mutates100kFilesAsync()
     {
-        await Dispatcher.RunAsync(() =>
-        {
-            ProjectManager.ProjectAdded(HostProject);
-        }, CancellationToken.None);
+        await ProjectManager.UpdateAsync(
+            updater => updater.ProjectAdded(HostProject),
+            CancellationToken.None);
 
         var cancellationSource = new CancellationTokenSource();
         var done = false;
@@ -45,9 +44,9 @@ public class ProjectMutationBenchmark : ProjectSnapshotManagerBenchmarkBase
             for (var i = 0; i < Documents.Length; i++)
             {
                 var document = Documents[i];
-                await Dispatcher.RunAsync(() => ProjectManager.DocumentAdded(HostProject.Key, document, TextLoaders[i % 4]), CancellationToken.None).ConfigureAwait(false);
+                await ProjectManager.UpdateAsync(updater => updater.DocumentAdded(HostProject.Key, document, TextLoaders[i % 4]), CancellationToken.None).ConfigureAwait(false);
                 Thread.Sleep(0);
-                await Dispatcher.RunAsync(() => ProjectManager.DocumentRemoved(HostProject.Key, document), CancellationToken.None).ConfigureAwait(false);
+                await ProjectManager.UpdateAsync(updater => updater.DocumentRemoved(HostProject.Key, document), CancellationToken.None).ConfigureAwait(false);
                 Thread.Sleep(0);
             }
 

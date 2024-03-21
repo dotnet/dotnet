@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
@@ -61,8 +62,15 @@ internal sealed class InlayHintService(IRazorDocumentMappingService documentMapp
         foreach (var hint in inlayHints)
         {
             if (hint.Position.TryGetAbsoluteIndex(csharpSourceText, null, out var absoluteIndex) &&
-                _documentMappingService.TryMapToHostDocumentPosition(csharpDocument, absoluteIndex, out Position? hostDocumentPosition, out _))
+                _documentMappingService.TryMapToHostDocumentPosition(csharpDocument, absoluteIndex, out Position? hostDocumentPosition, out var hostDocumentIndex))
             {
+                // We know this C# maps to Razor, but does it map to Razor that we like?
+                var node = await documentContext.GetSyntaxNodeAsync(hostDocumentIndex, cancellationToken).ConfigureAwait(false);
+                if (node?.FirstAncestorOrSelf<MarkupTagHelperAttributeValueSyntax>() is not null)
+                {
+                    continue;
+                }
+
                 if (hint.TextEdits is not null)
                 {
                     hint.TextEdits = _documentMappingService.GetHostDocumentEdits(csharpDocument, hint.TextEdits);

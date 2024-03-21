@@ -25,7 +25,7 @@ internal class OpenDocumentGenerator : IRazorStartupService, IDisposable
     // a document for each keystroke.
     private static readonly TimeSpan s_batchingTimeSpan = TimeSpan.FromMilliseconds(10);
 
-    private readonly ProjectSnapshotManagerBase _projectManager;
+    private readonly IProjectSnapshotManager _projectManager;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly LanguageServerFeatureOptions _options;
     private readonly IReadOnlyList<DocumentProcessedListener> _listeners;
@@ -33,7 +33,7 @@ internal class OpenDocumentGenerator : IRazorStartupService, IDisposable
 
     public OpenDocumentGenerator(
         IEnumerable<DocumentProcessedListener> listeners,
-        ProjectSnapshotManagerBase projectManager,
+        IProjectSnapshotManager projectManager,
         ProjectSnapshotManagerDispatcher dispatcher,
         LanguageServerFeatureOptions options,
         IErrorReporter errorReporter)

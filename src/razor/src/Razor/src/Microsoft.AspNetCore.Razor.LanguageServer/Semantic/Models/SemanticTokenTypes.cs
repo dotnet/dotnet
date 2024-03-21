@@ -20,7 +20,7 @@ internal sealed class SemanticTokenTypes
     private static readonly string s_razorCommentStarType = "razorCommentStar";
     private static readonly string s_razorCommentTransitionType = "razorCommentTransition";
     private static readonly string s_razorCommentType = "razorComment";
-    private static readonly string s_razorComponentAttributeType = "RazorComponentAttribute";
+    private static readonly string s_razorComponentAttributeType = "razorComponentAttribute";
     private static readonly string s_razorComponentElementType = "razorComponentElement";
     private static readonly string s_razorDirectiveAttributeType = "razorDirectiveAttribute";
     private static readonly string s_razorDirectiveColonType = "razorDirectiveColon";

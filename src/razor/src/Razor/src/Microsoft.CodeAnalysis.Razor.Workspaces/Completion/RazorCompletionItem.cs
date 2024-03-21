@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.Extensions.Internal;
@@ -28,7 +29,7 @@ internal sealed class RazorCompletionItem : IEquatable<RazorCompletionItem>
         string insertText,
         RazorCompletionItemKind kind,
         string? sortText = null,
-        IReadOnlyList<RazorCommitCharacter>? commitCharacters = null,
+        ImmutableArray<RazorCommitCharacter> commitCharacters = default,
         bool isSnippet = false)
     {
         if (displayText is null)
@@ -44,7 +45,7 @@ internal sealed class RazorCompletionItem : IEquatable<RazorCompletionItem>
         DisplayText = displayText;
         InsertText = insertText;
         Kind = kind;
-        CommitCharacters = commitCharacters;
+        CommitCharacters = commitCharacters.NullToEmpty();
         SortText = sortText ?? displayText;
         IsSnippet = isSnippet;
     }
@@ -62,7 +63,7 @@ internal sealed class RazorCompletionItem : IEquatable<RazorCompletionItem>
 
     public RazorCompletionItemKind Kind { get; }
 
-    public IReadOnlyCollection<RazorCommitCharacter>? CommitCharacters { get; }
+    public ImmutableArray<RazorCommitCharacter> CommitCharacters { get; }
 
     public ItemCollection Items
     {

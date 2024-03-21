@@ -45,7 +45,6 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
             _projectConfigurationFilePathStore,
             languageServerFeatureOptions,
             _projectManager,
-            Dispatcher,
             WorkspaceProvider,
             NoOpTelemetryReporter.Instance);
     }
@@ -60,9 +59,9 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
             "RootNamespace",
             "DisplayName");
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(hostProject);
+            updater.ProjectAdded(hostProject);
         });
 
         var projectId = ProjectId.CreateNewId();
@@ -140,9 +139,9 @@ public class FallbackProjectManagerTest : VisualStudioWorkspaceTestBase
             "RootNamespace",
             "DisplayName");
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectConfigurationChanged(hostProject);
+            updater.ProjectConfigurationChanged(hostProject);
         });
 
         project = Assert.Single(_projectManager.GetProjects());

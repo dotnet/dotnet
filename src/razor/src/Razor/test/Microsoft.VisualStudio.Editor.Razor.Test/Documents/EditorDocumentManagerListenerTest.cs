@@ -3,6 +3,8 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
@@ -10,7 +12,6 @@ using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Threading;
 using Moq;
 using Xunit;
@@ -18,137 +19,172 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Documents;
 
-public class EditorDocumentManagerListenerTest : VisualStudioTestBase
+public class EditorDocumentManagerListenerTest(ITestOutputHelper testOutput) : VisualStudioTestBase(testOutput)
 {
-    private readonly string _projectFilePath;
-    private readonly ProjectKey _projectKey;
-    private readonly string _documentFilePath;
-    private readonly TextLoader _textLoader;
-    private readonly IFileChangeTracker _fileChangeTracker;
-    private readonly TestTextBuffer _textBuffer;
+    private static readonly HostProject s_hostProject = new(
+        projectFilePath: "/path/to/project.csproj",
+        intermediateOutputPath: "/path/to/obj",
+        RazorConfiguration.Default,
+        rootNamespace: null);
 
-    public EditorDocumentManagerListenerTest(ITestOutputHelper testOutput)
-        : base(testOutput)
-    {
-        _projectFilePath = TestProjectData.SomeProject.FilePath;
-        _projectKey = TestProjectData.SomeProject.Key;
-        _documentFilePath = TestProjectData.SomeProjectFile1.FilePath;
-        _textLoader = TextLoader.From(TextAndVersion.Create(SourceText.From("FILE"), VersionStamp.Default));
-        _fileChangeTracker = Mock.Of<IFileChangeTracker>(x => x.FilePath == _documentFilePath, MockBehavior.Strict);
+    private static readonly HostDocument s_hostDocument = new(
+        filePath: "/path/to/file1.razor",
+        targetPath: "/path/to/file1.razor");
 
-        _textBuffer = new TestTextBuffer(new StringTextSnapshot("Hello"));
-    }
-
-    [Fact]
+    [UIFact]
     public async Task ProjectManager_Changed_DocumentRemoved_RemovesDocument()
     {
         // Arrange
-        var changedOnDisk = new EventHandler((o, args) => { });
-        var changedInEditor = new EventHandler((o, args) => { });
-        var opened = new EventHandler((o, args) => { });
-        var closed = new EventHandler((o, args) => { });
+        var projectManager = CreateProjectSnapshotManager();
 
-        var editorDocumentManger = new Mock<IEditorDocumentManager>(MockBehavior.Strict);
-        var document = GetEditorDocument(documentManager: editorDocumentManger.Object);
-        editorDocumentManger
-            .Setup(e => e.TryGetDocument(It.IsAny<DocumentKey>(), out document))
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectAdded(s_hostProject);
+            updater.DocumentAdded(s_hostProject.Key, s_hostDocument, StrictMock.Of<TextLoader>());
+        });
+
+        var editorDocumentMangerMock = new StrictMock<IEditorDocumentManager>();
+        var expectedDocument = GetEditorDocument(documentManager: editorDocumentMangerMock.Object);
+        editorDocumentMangerMock
+            .Setup(e => e.TryGetDocument(It.IsAny<DocumentKey>(), out expectedDocument))
             .Returns(true);
-        editorDocumentManger
+        editorDocumentMangerMock
             .Setup(e => e.RemoveDocument(It.IsAny<EditorDocument>()))
-            .Callback<EditorDocument>(doc => Assert.Same(document, doc));
+            .Callback<EditorDocument>(document => Assert.Same(expectedDocument, document))
+            .Verifiable();
 
         var listener = new EditorDocumentManagerListener(
-            editorDocumentManger.Object, Dispatcher, JoinableTaskContext, changedOnDisk, changedInEditor, opened, closed);
+            editorDocumentMangerMock.Object, projectManager, JoinableTaskContext, NoOpTelemetryReporter.Instance);
 
-        var projectFilePath = "/Path/to/project.csproj";
-        var project = Mock.Of<IProjectSnapshot>(p => p.Key == TestProjectKey.Create("/Path/to/obj") && p.FilePath == projectFilePath, MockBehavior.Strict);
+        var listenerAccessor = listener.GetTestAccessor();
 
-        // Act & Assert
-        await listener.ProjectManager_ChangedAsync(new ProjectChangeEventArgs(project, project, "/Path/to/file", ProjectChangeKind.DocumentRemoved, solutionIsClosing: false), DisposalToken);
+        // Act
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentRemoved(s_hostProject.Key, s_hostDocument);
+        });
+
+        await listenerAccessor.ProjectChangedTask;
+
+        // Assert
+        editorDocumentMangerMock.VerifyAll();
     }
 
-    [Fact]
+    [UIFact]
     public async Task ProjectManager_Changed_ProjectRemoved_RemovesAllDocuments()
     {
         // Arrange
-        var changedOnDisk = new EventHandler((o, args) => { });
-        var changedInEditor = new EventHandler((o, args) => { });
-        var opened = new EventHandler((o, args) => { });
-        var closed = new EventHandler((o, args) => { });
+        var projectManager = CreateProjectSnapshotManager();
 
-        var editorDocumentManger = new Mock<IEditorDocumentManager>(MockBehavior.Strict);
-        var document = GetEditorDocument(documentManager: editorDocumentManger.Object);
-        editorDocumentManger
-            .Setup(e => e.TryGetDocument(It.IsAny<DocumentKey>(), out document))
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectAdded(s_hostProject);
+            updater.DocumentAdded(s_hostProject.Key, s_hostDocument, StrictMock.Of<TextLoader>());
+        });
+
+        var editorDocumentMangerMock = new StrictMock<IEditorDocumentManager>();
+        var expectedDocument = GetEditorDocument(documentManager: editorDocumentMangerMock.Object);
+        editorDocumentMangerMock
+            .Setup(e => e.TryGetDocument(It.IsAny<DocumentKey>(), out expectedDocument))
             .Returns(true);
-        editorDocumentManger
+        editorDocumentMangerMock
             .Setup(e => e.RemoveDocument(It.IsAny<EditorDocument>()))
-            .Callback<EditorDocument>(doc => Assert.Same(document, doc));
+            .Callback<EditorDocument>(document => Assert.Same(expectedDocument, document))
+            .Verifiable();
 
         var listener = new EditorDocumentManagerListener(
-            editorDocumentManger.Object, Dispatcher, JoinableTaskContext, changedOnDisk, changedInEditor, opened, closed);
+            editorDocumentMangerMock.Object, projectManager, JoinableTaskContext, NoOpTelemetryReporter.Instance);
 
-        var projectFilePath = "/Path/to/project.csproj";
-        var project = Mock.Of<IProjectSnapshot>(p =>
-            p.Key == TestProjectKey.Create("/Path/to/obj") &&
-            p.DocumentFilePaths == new string[] { document.DocumentFilePath } &&
-            p.FilePath == projectFilePath, MockBehavior.Strict);
+        var listenerAccessor = listener.GetTestAccessor();
 
-        // Act & Assert
-        await listener.ProjectManager_ChangedAsync(new ProjectChangeEventArgs(project, project, "/Path/to/file", ProjectChangeKind.DocumentRemoved, solutionIsClosing: false), DisposalToken);
+        // Act
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectRemoved(s_hostProject.Key);
+        });
+
+        await listenerAccessor.ProjectChangedTask;
+
+        // Assert
+        editorDocumentMangerMock.VerifyAll();
     }
 
-    [Fact]
+    [UIFact]
     public async Task ProjectManager_Changed_DocumentAdded_InvokesGetOrCreateDocument()
     {
         // Arrange
-        var changedOnDisk = new EventHandler((o, args) => { });
-        var changedInEditor = new EventHandler((o, args) => { });
-        var opened = new EventHandler((o, args) => { });
-        var closed = new EventHandler((o, args) => { });
+        var projectManager = CreateProjectSnapshotManager();
 
-        var editorDocumentManger = new Mock<IEditorDocumentManager>(MockBehavior.Strict);
-        editorDocumentManger
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectAdded(s_hostProject);
+        });
+
+        var editorDocumentMangerMock = new StrictMock<IEditorDocumentManager>();
+        editorDocumentMangerMock
             .Setup(e => e.GetOrCreateDocument(It.IsAny<DocumentKey>(), It.IsAny<string>(), It.IsAny<ProjectKey>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>()))
             .Returns(GetEditorDocument())
-            .Callback<DocumentKey, string, ProjectKey, EventHandler, EventHandler, EventHandler, EventHandler>((key, filePath, projectKey, onChangedOnDisk, onChangedInEditor, onOpened, onClosed) =>
+            .Callback<DocumentKey, string, ProjectKey, EventHandler, EventHandler, EventHandler, EventHandler>((key, filePath, projectKey, _, _, _, _) =>
             {
-                Assert.Same(changedOnDisk, onChangedOnDisk);
-                Assert.Same(changedInEditor, onChangedInEditor);
-                Assert.Same(opened, onOpened);
-                Assert.Same(closed, onClosed);
-            });
+                Assert.Equal(s_hostDocument.FilePath, key.DocumentFilePath);
+                Assert.Equal(s_hostProject.FilePath, filePath);
+                Assert.Equal(s_hostProject.Key, projectKey);
+            })
+            .Verifiable();
 
         var listener = new EditorDocumentManagerListener(
-            editorDocumentManger.Object, Dispatcher, JoinableTaskContext, changedOnDisk, changedInEditor, opened, closed);
+            editorDocumentMangerMock.Object, projectManager, JoinableTaskContext, NoOpTelemetryReporter.Instance);
 
-        var projectFilePath = "/Path/to/project.csproj";
-        var project = Mock.Of<IProjectSnapshot>(p => p.Key == TestProjectKey.Create("/Path/to/obj") && p.FilePath == projectFilePath, MockBehavior.Strict);
+        var listenerAccessor = listener.GetTestAccessor();
 
-        // Act & Assert
-        await listener.ProjectManager_ChangedAsync(new ProjectChangeEventArgs(project, project, "/Path/to/file", ProjectChangeKind.DocumentAdded, solutionIsClosing: false), DisposalToken);
+        // Act
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentAdded(s_hostProject.Key, s_hostDocument, StrictMock.Of<TextLoader>());
+        });
+
+        await listenerAccessor.ProjectChangedTask;
+
+        // Assert
+        editorDocumentMangerMock.VerifyAll();
     }
 
-    [Fact]
+    [UIFact]
     public async Task ProjectManager_Changed_OpenDocumentAdded_InvokesOnOpened()
     {
         // Arrange
-        var called = false;
-        var opened = new EventHandler((o, args) => called = true);
+        var projectManager = CreateProjectSnapshotManager();
 
-        var editorDocumentManger = new Mock<IEditorDocumentManager>(MockBehavior.Strict);
-        editorDocumentManger
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectAdded(s_hostProject);
+        });
+
+        var editorDocumentMangerMock = new StrictMock<IEditorDocumentManager>();
+        editorDocumentMangerMock
             .Setup(e => e.GetOrCreateDocument(It.IsAny<DocumentKey>(), It.IsAny<string>(), It.IsAny<ProjectKey>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>(), It.IsAny<EventHandler>()))
             .Returns(GetEditorDocument(isOpen: true));
 
         var listener = new EditorDocumentManagerListener(
-            editorDocumentManger.Object, Dispatcher, JoinableTaskContext, onChangedOnDisk: null, onChangedInEditor: null, onOpened: opened, onClosed: null);
+            editorDocumentMangerMock.Object, projectManager, JoinableTaskContext, NoOpTelemetryReporter.Instance);
+
+        var listenerAccessor = listener.GetTestAccessor();
+
+        var called = false;
+        listenerAccessor.OnOpened += delegate { called = true; };
 
         var projectFilePath = "/Path/to/project.csproj";
-        var project = Mock.Of<IProjectSnapshot>(p => p.Key == TestProjectKey.Create("/Path/to/obj") && p.FilePath == projectFilePath, MockBehavior.Strict);
+        var project = StrictMock.Of<IProjectSnapshot>(p =>
+            p.Key == TestProjectKey.Create("/Path/to/obj") &&
+            p.FilePath == projectFilePath);
 
         // Act
-        await listener.ProjectManager_ChangedAsync(new ProjectChangeEventArgs(project, project, "/Path/to/file", ProjectChangeKind.DocumentAdded, solutionIsClosing: false), DisposalToken);
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentAdded(s_hostProject.Key, s_hostDocument, StrictMock.Of<TextLoader>());
+        });
+
+        await listenerAccessor.ProjectChangedTask;
 
         // Assert
         Assert.True(called);
@@ -156,21 +192,26 @@ public class EditorDocumentManagerListenerTest : VisualStudioTestBase
 
     private EditorDocument GetEditorDocument(bool isOpen = false, IEditorDocumentManager? documentManager = null)
     {
-        var document = new EditorDocument(
-            documentManager ?? Mock.Of<IEditorDocumentManager>(MockBehavior.Strict),
+        var fileChangeTracker = StrictMock.Of<IFileChangeTracker>(x =>
+            x.FilePath == s_hostDocument.FilePath);
+
+        var textBuffer = isOpen
+            ? new TestTextBuffer(new StringTextSnapshot("Hello"))
+            : null;
+
+        return new EditorDocument(
+            documentManager ?? StrictMock.Of<IEditorDocumentManager>(),
             Dispatcher,
             JoinableTaskContext,
-            _projectFilePath,
-            _documentFilePath,
-            _projectKey,
-            _textLoader,
-            _fileChangeTracker,
-            isOpen ? _textBuffer : null,
+            s_hostProject.FilePath,
+            s_hostDocument.FilePath,
+            s_hostProject.Key,
+            StrictMock.Of<TextLoader>(),
+            fileChangeTracker,
+            textBuffer,
             changedOnDisk: null,
             changedInEditor: null,
             opened: null,
             closed: null);
-
-        return document;
     }
 }

@@ -11,14 +11,12 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Shared = System.Composition.SharedAttribute;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor;
 
 /// <summary>
 /// Publishes project.razor.bin files.
 /// </summary>
-[Shared]
 [Export(typeof(IRazorStartupService))]
 internal class RazorProjectInfoPublisher : IRazorStartupService
 {
@@ -30,7 +28,7 @@ internal class RazorProjectInfoPublisher : IRazorStartupService
     private const string TempFileExt = ".temp";
     private readonly RazorLogger _logger;
     private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
-    private readonly ProjectSnapshotManagerBase _projectManager;
+    private readonly IProjectSnapshotManager _projectManager;
     private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore;
     private readonly Dictionary<ProjectKey, IProjectSnapshot> _pendingProjectPublishes;
     private readonly object _pendingProjectPublishesLock;
@@ -41,7 +39,7 @@ internal class RazorProjectInfoPublisher : IRazorStartupService
     [ImportingConstructor]
     public RazorProjectInfoPublisher(
         LSPEditorFeatureDetector lSPEditorFeatureDetector,
-        ProjectSnapshotManagerBase projectManager,
+        IProjectSnapshotManager projectManager,
         ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
         RazorLogger logger)
     {

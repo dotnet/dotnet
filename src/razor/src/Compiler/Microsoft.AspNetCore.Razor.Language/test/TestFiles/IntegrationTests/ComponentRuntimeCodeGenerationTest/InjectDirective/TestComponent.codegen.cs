@@ -43,6 +43,7 @@ Value5
 #line hidden
 #nullable disable
          { get; set; }
+         = default!;
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private 
 #nullable restore
 #line (5,9)-(5,15) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -60,6 +61,7 @@ Value4
 #line hidden
 #nullable disable
          { get; set; }
+         = default!;
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private 
 #nullable restore
 #line (4,9)-(4,12) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -77,6 +79,7 @@ Value3
 #line hidden
 #nullable disable
          { get; set; }
+         = default!;
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private 
 #nullable restore
 #line (3,15)-(3,28) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -94,6 +97,7 @@ Value2
 #line hidden
 #nullable disable
          { get; set; }
+         = default!;
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private 
 #nullable restore
 #line (2,9)-(2,15) "x:\dir\subdir\Test\TestComponent.cshtml"
@@ -111,6 +115,7 @@ Value1
 #line hidden
 #nullable disable
          { get; set; }
+         = default!;
     }
 }
 #pragma warning restore 1591

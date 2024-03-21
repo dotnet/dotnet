@@ -60,9 +60,9 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         // Arrange
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(hostProject);
+            updater.ProjectAdded(hostProject);
         });
 
         var projectWorkspaceState = ProjectWorkspaceState.Create(LanguageVersion.LatestMajor);
@@ -89,10 +89,10 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(hostProject);
-            _projectManager.DocumentAdded(hostProject.Key, hostDocument, StrictMock.Of<TextLoader>());
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(hostProject.Key, hostDocument, StrictMock.Of<TextLoader>());
         });
 
         var newDocument = new DocumentSnapshotHandle("file.cshtml", "file.cshtml", FileKinds.Component);
@@ -121,10 +121,10 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         var hostDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(hostProject);
-            _projectManager.DocumentAdded(hostProject.Key, hostDocument, StrictMock.Of<TextLoader>());
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(hostProject.Key, hostDocument, StrictMock.Of<TextLoader>());
         });
 
         var oldDocument = new DocumentSnapshotHandle(hostDocument.FilePath, hostDocument.TargetPath, hostDocument.FileKind);
@@ -155,10 +155,10 @@ public class RazorProjectServiceTest : LanguageServerTestBase
 
         var miscProject = await RunOnDispatcherAsync(_snapshotResolver.GetMiscellaneousProject);
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(hostProject);
-            _projectManager.DocumentAdded(miscProject.Key, hostDocument, StrictMock.Of<TextLoader>());
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(miscProject.Key, hostDocument, StrictMock.Of<TextLoader>());
         });
 
         var project = _projectManager.GetLoadedProject(hostProject.Key);
@@ -192,12 +192,12 @@ public class RazorProjectServiceTest : LanguageServerTestBase
 
         var miscProject = await RunOnDispatcherAsync(_snapshotResolver.GetMiscellaneousProject);
 
-        var project = await RunOnDispatcherAsync(() =>
+        var project = await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(hostProject);
+            updater.ProjectAdded(hostProject);
 
-            var project = _projectManager.GetLoadedProject(hostProject.Key);
-            _projectManager.DocumentAdded(hostProject.Key, hostDocument, StrictMock.Of<TextLoader>());
+            var project = updater.GetLoadedProject(hostProject.Key);
+            updater.DocumentAdded(hostProject.Key, hostDocument, StrictMock.Of<TextLoader>());
 
             return project;
         });
@@ -236,10 +236,10 @@ public class RazorProjectServiceTest : LanguageServerTestBase
             _ = _snapshotResolver.GetMiscellaneousProject();
         });
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(hostProject);
-            _projectManager.DocumentAdded(hostProject.Key, document, StrictMock.Of<TextLoader>());
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(hostProject.Key, document, StrictMock.Of<TextLoader>());
         });
 
         var newDocument = new DocumentSnapshotHandle(document.FilePath, document.TargetPath, document.FileKind);
@@ -266,10 +266,10 @@ public class RazorProjectServiceTest : LanguageServerTestBase
         var hostProject = new HostProject("C:/path/to/project.csproj", "C:/path/to/obj", RazorConfiguration.Default, "TestRootNamespace");
         var legacyDocument = new HostDocument("C:/path/to/file.cshtml", "file.cshtml", FileKinds.Legacy);
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(hostProject);
-            _projectManager.DocumentAdded(hostProject.Key, legacyDocument, StrictMock.Of<TextLoader>());
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(hostProject.Key, legacyDocument, StrictMock.Of<TextLoader>());
         });
 
         var newDocument = new DocumentSnapshotHandle(legacyDocument.FilePath, legacyDocument.TargetPath, FileKinds.Component);
@@ -1179,11 +1179,11 @@ public class RazorProjectServiceTest : LanguageServerTestBase
 
         var miscProject = await RunOnDispatcherAsync(_snapshotResolver.GetMiscellaneousProject);
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.DocumentAdded(miscProject.Key,
+            updater.DocumentAdded(miscProject.Key,
                 new HostDocument(DocumentFilePath1, "document1.cshtml"), CreateEmptyTextLoader());
-            _projectManager.DocumentAdded(miscProject.Key,
+            updater.DocumentAdded(miscProject.Key,
                 new HostDocument(DocumentFilePath2, "document2.cshtml"), CreateEmptyTextLoader());
         });
 
@@ -1211,11 +1211,11 @@ public class RazorProjectServiceTest : LanguageServerTestBase
 
         var miscProject = await RunOnDispatcherAsync(_snapshotResolver.GetMiscellaneousProject);
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.DocumentAdded(miscProject.Key,
+            updater.DocumentAdded(miscProject.Key,
                 new HostDocument(DocumentFilePath1, "document1.cshtml"), CreateEmptyTextLoader());
-            _projectManager.DocumentAdded(miscProject.Key,
+            updater.DocumentAdded(miscProject.Key,
                 new HostDocument(DocumentFilePath2, "document2.cshtml"), CreateEmptyTextLoader());
         });
 

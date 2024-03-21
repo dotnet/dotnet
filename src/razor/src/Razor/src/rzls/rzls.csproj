@@ -15,7 +15,7 @@
     In a non-vertical build, we'll publish for all RIDs of the OS we are building on (to reduce the number of CI jobs).
   -->
   <PropertyGroup Condition="'$(DotNetBuild)' != 'true'">
-    <RuntimeIdentifiers Condition="$([MSBuild]::IsOSPlatform('Windows'))">win-x64;win-x86;win-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifiers Condition="$([MSBuild]::IsOSPlatform('Windows'))">win-x64;win-arm64</RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="$([MSBuild]::IsOSPlatform('Linux'))">linux-x64;linux-musl-x64;linux-arm64;linux-musl-arm64</RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="$([MSBuild]::IsOSPlatform('OSX'))">osx-x64;osx-arm64</RuntimeIdentifiers>
   </PropertyGroup>
@@ -46,10 +46,6 @@
   -->
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-
-    <!-- Enable roll-forward to latest patch.  This allows one restore operation
-        to apply to all of the self-contained publish operations. -->
-    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     <RollForward>LatestMajor</RollForward>
     <RidsPublishDir>$(ArtifactsDir)LanguageServer\$(Configuration)\</RidsPublishDir>
   </PropertyGroup>
