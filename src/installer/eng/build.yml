@@ -251,8 +251,8 @@ jobs:
       inputs:
         SourceFolder: '$(installerRoot)/artifacts'
         Contents: |
-         log/${{ parameters.buildConfiguration }}/**/*
-         TestResults/${{ parameters.buildConfiguration }}/**/*
+          log/${{ parameters.buildConfiguration }}/**/*
+          TestResults/${{ parameters.buildConfiguration }}/**/*
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
       continueOnError: true
       condition: always()
