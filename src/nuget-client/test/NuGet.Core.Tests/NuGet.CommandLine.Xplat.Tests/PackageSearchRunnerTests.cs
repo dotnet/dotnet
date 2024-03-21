@@ -28,7 +28,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         [InlineData(0, 20, false)]
         [InlineData(5, 10, true)]
         [InlineData(10, 20, false)]
-        public async Task PackageSearchRunner_TableFormatNormalVerbosity_OnePackageTableOutputted(int skip, int take, bool prerelease)
+        public async Task RunAsync_TableFormatNormalVerbosity_OnePackageTableOutputted(int skip, int take, bool prerelease)
         {
             // Arrange
             ISettings settings = Settings.LoadDefaultSettings(
@@ -103,7 +103,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         [InlineData(0, 20, false)]
         [InlineData(5, 10, true)]
         [InlineData(10, 20, false)]
-        public async Task PackageSearchRunner_TableFormatMinimalVerbosity_OnePackageTableOutputted(int skip, int take, bool prerelease)
+        public async Task RunAsync_TableFormatMinimalVerbosity_OnePackageTableOutputted(int skip, int take, bool prerelease)
         {
             // Arrange
             ISettings settings = Settings.LoadDefaultSettings(
@@ -174,7 +174,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         [InlineData(0, 20, false)]
         [InlineData(5, 10, true)]
         [InlineData(10, 20, false)]
-        public async Task PackageSearchRunner_TableFormatDetailedVerbosity_OnePackageTableOutputted(int skip, int take, bool prerelease)
+        public async Task RunAsync_TableFormatDetailedVerbosity_OnePackageTableOutputted(int skip, int take, bool prerelease)
         {
             // Arrange
             ISettings settings = Settings.LoadDefaultSettings(
@@ -246,7 +246,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         [InlineData(0, 20, false)]
         [InlineData(5, 10, true)]
         [InlineData(10, 20, false)]
-        public async Task PackageSearchRunner_JsonFormatNormalVerbosity_OnePackageJsonOutputted(int skip, int take, bool prerelease)
+        public async Task RunAsync_JsonFormatNormalVerbosity_OnePackageJsonOutputted(int skip, int take, bool prerelease)
         {
             // Arrange
             ISettings settings = Settings.LoadDefaultSettings(
@@ -284,7 +284,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         [InlineData(0, 20, false)]
         [InlineData(5, 10, true)]
         [InlineData(10, 20, false)]
-        public async Task PackageSearchRunner_JsonFormatMinimalVerbosity_OnePackageJsonOutputted(int skip, int take, bool prerelease)
+        public async Task RunAsync_JsonFormatMinimalVerbosity_OnePackageJsonOutputted(int skip, int take, bool prerelease)
         {
             // Arrange
             ISettings settings = Settings.LoadDefaultSettings(
@@ -322,7 +322,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         [InlineData(0, 20, false)]
         [InlineData(5, 10, true)]
         [InlineData(10, 20, false)]
-        public async Task PackageSearchRunner_JsonFormatDetailedVerbosity_OnePackageJsonOutputted(int skip, int take, bool prerelease)
+        public async Task RunAsync_JsonFormatDetailedVerbosity_OnePackageJsonOutputted(int skip, int take, bool prerelease)
         {
             // Arrange
             ISettings settings = Settings.LoadDefaultSettings(
@@ -356,7 +356,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public async Task PackageSearchRunner_ExactMatchOptionEnabled_OnePackageTableOutputted()
+        public async Task RunAsync_ExactMatchOptionEnabled_OnePackageTableOutputted()
         {
             // Arrange
             ISettings settings = Settings.LoadDefaultSettings(
@@ -406,7 +406,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public async Task PackageSearchRunner_WhenSourceIsInvalid_ReturnsErrorExitCode()
+        public async Task RunAsync_WhenSourceIsInvalid_ReturnsErrorExitCode()
         {
             // Arrange
             ISettings settings = Settings.LoadDefaultSettings(
@@ -439,7 +439,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public async Task PackageSearchRunner_WhenSourceHasNoSearchResource_LogsSearchServiceMissingError()
+        public async Task RunAsync_WhenSourceHasNoSearchResource_LogsSearchServiceMissingError()
         {
             // Arrange
             ISettings settings = Settings.LoadDefaultSettings(
@@ -472,7 +472,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public async Task PackageSearchRunner_HandlesOperationCanceledException_WhenCancellationIsRequested()
+        public async Task RunAsync_HandlesOperationCanceledException_WhenCancellationIsRequested()
         {
             // Arrange
             ISettings settings = Settings.LoadDefaultSettings(
@@ -506,6 +506,108 @@ namespace NuGet.CommandLine.Xplat.Tests
             // Assert
             Assert.Equal(ExitCodes.Success, exitCode);
             Assert.Contains(expectedError, StoredErrorMessage);
+        }
+
+        [Fact]
+        public async Task RunAsync_WhenPackageHasOnlyIdAndVersion_ReturnsValidNormalVerbosityOutput()
+        {
+            // Arrange
+            ISettings settings = Settings.LoadDefaultSettings(
+                Directory.GetCurrentDirectory(),
+                configFileName: null,
+                machineWideSettings: new XPlatMachineWideSetting());
+            PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
+
+            PackageSearchArgs packageSearchArgs = new()
+            {
+                Skip = 0,
+                Take = 10,
+                Prerelease = true,
+                ExactMatch = false,
+                Logger = GetLogger(),
+                SearchTerm = "NullInfoPackage",
+                Sources = new List<string> { $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json" },
+                Verbosity = PackageSearchVerbosity.Normal,
+                Format = PackageSearchFormat.Json
+            };
+
+            // Act
+            await PackageSearchRunner.RunAsync(
+                sourceProvider: sourceProvider,
+                packageSearchArgs,
+                cancellationToken: System.Threading.CancellationToken.None);
+
+            // Assert
+            string message = _fixture.NormalizeNewlines(Message);
+            Assert.Contains(_fixture.ExpectedSearchResultNullInfoPackage, message);
+        }
+
+        [Fact]
+        public async Task RunAsync_WhenPackageHasOnlyIdAndVersion_ReturnsValidMinimalVerbosityOutput()
+        {
+            // Arrange
+            ISettings settings = Settings.LoadDefaultSettings(
+                Directory.GetCurrentDirectory(),
+                configFileName: null,
+                machineWideSettings: new XPlatMachineWideSetting());
+            PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
+
+            PackageSearchArgs packageSearchArgs = new()
+            {
+                Skip = 0,
+                Take = 10,
+                Prerelease = true,
+                ExactMatch = false,
+                Logger = GetLogger(),
+                SearchTerm = "NullInfoPackage",
+                Sources = new List<string> { $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json" },
+                Verbosity = PackageSearchVerbosity.Minimal,
+                Format = PackageSearchFormat.Json
+            };
+
+            // Act
+            await PackageSearchRunner.RunAsync(
+                sourceProvider: sourceProvider,
+                packageSearchArgs,
+                cancellationToken: System.Threading.CancellationToken.None);
+
+            // Assert
+            string message = _fixture.NormalizeNewlines(Message);
+            Assert.Contains(_fixture.ExpectedSearchResultNullInfoPackage, message);
+        }
+
+        [Fact]
+        public async Task RunAsync_WhenPackageHasOnlyIdAndVersion_ReturnsValidDetailedVerbosityOutput()
+        {
+            // Arrange
+            ISettings settings = Settings.LoadDefaultSettings(
+                Directory.GetCurrentDirectory(),
+                configFileName: null,
+                machineWideSettings: new XPlatMachineWideSetting());
+            PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
+
+            PackageSearchArgs packageSearchArgs = new()
+            {
+                Skip = 0,
+                Take = 10,
+                Prerelease = true,
+                ExactMatch = false,
+                Logger = GetLogger(),
+                SearchTerm = "NullInfoPackage",
+                Sources = new List<string> { $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json" },
+                Verbosity = PackageSearchVerbosity.Detailed,
+                Format = PackageSearchFormat.Json
+            };
+
+            // Act
+            await PackageSearchRunner.RunAsync(
+                sourceProvider: sourceProvider,
+                packageSearchArgs,
+                cancellationToken: System.Threading.CancellationToken.None);
+
+            // Assert
+            string message = _fixture.NormalizeNewlines(Message);
+            Assert.Contains(_fixture.ExpectedSearchResultNullInfoPackage, message);
         }
     }
 }
