@@ -4,7 +4,7 @@ parameters:
   buildConfig: Release
 
 jobs:
-- template: /eng/common/templates/job/job.yml
+- template: /eng/common/templates-official/job/job.yml@self
   parameters:
     name: ValidateArcadeSDK
     displayName: Validate Arcade SDK
@@ -23,7 +23,7 @@ jobs:
     - _BuildConfig: ${{ parameters.buildConfig }}
     - _BuildArgs: ${{ parameters.buildArgs }}
     - _ValidateBlobFeedUrl: ${{ parameters.validateBlobFeedUrl }}
-    - template: /eng/common/templates/variables/pool-providers.yml
+    - template: /eng/common/templates-official/variables/pool-providers.yml@self
     pool:
       name: $(DncEngInternalBuildPool)
       demands: ImageOverride -equals windows.vs2019.amd64

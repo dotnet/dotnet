@@ -4,192 +4,165 @@ parameters:
   BARBuildId: ''
   symbolPublishingAdditionalParameters: ''
   buildQuality: 'daily'
-
 stages:
-  - stage: publish
-    displayName: Publishing
-    jobs:
-    - job: publish_assets
-      displayName: Publish Assets and Symbols
-      timeoutInMinutes: 120
-      variables:
-        - group: DotNet-Symbol-Server-Pats
-        - group: DotNetBuilds storage account tokens
-        - group: AzureDevOps-Artifact-Feeds-Pats
-        - group: DotNet-MSRC-Storage
-        - group: Publish-Build-Assets
+- stage: publish
+  displayName: Publishing
+  jobs:
+  - job: publish_assets
+    displayName: Publish Assets and Symbols
+    timeoutInMinutes: 120
+    variables:
+    - group: DotNet-Symbol-Server-Pats
+    - group: DotNetBuilds storage account tokens
+    - group: AzureDevOps-Artifact-Feeds-Pats
+    - group: DotNet-MSRC-Storage
+    - group: Publish-Build-Assets
+  
+    # Default Maestro++ API Endpoint and API Version
+    - name: MaestroApiEndPoint
+      value: "https://maestro.dot.net"
+    - name: MaestroApiAccessToken
+      value: $(MaestroAccessToken)
+    - name: MaestroApiVersion
+      value: "2020-02-20"
+    - template: /eng/common/templates-official/post-build/common-variables.yml@self
 
-        # Default Maestro++ API Endpoint and API Version
-        - name: MaestroApiEndPoint
-          value: "https://maestro.dot.net"
-        - name: MaestroApiAccessToken
-          value: $(MaestroAccessToken)
-        - name: MaestroApiVersion
-          value: "2020-02-20"
-        - template: /eng/common/templates/post-build/common-variables.yml
-
-      pool:
-        # We don't use the collection uri here because it might vary (.visualstudio.com vs. dev.azure.com)
-        ${{ if eq(variables['System.TeamProject'], 'DevDiv') }}:
-          name: VSEngSS-MicroBuild2022-1ES
-          demands: Cmd
-        # If it's not devdiv, it's dnceng:
-        ${{ else }}:
-          name: NetCore1ESPool-Publishing-Internal
-          demands: ImageOverride -equals windows.vs2019.amd64
-
-      steps:
-        - task: PowerShell@2
-          displayName: Validate and Locate Build
-          inputs:
-            targetType: inline
-            pwsh: true
-            script: |
-              # Keeping this script inline so that we don't need to checkout the whole repo to use just one file
-              try {
-                  $buildApiEndpoint = "$(MaestroApiEndPoint)/api/builds/${Env:BARBuildId}?api-version=$(MaestroApiVersion)"
-
-                  $apiHeaders = New-Object 'System.Collections.Generic.Dictionary[[String],[String]]'
-                  $apiHeaders.Add('Accept', 'application/json')
-                  $apiHeaders.Add('Authorization',"Bearer ${Env:MAESTRO_API_TOKEN}")
-
-                  $buildInfo = try { Invoke-WebRequest -Method Get -Uri $buildApiEndpoint -Headers $apiHeaders | ConvertFrom-Json } catch { Write-Host "Error: $_" }
-
-                  if (!$buildInfo) {
-                    Write-Host "Build with BAR ID ${Env:BARBuildId} was not found in BAR!"
-                    exit 1
-                  }
-
-                  $channels = ${Env:PromoteToChannelIds} -split "-"
-                  $channelNames = @()
-                  foreach ($channelId in $channels) {
-                    $channelApiEndpoint = "$(MaestroApiEndPoint)/api/channels/${channelId}?api-version=$(MaestroApiVersion)"
-                    $channelInfo = try { Invoke-WebRequest -Method Get -Uri $channelApiEndpoint -Headers $apiHeaders | ConvertFrom-Json } catch { Write-Host "Error: $_" }
-
-                    if (!$channelInfo) {
-                      Write-Host "Channel with ID ${channelId} was not found in BAR. Aborting."
-                      exit 1
-                    }
-
-                    $channelNames += "'$($channelInfo.name)'"
-                  }
-
-                  $azureDevOpsBuildNumber = $buildInfo.azureDevOpsBuildNumber
-                  $azureDevOpsRepository = "Unknown"
-                  $lastIndexOfSlash = $buildInfo.azureDevOpsRepository.LastIndexOf('/')
-
-                  if ($lastIndexOfSlash -ne -1) {
-                    $azureDevOpsRepository = $buildInfo.azureDevOpsRepository.Substring($lastIndexOfSlash + 1)
-
-                    # Invalid chars in Azdo build number: '"', '/', ':', '<', '>', '\', '|', '?', '@', and '*'
-                    $azureDevOpsRepository = $azureDevOpsRepository -replace '["/:<>\\|?@*"]', '_'
-                  }
-
-                  $channelNames = $channelNames -join ", "
-                  $buildNumberName = "Promoting $azureDevOpsRepository build $azureDevOpsBuildNumber (${Env:BARBuildId}) to channel(s) $channelNames #"
-
-                  # Maximum buildnumber length is 255 chars
-                  if ($buildNumberName.Length -GT 255) {
-                    $buildNumberName = $buildNumberName.Substring(0, 255)
-                  }
-
-                  # Set tags on publishing for visibility
-
-                  Write-Host "##vso[build.updatebuildnumber]$buildNumberName"
-                  Write-Host "##vso[build.addbuildtag]Channel(s) - $channelNames"
-                  Write-Host "##vso[build.addbuildtag]BAR ID - ${Env:BARBuildId}"
-
-                  # Set variables used in publishing.
-                  Write-Host "##vso[task.setvariable variable=AzDOProject]$($buildInfo.azureDevOpsProject)"
-                  Write-Host "##vso[task.setvariable variable=AzDOPipelineId]$($buildInfo.azureDevOpsBuildDefinitionId)"
-                  Write-Host "##vso[task.setvariable variable=AzDOBuildId]$($buildInfo.azureDevOpsBuildId)"
-                  Write-Host "##vso[task.setvariable variable=AzDOAccount]$($buildInfo.azureDevOpsAccount)"
-                  Write-Host "##vso[task.setvariable variable=AzDOBranch]$($buildInfo.azureDevOpsBranch)"
-              }
-              catch {
-                Write-Host $_
-                Write-Host $_.Exception
-                Write-Host $_.ScriptStackTrace
+    steps:
+    - task: PowerShell@2
+      displayName: Validate and Locate Build
+      inputs:
+        targetType: inline
+        pwsh: true
+        script: |
+          # Keeping this script inline so that we don't need to checkout the whole repo to use just one file
+          try {
+              $buildApiEndpoint = "$(MaestroApiEndPoint)/api/builds/${Env:BARBuildId}?api-version=$(MaestroApiVersion)"
+              $apiHeaders = New-Object 'System.Collections.Generic.Dictionary[[String],[String]]'
+              $apiHeaders.Add('Accept', 'application/json')
+              $apiHeaders.Add('Authorization',"Bearer ${Env:MAESTRO_API_TOKEN}")
+              $buildInfo = try { Invoke-WebRequest -Method Get -Uri $buildApiEndpoint -Headers $apiHeaders | ConvertFrom-Json } catch { Write-Host "Error: $_" }
+              if (!$buildInfo) {
+                Write-Host "Build with BAR ID ${Env:BARBuildId} was not found in BAR!"
                 exit 1
               }
-          env:
-            MAESTRO_API_TOKEN: $(MaestroApiAccessToken)
-            BARBuildId: ${{ parameters.BARBuildId }}
-            PromoteToChannelIds: ${{ parameters.PromoteToChannelIds }}
+              $channels = ${Env:PromoteToChannelIds} -split "-"
+              $channelNames = @()
+              foreach ($channelId in $channels) {
+                $channelApiEndpoint = "$(MaestroApiEndPoint)/api/channels/${channelId}?api-version=$(MaestroApiVersion)"
+                $channelInfo = try { Invoke-WebRequest -Method Get -Uri $channelApiEndpoint -Headers $apiHeaders | ConvertFrom-Json } catch { Write-Host "Error: $_" }
+                if (!$channelInfo) {
+                  Write-Host "Channel with ID ${channelId} was not found in BAR. Aborting."
+                  exit 1
+                }
+                $channelNames += "'$($channelInfo.name)'"
+              }
+              $azureDevOpsBuildNumber = $buildInfo.azureDevOpsBuildNumber
+              $azureDevOpsRepository = "Unknown"
+              $lastIndexOfSlash = $buildInfo.azureDevOpsRepository.LastIndexOf('/')
+              if ($lastIndexOfSlash -ne -1) {
+                $azureDevOpsRepository = $buildInfo.azureDevOpsRepository.Substring($lastIndexOfSlash + 1)
+                # Invalid chars in Azdo build number: '"', '/', ':', '<', '>', '\', '|', '?', '@', and '*'
+                $azureDevOpsRepository = $azureDevOpsRepository -replace '["/:<>\\|?@*"]', '_'
+              }
+              $channelNames = $channelNames -join ", "
+              $buildNumberName = "Promoting $azureDevOpsRepository build $azureDevOpsBuildNumber (${Env:BARBuildId}) to channel(s) $channelNames #"
+              # Maximum buildnumber length is 255 chars
+              if ($buildNumberName.Length -GT 255) {
+                $buildNumberName = $buildNumberName.Substring(0, 255)
+              }
+              # Set tags on publishing for visibility
+              Write-Host "##vso[build.updatebuildnumber]$buildNumberName"
+              Write-Host "##vso[build.addbuildtag]Channel(s) - $channelNames"
+              Write-Host "##vso[build.addbuildtag]BAR ID - ${Env:BARBuildId}"
+              # Set variables used in publishing.
+              Write-Host "##vso[task.setvariable variable=AzDOProject]$($buildInfo.azureDevOpsProject)"
+              Write-Host "##vso[task.setvariable variable=AzDOPipelineId]$($buildInfo.azureDevOpsBuildDefinitionId)"
+              Write-Host "##vso[task.setvariable variable=AzDOBuildId]$($buildInfo.azureDevOpsBuildId)"
+              Write-Host "##vso[task.setvariable variable=AzDOAccount]$($buildInfo.azureDevOpsAccount)"
+              Write-Host "##vso[task.setvariable variable=AzDOBranch]$($buildInfo.azureDevOpsBranch)"
+          }
+          catch {
+            Write-Host $_
+            Write-Host $_.Exception
+            Write-Host $_.ScriptStackTrace
+            exit 1
+          }
+      env:
+        MAESTRO_API_TOKEN: $(MaestroApiAccessToken)
+        BARBuildId: ${{ parameters.BARBuildId }}
+        PromoteToChannelIds: ${{ parameters.PromoteToChannelIds }}
 
-        - task: DownloadBuildArtifacts@0
-          displayName: Download Build Assets
-          continueOnError: true
-          enabled: true
-          inputs:
-            buildType: specific
-            buildVersionToDownload: specific
-            project:  $(AzDOProject)
-            pipeline: $(AzDOPipelineId)
-            buildId: $(AzDOBuildId)
-            downloadType: 'specific'
-            itemPattern: |
-              AssetManifests/**
-              BlobArtifacts/MergedManifest.xml
-              PdbArtifacts/**
-              ReleaseConfigs/SymbolPublishingExclusionsFile.txt
-            downloadPath: '$(Build.ArtifactStagingDirectory)'
+    - task: DownloadBuildArtifacts@0
+      displayName: Download Build Assets
+      continueOnError: true
+      enabled: true
+      inputs:
+        buildType: specific
+        buildVersionToDownload: specific
+        project: $(AzDOProject)
+        pipeline: $(AzDOPipelineId)
+        buildId: $(AzDOBuildId)
+        downloadType: 'specific'
+        itemPattern: |
+          AssetManifests/**
+          BlobArtifacts/MergedManifest.xml
+          PdbArtifacts/**
+          ReleaseConfigs/SymbolPublishingExclusionsFile.txt
+        downloadPath: '$(Build.ArtifactStagingDirectory)'
 
-        - task: NuGetToolInstaller@1
-          displayName: 'Install NuGet.exe'
+    - task: NuGetToolInstaller@1
+      displayName: 'Install NuGet.exe'
 
-        # This is necessary whenever we want to publish/restore to an AzDO private feed
-        - task: NuGetAuthenticate@1
-          displayName: 'Authenticate to AzDO Feeds'
+    - task: NuGetAuthenticate@1
+      displayName: 'Authenticate to AzDO Feeds'
 
-        - task: PowerShell@2
-          displayName: Enable cross-org publishing
-          inputs:
-            filePath: $(Build.SourcesDirectory)/eng/common/enable-cross-org-publishing.ps1
-            arguments: -token $(dn-bot-all-orgs-artifact-feeds-rw)
+    - task: PowerShell@2
+      displayName: Enable cross-org publishing
+      inputs:
+        filePath: $(Build.SourcesDirectory)/eng/common/enable-cross-org-publishing.ps1
+        arguments: -token $(dn-bot-all-orgs-artifact-feeds-rw)
 
-        - task: PowerShell@2
-          displayName: Publish packages, blobs and symbols
-          inputs:
-            filePath: $(Build.SourcesDirectory)/eng/common/sdk-task.ps1
-            arguments: -task PublishArtifactsInManifest -restore -msbuildEngine dotnet
-              /p:PublishingInfraVersion=3
-              /p:BARBuildId=${{ parameters.BARBuildId }}
-              /p:TargetChannels='${{ parameters.PromoteToChannelIds }}'
-              /p:IsInternalBuild=${{ contains(variables['AzDOBranch'], 'internal/') }}
-              /p:NugetPath=$(NuGetExeToolPath)
-              /p:MaestroApiEndpoint='$(MaestroApiEndPoint)'
-              /p:BuildAssetRegistryToken='$(MaestroApiAccessToken)'
-              /p:ManifestsBasePath='$(Build.ArtifactStagingDirectory)/AssetManifests/'
-              /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/'
-              /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts/'
-              /p:PublishInstallersAndChecksums=true
-              /p:AzureDevOpsFeedsKey='$(dn-bot-all-orgs-artifact-feeds-rw)'
-              /p:AkaMSClientId=$(akams-app-id)
-              /p:AkaMSClientSecret=$(akams-app-secret)
-              ${{ parameters.artifactsPublishingAdditionalParameters }}
-              /p:PDBArtifactsBasePath='$(Build.ArtifactStagingDirectory)/PDBArtifacts/'
-              /p:SymbolPublishingExclusionsFile='$(Build.ArtifactStagingDirectory)/ReleaseConfigs/SymbolPublishingExclusionsFile.txt'
-              ${{ parameters.symbolPublishingAdditionalParameters}}
-              /p:MsdlToken=$(microsoft-symbol-server-pat)
-              /p:SymWebToken=$(symweb-symbol-server-pat)
-              /p:BuildQuality='${{ parameters.buildQuality }}'
-              /p:AzdoApiToken='$(dn-bot-all-orgs-build-rw-code-rw)'
-              /p:ArtifactsBasePath='$(Build.ArtifactStagingDirectory)/'
-              /p:BuildId='$(AzDOBuildId)'
-              /p:AzureDevOpsOrg='$(AzDOAccount)'
-              /p:AzureProject='$(AzDOProject)'
-              /p:UseStreamingPublishing='true'
-              /p:StreamingPublishingMaxClients=16
-              /p:NonStreamingPublishingMaxClients=12
-              /p:DotNetBuildsPublicUriBase64='$(dotnetbuilds-public-container-uri-base64)'
-              /p:DotNetBuildsPublicChecksumsUriBase64='$(dotnetbuilds-public-container-checksum-uri-base64)'
-              /p:DotNetBuildsInternalUriBase64='$(dotnetbuilds-internal-container-uri-base64)'
-              /p:DotNetBuildsInternalChecksumsUriBase64='$(dotnetbuilds-internal-container-checksum-uri-base64)'
-              /p:DotNetCliMsrcDotNetUriBase64='$(dotnetclimsrc-dotnet-container-uri-base64)'
-              /p:DotNetCliChecksumsMsrcDotNetUriBase64='$(dotnetclichecksumsmsrc-dotnet-container-uri-base64)'
-        - template: /eng/common/templates/steps/publish-logs.yml
-          parameters:
-            StageLabel: '${{ parameters.stageName }}'
-            JobLabel: 'AssetsPublishing'
-            BinlogToolVersion: $(BinlogToolVersion)
+    - task: PowerShell@2
+      displayName: Publish packages, blobs and symbols
+      inputs:
+        filePath: $(Build.SourcesDirectory)/eng/common/sdk-task.ps1
+        arguments: -task PublishArtifactsInManifest -restore -msbuildEngine dotnet 
+          /p:PublishingInfraVersion=3 
+          /p:BARBuildId=${{ parameters.BARBuildId }} 
+          /p:TargetChannels='${{ parameters.PromoteToChannelIds }}' 
+          /p:IsInternalBuild=${{ contains(variables['AzDOBranch'], 'internal/') }} 
+          /p:NugetPath=$(NuGetExeToolPath) 
+          /p:MaestroApiEndpoint='$(MaestroApiEndPoint)' 
+          /p:BuildAssetRegistryToken='$(MaestroApiAccessToken)' 
+          /p:ManifestsBasePath='$(Build.ArtifactStagingDirectory)/AssetManifests/' 
+          /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/' 
+          /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts/' 
+          /p:PublishInstallersAndChecksums=true 
+          /p:AzureDevOpsFeedsKey='$(dn-bot-all-orgs-artifact-feeds-rw)' 
+          /p:AkaMSClientId=$(akams-app-id) 
+          /p:AkaMSClientSecret=$(akams-app-secret) ${{ parameters.artifactsPublishingAdditionalParameters }} 
+          /p:PDBArtifactsBasePath='$(Build.ArtifactStagingDirectory)/PDBArtifacts/' 
+          /p:SymbolPublishingExclusionsFile='$(Build.ArtifactStagingDirectory)/ReleaseConfigs/SymbolPublishingExclusionsFile.txt' ${{ parameters.symbolPublishingAdditionalParameters}} 
+          /p:MsdlToken=$(microsoft-symbol-server-pat) 
+          /p:SymWebToken=$(symweb-symbol-server-pat) 
+          /p:BuildQuality='${{ parameters.buildQuality }}' 
+          /p:AzdoApiToken='$(dn-bot-all-orgs-build-rw-code-rw)' 
+          /p:ArtifactsBasePath='$(Build.ArtifactStagingDirectory)/' 
+          /p:BuildId='$(AzDOBuildId)' 
+          /p:AzureDevOpsOrg='$(AzDOAccount)' 
+          /p:AzureProject='$(AzDOProject)' 
+          /p:UseStreamingPublishing='true' 
+          /p:StreamingPublishingMaxClients=16 
+          /p:NonStreamingPublishingMaxClients=12 
+          /p:DotNetBuildsPublicUriBase64='$(dotnetbuilds-public-container-uri-base64)' 
+          /p:DotNetBuildsPublicChecksumsUriBase64='$(dotnetbuilds-public-container-checksum-uri-base64)' 
+          /p:DotNetBuildsInternalUriBase64='$(dotnetbuilds-internal-container-uri-base64)' 
+          /p:DotNetBuildsInternalChecksumsUriBase64='$(dotnetbuilds-internal-container-checksum-uri-base64)' 
+          /p:DotNetCliMsrcDotNetUriBase64='$(dotnetclimsrc-dotnet-container-uri-base64)' 
+          /p:DotNetCliChecksumsMsrcDotNetUriBase64='$(dotnetclichecksumsmsrc-dotnet-container-uri-base64)'
+
+    - template: /eng/common/templates-official/steps/publish-logs.yml@self
+      parameters:
+        StageLabel: '${{ parameters.stageName }}'
+        JobLabel: 'AssetsPublishing'
+        BinlogToolVersion: $(BinlogToolVersion)

@@ -17,6 +17,7 @@
       DotNetSymbolServerTokenSymWeb     Personal access token for SymWeb symbol server. Available from variable group DotNet-Symbol-Server-Pats.
       DotNetSymbolExpirationInDays      Symbol expiration time in days (defaults to 10 years).
       SkipPackageChecks                 Skips package safety checks.
+      EnableDefaultPublishItems         Includes all packages under "/artifacts/packages". Defaults to true.
   -->
 
   <Import Project="BuildStep.props" />
@@ -63,6 +64,8 @@
     <PublishDependsOnTargets Condition="$(DotNetPublishUsingPipelines)">$(PublishDependsOnTargets);PublishToAzureDevOpsArtifacts</PublishDependsOnTargets>
 
     <PublishDependsOnTargets>BeforePublish;$(PublishDependsOnTargets)</PublishDependsOnTargets>
+
+    <EnableDefaultPublishItems Condition="'$(EnableDefaultPublishItems)' == ''">true</EnableDefaultPublishItems>
   </PropertyGroup>
 
   <Import Project="$(NuGetPackageRoot)microsoft.dotnet.build.tasks.feed\$(MicrosoftDotNetBuildTasksFeedVersion)\build\Microsoft.DotNet.Build.Tasks.Feed.targets"/>
@@ -72,12 +75,16 @@
           DependsOnTargets="$(PublishDependsOnTargets)" />
 
   <Target Name="BeforePublish">
-    <ItemGroup>
+    <ItemGroup Condition="'$(EnableDefaultPublishItems)' == 'true'">
       <ExistingSymbolPackages Include="$(ArtifactsShippingPackagesDir)**/*.symbols.nupkg" IsShipping="true" />
       <ExistingSymbolPackages Include="$(ArtifactsNonShippingPackagesDir)**/*.symbols.nupkg" IsShipping="false" />
 
       <PackagesToPublish Include="$(ArtifactsShippingPackagesDir)**/*.nupkg" IsShipping="true" />
       <PackagesToPublish Include="$(ArtifactsNonShippingPackagesDir)**/*.nupkg" IsShipping="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <!-- Make sure that PackagesToPublish doesn't contain existing symbol packages. --> 
       <PackagesToPublish Remove="@(ExistingSymbolPackages)" />
 
       <!-- Do not generate symbol packages when building from source. The generate package for the source build intermediate
@@ -125,11 +132,6 @@
       <ExistingSymbolPackages Remove="@(ExistingSymbolPackages)" Condition="'$(DotNetBuildSourceOnly)' == 'true'"/>
 
       <ItemsToPushToBlobFeed Include="@(PackagesToPublish);@(ExistingSymbolPackages);@(SymbolPackagesToGenerate)" Exclude="@(ItemsToPushToBlobFeed)" />
-
-      <ItemsToPushToBlobFeed>
-        <ManifestArtifactData Condition="'%(IsShipping)' != 'true'">NonShipping=true</ManifestArtifactData>
-        <ManifestArtifactData Condition="'%(IsShipping)' == 'true' and '$(ProducesDotNetReleaseShippingAssets)' == 'true'">DotNetReleaseShipping=true</ManifestArtifactData>
-      </ItemsToPushToBlobFeed>
     </ItemGroup>
     
     <Error Condition="'$(AllowEmptySignPostBuildList)' != 'true' AND '@(ItemsToSignPostBuild)' == ''" 
@@ -169,6 +171,13 @@
       <ManifestBuildData Include="AzureDevOpsBuildNumber=$(BUILD_BUILDNUMBER)" />
       <ManifestBuildData Include="AzureDevOpsRepository=$(BUILD_REPOSITORY_URI)" />
       <ManifestBuildData Include="AzureDevOpsBranch=$(BUILD_SOURCEBRANCH)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ItemsToPushToBlobFeed>
+        <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' != 'true'">NonShipping=true</ManifestArtifactData>
+        <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' == 'true' and '$(ProducesDotNetReleaseShippingAssets)' == 'true'">DotNetReleaseShipping=true</ManifestArtifactData>
+      </ItemsToPushToBlobFeed>
     </ItemGroup>
 
     <!--

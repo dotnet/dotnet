@@ -8,400 +8,118 @@ trigger:
     - release/8.0
   paths:
     include:
-      - '*'
+    - '*'
     exclude:
-      - .github/*
-      - Documentation/*
-      - Images/*
-      - CODE-OF-CONDUCT.md
-      - CONTRIBUTING.md
-      - LICENSE.TXT
-      - PATENTS.TXT
-      - README.md
-      - SECURITY.md
-      - THIRD-PARTY-NOTICES.TXT
-
-pr:
-  branches:
-    include:
-    - main
-    - release/6.0
-    - release/7.0
-    - release/8.0
-    - templates
-  paths:
-    include:
-      - '*'
-    exclude:
-      - .github/*
-      - Documentation/*
-      - Images/*
-      - CODE-OF-CONDUCT.md
-      - CONTRIBUTING.md
-      - LICENSE.TXT
-      - PATENTS.TXT
-      - README.md
-      - SECURITY.md
-      - THIRD-PARTY-NOTICES.TXT
-
+    - .github/*
+    - Documentation/*
+    - Images/*
+    - CODE-OF-CONDUCT.md
+    - CONTRIBUTING.md
+    - LICENSE.TXT
+    - PATENTS.TXT
+    - README.md
+    - SECURITY.md
+    - THIRD-PARTY-NOTICES.TXT
+pr: none
 
 variables:
-- template: /eng/common-variables.yml
-- template: /eng/common/templates/variables/pool-providers.yml
+- template: /eng/common-variables.yml@self
+- template: /eng/common/templates-official/variables/pool-providers.yml@self
 
 resources:
   containers:
   - container: LinuxContainer
     image: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-fpm
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    pool:
+      name: $(DncEngInternalBuildPool)
+      image: windows.vs2019.amd64
+      os: windows
 
-stages:
-- stage: build
-  displayName: Build
-  jobs:
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
-    - template: /eng/common/templates/job/onelocbuild.yml
-      parameters:
-        MirrorRepo: arcade
-        LclSource: lclFilesFromPackage
-        LclPackageId: 'LCL-JUNO-PROD-ARCADE'
-  - template: /eng/common/templates/jobs/jobs.yml
-    parameters:
-      artifacts:
-        publish:
-          artifacts: true
-          logs: true
-          manifests: true
-      enableMicrobuild: true
-      enablePublishUsingPipelines: true
-      enableSourceIndex: true
-      enableSourceBuild: true
-      workspace:
-        clean: all
+    stages:
+    - stage: build
+      displayName: Build
       jobs:
-      - job: Windows_NT
-        timeoutInMinutes: 90
-        pool:
-          ${{ if eq(variables._RunAsPublic, True) }}:
-            vmImage: windows-latest
-          ${{ if eq(variables._RunAsInternal, True) }}:
-            name: $(DncEngInternalBuildPool)
-            demands: ImageOverride -equals windows.vs2019.amd64
-        strategy:
-          matrix:
-            Build_Release:
-              _BuildConfig: Release
-        preSteps:
-        - checkout: self
-          fetchDepth: 0
-          clean: true
-        steps:
-        - script: eng\common\cibuild.cmd
-            -configuration $(_BuildConfig)
+      - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+        - template: /eng/common/templates-official/job/onelocbuild.yml@self
+          parameters:
+            MirrorRepo: arcade
+            LclSource: lclFilesFromPackage
+            LclPackageId: 'LCL-JUNO-PROD-ARCADE'
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
+        parameters:
+          artifacts:
+            publish:
+              artifacts: true
+              logs: true
+              manifests: true
+          enableMicrobuild: true
+          enablePublishUsingPipelines: true
+          enableSourceIndex: true
+          enableSourceBuild: true
+          workspace:
+            clean: all
+          jobs:
+          - job: Windows_NT
+            timeoutInMinutes: 90
+            strategy:
+              matrix:
+                Build_Release:
+                  _BuildConfig: Release
+            preSteps:
+            - checkout: self
+              fetchDepth: 0
+              clean: true
+            steps:
+            - script: eng\common\cibuild.cmd
+                -configuration $(_BuildConfig)
+                -prepareMachine
+                $(_InternalBuildArgs)
+                /p:Test=false
+              displayName: Windows Build / Publish
+
+    - stage: ValidateSdk
+      displayName: Validate Arcade SDK
+      dependsOn: build
+      jobs:
+      - template: /eng/validate-sdk.yml@self
+        parameters:
+          buildArgs: -configuration $(_BuildConfig)
             -prepareMachine
             $(_InternalBuildArgs)
             /p:Test=false
-          displayName: Windows Build / Publish
 
-        - ${{ if and(eq(variables._RunAsPublic, True), eq(variables['Build.Reason'], 'PullRequest')) }}:
-          - powershell: |
-              # Detects if current change contains change for which we need to run XHarness E2E tests
-              git fetch --all
-              $diff=$(git diff HEAD HEAD~ --name-only -- src/Microsoft.DotNet.Helix/Sdk 'tests/XHarness*')
-
-              if ($diff) {
-                Write-Host "Detected changes that will require running XHarness E2E tests. Changed files:"
-                Write-Host $diff
-                Write-Host "##vso[task.setvariable variable=RunXHarnessTests;isOutput=true]True"
-                exit 0
-              }
-
-              # Detects if Version.Details.xml or Versions.props changed (a version bump)
-              $fullDiff=$(git diff HEAD HEAD~ -- eng/Version.Details.xml eng/Versions.props)
-              if ($fullDiff -match 'Microsoft.DotNet.XHarness.CLI')
-              {
-                Write-Host "Detected a version bump of Microsoft.DotNet.XHarness.CLI, will run XHarness E2E tests"
-                Write-Host "##vso[task.setvariable variable=RunXHarnessTests;isOutput=true]True"
-                exit 0
-              }
-
-              Write-Host "No changes detected that will require running XHarness E2E tests"
-            name: XHarnessChangeDetection
-            displayName: Detect XHarness changes
-
-      - ${{ if eq(variables._RunAsPublic, True) }}:
-        - job: Linux
-          container: LinuxContainer
-          pool:
-            vmImage: ubuntu-latest
-          strategy:
-            matrix:
-              Build_Debug:
-                _BuildConfig: Debug
-          preSteps:
-          - checkout: self
-            clean: true
-          steps:
-          - script: eng/common/cibuild.sh
-              --configuration $(_BuildConfig)
-              --prepareMachine
-              /p:Test=false
-            displayName: Unix Build / Publish
-
-- ${{ if eq(variables._RunAsPublic, True) }}:
-  - stage: Test
-    dependsOn: build
-    jobs:
-    - template: /eng/common/templates/jobs/jobs.yml
+    - template: /eng/common/templates-official/post-build/post-build.yml@self
       parameters:
-        artifacts:
-          publish:
-            logs:
-              name: Logs_Test_$(Agent.OS)_$(_BuildConfig)_$(_Testing)
-          download: true
-        workspace:
-          clean: all
-        jobs:
-        - job: Windows_NT
-          timeoutInMinutes: 90
-          pool:
-            vmimage: windows-latest
-          strategy:
-            matrix:
-              Build_Release:
-                _BuildConfig: Release
-          variables:
-          - _Testing: Helix
-          preSteps:
-          - checkout: self
-            clean: true
-          steps:
-          - task: PowerShell@2
-            displayName: sdk-task verification
-            inputs:
-              filePath: eng\common\sdk-task.ps1
-              arguments: -task PublishToSymbolServers /p:DryRun="true" -restore -msbuildEngine dotnet
-                /p:DotNetSymbolServerTokenMsdl=DryRunPTA
-                /p:DotNetSymbolServerTokenSymWeb=DryRunPTA
-                /p:PDBArtifactsDirectory='$(Build.ArtifactStagingDirectory)/PDBArtifacts/'
-                /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/'
-                /p:SymbolPublishingExclusionsFile='$(Build.SourcesDirectory)/eng/SymbolPublishingExclusionsFile.txt'
-                /p:Configuration=Release
-                /p:PublishToMSDL=false
-          - powershell: eng\common\build.ps1
-              -configuration $(_BuildConfig)
-              -prepareMachine
-              -ci
-              -restore
-              -test
-              -warnAsError $false
-              -projects $(Build.SourcesDirectory)\tests\UnitTests.proj
-              /bl:$(Build.SourcesDirectory)\artifacts\log\$(_BuildConfig)\Helix.binlog
-              /p:RestoreUsingNuGetTargets=false
-            displayName: Run Helix Tests
-            env:
-              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-              HelixAccessToken: ''
-
-        - job: Linux
-          timeoutInMinutes: 90
-          container: LinuxContainer
-          pool:
-            vmimage: ubuntu-latest
-          strategy:
-            matrix:
-              Build_Debug:
-                _BuildConfig: Debug
-          variables:
-          - _Testing: Helix
-          preSteps:
-          - checkout: self
-            clean: true
-          steps:
-          - script: eng/common/build.sh
-              --configuration $(_BuildConfig)
-              --prepareMachine
-              --ci
-              --restore
-              --test
-              --warnAsError false
-              --projects $(Build.SourcesDirectory)/tests/UnitTests.proj
-              /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/Helix.binlog
-              /p:RestoreUsingNuGetTargets=false
-            displayName: Run Helix Tests
-            env:
-              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-              HelixAccessToken: ''
-
-  - stage: Test_XHarness
-    displayName: Test XHarness SDK
-    dependsOn: build
-    condition: and(succeeded(), eq(dependencies.build.outputs['Windows_NT.Build_Release.XHarnessChangeDetection.RunXHarnessTests'], 'True'))
-    jobs:
-    - template: /eng/common/templates/jobs/jobs.yml
-      parameters:
-        artifacts:
-          publish:
-            logs:
-              name: Logs_Test_$(Agent.OS)_$(_BuildConfig)_$(_Testing)
-          download: true
-        workspace:
-          clean: all
-        jobs:
-        - job: Apple_Simulators
-          timeoutInMinutes: 90
-          container: LinuxContainer
-          pool:
-            vmimage: ubuntu-latest
-          strategy:
-            matrix:
-              Build_Debug:
-                _BuildConfig: Debug
-          variables:
-          - _Testing: XHarness_Apple_Simulator_Tests
-          preSteps:
-          - checkout: self
-            clean: true
-          steps:
-          - script: eng/common/build.sh
-              -configuration $(_BuildConfig)
-              -prepareMachine
-              -ci
-              -restore
-              -test
-              -warnAsError false
-              -projects $(Build.SourcesDirectory)/tests/XHarness.Apple.SimulatorTests.proj
-              /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/XHarness.Apple.Simulator.Tests.binlog
-              /p:RestoreUsingNuGetTargets=false
-            displayName: XHarness Apple Simulator Helix Testing
-            env:
-              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-              HelixAccessToken: ''
-
-        - job: Apple_Devices
-          timeoutInMinutes: 90
-          container: LinuxContainer
-          pool:
-            vmimage: ubuntu-latest
-          strategy:
-            matrix:
-              Build_Debug:
-                _BuildConfig: Debug
-          variables:
-          - _Testing: XHarness_Apple_Device_Tests
-          preSteps:
-          - checkout: self
-            clean: true
-          steps:
-          - script: eng/common/build.sh
-              -configuration $(_BuildConfig)
-              -prepareMachine
-              -ci
-              -restore
-              -test
-              -warnAsError false
-              -projects $(Build.SourcesDirectory)/tests/XHarness.Apple.DeviceTests.proj
-              /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/Helix.XHarness.Apple.Device.Tests.binlog
-              /p:RestoreUsingNuGetTargets=false
-            displayName: XHarness Apple Device Helix Testing
-            env:
-              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-              HelixAccessToken: ''
-
-        - job: Android_Simulators
-          timeoutInMinutes: 90
-          container: LinuxContainer
-          pool:
-            vmimage: ubuntu-latest
-          strategy:
-            matrix:
-              Build_Debug:
-                _BuildConfig: Debug
-          variables:
-          - _Testing: XHarness_Android_Simulator_Tests
-          preSteps:
-          - checkout: self
-            clean: true
-          steps:
-          - script: eng/common/build.sh
-              -configuration $(_BuildConfig)
-              -prepareMachine
-              -ci
-              -restore
-              -test
-              -warnAsError false
-              -projects $(Build.SourcesDirectory)/tests/XHarness.Android.SimulatorTests.proj
-              /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/Helix.XHarness.Android.Simulator.Tests.binlog
-              /p:RestoreUsingNuGetTargets=false
-            displayName: XHarness Android Helix Testing (Linux)
-            env:
-              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-              HelixAccessToken: ''
-
-        - job: Android_Devices
-          timeoutInMinutes: 90
-          pool:
-            vmimage: windows-latest
-          strategy:
-            matrix:
-              Build_Release:
-                _BuildConfig: Release
-          variables:
-          - _Testing: XHarness_Android_Device_Tests
-          preSteps:
-          - checkout: self
-            clean: true
-          steps:
-          - powershell: eng\common\build.ps1
-              -configuration $(_BuildConfig)
-              -prepareMachine
-              -ci
-              -restore
-              -test
-              -warnAsError $false
-              -projects $(Build.SourcesDirectory)\tests\XHarness.Android.DeviceTests.proj
-              /bl:$(Build.SourcesDirectory)\artifacts\log\$(_BuildConfig)\Helix.XHarness.Android.Device.Tests.binlog
-              /p:RestoreUsingNuGetTargets=false
-            displayName: XHarness Android Helix Testing (Windows)
-            env:
-              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-              HelixAccessToken: ''
-
-- ${{ if eq(variables._RunAsInternal, True) }}:
-  - stage: ValidateSdk
-    displayName: Validate Arcade SDK
-    dependsOn: build
-    jobs:
-    - template: /eng/validate-sdk.yml
-      parameters:
-        buildArgs: -configuration $(_BuildConfig)
-          -prepareMachine
-          $(_InternalBuildArgs)
-          /p:Test=false
-
-  - template: eng\common\templates\post-build\post-build.yml
-    parameters:
-      publishingInfraVersion: 3
-      # signing validation will not run, even if the below value is 'true', if the 'PostBuildSign' variable is set to 'true'
-      enableSigningValidation: false
-      # Sourcelink validation isn't passing for Arcade due to some regressions. This should be
-      # enabled back once this issue is resolved: https://github.com/dotnet/arcade/issues/2912
-      enableSourceLinkValidation: false
-      publishDependsOn:
-      - Validate
-      - ValidateSdk
-      # This is to enable SDL runs part of Post-Build Validation Stage
-      SDLValidationParameters:
-        enable: true
-        publishGdn: true
-        continueOnError: false
-        params: ' -SourceToolsList @("policheck","credscan")
-        -TsaInstanceURL $(_TsaInstanceURL)
-        -TsaProjectName $(_TsaProjectName)
-        -TsaNotificationEmail $(_TsaNotificationEmail)
-        -TsaCodebaseAdmin $(_TsaCodebaseAdmin)
-        -TsaBugAreaPath $(_TsaBugAreaPath)
-        -TsaIterationPath $(_TsaIterationPath)
-        -TsaRepositoryName "Arcade"
-        -TsaCodebaseName "Arcade"
-        -TsaPublish $True
-        -PoliCheckAdditionalRunConfigParams @("UserExclusionPath < $(Build.SourcesDirectory)/eng/PoliCheckExclusions.xml")'
+        publishingInfraVersion: 3
+        # signing validation will not run, even if the below value is 'true', if the 'PostBuildSign' variable is set to 'true'
+        enableSigningValidation: false
+        # Sourcelink validation isn't passing for Arcade due to some regressions. This should be
+        # enabled back once this issue is resolved: https://github.com/dotnet/arcade/issues/2912
+        enableSourceLinkValidation: false
+        publishDependsOn:
+        - Validate
+        - ValidateSdk
+        # This is to enable SDL runs part of Post-Build Validation Stage 
+        SDLValidationParameters:
+          enable: true
+          publishGdn: true
+          continueOnError: false
+          params: ' -SourceToolsList @("policheck","credscan")
+          -TsaInstanceURL $(_TsaInstanceURL)
+          -TsaProjectName $(_TsaProjectName)
+          -TsaNotificationEmail $(_TsaNotificationEmail)
+          -TsaCodebaseAdmin $(_TsaCodebaseAdmin)
+          -TsaBugAreaPath $(_TsaBugAreaPath)
+          -TsaIterationPath $(_TsaIterationPath)
+          -TsaRepositoryName "Arcade"
+          -TsaCodebaseName "Arcade"
+          -TsaPublish $True
+          -PoliCheckAdditionalRunConfigParams @("UserExclusionPath < $(Build.SourcesDirectory)/eng/PoliCheckExclusions.xml")'
