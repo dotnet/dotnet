@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections;
@@ -527,7 +527,7 @@ internal sealed partial class DesignerHost : Container, IDesignerLoaderHost2, ID
         if (component == _rootComponent)
         {
             string className = _rootComponentClassName!;
-            if (oldName is not null && className.EndsWith(oldName) // If oldName occurs at the end of className
+            if (oldName is not null && className.EndsWith(oldName, StringComparison.Ordinal) // If oldName occurs at the end of className
                 && (className.Length > oldName.Length && className[className.Length - oldName.Length - 1] == '.')) // and is preceeded by a period
             {
                 // We assume the preceeding chars are the namespace and preserve it.
@@ -591,7 +591,7 @@ internal sealed partial class DesignerHost : Container, IDesignerLoaderHost2, ID
         {
             Site? site = component.Site as Site;
             RemoveWithoutUnsiting(component);
-            RemoveFromContainerPostProcess(component, this);
+            RemoveFromContainerPostProcess(component);
             if (site is not null)
             {
                 site.Disposed = true;
@@ -652,9 +652,14 @@ internal sealed partial class DesignerHost : Container, IDesignerLoaderHost2, ID
         return true;
     }
 
-    internal void RemoveFromContainerPostProcess(IComponent component, IContainer container)
+    internal void RemoveFromContainerPostProcess(IComponent component)
     {
-        // At one point during Whidbey, the component used to be unsited earlier in this process and it would be temporarily resited here before raising OnComponentRemoved. The problem with resiting it is that some 3rd party controls take action when a component is sited (such as displaying  a dialog a control is dropped on the form) and resiting here caused them to think they were being initialized for the first time.  To preserve compat, we shouldn't resite the component  during Remove.
+        // At one point during Whidbey, the component used to be unsited earlier in this process and
+        // it would be temporarily resited here before raising OnComponentRemoved. The problem with
+        // resiting it is that some 3rd party controls take action when a component is sited (such as
+        // displaying  a dialog a control is dropped on the form) and resiting here caused them to think
+        // they were being initialized for the first time. To preserve compat, we shouldn't resite the
+        // component during Remove.
         try
         {
             ComponentEventHandler? eh = _events[s_eventComponentRemoved] as ComponentEventHandler;

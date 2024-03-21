@@ -1762,7 +1762,7 @@ public class DesignSurfaceTests
     {
         public static object View { get; } = new();
 
-        public ViewTechnology[] SupportedTechnologies => new ViewTechnology[] { ViewTechnology.Default + 1 };
+        public ViewTechnology[] SupportedTechnologies => [ViewTechnology.Default + 1];
         public object GetView(ViewTechnology technology)
         {
             Assert.Equal(ViewTechnology.Default + 1, technology);
@@ -1820,6 +1820,9 @@ public class DesignSurfaceTests
             throw new NotImplementedException();
         }
     }
+
+#pragma warning disable IDE0060 // Remove unused parameter
+#pragma warning disable IDE0051 // Remove unused private members
 
     private class ClassWithPrivateDefaultConstructor
     {
@@ -1892,4 +1895,6 @@ public class DesignSurfaceTests
         {
         }
     }
+#pragma warning restore IDE0051
+#pragma warning restore IDE0060
 }

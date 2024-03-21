@@ -38,7 +38,6 @@ public unsafe partial class WebBrowserBase : Control
     private WebBrowserHelper.SelectionStyle _selectionStyle = WebBrowserHelper.SelectionStyle.NotSelected;
     private WebBrowserSiteBase? _axSite;
     private ContainerControl? _containingControl;
-    private HWND _hwndFocus;
     private EventHandler? _selectionChangeHandler;
     private readonly Guid _clsid;
     // Pointers to the ActiveX object: Interface pointers are cached for perf.
@@ -79,7 +78,7 @@ public unsafe partial class WebBrowserBase : Control
 
         _clsid = new Guid(clsidString);
         _webBrowserBaseChangingSize.Width = -1;  // Invalid value. Use WebBrowserBase.Bounds instead, when this is the case.
-        SetAXHostState(WebBrowserHelper.isMaskEdit, _clsid.Equals(WebBrowserHelper.maskEdit_Clsid));
+        SetAXHostState(WebBrowserHelper.s_isMaskEdit, _clsid.Equals(WebBrowserHelper.s_maskEdit_Clsid));
     }
 
     //
@@ -213,7 +212,7 @@ public unsafe partial class WebBrowserBase : Control
     }
 
     protected override bool ProcessDialogKey(Keys keyData) =>
-        _ignoreDialogKeys ? false : base.ProcessDialogKey(keyData);
+        !_ignoreDialogKeys && base.ProcessDialogKey(keyData);
 
     public override unsafe bool PreProcessMessage(ref Message msg)
     {
@@ -233,7 +232,7 @@ public unsafe partial class WebBrowserBase : Control
             return false;
         }
 
-        if (GetAXHostState(WebBrowserHelper.siteProcessedInputKey))
+        if (GetAXHostState(WebBrowserHelper.s_siteProcessedInputKey))
         {
             // In this case, the control called us back through IOleControlSite
             // and is now giving us a chance to see if we want to process it.
@@ -242,7 +241,7 @@ public unsafe partial class WebBrowserBase : Control
 
         // Convert Message to MSG
         MSG win32Message = msg;
-        SetAXHostState(WebBrowserHelper.siteProcessedInputKey, false);
+        SetAXHostState(WebBrowserHelper.s_siteProcessedInputKey, false);
         try
         {
             if (_axOleInPlaceObject is null)
@@ -284,7 +283,7 @@ public unsafe partial class WebBrowserBase : Control
 
                     return ret;
                 }
-                else if (GetAXHostState(WebBrowserHelper.siteProcessedInputKey))
+                else if (GetAXHostState(WebBrowserHelper.s_siteProcessedInputKey))
                 {
                     s_controlKeyboardRouting.TraceVerbose(
                         $"\t Message processed by site. Calling base.PreProcessMessage() {msg}");
@@ -300,7 +299,7 @@ public unsafe partial class WebBrowserBase : Control
         }
         finally
         {
-            SetAXHostState(WebBrowserHelper.siteProcessedInputKey, false);
+            SetAXHostState(WebBrowserHelper.s_siteProcessedInputKey, false);
         }
     }
 
@@ -418,19 +417,6 @@ public unsafe partial class WebBrowserBase : Control
                 DefWndProc(ref m);
                 break;
 
-            case PInvoke.WM_KILLFOCUS:
-                _hwndFocus = (HWND)m.WParamInternal;
-                try
-                {
-                    base.WndProc(ref m);
-                }
-                finally
-                {
-                    _hwndFocus = HWND.Null;
-                }
-
-                break;
-
             case PInvoke.WM_DESTROY:
                 //
                 // If we are currently in a state of InPlaceActive or above,
@@ -532,8 +518,7 @@ public unsafe partial class WebBrowserBase : Control
     //
     internal override bool CanSelectCore()
     {
-        return ActiveXState >= WebBrowserHelper.AXState.InPlaceActive ?
-            base.CanSelectCore() : false;
+        return ActiveXState >= WebBrowserHelper.AXState.InPlaceActive && base.CanSelectCore();
     }
 
     internal override bool AllowsKeyboardToolTip()
@@ -602,12 +587,12 @@ public unsafe partial class WebBrowserBase : Control
 
     internal void TransitionUpTo(WebBrowserHelper.AXState state)
     {
-        if (GetAXHostState(WebBrowserHelper.inTransition))
+        if (GetAXHostState(WebBrowserHelper.s_inTransition))
         {
             return;
         }
 
-        SetAXHostState(WebBrowserHelper.inTransition, true);
+        SetAXHostState(WebBrowserHelper.s_inTransition, true);
 
         try
         {
@@ -640,15 +625,15 @@ public unsafe partial class WebBrowserBase : Control
         }
         finally
         {
-            SetAXHostState(WebBrowserHelper.inTransition, false);
+            SetAXHostState(WebBrowserHelper.s_inTransition, false);
         }
     }
 
     internal void TransitionDownTo(WebBrowserHelper.AXState state)
     {
-        if (!GetAXHostState(WebBrowserHelper.inTransition))
+        if (!GetAXHostState(WebBrowserHelper.s_inTransition))
         {
-            SetAXHostState(WebBrowserHelper.inTransition, true);
+            SetAXHostState(WebBrowserHelper.s_inTransition, true);
 
             try
             {
@@ -681,7 +666,7 @@ public unsafe partial class WebBrowserBase : Control
             }
             finally
             {
-                SetAXHostState(WebBrowserHelper.inTransition, false);
+                SetAXHostState(WebBrowserHelper.s_inTransition, false);
             }
         }
     }
@@ -712,7 +697,7 @@ public unsafe partial class WebBrowserBase : Control
         get
         {
             if (_containingControl is null ||
-                GetAXHostState(WebBrowserHelper.recomputeContainingControl))
+                GetAXHostState(WebBrowserHelper.s_recomputeContainingControl))
             {
                 _containingControl = FindContainerControlInternal();
             }
@@ -763,9 +748,9 @@ public unsafe partial class WebBrowserBase : Control
 
     internal void AddSelectionHandler()
     {
-        if (!GetAXHostState(WebBrowserHelper.addedSelectionHandler))
+        if (!GetAXHostState(WebBrowserHelper.s_addedSelectionHandler))
         {
-            SetAXHostState(WebBrowserHelper.addedSelectionHandler, true);
+            SetAXHostState(WebBrowserHelper.s_addedSelectionHandler, true);
 
             ISelectionService? iss = WebBrowserHelper.GetSelectionService(this);
             if (iss is not null)
@@ -777,10 +762,10 @@ public unsafe partial class WebBrowserBase : Control
 
     internal bool RemoveSelectionHandler()
     {
-        bool retVal = GetAXHostState(WebBrowserHelper.addedSelectionHandler);
+        bool retVal = GetAXHostState(WebBrowserHelper.s_addedSelectionHandler);
         if (retVal)
         {
-            SetAXHostState(WebBrowserHelper.addedSelectionHandler, false);
+            SetAXHostState(WebBrowserHelper.s_addedSelectionHandler, false);
 
             ISelectionService? iss = WebBrowserHelper.GetSelectionService(this);
             if (iss is not null)
@@ -830,9 +815,9 @@ public unsafe partial class WebBrowserBase : Control
 
     private void StartEvents()
     {
-        if (!GetAXHostState(WebBrowserHelper.sinkAttached))
+        if (!GetAXHostState(WebBrowserHelper.s_sinkAttached))
         {
-            SetAXHostState(WebBrowserHelper.sinkAttached, true);
+            SetAXHostState(WebBrowserHelper.s_sinkAttached, true);
             CreateSink();
         }
 
@@ -841,9 +826,9 @@ public unsafe partial class WebBrowserBase : Control
 
     private void StopEvents()
     {
-        if (GetAXHostState(WebBrowserHelper.sinkAttached))
+        if (GetAXHostState(WebBrowserHelper.s_sinkAttached))
         {
-            SetAXHostState(WebBrowserHelper.sinkAttached, false);
+            SetAXHostState(WebBrowserHelper.s_sinkAttached, false);
             DetachSink();
         }
 
@@ -1186,7 +1171,7 @@ public unsafe partial class WebBrowserBase : Control
             containerControl = null;
         }
 
-        SetAXHostState(WebBrowserHelper.recomputeContainingControl, containerControl is null);
+        SetAXHostState(WebBrowserHelper.s_recomputeContainingControl, containerControl is null);
 
         return containerControl;
     }
