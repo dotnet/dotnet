@@ -94,7 +94,7 @@ public abstract partial class ToolingTestBase : IAsyncLifetime
         _disposalTokenSource = new();
         DisposalToken = _disposalTokenSource.Token;
 
-        LoggerFactory = new RazorLoggerFactory([new TestOutputLoggerProvider(testOutput)]);
+        LoggerFactory = new TestOutputLoggerFactory(testOutput);
 
         // Give this thread a name, so it's easier to find in the VS Threads window.
         Thread.CurrentThread.Name ??= "Main Thread";

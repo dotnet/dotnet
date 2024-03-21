@@ -80,9 +80,9 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var hostProject = new HostProject(@"C:\path\to\project.csproj", @"C:\path\to\obj", RazorConfiguration.Default, rootNamespace: "TestRootNamespace");
         var hostDocument = new HostDocument(@"C:\path\to\file.razor", "file.razor");
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(hostProject);
+            updater.ProjectAdded(hostProject);
         });
 
         var publisher = new TestRazorProjectInfoPublisher(
@@ -94,9 +94,9 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         };
 
         // Act
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
+            updater.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
         });
 
         // Assert
@@ -115,10 +115,10 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var hostProject = new HostProject(@"C:\path\to\project.csproj", @"C:\path\to\obj", RazorConfiguration.Default, rootNamespace: "TestRootNamespace");
         var hostDocument = new HostDocument(@"C:\path\to\file.razor", "file.razor");
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(hostProject);
-            projectManager.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
         });
 
         var publisher = new TestRazorProjectInfoPublisher(
@@ -130,9 +130,9 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         };
 
         // Act
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentOpened(hostProject.Key, hostDocument.FilePath, SourceText.From(string.Empty));
+            updater.DocumentOpened(hostProject.Key, hostDocument.FilePath, SourceText.From(string.Empty));
         });
 
         // Assert
@@ -151,11 +151,11 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var hostProject = new HostProject(@"C:\path\to\project.csproj", @"C:\path\to\obj", RazorConfiguration.Default, rootNamespace: "TestRootNamespace");
         var hostDocument = new HostDocument(@"C:\path\to\file.razor", "file.razor");
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(hostProject);
-            projectManager.ProjectWorkspaceStateChanged(hostProject.Key, ProjectWorkspaceState.Default);
-            projectManager.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
+            updater.ProjectAdded(hostProject);
+            updater.ProjectWorkspaceStateChanged(hostProject.Key, ProjectWorkspaceState.Default);
+            updater.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
         });
 
         var projectSnapshot = projectManager.GetProjects()[0];
@@ -174,9 +174,9 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         };
 
         // Act
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentOpened(hostProject.Key, hostDocument.FilePath, SourceText.From(string.Empty));
+            updater.DocumentOpened(hostProject.Key, hostDocument.FilePath, SourceText.From(string.Empty));
         });
 
         // Assert
@@ -195,11 +195,11 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var hostProject = new HostProject(@"C:\path\to\project.csproj", @"C:\path\to\obj", RazorConfiguration.Default, rootNamespace: "TestRootNamespace");
         var hostDocument = new HostDocument(@"C:\path\to\file.razor", "file.razor");
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(hostProject);
-            projectManager.ProjectWorkspaceStateChanged(hostProject.Key, ProjectWorkspaceState.Default);
-            projectManager.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
+            updater.ProjectAdded(hostProject);
+            updater.ProjectWorkspaceStateChanged(hostProject.Key, ProjectWorkspaceState.Default);
+            updater.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(hostDocument.FilePath));
         });
 
         var projectSnapshot = projectManager.GetProjects()[0];
@@ -220,9 +220,9 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         };
 
         // Act
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.DocumentOpened(hostProject.Key, hostDocument.FilePath, SourceText.From(string.Empty));
+            updater.DocumentOpened(hostProject.Key, hostDocument.FilePath, SourceText.From(string.Empty));
         });
 
         // Assert
@@ -551,10 +551,10 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var projectWorkspaceState = ProjectWorkspaceState.Default;
 
         // Act
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(hostProject);
-            projectManager.ProjectWorkspaceStateChanged(hostProject.Key, projectWorkspaceState);
+            updater.ProjectAdded(hostProject);
+            updater.ProjectWorkspaceStateChanged(hostProject.Key, projectWorkspaceState);
         });
 
         // Assert
@@ -587,8 +587,8 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         projectConfigurationFilePathStore.Set(hostProject.Key, expectedConfigurationFilePath);
 
         // Act
-        await RunOnDispatcherAsync(
-            () => projectManager.ProjectAdded(hostProject));
+        await projectManager.UpdateAsync(
+            updater => updater.ProjectAdded(hostProject));
 
         Assert.Empty(publisher.DeferredPublishTasks);
 
@@ -609,12 +609,12 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         };
 
         var hostProject = new HostProject(@"C:\path\to\project.csproj", @"C:\path\to\obj", RazorConfiguration.Default, "TestRootNamespace");
-        await RunOnDispatcherAsync(
-            () => projectManager.ProjectAdded(hostProject));
+        await projectManager.UpdateAsync(
+            updater => updater.ProjectAdded(hostProject));
 
         // Act & Assert
-        await RunOnDispatcherAsync(
-            () => projectManager.ProjectRemoved(hostProject.Key));
+        await projectManager.UpdateAsync(
+            updater => updater.ProjectRemoved(hostProject.Key));
 
         Assert.Empty(publisher.DeferredPublishTasks);
     }
@@ -652,10 +652,10 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
         var projectWorkspaceState = ProjectWorkspaceState.Default;
 
         // Act
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(hostProject);
-            projectManager.ProjectWorkspaceStateChanged(hostProject.Key, projectWorkspaceState);
+            updater.ProjectAdded(hostProject);
+            updater.ProjectWorkspaceStateChanged(hostProject.Key, projectWorkspaceState);
         });
 
         // Assert
@@ -676,7 +676,7 @@ public class RazorProjectInfoPublisherTest(ITestOutputHelper testOutput) : Langu
     }
 
     private class TestRazorProjectInfoPublisher(
-        ProjectSnapshotManagerBase projectManager,
+        IProjectSnapshotManager projectManager,
         ProjectConfigurationFilePathStore projectStatePublishFilePathStore,
         Action<IProjectSnapshot, string>? onSerializeToFile = null,
         bool shouldSerialize = true,

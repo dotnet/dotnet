@@ -123,10 +123,10 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var hostProject = new HostProject(projectFilePath, intermediateOutputPath, RazorConfiguration.Default, rootNamespace: null);
         var hostDocument = new HostDocument(filePath, "file.cshtml");
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(hostProject);
-            _projectManager.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(filePath));
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(filePath));
         });
 
         // Act
@@ -155,10 +155,10 @@ public class DocumentContextFactoryTest : LanguageServerTestBase
         var hostProject = new HostProject(projectFilePath, intermediateOutputPath, RazorConfiguration.Default, rootNamespace: null);
         var hostDocument = new HostDocument(filePath, "file.cshtml");
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(hostProject);
-            _projectManager.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(filePath));
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(hostProject.Key, hostDocument, new EmptyTextLoader(filePath));
         });
 
         // Act

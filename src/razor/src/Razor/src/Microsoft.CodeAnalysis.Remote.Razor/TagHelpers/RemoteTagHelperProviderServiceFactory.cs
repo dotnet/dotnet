@@ -10,7 +10,7 @@ internal sealed class RemoteTagHelperProviderServiceFactory : RazorServiceFactor
 {
     // WARNING: We must always have a parameterless constructor in order to be properly handled by ServiceHub.
     public RemoteTagHelperProviderServiceFactory()
-        : base(RazorServiceDescriptors.TagHelperProviderServiceDescriptors)
+        : base(RazorServices.Descriptors)
     {
     }
 

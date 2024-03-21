@@ -83,8 +83,8 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
         var handlerProvider = this.HandlerProvider;
         var queue = new RazorRequestExecutionQueue(this, _logger, handlerProvider);
         queue.Start();
-        return queue;
 
+        return queue;
     }
 
     protected override ILspServices ConstructLspServices()

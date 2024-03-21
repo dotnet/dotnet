@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Exports;
 using Microsoft.AspNetCore.Razor.Telemetry;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
@@ -79,7 +78,7 @@ public class Program
 
         // Have to create a logger factory to give to the server, but can't create any logger providers until we have
         // a server.
-        var loggerFactory = new RazorLoggerFactory([]);
+        var loggerFactory = new LoggerFactory([]);
 
         var server = RazorLanguageServerWrapper.Create(
             Console.OpenStandardInput(),

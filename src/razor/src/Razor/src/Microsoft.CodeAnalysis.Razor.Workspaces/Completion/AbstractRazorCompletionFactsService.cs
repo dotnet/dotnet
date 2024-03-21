@@ -2,9 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Composition;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -17,22 +15,9 @@ using SyntaxKind = AspNetCore.Razor.Language.SyntaxKind;
 using SyntaxNode = AspNetCore.Razor.Language.Syntax.SyntaxNode;
 #pragma warning restore IDE0065 // Misplaced using directive
 
-[Shared]
-[Export(typeof(IRazorCompletionFactsService))]
-internal class RazorCompletionFactsService : IRazorCompletionFactsService
+internal abstract class AbstractRazorCompletionFactsService(ImmutableArray<IRazorCompletionItemProvider> providers) : IRazorCompletionFactsService
 {
-    private readonly ImmutableArray<IRazorCompletionItemProvider> _providers;
-
-    [ImportingConstructor]
-    public RazorCompletionFactsService([ImportMany] IEnumerable<IRazorCompletionItemProvider> providers)
-    {
-        if (providers is null)
-        {
-            throw new ArgumentNullException(nameof(providers));
-        }
-
-        _providers = providers.ToImmutableArray();
-    }
+    private readonly ImmutableArray<IRazorCompletionItemProvider> _providers = providers;
 
     public ImmutableArray<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
     {

@@ -132,10 +132,10 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
 
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            var project = projectManager.CreateAndAddProject(@"C:\path\to\project.csproj");
-            projectManager.CreateAndAddDocument(project, @"C:\path\to\file.razor");
+            var project = updater.CreateAndAddProject(@"C:\path\to\project.csproj");
+            updater.CreateAndAddDocument(project, @"C:\path\to\file.razor");
         });
 
         var factory = new CSharpVirtualDocumentFactory(
@@ -170,7 +170,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
 
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
             var project1 = TestProjectSnapshot.Create(
                 @"C:\path\to\project1.csproj",
@@ -178,8 +178,8 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
                 documentFilePaths: [],
                 RazorConfiguration.Default,
                 projectWorkspaceState: null);
-            projectManager.ProjectAdded(project1.HostProject);
-            projectManager.CreateAndAddDocument(project1, @"C:\path\to\file.razor");
+            updater.ProjectAdded(project1.HostProject);
+            updater.CreateAndAddDocument(project1, @"C:\path\to\file.razor");
 
             var project2 = TestProjectSnapshot.Create(
                 @"C:\path\to\project2.csproj",
@@ -187,8 +187,8 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
                 documentFilePaths: [],
                 RazorConfiguration.Default,
                 projectWorkspaceState: null);
-            projectManager.ProjectAdded(project2.HostProject);
-            projectManager.CreateAndAddDocument(project2, @"C:\path\to\file.razor");
+            updater.ProjectAdded(project2.HostProject);
+            updater.CreateAndAddDocument(project2, @"C:\path\to\file.razor");
         });
 
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);

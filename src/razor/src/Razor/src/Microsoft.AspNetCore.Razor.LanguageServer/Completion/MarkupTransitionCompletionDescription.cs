@@ -2,8 +2,9 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.CodeAnalysis.Razor.Completion;
 
-namespace Microsoft.CodeAnalysis.Razor.Completion;
+namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
 internal class MarkupTransitionCompletionDescription : CompletionDescription
 {

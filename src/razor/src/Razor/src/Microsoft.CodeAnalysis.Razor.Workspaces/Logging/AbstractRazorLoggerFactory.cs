@@ -1,27 +1,23 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
-using System.Composition;
+using System.Collections.Immutable;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.CodeAnalysis.Razor.Logging;
 
-[Shared]
-[Export(typeof(IRazorLoggerFactory))]
-internal class RazorLoggerFactory : IRazorLoggerFactory
+internal abstract class AbstractRazorLoggerFactory : IRazorLoggerFactory
 {
     private readonly ILoggerFactory _loggerFactory;
 
-    [ImportingConstructor]
-    public RazorLoggerFactory([ImportMany] IEnumerable<IRazorLoggerProvider> razorLoggerProviders)
+    protected AbstractRazorLoggerFactory(ImmutableArray<IRazorLoggerProvider> providers)
     {
         _loggerFactory = LoggerFactory.Create(b =>
         {
             // We let everything through, and expect individual loggers to control their own levels
             b.AddFilter(level => true);
 
-            foreach (var provider in razorLoggerProviders)
+            foreach (var provider in providers)
             {
                 b.AddProvider(provider);
             }

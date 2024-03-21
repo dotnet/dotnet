@@ -27,10 +27,10 @@ public class WorkspaceSemanticTokensRefreshTriggerTest : LanguageServerTestBase
 
     protected override Task InitializeAsync()
     {
-        return RunOnDispatcherAsync(() =>
+        return _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(s_hostProject);
-            _projectManager.DocumentAdded(s_hostProject.Key, s_hostDocument, new EmptyTextLoader(s_hostDocument.FilePath));
+            updater.ProjectAdded(s_hostProject);
+            updater.DocumentAdded(s_hostProject.Key, s_hostDocument, new EmptyTextLoader(s_hostDocument.FilePath));
         });
     }
 
@@ -48,8 +48,8 @@ public class WorkspaceSemanticTokensRefreshTriggerTest : LanguageServerTestBase
         // Act
         var newDocument = new HostDocument("/path/to/newFile.razor", "newFile.razor");
 
-        await RunOnDispatcherAsync(() =>
-            _projectManager.DocumentAdded(s_hostProject.Key, newDocument, new EmptyTextLoader(newDocument.FilePath)));
+        await _projectManager.UpdateAsync(updater =>
+            updater.DocumentAdded(s_hostProject.Key, newDocument, new EmptyTextLoader(newDocument.FilePath)));
 
         // Assert
         publisher.VerifyAll();
