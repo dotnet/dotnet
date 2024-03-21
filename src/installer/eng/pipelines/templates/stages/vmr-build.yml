@@ -1,16 +1,23 @@
-# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
-# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
 parameters:
   dependsOn: []
   condition: always()
+
+  # Branch of the VMR to use (to push to for internal builds)
   vmrBranch: $(Build.SourceBranch)
-  isBuiltFromVmr: ''
+  
+  # True when build is running from dotnet/dotnet directly
+  isBuiltFromVmr:
+
+  # The following parameters aren't expected to be passed in rather they are used for encapsulation
+  # -----------------------------------------------------------------------------------------------
   alpine317Container: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.17
   centOSStream8Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
   centOSStream9Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
   fedora38Container: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-38
   ubuntu2204Container: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04
   ubuntu2204ArmContainer: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-arm64
+
+  # Internal builds
   poolInternalAmd64:
     name: NetCore1ESPool-Svc-Internal
     image: 1es-ubuntu-2004
@@ -60,7 +67,7 @@ stages:
 
   # PR and CI legs ------------------------------------
 
-  - template: /src/installer/eng/pipelines/templates/jobs/vmr-build.yml@self
+  - template: ../jobs/vmr-build.yml@self
     parameters:
       # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
       buildName: CentOSStream8_Online_MsftSdk
@@ -79,7 +86,7 @@ stages:
       useMonoRuntime: false              # 🚫
       withPreviousSDK: false             # 🚫
 
-  - template: /src/installer/eng/pipelines/templates/jobs/vmr-build.yml@self
+  - template: ../jobs/vmr-build.yml@self
     parameters:
       # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
       buildName: CentOSStream8_Offline_MsftSdk
@@ -102,7 +109,7 @@ stages:
 
     # CI - Stage 1 x64 legs ------------------------------------
 
-    - template: /src/installer/eng/pipelines/templates/jobs/vmr-build.yml@self
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: Alpine317_Offline_MsftSdk
@@ -121,7 +128,7 @@ stages:
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
 
-    - template: /src/installer/eng/pipelines/templates/jobs/vmr-build.yml@self
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: CentOSStream8_Online_PreviousSourceBuiltSdk
@@ -140,7 +147,7 @@ stages:
         useMonoRuntime: false              # 🚫
         withPreviousSDK: true              # ✅
 
-    - template: /src/installer/eng/pipelines/templates/jobs/vmr-build.yml@self
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: CentOSStream8_Offline_PreviousSourceBuiltSdk
@@ -159,7 +166,7 @@ stages:
         useMonoRuntime: false              # 🚫
         withPreviousSDK: true              # ✅
 
-    - template: /src/installer/eng/pipelines/templates/jobs/vmr-build.yml@self
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: CentOSStream8_Mono_Offline_MsftSdk
@@ -178,7 +185,7 @@ stages:
         useMonoRuntime: true               # ✅
         withPreviousSDK: false             # 🚫
 
-    - template: /src/installer/eng/pipelines/templates/jobs/vmr-build.yml@self
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: CentOSStream9_Offline_MsftSdk
@@ -197,7 +204,7 @@ stages:
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
 
-    - template: /src/installer/eng/pipelines/templates/jobs/vmr-build.yml@self
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: Fedora38_Offline_MsftSdk
@@ -216,7 +223,7 @@ stages:
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
 
-    - template: /src/installer/eng/pipelines/templates/jobs/vmr-build.yml@self
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: Ubuntu2204_Offline_MsftSdk
@@ -237,7 +244,7 @@ stages:
 
     # CI - Stage 1 arm64 Legs ------------------------------------
 
-    - template: /src/installer/eng/pipelines/templates/jobs/vmr-build.yml@self
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: Ubuntu2204Arm64_Offline_MsftSdk
@@ -258,7 +265,7 @@ stages:
 
     # CI - Stage 2 x64 Legs ------------------------------------
 
-    - template: /src/installer/eng/pipelines/templates/jobs/vmr-build.yml@self
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: CentOSStream8_Online_CurrentSourceBuiltSdk
@@ -278,7 +285,7 @@ stages:
         withPreviousSDK: false             # 🚫
         reuseBuildArtifactsFrom: CentOSStream8_Online_MsftSdk
 
-    - template: /src/installer/eng/pipelines/templates/jobs/vmr-build.yml@self
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: Fedora38_Offline_CurrentSourceBuiltSdk
