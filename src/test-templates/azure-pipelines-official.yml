@@ -14,120 +14,115 @@ variables:
 - name: CodeQL.Enabled
   value: false
 - name: _RunAsInternal
-  value: ${{ and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}
+  value: True
 - name: _RunAsPublic
-  value: ${{ eq(variables._RunAsInternal, False) }}
-- name: _SignType
-  value: test
-- name: _SignArgs
-  value: ''
-- name: _Sign
   value: False
+
+# Group gives access to $microsoft-symbol-server-pat and $symweb-symbol-server-pat
+- group: DotNet-Symbol-Server-Pats
+# Publish-Build-Assets provides: MaestroAccessToken, BotAccount-dotnet-maestro-bot-PAT
+- group: Publish-Build-Assets
+# Group gives access to $dn-bot-devdiv-drop-rw-code-rw and dn-bot-dnceng-build-rw-code-rw
+- group: DotNet-VSTS-Infra-Access
+- group: DotNet-DevDiv-Insertion-Workflow-Variables
+- name: _SignType
+  value: real
+- name: _SignArgs
+  value: /p:DotNetSignType=$(_SignType) /p:TeamName=$(_TeamName) /p:Sign=$(_Sign)
+- name: _Sign
+  value: True
+- name: _VisualStudioDropName
+  value: Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
 - name: _InternalBuildArgs
-  value: ' '
+  value: /p:DotNetSignType=$(_SignType)
+    /p:TeamName=$(_TeamName)
+    /p:VisualStudioDropName=$(_VisualStudioDropName)
+    /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
+    /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
+    /p:DotNetPublishUsingPipelines=true
+    /p:DotNetArtifactsCategory=.NETCore
+    /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+    /p:GenerateSbom=true
+- name: _BuildConfig
+  value: Release
 
-# Produce real signed binaries for Internal builds
-- ${{ if eq(variables._RunAsInternal, True) }}:
-  # Group gives access to $microsoft-symbol-server-pat and $symweb-symbol-server-pat
-  - group: DotNet-Symbol-Server-Pats
-  # Publish-Build-Assets provides: MaestroAccessToken, BotAccount-dotnet-maestro-bot-PAT
-  - group: Publish-Build-Assets
-  # Group gives access to $dn-bot-devdiv-drop-rw-code-rw and dn-bot-dnceng-build-rw-code-rw
-  - group: DotNet-VSTS-Infra-Access
-  - group: DotNet-DevDiv-Insertion-Workflow-Variables
-  - name: _SignType
-    value: real
-  - name: _SignArgs
-    value: /p:DotNetSignType=$(_SignType) /p:TeamName=$(_TeamName) /p:Sign=$(_Sign)
-  - name: _Sign
-    value: True
-  - name: _VisualStudioDropName
-    value: Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
-  - name: _InternalBuildArgs
-    value: /p:DotNetSignType=$(_SignType)
-      /p:TeamName=$(_TeamName)
-      /p:VisualStudioDropName=$(_VisualStudioDropName)
-      /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
-      /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
-      /p:DotNetPublishUsingPipelines=true
-      /p:DotNetArtifactsCategory=.NETCore
-      /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
-      /p:GenerateSbom=true
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
 
-stages:
-- stage: build
-  displayName: Build
-  jobs:
-
-  - template: /eng/common/templates/jobs/jobs.yml
-    parameters:
-      enableMicrobuild: true
-      enablePublishBuildArtifacts: true
-      enablePublishBuildAssets: true
-      enablePublishUsingPipelines: true
-      enablePublishTestResults: true
-      enableTelemetry: true
-      enableSourceBuild: true
-      testResultsFormat: 'vstest'
-      helixRepo: dotnet/test-templates
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    featureFlags:
+      autoBaseline: true
+    pool:
+      name: netcore1espool-internal
+      image: windows.vs2022preview.amd64
+      os: windows
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - stage: build
+      displayName: Build
       jobs:
-      - job: Windows
-        pool:
-          # For public or PR jobs, use the hosted pool.  For internal jobs use the internal pool.
-          # Will eventually change this to two BYOC pools.
-          ${{ if eq(variables._RunAsPublic, True) }}:
-            name: NetCore-Public
-            demands: ImageOverride -equals windows.vs2022preview.amd64.open
-          ${{ if eq(variables._RunAsInternal, True) }}:
-            name: NetCore1ESPool-Internal
-            demands: ImageOverride -equals windows.vs2022preview.amd64
-        strategy:
-          matrix:
-            Release:
-              _BuildConfig: Release
-            ${{ if eq(variables._RunAsPublic, True) }}:
-              Debug:
-                _BuildConfig: Debug
-        steps:
-        - checkout: self
-          clean: true
 
-        # Restore internal tools required for SBOM generation
-        - ${{ if eq(variables._RunAsInternal, True) }}:
-          - template: /eng/restore-internal-tools.yml
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
+        parameters:
+          enableMicrobuild: true
+          enablePublishBuildArtifacts: true
+          enablePublishBuildAssets: true
+          enablePublishUsingPipelines: true
+          enablePublishTestResults: true
+          enableTelemetry: true
+          enableSourceBuild: true
+          testResultsFormat: 'vstest'
+          helixRepo: dotnet/test-templates
+          jobs:
+          - job: Windows
+            pool:
+              name: netcore1espool-internal
+              image: windows.vs2022preview.amd64
+              os: windows
+              
+            steps:
+            - checkout: self
+              clean: true
 
-        - script: eng\common\cibuild.cmd
-            -configuration $(_BuildConfig)
-            -prepareMachine
-            $(_InternalBuildArgs)
-          displayName: Build
+            - template: /eng/restore-internal-tools.yml
 
-        - task: PublishBuildArtifacts@1
-          displayName: 'Publish VSSetup'
-          inputs:
-            PathtoPublish: '$(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)'
-            ArtifactName: VSSetupArtifacts
+            - script: eng\common\cibuild.cmd
+                -configuration $(_BuildConfig)
+                -prepareMachine
+                $(_InternalBuildArgs)
+              displayName: Build
 
-        - task: DotNetCoreCLI@2
-          displayName: 'Acceptance tests'
-          inputs:
-            command: test
-            projects: 'test\Microsoft.TestTemplates.Acceptance.Tests.sln'
+            - task: 1ES.PublishBuildArtifacts@1
+              displayName: 'Publish VSSetup'
+              inputs:
+                PathtoPublish: '$(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)'
+                ArtifactName: VSSetupArtifacts
 
-        - ${{ if eq(variables._RunAsInternal, True) }}:
-          - script: dir /S artifacts\VSSetup\$(_BuildConfig)\Insertion
-            displayName: 'List Insertion files to upload'
+            - task: DotNetCoreCLI@2
+              displayName: 'Acceptance tests'
+              inputs:
+                command: test
+                projects: 'test\Microsoft.TestTemplates.Acceptance.Tests.sln'
 
-          - task: ms-vseng.MicroBuildTasks.4305a8de-ba66-4d8b-b2d1-0dc4ecbbf5e8.MicroBuildUploadVstsDropFolder@1
-            displayName: Upload Azure DevOps Drop
-            inputs:
-              DropName: $(_VisualStudioDropName)
-              DropFolder: 'artifacts\VSSetup\$(_BuildConfig)\Insertion'
-              AccessToken: $(dn-bot-devdiv-drop-rw-code-rw)
-            condition: succeeded()
+            - script: dir /S artifacts\VSSetup\$(_BuildConfig)\Insertion
+              displayName: 'List Insertion files to upload'
 
-- ${{ if eq(variables._RunAsInternal, True) }}:
-  - template: \eng\common\templates\post-build\post-build.yml
-    parameters:
-      enableSourceLinkValidation: false
-      publishingInfraVersion: 3
+            - task: 1ES.MicroBuildVstsDrop@1
+              displayName: Upload Azure DevOps Drop
+              inputs:
+                dropName: $(_VisualStudioDropName)
+                dropFolder: 'artifacts\VSSetup\$(_BuildConfig)\Insertion'
+                accessToken: $(dn-bot-devdiv-drop-rw-code-rw)
+              condition: succeeded()
+
+    - template: \eng\common\templates-official\post-build\post-build.yml@self
+      parameters:
+        enableSourceLinkValidation: false
+        publishingInfraVersion: 3
