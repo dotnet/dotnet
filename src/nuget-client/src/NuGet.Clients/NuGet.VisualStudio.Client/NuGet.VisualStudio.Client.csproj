@@ -1,0 +1,431 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Shipping>true</Shipping>
+    <RootNamespace>NuGet.VisualStudio.Client</RootNamespace>
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <IncludeCopyLocalReferencesInVSIXContainer>true</IncludeCopyLocalReferencesInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+    <IncludeDebugSymbolsInLocalVSIXDeployment>true</IncludeDebugSymbolsInLocalVSIXDeployment>
+    <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+    <DeployExtension>false</DeployExtension>
+    <Description>Visual Studio Extensibility Package (vsix)</Description>
+    <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
+    <TargetVsixContainerName>NuGet.Tools.vsix</TargetVsixContainerName>
+    <VSSDKTargetPlatformRegRootSuffix>Exp</VSSDKTargetPlatformRegRootSuffix>
+    <IsProductComponent>true</IsProductComponent>
+    <ExtensionInstallationRoot>CommonExtensions</ExtensionInstallationRoot>
+    <ExtensionInstallationFolder>Microsoft\NuGet</ExtensionInstallationFolder>
+    <NgenApplicationDefault>[INSTALLDIR]\Common7\IDE\vsn.exe</NgenApplicationDefault>
+    <NgenPriorityDefault>3</NgenPriorityDefault>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' == 'True'">
+    <StartAction>Program</StartAction>
+    <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>
+    <StartArguments>/rootsuffix Exp /log</StartArguments>
+    <CreateVsixContainer>True</CreateVsixContainer>
+    <DeployExtension>True</DeployExtension>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.targets">
+      <Link>NuGet.targets</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.RestoreEx.targets">
+      <Link>NuGet.RestoreEx.targets</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.props">
+      <Link>NuGet.props</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="source.extension.vsixmanifest" />
+    <Content Include="..\NuGet.PackageManagement.PowerShellCmdlets\Scripts\about_NuGet.Cmdlets.help.txt">
+      <Link>Modules\NuGet\about_NuGet.Cmdlets.help.txt</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\NuGet.PackageManagement.PowerShellCmdlets\Scripts\NuGet.PackageManagement.PowerShellCmdlets.dll-Help.xml">
+      <Link>Modules\NuGet\NuGet.PackageManagement.PowerShellCmdlets.dll-Help.xml</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="$(PkgMicrosoft_Web_Xdt)\lib\net40\Microsoft.Web.XmlTransform.dll">
+      <Link>Microsoft.Web.XmlTransform.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="$(ArtifactsDirectory)\Scripts\Add-WrapperMembers.ps1">
+      <Link>Modules\NuGet\Add-WrapperMembers.ps1</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="$(ArtifactsDirectory)\Scripts\NuGet.Format.ps1xml">
+      <Link>Modules\NuGet\NuGet.Format.ps1xml</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="$(ArtifactsDirectory)\Scripts\NuGet.psd1">
+      <Link>Modules\NuGet\NuGet.psd1</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="$(ArtifactsDirectory)\Scripts\nuget.psm1">
+      <Link>Modules\NuGet\nuget.psm1</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="$(ArtifactsDirectory)\Scripts\NuGet.Types.ps1xml">
+      <Link>Modules\NuGet\NuGet.Types.ps1xml</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="$(ArtifactsDirectory)\Scripts\Profile.ps1">
+      <Link>Modules\NuGet\Profile.ps1</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\NuGet.PackageManagement.UI\Resources\PackageIconMonikers.imagemanifest">
+      <Link>PackageIconMonikers.imagemanifest</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="extension.vsixlangpack">
+      <IncludeInVSIX>false</IncludeInVSIX>
+    </Content>
+    <Content Include="$(BuildCommonDirectory)NOTICES.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\NuGet.Core\Microsoft.Build.NuGetSdkResolver\Microsoft.Build.NuGetSdkResolver.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.Build.Tasks.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Build.Tasks.Console\NuGet.Build.Tasks.Console.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Common\NuGet.Common.csproj">
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj">
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.DependencyResolver.Core\NuGet.DependencyResolver.Core.csproj">
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Frameworks\NuGet.Frameworks.csproj">
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.LibraryModel\NuGet.LibraryModel.csproj">
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj">
+      <Name>NuGet.PackageManagement</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj">
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.ProjectModel\NuGet.ProjectModel.csproj">
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj">
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj">
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.Tools\NuGet.Tools.csproj">
+      <Name>NuGet.Tools</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bPkgdefProjectOutputGroup%3bGetCopyToOutputDirectoryItems</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.Indexing\NuGet.Indexing.csproj">
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Commands\NuGet.Commands.csproj">
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NuGet.Core\NuGet.Credentials\NuGet.Credentials.csproj">
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.SolutionRestoreManager\NuGet.SolutionRestoreManager.csproj">
+      <Name>NuGet.SolutionRestoreManager</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bPkgdefProjectOutputGroup</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.VisualStudio.Contracts\NuGet.VisualStudio.Contracts.csproj" />
+    <ProjectReference Include="..\NuGet.VisualStudio.Implementation\NuGet.VisualStudio.Implementation.csproj">
+      <Name>NuGet.VisualStudio.Implementation</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.PackageManagement.PowerShellCmdlets\NuGet.PackageManagement.PowerShellCmdlets.csproj">
+      <Name>NuGet.PackageManagement.PowerShellCmdlets</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.PackageManagement.UI\NuGet.PackageManagement.UI.csproj">
+      <Name>NuGet.PackageManagement.UI</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj">
+      <Name>NuGet.PackageManagement.VisualStudio</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.VisualStudio.Internal.Contracts\NuGet.VisualStudio.Internal.Contracts.csproj">
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.VisualStudio.Interop\NuGet.VisualStudio.Interop.csproj">
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj">
+      <Name>NuGet.VisualStudio.Common</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.VisualStudio\NuGet.VisualStudio.csproj">
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+      <Ngen>True</Ngen>
+      <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
+      <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
+      <NgenPriority>$(NgenPriorityDefault)</NgenPriority>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.Console\NuGet.Console.csproj">
+      <Name>NuGet.Console</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+    <ProjectReference Include="..\NuGet.VisualStudio.OnlineEnvironment.Client\NuGet.VisualStudio.OnlineEnvironment.Client.csproj">
+      <Name>NuGet.VisualStudio.OnlineEnvironment.Client</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bPkgdefProjectOutputGroup%3bGetCopyToOutputDirectoryItems%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- This is important because otherwise the VSSDK will include the unsigned version coming from the global packages folder instead of the in-place signed one from the bootstrapped packages folder -->
+    <PackageReference Include="Lucene.Net" ExcludeAssets="all" GeneratePathProperty="true" />
+    <!-- dependency of Lucene.net. Can delete when Lucene.net has an update with a newer dependency on sharpziplib -->
+    <PackageReference Include="SharpZipLib" ExcludeAssets="all" />
+
+    <PackageReference Include="Newtonsoft.Json" ExcludeAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.Web.Xdt" ExcludeAssets="all" GeneratePathProperty="true" />
+
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" PrivateAssets="all" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <VsixIncludeFile Include=".vsixinclude" />
+    <VsixIgnoreFile Include=".vsixignore" />
+  </ItemGroup>
+
+  <!--
+    Copies NuGet's VSIX and symbols to the appropriate artifact locations
+  -->
+  <Target Name="PublishVS" Condition="'$(CreateVsixContainer)' != 'false'" AfterTargets="AfterBuild">
+    <ItemGroup>
+      <PackageManifest Include="$(OutputPath)Microsoft.VisualStudio.NuGet.Core.json" />
+    </ItemGroup>
+    <Message Text="Publishing VS VSIX package files..." Importance="high" />
+    <Message Text="$(TargetVsixContainer) -&gt; $(VsixPublishDestination)\NuGet.Tools.vsix" Importance="high" />
+    <Copy SourceFiles="$(TargetVsixContainer)" DestinationFiles="$(VsixPublishDestination)NuGet.Tools.vsix" OverwriteReadOnlyFiles="true" />
+    <Message Text="@(PackageManifest) -&gt; $(VsixPublishDestination)" Importance="high" />
+    <Copy SourceFiles="@(PackageManifest)" DestinationFolder="$(VsixPublishDestination)" OverwriteReadOnlyFiles="true" />
+    <ItemGroup Condition="'$(IsCIBuild)' !='true'">
+      <NuGetSymbolFiles Include="$(OutputPath)NuGet*.pdb" />
+    </ItemGroup>
+    <Message Text="Copying symbols file '%(NuGetSymbolFiles.Identity)'" Condition=" '@(NuGetSymbolFiles)' != '' " />
+    <Copy SourceFiles="@(NuGetSymbolFiles)" DestinationFolder="$(VsixPublishDestination)symbols" OverwriteReadOnlyFiles="true" Condition="'$(IsCIBuild)' !='true'" />
+  </Target>
+
+  <!--
+    Read the .vsixinclude file and generate an IncludeVsixFilesList item per line
+  -->
+  <Target Name="ReadVsixIncludeListFromFile">
+    <ReadLinesFromFile File="@(VsixIncludeFile)">
+      <Output TaskParameter="Lines" ItemName="IncludeVsixFilesList" />
+    </ReadLinesFromFile>
+    <ItemGroup>
+      <IncludeVsixFilesList Remove="@(IncludeVsixFilesList)" Condition="'%(Identity)' != '' AND $([System.String]::new('%(Identity)').StartsWith('#'))" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Read the .vsixignore file and generate an IgnoreVsixFilesList item per line
+  -->
+  <Target Name="ReadVsixIgnoreListFromFile">
+    <ReadLinesFromFile File="@(VsixIgnoreFile)">
+      <Output TaskParameter="Lines" ItemName="IgnoreVsixFilesList" />
+    </ReadLinesFromFile>
+    <ItemGroup>
+      <IgnoreVsixFilesList Remove="@(IgnoreVsixFilesList)" Condition="'%(Identity)' != '' AND $([System.String]::new('%(Identity)').StartsWith('#'))" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    The VSSDK creates a VsixSourceItems item for each file to be copied into the VSIX. In this target, we remove all
+    the files listed in our .vsixignore file, and error if any file listed in .vsixinclude is missing from the vsix.
+  -->
+  <Target Name="RemoveUnsolicitedVsixAssemblies" AfterTargets="GetVsixSourceItems" Condition="'$(IncludeCopyLocalReferencesInVSIXContainer)'=='true'" DependsOnTargets="ReadVsixIncludeListFromFile;ReadVsixIgnoreListFromFile">
+    <Message Text="Filtering VSIX package files..." Importance="high" />
+    <ItemGroup>
+      <AllVsixSymbols Include="@(VSIXSourceItem->'%(FileName)%(Extension)')" Condition=" '%(Extension)' == '.pdb' ">
+        <SourceFile>%(VSIXSourceItem.Identity)</SourceFile>
+      </AllVsixSymbols>
+      <AllVsixAssemblies Include="@(VSIXSourceItem->'%(FileName)%(Extension)')" Condition=" '%(Extension)' == '.dll' ">
+        <SourceFile>%(VSIXSourceItem.Identity)</SourceFile>
+      </AllVsixAssemblies>
+    </ItemGroup>
+    <ItemGroup>
+      <SuppressPackaging Include="@(AllVsixAssemblies)" Exclude="@(IncludeVsixFilesList)" />
+      <MissingRequiredAssemblies Include="@(IncludeVsixFilesList)" Exclude="@(AllVsixAssemblies)" />
+      <NotListedDependencies Include="@(SuppressPackaging)" Exclude="@(IgnoreVsixFilesList)" />
+      <MissingIgnoredAssemblies Include="@(IgnoreVsixFilesList)" Exclude="@(AllVsixAssemblies)" />
+      <VSIXSourceItem Remove="@(SuppressPackaging->'%(SourceFile)')" />
+      <VSIXSourceItem Remove="@(AllVsixSymbols->'%(SourceFile)')" />
+    </ItemGroup>
+    <Message Text="Suppressed file '%(SuppressPackaging.SourceFile)'" Condition=" '@(SuppressPackaging)' != '' " />
+    <Message Text="Included file '%(VSIXSourceItem.Identity)'" Condition=" '@(VSIXSourceItem)' != '' " />
+    <Error Text="Missing @(MissingRequiredAssemblies-&gt;Count()) required file(s) '@(MissingRequiredAssemblies)'" Condition=" '@(MissingRequiredAssemblies)' != '' " File="@(VsixIncludeFile)" />
+    <Error Text="Found @(NotListedDependencies-&gt;Count()) not listed file(s) '@(NotListedDependencies)'" Condition=" '@(NotListedDependencies)' != '' " File="@(VsixIncludeFile)" />
+    <Warning Text="Missing @(MissingIgnoredAssemblies-&gt;Count()) ignored file(s) '@(MissingIgnoredAssemblies)'" Condition=" '@(MissingIgnoredAssemblies)' != '' " File="@(VsixIgnoreFile)" />
+    <Message Text="Included @(VSIXSourceItem-&gt;Count()) file(s). Filtered @(SuppressPackaging-&gt;Count()) file(s)." Importance="high" />
+  </Target>
+
+  <!--
+    Our CI build runs the localization process, which generates additional assemblies that need to be included in the
+    VSIX, which are not available when localization was not run (for example, local builds).
+    The IsCIBuild property is passed on CI
+  -->
+  <Target Name="GetLocalizedDlls" AfterTargets="GetVsixSourceItems" Condition="'$(IsCIBuild)' =='true'">
+    <MSBuild Projects="@(SolutionProjectsWithoutVSIX)" Targets="GetLocalizedFilesForVsix" Properties="IsVsixBuild=true;BuildProjectReferences=false;">
+      <Output TaskParameter="TargetOutputs" ItemName="LocalizedFilesForVsix" />
+    </MSBuild>
+    <ItemGroup>
+      <VSIXSourceItem Include="@(LocalizedFilesForVsix)" />
+      <_LocalizedFiles Include="$(ArtifactsDirectory)microsoft.web.xdt\lib\net40\**\Microsoft.Web.XmlTransform.resources.dll" />
+      <_LocalizedFiles Include="$(ArtifactsDirectory)vsixlangpack\**\extension.vsixlangpack" />
+      <_VsixLocFiles Include="@(_LocalizedFiles)">
+        <TargetPath>%(_LocalizedFiles.RecursiveDir)%(_LocalizedFiles.Filename)%(_LocalizedFiles.Extension)</TargetPath>
+      </_VsixLocFiles>
+      <VSIXSourceItem Include="@(_VsixLocFiles)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Adds NuGet.Build.Tasks.Console.exe.config to the Vsix
+  -->
+  <Target Name="AddAppConfigToVsix" BeforeTargets="GetVsixSourceItems" DependsOnTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <Content Include="@(_ReferenceRelatedPaths)" IncludeInVSIX="true" Link="%(Filename)%(Extension)" Condition="'%(_ReferenceRelatedPaths.Name)' == 'NuGet.Build.Tasks.Console' And '%(_ReferenceRelatedPaths.Extension)' == '.config'" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Defines two third party dlls that ship in the vsix, and are used by two other targets
+  -->
+  <Target Name="GetThirdPartyAssemblies" Returns="@(ThirdPartyAssembly)">
+    <ItemGroup>
+      <ThirdPartyAssembly Include="$(PkgLucene_Net)\lib\NET40\Lucene.Net.dll"
+                          DestinationDir="$(IntermediateOutputPath)"
+                          TargetPath="$(IntermediateOutputPath)Lucene.Net.dll" />
+
+      <ThirdPartyAssembly Include="$(PkgNewtonsoft_Json)\lib\net45\Newtonsoft.Json.dll"
+                          DestinationDir="$(IntermediateOutputPath)"
+                          TargetPath="$(IntermediateOutputPath)Newtonsoft.Json.dll" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Copy 3rd party libraries to bin directory on build
+  -->
+  <Target Name="StageThirdPartyAssemblies"
+          BeforeTargets="BeforeBuild"
+          DependsOnTargets="GetThirdPartyAssemblies">
+    <Copy SourceFiles="@(ThirdPartyAssembly)"
+          DestinationFiles="%(ThirdPartyAssembly.TargetPath)"
+          Condition="!Exists('%(ThirdPartyAssembly.TargetPath)')" />
+    <ItemGroup>
+      <None Include="%(ThirdPartyAssembly.TargetPath)" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Add 3rd party libraries to VSIX
+  -->
+  <Target Name="IncludeThirdPartyAssembliesInVsix"
+          BeforeTargets="GetVsixSourceItems"
+          DependsOnTargets="GetThirdPartyAssemblies">
+    <ItemGroup>
+      <Content Include="%(ThirdPartyAssembly.TargetPath)" IncludeInVSIX="true" Link="%(Filename)%(Extension)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    The VSSDK BuildTools detects assemblies from NuGet packages via an MSBuild item metadata that only exists in
+    non-SDK style projects. Add in the NuGetSourceType=Package metadata to be compatible.
+  -->
+  <Target Name="VSSDKNuGetPackagesCompat" BeforeTargets="GetVsixSourceItems">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths
+        Update="@(ReferenceCopyLocalPaths)"
+        Condition=" '%(ReferenceCopyLocalPaths.NuGetPackageId)' != '' "
+        NuGetSourceType="Package" />
+    </ItemGroup>
+  </Target>
+</Project>
