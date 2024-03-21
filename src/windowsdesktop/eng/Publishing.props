@@ -1,5 +1,31 @@
 <Project>
-   <PropertyGroup>
-      <ProducesDotNetReleaseShippingAssets>true</ProducesDotNetReleaseShippingAssets>
-   </PropertyGroup>
+
+  <PropertyGroup>
+    <ProducesDotNetReleaseShippingAssets>true</ProducesDotNetReleaseShippingAssets>
+  </PropertyGroup>
+
+  <!-- Include installer archives and packages which aren't globbed by default. -->
+  <Target Name="PublishWindowsDesktopInstallers"
+          BeforeTargets="BeforePublish"
+          Condition="'$(DotNetBuildRepo)' == 'true'">
+    <!-- Retrieve windows desktop runtime pack product version.
+         Don't stabilize the package version in order to retrieve the VersionSuffix. -->
+    <MSBuild Projects="$(RepoRoot)src/windowsdesktop/src/sfx/Microsoft.WindowsDesktop.App.Runtime.sfxproj"
+             Targets="ReturnProductVersion"
+             Properties="IsShipping=false">
+      <Output TaskParameter="TargetOutputs" PropertyName="WindowsDesktopRuntimePackProductVersion" />
+    </MSBuild>
+
+    <ItemGroup>
+      <InstallerToPublish Include="$(ArtifactsPackagesDir)**\*.zip;
+                                   $(ArtifactsPackagesDir)**\*.exe;
+                                   $(ArtifactsPackagesDir)**\*.msi" />
+
+      <ItemsToPushToBlobFeed Include="@(InstallerToPublish)"
+                             IsShipping="$([System.String]::Copy('%(RecursiveDir)').StartsWith('Shipping'))"
+                             PublishFlatContainer="true"
+                             RelativeBlobPath="WindowsDesktop/$(WindowsDesktopRuntimePackProductVersion)/%(Filename)%(Extension)" />
+    </ItemGroup>
+  </Target>
+
 </Project>
