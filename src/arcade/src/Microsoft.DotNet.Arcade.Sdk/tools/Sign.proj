@@ -6,6 +6,23 @@
     <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
   </PropertyGroup>
 
+  <!--
+    Documentation for publishing is available here:
+      - https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Signing.md
+  
+    Optional variables:
+      EnableDefaultArtifacts            Includes *.nupkg, *.vsix and *.wixpack.zip under "/artifacts/packages/**" for sigining.
+                                        Defaults to true.
+    
+    Optional items:
+      Artifact (with Metadata)          Path to the artifact to publish. Can be set in Signing.props to sign and publish the artifact.
+        - RelativeBlobPath              The relative blob path when PublishFlatContainer is true.
+        - ChecksumPath                  The destination path to generate a checksum file for the artifact. Make sure to also set the
+                                        `RelativeBlobPathParent` property so that the RelativeBlobPath can be calculated.
+        - PublishFlatContainer          If true, publishes to blob artifacts, otherwise package artifacts.
+        - SkipPublish                   If true, skips publishing the artifact.
+  -->
+
   <Import Project="BuildStep.props" />
 
   <Import Project="$(NuGetPackageRoot)microsoft.dotnet.signtool\$(MicrosoftDotNetSignToolVersion)\build\Microsoft.DotNet.SignTool.props" />
