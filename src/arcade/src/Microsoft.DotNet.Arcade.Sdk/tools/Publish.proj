@@ -17,10 +17,19 @@
       DotNetSymbolServerTokenSymWeb     Personal access token for SymWeb symbol server. Available from variable group DotNet-Symbol-Server-Pats.
       DotNetSymbolExpirationInDays      Symbol expiration time in days (defaults to 10 years).
       SkipPackageChecks                 Skips package safety checks.
-      EnableDefaultPublishItems         Includes all packages under "/artifacts/packages". Defaults to true.
+      EnableDefaultArtifacts            Icludes packages under "/artifacts/packages/**" for publishing. Defaults to true.
+    
+    Optional items:
+      Artifact (with Metadata)          Path to the artifact to publish. Declare the item in Signing.props to sign and publish the artifact.
+        - RelativeBlobPath                The relative blob path when PublishFlatContainer is true.
+        - ChecksumPath                    The destination path to generate a checksum file for the artifact. Make sure to set the `RelativeBlobPathParent`
+                                          property so that the RelativeBlobPath for the generate checksum can be calculated.
+        - PublishFlatContainer            If true, publishes to blob artifacts, otherwise package artifacts.
   -->
 
   <Import Project="BuildStep.props" />
+
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.GenerateChecksums" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
 
   <!--
     In VMR inner-build copy to local storage, do not push to AzDO.
@@ -30,6 +39,8 @@
   <PropertyGroup Condition="'$(DotNetBuildPhase)' == 'InnerRepo' and '$(DotNetBuildOrchestrator)' == 'true'">
     <PushToLocalStorage>true</PushToLocalStorage>
   </PropertyGroup>
+
+  <Import Project="Sign.props" />
 
   <!-- Allow for repo specific Publish properties such as add additional files to be published -->
   <Import Project="$(RepositoryEngineeringDir)Publishing.props" Condition="Exists('$(RepositoryEngineeringDir)Publishing.props')" />
@@ -64,8 +75,6 @@
     <PublishDependsOnTargets Condition="$(DotNetPublishUsingPipelines)">$(PublishDependsOnTargets);PublishToAzureDevOpsArtifacts</PublishDependsOnTargets>
 
     <PublishDependsOnTargets>BeforePublish;$(PublishDependsOnTargets)</PublishDependsOnTargets>
-
-    <EnableDefaultPublishItems Condition="'$(EnableDefaultPublishItems)' == ''">true</EnableDefaultPublishItems>
   </PropertyGroup>
 
   <Import Project="$(NuGetPackageRoot)microsoft.dotnet.build.tasks.feed\$(MicrosoftDotNetBuildTasksFeedVersion)\build\Microsoft.DotNet.Build.Tasks.Feed.targets"/>
@@ -75,12 +84,18 @@
           DependsOnTargets="$(PublishDependsOnTargets)" />
 
   <Target Name="BeforePublish">
-    <ItemGroup Condition="'$(EnableDefaultPublishItems)' == 'true'">
+    <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true'">
       <ExistingSymbolPackages Include="$(ArtifactsShippingPackagesDir)**/*.symbols.nupkg" IsShipping="true" />
       <ExistingSymbolPackages Include="$(ArtifactsNonShippingPackagesDir)**/*.symbols.nupkg" IsShipping="false" />
 
       <PackagesToPublish Include="$(ArtifactsShippingPackagesDir)**/*.nupkg" IsShipping="true" />
       <PackagesToPublish Include="$(ArtifactsNonShippingPackagesDir)**/*.nupkg" IsShipping="false" />
+    </ItemGroup>
+
+    <!-- Respect Artifact item repo extension point for packages -->
+    <ItemGroup Condition="'@(Artifact)' != ''">
+      <ExistingSymbolPackages Include="@(Artifact)" Condition="'%(Artifact.SkipPublish)' != 'true' and $([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.symbols.nupkg'))" />
+      <PackagesToPublish Include="@(Artifact)" Condition="'%(Artifact.SkipPublish)' != 'true' and $([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.nupkg'))" />
     </ItemGroup>
 
     <ItemGroup>
@@ -138,7 +153,28 @@
            Text="List of files to sign post-build is empty. Make sure that ItemsToSignPostBuild is configured correctly." />
   </Target>
 
-  <Target Name="PublishToAzureDevOpsArtifacts">
+  <!-- Generate checksums from artifact items that set ChecksumPath.
+       The produced checksums get automatically added as artifacts. -->
+  <Target Name="GenerateChecksumsFromArtifacts"
+          Condition="'@(Artifact)' != '' and '@(Artifact->HasMetadata('ChecksumPath'))' != ''">
+    <ItemGroup>
+      <GenerateChecksumItems Include="@(Artifact->HasMetadata('ChecksumPath'))"
+                             DestinationPath="%(Artifact.ChecksumPath)"
+                             RemoveMetadata="RelativeBlobPath" />
+    </ItemGroup>
+
+    <GenerateChecksums Items="@(GenerateChecksumItems)" />
+
+    <ItemGroup>
+      <!-- Set RelativeBlobPath if RelativeBlobPathParent is provided. -->
+      <Artifact Include="@(GenerateChecksumItems -> '%(DestinationPath)')">
+        <RelativeBlobPath Condition="'$(RelativeBlobPathParent)' != ''">$(RelativeBlobPathParent)%(Filename)%(Extension)</RelativeBlobPath>
+      </Artifact>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="PublishToAzureDevOpsArtifacts"
+          DependsOnTargets="GenerateChecksumsFromArtifacts">
     <!-- 
       Sadly AzDO doesn't have a variable to tell the account name. Also
       the format of CollectionURI is not precise across different agent 
@@ -171,6 +207,12 @@
       <ManifestBuildData Include="AzureDevOpsBuildNumber=$(BUILD_BUILDNUMBER)" />
       <ManifestBuildData Include="AzureDevOpsRepository=$(BUILD_REPOSITORY_URI)" />
       <ManifestBuildData Include="AzureDevOpsBranch=$(BUILD_SOURCEBRANCH)" />
+    </ItemGroup>
+
+    <!-- Respect Artifact item repo extension point for blob items (non packages). -->
+    <ItemGroup>
+      <ItemsToPushToBlobFeed Include="@(Artifact)"
+                             Condition="'%(Artifact.SkipPublish)' != 'true' and '%(Artifact.PublishFlatContainer)' == 'true'" />
     </ItemGroup>
 
     <ItemGroup>
@@ -301,8 +343,6 @@
                     PdbConversionTreatAsWarning=""
                     Condition="$(PublishToSymbolServer)"/>
   </Target>
-
-  <Import Project="Sign.props" />
 
   <!-- Update sign infos that were using Microsoft400 to use the .NET-specific cert if UseDotNetCertificate is present.
        This will update any use, even if explicitly specified.
