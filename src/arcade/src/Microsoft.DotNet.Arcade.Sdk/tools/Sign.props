@@ -1,6 +1,11 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project>
 
+  <PropertyGroup>
+    <!-- By default, search for sign aritfacts under the list of known directories. -->
+    <EnableDefaultArtifacts>true</EnableDefaultArtifacts>
+  </PropertyGroup>
+
   <ItemGroup>
     <!--
       This is intended to hold information about the certificates used for signing.
@@ -9,7 +14,9 @@
     -->
     <CertificatesSignInfo Include="3PartyDual" DualSigningAllowed="true" />
     <CertificatesSignInfo Include="3PartySHA2" DualSigningAllowed="true" />
+  </ItemGroup>
 
+  <ItemGroup Condition="'$(EnableDefaultArtifacts)' == 'true'">
     <!-- List of container files that will be opened and checked for files that need to be signed. -->
     <_DefaultItemsToSign Include="$(ArtifactsPackagesDir)**\*.nupkg" />
     <_DefaultItemsToSign Include="$(VisualStudioSetupOutputPath)**\*.vsix" />
@@ -21,7 +28,9 @@
     <ItemsToSign Include="@(_DefaultItemsToSign)" Condition="'$(PostBuildSign)' != 'true'" />
     <ItemsToSignPostBuild Include="@(_DefaultItemsToSign->'%(Filename)%(Extension)')" Condition="'$(PostBuildSign)' == 'true'" />
     <ItemsToSignPostBuild Include="@(_ItemsToOnlySignPostBuild->'%(Filename)%(Extension)')" Condition="'$(PostBuildSign)' == 'true'" />
+  </ItemGroup>
 
+  <ItemGroup>
     <!-- Default certificate/strong-name to be used for all files with PKT=="31bf3856ad364e35". -->
     <StrongNameSignInfo Include="MsSharedLib72" PublicKeyToken="31bf3856ad364e35" CertificateName="Microsoft400" />
     <StrongNameSignInfo Include="SilverlightCert121" PublicKeyToken="7cec85d7bea7798e" CertificateName="Microsoft400" />
@@ -76,5 +85,19 @@
 
   <!-- Allow repository to customize signing configuration -->
   <Import Project="$(RepositoryEngineeringDir)Signing.props" Condition="Exists('$(RepositoryEngineeringDir)Signing.props')" />
+
+  <!-- Respect Artifact item repo extension point -->
+  <ItemGroup Condition="'@(Artifact)' != ''">
+    <!-- Sign wixpacks to correspond to msi/exe signing -->
+    <_ItemsToOnlySignPostBuild Include="@(Artifact)"
+                               Condition="$([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.wixpack.zip'))" />
+
+    <!-- If PostBuildSign == true, these are added to ItemsToSignPostBuild, otherwise these are added to ItemsToSign -->
+    <ItemsToSign Include="@(Artifact)"
+                 Exclude="@(_ItemsToOnlySignPostBuild)"
+                 Condition="'$(PostBuildSign)' != 'true'" />
+    <ItemsToSignPostBuild Include="@(Artifact->'%(Filename)%(Extension)')"
+                          Condition="'$(PostBuildSign)' == 'true'" />
+  </ItemGroup>
 
 </Project>
