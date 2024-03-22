@@ -70,6 +70,10 @@ extends:
         name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
         os: windows
+      # Temporary to workaround MicroBuild issues.
+      credscan:
+        enabled: false
+        justificationForDisabling: 'CredScan is failing on the MicroBuild signing plugin. "MicroBuild/Plugins/nuget.config" has changing content and thus cannot be baselined.'
     stages:
     - stage: Build
       jobs:
