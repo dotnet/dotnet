@@ -22,22 +22,23 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 // (language version, extensions, named configuration).
 //
 // The implementation will create a ProjectSnapshot for each HostProject.
-internal class ProjectSnapshotManager(
+internal partial class ProjectSnapshotManager(
     IProjectEngineFactoryProvider projectEngineFactoryProvider,
     ProjectSnapshotManagerDispatcher dispatcher)
-    : ProjectSnapshotManagerBase
+    : IProjectSnapshotManager
 {
-    public override event EventHandler<ProjectChangeEventArgs>? PriorityChanged;
-    public override event EventHandler<ProjectChangeEventArgs>? Changed;
+    public event EventHandler<ProjectChangeEventArgs>? PriorityChanged;
+    public event EventHandler<ProjectChangeEventArgs>? Changed;
 
     // Each entry holds a ProjectState and an optional ProjectSnapshot. ProjectSnapshots are
     // created lazily.
     private readonly ReadWriterLocker _rwLocker = new();
-    private readonly Dictionary<ProjectKey, Entry> _projects_needsLock = new();
+    private readonly Dictionary<ProjectKey, Entry> _projects_needsLock = [];
     private readonly HashSet<string> _openDocuments_needsLock = new(FilePathComparer.Instance);
-    private static readonly LoadTextOptions LoadTextOptions = new LoadTextOptions(SourceHashAlgorithm.Sha256);
+    private static readonly LoadTextOptions s_loadTextOptions = new(SourceHashAlgorithm.Sha256);
 
-    // We have a queue for changes because if one change results in another change aka, add -> open we want to make sure the "add" finishes running first before "open" is notified.
+    // We have a queue for changes because if one change results in another change aka, add -> open
+    // we want to make sure the "add" finishes running first before "open" is notified.
     private readonly Queue<ProjectChangeEventArgs> _notificationWork = new();
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider = projectEngineFactoryProvider;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
@@ -45,26 +46,26 @@ internal class ProjectSnapshotManager(
     // internal for testing
     internal bool IsSolutionClosing { get; private set; }
 
-    public override ImmutableArray<IProjectSnapshot> GetProjects()
+    public ImmutableArray<IProjectSnapshot> GetProjects()
     {
         using var _ = _rwLocker.EnterReadLock();
-        using var _1 = ListPool<IProjectSnapshot>.GetPooledObject(out var builder);
+        using var builder = new PooledArrayBuilder<IProjectSnapshot>(_projects_needsLock.Count);
 
         foreach (var (_, entry) in _projects_needsLock)
         {
             builder.Add(entry.GetSnapshot());
         }
 
-        return builder.ToImmutableArray();
+        return builder.DrainToImmutable();
     }
 
-    internal override ImmutableArray<string> GetOpenDocuments()
+    public ImmutableArray<string> GetOpenDocuments()
     {
         using var _ = _rwLocker.EnterReadLock();
         return _openDocuments_needsLock.ToImmutableArray();
     }
 
-    public override IProjectSnapshot GetLoadedProject(ProjectKey projectKey)
+    public IProjectSnapshot GetLoadedProject(ProjectKey projectKey)
     {
         using (_rwLocker.EnterReadLock())
         {
@@ -77,7 +78,7 @@ internal class ProjectSnapshotManager(
         throw new InvalidOperationException($"No project snapshot exists with the key, '{projectKey}'");
     }
 
-    public override bool TryGetLoadedProject(ProjectKey projectKey, [NotNullWhen(true)] out IProjectSnapshot? project)
+    public bool TryGetLoadedProject(ProjectKey projectKey, [NotNullWhen(true)] out IProjectSnapshot? project)
     {
         using (_rwLocker.EnterReadLock())
         {
@@ -92,7 +93,7 @@ internal class ProjectSnapshotManager(
         return false;
     }
 
-    public override ImmutableArray<ProjectKey> GetAllProjectKeys(string projectFileName)
+    public ImmutableArray<ProjectKey> GetAllProjectKeys(string projectFileName)
     {
         if (projectFileName is null)
         {
@@ -100,7 +101,7 @@ internal class ProjectSnapshotManager(
         }
 
         using var _ = _rwLocker.EnterReadLock();
-        using var _1 = ArrayBuilderPool<ProjectKey>.GetPooledObject(out var projects);
+        using var projects = new PooledArrayBuilder<ProjectKey>(capacity: _projects_needsLock.Count);
 
         foreach (var (key, entry) in _projects_needsLock)
         {
@@ -113,7 +114,7 @@ internal class ProjectSnapshotManager(
         return projects.DrainToImmutable();
     }
 
-    public override bool IsDocumentOpen(string documentFilePath)
+    public bool IsDocumentOpen(string documentFilePath)
     {
         if (documentFilePath is null)
         {
@@ -124,7 +125,7 @@ internal class ProjectSnapshotManager(
         return _openDocuments_needsLock.Contains(documentFilePath);
     }
 
-    internal override void DocumentAdded(ProjectKey projectKey, HostDocument document, TextLoader textLoader)
+    private void DocumentAdded(ProjectKey projectKey, HostDocument document, TextLoader textLoader)
     {
         if (document is null)
         {
@@ -142,7 +143,7 @@ internal class ProjectSnapshotManager(
         }
     }
 
-    internal override void DocumentRemoved(ProjectKey projectKey, HostDocument document)
+    private void DocumentRemoved(ProjectKey projectKey, HostDocument document)
     {
         if (document is null)
         {
@@ -160,7 +161,7 @@ internal class ProjectSnapshotManager(
         }
     }
 
-    internal override void DocumentOpened(ProjectKey projectKey, string documentFilePath, SourceText sourceText)
+    private void DocumentOpened(ProjectKey projectKey, string documentFilePath, SourceText sourceText)
     {
         if (documentFilePath is null)
         {
@@ -183,7 +184,7 @@ internal class ProjectSnapshotManager(
         }
     }
 
-    internal override void DocumentClosed(ProjectKey projectKey, string documentFilePath, TextLoader textLoader)
+    private void DocumentClosed(ProjectKey projectKey, string documentFilePath, TextLoader textLoader)
     {
         if (documentFilePath is null)
         {
@@ -206,7 +207,7 @@ internal class ProjectSnapshotManager(
         }
     }
 
-    internal override void DocumentChanged(ProjectKey projectKey, string documentFilePath, SourceText sourceText)
+    private void DocumentChanged(ProjectKey projectKey, string documentFilePath, SourceText sourceText)
     {
         if (documentFilePath is null)
         {
@@ -229,7 +230,7 @@ internal class ProjectSnapshotManager(
         }
     }
 
-    internal override void DocumentChanged(ProjectKey projectKey, string documentFilePath, TextLoader textLoader)
+    private void DocumentChanged(ProjectKey projectKey, string documentFilePath, TextLoader textLoader)
     {
         if (documentFilePath is null)
         {
@@ -252,7 +253,7 @@ internal class ProjectSnapshotManager(
         }
     }
 
-    internal override void ProjectAdded(HostProject hostProject)
+    private void ProjectAdded(HostProject hostProject)
     {
         if (hostProject is null)
         {
@@ -270,7 +271,7 @@ internal class ProjectSnapshotManager(
         }
     }
 
-    internal override void ProjectConfigurationChanged(HostProject hostProject)
+    private void ProjectConfigurationChanged(HostProject hostProject)
     {
         if (hostProject is null)
         {
@@ -288,7 +289,7 @@ internal class ProjectSnapshotManager(
         }
     }
 
-    internal override void ProjectWorkspaceStateChanged(ProjectKey projectKey, ProjectWorkspaceState? projectWorkspaceState)
+    private void ProjectWorkspaceStateChanged(ProjectKey projectKey, ProjectWorkspaceState? projectWorkspaceState)
     {
         if (projectWorkspaceState is null)
         {
@@ -306,7 +307,7 @@ internal class ProjectSnapshotManager(
         }
     }
 
-    internal override void ProjectRemoved(ProjectKey projectKey)
+    private void ProjectRemoved(ProjectKey projectKey)
     {
         if (TryChangeEntry_UsesLock(
             projectKey,
@@ -319,12 +320,12 @@ internal class ProjectSnapshotManager(
         }
     }
 
-    internal override void SolutionOpened()
+    private void SolutionOpened()
     {
         IsSolutionClosing = false;
     }
 
-    internal override void SolutionClosed()
+    private void SolutionClosed()
     {
         IsSolutionClosing = true;
     }
@@ -343,15 +344,19 @@ internal class ProjectSnapshotManager(
 
         if (_notificationWork.Count == 1)
         {
-            // Only one notification, go ahead and start notifying. In the situation where Count > 1 it means an event was triggered as a response to another event.
-            // To ensure order we wont immediately re-invoke Changed here, we'll wait for the stack to unwind to notify others. This process still happens synchronously
-            // it just ensures that events happen in the correct order. For instance lets take the situation where a document is added to a project. That document will be
-            // added and then opened. However, if the result of "adding" causes an "open" to triger we want to ensure that "add" finishes prior to "open" being notified.
+            // Only one notification, go ahead and start notifying. In the situation where Count > 1
+            // it means an event was triggered as a response to another event. To ensure order we won't
+            // immediately re-invoke Changed here, we'll wait for the stack to unwind to notify others.
+            // This process still happens synchronously it just ensures that events happen in the correct
+            // order. For instance lets take the situation where a document is added to a project.
+            // That document will be added and then opened. However, if the result of "adding" causes an
+            // "open" to trigger we want to ensure that "add" finishes prior to "open" being notified.
 
             // Start unwinding the notification queue
             do
             {
-                // Don't dequeue yet, we want the notification to sit in the queue until we've finished notifying to ensure other calls to NotifyListeners know there's a currently running event loop.
+                // Don't dequeue yet, we want the notification to sit in the queue until we've finished
+                // notifying to ensure other calls to NotifyListeners know there's a currently running event loop.
                 var args = _notificationWork.Peek();
                 PriorityChanged?.Invoke(this, args);
                 Changed?.Invoke(this, args);
@@ -365,7 +370,7 @@ internal class ProjectSnapshotManager(
     private static Func<Task<TextAndVersion>> CreateTextAndVersionFunc(TextLoader textLoader)
         => textLoader is null
             ? DocumentState.EmptyLoader
-            : (() => textLoader.LoadTextAndVersionAsync(LoadTextOptions, CancellationToken.None));
+            : (() => textLoader.LoadTextAndVersionAsync(s_loadTextOptions, CancellationToken.None));
 
     private bool TryChangeEntry_UsesLock(
         ProjectKey projectKey,
@@ -462,13 +467,13 @@ internal class ProjectSnapshotManager(
     {
         switch (action)
         {
-            case AddDocumentAction addAction:
-                return new Entry(originalEntry.State.WithAddedHostDocument(addAction.NewDocument, CreateTextAndVersionFunc(addAction.TextLoader)));
+            case AddDocumentAction(var newDocument, var textLoader):
+                return new Entry(originalEntry.State.WithAddedHostDocument(newDocument, CreateTextAndVersionFunc(textLoader)));
 
-            case RemoveDocumentAction removeAction:
-                return new Entry(originalEntry.State.WithRemovedHostDocument(removeAction.OriginalDocument));
+            case RemoveDocumentAction(var originalDocument):
+                return new Entry(originalEntry.State.WithRemovedHostDocument(originalDocument));
 
-            case CloseDocumentAction closeAction:
+            case CloseDocumentAction(var textLoader):
                 {
                     if (documentState is null)
                     {
@@ -477,22 +482,22 @@ internal class ProjectSnapshotManager(
 
                     var state = originalEntry.State.WithChangedHostDocument(
                         documentState.HostDocument,
-                        async () => await closeAction.TextLoader.LoadTextAndVersionAsync(LoadTextOptions, cancellationToken: default).ConfigureAwait(false));
+                        () => textLoader.LoadTextAndVersionAsync(s_loadTextOptions, cancellationToken: default));
                     return new Entry(state);
                 }
 
-            case OpenDocumentAction openAction:
-                if (documentState is null)
+            case OpenDocumentAction(var sourceText):
                 {
-                    throw new ArgumentNullException(nameof(documentState));
-                }
+                    if (documentState is null)
+                    {
+                        throw new ArgumentNullException(nameof(documentState));
+                    }
 
-                {
                     if (documentState.TryGetText(out var olderText) &&
                         documentState.TryGetTextVersion(out var olderVersion))
                     {
-                        var version = openAction.SourceText.ContentEquals(olderText) ? olderVersion : olderVersion.GetNewerVersion();
-                        var newState = originalEntry.State.WithChangedHostDocument(documentState.HostDocument, openAction.SourceText, version);
+                        var version = sourceText.ContentEquals(olderText) ? olderVersion : olderVersion.GetNewerVersion();
+                        var newState = originalEntry.State.WithChangedHostDocument(documentState.HostDocument, sourceText, version);
                         return new Entry(newState);
                     }
                     else
@@ -502,25 +507,31 @@ internal class ProjectSnapshotManager(
                             olderText = await documentState.GetTextAsync().ConfigureAwait(false);
                             olderVersion = await documentState.GetTextVersionAsync().ConfigureAwait(false);
 
-                            var version = openAction.SourceText.ContentEquals(olderText) ? olderVersion : olderVersion.GetNewerVersion();
-                            return TextAndVersion.Create(openAction.SourceText, version, documentState.HostDocument.FilePath);
+                            var version = sourceText.ContentEquals(olderText) ? olderVersion : olderVersion.GetNewerVersion();
+                            return TextAndVersion.Create(sourceText, version, documentState.HostDocument.FilePath);
                         });
 
                         return new Entry(newState);
                     }
                 }
 
-            case DocumentTextLoaderChangedAction textLoaderChangedAction:
-                return new Entry(originalEntry.State.WithChangedHostDocument(documentState.AssumeNotNull().HostDocument, CreateTextAndVersionFunc(textLoaderChangedAction.TextLoader)));
+            case DocumentTextLoaderChangedAction(var textLoader):
+                {
+                    var newState = originalEntry.State.WithChangedHostDocument(
+                        documentState.AssumeNotNull().HostDocument,
+                        CreateTextAndVersionFunc(textLoader));
 
-            case DocumentTextChangedAction textChangedAction:
+                    return new Entry(newState);
+                }
+
+            case DocumentTextChangedAction(var sourceText):
                 {
                     documentState.AssumeNotNull();
                     if (documentState.TryGetText(out var olderText) &&
                         documentState.TryGetTextVersion(out var olderVersion))
                     {
-                        var version = textChangedAction.SourceText.ContentEquals(olderText) ? olderVersion : olderVersion.GetNewerVersion();
-                        var state = originalEntry.State.WithChangedHostDocument(documentState.HostDocument, textChangedAction.SourceText, version);
+                        var version = sourceText.ContentEquals(olderText) ? olderVersion : olderVersion.GetNewerVersion();
+                        var state = originalEntry.State.WithChangedHostDocument(documentState.HostDocument, sourceText, version);
 
                         return new Entry(state);
                     }
@@ -531,8 +542,8 @@ internal class ProjectSnapshotManager(
                             olderText = await documentState.GetTextAsync().ConfigureAwait(false);
                             olderVersion = await documentState.GetTextVersionAsync().ConfigureAwait(false);
 
-                            var version = textChangedAction.SourceText.ContentEquals(olderText) ? olderVersion : olderVersion.GetNewerVersion();
-                            return TextAndVersion.Create(textChangedAction.SourceText, version, documentState.HostDocument.FilePath);
+                            var version = sourceText.ContentEquals(olderText) ? olderVersion : olderVersion.GetNewerVersion();
+                            return TextAndVersion.Create(sourceText, version, documentState.HostDocument.FilePath);
                         });
 
                         return new Entry(state);
@@ -542,26 +553,109 @@ internal class ProjectSnapshotManager(
             case ProjectRemovedAction:
                 return null;
 
-            case ProjectWorkspaceStateChangedAction workspaceStateChangedAction:
-                return new Entry(originalEntry.State.WithProjectWorkspaceState(workspaceStateChangedAction.WorkspaceState));
+            case ProjectWorkspaceStateChangedAction(var workspaceState):
+                return new Entry(originalEntry.State.WithProjectWorkspaceState(workspaceState));
 
-            case HostProjectUpdatedAction hostProjectUpdatedAction:
-                return new Entry(originalEntry.State.WithHostProject(hostProjectUpdatedAction.HostProject));
+            case HostProjectUpdatedAction(var hostProject):
+                return new Entry(originalEntry.State.WithHostProject(hostProject));
 
             default:
                 throw new InvalidOperationException($"Unexpected action type {action.GetType()}");
         }
     }
 
-    private class Entry
+    public void Update(Action<Updater> updater)
     {
-        private IProjectSnapshot? _snapshotUnsafe;
-        public readonly ProjectState State;
+        _dispatcher.AssertRunningOnDispatcher();
+        updater(new(this));
+    }
 
-        public Entry(ProjectState state)
-        {
-            State = state;
-        }
+    public void Update<TState>(Action<Updater, TState> updater, TState state)
+    {
+        _dispatcher.AssertRunningOnDispatcher();
+        updater(new(this), state);
+    }
+
+    public TResult Update<TResult>(Func<Updater, TResult> updater)
+    {
+        _dispatcher.AssertRunningOnDispatcher();
+        return updater(new(this));
+    }
+
+    public TResult Update<TState, TResult>(Func<Updater, TState, TResult> updater, TState state)
+    {
+        _dispatcher.AssertRunningOnDispatcher();
+        return updater(new(this), state);
+    }
+
+    public Task UpdateAsync(Action<Updater> updater, CancellationToken cancellationToken)
+    {
+        return _dispatcher.RunAsync(
+            static x => x.updater(new(x.instance)),
+            (updater, instance: this),
+            cancellationToken);
+    }
+
+    public Task UpdateAsync<TState>(Action<Updater, TState> updater, TState state, CancellationToken cancellationToken)
+    {
+        return _dispatcher.RunAsync(
+            static x => x.updater(new(x.instance), x.state),
+            (updater, state, instance: this),
+            cancellationToken);
+    }
+
+    public Task<TResult> UpdateAsync<TResult>(Func<Updater, TResult> updater, CancellationToken cancellationToken)
+    {
+        return _dispatcher.RunAsync(
+            static x => x.updater(new(x.instance)),
+            (updater, instance: this),
+            cancellationToken);
+    }
+
+    public Task<TResult> UpdateAsync<TState, TResult>(Func<Updater, TState, TResult> updater, TState state, CancellationToken cancellationToken)
+    {
+        return _dispatcher.RunAsync(
+            static x => x.updater(new(x.instance), x.state),
+            (updater, state, instance: this),
+            cancellationToken);
+    }
+
+    public Task UpdateAsync(Func<Updater, Task> updater, CancellationToken cancellationToken)
+    {
+        return _dispatcher.RunAsync(
+            static x => x.updater(new(x.instance)),
+            (updater, instance: this),
+            cancellationToken).Unwrap();
+    }
+
+    public Task UpdateAsync<TState>(Func<Updater, TState, Task> updater, TState state, CancellationToken cancellationToken)
+    {
+        return _dispatcher.RunAsync(
+            static x => x.updater(new(x.instance), x.state),
+            (updater, state, instance: this),
+            cancellationToken).Unwrap();
+    }
+
+    public Task<TResult> UpdateAsync<TResult>(Func<Updater, Task<TResult>> updater, CancellationToken cancellationToken)
+    {
+        return _dispatcher.RunAsync(
+            static x => x.updater(new(x.instance)),
+            (updater, instance: this),
+            cancellationToken).Unwrap();
+    }
+
+    public Task<TResult> UpdateAsync<TState, TResult>(Func<Updater, TState, Task<TResult>> updater, TState state, CancellationToken cancellationToken)
+    {
+        return _dispatcher.RunAsync(
+            static x => x.updater(new(x.instance), x.state),
+            (updater, state, instance: this),
+            cancellationToken).Unwrap();
+    }
+
+    private class Entry(ProjectState state)
+    {
+        public readonly ProjectState State = state;
+        private IProjectSnapshot? _snapshotUnsafe;
 
         public IProjectSnapshot GetSnapshot()
         {

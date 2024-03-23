@@ -28,7 +28,7 @@ internal class TestDelegatedCompletionListProvider : DelegatedCompletionListProv
         IRazorLoggerFactory loggerFactory)
         : base(
             responseRewriters,
-            new RazorDocumentMappingService(new FilePathService(TestLanguageServerFeatureOptions.Instance), new TestDocumentContextFactory(), loggerFactory),
+            new RazorDocumentMappingService(new LSPFilePathService(TestLanguageServerFeatureOptions.Instance), new TestDocumentContextFactory(), loggerFactory),
             new TestLanguageServer(new Dictionary<string, Func<object, Task<object>>>()
             {
                 [LanguageServerConstants.RazorCompletionEndpointName] = completionFactory.OnDelegationAsync,

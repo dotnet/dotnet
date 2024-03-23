@@ -27,11 +27,7 @@ public class InjectTargetExtension : IInjectTargetExtension
         if (!context.Options.DesignTime && !string.IsNullOrWhiteSpace(node.TypeSource?.FilePath))
         {
             context.CodeWriter.WriteLine(RazorInjectAttribute);
-            context.CodeWriter.WriteAutoPropertyDeclaration(["public"], node.TypeName, node.MemberName, node.TypeSource, node.MemberSource, context, privateSetter: true);
-            if (!context.Options.SuppressNullabilityEnforcement)
-            {
-                context.CodeWriter.WriteLine(" = default!;");
-            }
+            context.CodeWriter.WriteAutoPropertyDeclaration(["public"], node.TypeName, node.MemberName, node.TypeSource, node.MemberSource, context, privateSetter: true, defaultValue: true);
         }
         else
         {

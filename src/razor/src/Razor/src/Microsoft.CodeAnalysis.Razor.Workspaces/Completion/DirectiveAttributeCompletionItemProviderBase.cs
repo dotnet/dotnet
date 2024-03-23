@@ -1,12 +1,11 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-#nullable disable
-
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Text;
 using RazorSyntaxList = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxList<Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode>;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
@@ -21,9 +20,9 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
     internal static bool TryGetAttributeInfo(
         RazorSyntaxNode attributeLeafOwner,
         out TextSpan? prefixLocation,
-        out string attributeName,
+        [NotNullWhen(true)] out string? attributeName,
         out TextSpan attributeNameLocation,
-        out string parameterName,
+        out string? parameterName,
         out TextSpan parameterLocation)
     {
         var attribute = attributeLeafOwner.Parent;
@@ -34,18 +33,18 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
         {
             case MarkupMinimizedAttributeBlockSyntax minimizedMarkupAttribute:
                 prefixLocation = minimizedMarkupAttribute.NamePrefix?.Span;
-                TryExtractIncompleteDirectiveAttribute(
+                SplitAttributeNameIntoParts(
                     minimizedMarkupAttribute.Name.GetContent(),
                     minimizedMarkupAttribute.Name.Span,
                     out attributeName,
                     out attributeNameLocation,
                     out parameterName,
                     out parameterLocation);
-
                 return true;
+
             case MarkupAttributeBlockSyntax markupAttribute:
                 prefixLocation = markupAttribute.NamePrefix?.Span;
-                TryExtractIncompleteDirectiveAttribute(
+                SplitAttributeNameIntoParts(
                     markupAttribute.Name.GetContent(),
                     markupAttribute.Name.Span,
                     out attributeName,
@@ -53,9 +52,10 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
                     out parameterName,
                     out parameterLocation);
                 return true;
+
             case MarkupMinimizedTagHelperAttributeSyntax minimizedTagHelperAttribute:
                 prefixLocation = minimizedTagHelperAttribute.NamePrefix?.Span;
-                TryExtractIncompleteDirectiveAttribute(
+                SplitAttributeNameIntoParts(
                     minimizedTagHelperAttribute.Name.GetContent(),
                     minimizedTagHelperAttribute.Name.Span,
                     out attributeName,
@@ -63,9 +63,10 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
                     out parameterName,
                     out parameterLocation);
                 return true;
+
             case MarkupTagHelperAttributeSyntax tagHelperAttribute:
                 prefixLocation = tagHelperAttribute.NamePrefix?.Span;
-                TryExtractIncompleteDirectiveAttribute(
+                SplitAttributeNameIntoParts(
                     tagHelperAttribute.Name.GetContent(),
                     tagHelperAttribute.Name.Span,
                     out attributeName,
@@ -73,12 +74,13 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
                     out parameterName,
                     out parameterLocation);
                 return true;
+
             case MarkupTagHelperDirectiveAttributeSyntax directiveAttribute:
                 {
                     var attributeNameNode = directiveAttribute.Name;
                     var directiveAttributeTransition = directiveAttribute.Transition;
                     var nameStart = directiveAttributeTransition?.SpanStart ?? attributeNameNode.SpanStart;
-                    var nameEnd = attributeNameNode?.Span.End ?? directiveAttributeTransition.Span.End;
+                    var nameEnd = attributeNameNode?.Span.End ?? directiveAttributeTransition.AssumeNotNull().Span.End;
                     prefixLocation = directiveAttribute.NamePrefix?.Span;
                     attributeName = string.Concat(directiveAttributeTransition?.GetContent(), attributeNameNode?.GetContent());
                     attributeNameLocation = new TextSpan(nameStart, nameEnd - nameStart);
@@ -86,12 +88,13 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
                     parameterLocation = directiveAttribute.ParameterName?.Span ?? default;
                     return true;
                 }
+
             case MarkupMinimizedTagHelperDirectiveAttributeSyntax minimizedDirectiveAttribute:
                 {
                     var attributeNameNode = minimizedDirectiveAttribute.Name;
                     var directiveAttributeTransition = minimizedDirectiveAttribute.Transition;
                     var nameStart = directiveAttributeTransition?.SpanStart ?? attributeNameNode.SpanStart;
-                    var nameEnd = attributeNameNode?.Span.End ?? directiveAttributeTransition.Span.End;
+                    var nameEnd = attributeNameNode?.Span.End ?? directiveAttributeTransition.AssumeNotNull().Span.End;
                     prefixLocation = minimizedDirectiveAttribute.NamePrefix?.Span;
                     attributeName = string.Concat(directiveAttributeTransition?.GetContent(), attributeNameNode?.GetContent());
                     attributeNameLocation = new TextSpan(nameStart, nameEnd - nameStart);
@@ -101,7 +104,7 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
                 }
         }
 
-        prefixLocation = default;
+        prefixLocation = null;
         attributeName = null;
         attributeNameLocation = default;
         parameterName = null;
@@ -110,7 +113,10 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
     }
 
     // Internal for testing
-    internal static bool TryGetElementInfo(RazorSyntaxNode element, out string containingTagName, out IEnumerable<string> attributeNames)
+    internal static bool TryGetElementInfo(
+        RazorSyntaxNode element,
+        [NotNullWhen(true)] out string? containingTagName,
+        out ImmutableArray<string> attributeNames)
     {
         if (element is MarkupStartTagSyntax startTag)
         {
@@ -131,65 +137,60 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
         return false;
     }
 
-    private static IEnumerable<string> ExtractAttributeNames(RazorSyntaxList attributes)
+    private static ImmutableArray<string> ExtractAttributeNames(RazorSyntaxList attributes)
     {
-        var attributeNames = new List<string>();
+        using var attributeNames = new PooledArrayBuilder<string>(capacity: attributes.Count);
 
-        for (var i = 0; i < attributes.Count; i++)
+        foreach (var attribute in attributes)
         {
-            var attribute = attributes[i];
-            if (attribute is MarkupTagHelperAttributeSyntax tagHelperAttribute)
+            switch (attribute)
             {
-                var name = tagHelperAttribute.Name.GetContent();
-                attributeNames.Add(name);
-            }
-            else if (attribute is MarkupMinimizedTagHelperAttributeSyntax minimizedTagHelperAttribute)
-            {
-                var name = minimizedTagHelperAttribute.Name.GetContent();
-                attributeNames.Add(name);
-            }
-            else if (attribute is MarkupAttributeBlockSyntax markupAttribute)
-            {
-                var name = markupAttribute.Name.GetContent();
-                attributeNames.Add(name);
-            }
-            else if (attribute is MarkupMinimizedAttributeBlockSyntax minimizedMarkupAttribute)
-            {
-                var name = minimizedMarkupAttribute.Name.GetContent();
-                attributeNames.Add(name);
-            }
-            else if (attribute is MarkupTagHelperDirectiveAttributeSyntax directiveAttribute)
-            {
-                var name = directiveAttribute.FullName;
-                attributeNames.Add(name);
-            }
-            else if (attribute is MarkupMinimizedTagHelperDirectiveAttributeSyntax minimizedDirectiveAttribute)
-            {
-                var name = minimizedDirectiveAttribute.FullName;
-                attributeNames.Add(name);
+                case MarkupTagHelperAttributeSyntax tagHelperAttribute:
+                    attributeNames.Add(tagHelperAttribute.Name.GetContent());
+                    break;
+
+                case MarkupMinimizedTagHelperAttributeSyntax minimizedTagHelperAttribute:
+                    attributeNames.Add(minimizedTagHelperAttribute.Name.GetContent());
+                    break;
+
+                case MarkupAttributeBlockSyntax markupAttribute:
+                    attributeNames.Add(markupAttribute.Name.GetContent());
+                    break;
+
+                case MarkupMinimizedAttributeBlockSyntax minimizedMarkupAttribute:
+                    attributeNames.Add(minimizedMarkupAttribute.Name.GetContent());
+                    break;
+
+                case MarkupTagHelperDirectiveAttributeSyntax directiveAttribute:
+                    attributeNames.Add(directiveAttribute.FullName);
+                    break;
+
+                case MarkupMinimizedTagHelperDirectiveAttributeSyntax minimizedDirectiveAttribute:
+                    attributeNames.Add(minimizedDirectiveAttribute.FullName);
+                    break;
             }
         }
 
-        return attributeNames;
+        return attributeNames.DrainToImmutable();
     }
 
-    private static void TryExtractIncompleteDirectiveAttribute(
+    private static void SplitAttributeNameIntoParts(
         string attributeName,
         TextSpan attributeNameLocation,
         out string name,
         out TextSpan nameLocation,
-        out string parameterName,
+        out string? parameterName,
         out TextSpan parameterLocation)
     {
         name = attributeName;
         nameLocation = attributeNameLocation;
-        parameterName = default;
+        parameterName = null;
         parameterLocation = default;
 
         // It's possible that the attribute looks like a directive attribute but is incomplete.
         // We should try and extract out the transition and parameter.
 
-        if (!attributeName.StartsWith("@", StringComparison.Ordinal))
+        if (attributeName.Length == 0 || attributeName[0] != '@')
         {
             // Doesn't look like a directive attribute. Not an incomplete directive attribute.
             return;
@@ -202,9 +203,9 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
             return;
         }
 
-        parameterName = attributeName[(colonIndex + 1)..];
-        parameterLocation = new TextSpan(attributeNameLocation.Start + colonIndex + 1, parameterName.Length);
         name = attributeName[..colonIndex];
         nameLocation = new TextSpan(attributeNameLocation.Start, name.Length);
+        parameterName = attributeName[(colonIndex + 1)..];
+        parameterLocation = new TextSpan(attributeNameLocation.Start + colonIndex + 1, parameterName.Length);
     }
 }

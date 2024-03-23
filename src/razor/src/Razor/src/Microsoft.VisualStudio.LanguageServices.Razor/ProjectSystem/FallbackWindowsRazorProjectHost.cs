@@ -43,11 +43,10 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
     public FallbackWindowsRazorProjectHost(
         IUnconfiguredProjectCommonServices commonServices,
         [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
-        ProjectSnapshotManagerBase projectManager,
-        ProjectSnapshotManagerDispatcher dispatcher,
+        IProjectSnapshotManager projectManager,
         ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
         LanguageServerFeatureOptions? languageServerFeatureOptions)
-        : base(commonServices, serviceProvider, projectManager, dispatcher, projectConfigurationFilePathStore)
+        : base(commonServices, serviceProvider, projectManager, projectConfigurationFilePathStore)
     {
         _languageServerFeatureOptions = languageServerFeatureOptions;
     }
@@ -73,14 +72,17 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
         if (mvcReferenceFullPath is null)
         {
             // Ok we can't find an MVC version. Let's assume this project isn't using Razor then.
-            await UpdateAsync(() =>
-            {
-                var projectKeys = GetAllProjectKeys(CommonServices.UnconfiguredProject.FullPath);
-                foreach (var projectKey in projectKeys)
+            await UpdateAsync(
+                updater =>
                 {
-                    RemoveProjectUnsafe(projectKey);
-                }
-            }, CancellationToken.None).ConfigureAwait(false);
+                    var projectKeys = GetAllProjectKeys(CommonServices.UnconfiguredProject.FullPath);
+                    foreach (var projectKey in projectKeys)
+                    {
+                        RemoveProject(updater, projectKey);
+                    }
+                },
+                CancellationToken.None)
+                .ConfigureAwait(false);
             return;
         }
 
@@ -88,14 +90,17 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
         if (version is null)
         {
             // Ok we can't find an MVC version. Let's assume this project isn't using Razor then.
-            await UpdateAsync(() =>
-            {
-                var projectKeys = GetAllProjectKeys(CommonServices.UnconfiguredProject.FullPath);
-                foreach (var projectKey in projectKeys)
+            await UpdateAsync(
+                updater =>
                 {
-                    RemoveProjectUnsafe(projectKey);
-                }
-            }, CancellationToken.None).ConfigureAwait(false);
+                    var projectKeys = GetAllProjectKeys(CommonServices.UnconfiguredProject.FullPath);
+                    foreach (var projectKey in projectKeys)
+                    {
+                        RemoveProject(updater, projectKey);
+                    }
+                },
+                CancellationToken.None)
+                .ConfigureAwait(false);
             return;
         }
 
@@ -110,11 +115,14 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
         {
             // If the intermediate output path is in the ProjectChanges, then we know that it has changed, so we want to ensure we remove the old one,
             // otherwise this would be seen as an Add, and we'd end up with two active projects
-            await UpdateAsync(() =>
-            {
-                var beforeProjectKey = ProjectKey.FromString(beforeIntermediateOutputPath);
-                RemoveProjectUnsafe(beforeProjectKey);
-            }, CancellationToken.None).ConfigureAwait(false);
+            await UpdateAsync(
+                updater =>
+                {
+                    var beforeProjectKey = ProjectKey.FromString(beforeIntermediateOutputPath);
+                    RemoveProject(updater, beforeProjectKey);
+                },
+                CancellationToken.None)
+                .ConfigureAwait(false);
         }
 
         // We need to deal with the case where the project was uninitialized, but now
@@ -127,7 +135,7 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
         var documents = GetCurrentDocuments(update.Value);
         var changedDocuments = GetChangedAndRemovedDocuments(update.Value);
 
-        await UpdateAsync(() =>
+        await UpdateAsync(updater =>
         {
             var configuration = FallbackRazorConfiguration.SelectConfiguration(version);
             var projectFileName = Path.GetFileNameWithoutExtension(CommonServices.UnconfiguredProject.FullPath);
@@ -143,16 +151,17 @@ internal class FallbackWindowsRazorProjectHost : WindowsRazorProjectHostBase
                 ProjectConfigurationFilePathStore.Set(hostProject.Key, projectConfigurationFile);
             }
 
-            UpdateProjectUnsafe(hostProject);
+            UpdateProject(updater, hostProject);
 
             for (var i = 0; i < changedDocuments.Length; i++)
             {
-                RemoveDocumentUnsafe(hostProject.Key, changedDocuments[i]);
+                updater.DocumentRemoved(hostProject.Key, changedDocuments[i]);
             }
 
             for (var i = 0; i < documents.Length; i++)
             {
-                AddDocumentUnsafe(hostProject.Key, documents[i]);
+                var document = documents[i];
+                updater.DocumentAdded(hostProject.Key, document, new FileTextLoader(document.FilePath, null));
             }
         }, CancellationToken.None).ConfigureAwait(false);
     }

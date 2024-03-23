@@ -13,14 +13,9 @@ internal partial class RazorLanguageServer
     /// whether things are coming from the VS side, the LSP side, of our code. This is only temporary and will be removed when we move
     /// to cohosting as there will only be one side.
     /// </summary>
-    private class LoggerFactoryWrapper : IRazorLoggerFactory
+    private sealed class LoggerFactoryWrapper(IRazorLoggerFactory loggerFactory) : IRazorLoggerFactory
     {
-        private IRazorLoggerFactory _loggerFactory;
-
-        public LoggerFactoryWrapper(IRazorLoggerFactory loggerFactory)
-        {
-            _loggerFactory = loggerFactory;
-        }
+        private IRazorLoggerFactory _loggerFactory = loggerFactory;
 
         public void AddLoggerProvider(IRazorLoggerProvider provider)
         {

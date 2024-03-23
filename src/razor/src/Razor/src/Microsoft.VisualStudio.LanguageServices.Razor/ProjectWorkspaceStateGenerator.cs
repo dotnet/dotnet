@@ -21,7 +21,7 @@ namespace Microsoft.VisualStudio.LanguageServices.Razor;
 [Export(typeof(IProjectWorkspaceStateGenerator))]
 [method: ImportingConstructor]
 internal sealed class ProjectWorkspaceStateGenerator(
-    ProjectSnapshotManagerBase projectManager,
+    IProjectSnapshotManager projectManager,
     ITagHelperResolver tagHelperResolver,
     ProjectSnapshotManagerDispatcher dispatcher,
     IErrorReporter errorReporter,
@@ -31,7 +31,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
     // Internal for testing
     internal readonly Dictionary<ProjectKey, UpdateItem> Updates = new();
 
-    private readonly ProjectSnapshotManagerBase _projectManager = projectManager;
+    private readonly IProjectSnapshotManager _projectManager = projectManager;
     private readonly ITagHelperResolver _tagHelperResolver = tagHelperResolver;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
     private readonly IErrorReporter _errorReporter = errorReporter;
@@ -195,10 +195,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
                     new Property("id", telemetryId),
                     new Property("result", "error"));
 
-                await _dispatcher.RunAsync(
-                   () => _errorReporter.ReportError(ex, projectSnapshot),
-                   // Don't allow errors to be cancelled
-                   CancellationToken.None).ConfigureAwait(false);
+                _errorReporter.ReportError(ex, projectSnapshot);
                 return;
             }
 
@@ -208,17 +205,22 @@ internal sealed class ProjectWorkspaceStateGenerator(
                 return;
             }
 
-            await _dispatcher.RunAsync(
-                () =>
-                {
-                    if (cancellationToken.IsCancellationRequested)
+            await _projectManager
+                .UpdateAsync(
+                    static (updater, state) =>
                     {
-                        return;
-                    }
+                        var (projectKey, workspaceState, cancellationToken) = state;
 
-                    ReportWorkspaceStateChange(projectSnapshot.Key, workspaceState);
-                },
-                cancellationToken).ConfigureAwait(false);
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
+                        updater.ProjectWorkspaceStateChanged(projectKey, workspaceState);
+                    },
+                    state: (projectSnapshot.Key, workspaceState, cancellationToken),
+                    cancellationToken)
+                .ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -227,11 +229,7 @@ internal sealed class ProjectWorkspaceStateGenerator(
         }
         catch (Exception ex)
         {
-            // This is something totally unexpected, let's just send it over to the project manager.
-            await _dispatcher.RunAsync(
-                () => _errorReporter.ReportError(ex),
-                // Don't allow errors to be cancelled
-                CancellationToken.None).ConfigureAwait(false);
+            _errorReporter.ReportError(ex);
         }
         finally
         {
@@ -251,13 +249,6 @@ internal sealed class ProjectWorkspaceStateGenerator(
         }
 
         OnBackgroundWorkCompleted();
-    }
-
-    private void ReportWorkspaceStateChange(ProjectKey projectKey, ProjectWorkspaceState workspaceStateChange)
-    {
-        _dispatcher.AssertRunningOnDispatcher();
-
-        _projectManager.ProjectWorkspaceStateChanged(projectKey, workspaceStateChange);
     }
 
     private void OnStartingBackgroundWork()

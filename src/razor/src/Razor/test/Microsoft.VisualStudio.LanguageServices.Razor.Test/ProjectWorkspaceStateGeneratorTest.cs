@@ -122,10 +122,10 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
             _projectManager, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
         stateGenerator.NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false);
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(_projectSnapshot.HostProject);
-            _projectManager.ProjectWorkspaceStateChanged(_projectSnapshot.Key, _projectWorkspaceStateWithTagHelpers);
+            updater.ProjectAdded(_projectSnapshot.HostProject);
+            updater.ProjectWorkspaceStateChanged(_projectSnapshot.Key, _projectWorkspaceStateWithTagHelpers);
         });
 
         // Act
@@ -151,9 +151,9 @@ public class ProjectWorkspaceStateGeneratorTest : VisualStudioWorkspaceTestBase
             _projectManager, _tagHelperResolver, Dispatcher, ErrorReporter, NoOpTelemetryReporter.Instance);
         stateGenerator.NotifyBackgroundWorkCompleted = new ManualResetEventSlim(initialState: false);
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(_projectSnapshot.HostProject);
+            updater.ProjectAdded(_projectSnapshot.HostProject);
         });
 
         // Act

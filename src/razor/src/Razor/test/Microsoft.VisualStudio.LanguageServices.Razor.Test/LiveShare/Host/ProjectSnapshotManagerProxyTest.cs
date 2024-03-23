@@ -42,13 +42,13 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(_hostProject1);
-            projectManager.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
+            updater.ProjectAdded(_hostProject1);
+            updater.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
 
-            projectManager.ProjectAdded(_hostProject2);
-            projectManager.ProjectWorkspaceStateChanged(_hostProject2.Key, _projectWorkspaceState2);
+            updater.ProjectAdded(_hostProject2);
+            updater.ProjectWorkspaceStateChanged(_hostProject2.Key, _projectWorkspaceState2);
         });
 
         using var proxy = new ProjectSnapshotManagerProxy(
@@ -76,10 +76,10 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(_hostProject1);
-            projectManager.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
+            updater.ProjectAdded(_hostProject1);
+            updater.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
         });
 
         using var proxy = new ProjectSnapshotManagerProxy(
@@ -101,11 +101,11 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         };
 
         // Act
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
             // Change the project's configuration to force a changed event to be raised.
-            var project = projectManager.GetLoadedProject(_hostProject1.Key);
-            projectManager.ProjectConfigurationChanged(new(
+            var project = updater.GetLoadedProject(_hostProject1.Key);
+            updater.ProjectConfigurationChanged(new(
                 project.FilePath,
                 project.IntermediateOutputPath,
                 FallbackRazorConfiguration.MVC_1_0,
@@ -125,10 +125,10 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(_hostProject1);
-            projectManager.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
+            updater.ProjectAdded(_hostProject1);
+            updater.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
         });
 
         var proxy = new ProjectSnapshotManagerProxy(
@@ -143,11 +143,11 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         proxy.Dispose();
 
         // Act
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
             // Change the project's configuration to force a changed event to be raised.
-            var project = projectManager.GetLoadedProject(_hostProject1.Key);
-            projectManager.ProjectConfigurationChanged(new(
+            var project = updater.GetLoadedProject(_hostProject1.Key);
+            updater.ProjectConfigurationChanged(new(
                 project.FilePath,
                 project.IntermediateOutputPath,
                 FallbackRazorConfiguration.MVC_1_0,
@@ -165,10 +165,10 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(_hostProject1);
-            projectManager.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
+            updater.ProjectAdded(_hostProject1);
+            updater.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
         });
 
         using var proxy = new ProjectSnapshotManagerProxy(
@@ -198,13 +198,13 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(_hostProject1);
-            projectManager.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
+            updater.ProjectAdded(_hostProject1);
+            updater.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
 
-            projectManager.ProjectAdded(_hostProject2);
-            projectManager.ProjectWorkspaceStateChanged(_hostProject2.Key, _projectWorkspaceState2);
+            updater.ProjectAdded(_hostProject2);
+            updater.ProjectWorkspaceStateChanged(_hostProject2.Key, _projectWorkspaceState2);
         });
 
         using var proxy = new ProjectSnapshotManagerProxy(
@@ -232,10 +232,10 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
         // Arrange
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(_hostProject1);
-            projectManager.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
+            updater.ProjectAdded(_hostProject1);
+            updater.ProjectWorkspaceStateChanged(_hostProject1.Key, _projectWorkspaceState1);
         });
 
         using var proxy = new ProjectSnapshotManagerProxy(

@@ -15,7 +15,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <IsPackable Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</IsPackable>
+    <!-- Don't produce this package when building from source or inside the VMR as it relies on a VS license. -->
+    <IsPackable Condition="'$(DotNetBuild)' != 'true'">true</IsPackable>
     <NuspecFile>Microsoft.TestPlatform.Portable.nuspec</NuspecFile>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.Portable</PackageId>

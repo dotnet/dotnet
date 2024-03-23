@@ -5,9 +5,8 @@ using System.Collections.Immutable;
 using MessagePack.Formatters;
 using Microsoft.AspNetCore.Razor.Serialization.MessagePack.Resolvers;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Razor.Remote;
 
-namespace Microsoft.CodeAnalysis.Remote.Razor;
+namespace Microsoft.CodeAnalysis.Razor.Remote;
 
 internal static class RazorServices
 {
@@ -22,5 +21,6 @@ internal static class RazorServices
         [
             (typeof(IRemoteTagHelperProviderService), null),
             (typeof(IRemoteClientInitializationService), null),
+            (typeof(IRemoteSemanticTokensService), null),
         ]);
 }

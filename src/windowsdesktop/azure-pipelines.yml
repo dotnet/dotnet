@@ -14,7 +14,7 @@ variables:
   value: dotnet-core-acquisition
   # Skip Running CI tests
 - name: SkipTests
-  value: false
+  value: true
   # Set Official Build Id
 - name: OfficialBuildId
   value: $(Build.BuildNumber)
@@ -60,34 +60,32 @@ extends:
       - template: /eng/pipelines/jobs/windows-build.yml@self
         parameters:
           name: win_x64
+          displayName: win-x64
           targetArchitecture: x64
 
       # Windows x86
       - template: /eng/pipelines/jobs/windows-build.yml@self
         parameters:
           name: win_x86
+          displayName: win-x86
           targetArchitecture: x86
 
       # Windows arm64
       - template: /eng/pipelines/jobs/windows-build.yml@self
         parameters:
           name: win_arm64
+          displayName: win-arm64
           targetArchitecture: arm64
 
-    - stage: PrepareForPublish
-      displayName: Prepare for Publish
-      dependsOn: Build
-      jobs:
-      # Prep artifacts: sign them and upload pipeline artifacts expected by stages-based publishing.
-      - template: /eng/pipelines/jobs/prepare-signed-artifacts.yml@self
-        parameters:
-          PublishRidAgnosticPackagesFromJobName: win_x64
       # Publish to Build Asset Registry in order to generate the ReleaseConfigs artifact.
       - template: /eng/common/templates-official/job/publish-build-assets.yml@self
         parameters:
           publishUsingPipelines: true
           publishAssetsImmediately: true
-          dependsOn: PrepareSignedArtifacts
+          dependsOn:
+            - win_x64
+            - win_x86
+            - win_arm64
           pool:
             name: NetCore1ESPool-Internal
             demands: ImageOverride -equals windows.vs2022preview.amd64
@@ -95,15 +93,11 @@ extends:
     # Stages-based publishing entry point
     - template: /eng/common/templates-official/post-build/post-build.yml@self
       parameters:
-        publishingInfraVersion: 3
-        validateDependsOn:
-        - PrepareForPublish
         enableSymbolValidation: false
         enableSigningValidation: false
         enableNugetValidation: false
         enableSourceLinkValidation: false
         publishAssetsImmediately: true
-
         SDLValidationParameters:
           enable: false
           params: >-

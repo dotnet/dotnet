@@ -107,11 +107,6 @@
         <target state="translated">알 수 없는 ProjectChangeKind {0}</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unknown_RazorMetaCode">
-        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
-        <target state="translated">'{' 또는 '}' 이외의 RazorMetaCode를 방문하려고 했습니다.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Version_Should_Not_Be_Null">
         <source>Provided version should not be null.</source>
         <target state="translated">제공된 버전은 null이 아니어야 합니다.</target>

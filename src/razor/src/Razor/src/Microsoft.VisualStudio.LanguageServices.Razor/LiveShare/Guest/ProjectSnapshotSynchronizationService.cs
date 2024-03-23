@@ -15,7 +15,7 @@ namespace Microsoft.VisualStudio.LiveShare.Razor.Guest;
 internal class ProjectSnapshotSynchronizationService(
     CollaborationSession sessionContext,
     IProjectSnapshotManagerProxy hostProjectManagerProxy,
-    ProjectSnapshotManagerBase projectManager,
+    IProjectSnapshotManager projectManager,
     ProjectSnapshotManagerDispatcher dispatcher,
     IErrorReporter errorReporter,
     JoinableTaskFactory jtf) : ICollaborationService, IAsyncDisposable, System.IAsyncDisposable
@@ -23,7 +23,7 @@ internal class ProjectSnapshotSynchronizationService(
     private readonly JoinableTaskFactory _jtf = jtf;
     private readonly CollaborationSession _sessionContext = sessionContext;
     private readonly IProjectSnapshotManagerProxy _hostProjectManagerProxy = hostProjectManagerProxy;
-    private readonly ProjectSnapshotManagerBase _projectManager = projectManager;
+    private readonly IProjectSnapshotManager _projectManager = projectManager;
     private readonly IErrorReporter _errorReporter = errorReporter;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
 
@@ -49,7 +49,9 @@ internal class ProjectSnapshotSynchronizationService(
         {
             try
             {
-                _projectManager.ProjectRemoved(project.Key);
+                _projectManager.Update(
+                    static (updater, key) => updater.ProjectRemoved(key),
+                    state: project.Key);
             }
             catch (Exception ex)
             {
@@ -73,21 +75,32 @@ internal class ProjectSnapshotSynchronizationService(
             var guestPath = ResolveGuestPath(args.ProjectFilePath);
             var guestIntermediateOutputPath = ResolveGuestPath(args.IntermediateOutputPath);
             var hostProject = new HostProject(guestPath, guestIntermediateOutputPath, args.Newer!.Configuration, args.Newer.RootNamespace);
-            _projectManager.ProjectAdded(hostProject);
 
-            if (args.Newer.ProjectWorkspaceState != null)
-            {
-                _projectManager.ProjectWorkspaceStateChanged(hostProject.Key, args.Newer.ProjectWorkspaceState);
-            }
+            _projectManager.Update(
+                static (updater, state) =>
+                {
+                    updater.ProjectAdded(state.hostProject);
+
+                    if (state.projectWorkspaceState != null)
+                    {
+                        updater.ProjectWorkspaceStateChanged(state.hostProject.Key, state.projectWorkspaceState);
+                    }
+                },
+                state: (hostProject, projectWorkspaceState: args.Newer.ProjectWorkspaceState));
         }
         else if (args.Kind == ProjectProxyChangeKind.ProjectRemoved)
         {
             var guestPath = ResolveGuestPath(args.ProjectFilePath);
-            var projectKeys = _projectManager.GetAllProjectKeys(guestPath);
-            foreach (var projectKey in projectKeys)
-            {
-                _projectManager.ProjectRemoved(projectKey);
-            }
+            _projectManager.Update(
+                static (updater, guestPath) =>
+                {
+                    var projectKeys = updater.GetAllProjectKeys(guestPath);
+                    foreach (var projectKey in projectKeys)
+                    {
+                        updater.ProjectRemoved(projectKey);
+                    }
+                },
+                state: guestPath);
         }
         else if (args.Kind == ProjectProxyChangeKind.ProjectChanged)
         {
@@ -96,17 +109,25 @@ internal class ProjectSnapshotSynchronizationService(
                 var guestPath = ResolveGuestPath(args.Newer.FilePath);
                 var guestIntermediateOutputPath = ResolveGuestPath(args.Newer.IntermediateOutputPath);
                 var hostProject = new HostProject(guestPath, guestIntermediateOutputPath, args.Newer.Configuration, args.Newer.RootNamespace);
-                _projectManager.ProjectConfigurationChanged(hostProject);
+                _projectManager.Update(
+                    static (updater, hostProject) => updater.ProjectConfigurationChanged(hostProject),
+                    state: hostProject);
             }
             else if (args.Older.ProjectWorkspaceState != args.Newer.ProjectWorkspaceState ||
                 args.Older.ProjectWorkspaceState?.Equals(args.Newer.ProjectWorkspaceState) == false)
             {
                 var guestPath = ResolveGuestPath(args.Newer.FilePath);
-                var projectKeys = _projectManager.GetAllProjectKeys(guestPath);
-                foreach (var projectKey in projectKeys)
-                {
-                    _projectManager.ProjectWorkspaceStateChanged(projectKey, args.Newer.ProjectWorkspaceState);
-                }
+                _projectManager.Update(
+                    static (updater, state) =>
+                    {
+                        var projectKeys = updater.GetAllProjectKeys(state.guestPath);
+
+                        foreach (var projectKey in projectKeys)
+                        {
+                            updater.ProjectWorkspaceStateChanged(projectKey, state.projectWorkspaceState);
+                        }
+                    },
+                    state: (guestPath, projectWorkspaceState: args.Newer.ProjectWorkspaceState));
             }
         }
     }
@@ -120,12 +141,17 @@ internal class ProjectSnapshotSynchronizationService(
             var guestPath = ResolveGuestPath(projectHandle.FilePath);
             var guestIntermediateOutputPath = ResolveGuestPath(projectHandle.IntermediateOutputPath);
             var hostProject = new HostProject(guestPath, guestIntermediateOutputPath, projectHandle.Configuration, projectHandle.RootNamespace);
-            _projectManager.ProjectAdded(hostProject);
+            _projectManager.Update(
+                static (updater, state) =>
+                {
+                    updater.ProjectAdded(state.hostProject);
 
-            if (projectHandle.ProjectWorkspaceState is not null)
-            {
-                _projectManager.ProjectWorkspaceStateChanged(hostProject.Key, projectHandle.ProjectWorkspaceState);
-            }
+                    if (state.projectWorkspaceState is not null)
+                    {
+                        updater.ProjectWorkspaceStateChanged(state.hostProject.Key, state.projectWorkspaceState);
+                    }
+                },
+                state: (hostProject, projectWorkspaceState: projectHandle.ProjectWorkspaceState));
         }
     }
 
