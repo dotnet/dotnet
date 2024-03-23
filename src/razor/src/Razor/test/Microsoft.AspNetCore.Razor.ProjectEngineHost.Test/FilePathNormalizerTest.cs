@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Razor.ProjectEngineHost.Test;
 
 public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestBase(testOutput)
 {
-    [OSSkipConditionFact(new[] { "OSX", "Linux" })]
+    [OSSkipConditionFact(["OSX", "Linux"])]
     public void Normalize_Windows_StripsPrecedingSlash()
     {
         // Arrange
@@ -102,7 +102,7 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestB
         Assert.Equal("C:/path/to/directory/", normalized);
     }
 
-    [OSSkipConditionFact(new[] { "OSX", "Linux" })]
+    [OSSkipConditionFact(["OSX", "Linux"])]
     public void NormalizeDirectory_Windows_HandlesSingleSlashDirectory()
     {
         // Arrange
@@ -115,29 +115,49 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestB
         Assert.Equal("/", normalized);
     }
 
+    [Theory]
+    [InlineData("path/to/", "path/to/", true)]
+    [InlineData("path/to1/", "path/to2/", false)]
+    [InlineData("path/to/", "path/to/file.cs", true)]
+    [InlineData("path/to/file.cs", "path/to/file.cs", true)]
+    [InlineData("path/to/file1.cs", "path/to/file2.cs", true)]
+    [InlineData("path/to1/file.cs", "path/to2/file.cs", false)]
+    [InlineData("path/to/", @"path\to\", true)]
+    [InlineData("path/to1/", @"path\to2\", false)]
+    [InlineData("path/to/", @"path\to\file.cs", true)]
+    [InlineData("path/to/file.cs", @"path\to\file.cs", true)]
+    [InlineData("path/to/file1.cs", @"path\to\file2.cs", true)]
+    [InlineData("path/to1/file.cs", @"path\to2\file.cs", false)]
+    public void AreDirectoryPathsEquivalent(string path1, string path2, bool expected)
+    {
+        var result = FilePathNormalizer.AreDirectoryPathsEquivalent(path1, path2);
+
+        Assert.Equal(expected, result);
+    }
+
     [Fact]
-    public void FilePathsEquivalent_NotEqualPaths_ReturnsFalse()
+    public void AreFilePathsEquivalent_NotEqualPaths_ReturnsFalse()
     {
         // Arrange
         var filePath1 = "path/to/document.cshtml";
         var filePath2 = "path\\to\\different\\document.cshtml";
 
         // Act
-        var result = FilePathNormalizer.FilePathsEquivalent(filePath1, filePath2);
+        var result = FilePathNormalizer.AreFilePathsEquivalent(filePath1, filePath2);
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void FilePathsEquivalent_NormalizesPathsBeforeComparison_ReturnsTrue()
+    public void AreFilePathsEquivalent_NormalizesPathsBeforeComparison_ReturnsTrue()
     {
         // Arrange
         var filePath1 = "path/to/document.cshtml";
         var filePath2 = "path\\to\\document.cshtml";
 
         // Act
-        var result = FilePathNormalizer.FilePathsEquivalent(filePath1, filePath2);
+        var result = FilePathNormalizer.AreFilePathsEquivalent(filePath1, filePath2);
 
         // Assert
         Assert.True(result);
@@ -189,7 +209,7 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestB
         Assert.Equal("/", normalized);
     }
 
-    [OSSkipConditionFact(new[] { "Windows" })]
+    [OSSkipConditionFact(["Windows"])]
     public void Normalize_NonWindows_AddsLeadingForwardSlash()
     {
         // Arrange

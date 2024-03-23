@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
 [Export(typeof(IProjectSnapshotManager))]
-[Export(typeof(ProjectSnapshotManagerBase))]
 [method: ImportingConstructor]
 internal sealed class VisualStudioProjectSnapshotManager(
     IProjectEngineFactoryProvider projectEngineFactoryProvider,

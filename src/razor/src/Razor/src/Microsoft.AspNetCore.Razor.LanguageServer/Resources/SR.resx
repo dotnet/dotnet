@@ -177,9 +177,6 @@
   <data name="Unknown_ProjectChangeKind" xml:space="preserve">
     <value>Unknown ProjectChangeKind {0}</value>
   </data>
-  <data name="Unknown_RazorMetaCode" xml:space="preserve">
-    <value>Attempted to visit a RazorMetaCode other than '{' or '}'.</value>
-  </data>
   <data name="Version_Should_Not_Be_Null" xml:space="preserve">
     <value>Provided version should not be null.</value>
   </data>

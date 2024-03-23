@@ -51,11 +51,11 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
         var hostDocument1 = new HostDocument(@"C:\document1.razor", "document1.razor", FileKinds.Component);
         var hostDocument2 = new HostDocument(@"C:\document2.razor", "document2.razor", FileKinds.Component);
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(hostProject);
-            _projectManager.DocumentAdded(hostProject.Key, hostDocument1, new EmptyTextLoader(hostDocument1.FilePath));
-            _projectManager.DocumentAdded(hostProject.Key, hostDocument2, new EmptyTextLoader(hostDocument2.FilePath));
+            updater.ProjectAdded(hostProject);
+            updater.DocumentAdded(hostProject.Key, hostDocument1, new EmptyTextLoader(hostDocument1.FilePath));
+            updater.DocumentAdded(hostProject.Key, hostDocument2, new EmptyTextLoader(hostDocument2.FilePath));
         });
 
         var projectKey = _projectManager.GetAllProjectKeys(hostProject.FilePath).Single();
@@ -64,7 +64,7 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
         _document2 = _project.GetDocument(hostDocument2.FilePath).AssumeNotNull();
 
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
-        var filePathService = new FilePathService(languageServerFeatureOptions);
+        var filePathService = new VisualStudioFilePathService(languageServerFeatureOptions);
 
         var serviceProvider = VsMocks.CreateServiceProvider(static b =>
             b.AddComponentModel(static b =>
@@ -78,7 +78,6 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
             StrictMock.Of<ProjectConfigurationFilePathStore>(),
             languageServerFeatureOptions,
             _projectManager,
-            Dispatcher,
             WorkspaceProvider,
             NoOpTelemetryReporter.Instance);
 
@@ -147,9 +146,9 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
         var called = false;
         _provider.Updated += (sender, args) => called = true;
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectRemoved(_project.Key);
+            updater.ProjectRemoved(_project.Key);
         });
 
         // Act
@@ -167,10 +166,10 @@ public class RazorDynamicFileInfoProviderTest(ITestOutputHelper testOutput) : Vi
         await _testAccessor.GetDynamicFileInfoAsync(_projectId, _document2.FilePath.AssumeNotNull(), DisposalToken);
         _provider.Updated += (sender, documentFilePath) => throw new InvalidOperationException("Should not have been called!");
 
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.SolutionClosed();
-            _projectManager.DocumentClosed(_project.Key, _document1.FilePath, new EmptyTextLoader(string.Empty));
+            updater.SolutionClosed();
+            updater.DocumentClosed(_project.Key, _document1.FilePath, new EmptyTextLoader(string.Empty));
         });
 
         // Act & Assert

@@ -75,9 +75,9 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
     public async Task GetTagHelpersAsync_WithSerializableCustomFactory_GoesOutOfProcess()
     {
         // Arrange
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(s_hostProject_For_2_0);
+            updater.ProjectAdded(s_hostProject_For_2_0);
         });
 
         var projectSnapshot = _projectManager.GetLoadedProject(s_hostProject_For_2_0.Key);
@@ -107,9 +107,9 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
     public async Task GetTagHelpersAsync_WithNonSerializableCustomFactory_StaysInProcess()
     {
         // Arrange
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(s_hostProject_For_NonSerializableConfiguration);
+            updater.ProjectAdded(s_hostProject_For_NonSerializableConfiguration);
         });
 
         var projectSnapshot = _projectManager.GetLoadedProject(s_hostProject_For_2_0.Key);
@@ -139,9 +139,9 @@ public partial class OutOfProcTagHelperResolverTest : VisualStudioTestBase
     public async Task GetTagHelpersAsync_OperationCanceledException_DoesNotGetWrapped()
     {
         // Arrange
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(s_hostProject_For_2_0);
+            updater.ProjectAdded(s_hostProject_For_2_0);
         });
 
         var projectSnapshot = _projectManager.GetLoadedProject(s_hostProject_For_2_0.Key);

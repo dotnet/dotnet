@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal sealed class RazorDocumentMappingService(
-        FilePathService filePathService,
+        IFilePathService filePathService,
         IDocumentContextFactory documentContextFactory,
         IRazorLoggerFactory loggerFactory)
          : AbstractRazorDocumentMappingService(filePathService, documentContextFactory, loggerFactory.CreateLogger<RazorDocumentMappingService>())

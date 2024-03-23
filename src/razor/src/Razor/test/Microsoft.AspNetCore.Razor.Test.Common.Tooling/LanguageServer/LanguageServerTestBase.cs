@@ -31,7 +31,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 public abstract class LanguageServerTestBase : ToolingTestBase
 {
     private protected IRazorSpanMappingService SpanMappingService { get; }
-    private protected FilePathService FilePathService { get; }
+    private protected IFilePathService FilePathService { get; }
 
     protected JsonSerializer Serializer { get; }
 
@@ -44,7 +44,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         Serializer.AddVSInternalExtensionConverters();
         Serializer.AddVSExtensionConverters();
 
-        FilePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
+        FilePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
     }
 
     private protected override ProjectSnapshotManagerDispatcher CreateDispatcher()
@@ -58,7 +58,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         => CreateProjectSnapshotManager(ProjectEngineFactories.DefaultProvider);
 
     private protected TestProjectSnapshotManager CreateProjectSnapshotManager(IProjectEngineFactoryProvider projectEngineFactoryProvider)
-        => new(projectEngineFactoryProvider, Dispatcher);
+        => new(projectEngineFactoryProvider, Dispatcher, DisposalToken);
 
     internal RazorRequestContext CreateRazorRequestContext(VersionedDocumentContext? documentContext, ILspServices? lspServices = null)
     {
@@ -92,6 +92,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
                 @using System;
                 @using Microsoft.AspNetCore.Components
                 @using Microsoft.AspNetCore.Components.Authorization
+                @using Microsoft.AspNetCore.Components.Forms
                 @using Microsoft.AspNetCore.Components.Routing
                 @using Microsoft.AspNetCore.Components.Web
                 """,

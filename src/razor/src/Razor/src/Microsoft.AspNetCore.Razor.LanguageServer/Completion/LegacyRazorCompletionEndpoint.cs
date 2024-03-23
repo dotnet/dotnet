@@ -91,7 +91,7 @@ internal class LegacyRazorCompletionEndpoint(
         };
         var completionOptions = new RazorCompletionOptions(SnippetsSupported: true);
         var owner = syntaxTree.Root.FindInnermostNode(hostDocumentIndex, includeWhitespace: true, walkMarkersBack: true);
-        owner = RazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, hostDocumentIndex);
+        owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, hostDocumentIndex);
         var completionContext = new RazorCompletionContext(hostDocumentIndex, owner, syntaxTree, tagHelperDocumentContext, reason, completionOptions);
 
         var razorCompletionItems = _completionFactsService.GetCompletionItems(completionContext);

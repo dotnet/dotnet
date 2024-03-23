@@ -2,29 +2,53 @@
 
   <PropertyGroup>
     <ProducesDotNetReleaseShippingAssets>true</ProducesDotNetReleaseShippingAssets>
+    <!-- This avoids creating VS.*.symbols.nupkg packages that are identical to the original package. -->
+    <AutoGenerateSymbolPackages>false</AutoGenerateSymbolPackages>
+    <!-- Set PlatformName to TargetArchitecture to create unique build manifest files. -->
+    <PlatformName>$(TargetArchitecture)</PlatformName>
   </PropertyGroup>
 
-  <!-- Include installer archives and packages which aren't globbed by default. -->
-  <Target Name="PublishWindowsDesktopInstallers"
-          BeforeTargets="BeforePublish"
-          Condition="'$(DotNetBuildRepo)' == 'true'">
-    <!-- Retrieve windows desktop runtime pack product version.
+  <Target Name="AddRelativeBlobPathToArtifacts"
+          BeforeTargets="PublishToAzureDevOpsArtifacts">
+    <!-- Retrieve the runtime pack product version.
          Don't stabilize the package version in order to retrieve the VersionSuffix. -->
     <MSBuild Projects="$(RepoRoot)src/windowsdesktop/src/sfx/Microsoft.WindowsDesktop.App.Runtime.sfxproj"
              Targets="ReturnProductVersion"
              Properties="IsShipping=false">
-      <Output TaskParameter="TargetOutputs" PropertyName="WindowsDesktopRuntimePackProductVersion" />
+      <Output TaskParameter="TargetOutputs" PropertyName="RuntimePackProductVersion" />
     </MSBuild>
 
-    <ItemGroup>
-      <InstallerToPublish Include="$(ArtifactsPackagesDir)**\*.zip;
-                                   $(ArtifactsPackagesDir)**\*.exe;
-                                   $(ArtifactsPackagesDir)**\*.msi" />
+    <PropertyGroup>
+      <!-- Read by the checksum generation target -->
+      <RelativeBlobPathParent>WindowsDesktop/$(RuntimePackProductVersion)/</RelativeBlobPathParent>
+    </PropertyGroup>
 
-      <ItemsToPushToBlobFeed Include="@(InstallerToPublish)"
-                             IsShipping="$([System.String]::Copy('%(RecursiveDir)').StartsWith('Shipping'))"
-                             PublishFlatContainer="true"
-                             RelativeBlobPath="WindowsDesktop/$(WindowsDesktopRuntimePackProductVersion)/%(Filename)%(Extension)" />
+    <ItemGroup>
+      <Artifact Condition="'%(Artifact.PublishFlatContainer)' == 'true' and '%(Artifact.RelativeBlobPath)' == ''"
+                RelativeBlobPath="$(RelativeBlobPathParent)%(Filename)%(Extension)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- This target only runs when EnableDefaultArtifacts=true which is a single build leg in CI. -->
+  <Target Name="GenerateProductVersionFiles"
+          Condition="'$(EnableDefaultArtifacts)' == 'true'"
+          BeforeTargets="PublishToAzureDevOpsArtifacts"
+          AfterTargets="AddRelativeBlobPathToArtifacts">
+    <ItemGroup>
+      <ProductVersionFile Include="$(ArtifactsShippingPackagesDir)productVersion.txt" />
+      <ProductVersionFile Include="$(ArtifactsShippingPackagesDir)windowsdesktop-productVersion.txt" />
+    </ItemGroup>
+
+    <!-- Generate productVersion.txt file containing the product version. -->
+    <WriteLinesToFile File="%(ProductVersionFile.Identity)"
+                      Lines="$(RuntimePackProductVersion)"
+                      Overwrite="true"
+                      Encoding="ASCII" />
+
+    <ItemGroup>
+      <Artifact Include="@(ProductVersionFile)"
+                PublishFlatContainer="true"
+                RelativeBlobPath="$(RelativeBlobPathParent)%(Filename)%(Extension)" />
     </ItemGroup>
   </Target>
 

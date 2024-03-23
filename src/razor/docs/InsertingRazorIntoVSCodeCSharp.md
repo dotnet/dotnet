@@ -72,12 +72,11 @@ You should now have 10 lines of text containing `razorlanguageserver` that are i
 2023-06-29T01:16:17.9786564Z release\DDPublish\vscode-razor\7.0.0-preview.23328.2\RazorLanguageServer-PlatformAgnostic-7.0.0-preview.23328.2.zip -> https://download.visualstudio.microsoft.com/download/pr/51d2bf3c-cb3c-4385-b59f-d4d6c9a96743/fca9e77ad09cc54b115bfb8b5e6aaf66/razorlanguageserver-platformagnostic-7.0.0-preview.23328.2.zip
 2023-06-29T01:16:17.9792213Z release\DDPublish\vscode-razor\7.0.0-preview.23328.2\RazorLanguageServer-win-arm64-7.0.0-preview.23328.2.zip -> https://download.visualstudio.microsoft.com/download/pr/51d2bf3c-cb3c-4385-b59f-d4d6c9a96743/b2aa92ccbdf03761b6783bf123bfbe22/razorlanguageserver-win-arm64-7.0.0-preview.23328.2.zip
 2023-06-29T01:16:17.9797904Z release\DDPublish\vscode-razor\7.0.0-preview.23328.2\RazorLanguageServer-win-x64-7.0.0-preview.23328.2.zip -> https://download.visualstudio.microsoft.com/download/pr/51d2bf3c-cb3c-4385-b59f-d4d6c9a96743/3b7fc7c2f06e48d78bec2125adcc41aa/razorlanguageserver-win-x64-7.0.0-preview.23328.2.zip
-2023-06-29T01:16:17.9803596Z release\DDPublish\vscode-razor\7.0.0-preview.23328.2\RazorLanguageServer-win-x86-7.0.0-preview.23328.2.zip -> https://download.visualstudio.microsoft.com/download/pr/51d2bf3c-cb3c-4385-b59f-d4d6c9a96743/d1b37bd821529147e7ffec08f98be17c/razorlanguageserver-win-x86-7.0.0-preview.23328.2.zip
 ```
 
 You need to put that in your text editor of choice, remove everything but the `https://` URLs, add a comma to the end of every line, then collapse the whole thing down to one line. ie:
 
-`https://download.visualstudio.microsoft.com/&lt;snip%gt;razorlanguageserver-win-x86.zip,https://download.visualstudio.microsoft.com/&lt;snip%gt;razorlanguageserver-win-x64.zip`
+`https://download.visualstudio.microsoft.com/&lt;snip%gt;razorlanguageserver-win-arm64.zip,https://download.visualstudio.microsoft.com/&lt;snip%gt;razorlanguageserver-win-x64.zip`
 
 ### Update vscode-csharp
 

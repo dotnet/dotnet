@@ -83,11 +83,6 @@ namespace Microsoft.DotNet.WindowsDesktop.App.Tests
             HasGoodPlatformManifest();
         }
 
-        public void IsAppHostPack()
-        {
-            IsRuntimeSpecificPack();
-        }
-
         public void IsRuntimePack()
         {
             IsRuntimeSpecificPack();

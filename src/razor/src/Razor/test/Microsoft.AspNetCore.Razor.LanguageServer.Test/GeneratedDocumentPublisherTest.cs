@@ -31,10 +31,10 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
 
     protected override async Task InitializeAsync()
     {
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectAdded(s_hostProject);
-            _projectManager.DocumentAdded(s_hostProject.Key, s_hostDocument, new EmptyTextLoader(s_hostDocument.FilePath));
+            updater.ProjectAdded(s_hostProject);
+            updater.DocumentAdded(s_hostProject.Key, s_hostDocument, new EmptyTextLoader(s_hostDocument.FilePath));
         });
     }
 
@@ -240,9 +240,13 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
         });
 
         // Act
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
+        });
+
         await RunOnDispatcherAsync(() =>
         {
-            _projectManager.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
             publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 124);
         });
 
@@ -268,9 +272,13 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
         });
 
         // Act
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
+        });
+
         await RunOnDispatcherAsync(() =>
         {
-            _projectManager.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
             publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
         });
 
@@ -294,9 +302,13 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
         });
 
         // Act
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
+        });
+
         await RunOnDispatcherAsync(() =>
         {
-            _projectManager.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
             publisher.PublishHtml(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 124);
         });
 
@@ -322,9 +334,13 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
         });
 
         // Act
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
+        });
+
         await RunOnDispatcherAsync(() =>
         {
-            _projectManager.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
             publisher.PublishHtml(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
         });
 
@@ -345,13 +361,21 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
         await RunOnDispatcherAsync(() =>
         {
             publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
-            _projectManager.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
+        });
+
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
         });
 
         // Act
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentClosed(s_hostProject.Key, s_hostDocument.FilePath, new EmptyTextLoader(s_hostDocument.FilePath));
+        });
+
         await RunOnDispatcherAsync(() =>
         {
-            _projectManager.DocumentClosed(s_hostProject.Key, s_hostDocument.FilePath, new EmptyTextLoader(s_hostDocument.FilePath));
             publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
         });
 
@@ -386,14 +410,22 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
         await RunOnDispatcherAsync(() =>
         {
             publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
-            _projectManager.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
+        });
+
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
         });
 
         // Act
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectAdded(s_hostProject2);
+            updater.DocumentAdded(s_hostProject2.Key, s_hostDocument, new EmptyTextLoader(s_hostDocument.FilePath));
+        });
+
         await RunOnDispatcherAsync(() =>
         {
-            _projectManager.ProjectAdded(s_hostProject2);
-            _projectManager.DocumentAdded(s_hostProject2.Key, s_hostDocument, new EmptyTextLoader(s_hostDocument.FilePath));
             publisher.PublishCSharp(s_hostProject2.Key, s_hostDocument.FilePath, changedSourceText, 124);
         });
 
@@ -418,13 +450,17 @@ public class GeneratedDocumentPublisherTest : LanguageServerTestBase
         await RunOnDispatcherAsync(() =>
         {
             publisher.PublishCSharp(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText, 123);
-            _projectManager.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
+        });
+
+        await _projectManager.UpdateAsync(updater =>
+        {
+            updater.DocumentOpened(s_hostProject.Key, s_hostDocument.FilePath, initialSourceText);
         });
 
         // Act
-        await RunOnDispatcherAsync(() =>
+        await _projectManager.UpdateAsync(updater =>
         {
-            _projectManager.ProjectRemoved(s_hostProject.Key);
+            updater.ProjectRemoved(s_hostProject.Key);
         });
 
         Assert.Equal(0, publisher.GetTestAccessor().PublishedCSharpDataCount);

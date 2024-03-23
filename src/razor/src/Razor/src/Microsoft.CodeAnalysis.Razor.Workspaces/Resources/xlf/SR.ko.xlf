@@ -34,6 +34,11 @@
         <target state="translated">'{2}'의 {1} 범위를 벗어나는 줄 '{0}'을(를) 쿼리했습니다. 문서가 최신이 아닐 수 있습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Unknown_RazorMetaCode">
+        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
+        <target state="new">Attempted to visit a RazorMetaCode other than '{' or '}'.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Unknown_mapping_behavior">
         <source>Unknown mapping behavior</source>
         <target state="translated">알 수 없는 매핑 동작</target>

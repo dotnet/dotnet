@@ -34,6 +34,11 @@
         <target state="translated">'{2}' の {1} 範囲外の行 '{0}' がクエリされました。ドキュメントが最新ではない可能性があります。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Unknown_RazorMetaCode">
+        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
+        <target state="translated">'{' or '}' 以外の RazorMetaCode にアクセスしようとしました。</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Unknown_mapping_behavior">
         <source>Unknown mapping behavior</source>
         <target state="translated">不明なマッピング動作</target>

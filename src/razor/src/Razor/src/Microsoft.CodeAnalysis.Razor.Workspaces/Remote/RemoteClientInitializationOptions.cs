@@ -9,8 +9,17 @@ namespace Microsoft.CodeAnalysis.Razor.Remote;
 internal struct RemoteClientInitializationOptions
 {
     [DataMember(Order = 0)]
-    internal bool UseRazorCohostServer;
+    internal required bool UseRazorCohostServer;
 
     [DataMember(Order = 1)]
-    internal bool UsePreciseSemanticTokenRanges;
+    internal required bool UsePreciseSemanticTokenRanges;
+
+    [DataMember(Order = 2)]
+    internal required string CSharpVirtualDocumentSuffix;
+
+    [DataMember(Order = 3)]
+    internal required string HtmlVirtualDocumentSuffix;
+
+    [DataMember(Order = 4)]
+    internal required bool IncludeProjectKeyInGeneratedFilePath;
 }

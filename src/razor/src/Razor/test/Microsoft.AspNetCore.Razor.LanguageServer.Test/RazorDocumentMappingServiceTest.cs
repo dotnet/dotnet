@@ -23,12 +23,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 public class RazorDocumentMappingServiceTest : ToolingTestBase
 {
-    private readonly FilePathService _filePathService;
+    private readonly IFilePathService _filePathService;
 
     public RazorDocumentMappingServiceTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _filePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
+        _filePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
     }
 
     [Fact]

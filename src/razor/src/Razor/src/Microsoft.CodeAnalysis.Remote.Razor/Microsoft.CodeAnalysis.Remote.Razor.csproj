@@ -40,6 +40,9 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Remote.ServiceHub" Version="$(MicrosoftCodeAnalysisRemoteServiceHubPackageVersion)" />
     <PackageReference Include="Nerdbank.Streams" Version="$(NerdbankStreamsPackageVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.RpcContracts" Version="$(MicrosoftVisualStudioRpcContractsPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" Version="$(MicrosoftVisualStudioLanguageServerProtocolPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Extensions" Version="$(MicrosoftVisualStudioLanguageServerProtocolExtensionsPackageVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol.Internal" Version="$(MicrosoftVisualStudioLanguageServerProtocolInternalPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup>

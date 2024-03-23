@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Composition;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.CodeAnalysis.Razor.Remote;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 

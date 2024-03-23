@@ -9,7 +9,29 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
 internal static class RazorCompletionItemExtensions
 {
+    private readonly static string s_markupTransitionDescriptionKey = "Razor.MarkupTransitionDescription";
     private readonly static string s_tagHelperElementCompletionDescriptionKey = "Razor.TagHelperElementDescription";
+
+    public static void SetMarkupTransitionCompletionDescription(this RazorCompletionItem completionItem, MarkupTransitionCompletionDescription markupTransitionCompletionDescription)
+    {
+        if (completionItem is null)
+        {
+            throw new ArgumentNullException(nameof(completionItem));
+        }
+
+        completionItem.Items[s_markupTransitionDescriptionKey] = markupTransitionCompletionDescription;
+    }
+
+    public static MarkupTransitionCompletionDescription? GetMarkupTransitionCompletionDescription(this RazorCompletionItem completionItem)
+    {
+        if (completionItem is null)
+        {
+            throw new ArgumentNullException(nameof(completionItem));
+        }
+
+        var markupTransitionCompletionDescription = completionItem.Items[s_markupTransitionDescriptionKey] as MarkupTransitionCompletionDescription;
+        return markupTransitionCompletionDescription;
+    }
 
     public static void SetTagHelperElementDescriptionInfo(this RazorCompletionItem completionItem, AggregateBoundElementDescription elementDescriptionInfo)
     {

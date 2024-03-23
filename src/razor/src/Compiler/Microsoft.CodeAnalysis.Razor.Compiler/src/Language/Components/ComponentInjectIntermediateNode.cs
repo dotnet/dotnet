@@ -65,6 +65,7 @@ internal class ComponentInjectIntermediateNode : ExtensionIntermediateNode
             MemberName,
             TypeSpan,
             MemberSpan,
-            context);
+            context,
+            defaultValue: true);
     }
 }

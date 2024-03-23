@@ -1,23 +1,22 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-internal sealed record RazorCommitCharacter(string Character, bool Insert = true)
+internal readonly record struct RazorCommitCharacter(string Character, bool Insert = true)
 {
-    public static IReadOnlyList<RazorCommitCharacter> FromArray(IReadOnlyList<string> characters) => FromArray(characters, insert: true);
-
-    public static IReadOnlyList<RazorCommitCharacter> FromArray(IReadOnlyList<string> characters, bool insert)
+    public static ImmutableArray<RazorCommitCharacter> CreateArray(string[] characters, bool insert = true)
     {
-        var converted = new RazorCommitCharacter[characters.Count];
+        using var converted = new PooledArrayBuilder<RazorCommitCharacter>(capacity: characters.Length);
 
-        for (var i = 0; i < characters.Count; i++)
+        foreach (var ch in characters)
         {
-            converted[i] = new RazorCommitCharacter(characters[i], insert);
+            converted.Add(new(ch, insert));
         }
 
-        return converted;
+        return converted.DrainToImmutable();
     }
 }

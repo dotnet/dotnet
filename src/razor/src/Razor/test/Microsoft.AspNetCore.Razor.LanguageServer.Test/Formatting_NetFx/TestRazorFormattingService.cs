@@ -29,7 +29,7 @@ internal static class TestRazorFormattingService
     {
         codeDocument ??= TestRazorCodeDocument.CreateEmpty();
 
-        var filePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
+        var filePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
         var mappingService = new RazorDocumentMappingService(filePathService, new TestDocumentContextFactory(), loggerFactory);
 
         var projectManager = StrictMock.Of<IProjectSnapshotManager>();
