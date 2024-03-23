@@ -20,15 +20,6 @@ variables:
   # Skip Running CI tests
   - name: SkipTests
     value: false
-  # Set Official Build Id
-  - name: OfficialBuildId
-    value: $(Build.BuildNumber)
-  - ${{ if or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), eq(variables['Build.Reason'], 'Manual')) }}:
-    - name: PostBuildSign
-      value: false
-  - ${{ else }}:
-    - name: PostBuildSign
-      value: true
 
   # Set the target blob feed for package publish during official and validation builds.
   - name: _DotNetArtifactsCategory
@@ -48,16 +39,19 @@ stages:
   - template: /eng/pipelines/jobs/windows-build-PR.yml
     parameters:
       name: win_x64
+      displayName: win-x64
       targetArchitecture: x64
 
   # Windows x86
   - template: /eng/pipelines/jobs/windows-build-PR.yml
     parameters:
       name: win_x86
+      displayName: win-x86
       targetArchitecture: x86
 
   # Windows arm64
   - template: /eng/pipelines/jobs/windows-build-PR.yml
     parameters:
       name: win_arm64
+      displayName: win-arm64
       targetArchitecture: arm64
