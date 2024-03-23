@@ -22,12 +22,12 @@ using Microsoft.VisualStudio.LanguageServer.Protocol;
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
 internal abstract class AbstractRazorDocumentMappingService(
-    FilePathService filePathService,
+    IFilePathService filePathService,
     IDocumentContextFactory documentContextFactory,
     ILogger logger)
     : IRazorDocumentMappingService
 {
-    private readonly FilePathService _documentFilePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
+    private readonly IFilePathService _documentFilePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
     private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory ?? throw new ArgumentNullException(nameof(documentContextFactory));
     private readonly ILogger _logger = logger;
 

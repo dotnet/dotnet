@@ -9,6 +9,8 @@ internal static class RazorLSPConstants
 
     public const string RazorLanguageServerName = "Razor Language Server Client";
 
+    public const string CohostLanguageServerName = "Cohosted Razor Language Server Client";
+
     public const string HtmlLanguageServerName = "HtmlDelegationLanguageServerClient";
 
     public const string CSHTMLFileExtension = ".cshtml";

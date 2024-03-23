@@ -10,21 +10,22 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Semantic.Models;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-internal class LSPCSharpSemanticTokensProvider(IClientConnection clientConnection, IRazorLoggerFactory loggerFactory) : ICSharpSemanticTokensProvider
+internal class LSPCSharpSemanticTokensProvider(LanguageServerFeatureOptions languageServerFeatureOptions, IClientConnection clientConnection, IRazorLoggerFactory loggerFactory) : ICSharpSemanticTokensProvider
 {
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IClientConnection _clientConnection = clientConnection;
     private readonly ILogger _logger = loggerFactory.CreateLogger<LSPCSharpSemanticTokensProvider>();
 
     public async Task<int[]?> GetCSharpSemanticTokensResponseAsync(
             VersionedDocumentContext documentContext,
             ImmutableArray<LinePositionSpan> csharpSpans,
-            bool usePreciseSemanticTokenRanges,
             Guid correlationId,
             CancellationToken cancellationToken)
     {
@@ -40,7 +41,7 @@ internal class LSPCSharpSemanticTokensProvider(IClientConnection clientConnectio
 
         var parameter = new ProvideSemanticTokensRangesParams(documentContext.Identifier.TextDocumentIdentifier, documentVersion, csharpRanges, correlationId);
         ProvideSemanticTokensResponse? csharpResponse;
-        if (usePreciseSemanticTokenRanges)
+        if (_languageServerFeatureOptions.UsePreciseSemanticTokenRanges)
         {
             csharpResponse = await GetCsharpResponseAsync(_clientConnection, parameter, CustomMessageNames.RazorProvidePreciseRangeSemanticTokensEndpoint, cancellationToken).ConfigureAwait(false);
 

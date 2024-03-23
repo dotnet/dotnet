@@ -25,16 +25,14 @@ internal sealed class FallbackProjectManager(
     [Import(typeof(SVsServiceProvider))] IServiceProvider serviceProvider,
     ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
     LanguageServerFeatureOptions languageServerFeatureOptions,
-    ProjectSnapshotManagerBase projectManager,
-    ProjectSnapshotManagerDispatcher dispatcher,
+    IProjectSnapshotManager projectManager,
     IWorkspaceProvider workspaceProvider,
     ITelemetryReporter telemetryReporter)
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly ProjectConfigurationFilePathStore _projectConfigurationFilePathStore = projectConfigurationFilePathStore;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
-    private readonly ProjectSnapshotManagerBase _projectManager = projectManager;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
+    private readonly IProjectSnapshotManager _projectManager = projectManager;
     private readonly IWorkspaceProvider _workspaceProvider = workspaceProvider;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
@@ -116,7 +114,7 @@ internal sealed class FallbackProjectManager(
         var hostProject = new FallbackHostProject(project.FilePath, intermediateOutputPath, FallbackRazorConfiguration.Latest, rootNamespace, project.Name);
 
         await UpdateProjectManagerAsync(
-                () => _projectManager.ProjectAdded(hostProject),
+                updater => updater.ProjectAdded(hostProject),
                 cancellationToken)
             .ConfigureAwait(false);
 
@@ -138,7 +136,7 @@ internal sealed class FallbackProjectManager(
         var textLoader = new FileTextLoader(filePath, defaultEncoding: null);
 
         await UpdateProjectManagerAsync(
-                () => _projectManager.DocumentAdded(projectKey, hostDocument, textLoader),
+                updater => updater.DocumentAdded(projectKey, hostDocument, textLoader),
                 cancellationToken)
             .ConfigureAwait(false);
     }
@@ -168,10 +166,6 @@ internal sealed class FallbackProjectManager(
         }
 
         var projectKey = ProjectKey.From(project);
-        if (projectKey is not { } razorProjectKey)
-        {
-            return;
-        }
 
         var hostDocument = CreateHostDocument(filePath, projectFilePath);
         if (hostDocument is null)
@@ -180,21 +174,24 @@ internal sealed class FallbackProjectManager(
         }
 
         await UpdateProjectManagerAsync(
-                () => _projectManager.DocumentRemoved(razorProjectKey, hostDocument),
+                updater => updater.DocumentRemoved(projectKey, hostDocument),
                 cancellationToken)
             .ConfigureAwait(false);
     }
 
-    private Task UpdateProjectManagerAsync(Action action, CancellationToken cancellationToken)
+    private Task UpdateProjectManagerAsync(Action<ProjectSnapshotManager.Updater> action, CancellationToken cancellationToken)
     {
-        return _dispatcher
-            .RunAsync(() =>
-            {
-                RazorStartupInitializer.Initialize(_serviceProvider);
+        return _projectManager
+            .UpdateAsync(
+                static (updater, state) =>
+                {
+                    var (serviceProvider, action) = state;
+                    RazorStartupInitializer.Initialize(serviceProvider);
 
-                action();
-            },
-            cancellationToken);
+                    action(updater);
+                },
+                state: (_serviceProvider, action),
+                cancellationToken);
     }
 
     private Project? TryFindProjectForProjectId(ProjectId projectId)

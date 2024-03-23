@@ -68,10 +68,10 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
         var textAndVersion = TextAndVersion.Create(text, textVersion);
         cache.TrackDocumentVersion(document, 1337);
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(document.ProjectInternal.HostProject);
-            projectManager.DocumentAdded(document.ProjectInternal.Key, document.State.HostDocument, TextLoader.From(textAndVersion));
+            updater.ProjectAdded(document.ProjectInternal.HostProject);
+            updater.DocumentAdded(document.ProjectInternal.Key, document.State.HostDocument, TextLoader.From(textAndVersion));
         });
 
         // Act - 1
@@ -81,8 +81,8 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
         Assert.True(result);
 
         // Act - 2
-        await RunOnDispatcherAsync(() =>
-            projectManager.DocumentRemoved(document.ProjectInternal.Key, document.State.HostDocument));
+        await projectManager.UpdateAsync(updater =>
+            updater.DocumentRemoved(document.ProjectInternal.Key, document.State.HostDocument));
         result = cache.TryGetDocumentVersion(document, out _);
 
         // Assert - 2
@@ -102,11 +102,11 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
         var textAndVersion = TextAndVersion.Create(text, textVersion);
         cache.TrackDocumentVersion(document, 1337);
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(document.ProjectInternal.HostProject);
-            projectManager.DocumentAdded(document.ProjectInternal.Key, document.State.HostDocument, TextLoader.From(textAndVersion));
-            projectManager.DocumentOpened(document.ProjectInternal.Key, document.FilePath, textAndVersion.Text);
+            updater.ProjectAdded(document.ProjectInternal.HostProject);
+            updater.DocumentAdded(document.ProjectInternal.Key, document.State.HostDocument, TextLoader.From(textAndVersion));
+            updater.DocumentOpened(document.ProjectInternal.Key, document.FilePath, textAndVersion.Text);
         });
 
         // Act - 1
@@ -117,8 +117,8 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
         Assert.True(projectManager.IsDocumentOpen(document.FilePath));
 
         // Act - 2
-        await RunOnDispatcherAsync(() =>
-            projectManager.DocumentRemoved(document.ProjectInternal.Key, document.State.HostDocument));
+        await projectManager.UpdateAsync(updater =>
+            updater.DocumentRemoved(document.ProjectInternal.Key, document.State.HostDocument));
         result = cache.TryGetDocumentVersion(document, out _);
 
         // Assert - 2
@@ -139,10 +139,10 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
         cache.TrackDocumentVersion(document, 1337);
         var textLoader = TextLoader.From(textAndVersion);
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(document.ProjectInternal.HostProject);
-            projectManager.DocumentAdded(document.ProjectInternal.Key, document.State.HostDocument, textLoader);
+            updater.ProjectAdded(document.ProjectInternal.HostProject);
+            updater.DocumentAdded(document.ProjectInternal.Key, document.State.HostDocument, textLoader);
         });
 
         // Act - 1
@@ -152,8 +152,8 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
         Assert.True(result);
 
         // Act - 2
-        await RunOnDispatcherAsync(() =>
-            projectManager.DocumentClosed(document.ProjectInternal.HostProject.Key, document.State.HostDocument.FilePath, textLoader));
+        await projectManager.UpdateAsync(updater =>
+            updater.DocumentClosed(document.ProjectInternal.HostProject.Key, document.State.HostDocument.FilePath, textLoader));
         result = cache.TryGetDocumentVersion(document, out var version);
 
         // Assert - 2
@@ -271,10 +271,10 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
             RazorConfiguration.Default,
             projectWorkspaceState: null);
 
-        var document1 = await RunOnDispatcherAsync(() =>
+        var document1 = await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(project1.HostProject);
-            return projectManager.CreateAndAddDocument(project1, @"C:\path\to\file.razor");
+            updater.ProjectAdded(project1.HostProject);
+            return updater.CreateAndAddDocument(project1, @"C:\path\to\file.razor");
         });
 
         // Act
@@ -295,14 +295,13 @@ public class DocumentVersionCacheTest(ITestOutputHelper testOutput) : LanguageSe
             RazorConfiguration.Default,
             projectWorkspaceState: null);
 
-        var document2 = await RunOnDispatcherAsync(() =>
+        var document2 = await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(project2.HostProject);
-            projectManager.CreateAndAddDocument(project2, @"C:\path\to\file.razor");
+            updater.ProjectAdded(project2.HostProject);
+            updater.CreateAndAddDocument(project2, @"C:\path\to\file.razor");
 
-            return projectManager
+            return updater
                 .GetLoadedProject(project2.Key)
-                .AssumeNotNull()
                 .GetDocument(document1.FilePath);
         });
 

@@ -107,11 +107,6 @@
         <target state="translated">Неизвестный ProjectChangeKind {0}</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unknown_RazorMetaCode">
-        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
-        <target state="translated">Предпринята попытка посетить RazorMetaCode, отличный от "{" или "}".</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Version_Should_Not_Be_Null">
         <source>Provided version should not be null.</source>
         <target state="translated">Предоставленная версия не должна иметь значение NULL.</target>

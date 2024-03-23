@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 
-namespace Microsoft.CodeAnalysis.Remote.Razor;
+namespace Microsoft.CodeAnalysis.Razor.Remote;
 
 internal interface IRemoteTagHelperProviderService
 {

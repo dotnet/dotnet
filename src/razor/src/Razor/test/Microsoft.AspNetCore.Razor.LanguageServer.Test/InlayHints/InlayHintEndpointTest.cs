@@ -41,9 +41,9 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
                 """,
             toolTipMap: new Dictionary<string, string>
                 {
-                    { "int",           "struct System.Int32" },
-                    {"string",         "class System.String" },
-                    {"thisIsMyString", "(parameter) string thisIsMyStr" }
+                    { "int",            "struct System.Int32"            },
+                    { "string",         "class System.String"            },
+                    { "thisIsMyString", "(parameter) string thisIsMyStr" }
                 },
             output: """
 
@@ -62,11 +62,36 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
 
                 """);
 
+    [Fact]
+    public Task InlayHints_ComponentAttributes()
+        => VerifyInlayHintsAsync(
+            input: """
+
+                <div>
+                    <InputText Value="_value" />
+                    <InputText Value="@_value" />
+                    <InputText Value="@(_value)" />
+                </div>
+
+                """,
+            toolTipMap: new Dictionary<string, string>
+                {
+                },
+            output: """
+
+                <div>
+                    <InputText Value="_value" />
+                    <InputText Value="@_value" />
+                    <InputText Value="@(_value)" />
+                </div>
+
+                """);
+
     private async Task VerifyInlayHintsAsync(string input, Dictionary<string, string> toolTipMap, string output)
     {
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spansDict);
-        var codeDocument = CreateCodeDocument(input);
         var razorFilePath = "C:/path/to/file.razor";
+        var codeDocument = CreateCodeDocument(input, filePath: razorFilePath);
 
         var languageServer = await CreateLanguageServerAsync(codeDocument, razorFilePath);
 

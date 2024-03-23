@@ -107,6 +107,28 @@ public sealed class RazorSourceGeneratorComponentTests : RazorSourceGeneratorTes
         await VerifyRazorPageMatchesBaselineAsync(compilation, "Views_Home_Index");
     }
 
+    [Fact]
+    public async Task Inject()
+    {
+        // Arrange
+        var project = CreateTestProject(new()
+        {
+            ["Shared/Component1.razor"] = """
+                @inject IServiceProvider ServiceProvider
+                """,
+        });
+        var compilation = await project.GetCompilationAsync();
+        var driver = await GetDriverAsync(project);
+
+        // Act
+        var result = RunGenerator(compilation!, ref driver);
+
+        // Assert
+        Assert.Empty(result.Diagnostics);
+        Assert.Single(result.GeneratedSources);
+        result.VerifyOutputsMatchBaseline();
+    }
+
     [Fact, WorkItem("https://github.com/dotnet/razor/issues/8718")]
     public async Task ComponentInheritsFromComponent()
     {

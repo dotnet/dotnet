@@ -486,7 +486,7 @@ public class MonitorProjectConfigurationFilePathEndpointTest : LanguageServerTes
         WorkspaceDirectoryPathResolver workspaceDirectoryPathResolver,
         IEnumerable<IProjectConfigurationFileChangeListener> listeners,
         IRazorLoggerFactory loggerFactory,
-        ProjectSnapshotManagerBase projectManager,
+        IProjectSnapshotManager projectManager,
         LanguageServerFeatureOptions? options = null) : MonitorProjectConfigurationFilePathEndpoint(
             projectManager,
             dispatcher,

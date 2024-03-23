@@ -642,11 +642,18 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             projectManager,
             LoggerFactory);
 
-        await RunOnDispatcherAsync(() =>
+        var projectKey1 = await RunOnDispatcherAsync(() =>
         {
-            var projectKey1 = projectService.AddProject(s_projectFilePath1, s_intermediateOutputPath1, RazorConfiguration.Default, RootNamespace1);
-            projectManager.ProjectWorkspaceStateChanged(projectKey1, ProjectWorkspaceState.Create(tagHelpers));
+            return projectService.AddProject(s_projectFilePath1, s_intermediateOutputPath1, RazorConfiguration.Default, RootNamespace1);
+        });
 
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectWorkspaceStateChanged(projectKey1, ProjectWorkspaceState.Create(tagHelpers));
+        });
+
+        var projectKey2 = await RunOnDispatcherAsync(() =>
+        {
             projectService.AddDocument(s_componentFilePath1);
             projectService.AddDocument(s_componentFilePath2);
             projectService.AddDocument(s_directoryFilePath1);
@@ -661,9 +668,16 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             projectService.UpdateDocument(s_componentFilePath1337, SourceText.From(ComponentText1337), version: 42);
             projectService.UpdateDocument(s_indexFilePath1, SourceText.From(IndexText1), version: 42);
 
-            var projectKey2 = projectService.AddProject(s_projectFilePath2, s_intermediateOutputPath2, RazorConfiguration.Default, RootNamespace2);
-            projectManager.ProjectWorkspaceStateChanged(projectKey2, ProjectWorkspaceState.Create(tagHelpers));
+            return projectService.AddProject(s_projectFilePath2, s_intermediateOutputPath2, RazorConfiguration.Default, RootNamespace2);
+        });
 
+        await projectManager.UpdateAsync(updater =>
+        {
+            updater.ProjectWorkspaceStateChanged(projectKey2, ProjectWorkspaceState.Create(tagHelpers));
+        });
+
+        await RunOnDispatcherAsync(() =>
+        {
             projectService.AddDocument(s_componentFilePath3);
             projectService.AddDocument(s_componentFilePath4);
             projectService.AddDocument(s_componentWithParamFilePath);

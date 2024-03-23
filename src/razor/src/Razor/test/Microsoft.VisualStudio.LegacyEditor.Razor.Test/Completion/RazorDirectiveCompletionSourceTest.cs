@@ -34,7 +34,7 @@ public class RazorDirectiveCompletionSourceTest(ITestOutputHelper testOutput) : 
         CSharpCodeParser.UsingDirectiveDescriptor
     ]);
 
-    private readonly IRazorCompletionFactsService _completionFactsService = new RazorCompletionFactsService([new DirectiveCompletionItemProvider()]);
+    private readonly IRazorCompletionFactsService _completionFactsService = new LegacyRazorCompletionFactsService();
 
     [UIFact]
     public async Task GetCompletionContextAsync_DoesNotProvideCompletionsPriorToParseResults()

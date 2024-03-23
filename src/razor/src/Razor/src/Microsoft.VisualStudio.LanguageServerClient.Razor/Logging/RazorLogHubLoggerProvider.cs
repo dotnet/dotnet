@@ -1,14 +1,13 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Composition;
+using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor.Logging;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Logging;
 
-[Shared]
 [Export(typeof(IRazorLoggerProvider))]
 internal sealed class RazorLogHubLoggerProvider : IRazorLoggerProvider
 {
