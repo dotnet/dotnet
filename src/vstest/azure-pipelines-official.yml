@@ -271,14 +271,14 @@ extends:
               - task:  1ES.PublishNuget@1
                 displayName: 'Publish NuGet packages to dotnet-tools feed'
                 inputs:
-                  packageParentPath: '$(Build.SourcesDirectory)'
+                  packageParentPath: '$(Build.SourcesDirectory)/artifacts/packages/Release'
                   packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
                   publishVstsFeed: 'public/dotnet-tools'
 
               - task:  1ES.PublishNuget@1
                 displayName: 'Publish NuGet packages to test-tools feed'
                 inputs:
-                  packageParentPath: '$(Build.SourcesDirectory)'
+                  packageParentPath: '$(Build.SourcesDirectory)/artifacts/packages/Release'
                   packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
                   publishVstsFeed: 'public/test-tools'
 
@@ -299,12 +299,13 @@ extends:
                   ArtifactName: 'VSSetup'
                 condition: succeeded()
 
-      - template: /eng/common/templates-official/job/onelocbuild.yml@self
-        parameters:
-          GitHubOrg: microsoft
-          MirrorRepo: vstest
-          LclSource: lclFilesfromPackage
-          LclPackageId: 'LCL-JUNO-PROD-VSTEST'
+      - ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
+        - template: /eng/common/templates-official/job/onelocbuild.yml@self
+          parameters:
+            GitHubOrg: microsoft
+            MirrorRepo: vstest
+            LclSource: lclFilesfromPackage
+            LclPackageId: 'LCL-JUNO-PROD-VSTEST'
 
     - template: eng\common\templates-official\post-build\post-build.yml@self
       parameters:

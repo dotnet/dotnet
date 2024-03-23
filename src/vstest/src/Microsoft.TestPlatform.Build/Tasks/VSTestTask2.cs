@@ -201,7 +201,8 @@ public class VSTestTask2 : ToolTask, ITestTask
                         var lineNumber = 0;
                         var _ = !StringUtils.IsNullOrWhiteSpace(place) && int.TryParse(line, out lineNumber);
 
-                        string? singleLineError = JoinSingleLineAndShorten(place, fullErrorMessage);
+                        string? nameAndPlace = place == displayName ? place : $"{displayName}: {place}";
+                        string? singleLineError = JoinSingleLineAndShorten(nameAndPlace, fullErrorMessage);
 
                         file ??= string.Empty;
 
