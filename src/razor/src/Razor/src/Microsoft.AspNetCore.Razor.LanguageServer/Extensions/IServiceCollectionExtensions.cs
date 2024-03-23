@@ -23,7 +23,9 @@ using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -44,8 +46,8 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<RazorLifeCycleManager>(razorLifeCycleManager);
         services.AddSingleton<CapabilitiesManager>();
         services.AddSingleton<IInitializeManager<InitializeParams, InitializeResult>, CapabilitiesManager>(sp => sp.GetRequiredService<CapabilitiesManager>());
+        services.AddSingleton<IClientCapabilitiesService>(sp => sp.GetRequiredService<CapabilitiesManager>());
         services.AddSingleton<AbstractRequestContextFactory<RazorRequestContext>, RazorRequestContextFactory>();
-        services.AddSingleton<IClientCapabilitiesService, ClientCapabilitiesService>();
 
         services.AddSingleton<ICapabilitiesProvider, RazorLanguageServerCapability>();
 
@@ -98,7 +100,7 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<CompletionItemResolver, RazorCompletionItemResolver>();
         services.AddSingleton<CompletionItemResolver, DelegatedCompletionItemResolver>();
         services.AddSingleton<ITagHelperCompletionService, LspTagHelperCompletionService>();
-        services.AddSingleton<IRazorCompletionFactsService, RazorCompletionFactsService>();
+        services.AddSingleton<IRazorCompletionFactsService, LspRazorCompletionFactsService>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeParameterCompletionItemProvider>();
@@ -123,14 +125,17 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IHoverService, HoverService>();
     }
 
-    public static void AddSemanticTokensServices(this IServiceCollection services)
+    public static void AddSemanticTokensServices(this IServiceCollection services, LanguageServerFeatureOptions featureOptions)
     {
-        services.AddHandlerWithCapabilities<SemanticTokensRangeEndpoint>();
-        // Ensure that we don't add the default service if something else has added one.
-        services.TryAddSingleton<IRazorSemanticTokensInfoService, RazorSemanticTokensInfoService>();
-        services.AddSingleton<ICSharpSemanticTokensProvider, LSPCSharpSemanticTokensProvider>();
+        if (!featureOptions.UseRazorCohostServer)
+        {
+            services.AddHandlerWithCapabilities<SemanticTokensRangeEndpoint>();
+            // Ensure that we don't add the default service if something else has added one.
+            services.TryAddSingleton<IRazorSemanticTokensInfoService, RazorSemanticTokensInfoService>();
+            services.AddSingleton<ICSharpSemanticTokensProvider, LSPCSharpSemanticTokensProvider>();
 
-        services.AddSingleton<ISemanticTokensLegendService, RazorSemanticTokensLegendService>();
+            services.AddSingleton<ISemanticTokensLegendService, RazorSemanticTokensLegendService>();
+        }
 
         services.AddHandler<RazorSemanticTokensRefreshEndpoint>();
 
@@ -242,8 +247,7 @@ internal static class IServiceCollectionExtensions
 
         // Add project snapshot manager
         services.AddSingleton<IProjectEngineFactoryProvider, LspProjectEngineFactoryProvider>();
-        services.AddSingleton<ProjectSnapshotManagerBase, ProjectSnapshotManager>();
-        services.AddSingleton<IProjectSnapshotManager>(services => services.GetRequiredService<ProjectSnapshotManagerBase>());
+        services.AddSingleton<IProjectSnapshotManager, ProjectSnapshotManager>();
     }
 
     public static void AddHandlerWithCapabilities<T>(this IServiceCollection services)

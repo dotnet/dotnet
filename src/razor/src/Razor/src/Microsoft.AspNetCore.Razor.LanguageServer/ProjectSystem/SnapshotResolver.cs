@@ -16,13 +16,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
 internal sealed class SnapshotResolver : ISnapshotResolver
 {
-    private readonly ProjectSnapshotManagerBase _projectManager;
+    private readonly IProjectSnapshotManager _projectManager;
     private readonly ILogger _logger;
 
     // Internal for testing
     internal readonly HostProject MiscellaneousHostProject;
 
-    public SnapshotResolver(ProjectSnapshotManagerBase projectManager, IRazorLoggerFactory loggerFactory)
+    public SnapshotResolver(IProjectSnapshotManager projectManager, IRazorLoggerFactory loggerFactory)
     {
         _projectManager = projectManager;
         _logger = loggerFactory.CreateLogger<SnapshotResolver>();
@@ -62,7 +62,10 @@ internal sealed class SnapshotResolver : ISnapshotResolver
     {
         if (!_projectManager.TryGetLoadedProject(MiscellaneousHostProject.Key, out var miscellaneousProject))
         {
-            _projectManager.ProjectAdded(MiscellaneousHostProject);
+            _projectManager.Update(
+                static (updater, miscHostProject) => updater.ProjectAdded(miscHostProject),
+                state: MiscellaneousHostProject);
+
             miscellaneousProject = _projectManager.GetLoadedProject(MiscellaneousHostProject.Key);
         }
 

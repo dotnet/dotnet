@@ -23,14 +23,14 @@ public class ProjectLoadBenchmark : ProjectSnapshotManagerBenchmarkBase
     [Benchmark(Description = "Initializes a project and 100 files", OperationsPerInvoke = 100)]
     public async Task ProjectLoad_AddProjectAnd100Files()
     {
-        await Dispatcher.RunAsync(
-            () =>
+        await ProjectManager.UpdateAsync(
+            updater =>
             {
-                ProjectManager.ProjectAdded(HostProject);
+                updater.ProjectAdded(HostProject);
 
                 for (var i = 0; i < Documents.Length; i++)
                 {
-                    ProjectManager.DocumentAdded(HostProject.Key, Documents[i], TextLoaders[i % 4]);
+                    updater.DocumentAdded(HostProject.Key, Documents[i], TextLoaders[i % 4]);
                 }
             },
             CancellationToken.None);

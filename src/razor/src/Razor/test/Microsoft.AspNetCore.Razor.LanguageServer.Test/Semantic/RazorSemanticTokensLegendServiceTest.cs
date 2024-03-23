@@ -18,7 +18,7 @@ public class RazorSemanticTokensLegendServiceTest(ITestOutputHelper testOutput) 
         var clientCapabilitiesService = new TestClientCapabilitiesService(new VisualStudio.LanguageServer.Protocol.VSInternalClientCapabilities());
         var service = new RazorSemanticTokensLegendService(clientCapabilitiesService);
 
-        var expected = Math.Pow(RazorSemanticTokensAccessor.GetTokenModifiers().Length, 2);
+        var expected = Math.Pow(2, RazorSemanticTokensAccessor.GetTokenModifiers().Length);
 
         Assert.Equal(expected, service.TokenModifiers.RazorCodeModifier);
     }

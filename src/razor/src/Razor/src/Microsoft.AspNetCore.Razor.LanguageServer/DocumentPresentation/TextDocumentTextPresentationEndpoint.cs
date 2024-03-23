@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 internal class TextDocumentTextPresentationEndpoint(
     IRazorDocumentMappingService razorDocumentMappingService,
     IClientConnection clientConnection,
-    FilePathService filePathService,
+    IFilePathService filePathService,
     IRazorLoggerFactory loggerFactory)
     : AbstractTextDocumentPresentationEndpointBase<TextPresentationParams>(razorDocumentMappingService, clientConnection, filePathService, loggerFactory.CreateLogger<TextDocumentTextPresentationEndpoint>()), ITextDocumentTextPresentationHandler
 {

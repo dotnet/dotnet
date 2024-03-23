@@ -21,9 +21,9 @@ internal class RemoteLanguageServerFeatureOptions : LanguageServerFeatureOptions
 
     public override string ProjectConfigurationFileName => throw new InvalidOperationException("This option has not been synced to OOP.");
 
-    public override string CSharpVirtualDocumentSuffix => throw new InvalidOperationException("This option has not been synced to OOP.");
+    public override string CSharpVirtualDocumentSuffix => s_options.CSharpVirtualDocumentSuffix;
 
-    public override string HtmlVirtualDocumentSuffix => throw new InvalidOperationException("This option has not been synced to OOP.");
+    public override string HtmlVirtualDocumentSuffix => s_options.HtmlVirtualDocumentSuffix;
 
     public override bool SingleServerCompletionSupport => throw new InvalidOperationException("This option has not been synced to OOP.");
 
@@ -39,7 +39,7 @@ internal class RemoteLanguageServerFeatureOptions : LanguageServerFeatureOptions
 
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => throw new InvalidOperationException("This option has not been synced to OOP.");
 
-    public override bool IncludeProjectKeyInGeneratedFilePath => throw new InvalidOperationException("This option has not been synced to OOP.");
+    public override bool IncludeProjectKeyInGeneratedFilePath => s_options.IncludeProjectKeyInGeneratedFilePath;
 
     public override bool MonitorWorkspaceFolderForConfigurationFiles => throw new InvalidOperationException("This option has not been synced to OOP.");
 

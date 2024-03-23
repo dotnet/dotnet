@@ -34,6 +34,11 @@
         <target state="translated">Wykonano zapytanie wiersza "{0}" poza zakresem {1} "{2}". Dokument może być nieaktualny.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Unknown_RazorMetaCode">
+        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
+        <target state="translated">Podjęto próbę odwiedzenia elementu RazorMetaCode innego niż '{' or '}'.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Unknown_mapping_behavior">
         <source>Unknown mapping behavior</source>
         <target state="translated">Nieznane zachowanie mapowania</target>

@@ -8,5 +8,7 @@ namespace Microsoft.CodeAnalysis.Razor.Remote;
 
 internal interface IRemoteClientInitializationService
 {
-    ValueTask InitializeAsync(RemoteClientInitializationOptions languageServerFeatureOptions, CancellationToken cancellationToken);
+    ValueTask InitializeAsync(RemoteClientInitializationOptions initializationOptions, CancellationToken cancellationToken);
+
+    ValueTask InitializeLSPAsync(RemoteClientLSPInitializationOptions lspInitializationOptions, CancellationToken cancellationToken);
 }

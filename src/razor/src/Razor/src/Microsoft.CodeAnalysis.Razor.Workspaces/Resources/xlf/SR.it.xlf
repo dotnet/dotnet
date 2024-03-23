@@ -34,6 +34,11 @@
         <target state="translated">È stata eseguita una query sulla riga '{0}' non compresa nell'intervallo {1} di '{2}'. Il documento potrebbe non essere aggiornato.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Unknown_RazorMetaCode">
+        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
+        <target state="translated">È stato effettuato un tentativo di visitare un elemento RazorMetaCode diverso da '{' or '}'.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Unknown_mapping_behavior">
         <source>Unknown mapping behavior</source>
         <target state="translated">Comportamento di mapping sconosciuto</target>

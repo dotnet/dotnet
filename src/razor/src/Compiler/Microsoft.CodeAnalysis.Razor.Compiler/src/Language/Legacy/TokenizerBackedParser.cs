@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
@@ -100,17 +101,19 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
             return CurrentToken;
         }
 
+        using var _ = ListPool<SyntaxToken>.GetPooledObject(out var tokens);
+
         // We add 1 in order to store the current token.
-        var tokens = new SyntaxToken[count + 1];
+        tokens.SetCapacityIfLarger(count + 1);
         var currentToken = CurrentToken;
 
-        tokens[0] = currentToken;
+        tokens.Add(currentToken);
 
         // We need to look forward "count" many times.
         for (var i = 1; i <= count; i++)
         {
             NextToken();
-            tokens[i] = CurrentToken;
+            tokens.Add(CurrentToken);
         }
 
         // Restore Tokenizer's location to where it was pointing before the look-ahead.
@@ -141,7 +144,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
 
         var matchFound = false;
 
-        var tokens = new List<SyntaxToken>();
+        using var _ = ListPool<SyntaxToken>.GetPooledObject(out var tokens);
         tokens.Add(CurrentToken);
 
         while (true)
@@ -204,15 +207,7 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
     /// that is the correct format for providing to this method. The caller of this method would,
     /// in that case, want to put c, b and a back into the stream, so "a, b, c" is the CORRECT order
     /// </remarks>
-    protected internal void PutBack(IEnumerable<SyntaxToken> tokens)
-    {
-        foreach (var token in tokens.Reverse())
-        {
-            PutBack(token);
-        }
-    }
-
-    protected internal void PutBack(IReadOnlyList<SyntaxToken> tokens)
+    protected void PutBack(ref readonly PooledArrayBuilder<SyntaxToken> tokens)
     {
         for (int i = tokens.Count - 1; i >= 0; i--)
         {
@@ -279,14 +274,16 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
     protected bool TokenExistsAfterWhitespace(SyntaxKind kind, bool includeNewLines = true)
     {
         var tokenFound = false;
-        var whitespace = ReadWhile(
+        using var whitespace = new PooledArrayBuilder<SyntaxToken>();
+        ReadWhile(
             static (token, includeNewLines) =>
                 token.Kind == SyntaxKind.Whitespace || (includeNewLines && token.Kind == SyntaxKind.NewLine),
-            includeNewLines);
+            includeNewLines,
+            ref whitespace.AsRef());
         tokenFound = At(kind);
 
         PutCurrentBack();
-        PutBack(whitespace);
+        PutBack(in whitespace);
         EnsureCurrent();
 
         return tokenFound;
@@ -302,25 +299,57 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
         return true;
     }
 
-    protected internal IReadOnlyList<SyntaxToken> ReadWhile(Func<SyntaxToken, bool> condition)
-        => ReadWhile(static (token, condition) => condition(token), condition);
-
-    protected internal IReadOnlyList<SyntaxToken> ReadWhile<TArg>(Func<SyntaxToken, TArg, bool> condition, TArg arg)
+    protected void ReadWhile<TArg>(
+        Func<SyntaxToken, TArg, bool> predicate,
+        TArg arg,
+        ref PooledArrayBuilder<SyntaxToken> result)
     {
-        if (!EnsureCurrent() || !condition(CurrentToken, arg))
+        Debug.Assert(result.Count == 0, "Expected empty builder.");
+
+        if (!EnsureCurrent() || !predicate(CurrentToken, arg))
         {
-            return Array.Empty<SyntaxToken>();
+            return;
         }
 
-        var result = new List<SyntaxToken>();
         do
         {
             result.Add(CurrentToken);
             NextToken();
         }
-        while (EnsureCurrent() && condition(CurrentToken, arg));
+        while (EnsureCurrent() && predicate(CurrentToken, arg));
+    }
 
-        return result;
+    protected void ReadWhile(
+        Func<SyntaxToken, bool> predicate,
+        ref PooledArrayBuilder<SyntaxToken> result)
+    {
+        Debug.Assert(result.Count == 0, "Expected empty builder.");
+
+        if (!EnsureCurrent() || !predicate(CurrentToken))
+        {
+            return;
+        }
+
+        do
+        {
+            result.Add(CurrentToken);
+            NextToken();
+        }
+        while (EnsureCurrent() && predicate(CurrentToken));
+    }
+
+    protected void SkipWhile(Func<SyntaxToken, bool> predicate)
+    {
+        if (!EnsureCurrent() || !predicate(CurrentToken))
+        {
+            return;
+        }
+
+        do
+        {
+            NextToken();
+        }
+        while (EnsureCurrent() && predicate(CurrentToken));
     }
 
     protected bool AtIdentifier(bool allowKeywords)
@@ -471,21 +500,24 @@ internal abstract class TokenizerBackedParser<TTokenizer> : ParserBase
         AcceptWhile(static (token, types) => types.All(expected => expected != token.Kind), types);
     }
 
-    protected internal void AcceptWhile(Func<SyntaxToken, bool> condition)
+    protected void AcceptWhile(Func<SyntaxToken, bool> condition)
     {
-        Accept(ReadWhile(condition));
+        using var tokens = new PooledArrayBuilder<SyntaxToken>();
+        ReadWhile(condition, ref tokens.AsRef());
+        Accept(in tokens);
     }
 
-    protected internal void AcceptWhile<TArg>(Func<SyntaxToken, TArg, bool> condition, TArg arg)
+    protected void AcceptWhile<TArg>(Func<SyntaxToken, TArg, bool> condition, TArg arg)
     {
-        Accept(ReadWhile(condition, arg));
+        using var tokens = new PooledArrayBuilder<SyntaxToken>();
+        ReadWhile(condition, arg, ref tokens.AsRef());
+        Accept(in tokens);
     }
 
-    protected internal void Accept(IReadOnlyList<SyntaxToken> tokens)
+    protected void Accept(ref readonly PooledArrayBuilder<SyntaxToken> tokens)
     {
-        for (int i = 0; i < tokens.Count; i++)
+        foreach (var token in tokens)
         {
-            var token = tokens[i];
             Accept(token);
         }
     }

@@ -18,7 +18,7 @@ public class FilePathServiceTest
     {
         // Arrange
         var projectKey = TestProjectKey.Create("Hello");
-        var filePathService = new FilePathService(new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: includeProjectKey));
+        var filePathService = new TestFilePathService(new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: includeProjectKey));
 
         // Act
         var result = filePathService.GetRazorCSharpFilePath(projectKey, @"C:\path\to\file.razor");
@@ -34,7 +34,7 @@ public class FilePathServiceTest
     {
         // Arrange
         var projectKey = default(ProjectKey);
-        var filePathService = new FilePathService(new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: includeProjectKey));
+        var filePathService = new TestFilePathService(new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: includeProjectKey));
 
         // Act
         var result = filePathService.GetRazorCSharpFilePath(projectKey, @"C:\path\to\file.razor");
@@ -50,7 +50,7 @@ public class FilePathServiceTest
     public void GetRazorDocumentUri_CSharpFile_ReturnsExpectedUri(bool includeProjectKey, string input)
     {
         // Arrange
-        var filePathService = new FilePathService(new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: includeProjectKey));
+        var filePathService = new TestFilePathService(new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: includeProjectKey));
 
         // Act
         var result = filePathService.GetRazorDocumentUri(new Uri(input));
@@ -63,11 +63,15 @@ public class FilePathServiceTest
     public void GetRazorDocumentUri_HtmlFile_ReturnsExpectedUri()
     {
         // Arrange
-        var filePathService = new FilePathService(new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true));
+        var filePathService = new TestFilePathService(new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true));
         // Act
         var result = filePathService.GetRazorDocumentUri(new Uri(@"C:\path\to\file.razor__virtual.html"));
 
         // Assert
         Assert.Equal(@"C:/path/to/file.razor", result.GetAbsoluteOrUNCPath());
+    }
+
+    private class TestFilePathService(TestLanguageServerFeatureOptions options) : AbstractFilePathService(options)
+    {
     }
 }

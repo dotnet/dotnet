@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Syntax.InternalSyntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
@@ -350,8 +351,10 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 ((previousSpan is MarkupStartTagSyntax startTag && startTag.IsMarkupTransition) ||
                 (previousSpan is MarkupEndTagSyntax endTag && endTag.IsMarkupTransition)))
             {
-                var tokens = ReadWhile(
-                    static f => (f.Kind == SyntaxKind.Whitespace) || (f.Kind == SyntaxKind.NewLine));
+                using var tokens = new PooledArrayBuilder<SyntaxToken>();
+                ReadWhile(
+                    static f => (f.Kind == SyntaxKind.Whitespace) || (f.Kind == SyntaxKind.NewLine),
+                    ref tokens.AsRef());
 
                 // Make sure the current token is not markup, which can be html start tag or @:
                 if (!(At(SyntaxKind.OpenAngle) ||
@@ -362,7 +365,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 }
 
                 PutCurrentBack();
-                PutBack(tokens);
+                PutBack(in tokens);
                 EnsureCurrent();
             }
             if (shouldAcceptWhitespaceAndNewLine)
@@ -698,7 +701,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                     var bookmark = CurrentStart.AbsoluteIndex;
 
                     // Skip whitespace
-                    ReadWhile(IsSpacingTokenIncludingNewLines);
+                    SkipWhile(IsSpacingTokenIncludingNewLines);
 
                     // Open Angle
                     if (At(SyntaxKind.OpenAngle) && NextIs(SyntaxKind.ForwardSlash))
@@ -1070,21 +1073,25 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
         // http://dev.w3.org/html5/spec/tokenization.html#before-attribute-name-state
         // Capture whitespace
-        var attributePrefixWhitespace = ReadWhile(static token => token.Kind == SyntaxKind.Whitespace || token.Kind == SyntaxKind.NewLine);
+        using var attributePrefixWhitespace = new PooledArrayBuilder<SyntaxToken>();
+        ReadWhile(
+            static token => token.Kind == SyntaxKind.Whitespace || token.Kind == SyntaxKind.NewLine,
+            ref attributePrefixWhitespace.AsRef());
 
         // http://dev.w3.org/html5/spec/tokenization.html#attribute-name-state
         // Read the 'name' (i.e. read until the '=' or whitespace/newline)
-        if (!TryParseAttributeName(out var nameTokens))
+        using var nameTokens = new PooledArrayBuilder<SyntaxToken>();
+        if (!TryParseAttributeName(ref nameTokens.AsRef()))
         {
             // Unexpected character in tag, enter recovery
-            Accept(attributePrefixWhitespace);
+            Accept(in attributePrefixWhitespace);
             ParseMiscAttribute(builder);
             return;
         }
 
-        Accept(attributePrefixWhitespace); // Whitespace before attribute name
+        Accept(in attributePrefixWhitespace); // Whitespace before attribute name
         var namePrefix = OutputAsMarkupLiteral();
-        Accept(nameTokens); // Attribute name
+        Accept(in nameTokens); // Attribute name
         var name = OutputAsMarkupLiteralRequired();
 
         var atMinimizedAttribute = !TokenExistsAfterWhitespace(SyntaxKind.Equals);
@@ -1102,9 +1109,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         }
     }
 
-    private bool TryParseAttributeName(out IReadOnlyList<SyntaxToken> nameTokens)
+    private bool TryParseAttributeName(ref PooledArrayBuilder<SyntaxToken> nameTokens)
     {
-        nameTokens = Array.Empty<SyntaxToken>();
         //
         // We are currently here <input |name="..." />
         // If we encounter a transition (@) here, it can be parsed as CSharp or Markup depending on the feature flag.
@@ -1119,7 +1125,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
 
         if (IsValidAttributeNameToken(CurrentToken))
         {
-            nameTokens = ReadWhile(
+            ReadWhile(
                 static (token, self) =>
                     token.Kind != SyntaxKind.Whitespace &&
                     token.Kind != SyntaxKind.NewLine &&
@@ -1127,7 +1133,8 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                     token.Kind != SyntaxKind.CloseAngle &&
                     token.Kind != SyntaxKind.OpenAngle &&
                     (token.Kind != SyntaxKind.ForwardSlash || !self.NextIs(SyntaxKind.CloseAngle)),
-                this);
+                this,
+                ref nameTokens);
 
             return true;
         }
@@ -1144,12 +1151,15 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         Assert(SyntaxKind.Equals); // We should be at "="
         var equalsToken = EatCurrentToken();
 
-        var whitespaceAfterEquals = ReadWhile(static token => token.Kind == SyntaxKind.Whitespace || token.Kind == SyntaxKind.NewLine);
+        using var whitespaceAfterEquals = new PooledArrayBuilder<SyntaxToken>();
+        ReadWhile(
+            static token => token.Kind == SyntaxKind.Whitespace || token.Kind == SyntaxKind.NewLine,
+            ref whitespaceAfterEquals.AsRef());
         var quote = SyntaxKind.Marker;
         if (At(SyntaxKind.SingleQuote) || At(SyntaxKind.DoubleQuote))
         {
             // Found a quote, the whitespace belongs to this attribute.
-            Accept(whitespaceAfterEquals);
+            Accept(in whitespaceAfterEquals);
             quote = CurrentToken.Kind;
             AcceptAndMoveNext();
         }
@@ -1157,7 +1167,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         {
             // No quotes found after the whitespace. Put it back so that it can be parsed later.
             PutCurrentBack();
-            PutBack(whitespaceAfterEquals);
+            PutBack(in whitespaceAfterEquals);
         }
 
         MarkupTextLiteralSyntax? valuePrefix = null;
@@ -1165,7 +1175,18 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         MarkupTextLiteralSyntax? valueSuffix = null;
 
         // First, determine if this is a 'data-' attribute (since those can't use conditional attributes)
-        var nameContent = string.Concat(name.LiteralTokens.Nodes.Select(s => s.Content));
+        string nameContent;
+
+        using (StringBuilderPool.GetPooledObject(out var builder))
+        {
+            foreach (var node in name.LiteralTokens.Nodes)
+            {
+                builder.Append(node.Content);
+            }
+
+            nameContent = builder.ToString();
+        }
+
         if (IsConditionalAttributeName(nameContent))
         {
             // We now have the value prefix which is usually whitespace and/or a quote
@@ -1238,7 +1259,10 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
     private void ParseConditionalAttributeValue(in SyntaxListBuilder<RazorSyntaxNode> builder, SyntaxKind quote)
     {
         var prefixStart = CurrentStart;
-        var prefixTokens = ReadWhile(static token => token.Kind == SyntaxKind.Whitespace || token.Kind == SyntaxKind.NewLine);
+        using var prefixTokens = new PooledArrayBuilder<SyntaxToken>();
+        ReadWhile(
+            static token => token.Kind == SyntaxKind.Whitespace || token.Kind == SyntaxKind.NewLine,
+            ref prefixTokens.AsRef());
 
         if (At(SyntaxKind.Transition))
         {
@@ -1247,11 +1271,24 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 using (var pooledResult = Pool.Allocate<RazorSyntaxNode>())
                 {
                     var markupBuilder = pooledResult.Builder;
-                    Accept(prefixTokens);
+                    Accept(in prefixTokens);
 
                     // Render a single "@" in place of "@@".
+                    string prefixContent;
+
+                    using (var pooledBuilder = StringBuilderPool.GetPooledObject())
+                    {
+                        var prefixBuilder = pooledBuilder.Object;
+                        foreach (var prefixToken in prefixTokens)
+                        {
+                            prefixBuilder.Append(prefixToken.Content);
+                        }
+
+                        prefixContent = prefixBuilder.ToString();
+                    }
+
                     chunkGenerator = new LiteralAttributeChunkGenerator(
-                        new LocationTagged<string>(string.Concat(prefixTokens.Select(s => s.Content)), prefixStart),
+                        new LocationTagged<string>(prefixContent, prefixStart),
                         new LocationTagged<string>(CurrentToken.Content, CurrentStart));
                     AcceptAndMoveNext();
                     SetAcceptedCharacters(AcceptedCharactersInternal.None);
@@ -1268,7 +1305,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             }
             else
             {
-                Accept(prefixTokens);
+                Accept(in prefixTokens);
                 var valueStart = CurrentStart;
                 PutCurrentBack();
 
@@ -1287,13 +1324,14 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         }
         else
         {
-            Accept(prefixTokens);
+            Accept(in prefixTokens);
             var prefix = OutputAsMarkupLiteral();
 
             // Literal value
             // 'quote' should be "Unknown" if not quoted and tokens coming from the tokenizer should never have
             // "Unknown" type.
-            var valueTokens = ReadWhile(
+            using var valueTokens = new PooledArrayBuilder<SyntaxToken>();
+            ReadWhile(
                 static (token, arg) =>
                     // These three conditions find separators which break the attribute value into portions
                     token.Kind != SyntaxKind.Whitespace &&
@@ -1302,8 +1340,10 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                     // This condition checks for the end of the attribute value (it repeats some of the checks above
                     // but for now that's ok)
                     !arg.self.IsEndOfAttributeValue(arg.quote, token),
-                (self: this, quote));
-            Accept(valueTokens);
+                (self: this, quote),
+                ref valueTokens.AsRef());
+            Accept(in valueTokens);
+
             var value = OutputAsMarkupLiteral();
 
             var literalAttributeValue = SyntaxFactory.MarkupLiteralAttributeValue(prefix, value);
@@ -1740,12 +1780,12 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         return false;
     }
 
-    private IReadOnlyList<SyntaxToken> FastReadWhitespaceAndNewLines()
+    private void FastReadWhitespaceAndNewLines(ref PooledArrayBuilder<SyntaxToken> whitespaceTokens)
     {
+        Debug.Assert(whitespaceTokens.Count == 0, "Expected empty builder.");
+
         if (EnsureCurrent() && (CurrentToken.Kind == SyntaxKind.Whitespace || CurrentToken.Kind == SyntaxKind.NewLine))
         {
-            var whitespaceTokens = new List<SyntaxToken>();
-
             whitespaceTokens.Add(CurrentToken);
             NextToken();
 
@@ -1754,16 +1794,13 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 whitespaceTokens.Add(CurrentToken);
                 NextToken();
             }
-
-            return whitespaceTokens;
         }
-
-        return Array.Empty<SyntaxToken>();
     }
 
     private ParserState GetParserState(ParseMode mode)
     {
-        var whitespace = FastReadWhitespaceAndNewLines();
+        using var whitespace = new PooledArrayBuilder<SyntaxToken>();
+        FastReadWhitespaceAndNewLines(ref whitespace.AsRef());
         try
         {
             if (whitespace.Count == 0 && EndOfFile)
@@ -1838,7 +1875,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             if (whitespace.Count > 0)
             {
                 PutCurrentBack();
-                PutBack(whitespace);
+                PutBack(in whitespace);
                 EnsureCurrent();
             }
         }

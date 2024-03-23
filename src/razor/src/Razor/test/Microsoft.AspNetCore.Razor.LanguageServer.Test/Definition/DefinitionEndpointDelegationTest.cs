@@ -227,9 +227,9 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
 
         var projectManager = CreateProjectSnapshotManager();
 
-        await RunOnDispatcherAsync(() =>
+        await projectManager.UpdateAsync(updater =>
         {
-            projectManager.ProjectAdded(new(
+            updater.ProjectAdded(new(
                 projectFilePath: "C:/path/to/project.csproj",
                 intermediateOutputPath: "C:/path/to/obj",
                 razorConfiguration: RazorConfiguration.Default,

@@ -64,8 +64,8 @@
     "textEditor.razor.advanced.codeBlockBraceOnNextLine": {
       "type": "boolean",
       "default": false,
-      "title": "@Setting_CodeBlockBraceOnNextLinedDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
-      "description": "@Setting_CodeBlockBraceOnNextLinedDescription;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "title": "@Setting_CodeBlockBraceOnNextLineDisplayName;{13b72f58-279e-49e0-a56d-296be02f0805}",
+      "description": "@Setting_CodeBlockBraceOnNextLineDescription;{13b72f58-279e-49e0-a56d-296be02f0805}",
       "migration": {
         "pass": {
           "input": {
