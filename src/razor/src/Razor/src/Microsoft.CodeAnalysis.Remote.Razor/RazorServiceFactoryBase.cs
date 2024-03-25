@@ -2,10 +2,12 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipelines;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Remote.Razor.Logging;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.ServiceHub.Framework.Services;
 using Microsoft.VisualStudio.Composition;
@@ -43,6 +45,9 @@ internal abstract partial class RazorServiceFactoryBase<TService> : IServiceHubS
     {
         // Dispose the AuthorizationServiceClient since we won't be using it
         authorizationServiceClient?.Dispose();
+
+        var traceSource = (TraceSource)hostProvidedServices.GetService(typeof(TraceSource));
+        RemoteLoggerFactory.Initialize(traceSource);
 
         return CreateAsync(stream.UsePipe(), serviceBroker);
     }

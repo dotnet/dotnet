@@ -31,7 +31,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 public abstract class LanguageServerTestBase : ToolingTestBase
 {
     private protected IRazorSpanMappingService SpanMappingService { get; }
-    private protected FilePathService FilePathService { get; }
+    private protected IFilePathService FilePathService { get; }
 
     protected JsonSerializer Serializer { get; }
 
@@ -44,7 +44,7 @@ public abstract class LanguageServerTestBase : ToolingTestBase
         Serializer.AddVSInternalExtensionConverters();
         Serializer.AddVSExtensionConverters();
 
-        FilePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
+        FilePathService = new LSPFilePathService(TestLanguageServerFeatureOptions.Instance);
     }
 
     private protected override ProjectSnapshotManagerDispatcher CreateDispatcher()

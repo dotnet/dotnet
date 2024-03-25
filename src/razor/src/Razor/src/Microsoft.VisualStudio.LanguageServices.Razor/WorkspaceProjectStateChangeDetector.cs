@@ -496,12 +496,7 @@ internal class WorkspaceProjectStateChangeDetector : IRazorStartupService, IDisp
             return false;
         }
 
-        // ProjectKey could be null, if Roslyn doesn't know the IntermediateOutputPath for the project
-        if (ProjectKey.From(project) is not { } projectKey)
-        {
-            projectSnapshot = null;
-            return false;
-        }
+        var projectKey = ProjectKey.From(project);
 
         return _projectManager.TryGetLoadedProject(projectKey, out projectSnapshot);
     }

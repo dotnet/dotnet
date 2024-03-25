@@ -24,7 +24,7 @@ internal class TextDocumentUriPresentationEndpoint(
     IRazorDocumentMappingService razorDocumentMappingService,
     RazorComponentSearchEngine razorComponentSearchEngine,
     IClientConnection clientConnection,
-    FilePathService filePathService,
+    IFilePathService filePathService,
     IDocumentContextFactory documentContextFactory,
     IRazorLoggerFactory loggerFactory)
     : AbstractTextDocumentPresentationEndpointBase<UriPresentationParams>(razorDocumentMappingService, clientConnection, filePathService, loggerFactory.CreateLogger<TextDocumentUriPresentationEndpoint>()), ITextDocumentUriPresentationHandler

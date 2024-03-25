@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
@@ -26,7 +27,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
     private readonly IContentTypeRegistryService _contentTypeRegistryService;
     private readonly ITextBufferFactoryService _textBufferFactoryService;
     private readonly ITextDocumentFactoryService _textDocumentFactoryService;
-    private readonly FilePathService _filePathService;
+    private readonly IFilePathService _filePathService;
 
     public CSharpVirtualDocumentFactoryTest(ITestOutputHelper testOutput)
         : base(testOutput)
@@ -62,7 +63,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
         _razorLSPBuffer = VsMocks.CreateTextBuffer(VsMocks.ContentTypes.RazorLSP);
         _nonRazorLSPBuffer = VsMocks.CreateTextBuffer(VsMocks.ContentTypes.NonRazor);
 
-        _filePathService = new FilePathService(TestLanguageServerFeatureOptions.Instance);
+        _filePathService = new VisualStudioFilePathService(TestLanguageServerFeatureOptions.Instance);
     }
 
     [Fact]
@@ -192,7 +193,7 @@ public class CSharpVirtualDocumentFactoryTest : VisualStudioTestBase
         });
 
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(includeProjectKeyInGeneratedFilePath: true);
-        var filePathService = new FilePathService(languageServerFeatureOptions);
+        var filePathService = new VisualStudioFilePathService(languageServerFeatureOptions);
         var factory = new CSharpVirtualDocumentFactory(
             _contentTypeRegistryService,
             _textBufferFactoryService,

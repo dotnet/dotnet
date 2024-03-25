@@ -123,12 +123,12 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
         var featureOptions = _featureOptions ?? new DefaultLanguageServerFeatureOptions();
         services.AddSingleton(featureOptions);
 
-        services.AddSingleton<FilePathService>();
+        services.AddSingleton<IFilePathService, LSPFilePathService>();
 
         services.AddLifeCycleServices(this, _clientConnection, _lspServerActivationTracker);
 
         services.AddDiagnosticServices();
-        services.AddSemanticTokensServices();
+        services.AddSemanticTokensServices(featureOptions);
         services.AddDocumentManagementServices(featureOptions);
         services.AddCompletionServices(featureOptions);
         services.AddFormattingServices();
