@@ -34,6 +34,9 @@ variables:
       /p:DotNetRuntimeSourceFeedKey=$(dotnetbuilds-internal-container-read-token-base64)
       /p:dotnetbuilds-internal-container-read-token-base64=$(dotnetbuilds-internal-container-read-token-base64)
 - template: /eng/common/templates-official/variables/pool-providers.yml
+# Set the MicroBuild plugin installation directory to the agent temp directory to avoid SDL tool scanning.
+- name: MicroBuildOutputFolderOverride
+  value: $(Agent.TempDirectory)
 
 resources:
   repositories:
@@ -70,10 +73,6 @@ extends:
         name: $(DncEngInternalBuildPool)
         image: 1es-windows-2022
         os: windows
-      # Temporary to workaround MicroBuild issues.
-      credscan:
-        enabled: false
-        justificationForDisabling: 'CredScan is failing on the MicroBuild signing plugin. "MicroBuild/Plugins/nuget.config" has changing content and thus cannot be baselined.'
     stages:
     - stage: Build
       jobs:
