@@ -22,7 +22,10 @@ jobs:
   displayName: Synchronize VMR's ${{ parameters.vmrBranch }}
   timeoutInMinutes: 120
   variables:
-  - template: /eng/common/templates/variables/pool-providers.yml
+  - ${{ if eq(variables['System.TeamProject'], 'public') }}:
+    - template: /eng/common/templates/variables/pool-providers.yml
+  - ${{ else }}:
+    - template: /eng/common/templates-official/variables/pool-providers.yml
   - name: vmrPath
     value: $(Agent.BuildDirectory)/vmr
   - ${{ if not(parameters.noPush) }}:
@@ -40,23 +43,17 @@ jobs:
   pool:
     ${{ if eq(variables['System.TeamProject'], 'public') }}:
       name: $(DncEngPublicBuildPool)
-      demands: ImageOverride -equals Build.Ubuntu.2004.Amd64.Open
-    ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      image: 1es-ubuntu-2004-open
+      os: linux
+    ${{ else }}:
       name: $(DncEngInternalBuildPool)
-      demands: ImageOverride -equals Build.Ubuntu.2004.Amd64
+      demands: ImageOverride -equals 1es-ubuntu-2004
+      os: linux
 
   steps:
   - template: ../steps/vmr-prepare.yml
     parameters:
       vmrBranch: ${{ parameters.vmrBranch }}
-    
-  # TODO (https://github.com/dotnet/arcade/issues/11332): Allow full CG?
-  # Currently, we ignore dirs of individual repos - they have been scanned before
-  - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal')) }}:
-    - task: ComponentGovernanceComponentDetection@0
-      inputs:
-        sourceScanPath: $(Agent.BuildDirectory)/vmr
-        ignoreDirectories: $(Agent.BuildDirectory)/vmr/src
 
   - template: ../steps/vmr-pull-updates.yml
     parameters:

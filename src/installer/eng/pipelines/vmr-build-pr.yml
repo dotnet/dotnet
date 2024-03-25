@@ -1,9 +1,11 @@
-# This yml is used by these pipelines and triggers:
+# This YAML is used by these PR pipelines:
 #
-# - installer-source-build (public)
-#   - PR: release/* and main, ultralite build
-# - installer-unified-build (public)
-#   - PR: main, lite build
+# - installer-source-build
+#   https://dev.azure.com/dnceng-public/public/_build?definitionId=233
+# - installer-unified-build
+#   https://dev.azure.com/dnceng-public/public/_build?definitionId=277
+# - installer-unified-build-full
+#   https://dev.azure.com/dnceng-public/public/_build?definitionId=279
 
 trigger: none
 pr:
@@ -28,6 +30,8 @@ parameters:
   default: false
 
 variables:
+- template: /eng/common/templates/variables/pool-providers.yml@self
+
 - ${{ if ne(parameters.vmrBranch, ' ') }}:
   - name: VmrBranch
     value: ${{ replace(parameters.vmrBranch, ' ', '') }}

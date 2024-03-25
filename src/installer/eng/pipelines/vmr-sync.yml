@@ -19,6 +19,11 @@ resources:
     endpoint: dotnet
     ref: $(Build.SourceBranch)
 
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+
 parameters:
 - name: vmrBranch
   displayName: dotnet/dotnet branch to push to
@@ -26,6 +31,8 @@ parameters:
   default: ' '
 
 variables:
+- template: /eng/common/templates-official/variables/pool-providers.yml@self
+
 - ${{ if ne(parameters.vmrBranch, ' ') }}:
   - name: VmrBranch
     value: ${{ replace(parameters.vmrBranch, ' ', '') }}
@@ -33,7 +40,27 @@ variables:
   - name: VmrBranch
     value: ${{ replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), 'refs/pull/', '') }}
 
-jobs:
-- template: /eng/pipelines/templates/jobs/vmr-synchronization.yml
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
-    vmrBranch: ${{ variables.VmrBranch }}
+    sdl:
+      sourceAnalysisPool:
+        name: $(DncEngInternalBuildPool)
+        image: 1es-windows-2022
+        os: windows
+
+      sourceRepositoriesToScan:
+        exclude:
+        - repository: vmr
+
+      componentgovernance:
+        sourceScanPath: $(Agent.BuildDirectory)/vmr
+        ignoreDirectories: $(Agent.BuildDirectory)/vmr/src
+
+    stages:
+    - stage: VMRSynchronization
+      displayName: VMR Synchronization
+      jobs:
+      - template: /eng/pipelines/templates/jobs/vmr-synchronization.yml@self
+        parameters:
+          vmrBranch: ${{ variables.VmrBranch }}

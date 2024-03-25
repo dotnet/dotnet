@@ -101,7 +101,6 @@ jobs:
     condition: succeededOrFailed()
     dependsOn: ${{ parameters.reuseBuildArtifactsFrom }}_${{ parameters.architecture }}
   variables:
-  - template: /eng/common/templates/variables/pool-providers.yml
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
   - ${{ if and(not(parameters.isBuiltFromVmr), eq(variables['System.TeamProject'], 'internal'), not(startswith(parameters.vmrBranch, 'internal/release/')), not(eq(variables['Build.Reason'], 'PullRequest'))) }}:
@@ -128,9 +127,36 @@ jobs:
     - name: sourcesPath
       value: $(vmrPath)
 
+  templateContext:
+    outputs:
+    - output: pipelineArtifact
+      displayName: Publish BuildLogs
+      condition: succeededOrFailed()
+      targetPath: $(Build.StagingDirectory)/BuildLogs
+      artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
+
+    - output: pipelineArtifact
+      displayName: Publish Artifacts
+      condition: and(succeededOrFailed(), eq(variables['hasAssets'], 'true'))
+      targetPath: $(sourcesPath)/artifacts/assets/Release/
+      artifactName: $(Agent.JobName)_Artifacts
+
+    - ${{ if ne(parameters.buildSourceOnly, 'true') }}:
+      - output: pipelineArtifact
+        displayName: Publish Packages
+        targetPath: $(sourcesPath)/artifacts/packages/Release/
+        artifactName: $(Agent.JobName)_Packages
+
+    - ${{ if not(parameters.isBuiltFromVmr) }}:
+      - output: pipelineArtifact
+        displayName: Upload failed patches
+        condition: failed()
+        targetPath: $(Agent.TempDirectory)
+        artifactName: $(System.JobDisplayName)_FailedPatches
+
   steps:
   - ${{ if not(parameters.isBuiltFromVmr) }}:
-    - template: ../steps/vmr-prepare.yml
+    - template: ../steps/vmr-prepare.yml@self
       parameters:
         ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
           vmrBranch: $(System.PullRequest.TargetBranch)
@@ -139,7 +165,7 @@ jobs:
 
     # Synchronize new content in the VMR during PRs (we expect this to come
     - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-      - template: ../steps/vmr-pull-updates.yml
+      - template: ../steps/vmr-pull-updates.yml@self
         parameters:
           vmrPath: $(vmrPath)
           vmrBranch: ${{ parameters.vmrBranch }}
@@ -402,12 +428,6 @@ jobs:
       continueOnError: true
       condition: succeededOrFailed()
 
-  - publish: '$(Build.StagingDirectory)/BuildLogs'
-    artifact: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
-    displayName: Publish BuildLogs
-    continueOnError: true
-    condition: succeededOrFailed()
-
   # Only upload test results if enabled
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: PublishTestResults@2
@@ -421,15 +441,3 @@ jobs:
         mergeTestResults: true
         publishRunAttachments: true
         testRunTitle: SourceBuild_SmokeTests_$(Agent.JobName)
-
-  - publish: '$(sourcesPath)/artifacts/assets/Release/'
-    artifact: $(Agent.JobName)_Artifacts
-    displayName: Publish Artifacts
-    condition: and(succeededOrFailed(), eq(variables['hasAssets'], 'true'))
-    continueOnError: true
-
-  # When building from source, the Private.SourceBuilt.Artifacts archive already contains the nuget packages
-  - ${{ if ne(parameters.buildSourceOnly, 'true') }}:
-    - publish: '$(sourcesPath)/artifacts/packages/Release/'
-      artifact: $(Agent.JobName)_Packages
-      displayName: Publish Packages
