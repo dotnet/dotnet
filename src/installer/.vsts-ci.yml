@@ -74,6 +74,10 @@ extends:
         # failOnAlert: false
         # This should be removed when failOnAlert works properly.
         ignoreDirectories: '.packages'
+      # Temporary to workaround MicroBuild issues.
+      credscan:
+        enabled: false
+        justificationForDisabling: 'CredScan is failing on the MicroBuild signing plugin. "MicroBuild/Plugins/nuget.config" has changing content and thus cannot be baselined.'
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
