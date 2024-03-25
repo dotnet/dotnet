@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
+namespace Microsoft.CodeAnalysis.Razor.SemanticTokens;
 
 internal sealed class SemanticTokenTypes
 {

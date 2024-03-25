@@ -22,4 +22,8 @@ internal static class StringExtensions
     // This method doesn't exist on .NET Framework, but it does on .NET Core.
     public static bool Contains(this string s, char ch)
         => s.IndexOf(ch) >= 0;
+
+    // This method doesn't exist on .NET Framework, but it does on .NET Core.
+    public static bool EndsWith(this string s, char ch)
+        => s.Length > 0 && s[^1] == ch;
 }

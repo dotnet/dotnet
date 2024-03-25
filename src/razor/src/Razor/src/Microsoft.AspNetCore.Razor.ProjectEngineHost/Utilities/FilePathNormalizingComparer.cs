@@ -13,7 +13,7 @@ internal sealed class FilePathNormalizingComparer : IEqualityComparer<string>
     {
     }
 
-    public bool Equals(string? x, string? y) => FilePathNormalizer.FilePathsEquivalent(x, y);
+    public bool Equals(string? x, string? y) => FilePathNormalizer.AreFilePathsEquivalent(x, y);
 
     public int GetHashCode(string obj) => FilePathNormalizer.GetHashCode(obj);
 }

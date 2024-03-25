@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,7 +30,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
     private readonly Func<Key, Entry> _createEmptyEntry;
     private readonly IRazorDocumentServiceProviderFactory _factory;
     private readonly LSPEditorFeatureDetector _lspEditorFeatureDetector;
-    private readonly FilePathService _filePathService;
+    private readonly IFilePathService _filePathService;
     private readonly IWorkspaceProvider _workspaceProvider;
     private readonly FallbackProjectManager _fallbackProjectManager;
 
@@ -37,7 +38,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
     public RazorDynamicFileInfoProvider(
         IRazorDocumentServiceProviderFactory factory,
         LSPEditorFeatureDetector lspEditorFeatureDetector,
-        FilePathService filePathService,
+        IFilePathService filePathService,
         IWorkspaceProvider workspaceProvider,
         IProjectSnapshotManager projectManager,
         FallbackProjectManager fallbackProjectManager)
@@ -73,7 +74,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         documentContainer.SetSupportsDiagnostics(true);
 
         // TODO: This needs to use the project key somehow, rather than assuming all generated content is the same
-        var filePath = FilePathService.GetProjectSystemFilePath(documentUri);
+        var filePath = GetProjectSystemFilePath(documentUri);
 
         var foundAny = false;
         foreach (var associatedKvp in GetAllKeysForPath(filePath))
@@ -143,7 +144,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
             throw new ArgumentNullException(nameof(propertiesService));
         }
 
-        var filePath = FilePathService.GetProjectSystemFilePath(documentUri);
+        var filePath = GetProjectSystemFilePath(documentUri);
         foreach (var associatedKvp in GetAllKeysForPath(filePath))
         {
             var associatedKey = associatedKvp.Key;
@@ -297,6 +298,22 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         _entries.TryRemove(key, out _);
     }
 
+    public static string GetProjectSystemFilePath(Uri uri)
+    {
+        // In VS Windows project system file paths always utilize `\`. In VSMac they don't. This is a bit of a hack
+        // however, it's the only way to get the correct file path for a document to map to a corresponding project
+        // system.
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            // VSWin
+            return uri.GetAbsoluteOrUNCPath().Replace('/', '\\');
+        }
+
+        // VSMac
+        return uri.AbsolutePath;
+    }
+
     public TestAccessor GetTestAccessor() => new(this);
 
     private void ProjectManager_Changed(object? sender, ProjectChangeEventArgs args)
@@ -337,7 +354,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
 
         foreach (var project in workspace.CurrentSolution.Projects)
         {
-            if (key.Equals(ProjectKey.From(project)))
+            if (key.Matches(project))
             {
                 return project.Id;
             }
@@ -346,20 +363,13 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         return null;
     }
 
-    public ProjectKey? TryFindProjectKeyForProjectId(ProjectId projectId)
+    private ProjectKey? TryFindProjectKeyForProjectId(ProjectId projectId)
     {
         var workspace = _workspaceProvider.GetWorkspace();
 
-        var project = workspace.CurrentSolution.GetProject(projectId);
-        if (project is null ||
-            project.Language != LanguageNames.CSharp)
-        {
-            return null;
-        }
-
-        var projectKey = ProjectKey.From(project);
-
-        return projectKey;
+        return workspace.CurrentSolution.GetProject(projectId) is { Language: LanguageNames.CSharp } project
+            ? ProjectKey.From(project)
+            : null;
     }
 
     private RazorDynamicFileInfo CreateEmptyInfo(Key key)

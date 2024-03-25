@@ -166,10 +166,6 @@ internal sealed class FallbackProjectManager(
         }
 
         var projectKey = ProjectKey.From(project);
-        if (projectKey is not { } razorProjectKey)
-        {
-            return;
-        }
 
         var hostDocument = CreateHostDocument(filePath, projectFilePath);
         if (hostDocument is null)
@@ -178,7 +174,7 @@ internal sealed class FallbackProjectManager(
         }
 
         await UpdateProjectManagerAsync(
-                updater => updater.DocumentRemoved(razorProjectKey, hostDocument),
+                updater => updater.DocumentRemoved(projectKey, hostDocument),
                 cancellationToken)
             .ConfigureAwait(false);
     }

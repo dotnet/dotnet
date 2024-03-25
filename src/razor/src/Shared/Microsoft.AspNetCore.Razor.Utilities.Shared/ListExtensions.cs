@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 
 namespace Microsoft.AspNetCore.Razor;
@@ -30,5 +29,8 @@ internal static class ListExtensions
     public static T[] ToArrayOrEmpty<T>(this List<T>? list)
         => list?.Count > 0
             ? list.ToArray()
-            : Array.Empty<T>();
+            : [];
+
+    public static bool Any<T>(this List<T> list)
+        => list.Count > 0;
 }

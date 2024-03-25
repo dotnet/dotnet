@@ -1,11 +1,10 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal interface IClientCapabilitiesService
+internal sealed class LSPFilePathService(LanguageServerFeatureOptions options) : AbstractFilePathService(options)
 {
-    VSInternalClientCapabilities ClientCapabilities { get; }
 }

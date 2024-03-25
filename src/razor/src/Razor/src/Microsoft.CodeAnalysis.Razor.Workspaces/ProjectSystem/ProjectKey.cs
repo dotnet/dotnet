@@ -3,7 +3,6 @@
 
 using System;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -19,7 +18,7 @@ internal readonly record struct ProjectKey
     // end up. All creation logic is here in one place to ensure this is consistent.
     public static ProjectKey From(HostProject hostProject) => new(hostProject.IntermediateOutputPath);
     public static ProjectKey From(IProjectSnapshot project) => new(project.IntermediateOutputPath);
-    public static ProjectKey? From(Project project)
+    public static ProjectKey From(Project project)
     {
         var intermediateOutputPath = FilePathNormalizer.GetNormalizedDirectoryName(project.CompilationOutputInfo.AssemblyPath);
         return new(intermediateOutputPath);
@@ -33,8 +32,8 @@ internal readonly record struct ProjectKey
     {
         Debug.Assert(id is not null, "Cannot create a key for null Id. Did you call ProjectKey.From(this) in a constructor, before initializing a property?");
         Debug.Assert(!id!.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase), "We expect the intermediate output path, not the project file");
-        // The null check in the assert means the compiler thinks we're lying about id being non-nullable.. which is fair I suppose.
-        Id = FilePathNormalizer.NormalizeDirectory(id).AssumeNotNull();
+
+        Id = FilePathNormalizer.NormalizeDirectory(id);
     }
 
     public override int GetHashCode()
@@ -45,5 +44,21 @@ internal readonly record struct ProjectKey
     public bool Equals(ProjectKey other)
     {
         return FilePathComparer.Instance.Equals(Id, other.Id);
+    }
+
+    /// <summary>
+    /// Returns <see langword="true"/> if this <see cref="ProjectKey"/> matches the given <see cref="Project"/>.
+    /// </summary>
+    public bool Matches(Project project)
+    {
+        // In order to perform this check, we are relying on the fact that Id will always end with a '/',
+        // because it is guaranteed to be normalized. However, CompilationOutputInfo.AssemblyPath will
+        // contain the assembly file name, which AreDirectoryPathsEquivalent will shave off before comparing.
+        // So, AreDirectoryPathsEquivalent will return true when Id is "C:/my/project/path/"
+        // and the assembly path is "C:\my\project\path\assembly.dll"
+
+        Debug.Assert(Id.EndsWith('/'), $"This method can't be called if {nameof(Id)} is not a normalized directory path.");
+
+        return FilePathNormalizer.AreDirectoryPathsEquivalent(Id, project.CompilationOutputInfo.AssemblyPath);
     }
 }

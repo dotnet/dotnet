@@ -7,6 +7,7 @@ using System.ComponentModel.Composition;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json;
 
@@ -21,6 +22,8 @@ internal class RazorCohostCapabilitiesProvider([ImportMany(typeof(ICapabilitiesP
     private readonly IEnumerable<Lazy<ICapabilitiesProvider>> _cohostCapabilitiesProviders = cohostCapabilitiesProviders;
 
     private VSInternalClientCapabilities? _clientCapabilities;
+
+    public bool CanGetClientCapabilities => _clientCapabilities is not null;
 
     public VSInternalClientCapabilities ClientCapabilities => _clientCapabilities.AssumeNotNull();
 

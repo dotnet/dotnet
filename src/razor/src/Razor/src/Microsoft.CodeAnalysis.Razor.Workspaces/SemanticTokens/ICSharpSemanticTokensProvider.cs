@@ -8,14 +8,13 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
+namespace Microsoft.CodeAnalysis.Razor.SemanticTokens;
 
 internal interface ICSharpSemanticTokensProvider
 {
     Task<int[]?> GetCSharpSemanticTokensResponseAsync(
         VersionedDocumentContext documentContext,
         ImmutableArray<LinePositionSpan> csharpSpans,
-        bool usePreciseSemanticTokenRanges,
         Guid correlationId,
         CancellationToken cancellationToken);
 }

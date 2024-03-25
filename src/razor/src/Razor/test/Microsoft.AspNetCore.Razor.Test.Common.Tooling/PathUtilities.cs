@@ -32,6 +32,6 @@ public static class PathUtilities
 
     public static void AssertEquivalent(string? expectedFilePath, string? actualFilePath)
     {
-        Assert.True(FilePathNormalizer.FilePathsEquivalent(expectedFilePath, actualFilePath));
+        Assert.True(FilePathNormalizer.AreFilePathsEquivalent(expectedFilePath, actualFilePath));
     }
 }

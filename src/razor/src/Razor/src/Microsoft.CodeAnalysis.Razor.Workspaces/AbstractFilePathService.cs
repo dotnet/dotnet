@@ -2,25 +2,15 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Composition;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
-[Shared]
-[Export(typeof(FilePathService))]
-internal sealed class FilePathService
+internal abstract class AbstractFilePathService(LanguageServerFeatureOptions languageServerFeatureOptions) : IFilePathService
 {
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions;
-
-    [ImportingConstructor]
-    public FilePathService(LanguageServerFeatureOptions languageServerFeatureOptions)
-    {
-        _languageServerFeatureOptions = languageServerFeatureOptions;
-    }
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
 
     public string GetRazorCSharpFilePath(ProjectKey projectKey, string razorFilePath)
         => GetGeneratedFilePath(projectKey, razorFilePath, _languageServerFeatureOptions.CSharpVirtualDocumentSuffix);
@@ -98,21 +88,5 @@ internal sealed class FilePathService
 
         Debug.Assert(!projectToken.Contains("."), "Project token can't contain a dot or the GetRazorFilePath method will fail.");
         return "." + projectToken;
-    }
-
-    public static string GetProjectSystemFilePath(Uri uri)
-    {
-        // In VS Windows project system file paths always utilize `\`. In VSMac they don't. This is a bit of a hack
-        // however, it's the only way to get the correct file path for a document to map to a corresponding project
-        // system.
-
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            // VSWin
-            return uri.GetAbsoluteOrUNCPath().Replace('/', '\\');
-        }
-
-        // VSMac
-        return uri.AbsolutePath;
     }
 }

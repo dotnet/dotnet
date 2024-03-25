@@ -21,7 +21,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.FindAllReferences;
 [RazorLanguageServerEndpoint(Methods.TextDocumentReferencesName)]
 internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoint<ReferenceParams, VSInternalReferenceItem[]>, ICapabilitiesProvider
 {
-    private readonly FilePathService _filePathService;
+    private readonly IFilePathService _filePathService;
     private readonly IRazorDocumentMappingService _documentMappingService;
 
     public FindAllReferencesEndpoint(
@@ -29,7 +29,7 @@ internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoin
         IRazorDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
         IRazorLoggerFactory loggerFactory,
-        FilePathService filePathService)
+        IFilePathService filePathService)
         : base(languageServerFeatureOptions, documentMappingService, clientConnection, loggerFactory.CreateLogger<FindAllReferencesEndpoint>())
     {
         _filePathService = filePathService ?? throw new ArgumentNullException(nameof(filePathService));
@@ -84,7 +84,7 @@ internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoin
 
             // Indicates the reference item is directly available in the code
             referenceItem.Origin = VSInternalItemOrigin.Exact;
-
+            
             if (!_filePathService.IsVirtualCSharpFile(referenceItem.Location.Uri) &&
                 !_filePathService.IsVirtualHtmlFile(referenceItem.Location.Uri))
             {

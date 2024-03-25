@@ -4,7 +4,7 @@
 using System;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
+namespace Microsoft.CodeAnalysis.Razor.SemanticTokens;
 
 internal readonly struct SemanticRange : IComparable<SemanticRange>
 {

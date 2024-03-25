@@ -34,6 +34,11 @@
         <target state="translated">Die Zeile "{0}" außerhalb des {1} Bereichs von "{2}" wurde abgefragt. Das Dokument ist möglicherweise nicht auf dem neuesten Stand.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Unknown_RazorMetaCode">
+        <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
+        <target state="translated">Es wurde versucht, einen anderen RazorMetaCode als '{' or '}' zu besuchen.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Unknown_mapping_behavior">
         <source>Unknown mapping behavior</source>
         <target state="translated">Unbekanntes Zuordnungsverhalten</target>
