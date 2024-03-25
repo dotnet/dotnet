@@ -1,11 +1,6 @@
 <!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
 <Project DefaultTargets="Sign">
 
-  <PropertyGroup>
-    <!-- Disable target framework filtering for top level projects -->
-    <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
-  </PropertyGroup>
-
   <!--
     Documentation for publishing is available here:
       - https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Signing.md
@@ -13,15 +8,21 @@
     Optional variables:
       EnableDefaultArtifacts            Includes *.nupkg, *.vsix and *.wixpack.zip under "/artifacts/packages/**" for sigining.
                                         Defaults to true.
-    
+
     Optional items:
-      Artifact (with Metadata)          Path to the artifact to publish. Can be set in Signing.props to sign and publish the artifact.
-        - RelativeBlobPath              The relative blob path when PublishFlatContainer is true.
-        - ChecksumPath                  The destination path to generate a checksum file for the artifact. Make sure to also set the
-                                        `RelativeBlobPathParent` property so that the RelativeBlobPath can be calculated.
-        - PublishFlatContainer          If true, publishes to blob artifacts, otherwise package artifacts.
-        - SkipPublish                   If true, skips publishing the artifact.
+      Artifact (with Metadata)          Path to the artifact to publish. Declare the item in Signing.props to sign and publish the artifact.
+        - ChecksumPath                    The destination path to generate a checksum file for the artifact. Set the `RelativeBlobPathParent`
+                                          property if the RelativeBlobPath for the generate checksum should be automatically set.
+        - PublishFlatContainer            By default artifacts are published to blob artifacts. Set to false to publish to package artifacts.
+        - RelativeBlobPath                The relative blob path when publishing to blob artifacts.
+        - IsShipping                      Set to true to mark a package as shipping when publishing to package artifacts. Defaults to false.
+        - SkipPublish                     If true, skips publishing the artifact.
   -->
+
+  <PropertyGroup>
+    <!-- Disable target framework filtering for top level projects -->
+    <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
+  </PropertyGroup>
 
   <Import Project="BuildStep.props" />
 
