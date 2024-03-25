@@ -6,6 +6,13 @@
     <EnableDefaultArtifacts>true</EnableDefaultArtifacts>
   </PropertyGroup>
 
+  <!-- Repo extension point to sign and/or publish. PublishFlatcontainer defaults to true for Artifact items. -->
+  <ItemDefinitionGroup>
+    <Artifact>
+      <PublishFlatContainer>true</PublishFlatContainer>
+    </Artifact>
+  </ItemDefinitionGroup>
+
   <ItemGroup>
     <!--
       This is intended to hold information about the certificates used for signing.
