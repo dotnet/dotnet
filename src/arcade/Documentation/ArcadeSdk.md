@@ -643,7 +643,7 @@ The steps below assume the following variables to be defined:
 ### Signing plugin installation
 
 ```yml
-- task: MicroBuildSigningPlugin@3
+- task: MicroBuildSigningPlugin@4
   displayName: Install Signing Plugin
   inputs:
     signType: real
