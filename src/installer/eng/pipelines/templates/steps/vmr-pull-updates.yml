@@ -88,7 +88,8 @@ steps:
   condition: eq(variables['Agent.OS'], 'Windows_NT')
   workingDirectory: $(Agent.BuildDirectory)/installer
 
-- publish: $(Agent.TempDirectory)
-  artifact: $(System.JobDisplayName)_FailedPatches
-  displayName: Upload failed patches
-  condition: failed()
+- ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+  - publish: $(Agent.TempDirectory)
+    artifact: $(System.JobDisplayName)_FailedPatches
+    displayName: Upload failed patches
+    condition: failed()

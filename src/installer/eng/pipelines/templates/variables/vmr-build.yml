@@ -1,5 +1,5 @@
 parameters:
-- name: vmrBranch 
+- name: vmrBranch
   type: string
 
 variables:
@@ -36,26 +36,30 @@ variables:
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: defaultPoolName
     value: NetCore-Public-XL
-  - name: defaultPoolNameLinuxArm64
+  - name: poolImage_Linux
+    value: 1es-ubuntu-2004-open
+  - name: poolImage_LinuxArm64
+    value: Mariner-2-Docker-ARM64
+  - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Public
-  - name: defaultPoolNameMac
+  - name: poolImage_Mac
     value: macos-12
-  - name: defaultPoolDemandsLinux
-    value: ImageOverride -equals Build.Ubuntu.2204.Amd64.Open
-  - name: defaultPoolDemandsWindows
-    value: ImageOverride -equals windows.vs2022.amd64.open
-- ${{ elseif eq(variables['System.TeamProject'], 'internal') }}:
+  - name: poolImage_Windows
+    value: windows.vs2022.amd64.open
+- ${{ else }}:
   - ${{ if in(variables['Build.Reason'], 'PullRequest') }}:
     - name: defaultPoolName
       value: NetCore1ESPool-Internal-XL
   - ${{ else }}:
     - name: defaultPoolName
-      value: NetCore1ESPool-Svc-Internal
-  - name: defaultPoolNameLinuxArm64
+      value: $(DncEngInternalBuildPool)
+  - name: poolImage_Linux
+    value: 1es-ubuntu-2204
+  - name: poolImage_LinuxArm64
+    value: Mariner-2-Docker-ARM64
+  - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Internal
-  - name: defaultPoolNameMac
+  - name: poolImage_Mac
     value: macos-13-arm64
-  - name: defaultPoolDemandsLinux
-    value: ImageOverride -equals Build.Ubuntu.2204.Amd64
-  - name: defaultPoolDemandsWindows
-    value: ImageOverride -equals windows.vs2022.amd64
+  - name: poolImage_Windows
+    value: windows.vs2022.amd64
