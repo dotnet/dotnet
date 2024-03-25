@@ -36,7 +36,7 @@
       </trans-unit>
       <trans-unit id="Unknown_RazorMetaCode">
         <source>Attempted to visit a RazorMetaCode other than '{' or '}'.</source>
-        <target state="new">Attempted to visit a RazorMetaCode other than '{' or '}'.</target>
+        <target state="translated">Es wurde versucht, einen anderen RazorMetaCode als '{' or '}' zu besuchen.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unknown_mapping_behavior">
