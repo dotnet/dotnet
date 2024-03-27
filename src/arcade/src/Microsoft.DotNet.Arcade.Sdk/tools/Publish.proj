@@ -20,7 +20,7 @@
                                           property if the RelativeBlobPath for the generate checksum should be automatically set.
         - PublishFlatContainer            By default artifacts are published to blob artifacts. Set to false to publish to package artifacts.
         - RelativeBlobPath                The relative blob path when publishing to blob artifacts.
-        - IsShipping                      Set to true to mark a package as shipping when publishing to package artifacts. Defaults to false.
+        - IsShipping                      Set to false to mark the artifact as non-shipping. Defaults to true.
   -->
 
   <PropertyGroup>
@@ -122,7 +122,8 @@
     <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildInnerRepo)' == 'true'">
       <UnifiedSymbolsPackage Include="$(ArtifactsNonShippingPackagesDir)Symbols.*.tar.gz" />
       <Artifact Include="@(UnifiedSymbolsPackage)"
-                RelativeBlobPath="Symbols/%(Filename)%(Extension)" />
+                RelativeBlobPath="Symbols/%(Filename)%(Extension)"
+                IsShipping="false" />
     </ItemGroup>
 
     <!--
@@ -215,8 +216,8 @@
 
     <ItemGroup>
       <ItemsToPushToBlobFeed>
-        <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' != 'true'">NonShipping=true</ManifestArtifactData>
-        <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' == 'true' and '$(ProducesDotNetReleaseShippingAssets)' == 'true'">DotNetReleaseShipping=true</ManifestArtifactData>
+        <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' == 'false'">NonShipping=true</ManifestArtifactData>
+        <ManifestArtifactData Condition="'%(ItemsToPushToBlobFeed.IsShipping)' != 'false' and '$(ProducesDotNetReleaseShippingAssets)' == 'true'">DotNetReleaseShipping=true</ManifestArtifactData>
       </ItemsToPushToBlobFeed>
     </ItemGroup>
 

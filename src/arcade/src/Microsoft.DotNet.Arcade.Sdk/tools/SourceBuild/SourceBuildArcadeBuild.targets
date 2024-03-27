@@ -93,16 +93,12 @@
   </Target>
 
   <!--
-    PrepareInnerSourceBuildRepoRoot either clones the source to the inner repo
-    or copies the source to the inner repo depending on CloneSrcInsteadOfCopy.
-    Repos take a dependency on PrepareInnerSourceBuildRepoRoot, so this target
-    exists to wait until either the source is cloned or copied.
+    PrepareInnerSourceBuildRepoRoot copies the source to the inner repo.  Source-build
+    targets will change the source dynamically. Creating a fresh copy avoids overwriting
+    existing work or making subtle changes that might accidentally get added to the user's
+    existing work via a 'git add .'. Repos take a dependency on PrepareInnerSourceBuildRepoRoot.
   -->
-  <Target Name="PrepareInnerSourceBuildRepoRoot"
-          DependsOnTargets="CopyInnerSourceBuildRepoRoot;CloneInnerSourceBuildRepoRoot">
-  </Target>
-
-  <Target Name="CopyInnerSourceBuildRepoRoot" Condition=" '$(CloneSrcInsteadOfCopy)' != 'true' and '$(UseInnerClone)' == 'true' ">
+  <Target Name="PrepareInnerSourceBuildRepoRoot" Condition="'$(UseInnerClone)' == 'true'">
     <ItemGroup>
       <SourceBuildFilesToCopy Include="$(RepoRoot)/**/*" />
       <SourceBuildFilesToCopy Include="$(RepoRoot)/**/.*" />
@@ -113,87 +109,6 @@
     <Copy
       SourceFiles="@(SourceBuildFilesToCopy)"
       DestinationFolder="$(InnerSourceBuildRepoRoot)%(RecursiveDir)" />
-  </Target>
-
-  <!--
-    Clone the repo to a new location. Source-build targets will change the source dynamically.
-    Creating a fresh clone avoids overwriting existing work or making subtle changes that might
-    accidentally get added to the user's existing work via a 'git add .'. Since the clone also has
-    access to the git data, this also makes it easy to see what changes the source-build infra has
-    made, for diagnosis or exploratory purposes.
-  -->
-  <Target Name="CloneInnerSourceBuildRepoRoot" Condition=" '$(CloneSrcInsteadOfCopy)' == 'true' and '$(UseInnerClone)' == 'true' ">
-    <PropertyGroup>
-      <!--
-        By default, copy WIP. WIP copy helps with local machine dev work. Don't copy WIP if this is
-        a CI build: CI often uses shallow clones, which WIP copying doesn't support.
-      -->
-      <CopyWipIntoInnerSourceBuildRepo Condition="'$(CopyWipIntoInnerSourceBuildRepo)' == '' and '$(ContinuousIntegrationBuild)' == 'true'">false</CopyWipIntoInnerSourceBuildRepo>
-      <CopyWipIntoInnerSourceBuildRepo Condition="'$(CopyWipIntoInnerSourceBuildRepo)' == ''">true</CopyWipIntoInnerSourceBuildRepo>
-
-      <_GitCloneToDirArgs />
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
-      <_GitCloneToDirArgs>$(_GitCloneToDirArgs) -Source "$(RepoRoot)$(_DirSeparatorEscapedCharForExecArg)"</_GitCloneToDirArgs>
-      <_GitCloneToDirArgs>$(_GitCloneToDirArgs) -Dest "$(InnerSourceBuildRepoRoot)$(_DirSeparatorEscapedCharForExecArg)"</_GitCloneToDirArgs>
-      <_GitCloneToDirArgs Condition="'$(CopyWipIntoInnerSourceBuildRepo)' == 'true'">$(_GitCloneToDirArgs) -CopyWip</_GitCloneToDirArgs>
-      <_GitCloneToDirArgs Condition="'$(CleanInnerSourceBuildRepoRoot)' == 'true'">$(_GitCloneToDirArgs) -Clean</_GitCloneToDirArgs>
-
-      <_GitCloneToDirScriptFile>$(MSBuildThisFileDirectory)git-clone-to-dir.ps1</_GitCloneToDirScriptFile>
-      <_GitCloneToDirScriptCommand>powershell -ExecutionPolicy Unrestricted -NoProfile -command "&amp; $(_GitCloneToDirScriptFile) $(_GitCloneToDirArgs)"</_GitCloneToDirScriptCommand>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
-      <_GitCloneToDirArgs>$(_GitCloneToDirArgs) --source "$(RepoRoot)"</_GitCloneToDirArgs>
-      <_GitCloneToDirArgs>$(_GitCloneToDirArgs) --dest "$(InnerSourceBuildRepoRoot)"</_GitCloneToDirArgs>
-      <_GitCloneToDirArgs Condition="'$(CopyWipIntoInnerSourceBuildRepo)' == 'true'">$(_GitCloneToDirArgs) --copy-wip</_GitCloneToDirArgs>
-      <_GitCloneToDirArgs Condition="'$(CleanInnerSourceBuildRepoRoot)' == 'true'">$(_GitCloneToDirArgs) --clean</_GitCloneToDirArgs>
-
-      <_GitCloneToDirScriptFile>$(MSBuildThisFileDirectory)git-clone-to-dir.sh</_GitCloneToDirScriptFile>
-      <_GitCloneToDirScriptCommand>$(_GitCloneToDirScriptFile) $(_GitCloneToDirArgs)</_GitCloneToDirScriptCommand>
-    </PropertyGroup>
-
-    <Exec Command="$(_GitCloneToDirScriptCommand)" />
-
-    <!--
-      If the repo has submodules, use 'git clone' on each submodule to put it in the inner repo. We
-      could simply call 'git submodule update ...' one time in the inner repo. However, that hits
-      the network, which is slow and may be unreliable. Also:
-
-      * 'git clone' copies the minimal amount of files from one place on disk to another.
-      * 'git clone' uses hard links instead of doing a full copy of all the Git data files. (In some
-        cases it can't use hard links, but Git figures that out itself.)
-
-      The result of cloning each submodule into the right location in the inner repo isn't identical
-      to fully setting up a submodule, but it behaves the same in the context of source-build.
-    -->
-    <PropertyGroup>
-      <CloneSubmodulesToInnerSourceBuildRepo Condition="'$(CloneSubmodulesToInnerSourceBuildRepo)' == ''">true</CloneSubmodulesToInnerSourceBuildRepo>
-
-      <_GitSubmoduleCloneArgs />
-      <_GitSubmoduleCloneArgs>$(_GitSubmoduleCloneArgs) --source .</_GitSubmoduleCloneArgs>
-      <!-- The destination is set using a bit of bash and msbuild logic that takes the root directory of innermost repository
-           containing the submodule (root of repo, or parent submodule), then replaces that root path with the inner source build root
-           location using sed, and then adds on the subpath of the submodule.
-
-           There are various escaped special characters here:
-           - %24 ensures that msbuild does not attempt to evaluate the whole bash statement as a variable
-           - &quot; ensures that the whole path is quoted.
-
-           We also use an atypical sed replacement delimiter (+), because the typical '/' would occur within paths
-
-           It is expected that when the inner clone goes away, this code goes away (see https://github.com/dotnet/source-build/issues/3072).
-      -->
-      <_GitSubmoduleCloneArgs>$(_GitSubmoduleCloneArgs) --dest &quot;%24(echo &quot;${toplevel}/&quot; | sed s+$(RepoRoot)+$(InnerSourceBuildRepoRoot)+)${sm_path}&quot;</_GitSubmoduleCloneArgs>
-      <_GitSubmoduleCloneArgs Condition="'$(CopyWipIntoInnerSourceBuildRepo)' == 'true'">$(_GitSubmoduleCloneArgs) --copy-wip</_GitSubmoduleCloneArgs>
-      <_GitSubmoduleCloneArgs Condition="'$(CleanInnerSourceBuildRepoRoot)' == 'true'">$(_GitSubmoduleCloneArgs) --clean</_GitSubmoduleCloneArgs>
-    </PropertyGroup>
-
-    <Exec
-      Condition="'$(CloneSubmodulesToInnerSourceBuildRepo)' == 'true'"
-      Command="git submodule foreach --recursive '$(_GitCloneToDirScriptFile) $(_GitSubmoduleCloneArgs)'"
-      WorkingDirectory="$(RepoRoot)" />
   </Target>
 
   <Target Name="RunInnerSourceBuildCommand"
