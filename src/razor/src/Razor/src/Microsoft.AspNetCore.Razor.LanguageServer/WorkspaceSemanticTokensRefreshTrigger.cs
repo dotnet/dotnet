@@ -11,11 +11,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 /// </summary>
 internal class WorkspaceSemanticTokensRefreshTrigger : IRazorStartupService
 {
-    private readonly IWorkspaceSemanticTokensRefreshPublisher _publisher;
+    private readonly IWorkspaceSemanticTokensRefreshNotifier _publisher;
     private readonly IProjectSnapshotManager _projectManager;
 
     public WorkspaceSemanticTokensRefreshTrigger(
-        IWorkspaceSemanticTokensRefreshPublisher publisher,
+        IWorkspaceSemanticTokensRefreshNotifier publisher,
         IProjectSnapshotManager projectManager)
     {
         _publisher = publisher;
@@ -30,7 +30,7 @@ internal class WorkspaceSemanticTokensRefreshTrigger : IRazorStartupService
         // is edited and if a parameter or type change is made it should be reflected as a ProjectChanged.
         if (args.Kind != ProjectChangeKind.DocumentChanged)
         {
-            _publisher.EnqueueWorkspaceSemanticTokensRefresh();
+            _publisher.NotifyWorkspaceSemanticTokensRefresh();
         }
     }
 }

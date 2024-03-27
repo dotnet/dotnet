@@ -37,16 +37,15 @@ public class RazorSemanticTokensRefreshEndpointTest(ITestOutputHelper testOutput
         };
         var clientCapabilitiesService = new TestClientCapabilitiesService(clientCapabilities);
         var serverClient = new TestClient();
-        var errorReporter = new TestErrorReporter();
         var optionsMonitor = GetOptionsMonitor();
-        using var semanticTokensRefreshPublisher = new WorkspaceSemanticTokensRefreshPublisher(clientCapabilitiesService, serverClient, errorReporter, optionsMonitor);
-        var refreshEndpoint = new RazorSemanticTokensRefreshEndpoint(semanticTokensRefreshPublisher);
+        using var publisher = new WorkspaceSemanticTokensRefreshNotifier(clientCapabilitiesService, serverClient, optionsMonitor);
+        var refreshEndpoint = new RazorSemanticTokensRefreshEndpoint(publisher);
         var refreshParams = new SemanticTokensRefreshParams();
         var requestContext = new RazorRequestContext();
 
         // Act
         await refreshEndpoint.HandleNotificationAsync(refreshParams, requestContext, DisposalToken);
-        semanticTokensRefreshPublisher.GetTestAccessor().WaitForEmpty();
+        await publisher.GetTestAccessor().WaitForNotificationAsync();
 
         // Assert
         Assert.Equal(Methods.WorkspaceSemanticTokensRefreshName, serverClient.Requests.Single().Method);

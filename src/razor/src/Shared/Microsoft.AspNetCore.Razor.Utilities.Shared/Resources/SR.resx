@@ -126,11 +126,20 @@
   <data name="Destination_is_too_short" xml:space="preserve">
     <value>Destination is too short.</value>
   </data>
+  <data name="Expected_condition_to_be_false" xml:space="preserve">
+    <value>Expected condition to be false.</value>
+  </data>
+  <data name="Expected_condition_to_be_true" xml:space="preserve">
+    <value>Expected condition to be true.</value>
+  </data>
+  <data name="File_0_Line_1" xml:space="preserve">
+    <value> File='{0}', Line={1}</value>
+  </data>
   <data name="Non_negative_number_required" xml:space="preserve">
     <value>Non-negative number required.</value>
   </data>
-  <data name="This_program_location_is_thought_to_be_unreachable_File_0_Line_1" xml:space="preserve">
-    <value>This program location is thought to be unreachable. File='{0}', Line={1}</value>
+  <data name="This_program_location_is_thought_to_be_unreachable" xml:space="preserve">
+    <value>This program location is thought to be unreachable.</value>
   </data>
   <data name="Unsupported_type_0" xml:space="preserve">
     <value>Unsupported type: '{0}'.</value>

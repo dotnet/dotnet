@@ -35,12 +35,12 @@ public class WorkspaceSemanticTokensRefreshTriggerTest : LanguageServerTestBase
     }
 
     [Fact]
-    public async Task PublishesOnWorkspaceUpdate()
+    public async Task NotifiesOnWorkspaceUpdate()
     {
         // Arrange
-        var publisher = new StrictMock<IWorkspaceSemanticTokensRefreshPublisher>();
+        var publisher = new StrictMock<IWorkspaceSemanticTokensRefreshNotifier>();
         publisher
-            .Setup(w => w.EnqueueWorkspaceSemanticTokensRefresh())
+            .Setup(w => w.NotifyWorkspaceSemanticTokensRefresh())
             .Verifiable();
 
         var refreshTrigger = new TestWorkspaceSemanticTokensRefreshTrigger(publisher.Object, _projectManager);
@@ -56,7 +56,7 @@ public class WorkspaceSemanticTokensRefreshTriggerTest : LanguageServerTestBase
     }
 
     private class TestWorkspaceSemanticTokensRefreshTrigger(
-        IWorkspaceSemanticTokensRefreshPublisher publisher,
+        IWorkspaceSemanticTokensRefreshNotifier publisher,
         IProjectSnapshotManager projectManager)
         : WorkspaceSemanticTokensRefreshTrigger(publisher, projectManager);
 }

@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -37,6 +38,7 @@ internal interface IProjectSnapshot
 
     RazorProjectEngine GetProjectEngine();
     IDocumentSnapshot? GetDocument(string filePath);
+    bool TryGetDocument(string filePath, [NotNullWhen(true)] out IDocumentSnapshot? document);
     bool IsImportDocument(IDocumentSnapshot document);
 
     /// <summary>

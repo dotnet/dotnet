@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -63,6 +64,12 @@ internal class EphemeralProjectSnapshot : IProjectSnapshot
         }
 
         return null;
+    }
+
+    public bool TryGetDocument(string filePath, [NotNullWhen(true)] out IDocumentSnapshot? document)
+    {
+        document = null;
+        return false;
     }
 
     public bool IsImportDocument(IDocumentSnapshot document)

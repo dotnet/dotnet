@@ -41,7 +41,6 @@
     <Asset Type="Microsoft.ServiceHub.Service" d:Source="File" Path="ServiceHubCore\Microsoft.VisualStudio.Razor.ClientInitializationCore64.servicehub.service.json" />
     <Asset Type="Microsoft.ServiceHub.Service" d:Source="File" Path="ServiceHubCore\Microsoft.VisualStudio.Razor.ClientInitializationCore64S.servicehub.service.json" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.CodeAnalysis.Razor.Compiler.dll" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.CommonLanguageServerProtocol.Framework.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.ObjectPool.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.Options.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.Primitives.dll" />
