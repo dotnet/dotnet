@@ -58,7 +58,7 @@ public class SerializableTypesTests
 
             using var streamOut = result.GetStream();
             Assert.False(streamOut.IsNull);
-            Assert.True(ComHelpers.TryGetObjectForIUnknown(streamOut.AsUnknown, takeOwnership: false, out ComManagedStream managedStream));
+            Assert.True(ComHelpers.TryGetObjectForIUnknown(streamOut, out ComManagedStream managedStream));
             Stream bufferStream = managedStream.GetDataStream();
             byte[] buffer = new byte[3];
             bufferStream.Read(buffer, 0, buffer.Length);
@@ -291,7 +291,7 @@ public class SerializableTypesTests
             tableLayoutPanel.Controls.Add(new RadioButton() { Name = "radioButton01" }, 0, 1);
             tableLayoutPanel.Controls.Add(new CheckBox() { Name = "checkBox11" }, 1, 1);
 
-            netBlob = BinarySerialization.ToBase64String(tableLayoutPanel.LayoutSettings as TableLayoutSettings);
+            netBlob = BinarySerialization.ToBase64String(tableLayoutPanel.LayoutSettings);
         }
 
         // ensure we can deserialise NET serialised data and continue to match the payload

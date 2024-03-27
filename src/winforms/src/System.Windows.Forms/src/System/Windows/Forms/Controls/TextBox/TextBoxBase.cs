@@ -376,21 +376,7 @@ public abstract partial class TextBoxBase : Control
 
     internal virtual bool CanRaiseTextChangedEvent => true;
 
-    protected override bool CanEnableIme
-    {
-        get
-        {
-            Debug.WriteLineIf(CompModSwitches.ImeMode.Level >= TraceLevel.Info, $"Inside get_CanEnableIme(), this = {this}");
-            Debug.Indent();
-
-            bool canEnable = !(ReadOnly || PasswordProtect) && base.CanEnableIme;
-
-            Debug.WriteLineIf(CompModSwitches.ImeMode.Level >= TraceLevel.Info, $"Value = {canEnable}");
-            Debug.Unindent();
-
-            return canEnable;
-        }
-    }
+    protected override bool CanEnableIme => !(ReadOnly || PasswordProtect) && base.CanEnableIme;
 
     /// <summary>
     ///  Gets a value indicating whether the user can undo the previous operation in a text box control.
@@ -559,23 +545,7 @@ public abstract partial class TextBoxBase : Control
     /// </summary>
     protected override ImeMode ImeModeBase
     {
-        get
-        {
-            if (DesignMode)
-            {
-                return base.ImeModeBase;
-            }
-
-            Debug.WriteLineIf(CompModSwitches.ImeMode.Level >= TraceLevel.Info, $"Inside get_ImeModeInternal(), this = {this}");
-            Debug.Indent();
-
-            ImeMode imeMode = CanEnableIme ? base.ImeModeBase : ImeMode.Disable;
-
-            Debug.WriteLineIf(CompModSwitches.ImeMode.Level >= TraceLevel.Info, $"Value = {imeMode}");
-            Debug.Unindent();
-
-            return imeMode;
-        }
+        get => (DesignMode || CanEnableIme) ? base.ImeModeBase : ImeMode.Disable;
         set => base.ImeModeBase = value;
     }
 
@@ -1429,7 +1399,6 @@ public abstract partial class TextBoxBase : Control
 
     protected override bool ProcessDialogKey(Keys keyData)
     {
-        s_controlKeyboardRouting.TraceVerbose($"TextBoxBase.ProcessDialogKey [{keyData}]");
         Keys keyCode = keyData & Keys.KeyCode;
 
         if (keyCode == Keys.Tab && AcceptsTab && (keyData & Keys.Control) != 0)
@@ -2052,16 +2021,9 @@ public abstract partial class TextBoxBase : Control
     private void WmGetDlgCode(ref Message m)
     {
         base.WndProc(ref m);
-        if (AcceptsTab)
-        {
-            s_controlKeyboardRouting.TraceVerbose("TextBox wants tabs");
-            m.ResultInternal = (LRESULT)(m.ResultInternal | (int)PInvoke.DLGC_WANTTAB);
-        }
-        else
-        {
-            s_controlKeyboardRouting.TraceVerbose("TextBox doesn't want tabs");
-            m.ResultInternal = (LRESULT)(m.ResultInternal & ~(int)(PInvoke.DLGC_WANTTAB | PInvoke.DLGC_WANTALLKEYS));
-        }
+        m.ResultInternal = AcceptsTab
+            ? (LRESULT)(m.ResultInternal | (int)PInvoke.DLGC_WANTTAB)
+            : (LRESULT)(m.ResultInternal & ~(int)(PInvoke.DLGC_WANTTAB | PInvoke.DLGC_WANTALLKEYS));
     }
 
     /// <summary>
