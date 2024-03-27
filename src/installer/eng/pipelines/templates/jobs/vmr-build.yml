@@ -321,6 +321,8 @@ jobs:
           # Allows Arcade to have access to the commit for the build, pass it through to the container
           customEnvVars="$customEnvVars BUILD_SOURCEVERSION=$BUILD_SOURCEVERSION"
 
+          customEnvVars="$customEnvVars BUILD_BUILDNUMBER=$(Build.BuildNumber)"
+
           customDockerRunArgs=""
           for envVar in $customEnvVars; do
             customDockerRunArgs="$customDockerRunArgs -e $envVar"
