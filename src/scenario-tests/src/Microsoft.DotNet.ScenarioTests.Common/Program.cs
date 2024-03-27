@@ -9,6 +9,7 @@ using Xunit.Abstractions;
 using Xunit.Sdk;
 using System.Runtime.InteropServices;
 using System.Collections.Immutable;
+using System.Globalization;
 
 namespace ScenarioTests
 {
@@ -124,7 +125,9 @@ namespace ScenarioTests
             var summarySink = new DelegatingExecutionSummarySink(testSink,
                 () => false,
                 (completed, summary) => Console.WriteLine($"Tests run: {summary.Total}, Errors: {summary.Errors}, Failures: {summary.Failed}, Skipped: {summary.Skipped}. Time: {TimeSpan.FromSeconds((double)summary.Time).TotalSeconds}s"));
+            var resultsXmlAssemblies = new XElement("assemblies");
             var resultsXmlAssembly = new XElement("assembly");
+            resultsXmlAssemblies.Add(resultsXmlAssembly);
             var resultsSink = new DelegatingXmlCreationSink(summarySink, resultsXmlAssembly);
             var platform = OperatingSystemFinder.GetPlatform();
 
@@ -133,6 +136,7 @@ namespace ScenarioTests
 
             testSink.Execution.TestAssemblyFinishedEvent += args =>
             {
+                resultsXmlAssemblies.Add(new XAttribute("timestamp", DateTime.Now.ToString(CultureInfo.InvariantCulture)));
                 Console.WriteLine($"Finished {args.Message.TestAssembly.Assembly}{Environment.NewLine}");
                 testsFinished.SetResult();
             };
@@ -187,7 +191,7 @@ namespace ScenarioTests
 
             if (xmlResultsPath != null)
             {
-                resultsXmlAssembly.Save(xmlResultsPath); 
+                resultsXmlAssemblies.Save(xmlResultsPath); 
             }
 
             if (!noCleanTestRoot)
