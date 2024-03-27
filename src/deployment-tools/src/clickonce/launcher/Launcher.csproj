@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <IsPackable Condition="'$(TargetArchitecture)' == 'x86'">true</IsPackable>
+    <IsPackable>true</IsPackable>
     <IsShipping>true</IsShipping>
     <IsShippingPackage>false</IsShippingPackage>
     <PackageId>VS.Redist.Common.NetCore.Launcher</PackageId>
@@ -13,18 +14,19 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <TargetFramework>net45</TargetFramework>
     <AssemblyName>Launcher</AssemblyName>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net45</TargetFramework>
     <NoWin32Manifest>true</NoWin32Manifest>
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="System.Deployment" />
   </ItemGroup>
+
   <ItemGroup>
     <Compile Include="..\shared\NativeMethods.cs" />
   </ItemGroup>
+
 </Project>

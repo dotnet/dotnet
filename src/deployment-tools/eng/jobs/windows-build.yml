@@ -2,43 +2,43 @@ parameters:
   additionalMSBuildArguments: ''
   displayName: ''
   publishRidAgnosticPackages: false
-  skipTests: $(SkipTests)
   targetArchitecture: null
   timeoutInMinutes: 120
   codeql: false
 
 jobs:
   - job: ${{ parameters.name }}
-    displayName: ${{ parameters.name }}
+    displayName: ${{ parameters.displayName }}
     timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
     pool:
       # Use a hosted pool when possible.
       ${{ if eq(variables['System.TeamProject'], 'public') }}:
         name: NetCore-Public
-        demands: ImageOverride -equals windows.vs2019.amd64.open
+        demands: ImageOverride -equals windows.vs2022.amd64.open
       ${{ if ne(variables['System.TeamProject'], 'public') }}:
         name: NetCore1ESPool-Internal
-        demands: ImageOverride -equals windows.vs2019.amd64
+        demands: ImageOverride -equals windows.vs2022.amd64
     strategy:
-      matrix: 
-        debug:
-          _BuildConfig: Debug
+      matrix:
         release:
           _BuildConfig: Release
+        ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+          debug:
+            _BuildConfig: Debug
     workspace:
       clean: all
     variables: 
       CommonMSBuildArgs: >-
-        /p:Configuration=$(_BuildConfig)
-        /p:OfficialBuildId=$(OfficialBuildId)
+        -c $(_BuildConfig)
         /p:TargetArchitecture=${{ parameters.targetArchitecture }}
-        /p:PortableBuild=true
-        /p:ContinuousIntegrationBuild=true
-        /p:SkipTests=${{ parameters.skipTests }}
-      MsbuildSigningArguments: >-
-        /p:CertificateId=400
         /p:DotNetSignType=$(SignType)
-      TargetArchitecture: ${{ parameters.targetArchitecture }}
+      ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+        InternalMSBuildArgs: >-
+          /p:OfficialBuildId=$(Build.BuildNumber)
+          /p:DotNetPublishUsingPipelines=true
+          /p:Test=false
+      ${{ else }}:
+        InternalMSBuildArgs: ''
       Codeql.Enabled: ${{ parameters.codeql }}
 
     steps:
@@ -70,28 +70,11 @@ jobs:
         env:
           Token: $(dn-bot-dnceng-artifact-feeds-rw)
 
-    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-      - script: >-
-          build.cmd -subset clickonce+installer+dotnet_releases -ci -test
-          $(CommonMSBuildArgs)
-          $(MsbuildSigningArguments)
-          /p:Sign=true /p:SignBinaries=true
-          /p:LocalizedBuild=true
-        displayName: Build and Sign Binaries
-
-    - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-      - script: >-
-          build.cmd -subset clickonce+installer+dotnet_releases -ci -test
-          $(CommonMSBuildArgs)
-          $(MsbuildSigningArguments)
-          /p:LocalizedBuild=true
-        displayName: Build
-
     - script: >-
-        build.cmd -subset clickonce+installer+dotnet_releases -ci -pack
+        eng\common\cibuild.cmd
         $(CommonMSBuildArgs)
-        $(MsbuildSigningArguments)
-      displayName: Package
+        $(InternalMSBuildArgs)
+      displayName: Build
 
     # Generate SBOM for the internal leg only
     - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
@@ -99,20 +82,111 @@ jobs:
         parameters:
           name: Generate_SBOM_${{ parameters.name }}
 
-    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), ne(variables['DisableVSPublish'], 'true')) }}:
+    # Push VS packages to VS package feed
+    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), ne(variables['DisableVSPublish'], 'true'), eq(variables['_BuildConfig'], 'Release')) }}:
       - task: NuGetToolInstaller@1
         displayName: 'Install NuGet.exe'
+
+      # Push rid specific packages on all architectures
       - task: NuGetCommand@2
         displayName: Push Visual Studio NuPkgs
         inputs:
           command: push
-          packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/*/VS.Redist.Common.*.nupkg'
+          packagesToPush: $(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/*/VS.Redist.Common.NETCoreCheck.*.nupkg
           nuGetFeedType: external
           publishFeedCredentials: 'DevDiv - VS package feed'
-        condition: and(
-          succeeded(),
-          eq(variables['_BuildConfig'], 'Release'))
+        condition: succeeded()
+    
+      # Push rid agnostic VS packages only on x64
+      - ${{ if eq(parameters.targetArchitecture, 'x64') }}:
+        - task: NuGetCommand@2
+          displayName: Push Visual Studio NuPkgs
+          inputs:
+            command: push
+            packagesToPush: $(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/*/VS.Redist.Common.NetCore.Launcher.*.nupkg
+            nuGetFeedType: external
+            publishFeedCredentials: 'DevDiv - VS package feed'
+          condition: succeeded()
 
-    - template: steps/upload-job-artifacts.yml
-      parameters:
-        name: ${{ parameters.name }}
+    # Upload build outputs as build artifacts only if internal and not PR, to save storage space.
+    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+      - powershell: |
+          $folderExists = Test-Path -Path "$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)"
+          Write-Output "##vso[task.setvariable variable=ArtifactsPackagesFolderExists]$folderExists"
+        displayName: Detect Packages subdirectory
+
+      - task: CopyFiles@2
+        displayName: Prepare job-specific Artifacts subdirectory
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)'
+          Contents: |
+            Shipping/**/*
+            NonShipping/**/*
+          TargetFolder: '$(Build.StagingDirectory)/Artifacts/${{ parameters.name }}'
+          CleanTargetFolder: true
+        condition: and(succeeded(), eq(variables._BuildConfig, 'Release'), eq(variables['ArtifactsPackagesFolderExists'], True))
+
+      - powershell: |
+          $folderExists = Test-Path -Path "$(Build.StagingDirectory)/Artifacts"
+          Write-Output "##vso[task.setvariable variable=StagingArtifactsFolderExist]$folderExists"
+        displayName: Detect Staged Artifacts subdirectory
+
+      - task: PublishBuildArtifacts@1
+        displayName: Publish Artifacts
+        inputs:
+          pathToPublish: '$(Build.StagingDirectory)/Artifacts'
+          artifactName: IntermediateUnsignedArtifacts
+          artifactType: container
+        condition: and(succeeded(), eq(variables._BuildConfig, 'Release'), eq(variables['StagingArtifactsFolderExist'], True))
+
+    # Upload build outputs as build artifacts only if internal and not PR, to save storage space.
+    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+      - task: CopyFiles@2
+        displayName: Prepare job-specific PdbArtifacts subdirectory
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)/artifacts/SymStore/$(_BuildConfig)'
+          Contents: |
+            **/*
+          TargetFolder: '$(Build.StagingDirectory)/PdbArtifacts/${{ parameters.name }}'
+          CleanTargetFolder: true
+        condition: and(succeeded(), eq(variables._BuildConfig, 'Release'))
+
+      - task: PublishBuildArtifacts@1
+        displayName: Publish PdbArtifacts
+        inputs:
+          pathToPublish: '$(Build.StagingDirectory)/PdbArtifacts'
+          artifactName: PdbArtifacts
+          artifactType: container
+        condition: and(succeeded(), eq(variables._BuildConfig, 'Release'))
+
+    - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+      - task: PublishTestResults@2
+        displayName: Publish Test Results
+        inputs:
+          testResultsFormat: 'xUnit'
+          testResultsFiles: '*.xml'
+          searchFolder: '$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)'
+          mergeTestResults: true
+          testRunTitle: ${{ parameters.name }}-$(_BuildConfig)
+        continueOnError: true
+        condition: always()
+
+    - task: CopyFiles@2
+      displayName: Prepare BuildLogs staging directory
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: |
+          **/*.log
+          **/*.binlog
+        TargetFolder: '$(Build.StagingDirectory)/BuildLogs'
+        CleanTargetFolder: true
+      continueOnError: true
+      condition: succeededOrFailed()
+
+    - task: PublishBuildArtifacts@1
+      displayName: Publish BuildLogs
+      inputs:
+        PathtoPublish: '$(Build.StagingDirectory)/BuildLogs'
+        ArtifactName: Logs-${{ parameters.name }}-$(_BuildConfig)
+      continueOnError: true
+      condition: succeededOrFailed()

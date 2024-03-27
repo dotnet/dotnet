@@ -55,7 +55,7 @@ GOTO :DONE
   echo "Usage..."
   echo "gen-buildsys-win.bat <path to top level CMakeLists.txt> <VSVersion> <Target Architecture>"
   echo "Specify the path to the top level CMake file"
-  echo "Specify the VSVersion to be used - VS2017 or VS2019"
+  echo "Specify the VSVersion to be used - 2022"
   echo "Specify the Target Architecture - AnyCPU, x86, x64, ARM, or ARM64."
   echo "Specify latest commit hash"
   echo "Specify the native version"

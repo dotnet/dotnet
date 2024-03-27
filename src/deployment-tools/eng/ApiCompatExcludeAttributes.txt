@@ -1,2 +1,0 @@
-T:System.CLSCompliantAttribute
-T:System.Diagnostics.CodeAnalysis.MemberNotNullAttribute

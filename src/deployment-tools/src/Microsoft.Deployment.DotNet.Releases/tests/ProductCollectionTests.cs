@@ -15,7 +15,7 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         [Fact]
         public async Task ItReturnsAllSupportPhases()
         {
-            ProductCollection products = await ProductCollection.GetFromFileAsync(@"data\\releases-index.json", false);
+            ProductCollection products = await ProductCollection.GetFromFileAsync(@"data/releases-index.json", false);
             IEnumerable<SupportPhase> supportPhases = products.GetSupportPhases();
 
             Assert.Equal(4, supportPhases.Count());
