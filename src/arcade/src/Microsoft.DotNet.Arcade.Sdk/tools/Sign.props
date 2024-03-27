@@ -6,10 +6,11 @@
     <EnableDefaultArtifacts>true</EnableDefaultArtifacts>
   </PropertyGroup>
 
-  <!-- Repo extension point to sign and/or publish. PublishFlatcontainer defaults to true for Artifact items. -->
+  <!-- Repo extension point to sign and/or publish. Artifacts are shipping and blobs by default. -->
   <ItemDefinitionGroup>
     <Artifact>
       <PublishFlatContainer>true</PublishFlatContainer>
+      <IsShipping>true</IsShipping>
     </Artifact>
   </ItemDefinitionGroup>
 

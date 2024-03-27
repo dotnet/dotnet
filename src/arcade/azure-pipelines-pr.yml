@@ -1,4 +1,21 @@
-trigger: none
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/6.0
+    - release/7.0
+    - release/8.0
+    exclude:
+    - .github/*
+    - Documentation/*
+    - CODE-OF-CONDUCT.md
+    - CONTRIBUTING.md
+    - LICENSE.TXT
+    - README.md
+    - SECURITY.md
+    - THIRD-PARTY-NOTICES.TXT
+
 pr:
   branches:
     include:

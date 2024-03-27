@@ -11,11 +11,6 @@
 
     Optional items:
       Artifact (with Metadata)          Path to the artifact to publish. Declare the item in Signing.props to sign and publish the artifact.
-        - ChecksumPath                    The destination path to generate a checksum file for the artifact. Set the `RelativeBlobPathParent`
-                                          property if the RelativeBlobPath for the generate checksum should be automatically set.
-        - PublishFlatContainer            By default artifacts are published to blob artifacts. Set to false to publish to package artifacts.
-        - RelativeBlobPath                The relative blob path when publishing to blob artifacts.
-        - IsShipping                      Set to true to mark a package as shipping when publishing to package artifacts. Defaults to false.
         - SkipPublish                     If true, skips publishing the artifact.
   -->
 
