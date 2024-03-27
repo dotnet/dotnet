@@ -68,6 +68,23 @@ must be applied via [patches](patches). See [below](#patches) for more info on p
 1. After the PR is merged to update a component, coordination is often needed in the darc dependency flows. The source-build-external update
 may need to flow in at the same time as the cooresponding changes in product repos which take a dependency on the new component version.
 
+### Updating an External Component Used in a Pre-SBE Repo
+
+A _Pre-SBE_ repo is a repo that is built before source-build-externals during the product build.
+
+> [!NOTE]
+>
+> You can view the current pre-SBE repos by running `dotnet msbuild repo-projects/source-build-externals.proj -target:ShowDependencyGraph /p:DotNetBuildSourceOnly=true` from the root of the VMR.
+
+When updating a component that is used in a Pre-SBE repo, please adhere to the following steps:
+
+1. **Add the updated component**: Include the component with the updated version as a new submodule in source-build-externals named `<component>-<new-version>` (this new submodule should be separate from any previously existing version's submodule). Rename the component's old submodule to `<component>-<old-version>`. Also rename the old component's patches directory in `patches/` (if it exists) and the project file in `repo-projects/` to match the submodule name of `<component>-<old-version>`.
+    - See [#276](https://github.com/dotnet/source-build-externals/pull/276) for an example.
+2. **Update post-SBE repositories (if applicable)**: If your dependency is also in a repo that is built after SBE, allow the updated version to flow to the post-SBE repository and update the post-SBE repository to use this new version.
+3. **Build and release**: Perform a build and release the artifacts to update the n-1 (previous) artifacts for the pre-SBE repository.
+4. **Update the pre-SBE repository**: Update the pre-SBE repository to use the new version of the component.
+5. **Clean up**: Remove the outdated component from source-build-externals, the outdated component's patches directory in `patches/`, if applicable, and the project file in `repo-projects`. Rename the updated component's submodule to `<component>`. Also rename any existing patches directory in `patches/` and the respective project file in `repo-projects/` to match the submodule name, `<component>`.
+
 ## Patches
 
 When creating/updating patches, it is desirable to backport the changes whenever feasible as this reduces
