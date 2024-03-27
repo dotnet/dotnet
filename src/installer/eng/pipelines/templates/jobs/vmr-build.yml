@@ -136,16 +136,10 @@ jobs:
       artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
 
     - output: pipelineArtifact
+      path: $(Build.ArtifactStagingDirectory)/publishing
+      artifact: $(Agent.JobName)_Artifacts
       displayName: Publish Artifacts
-      condition: and(succeededOrFailed(), eq(variables['hasAssets'], 'true'))
-      targetPath: $(sourcesPath)/artifacts/assets/Release/
-      artifactName: $(Agent.JobName)_Artifacts
-
-    - ${{ if ne(parameters.buildSourceOnly, 'true') }}:
-      - output: pipelineArtifact
-        displayName: Publish Packages
-        targetPath: $(sourcesPath)/artifacts/packages/Release/
-        artifactName: $(Agent.JobName)_Packages
+      condition: always()
 
     - ${{ if not(parameters.isBuiltFromVmr) }}:
       - output: pipelineArtifact
@@ -458,7 +452,3 @@ jobs:
         SourceFolder: $(sourcesPath)/artifacts/packages
         TargetFolder: $(Build.ArtifactStagingDirectory)/publishing/packages
       displayName: Copy packages to Artifact Staging Directory
-
-  - publish: $(Build.ArtifactStagingDirectory)/publishing
-    artifact: $(Agent.JobName)_Artifacts
-    displayName: Publish Artifacts
