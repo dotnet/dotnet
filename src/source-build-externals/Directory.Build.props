@@ -71,7 +71,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <SourceBuiltPackagesPath>$(ArtifactsPackagesDir)</SourceBuiltPackagesPath>
+    <SourceBuiltPackagesPath>$(ArtifactsShippingPackagesDir)</SourceBuiltPackagesPath>
     <LoggingDir>$(BaseOutputPath)logs/</LoggingDir>
   </PropertyGroup>
 
