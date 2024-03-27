@@ -1691,7 +1691,7 @@ internal sealed partial class PropertyGridView :
         try
         {
             object[] values = gridEntry.GetPropertyValueList();
-            object value = gridEntry.PropertyValue;
+            object? value = gridEntry.PropertyValue;
             string? textValue = gridEntry.TypeConverter.ConvertToString(gridEntry, value);
 
             if (values.Length == 0)
@@ -1779,7 +1779,7 @@ internal sealed partial class PropertyGridView :
             {
                 entries[depth] = gridEntry;
                 gridEntry = gridEntry.ParentGridEntry;
-                depth = gridEntry.PropertyDepth;
+                depth = gridEntry?.PropertyDepth ?? 0;
             }
 
             return new GridEntryCollection(entries, disposeItems: false);
@@ -2418,7 +2418,7 @@ internal sealed partial class PropertyGridView :
 
     private bool ProcessEnumUpAndDown(GridEntry entry, Keys keyCode, bool closeDropDown = true)
     {
-        object value = entry.PropertyValue;
+        object? value = entry.PropertyValue;
         object[] values = entry.GetPropertyValueList();
 
         for (int i = 0; i < values.Length; i++)
@@ -3040,7 +3040,7 @@ internal sealed partial class PropertyGridView :
         if ((rowMoveCurrent != TipRow || point.X != TipColumn) && !_flags.HasFlag(Flags.IsSplitterMove))
         {
             GridEntry? gridItem = GetGridEntryFromRow(rowMoveCurrent);
-            string tip = string.Empty;
+            string? tip = string.Empty;
             _tipInfo = -1;
 
             if (gridItem is not null)
@@ -3746,7 +3746,7 @@ internal sealed partial class PropertyGridView :
 
             try
             {
-                SetFlag(Flags.ResizableDropDown, gridEntry.UITypeEditor.IsDropDownResizable);
+                SetFlag(Flags.ResizableDropDown, gridEntry.UITypeEditor?.IsDropDownResizable ?? false);
                 gridEntry.EditPropertyValue(this);
             }
             finally
@@ -4886,7 +4886,7 @@ internal sealed partial class PropertyGridView :
         return result;
     }
 
-    private unsafe void ShowFormatExceptionMessage(string propertyName, Exception? ex)
+    private unsafe void ShowFormatExceptionMessage(string? propertyName, Exception? ex)
     {
         propertyName ??= "(unknown)";
 
@@ -4960,7 +4960,7 @@ internal sealed partial class PropertyGridView :
         }
     }
 
-    internal unsafe void ShowInvalidMessage(string propertyName, Exception? ex)
+    internal unsafe void ShowInvalidMessage(string? propertyName, Exception? ex)
     {
         propertyName ??= "(unknown)";
 
@@ -5099,7 +5099,7 @@ internal sealed partial class PropertyGridView :
         }
     }
 
-    private static void UpdateHelpAttributes(IHelpService helpService, GridEntry entry, bool addAsF1)
+    private static void UpdateHelpAttributes(IHelpService helpService, GridEntry? entry, bool addAsF1)
     {
         if (entry is null)
         {

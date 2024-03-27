@@ -235,7 +235,6 @@ public partial class Form : ContainerControl
         }
         set
         {
-            s_focusTracing.TraceVerbose($"Form::set_Active - {Name}");
             if ((_formState[s_formStateIsActive] != 0) != value)
             {
                 if (value)
@@ -678,7 +677,8 @@ public partial class Form : ContainerControl
             _formState[s_formStateBorderStyle] = (int)value;
             if (_formState[s_formStateSetClientSize] == 1 && !IsHandleCreated)
             {
-                ClientSize = ClientSize;
+                Size size = ClientSize;
+                ClientSize = size;
             }
 
             // Since setting the border style induces a call to SetBoundsCore, which,
@@ -2215,8 +2215,6 @@ public partial class Form : ContainerControl
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     protected override void SetVisibleCore(bool value)
     {
-        s_focusTracing.TraceVerbose($"Form::SetVisibleCore({value}) - {Name}");
-
         // If DialogResult.OK and the value == Visible then this code has been called either through
         // ShowDialog( ) or explicit Hide( ) by the user. So don't go through this function again.
         // This will avoid flashing during closing the dialog;
@@ -2798,24 +2796,15 @@ public partial class Form : ContainerControl
     [Obsolete("This method has been deprecated. Use the ApplyAutoScaling method instead.  https://go.microsoft.com/fwlink/?linkid=14202")]
     protected void ApplyAutoScaling()
     {
-        Debug.WriteLineIf(CompModSwitches.RichLayout.TraceInfo, "ApplyAutoScaling... ");
-        Debug.Indent();
-        // NOTE : This function is cloned in FormDocumentDesigner... remember to keep
-        //      : them in sync
-        //
+        // NOTE : This function is cloned in FormDocumentDesigner, remember to keep them in sync.
 
-        // We also don't do this if the property is empty.  Otherwise we will perform
-        // two GetAutoScaleBaseSize calls only to find that they returned the same
-        // value.
-        //
+        // We also don't do this if the property is empty. Otherwise we will perform two GetAutoScaleBaseSize
+        // calls only to find that they returned the same value.
         if (!_autoScaleBaseSize.IsEmpty)
         {
             Size baseVar = AutoScaleBaseSize;
-            Debug.WriteLineIf(CompModSwitches.RichLayout.TraceInfo, $"base  ={baseVar}");
             SizeF newVarF = GetAutoScaleSize(Font);
-            Debug.WriteLineIf(CompModSwitches.RichLayout.TraceInfo, $"new(f)={newVarF}");
             Size newVar = new((int)Math.Round(newVarF.Width), (int)Math.Round(newVarF.Height));
-            Debug.WriteLineIf(CompModSwitches.RichLayout.TraceInfo, $"new(i)={newVar}");
 
             // We save a significant amount of time by bailing early if there's no work to be done
             if (baseVar.Equals(newVar))
@@ -2825,16 +2814,11 @@ public partial class Form : ContainerControl
 
             float percY = AdjustScale(newVar.Height / ((float)baseVar.Height));
             float percX = AdjustScale(newVar.Width / ((float)baseVar.Width));
-            Debug.WriteLineIf(CompModSwitches.RichLayout.TraceInfo, $"scale={percX}, {percY}");
             Scale(percX, percY);
-            // This would ensure that we use the new
-            // font information to calculate the AutoScaleBaseSize. According to Triage
-            // this was decided to Fix in this version.
-            //
+
+            // This would ensure that we use the new font information to calculate the AutoScaleBaseSize.
             AutoScaleBaseSize = newVar;
         }
-
-        Debug.Unindent();
     }
 
     /// <summary>
@@ -3636,11 +3620,11 @@ public partial class Form : ContainerControl
     /// </summary>
     internal override bool CanProcessMnemonic()
     {
-#if DEBUG
-        TraceCanProcessMnemonic();
-#endif
         // If this is a Mdi child form, child controls should process mnemonics only if this is the active mdi child.
-        if (IsMdiChild && (_formStateEx[s_formStateExMnemonicProcessed] == 1 || this != MdiParentInternal.ActiveMdiChildInternal || WindowState == FormWindowState.Minimized))
+        if (IsMdiChild &&
+            (_formStateEx[s_formStateExMnemonicProcessed] == 1
+                || this != MdiParentInternal.ActiveMdiChildInternal
+                || WindowState == FormWindowState.Minimized))
         {
             return false;
         }
@@ -3917,7 +3901,7 @@ public partial class Form : ContainerControl
     }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    protected override void OnEnter(EventArgs e)
+    protected internal override void OnEnter(EventArgs e)
     {
         base.OnEnter(e);
 
@@ -4533,11 +4517,7 @@ public partial class Form : ContainerControl
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     protected override bool ProcessDialogChar(char charCode)
     {
-#if DEBUG
-        s_controlKeyboardRouting.TraceVerbose($"Form.ProcessDialogChar [{charCode}]");
-#endif
-        // If we're the top-level form or control, we need to do the mnemonic handling
-        //
+        // If we're the top-level form or control, we need to do the mnemonic handling.
         if (IsMdiChild && charCode != ' ')
         {
             if (ProcessMnemonic(charCode))
@@ -4906,8 +4886,6 @@ public partial class Form : ContainerControl
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected override void ScaleCore(float x, float y)
     {
-        Debug.WriteLineIf(CompModSwitches.RichLayout.TraceInfo, $"{GetType().Name}::ScaleCore({x}, {y})");
-
         using SuspendLayoutScope scope = new(this);
 
         // Get size values in advance to prevent one change from affecting another.

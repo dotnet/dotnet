@@ -3389,7 +3389,7 @@ public partial class ToolStrip : ScrollableControl, IArrangedElement, ISupportTo
         ClearAllSelections();
     }
 
-    protected override void OnLeave(EventArgs e)
+    protected internal override void OnLeave(EventArgs e)
     {
         base.OnLeave(e);
         if (!IsDropDown)
@@ -4591,7 +4591,8 @@ public partial class ToolStrip : ScrollableControl, IArrangedElement, ISupportTo
                 if (item != _currentlyActiveTooltipItem)
                 {
                     ToolTip.Hide(this);
-                    _currentlyActiveTooltipItem = item;
+                    if(!refresh)
+                        _currentlyActiveTooltipItem = item;
                 }
 
                 if (_currentlyActiveTooltipItem is not null && !GetToolStripState(STATE_DRAGGING))
