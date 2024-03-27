@@ -1,26 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+
     <MajorVersion>2</MajorVersion>
     <MinorVersion>0</MinorVersion>
     <PreReleaseVersionIteration>1</PreReleaseVersionIteration>
     <SuppressFinalPackageVersion>true</SuppressFinalPackageVersion>
-  </PropertyGroup>
 
-  <PropertyGroup>
     <!-- Always produce this package in the .NET unified product build so that it may flow to downstream consumers. -->
-    <IsPackable Condition="'$(TargetArchitecture)' == 'x86' OR '$(DotNetBuild)' == 'true'">true</IsPackable>
+    <IsPackable>true</IsPackable>
     <IsShipping>true</IsShipping>
     <PackageId>Microsoft.Deployment.DotNet.Releases</PackageId>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <LangVersion>9.0</LangVersion>
-    <RootNamespace>Microsoft.Deployment.DotNet.Releases</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EnableXlfLocalization>true</EnableXlfLocalization>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Description>
-      A client library for queyring the .NET releases JSON files.
-    </Description>
+    <Description>A client library for querying the .NET releases JSON files.</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,17 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="ReleasesResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ReleasesResources.resx</DependentUpon>
-    </Compile>
+    <EmbeddedResource Update="ReleasesResources.resx"
+                      GenerateSource="true" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="ReleasesResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ReleasesResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
 </Project>

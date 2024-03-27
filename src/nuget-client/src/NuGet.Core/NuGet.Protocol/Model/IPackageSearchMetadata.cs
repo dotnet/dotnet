@@ -27,7 +27,6 @@ namespace NuGet.Protocol.Core.Types
         Uri ReportAbuseUrl { get; }
         Uri PackageDetailsUrl { get; }
         DateTimeOffset? Published { get; }
-        IReadOnlyList<string> OwnersList { get; }
         string Owners { get; }
         bool RequireLicenseAcceptance { get; }
         string Summary { get; }

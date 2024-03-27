@@ -40,17 +40,9 @@ To build the whole repo:
 
 `build`
 
-To build just specific subsets, i.e. `clickonce`:
-
-`build -subset clickonce`
-
 After you've built binaries, you can create packages, by running the following:
 
 `build -pack`
-
-## Localization
-
-You can turn on localized builds via the `/p:LocalizedBuild=true` command line argument.
 
 ## Reporting security issues and security bugs
 

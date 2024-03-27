@@ -68,13 +68,13 @@ stages:
         filePath: $(DartLab.Path)\Scripts\VisualStudio\Installation\Get-VisualStudioSetupParameters.ps1
         arguments: -RunSettingsURI '$(runSettingsURI)' -InstallPath 'C:\Test\VisualStudio' -NoRestart -Quiet -Wait -OutVariableName 'VisualStudio.InstallationUnderTest.SetupParameters'
     
-    - template: \steps\powershell\execute-script.yml@DartLabTemplates
+    - template: '\steps\powershell\execute-script.yml@DartLabTemplates'
       parameters:
         displayName: Get Baseline Build ID using CloudBuild Session ID
         continueOnError: true
         filePath: $(DartLab.Path)\Scripts\AzureDevOps\Build\Get-BuildIdFromCloudBuildSessionID.ps1
         arguments: -ClientSecret (ConvertTo-SecureString '$(CloudBuild-ClientSecret)' -AsPlainText -Force) -ClientID '$(CloudBuild-ClientID)' -SessionID '${{ parameters.QBuildSessionId }}' -OutVariableName 'BaselineBuildID'
-    
+
     - task: PowerShell@2
       displayName: "Get Baseline build commit ids"
       name: "getbaselinebuildcommitids"
@@ -144,7 +144,7 @@ stages:
         inlineScript: |
           Get-ChildItem Env: | Sort-Object Name | Format-Table -Wrap -AutoSize
 
-    - task: DownloadBuildArtifacts@0
+    - task: DownloadPipelineArtifact@2
       displayName: "Download Build artifacts"
       inputs:
         artifactName: "VS15"
@@ -192,9 +192,6 @@ stages:
         mergeTestResults: "true"
         testRunTitle: "NuGet.Client EndToEnd Tests On Windows"
       condition: "succeededOrFailed()"
-
-    - task: ComponentGovernanceComponentDetection@0
-      displayName: 'Component Detection'
 
     - task: PowerShell@1
       displayName: "Initialize Git Commit Status on GitHub"

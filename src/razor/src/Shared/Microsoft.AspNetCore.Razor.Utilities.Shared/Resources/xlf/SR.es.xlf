@@ -17,14 +17,29 @@
         <target state="translated">El destino es demasiado corto.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Expected_condition_to_be_false">
+        <source>Expected condition to be false.</source>
+        <target state="new">Expected condition to be false.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Expected_condition_to_be_true">
+        <source>Expected condition to be true.</source>
+        <target state="new">Expected condition to be true.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="File_0_Line_1">
+        <source> File='{0}', Line={1}</source>
+        <target state="new"> File='{0}', Line={1}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Non_negative_number_required">
         <source>Non-negative number required.</source>
         <target state="translated">Se requiere un número no negativo.</target>
         <note />
       </trans-unit>
-      <trans-unit id="This_program_location_is_thought_to_be_unreachable_File_0_Line_1">
-        <source>This program location is thought to be unreachable. File='{0}', Line={1}</source>
-        <target state="translated">Se considera que esta ubicación del programa es inaccesible. Archivo=''{0}'', Línea={1}</target>
+      <trans-unit id="This_program_location_is_thought_to_be_unreachable">
+        <source>This program location is thought to be unreachable.</source>
+        <target state="new">This program location is thought to be unreachable.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_type_0">

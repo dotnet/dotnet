@@ -39,8 +39,6 @@ namespace NuGet.VisualStudio.Internal.Contracts
 
         public DateTimeOffset? Published => _packageSearchMetadata.Published;
 
-        public IReadOnlyList<string> OwnersList => _packageSearchMetadata.OwnersList;
-
         public string Owners => _packageSearchMetadata.Owners;
 
         public bool RequireLicenseAcceptance => _packageSearchMetadata.RequireLicenseAcceptance;

@@ -1,6 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project>
-   <PropertyGroup>
-      <PublishingVersion>3</PublishingVersion>
-   </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- This avoids creating VS.*.symbols.nupkg packages that are identical to the original package. -->
+    <AutoGenerateSymbolPackages>false</AutoGenerateSymbolPackages>
+    <!-- Set PlatformName to TargetArchitecture to create unique build manifest files. -->
+    <PlatformName Condition="'$(TargetArchitecture)' != ''">$(TargetArchitecture)</PlatformName>
+  </PropertyGroup>
+
 </Project>

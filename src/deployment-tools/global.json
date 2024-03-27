@@ -5,19 +5,10 @@
     "rollForward": "major"
   },
   "tools": {
-    "dotnet": "9.0.100-preview.1.24101.2",
-    "runtimes": {
-      "dotnet": [
-        "8.0.0"
-      ]
-    }
-  },
-  "native-tools": {
-    "cmake": "3.14.5",
-    "python3": "3.7.1"
+    "dotnet": "9.0.100-preview.1.24101.2"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "9.0.0-beta.24165.6",
+    "Microsoft.DotNet.Arcade.Sdk": "9.0.0-beta.24172.1",
     "Microsoft.Build.NoTargets": "3.7.0",
     "Microsoft.Build.Traversal": "3.4.0"
   }

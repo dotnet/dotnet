@@ -59,7 +59,7 @@ namespace Microsoft.Deployment.DotNet.Releases.Tests
         [Fact]
         public async Task ItCanCreateASingleRelease()
         {
-            var releases = await Product.GetReleasesAsync(@"data\5.0\releases.json");
+            var releases = await Product.GetReleasesAsync(Path.Combine("data", "5.0", "releases.json"));
 
             Assert.Equal(new ReleaseVersion("5.0.17"), releases[0].Version);
             Assert.Null(releases[0].Product);

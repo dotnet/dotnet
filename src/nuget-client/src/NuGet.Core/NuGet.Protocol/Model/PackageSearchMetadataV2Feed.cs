@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -48,7 +49,6 @@ namespace NuGet.Protocol
             Description = package.Description;
             IconUrl = GetUriSafe(package.IconUrl);
             LicenseUrl = GetUriSafe(package.LicenseUrl);
-            _ownersList = (IReadOnlyList<string>)package.Owners;
             Owners = metadataCache.GetString(string.Join(", ", package.Owners));
             PackageId = package.Id;
             ProjectUrl = GetUriSafe(package.ProjectUrl);
@@ -84,9 +84,6 @@ namespace NuGet.Protocol
         public PackageIdentity Identity => new PackageIdentity(PackageId, Version);
 
         public Uri LicenseUrl { get; private set; }
-
-        private IReadOnlyList<string> _ownersList;
-        public IReadOnlyList<string> OwnersList => _ownersList;
 
         public string Owners { get; private set; }
 

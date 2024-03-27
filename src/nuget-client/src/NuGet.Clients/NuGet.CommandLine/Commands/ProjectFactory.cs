@@ -761,7 +761,9 @@ namespace NuGet.CommandLine
 
                 projectFactory.InitializeProperties(builder);
 
+#pragma warning disable CS0612 // Type or member is obsolete
                 if (!projectFactory.ProcessJsonFile(builder, project.DirectoryPath, null))
+#pragma warning restore CS0612 // Type or member is obsolete
                 {
                     projectFactory.ProcessNuspec(builder, null);
                 }

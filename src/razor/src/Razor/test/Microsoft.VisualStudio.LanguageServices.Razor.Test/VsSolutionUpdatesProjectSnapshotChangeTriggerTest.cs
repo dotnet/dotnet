@@ -195,7 +195,8 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
             updater.ProjectRemoved(s_someProject.Key);
         });
 
-        var update = Assert.Single(workspaceStateGenerator.UpdateQueue);
+        var update = Assert.Single(workspaceStateGenerator.Updates);
+        Assert.NotNull(update.WorkspaceProject);
         Assert.Equal(update.WorkspaceProject.Id, _someWorkspaceProject.Id);
         Assert.Same(expectedProjectSnapshot, update.ProjectSnapshot);
         Assert.True(update.CancellationToken.IsCancellationRequested);
@@ -240,7 +241,8 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         await testAccessor.OnProjectBuiltAsync(vsHierarchyMock.Object, DisposalToken);
 
         // Assert
-        var update = Assert.Single(workspaceStateGenerator.UpdateQueue);
+        var update = Assert.Single(workspaceStateGenerator.Updates);
+        Assert.NotNull(update.WorkspaceProject);
         Assert.Equal(update.WorkspaceProject.Id, _someWorkspaceProject.Id);
         Assert.Same(expectedProjectSnapshot, update.ProjectSnapshot);
     }
@@ -285,7 +287,7 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         await testAccessor.OnProjectBuiltAsync(StrictMock.Of<IVsHierarchy>(), DisposalToken);
 
         // Assert
-        Assert.Empty(workspaceStateGenerator.UpdateQueue);
+        Assert.Empty(workspaceStateGenerator.Updates);
     }
 
     [UIFact]
@@ -322,6 +324,6 @@ public class VsSolutionUpdatesProjectSnapshotChangeTriggerTest : VisualStudioTes
         await testAccessor.OnProjectBuiltAsync(StrictMock.Of<IVsHierarchy>(), DisposalToken);
 
         // Assert
-        Assert.Empty(workspaceStateGenerator.UpdateQueue);
+        Assert.Empty(workspaceStateGenerator.Updates);
     }
 }

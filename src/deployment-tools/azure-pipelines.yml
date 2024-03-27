@@ -17,14 +17,6 @@ name: $(Date:yyyyMMdd)$(Rev:.r)
 variables:
   - name: TeamName
     value: dotnet-core-acquisition
-  # Skip Running CI tests
-  - name: SkipTests
-    value: false
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    # Set Official Build Id
-    - name: OfficialBuildId
-      value: $(Build.BuildNumber)
-
   # Produce test-signed build for PR and Public builds
   - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
     - name: SignType
@@ -50,59 +42,59 @@ stages:
   # Windows x64
   - template: /eng/jobs/windows-build.yml
     parameters:
-      name: Windows_x64
-      publishRidAgnosticPackages: true
+      name: win_x64
+      displayName: win-x64
       targetArchitecture: x64
       codeql: true
 
   # Windows x86
   - template: /eng/jobs/windows-build.yml
     parameters:
-      name: Windows_x86
+      name: win_x86
+      displayName: win-x86
       targetArchitecture: x86
 
   # Windows arm64
   - template: /eng/jobs/windows-build.yml
     parameters:
-      name: Windows_arm64
+      name: win_arm64
+      displayName: win-arm64
       targetArchitecture: arm64
   
   # Source-build
   - template: /eng/common/templates/jobs/source-build.yml
+    parameters:
+        platform:
+          name: 'Managed'
+          container: 'mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9'
 
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-  - stage: PrepareForPublish
-    displayName: Prepare for Publish
-    dependsOn: Build
-    jobs:
-    # Prep artifacts: sign them and upload pipeline artifacts expected by stages-based publishing.
-    - template: /eng/jobs/prepare-signed-artifacts.yml
-      parameters:
-        PublishRidAgnosticPackagesFromJobName: Windows_x64
-    # Publish to Build Asset Registry in order to generate the ReleaseConfigs artifact.
+  # Publish to Build Asset Registry in order to generate the ReleaseConfigs artifact.
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
     - template: /eng/common/templates/job/publish-build-assets.yml
       parameters:
         publishUsingPipelines: true
-        dependsOn: PrepareSignedArtifacts
+        publishAssetsImmediately: true
+        dependsOn:
+          - win_x64
+          - win_x86
+          - win_arm64
+          - Source_Build_Managed
         pool:
           name: NetCore1ESPool-Internal
-          demands: ImageOverride -equals windows.vs2019.amd64
+          demands: ImageOverride -equals windows.vs2022.amd64
 
 # Stages-based publishing entry point
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
   - template: /eng/common/templates/post-build/post-build.yml
     parameters:
-      validateDependsOn:
-      - PrepareForPublish
-      publishingInfraVersion: 3
       enableSymbolValidation: false
       enableSigningValidation: false
       enableNugetValidation: false
       enableSourceLinkValidation: false
-      publishInstallersAndChecksums: true
+      publishAssetsImmediately: true
       # Enable SDL validation, passing through values from the 'deployment-tools-sdl-validation' group.
       SDLValidationParameters:
-        enable: true
+        enable: false
         params: >-
           -SourceToolsList @("policheck","credscan")
           -ArtifactToolsList @("binskim")

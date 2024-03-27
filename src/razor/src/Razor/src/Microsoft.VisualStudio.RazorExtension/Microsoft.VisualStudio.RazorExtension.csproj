@@ -282,7 +282,6 @@
   <!-- Include our Razor package dependency dlls in our extension -->
   <ItemGroup>
     <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.Razor.Compiler.dll" />
-    <RazorNgendVSIXSourceItem Include="$(OutputPath)Microsoft.CommonLanguageServerProtocol.Framework.dll" />
 
     <VSIXSourceItem Include="@(RazorNgendVSIXSourceItem)">
       <Ngen>$(Ngen)</Ngen>

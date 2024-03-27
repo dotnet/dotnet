@@ -219,12 +219,12 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
     }
 
     // Internal for testing
-    internal TestAccessor GetTestAccessor()
+    internal new TestAccessor GetTestAccessor()
     {
         return new TestAccessor(this);
     }
 
-    internal class TestAccessor
+    internal new class TestAccessor
     {
         private RazorLanguageServer _server;
 
