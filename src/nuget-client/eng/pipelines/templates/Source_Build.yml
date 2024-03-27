@@ -7,18 +7,6 @@ steps:
       ./eng/source-build/build.sh
   condition: "always()"
 
-- task: PublishBuildArtifacts@1
-  displayName: Upload source-build log
-  condition: "or(failed(), eq(variables['System.debug'], 'true'))"
-  continueOnError: true
-  inputs:
-    PathToPublish: "artifacts/sb/log/source-build.binlog"
-    ArtifactName: "Source-build log"
-    ArtifactType: Container
-
-- task: ComponentGovernanceComponentDetection@0
-  displayName: 'Component Detection'
-
 - task: PowerShell@2
   displayName: "Initialize Git Commit Status on GitHub"
   inputs:

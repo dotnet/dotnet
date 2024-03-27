@@ -125,8 +125,8 @@ stages:
             inlineScript: |
               Get-ChildItem Env: | Sort-Object Name | Format-Table -Wrap -AutoSize
 
-        - task: DownloadBuildArtifacts@0
-          displayName: "Download Build artifacts"
+        - task: DownloadPipelineArtifact@0
+          displayName: "Download Pipeline artifacts"
           inputs:
             artifactName: "VS15"
             downloadPath: "$(Build.Repository.LocalPath)/artifacts"
@@ -154,6 +154,3 @@ stages:
               . $(System.DefaultWorkingDirectory)\\artifacts\\EndToEnd\\scripts\\PostGitCommitStatus.ps1
               SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -VstsPersonalAccessToken $(System.AccessToken) -CommitSha $(Build.SourceVersion) -TestName "$(GitHubStatusName)"
           condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"
-
-        - task: ComponentGovernanceComponentDetection@0
-          displayName: 'Component Detection'

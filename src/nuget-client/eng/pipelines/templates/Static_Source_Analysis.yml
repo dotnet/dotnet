@@ -71,9 +71,6 @@ steps:
   continueOnError: ${{ parameters.isOfficialBuild }}
   condition: succeededOrFailed()
 
-- task: ComponentGovernanceComponentDetection@0
-  displayName: 'Component Detection'
-
 - script: dotnet format whitespace --verify-no-changes NuGet.sln
   name: dotnetFormatWhitespace
   displayName: Check whitespace formatting

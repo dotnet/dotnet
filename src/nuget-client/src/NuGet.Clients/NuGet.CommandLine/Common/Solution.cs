@@ -135,7 +135,7 @@ namespace NuGet.Common
 
                 try
                 {
-                    var projectShouldBuild = !isSolutionFilter || projectShouldBuildMethod.Invoke(solutionFile, new object[] { project.RelativePath });
+                    var projectShouldBuild = !isSolutionFilter || (bool)projectShouldBuildMethod.Invoke(solutionFile, new object[] { project.RelativePath });
                     if (projectShouldBuild)
                     {
                         var relativePath = project.RelativePath.Replace('\\', Path.DirectorySeparatorChar);

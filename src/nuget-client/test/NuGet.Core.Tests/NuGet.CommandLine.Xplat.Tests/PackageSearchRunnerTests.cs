@@ -8,7 +8,6 @@ using System.IO;
 using NuGet.Configuration;
 using NuGet.CommandLine.XPlat;
 using System;
-using System.Linq;
 using System.Globalization;
 using System.Threading;
 
@@ -36,35 +35,12 @@ namespace NuGet.CommandLine.Xplat.Tests
                 configFileName: null,
                 machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
-            var expectedValues = new List<string>
-            {
-                "| Package ID           ",
-                "| Latest Version ",
-                "| Owners            ",
-                "| Total Downloads ",
-                "|----------------------",
-                "|----------------",
-                "|-------------------",
-                "|-----------------",
-                "| ",
-                "",
-                "Fake.Newtonsoft.",
-                "Json",
-                "",
-                " ",
-                "| 12.0.3         ",
-                "| James Newton-King ",
-                "| 531,607,259     ",
-            };
-
-            var notExpectedValues = new List<string>
-            {
-                "| Vulnerable ",
-                "| Deprecation                      ",
-                "| Project URL   ",
-                "| Description     ",
-            };
-
+            var expectedDefaultColoredMessage =
+                "| Package ID           | Latest Version | Owners            | Total Downloads |" +
+                "| -------------------- | -------------- | ----------------- | --------------- |" +
+                "| Fake.Newtonsoft. | 12.0.3         | James Newton-King | 531,607,259     |" +
+                "| -------------------- | -------------- | ----------------- | --------------- |";
+            var expectedRedColoredMessage = "Json";
             PackageSearchArgs packageSearchArgs = new()
             {
                 Skip = skip,
@@ -85,17 +61,8 @@ namespace NuGet.CommandLine.Xplat.Tests
                 cancellationToken: System.Threading.CancellationToken.None);
 
             // Assert
-            foreach (var expected in expectedValues)
-            {
-                Assert.Contains(expected, ColoredMessage.Select(tuple => tuple.Item1));
-            }
-
-            foreach (var notExpected in notExpectedValues)
-            {
-                Assert.DoesNotContain(notExpected, ColoredMessage.Select(tuple => tuple.Item1));
-            }
-
-            Assert.Contains(Tuple.Create("Json", ConsoleColor.Red), ColoredMessage);
+            Assert.Equal(expectedDefaultColoredMessage, ColoredMessage[System.Console.ForegroundColor]);
+            Assert.Equal(expectedRedColoredMessage, ColoredMessage[ConsoleColor.Red]);
         }
 
         [Theory]
@@ -111,31 +78,12 @@ namespace NuGet.CommandLine.Xplat.Tests
                 configFileName: null,
                 machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
-            var expectedValues = new List<string>
-            {
-                "| Package ID           ",
-                "| Latest Version ",
-                "|----------------------",
-                "|----------------",
-                "| ",
-                "",
-                "Fake.Newtonsoft.",
-                "Json",
-                "",
-                " ",
-                "| 12.0.3         ",
-            };
-
-            var notExpectedValues = new List<string>
-            {
-                "| Owners            ",
-                "| Total Downloads ",
-                "| Vulnerable ",
-                "| Deprecation                      ",
-                "| Project URL   ",
-                "| Description     ",
-            };
-
+            var expectedDefaultColorMessage =
+                "| Package ID           | Latest Version |" +
+                "| -------------------- | -------------- |" +
+                "| Fake.Newtonsoft. | 12.0.3         |" +
+                "| -------------------- | -------------- |";
+            var expectedRedColorMessage = "Json";
             PackageSearchArgs packageSearchArgs = new()
             {
                 Skip = skip,
@@ -156,17 +104,9 @@ namespace NuGet.CommandLine.Xplat.Tests
                 cancellationToken: System.Threading.CancellationToken.None);
 
             // Assert
-            foreach (var expected in expectedValues)
-            {
-                Assert.Contains(expected, ColoredMessage.Select(tuple => tuple.Item1));
-            }
 
-            foreach (var notExpected in notExpectedValues)
-            {
-                Assert.DoesNotContain(notExpected, ColoredMessage.Select(tuple => tuple.Item1));
-            }
-
-            Assert.Contains(Tuple.Create("Json", ConsoleColor.Red), ColoredMessage);
+            Assert.Equal(expectedDefaultColorMessage, ColoredMessage[System.Console.ForegroundColor]);
+            Assert.Equal(expectedRedColorMessage, ColoredMessage[ConsoleColor.Red]);
         }
 
         [Theory]
@@ -182,37 +122,12 @@ namespace NuGet.CommandLine.Xplat.Tests
                 configFileName: null,
                 machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
-            var expectedValues = new List<string>
-                {
-                    "| Package ID           ",
-                    "| Latest Version ",
-                    "| Owners            ",
-                    "| Total Downloads ",
-                    "| Vulnerable ",
-                    "| Deprecation                      ",
-                    "| Project URL   ",
-                    "| Description     ",
-                    "|----------------------",
-                    "|----------------",
-                    "|-------------------",
-                    "|-----------------",
-                    "|------------",
-                    "|----------------------------------",
-                    "|---------------",
-                    "|-----------------",
-                    " ",
-                    "Fake.Newtonsoft.",
-                    " ",
-                    " ",
-                    "| 12.0.3         ",
-                    "| James Newton-King ",
-                    "| 531,607,259     ",
-                    "| N/A        ",
-                    "| This package has been deprecated ",
-                    "| http://myuri/ ",
-                    "| My description. "
-                };
-
+            var expectedDefaultColorMessage =
+                "| Package ID           | Latest Version | Owners            | Total Downloads | Vulnerable | Deprecation                      | Project URL   | Description     |" +
+                "| -------------------- | -------------- | ----------------- | --------------- | ---------- | -------------------------------- | ------------- | --------------- |" +
+                "| Fake.Newtonsoft. | 12.0.3         | James Newton-King | 531,607,259     | N/A        | This package has been deprecated | http://myuri/ | My description. |" +
+                "| -------------------- | -------------- | ----------------- | --------------- | ---------- | -------------------------------- | ------------- | --------------- |";
+            var expectedRedColorMessage = "Json";
             PackageSearchArgs packageSearchArgs = new()
             {
                 Skip = skip,
@@ -233,12 +148,9 @@ namespace NuGet.CommandLine.Xplat.Tests
                 cancellationToken: System.Threading.CancellationToken.None);
 
             // Assert
-            foreach (var expected in expectedValues)
-            {
-                Assert.Contains(expected, ColoredMessage.Select(tuple => tuple.Item1));
-            }
 
-            Assert.Contains(Tuple.Create("Json", ConsoleColor.Red), ColoredMessage);
+            Assert.Equal(expectedDefaultColorMessage, ColoredMessage[System.Console.ForegroundColor]);
+            Assert.Equal(expectedRedColorMessage, ColoredMessage[ConsoleColor.Red]);
         }
 
         [Theory]
@@ -364,21 +276,12 @@ namespace NuGet.CommandLine.Xplat.Tests
                 configFileName: null,
                 machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
-            var expectedValues = new List<string>
-            {
-                "| Package ID      ",
-                "| Version ",
-                "| Owners ",
-                "| Total Downloads ",
-                "|-----------------",
-                "|---------",
-                "|--------",
-                "|-----------------",
-                "| 13.0.3  ",
-                "|        ",
-                "| N/A             ",
-            };
-
+            var expectedDefaultColorMessage =
+               "| Package ID           | Version | Owners            | Total Downloads |" +
+               "| -------------------- | ------- | ----------------- | --------------- |" +
+               "|  | 12.0.3  | James Newton-King | 531,607,259     |" +
+               "| -------------------- | ------- | ----------------- | --------------- |";
+            var expectedRedColorMessage = "Fake.Newtonsoft.Json";
             PackageSearchArgs packageSearchArgs = new()
             {
                 Skip = 0,
@@ -386,7 +289,7 @@ namespace NuGet.CommandLine.Xplat.Tests
                 Prerelease = false,
                 ExactMatch = true,
                 Logger = GetLogger(),
-                SearchTerm = "Newtonsoft.Json",
+                SearchTerm = "Fake.Newtonsoft.Json",
                 Sources = new List<string> { $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json" }
             };
 
@@ -397,12 +300,9 @@ namespace NuGet.CommandLine.Xplat.Tests
                 cancellationToken: System.Threading.CancellationToken.None);
 
             // Assert
-            foreach (var expected in expectedValues)
-            {
-                Assert.Contains(expected, ColoredMessage.Select(tuple => tuple.Item1));
-            }
 
-            Assert.Contains(Tuple.Create("Newtonsoft.Json", ConsoleColor.Red), ColoredMessage);
+            Assert.Equal(expectedDefaultColorMessage, ColoredMessage[System.Console.ForegroundColor]);
+            Assert.Equal(expectedRedColorMessage, ColoredMessage[ConsoleColor.Red]);
         }
 
         [Fact]
