@@ -1,13 +1,3 @@
-variables:
-  - template: /eng/common-variables.yml
-  - template: /eng/common/templates/variables/pool-providers.yml
-  - name: Build.Repository.Clean
-    value: true
-  - name: CheckNuGetSizesScript
-    value: >-
-      $nupkgs_large=(Get-ChildItem artifacts/packages/$(_BuildConfig)/Shipping -recurse -include "*.nupkg" | Select-Object Name,Length | Where-Object { $_.Length -gt 250*1MB });
-      if ($nupkgs_large.Length -gt 0) { Write-Error "NuGet size exceeds 250MiB: $($nupkgs_large | Format-Table | Out-String)"; exit 1 }
-
 trigger:
   batch: true
   branches:
@@ -21,6 +11,14 @@ pr:
     - main
     - release/*
 
+variables:
+  - template: /eng/common-variables.yml
+  - template: /eng/common/templates/variables/pool-providers.yml
+  - name: CheckNuGetSizesScript
+    value: >-
+      $nupkgs_large=(Get-ChildItem artifacts/packages/$(_BuildConfig)/Shipping -recurse -include "*.nupkg" | Select-Object Name,Length | Where-Object { $_.Length -gt 250*1MB });
+      if ($nupkgs_large.Length -gt 0) { Write-Error "NuGet size exceeds 250MiB: $($nupkgs_large | Format-Table | Out-String)"; exit 1 }
+
 stages:
 - stage: build
   displayName: Build
@@ -32,8 +30,6 @@ stages:
       enablePublishUsingPipelines: true
       enableMicrobuild: true
       enableSourceBuild: true
-      variables:
-        - _BuildConfig: Release
       jobs:
 
       ############ macOS BUILD ############
@@ -114,12 +110,10 @@ stages:
               assetManifestOS: win
               assetManifestPlatform: x64
               archflag: -arch x64
-              SkipPublishWorkloads: true
             arm64:
               assetManifestOS: win
               assetManifestPlatform: arm64
               archflag: -arch arm64
-              SkipPublishWorkloads: true
         steps:
         - script: |
             .\build.cmd $(archflag) -restore -build -pack -ci -configuration $(_BuildConfig) -sign -publish /p:SkipWorkloads=true /p:PackageRID=$(assetManifestOS)-$(assetManifestPlatform) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping $(_InternalBuildArgs)
@@ -158,7 +152,6 @@ stages:
               assetManifestOS: win
               assetManifestPlatform: x64
               archflag: -arch x64
-              SkipPublishWorkloads: false
         steps:
         - task: DownloadPipelineArtifact@2
           inputs:
@@ -208,6 +201,5 @@ stages:
             targetPath: $(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)/Insertion/
             artifactName: 'Workloads'
           continueOnError: true
-          condition: ne(variables['SkipPublishWorkloads'], 'true')
         - powershell: $(CheckNuGetSizesScript)
           displayName: Check NuGet sizes

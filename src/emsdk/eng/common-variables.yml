@@ -12,6 +12,8 @@ variables:
     value: ''
   - name: _InternalPublishArg
     value: ''
+  - name: _BuildConfig
+    value: Release
   - ${{ if or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), in(variables['Build.Reason'], 'Manual')) }}:
     - name: PostBuildSign
       value: false
