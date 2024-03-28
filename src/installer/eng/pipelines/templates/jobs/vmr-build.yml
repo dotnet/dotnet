@@ -424,6 +424,13 @@ jobs:
       continueOnError: true
       condition: succeededOrFailed()
 
+  - ${{ if or(ne(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'PullRequest')) }}:
+    - publish: $(Build.StagingDirectory)/BuildLogs
+      artifact: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
+      displayName: Publish BuildLogs
+      continueOnError: true
+      condition: always()
+
   # Only upload test results if enabled
   - ${{ if eq(parameters.runTests, 'True') }}:
     - task: PublishTestResults@2
@@ -454,3 +461,10 @@ jobs:
         SourceFolder: $(sourcesPath)/artifacts/packages
         TargetFolder: $(Build.ArtifactStagingDirectory)/publishing/packages
       displayName: Copy packages to Artifact Staging Directory
+
+  - ${{ if or(ne(variables['System.TeamProject'], 'internal'), eq(variables['Build.Reason'], 'PullRequest')) }}:
+    - publish: $(Build.ArtifactStagingDirectory)/publishing
+      artifact: $(Agent.JobName)_Artifacts
+      displayName: Publish Artifacts
+      condition: succeededOrFailed()
+      continueOnError: true
