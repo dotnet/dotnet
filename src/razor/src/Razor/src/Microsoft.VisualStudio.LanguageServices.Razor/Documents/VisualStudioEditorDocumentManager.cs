@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor;
@@ -28,11 +29,12 @@ internal sealed class VisualStudioEditorDocumentManager(
     ProjectSnapshotManagerDispatcher dispatcher,
     JoinableTaskContext joinableTaskContext) : EditorDocumentManager(fileChangeTrackerFactory, dispatcher, joinableTaskContext)
 {
-    private readonly IVsRunningDocumentTable4 _runningDocumentTable = serviceProvider.GetService<SVsRunningDocumentTable, IVsRunningDocumentTable4>(throwOnFailure: true).AssumeNotNull();
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly IVsEditorAdaptersFactoryService _editorAdaptersFactory = editorAdaptersFactory;
 
     private readonly Dictionary<uint, List<DocumentKey>> _documentsByCookie = [];
     private readonly Dictionary<DocumentKey, uint> _cookiesByDocument = [];
+    private IVsRunningDocumentTable4? _runningDocumentTable;
     private bool _advised;
 
     protected override ITextBuffer? GetTextBufferForOpenDocument(string filePath)
@@ -219,9 +221,14 @@ internal sealed class VisualStudioEditorDocumentManager(
         }
     }
 
+    [MemberNotNull(nameof(_runningDocumentTable))]
     private void EnsureDocumentTableAdvised()
     {
         JoinableTaskContext.AssertUIThread();
+
+        // Note: Because it is a COM interface, we defer retrieving IVsRunningDocumentTable until
+        // now to avoid implicitly marshalling to the UI thread, which can deadlock.
+        _runningDocumentTable ??= _serviceProvider.GetService<SVsRunningDocumentTable, IVsRunningDocumentTable4>(throwOnFailure: true).AssumeNotNull();
 
         if (!_advised)
         {
