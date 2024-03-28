@@ -20,7 +20,7 @@ using Microsoft.VisualStudio.LanguageServerClient.Razor.Extensions;
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Cohost;
 
 [Shared]
-[RazorLanguageServerEndpoint(Methods.TextDocumentSemanticTokensRangeName)]
+[RazorMethod(Methods.TextDocumentSemanticTokensRangeName)]
 [ExportRazorStatelessLspService(typeof(CohostSemanticTokensRangeEndpoint))]
 [Export(typeof(ICapabilitiesProvider))]
 [method: ImportingConstructor]

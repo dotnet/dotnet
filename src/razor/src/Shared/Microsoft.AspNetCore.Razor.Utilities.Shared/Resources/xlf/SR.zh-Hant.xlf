@@ -39,7 +39,7 @@
       </trans-unit>
       <trans-unit id="This_program_location_is_thought_to_be_unreachable">
         <source>This program location is thought to be unreachable.</source>
-        <target state="new">This program location is thought to be unreachable.</target>
+        <target state="translated">此程式位置被認為無法連接。</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_type_0">
