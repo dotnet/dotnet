@@ -42,6 +42,10 @@ parameters:
   displayName: "Run SDL validation"
   type: boolean
   default: False
+- name: SkipTests
+  displayName: "Skip tests"
+  type: boolean
+  default: False
 
 - name: otherOsPools
   type: object
@@ -165,26 +169,26 @@ extends:
                 /p:SourceBranchName=$(Build.SourceBranchName)
               name: Build
               displayName: Build
+            - ${{ if eq(parameters.SkipTests, False) }}:
+              # -ci is allowing to import some environment variables and some required configurations
+              # -nobl avoid overwriting binlog of the main Build
+              - script: Test.cmd
+                  -configuration Release
+                  -ci
+                  -nobl
+                  -integrationTest
+                  -performanceTest
+                name: Test
+                displayName: Test
 
-            # -ci is allowing to import some environment variables and some required configurations
-            # -nobl avoid overwriting binlog of the main Build
-            - script: Test.cmd
-                -configuration Release
-                -ci
-                -nobl
-                -integrationTest
-                -performanceTest
-              name: Test
-              displayName: Test
-
-            # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
-            # through the console or trx
-            - task: 1ES.PublishBuildArtifacts@1
-              displayName: 'Publish Test Results folders'
-              inputs:
-                PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
-                ArtifactName: TestResults
-              condition: failed()
+              # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
+              # through the console or trx
+              - task: 1ES.PublishBuildArtifacts@1
+                displayName: 'Publish Test Results folders'
+                inputs:
+                  PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
+                  ArtifactName: TestResults
+                condition: failed()
 
             - task: 1ES.PublishBuildArtifacts@1
               displayName: 'Publish VSSetup'
@@ -221,23 +225,24 @@ extends:
                 inputs:
                   artifactName: PackageArtifacts
                   targetPath: '$(Build.SourcesDirectory)/artifacts/packages/Release/Shipping'
+              
+              - ${{ if eq(parameters.SkipTests, False) }}:
+                - script: ./test.sh
+                    --configuration Release
+                    --ci
+                    --integrationTest
+                    --performanceTest
+                  name: Test
+                  displayName: Test
 
-              - script: ./test.sh
-                  --configuration Release
-                  --ci
-                  --integrationTest
-                  --performanceTest
-                name: Test
-                displayName: Test
-
-              # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
-              # through the console or trx
-              - task: 1ES.PublishBuildArtifacts@1
-                displayName: 'Publish Test Results folders'
-                inputs:
-                  PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
-                  ArtifactName: TestResults
-                condition: failed()
+                # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
+                # through the console or trx
+                - task: 1ES.PublishBuildArtifacts@1
+                  displayName: 'Publish Test Results folders'
+                  inputs:
+                    PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
+                    ArtifactName: TestResults
+                  condition: failed()
 
           - job: Publish
             dependsOn: 

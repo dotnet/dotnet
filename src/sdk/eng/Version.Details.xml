@@ -63,28 +63,28 @@
       <Sha>5b7beea1daa64d283d62d52a0027b13ee9484ff6</Sha>
       <SourceBuild RepoName="emsdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.10.0-preview-24177-05">
+    <Dependency Name="Microsoft.Build" Version="17.11.0-preview-24178-06">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>6064d9c8fe7beb06ffc10f8ff27ce967039a2c0d</Sha>
+      <Sha>fc88a31e448201028ca50f890fea3a9878d7c534</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Localization" Version="17.10.0-preview-24177-05">
+    <Dependency Name="Microsoft.Build.Localization" Version="17.11.0-preview-24178-06">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>6064d9c8fe7beb06ffc10f8ff27ce967039a2c0d</Sha>
+      <Sha>fc88a31e448201028ca50f890fea3a9878d7c534</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.10.0-preview-24177-05">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.11.0-preview-24178-06">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>6064d9c8fe7beb06ffc10f8ff27ce967039a2c0d</Sha>
+      <Sha>fc88a31e448201028ca50f890fea3a9878d7c534</Sha>
       <SourceBuild RepoName="msbuild" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.8.300-beta.24177.2">
+    <Dependency Name="Microsoft.FSharp.Compiler" Version="12.8.300-beta.24178.1">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>483e55164135bd7360df637de12c803fd9e861a5</Sha>
+      <Sha>20b263ab495669df94b309fce12584b207dc765c</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="8.0.300-beta.24177.2">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.fsharp" Version="8.0.300-beta.24178.1">
       <Uri>https://github.com/dotnet/fsharp</Uri>
-      <Sha>483e55164135bd7360df637de12c803fd9e861a5</Sha>
+      <Sha>20b263ab495669df94b309fce12584b207dc765c</Sha>
       <SourceBuild RepoName="fsharp" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.11.0-1.24177.10">
@@ -197,22 +197,22 @@
       <Uri>https://github.com/nuget/nuget.client</Uri>
       <Sha>fb50d1a45ed10b39b5f335bc3a4bdcaea9b951cf</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.10.0-preview-24170-01">
+    <Dependency Name="Microsoft.NET.Test.Sdk" Version="17.10.0-release-24177-07">
       <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>6957756d70d6ade74e239a38ad709db5cb39fe0d</Sha>
+      <Sha>1cd0d8998250d36c95ed65a76304ef5d1b33e98f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TestPlatform.CLI" Version="17.10.0-preview-24170-01">
+    <Dependency Name="Microsoft.TestPlatform.CLI" Version="17.10.0-release-24177-07">
       <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>6957756d70d6ade74e239a38ad709db5cb39fe0d</Sha>
+      <Sha>1cd0d8998250d36c95ed65a76304ef5d1b33e98f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TestPlatform.Build" Version="17.10.0-preview-24170-01">
+    <Dependency Name="Microsoft.TestPlatform.Build" Version="17.10.0-release-24177-07">
       <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>6957756d70d6ade74e239a38ad709db5cb39fe0d</Sha>
+      <Sha>1cd0d8998250d36c95ed65a76304ef5d1b33e98f</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.vstest" Version="17.10.0-preview-24170-01">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.vstest" Version="17.10.0-release-24177-07">
       <Uri>https://github.com/microsoft/vstest</Uri>
-      <Sha>6957756d70d6ade74e239a38ad709db5cb39fe0d</Sha>
+      <Sha>1cd0d8998250d36c95ed65a76304ef5d1b33e98f</Sha>
       <SourceBuild RepoName="vstest" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="9.0.0-preview.4.24178.3">
@@ -235,26 +235,26 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>e612bf4d0b6f08623092902c34a504e932388664</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="9.0.0-preview.4.24177.3">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="9.0.0-preview.4.24178.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>64bd47b77584245e3fef1d50e7df26391ed1c43c</Sha>
+      <Sha>779fc998f3d71a33a0ed59b4acf849b45e9659a2</Sha>
       <SourceBuildTarball RepoName="windowsdesktop" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.9.0" Version="9.0.0-preview.4.24177.3">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.9.0" Version="9.0.0-preview.4.24178.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>64bd47b77584245e3fef1d50e7df26391ed1c43c</Sha>
+      <Sha>779fc998f3d71a33a0ed59b4acf849b45e9659a2</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="9.0.0-preview.4.24177.3">
+    <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="9.0.0-preview.4.24178.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>64bd47b77584245e3fef1d50e7df26391ed1c43c</Sha>
+      <Sha>779fc998f3d71a33a0ed59b4acf849b45e9659a2</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.9.0" Version="9.0.0-preview.4.24177.3">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.9.0" Version="9.0.0-preview.4.24178.2">
       <Uri>https://github.com/dotnet/windowsdesktop</Uri>
-      <Sha>64bd47b77584245e3fef1d50e7df26391ed1c43c</Sha>
+      <Sha>779fc998f3d71a33a0ed59b4acf849b45e9659a2</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="9.0.0-preview.4.24177.4" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
+    <Dependency Name="Microsoft.NET.Sdk.WindowsDesktop" Version="9.0.0-preview.4.24177.5" CoherentParentDependency="Microsoft.WindowsDesktop.App.Ref">
       <Uri>https://github.com/dotnet/wpf</Uri>
-      <Sha>3c8f486a72db65d2574fedbc2617c9d9d21abefc</Sha>
+      <Sha>69b072ec137ebf5b2efa9d7ffa40183d70625ae2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.AspNetCore.App.Ref" Version="9.0.0-preview.4.24177.3">
       <Uri>https://github.com/dotnet/aspnetcore</Uri>
