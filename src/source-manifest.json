@@ -151,10 +151,10 @@
       "commitSha": "1cd0d8998250d36c95ed65a76304ef5d1b33e98f"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24177.3",
+      "packageVersion": "9.0.0-preview.4.24178.2",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "64bd47b77584245e3fef1d50e7df26391ed1c43c"
+      "commitSha": "779fc998f3d71a33a0ed59b4acf849b45e9659a2"
     },
     {
       "packageVersion": "9.0.0-preview.4.24177.1",
