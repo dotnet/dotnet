@@ -1,0 +1,24 @@
+variables:
+
+- ${{ if eq(variables['System.TeamProject'], 'public') }}:
+  - name: defaultPoolName
+    value: NetCore-Public-XL
+  - name: poolImage_Linux
+    value: 1es-ubuntu-2004-open
+  - name: poolImage_LinuxArm64
+    value: Mariner-2-Docker-ARM64
+  - name: poolName_LinuxArm64
+    value: Docker-Linux-Arm-Public
+- ${{ else }}:
+  - ${{ if in(variables['Build.Reason'], 'PullRequest') }}:
+    - name: defaultPoolName
+      value: NetCore1ESPool-Internal-XL
+  - ${{ else }}:
+    - name: defaultPoolName
+      value: $(DncEngInternalBuildPool)
+  - name: poolImage_Linux
+    value: 1es-ubuntu-2204
+  - name: poolImage_LinuxArm64
+    value: Mariner-2-Docker-ARM64
+  - name: poolName_LinuxArm64
+    value: Docker-Linux-Arm-Internal
