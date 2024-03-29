@@ -2,38 +2,61 @@
 ### If run in a PR, new changes are applied to a local copy of the VMR, then it is source-built and tested
 
 parameters:
-  dependsOn: []
-  condition: always()
+- name: dependsOn
+  type: object
+  default: []
+- name: condition
+  type: string
+  default: always()
 
   # Branch of the VMR to use (to push to for internal builds)
-  vmrBranch: $(Build.SourceBranch)
+- name: vmrBranch
+  type: string
+  default: $(Build.SourceBranch)
 
   # True when build is running from dotnet/dotnet directly
-  isBuiltFromVmr:
+- name: isBuiltFromVmr
+  type: boolean
+  default: false
 
   # The following parameters aren't expected to be passed in rather they are used for encapsulation
   # -----------------------------------------------------------------------------------------------
-  alpine317Container: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.17
-  centOSStream8Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
-  centOSStream9Container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
-  fedora38Container: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-38
-  ubuntu2204Container: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04
-  ubuntu2204ArmContainer: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-arm64
+- name: alpine317Container
+  type: string
+  default: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.17
+- name: centOSStream8Container
+  type: string
+  default: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
+- name: centOSStream9Container
+  type: string
+  default: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
+- name: fedora38Container
+  type: string
+  default: mcr.microsoft.com/dotnet-buildtools/prereqs:fedora-38
+- name: ubuntu2204Container
+  type: string
+  default: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04
+- name: ubuntu2204ArmContainer
+  type: string
+  default: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-arm64
 
-  # Internal builds
-  poolInternalAmd64:
-    name: NetCore1ESPool-Svc-Internal
-    demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
-  poolInternalAmd64PR:
-    name: NetCore1ESPool-Internal-XL
-    demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
-  poolInternalArm64:
-    name: Docker-Linux-Arm-Internal
+# These are not expected to be passed it but rather just object variables reused below
+- name: pool_Linux
+  type: object
+  default:
+    name: $(defaultPoolName)
+    image: $(poolImage_Linux)
+    demands: ImageOverride -equals $(poolImage_Linux)
+    os: linux
 
-  # Public builds / PRs
-  poolPublicAmd64:
-    name: NetCore-Public-XL
-    demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+- name: pool_LinuxArm64
+  type: object
+  default:
+    name: $(poolName_LinuxArm64)
+    image: $(poolImage_LinuxArm64)
+    demands: ImageOverride -equals $(poolImage_Linux)
+    hostArchitecture: Arm64
+    os: linux
 
 stages:
 - stage: VMR_Source_Build
@@ -41,23 +64,7 @@ stages:
   dependsOn: ${{ parameters.dependsOn }}
   condition: ${{ parameters.condition }}
   variables:
-  - ${{ if eq(variables['System.TeamProject'], 'public') }}:
-    - name: defaultPoolName
-      value: ${{ parameters.poolPublicAmd64.name }}
-    - name: defaultPoolDemands
-      value: ${{ parameters.poolPublicAmd64.demands }}
-  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-    - ${{ if in(variables['Build.Reason'], 'PullRequest') }}:
-      - name: defaultPoolName
-        value: ${{ parameters.poolInternalAmd64PR.name }}
-      - name: defaultPoolDemands
-        value: ${{ parameters.poolInternalAmd64PR.demands }}
-    - ${{ else }}:
-      - name: defaultPoolName
-        value: ${{ parameters.poolInternalAmd64.name }}
-      - name: defaultPoolDemands
-        value: ${{ parameters.poolInternalAmd64.demands }}
-
+  - template: ../variables/vmr-build.yml@self
   - ${{ if ne(parameters.vmrBranch, '') }}:
     - name: VmrBranch
       value: ${{ parameters.vmrBranch }}
@@ -69,16 +76,14 @@ stages:
 
   # PR and CI legs ------------------------------------
 
-  - template: ../jobs/vmr-build.yml
+  - template: ../jobs/vmr-build.yml@self
     parameters:
       # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
       buildName: CentOSStream8_Online_MsftSdk
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       vmrBranch: ${{ variables.VmrBranch }}
       architecture: x64
-      pool:
-        name: ${{ variables.defaultPoolName }}
-        demands: ${{ variables.defaultPoolDemands }}
+      pool: ${{ parameters.pool_Linux }}
       container: ${{ parameters.centOSStream8Container }}
       buildFromArchive: false            # 🚫
       enablePoison: false                # 🚫
@@ -87,16 +92,14 @@ stages:
       useMonoRuntime: false              # 🚫
       withPreviousSDK: false             # 🚫
 
-  - template: ../jobs/vmr-build.yml
+  - template: ../jobs/vmr-build.yml@self
     parameters:
       # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
       buildName: CentOSStream8_Offline_MsftSdk
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       vmrBranch: ${{ variables.VmrBranch }}
       architecture: x64
-      pool:
-        name: ${{ variables.defaultPoolName }}
-        demands: ${{ variables.defaultPoolDemands }}
+      pool: ${{ parameters.pool_Linux }}
       container: ${{ parameters.centOSStream8Container }}
       buildFromArchive: true             # ✅
       enablePoison: false                # 🚫
@@ -109,16 +112,14 @@ stages:
 
     # CI - Stage 1 x64 legs ------------------------------------
 
-    - template: ../jobs/vmr-build.yml
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: Alpine317_Offline_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
-        pool:
-          name: ${{ variables.defaultPoolName }}
-          demands: ${{ variables.defaultPoolDemands }}
+        pool: ${{ parameters.pool_Linux }}
         container: ${{ parameters.alpine317Container }}
         buildFromArchive: false            # ✅
         enablePoison: false                # 🚫
@@ -127,16 +128,14 @@ stages:
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
 
-    - template: ../jobs/vmr-build.yml
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: CentOSStream8_Online_PreviousSourceBuiltSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
-        pool:
-          name: ${{ variables.defaultPoolName }}
-          demands: ${{ variables.defaultPoolDemands }}
+        pool: ${{ parameters.pool_Linux }}
         container: ${{ parameters.centOSStream8Container }}
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
@@ -145,16 +144,14 @@ stages:
         useMonoRuntime: false              # 🚫
         withPreviousSDK: true              # ✅
 
-    - template: ../jobs/vmr-build.yml
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: CentOSStream8_Offline_PreviousSourceBuiltSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
-        pool:
-          name: ${{ variables.defaultPoolName }}
-          demands: ${{ variables.defaultPoolDemands }}
+        pool: ${{ parameters.pool_Linux }}
         container: ${{ parameters.centOSStream8Container }}
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
@@ -163,16 +160,14 @@ stages:
         useMonoRuntime: false              # 🚫
         withPreviousSDK: true              # ✅
 
-    - template: ../jobs/vmr-build.yml
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: CentOSStream8_Mono_Offline_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
-        pool:
-          name: ${{ variables.defaultPoolName }}
-          demands: ${{ variables.defaultPoolDemands }}
+        pool: ${{ parameters.pool_Linux }}
         container: ${{ parameters.centOSStream8Container }}
         buildFromArchive: true             # ✅
         enablePoison: false                # 🚫
@@ -181,16 +176,14 @@ stages:
         useMonoRuntime: true               # ✅
         withPreviousSDK: false             # 🚫
 
-    - template: ../jobs/vmr-build.yml
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: CentOSStream9_Offline_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
-        pool:
-          name: ${{ variables.defaultPoolName }}
-          demands: ${{ variables.defaultPoolDemands }}
+        pool: ${{ parameters.pool_Linux }}
         container: ${{ parameters.centOSStream9Container }}
         buildFromArchive: true             # ✅
         enablePoison: false                # 🚫
@@ -199,16 +192,14 @@ stages:
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
 
-    - template: ../jobs/vmr-build.yml
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: Fedora38_Offline_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
-        pool:
-          name: ${{ variables.defaultPoolName }}
-          demands: ${{ variables.defaultPoolDemands }}
+        pool: ${{ parameters.pool_Linux }}
         container: ${{ parameters.fedora38Container }}
         buildFromArchive: true             # ✅
         enablePoison: true                 # ✅
@@ -217,16 +208,14 @@ stages:
         useMonoRuntime: false              # 🚫
         withPreviousSDK: false             # 🚫
 
-    - template: ../jobs/vmr-build.yml
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: Ubuntu2204_Offline_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
-        pool:
-          name: ${{ variables.defaultPoolName }}
-          demands: ${{ variables.defaultPoolDemands }}
+        pool: ${{ parameters.pool_Linux }}
         container: ${{ parameters.ubuntu2204Container }}
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
@@ -237,14 +226,14 @@ stages:
 
     # CI - Stage 1 arm64 Legs ------------------------------------
 
-    - template: ../jobs/vmr-build.yml
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: Ubuntu2204Arm64_Offline_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: arm64
-        pool: ${{ parameters.poolInternalArm64 }}
+        pool: ${{ parameters.pool_LinuxArm64 }}
         container: ${{ parameters.ubuntu2204ArmContainer }}
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
@@ -255,16 +244,14 @@ stages:
 
     # CI - Stage 2 x64 Legs ------------------------------------
 
-    - template: ../jobs/vmr-build.yml
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: CentOSStream8_Online_CurrentSourceBuiltSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
-        pool:
-          name: ${{ variables.defaultPoolName }}
-          demands: ${{ variables.defaultPoolDemands }}
+        pool: ${{ parameters.pool_Linux }}
         container: ${{ parameters.centOSStream8Container }}
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
@@ -274,16 +261,14 @@ stages:
         withPreviousSDK: false             # 🚫
         reuseBuildArtifactsFrom: CentOSStream8_Online_MsftSdk
 
-    - template: ../jobs/vmr-build.yml
+    - template: ../jobs/vmr-build.yml@self
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
         buildName: Fedora38_Offline_CurrentSourceBuiltSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
-        pool:
-          name: ${{ variables.defaultPoolName }}
-          demands: ${{ variables.defaultPoolDemands }}
+        pool: ${{ parameters.pool_Linux }}
         container: ${{ parameters.fedora38Container }}
         buildFromArchive: false            # 🚫
         enablePoison: false                # 🚫
