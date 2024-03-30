@@ -991,10 +991,7 @@ namespace Test
     public void IncludesMinimizedAttributeValueParameterBeforeLanguageVersion5()
     {
         // Arrange
-        _configuration = new(
-            RazorLanguageVersion.Version_3_0,
-            base.Configuration.ConfigurationName,
-            base.Configuration.Extensions);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_3_0 };
 
         // Act
         var generated = CompileToCSharp(@"
@@ -9178,10 +9175,7 @@ namespace Test
     public void Legacy_3_1_LeadingWhiteSpace_WithDirective()
     {
         // Arrange/Act
-        _configuration = new(
-            RazorLanguageVersion.Version_3_0,
-            base.Configuration.ConfigurationName,
-            base.Configuration.Extensions);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_3_0 };
 
         var generated = CompileToCSharp(@"
 
@@ -9199,10 +9193,7 @@ namespace Test
     public void Legacy_3_1_LeadingWhiteSpace_WithCSharpExpression()
     {
         // Arrange/Act
-        _configuration = new(
-            RazorLanguageVersion.Version_3_0,
-            base.Configuration.ConfigurationName,
-            base.Configuration.Extensions);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_3_0 };
 
         var generated = CompileToCSharp(@"
 
@@ -9220,10 +9211,7 @@ namespace Test
     public void Legacy_3_1_LeadingWhiteSpace_WithComponent()
     {
         // Arrange
-        _configuration = new(
-            RazorLanguageVersion.Version_3_0,
-            base.Configuration.ConfigurationName,
-            base.Configuration.Extensions);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_3_0 };
 
         AdditionalSyntaxTrees.Add(Parse(@"
 using Microsoft.AspNetCore.Components;
@@ -9256,10 +9244,7 @@ namespace Test
     public void Legacy_3_1_TrailingWhiteSpace_WithDirective()
     {
         // Arrange/Act
-        _configuration = new(
-            RazorLanguageVersion.Version_3_0,
-            base.Configuration.ConfigurationName,
-            base.Configuration.Extensions);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_3_0 };
 
         var generated = CompileToCSharp(@"
 <h1>Hello</h1>
@@ -9278,10 +9263,7 @@ namespace Test
     public void Legacy_3_1_TrailingWhiteSpace_WithCSharpExpression()
     {
         // Arrange/Act
-        _configuration = new(
-            RazorLanguageVersion.Version_3_0,
-            base.Configuration.ConfigurationName,
-            base.Configuration.Extensions);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_3_0 };
 
         var generated = CompileToCSharp(@"
 <h1>Hello</h1>
@@ -9300,10 +9282,7 @@ namespace Test
     public void Legacy_3_1_TrailingWhiteSpace_WithComponent()
     {
         // Arrange
-        _configuration = new(
-            RazorLanguageVersion.Version_3_0,
-            base.Configuration.ConfigurationName,
-            base.Configuration.Extensions);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_3_0 };
 
         AdditionalSyntaxTrees.Add(Parse(@"
 using Microsoft.AspNetCore.Components;
@@ -9334,10 +9313,7 @@ namespace Test
     public void Legacy_3_1_Whitespace_BetweenElementAndFunctions()
     {
         // Arrange
-        _configuration = new(
-            RazorLanguageVersion.Version_3_0,
-            base.Configuration.ConfigurationName,
-            base.Configuration.Extensions);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_3_0 };
 
         // Act
         var generated = CompileToCSharp(@"
@@ -9357,10 +9333,7 @@ namespace Test
     public void Legacy_3_1_WhiteSpace_InsideAttribute_InMarkupBlock()
     {
         // Arrange
-        _configuration = new(
-            RazorLanguageVersion.Version_3_0,
-            base.Configuration.ConfigurationName,
-            base.Configuration.Extensions);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_3_0 };
 
         // Act
         var generated = CompileToCSharp(@"<div class=""first second"">Hello</div>");
@@ -9375,10 +9348,7 @@ namespace Test
     public void Legacy_3_1_WhiteSpace_InMarkupInFunctionsBlock()
     {
         // Arrange
-        _configuration = new(
-            RazorLanguageVersion.Version_3_0,
-            base.Configuration.ConfigurationName,
-            base.Configuration.Extensions);
+        _configuration = base.Configuration with { LanguageVersion = RazorLanguageVersion.Version_3_0 };
 
         // Act
         var generated = CompileToCSharp(@"

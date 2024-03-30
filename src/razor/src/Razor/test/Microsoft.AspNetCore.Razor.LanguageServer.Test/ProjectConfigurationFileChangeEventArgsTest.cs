@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Serialization;
 using Microsoft.AspNetCore.Razor.Test.Common;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -38,7 +39,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
             projectInfoDeserializer: deserializerMock.Object);
 
         // Act
-        var result = args.TryDeserialize(out var handle);
+        var result = args.TryDeserialize(TestLanguageServerFeatureOptions.Instance, out var handle);
 
         // Assert
         Assert.False(result);
@@ -70,7 +71,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
             projectInfoDeserializer: deserializerMock.Object);
 
         // Act
-        var result = args.TryDeserialize(out var deserializedProjectInfo);
+        var result = args.TryDeserialize(TestLanguageServerFeatureOptions.Instance, out var deserializedProjectInfo);
 
         // Assert
         Assert.False(result);
@@ -85,7 +86,7 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
         var projectInfo = new RazorProjectInfo(
             "/path/to/obj/project.razor.bin",
             "c:/path/to/project.csproj",
-            configuration: RazorConfiguration.Default,
+            configuration: RazorConfiguration.Default with { LanguageServerFlags = TestLanguageServerFeatureOptions.Instance.ToLanguageServerFlags() },
             rootNamespace: null,
             displayName: "project",
             projectWorkspaceState: ProjectWorkspaceState.Default,
@@ -101,14 +102,17 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
             projectInfoDeserializer: deserializerMock.Object);
 
         // Act
-        var result1 = args.TryDeserialize(out var projectInfo1);
-        var result2 = args.TryDeserialize(out var projectInfo2);
+        var result1 = args.TryDeserialize(TestLanguageServerFeatureOptions.Instance, out var projectInfo1);
+        var result2 = args.TryDeserialize(TestLanguageServerFeatureOptions.Instance, out var projectInfo2);
 
         // Assert
         Assert.True(result1);
         Assert.True(result2);
-        Assert.Same(projectInfo, projectInfo1);
-        Assert.Same(projectInfo, projectInfo2);
+
+        // Deserialization will cause the LanguageServerFlags to be updated on the configuration, so reference equality will not hold.
+        // Test equality, and that retrieving same instance on repeat calls works by reference equality of projectInfo1 and projectInfo2.
+        Assert.Equal(projectInfo, projectInfo1);
+        Assert.Same(projectInfo1, projectInfo2);
     }
 
     [Fact]
@@ -125,8 +129,8 @@ public class ProjectConfigurationFileChangeEventArgsTest(ITestOutputHelper testO
         var args = new ProjectConfigurationFileChangeEventArgs("/path/to/obj/project.razor.bin", RazorFileChangeKind.Changed, deserializerMock.Object);
 
         // Act
-        var result1 = args.TryDeserialize(out var handle1);
-        var result2 = args.TryDeserialize(out var handle2);
+        var result1 = args.TryDeserialize(TestLanguageServerFeatureOptions.Instance, out var handle1);
+        var result2 = args.TryDeserialize(TestLanguageServerFeatureOptions.Instance, out var handle2);
 
         // Assert
         Assert.False(result1);
