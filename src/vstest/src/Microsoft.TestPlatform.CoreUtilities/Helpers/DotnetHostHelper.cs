@@ -409,8 +409,10 @@ public class DotnetHostHelper : IDotnetHostHelper
             using var headerReader = _fileHelper.GetStream(path, FileMode.Open, FileAccess.Read);
             var magicBytes = new byte[4];
             var cpuInfoBytes = new byte[4];
+#pragma warning disable CA2022 // Avoid inexact read
             headerReader.Read(magicBytes, 0, magicBytes.Length);
             headerReader.Read(cpuInfoBytes, 0, cpuInfoBytes.Length);
+#pragma warning restore CA2022
 
             var magic = BitConverter.ToUInt32(magicBytes, 0);
             var cpuInfo = BitConverter.ToUInt32(cpuInfoBytes, 0);
