@@ -18,8 +18,7 @@ public class RazorConfigurationSerializationTest(ITestOutputHelper testOutput) :
         var configuration = new RazorConfiguration(
             RazorLanguageVersion.Version_1_1,
             "Test",
-            [new("Test-Extension1"), new("Test-Extension2")],
-            ForceRuntimeCodeGeneration: true);
+            [new("Test-Extension1"), new("Test-Extension2")]);
 
         // Act
         var json = JsonDataConvert.SerializeObject(configuration, ObjectWriters.WriteProperties);
@@ -35,7 +34,6 @@ public class RazorConfigurationSerializationTest(ITestOutputHelper testOutput) :
             e => Assert.Equal("Test-Extension1", e.ExtensionName),
             e => Assert.Equal("Test-Extension2", e.ExtensionName));
         Assert.Equal(configuration.LanguageVersion, obj.LanguageVersion);
-        Assert.Equal(configuration.ForceRuntimeCodeGeneration, obj.ForceRuntimeCodeGeneration);
     }
 
     [Fact]

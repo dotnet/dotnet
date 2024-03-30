@@ -42,7 +42,6 @@ internal static partial class ObjectReaders
     {
         var configurationName = reader.ReadNonNullString(nameof(RazorConfiguration.ConfigurationName));
         var languageVersionText = reader.ReadNonNullString(nameof(RazorConfiguration.LanguageVersion));
-        var forceRuntimeCodeGeneration = reader.ReadBooleanOrFalse(nameof(RazorConfiguration.ForceRuntimeCodeGeneration));
         var extensions = reader.ReadImmutableArrayOrEmpty(nameof(RazorConfiguration.Extensions),
             static r =>
             {
@@ -54,7 +53,7 @@ internal static partial class ObjectReaders
             ? version
             : RazorLanguageVersion.Version_2_1;
 
-        return new(languageVersion, configurationName, extensions, ForceRuntimeCodeGeneration: forceRuntimeCodeGeneration);
+        return new(languageVersion, configurationName, extensions);
     }
 
     public static RazorDiagnostic ReadDiagnostic(JsonDataReader reader)
