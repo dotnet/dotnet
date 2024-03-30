@@ -30,8 +30,10 @@ namespace Microsoft.SignCheck.Verification
                 byte[] properties = new byte[5];
                 byte[] fileLengthBytes = new byte[8];
 
+#pragma warning disable CA2022 // Avoid inexact read
                 inFile.Read(properties, 0, 5);
                 inFile.Read(fileLengthBytes, 0, 8);
+#pragma warning restore CA2022
 
                 long fileLength = BitConverter.ToInt64(fileLengthBytes, 0);
                 decoder.SetDecoderProperties(properties);
