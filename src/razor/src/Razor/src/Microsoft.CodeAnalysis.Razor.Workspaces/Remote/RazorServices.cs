@@ -22,5 +22,6 @@ internal static class RazorServices
             (typeof(IRemoteTagHelperProviderService), null),
             (typeof(IRemoteClientInitializationService), null),
             (typeof(IRemoteSemanticTokensService), null),
+            (typeof(IRemoteHtmlDocumentService), null),
         ]);
 }

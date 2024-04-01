@@ -3,7 +3,7 @@
 
   <Target Name="RunTests"
           Outputs="%(TestToRun.ResultsStdOutPath)"
-          Condition="'$(SkipTests)' != 'true'">
+          Condition="'$(SkipTests)' != 'true' and '@(TestToRun)' != ''">
     <PropertyGroup>
       <_TestEnvironment>%(TestToRun.EnvironmentDisplay)</_TestEnvironment>
       <_TestAssembly>%(TestToRun.Identity)</_TestAssembly>

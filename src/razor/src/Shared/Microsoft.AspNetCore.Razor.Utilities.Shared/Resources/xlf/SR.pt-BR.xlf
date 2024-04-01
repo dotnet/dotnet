@@ -19,17 +19,17 @@
       </trans-unit>
       <trans-unit id="Expected_condition_to_be_false">
         <source>Expected condition to be false.</source>
-        <target state="new">Expected condition to be false.</target>
+        <target state="translated">Condição esperada como falsa.</target>
         <note />
       </trans-unit>
       <trans-unit id="Expected_condition_to_be_true">
         <source>Expected condition to be true.</source>
-        <target state="new">Expected condition to be true.</target>
+        <target state="translated">Condição esperada como verdadeira.</target>
         <note />
       </trans-unit>
       <trans-unit id="File_0_Line_1">
         <source> File='{0}', Line={1}</source>
-        <target state="new"> File='{0}', Line={1}</target>
+        <target state="translated"> Arquivo='{0}', Linha={1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Non_negative_number_required">

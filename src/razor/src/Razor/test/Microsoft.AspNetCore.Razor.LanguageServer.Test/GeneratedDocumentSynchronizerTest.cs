@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
+using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
@@ -27,7 +28,7 @@ public class GeneratedDocumentSynchronizerTest : LanguageServerTestBase
         var projectManager = StrictMock.Of<IProjectSnapshotManager>();
         _cache = new DocumentVersionCache(projectManager);
         _publisher = new TestGeneratedDocumentPublisher();
-        _synchronizer = new GeneratedDocumentSynchronizer(_publisher, _cache, Dispatcher);
+        _synchronizer = new GeneratedDocumentSynchronizer(_publisher, _cache, Dispatcher, TestLanguageServerFeatureOptions.Instance);
         _document = TestDocumentSnapshot.Create("C:/path/to/file.razor");
         _codeDocument = CreateCodeDocument("<p>Hello World</p>");
     }
