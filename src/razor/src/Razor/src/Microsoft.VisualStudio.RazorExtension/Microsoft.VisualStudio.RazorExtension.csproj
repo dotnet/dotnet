@@ -32,7 +32,12 @@
          Without this the Razor Extension won't be deployed for IntegrationTests
          to use in the "build.cmd" scenario -->
     <DeployExtension>true</DeployExtension>
+
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
   </PropertyGroup>
+
+  <!-- Import the list of service hub services we proffer, to generate various files to include in the VSIX -->
+  <Import Project="$(RepositoryEngineeringDir)targets\Services.props" />
 
   <!-- Include Razor SDK design time assets in the VSIX -->
   <ItemGroup>
@@ -61,54 +66,6 @@
   <!-- Misc other content -->
   <ItemGroup>
     <Content Include="$(RepositoryRoot)NOTICE.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Microsoft.VisualStudio.Razor.SemanticTokens64.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Microsoft.VisualStudio.Razor.SemanticTokens64S.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Microsoft.VisualStudio.Razor.ClientInitialization64.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Microsoft.VisualStudio.Razor.ClientInitialization64S.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Microsoft.VisualStudio.Razor.TagHelperProvider64.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Microsoft.VisualStudio.Razor.TagHelperProvider64S.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="$(ServiceHubCoreSubPath)\Microsoft.VisualStudio.Razor.TagHelperProviderCore64S.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="$(ServiceHubCoreSubPath)\Microsoft.VisualStudio.Razor.TagHelperProviderCore64.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="ServiceHubCore\Microsoft.VisualStudio.Razor.SemanticTokensCore64.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="ServiceHubCore\Microsoft.VisualStudio.Razor.SemanticTokensCore64S.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="ServiceHubCore\Microsoft.VisualStudio.Razor.ClientInitializationCore64.servicehub.service.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="ServiceHubCore\Microsoft.VisualStudio.Razor.ClientInitializationCore64S.servicehub.service.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
