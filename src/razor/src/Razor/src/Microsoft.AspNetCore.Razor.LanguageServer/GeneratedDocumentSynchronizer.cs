@@ -8,21 +8,16 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class GeneratedDocumentSynchronizer : DocumentProcessedListener
+internal class GeneratedDocumentSynchronizer(
+    IGeneratedDocumentPublisher publisher,
+    IDocumentVersionCache documentVersionCache,
+    ProjectSnapshotManagerDispatcher dispatcher,
+    LanguageServerFeatureOptions languageServerFeatureOptions) : DocumentProcessedListener
 {
-    private readonly IGeneratedDocumentPublisher _publisher;
-    private readonly IDocumentVersionCache _documentVersionCache;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
-
-    public GeneratedDocumentSynchronizer(
-        IGeneratedDocumentPublisher publisher,
-        IDocumentVersionCache documentVersionCache,
-        ProjectSnapshotManagerDispatcher dispatcher)
-    {
-        _publisher = publisher;
-        _documentVersionCache = documentVersionCache;
-        _dispatcher = dispatcher;
-    }
+    private readonly IGeneratedDocumentPublisher _publisher = publisher;
+    private readonly IDocumentVersionCache _documentVersionCache = documentVersionCache;
+    private readonly ProjectSnapshotManagerDispatcher _dispatcher = dispatcher;
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
 
     public override void Initialize(IProjectSnapshotManager projectManager)
     {
@@ -40,9 +35,13 @@ internal class GeneratedDocumentSynchronizer : DocumentProcessedListener
 
         var filePath = document.FilePath.AssumeNotNull();
 
-        var htmlText = codeDocument.GetHtmlSourceText();
+        // If cohosting is on, then it is responsible for updating the Html buffer
+        if (!_languageServerFeatureOptions.UseRazorCohostServer)
+        {
+            var htmlText = codeDocument.GetHtmlSourceText();
 
-        _publisher.PublishHtml(document.Project.Key, filePath, htmlText, hostDocumentVersion.Value);
+            _publisher.PublishHtml(document.Project.Key, filePath, htmlText, hostDocumentVersion.Value);
+        }
 
         var csharpText = codeDocument.GetCSharpSourceText();
 
