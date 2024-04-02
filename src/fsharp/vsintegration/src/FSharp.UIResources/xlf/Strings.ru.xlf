@@ -204,37 +204,37 @@
       </trans-unit>
       <trans-unit id="TransparentCompiler">
         <source>Transparent Compiler (experimental)</source>
-        <target state="translated">Прозрачный компилятор (экспериментальная функция)</target>
+        <target state="new">Transparent Compiler (experimental)</target>
         <note />
       </trans-unit>
       <trans-unit id="TransparentCompiler_Discalimer1">
         <source>WARNING! Transparent Compiler does not yet support all features and can cause crashes or give incorrect results.</source>
-        <target state="translated">Предупреждение! Прозрачный компилятор пока поддерживает не все функции и может вызывать сбои или предоставлять неверные результаты.</target>
+        <target state="new">WARNING! Transparent Compiler does not yet support all features and can cause crashes or give incorrect results.</target>
         <note />
       </trans-unit>
       <trans-unit id="TransparentCompiler_Discalimer2">
         <source>Use at your own risk!</source>
-        <target state="translated">Используйте его на свой риск!</target>
+        <target state="new">Use at your own risk!</target>
         <note />
       </trans-unit>
       <trans-unit id="TransparentCompiler_Discalimer3">
         <source>By checking this you also opt-in for additional performance telemetry</source>
-        <target state="translated">Устанавливая этот флажок, вы также соглашались на дополнительную телеметрию производительности</target>
+        <target state="new">By checking this you also opt-in for additional performance telemetry</target>
         <note />
       </trans-unit>
       <trans-unit id="Transparent_Compiler_Cache_Factor">
         <source>Transparent Compiler Cache Factor</source>
-        <target state="translated">Коэффициент кэша прозрачного компилятора</target>
+        <target state="new">Transparent Compiler Cache Factor</target>
         <note />
       </trans-unit>
       <trans-unit id="Transparent_Compiler_Cache_Factor_Tooltip">
         <source>Higher number means more memory will be used for caching. Changing the value wipes cache.</source>
-        <target state="translated">Чем больше число, тем больше памяти будет использоваться для кэширования. Изменение значения очищает кэш.</target>
+        <target state="new">Higher number means more memory will be used for caching. Changing the value wipes cache.</target>
         <note />
       </trans-unit>
       <trans-unit id="Transparent_Compiler_Snapshot_Reuse">
         <source>Create new project snapshots from existing ones</source>
-        <target state="translated">Создавать новые моментальные снимки проекта из существующих</target>
+        <target state="new">Create new project snapshots from existing ones</target>
         <note />
       </trans-unit>
       <trans-unit id="Unused_opens_code_fix">
@@ -324,7 +324,7 @@
       </trans-unit>
       <trans-unit id="Use_Transparent_Compiler">
         <source>Use Transparent Compiler (restart required)</source>
-        <target state="translated">Использовать прозрачный компилятор (требуется перезагрузка)</target>
+        <target state="new">Use Transparent Compiler (restart required)</target>
         <note />
       </trans-unit>
       <trans-unit id="Use_syntax_tree_cache">
