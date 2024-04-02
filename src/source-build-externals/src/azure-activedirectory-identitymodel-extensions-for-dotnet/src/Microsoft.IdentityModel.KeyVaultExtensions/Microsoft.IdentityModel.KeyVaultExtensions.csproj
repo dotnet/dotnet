@@ -7,8 +7,7 @@
     <Description>Includes types that provide support for signing and encrypting tokens with Azure Key Vault.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>Microsoft.IdentityModel.KeyVaultExtensions</PackageId>
-    <TargetFrameworks Condition="'$(TargetNet8)' == 'True'">netstandard2.0;net6.0;net8.0</TargetFrameworks>
-    <TargetFrameworks Condition="'$(TargetNet8)' != 'True'">netstandard2.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net6.0;net8.0</TargetFrameworks>
     <PackageTags>.NET;Windows;Authentication;Identity;Azure;Key;Vault;Extensions</PackageTags>
     <Nullable>enable</Nullable>
   </PropertyGroup>

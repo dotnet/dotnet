@@ -3,13 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text.Json;
 using Microsoft.IdentityModel.TestUtils;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace Microsoft.IdentityModel.Tokens.Json.Tests
@@ -65,13 +62,6 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                     {
                         ExpectedException = ExpectedException.ArgumentException(substringExpected: "IDX10805:", inner: typeof(System.Text.Json.JsonException)),
                         Json = DataSets.JsonWebKeySetBadFormatingString
-                    });
-
-                theoryData.Add(
-                    new JsonWebKeySetTheoryData("GoogleCertsExpected")
-                    {
-                        Json = File.ReadAllText(DataSets.GoogleCertsFile),
-                        JsonWebKeySet = DataSets.GoogleCertsExpected
                     });
 
                 theoryData.Add(

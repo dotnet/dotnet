@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
@@ -27,9 +28,11 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         private string _encodedHeader;
         private string _encodedPayload;
         private string _encodedSignature;
+        private string _encodedToken;
         private string _encryptedKey;
         private string _initializationVector;
         private List<string> _audiences;
+        private readonly ReadOnlyMemory<char> _encodedTokenMemory;
 
         #region properties relating to the header
         // when constructing a JWT, these properties, when found, will be set
@@ -78,7 +81,33 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             if (string.IsNullOrEmpty(jwtEncodedString))
                 throw LogHelper.LogExceptionMessage(new ArgumentNullException(nameof(jwtEncodedString)));
 
-            ReadToken(jwtEncodedString);
+            ReadToken(jwtEncodedString.AsMemory());
+
+            _encodedToken = jwtEncodedString;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="JsonWebToken"/> from a ReadOnlyMemory{char} in JWS or JWE Compact serialized format.
+        /// </summary>
+        /// <param name="encodedTokenMemory">A ReadOnlyMemory{char} containing the JSON Web Token serialized in JWS or JWE Compact format.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="encodedTokenMemory"/> is empty.</exception>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="encodedTokenMemory"/> does not represent a valid JWS or JWE Compact serialization format.</exception>
+        /// <remarks>
+        /// See: https://datatracker.ietf.org/doc/html/rfc7519 (JWT)
+        /// See: https://datatracker.ietf.org/doc/html/rfc7515 (JWS)
+        /// See: https://datatracker.ietf.org/doc/html/rfc7516 (JWE)
+        /// <para>
+        /// The contents of the returned <see cref="JsonWebToken"/> have not been validated; the JSON Web Token is simply decoded. Validation can be performed using the methods in <see cref="JsonWebTokenHandler"/>.
+        /// </para>
+        /// </remarks>
+        public JsonWebToken(ReadOnlyMemory<char> encodedTokenMemory)
+        {
+            if (encodedTokenMemory.IsEmpty)
+                throw LogHelper.LogExceptionMessage(new ArgumentNullException(nameof(encodedTokenMemory)));
+
+            ReadToken(encodedTokenMemory);
+
+            _encodedTokenMemory = encodedTokenMemory;
         }
 
         /// <summary>
@@ -108,7 +137,9 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             var encodedPayload = Base64UrlEncoder.Encode(payload);
             var encodedToken = encodedHeader + "." + encodedPayload + ".";
 
-            ReadToken(encodedToken);
+            ReadToken(encodedToken.AsMemory());
+
+            _encodedToken = encodedToken;
         }
 
         internal string ActualIssuer { get; set; }
@@ -192,10 +223,10 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 // TODO - need to account for JWE
                 if (_encodedHeader == null)
                 {
-                    if (EncodedToken != null)
-                        _encodedHeader = EncodedToken.Substring(0, Dot1);
+                    if (!_encodedTokenMemory.IsEmpty)
+                        _encodedHeader = _encodedTokenMemory.Span.Slice(0, Dot1).ToString();
                     else
-                        _encodedHeader = string.Empty;
+                        _encodedHeader = (_encodedToken is not null) ? _encodedToken.Substring(0, Dot1) :  string.Empty;
                 }
 
                 return _encodedHeader;
@@ -237,10 +268,17 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             {
                 if (_encodedPayload == null)
                 {
-                    if (EncodedToken != null)
-                        _encodedPayload = IsEncrypted ? string.Empty : EncodedToken.Substring(Dot1 + 1, Dot2 - Dot1 - 1);
+                    if (!_encodedTokenMemory.IsEmpty)
+                    {
+                        _encodedPayload = IsEncrypted ? string.Empty : _encodedTokenMemory.Span.Slice(Dot1 + 1, Dot2 - Dot1 - 1).ToString();
+                    }
                     else
-                        _encodedPayload = string.Empty;
+                    {
+                        if (_encodedToken is not null)
+                            _encodedPayload = IsEncrypted ? string.Empty : _encodedToken.Substring(Dot1 + 1, Dot2 - Dot1 - 1);
+                        else
+                            _encodedPayload = string.Empty;
+                    }
                 }
 
                 return _encodedPayload;
@@ -260,10 +298,17 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             {
                 if (_encodedSignature == null)
                 {
-                    if (EncodedToken != null)
-                        _encodedSignature = IsEncrypted ? string.Empty : EncodedToken.Substring(Dot2 + 1, EncodedToken.Length - Dot2 - 1);
+                    if (!_encodedTokenMemory.IsEmpty)
+                    {
+                        _encodedSignature = IsEncrypted ? string.Empty : _encodedTokenMemory.Span.Slice(Dot2 + 1, _encodedTokenMemory.Length - Dot2 - 1).ToString();
+                    }
                     else
-                        _encodedSignature = string.Empty;
+                    {
+                        if (_encodedToken is not null)
+                            _encodedSignature = IsEncrypted ? string.Empty : _encodedToken.Substring(Dot2 + 1, _encodedToken.Length - Dot2 - 1);
+                        else
+                            _encodedSignature = string.Empty;
+                    }
                 }
 
                 return _encodedSignature;
@@ -276,7 +321,16 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// <remarks>
         /// The original Base64UrlEncoded of the JWT.
         /// </remarks>
-        public string EncodedToken { get; private set; }
+        public string EncodedToken
+        {
+            get
+            {
+               if (_encodedToken is null && !_encodedTokenMemory.IsEmpty)
+                    _encodedToken = _encodedTokenMemory.ToString();
+
+               return _encodedToken;
+            }
+        }
 
         internal JsonClaimSet Header { get; set; }
 
@@ -347,27 +401,29 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         internal int NumberOfDots { get; set; }
 
         /// <summary>
-        /// Converts a string into an instance of <see cref="JsonWebToken"/>.
+        /// Converts a span into an instance of <see cref="JsonWebToken"/>.
         /// </summary>
-        /// <param name="encodedJson">A 'JSON Web Token' (JWT) in JWS or JWE Compact Serialization Format.</param>
-        /// <exception cref="SecurityTokenMalformedException">if <paramref name="encodedJson"/> is malformed, a valid JWT should have either 2 dots (JWS) or 4 dots (JWE).</exception>
-        /// <exception cref="SecurityTokenMalformedException">if <paramref name="encodedJson"/> does not have an non-empty authentication tag after the 4th dot for a JWE.</exception>
-        /// <exception cref="SecurityTokenMalformedException">if <paramref name="encodedJson"/> has more than 4 dots.</exception>
-        internal void ReadToken(string encodedJson)
+        /// <param name="encodedTokenMemory">A span representing a 'JSON Web Token' (JWT) in JWS or JWE Compact Serialization Format.</param>
+        /// <exception cref="SecurityTokenMalformedException">if <paramref name="encodedTokenMemory"/> is malformed, a valid JWT should have either 2 dots (JWS) or 4 dots (JWE).</exception>
+        /// <exception cref="SecurityTokenMalformedException">if <paramref name="encodedTokenMemory"/> does not have a non-empty authentication tag after the 4th dot for a JWE.</exception>
+        /// <exception cref="SecurityTokenMalformedException">if <paramref name="encodedTokenMemory"/> has more than 4 dots.</exception>
+        internal void ReadToken(ReadOnlyMemory<char> encodedTokenMemory)
         {
-            // JWT must have 2 dots
-            Dot1 = encodedJson.IndexOf('.');
-            if (Dot1 == -1 || Dot1 == encodedJson.Length - 1)
+            // JWT must have 2 dots for JWS or 4 dots for JWE (a.b.c.d.e)
+            ReadOnlySpan<char> encodedTokenSpan = encodedTokenMemory.Span;
+
+            Dot1 = encodedTokenSpan.IndexOf('.'); 
+            if (Dot1 == -1 || Dot1 == encodedTokenSpan.Length - 1)
                 throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogMessages.IDX14100));
 
-            Dot2 = encodedJson.IndexOf('.', Dot1 + 1);
+            // Dot2 index in the second segment
+            Dot2 = encodedTokenSpan.Slice(Dot1 + 1).IndexOf('.');
             if (Dot2 == -1)
                 throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogMessages.IDX14120));
 
-            if (Dot2 == encodedJson.Length - 1)
-                Dot3 = -1;
-            else
-                Dot3 = encodedJson.IndexOf('.', Dot2 + 1);
+            // Dot2 index in the whole token
+            Dot2 = Dot1 + Dot2 + 1;
+            Dot3 = (Dot2 == encodedTokenSpan.Length - 1) ? -1 : encodedTokenSpan.Slice(Dot2 + 1).IndexOf('.');
 
             if (Dot3 == -1)
             {
@@ -375,28 +431,28 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 // JWS: https://www.rfc-editor.org/rfc/rfc7515
                 // Format: https://www.rfc-editor.org/rfc/rfc7515#page-7
 
-                IsSigned = !(Dot2 + 1 == encodedJson.Length);
+                IsSigned = !(Dot2 + 1 == encodedTokenSpan.Length);
                 try
                 {
-                    Header = CreateClaimSet(encodedJson, 0, Dot1, CreateHeaderClaimSet);
+                    Header = CreateClaimSet(encodedTokenSpan, 0, Dot1, createHeaderClaimSet: true);
                 }
                 catch (Exception ex)
                 {
                     throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(
                         LogMessages.IDX14102,
-                        LogHelper.MarkAsUnsafeSecurityArtifact(encodedJson.Substring(0, Dot1), t => t.ToString())),
+                        LogHelper.MarkAsUnsafeSecurityArtifact(encodedTokenSpan.Slice(0, Dot1).ToString(), t => t.ToString())), // TODO: Add an overload to LogHelper.MarkAsUnsafeSecurityArtifact that accepts span?
                         ex));
                 }
 
                 try
                 {
-                    Payload = CreateClaimSet(encodedJson, Dot1 + 1, Dot2 - Dot1 - 1, CreatePayloadClaimSet);
+                    Payload = CreateClaimSet(encodedTokenSpan, Dot1 + 1, Dot2 - Dot1 - 1, createHeaderClaimSet: false);
                 }
                 catch (Exception ex)
                 {
                     throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(
                         LogMessages.IDX14101,
-                        LogHelper.MarkAsUnsafeSecurityArtifact(encodedJson.Substring(Dot1 + 1, Dot2 - Dot1 - 1), t => t.ToString())),
+                        LogHelper.MarkAsUnsafeSecurityArtifact(encodedTokenSpan.Slice(Dot1 + 1, Dot2 - Dot1 - 1).ToString(), t => t.ToString())),
                         ex));
                 }
             }
@@ -407,115 +463,122 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 // empty payload for JWE's {encrypted tokens}.
                 Payload = new JsonClaimSet();
 
-                if (Dot3 == encodedJson.Length)
-                    throw LogHelper.LogExceptionMessage(new ArgumentException(LogMessages.IDX14121));
-
-                Dot4 = encodedJson.IndexOf('.', Dot3 + 1);
-
-                // JWE needs to have 4 dots
+                Dot3 = Dot2 + Dot3 + 1;
+                if (Dot3 == encodedTokenSpan.Length - 1)
+                    throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogMessages.IDX14121));
+                
+                Dot4 = encodedTokenSpan.Slice(Dot3 + 1).IndexOf('.');
                 if (Dot4 == -1)
                     throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogMessages.IDX14121));
-
-                // too many dots...
-                if (encodedJson.IndexOf('.', Dot4 + 1) != -1)
-                    throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogMessages.IDX14122));
+                
+                Dot4 = Dot3 + Dot4 + 1;
 
                 // must have something after 4th dot
-                if (Dot4 == encodedJson.Length - 1)
+                if (Dot4 == encodedTokenSpan.Length - 1)
                     throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogMessages.IDX14310));
 
-                // right number of dots for JWE
-                ReadOnlyMemory<char> hChars = encodedJson.AsMemory(0, Dot1);
+                if (encodedTokenSpan.Slice(Dot4 + 1).IndexOf('.') != -1)
+                    throw LogHelper.LogExceptionMessage(new SecurityTokenMalformedException(LogMessages.IDX14122));
 
-                // header cannot be empty
-                if (hChars.IsEmpty)
+                ReadOnlySpan<char> headerSpan = encodedTokenSpan.Slice(0, Dot1);
+                if (headerSpan.IsEmpty)
                     throw LogHelper.LogExceptionMessage(new ArgumentException(LogMessages.IDX14307));
 
-                byte[] headerAsciiBytes = new byte[hChars.Length];
+                // right number of dots for JWE (4)
+                byte[] headerAsciiBytes = new byte[headerSpan.Length];
 #if NET6_0_OR_GREATER
-                Encoding.ASCII.GetBytes(hChars.Span, headerAsciiBytes);
+                Encoding.ASCII.GetBytes(headerSpan, headerAsciiBytes);
 #else
                 unsafe
                 {
-                    fixed (char* hCharsPtr = hChars.Span)
+                    fixed (char* hCharsPtr = headerSpan)
                     fixed (byte* headerAsciiBytesPtr = headerAsciiBytes)
                     {
-                        Encoding.ASCII.GetBytes(hCharsPtr, hChars.Length, headerAsciiBytesPtr, headerAsciiBytes.Length);
+                        Encoding.ASCII.GetBytes(hCharsPtr, headerSpan.Length, headerAsciiBytesPtr, headerAsciiBytes.Length);
                     }
                 }
 #endif
+
                 HeaderAsciiBytes = headerAsciiBytes;
 
                 try
                 {
-                    Header = CreateHeaderClaimSet(Base64UrlEncoder.UnsafeDecode(hChars));
+                    Header = CreateHeaderClaimSet(Base64UrlEncoder.UnsafeDecode(headerSpan).AsSpan());
                 }
                 catch (Exception ex)
                 {
                     throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(
                         LogMessages.IDX14102,
-                        LogHelper.MarkAsUnsafeSecurityArtifact(encodedJson.Substring(0, Dot1), t => t.ToString())),
+                        LogHelper.MarkAsUnsafeSecurityArtifact(headerSpan.ToString(), t => t.ToString())),
                         ex));
                 }
 
-                // dir does not have any key bytes
-                ReadOnlyMemory<char> encryptedKeyBytes = encodedJson.AsMemory(Dot1 + 1, Dot2 - Dot1 - 1);
+                // delegating retrieving encrypted Key to the getter on EncryptedKey
+                ReadOnlySpan<char> encryptedKeyBytes = encodedTokenSpan.Slice(Dot1 + 1, Dot2 - Dot1 - 1);
                 if (!encryptedKeyBytes.IsEmpty)
                 {
                     EncryptedKeyBytes = Base64UrlEncoder.UnsafeDecode(encryptedKeyBytes);
-                    _encryptedKey = encodedJson.Substring(Dot1 + 1, Dot2 - Dot1 - 1);
+                    _encryptedKey = encryptedKeyBytes.ToString();
                 }
                 else
                 {
                     _encryptedKey = string.Empty;
                 }
 
-                ReadOnlyMemory<char> initializationVectorChars = encodedJson.AsMemory(Dot2 + 1, Dot3 - Dot2 - 1);
-                if (initializationVectorChars.IsEmpty)
+                ReadOnlySpan<char> initializationVectorSpan = encodedTokenSpan.Slice(Dot2 + 1, Dot3 - Dot2 - 1);
+                if (initializationVectorSpan.IsEmpty)
                     throw LogHelper.LogExceptionMessage(new ArgumentException(LogMessages.IDX14308));
 
                 try
                 {
-                    InitializationVectorBytes = Base64UrlEncoder.UnsafeDecode(initializationVectorChars);
+                    InitializationVectorBytes = Base64UrlEncoder.UnsafeDecode(initializationVectorSpan);
                 }
                 catch (Exception ex)
                 {
                     throw LogHelper.LogExceptionMessage(new ArgumentException(LogMessages.IDX14309, ex));
                 }
 
-                ReadOnlyMemory<char> authTagChars = encodedJson.AsMemory(Dot4 + 1);
-                if (authTagChars.IsEmpty)
+                ReadOnlySpan<char> authTagSpan = encodedTokenSpan.Slice(Dot4 + 1);
+                if (authTagSpan.IsEmpty)
                     throw LogHelper.LogExceptionMessage(new ArgumentException(LogMessages.IDX14310));
 
                 try
                 {
-                    AuthenticationTagBytes = Base64UrlEncoder.UnsafeDecode(authTagChars);
+                    AuthenticationTagBytes = Base64UrlEncoder.UnsafeDecode(authTagSpan);
                 }
                 catch (Exception ex)
                 {
                     throw LogHelper.LogExceptionMessage(new ArgumentException(LogMessages.IDX14311, ex));
                 }
 
-                ReadOnlyMemory<char> cipherTextBytes = encodedJson.AsMemory(Dot3 + 1, Dot4 - Dot3 - 1);
-                if (cipherTextBytes.IsEmpty)
+                ReadOnlySpan<char> cipherTextSpan = encodedTokenSpan.Slice(Dot3 + 1, Dot4 - Dot3 - 1);
+                if (cipherTextSpan.IsEmpty)
                     throw LogHelper.LogExceptionMessage(new ArgumentException(LogMessages.IDX14306));
 
                 try
                 {
-                    CipherTextBytes = Base64UrlEncoder.UnsafeDecode(cipherTextBytes);
+                    CipherTextBytes = Base64UrlEncoder.UnsafeDecode(cipherTextSpan);
                 }
                 catch (Exception ex)
                 {
                     throw LogHelper.LogExceptionMessage(new ArgumentException(LogMessages.IDX14312, ex));
                 }
             }
-
-            EncodedToken = encodedJson;
         }
 
-        internal static JsonClaimSet CreateClaimSet(string rawString, int startIndex, int length, Func<byte[], int, JsonClaimSet> action)
+        internal JsonClaimSet CreateClaimSet(ReadOnlySpan<char> strSpan, int startIndex, int length, bool createHeaderClaimSet)
         {
-            return Base64UrlEncoding.Decode(rawString, startIndex, length, action);
+            int outputSize = Base64UrlEncoding.ValidateAndGetOutputSize(strSpan, startIndex, length);
+            byte[] output = ArrayPool<byte>.Shared.Rent(outputSize);
+            try
+            {
+                Base64UrlEncoding.Decode(strSpan, startIndex, length, output);
+                return createHeaderClaimSet ? CreateHeaderClaimSet(output.AsSpan()) : CreatePayloadClaimSet(output.AsSpan());
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(output);
+            }
         }
 
         /// <summary>
@@ -926,6 +989,9 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// <remarks>
         /// Identifies the authorized party for the id_token.
         /// see: https://openid.net/specs/openid-connect-core-1_0.html
+        /// <para>
+        /// If the 'azp' claim is not found, an empty string is returned.
+        /// </para>
         /// </remarks>
         public string Azp
         {

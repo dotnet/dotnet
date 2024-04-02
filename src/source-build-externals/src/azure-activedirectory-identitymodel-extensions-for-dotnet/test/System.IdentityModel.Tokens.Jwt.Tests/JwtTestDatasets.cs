@@ -556,6 +556,8 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                     {
                         TestId = nameof(Default.AsymmetricJws) + "_ConfigIssuerInvalid_AadIssuerValidatorThrow_LKGValid",
                         Token = Default.AadAsymmetricJws,
+                        SetupIssuerLkg = true,
+                        SetupIssuerLkgConfigurationManager = new MockConfigurationManager<OpenIdConnectConfiguration>(validConfig),
                         ValidationParameters = new TokenValidationParameters
                         {
                             ConfigurationManager = new MockConfigurationManager<OpenIdConnectConfiguration>(invalidIssuerConfig, validConfig),
@@ -650,6 +652,8 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                     {
                         TestId = nameof(Default.AsymmetricJws) + "_ConfigInvalid_AadIssuerValidatorThrow_LKGSucceeds_RequestRefreshIssuerInvalid",
                         Token = Default.AadAsymmetricJws,
+                        SetupIssuerLkg = true,
+                        SetupIssuerLkgConfigurationManager = new MockConfigurationManager<OpenIdConnectConfiguration>(validConfig),
                         ValidationParameters = new TokenValidationParameters
                         {
                             ConfigurationManager = new MockConfigurationManager<OpenIdConnectConfiguration>(invalidIssuerConfig, validConfig, invalidIssuerConfig),
@@ -962,6 +966,8 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                     {
                         TestId = nameof(aadJwe) + "_ConfigIssuerInvalid_AadIssuerValidatorThrow_LKGValid",
                         Token = aadJwe,
+                        SetupIssuerLkg = true,
+                        SetupIssuerLkgConfigurationManager = new MockConfigurationManager<OpenIdConnectConfiguration>(validConfig),
                         ValidationParameters = new TokenValidationParameters
                         {
                             ConfigurationManager = new MockConfigurationManager<OpenIdConnectConfiguration>(invalidIssuerConfig, validConfig),
@@ -1047,6 +1053,8 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                     {
                         TestId = nameof(aadJwe) + "_ConfigInvalid_AadIssuerValidatorThrow_LKGSucceeds_RequestRefreshIssuerInvalid",
                         Token = aadJwe,
+                        SetupIssuerLkg = true,
+                        SetupIssuerLkgConfigurationManager = new MockConfigurationManager<OpenIdConnectConfiguration>(validConfig),
                         ValidationParameters = new TokenValidationParameters
                         {
                             ConfigurationManager = new MockConfigurationManager<OpenIdConnectConfiguration>(invalidIssuerConfig, validConfig, invalidIssuerConfig),

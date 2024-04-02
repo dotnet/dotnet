@@ -2,11 +2,14 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Json.Tests;
 using Xunit;
-
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
 
 namespace System.IdentityModel.Tokens.Jwt.Tests
 {
@@ -138,6 +141,103 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             var kid = jwtHeader.Kid;
             Assert.True(kid == null);
         }
+
+        [Fact]
+        public void Getx5cDirectlyFromHeader_x5cIsUnsupportedType()
+        {
+            var arrayWithUnsupportedTypes = new List<object>
+            {
+                new List<string>()
+            };
+
+            JwtHeader header = new JwtHeader
+            {
+                { JwtHeaderParameterNames.X5c, arrayWithUnsupportedTypes }
+            };
+
+            var exception = Assert.Throws<JsonException>(() => header.X5c);
+
+            Assert.Contains("IDX11026", exception.Message);
+        }
+
+        [Fact]
+        public void Getx5cDirectlyFromHeader_x5cIsList()
+        {
+            X509Chain ch = new X509Chain();
+            ch.Build(KeyingMaterial.CertSelfSigned1024_SHA256);
+
+            var x5cArray = new List<string>();
+
+            foreach (var element in ch.ChainElements)
+                x5cArray.Add(Convert.ToBase64String(element.Certificate.Export(X509ContentType.Cert)));
+
+            JwtHeader header = new JwtHeader
+            {
+                { JwtHeaderParameterNames.X5c, x5cArray }
+            };
+
+            var expectedX5c = JsonSerializer.Serialize(x5cArray, new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            });
+
+            Assert.Equal(expectedX5c, header.X5c);
+        }
+
+        [Fact]
+        public void Getx5cDirectlyFromHeader_x5cIsJsonElement()
+        {
+            X509Chain ch = new X509Chain();
+            ch.Build(KeyingMaterial.CertSelfSigned1024_SHA256);
+
+            var x5cArray = new List<string>();
+
+            foreach (var element in ch.ChainElements)
+                x5cArray.Add(Convert.ToBase64String(element.Certificate.Export(X509ContentType.Cert)));
+
+            var x5cJsonElement = JsonSerializer.Serialize(x5cArray);
+
+            JwtHeader header = new JwtHeader
+            {
+                { JwtHeaderParameterNames.X5c, x5cJsonElement }
+            };
+
+            var expectedX5c = JsonSerializer.Serialize(x5cArray);
+            Assert.Equal(expectedX5c, header.X5c);
+        }
+
+        [Fact]
+        public void Getx5cRoundTrip()
+        {
+            X509Chain ch = new X509Chain();
+            ch.Build(KeyingMaterial.CertSelfSigned1024_SHA256);
+
+            var x5CArray = new List<string>();
+
+            foreach (var element in ch.ChainElements)
+                x5CArray.Add(Convert.ToBase64String(element.Certificate.Export(X509ContentType.Cert)));
+
+            JwtHeader header = new JwtHeader
+            {
+                { JwtHeaderParameterNames.X5c, x5CArray }
+            };
+
+            var payload = new JwtPayload();
+
+            SecurityToken securityToken = new JwtSecurityToken(header, payload);
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+            string jwt = tokenHandler.WriteToken(securityToken);
+
+            var jsonWebToken = new JsonWebToken(jwt);
+
+            var x5cFromJsonWebToken = jsonWebToken.Header.GetValue<string>(JwtHeaderParameterNames.X5c);
+
+            JwtSecurityToken token = tokenHandler.ReadJwtToken(jwt);
+
+            string x5CFromJwtSecurityToken = token.Header.X5c;
+            Assert.NotEmpty(x5CFromJwtSecurityToken);
+            Assert.Equal(x5CFromJwtSecurityToken, x5cFromJsonWebToken);
+        }
     }
 
     public class JwtHeaderTheoryData : TheoryDataBase
@@ -147,5 +247,3 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         public SigningCredentials SigningCredentials { get; set; }
    }
 }
-
-#pragma warning restore CS3016 // Arrays as attribute arguments is not CLS-compliant

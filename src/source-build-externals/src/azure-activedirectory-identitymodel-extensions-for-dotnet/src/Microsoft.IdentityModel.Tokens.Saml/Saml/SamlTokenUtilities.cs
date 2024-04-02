@@ -7,6 +7,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Microsoft.IdentityModel.Xml;
 using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.IdentityModel.Logging;
 using TokenLogMessages = Microsoft.IdentityModel.Tokens.LogMessages;
 
@@ -164,6 +167,30 @@ namespace Microsoft.IdentityModel.Tokens.Saml
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Fetches current configuration from the ConfigurationManager of <paramref name="validationParameters"/>
+        /// and populates ValidIssuers and IssuerSigningKeys.
+        /// </summary>
+        /// <param name="validationParameters"> the token validation parameters to update.</param>
+        /// <returns> New TokenValidationParameters with ValidIssuers and IssuerSigningKeys updated.</returns>
+        internal static async Task<TokenValidationParameters> PopulateValidationParametersWithCurrentConfigurationAsync(
+            TokenValidationParameters validationParameters)
+        {
+            if (validationParameters.ConfigurationManager == null)
+            {
+                return validationParameters;
+            }
+
+            var currentConfiguration = await validationParameters.ConfigurationManager.GetBaseConfigurationAsync(CancellationToken.None).ConfigureAwait(false);
+            var validationParametersCloned = validationParameters.Clone();
+            var issuers = new[] { currentConfiguration.Issuer };
+
+            validationParametersCloned.ValidIssuers = (validationParametersCloned.ValidIssuers == null ? issuers : validationParametersCloned.ValidIssuers.Concat(issuers));
+            validationParametersCloned.IssuerSigningKeys = (validationParametersCloned.IssuerSigningKeys == null ? currentConfiguration.SigningKeys : validationParametersCloned.IssuerSigningKeys.Concat(currentConfiguration.SigningKeys));
+            return validationParametersCloned;
+
         }
     }
 }

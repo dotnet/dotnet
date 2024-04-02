@@ -23,10 +23,6 @@
       <PackCommandArgs>$(BuildCommandArgs) --output $(ProjectDirectory)pack</PackCommandArgs>
     </PropertyGroup>
 
-    <!-- Update project assembly info (see https://github.com/dotnet/source-build/issues/3565).
-         The script being executed is being injected into the repo via a patch. -->
-    <Exec Command="./updateAssemblyInfo.sh" WorkingDirectory="$(ProjectDirectory)" IgnoreStandardErrorWarningFormat="true" />
-
     <Exec Command="$(DotnetToolCommand) restore /bl:restore.binlog $(SystemIdentityModelTokensJwtProject) $(BuildCommandArgs)"
           EnvironmentVariables="@(EnvironmentVariables)"
           WorkingDirectory="$(ProjectDirectory)"

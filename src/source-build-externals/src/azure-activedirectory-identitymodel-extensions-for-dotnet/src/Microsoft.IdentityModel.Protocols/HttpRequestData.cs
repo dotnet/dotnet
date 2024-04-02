@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 
 namespace Microsoft.IdentityModel.Protocols
 {
@@ -14,6 +16,7 @@ namespace Microsoft.IdentityModel.Protocols
     public class HttpRequestData
     {
         private IDictionary<string, IEnumerable<string>> _headers = new Dictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
+        private X509Certificate2Collection _clientCertificates;
 
         /// <summary>
         /// Gets or sets the http request URI. 
@@ -44,6 +47,14 @@ namespace Microsoft.IdentityModel.Protocols
                 _headers = value ?? throw new ArgumentNullException(nameof(Headers));
             }
         }
+
+        /// <summary>
+        /// Gets the certificate collection involved in authenticating the client against the server.
+        /// </summary>
+        public X509Certificate2Collection ClientCertificates => _clientCertificates ??
+            Interlocked.CompareExchange(ref _clientCertificates, [], null) ??
+            _clientCertificates;
+
         /// <summary>
         /// Gets or sets an <see cref="IDictionary{String, Object}"/> that enables custom extensibility scenarios.
         /// </summary>

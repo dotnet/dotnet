@@ -7,7 +7,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using System.Xml;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.WsFederation;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Xml;
 using Xunit;
@@ -319,6 +322,23 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
+        [Theory, MemberData(nameof(ValidateTokenTheoryData))]
+        public async Task ValidateTokenAsync(SamlTheoryData theoryData)
+        {
+            var context = TestUtilities.WriteHeader($"{this}.ValidateToken", theoryData);
+            var validationResult = await (theoryData.Handler as SamlSecurityTokenHandler).ValidateTokenAsync(theoryData.Token, theoryData.ValidationParameters);
+            if (validationResult.Exception != null)
+            {
+                theoryData.ExpectedException.ProcessException(validationResult.Exception, context);
+            }
+            else
+            {
+                theoryData.ExpectedException.ProcessNoException(context);
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
         public static TheoryData<SamlTheoryData> ValidateTokenTheoryData
         {
             get
@@ -426,6 +446,63 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
                         ExpectedException = new ExpectedException(typeof(SamlSecurityTokenReadException), "IDX11131:"),
                         Token = ReferenceTokens.SamlToken_NoAttributes,
                         ValidationParameters = new TokenValidationParameters(),
+                    },
+                    new SamlTheoryData("ReferenceTokens_SamlToken_Valid_Issuer_ConfigurationManager")
+                    {
+                        ExpectedException = ExpectedException.SecurityTokenSignatureKeyNotFoundException("IDX10500:"),
+                        Token = ReferenceTokens.SamlToken_Valid,
+                        ValidationParameters = new TokenValidationParameters
+                        {
+                            ConfigurationManager = new StaticConfigurationManager<BaseConfiguration>(new WsFederationConfiguration()
+                            {
+                                Issuer = "http://Default.Issuer.com",
+                            }),
+                            ValidateIssuerSigningKey = false,
+                            ValidateIssuer = true,
+                            ValidateAudience = false,
+                            ValidateLifetime = false,
+                        }
+                    },
+                    new SamlTheoryData("ReferenceTokens_SamlToken_Valid_IssuerSigningKey_ConfigurationManager")
+                    {
+                        Token = ReferenceTokens.SamlToken_Valid,
+                        ValidationParameters = new TokenValidationParameters
+                        {
+                            ConfigurationManager = new StaticConfigurationManager<BaseConfiguration>(new WsFederationConfiguration()
+                            {
+                                SigningKeys = { KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Key },
+                            }),
+                            ValidateIssuer = false,
+                            ValidateAudience = false,
+                            ValidateLifetime = false,
+                        }
+                    },
+                    new SamlTheoryData("ReferenceTokens_SamlToken_Valid_IssuerSigningKey_and_Issuer_ConfigurationManager")
+                    {
+                        Token = ReferenceTokens.SamlToken_Valid,
+                        ValidationParameters = new TokenValidationParameters
+                        {
+                            ConfigurationManager = new StaticConfigurationManager<BaseConfiguration>(new WsFederationConfiguration()
+                            {
+                                Issuer = "http://Default.Issuer.com",
+                                SigningKeys = { KeyingMaterial.DefaultX509SigningCreds_2048_RsaSha2_Sha2.Key },
+                            }),
+                            ValidateIssuer = true,
+                            ValidateAudience = false,
+                            ValidateLifetime = false,
+                        }
+                    },
+                    new SamlTheoryData("ReferenceTokens_SamlToken_Valid_NoSigningKey_ConfigurationManager")
+                    {
+                        ExpectedException = ExpectedException.SecurityTokenSignatureKeyNotFoundException("IDX10500:"),
+                        Token = ReferenceTokens.SamlToken_Valid,
+                        ValidationParameters = new TokenValidationParameters
+                        {
+                            ConfigurationManager = new StaticConfigurationManager<BaseConfiguration>(new WsFederationConfiguration()),
+                            ValidateIssuer = false,
+                            ValidateAudience = false,
+                            ValidateLifetime = false,
+                        }
                     },
                     new SamlTheoryData("ReferenceTokens_SamlToken_Valid_IssuerSigningKey_Set")
                     {

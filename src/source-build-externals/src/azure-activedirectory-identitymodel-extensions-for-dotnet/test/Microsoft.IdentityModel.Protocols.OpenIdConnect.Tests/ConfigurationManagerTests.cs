@@ -24,6 +24,13 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
     /// </summary>
     public class ConfigurationManagerTests
     {
+        /// <summary>
+        /// This test reaches out the the internet to fetch the OpenIdConnectConfiguration from the specified metadata address.
+        /// There is no validaiton of the configuration. The validation is done in the OpenIdConnectConfigurationSerializationTests.Deserialize
+        /// against values obtained 2/2/2024
+        /// </summary>
+        /// <param name="theoryData"></param>
+        /// <returns></returns>
         [Theory, MemberData(nameof(GetPublicMetadataTheoryData), DisableDiscoveryEnumeration = true)]
         public async Task GetPublicMetadata(ConfigurationManagerTheoryData<OpenIdConnectConfiguration> theoryData)
         {

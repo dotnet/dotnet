@@ -83,7 +83,7 @@ namespace Microsoft.IdentityModel.Tokens
             return payload;
         }
 
-        internal static IDictionary<string, object> CreateDictionaryFromClaims(
+        internal static Dictionary<string, object> CreateDictionaryFromClaims(
             IEnumerable<Claim> claims,
             SecurityTokenDescriptor tokenDescriptor,
             bool audienceSet,

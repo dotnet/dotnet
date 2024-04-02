@@ -6,11 +6,11 @@ parameters:
   BuildConfiguration: ''
 
 steps:
-- task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+- task: EsrpCodeSigning@4
   displayName: 'Sign ${{ parameters.LibraryName }}'
   inputs:
     ConnectedServiceName: 'IDDP Code Signing'
-    FolderPath: 'src\${{ parameters.LibraryName }}\bin\${{ parameters.BuildConfiguration }}'
+    FolderPath: '$(Build.SourcesDirectory)\src'
     Pattern: ${{ parameters.LibraryName }}.dll
     signConfigType: inlineSignParams
     inlineOperation: |
