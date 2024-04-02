@@ -30,15 +30,16 @@ jobs:
           -c $(_BuildConfig)
           /p:TargetArchitecture=${{ parameters.targetArchitecture }}
           /p:SkipTests=${{ parameters.skipTests }}
-      - name: MsbuildSigningArguments
-        value: /p:DotNetSignType=$(SignType)
       - name: TargetArchitecture
         value: ${{ parameters.targetArchitecture }}
       - ${{ if eq(variables['System.TeamProject'], 'public') }}:
+        - name: MsbuildSigningArguments
+          value: /p:DotNetSignType=Test
         - name: _InternalRuntimeDownloadArgs
           value: ''
       - ${{ if ne(variables['System.TeamProject'], 'public') }}:
-        - group: DotNet-MSRC-Storage
+        - name: MsbuildSigningArguments
+          value: /p:DotNetSignType=Real
         - name: _InternalRuntimeDownloadArgs
           value: >-
             /p:DotNetRuntimeSourceFeed=https://dotnetclimsrc.blob.core.windows.net/dotnet
