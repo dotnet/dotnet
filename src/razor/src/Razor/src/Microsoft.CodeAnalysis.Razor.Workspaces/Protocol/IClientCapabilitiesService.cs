@@ -3,7 +3,7 @@
 
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
+namespace Microsoft.CodeAnalysis.Razor.Protocol;
 
 internal interface IClientCapabilitiesService
 {

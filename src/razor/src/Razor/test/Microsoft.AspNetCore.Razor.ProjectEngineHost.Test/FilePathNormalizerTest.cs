@@ -25,7 +25,20 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestB
     }
 
     [Fact]
-    public void Normalize_IgnoresUNCPaths()
+    public void Normalize_NormalizesPathsWithSlashAtPositionOne()
+    {
+        // Arrange
+        var path = @"d\ComputerName\path\to\something";
+
+        // Act
+        path = FilePathNormalizer.Normalize(path);
+
+        // Assert
+        Assert.Equal("d/ComputerName/path/to/something", path);
+    }
+
+    [Fact]
+    public void Normalize_FixesUNCPaths()
     {
         // Arrange
         var path = "//ComputerName/path/to/something";
@@ -34,7 +47,20 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestB
         path = FilePathNormalizer.Normalize(path);
 
         // Assert
-        Assert.Equal("//ComputerName/path/to/something", path);
+        Assert.Equal(@"\\ComputerName/path/to/something", path);
+    }
+
+    [Fact]
+    public void Normalize_IgnoresUNCPaths()
+    {
+        // Arrange
+        var path = @"\\ComputerName\path\to\something";
+
+        // Act
+        path = FilePathNormalizer.Normalize(path);
+
+        // Assert
+        Assert.Equal(@"\\ComputerName/path/to/something", path);
     }
 
     [Fact]

@@ -49,16 +49,16 @@
       "commitSha": "5b7beea1daa64d283d62d52a0027b13ee9484ff6"
     },
     {
-      "packageVersion": "8.0.300-beta.24179.1",
+      "packageVersion": "8.0.300-beta.24201.2",
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "b3701b7936766cf73224c7a55ba04a046b3d1a28"
+      "commitSha": "78caa77ac30021b33f2126dc1b57b2f255551def"
     },
     {
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "9bef43c6fcb8e569fd329a48662ef50c33936498"
+      "commitSha": "f57978eadb8d7814bd681127479338106d653236"
     },
     {
       "packageVersion": "17.11.0-preview-24178-16",
@@ -73,10 +73,10 @@
       "commitSha": "fb50d1a45ed10b39b5f335bc3a4bdcaea9b951cf"
     },
     {
-      "packageVersion": "7.0.0-preview.24180.1",
+      "packageVersion": "7.0.0-preview.24201.4",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "e72efde82a6080e71e7bf2729b4044709e88a211"
+      "commitSha": "416d1fd6585fdeb850a29c2ca2dc300298f1fcac"
     },
     {
       "packageVersion": "4.11.0-1.24180.2",
@@ -85,10 +85,10 @@
       "commitSha": "0288056413b6de0d0941b0b1ed770c273d870fb0"
     },
     {
-      "packageVersion": "3.11.0-beta1.24177.1",
+      "packageVersion": "3.11.0-beta1.24201.2",
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "ad732e236e7ffcb66de4b45a1b736aad4ccdcd83"
+      "commitSha": "332dd9ab9ec226d410cc4f42f7ebe24d4fdeb117"
     },
     {
       "packageVersion": "9.0.0-preview.4.24201.6",
@@ -103,10 +103,10 @@
       "commitSha": "ddccfec3ccd631fb8341c8b6e4e422e8cb339aa5"
     },
     {
-      "packageVersion": "9.0.100-preview.4.24201.9",
+      "packageVersion": "9.0.100-preview.4.24202.1",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "1b5b0c1cafa6cc0c8bc282e3c6336316f682f82a"
+      "commitSha": "0dbb5656c812641b4d7e4a4f425f8503d739114e"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24175.4",
@@ -121,7 +121,7 @@
       "commitSha": "c0b5d69a1a1513528c77fffff708c7502d57c35c"
     },
     {
-      "packageVersion": "9.0.0-beta.24180.1",
+      "packageVersion": "9.0.0-beta.24181.1",
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
       "commitSha": "0a7443b1ac4d9156e234d699d7c7604d9b91c58f"
@@ -133,10 +133,10 @@
       "commitSha": "01de94d9718fd48c511cae276437edcd41b41fa4"
     },
     {
-      "packageVersion": "9.0.100-preview.4.24181.1",
+      "packageVersion": "9.0.100-preview.4.24201.1",
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "2604b7363dc5d8c92f8b30b6518ebcf2e048fbbd"
+      "commitSha": "8bfdcbd336306686ba7aa30211548104e21b6c7c"
     },
     {
       "packageVersion": "1.1.0-rc.24175.1",
@@ -151,22 +151,22 @@
       "commitSha": "1cd0d8998250d36c95ed65a76304ef5d1b33e98f"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24181.1",
+      "packageVersion": "9.0.0-preview.4.24201.1",
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "672c180b467833f824fd19cab7ac76a73138ab6c"
+      "commitSha": "6890b3896882b0b31278b0d28dd4ca8e03e52390"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24180.1",
+      "packageVersion": "9.0.0-preview.4.24181.1",
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "5cc859511608804df7a4fd16cb7b7503fd8d76d8"
+      "commitSha": "50add59bd0407dc3e1b5003ec56f592f06c32bda"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24180.2",
+      "packageVersion": "9.0.0-preview.4.24181.1",
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "7b356d191513c508297f3c83640dcda10d3b1c7c"
+      "commitSha": "e1642d0c0b59336a035e944391110c6fff19a4c1"
     },
     {
       "packageVersion": "9.0.0-preview.24168.2",
