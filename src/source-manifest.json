@@ -13,10 +13,10 @@
       "commitSha": "9faf59f870abdeb427c51c1380fce84d8163f2f0"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24179.2",
+      "packageVersion": "9.0.0-preview.4.24201.14",
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "6dfaf9e2cff6cfa3aab0b7842fe02fe9f71e0f60"
+      "commitSha": "dc1acba9cd1374a8a8560bee655682e1a72de3eb"
     },
     {
       "packageVersion": "0.11.4-alpha.24168.1",
@@ -58,7 +58,7 @@
       "packageVersion": "9.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "cf0ecaf707f9e225a234915d0277b6fa91d20062"
+      "commitSha": "910af3cb055c12b065f34623e49b309671775099"
     },
     {
       "packageVersion": "17.11.0-preview-24178-16",
@@ -73,10 +73,10 @@
       "commitSha": "fb50d1a45ed10b39b5f335bc3a4bdcaea9b951cf"
     },
     {
-      "packageVersion": "7.0.0-preview.24201.4",
+      "packageVersion": "7.0.0-preview.24202.1",
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "416d1fd6585fdeb850a29c2ca2dc300298f1fcac"
+      "commitSha": "0881c0a948b55b2edc5c1c6437fd19c40ece74af"
     },
     {
       "packageVersion": "4.11.0-1.24180.2",
@@ -91,10 +91,10 @@
       "commitSha": "332dd9ab9ec226d410cc4f42f7ebe24d4fdeb117"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24201.6",
+      "packageVersion": "9.0.0-preview.4.24201.8",
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "dc01e99ac585d0c5aecee2bdbc1310451a6467bf"
+      "commitSha": "ab2bd48741b54baa9ac416a3da56efe915826085"
     },
     {
       "packageVersion": "9.0.0-preview.24176.1",
@@ -103,10 +103,10 @@
       "commitSha": "ddccfec3ccd631fb8341c8b6e4e422e8cb339aa5"
     },
     {
-      "packageVersion": "9.0.100-preview.4.24202.1",
+      "packageVersion": "9.0.100-preview.4.24202.4",
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "0dbb5656c812641b4d7e4a4f425f8503d739114e"
+      "commitSha": "4d607580e645c9c7749f394ad7172f91a6fa17d1"
     },
     {
       "packageVersion": "9.0.0-alpha.1.24201.3",
@@ -169,10 +169,10 @@
       "commitSha": "e1642d0c0b59336a035e944391110c6fff19a4c1"
     },
     {
-      "packageVersion": "9.0.0-preview.24168.2",
+      "packageVersion": "9.0.0-preview.24175.2",
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
-      "commitSha": "ea48469ba1215ec764ceba3df6f0b13b465c68ad"
+      "commitSha": "0ad4c4635bdf80aebc43c45bde031b9a0f3df606"
     },
     {
       "packageVersion": "1.0.0-beta.23475.1",
