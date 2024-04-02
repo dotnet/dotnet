@@ -3,6 +3,7 @@
 
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
 

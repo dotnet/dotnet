@@ -22,7 +22,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <summary>
         /// Mapping from algorithm to the expected signature size in bytes.
         /// </summary>
-        private static readonly Dictionary<string, int> _expectedSignatureSizeInBytes = new Dictionary<string, int>
+        internal static readonly Dictionary<string, int> ExpectedSignatureSizeInBytes = new Dictionary<string, int>
         {
             { SecurityAlgorithms.HmacSha256, 32 },
             { SecurityAlgorithms.HmacSha256Signature, 32 },
@@ -203,6 +203,73 @@ namespace Microsoft.IdentityModel.Tokens
             }
         }
 
+#if NET6_0_OR_GREATER
+        /// <inheritdoc/>
+        public override bool Sign(ReadOnlySpan<byte> input, Span<byte> signature, out int bytesWritten)
+        {
+            if (input == null || input.Length == 0)
+                throw LogHelper.LogArgumentNullException(nameof(input));
+
+            if (_disposed)
+            {
+                CryptoProviderCache?.TryRemove(this);
+                throw LogHelper.LogExceptionMessage(new ObjectDisposedException(GetType().ToString()));
+            }
+
+            KeyedHashAlgorithm keyedHashAlgorithm = GetKeyedHashAlgorithm(GetKeyBytes(Key), Algorithm);
+
+            try
+            {
+                return keyedHashAlgorithm.TryComputeHash(input, signature, out bytesWritten);
+            }
+            catch
+            {
+                CryptoProviderCache?.TryRemove(this);
+                Dispose(true);
+                throw;
+            }
+            finally
+            {
+                if (!_disposed)
+                    ReleaseKeyedHashAlgorithm(keyedHashAlgorithm);
+            }
+        }
+#endif
+
+        /// <inheritdoc/>
+        public override byte[] Sign(byte[] input, int offset, int count)
+        {
+            if (input == null || input.Length == 0)
+                throw LogHelper.LogArgumentNullException(nameof(input));
+
+            if (_disposed)
+            {
+                CryptoProviderCache?.TryRemove(this);
+                throw LogHelper.LogExceptionMessage(new ObjectDisposedException(GetType().ToString()));
+            }
+
+            if (LogHelper.IsEnabled(EventLogLevel.Informational))
+                LogHelper.LogInformation(LogMessages.IDX10642, input);
+
+            KeyedHashAlgorithm keyedHashAlgorithm = GetKeyedHashAlgorithm(GetKeyBytes(Key), Algorithm);
+
+            try
+            {
+                return keyedHashAlgorithm.ComputeHash(input, offset, count);
+            }
+            catch
+            {
+                CryptoProviderCache?.TryRemove(this);
+                Dispose(true);
+                throw;
+            }
+            finally
+            {
+                if (!_disposed)
+                    ReleaseKeyedHashAlgorithm(keyedHashAlgorithm);
+            }
+        }
+
         /// <summary>
         /// Verifies that a signature created over the 'input' matches the signature. Using <see cref="SymmetricSecurityKey"/> and 'algorithm' passed to <see cref="SymmetricSignatureProvider( SecurityKey, string )"/>.
         /// </summary>
@@ -362,7 +429,7 @@ namespace Microsoft.IdentityModel.Tokens
             // Check that signature length matches algorithm.
             // If we don't have an entry for the algorithm in our dictionary, that is probably a bug.
             // This is why a new message was created, rather than using IDX10640.
-            if (!_expectedSignatureSizeInBytes.TryGetValue(algorithmToValidate, out int expectedSignatureLength))
+            if (!ExpectedSignatureSizeInBytes.TryGetValue(algorithmToValidate, out int expectedSignatureLength))
                 throw LogHelper.LogExceptionMessage(new ArgumentException(
                     LogHelper.FormatInvariant(
                         LogMessages.IDX10718,
@@ -412,7 +479,6 @@ namespace Microsoft.IdentityModel.Tokens
                     ReleaseKeyedHashAlgorithm(keyedHashAlgorithm);
             }
         }
-
 
         #region IDisposable Members
 

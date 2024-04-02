@@ -7,8 +7,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
@@ -65,7 +66,7 @@ internal class DelegatedCompletionItemResolver : CompletionItemResolver
             delegatedParams.Identifier,
             item,
             delegatedParams.ProjectedKind);
-        var resolvedCompletionItem = await _clientConnection.SendRequestAsync<DelegatedCompletionItemResolveParams, VSInternalCompletionItem?>(Common.LanguageServerConstants.RazorCompletionResolveEndpointName, delegatedResolveParams, cancellationToken).ConfigureAwait(false);
+        var resolvedCompletionItem = await _clientConnection.SendRequestAsync<DelegatedCompletionItemResolveParams, VSInternalCompletionItem?>(CodeAnalysis.Razor.Protocol.LanguageServerConstants.RazorCompletionResolveEndpointName, delegatedResolveParams, cancellationToken).ConfigureAwait(false);
 
         if (resolvedCompletionItem is not null)
         {
@@ -105,7 +106,7 @@ internal class DelegatedCompletionItemResolver : CompletionItemResolver
             return resolvedCompletionItem;
         }
 
-        var formattingOptions = await _clientConnection.SendRequestAsync<TextDocumentIdentifierAndVersion, FormattingOptions?>(Common.LanguageServerConstants.RazorGetFormattingOptionsEndpointName, documentContext.Identifier, cancellationToken).ConfigureAwait(false);
+        var formattingOptions = await _clientConnection.SendRequestAsync<TextDocumentIdentifierAndVersion, FormattingOptions?>(CodeAnalysis.Razor.Protocol.LanguageServerConstants.RazorGetFormattingOptionsEndpointName, documentContext.Identifier, cancellationToken).ConfigureAwait(false);
         if (formattingOptions is null)
         {
             return resolvedCompletionItem;

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Extensions;
 using Microsoft.AspNetCore.Razor.LanguageServer.FindAllReferences;
 using Microsoft.AspNetCore.Razor.LanguageServer.Folding;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.LanguageServer.Implementation;
 using Microsoft.AspNetCore.Razor.LanguageServer.InlayHints;
 using Microsoft.AspNetCore.Razor.LanguageServer.LinkedEditingRange;

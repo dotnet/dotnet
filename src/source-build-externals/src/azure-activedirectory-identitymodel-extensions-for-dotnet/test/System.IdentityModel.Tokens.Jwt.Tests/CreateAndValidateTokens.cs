@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace System.IdentityModel.Tokens.Jwt.Tests
@@ -42,8 +41,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                     ValidateLifetime = false,
                 };
 
-            SecurityToken validatedSecurityToken = null;
-            var cp = handler.ValidateToken(jwt, validationParameters, out validatedSecurityToken);
+            handler.ValidateToken(jwt, validationParameters, out var validatedSecurityToken);
 
             JwtSecurityToken validatedJwt = validatedSecurityToken as JwtSecurityToken;
             object x5csInHeader = validatedJwt.Header[JwtHeaderParameterNames.X5c];
@@ -62,16 +60,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 int num = 0;
                 foreach (var str in list)
                 {
-                    var value = str as JValue;
-                    if (value != null)
-                    {
-                        string aud = value.Value as string;
-                        if (aud != null)
-                        {
-
-                        }
-                    }
-                    else if (!(str is string))
+                    if (!(str is string))
                     {
                         errors.Add("3: str is not string, is: " + str.GetType());
                         errors.Add("token : " + validatedJwt.ToString());
@@ -85,20 +74,28 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 }
             }
 
+            var serializedX5cs = JsonSerializer.Serialize(x5cs);
+            if (header.X5c != serializedX5cs)
+            {
+                errors.Add("5: header.X5c != serializedX5Cs");
+            }
+
             X509SecurityKey signingKey = KeyingMaterial.X509SecurityKeySelfSigned2048_SHA256;
             X509SecurityKey validateKey = KeyingMaterial.X509SecurityKeySelfSigned2048_SHA256_Public;
 
             // make sure we can still validate with existing logic.
             var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.RsaSha256Signature);
-            header = new JwtHeader(signingCredentials);
-            header.Add(JwtHeaderParameterNames.X5c, x5cs);
+            header = new JwtHeader(signingCredentials)
+            {
+                { JwtHeaderParameterNames.X5c, x5cs }
+            };
+
             jwtToken = new JwtSecurityToken(header, payload);
             jwt = handler.WriteToken(jwtToken);
 
             validationParameters.IssuerSigningKey = validateKey;
             validationParameters.RequireSignedTokens = true;
-            validatedSecurityToken = null;
-            cp = handler.ValidateToken(jwt, validationParameters, out validatedSecurityToken);
+            handler.ValidateToken(jwt, validationParameters, out _);
 
             TestUtilities.AssertFailIfErrors("CreateAndValidateTokens_MultipleX5C", errors);
         }
@@ -139,7 +136,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             validateKey = KeyingMaterial.X509SecurityKeySelfSigned2048_SHA384_Public;
             validationParameters.IssuerSigningKey = validateKey;
 
-            ExpectedException expectedException = ExpectedException.SecurityTokenSignatureKeyNotFoundException("IDX10503:");
+            ExpectedException expectedException = ExpectedException.SecurityTokenSignatureKeyNotFoundException("IDX10517:");
             try
             {
                 cp = handler.ValidateToken(jwt, validationParameters, out validatedSecurityToken);

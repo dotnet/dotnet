@@ -23,18 +23,16 @@ jobs:
     name: Wilson GitHub Action Test
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2.3.4
-    - name: Setup .NET 6.0.301
-      uses: actions/setup-dotnet@v2.1.0
-      with:
-        dotnet-version: 6.0.301
+      uses: actions/checkout@v4.1.1
+
     - name: Setup .NET 8.0.x
-      uses: actions/setup-dotnet@v2.1.0
+      uses: actions/setup-dotnet@v4.0.0
       with:
-        dotnet-version: 8.0.100-rc.1.23463.5
-  
-    # Build and test
-    - name: Restore packages
-      run: dotnet restore Wilson.sln
+        dotnet-version: 8.0.x
+
     - name: Run the tests
       run: dotnet test Wilson.sln
+
+    # Run baseline package validation
+    - name: Pack
+      run: dotnet pack Product.proj --no-restore --no-build

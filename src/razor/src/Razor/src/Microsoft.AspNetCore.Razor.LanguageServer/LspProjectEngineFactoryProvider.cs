@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
 using Microsoft.Extensions.Options;
 

@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 

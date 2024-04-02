@@ -95,9 +95,36 @@ namespace Microsoft.IdentityModel.Tokens
         /// <returns>signed bytes</returns>
         public abstract byte[] Sign(byte[] input);
 
+        /// <summary>
+        /// Produces a signature over the specified region of the <paramref name="input"/>.
+        /// </summary>
+        /// <param name="input">The bytes to produce a signature over.</param>
+        /// <param name="offset">The offset to specify the beginning of the region.</param>
+        /// <param name="count">The count to specify the end of the region.</param>
+        /// <returns>The signature bytes.</returns>
+        public virtual byte[] Sign(byte[] input, int offset, int count)
+        {
+            throw LogHelper.LogExceptionMessage(new NotImplementedException());
+        }
+
+#if NET6_0_OR_GREATER
+        /// <summary>
+        /// Produces a signature over the <paramref name="data"/> and writes it to <paramref name="destination"/>.
+        /// </summary>
+        /// <param name="data">The bytes to produce a signature over.</param>
+        /// <param name="destination">The pre-allocated span where signature bytes will be placed.</param>
+        /// <param name="bytesWritten">The number of bytes written into the signature span.</param>         
+        /// <returns>returns <see langword="true"/> if creation of signature succeeded, <see langword="false"/> otherwise.</returns>
+        public virtual bool Sign(ReadOnlySpan<byte> data, Span<byte> destination, out int bytesWritten)
+        {
+            throw LogHelper.LogExceptionMessage(new NotImplementedException());
+        }
+#endif
+        /// <summary>
         /// Verifies that the <paramref name="signature"/> over <paramref name="input"/> using the
         /// <see cref="SecurityKey"/> and <see cref="SignatureProvider.Algorithm"/> specified by this
         /// <see cref="SignatureProvider"/> are consistent.
+        /// </summary>
         /// <param name="input">the bytes that were signed.</param>
         /// <param name="signature">signature to compare against.</param>
         /// <returns>true if the computed signature matches the signature parameter, false otherwise.</returns>

@@ -3,7 +3,7 @@
 
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
+namespace Microsoft.CodeAnalysis.Razor.Protocol;
 
 /// <summary>
 /// A serializable pairing of <see cref="TextDocumentIdentifier"/> and a version. This

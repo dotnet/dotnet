@@ -5,9 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.ColorPresentation;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.DocumentColor;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol.ColorPresentation;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json.Linq;
@@ -72,7 +71,7 @@ internal partial class RazorCustomMessageTarget
         var htmlTextBuffer = htmlDoc.Snapshot.TextBuffer;
         var requests = _requestInvoker.ReinvokeRequestOnMultipleServersAsync<ColorPresentationParams, ColorPresentation[]>(
             htmlTextBuffer,
-            ColorPresentationEndpoint.ColorPresentationMethodName,
+            CustomMessageNames.ColorPresentationMethodName,
             colorPresentationParams,
             cancellationToken).ConfigureAwait(false);
 

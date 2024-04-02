@@ -22,10 +22,10 @@ Subject: [PATCH] fix for source build
  15 files changed, 8 insertions(+), 89 deletions(-)
 
 diff --git a/build/common.props b/build/common.props
-index 9f99de11..143d8509 100644
+index 7f22eb03..ec229fc2 100644
 --- a/build/common.props
 +++ b/build/common.props
-@@ -35,7 +35,7 @@
+@@ -46,7 +46,7 @@
    </PropertyGroup>
  
    <PropertyGroup>
@@ -34,12 +34,12 @@ index 9f99de11..143d8509 100644
      <PackageValidationBaselineVersion>7.0.0</PackageValidationBaselineVersion>
    </PropertyGroup>
  
-@@ -47,9 +47,5 @@
+@@ -58,9 +58,5 @@
      <NoWarn>$(NoWarn);SYSLIB0050</NoWarn>
      <NoWarn>$(NoWarn);SYSLIB0051</NoWarn>
    </PropertyGroup>
 -  
--  <ItemGroup Condition="'$(TargetFramework)' != 'net8.0'">
+-  <ItemGroup>
 -    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All"/>
 -  </ItemGroup>
  
@@ -68,21 +68,21 @@ index 23e1b910..254f709e 100644
  
  </Project>
 diff --git a/build/targets.props b/build/targets.props
-index f020b59b..934aae74 100644
+index eb2d3523..e9cde8f0 100644
 --- a/build/targets.props
 +++ b/build/targets.props
 @@ -1,7 +1,7 @@
  <Project>
    <PropertyGroup>
--    <SrcTargets Condition="'$(TargetNet8)' == 'True'">net461;net462;net472;netstandard2.0;net6.0;net8.0</SrcTargets>
--    <SrcTargets Condition="'$(TargetNet8)' != 'True'">net461;net462;net472;netstandard2.0;net6.0</SrcTargets>
-+    <SrcTargets Condition="'$(TargetNet8)' == 'True'">netstandard2.0;net6.0;net8.0</SrcTargets>
-+    <SrcTargets Condition="'$(TargetNet8)' != 'True'">netstandard2.0;net6.0</SrcTargets>
+-    <SrcTargets Condition="'$(LocalBuild)' != 'True'">net461;net462;net472;netstandard2.0;net6.0;net8.0</SrcTargets>
+-    <SrcTargets Condition="'$(LocalBuild)' == 'True'">net461;netstandard2.0;net8.0</SrcTargets>
++    <SrcTargets Condition="'$(LocalBuild)' != 'True'">netstandard2.0;net6.0;net8.0</SrcTargets>
++    <SrcTargets Condition="'$(LocalBuild)' == 'True'">netstandard2.0;net6.0</SrcTargets>
      <SrcStandardTargets>netstandard2.0</SrcStandardTargets>
    </PropertyGroup>
  </Project>
 diff --git a/buildConfiguration.xml b/buildConfiguration.xml
-index 83cd80e1..868c5395 100644
+index 06e064da..e6bb5701 100644
 --- a/buildConfiguration.xml
 +++ b/buildConfiguration.xml
 @@ -1,7 +1,7 @@
@@ -91,9 +91,9 @@ index 83cd80e1..868c5395 100644
    <nugetVersion>3.5.0-rc-1285</nugetVersion>
 -  <runtimes>net461,netstandard2.0</runtimes>
 +  <runtimes>netstandard2.0</runtimes>
-   <assemblyVersion>7.1.2</assemblyVersion>
-   <nugetSuffix>preview</nugetSuffix>
    <projects>
+     <src>
+       <project name="Microsoft.IdentityModel.Logging" />
 diff --git a/src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj b/src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj
 index f7a11afe..4a87af91 100644
 --- a/src/Microsoft.IdentityModel.Abstractions/Microsoft.IdentityModel.Abstractions.csproj
@@ -183,7 +183,7 @@ index 0e283fce..d599a4b1 100644
      <ProjectReference Include="..\Microsoft.IdentityModel.Protocols\Microsoft.IdentityModel.Protocols.csproj" />
      <ProjectReference Include="..\Microsoft.IdentityModel.Tokens.Saml\Microsoft.IdentityModel.Tokens.Saml.csproj" />
 diff --git a/src/Microsoft.IdentityModel.Protocols/Microsoft.IdentityModel.Protocols.csproj b/src/Microsoft.IdentityModel.Protocols/Microsoft.IdentityModel.Protocols.csproj
-index 87d7a90f..00357f8c 100644
+index b0cdcc2e..7f0bb67d 100644
 --- a/src/Microsoft.IdentityModel.Protocols/Microsoft.IdentityModel.Protocols.csproj
 +++ b/src/Microsoft.IdentityModel.Protocols/Microsoft.IdentityModel.Protocols.csproj
 @@ -15,13 +15,6 @@
@@ -198,8 +198,8 @@ index 87d7a90f..00357f8c 100644
 -  </ItemGroup>
 -
    <ItemGroup>
-     <ProjectReference Include="..\Microsoft.IdentityModel.Logging\Microsoft.IdentityModel.Logging.csproj" />
      <ProjectReference Include="..\Microsoft.IdentityModel.Tokens\Microsoft.IdentityModel.Tokens.csproj" />
+   </ItemGroup>
 diff --git a/src/Microsoft.IdentityModel.Tokens.Saml/Microsoft.IdentityModel.Tokens.Saml.csproj b/src/Microsoft.IdentityModel.Tokens.Saml/Microsoft.IdentityModel.Tokens.Saml.csproj
 index 8859880f..0deb3a3a 100644
 --- a/src/Microsoft.IdentityModel.Tokens.Saml/Microsoft.IdentityModel.Tokens.Saml.csproj

@@ -2,7 +2,6 @@
 
   <Import Project="dependencies.props" />
   <Import Project="targets.props" />
-  <Import Project="version.props" />
 
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
@@ -10,9 +9,6 @@
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <Company>Microsoft Corporation.</Company>
     <DelaySign>true</DelaySign>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <OutputTypeEx>library</OutputTypeEx>
     <Product>Microsoft IdentityModel</Product>
     <RepositoryType>git</RepositoryType>
@@ -31,7 +27,22 @@
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(SrcTargets)</TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">$(SrcStandardTargets)</TargetFrameworks>
     <NetStandardImplicitPackageVersion>$(NetStandardVersion)</NetStandardImplicitPackageVersion>
-    <LangVersion>11</LangVersion>
+    <LangVersion>12</LangVersion>
+  </PropertyGroup>
+
+  <!-- Wilson version  -->
+  <PropertyGroup>
+    <WilsonCurrentVersion>7.4.1</WilsonCurrentVersion>
+
+    <PreviewVersionSuffix Condition="'$(PreviewVersionSuffix)' == '' and '$(BuildingInsideVisualStudio)' != 'true'">preview-$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMddHHmmss"))</PreviewVersionSuffix>
+    <!--VS re-evaluates the variables, so having seconds or minutes creates an infinite loop of package updates-->
+    <PreviewVersionSuffix Condition="'$(PreviewVersionSuffix)' == '' and '$(BuildingInsideVisualStudio)' == 'true'">preview-$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMddHH"))</PreviewVersionSuffix>
+    <IsCustomPreview>$(WilsonVersion.Contains("-"))</IsCustomPreview>
+    <Version Condition="'$(WilsonVersion)' != ''">$(WilsonVersion)</Version>
+    <VersionSuffix Condition="'$(WilsonVersion)' == ''">$(PreviewVersionSuffix)</VersionSuffix>
+    <VersionPrefix Condition="'$(WilsonVersion)' == ''">$(WilsonCurrentVersion)</VersionPrefix>
+    <FileVersion Condition="'$(WilsonVersion)' != '' and '$(IsCustomPreview)' != 'true' ">$(WilsonVersion).$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMdd"))</FileVersion>
+    <FileVersion Condition="'$(WilsonVersion)' == ''">$(WilsonCurrentVersion).$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMdd"))</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -48,7 +59,7 @@
     <NoWarn>$(NoWarn);SYSLIB0051</NoWarn>
   </PropertyGroup>
   
-  <ItemGroup Condition="'$(TargetFramework)' != 'net8.0'">
+  <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubVersion)" PrivateAssets="All"/>
   </ItemGroup>
 

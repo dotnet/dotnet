@@ -87,9 +87,26 @@ When updating a component that is used in a Pre-SBE repo, please adhere to the f
 
 ## Patches
 
-When creating/updating patches, it is desirable to backport the changes whenever feasible as this reduces
+1. When creating/updating patches, it is desirable to backport the changes whenever feasible as this reduces
 the maintenance burden when [updating a component to a newer version](#updating-an-external-component-to-a-newer-version).
 
+1. Steps to create new patches:
+
+    1. Make changes in the submodule.
+
+    1. Commit changes in the submodule.
+
+    1. From the root directory of the submodule, run [extract-patches.sh](extract-patches.sh)/[extract-patches.ps1](extract-patches.ps1).
+       The script will prepare a patch based on the base sha of the submodule and the latest committed changes. The patch
+       will be added to patches/<component>/*.patch
+
+1. To apply a patch, or multiple patches, use `git am` while inside the submodule directory
+For example, to apply *all* `humanizer` patches:
+
+```sh
+# cd src/humanizer
+# git am "../../patches/humanizer/*"
+```
 ## Found an Issue?
 
 Source build related issues are tracked in the [source build repo](https://github.com/dotnet/source-build/).

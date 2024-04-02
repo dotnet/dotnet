@@ -3,13 +3,11 @@
 
 using BenchmarkDotNet.Attributes;
 using Microsoft.IdentityModel.Protocols.SignedHttpRequest;
-using Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests;
-using Microsoft.IdentityModel.Protocols;
 
 namespace Microsoft.IdentityModel.Benchmarks
 {
-    [HideColumns("Type", "Job", "WarmupCount", "LaunchCount")]
-    [MemoryDiagnoser]
+    // dotnet run -c release -f net8.0 --filter Microsoft.IdentityModel.Benchmarks.CreateSignedHttpRequestTests*
+
     public class CreateSignedHttpRequestTests
     {
         private SignedHttpRequestHandler _signedHttpRequestHandler;
@@ -20,19 +18,18 @@ namespace Microsoft.IdentityModel.Benchmarks
         {
             _signedHttpRequestHandler = new SignedHttpRequestHandler();
             _signedHttpRequestDescriptor = new SignedHttpRequestDescriptor(
-                    SignedHttpRequestTestUtils.DefaultEncodedAccessToken,
-                    new HttpRequestData(),
-                    SignedHttpRequestTestUtils.DefaultSigningCredentials,
+                    BenchmarkUtils.CreateAccessTokenWithCnf(),
+                    BenchmarkUtils.HttpRequestData,
+                    BenchmarkUtils.SigningCredentialsRsaSha256,
                     new SignedHttpRequestCreationParameters()
                     {
-                        CreateM = false,
+                        CreateM = true,
                         CreateP = false,
-                        CreateU = false
+                        CreateU = true
                     });
         }
 
         [Benchmark]
         public string SHRHandler_CreateSignedHttpRequest() => _signedHttpRequestHandler.CreateSignedHttpRequest(_signedHttpRequestDescriptor);
-
     }
 }

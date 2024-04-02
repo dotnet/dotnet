@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,17 +11,282 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens.Tests;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace Microsoft.IdentityModel.Tokens.Json.Tests
 {
     public class JsonSerializerPrimitivesTests
     {
+        [Theory, MemberData(nameof(RoundTripObjectsTheoryData), DisableDiscoveryEnumeration = true)]
+        public void RoundTripObjects(JsonSerializerTheoryData theoryData)
+        {
+            CompareContext context = TestUtilities.WriteHeader($"{this}.RoundTripObjects", theoryData);
+            MemoryStream memoryStream = new MemoryStream();
+            Utf8JsonWriter writer = new Utf8JsonWriter(memoryStream, new JsonWriterOptions { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
+            try
+            {
+                writer.WriteStartObject();
+                JsonSerializerPrimitives.WriteObject(ref writer, theoryData.PropertyName, theoryData.Object);
+                writer.WriteEndObject();
+                writer.Flush();
+
+                // getting the json string helps with debugging
+                string json = Encoding.UTF8.GetString(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
+                Utf8JsonReader reader = new Utf8JsonReader(memoryStream.GetBuffer());
+
+                // first read positions at the start of the object, second read positions at the property name
+                reader.Read();
+                reader.Read();
+
+                string propertyName = JsonSerializerPrimitives.ReadPropertyName(ref reader, this.GetType().Name, false);
+                object obj = JsonSerializerPrimitives.ReadPropertyValueAsObject(ref reader, theoryData.PropertyName, this.GetType().Name, true);
+                IdentityComparer.AreEqual(obj, theoryData.ReadObject, context);
+                theoryData.ExpectedException.ProcessNoException(context);
+            }
+            catch(Exception ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex, context);
+            }
+            finally
+            {
+                writer?.Dispose();
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        public static TheoryData<JsonSerializerTheoryData> RoundTripObjectsTheoryData
+        {
+            // there are a lot of tests here as this tests the lowest level of the serializer.
+            // Please do not use '.' in test names as double clicking on TheoryData.TestId will not copy the name to the clipboard.
+            // With so many tests conditional break points are very useful.
+            get
+            {
+                var theoryData = new TheoryData<JsonSerializerTheoryData>();
+                #region First LevelTests
+                // TODO - guid is serialized as a string make sure test exists for JsonWebToken to that TryGetValue<Guid> is tested
+                // When creating the JsonElement don't add any spaces in the string or the test will fail on JsonElement.RawText.
+                // We could have chosen to remove the spaces, but that might interfer with other tests.
+
+                DateTime dateTime = DateTime.UtcNow;
+                AddFloatDoubleVariations(theoryData);
+                AddListVariations(new List<string>{"string1", "string2"}, theoryData);
+                AddMinMaxVariations(DateTime.MaxValue, DateTime.MinValue, dateTime, theoryData);
+                AddMinMaxVariations(float.MaxValue, float.MinValue, (float)0, theoryData);
+                AddMinMaxVariations(double.MaxValue, double.MinValue, (double)0, theoryData);
+                AddMinMaxVariations(decimal.MaxValue, decimal.MinValue, (decimal)0, theoryData);
+                AddMinMaxVariations(long.MaxValue, long.MinValue, (long)0, theoryData);
+                AddMinMaxVariations(int.MaxValue, int.MinValue, 0, theoryData);
+
+                Guid guid = Guid.NewGuid();
+                theoryData.Add(new JsonSerializerTheoryData("Guid")
+                {
+                    Object = guid,
+                    ReadObject = guid.ToString()
+                });
+
+                theoryData.Add(new JsonSerializerTheoryData("true")
+                {
+                    Object = true,
+                    ReadObject = true
+                });
+
+                JsonElement? jsonElement = JsonUtilities.CreateJsonElement("""{"string1":"value1"}""");
+
+                theoryData.Add(new JsonSerializerTheoryData("Dictionary_object_object>")
+                {
+                    Object = new Dictionary<object, object>{{"string1", "value1"}},
+                    ReadObject = jsonElement
+                });
+
+                theoryData.Add(new JsonSerializerTheoryData("Dictionary_string_string")
+                {
+                    Object = new Dictionary<string,string>{{"string1", "value1"}},
+                    ReadObject = jsonElement
+                });
+
+                theoryData.Add(new JsonSerializerTheoryData("IDictionary_string_string")
+                {
+                    Object = new Dictionary<string, string>{{"string1", "value1"}} as IDictionary<string, string>,
+                    ReadObject = jsonElement
+                });
+
+                theoryData.Add(new JsonSerializerTheoryData("Dictionary_object_string>")
+                {
+                    Object = new Dictionary<object, string>{{"string1","value1"}},
+                    ReadObject = jsonElement
+                });
+                #endregion
+
+                #region Second LevelTests
+                // objects embeded in a dictionary or list
+                theoryData.Add(new JsonSerializerTheoryData("Dictionary_Guid")
+                {
+                    Object = new Dictionary<string, object>{{"key1", new Dictionary<string, object>{{"guid", guid}}}},
+                    ReadObject = JsonUtilities.CreateJsonElement($$$"""{"key1":{"guid":"{{{guid.ToString()}}}"}}""")
+                });
+
+                theoryData.Add(new JsonSerializerTheoryData("Dictionary_Dictionary_List_string")
+                {
+                    Object = new Dictionary<object, object>{{"key1", new Dictionary<string, object>{{"key2", new List<string> {"string1", "string2"}}}}},
+                    ReadObject = JsonUtilities.CreateJsonElement("""{"key1":{"key2":["string1","string2"]}}""")
+                });
+
+                theoryData.Add(new JsonSerializerTheoryData("List_Dictionary_String_List_String}")
+                {
+                    Object = new List<object>{"list",new Dictionary<string, string>{{"string1", "string2"}},new List<string>{"string3", "string4"}},
+                    ReadObject = JsonUtilities.CreateJsonElement("""["list",{"string1":"string2"},["string3","string4"]]""")
+                });
+
+                // For some versions of net, JsonDocument.Parse returns 1.7976931348623157E+308 instead of 1.79769313486232E+308 the value returned by double.MaxValue.ToString()
+#if NET6_0_OR_GREATER
+                string jsonElementString =
+                $$"""
+                ["string1","{{guid.ToString()}}",{{int.MaxValue}},{{long.MaxValue}},true,{{double.MaxValue}},null,{{decimal.MaxValue}}]
+                """;
+                theoryData.Add(new JsonSerializerTheoryData("ListWithPrimitiveTypes")
+                {
+                    Object = new List<object>{"string1", guid, int.MaxValue, long.MaxValue, true, double.MaxValue, null, decimal.MaxValue },
+                    ReadObject = JsonUtilities.CreateJsonElement(jsonElementString)
+                });
+#else
+                string jsonElementString =
+                $$"""
+                ["string1","{{guid.ToString()}}",{{int.MaxValue}},{{long.MaxValue}},true,1.7976931348623157E+308,null,{{decimal.MaxValue}}]
+                """;
+                theoryData.Add(new JsonSerializerTheoryData("ListWithPrimitiveTypes")
+                {
+                    Object = new List<object> { "string1", guid, int.MaxValue, long.MaxValue, true, 1.7976931348623157E+308, null, decimal.MaxValue },
+                    ReadObject = JsonUtilities.CreateJsonElement(jsonElementString)
+                });
+#endif
+                #endregion
+
+                return theoryData;
+            }
+        }
+
+        private static void AddListVariations(List<string> strings, TheoryData<JsonSerializerTheoryData> theoryData)
+        {
+            string jsonElementString = "[";
+            for (int i = 0; i < strings.Count -1; i++)
+                jsonElementString += $@"""{strings[i]}"",";
+
+            jsonElementString += $@"""{strings[strings.Count - 1]}""]";
+
+            theoryData.Add(new JsonSerializerTheoryData("StringArray")
+            {
+                Object = strings.ToArray(),
+                ReadObject = JsonUtilities.CreateJsonElement(jsonElementString)
+            });
+
+            theoryData.Add(new JsonSerializerTheoryData("ListOfString")
+            {
+                Object = new List<string>(strings),
+                ReadObject = JsonUtilities.CreateJsonElement(jsonElementString)
+            });
+
+            theoryData.Add(new JsonSerializerTheoryData("IListOfString")
+            {
+                Object = (new List<string>(strings) as IList<string>),
+                ReadObject = JsonUtilities.CreateJsonElement(jsonElementString)
+            });
+
+            theoryData.Add(new JsonSerializerTheoryData("IEnumerableOfString")
+            {
+                Object = (new List<string>(strings) as IEnumerable<string>),
+                ReadObject = JsonUtilities.CreateJsonElement(jsonElementString)
+            });
+
+            theoryData.Add(new JsonSerializerTheoryData("CollectionOfString")
+            {
+                Object = new Collection<string>(strings),
+                ReadObject = JsonUtilities.CreateJsonElement(jsonElementString)
+            });
+
+            theoryData.Add(new JsonSerializerTheoryData("JsonElement_ListOfString")
+            {
+                Object = JsonUtilities.CreateJsonElement(jsonElementString),
+                ReadObject = JsonUtilities.CreateJsonElement(jsonElementString)
+            });
+        }
+
+        private static void AddMinMaxVariations(object minValue, object maxValue, object zero, TheoryData<JsonSerializerTheoryData> theoryData)
+        {
+            theoryData.Add(new JsonSerializerTheoryData(minValue.GetType().Name + "_MinValue")
+            {
+                Object = minValue,
+                ReadObject = minValue
+            });
+
+            theoryData.Add(new JsonSerializerTheoryData(minValue.GetType().Name + "_MaxValue")
+            {
+                Object = minValue,
+                ReadObject = minValue
+            });
+
+            theoryData.Add(new JsonSerializerTheoryData(minValue.GetType().Name + "_Zero")
+            {
+                Object = zero,
+                ReadObject = zero
+            });
+        }
+
+        private static void AddFloatDoubleVariations(TheoryData<JsonSerializerTheoryData> theoryData)
+        {
+            theoryData.Add(new JsonSerializerTheoryData("Single_11.1")
+            {
+                Object = (float)11.1,
+                ReadObject = (float)11.1
+            });
+
+            theoryData.Add(new JsonSerializerTheoryData("Single_Minus_11.1")
+            {
+                Object = (float)-11.1,
+                ReadObject = (float)-11.1
+            });
+
+            theoryData.Add(new JsonSerializerTheoryData("Double_11.1")
+            {
+                Object = (double)11.1,
+                ReadObject = (double)11.1
+            });
+
+            theoryData.Add(new JsonSerializerTheoryData("Double_Minus_11.1")
+            {
+                Object = (double)-11.1,
+                ReadObject = (double)-11.1
+            });
+
+            theoryData.Add(new JsonSerializerTheoryData("List_Single_11.1")
+            {
+                Object = new List<object> { (float)11.1 },
+                ReadObject = JsonUtilities.CreateJsonElement("[11.1]")
+            });
+
+            theoryData.Add(new JsonSerializerTheoryData("List_Single_Minus_11.1")
+            {
+                Object = new List<object> { (float)-11.1 },
+                ReadObject = JsonUtilities.CreateJsonElement("[-11.1]")
+            });
+
+            theoryData.Add(new JsonSerializerTheoryData("List_Double_11.1")
+            {
+                Object = new List<object> { (double)11.1 },
+                ReadObject = JsonUtilities.CreateJsonElement("[11.1]")
+            });
+
+            theoryData.Add(new JsonSerializerTheoryData("List_Double_Minus_11.1")
+            {
+                Object = new List<object> { (double)-11.1 },
+                ReadObject = JsonUtilities.CreateJsonElement("[-11.1]")
+            });
+        }
+
         [Fact]
         public void CheckMaxDepthReading()
         {
-            var document = JsonDocument.Parse(@"{""key"":" + new string('[', 62) +  @"""value""" + new string(']', 62) + "}");
+            var document = JsonDocument.Parse(@"{""key"":" + new string('[', 62) + @"""value""" + new string(']', 62) + "}");
 
             Dictionary<string, object> value;
             JsonSerializerPrimitives.TryCreateTypeFromJsonElement(document.RootElement, out value);
@@ -76,7 +342,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
 
             json.Append('{');
 
-            foreach(var i in Enumerable.Range(0, 100))
+            foreach (var i in Enumerable.Range(0, 100))
             {
                 json.Append($@"""key-{i}"":""value-{i}""");
                 if (i != 99)
@@ -114,7 +380,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
         /// This test is designed to ensure that JsonSerializationPrimitives maximize depth of arrays of arrays.
         /// </summary>
         /// <param name="theoryData"></param>
-        [Theory, MemberData(nameof(CheckMaximumDepthWritingTheoryData))]
+        [Theory, MemberData(nameof(CheckMaximumDepthWritingTheoryData), DisableDiscoveryEnumeration = true)]
         public void CheckMaximumDepthWriting(JsonSerializerTheoryData theoryData)
         {
             CompareContext context = new CompareContext(theoryData);
@@ -135,7 +401,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                     IdentityComparer.AreEqual(json, theoryData.Json, context);
                     theoryData.ExpectedException.ProcessNoException(context);
                 }
-                catch (Exception ex )
+                catch (Exception ex)
                 {
                     theoryData.ExpectedException.ProcessException(ex, context);
                 }
@@ -248,7 +514,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                     Json = json,
                     PropertyName = "key",
                     Object = result,
-                    ExpectedException = new ExpectedException(typeExpected:typeof(InvalidOperationException))
+                    ExpectedException = new ExpectedException(typeExpected: typeof(InvalidOperationException))
                 });
 
                 (json, result) = CreateJsonSerializerTheoryData(50);
@@ -259,7 +525,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                 var mergedObjects = new Dictionary<string, object>
                 {
                     ["key1"] = new Dictionary<string, object> { ["key"] = result },
-                    ["key2"] = new Dictionary<string, object> { ["key"] =  result2 },
+                    ["key2"] = new Dictionary<string, object> { ["key"] = result2 },
                 };
 
                 theoryData.Add(new JsonSerializerTheoryData($"MultipleObjects")
@@ -317,308 +583,6 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
             runningJson.Append("]}");
 
             return (runningJson.ToString(), resultObject);
-        }
-
-        /// <summary>
-        /// This test is designed to ensure that JsonDeserialize and Utf8Reader are consistent and
-        /// that we understand the differences with newtonsoft.
-        /// </summary>
-        /// <param name="theoryData"></param>
-        [Theory, MemberData(nameof(DeserializeTheoryData))]
-        public void Deserialize(JsonSerializerTheoryData theoryData)
-        {
-            var context = new CompareContext(theoryData);
-            JsonTestClass jsonDeserialize = null;
-            JsonTestClass jsonRead = null;
-            JsonTestClass jsonIdentityModel = null;
-
-            CompareContext serializationContext = new CompareContext(theoryData);
-            try
-            {
-                jsonIdentityModel = JsonConvert.DeserializeObject<JsonTestClass>(theoryData.Json);
-                theoryData.IdentityModelSerializerExpectedException.ProcessNoException(serializationContext);
-            }
-            catch (Exception ex )
-            {
-                theoryData.IdentityModelSerializerExpectedException.ProcessException(ex, serializationContext);
-            }
-
-            if (serializationContext.Diffs.Count > 0)
-            {
-                context.Diffs.Add("ExpectedException difference in IdentityModel.Json.JsonConvert.DeserializeObject");
-                context.Merge(serializationContext);
-            }
-
-            serializationContext.Diffs.Clear();
-            try
-            {
-                jsonDeserialize = System.Text.Json.JsonSerializer.Deserialize<JsonTestClass>(theoryData.Json);
-                theoryData.JsonSerializerExpectedException.ProcessNoException(serializationContext);
-            }
-            catch (Exception ex)
-            {
-                theoryData.JsonSerializerExpectedException.ProcessException(ex, serializationContext);
-            }
-
-            if (serializationContext.Diffs.Count > 0)
-            {
-                context.Diffs.Add("ExpectedException difference in JsonSerializer.Deserialize");
-                context.Merge(serializationContext);
-            }
-
-
-            serializationContext.Diffs.Clear();
-            try
-            {
-                jsonRead = JsonTestClassSerializer.Deserialize(theoryData.Json);
-                theoryData.JsonReaderExpectedException.ProcessNoException(serializationContext);
-            }
-            catch (Exception ex)
-            {
-                theoryData.JsonReaderExpectedException.ProcessException(ex, serializationContext);
-            }
-
-            if (serializationContext.Diffs.Count > 0)
-            {
-                context.Diffs.Add("ExpectedException difference in JsonTestClassSerializer.Deserialize");
-                context.Merge(serializationContext);
-            }
-
-            // newtonsoft maps Number to bool, System.Text.Json does not, it throws.
-            if (theoryData.CompareMicrosoftJson)
-            {
-                serializationContext.Diffs.Clear();
-                IdentityComparer.AreEqual(jsonDeserialize, jsonIdentityModel, serializationContext);
-                if (serializationContext.Diffs.Count > 0)
-                {
-                    context.Diffs.Add("Difference between JsonSerializer.Deserialize and IdentityModel.Json.JsonConvert.DeserializeObject");
-                    context.Merge(serializationContext);
-                }
-            }
-
-            serializationContext.Diffs.Clear();
-            IdentityComparer.AreEqual(jsonDeserialize, jsonRead, context);
-            if (serializationContext.Diffs.Count > 0)
-            {
-                context.Diffs.Add("Difference between JsonSerializer.Deserialize and JsonTestClassSerializer");
-                context.Merge(serializationContext);
-            }
-
-            TestUtilities.AssertFailIfErrors(context);
-        }
-
-        public static TheoryData<JsonSerializerTheoryData> DeserializeTheoryData
-        {
-            get
-            {
-                var theoryData = new TheoryData<JsonSerializerTheoryData>();
-
-                JsonSerializationTestUtilities.AddSerializationTestCases(
-                    theoryData,
-                    "Boolean",
-                    new ExpectedException(typeof(JsonReaderException), ""),
-                    new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020: "),
-                    new ExpectedException(typeof(System.Text.Json.JsonException), "The JSON value could not be converted") { IgnoreInnerException = true }
-                );
-
-                JsonSerializationTestUtilities.AddSerializationTestCases(
-                    theoryData,
-                    "Double",
-                    new ExpectedException(typeof(JsonReaderException), ""),
-                    new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020: "),
-                    new ExpectedException(typeof(System.Text.Json.JsonException), "The JSON value could not be converted") { IgnoreInnerException = true }
-                );
-
-                JsonSerializationTestUtilities.AddSerializationTestCases(
-                    theoryData,
-                    "Int",
-                    new ExpectedException(typeof(JsonReaderException), ""),
-                    new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020: ") { IgnoreInnerException = true },
-                    new ExpectedException(typeof(System.Text.Json.JsonException), "The JSON value could not be converted") { IgnoreInnerException = true }
-                );
-
-                JsonSerializationTestUtilities.AddSerializationTestCases(
-                    theoryData,
-                    "ListObject",
-                    new ExpectedException(typeof(JsonSerializationException), "") { IgnoreInnerException = true },
-                    new ExpectedException(typeof(System.Text.Json.JsonException), ""),
-                    new ExpectedException(typeof(System.Text.Json.JsonException), "")
-                );
-
-                JsonSerializationTestUtilities.AddSerializationTestCases(
-                    theoryData,
-                    "ListString",
-                    new ExpectedException(typeof(JsonSerializationException), "") { IgnoreInnerException = true },
-                    new ExpectedException(typeof(System.Text.Json.JsonException), ""),
-                    new ExpectedException(typeof(System.Text.Json.JsonException), "") { IgnoreInnerException = true }
-                    );
-
-                JsonSerializationTestUtilities.AddSerializationTestCases(
-                    theoryData,
-                    "String",
-                    new ExpectedException(typeof(JsonReaderException), "") { IgnoreInnerException = true },
-                    new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020: "),
-                    new ExpectedException(typeof(System.Text.Json.JsonException), "The JSON value could not be converted") { IgnoreInnerException = true }
-                );
-
-                return theoryData;
-            }
-        }
-
-        /// <summary>
-        /// This test is designed to ensure that JsonDeserialize and Utf8Reader are consistent w.r.t. exceptions.
-        /// </summary>
-        /// <param name="theoryData"></param>
-        [Theory, MemberData(nameof(SerializeTheoryData))]
-        public void Serialize(JsonSerializerTheoryData theoryData)
-        {
-            var context = new CompareContext(theoryData);
-            string jsonIdentityModel = JsonConvert.SerializeObject(theoryData.JsonTestClass);
-            string jsonNewtonsoft = JsonConvert.SerializeObject(theoryData.JsonTestClass);
-
-            // without using the JavaScriptEncoder.UnsafeRelaxedJsonEscaping, System.Text.Json will escape all characters
-            // we will need to have some way for the user to specify the encoder to use.
-            string jsonSerialize = System.Text.Json.JsonSerializer.Serialize(
-                theoryData.JsonTestClass,
-                new JsonSerializerOptions
-                {
-                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-#if NET6_0_OR_GREATER
-                    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-#endif
-                });
-
-            string serialize = JsonTestClassSerializer.Serialize(
-                theoryData.JsonTestClass,
-                new JsonWriterOptions
-                {
-                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-                },
-                theoryData.Serializers);
-
-            CompareContext serializeContext = new CompareContext(theoryData);
-            IdentityComparer.AreEqual(jsonNewtonsoft, jsonIdentityModel, serializeContext);
-            if (serializeContext.Diffs.Count > 0)
-            {
-                context.Diffs.Add("Difference in Newtonsoft, IdentityModel");
-                context.Merge(serializeContext);
-            }
-
-#if NET6_0_OR_GREATER
-            serializeContext.Diffs.Clear();
-            IdentityComparer.AreEqual(jsonNewtonsoft, jsonSerialize, serializeContext);
-            if (serializeContext.Diffs.Count > 0)
-            {
-                context.Diffs.Add("Difference in Newtonsoft, JsonSerializer.Serialize");
-                context.Merge(serializeContext);
-            }
-#endif
-            serializeContext.Diffs.Clear();
-            IdentityComparer.AreEqual(jsonNewtonsoft, serialize, serializeContext);
-            if (serializeContext.Diffs.Count > 0)
-            {
-                context.Diffs.Add("Difference in Newtonsoft, JsonTestClassSerializer.Serialize");
-                context.Merge(serializeContext);
-            }
-
-#if NET6_0_OR_GREATER
-            serializeContext.Diffs.Clear();
-            IdentityComparer.AreEqual(jsonSerialize, serialize, serializeContext);
-            if (serializeContext.Diffs.Count > 0)
-            {
-                context.Diffs.Add("Difference in JsonSerializer.Serialize and JsonTestClassSerializer.Write");
-                context.Merge(serializeContext);
-            }
-#endif
-            TestUtilities.AssertFailIfErrors(context);
-        }
-
-        public static TheoryData<JsonSerializerTheoryData> SerializeTheoryData
-        {
-            get
-            {
-                TheoryData<JsonSerializerTheoryData> theoryData = new TheoryData<JsonSerializerTheoryData>();
-
-                IDictionary<Type, IJsonSerializer> serializers = new Dictionary<Type, IJsonSerializer>
-                {
-                    { typeof(JsonTestClass), new SystemTextJsonSerializer() }
-                };
-
-                theoryData.Add(new JsonSerializerTheoryData("FullyPopulated")
-                {
-                    JsonTestClass = CreateJsonTestClass("*"),
-                    Serializers = serializers
-                });
-
-                theoryData.Add(new JsonSerializerTheoryData("AdditionalData")
-                {
-                    JsonTestClass = CreateJsonTestClass("AdditionalData"),
-                    Serializers = serializers
-                });
-
-                theoryData.Add(new JsonSerializerTheoryData("Boolean")
-                {
-                    JsonTestClass = CreateJsonTestClass("Boolean")
-                });
-
-                theoryData.Add(new JsonSerializerTheoryData("Double")
-                {
-                    JsonTestClass = CreateJsonTestClass("Double")
-                });
-
-                theoryData.Add(new JsonSerializerTheoryData("Int")
-                {
-                    JsonTestClass = CreateJsonTestClass("Int")
-                });
-
-                theoryData.Add(new JsonSerializerTheoryData("ListObject")
-                {
-                    JsonTestClass = CreateJsonTestClass("ListObject")
-                });
-
-                theoryData.Add(new JsonSerializerTheoryData("ListString")
-                {
-                    JsonTestClass = CreateJsonTestClass("ListString")
-                });
-
-                theoryData.Add(new JsonSerializerTheoryData("String")
-                {
-                    JsonTestClass = CreateJsonTestClass("String")
-                });
-
-                return theoryData;
-            }
-        }
-
-        private static JsonTestClass CreateJsonTestClass(string propertiesToSet)
-        {
-            JsonTestClass jsonTestClass = new JsonTestClass();
-
-            if (propertiesToSet == "*" || propertiesToSet.Contains("AdditionalData"))
-            {
-                jsonTestClass.AdditionalData["Key1"] = "Data1";
-                jsonTestClass.AdditionalData["Object"] = new JsonTestClass { Boolean = true, Double = 1.4, AdditionalData = new Dictionary<string, object> { { "key", "value" } } };
-            }
-
-            if (propertiesToSet == "*" || propertiesToSet.Contains("Boolean"))
-                jsonTestClass.Boolean = true;
-
-            if (propertiesToSet == "*" || propertiesToSet.Contains("Double"))
-                jsonTestClass.Double = 1.1;
-
-            if (propertiesToSet == "*" || propertiesToSet.Contains("Int"))
-                jsonTestClass.Int = 1;
-
-            if (propertiesToSet == "*" || propertiesToSet.Contains("ListObject"))
-                jsonTestClass.ListObject = new List<object> { 1, "string", true, "{\"innerArray\", [1, \"innerValue\"] }" };
-
-            if (propertiesToSet == "*" || propertiesToSet.Contains("ListString"))
-                jsonTestClass.ListString = new List<string> { "string1", "string2" };
-
-            if (propertiesToSet == "*" || propertiesToSet.Contains("String"))
-                jsonTestClass.String = "string";
-
-            return jsonTestClass;
         }
     }
 }

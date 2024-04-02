@@ -10,8 +10,12 @@ namespace Microsoft.IdentityModel.Tokens
     delegate byte[] EncryptDelegate(byte[] bytes);
     delegate byte[] DecryptDelegate(byte[] bytes);
     delegate byte[] SignDelegate(byte[] bytes);
+    delegate byte[] SignUsingOffsetDelegate(byte[] bytes, int offset, int count);
+#if NET6_0_OR_GREATER
+    delegate bool SignUsingSpanDelegate(ReadOnlySpan<byte> bytes, Span<byte> signature, out int bytesWritten);
+#endif
     delegate bool VerifyDelegate(byte[] bytes, byte[] signature);
-    delegate bool VerifyDelegateWithLength(byte[] bytes, int start, int length, byte[] signature);
+    delegate bool VerifyUsingOffsetDelegate(byte[] bytes, int offset, int count, byte[] signature);
 
     /// <summary>
     /// This adapter abstracts the 'RSA' differences between versions of .Net targets.
@@ -23,16 +27,27 @@ namespace Microsoft.IdentityModel.Tokens
 #endif
         private bool _disposeCryptoOperators = false;
         private bool _disposed = false;
-        private DecryptDelegate DecryptFunction = DecryptFunctionNotFound;
-        private EncryptDelegate EncryptFunction = EncryptFunctionNotFound;
-        private SignDelegate SignatureFunction = SignatureFunctionNotFound;
-        private VerifyDelegate VerifyFunction = VerifyFunctionNotFound;
-        private VerifyDelegateWithLength VerifyFunctionWithLength = VerifyFunctionWithLengthNotFound;
+        private DecryptDelegate _decryptFunction = DecryptFunctionNotFound;
+        private EncryptDelegate _encryptFunction = EncryptFunctionNotFound;
+        private SignDelegate _signFunction = SignFunctionNotFound;
+        private SignUsingOffsetDelegate _signUsingOffsetFunction = SignUsingOffsetNotFound;
+#if NET6_0_OR_GREATER
+        private SignUsingSpanDelegate _signUsingSpanFunction = SignUsingSpanNotFound;
+#endif
+        private VerifyDelegate _verifyFunction = VerifyNotFound;
+        private VerifyUsingOffsetDelegate _verifyUsingOffsetFunction = VerifyUsingOffsetNotFound;
 
         // Encryption algorithms do not need a HashAlgorithm, this is called by RSAKeyWrap
         internal AsymmetricAdapter(SecurityKey key, string algorithm, bool requirePrivateKey)
             : this(key, algorithm, null, requirePrivateKey)
         {
+        }
+
+        internal AsymmetricAdapter(SecurityKey key, string algorithm, HashAlgorithm hashAlgorithm, HashAlgorithmName hashAlgorithmName, bool requirePrivateKey)
+            : this(key, algorithm, hashAlgorithm, requirePrivateKey)
+        {
+
+            HashAlgorithmName = hashAlgorithmName;
         }
 
         internal AsymmetricAdapter(SecurityKey key, string algorithm, HashAlgorithm hashAlgorithm, bool requirePrivateKey)
@@ -73,7 +88,7 @@ namespace Microsoft.IdentityModel.Tokens
 
         internal byte[] Decrypt(byte[] data)
         {
-            return DecryptFunction(data);
+            return _decryptFunction(data);
         }
 
         internal static byte[] DecryptFunctionNotFound(byte[] _)
@@ -117,7 +132,7 @@ namespace Microsoft.IdentityModel.Tokens
 
         internal byte[] Encrypt(byte[] data)
         {
-            return EncryptFunction(data);
+            return _encryptFunction(data);
         }
 
         internal static byte[] EncryptFunctionNotFound(byte[] _)
@@ -131,16 +146,20 @@ namespace Microsoft.IdentityModel.Tokens
         private void InitializeUsingEcdsaSecurityKey(ECDsaSecurityKey ecdsaSecurityKey)
         {
             ECDsa = ecdsaSecurityKey.ECDsa;
-            SignatureFunction = SignWithECDsa;
-            VerifyFunction = VerifyWithECDsa;
-            VerifyFunctionWithLength = VerifyWithECDsaWithLength;
+            _signFunction = SignECDsa;
+            _signUsingOffsetFunction = SignUsingOffsetECDsa;
+#if NET6_0_OR_GREATER
+            _signUsingSpanFunction = SignUsingSpanECDsa;
+#endif
+            _verifyFunction = VerifyECDsa;
+            _verifyUsingOffsetFunction = VerifyUsingOffsetECDsa;
         }
 
         private void InitializeUsingRsa(RSA rsa, string algorithm)
         {
             // The return value for X509Certificate2.GetPrivateKey OR X509Certificate2.GetPublicKey.Key is a RSACryptoServiceProvider
             // These calls return an AsymmetricAlgorithm which doesn't have API's to do much and need to be cast.
-            // RSACryptoServiceProvider is wrapped with RSACryptoServiceProviderProxy as some CryptoServideProviders (CSP's) do
+            // RSACryptoServiceProvider is wrapped with RSACryptoServiceProviderProxy as some CryptoServiceProviders (CSP's) do
             // not natively support SHA2.
 #if DESKTOP
             if (rsa is RSACryptoServiceProvider rsaCryptoServiceProvider)
@@ -149,13 +168,12 @@ namespace Microsoft.IdentityModel.Tokens
                                   || algorithm.Equals(SecurityAlgorithms.RsaOaepKeyWrap);
 
                 RsaCryptoServiceProviderProxy = new RSACryptoServiceProviderProxy(rsaCryptoServiceProvider);
-                DecryptFunction = DecryptWithRsaCryptoServiceProviderProxy;
-                EncryptFunction = EncryptWithRsaCryptoServiceProviderProxy;
-                SignatureFunction = SignWithRsaCryptoServiceProviderProxy;
-                VerifyFunction = VerifyWithRsaCryptoServiceProviderProxy;
-#if NET461_OR_GREATER
-                VerifyFunctionWithLength = VerifyWithRsaCryptoServiceProviderProxyWithLength;
-#endif
+                _decryptFunction = DecryptWithRsaCryptoServiceProviderProxy;
+                _encryptFunction = EncryptWithRsaCryptoServiceProviderProxy;
+                _signFunction = SignWithRsaCryptoServiceProviderProxy;
+                _signUsingOffsetFunction = SignWithRsaCryptoServiceProviderProxyUsingOffset;
+                _verifyFunction = VerifyWithRsaCryptoServiceProviderProxy;
+                _verifyUsingOffsetFunction = VerifyWithRsaCryptoServiceProviderProxyUsingOffset;
                 // RSACryptoServiceProviderProxy will track if a new RSA object is created and dispose appropriately.
                 _disposeCryptoOperators = true;
                 return;
@@ -181,11 +199,15 @@ namespace Microsoft.IdentityModel.Tokens
                         ? RSAEncryptionPadding.OaepSHA1
                         : RSAEncryptionPadding.Pkcs1;
             RSA = rsa;
-            DecryptFunction = DecryptWithRsa;
-            EncryptFunction = EncryptWithRsa;
-            SignatureFunction = SignWithRsa;
-            VerifyFunction = VerifyWithRsa;
-            VerifyFunctionWithLength = VerifyWithRsaWithLength;
+            _decryptFunction = DecryptWithRsa;
+            _encryptFunction = EncryptWithRsa;
+            _signFunction = SignRsa;
+            _signUsingOffsetFunction = SignUsingOffsetRsa;
+#if NET6_0_OR_GREATER
+            _signUsingSpanFunction = SignUsingSpanRsa;
+#endif
+            _verifyFunction = VerifyRsa;
+            _verifyUsingOffsetFunction = VerifyUsingOffsetRsa;
         }
 
         private void InitializeUsingRsaSecurityKey(RsaSecurityKey rsaSecurityKey, string algorithm)
@@ -219,60 +241,101 @@ namespace Microsoft.IdentityModel.Tokens
 
         internal byte[] Sign(byte[] bytes)
         {
-            return SignatureFunction(bytes);
+            return _signFunction(bytes);
         }
 
-        private static byte[] SignatureFunctionNotFound(byte[] _)
+#if NET6_0_OR_GREATER
+        internal bool SignUsingSpan(ReadOnlySpan<byte> data, Span<byte> destination, out int bytesWritten)
+        {
+            return _signUsingSpanFunction(data, destination, out bytesWritten);
+        }
+#endif
+
+        internal byte[] SignUsingOffset(byte[] bytes, int offset, int count)
+        {
+            return _signUsingOffsetFunction(bytes, offset, count);
+        }
+
+        private static byte[] SignFunctionNotFound(byte[] _)
         {
             // we should never get here, its a bug if we do.
             throw LogHelper.LogExceptionMessage(new CryptographicException(LogMessages.IDX10685));
         }
 
-        private byte[] SignWithECDsa(byte[] bytes)
+        private static byte[] SignUsingOffsetNotFound(byte[] b, int c, int d)
+        {
+            // we should never get here, its a bug if we do.
+            throw LogHelper.LogExceptionMessage(new CryptographicException(LogMessages.IDX10685));
+        }
+
+#if NET6_0_OR_GREATER
+#pragma warning disable CA1801 // Review unused parameters
+        private static bool SignUsingSpanNotFound(ReadOnlySpan<byte> data, Span<byte> destination, out int bytesWritten)
+#pragma warning restore CA1801 // Review unused parameters
+        {
+            // we should never get here, its a bug if we do.
+            throw LogHelper.LogExceptionMessage(new CryptographicException(LogMessages.IDX10685));
+        }
+#endif
+
+        private byte[] SignECDsa(byte[] bytes)
         {
             return ECDsa.SignHash(HashAlgorithm.ComputeHash(bytes));
         }
 
+#if NET6_0_OR_GREATER
+        internal bool SignUsingSpanECDsa(ReadOnlySpan<byte> data, Span<byte> destination, out int bytesWritten)
+        {
+            // ECDSA.TrySignData will return true and set bytesWritten = 64, if destination is null.
+            if (destination.Length == 0)
+            {
+                bytesWritten = 0;
+                return false;
+            }
+
+            bool success = ECDsa.TrySignData(data, destination, HashAlgorithmName, out bytesWritten);
+            if (!success || bytesWritten == 0)
+                return false;
+
+            return destination.Length >= bytesWritten;
+        }
+#endif
+
+        private byte[] SignUsingOffsetECDsa(byte[] bytes, int offset, int count)
+        {
+            return ECDsa.SignHash(HashAlgorithm.ComputeHash(bytes, offset, count));
+        }
+
         internal bool Verify(byte[] bytes, byte[] signature)
         {
-            return VerifyFunction(bytes, signature);
+            return _verifyFunction(bytes, signature);
         }
 
-        internal bool Verify(byte[] bytes, int start, int length, byte[] signature)
+        internal bool VerifyUsingOffset(byte[] bytes, int offset, int count, byte[] signature)
         {
-            return VerifyFunctionWithLength(bytes, start, length, signature);
+            return _verifyUsingOffsetFunction(bytes, offset, count, signature);
         }
 
-        private static bool VerifyFunctionNotFound(byte[] bytes, byte[] signature)
-        {
-            // we should never get here, its a bug if we do.
-            throw LogHelper.LogExceptionMessage(new NotSupportedException(LogMessages.IDX10686));
-        }
-
-        private static bool VerifyFunctionWithLengthNotFound(byte[] bytes, int start, int length, byte[] signature)
+        private static bool VerifyNotFound(byte[] bytes, byte[] signature)
         {
             // we should never get here, its a bug if we do.
             throw LogHelper.LogExceptionMessage(new NotSupportedException(LogMessages.IDX10686));
         }
 
-        private bool VerifyWithECDsa(byte[] bytes, byte[] signature)
+        private static bool VerifyUsingOffsetNotFound(byte[] bytes, int offset, int count, byte[] signature)
+        {
+            // we should never get here, its a bug if we do.
+            throw LogHelper.LogExceptionMessage(new NotSupportedException(LogMessages.IDX10686));
+        }
+
+        private bool VerifyECDsa(byte[] bytes, byte[] signature)
         {
             return ECDsa.VerifyHash(HashAlgorithm.ComputeHash(bytes), signature);
         }
 
-        private bool VerifyWithECDsaWithLength(byte[] bytes, int start, int length, byte[] signature)
+        private bool VerifyUsingOffsetECDsa(byte[] bytes, int offset, int count, byte[] signature)
         {
-            return ECDsa.VerifyHash(HashAlgorithm.ComputeHash(bytes, start, length), signature);
-        }
-
-#region NET61+ related code
-#if NET461 || NET462 || NET472 || NETSTANDARD2_0 || NET6_0_OR_GREATER
-
-        // HasAlgorithmName was introduced into Net46
-        internal AsymmetricAdapter(SecurityKey key, string algorithm, HashAlgorithm hashAlgorithm, HashAlgorithmName hashAlgorithmName, bool requirePrivateKey)
-            : this(key, algorithm, hashAlgorithm, requirePrivateKey)
-        {
-            HashAlgorithmName = hashAlgorithmName;
+            return ECDsa.VerifyHash(HashAlgorithm.ComputeHash(bytes, offset, count), signature);
         }
 
         private byte[] DecryptWithRsa(byte[] bytes)
@@ -291,22 +354,32 @@ namespace Microsoft.IdentityModel.Tokens
 
         private RSASignaturePadding RSASignaturePadding { get; set; }
 
-        private byte[] SignWithRsa(byte[] bytes)
+        private byte[] SignRsa(byte[] bytes)
         {
             return RSA.SignHash(HashAlgorithm.ComputeHash(bytes), HashAlgorithmName, RSASignaturePadding);
         }
 
-        private bool VerifyWithRsa(byte[] bytes, byte[] signature)
+#if NET6_0_OR_GREATER
+        internal bool SignUsingSpanRsa(ReadOnlySpan<byte> data, Span<byte> destination, out int bytesWritten)
+        {
+            return RSA.TrySignData(data, destination, HashAlgorithmName, RSASignaturePadding, out bytesWritten);
+        }
+#endif
+
+        private byte[] SignUsingOffsetRsa(byte[] bytes, int offset, int count)
+        {
+            return RSA.SignData(bytes, offset, count, HashAlgorithmName, RSASignaturePadding);
+        }
+
+        private bool VerifyRsa(byte[] bytes, byte[] signature)
         {
             return RSA.VerifyHash(HashAlgorithm.ComputeHash(bytes), signature, HashAlgorithmName, RSASignaturePadding);
         }
 
-        private bool VerifyWithRsaWithLength(byte[] bytes, int start, int length, byte[] signature)
+        private bool VerifyUsingOffsetRsa(byte[] bytes, int offset, int count, byte[] signature)
         {
-            return RSA.VerifyHash(HashAlgorithm.ComputeHash(bytes, start, length), signature, HashAlgorithmName, RSASignaturePadding);
+            return RSA.VerifyHash(HashAlgorithm.ComputeHash(bytes, offset, count), signature, HashAlgorithmName, RSASignaturePadding);
         }
-#endif
-#endregion
 
 #region DESKTOP related code
 #if DESKTOP
@@ -326,18 +399,20 @@ namespace Microsoft.IdentityModel.Tokens
         {
             return RsaCryptoServiceProviderProxy.SignData(bytes, HashAlgorithm);
         }
+        internal byte[] SignWithRsaCryptoServiceProviderProxyUsingOffset(byte[] bytes, int offset, int length)
+        {
+            return RsaCryptoServiceProviderProxy.SignData(bytes, offset, length, HashAlgorithm);
+        }
 
         private bool VerifyWithRsaCryptoServiceProviderProxy(byte[] bytes, byte[] signature)
         {
             return RsaCryptoServiceProviderProxy.VerifyData(bytes, HashAlgorithm, signature);
         }
 
-    #if NET461_OR_GREATER
-        private bool VerifyWithRsaCryptoServiceProviderProxyWithLength(byte[] bytes, int offset, int length, byte[] signature)
+        private bool VerifyWithRsaCryptoServiceProviderProxyUsingOffset(byte[] bytes, int offset, int length, byte[] signature)
         {
             return RsaCryptoServiceProviderProxy.VerifyDataWithLength(bytes, offset, length, HashAlgorithm, HashAlgorithmName, signature);
         }
-    #endif
 
 #endif
 #endregion

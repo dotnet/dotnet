@@ -3,8 +3,9 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol.SemanticTokens;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 

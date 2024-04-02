@@ -315,7 +315,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 var signingSignatureProvider = theoryData.CryptoProviderFactory.CreateForSigning(theoryData.SigningKey, theoryData.SigningAlgorithm) as SymmetricSignatureProvider;
                 var signedBytes = signingSignatureProvider.Sign(bytes);
                 var verifyingSignatureProvider = theoryData.CryptoProviderFactory.CreateForVerifying(theoryData.VerifyKey, theoryData.VerifyAlgorithm) as SymmetricSignatureProvider;
-                if (theoryData.VerifySpecifyingLength)
+                if (theoryData.VerifyUsingLength)
                     verifyingSignatureProvider.Verify(bytes, signedBytes);
                 else
                     verifyingSignatureProvider.Verify(bytes, signedBytes, signedBytes.Length);
@@ -426,7 +426,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                     VerifyAlgorithm = ALG.HmacSha256,
                     VerifyKey = Default.SymmetricSigningKey256,
                     VerifySignatureProviderType = typeof(CustomSymmetricSignatureProvider).ToString(),
-                    VerifySpecifyingLength = true
+                    VerifyUsingLength = true
                 });
 
                 // Symmetric disposed signing
@@ -496,7 +496,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                     VerifyAlgorithm = ALG.HmacSha256,
                     VerifyKey = Default.SymmetricSigningKey256,
                     VerifySignatureProviderType = typeof(CustomSymmetricSignatureProvider).ToString(),
-                    VerifySpecifyingLength = true
+                    VerifyUsingLength = true
                 });
 
                 // Symmetric signing verifying succeed
@@ -518,7 +518,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                     VerifyAlgorithm = ALG.HmacSha256,
                     VerifyKey = Default.SymmetricSigningKey256,
                     VerifySignatureProviderType = typeof(CustomSymmetricSignatureProvider).ToString(),
-                    VerifySpecifyingLength = false
+                    VerifyUsingLength = false
                 });
 
                 // Symmetric signing verifying (specifying length) succeed
@@ -540,7 +540,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                     VerifyAlgorithm = ALG.HmacSha256,
                     VerifyKey = Default.SymmetricSigningKey256,
                     VerifySignatureProviderType = typeof(CustomSymmetricSignatureProvider).ToString(),
-                    VerifySpecifyingLength = true
+                    VerifyUsingLength = true
                 });
 
                 return theoryData;

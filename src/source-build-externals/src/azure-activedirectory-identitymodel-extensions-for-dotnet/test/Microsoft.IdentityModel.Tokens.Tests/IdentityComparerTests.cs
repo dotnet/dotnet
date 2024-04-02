@@ -577,7 +577,7 @@ namespace Microsoft.IdentityModel.TestUtils
 
             Assert.True(context.Diffs.Count(s => s == "str1 != str2, StringComparison: 'Ordinal'") == 1);
             Assert.True(context.Diffs[1] == string1);
-            Assert.True(context.Diffs[2] == string2);
+            Assert.True(context.Diffs[3] == string2);
         }
 
         [Fact]

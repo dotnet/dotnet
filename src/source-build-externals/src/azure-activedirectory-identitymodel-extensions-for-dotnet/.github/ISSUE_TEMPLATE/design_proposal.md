@@ -1,7 +1,7 @@
 ---
 name: 🤔 Design proposal
 about: Collaborate on a design for a feature/fix or other change
-labels: design-proposal
+labels: ✏️design proposal, needs attention, untriaged
 ---
 
 <!--

@@ -521,5 +521,15 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             var issuer = jwtPayload.Iss;
             Assert.True(issuer == null);
         }
+
+        [Fact]
+        public void TestGuidClaim()
+        {
+            JwtPayload jwtPayload = new JwtPayload();
+            Guid guid = Guid.NewGuid();
+            string expected = $"{{\"appid\":\"{guid}\"}}";
+            jwtPayload.Add("appid", guid);
+            Assert.Equal(expected, jwtPayload.SerializeToJson());
+        }
     }
 }

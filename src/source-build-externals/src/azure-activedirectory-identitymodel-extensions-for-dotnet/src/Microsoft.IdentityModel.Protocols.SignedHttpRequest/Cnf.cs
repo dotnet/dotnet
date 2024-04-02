@@ -26,7 +26,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
                 throw LogHelper.LogArgumentNullException(nameof(json));
 
             Utf8JsonReader reader = new(Encoding.UTF8.GetBytes(json).AsSpan());
-            if (!JsonSerializerPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.StartObject, false))
+            if (!JsonSerializerPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.StartObject, true))
                 throw LogHelper.LogExceptionMessage(
                     new JsonException(
                         LogHelper.FormatInvariant(
@@ -38,7 +38,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
                         LogHelper.MarkAsNonPII(reader.CurrentDepth),
                         LogHelper.MarkAsNonPII(reader.BytesConsumed))));
 
-            while (reader.Read())
+            while (true)
             {
                 if (reader.TokenType == JsonTokenType.PropertyName)
                 {
@@ -49,22 +49,27 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
                     }
                     else if (reader.ValueTextEquals(ConfirmationClaimTypesUtf8Bytes.Kid))
                     {
-                        reader.Read();
-                        Kid = JsonSerializerPrimitives.ReadString(ref reader, ConfirmationClaimTypes.Kid, ClassName);
+                        Kid = JsonSerializerPrimitives.ReadString(ref reader, ConfirmationClaimTypes.Kid, ClassName, true);
                     }
                     else if (reader.ValueTextEquals(ConfirmationClaimTypesUtf8Bytes.Jku))
                     {
-                        reader.Read();
-                        Jku = JsonSerializerPrimitives.ReadString(ref reader, ConfirmationClaimTypes.Kid, ClassName);
+                        Jku = JsonSerializerPrimitives.ReadString(ref reader, ConfirmationClaimTypes.Kid, ClassName, true);
                     }
                     else if (reader.ValueTextEquals(ConfirmationClaimTypesUtf8Bytes.Jwe))
                     {
-                        reader.Read();
-                        Jwe = JsonSerializerPrimitives.ReadString(ref reader, ConfirmationClaimTypes.Jwe, ClassName);
+                        Jwe = JsonSerializerPrimitives.ReadString(ref reader, ConfirmationClaimTypes.Jwe, ClassName, true);
+                    }
+                    else
+                    {
+                        // this is not a property we recognize, skip it.
+                        reader.Skip();
                     }
                 }
-                else if (JsonSerializerPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.EndObject, false))
+                // We read a JsonTokenType.StartObject above, exiting and positioning reader at next token.
+                else if (JsonSerializerPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.EndObject, true))
                     break;
+                else if (!reader.Read())
+                        break;
             }
         }
 

@@ -12,7 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json;
+using System.Threading;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Json.Tests;
@@ -429,7 +429,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
                 theoryData.Add(new GetPayloadValueTheoryData("Alg_Int")
                 {
-                    ExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020:"),
+                    ExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11022:"),
                     PropertyName = "Alg",
                     PropertyType = typeof(string),
                     PropertyValue = null,
@@ -512,7 +512,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
                 theoryData.Add(new GetPayloadValueTheoryData("Azp_Int")
                 {
-                    ExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11020:"),
+                    ExpectedException = new ExpectedException(typeof(System.Text.Json.JsonException), "IDX11022:"),
                     PropertyName = "Azp",
                     PropertyType = typeof(string),
                     Json = JsonUtilities.CreateUnsignedToken("azp", 1)
@@ -962,6 +962,15 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     PropertyType = typeof(SampleEnum),
                     PropertyValue = "option1",
                     Json = JsonUtilities.CreateUnsignedToken("enum", "option1")
+                });
+
+                Guid guid = Guid.NewGuid();
+                theoryData.Add(new GetPayloadValueTheoryData("guid")
+                {
+                    PropertyName = "guid",
+                    PropertyType = typeof(string),
+                    PropertyValue = guid.ToString(),
+                    Json = JsonUtilities.CreateUnsignedToken("guid", guid)
                 });
                 #endregion
 
@@ -1598,6 +1607,30 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     Token = EncodedJwts.JWEEmptyAuthenticationTag,
                 });
 
+                theoryData.Add(new JwtTheoryData(nameof(EncodedJwts.JWEInvalidHeader))
+                {
+                    ExpectedException = new ExpectedException(typeof(ArgumentException), "IDX14102:", typeof(FormatException), true),
+                    Token = EncodedJwts.JWEInvalidHeader,
+                });
+
+                theoryData.Add(new JwtTheoryData(nameof(EncodedJwts.JWEInvalidIV))
+                {
+                    ExpectedException = new ExpectedException(typeof(ArgumentException), "IDX14309:", typeof(FormatException), true),
+                    Token = EncodedJwts.JWEInvalidIV,
+                });
+
+                theoryData.Add(new JwtTheoryData(nameof(EncodedJwts.JWEInvalidCiphertext))
+                {
+                    ExpectedException = new ExpectedException(typeof(ArgumentException), "IDX14312:", typeof(FormatException), true),
+                    Token = EncodedJwts.JWEInvalidCiphertext,
+                });
+
+                theoryData.Add(new JwtTheoryData(nameof(EncodedJwts.JWEInvalidAuthenticationTag))
+                {
+                    ExpectedException = new ExpectedException(typeof(ArgumentException), "IDX14311:", typeof(FormatException), true),
+                    Token = EncodedJwts.JWEInvalidAuthenticationTag,
+                });
+
                 return theoryData;
             }
         }
@@ -1630,6 +1663,60 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             string jsonEncoded = Base64UrlEncoder.Encode("{}") + "." + Base64UrlEncoder.Encode(json) + ".";
             JsonWebToken encodedToken = new JsonWebToken(jsonEncoded);
             _ = encodedToken.Claims;
+        }
+
+        [Fact]
+        public void DifferentCultureJsonWebToken()
+        {
+            string numericClaim = string.Empty;
+            List<Claim> numericList = null;
+
+            var thread = new Thread(() =>
+            {
+                CultureInfo.CurrentCulture = new CultureInfo("fr-FR");
+
+                var handler = new JsonWebTokenHandler();
+                var tokenStr = handler.CreateToken(new SecurityTokenDescriptor
+                {
+                    Claims = new Dictionary<string, object>
+                    {
+                        { "numericClaim", 10.9d },
+                        { "numericList", new List<object> { 12.2, 11.1 } }
+                    }
+                });
+
+                var token = new JsonWebToken(tokenStr);
+                var claim = token.Claims.First(c => c.Type == "numericClaim");
+                numericClaim = claim.Value;
+                numericList = token.Claims.Where(c => c.Type == "numericList").ToList();
+            });
+
+            thread.Start();
+            thread.Join();
+
+            Assert.Equal("10.9", numericClaim);
+            Assert.Equal("12.2", numericList[0].Value);
+            Assert.Equal("11.1", numericList[1].Value);
+        }
+
+        // Test to verify equality between JsonWebTokens created from a string and an equivalent span
+        [Theory, MemberData(nameof(ParseTokenTheoryData))]
+        public void StringAndMemoryConstructors_CreateEquivalentTokens(JwtTheoryData theoryData)
+        {
+            var context = TestUtilities.WriteHeader($"{this}.CompareJsonWebToken", theoryData);
+            try
+            {
+                var tokenFromMemory = new JsonWebToken(theoryData.Token.AsMemory());
+                var tokenFromString = new JsonWebToken(theoryData.Token);
+
+                theoryData.ExpectedException.ProcessNoException(context);
+                IdentityComparer.AreEqual(tokenFromMemory, tokenFromString, context);
+            }
+            catch (Exception ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex, context);
+            }
+            TestUtilities.AssertFailIfErrors(context);
         }
     }
 

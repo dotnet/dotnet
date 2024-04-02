@@ -2,7 +2,7 @@
 name: Documentation
 about: Suggest a change to the documentation.
 title: '[Documentation] '
-labels: documentation
+labels: documentation, needs attention, untriaged
 assignees: ''
 
 ---

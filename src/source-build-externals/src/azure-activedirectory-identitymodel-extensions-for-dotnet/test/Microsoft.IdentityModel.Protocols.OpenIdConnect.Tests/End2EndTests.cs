@@ -8,8 +8,6 @@ using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
 using Xunit;
 
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
-
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
 {
     /// <summary>
@@ -108,12 +106,4 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             };
         }
     }
-
-    public class OpenIdConnectTheoryData : TheoryDataBase
-    {
-        public string OpenIdConnectMetadataFileName { get; set; }
-
-        public SigningCredentials SigningCredentials { get; set; }
-    }
 }
-#pragma warning restore CS3016 // Arrays as attribute arguments is not CLS-compliant

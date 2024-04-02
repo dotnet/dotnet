@@ -252,11 +252,23 @@ internal static class FilePathNormalizer
             {
                 writeSlot = '/';
 
-                // if there are two slashes in a row, we skip over one of them, unless we're
-                // at the start of the span, in order to allow '\\network' paths
-                if (read > 0 && Unsafe.Add(ref readSlot, 1) is '/' or '\\')
+                if (Unsafe.Add(ref readSlot, 1) is '/' or '\\')
                 {
-                    read++;
+                    // We found two slashes in a row. If we are at the start of the path,
+                    // we we are at '\\network' paths, so want to leave them alone. Otherwise
+                    // we skip over one of them to de-dupe
+                    if (read == 0)
+                    {
+                        writeSlot = '\\';
+                        writeSlot = ref Unsafe.Add(ref writeSlot, 1);
+                        writeSlot = '\\';
+                        read++;
+                        write++;
+                    }
+                    else if (read > 0)
+                    {
+                        read++;
+                    }
                 }
             }
             else

@@ -3,6 +3,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 

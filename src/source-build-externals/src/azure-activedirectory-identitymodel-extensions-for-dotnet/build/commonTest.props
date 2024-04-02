@@ -17,7 +17,7 @@
     <TargetFrameworks Condition=" '$(OS)' != 'Windows_NT' ">$(TestOnlyCoreTargets)</TargetFrameworks>
     <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.1'">$(DotNetCoreAppRuntimeVersion)</RuntimeFrameworkVersion>
     <IsPackable>false</IsPackable>
-    <LangVersion>11</LangVersion>
+    <LangVersion>12</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' OR '$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net8.0'">

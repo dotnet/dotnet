@@ -2,8 +2,8 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.ComponentModel.Composition;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
-using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Cohost;
 
