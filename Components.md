@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@78caa77](https://github.com/dotnet/fsharp/tree/78caa77ac30021b33f2126dc1b57b2f255551def)*
 - `src/installer`  
-*[dotnet/installer@be8365f](https://github.com/dotnet/installer/tree/be8365f8fcccad7148008925cc64505bac6de187)*
+*[dotnet/installer@4ba50ae](https://github.com/dotnet/installer/tree/4ba50aedee0eae2bf53b52d063290bac425515e9)*
 - `src/msbuild`  
 *[dotnet/msbuild@7ca3c98](https://github.com/dotnet/msbuild/tree/7ca3c98fad986066bbf2802c863236b4a0f4e34a)*
 - `src/nuget-client`  
@@ -46,11 +46,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@332dd9a](https://github.com/dotnet/roslyn-analyzers/tree/332dd9ab9ec226d410cc4f42f7ebe24d4fdeb117)*
 - `src/runtime`  
-*[dotnet/runtime@ab2bd48](https://github.com/dotnet/runtime/tree/ab2bd48741b54baa9ac416a3da56efe915826085)*
+*[dotnet/runtime@10e87bc](https://github.com/dotnet/runtime/tree/10e87bcc74644ed83aea3d9469451411669ddd74)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@ddccfec](https://github.com/dotnet/scenario-tests/tree/ddccfec3ccd631fb8341c8b6e4e422e8cb339aa5)*
 - `src/sdk`  
-*[dotnet/sdk@4d60758](https://github.com/dotnet/sdk/tree/4d607580e645c9c7749f394ad7172f91a6fa17d1)*
+*[dotnet/sdk@298eeb2](https://github.com/dotnet/sdk/tree/298eeb2f8492b51e3d115c04135975b5cfaf34fa)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@bcd4473](https://github.com/dotnet/source-build-externals/tree/bcd44732882bc2b81b30146c778eb6ccb7fea793)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -96,7 +96,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/vstest`  
 *[microsoft/vstest@1cd0d89](https://github.com/microsoft/vstest/tree/1cd0d8998250d36c95ed65a76304ef5d1b33e98f)*
 - `src/windowsdesktop`  
-*[dotnet/windowsdesktop@6890b38](https://github.com/dotnet/windowsdesktop/tree/6890b3896882b0b31278b0d28dd4ca8e03e52390)*
+*[dotnet/windowsdesktop@08fa4a2](https://github.com/dotnet/windowsdesktop/tree/08fa4a267f85896cd8ad85657cd6993677ea1e04)*
 - `src/winforms`  
 *[dotnet/winforms@50add59](https://github.com/dotnet/winforms/tree/50add59bd0407dc3e1b5003ec56f592f06c32bda)*
 - `src/wpf`  
