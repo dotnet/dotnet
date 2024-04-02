@@ -4,18 +4,19 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Common;
-using Microsoft.AspNetCore.Razor.LanguageServer.DocumentColor;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
+using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Protocol.ColorPresentation;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ColorPresentation;
 
-[RazorLanguageServerEndpoint(ColorPresentationMethodName)]
+using ColorPresentation = CodeAnalysis.Razor.Protocol.ColorPresentation.ColorPresentation;
+
+[RazorLanguageServerEndpoint(CustomMessageNames.ColorPresentationMethodName)]
 internal sealed class ColorPresentationEndpoint : IRazorRequestHandler<ColorPresentationParams, ColorPresentation[]>
 {
-    public const string ColorPresentationMethodName = "textDocument/colorPresentation";
-
     private readonly IClientConnection _clientConnection;
 
     public ColorPresentationEndpoint(IClientConnection clientConnection)

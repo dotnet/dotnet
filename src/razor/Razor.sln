@@ -62,6 +62,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{4CAC99E0
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		NuGet.config = NuGet.config
+		eng\targets\Services.props = eng\targets\Services.props
 		SpellingExclusions.dic = SpellingExclusions.dic
 		eng\Versions.props = eng\Versions.props
 	EndProjectSection

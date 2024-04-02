@@ -13,11 +13,9 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Razor;
-using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor;
 
@@ -31,7 +29,6 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
     private readonly LanguageServerFeatureOptions _options;
     private readonly Workspace _workspace;
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
-    private readonly ILogger _logger;
 
     private readonly CancellationTokenSource _disposeTokenSource;
     private readonly AsyncBatchingWorkQueue<(Project?, IProjectSnapshot)> _workQueue;
@@ -44,14 +41,12 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
         IProjectSnapshotManager projectManager,
         LanguageServerFeatureOptions options,
         IWorkspaceProvider workspaceProvider,
-        ProjectSnapshotManagerDispatcher dispatcher,
-        IRazorLoggerFactory loggerFactory)
+        ProjectSnapshotManagerDispatcher dispatcher)
     {
         _generator = generator;
         _projectManager = projectManager;
         _options = options;
         _dispatcher = dispatcher;
-        _logger = loggerFactory.CreateLogger<WorkspaceProjectStateChangeDetector>();
 
         _disposeTokenSource = new();
         _workQueue = new AsyncBatchingWorkQueue<(Project?, IProjectSnapshot)>(
@@ -87,8 +82,6 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
                 return;
             }
 
-            _logger.LogTrace("Process update: {DisplayName}", projectSnapshot.DisplayName);
-
             await _dispatcher.RunAsync(
                static state =>
                {
@@ -102,8 +95,6 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
 
     private void Workspace_WorkspaceChanged(object? sender, WorkspaceChangeEventArgs e)
     {
-        _logger.LogTrace("Workspace change: {Kind}", e.Kind);
-
         switch (e.Kind)
         {
             case WorkspaceChangeKind.ProjectAdded:
@@ -398,7 +389,6 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
 
     private void EnqueueUpdate(Project? project, IProjectSnapshot projectSnapshot)
     {
-        _logger.LogTrace("Enqueue update: {DisplayName}", projectSnapshot.DisplayName);
         _workQueue.AddWork((project, projectSnapshot));
     }
 

@@ -4,7 +4,6 @@
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Serialization;
@@ -13,21 +12,17 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.ServiceHub.Framework;
-using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
-internal sealed class RemoteTagHelperProviderService : RazorServiceBase, IRemoteTagHelperProviderService
+internal sealed class RemoteTagHelperProviderService(
+    IServiceBroker serviceBroker,
+    RemoteTagHelperResolver tagHelperResolver,
+    RemoteTagHelperDeltaProvider tagHelperDeltaProvider)
+    : RazorServiceBase(serviceBroker), IRemoteTagHelperProviderService
 {
-    private readonly RemoteTagHelperResolver _tagHelperResolver;
-    private readonly RemoteTagHelperDeltaProvider _tagHelperDeltaProvider;
-
-    internal RemoteTagHelperProviderService(IServiceBroker serviceBroker, ExportProvider exportProvider)
-        : base(serviceBroker)
-    {
-        _tagHelperResolver = exportProvider.GetExportedValue<RemoteTagHelperResolver>().AssumeNotNull();
-        _tagHelperDeltaProvider = exportProvider.GetExportedValue<RemoteTagHelperDeltaProvider>().AssumeNotNull();
-    }
+    private readonly RemoteTagHelperResolver _tagHelperResolver = tagHelperResolver;
+    private readonly RemoteTagHelperDeltaProvider _tagHelperDeltaProvider = tagHelperDeltaProvider;
 
     public ValueTask<FetchTagHelpersResult> FetchTagHelpersAsync(
         RazorPinnedSolutionInfoWrapper solutionInfo,

@@ -7,7 +7,7 @@ using System;
 // should be a plain record. If more logic is needed than record
 // definition please put in a separate file.
 
-namespace Microsoft.CodeAnalysis.Razor.Workspaces.Protocol;
+namespace Microsoft.CodeAnalysis.Razor.Protocol;
 
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 

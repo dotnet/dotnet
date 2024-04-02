@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Composition;
@@ -16,5 +17,9 @@ internal sealed class RemoteTagHelperProviderServiceFactory : RazorServiceFactor
     }
 
     protected override IRemoteTagHelperProviderService CreateService(IServiceBroker serviceBroker, ExportProvider exportProvider)
-        => new RemoteTagHelperProviderService(serviceBroker, exportProvider);
+    {
+        var tagHelperResolver = exportProvider.GetExportedValue<RemoteTagHelperResolver>().AssumeNotNull();
+        var tagHelperDeltaProvider = exportProvider.GetExportedValue<RemoteTagHelperDeltaProvider>().AssumeNotNull();
+        return new RemoteTagHelperProviderService(serviceBroker, tagHelperResolver, tagHelperDeltaProvider);
+    }
 }
