@@ -69,42 +69,36 @@ parameters:
   default: false
 
 jobs:
-- template: common/templates-official/job/job.yml
+- template: common/templates/job/job.yml
   parameters:
     # Set up the name of the job.
     ${{ if parameters.pgoInstrument }}:
       name: PGO_${{ parameters.agentOs }}_${{ parameters.jobName }}
     ${{ if not(parameters.pgoInstrument) }}:
       name: ${{ parameters.agentOs }}_${{ parameters.jobName }}
-
+    
     # Set up the pool/machine info to be used based on the Agent OS
     ${{ if eq(parameters.agentOs, 'Windows_NT') }}:
       enableMicrobuild: true
       pool:
         ${{ if eq(variables['System.TeamProject'], 'public') }}:
           name: $(DncEngPublicBuildPool)
-          image: 1es-windows-2019-open
-          os: windows
+          demands: ImageOverride -equals windows.vs2019.amd64.open
         ${{ if eq(variables['System.TeamProject'], 'internal') }}:
           name: $(DncEngInternalBuildPool)
-          image: 1es-windows-2019
-          os: windows
+          demands: ImageOverride -equals windows.vs2019.amd64
     ${{ if eq(parameters.agentOs, 'Linux') }}:
       pool:
         ${{ if eq(variables['System.TeamProject'], 'public') }}:
           name: $(DncEngPublicBuildPool)
-          image: 1es-ubuntu-2004-open
-          os: linux
+          demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
         ${{ if eq(variables['System.TeamProject'], 'internal') }}:
           name: $(DncEngInternalBuildPool)
-          image: 1es-ubuntu-2004
-          os: linux
+          demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
       container: ${{ parameters.container }}
     ${{ if eq(parameters.agentOs, 'Darwin') }}:
       pool:
-        name: Azure Pipelines
-        image: macOS-latest
-        os: macOS
+        vmImage: 'macOS-latest'
 
     timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
     ${{ if parameters.isBuiltFromVmr }}:
@@ -174,7 +168,7 @@ jobs:
                   /p:DotNetPublishUsingPipelines=$(_PublishUsingPipelines)
                   $(_PgoInstrument)
 
-    - template: /eng/common/templates-official/variables/pool-providers.yml
+    - template: /eng/common/templates/variables/pool-providers.yml
 
     steps:
     - checkout: self
@@ -257,7 +251,7 @@ jobs:
       continueOnError: true
       condition: always()
 
-    - task: 1ES.PublishBuildArtifacts@1
+    - task: PublishBuildArtifacts@1
       displayName: Publish Logs to VSTS
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
