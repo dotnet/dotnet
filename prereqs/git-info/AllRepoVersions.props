@@ -9,8 +9,8 @@
     <aspnetcoreOutputPackageVersion>9.0.0-preview.4.24179.2</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>9c8ea966df62f764523b51772763e74e71040a92</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.4-alpha.24168.1</cecilOutputPackageVersion>
-    <commandlineapiGitCommitHash>5ea97af07263ea3ef68a18557c8aa3f7e3200bda</commandlineapiGitCommitHash>
-    <commandlineapiOutputPackageVersion>0.1.512601</commandlineapiOutputPackageVersion>
+    <commandlineapiGitCommitHash>c96672b8b84c307feb035fed6cbe9db85d5b87d3</commandlineapiGitCommitHash>
+    <commandlineapiOutputPackageVersion>0.1.520101</commandlineapiOutputPackageVersion>
     <deploymenttoolsGitCommitHash>596a11e185d2274531fe57a2c9e03bbe4f23064d</deploymenttoolsGitCommitHash>
     <deploymenttoolsOutputPackageVersion>9.0.0-preview.1.24172.2</deploymenttoolsOutputPackageVersion>
     <diagnosticsGitCommitHash>831eee3a9e69dd886fa190a9914a7f66260c653a</diagnosticsGitCommitHash>

@@ -25,10 +25,10 @@
       "commitSha": "9c8ea966df62f764523b51772763e74e71040a92"
     },
     {
-      "packageVersion": "0.1.512601",
+      "packageVersion": "0.1.520101",
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "5ea97af07263ea3ef68a18557c8aa3f7e3200bda"
+      "commitSha": "c96672b8b84c307feb035fed6cbe9db85d5b87d3"
     },
     {
       "packageVersion": "9.0.0-preview.1.24172.2",
