@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using Microsoft.IdentityModel.TestUtils;
+using Microsoft.IdentityModel.Tokens.Json.Tests;
 using Microsoft.IdentityModel.Tokens;
 using Xunit;
 
@@ -133,6 +134,23 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     PropertyValue = new Dictionary<string, string> {{"prop1","value1"}}
                 });
 
+            theoryData.Add(
+                new JsonClaimSetTheoryData("ArrayOfObjects")
+                {
+                    Json = header + "." + Base64UrlEncoder.Encode(JsonData.ArrayOfObjectsObject) + ".",
+                    PropertyName = JsonData.ArrayProperty,
+                    PropertyType = typeof(JsonElement),
+                    PropertyValue = JsonUtilities.CreateJsonElement(JsonData.ArrayOfObjectsValue)
+                });
+
+            theoryData.Add(
+                new JsonClaimSetTheoryData("ObjectOfObjects")
+                {
+                    Json = header + "." + Base64UrlEncoder.Encode("{" + JsonData.ObjectClaim + "}") + ".",
+                    PropertyName = JsonData.ObjectProperty,
+                    PropertyType = typeof(JsonElement),
+                    PropertyValue = JsonUtilities.CreateJsonElement(JsonData.ObjectValue)
+                });
 
             return theoryData;
         }

@@ -62,6 +62,13 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
+                ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorStrings[0]),
+                TestId = "a.",
+                Token = "a."
+            });
+            theoryData.Add(new JwtTheoryData
+            {
+                CanRead = false,
                 ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorStrings[1]),
                 TestId = "a.b",
                 Token = "a.b"

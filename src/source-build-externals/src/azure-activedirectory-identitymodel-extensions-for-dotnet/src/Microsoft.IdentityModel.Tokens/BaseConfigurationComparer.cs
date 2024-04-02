@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Microsoft.IdentityModel.Tokens
 {
@@ -17,11 +16,31 @@ namespace Microsoft.IdentityModel.Tokens
                 return true;
             else if (config1 == null || config2 == null)
                 return false;
-            else if (config1.Issuer == config2.Issuer && config1.SigningKeys.Count == config2.SigningKeys.Count
-                     && !config1.SigningKeys.Select(x => x.InternalId).Except(config2.SigningKeys.Select(x => x.InternalId)).Any())
-                return true;
             else
-                return false;
+            {
+                if (config1.Issuer != config2.Issuer)
+                    return false;
+
+                if (config1.SigningKeys.Count != config2.SigningKeys.Count)
+                    return false;
+
+                foreach (var key in config1.SigningKeys)
+                {
+                    if (!ContainsKeyWithInternalId(config2, key.InternalId))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool ContainsKeyWithInternalId(BaseConfiguration config, string internalId)
+        {
+            foreach(var key in config.SigningKeys)
+                if (key.InternalId == internalId)
+                    return true;
+
+            return false;
         }
 
         public int GetHashCode(BaseConfiguration config)
@@ -29,10 +48,9 @@ namespace Microsoft.IdentityModel.Tokens
             int defaultHash = string.Empty.GetHashCode();
             int hashCode = defaultHash;
             hashCode ^= string.IsNullOrEmpty(config.Issuer) ? defaultHash : config.Issuer.GetHashCode();
-            foreach(string internalId in config.SigningKeys.Select(x => x.InternalId))
-            {
-                hashCode ^= internalId.GetHashCode();
-            }
+
+            foreach (var key in config.SigningKeys)
+                hashCode ^= key.InternalId.GetHashCode();
 
             return hashCode;
         }

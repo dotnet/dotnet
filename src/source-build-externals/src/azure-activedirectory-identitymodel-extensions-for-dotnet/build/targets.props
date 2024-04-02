@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
-    <SrcTargets Condition="'$(TargetNet8)' == 'True'">net461;net462;net472;netstandard2.0;net6.0;net8.0</SrcTargets>
-    <SrcTargets Condition="'$(TargetNet8)' != 'True'">net461;net462;net472;netstandard2.0;net6.0</SrcTargets>
+    <SrcTargets Condition="'$(LocalBuild)' != 'True'">net461;net462;net472;netstandard2.0;net6.0;net8.0</SrcTargets>
+    <SrcTargets Condition="'$(LocalBuild)' == 'True'">net461;netstandard2.0;net8.0</SrcTargets>
     <SrcStandardTargets>netstandard2.0</SrcStandardTargets>
   </PropertyGroup>
 </Project>

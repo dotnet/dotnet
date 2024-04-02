@@ -14,8 +14,13 @@ namespace Microsoft.IdentityModel.JsonWebTokens
     {
         internal JsonClaimSet CreatePayloadClaimSet(byte[] bytes, int length)
         {
-            Utf8JsonReader reader = new(bytes.AsSpan().Slice(0, length));
-            if (!JsonSerializerPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.StartObject, false))
+            return CreatePayloadClaimSet(bytes.AsSpan(0, length));
+        }
+
+        internal JsonClaimSet CreatePayloadClaimSet(ReadOnlySpan<byte> byteSpan)
+        { 
+            Utf8JsonReader reader = new(byteSpan);
+            if (!JsonSerializerPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.StartObject, true))
                 throw LogHelper.LogExceptionMessage(
                     new JsonException(
                         LogHelper.FormatInvariant(
@@ -27,14 +32,14 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                         LogHelper.MarkAsNonPII(reader.CurrentDepth),
                         LogHelper.MarkAsNonPII(reader.BytesConsumed))));
 
-            Dictionary<string, object> claims = new();
-            while (reader.Read())
+            Dictionary<string, object> claims = [];
+            while (true)
             {
                 if (reader.TokenType == JsonTokenType.PropertyName)
                 {
                     if (reader.ValueTextEquals(JwtPayloadUtf8Bytes.Aud))
                     {
-                        _audiences = new List<string>();
+                        _audiences = [];
                         reader.Read();
                         if (reader.TokenType == JsonTokenType.StartArray)
                         {
@@ -98,10 +103,11 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                         claims[propertyName] = JsonSerializerPrimitives.ReadPropertyValueAsObject(ref reader, propertyName, JsonClaimSet.ClassName, true);
                     }
                 }
-                else if (reader.TokenType == JsonTokenType.EndObject)
-                {
+                // We read a JsonTokenType.StartObject above, exiting and positioning reader at next token.
+                else if (JsonSerializerPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.EndObject, false))
                     break;
-                }
+                else if (!reader.Read())
+                    break;
             };
 
             return new JsonClaimSet(claims);

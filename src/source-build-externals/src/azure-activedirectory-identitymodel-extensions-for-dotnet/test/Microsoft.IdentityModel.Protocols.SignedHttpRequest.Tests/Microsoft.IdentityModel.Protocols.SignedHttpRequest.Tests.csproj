@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\src\Microsoft.IdentityModel.JsonWebTokens\Microsoft.IdentityModel.JsonWebTokens.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.IdentityModel.Protocols.SignedHttpRequest\Microsoft.IdentityModel.Protocols.SignedHttpRequest.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.IdentityModel.Tokens\Microsoft.IdentityModel.Tokens.csproj" />
+    <ProjectReference Include="..\Microsoft.IdentityModel.Tokens.Tests\Microsoft.IdentityModel.Tokens.Tests.csproj" />
     <ProjectReference Include="..\Microsoft.IdentityModel.TestUtils\Microsoft.IdentityModel.TestUtils.csproj" />
   </ItemGroup>
   

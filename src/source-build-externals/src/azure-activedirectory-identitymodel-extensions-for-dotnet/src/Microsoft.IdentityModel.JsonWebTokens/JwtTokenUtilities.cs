@@ -8,12 +8,10 @@ using System.Globalization;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.IdentityModel.Tokens.Json;
 
 using TokenLogMessages = Microsoft.IdentityModel.Tokens.LogMessages;
 
@@ -47,7 +45,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         private static Regex CreateJweRegex() => new Regex(JwtConstants.JweCompactSerializationRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(_regexMatchTimeoutMilliseconds));
 #endif
 
-        internal static IList<string> DefaultHeaderParameters = new List<string>()
+        internal static List<string> DefaultHeaderParameters = new List<string>()
         {
             JwtHeaderParameterNames.Alg,
             JwtHeaderParameterNames.Kid,
@@ -120,6 +118,82 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 cryptoProviderFactory.ReleaseSignatureProvider(signatureProvider);
             }
         }
+
+        internal static byte[] CreateEncodedSignature(
+            byte[] input,
+            int offset,
+            int count,
+            SigningCredentials signingCredentials)
+        {
+            if (input == null)
+                throw LogHelper.LogArgumentNullException(nameof(input));
+
+            if (signingCredentials == null)
+                return null;
+
+            var cryptoProviderFactory = signingCredentials.CryptoProviderFactory ?? signingCredentials.Key.CryptoProviderFactory;
+            var signatureProvider = cryptoProviderFactory.CreateForSigning(signingCredentials.Key, signingCredentials.Algorithm) ??
+                throw LogHelper.LogExceptionMessage(
+                    new InvalidOperationException(
+                        LogHelper.FormatInvariant(
+                            TokenLogMessages.IDX10637,
+                            signingCredentials.Key == null ? "Null" : signingCredentials.Key.ToString(),
+                            LogHelper.MarkAsNonPII(signingCredentials.Algorithm))));
+
+            try
+            {
+                if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                    LogHelper.LogVerbose(LogMessages.IDX14200);
+
+                return signatureProvider.Sign(input, offset, count);
+            }
+            finally
+            {
+                cryptoProviderFactory.ReleaseSignatureProvider(signatureProvider);
+            }
+        }
+
+#if NET6_0_OR_GREATER
+        /// <summary>
+        /// Produces a signature over the <paramref name="data"/>.
+        /// </summary>
+        /// <param name="data">Span containing bytes to be signed.</param>
+        /// <param name="destination">destination for signature.</param>
+        /// <param name="signingCredentials">The <see cref="SigningCredentials"/> that contain crypto specs used to sign the token.</param>
+        /// <param name="bytesWritten"></param>
+        /// <returns>The size of the signature.</returns>
+        /// <exception cref="ArgumentNullException">'input' or 'signingCredentials' is null.</exception>
+        internal static bool CreateSignature(
+            ReadOnlySpan<byte> data,
+            Span<byte> destination,
+            SigningCredentials signingCredentials,
+            out int bytesWritten)
+        {
+            bytesWritten = 0;
+            if (signingCredentials == null)
+                return false;
+
+            var cryptoProviderFactory = signingCredentials.CryptoProviderFactory ?? signingCredentials.Key.CryptoProviderFactory;
+            var signatureProvider = cryptoProviderFactory.CreateForSigning(signingCredentials.Key, signingCredentials.Algorithm) ??
+                throw LogHelper.LogExceptionMessage(
+                    new InvalidOperationException(
+                        LogHelper.FormatInvariant(
+                            TokenLogMessages.IDX10637, signingCredentials.Key == null ? "Null" : signingCredentials.Key.ToString(),
+                            LogHelper.MarkAsNonPII(signingCredentials.Algorithm))));
+
+            try
+            {
+                if (LogHelper.IsEnabled(EventLogLevel.Verbose))
+                    LogHelper.LogVerbose(LogMessages.IDX14200);
+
+                return signatureProvider.Sign(data, destination, out bytesWritten);
+            }
+            finally
+            {
+                cryptoProviderFactory.ReleaseSignatureProvider(signatureProvider);
+            }
+        }
+#endif
 
         /// <summary>
         /// Decompress JWT token bytes.
@@ -420,7 +494,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             // not a string, we do not know how to sanitize so we return a String which represents the object instance
             if (!(obj is string token))
                 return obj.GetType().ToString();
- 
+
             int lastDot = token.LastIndexOf(".");
 
             // no dots, not a JWT, we do not know how to sanitize so we return UnrecognizedEncodedToken

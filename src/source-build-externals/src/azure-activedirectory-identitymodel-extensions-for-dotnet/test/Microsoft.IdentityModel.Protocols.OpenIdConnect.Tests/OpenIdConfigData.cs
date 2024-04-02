@@ -4,6 +4,8 @@
 using System.Collections.Generic;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Json;
+using Microsoft.IdentityModel.Tokens.Json.Tests;
 
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
 {
@@ -38,6 +40,8 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         public static string AccountsGoogle = "https://accounts.google.com/.well-known/openid-configuration";
         public static string BadUri = "_____NoSuchfile____";
         public static string HttpsBadUri = "https://_____NoSuchfile____";
+
+        #region Configuration Strings
         public static string OpenIdConnectMetadataPingString = @"{""authorization_endpoint"":""https:\/\/connect-interop.pinglabs.org:9031\/as\/authorization.oauth2"",
                                                                   ""issuer"":""https:\/\/connect-interop.pinglabs.org:9031"",
                                                                   ""id_token_signing_alg_values_supported"":[""none"",""HS256"",""HS384"",""HS512"",""RS256"",""RS384"",""RS512"",""ES256"",""ES384"",""ES512""],
@@ -139,7 +143,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
                                                 ""token_endpoint"":""https://login.windows.net/d062b2b0-9aca-4ff7-b32a-ba47231a4002/oauth2/token"",
                                                 ""token_endpoint_auth_methods_supported"":[""client_secret_post"",""private_key_jwt""],
                                                 ""SigningKeys"":[""key1"",""key2""]
-                                            }";
+                    }";
 
         public static string OpenIdConnectMetadataBadX509DataString = @"{""jwks_uri"":""JsonWebKeySetBadX509Data.json""}";
         public static string OpenIdConnectMetadataBadBase64DataString = @"{""jwks_uri"":""JsonWebKeySetBadBase64Data.json""}";
@@ -147,6 +151,406 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         public static string OpenIdConnectMetadataBadFormatString = @"{""issuer""::""https://sts.windows.net/d062b2b0-9aca-4ff7-b32a-ba47231a4002/""}";
         public static string OpenIdConnectMetadataPingLabsJWKSString = @"{""jwks_uri"":""PingLabsJWKS.json""}";
         public static string OpenIdConnectMetatadataBadJson = @"{...";
+        #endregion
+
+        #region WellKnownConfigurationStrings
+        public static string Authority => "https://idp.com";
+
+        public static string Issuer => Authority;
+
+        public static string IssuerClaim =>
+            $"""
+            "{OpenIdProviderMetadataNames.Issuer}":"{Issuer}"
+            """;
+
+        public static string JksUri => Authority + "/jwks";
+
+        public static string JksUriClaim =>
+            $"""
+            "{OpenIdProviderMetadataNames.JwksUri}":"{JksUri}"
+            """;
+        #endregion
+
+        #region GOOGLE 2/2/2024 https://accounts.google.com/.well-known/openid-configuration
+        public static string AccountsGoogleComJson =>
+                $$"""
+                {
+                "issuer": "https://accounts.google.com",
+                "authorization_endpoint": "https://accounts.google.com/o/oauth2/v2/auth",
+                "device_authorization_endpoint": "https://oauth2.googleapis.com/device/code",
+                "token_endpoint": "https://oauth2.googleapis.com/token",
+                "userinfo_endpoint": "https://openidconnect.googleapis.com/v1/userinfo",
+                "revocation_endpoint": "https://oauth2.googleapis.com/revoke",
+                "jwks_uri": "https://www.googleapis.com/oauth2/v3/certs",
+                "response_types_supported": ["code","id_token","code id_token"],
+                "subject_types_supported": ["public"],
+                "id_token_signing_alg_values_supported": ["RS256"],
+                "scopes_supported": ["openid","email","profile"],
+                "token_endpoint_auth_methods_supported": ["client_secret_post","client_secret_basic"],
+                "claims_supported": ["aud","email","email_verified","exp","family_name","given_name","iat","iss","locale","name","picture","sub"],
+                "code_challenge_methods_supported": ["plain","S256"],
+                "grant_types_supported": ["authorization_code","refresh_token","urn:ietf:params:oauth:grant-type:device_code","urn:ietf:params:oauth:grant-type:jwt-bearer"]
+                }
+                """;
+        public static OpenIdConnectConfiguration AccountsGoogleComConfig
+        {
+            get
+            {
+                // AccountsGoogleComConfig
+                OpenIdConnectConfiguration config = new OpenIdConnectConfiguration
+                {
+                    AuthorizationEndpoint = "https://accounts.google.com/o/oauth2/v2/auth",
+                    Issuer = "https://accounts.google.com",
+                    JwksUri = "https://www.googleapis.com/oauth2/v3/certs",
+                    TokenEndpoint = "https://oauth2.googleapis.com/token",
+                    UserInfoEndpoint = "https://openidconnect.googleapis.com/v1/userinfo",
+                };
+
+                AddToCollection(config.ResponseTypesSupported, "code", "id_token", "code id_token");
+                config.SubjectTypesSupported.Add("public");
+                config.IdTokenSigningAlgValuesSupported.Add("RS256");
+                AddToCollection(config.ScopesSupported, "openid", "email", "profile");
+                AddToCollection(config.TokenEndpointAuthMethodsSupported, "client_secret_post", "client_secret_basic");
+                AddToCollection(config.ClaimsSupported, "aud", "email", "email_verified", "exp", "family_name", "given_name", "iat", "iss", "locale", "name", "picture", "sub");
+                AddToCollection(config.GrantTypesSupported, "authorization_code", "refresh_token", "urn:ietf:params:oauth:grant-type:device_code", "urn:ietf:params:oauth:grant-type:jwt-bearer");
+
+                // Adjust if Google changes their config or https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/issues/2456 is implemented.
+                config.AdditionalData.Add("device_authorization_endpoint", "https://oauth2.googleapis.com/device/code");
+                config.AdditionalData.Add("code_challenge_methods_supported", JsonUtilities.CreateJsonElement(""" ["plain","S256"] """));
+                config.AdditionalData.Add("revocation_endpoint", "https://oauth2.googleapis.com/revoke");
+
+                return config;
+            }
+        }
+        #endregion
+
+        #region AADCommonV1 2/2/2024 https://login.microsoftonline.com/common/.well-known/openid-configuration 
+        public static string AADCommonV1Json =>
+                """
+                {
+                "token_endpoint": "https://login.microsoftonline.com/common/oauth2/token",
+                "token_endpoint_auth_methods_supported": ["client_secret_post","private_key_jwt","client_secret_basic"],
+                "jwks_uri": "https://login.microsoftonline.com/common/discovery/keys",
+                "response_modes_supported": ["query","fragment","form_post"],
+                "subject_types_supported": ["pairwise"],
+                "id_token_signing_alg_values_supported": ["RS256"],
+                "response_types_supported": ["code","id_token","code id_token","token id_token","token"],
+                "scopes_supported": ["openid"],
+                "issuer": "https://sts.windows.net/{tenantid}/",
+                "microsoft_multi_refresh_token": true,
+                "authorization_endpoint": "https://login.microsoftonline.com/common/oauth2/authorize",
+                "device_authorization_endpoint": "https://login.microsoftonline.com/common/oauth2/devicecode",
+                "http_logout_supported": true,
+                "frontchannel_logout_supported": true,
+                "end_session_endpoint": "https://login.microsoftonline.com/common/oauth2/logout",
+                "claims_supported": ["sub","iss","cloud_instance_name","cloud_instance_host_name","cloud_graph_host_name","msgraph_host","aud","exp","iat","auth_time","acr","amr","nonce","email","given_name","family_name","nickname"],
+                "check_session_iframe": "https://login.microsoftonline.com/common/oauth2/checksession",
+                "userinfo_endpoint": "https://login.microsoftonline.com/common/openid/userinfo",
+                "kerberos_endpoint": "https://login.microsoftonline.com/common/kerberos",
+                "tenant_region_scope": null,
+                "cloud_instance_name": "microsoftonline.com",
+                "cloud_graph_host_name": "graph.windows.net",
+                "msgraph_host": "graph.microsoft.com",
+                "rbac_url": "https://pas.windows.net"
+                }
+                """;
+
+        public static OpenIdConnectConfiguration AADCommonV1Config
+        {
+            get
+            {
+                OpenIdConnectConfiguration config = new OpenIdConnectConfiguration
+                {
+                    AuthorizationEndpoint = "https://login.microsoftonline.com/common/oauth2/authorize",
+                    CheckSessionIframe = "https://login.microsoftonline.com/common/oauth2/checksession",
+                    HttpLogoutSupported = true,
+                    Issuer = "https://sts.windows.net/{tenantid}/",
+                    JwksUri = "https://login.microsoftonline.com/common/discovery/keys",
+                    TokenEndpoint = "https://login.microsoftonline.com/common/oauth2/token",
+                    UserInfoEndpoint = "https://login.microsoftonline.com/common/openid/userinfo",
+                    EndSessionEndpoint = "https://login.microsoftonline.com/common/oauth2/logout",
+                    FrontchannelLogoutSupported = JsonSerializerPrimitives.True,
+                };
+
+                AddToCollection(config.ResponseModesSupported, "query", "fragment", "form_post");
+                AddToCollection(config.ResponseTypesSupported, "code", "id_token", "code id_token", "token id_token", "token");
+                AddToCollection(config.SubjectTypesSupported, "pairwise");
+                AddToCollection(config.IdTokenSigningAlgValuesSupported, "RS256");
+                AddToCollection(config.ScopesSupported, "openid");
+                AddToCollection(config.TokenEndpointAuthMethodsSupported, "client_secret_post", "private_key_jwt", "client_secret_basic");
+                AddToCollection(config.ClaimsSupported, "sub", "iss", "cloud_instance_name", "cloud_instance_host_name", "cloud_graph_host_name", "msgraph_host", "aud", "exp", "iat", "auth_time", "acr", "amr", "nonce", "email", "given_name", "family_name", "nickname");
+                config.AdditionalData.Add("microsoft_multi_refresh_token", true);
+                config.AdditionalData.Add("device_authorization_endpoint", "https://login.microsoftonline.com/common/oauth2/devicecode");
+                config.AdditionalData.Add("kerberos_endpoint", "https://login.microsoftonline.com/common/kerberos");
+                config.AdditionalData.Add("tenant_region_scope", null);
+                config.AdditionalData.Add("cloud_instance_name", "microsoftonline.com");
+                config.AdditionalData.Add("cloud_graph_host_name", "graph.windows.net");
+                config.AdditionalData.Add("msgraph_host", "graph.microsoft.com");
+                config.AdditionalData.Add("rbac_url", "https://pas.windows.net");
+
+                return config;
+            }
+        }
+        #endregion
+
+        #region AADCommonV2 2/2/2024 https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration
+        public static string AADCommonV2Json =>
+            """
+            {
+            "token_endpoint": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+            "token_endpoint_auth_methods_supported": ["client_secret_post","private_key_jwt","client_secret_basic"],
+            "jwks_uri": "https://login.microsoftonline.com/common/discovery/v2.0/keys",
+            "response_modes_supported": ["query","fragment","form_post"],
+            "subject_types_supported": ["pairwise"],
+            "id_token_signing_alg_values_supported": ["RS256"],
+            "response_types_supported": ["code","id_token","code id_token","id_token token"],
+            "scopes_supported": ["openid","profile","email","offline_access"],
+            "issuer": "https://login.microsoftonline.com/{tenantid}/v2.0",
+            "request_uri_parameter_supported": false,
+            "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+            "authorization_endpoint": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+            "device_authorization_endpoint": "https://login.microsoftonline.com/common/oauth2/v2.0/devicecode",
+            "http_logout_supported": true,
+            "frontchannel_logout_supported": true,
+            "end_session_endpoint": "https://login.microsoftonline.com/common/oauth2/v2.0/logout",
+            "claims_supported": ["sub","iss","cloud_instance_name","cloud_instance_host_name","cloud_graph_host_name","msgraph_host","aud","exp","iat","auth_time","acr","nonce","preferred_username","name","tid","ver","at_hash","c_hash","email"],
+            "kerberos_endpoint": "https://login.microsoftonline.com/common/kerberos",
+            "tenant_region_scope": null,
+            "cloud_instance_name": "microsoftonline.com",
+            "cloud_graph_host_name": "graph.windows.net",
+            "msgraph_host": "graph.microsoft.com",
+            "rbac_url": "https://pas.windows.net"
+            }
+            """;
+
+        public static OpenIdConnectConfiguration AADCommonV2Config
+        {
+            get
+            {
+                OpenIdConnectConfiguration config = new OpenIdConnectConfiguration
+                {
+                    AuthorizationEndpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+                    HttpLogoutSupported = true,
+                    Issuer = "https://login.microsoftonline.com/{tenantid}/v2.0",
+                    JwksUri = "https://login.microsoftonline.com/common/discovery/v2.0/keys",
+                    TokenEndpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+                    UserInfoEndpoint = "https://graph.microsoft.com/oidc/userinfo",
+                    EndSessionEndpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/logout",
+                    FrontchannelLogoutSupported = JsonSerializerPrimitives.True,
+                };
+
+                AddToCollection(config.ResponseModesSupported, "query", "fragment", "form_post");
+                AddToCollection(config.ResponseTypesSupported, "code", "id_token", "code id_token", "id_token token");
+                AddToCollection(config.SubjectTypesSupported, "pairwise");
+                AddToCollection(config.IdTokenSigningAlgValuesSupported, "RS256");
+                AddToCollection(config.ScopesSupported, "openid", "profile", "email", "offline_access");
+                AddToCollection(config.TokenEndpointAuthMethodsSupported, "client_secret_post", "private_key_jwt", "client_secret_basic");
+                AddToCollection(config.ClaimsSupported, "sub", "iss", "cloud_instance_name", "cloud_instance_host_name", "cloud_graph_host_name", "msgraph_host", "aud", "exp", "iat", "auth_time", "acr", "nonce", "preferred_username", "name", "tid", "ver", "at_hash", "c_hash", "email");
+                config.AdditionalData.Add("device_authorization_endpoint", "https://login.microsoftonline.com/common/oauth2/v2.0/devicecode");
+                config.AdditionalData.Add("kerberos_endpoint", "https://login.microsoftonline.com/common/kerberos");
+                config.AdditionalData.Add("tenant_region_scope", null);
+                config.AdditionalData.Add("cloud_instance_name", "microsoftonline.com");
+                config.AdditionalData.Add("cloud_graph_host_name", "graph.windows.net");
+                config.AdditionalData.Add("msgraph_host", "graph.microsoft.com");
+                config.AdditionalData.Add("rbac_url", "https://pas.windows.net");
+
+                return config;
+            }
+        }
+        #endregion
+
+        #region Array
+        public static string ArrayFirstObject =>
+            $$"""
+            {{{JsonData.ArrayClaim}},{{JksUriClaim}},{{IssuerClaim}}}
+            """;
+        public static string ArrayMiddleObject =>
+            $$"""
+            {{{JksUriClaim}},{{JsonData.ArrayClaim}},{{IssuerClaim}}}
+            """;
+
+        public static string ArrayLastObject =>
+            $$"""
+            {{{JksUriClaim}},{{IssuerClaim}},{{JsonData.ArrayClaim}}}
+            """;
+
+        public static OpenIdConnectConfiguration ArraysConfig
+        {
+            get
+            {
+                OpenIdConnectConfiguration config = new OpenIdConnectConfiguration
+                {
+                    Issuer = Issuer,
+                    JwksUri = JksUri
+                };
+
+                config.AdditionalData.Add(JsonData.ArrayProperty, JsonUtilities.CreateJsonElement(JsonData.ArrayValue));
+                return config;
+            }
+        }
+        #endregion
+
+        #region Object
+        public static string ObjectFirstObject =>
+            $$"""
+            {{{JsonData.ObjectClaim}},{{IssuerClaim}},{{JksUriClaim}}}
+            """;
+
+        public static string ObjectMiddleObject =>
+            $$"""
+            {{{IssuerClaim}},{{JsonData.ObjectClaim}},{{JksUriClaim}}}
+            """;
+
+        public static string ObjectLastObject =>
+            $$"""
+            {{{IssuerClaim}},{{JksUriClaim}},{{JsonData.ObjectClaim}}}
+            """;
+
+        public static OpenIdConnectConfiguration ObjectConfig
+        {
+            get
+            {
+                OpenIdConnectConfiguration config = new OpenIdConnectConfiguration
+                {
+                    JwksUri = JksUri,
+                    Issuer = Issuer
+                };
+
+                config.AdditionalData.Add(JsonData.ObjectProperty, JsonUtilities.CreateJsonElement(JsonData.ObjectValue));
+
+                return config;
+            }
+        }
+        #endregion
+
+        #region Duplicates
+        public static string Duplicates =>
+            $$"""
+            {
+                "Request_parameter_supported": true,
+                "claims_parameter_supported": true,
+                "claims_parameter_Supported": false,
+                "request_parameter_supported": false,
+                {{IssuerClaim }},
+                {{JsonData.ObjectClaim}},
+                {{JksUriClaim}},
+                {{JsonData.ArrayClaim}},
+                {{JsonData.ObjectClaim}},
+                {{IssuerClaim}},
+                {{JsonData.ArrayClaim}},
+                {{JksUriClaim}},
+                {{JsonData.ObjectClaim}}
+            }
+            """;
+
+        public static OpenIdConnectConfiguration DuplicatesConfig
+        {             get
+            {
+                OpenIdConnectConfiguration config = new OpenIdConnectConfiguration
+                {
+                    ClaimsParameterSupported = false,
+                    Issuer = Issuer,
+                    JwksUri = JksUri,
+                    RequestParameterSupported = false,
+                };
+
+                config.AdditionalData.Add(JsonData.ObjectProperty, JsonUtilities.CreateJsonElement(JsonData.ObjectValue));
+                config.AdditionalData.Add(JsonData.ArrayProperty, JsonUtilities.CreateJsonElement(JsonData.ArrayValue));
+
+                return config;
+            }
+        }
+        #endregion
+
+        #region FrontChannel one off tests
+        // FrontChannelFalse, used for testing that the json is case insensitive.
+        public static string FrontChannelTrue =>
+            """
+            {
+                "frontchannel_logout_session_supported": "true",
+                "frontchannel_logout_supported": "false"
+            }
+            """;
+
+        public static OpenIdConnectConfiguration FrontChannelTrueConfig
+        {
+            get
+            {
+                OpenIdConnectConfiguration config = new OpenIdConnectConfiguration
+                {
+                    FrontchannelLogoutSessionSupported = JsonSerializerPrimitives.True,
+                    FrontchannelLogoutSupported = JsonSerializerPrimitives.False
+                };
+
+                return config;
+            }
+        }
+
+        public static string FrontChannelFalse =>
+            """
+            {
+                "frontchannel_logout_session_supported": "false",
+                "frontchannel_logout_supported": "true"
+            }
+            """;
+
+        public static OpenIdConnectConfiguration FrontChannelFalseConfig
+        {
+            get
+            {
+                OpenIdConnectConfiguration config = new OpenIdConnectConfiguration
+                {
+                    FrontchannelLogoutSessionSupported = JsonSerializerPrimitives.False,
+                    FrontchannelLogoutSupported = JsonSerializerPrimitives.True
+                };
+
+                return config;
+            }
+        }
+        #endregion
+
+        #region Singleton Objects for AdditionalData
+
+        public static OpenIdConnectConfiguration StringConfig
+        {
+            get
+            {
+                OpenIdConnectConfiguration config = new OpenIdConnectConfiguration();
+                config.AdditionalData.Add(JsonData.StringProperty, JsonData.StringValue);
+                return config;
+            }
+        }
+
+        public static OpenIdConnectConfiguration BoolFalseConfig
+        {
+            get
+            {
+                OpenIdConnectConfiguration config = new OpenIdConnectConfiguration();
+                config.AdditionalData.Add(JsonData.FalseProperty, false);
+                return config;
+            }
+        }
+
+        public static OpenIdConnectConfiguration BoolTrueConfig
+        {
+            get
+            {
+                OpenIdConnectConfiguration config = new OpenIdConnectConfiguration();
+                config.AdditionalData.Add(JsonData.TrueProperty, true);
+                return config;
+            }
+        }
+
+        public static OpenIdConnectConfiguration NullConfig
+        {
+            get
+            {
+                OpenIdConnectConfiguration config = new OpenIdConnectConfiguration();
+                config.AdditionalData.Add(JsonData.NullProperty, null);
+                return config;
+            }
+        }
+        #endregion
 
         static OpenIdConfigData()
         {
@@ -176,8 +580,8 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             SingleX509Data.JsonWebKeySet = DataSets.JsonWebKeySetX509Data;
             SingleX509Data.JwksUri = "JsonWebKeySetSingleX509Data.json";
             SingleX509Data.IdTokenSigningAlgValuesSupported.Add("RS256");
-            AddToCollection(SingleX509Data.ResponseTypesSupported, new string[] { "code", "id_token", "code id_token" });
-            AddToCollection(SingleX509Data.ResponseModesSupported, new string[] { "query", "fragment", "form_post" });
+            AddToCollection(SingleX509Data.ResponseTypesSupported, "code", "id_token", "code id_token");
+            AddToCollection(SingleX509Data.ResponseModesSupported, "query", "fragment", "form_post");
             SingleX509Data.ScopesSupported.Add("openid");
             SingleX509Data.SigningKeys.Add(KeyingMaterial.X509SecurityKey1);
             SingleX509Data.SubjectTypesSupported.Add("pairwise");

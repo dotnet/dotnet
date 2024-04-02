@@ -83,10 +83,11 @@ namespace Microsoft.IdentityModel.Tokens
         // 10500 - SignatureValidation
         public const string IDX10500 = "IDX10500: Signature validation failed. No security keys were provided to validate the signature.";
         //public const string IDX10501 = "IDX10501: Signature validation failed. Unable to match key: \nkid: '{0}'. \nNumber of keys in TokenValidationParameters: '{1}'. \nNumber of keys in Configuration: '{2}'. \nExceptions caught:\n '{3}'. \ntoken: '{4}'.";
-        public const string IDX10503 = "IDX10503: Signature validation failed. Token does not have a kid. Keys tried: '{0}'. Number of keys in TokenValidationParameters: '{1}'. \nNumber of keys in Configuration: '{2}'. \nExceptions caught:\n '{3}'.\ntoken: '{4}'. See https://aka.ms/IDX10503 for details.";
+        public const string IDX10503 = "IDX10503: Signature validation failed. The token's kid is: '{0}', but did not match any keys in TokenValidationParameters or Configuration. Keys tried: '{1}'. Number of keys in TokenValidationParameters: '{2}'. \nNumber of keys in Configuration: '{3}'. \nExceptions caught:\n '{4}'.\ntoken: '{5}'. See https://aka.ms/IDX10503 for details.";
         public const string IDX10504 = "IDX10504: Unable to validate signature, token does not have a signature: '{0}'.";
         public const string IDX10505 = "IDX10505: Signature validation failed. The user defined 'Delegate' specified on TokenValidationParameters returned null when validating token: '{0}'.";
-        public const string IDX10506 = "IDX10506: Signature validation failed. The user defined 'Delegate' specified on TokenValidationParameters did not return a '{0}', but returned a '{1}' when validating token: '{2}'.";
+        // Provide a message more specific to JsonWebTokens while allowing people searching the ID to search solutions provided for the old message like those at https://stackoverflow.com/questions/77515249/custom-token-validator-not-working-in-net-8
+        public const string IDX10506 = "IDX10506: Signature validation failed. The user defined 'Delegate' specified on TokenValidationParameters did not return a '{0}', but returned a '{1}' when validating token: '{2}'. If you are using ASP.NET Core 8 or later, see https://learn.microsoft.com/en-us/dotnet/core/compatibility/aspnet-core/8.0/securitytoken-events for more details.";
         // public const string IDX10507 = "IDX10507:";
         public const string IDX10508 = "IDX10508: Signature validation failed. Signature is improperly formatted.";
         public const string IDX10509 = "IDX10509: Token validation failed. The user defined 'Delegate' set on TokenValidationParameters.TokenReader did not return a '{0}', but returned a '{1}' when reading token: '{2}'.";
@@ -97,6 +98,7 @@ namespace Microsoft.IdentityModel.Tokens
         public const string IDX10514 = "IDX10514: Signature validation failed. Keys tried: '{0}'. \nKeyInfo: '{1}'. \nExceptions caught:\n '{2}'.\ntoken: '{3}'.";
         //public const string IDX10515 = "IDX10515: Signature validation failed. Unable to match key: \nKeyInfo: '{0}'.\nExceptions caught:\n '{1}'. \ntoken: '{2}'. Valid Lifetime: '{3}'. Valid Issuer: '{4}'";
         //public const string IDX10516 = "IDX10516: Signature validation failed. Unable to match key: \nkid: '{0}'. \nNumber of keys in TokenValidationParameters: '{1}'. \nNumber of keys in Configuration: '{2}'. \nExceptions caught:\n '{3}'. \ntoken: '{4}'. Valid Lifetime: '{5}'. Valid Issuer: '{6}'";
+        public const string IDX10517 = "IDX10517: Signature validation failed. The token's kid is missing. Keys tried: '{0}'. Number of keys in TokenValidationParameters: '{1}'. \nNumber of keys in Configuration: '{2}'. \nExceptions caught:\n '{3}'.\ntoken: '{4}'. See https://aka.ms/IDX10503 for details.";
 
         // encryption / decryption
         // public const string IDX10600 = "IDX10600:";
@@ -260,6 +262,8 @@ namespace Microsoft.IdentityModel.Tokens
         public const string IDX11022 = "IDX11022: Expecting json reader to be positioned on '{0}', reader was positioned at: '{1}', Reading: '{2}.{3}', Position: '{4}', CurrentDepth: '{5}', BytesConsumed: '{6}'.";
         public const string IDX11023 = "IDX11023: Expecting json reader to be positioned on '{0}', reader was positioned at: '{1}', Reading: '{2}', Position: '{3}', CurrentDepth: '{4}', BytesConsumed: '{5}'.";
         public const string IDX11025 = "IDX11025: Cannot serialize object of type: '{0}' into property: '{1}'.";
+        public const string IDX11026 = "IDX11026: Unable to get claim value as a string from claim type:'{0}', value type was:'{1}'. Acceptable types are String, IList<String>, and System.Text.Json.JsonElement.";
+
 
 #pragma warning restore 1591
     }

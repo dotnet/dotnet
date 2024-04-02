@@ -475,7 +475,11 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         public static string JWEEmptyEncryptedKey = @"eyJhIjoiYiJ9..eyJhIjoiYiJ9.eyJhIjoiYiJ9.eyJhIjoiYiJ9";
         public static string JWEEmptyIV =           @"eyJhIjoiYiJ9.eyJhIjoiYiJ9..eyJhIjoiYiJ9.eyJhIjoiYiJ9";
         public static string JWEEmptyCiphertext =   @"eyJhIjoiYiJ9.eyJhIjoiYiJ9.eyJhIjoiYiJ9..eyJhIjoiYiJ9";
-        public static string JWEEmptyAuthenticationTag = @"eyJhIjoiYiJ9.eyJhIjoiYiJ9.eyJhIjoiYiJ9.eyJhIjoiYiJ9.";
+        public static string JWEEmptyAuthenticationTag =    @"eyJhIjoiYiJ9.eyJhIjoiYiJ9.eyJhIjoiYiJ9.eyJhIjoiYiJ9.";
+        public static string JWEInvalidHeader =             @"e.eyJhIjoiYiJ9.eyJhIjoiYiJ9.eyJhIjoiYiJ9.eyJhIjoiYiJ9";
+        public static string JWEInvalidIV =                 @"eyJhIjoiYiJ9.eyJhIjoiYiJ9.e.eyJhIjoiYiJ9.eyJhIjoiYiJ9";
+        public static string JWEInvalidCiphertext =         @"eyJhIjoiYiJ9.eyJhIjoiYiJ9.eyJhIjoiYiJ9.e.eyJhIjoiYiJ9";
+        public static string JWEInvalidAuthenticationTag =  @"eyJhIjoiYiJ9.eyJhIjoiYiJ9.eyJhIjoiYiJ9.eyJhIjoiYiJ9.e";
 
         public static string JwsKidNullX5t
         {

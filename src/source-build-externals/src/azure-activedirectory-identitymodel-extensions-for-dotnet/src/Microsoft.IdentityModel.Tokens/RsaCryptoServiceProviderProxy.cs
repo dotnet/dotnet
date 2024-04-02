@@ -171,6 +171,16 @@ namespace Microsoft.IdentityModel.Tokens
             return _rsa.SignData(input, hash);
         }
 
+        internal byte[] SignData(byte[] input, int offset, int length, object hash)
+        {
+            if (input == null || input.Length == 0)
+                throw LogHelper.LogArgumentNullException(nameof(input));
+
+            _  = hash ?? throw LogHelper.LogArgumentNullException(nameof(hash));
+
+            return _rsa.SignData(input, offset, length, hash);
+        }
+
         /// <summary>
         /// Verifies that a digital signature is valid by determining the hash value in the signature using the provided public key and comparing it to the hash value of the provided data.
         /// </summary>

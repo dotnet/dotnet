@@ -23,5 +23,6 @@ namespace Microsoft.IdentityModel.Validators
         public const string IDX40004 = "IDX40004: Token issuer: '{0}', does not contain the `tid` or `tenantId` claim present in the token: '{1}'.";
         public const string IDX40005 = "IDX40005: Token issuer: '{0}', does not match the signing key issuer: '{1}'.";
         public const string IDX40007 = "IDX40007: RequireSignedTokens property on ValidationParameters is set to true, but the issuer signing key is null.";
+        public const string IDX40008 = "IDX40008: When setting LastKnownGoodLifetime, the value must be greater than or equal to zero. value: '{0}'.";
     }
 }

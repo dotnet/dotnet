@@ -154,8 +154,6 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             { JwtHeaderParameterNames.Kid, KeyingMaterial.RsaSecurityKey_2048.KeyId }
         };
 
-
-
         internal static JObject DefaultSignedHttpRequestHeader => new JObject
         {
             { JwtHeaderParameterNames.Alg, SecurityAlgorithms.RsaSha256 },

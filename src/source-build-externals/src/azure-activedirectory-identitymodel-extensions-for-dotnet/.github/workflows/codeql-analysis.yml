@@ -2,14 +2,14 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ "dev", "dev7" ]
+    branches: [ "dev", "dev6x" ]
   pull_request:
     types:
       - opened
       - synchronize
       - reopened
       - ready_for_review
-    branches: [ "dev", "dev7" ]
+    branches: [ "dev", "dev6x" ]
 
 jobs:
   analyze:

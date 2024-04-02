@@ -711,7 +711,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// Gets or sets a delegate that will be used to validate the signature of the token.
         /// </summary>
         /// <remarks>
-        /// If set, this delegate will be called to signature of the token, instead of default processing.
+        /// If set, this delegate will be called to validate the signature of the token, instead of default processing.
         /// </remarks>
         public SignatureValidator SignatureValidator { get; set; }
 
@@ -720,7 +720,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// the <see cref="BaseConfiguration"/>.
         /// </summary>
         /// <remarks>
-        /// If set, this delegate will be called to signature of the token, instead of default processing.
+        /// If set, this delegate will be called to validate the signature of the token, instead of default processing.
         /// </remarks>
         public SignatureValidatorUsingConfiguration SignatureValidatorUsingConfiguration { get; set; }
 
