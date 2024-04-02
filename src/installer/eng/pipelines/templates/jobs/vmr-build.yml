@@ -98,7 +98,7 @@ jobs:
   # Currently, CodeQL slows the build down too much
   # https://github.com/dotnet/source-build/issues/4276
   ${{ if and(parameters.isBuiltFromVmr, startswith(parameters.buildName, 'Windows'), eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-    timeoutInMinutes: 360
+    timeoutInMinutes: 720
   ${{ else }}:
     timeoutInMinutes: 150
 
