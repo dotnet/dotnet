@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@b3701b7](https://github.com/dotnet/fsharp/tree/b3701b7936766cf73224c7a55ba04a046b3d1a28)*
 - `src/installer`  
-*[dotnet/installer@66c46f5](https://github.com/dotnet/installer/tree/66c46f5f645d5cbef0956d1159c3dcf94942bb90)*
+*[dotnet/installer@b5e8ade](https://github.com/dotnet/installer/tree/b5e8ade5d5d3dd60ca5aa7cfb5deff8569a05cd5)*
 - `src/msbuild`  
 *[dotnet/msbuild@7ca3c98](https://github.com/dotnet/msbuild/tree/7ca3c98fad986066bbf2802c863236b4a0f4e34a)*
 - `src/nuget-client`  
@@ -46,11 +46,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@ad732e2](https://github.com/dotnet/roslyn-analyzers/tree/ad732e236e7ffcb66de4b45a1b736aad4ccdcd83)*
 - `src/runtime`  
-*[dotnet/runtime@1949bd2](https://github.com/dotnet/runtime/tree/1949bd2e017a0dc1e48b7cfed263051a6ed147a5)*
+*[dotnet/runtime@0fd23aa](https://github.com/dotnet/runtime/tree/0fd23aa2d5913df90c3c57ffef5c2dcdf119d043)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@ddccfec](https://github.com/dotnet/scenario-tests/tree/ddccfec3ccd631fb8341c8b6e4e422e8cb339aa5)*
 - `src/sdk`  
-*[dotnet/sdk@acd489e](https://github.com/dotnet/sdk/tree/acd489ee0dae8d34e75986978cfd3f2bce1b2288)*
+*[dotnet/sdk@77dfc1c](https://github.com/dotnet/sdk/tree/77dfc1c2b95436a3a47793d05307ea35bab9f35e)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@52d6569](https://github.com/dotnet/source-build-externals/tree/52d6569d44f86b5d442017f4a9eb3cda4c766afb)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -90,7 +90,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@01de94d](https://github.com/dotnet/symreader/tree/01de94d9718fd48c511cae276437edcd41b41fa4)*
 - `src/templating`  
-*[dotnet/templating@720bc0e](https://github.com/dotnet/templating/tree/720bc0e020a462ae2f4671781766d099a0762aff)*
+*[dotnet/templating@2604b73](https://github.com/dotnet/templating/tree/2604b7363dc5d8c92f8b30b6518ebcf2e048fbbd)*
 - `src/test-templates`  
 *[dotnet/test-templates@3bda3d3](https://github.com/dotnet/test-templates/tree/3bda3d335edaf10ef6c5bc93c06c8c57db5ee9c4)*
 - `src/vstest`  
