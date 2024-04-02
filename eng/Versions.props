@@ -3,6 +3,7 @@
   <PropertyGroup>
     <VersionPrefix>0.1.0</VersionPrefix>
     <PreReleaseVersionLabel>alpha.1</PreReleaseVersionLabel>
+    <UseVSTestRunner>true</UseVSTestRunner>
   </PropertyGroup>
   <PropertyGroup>
     <!--
