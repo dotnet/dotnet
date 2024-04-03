@@ -14,15 +14,14 @@ using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol.SemanticTokens;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-internal class LSPCSharpSemanticTokensProvider(LanguageServerFeatureOptions languageServerFeatureOptions, IClientConnection clientConnection, IRazorLoggerFactory loggerFactory) : ICSharpSemanticTokensProvider
+internal class LSPCSharpSemanticTokensProvider(LanguageServerFeatureOptions languageServerFeatureOptions, IClientConnection clientConnection, ILoggerFactory loggerFactory) : ICSharpSemanticTokensProvider
 {
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IClientConnection _clientConnection = clientConnection;
-    private readonly ILogger _logger = loggerFactory.CreateLogger<LSPCSharpSemanticTokensProvider>();
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<LSPCSharpSemanticTokensProvider>();
 
     public async Task<int[]?> GetCSharpSemanticTokensResponseAsync(
             VersionedDocumentContext documentContext,

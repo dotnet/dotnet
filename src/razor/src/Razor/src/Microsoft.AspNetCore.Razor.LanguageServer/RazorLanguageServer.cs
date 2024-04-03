@@ -37,7 +37,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequestContext>
 {
     private readonly JsonRpc _jsonRpc;
-    private readonly IRazorLoggerFactory _loggerFactory;
+    private readonly ILoggerFactory _loggerFactory;
     private readonly LanguageServerFeatureOptions? _featureOptions;
     private readonly ProjectSnapshotManagerDispatcher? _projectSnapshotManagerDispatcher;
     private readonly Action<IServiceCollection>? _configureServer;
@@ -51,7 +51,7 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
 
     public RazorLanguageServer(
         JsonRpc jsonRpc,
-        IRazorLoggerFactory loggerFactory,
+        ILoggerFactory loggerFactory,
         ProjectSnapshotManagerDispatcher? projectSnapshotManagerDispatcher,
         LanguageServerFeatureOptions? featureOptions,
         Action<IServiceCollection>? configureServer,
@@ -74,7 +74,7 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
         Initialize();
     }
 
-    private static ILspLogger CreateILspLogger(IRazorLoggerFactory loggerFactory, ITelemetryReporter telemetryReporter)
+    private static ILspLogger CreateILspLogger(ILoggerFactory loggerFactory, ITelemetryReporter telemetryReporter)
     {
         return new ClaspLoggingBridge(loggerFactory, telemetryReporter);
     }
@@ -90,12 +90,11 @@ internal partial class RazorLanguageServer : AbstractLanguageServer<RazorRequest
 
     protected override ILspServices ConstructLspServices()
     {
-        var services = new ServiceCollection()
-            .AddOptions();
+        var services = new ServiceCollection();
 
         var loggerFactoryWrapper = new LoggerFactoryWrapper(_loggerFactory);
         // Wrap the logger factory so that we can add [LSP] to the start of all the categories
-        services.AddSingleton<IRazorLoggerFactory>(loggerFactoryWrapper);
+        services.AddSingleton<ILoggerFactory>(loggerFactoryWrapper);
 
         if (_configureServer is not null)
         {

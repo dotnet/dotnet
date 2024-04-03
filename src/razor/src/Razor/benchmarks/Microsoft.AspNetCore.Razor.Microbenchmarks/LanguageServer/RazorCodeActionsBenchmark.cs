@@ -55,7 +55,7 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
             htmlCodeActionProviders: languageServer.GetRequiredService<IEnumerable<IHtmlCodeActionProvider>>(),
             clientConnection: languageServer.GetRequiredService<IClientConnection>(),
             languageServerFeatureOptions: languageServer.GetRequiredService<LanguageServerFeatureOptions>(),
-            loggerFactory: languageServer.GetRequiredService<IRazorLoggerFactory>(),
+            loggerFactory: languageServer.GetRequiredService<ILoggerFactory>(),
             telemetryReporter: null);
 
         var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");

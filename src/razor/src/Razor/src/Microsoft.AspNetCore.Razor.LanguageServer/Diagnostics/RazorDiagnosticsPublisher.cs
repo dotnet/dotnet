@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Threading;
 
@@ -45,7 +44,7 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
         LanguageServerFeatureOptions languageServerFeatureOptions,
         Lazy<RazorTranslateDiagnosticsService> razorTranslateDiagnosticsService,
         Lazy<IDocumentContextFactory> documentContextFactory,
-        IRazorLoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory)
     {
         if (projectSnapshotManagerDispatcher is null)
         {
@@ -85,7 +84,7 @@ internal class RazorDiagnosticsPublisher : DocumentProcessedListener
         PublishedRazorDiagnostics = new Dictionary<string, IReadOnlyList<RazorDiagnostic>>(FilePathComparer.Instance);
         PublishedCSharpDiagnostics = new Dictionary<string, IReadOnlyList<Diagnostic>>(FilePathComparer.Instance);
         _work = new Dictionary<string, IDocumentSnapshot>(FilePathComparer.Instance);
-        _logger = loggerFactory.CreateLogger<RazorDiagnosticsPublisher>();
+        _logger = loggerFactory.GetOrCreateLogger<RazorDiagnosticsPublisher>();
     }
 
     // Used in tests to ensure we can control when background work completes.

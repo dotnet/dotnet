@@ -36,7 +36,7 @@ internal sealed class RazorLanguageServerWrapper : IDisposable
     public static RazorLanguageServerWrapper Create(
         Stream input,
         Stream output,
-        IRazorLoggerFactory loggerFactory,
+        ILoggerFactory loggerFactory,
         ITelemetryReporter telemetryReporter,
         ProjectSnapshotManagerDispatcher? projectSnapshotManagerDispatcher = null,
         Action<IServiceCollection>? configure = null,

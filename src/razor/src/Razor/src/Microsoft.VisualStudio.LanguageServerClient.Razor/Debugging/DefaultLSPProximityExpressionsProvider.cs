@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
@@ -27,7 +26,7 @@ internal class DefaultLSPProximityExpressionsProvider : LSPProximityExpressionsP
     [ImportingConstructor]
     public DefaultLSPProximityExpressionsProvider(
         LSPRequestInvoker requestInvoker,
-        Lazy<IRazorLoggerFactory> loggerFactory)
+        Lazy<ILoggerFactory> loggerFactory)
     {
         if (requestInvoker is null)
         {
@@ -40,7 +39,7 @@ internal class DefaultLSPProximityExpressionsProvider : LSPProximityExpressionsP
         }
 
         _requestInvoker = requestInvoker;
-        _logger = new Lazy<ILogger>(() => loggerFactory.Value.CreateLogger<DefaultLSPProximityExpressionsProvider>());
+        _logger = new Lazy<ILogger>(() => loggerFactory.Value.GetOrCreateLogger<DefaultLSPProximityExpressionsProvider>());
     }
 
     public async override Task<IReadOnlyList<string>?> GetProximityExpressionsAsync(LSPDocumentSnapshot documentSnapshot, Position position, CancellationToken cancellationToken)

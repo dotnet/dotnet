@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Protocol.ProjectSystem;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
@@ -26,7 +25,7 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
     private readonly WorkspaceDirectoryPathResolver _workspaceDirectoryPathResolver;
     private readonly IEnumerable<IProjectConfigurationFileChangeListener> _listeners;
     private readonly LanguageServerFeatureOptions _options;
-    private readonly IRazorLoggerFactory _loggerFactory;
+    private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger _logger;
     private readonly ConcurrentDictionary<string, (string ConfigurationDirectory, IFileChangeDetector Detector)> _outputPathMonitors;
     private readonly object _disposeLock;
@@ -40,7 +39,7 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
         WorkspaceDirectoryPathResolver workspaceDirectoryPathResolver,
         IEnumerable<IProjectConfigurationFileChangeListener> listeners,
         LanguageServerFeatureOptions options,
-        IRazorLoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory)
     {
         _projectManager = projectManager;
         _dispatcher = dispatcher;
@@ -48,7 +47,7 @@ internal class MonitorProjectConfigurationFilePathEndpoint : IRazorNotificationH
         _listeners = listeners;
         _options = options;
         _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
-        _logger = loggerFactory.CreateLogger<MonitorProjectConfigurationFilePathEndpoint>();
+        _logger = loggerFactory.GetOrCreateLogger<MonitorProjectConfigurationFilePathEndpoint>();
         _outputPathMonitors = new ConcurrentDictionary<string, (string, IFileChangeDetector)>(FilePathComparer.Instance);
         _disposeLock = new object();
     }

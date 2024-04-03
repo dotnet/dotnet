@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using TextSpan = Microsoft.CodeAnalysis.Text.TextSpan;
 
@@ -25,7 +24,7 @@ internal class CSharpFormattingPass : CSharpFormattingPassBase
     public CSharpFormattingPass(
         IRazorDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
-        IRazorLoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory)
         : base(documentMappingService, clientConnection)
     {
         if (loggerFactory is null)
@@ -33,7 +32,7 @@ internal class CSharpFormattingPass : CSharpFormattingPassBase
             throw new ArgumentNullException(nameof(loggerFactory));
         }
 
-        _logger = loggerFactory.CreateLogger<CSharpFormattingPass>();
+        _logger = loggerFactory.GetOrCreateLogger<CSharpFormattingPass>();
     }
 
     // Run after the HTML and Razor formatter pass.

@@ -3,13 +3,12 @@
 
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor.Logging;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Logging;
 
-[Export(typeof(IRazorLoggerProvider))]
-internal sealed class RazorLogHubLoggerProvider : IRazorLoggerProvider
+[Export(typeof(ILoggerProvider))]
+internal sealed class RazorLogHubLoggerProvider : ILoggerProvider
 {
     private readonly RazorLogHubTraceProvider _traceProvider;
 

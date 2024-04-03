@@ -2,121 +2,67 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Internal;
-using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.VisualStudio.Razor.DynamicFiles;
 
 [Export(typeof(IRazorStartupService))]
-internal class BackgroundDocumentGenerator : IRazorStartupService
+internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisposable
 {
-    // Internal for testing
-    internal readonly Dictionary<DocumentKey, (IProjectSnapshot project, IDocumentSnapshot document)> Work = [];
+    private static readonly TimeSpan s_delay = TimeSpan.FromSeconds(2);
 
     private readonly IProjectSnapshotManager _projectManager;
-    private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly IRazorDynamicFileInfoProviderInternal _infoProvider;
     private readonly IErrorReporter _errorReporter;
-    private ImmutableHashSet<string> _suppressedDocuments;
 
-    private Timer? _timer;
+    private readonly CancellationTokenSource _disposeTokenSource;
+    private readonly AsyncBatchingWorkQueue<(IProjectSnapshot, IDocumentSnapshot)> _workQueue;
+    private ImmutableHashSet<string> _suppressedDocuments;
     private bool _solutionIsClosing;
 
     [ImportingConstructor]
     public BackgroundDocumentGenerator(
         IProjectSnapshotManager projectManager,
-        ProjectSnapshotManagerDispatcher dispatcher,
         IRazorDynamicFileInfoProviderInternal infoProvider,
         IErrorReporter errorReporter)
+        : this(projectManager, infoProvider, errorReporter, s_delay)
+    {
+    }
+
+    // Provided for tests to be able to modify the timer delay
+    protected BackgroundDocumentGenerator(
+        IProjectSnapshotManager projectManager,
+        IRazorDynamicFileInfoProviderInternal infoProvider,
+        IErrorReporter errorReporter,
+        TimeSpan delay)
     {
         _projectManager = projectManager;
-        _dispatcher = dispatcher;
         _infoProvider = infoProvider;
         _errorReporter = errorReporter;
 
+        _disposeTokenSource = new();
+        _workQueue = new AsyncBatchingWorkQueue<(IProjectSnapshot, IDocumentSnapshot)>(delay, ProcessBatchAsync, _disposeTokenSource.Token);
         _suppressedDocuments = ImmutableHashSet<string>.Empty.WithComparer(FilePathComparer.Instance);
         _projectManager.Changed += ProjectManager_Changed;
     }
 
-    public bool HasPendingNotifications
+    public void Dispose()
     {
-        get
-        {
-            lock (Work)
-            {
-                return Work.Count > 0;
-            }
-        }
+        _disposeTokenSource.Cancel();
+        _disposeTokenSource.Dispose();
     }
 
-    // Used in unit tests to control the timer delay.
-    public TimeSpan Delay { get; set; } = TimeSpan.FromSeconds(2);
-
-    public bool IsScheduledOrRunning => _timer != null;
-
-    // Used in unit tests to ensure we can control when background work starts.
-    public ManualResetEventSlim? BlockBackgroundWorkStart { get; set; }
-
-    // Used in unit tests to ensure we can know when background work finishes.
-    public ManualResetEventSlim? NotifyBackgroundWorkStarting { get; set; }
-
-    // Used in unit tests to ensure we can know when background has captured its current workload.
-    public ManualResetEventSlim? NotifyBackgroundCapturedWorkload { get; set; }
-
-    // Used in unit tests to ensure we can control when background work completes.
-    public ManualResetEventSlim? BlockBackgroundWorkCompleting { get; set; }
-
-    // Used in unit tests to ensure we can know when background work finishes.
-    public ManualResetEventSlim? NotifyBackgroundWorkCompleted { get; set; }
-
-    // Used in unit tests to ensure we can know when errors are reported
-    public ManualResetEventSlim? NotifyErrorBeingReported { get; set; }
-
-    private void OnStartingBackgroundWork()
-    {
-        if (BlockBackgroundWorkStart is not null)
-        {
-            BlockBackgroundWorkStart.Wait();
-            BlockBackgroundWorkStart.Reset();
-        }
-
-        NotifyBackgroundWorkStarting?.Set();
-    }
-
-    private void OnCompletingBackgroundWork()
-    {
-        if (BlockBackgroundWorkCompleting is not null)
-        {
-            BlockBackgroundWorkCompleting.Wait();
-            BlockBackgroundWorkCompleting.Reset();
-        }
-    }
-
-    private void OnCompletedBackgroundWork()
-    {
-        NotifyBackgroundWorkCompleted?.Set();
-    }
-
-    private void OnBackgroundCapturedWorkload()
-    {
-        NotifyBackgroundCapturedWorkload?.Set();
-    }
-
-    private void OnErrorBeingReported()
-    {
-        NotifyErrorBeingReported?.Set();
-    }
+    protected Task WaitUntilCurrentBatchCompletesAsync()
+        => _workQueue.WaitUntilCurrentBatchCompletesAsync();
 
     protected virtual async Task ProcessDocumentAsync(IProjectSnapshot project, IDocumentSnapshot document)
     {
@@ -125,16 +71,11 @@ internal class BackgroundDocumentGenerator : IRazorStartupService
         UpdateFileInfo(project, document);
     }
 
-    public void Enqueue(IProjectSnapshot project, IDocumentSnapshot document)
+    public virtual void Enqueue(IProjectSnapshot project, IDocumentSnapshot document)
     {
-        if (project is null)
+        if (_disposeTokenSource.IsCancellationRequested)
         {
-            throw new ArgumentNullException(nameof(project));
-        }
-
-        if (document is null)
-        {
-            throw new ArgumentNullException(nameof(document));
+            return;
         }
 
         if (project is ProjectSnapshot { HostProject: FallbackHostProject })
@@ -143,112 +84,47 @@ internal class BackgroundDocumentGenerator : IRazorStartupService
             return;
         }
 
-        _dispatcher.AssertRunningOnDispatcher();
-
-        lock (Work)
+        if (Suppressed(project, document))
         {
-            if (Suppressed(project, document))
+            return;
+        }
+
+        _workQueue.AddWork((project, document));
+    }
+
+    protected virtual async ValueTask ProcessBatchAsync(ImmutableArray<(IProjectSnapshot, IDocumentSnapshot)> items, CancellationToken token)
+    {
+        foreach (var (project, document) in items.GetMostRecentUniqueItems(Comparer.Instance))
+        {
+            if (token.IsCancellationRequested)
             {
                 return;
             }
 
-            // We only want to store the last 'seen' version of any given document. That way when we pick one to process
-            // it's always the best version to use.
-            Work[new DocumentKey(project.Key, document.FilePath.AssumeNotNull())] = (project, document);
-
-            StartWorker();
-        }
-    }
-
-    protected virtual void StartWorker()
-    {
-        // Access to the timer is protected by the lock in Enqueue and in Timer_Tick
-        // Timer will fire after a fixed delay, but only once.
-        _timer ??= NonCapturingTimer.Create(state => ((BackgroundDocumentGenerator)state).Timer_Tick(), this, Delay, Timeout.InfiniteTimeSpan);
-    }
-
-    private void Timer_Tick()
-    {
-        TimerTickAsync().Forget();
-    }
-
-    private async Task TimerTickAsync()
-    {
-        Assumes.NotNull(_timer);
-
-        try
-        {
-            // Timer is stopped.
-            _timer.Change(Timeout.Infinite, Timeout.Infinite);
-
-            OnStartingBackgroundWork();
-
-            KeyValuePair<DocumentKey, (IProjectSnapshot project, IDocumentSnapshot document)>[] work;
-            lock (Work)
+            // If the solution is closing, suspect any in-progress work
+            if (_solutionIsClosing)
             {
-                work = Work.ToArray();
-                Work.Clear();
+                break;
             }
 
-            OnBackgroundCapturedWorkload();
-
-            for (var i = 0; i < work.Length; i++)
+            try
             {
-                // If the solution is closing, suspect any in-progress work
-                if (_solutionIsClosing)
-                {
-                    break;
-                }
-
-                var (project, document) = work[i].Value;
-                try
-                {
-                    await ProcessDocumentAsync(project, document).ConfigureAwait(false);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    // Ignore UnauthorizedAccessException. These can occur when a file gets its permissions changed as we're processing it.
-                }
-                catch (IOException)
-                {
-                    // Ignore IOException. These can occur when a file was in the middle of being renamed and it disappears as we're processing it.
-                    // This is a common case and does not warrant an activity log entry.
-                }
-                catch (Exception ex)
-                {
-                    ReportError(project, ex);
-                }
+                await ProcessDocumentAsync(project, document).ConfigureAwait(false);
             }
-
-            OnCompletingBackgroundWork();
-
-            lock (Work)
+            catch (UnauthorizedAccessException)
             {
-                // Resetting the timer allows another batch of work to start.
-                _timer.Dispose();
-                _timer = null;
-
-                // If more work came in while we were running start the worker again, unless the solution
-                // is being closed.
-                if (Work.Count > 0 && !_solutionIsClosing)
-                {
-                    StartWorker();
-                }
+                // Ignore UnauthorizedAccessException. These can occur when a file gets its permissions changed as we're processing it.
             }
-
-            OnCompletedBackgroundWork();
+            catch (IOException)
+            {
+                // Ignore IOException. These can occur when a file was in the middle of being renamed and it disappears as we're processing it.
+                // This is a common case and does not warrant an activity log entry.
+            }
+            catch (Exception ex)
+            {
+                _errorReporter.ReportError(ex, project);
+            }
         }
-        catch (Exception ex)
-        {
-            _errorReporter.ReportError(ex);
-        }
-    }
-
-    private void ReportError(IProjectSnapshot project, Exception ex)
-    {
-        OnErrorBeingReported();
-
-        _errorReporter.ReportError(ex, project);
     }
 
     private bool Suppressed(IProjectSnapshot project, IDocumentSnapshot document)
@@ -296,7 +172,7 @@ internal class BackgroundDocumentGenerator : IRazorStartupService
 
                     foreach (var documentFilePath in newProject.DocumentFilePaths)
                     {
-                        if (newProject.GetDocument(documentFilePath) is { } document)
+                        if (newProject.TryGetDocument(documentFilePath, out var document))
                         {
                             Enqueue(newProject, document);
                         }
@@ -304,13 +180,14 @@ internal class BackgroundDocumentGenerator : IRazorStartupService
 
                     break;
                 }
+
             case ProjectChangeKind.ProjectChanged:
                 {
                     var newProject = args.Newer.AssumeNotNull();
 
                     foreach (var documentFilePath in newProject.DocumentFilePaths)
                     {
-                        if (newProject.GetDocument(documentFilePath) is { } document)
+                        if (newProject.TryGetDocument(documentFilePath, out var document))
                         {
                             Enqueue(newProject, document);
                         }
@@ -325,7 +202,7 @@ internal class BackgroundDocumentGenerator : IRazorStartupService
                     var newProject = args.Newer.AssumeNotNull();
                     var documentFilePath = args.DocumentFilePath.AssumeNotNull();
 
-                    if (newProject.GetDocument(documentFilePath) is { } document)
+                    if (newProject.TryGetDocument(documentFilePath, out var document))
                     {
                         Enqueue(newProject, document);
 
@@ -346,7 +223,7 @@ internal class BackgroundDocumentGenerator : IRazorStartupService
                     var oldProject = args.Older.AssumeNotNull();
                     var documentFilePath = args.DocumentFilePath.AssumeNotNull();
 
-                    if (oldProject.GetDocument(documentFilePath) is { } document)
+                    if (oldProject.TryGetDocument(documentFilePath, out var document))
                     {
                         foreach (var relatedDocument in newProject.GetRelatedDocuments(document))
                         {

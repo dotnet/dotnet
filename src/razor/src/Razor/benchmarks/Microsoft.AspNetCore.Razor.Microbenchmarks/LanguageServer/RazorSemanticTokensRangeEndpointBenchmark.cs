@@ -64,7 +64,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
     {
         EnsureServicesInitialized();
 
-        var loggerFactory = RazorLanguageServer.GetRequiredService<IRazorLoggerFactory>();
+        var loggerFactory = RazorLanguageServer.GetRequiredService<ILoggerFactory>();
 
         var projectRoot = Path.Combine(RepoRoot, "src", "Razor", "test", "testapps", "ComponentApp");
         ProjectFilePath = Path.Combine(projectRoot, "ComponentApp.csproj");
@@ -159,7 +159,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
             LanguageServerFeatureOptions languageServerFeatureOptions,
             IRazorDocumentMappingService documentMappingService,
             RazorSemanticTokensLegendService razorSemanticTokensLegendService,
-            IRazorLoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory)
             : base(documentMappingService, razorSemanticTokensLegendService, csharpSemanticTokensProvider: null!, languageServerFeatureOptions, loggerFactory)
         {
         }

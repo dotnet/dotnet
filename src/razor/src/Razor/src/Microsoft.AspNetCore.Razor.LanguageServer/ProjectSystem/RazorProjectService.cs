@@ -19,7 +19,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 
@@ -29,7 +28,7 @@ internal class RazorProjectService(
     ISnapshotResolver snapshotResolver,
     IDocumentVersionCache documentVersionCache,
     IProjectSnapshotManager projectManager,
-    IRazorLoggerFactory loggerFactory)
+    ILoggerFactory loggerFactory)
     : IRazorProjectService
 {
     private readonly IProjectSnapshotManager _projectManager = projectManager;
@@ -37,7 +36,7 @@ internal class RazorProjectService(
     private readonly RemoteTextLoaderFactory _remoteTextLoaderFactory = remoteTextLoaderFactory;
     private readonly ISnapshotResolver _snapshotResolver = snapshotResolver;
     private readonly IDocumentVersionCache _documentVersionCache = documentVersionCache;
-    private readonly ILogger _logger = loggerFactory.CreateLogger<RazorProjectService>();
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorProjectService>();
 
     public void AddDocument(string filePath)
     {

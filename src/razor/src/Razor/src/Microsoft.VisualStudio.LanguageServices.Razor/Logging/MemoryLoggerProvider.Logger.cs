@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.Extensions.Logging;
+using Microsoft.CodeAnalysis.Razor.Logging;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
 
@@ -13,13 +13,10 @@ internal partial class MemoryLoggerProvider
         private readonly Buffer _buffer = buffer;
         private readonly string _categoryName = categoryName;
 
-        public IDisposable BeginScope<TState>(TState state)
-            => Scope.Instance;
-
         public bool IsEnabled(LogLevel logLevel)
             => true;
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        public void Log<TState>(LogLevel logLevel, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
             _buffer.Append($"{DateTime.Now:h:mm:ss.fff} [{_categoryName}] {formatter(state, exception)}");
             if (exception is not null)

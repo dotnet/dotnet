@@ -365,7 +365,7 @@ public class DefinitionEndpointTest(ITestOutputHelper testOutput) : TagHelperSer
         var documentContext = CreateDocumentContext(new Uri(@"C:\file.razor"), documentSnapshot);
 
         var (descriptor, attributeDescriptor) = await DefinitionEndpoint.GetOriginTagHelperBindingAsync(
-            documentContext, position, ignoreAttributes, LoggerFactory.CreateLogger("RazorDefinitionEndpoint"), DisposalToken);
+            documentContext, position, ignoreAttributes, LoggerFactory.GetOrCreateLogger("RazorDefinitionEndpoint"), DisposalToken);
 
         if (tagHelperDescriptorName is null)
         {

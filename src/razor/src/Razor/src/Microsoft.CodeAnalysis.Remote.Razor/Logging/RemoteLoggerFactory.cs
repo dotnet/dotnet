@@ -4,13 +4,12 @@
 using System.Composition;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.Logging;
 
-[Export(typeof(IRazorLoggerFactory)), Shared]
+[Export(typeof(ILoggerFactory)), Shared]
 [method: ImportingConstructor]
-internal partial class RemoteLoggerFactory() : IRazorLoggerFactory
+internal partial class RemoteLoggerFactory() : ILoggerFactory
 {
     private static TraceSource? s_traceSource;
 
@@ -19,12 +18,12 @@ internal partial class RemoteLoggerFactory() : IRazorLoggerFactory
         s_traceSource ??= traceSource;
     }
 
-    public void AddLoggerProvider(IRazorLoggerProvider provider)
+    public void AddLoggerProvider(ILoggerProvider provider)
     {
         throw new System.NotImplementedException();
     }
 
-    public ILogger CreateLogger(string categoryName)
+    public ILogger GetOrCreateLogger(string categoryName)
     {
         return new Logger(categoryName);
     }

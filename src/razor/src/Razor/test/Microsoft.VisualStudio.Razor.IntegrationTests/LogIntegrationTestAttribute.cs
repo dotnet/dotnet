@@ -23,7 +23,7 @@ public class LogIntegrationTestAttribute : BeforeAfterTestAttribute
     // private static ILogger GetLogger(string testName)
     // {
     //     var componentModel = ServiceProvider.GlobalProvider.GetService<SComponentModel, IComponentModel>();
-    //     var loggerFactory = componentModel.GetService<IRazorLoggerFactory>();
+    //     var loggerFactory = componentModel.GetService<ILoggerFactory>();
     //     return loggerFactory.CreateLogger(testName);
     // }
 }

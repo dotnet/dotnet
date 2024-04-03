@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
@@ -25,12 +24,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 internal class LegacyRazorCompletionEndpoint(
     IRazorCompletionFactsService completionFactsService,
     CompletionListCache completionListCache,
-    IRazorLoggerFactory loggerFactory)
+    ILoggerFactory loggerFactory)
     : IVSCompletionEndpoint
 {
     private readonly IRazorCompletionFactsService _completionFactsService = completionFactsService;
     private readonly CompletionListCache _completionListCache = completionListCache;
-    private readonly ILogger _logger = loggerFactory.CreateLogger<LegacyRazorCompletionEndpoint>();
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<LegacyRazorCompletionEndpoint>();
 
     private static readonly Command s_retriggerCompletionCommand = new()
     {

@@ -15,7 +15,6 @@ using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -31,13 +30,13 @@ internal class ProjectConfigurationStateSynchronizer : IProjectConfigurationFile
     public ProjectConfigurationStateSynchronizer(
         ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
         IRazorProjectService projectService,
-        IRazorLoggerFactory loggerFactory,
+        ILoggerFactory loggerFactory,
         LanguageServerFeatureOptions languageServerFeatureOptions)
     {
         _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
         _projectService = projectService;
         _languageServerFeatureOptions = languageServerFeatureOptions;
-        _logger = loggerFactory.CreateLogger<ProjectConfigurationStateSynchronizer>();
+        _logger = loggerFactory.GetOrCreateLogger<ProjectConfigurationStateSynchronizer>();
         _configurationToProjectMap = new Dictionary<string, ProjectKey>(FilePathComparer.Instance);
         ProjectInfoMap = new Dictionary<ProjectKey, DelayedProjectInfo>();
     }

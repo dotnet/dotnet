@@ -4,11 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.Extensions.Logging;
+using Microsoft.CodeAnalysis.Razor.Logging;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.Logging;
 
-public partial class TestOutputLogger : ILogger
+internal partial class TestOutputLogger : ILogger
 {
     [ThreadStatic]
     private static StringBuilder? g_builder;
@@ -28,13 +28,10 @@ public partial class TestOutputLogger : ILogger
         LogLevel = logLevel;
     }
 
-    public IDisposable BeginScope<TState>(TState state)
-        => NoOpDisposable.Instance;
-
     public bool IsEnabled(LogLevel logLevel)
         => logLevel >= LogLevel;
 
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+    public void Log<TState>(LogLevel logLevel, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
         if (!IsEnabled(logLevel) || _provider.TestOutputHelper is null)
         {

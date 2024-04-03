@@ -4,7 +4,7 @@
 using System;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.Editor.Razor.Logging;
 
 namespace Microsoft.VisualStudio.LanguageServerClient.Razor.Logging;
@@ -20,14 +20,12 @@ internal sealed class RazorLogHubLogger : ILogger
         _traceProvider = traceProvider;
     }
 
-    public IDisposable BeginScope<TState>(TState state) => Scope.Instance;
-
     public bool IsEnabled(LogLevel logLevel)
     {
         return true;
     }
 
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+    public void Log<TState>(LogLevel logLevel, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
         var traceSource = _traceProvider.TryGetTraceSource();
         if (traceSource is null)

@@ -7,6 +7,6 @@ using Xunit.Abstractions;
 namespace Microsoft.AspNetCore.Razor.Test.Common.Logging;
 
 internal sealed class TestOutputLoggerFactory(ITestOutputHelper output)
-    : AbstractRazorLoggerFactory([new TestOutputLoggerProvider(output)])
+    : AbstractLoggerFactory([new TestOutputLoggerProvider(output)])
 {
 }

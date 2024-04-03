@@ -394,7 +394,7 @@ internal partial class WorkspaceProjectStateChangeDetector : IRazorStartupServic
 
     private bool TryGetProjectSnapshot(Project? project, [NotNullWhen(true)] out IProjectSnapshot? projectSnapshot)
     {
-        if (project is null)
+        if (project?.CompilationOutputInfo.AssemblyPath is null)
         {
             projectSnapshot = null;
             return false;

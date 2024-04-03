@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.LinkedEditingRange;
@@ -27,14 +26,14 @@ internal class LinkedEditingRangeEndpoint : IRazorRequestHandler<LinkedEditingRa
 
     private readonly ILogger _logger;
 
-    public LinkedEditingRangeEndpoint(IRazorLoggerFactory loggerFactory)
+    public LinkedEditingRangeEndpoint(ILoggerFactory loggerFactory)
     {
         if (loggerFactory is null)
         {
             throw new ArgumentNullException(nameof(loggerFactory));
         }
 
-        _logger = loggerFactory.CreateLogger<LinkedEditingRangeEndpoint>();
+        _logger = loggerFactory.GetOrCreateLogger<LinkedEditingRangeEndpoint>();
     }
 
     public bool MutatesSolutionState => false;

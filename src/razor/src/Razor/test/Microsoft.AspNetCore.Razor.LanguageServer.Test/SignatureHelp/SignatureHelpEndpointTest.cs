@@ -6,12 +6,10 @@
 using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Xunit;
 using Xunit.Abstractions;
@@ -93,7 +91,7 @@ public class SignatureHelpEndpointTest(ITestOutputHelper testOutput) : SingleSer
         return VerifySignatureHelpWithContextAndOptionsAsync(input, optionsMonitor: null, signatureHelpContext: null, signatures);
     }
 
-    private async Task VerifySignatureHelpWithContextAndOptionsAsync(string input, IOptionsMonitor<RazorLSPOptions> optionsMonitor = null, SignatureHelpContext signatureHelpContext = null, params string[] signatures)
+    private async Task VerifySignatureHelpWithContextAndOptionsAsync(string input, RazorLSPOptionsMonitor optionsMonitor = null, SignatureHelpContext signatureHelpContext = null, params string[] signatures)
     {
         // Arrange
         TestFileMarkupParser.GetPositionAndSpans(input, out var output, out int cursorPosition, out ImmutableArray<TextSpan> _);

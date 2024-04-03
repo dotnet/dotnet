@@ -11,7 +11,6 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Threading;
@@ -24,12 +23,12 @@ internal class CohostTextDocumentSyncHandler(
     IRemoteClientProvider remoteClientProvider,
     LSPDocumentManager documentManager,
     JoinableTaskContext joinableTaskContext,
-    IRazorLoggerFactory loggerFactory) : IRazorCohostTextDocumentSyncHandler
+    ILoggerFactory loggerFactory) : IRazorCohostTextDocumentSyncHandler
 {
     private readonly IRemoteClientProvider _remoteClientProvider = remoteClientProvider;
     private readonly JoinableTaskContext _joinableTaskContext = joinableTaskContext;
     private readonly TrackingLSPDocumentManager _documentManager = documentManager as TrackingLSPDocumentManager ?? throw new InvalidOperationException("Expected TrackingLSPDocumentManager");
-    private readonly ILogger _logger = loggerFactory.CreateLogger<CohostTextDocumentSyncHandler>();
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostTextDocumentSyncHandler>();
 
     public async Task HandleAsync(int version, RazorCohostRequestContext context, CancellationToken cancellationToken)
     {

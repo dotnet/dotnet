@@ -8,9 +8,9 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
 
-[Export(typeof(IRazorLoggerFactory))]
+[Export(typeof(ILoggerFactory))]
 [method: ImportingConstructor]
-internal sealed class VisualStudioRazorLoggerFactory([ImportMany] IEnumerable<IRazorLoggerProvider> providers)
-    : AbstractRazorLoggerFactory(providers.ToImmutableArray())
+internal sealed class VisualStudioLoggerFactory([ImportMany] IEnumerable<ILoggerProvider> providers)
+    : AbstractLoggerFactory(providers.ToImmutableArray())
 {
 }

@@ -1,11 +1,13 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using Microsoft.Extensions.Logging;
+using System;
 
 namespace Microsoft.CodeAnalysis.Razor.Logging;
 
-// Very very light wrapper for ILoggerProvider, so that we're not MEF importing general use types
-internal interface IRazorLoggerProvider : ILoggerProvider
+internal interface ILogger
 {
+    void Log<TState>(LogLevel logLevel, TState state, Exception? exception, Func<TState, Exception?, string> formatter);
+
+    bool IsEnabled(LogLevel logLevel);
 }
