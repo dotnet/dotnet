@@ -109,6 +109,8 @@ jobs:
       find artifacts/ -type f -name "BuildTests*.binlog" -exec cp {} --parents -t ${targetFolder} \;
       find artifacts/ -type f -name "BuildTests*.log" -exec cp {} --parents -t ${targetFolder} \;
       echo "Updated:"
+      find test/ -type f -name "UpdatedLicenseExclusions*.txt"
+      find test/ -type f -name "UpdatedLicenseExclusions*.txt" -exec cp {} --parents -t ${targetFolder} \;
       find test/ -type f -name "Updated*.json"
       find test/ -type f -name "Updated*.json" -exec cp {} --parents -t ${targetFolder} \;
       echo "Results:"
