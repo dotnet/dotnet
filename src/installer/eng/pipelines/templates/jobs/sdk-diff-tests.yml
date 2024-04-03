@@ -75,6 +75,10 @@ jobs:
       displayName: Download Source Built Artifacts
 
   - script: |
+      find $(Pipeline.Workspace)/Artifacts -type f -exec mv {} $(Pipeline.Workspace)/Artifacts \;
+    displayName: Move Artifacts to root
+
+  - script: |
       platform="linux"
       if [[ ${{ parameters.targetRid }} =~ "alpine" ]]; then
         platform="$platform-musl"
