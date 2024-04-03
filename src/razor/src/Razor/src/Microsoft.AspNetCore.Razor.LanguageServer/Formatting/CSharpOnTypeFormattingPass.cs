@@ -21,8 +21,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 using TextSpan = Microsoft.CodeAnalysis.Text.TextSpan;
@@ -32,13 +30,13 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
 {
     private readonly ILogger _logger;
-    private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
+    private readonly RazorLSPOptionsMonitor _optionsMonitor;
 
     public CSharpOnTypeFormattingPass(
         IRazorDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
-        IOptionsMonitor<RazorLSPOptions> optionsMonitor,
-        IRazorLoggerFactory loggerFactory)
+        RazorLSPOptionsMonitor optionsMonitor,
+        ILoggerFactory loggerFactory)
         : base(documentMappingService, clientConnection)
     {
         if (loggerFactory is null)
@@ -46,7 +44,7 @@ internal class CSharpOnTypeFormattingPass : CSharpFormattingPassBase
             throw new ArgumentNullException(nameof(loggerFactory));
         }
 
-        _logger = loggerFactory.CreateLogger<CSharpOnTypeFormattingPass>();
+        _logger = loggerFactory.GetOrCreateLogger<CSharpOnTypeFormattingPass>();
         _optionsMonitor = optionsMonitor;
     }
 

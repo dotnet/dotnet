@@ -5,7 +5,6 @@ using System;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 
@@ -20,26 +19,11 @@ internal class ClaspLoggingBridge : ILspLogger
     private readonly ILogger _logger;
     private readonly ITelemetryReporter? _telemetryReporter;
 
-    public ClaspLoggingBridge(IRazorLoggerFactory loggerFactory, ITelemetryReporter? telemetryReporter = null)
+    public ClaspLoggingBridge(ILoggerFactory loggerFactory, ITelemetryReporter? telemetryReporter = null)
     {
-        // We're creating this on behalf of CLaSP, because it doesn't know how to use IRazorLoggerFactory, so using that as the category name.
-        _logger = loggerFactory.CreateLogger("CLaSP");
+        // We're creating this on behalf of CLaSP, because it doesn't know how to use our ILoggerFactory, so using that as the category name.
+        _logger = loggerFactory.GetOrCreateLogger("CLaSP");
         _telemetryReporter = telemetryReporter;
-    }
-
-    public IDisposable BeginScope<TState>(TState state)
-    {
-        return _logger.BeginScope(state);
-    }
-
-    public bool IsEnabled(LogLevel logLevel)
-    {
-        return _logger.IsEnabled(logLevel);
-    }
-
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
-    {
-        _logger.Log(logLevel, eventId, state, exception, formatter);
     }
 
     public void LogStartContext(string message, params object[] @params)

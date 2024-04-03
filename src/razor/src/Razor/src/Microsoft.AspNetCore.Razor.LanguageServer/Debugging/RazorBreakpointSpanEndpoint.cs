@@ -15,7 +15,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
@@ -30,7 +29,7 @@ internal class RazorBreakpointSpanEndpoint : IRazorDocumentlessRequestHandler<Ra
 
     public RazorBreakpointSpanEndpoint(
         IRazorDocumentMappingService documentMappingService,
-        IRazorLoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory)
     {
         if (loggerFactory is null)
         {
@@ -38,7 +37,7 @@ internal class RazorBreakpointSpanEndpoint : IRazorDocumentlessRequestHandler<Ra
         }
 
         _documentMappingService = documentMappingService ?? throw new ArgumentNullException(nameof(documentMappingService));
-        _logger = loggerFactory.CreateLogger<RazorBreakpointSpanEndpoint>();
+        _logger = loggerFactory.GetOrCreateLogger<RazorBreakpointSpanEndpoint>();
     }
 
     public Uri GetTextDocumentIdentifier(RazorBreakpointSpanParams request)

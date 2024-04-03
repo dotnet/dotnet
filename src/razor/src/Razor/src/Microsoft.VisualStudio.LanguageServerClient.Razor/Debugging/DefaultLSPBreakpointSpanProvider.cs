@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
@@ -25,7 +24,7 @@ internal class DefaultLSPBreakpointSpanProvider : LSPBreakpointSpanProvider
     [ImportingConstructor]
     public DefaultLSPBreakpointSpanProvider(
         LSPRequestInvoker requestInvoker,
-        Lazy<IRazorLoggerFactory> loggerFactory)
+        Lazy<ILoggerFactory> loggerFactory)
     {
         if (requestInvoker is null)
         {
@@ -38,7 +37,7 @@ internal class DefaultLSPBreakpointSpanProvider : LSPBreakpointSpanProvider
         }
 
         _requestInvoker = requestInvoker;
-        _logger = new Lazy<ILogger>(() => loggerFactory.Value.CreateLogger<DefaultLSPBreakpointSpanProvider>());
+        _logger = new Lazy<ILogger>(() => loggerFactory.Value.GetOrCreateLogger<DefaultLSPBreakpointSpanProvider>());
     }
 
     public async override Task<Range?> GetBreakpointSpanAsync(LSPDocumentSnapshot documentSnapshot, Position position, CancellationToken cancellationToken)

@@ -2,12 +2,11 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Razor.Test.Common.Logging;
 
-public class TestOutputLoggerProvider(ITestOutputHelper output) : IRazorLoggerProvider
+internal class TestOutputLoggerProvider(ITestOutputHelper output) : ILoggerProvider
 {
     private ITestOutputHelper? _output = output;
 

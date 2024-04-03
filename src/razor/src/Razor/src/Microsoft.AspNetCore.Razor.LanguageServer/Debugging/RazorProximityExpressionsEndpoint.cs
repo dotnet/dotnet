@@ -15,7 +15,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Debugging;
 
@@ -27,7 +26,7 @@ internal class RazorProximityExpressionsEndpoint : IRazorDocumentlessRequestHand
 
     public RazorProximityExpressionsEndpoint(
         IRazorDocumentMappingService documentMappingService,
-        IRazorLoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory)
     {
         if (documentMappingService is null)
         {
@@ -40,7 +39,7 @@ internal class RazorProximityExpressionsEndpoint : IRazorDocumentlessRequestHand
         }
 
         _documentMappingService = documentMappingService;
-        _logger = loggerFactory.CreateLogger<RazorBreakpointSpanEndpoint>();
+        _logger = loggerFactory.GetOrCreateLogger<RazorBreakpointSpanEndpoint>();
     }
 
     public bool MutatesSolutionState => false;

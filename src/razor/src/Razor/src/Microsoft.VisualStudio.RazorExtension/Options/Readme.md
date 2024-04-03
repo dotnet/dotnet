@@ -9,4 +9,4 @@ These are the steps needed to add a new option:
 3. Add a property with `LocCategory`, `LocDescription`, and `LocDisplayName`, with the argument being the `nameof` operator on the resource accessor.
 4. Add the property to the `ClientAdvancedSettings` record and update `OptionsStorage.GetAdvancedSettings` to appropriately construct the type.
 5. Add the appropriate setting to `RazorLSPOptions` if it needs to be used on the LSP side. This represents the LSP Server understanding of any client side settings that need to be enabled. There is a constructor that takes `ClientSettings` and applies to properties as needed.
-6. In whatever place you need the option, import an `IOptionsMonitor<RazorLSPOptions>` to get the current value as needed.
+6. In whatever place you need the option, import an `RazorLSPOptionsMonitor` to get the current value as needed.

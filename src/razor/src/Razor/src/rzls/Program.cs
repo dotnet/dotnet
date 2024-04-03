@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Telemetry;
-using Microsoft.Extensions.Logging;
+using Microsoft.CodeAnalysis.Razor.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -92,7 +92,7 @@ public class Program
         var loggerProvider = new LoggerProvider(logLevel, clientConnection);
         loggerFactory.AddLoggerProvider(loggerProvider);
 
-        loggerFactory.CreateLogger("RZLS").LogInformation("Razor Language Server started successfully.");
+        loggerFactory.GetOrCreateLogger("RZLS").LogInformation("Razor Language Server started successfully.");
 
         await server.WaitForExitAsync().ConfigureAwait(true);
     }

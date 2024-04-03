@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Text.Adornments;
 
@@ -40,7 +39,7 @@ internal class LegacyRazorCompletionResolveEndpoint : IVSCompletionResolveEndpoi
         LSPTagHelperTooltipFactory lspTagHelperTooltipFactory,
         VSLSPTagHelperTooltipFactory vsLspTagHelperTooltipFactory,
         CompletionListCache completionListCache,
-        IRazorLoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory)
     {
         if (lspTagHelperTooltipFactory is null)
         {
@@ -64,7 +63,7 @@ internal class LegacyRazorCompletionResolveEndpoint : IVSCompletionResolveEndpoi
 
         _lspTagHelperTooltipFactory = lspTagHelperTooltipFactory;
         _vsLspTagHelperTooltipFactory = vsLspTagHelperTooltipFactory;
-        _logger = loggerFactory.CreateLogger<RazorCompletionEndpoint>();
+        _logger = loggerFactory.GetOrCreateLogger<RazorCompletionEndpoint>();
         _completionListCache = completionListCache;
     }
 

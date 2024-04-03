@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.Telemetry;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Test.Shared;
 
-internal class TestTelemetryReporter(IRazorLoggerFactory loggerFactory) : VSTelemetryReporter(new Lazy<IRazorLoggerFactory>(() => loggerFactory))
+internal class TestTelemetryReporter(ILoggerFactory loggerFactory) : VSTelemetryReporter(new Lazy<ILoggerFactory>(() => loggerFactory))
 {
     public List<TelemetryEvent> Events { get; } = [];
 

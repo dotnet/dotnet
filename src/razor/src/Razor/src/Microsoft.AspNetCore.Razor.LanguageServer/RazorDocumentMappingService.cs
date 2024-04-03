@@ -5,14 +5,13 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal sealed class RazorDocumentMappingService(
         IFilePathService filePathService,
         IDocumentContextFactory documentContextFactory,
-        IRazorLoggerFactory loggerFactory)
-         : AbstractRazorDocumentMappingService(filePathService, documentContextFactory, loggerFactory.CreateLogger<RazorDocumentMappingService>())
+        ILoggerFactory loggerFactory)
+         : AbstractRazorDocumentMappingService(filePathService, documentContextFactory, loggerFactory.GetOrCreateLogger<RazorDocumentMappingService>())
 {
 }

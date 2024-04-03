@@ -9,17 +9,16 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Mapping;
 
 [RazorLanguageServerEndpoint(LanguageServerConstants.RazorLanguageQueryEndpoint)]
-internal sealed class RazorLanguageQueryEndpoint(IRazorDocumentMappingService documentMappingService, IRazorLoggerFactory loggerFactory)
+internal sealed class RazorLanguageQueryEndpoint(IRazorDocumentMappingService documentMappingService, ILoggerFactory loggerFactory)
     : IRazorRequestHandler<RazorLanguageQueryParams, RazorLanguageQueryResponse>
 {
     private readonly IRazorDocumentMappingService _documentMappingService = documentMappingService;
-    private readonly ILogger _logger = loggerFactory.CreateLogger<RazorLanguageQueryEndpoint>();
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorLanguageQueryEndpoint>();
 
     public bool MutatesSolutionState { get; } = false;
 

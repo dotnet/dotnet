@@ -7,16 +7,15 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentDidSaveName)]
-internal class DocumentDidSaveEndpoint(IRazorLoggerFactory loggerFactory)
+internal class DocumentDidSaveEndpoint(ILoggerFactory loggerFactory)
     : IRazorNotificationHandler<DidSaveTextDocumentParams>, ITextDocumentIdentifierHandler<DidSaveTextDocumentParams, TextDocumentIdentifier>
 {
-    private readonly ILogger _logger = loggerFactory.CreateLogger<DocumentDidSaveEndpoint>();
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<DocumentDidSaveEndpoint>();
 
     public bool MutatesSolutionState => false;
 

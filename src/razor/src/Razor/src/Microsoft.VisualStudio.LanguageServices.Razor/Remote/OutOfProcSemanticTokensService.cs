@@ -9,18 +9,17 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor.Settings;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 [Export(typeof(IOutOfProcSemanticTokensService))]
 [method: ImportingConstructor]
-internal class OutOfProcSemanticTokensService(IRemoteClientProvider remoteClientProvider, IClientSettingsManager clientSettingsManager, IRazorLoggerFactory loggerFactory) : IOutOfProcSemanticTokensService
+internal class OutOfProcSemanticTokensService(IRemoteClientProvider remoteClientProvider, IClientSettingsManager clientSettingsManager, ILoggerFactory loggerFactory) : IOutOfProcSemanticTokensService
 {
     private readonly IRemoteClientProvider _remoteClientProvider = remoteClientProvider;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
-    private readonly ILogger _logger = loggerFactory.CreateLogger<OutOfProcSemanticTokensService>();
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<OutOfProcSemanticTokensService>();
 
     public async ValueTask<int[]?> GetSemanticTokensDataAsync(TextDocument razorDocument, LinePositionSpan span, Guid correlationId, CancellationToken cancellationToken)
     {

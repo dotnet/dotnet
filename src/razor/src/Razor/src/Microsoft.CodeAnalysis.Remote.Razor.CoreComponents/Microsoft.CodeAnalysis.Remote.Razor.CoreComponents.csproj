@@ -28,7 +28,6 @@
       <_PublishedFiles Include="$(PublishDir)**\Microsoft.CodeAnalysis.Razor.*" />
       <_PublishedFiles Include="$(PublishDir)**\Microsoft.CodeAnalysis.Remote.Razor.*" Exclude="@(_ExcludedFiles)"/>
       <_PublishedFiles Include="$(PublishDir)**\Microsoft.AspNetCore.*" />
-      <_PublishedFiles Include="$(PublishDir)**\Microsoft.Extensions.Logging.Abstractions.dll" />
       <_PublishedFiles Include="$(PublishDir)**\Microsoft.Extensions.ObjectPool.dll" />
 
       <_PublishedFiles Include="$(PublishDir)**\Microsoft.VisualStudio.LanguageServer.Protocol.*" />

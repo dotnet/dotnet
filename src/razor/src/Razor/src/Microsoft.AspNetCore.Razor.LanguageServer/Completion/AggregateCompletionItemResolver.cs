@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
@@ -17,10 +16,10 @@ internal class AggregateCompletionItemResolver
     private readonly IReadOnlyList<CompletionItemResolver> _completionItemResolvers;
     private readonly ILogger _logger;
 
-    public AggregateCompletionItemResolver(IEnumerable<CompletionItemResolver> completionItemResolvers, IRazorLoggerFactory loggerFactory)
+    public AggregateCompletionItemResolver(IEnumerable<CompletionItemResolver> completionItemResolvers, ILoggerFactory loggerFactory)
     {
         _completionItemResolvers = completionItemResolvers.ToArray();
-        _logger = loggerFactory.CreateLogger<AggregateCompletionItemResolver>();
+        _logger = loggerFactory.GetOrCreateLogger<AggregateCompletionItemResolver>();
     }
 
     public async Task<VSInternalCompletionItem?> ResolveAsync(

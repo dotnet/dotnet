@@ -225,6 +225,7 @@ internal static class FilePathNormalizer
         NormalizeAndDedupeSlashes(destination, ref charsWritten);
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
+            charsWritten > 1 &&
             destination is ['/', ..] and not ['/', '/', ..])
         {
             // We've been provided a path that probably looks something like /C:/path/to.

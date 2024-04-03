@@ -49,7 +49,7 @@ internal class WorkspaceSemanticTokensRefreshNotifier : IWorkspaceSemanticTokens
         _disposeTokenSource.Dispose();
     }
 
-    private void HandleOptionsChange(RazorLSPOptions options, string _)
+    private void HandleOptionsChange(RazorLSPOptions options)
     {
         if (options.ColorBackground != _isColoringBackground)
         {

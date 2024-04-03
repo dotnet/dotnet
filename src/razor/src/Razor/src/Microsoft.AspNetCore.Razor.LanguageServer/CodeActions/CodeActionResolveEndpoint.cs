@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions.Models;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json.Linq;
 
@@ -31,7 +30,7 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
         IEnumerable<IRazorCodeActionResolver> razorCodeActionResolvers,
         IEnumerable<CSharpCodeActionResolver> csharpCodeActionResolvers,
         IEnumerable<HtmlCodeActionResolver> htmlCodeActionResolvers,
-        IRazorLoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory)
     {
         if (razorCodeActionResolvers is null)
         {
@@ -53,7 +52,7 @@ internal sealed class CodeActionResolveEndpoint : IRazorDocumentlessRequestHandl
             throw new ArgumentNullException(nameof(loggerFactory));
         }
 
-        _logger = loggerFactory.CreateLogger<CodeActionResolveEndpoint>();
+        _logger = loggerFactory.GetOrCreateLogger<CodeActionResolveEndpoint>();
 
         _razorCodeActionResolvers = CreateResolverMap(razorCodeActionResolvers);
         _csharpCodeActionResolvers = CreateResolverMap<BaseDelegatedCodeActionResolver>(csharpCodeActionResolvers);

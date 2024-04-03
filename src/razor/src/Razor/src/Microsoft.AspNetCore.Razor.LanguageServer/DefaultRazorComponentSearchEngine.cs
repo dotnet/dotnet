@@ -12,17 +12,16 @@ using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 internal class DefaultRazorComponentSearchEngine(
     IProjectSnapshotManager projectManager,
-    IRazorLoggerFactory loggerFactory)
+    ILoggerFactory loggerFactory)
     : RazorComponentSearchEngine
 {
     private readonly IProjectSnapshotManager _projectManager = projectManager;
-    private readonly ILogger _logger = loggerFactory.CreateLogger<DefaultRazorComponentSearchEngine>();
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<DefaultRazorComponentSearchEngine>();
 
     public async override Task<TagHelperDescriptor?> TryGetTagHelperDescriptorAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
     {

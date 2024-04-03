@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Razor.Test.Common;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -41,10 +41,10 @@ expected: @"
 
     internal override IOnAutoInsertProvider CreateProvider()
     {
-        var optionsMonitor = new Mock<IOptionsMonitor<RazorLSPOptions>>(MockBehavior.Strict);
-        optionsMonitor.SetupGet(o => o.CurrentValue).Returns(RazorLSPOptions.Default);
-        var provider = new CloseTextTagOnAutoInsertProvider(optionsMonitor.Object, LoggerFactory);
+        var configService = StrictMock.Of<IConfigurationSyncService>();
+        var optionsMonitor = new RazorLSPOptionsMonitor(configService, RazorLSPOptions.Default);
 
+        var provider = new CloseTextTagOnAutoInsertProvider(optionsMonitor, LoggerFactory);
         return provider;
     }
 }

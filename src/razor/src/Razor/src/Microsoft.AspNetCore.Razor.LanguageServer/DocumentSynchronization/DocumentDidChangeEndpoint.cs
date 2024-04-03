@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CommonLanguageServerProtocol.Framework;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
@@ -21,14 +20,14 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentSynchronization;
 internal class DocumentDidChangeEndpoint(
     ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
     IRazorProjectService razorProjectService,
-    IRazorLoggerFactory loggerFactory)
+    ILoggerFactory loggerFactory)
     : IRazorNotificationHandler<DidChangeTextDocumentParams>, ITextDocumentIdentifierHandler<DidChangeTextDocumentParams, TextDocumentIdentifier>, ICapabilitiesProvider
 {
     public bool MutatesSolutionState => true;
 
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher;
     private readonly IRazorProjectService _projectService = razorProjectService;
-    private readonly ILogger _logger = loggerFactory.CreateLogger<DocumentDidChangeEndpoint>();
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<DocumentDidChangeEndpoint>();
 
     public void ApplyCapabilities(VSInternalServerCapabilities serverCapabilities, VSInternalClientCapabilities clientCapabilities)
     {

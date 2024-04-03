@@ -3,7 +3,7 @@
 
 using System;
 using System.Diagnostics;
-using Microsoft.Extensions.Logging;
+using Microsoft.CodeAnalysis.Razor.Logging;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.Logging;
 
@@ -11,11 +11,9 @@ internal partial class RemoteLoggerFactory
 {
     private class Logger(string categoryName) : ILogger
     {
-        public IDisposable BeginScope<TState>(TState state) => Scope.Instance;
-
         public bool IsEnabled(LogLevel logLevel) => true;
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        public void Log<TState>(LogLevel logLevel, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
             if (s_traceSource is null)
             {

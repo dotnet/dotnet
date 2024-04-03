@@ -3,7 +3,7 @@
 
 using System;
 using System.IO;
-using Microsoft.Extensions.Logging;
+using Microsoft.CodeAnalysis.Razor.Logging;
 
 namespace Microsoft.VisualStudio.Editor.Razor.Snippets;
 

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Settings;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -19,7 +18,7 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
     private readonly IClientConnection _clientConnection;
     private readonly ILogger _logger;
 
-    public DefaultRazorConfigurationService(IClientConnection clientConnection, IRazorLoggerFactory loggerFactory)
+    public DefaultRazorConfigurationService(IClientConnection clientConnection, ILoggerFactory loggerFactory)
     {
         if (clientConnection is null)
         {
@@ -32,7 +31,7 @@ internal class DefaultRazorConfigurationService : IConfigurationSyncService
         }
 
         _clientConnection = clientConnection;
-        _logger = loggerFactory.CreateLogger<DefaultRazorConfigurationService>();
+        _logger = loggerFactory.GetOrCreateLogger<DefaultRazorConfigurationService>();
     }
 
     public async Task<RazorLSPOptions?> GetLatestOptionsAsync(CancellationToken cancellationToken)

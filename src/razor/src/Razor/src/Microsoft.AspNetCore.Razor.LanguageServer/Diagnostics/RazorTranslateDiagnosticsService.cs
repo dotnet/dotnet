@@ -16,7 +16,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Logging;
 using Diagnostic = Microsoft.VisualStudio.LanguageServer.Protocol.Diagnostic;
 using DiagnosticSeverity = Microsoft.VisualStudio.LanguageServer.Protocol.DiagnosticSeverity;
 using Position = Microsoft.VisualStudio.LanguageServer.Protocol.Position;
@@ -43,9 +42,9 @@ internal class RazorTranslateDiagnosticsService
     /// translating code diagnostics from one representation into another, such as from C# to Razor.
     /// </summary>
     /// <param name="documentMappingService">The <see cref="IRazorDocumentMappingService"/>.</param>
-    /// <param name="loggerFactory">The <see cref="IRazorLoggerFactory"/>.</param>
+    /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
     /// <exception cref="ArgumentNullException"/>
-    public RazorTranslateDiagnosticsService(IRazorDocumentMappingService documentMappingService, IRazorLoggerFactory loggerFactory)
+    public RazorTranslateDiagnosticsService(IRazorDocumentMappingService documentMappingService, ILoggerFactory loggerFactory)
     {
         if (documentMappingService is null)
         {
@@ -58,7 +57,7 @@ internal class RazorTranslateDiagnosticsService
         }
 
         _documentMappingService = documentMappingService;
-        _logger = loggerFactory.CreateLogger<RazorTranslateDiagnosticsService>();
+        _logger = loggerFactory.GetOrCreateLogger<RazorTranslateDiagnosticsService>();
     }
 
     /// <summary>

@@ -3,11 +3,10 @@
 
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class LoggerProvider(LogLevel logLevel, IClientConnection clientConnection) : IRazorLoggerProvider
+internal class LoggerProvider(LogLevel logLevel, IClientConnection clientConnection) : ILoggerProvider
 {
     private readonly LogLevel _logLevel = logLevel;
     private readonly IClientConnection _clientConnection = clientConnection;

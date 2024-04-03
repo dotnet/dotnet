@@ -12,7 +12,6 @@ using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
@@ -49,7 +48,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
         IFilePathService filePathService,
         IProjectSnapshotManager projectManager,
         LanguageServerFeatureOptions languageServerFeatureOptions,
-        IRazorLoggerFactory loggerFactory,
+        ILoggerFactory loggerFactory,
         ITelemetryReporter telemetryReporter)
         : base(contentTypeRegistry, textBufferFactory, textDocumentFactory, fileUriProvider)
     {
@@ -57,7 +56,7 @@ internal class CSharpVirtualDocumentFactory : VirtualDocumentFactoryBase
         _filePathService = filePathService;
         _projectManager = projectManager;
         _languageServerFeatureOptions = languageServerFeatureOptions;
-        _logger = loggerFactory.CreateLogger<CSharpVirtualDocumentFactory>();
+        _logger = loggerFactory.GetOrCreateLogger<CSharpVirtualDocumentFactory>();
         _telemetryReporter = telemetryReporter;
     }
 
