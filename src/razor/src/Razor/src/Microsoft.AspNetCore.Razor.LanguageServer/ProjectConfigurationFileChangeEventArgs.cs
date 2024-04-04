@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Serialization;
 using Microsoft.AspNetCore.Razor.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -32,7 +33,7 @@ internal sealed class ProjectConfigurationFileChangeEventArgs : EventArgs
         _gate = new object();
     }
 
-    public bool TryDeserialize([NotNullWhen(true)] out RazorProjectInfo? projectInfo)
+    public bool TryDeserialize(LanguageServerFeatureOptions languageServerFeatureOptions, [NotNullWhen(true)] out RazorProjectInfo? projectInfo)
     {
         if (Kind == RazorFileChangeKind.Removed)
         {
@@ -59,6 +60,15 @@ internal sealed class ProjectConfigurationFileChangeEventArgs : EventArgs
                 var normalizedDetectedFilePath = FilePathNormalizer.Normalize(ConfigurationFilePath);
                 if (string.Equals(normalizedSerializedFilePath, normalizedDetectedFilePath, FilePathComparison.Instance))
                 {
+                    // Modify the feature flags on the configuration before storing
+                    deserializedProjectInfo = deserializedProjectInfo with
+                    {
+                        Configuration = deserializedProjectInfo.Configuration with
+                        {
+                            LanguageServerFlags = languageServerFeatureOptions.ToLanguageServerFlags()
+                        }
+                    };
+
                     _projectInfo = deserializedProjectInfo;
                 }
                 else

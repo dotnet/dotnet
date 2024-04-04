@@ -3,7 +3,7 @@
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal interface IWorkspaceSemanticTokensRefreshPublisher
+internal interface IWorkspaceSemanticTokensRefreshNotifier
 {
-    void EnqueueWorkspaceSemanticTokensRefresh();
+    void NotifyWorkspaceSemanticTokensRefresh();
 }

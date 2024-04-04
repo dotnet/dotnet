@@ -12,20 +12,20 @@ using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.ProjectSystem;
 
-internal sealed class RazorProjectInfo
+internal sealed record class RazorProjectInfo
 {
     private static readonly MessagePackSerializerOptions s_options = MessagePackSerializerOptions.Standard
         .WithResolver(CompositeResolver.Create(
             RazorProjectInfoResolver.Instance,
             StandardResolver.Instance));
 
-    public string SerializedFilePath { get; }
-    public string FilePath { get; }
-    public RazorConfiguration Configuration { get; }
-    public string? RootNamespace { get; }
-    public string DisplayName { get; }
-    public ProjectWorkspaceState ProjectWorkspaceState { get; }
-    public ImmutableArray<DocumentSnapshotHandle> Documents { get; }
+    public string SerializedFilePath { get; init; }
+    public string FilePath { get; init; }
+    public RazorConfiguration Configuration { get; init; }
+    public string? RootNamespace { get; init; }
+    public string DisplayName { get; init; }
+    public ProjectWorkspaceState ProjectWorkspaceState { get; init; }
+    public ImmutableArray<DocumentSnapshotHandle> Documents { get; init; }
 
     public RazorProjectInfo(
         string serializedFilePath,

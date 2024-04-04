@@ -1,6 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+extern alias LegacyClasp;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -240,8 +242,27 @@ internal static class WebTools
             BufferManager bufferManager,
             ILspLogger logger)
         {
-            var instance = CreateInstance(Type, textBufferFactoryService, bufferManager.Instance, logger);
+            var instance = CreateInstance(Type, textBufferFactoryService, bufferManager.Instance, new LegacyClaspILspLogger(logger));
             return new(instance);
+        }
+
+        /// <summary>
+        /// Wraps the razor logger (from the clasp source package) into the binary clasp logger that webtools uses.
+        /// </summary>
+        /// <param name="logger"></param>
+        private class LegacyClaspILspLogger(ILspLogger logger) : LegacyClasp.Microsoft.CommonLanguageServerProtocol.Framework.ILspLogger
+        {
+            public void LogEndContext(string message, params object[] @params) => logger.LogEndContext(message, @params);
+
+            public void LogError(string message, params object[] @params) => logger.LogError(message, @params);
+
+            public void LogException(Exception exception, string? message = null, params object[] @params) => logger.LogException(exception, message, @params);
+
+            public void LogInformation(string message, params object[] @params) => logger.LogInformation(message, @params);
+
+            public void LogStartContext(string message, params object[] @params) => logger.LogStartContext(message, @params);
+
+            public void LogWarning(string message, params object[] @params) => logger.LogWarning(message, @params);
         }
     }
 }

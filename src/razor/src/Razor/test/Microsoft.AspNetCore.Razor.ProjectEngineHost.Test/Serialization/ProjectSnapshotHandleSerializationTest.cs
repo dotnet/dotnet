@@ -30,8 +30,7 @@ public class ProjectSnapshotHandleSerializationTest(ITestOutputHelper testOutput
             projectId,
             new(RazorLanguageVersion.Version_1_1,
                 "Test",
-                [new("Test-Extension1"), new("Test-Extension2")],
-                ForceRuntimeCodeGeneration: false),
+                [new("Test-Extension1"), new("Test-Extension2")]),
             "Test");
 
         // Act

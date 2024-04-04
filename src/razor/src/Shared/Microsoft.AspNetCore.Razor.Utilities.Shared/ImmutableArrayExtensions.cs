@@ -16,7 +16,7 @@ internal static class ImmutableArrayExtensions
     /// </summary>
     public static ImmutableArray<T> NullToEmpty<T>(this ImmutableArray<T> array)
     {
-        return array.IsDefault ? ImmutableArray<T>.Empty : array;
+        return array.IsDefault ? [] : array;
     }
 
     public static void SetCapacityIfLarger<T>(this ImmutableArray<T>.Builder builder, int newCapacity)
@@ -46,7 +46,7 @@ internal static class ImmutableArrayExtensions
 #else
         if (builder.Count == 0)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
 
         if (builder.Count == builder.Capacity)
@@ -64,11 +64,11 @@ internal static class ImmutableArrayExtensions
     {
         return source switch
         {
-            [] => ImmutableArray<TResult>.Empty,
-            [var item] => ImmutableArray.Create(selector(item)),
-            [var item1, var item2] => ImmutableArray.Create(selector(item1), selector(item2)),
-            [var item1, var item2, var item3] => ImmutableArray.Create(selector(item1), selector(item2), selector(item3)),
-            [var item1, var item2, var item3, var item4] => ImmutableArray.Create(selector(item1), selector(item2), selector(item3), selector(item4)),
+            [] => [],
+            [var item] => [selector(item)],
+            [var item1, var item2] => [selector(item1), selector(item2)],
+            [var item1, var item2, var item3] => [selector(item1), selector(item2), selector(item3)],
+            [var item1, var item2, var item3, var item4] => [selector(item1), selector(item2), selector(item3), selector(item4)],
             var items => BuildResult(items, selector)
         };
 
@@ -89,7 +89,7 @@ internal static class ImmutableArrayExtensions
     {
         if (source is null || source.Count == 0)
         {
-            return ImmutableArray<TResult>.Empty;
+            return [];
         }
 
         using var builder = new PooledArrayBuilder<TResult>(capacity: source.Count);
@@ -105,7 +105,7 @@ internal static class ImmutableArrayExtensions
     {
         if (source is [])
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
 
         using var builder = new PooledArrayBuilder<T>();
@@ -119,6 +119,53 @@ internal static class ImmutableArrayExtensions
         }
 
         return builder.DrainToImmutable();
+    }
+
+    /// <summary>
+    /// Returns an <see cref="ImmutableArray{T}"/> that contains no duplicates from the <paramref name="source"/> array
+    /// and returns the most recent copy of each item.
+    /// </summary>
+    public static ImmutableArray<T> GetMostRecentUniqueItems<T>(this ImmutableArray<T> source, IEqualityComparer<T> comparer)
+    {
+        if (source.IsEmpty)
+        {
+            return [];
+        }
+
+#if !NETSTANDARD2_0
+        var uniqueItems = new HashSet<T>(capacity: source.Length, comparer);
+#else
+        var uniqueItems = new HashSet<T>(comparer);
+#endif
+
+        using var stack = new PooledArrayBuilder<T>(capacity: source.Length);
+
+        // Walk the next batch in reverse to identify unique items.
+        // We push them on a stack so that we can pop them in order later
+        for (var i = source.Length - 1; i >= 0; i--)
+        {
+            var item = source[i];
+
+            if (uniqueItems.Add(item))
+            {
+                stack.Push(item);
+            }
+        }
+
+        // Did we actually dedupe anything? If not, just return the original.
+        if (stack.Count == source.Length)
+        {
+            return source;
+        }
+
+        using var result = new PooledArrayBuilder<T>(capacity: stack.Count);
+
+        while (stack.Count > 0)
+        {
+            result.Add(stack.Pop());
+        }
+
+        return result.DrainToImmutable();
     }
 
     /// <summary>

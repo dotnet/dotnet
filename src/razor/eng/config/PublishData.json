@@ -7,8 +7,8 @@
       ],
       "vsBranch": "main",
       "vsMajorVersion": 17,
-      "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[d17.10 P3]"
+      "insertionCreateDraftPR": true,
+      "insertionTitlePrefix": "[d17.11 P1]"
     },
     "release/dev17.5": {
       "nugetKind": [
@@ -60,10 +60,10 @@
         "Shipping",
         "NonShipping"
       ],
-      "vsBranch": "rel/d17.10",
+      "vsBranch": "main",
       "vsMajorVersion": 17,
       "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[17.10 P2]"
+      "insertionTitlePrefix": "[17.10 P3]"
     }
   }
 }
