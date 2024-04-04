@@ -56,8 +56,8 @@ extends:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.19-WithNode
       cblMariner20Fpm:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-fpm
-      centosStream8:
-        image: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
+      centosStream9:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
       debian11Amd64:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:debian-11-amd64
       fedora39:
@@ -128,8 +128,8 @@ extends:
         - template: eng/build.yml@self
           parameters:
             agentOs: Linux
-            jobName: Build_CentOS_8_Stream_Debug_x64
-            container: centosStream8
+            jobName: Build_CentOS_9_Stream_Debug_x64
+            container: centosStream9
             buildConfiguration: Debug
             buildArchitecture: x64
             linuxPortable: false

@@ -78,12 +78,12 @@ stages:
     - template: ../jobs/vmr-build.yml
       parameters:
         # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
-        buildName: CentOSStream8_Online_MsftSdk
+        buildName: CentOSStream9_Online_MsftSdk
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         vmrBranch: ${{ variables.VmrBranch }}
         architecture: x64
         pool: ${{ parameters.pool_Linux }}
-        container: ${{ variables.centOSStream8Container }}
+        container: ${{ variables.centOSStream9Container }}
         buildFromArchive: false            # 🚫
         buildSourceOnly: true              # ✅
         enablePoison: false                # 🚫
@@ -99,12 +99,12 @@ stages:
       - template: ../jobs/vmr-build.yml
         parameters:
           # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
-          buildName: CentOSStream8_Online_CurrentSourceBuiltSdk
+          buildName: CentOSStream9_Online_CurrentSourceBuiltSdk
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           vmrBranch: ${{ variables.VmrBranch }}
           architecture: x64
           pool: ${{ parameters.pool_Linux }}
-          container: ${{ variables.centOSStream8Container }}
+          container: ${{ variables.centOSStream9Container }}
           buildFromArchive: false            # 🚫
           buildSourceOnly: true              # ✅
           enablePoison: false                # 🚫
@@ -113,7 +113,7 @@ stages:
           runTests: true                     # ✅
           useMonoRuntime: false              # 🚫
           withPreviousSDK: false             # 🚫
-          reuseBuildArtifactsFrom: CentOSStream8_Online_MsftSdk
+          reuseBuildArtifactsFrom: centOSStream9_Online_MsftSdk
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -158,80 +158,6 @@ stages:
         - template: ../jobs/vmr-build.yml
           parameters:
             # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
-            buildName: CentOSStream8_Offline_MsftSdk
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            vmrBranch: ${{ variables.VmrBranch }}
-            architecture: x64
-            pool: ${{ parameters.pool_Linux }}
-            container: ${{ variables.centOSStream8Container }}
-            buildFromArchive: true             # ✅
-            buildSourceOnly: true              # ✅
-            enablePoison: false                # 🚫
-            excludeOmniSharpTests: true        # ✅
-            runOnline: false                   # 🚫
-            runTests: true                     # ✅
-            useMonoRuntime: false              # 🚫
-            withPreviousSDK: false             # 🚫
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
-            buildName: CentOSStream8_Online_PreviousSourceBuiltSdk
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            vmrBranch: ${{ variables.VmrBranch }}
-            architecture: x64
-            artifactsRid: centos.8-x64
-            pool: ${{ parameters.pool_Linux }}
-            container: ${{ variables.centOSStream8Container }}
-            buildFromArchive: false            # 🚫
-            buildSourceOnly: true              # ✅
-            enablePoison: false                # 🚫
-            excludeOmniSharpTests: true        # ✅
-            runOnline: true                    # ✅
-            runTests: true                     # ✅
-            useMonoRuntime: false              # 🚫
-            withPreviousSDK: true              # ✅
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
-            buildName: CentOSStream8_Offline_PreviousSourceBuiltSdk
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            vmrBranch: ${{ variables.VmrBranch }}
-            architecture: x64
-            artifactsRid: centos.8-x64
-            pool: ${{ parameters.pool_Linux }}
-            container: ${{ variables.centOSStream8Container }}
-            buildFromArchive: false            # 🚫
-            buildSourceOnly: true              # ✅
-            enablePoison: false                # 🚫
-            excludeOmniSharpTests: true        # ✅
-            runOnline: false                   # 🚫
-            runTests: true                     # ✅
-            useMonoRuntime: false              # 🚫
-            withPreviousSDK: true              # ✅
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
-            buildName: CentOSStream8_Mono_Offline_MsftSdk
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            vmrBranch: ${{ variables.VmrBranch }}
-            architecture: x64
-            pool: ${{ parameters.pool_Linux }}
-            container: ${{ variables.centOSStream8Container }}
-            buildFromArchive: true             # ✅
-            buildSourceOnly: true              # ✅
-            enablePoison: false                # 🚫
-            excludeOmniSharpTests: true        # ✅
-            runOnline: false                   # 🚫
-            runTests: true                     # ✅
-            useMonoRuntime: true               # ✅
-            withPreviousSDK: false             # 🚫
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
             buildName: CentOSStream9_Offline_MsftSdk
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             vmrBranch: ${{ variables.VmrBranch }}
@@ -245,6 +171,62 @@ stages:
             runOnline: false                   # 🚫
             runTests: true                     # ✅
             useMonoRuntime: false              # 🚫
+            withPreviousSDK: false             # 🚫
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
+            buildName: CentOSStream9_Online_PreviousSourceBuiltSdk
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            artifactsRid: centos.9-x64
+            pool: ${{ parameters.pool_Linux }}
+            container: ${{ variables.centOSStream9Container }}
+            buildFromArchive: false            # 🚫
+            buildSourceOnly: true              # ✅
+            enablePoison: false                # 🚫
+            excludeOmniSharpTests: false       # 🚫
+            runOnline: true                    # ✅
+            runTests: true                     # ✅
+            useMonoRuntime: false              # 🚫
+            withPreviousSDK: true              # ✅
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
+            buildName: CentOSStream9_Offline_PreviousSourceBuiltSdk
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            artifactsRid: centos.9-x64
+            pool: ${{ parameters.pool_Linux }}
+            container: ${{ variables.centOSStream9Container }}
+            buildFromArchive: false            # 🚫
+            buildSourceOnly: true              # ✅
+            enablePoison: false                # 🚫
+            excludeOmniSharpTests: true        # ✅
+            runOnline: false                   # 🚫
+            runTests: true                     # ✅
+            useMonoRuntime: false              # 🚫
+            withPreviousSDK: true              # ✅
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
+            buildName: CentOSStream9_Mono_Offline_MsftSdk
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: x64
+            pool: ${{ parameters.pool_Linux }}
+            container: ${{ variables.centOSStream9Container }}
+            buildFromArchive: true             # ✅
+            buildSourceOnly: true              # ✅
+            enablePoison: false                # 🚫
+            excludeOmniSharpTests: true        # ✅
+            runOnline: false                   # 🚫
+            runTests: true                     # ✅
+            useMonoRuntime: true               # ✅
             withPreviousSDK: false             # 🚫
 
         - template: ../jobs/vmr-build.yml
