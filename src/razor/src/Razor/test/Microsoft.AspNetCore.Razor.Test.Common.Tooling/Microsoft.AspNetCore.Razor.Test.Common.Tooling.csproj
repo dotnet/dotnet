@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="..\..\benchmarks\Microsoft.AspNetCore.Razor.Microbenchmarks\Resources\project.razor.bin" Link="Resources\Benchmarking\project.razor.bin" />
     <EmbeddedResource Include="..\..\benchmarks\Microsoft.AspNetCore.Razor.Microbenchmarks\Resources\project.razor.json" Link="Resources\Benchmarking\project.razor.json" />
     <EmbeddedResource Include="..\..\benchmarks\Microsoft.AspNetCore.Razor.Microbenchmarks\Resources\taghelpers.json" Link="Resources\Benchmarking\taghelpers.json" />
     <EmbeddedResource Include="..\..\benchmarks\Microsoft.AspNetCore.Razor.Microbenchmarks\Resources\Telerik\Kendo.Mvc.Examples.project.razor.json" Link="Resources\Benchmarking\Kendo.Mvc.Examples.project.razor.json" />

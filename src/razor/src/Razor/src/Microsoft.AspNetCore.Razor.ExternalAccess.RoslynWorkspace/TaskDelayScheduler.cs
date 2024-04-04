@@ -1,6 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using Microsoft.AspNetCore.Razor.Threading;
+
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace;
 
 // Copied from https://github.com/dotnet/project-system/blob/e4db47666e0a49f6c38e701f8630dbc31380fb64/src/Microsoft.VisualStudio.ProjectSystem.Managed/Threading/Tasks/TaskDelayScheduler.cs

@@ -68,12 +68,12 @@ internal class RazorRequestExecutionQueue : RequestExecutionQueue<RazorRequestCo
     }
 
     // Internal for testing
-    internal TestAccessor GetTestAccessor()
+    internal new TestAccessor GetTestAccessor()
     {
         return new TestAccessor(this);
     }
 
-    internal class TestAccessor
+    internal new class TestAccessor
     {
         private RazorRequestExecutionQueue _queue;
 

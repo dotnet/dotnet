@@ -17,13 +17,21 @@ internal sealed class RazorConfigurationFormatter : ValueFormatter<RazorConfigur
 
     public override RazorConfiguration Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
     {
+        // The count is the number of values (2 or 3, depending on what was written) + the number of extensions
         var count = reader.ReadArrayHeader();
 
         var configurationName = CachedStringFormatter.Instance.Deserialize(ref reader, options) ?? string.Empty;
         var languageVersionText = CachedStringFormatter.Instance.Deserialize(ref reader, options) ?? string.Empty;
-        var forceRuntimeCodeGeneration = reader.ReadBoolean();
 
-        count -= 3;
+        count -= 2;
+
+        var forceRuntimeCodeGeneration = false;
+
+        if (reader.NextMessagePackType is MessagePackType.Boolean)
+        {
+            forceRuntimeCodeGeneration = reader.ReadBoolean();
+            count -= 1;
+        }
 
         using var builder = new PooledArrayBuilder<RazorExtension>();
 
@@ -39,14 +47,14 @@ internal sealed class RazorConfigurationFormatter : ValueFormatter<RazorConfigur
             ? version
             : RazorLanguageVersion.Version_2_1;
 
-        return new(languageVersion, configurationName, extensions, ForceRuntimeCodeGeneration: forceRuntimeCodeGeneration);
+        return new(languageVersion, configurationName, extensions);
     }
 
     public override void Serialize(ref MessagePackWriter writer, RazorConfiguration value, SerializerCachingOptions options)
     {
-        // Write two values + one value per extension.
+        // Write 3 values + 1 value per extension.
         var extensions = value.Extensions;
-        var count = extensions.Length + 3;
+        var count = extensions.Length + 2;
 
         writer.WriteArrayHeader(count);
 
@@ -61,9 +69,7 @@ internal sealed class RazorConfigurationFormatter : ValueFormatter<RazorConfigur
             CachedStringFormatter.Instance.Serialize(ref writer, value.LanguageVersion.ToString(), options);
         }
 
-        writer.Write(value.ForceRuntimeCodeGeneration);
-
-        count -= 3;
+        count -= 2;
 
         for (var i = 0; i < count; i++)
         {

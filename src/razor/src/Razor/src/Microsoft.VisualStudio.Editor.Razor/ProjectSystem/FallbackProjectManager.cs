@@ -107,11 +107,13 @@ internal sealed class FallbackProjectManager(
 
         var rootNamespace = project.DefaultNamespace;
 
+        var configuration = FallbackRazorConfiguration.Latest with { LanguageServerFlags = _languageServerFeatureOptions.ToLanguageServerFlags() };
+
         // We create this as a fallback project so that other parts of the system can reason about them - eg we don't do code
         // generation for closed files for documents in these projects. If these projects become "real", either because capabilities
         // change or simply a timing difference between Roslyn and our CPS components, the HostProject instance associated with
         // the project will be updated, and it will no longer be a fallback project.
-        var hostProject = new FallbackHostProject(project.FilePath, intermediateOutputPath, FallbackRazorConfiguration.Latest, rootNamespace, project.Name);
+        var hostProject = new FallbackHostProject(project.FilePath, intermediateOutputPath, configuration, rootNamespace, project.Name);
 
         await UpdateProjectManagerAsync(
                 updater => updater.ProjectAdded(hostProject),

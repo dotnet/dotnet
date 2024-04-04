@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
@@ -27,7 +28,7 @@ internal class BackgroundDocumentGenerator : IRazorStartupService
     private readonly ProjectSnapshotManagerDispatcher _dispatcher;
     private readonly IRazorDynamicFileInfoProviderInternal _infoProvider;
     private readonly IErrorReporter _errorReporter;
-    private readonly HashSet<string> _suppressedDocuments = new(FilePathComparer.Instance);
+    private ImmutableHashSet<string> _suppressedDocuments;
 
     private Timer? _timer;
     private bool _solutionIsClosing;
@@ -44,6 +45,7 @@ internal class BackgroundDocumentGenerator : IRazorStartupService
         _infoProvider = infoProvider;
         _errorReporter = errorReporter;
 
+        _suppressedDocuments = ImmutableHashSet<string>.Empty.WithComparer(FilePathComparer.Instance);
         _projectManager.Changed += ProjectManager_Changed;
     }
 
@@ -251,33 +253,27 @@ internal class BackgroundDocumentGenerator : IRazorStartupService
 
     private bool Suppressed(IProjectSnapshot project, IDocumentSnapshot document)
     {
-        lock (_suppressedDocuments)
+        var filePath = document.FilePath.AssumeNotNull();
+
+        if (_projectManager.IsDocumentOpen(filePath))
         {
-            var filePath = document.FilePath.AssumeNotNull();
-
-            if (_projectManager.IsDocumentOpen(filePath))
-            {
-                _suppressedDocuments.Add(filePath);
-                _infoProvider.SuppressDocument(project.Key, filePath);
-                return true;
-            }
-
-            _suppressedDocuments.Remove(filePath);
-            return false;
+            ImmutableInterlocked.Update(ref _suppressedDocuments, static (set, filePath) => set.Add(filePath), filePath);
+            _infoProvider.SuppressDocument(project.Key, filePath);
+            return true;
         }
+
+        ImmutableInterlocked.Update(ref _suppressedDocuments, static (set, filePath) => set.Remove(filePath), filePath);
+        return false;
     }
 
     private void UpdateFileInfo(IProjectSnapshot project, IDocumentSnapshot document)
     {
-        lock (_suppressedDocuments)
-        {
-            var filePath = document.FilePath.AssumeNotNull();
+        var filePath = document.FilePath.AssumeNotNull();
 
-            if (!_suppressedDocuments.Contains(filePath))
-            {
-                var container = new DefaultDynamicDocumentContainer(document);
-                _infoProvider.UpdateFileInfo(project.Key, container);
-            }
+        if (!_suppressedDocuments.Contains(filePath))
+        {
+            var container = new DefaultDynamicDocumentContainer(document);
+            _infoProvider.UpdateFileInfo(project.Key, container);
         }
     }
 

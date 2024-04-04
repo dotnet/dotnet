@@ -460,7 +460,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         var projectState = new Dictionary<string, IProjectRuleSnapshot>().ToImmutableDictionary();
 
         // Act
-        var result = DefaultWindowsRazorProjectHost.TryGetConfiguration(projectState, forceRuntimeCodeGeneration: false, out var configuration);
+        var result = DefaultWindowsRazorProjectHost.TryGetConfiguration(projectState, languageServerFlags: null, out var configuration);
 
         // Assert
         Assert.False(result);
@@ -482,7 +482,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         }.ToImmutableDictionary();
 
         // Act
-        var result = DefaultWindowsRazorProjectHost.TryGetConfiguration(projectState, forceRuntimeCodeGeneration: false, out var configuration);
+        var result = DefaultWindowsRazorProjectHost.TryGetConfiguration(projectState, languageServerFlags: null, out var configuration);
 
         // Assert
         Assert.False(result);
@@ -505,7 +505,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         }.ToImmutableDictionary();
 
         // Act
-        var result = DefaultWindowsRazorProjectHost.TryGetConfiguration(projectState, forceRuntimeCodeGeneration: false, out var configuration);
+        var result = DefaultWindowsRazorProjectHost.TryGetConfiguration(projectState, languageServerFlags: null, out var configuration);
 
         // Assert
         Assert.False(result);
@@ -534,7 +534,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         }.ToImmutableDictionary();
 
         // Act
-        var result = DefaultWindowsRazorProjectHost.TryGetConfiguration(projectState, forceRuntimeCodeGeneration: false, out var configuration);
+        var result = DefaultWindowsRazorProjectHost.TryGetConfiguration(projectState, languageServerFlags: null, out var configuration);
 
         // Assert
         Assert.True(result);
@@ -568,7 +568,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         }.ToImmutableDictionary();
 
         // Act
-        var result = DefaultWindowsRazorProjectHost.TryGetConfiguration(projectState, forceRuntimeCodeGeneration: false, out var configuration);
+        var result = DefaultWindowsRazorProjectHost.TryGetConfiguration(projectState, languageServerFlags: null, out var configuration);
 
         // Assert
         Assert.True(result);
@@ -616,7 +616,7 @@ public class DefaultWindowsRazorProjectHostTest : VisualStudioWorkspaceTestBase
         }.ToImmutableDictionary();
 
         // Act
-        var result = DefaultWindowsRazorProjectHost.TryGetConfiguration(projectState, forceRuntimeCodeGeneration: false, out var configuration);
+        var result = DefaultWindowsRazorProjectHost.TryGetConfiguration(projectState, languageServerFlags: null, out var configuration);
 
         // Assert
         Assert.True(result);

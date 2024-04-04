@@ -54,7 +54,7 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
 
     protected override async Task HandleProjectChangeAsync(string sliceDimensions, IProjectVersionedValue<IProjectSubscriptionUpdate> update)
     {
-        if (TryGetConfiguration(update.Value.CurrentState, _languageServerFeatureOptions.ForceRuntimeCodeGeneration, out var configuration) &&
+        if (TryGetConfiguration(update.Value.CurrentState, _languageServerFeatureOptions.ToLanguageServerFlags(), out var configuration) &&
             TryGetIntermediateOutputPath(update.Value.CurrentState, out var intermediatePath))
         {
             TryGetRootNamespace(update.Value.CurrentState, out var rootNamespace);
@@ -94,8 +94,8 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
 
                     var hostProject = new HostProject(CommonServices.UnconfiguredProject.FullPath, intermediatePath, configuration, rootNamespace, displayName);
 
-                var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
-                ProjectConfigurationFilePathStore.Set(hostProject.Key, projectConfigurationFile);
+                    var projectConfigurationFile = Path.Combine(intermediatePath, _languageServerFeatureOptions.ProjectConfigurationFileName);
+                    ProjectConfigurationFilePathStore.Set(hostProject.Key, projectConfigurationFile);
 
                     UpdateProject(updater, hostProject);
 
@@ -134,7 +134,7 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
     // Internal for testing
     internal static bool TryGetConfiguration(
         IImmutableDictionary<string, IProjectRuleSnapshot> state,
-        bool forceRuntimeCodeGeneration,
+        LanguageServerFlags? languageServerFlags,
         [NotNullWhen(returnValue: true)] out RazorConfiguration? configuration)
     {
         if (!TryGetDefaultConfiguration(state, out var defaultConfiguration))
@@ -162,7 +162,12 @@ internal class DefaultWindowsRazorProjectHost : WindowsRazorProjectHostBase
             return false;
         }
 
-        configuration = new(languageVersion, configurationItem.Key, extensions, ForceRuntimeCodeGeneration: forceRuntimeCodeGeneration);
+        configuration = new(
+            languageVersion,
+            configurationItem.Key,
+            extensions,
+            languageServerFlags);
+
         return true;
     }
 

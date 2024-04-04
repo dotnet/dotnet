@@ -1,13 +1,28 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-namespace Microsoft.AspNetCore.Razor.ExternalAccess.RoslynWorkspace;
+using System;
+using System.Threading;
 
-// Copied from https://github.com/dotnet/project-system/blob/e4db47666e0a49f6c38e701f8630dbc31380fb64/src/Microsoft.VisualStudio.ProjectSystem.Managed/Threading/Tasks/CancellationSeries.cs
+namespace Microsoft.AspNetCore.Razor.Threading;
 
+// NOTE: This code is copied from dotnet/roslyn:
+// https://github.com/dotnet/roslyn/blob/98cd097bf122677378692ebe952b71ab6e5bb013/src/Workspaces/Core/Portable/Utilities/CancellationSeries.cs
+//
+// However, it was originally derived from an implementation in dotnet/project-system:
+// https://github.com/dotnet/project-system/blob/bdf69d5420ec8d894f5bf4c3d4692900b7f2479c/src/Microsoft.VisualStudio.ProjectSystem.Managed/Threading/Tasks/CancellationSeries.cs
+
+/// <summary>
+/// Produces a series of <see cref="CancellationToken"/> objects such that requesting a new token
+/// causes the previously issued token to be cancelled.
+/// </summary>
+/// <remarks>
+/// <para>Consuming code is responsible for managing overlapping asynchronous operations.</para>
+/// <para>This class has a lock-free implementation to minimise latency and contention.</para>
+/// </remarks>
 internal sealed class CancellationSeries : IDisposable
 {
-    private CancellationTokenSource? _cts = new();
+    private CancellationTokenSource? _cts;
 
     private readonly CancellationToken _superToken;
 
@@ -16,10 +31,20 @@ internal sealed class CancellationSeries : IDisposable
     /// </summary>
     /// <param name="token">An optional cancellation token that, when cancelled, cancels the last
     /// issued token and causes any subsequent tokens to be issued in a cancelled state.</param>
-    public CancellationSeries(CancellationToken token)
+    public CancellationSeries(CancellationToken token = default)
     {
+        // Initialize with a pre-cancelled source to ensure HasActiveToken has the correct state
+        _cts = new CancellationTokenSource();
+        _cts.Cancel();
+
         _superToken = token;
     }
+
+    /// <summary>
+    /// Determines if the cancellation series has an active token which has not been cancelled.
+    /// </summary>
+    public bool HasActiveToken
+        => _cts is { IsCancellationRequested: false };
 
     /// <summary>
     /// Creates the next <see cref="CancellationToken"/> in the series, ensuring the last issued
@@ -37,7 +62,7 @@ internal sealed class CancellationSeries : IDisposable
     /// </list>
     /// </returns>
     /// <exception cref="ObjectDisposedException">This object has been disposed.</exception>
-    public CancellationToken CreateNext(CancellationToken token)
+    public CancellationToken CreateNext(CancellationToken token = default)
     {
         var nextSource = CancellationTokenSource.CreateLinkedTokenSource(token, _superToken);
 
@@ -46,7 +71,23 @@ internal sealed class CancellationSeries : IDisposable
         // This way we would return a cancelled token, which is reasonable.
         var nextToken = nextSource.Token;
 
-        var priorSource = Interlocked.Exchange(ref _cts, nextSource);
+        // The following block is identical to Interlocked.Exchange, except no replacement is made if the current
+        // field value is null (latch on null). This ensures state is not corrupted if CreateNext is called after
+        // the object is disposed.
+        var priorSource = Volatile.Read(ref _cts);
+        while (priorSource is not null)
+        {
+            var candidate = Interlocked.CompareExchange(ref _cts, nextSource, priorSource);
+
+            if (candidate == priorSource)
+            {
+                break;
+            }
+            else
+            {
+                priorSource = candidate;
+            }
+        }
 
         if (priorSource is null)
         {
