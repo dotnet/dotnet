@@ -292,10 +292,12 @@
     <!--
       Perform post-source-build tasks. Validate source-build requirements, such as the prebuilt
       usage baseline, and generate the source-build intermediate nupkg.
+
+      Only run this when we are actually building/packing something (vs. just restoring).
     -->
     <MSBuild Projects="SourceBuild\AfterSourceBuild.proj"
              Properties="@(_CommonProps);_NETCORE_ENGINEERING_TELEMETRY=AfterSourceBuild"
-             Condition="'$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuildRepo)' == 'true'"/>
+             Condition="'$(_SolutionBuildTargets)' != '' and ('$(ArcadeBuildFromSource)' == 'true' or '$(DotNetBuildRepo)' == 'true')"/>
 
     <!--
       Publish artifacts. This should run in the following situations:

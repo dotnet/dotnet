@@ -5,8 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Moq;
 using Xunit;
@@ -16,15 +14,11 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
 public class RazorConfigurationEndpointTest : LanguageServerTestBase
 {
-    private readonly IOptionsMonitorCache<RazorLSPOptions> _cache;
     private readonly IConfigurationSyncService _configurationService;
 
     public RazorConfigurationEndpointTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        var services = new ServiceCollection().AddOptions();
-        _cache = services.BuildServiceProvider().GetRequiredService<IOptionsMonitorCache<RazorLSPOptions>>();
-
         var configServiceMock = new Mock<IConfigurationSyncService>(MockBehavior.Strict);
         configServiceMock
             .Setup(c => c.GetLatestOptionsAsync(It.IsAny<CancellationToken>()))
@@ -37,7 +31,7 @@ public class RazorConfigurationEndpointTest : LanguageServerTestBase
     public async Task Handle_UpdatesOptions()
     {
         // Arrange
-        var optionsMonitor = TestRazorLSPOptionsMonitor.Create(_configurationService, _cache);
+        var optionsMonitor = TestRazorLSPOptionsMonitor.Create(_configurationService);
         var endpoint = new RazorConfigurationEndpoint(optionsMonitor, LoggerFactory);
         var request = new DidChangeConfigurationParams();
         var requestContext = CreateRazorRequestContext(documentContext: null);

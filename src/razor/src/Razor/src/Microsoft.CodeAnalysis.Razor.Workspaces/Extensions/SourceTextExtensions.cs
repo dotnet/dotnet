@@ -4,8 +4,8 @@
 using System;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 

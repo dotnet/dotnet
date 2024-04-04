@@ -1226,7 +1226,7 @@ public class RazorTranslateDiagnosticsEndpointTest : LanguageServerTestBase
     {
         public TestRazorDiagnosticsServiceWithRazorDiagnostic(
             IRazorDocumentMappingService documentMappingService,
-            IRazorLoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory)
             : base(documentMappingService, loggerFactory)
         {
         }
@@ -1241,7 +1241,7 @@ public class RazorTranslateDiagnosticsEndpointTest : LanguageServerTestBase
     {
         public TestRazorDiagnosticsServiceWithoutRazorDiagnostic(
             IRazorDocumentMappingService documentMappingService,
-            IRazorLoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory)
             : base(documentMappingService, loggerFactory)
         {
         }

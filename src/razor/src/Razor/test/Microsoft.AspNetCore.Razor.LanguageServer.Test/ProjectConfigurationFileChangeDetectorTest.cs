@@ -83,7 +83,7 @@ public class ProjectConfigurationFileChangeDetectorTest : LanguageServerTestBase
             ProjectSnapshotManagerDispatcher dispatcher,
             IEnumerable<IProjectConfigurationFileChangeListener> listeners,
             IReadOnlyList<string> existingConfigurationFiles,
-            IRazorLoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory)
             : base(dispatcher, listeners, TestLanguageServerFeatureOptions.Instance, loggerFactory)
         {
             _cancellationTokenSource = cancellationTokenSource;

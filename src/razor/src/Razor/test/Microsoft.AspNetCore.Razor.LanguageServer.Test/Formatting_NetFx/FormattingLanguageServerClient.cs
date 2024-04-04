@@ -27,10 +27,10 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 
-internal class FormattingLanguageServerClient(IRazorLoggerFactory loggerFactory) : IClientConnection
+internal class FormattingLanguageServerClient(ILoggerFactory loggerFactory) : IClientConnection
 {
     private readonly Dictionary<string, RazorCodeDocument> _documents = [];
-    private readonly IRazorLoggerFactory _loggerFactory = loggerFactory;
+    private readonly ILoggerFactory _loggerFactory = loggerFactory;
 
     public InitializeResult ServerSettings
         => throw new NotImplementedException();

@@ -5,12 +5,12 @@ using System;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Telemetry;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.Editor.Razor;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Threading;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -36,7 +36,7 @@ internal sealed class FallbackProjectManager(
     private readonly IWorkspaceProvider _workspaceProvider = workspaceProvider;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
-    internal async Task DynamicFileAddedAsync(
+    internal void DynamicFileAdded(
         ProjectId projectId,
         ProjectKey razorProjectKey,
         string projectFilePath,
@@ -51,7 +51,7 @@ internal sealed class FallbackProjectManager(
                 {
                     // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
                     // are the only way to know about files in the project.
-                    await AddFallbackDocumentAsync(razorProjectKey, filePath, projectFilePath, cancellationToken).ConfigureAwait(false);
+                    AddFallbackDocument(razorProjectKey, filePath, projectFilePath, cancellationToken);
                 }
             }
             else
@@ -59,7 +59,7 @@ internal sealed class FallbackProjectManager(
                 // We have been asked to provide dynamic file info, which means there is a .razor or .cshtml file in the project
                 // but for some reason our project system doesn't know about the project. In these cases (often when people don't
                 // use the Razor or Web SDK) we spin up a fallback experience for them
-                await AddFallbackProjectAsync(projectId, filePath, cancellationToken).ConfigureAwait(false);
+                AddFallbackProject(projectId, filePath, cancellationToken);
             }
         }
         catch (Exception ex)
@@ -68,7 +68,7 @@ internal sealed class FallbackProjectManager(
         }
     }
 
-    internal async Task DynamicFileRemovedAsync(
+    internal void DynamicFileRemoved(
         ProjectId projectId,
         ProjectKey razorProjectKey,
         string projectFilePath,
@@ -82,7 +82,7 @@ internal sealed class FallbackProjectManager(
             {
                 // If this is a fallback project, then Roslyn may not track documents in the project, so these dynamic file notifications
                 // are the only way to know about files in the project.
-                await RemoveFallbackDocumentAsync(projectId, filePath, projectFilePath, cancellationToken).ConfigureAwait(false);
+                RemoveFallbackDocument(projectId, filePath, projectFilePath, cancellationToken);
             }
         }
         catch (Exception ex)
@@ -91,7 +91,7 @@ internal sealed class FallbackProjectManager(
         }
     }
 
-    private async Task AddFallbackProjectAsync(ProjectId projectId, string filePath, CancellationToken cancellationToken)
+    private void AddFallbackProject(ProjectId projectId, string filePath, CancellationToken cancellationToken)
     {
         var project = TryFindProjectForProjectId(projectId);
         if (project?.FilePath is null)
@@ -115,19 +115,18 @@ internal sealed class FallbackProjectManager(
         // the project will be updated, and it will no longer be a fallback project.
         var hostProject = new FallbackHostProject(project.FilePath, intermediateOutputPath, configuration, rootNamespace, project.Name);
 
-        await UpdateProjectManagerAsync(
-                updater => updater.ProjectAdded(hostProject),
-                cancellationToken)
-            .ConfigureAwait(false);
+        EnqueueProjectManagerUpdate(
+            updater => updater.ProjectAdded(hostProject),
+            cancellationToken);
 
-        await AddFallbackDocumentAsync(hostProject.Key, filePath, project.FilePath, cancellationToken).ConfigureAwait(false);
+        AddFallbackDocument(hostProject.Key, filePath, project.FilePath, cancellationToken);
 
         var configurationFilePath = Path.Combine(intermediateOutputPath, _languageServerFeatureOptions.ProjectConfigurationFileName);
 
         _projectConfigurationFilePathStore.Set(hostProject.Key, configurationFilePath);
     }
 
-    private async Task AddFallbackDocumentAsync(ProjectKey projectKey, string filePath, string projectFilePath, CancellationToken cancellationToken)
+    private void AddFallbackDocument(ProjectKey projectKey, string filePath, string projectFilePath, CancellationToken cancellationToken)
     {
         var hostDocument = CreateHostDocument(filePath, projectFilePath);
         if (hostDocument is null)
@@ -137,10 +136,9 @@ internal sealed class FallbackProjectManager(
 
         var textLoader = new FileTextLoader(filePath, defaultEncoding: null);
 
-        await UpdateProjectManagerAsync(
-                updater => updater.DocumentAdded(projectKey, hostDocument, textLoader),
-                cancellationToken)
-            .ConfigureAwait(false);
+        EnqueueProjectManagerUpdate(
+            updater => updater.DocumentAdded(projectKey, hostDocument, textLoader),
+            cancellationToken);
     }
 
     private static HostDocument? CreateHostDocument(string filePath, string projectFilePath)
@@ -159,7 +157,7 @@ internal sealed class FallbackProjectManager(
         return hostDocument;
     }
 
-    private async Task RemoveFallbackDocumentAsync(ProjectId projectId, string filePath, string projectFilePath, CancellationToken cancellationToken)
+    private void RemoveFallbackDocument(ProjectId projectId, string filePath, string projectFilePath, CancellationToken cancellationToken)
     {
         var project = TryFindProjectForProjectId(projectId);
         if (project is null)
@@ -175,15 +173,14 @@ internal sealed class FallbackProjectManager(
             return;
         }
 
-        await UpdateProjectManagerAsync(
-                updater => updater.DocumentRemoved(projectKey, hostDocument),
-                cancellationToken)
-            .ConfigureAwait(false);
+        EnqueueProjectManagerUpdate(
+            updater => updater.DocumentRemoved(projectKey, hostDocument),
+            cancellationToken);
     }
 
-    private Task UpdateProjectManagerAsync(Action<ProjectSnapshotManager.Updater> action, CancellationToken cancellationToken)
+    private void EnqueueProjectManagerUpdate(Action<ProjectSnapshotManager.Updater> action, CancellationToken cancellationToken)
     {
-        return _projectManager
+        _projectManager
             .UpdateAsync(
                 static (updater, state) =>
                 {
@@ -193,7 +190,8 @@ internal sealed class FallbackProjectManager(
                     action(updater);
                 },
                 state: (_serviceProvider, action),
-                cancellationToken);
+                cancellationToken)
+            .Forget();
     }
 
     private Project? TryFindProjectForProjectId(ProjectId projectId)

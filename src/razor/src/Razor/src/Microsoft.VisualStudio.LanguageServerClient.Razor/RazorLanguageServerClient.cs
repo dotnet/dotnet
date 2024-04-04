@@ -37,7 +37,7 @@ internal class RazorLanguageServerClient(
     RazorLanguageClientMiddleLayer middleLayer,
     LSPRequestInvoker requestInvoker,
     ProjectConfigurationFilePathStore projectConfigurationFilePathStore,
-    IRazorLoggerFactory razorLoggerFactory,
+    ILoggerFactory loggerFactory,
     RazorLogHubTraceProvider traceProvider,
     LanguageServerFeatureOptions languageServerFeatureOptions,
     ProjectSnapshotManagerDispatcher projectSnapshotManagerDispatcher,
@@ -61,7 +61,7 @@ internal class RazorLanguageServerClient(
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
     private readonly VisualStudioHostServicesProvider _vsHostWorkspaceServicesProvider = vsHostWorkspaceServicesProvider ?? throw new ArgumentNullException(nameof(vsHostWorkspaceServicesProvider));
     private readonly ProjectSnapshotManagerDispatcher _projectSnapshotManagerDispatcher = projectSnapshotManagerDispatcher ?? throw new ArgumentNullException(nameof(projectSnapshotManagerDispatcher));
-    private readonly IRazorLoggerFactory _razorLoggerFactory = razorLoggerFactory ?? throw new ArgumentNullException(nameof(razorLoggerFactory));
+    private readonly ILoggerFactory _loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
     private readonly RazorLogHubTraceProvider _traceProvider = traceProvider ?? throw new ArgumentNullException(nameof(traceProvider));
 
     private RazorLanguageServerWrapper? _server;
@@ -108,7 +108,7 @@ internal class RazorLanguageServerClient(
         _server = RazorLanguageServerWrapper.Create(
             serverStream,
             serverStream,
-            _razorLoggerFactory,
+            _loggerFactory,
             _telemetryReporter,
             _projectSnapshotManagerDispatcher,
             ConfigureLanguageServer,

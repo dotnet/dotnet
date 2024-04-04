@@ -11,7 +11,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
@@ -23,7 +22,7 @@ internal class FormattingContentValidationPass : FormattingPassBase
     public FormattingContentValidationPass(
         IRazorDocumentMappingService documentMappingService,
         IClientConnection clientConnection,
-        IRazorLoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory)
         : base(documentMappingService, clientConnection)
     {
         if (loggerFactory is null)
@@ -31,7 +30,7 @@ internal class FormattingContentValidationPass : FormattingPassBase
             throw new ArgumentNullException(nameof(loggerFactory));
         }
 
-        _logger = loggerFactory.CreateLogger<FormattingContentValidationPass>();
+        _logger = loggerFactory.GetOrCreateLogger<FormattingContentValidationPass>();
     }
 
     // We want this to run at the very end.

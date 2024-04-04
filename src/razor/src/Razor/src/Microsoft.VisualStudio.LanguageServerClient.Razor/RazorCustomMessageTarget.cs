@@ -13,7 +13,6 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Editor.Razor.Settings;
 using Microsoft.VisualStudio.Editor.Razor.Snippets;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
@@ -55,7 +54,7 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
         LanguageServerFeatureOptions languageServerFeatureOptions,
         IProjectSnapshotManager projectManager,
         SnippetCache snippetCache,
-        IRazorLoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory)
     {
         if (documentManager is null)
         {
@@ -84,7 +83,7 @@ internal partial class RazorCustomMessageTarget : IRazorCustomMessageTarget
         _languageServerFeatureOptions = languageServerFeatureOptions ?? throw new ArgumentNullException(nameof(languageServerFeatureOptions));
         _projectManager = projectManager ?? throw new ArgumentNullException(nameof(projectManager));
         _snippetCache = snippetCache ?? throw new ArgumentNullException(nameof(snippetCache));
-        _logger = loggerFactory.CreateLogger<RazorCustomMessageTarget>();
+        _logger = loggerFactory.GetOrCreateLogger<RazorCustomMessageTarget>();
     }
 
     private async Task<DelegationRequestDetails?> GetProjectedRequestDetailsAsync(IDelegatedParams request, CancellationToken cancellationToken)

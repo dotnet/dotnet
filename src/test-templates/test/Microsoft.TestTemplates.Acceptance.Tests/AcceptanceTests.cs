@@ -10,7 +10,6 @@ public sealed partial class AcceptanceTests
 {
     private static readonly ImmutableArray<string> SupportedTargetFrameworks =
     [
-        "net8.0",
         "net9.0",
     ];
     private static readonly (string ProjectTemplateName, string ItemTemplateName, string[] Languages)[] AvailableItemTemplates =
@@ -94,7 +93,7 @@ public sealed partial class AcceptanceTests
             var result = DotnetUtils.InvokeDotnetTest(outputDirectory);
 
             // Verify the tests run as expected.
-            result.ValidateSummaryStatus(1, 0, 0); 
+            result.ValidateSummaryStatus(1, 0, 0);
         }
 
         Directory.Delete(outputDirectory, true);

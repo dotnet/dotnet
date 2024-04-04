@@ -24,6 +24,19 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestB
         Assert.Equal("c:/path/to/something", path);
     }
 
+    [OSSkipConditionFact(["OSX", "Linux"])]
+    public void Normalize_Windows_StripsPrecedingSlash_ShortPath()
+    {
+        // Arrange
+        var path = "/c";
+
+        // Act
+        path = FilePathNormalizer.Normalize(path);
+
+        // Assert
+        Assert.Equal("c", path);
+    }
+
     [Fact]
     public void Normalize_NormalizesPathsWithSlashAtPositionOne()
     {
@@ -133,6 +146,19 @@ public class FilePathNormalizerTest(ITestOutputHelper testOutput) : ToolingTestB
     {
         // Arrange
         var directory = @"\";
+
+        // Act
+        var normalized = FilePathNormalizer.NormalizeDirectory(directory);
+
+        // Assert
+        Assert.Equal("/", normalized);
+    }
+
+    [Fact]
+    public void NormalizeDirectory_HandlesSingleSlashDirectory()
+    {
+        // Arrange
+        var directory = "/";
 
         // Act
         var normalized = FilePathNormalizer.NormalizeDirectory(directory);

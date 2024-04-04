@@ -700,19 +700,55 @@ stages:
             targetOS: linux
             targetArchitecture: x64
 
-      # Mariner x64->non-x64 builds are currently broken, see https://github.com/dotnet/source-build/issues/3698
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Mariner_x64_Cross
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm
+            pool: ${{ parameters.pool_Linux }}
+            container: ${{ variables.marinerArmCrossContainer }}
+            crossRootFs: '/crossrootfs/arm'
+            targetOS: linux
+            targetArchitecture: arm
 
-      # - template: ../jobs/vmr-build.yml
-      #   parameters:
-      #     buildName: Mariner_x64_Cross
-      #     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-      #     vmrBranch: ${{ variables.VmrBranch }}
-      #     architecture: arm64
-      #     pool: ${{ parameters.pool_Linux }}
-      #     container: ${{ variables.marinerArm64CrossContainer }}
-      #     crossRootFs: '/crossrootfs/arm64'
-      #     targetOS: linux
-      #     targetArchitecture: arm64
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Mariner_x64_Cross_Mono
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm
+            pool: ${{ parameters.pool_Linux }}
+            container: ${{ variables.marinerArmCrossContainer }}
+            crossRootFs: '/crossrootfs/arm'
+            useMonoRuntime: true
+            targetOS: linux
+            targetArchitecture: arm
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Mariner_x64_Cross
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm64
+            pool: ${{ parameters.pool_Linux }}
+            container: ${{ variables.marinerArm64CrossContainer }}
+            crossRootFs: '/crossrootfs/arm64'
+            targetOS: linux
+            targetArchitecture: arm64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Mariner_x64_Cross_Mono
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            vmrBranch: ${{ variables.VmrBranch }}
+            architecture: arm64
+            pool: ${{ parameters.pool_Linux }}
+            container: ${{ variables.marinerArm64CrossContainer }}
+            crossRootFs: '/crossrootfs/arm64'
+            useMonoRuntime: true
+            targetOS: linux
+            targetArchitecture: arm64
 
         - template: ../jobs/vmr-build.yml
           parameters:

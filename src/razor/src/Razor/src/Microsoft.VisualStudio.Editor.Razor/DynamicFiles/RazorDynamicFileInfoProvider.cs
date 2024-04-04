@@ -232,7 +232,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         }
     }
 
-    public async Task<RazorDynamicFileInfo?> GetDynamicFileInfoAsync(ProjectId projectId, string? projectFilePath, string filePath, CancellationToken cancellationToken)
+    public Task<RazorDynamicFileInfo?> GetDynamicFileInfoAsync(ProjectId projectId, string? projectFilePath, string filePath, CancellationToken cancellationToken)
     {
         if (projectFilePath is null)
         {
@@ -249,20 +249,18 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         var projectKey = TryFindProjectKeyForProjectId(projectId);
         if (projectKey is not { } razorProjectKey)
         {
-            return null;
+            return Task.FromResult<RazorDynamicFileInfo?>(null);
         }
 
-        await _fallbackProjectManager
-            .DynamicFileAddedAsync(projectId, razorProjectKey, projectFilePath, filePath, cancellationToken)
-            .ConfigureAwait(false);
+        _fallbackProjectManager.DynamicFileAdded(projectId, razorProjectKey, projectFilePath, filePath, cancellationToken);
 
         var key = new Key(projectId, filePath);
         var entry = _entries.GetOrAdd(key, _createEmptyEntry);
 
-        return entry.Current;
+        return Task.FromResult<RazorDynamicFileInfo?>(entry.Current);
     }
 
-    public async Task RemoveDynamicFileInfoAsync(ProjectId projectId, string? projectFilePath, string filePath, CancellationToken cancellationToken)
+    public Task RemoveDynamicFileInfoAsync(ProjectId projectId, string? projectFilePath, string filePath, CancellationToken cancellationToken)
     {
         if (projectFilePath is null)
         {
@@ -277,12 +275,10 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         var projectKey = TryFindProjectKeyForProjectId(projectId);
         if (projectKey is not { } razorProjectKey)
         {
-            return;
+            return Task.CompletedTask;
         }
 
-        await _fallbackProjectManager
-            .DynamicFileRemovedAsync(projectId, razorProjectKey, projectFilePath, filePath, cancellationToken)
-            .ConfigureAwait(false);
+        _fallbackProjectManager.DynamicFileRemoved(projectId, razorProjectKey, projectFilePath, filePath, cancellationToken);
 
         // ---------------------------------------------------------- NOTE & CAUTION --------------------------------------------------------------
         //
@@ -296,6 +292,8 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
 
         var key = new Key(projectId, filePath);
         _entries.TryRemove(key, out _);
+
+        return Task.CompletedTask;
     }
 
     public static string GetProjectSystemFilePath(Uri uri)

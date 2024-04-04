@@ -3,13 +3,12 @@
 
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.VisualStudio.LanguageServices.Razor.Logging;
 
-[Export(typeof(IRazorLoggerProvider))]
+[Export(typeof(ILoggerProvider))]
 [method: ImportingConstructor]
-internal partial class MemoryLoggerProvider() : IRazorLoggerProvider
+internal partial class MemoryLoggerProvider() : ILoggerProvider
 {
     // How many messages will the buffer contain
     private const int BufferSize = 5000;

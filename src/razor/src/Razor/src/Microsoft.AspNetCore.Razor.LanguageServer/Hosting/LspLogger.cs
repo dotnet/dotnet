@@ -3,7 +3,7 @@
 
 using System;
 using System.Threading;
-using Microsoft.Extensions.Logging;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
@@ -24,17 +24,12 @@ internal class LspLogger : ILogger
         _clientConnection = clientConnection;
     }
 
-    public IDisposable BeginScope<TState>(TState state)
-    {
-        return new Disposable();
-    }
-
     public bool IsEnabled(LogLevel logLevel)
     {
         return logLevel >= _logLevel;
     }
 
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+    public void Log<TState>(LogLevel logLevel, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
         if (!IsEnabled(logLevel))
         {
@@ -69,12 +64,5 @@ internal class LspLogger : ILogger
         }
 
         _ = _clientConnection.SendNotificationAsync(Methods.WindowLogMessageName, @params, CancellationToken.None);
-    }
-
-    private class Disposable : IDisposable
-    {
-        public void Dispose()
-        {
-        }
     }
 }

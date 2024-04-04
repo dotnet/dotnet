@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -34,7 +33,7 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
         ProjectSnapshotManagerDispatcher dispatcher,
         IEnumerable<IProjectConfigurationFileChangeListener> listeners,
         LanguageServerFeatureOptions options,
-        IRazorLoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory)
     {
         if (loggerFactory is null)
         {
@@ -44,7 +43,7 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
         _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         _listeners = listeners ?? throw new ArgumentNullException(nameof(listeners));
         _options = options ?? throw new ArgumentNullException(nameof(options));
-        _logger = loggerFactory.CreateLogger<ProjectConfigurationFileChangeDetector>();
+        _logger = loggerFactory.GetOrCreateLogger<ProjectConfigurationFileChangeDetector>();
     }
 
     public async Task StartAsync(string workspaceDirectory, CancellationToken cancellationToken)
@@ -150,8 +149,6 @@ internal class ProjectConfigurationFileChangeDetector : IFileChangeDetector
     // Protected virtual for testing
     protected virtual IEnumerable<string> GetExistingConfigurationFiles(string workspaceDirectory)
     {
-        using var _ = _logger.BeginScope("Searching for existing project configuration files");
-
         return DirectoryHelper.GetFilteredFiles(
             workspaceDirectory,
             _options.ProjectConfigurationFileName,

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.Razor.Logging;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Telemetry;
 using StreamJsonRpc;
 
@@ -17,13 +16,13 @@ internal class VSTelemetryReporter : TelemetryReporter
     private readonly Lazy<ILogger?> _logger;
 
     [ImportingConstructor]
-    public VSTelemetryReporter(Lazy<IRazorLoggerFactory> loggerFactory)
+    public VSTelemetryReporter(Lazy<ILoggerFactory> loggerFactory)
         // Get the DefaultSession for telemetry. This is set by VS with
         // TelemetryService.SetDefaultSession and provides the correct
         // appinsights keys etc
         : base(ImmutableArray.Create(TelemetryService.DefaultSession))
     {
-        _logger = new Lazy<ILogger?>(() => loggerFactory.Value.CreateLogger<VSTelemetryReporter>());
+        _logger = new Lazy<ILogger?>(() => loggerFactory.Value.GetOrCreateLogger<VSTelemetryReporter>());
     }
 
     protected override bool HandleException(Exception exception, string? message, params object?[] @params)

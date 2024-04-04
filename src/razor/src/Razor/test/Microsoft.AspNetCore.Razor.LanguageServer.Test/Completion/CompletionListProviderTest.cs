@@ -105,7 +105,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
         public TestRazorCompletionListProvider(
             VSInternalCompletionList completionList,
             IEnumerable<string> triggerCharacters,
-            IRazorLoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory)
             : base(completionFactsService: null, completionListCache: null, loggerFactory)
         {
             _completionList = completionList;

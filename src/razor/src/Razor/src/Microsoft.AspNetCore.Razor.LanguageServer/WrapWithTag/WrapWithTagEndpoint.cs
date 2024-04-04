@@ -13,7 +13,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
@@ -22,12 +21,12 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.WrapWithTag;
 internal class WrapWithTagEndpoint(
     IClientConnection clientConnection,
     IRazorDocumentMappingService razorDocumentMappingService,
-    IRazorLoggerFactory loggerFactory)
+    ILoggerFactory loggerFactory)
     : IRazorRequestHandler<WrapWithTagParams, WrapWithTagResponse?>
 {
     private readonly IClientConnection _clientConnection = clientConnection ?? throw new ArgumentNullException(nameof(clientConnection));
     private readonly IRazorDocumentMappingService _razorDocumentMappingService = razorDocumentMappingService ?? throw new ArgumentNullException(nameof(razorDocumentMappingService));
-    private readonly ILogger _logger = loggerFactory.CreateLogger<WrapWithTagEndpoint>();
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<WrapWithTagEndpoint>();
 
     public bool MutatesSolutionState => false;
 

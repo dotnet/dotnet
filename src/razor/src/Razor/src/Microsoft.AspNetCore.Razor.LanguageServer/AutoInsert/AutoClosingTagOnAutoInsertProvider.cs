@@ -8,11 +8,8 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
-using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
@@ -41,10 +38,10 @@ internal sealed class AutoClosingTagOnAutoInsertProvider : IOnAutoInsertProvider
     );
     private static readonly ImmutableHashSet<string> s_voidElementsCaseSensitive = s_voidElements.WithComparer(StringComparer.Ordinal);
 
-    private readonly IOptionsMonitor<RazorLSPOptions> _optionsMonitor;
+    private readonly RazorLSPOptionsMonitor _optionsMonitor;
     private readonly ILogger _logger;
 
-    public AutoClosingTagOnAutoInsertProvider(IOptionsMonitor<RazorLSPOptions> optionsMonitor, IRazorLoggerFactory loggerFactory)
+    public AutoClosingTagOnAutoInsertProvider(RazorLSPOptionsMonitor optionsMonitor, ILoggerFactory loggerFactory)
     {
         if (optionsMonitor is null)
         {
@@ -57,7 +54,7 @@ internal sealed class AutoClosingTagOnAutoInsertProvider : IOnAutoInsertProvider
         }
 
         _optionsMonitor = optionsMonitor;
-        _logger = loggerFactory.CreateLogger<IOnAutoInsertProvider>();
+        _logger = loggerFactory.GetOrCreateLogger<IOnAutoInsertProvider>();
     }
 
     public string TriggerCharacter => ">";

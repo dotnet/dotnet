@@ -33,14 +33,11 @@
     <!--#SERVICEHUB_ASSETS#-->
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.CodeAnalysis.Razor.Compiler.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.ObjectPool.dll" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.Options.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.Primitives.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.DependencyInjection.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.Configuration.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.Configuration.Abstractions.dll" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.Logging.dll" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" Path="Microsoft.Extensions.Logging.Abstractions.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="System.IO.Pipelines.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="System.Runtime.CompilerServices.Unsafe.dll" />
     <Asset Type="Microsoft.VisualStudio.Assembly" Path="System.Threading.Channels.dll" />

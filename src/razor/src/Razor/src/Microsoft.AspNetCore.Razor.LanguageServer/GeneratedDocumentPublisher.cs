@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -33,13 +32,13 @@ internal sealed class GeneratedDocumentPublisher : IGeneratedDocumentPublisher, 
         ProjectSnapshotManagerDispatcher dispatcher,
         IClientConnection clientConnection,
         LanguageServerFeatureOptions options,
-        IRazorLoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory)
     {
         _projectManager = projectManager;
         _dispatcher = dispatcher;
         _clientConnection = clientConnection;
         _options = options;
-        _logger = loggerFactory.CreateLogger<GeneratedDocumentPublisher>();
+        _logger = loggerFactory.GetOrCreateLogger<GeneratedDocumentPublisher>();
         _publishedCSharpData = new Dictionary<DocumentKey, PublishData>();
 
         // We don't generate individual Html documents per-project, so in order to ensure diffs are calculated correctly

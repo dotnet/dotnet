@@ -3,9 +3,7 @@
 
 using System;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.ProjectEngineHost;
-using Microsoft.Extensions.Options;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
@@ -14,7 +12,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer;
 /// <see cref="ProjectEngineFactories.DefaultProvider"/> and configure every <see cref="RazorProjectEngine"/>
 /// with the current code-gen options.
 /// </summary>
-internal sealed class LspProjectEngineFactoryProvider(IOptionsMonitor<RazorLSPOptions> optionsMonitor) : IProjectEngineFactoryProvider
+internal sealed class LspProjectEngineFactoryProvider(RazorLSPOptionsMonitor optionsMonitor) : IProjectEngineFactoryProvider
 {
     public IProjectEngineFactory GetFactory(RazorConfiguration configuration)
     {
@@ -23,7 +21,7 @@ internal sealed class LspProjectEngineFactoryProvider(IOptionsMonitor<RazorLSPOp
         return new Factory(factory, optionsMonitor);
     }
 
-    private class Factory(IProjectEngineFactory innerFactory, IOptionsMonitor<RazorLSPOptions> optionsMonitor) : IProjectEngineFactory
+    private class Factory(IProjectEngineFactory innerFactory, RazorLSPOptionsMonitor optionsMonitor) : IProjectEngineFactory
     {
         public string ConfigurationName => innerFactory.ConfigurationName;
 
@@ -47,7 +45,7 @@ internal sealed class LspProjectEngineFactoryProvider(IOptionsMonitor<RazorLSPOp
             }
         }
 
-        private class CodeGenFeature(IOptionsMonitor<RazorLSPOptions> optionsMonitor) : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
+        private class CodeGenFeature(RazorLSPOptionsMonitor optionsMonitor) : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature
         {
             public int Order { get; set; }
 
