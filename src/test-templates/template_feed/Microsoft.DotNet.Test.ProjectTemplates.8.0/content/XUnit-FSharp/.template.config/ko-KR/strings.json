@@ -1,7 +1,0 @@
-{
-  "version": "1.0.0.0",
-  "strings": {
-    "name": "xUnit 테스트 프로젝트",
-    "description": "Windows, Linux 및 MacOS의 .NET에서 실행할 수 있는 xUnit.net 테스트를 포함하는 프로젝트입니다."
-  }
-}
