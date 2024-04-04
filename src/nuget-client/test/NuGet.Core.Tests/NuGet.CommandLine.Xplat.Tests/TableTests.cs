@@ -26,15 +26,18 @@ namespace NuGet.CommandLine.Xplat.Tests
         {
             // Arrange
             Table myTable = new Table(Array.Empty<int>(), Enumerable.Repeat("Header", columns).ToArray());
-            List<string[]> expectedTable = new();
-            expectedTable.Add(Enumerable.Repeat("Header", columns).ToArray());
-            expectedTable.Add(Enumerable.Repeat("row 1", columns).ToArray());
+            List<string[]> expectedTable =
+            [
+                Enumerable.Repeat("row 1", columns).ToArray(),
+            ];
+            List<string> header = Enumerable.Repeat("Header", columns).ToList();
 
             // Act
             myTable.AddRow(Enumerable.Repeat("row 1", columns).ToArray());
 
             // Assert
             Assert.Equal(expectedTable, myTable._rows);
+            Assert.Equal(header, myTable._columns.Select(c => c.Header).ToList());
         }
 
         [Theory]
@@ -50,7 +53,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             Table myTable = new Table(Array.Empty<int>(), Enumerable.Repeat("Header", columns).ToArray());
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => myTable.AddRow(new string[] { "row", "row column2" }));
+            var exception = Assert.Throws<InvalidOperationException>(() => myTable.AddRow("row", "row column2"));
 
             // Assert
             Assert.Equal("Row column count does not match header column count.", exception.Message);
@@ -80,23 +83,35 @@ namespace NuGet.CommandLine.Xplat.Tests
         public void PrintResult_NRowsAdded_PrintsNRows(int rows)
         {
             string searchTerm = "term";
+            Dictionary<ConsoleColor, string> coloredMessage = new Dictionary<ConsoleColor, string>();
             Mock<ILoggerWithColor> mockLoggerWithColor = new Mock<ILoggerWithColor>();
+            mockLoggerWithColor.Setup(x => x.LogMinimal(It.IsAny<string>(), It.IsAny<ConsoleColor>()))
+                .Callback<string, ConsoleColor>((message, color) =>
+                {
+                    if (!coloredMessage.ContainsKey(color))
+                    {
+                        coloredMessage[color] = "";
+                    }
+                    coloredMessage[color] += message;
+                });
             Table table = new Table(new int[] { 0, 1, 2, 3 }, new string[] { "column1", "column2", "column3", "column4" });
-
+            var expectedRedColoredMessage = string.Concat(Enumerable.Repeat(searchTerm, rows));
+            var expectedDefaultColoredMessage =
+                "| column1 | column2 | column3 | column4 |" +
+                "| ------- | ------- | ------- | ------- |";
             for (int i = 0; i < rows; i++)
             {
-                table.AddRow(new string[] { "column1", searchTerm, "column3", "column4" });
+                table.AddRow("column1", searchTerm, "column3", "column4");
+                expectedDefaultColoredMessage += $"| column1 |     | column3 | column4 |";
+                expectedDefaultColoredMessage += "| ------- | ------- | ------- | ------- |";
             }
 
             // Act
             table.PrintResult(searchTerm, mockLoggerWithColor.Object);
 
             // Assert
-            mockLoggerWithColor.Verify(x => x.LogMinimal("| column1 ", System.Console.ForegroundColor), Times.Exactly(rows + 1));
-            mockLoggerWithColor.Verify(x => x.LogMinimal("| column3 ", System.Console.ForegroundColor), Times.Exactly(rows + 1));
-            mockLoggerWithColor.Verify(x => x.LogMinimal("| column4 ", System.Console.ForegroundColor), Times.Exactly(rows + 1));
-            mockLoggerWithColor.Verify(x => x.LogMinimal("| column2 ", System.Console.ForegroundColor), Times.Exactly(1));
-            mockLoggerWithColor.Verify(x => x.LogMinimal(searchTerm, ConsoleColor.Red), Times.Exactly(rows));
+            Assert.Equal(expectedRedColoredMessage, coloredMessage[ConsoleColor.Red]);
+            Assert.Equal(expectedDefaultColoredMessage, coloredMessage[System.Console.ForegroundColor]);
         }
     }
 }

@@ -62,34 +62,9 @@ namespace NuGet.Protocol
         [JsonConverter(typeof(SafeUriConverter))]
         public Uri LicenseUrl { get; private set; }
 
-        private IReadOnlyList<string> _ownersList;
-
         [JsonProperty(PropertyName = JsonProperties.Owners)]
-        public IReadOnlyList<string> OwnersList
-        {
-            get { return _ownersList; }
-            private set
-            {
-                if (_ownersList != value)
-                {
-                    _ownersList = value;
-                    _owners = null;
-                }
-            }
-        }
-
-        private string _owners;
-        public string Owners
-        {
-            get
-            {
-                if (_owners == null)
-                {
-                    _owners = OwnersList != null ? string.Join(", ", OwnersList.Where(s => !string.IsNullOrWhiteSpace(s))) : null;
-                }
-                return _owners;
-            }
-        }
+        [JsonConverter(typeof(MetadataFieldConverter))]
+        public string Owners { get; private set; }
 
         [JsonProperty(PropertyName = JsonProperties.PackageId)]
         public string PackageId { get; private set; }

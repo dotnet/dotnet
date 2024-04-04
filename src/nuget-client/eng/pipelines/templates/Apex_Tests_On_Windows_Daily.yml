@@ -209,8 +209,8 @@ stages:
             inlineScript: |
               Get-ChildItem Env: | Sort-Object Name | Format-Table -Wrap -AutoSize
 
-        - task: DownloadBuildArtifacts@0
-          displayName: "Download Build artifacts"
+        - task: DownloadPipelineArtifact@2
+          displayName: "Download Pipeline artifacts"
           inputs:
             buildType: specific
             project: $(resources.pipeline.ComponentBuildUnderTest.projectID)
@@ -232,6 +232,3 @@ stages:
           displayName: "SetupFunctionalTests.ps1"
           inputs:
             scriptName: "$(System.DefaultWorkingDirectory)/artifacts/EndToEnd/scripts/SetupFunctionalTests.ps1"
-      postDeployAndRunTestsStepList:
-        - task: ComponentGovernanceComponentDetection@0
-          displayName: 'Component Detection'

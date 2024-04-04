@@ -19,14 +19,14 @@ namespace NuGet.CommandLine.Xplat.Tests
         internal Func<PackageSearchArgs, string, CancellationToken, Task<int>> SetupSettingsAndRunSearchAsync { get; set; }
         internal string StoredErrorMessage { get; set; }
         internal string StoredWarningMessage { get; set; }
-        internal List<Tuple<string, ConsoleColor>> ColoredMessage { get; set; }
+        internal Dictionary<ConsoleColor, string> ColoredMessage { get; set; }
         internal string Message { get; set; }
 
         public PackageSearchTestInitializer()
         {
             StoredErrorMessage = string.Empty;
             StoredWarningMessage = string.Empty;
-            ColoredMessage = new List<Tuple<string, ConsoleColor>>();
+            ColoredMessage = new Dictionary<ConsoleColor, string>();
             RootCommand = new CliRootCommand();
             var loggerWithColorMock = new Mock<ILoggerWithColor>();
 
@@ -37,7 +37,15 @@ namespace NuGet.CommandLine.Xplat.Tests
                 .Callback<string>(message => StoredErrorMessage += message);
 
             loggerWithColorMock.Setup(x => x.LogMinimal(It.IsAny<string>(), It.IsAny<ConsoleColor>()))
-                .Callback<string, ConsoleColor>((message, color) => { ColoredMessage.Add(Tuple.Create(message, color)); });
+                .Callback<string, ConsoleColor>((message, color) =>
+                {
+                    if (!ColoredMessage.ContainsKey(color))
+                    {
+                        ColoredMessage[color] = "";
+                    }
+                    ColoredMessage[color] += message;
+                });
+
             GetLogger = () => loggerWithColorMock.Object;
 
             loggerWithColorMock.Setup(x => x.LogMinimal(It.IsAny<string>()))
