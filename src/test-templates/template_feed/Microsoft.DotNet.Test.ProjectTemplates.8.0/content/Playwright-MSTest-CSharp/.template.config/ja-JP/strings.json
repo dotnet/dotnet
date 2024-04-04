@@ -1,7 +1,0 @@
-{
-  "version": "1.0.0.0",
-  "strings": {
-    "name": "MSTest テスト プロジェクト",
-    "description": "Windows、Linux、MacOS 上の .NET で実行できる MSTest 単体テストを含むプロジェクト。"
-  }
-}

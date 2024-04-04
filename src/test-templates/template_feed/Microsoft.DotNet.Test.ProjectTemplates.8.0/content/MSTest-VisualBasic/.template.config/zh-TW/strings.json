@@ -1,7 +1,0 @@
-{
-  "version": "1.0.0.0",
-  "strings": {
-    "name": "MSTest 測試專案",
-    "description": "專案含有可在 Windows、Linux 及 MacOS 的 .NET 上執行的 MSTest 單元測試。"
-  }
-}
