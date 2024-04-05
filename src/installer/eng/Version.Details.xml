@@ -201,10 +201,6 @@
       <Sha>fb50d1a45ed10b39b5f335bc3a4bdcaea9b951cf</Sha>
       <SourceBuildTarball RepoName="nuget-client" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.ApplicationInsights" Version="2.0.0">
-      <Uri>https://github.com/Microsoft/ApplicationInsights-dotnet</Uri>
-      <Sha>53b80940842204f78708a538628288ff5d741a1d</Sha>
-    </Dependency>
     <Dependency Name="Microsoft.NET.Workload.Emscripten.Current.Manifest-9.0.100.Transport" Version="9.0.0-preview.4.24201.2" CoherentParentDependency="Microsoft.NETCore.App.Runtime.win-x64">
       <Uri>https://github.com/dotnet/emsdk</Uri>
       <Sha>bd79d3dd7ed2db36b3c3d4fa807c21a06d2024ec</Sha>
