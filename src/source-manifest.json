@@ -157,10 +157,10 @@
       "commitSha": "1233632200ec6df0ca38fa1c7ad54f7d820fa9c5"
     },
     {
-      "packageVersion": "9.0.0-preview.4.24201.2",
+      "packageVersion": "9.0.0-preview.4.24203.6",
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "6710618bf954958130cd0e940cc25223079b12d5"
+      "commitSha": "3c3f911e162ab3528fe14b3f221bcc4c4bd447ec"
     },
     {
       "packageVersion": "9.0.0-preview.4.24204.1",
