@@ -4,9 +4,9 @@
 using System;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+namespace Microsoft.CodeAnalysis.Razor.Protocol.Debugging;
 
-internal class RazorBreakpointSpanParams
+internal class RazorProximityExpressionsParams
 {
     public required Uri Uri { get; init; }
 

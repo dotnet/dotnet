@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+namespace Microsoft.CodeAnalysis.Razor.Protocol.Debugging;
 
 internal class RazorProximityExpressionsResponse
 {

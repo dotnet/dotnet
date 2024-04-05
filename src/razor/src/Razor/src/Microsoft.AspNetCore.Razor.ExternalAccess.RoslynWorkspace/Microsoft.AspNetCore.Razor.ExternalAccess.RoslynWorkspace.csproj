@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <!-- needs to be compatible with NetVSCode as defined in Roslyn repo, eng/targets/TargetFrameworks.props -->
+    <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
