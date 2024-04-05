@@ -118,14 +118,6 @@
       <ItemsToSignPostBuild Include="@(SymbolPackagesToGenerate->'%(Filename)%(Extension)')" Condition="'$(PostBuildSign)' == 'true'" />
     </ItemGroup>
 
-    <!-- Include Symbols.<repo>.tar.gz, if running in inner source-only build -->
-    <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildInnerRepo)' == 'true'">
-      <UnifiedSymbolsPackage Include="$(ArtifactsNonShippingPackagesDir)Symbols.*.tar.gz" />
-      <Artifact Include="@(UnifiedSymbolsPackage)"
-                RelativeBlobPath="Symbols/%(Filename)%(Extension)"
-                IsShipping="false" />
-    </ItemGroup>
-
     <!--
       If a symbol package doesn't exist yet we assume that the regular package contains Portable PDBs.
       Such packages can act as symbol packages since they have the same structure.

@@ -14,7 +14,7 @@
   <Target Name="AfterSourceBuildInnerBuild"
           Condition="('$(ArcadeInnerBuildFromSource)' == 'true' or '$(DotNetBuildInnerRepo)' == 'true') and
                      '$(DotNetBuildOrchestrator)' == 'true'"
-          DependsOnTargets="CreateRepoSymbolsArchive;ClearPreviousSBRP" />
+          DependsOnTargets="CopyRepoSymbolsToIntermediates;ClearPreviousSBRP" />
 
   <Target Name="ClearPreviousSBRP"
           Condition="'$(GitHubRepositoryName)' == 'source-build-reference-packages'">

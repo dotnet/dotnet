@@ -159,20 +159,20 @@
 
     Conditioning out for Windows as the tar execution below doesn't work cross-plat.
   -->
+
   <Target Name="CreateRepoSymbolsArchive"
+          Condition="'$(OS)' != 'Windows_NT' and ('$(DotNetBuildFromSourceFlavor)' == 'Product' or '$(DotNetBuildOrchestrator)' == 'true' or '$(SupplementalIntermediateNupkgCategory)' == '$(SymbolsIntermediateNupkgCategory)')"
+          DependsOnTargets="$(CreateRepoSymbolsArchiveDependsOn);
+                            DiscoverRepoSymbols;
+                            PackageRepoSymbols"/>
+
+  <Target Name="DiscoverRepoSymbols"
           Condition="'$(OS)' != 'Windows_NT' and ('$(DotNetBuildFromSourceFlavor)' == 'Product' or '$(DotNetBuildOrchestrator)' == 'true' or '$(SupplementalIntermediateNupkgCategory)' == '$(SymbolsIntermediateNupkgCategory)')"
           DependsOnTargets="$(CreateRepoSymbolsArchiveDependsOn)">
     <PropertyGroup>
       <SymbolsRoot>$(CurrentRepoSourceBuildArtifactsDir)</SymbolsRoot>
       <!-- Fall back to repo root for source-build-externals or repos that don't have the regular SymbolsRoot as defined above -->
       <SymbolsRoot Condition="!Exists('$(SymbolsRoot)') or '$(GitHubRepositoryName)' == 'source-build-externals'">$(RepoRoot)</SymbolsRoot>
-      <SymbolsArchiveLocation>$(CurrentRepoSourceBuildArtifactsNonShippingPackagesDir)</SymbolsArchiveLocation>
-      <SymbolsArchiveLocation Condition="'$(GitHubRepositoryName)' == 'nuget-client' and '$(PackageOutputPath)' != ''">$([MSBuild]::EnsureTrailingSlash('$(PackageOutputPath)'))</SymbolsArchiveLocation>
-      <SymbolsList>$([MSBuild]::NormalizePath('$(SymbolsArchiveLocation)', 'symbols.lst'))</SymbolsList>
-      <SymbolsArchivePrefix>Symbols.</SymbolsArchivePrefix>
-      <!-- $(Version) and $(TargetRid) are only available when target is executed as part of intermediate package creation. -->
-      <SymbolsArchiveSuffix Condition="'$(CreateIntermediatePackage)' == 'true'">.$(Version).$(TargetRid)</SymbolsArchiveSuffix>
-      <SymbolsArchiveFile>$(SymbolsArchiveLocation)$(SymbolsArchivePrefix)$(GitHubRepositoryName)$(SymbolsArchiveSuffix)$(ArchiveExtension)</SymbolsArchiveFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -181,6 +181,20 @@
         <RelativePath>$([MSBuild]::MakeRelative($(SymbolsRoot), %(FullPath)))</RelativePath>
       </AbsoluteSymbolPath>
     </ItemGroup>
+  </Target>
+
+  <Target Name="PackageRepoSymbols"
+          Condition="'$(OS)' != 'Windows_NT' and ('$(DotNetBuildFromSourceFlavor)' == 'Product' or '$(DotNetBuildOrchestrator)' == 'true' or '$(SupplementalIntermediateNupkgCategory)' == '$(SymbolsIntermediateNupkgCategory)')"
+          DependsOnTargets="$(CreateRepoSymbolsArchiveDependsOn);DiscoverRepoSymbols">
+    <PropertyGroup>
+      <SymbolsArchiveLocation>$(CurrentRepoSourceBuildArtifactsNonShippingPackagesDir)</SymbolsArchiveLocation>
+      <SymbolsArchiveLocation Condition="'$(GitHubRepositoryName)' == 'nuget-client' and '$(PackageOutputPath)' != ''">$([MSBuild]::EnsureTrailingSlash('$(PackageOutputPath)'))</SymbolsArchiveLocation>
+      <SymbolsList>$([MSBuild]::NormalizePath('$(SymbolsArchiveLocation)', 'symbols.lst'))</SymbolsList>
+      <SymbolsArchivePrefix>Symbols.</SymbolsArchivePrefix>
+      <!-- $(Version) and $(TargetRid) are only available when target is executed as part of intermediate package creation. -->
+      <SymbolsArchiveSuffix Condition="'$(CreateIntermediatePackage)' == 'true'">.$(Version).$(TargetRid)</SymbolsArchiveSuffix>
+      <SymbolsArchiveFile>$(SymbolsArchiveLocation)$(SymbolsArchivePrefix)$(GitHubRepositoryName)$(SymbolsArchiveSuffix)$(ArchiveExtension)</SymbolsArchiveFile>
+    </PropertyGroup>
 
     <WriteLinesToFile
       File="$(SymbolsList)"
@@ -203,6 +217,13 @@
     <Delete Files="$(SymbolsList)" Condition="Exists($(SymbolsList))" />
   </Target>
 
+  <Target Name="CopyRepoSymbolsToIntermediates"
+          DependsOnTargets="DiscoverRepoSymbols">
+    <MakeDir Directories="$(SourceBuiltSymbolsDir)" />
+    <Copy
+      SourceFiles="@(AbsoluteSymbolPath)"
+      DestinationFolder="$(SourceBuiltSymbolsDir)%(RecursiveDir)" />
+  </Target>
   <!--
     This target can be removed once we enable standard repo assets manifests and SB orchestrator
     starts using it - https://github.com/dotnet/source-build/issues/3970
