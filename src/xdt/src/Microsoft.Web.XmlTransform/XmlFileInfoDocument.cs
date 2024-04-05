@@ -90,9 +90,7 @@ namespace Microsoft.Web.XmlTransform
             Encoding encoding = null;
             if (stream.CanSeek) {
                 byte[] buffer = new byte[3];
-#pragma warning disable CA2022 // Avoid inexact read
                 stream.Read(buffer, 0, buffer.Length);
-#pragma warning restore CA2022
 
                 if (buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF)
                     encoding = Encoding.UTF8;

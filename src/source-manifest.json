@@ -169,10 +169,10 @@
       "commitSha": "f1ebf9d0652f379a98482b276860b0f5aa19627b"
     },
     {
-      "packageVersion": "9.0.0-preview.24175.2",
+      "packageVersion": "9.0.0-preview.24201.1",
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
-      "commitSha": "0ad4c4635bdf80aebc43c45bde031b9a0f3df606"
+      "commitSha": "48b69ffe49e1514dc123b4e5453d4ee1e998581c"
     },
     {
       "packageVersion": "1.0.0-beta.23475.1",
