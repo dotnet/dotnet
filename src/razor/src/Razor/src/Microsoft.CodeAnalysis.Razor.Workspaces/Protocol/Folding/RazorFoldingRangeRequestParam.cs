@@ -4,7 +4,7 @@
 using System.Runtime.Serialization;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 
-namespace Microsoft.AspNetCore.Razor.LanguageServer.Protocol;
+namespace Microsoft.CodeAnalysis.Razor.Protocol.Folding;
 
 internal class RazorFoldingRangeRequestParam : FoldingRangeParams
 {
