@@ -12,8 +12,6 @@ variables:
 
 - name: alpine319Container
   value: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.19-WithNode
-- name: centOSStream8Container
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
 - name: centOSStream9Container
   value: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
 - name: fedora39Container
