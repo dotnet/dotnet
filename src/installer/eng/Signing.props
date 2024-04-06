@@ -5,6 +5,7 @@
          custom publishing target. And should not be picked up by arcade's default publishing logic. -->
     <ItemsToSignPostBuild Remove="*.wixpack.zip" />
   </ItemGroup>
+
   <ItemGroup Condition="'$(PostBuildSign)' != 'true'">
     <ItemsToSign Remove="@(ItemsToSign)" />
     <ItemsToSign Include="$(ArtifactsPackagesDir)**\*.exe" />
@@ -17,10 +18,7 @@
     <ExternalCertificateId Condition="'$(ExternalCertificateId)' == ''">3PartySHA2</ExternalCertificateId>
     <InternalCertificateId Condition="'$(InternalCertificateId)' == ''">MicrosoftDotNet500</InternalCertificateId>
 
-    <!--
-      Signing of shipping artifacts (layout, msi, bundle) are handled separately.
-      It is therefore expected that <ItemsToSign> could be an empty set.
-    -->
+    <!-- Signing of shipping artifacts (layout, msi, bundle) are handled separately. It is therefore expected that <ItemsToSign> could be an empty set. -->
     <AllowEmptySignList>true</AllowEmptySignList>
     <AllowEmptySignPostBuildList>true</AllowEmptySignPostBuildList>
 
@@ -33,6 +31,7 @@
     <FileSignInfo Include="MessagePack.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="Nerdbank.Streams.dll" CertificateName="$(ExternalCertificateId)" />
     <FileSignInfo Include="StreamJsonRpc.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="Valleysoft.DockerCredsProvider.dll" CertificateName="$(ExternalCertificateId)" />
 
     <!-- Files in the layout that should not be signed -->
     <FileSignInfo Include="apphost.exe" CertificateName="None" />

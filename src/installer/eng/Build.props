@@ -12,9 +12,8 @@
         <!-- Regular build -->
         <ItemGroup>
           <ProjectToBuild Include="$(RepoRoot)Microsoft.DotNet.Cli.sln" />
-          <ProjectToBuild Condition="'$(OS)' == 'Windows_NT' And ('$(Architecture)' == 'x86' Or '$(Architecture)' == 'x64' Or '$(Architecture)' == 'arm64' Or '$(Architecture)' == 'arm')"
-                          Include="$(RepoRoot)eng\version.csproj;
-                                   $(RepoRoot)eng\native.proj" />
+          <ProjectToBuild Condition="'$(OS)' == 'Windows_NT' And ('$(Architecture)' == 'x86' Or '$(Architecture)' == 'x64' Or '$(Architecture)' == 'arm64')"
+                          Include="$(RepoRoot)src\finalizer\finalizer-build.csproj" />
         </ItemGroup>
       </Otherwise>
   </Choose>
