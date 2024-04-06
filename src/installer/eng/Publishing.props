@@ -85,18 +85,15 @@
     <CheckSumsToPublish Remove="$(ArtifactsShippingPackagesDir)productCommit-*.txt.sha512" Condition=" '$(PublishBinariesAndBadge)' == 'false'" />
     <CheckSumsToPublish Remove="$(ArtifactsShippingPackagesDir)productVersion.txt.sha512" Condition=" '$(OS)' != 'Windows_NT' or '$(Architecture)' != 'x64'" />
     <CheckSumsToPublish Remove="$(ArtifactsShippingPackagesDir)sdk-productVersion.txt.sha512" Condition=" '$(OS)' != 'Windows_NT' or '$(Architecture)' != 'x64'" />
-    <CheckSumsToPublish Remove="$(ArtifactsShippingPackagesDir)*.zip.sha512" Condition=" '$(PublishBinariesAndBadge)' == 'false' "/>
-    <CheckSumsToPublish Remove="$(ArtifactsShippingPackagesDir)*.tar.gz.sha512" Condition=" '$(PublishBinariesAndBadge)' == 'false' "/>
+    <CheckSumsToPublish Remove="$(ArtifactsShippingPackagesDir)*.zip.sha512" Condition=" '$(PublishBinariesAndBadge)' == 'false' " />
+    <CheckSumsToPublish Remove="$(ArtifactsShippingPackagesDir)*.tar.gz.sha512" Condition=" '$(PublishBinariesAndBadge)' == 'false' " />
   </ItemGroup>
 
   <Target Name="PublishSdkAssetsAndChecksums"
           BeforeTargets="Publish"
           Condition="$(DotNetPublishUsingPipelines)">
-
     <ReadLinesFromFile File="$(ArtifactsTmpDir)FullNugetVersion.version">
-      <Output
-          TaskParameter="Lines"
-          PropertyName="FullNugetVersion"/>
+      <Output TaskParameter="Lines" PropertyName="FullNugetVersion" />
     </ReadLinesFromFile>
 
     <ItemGroup>

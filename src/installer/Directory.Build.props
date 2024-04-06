@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
-
-  <PropertyGroup Condition="'$(CopyrightNetFoundation)' != ''">
-    <Copyright>$(CopyrightNetFoundation)</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-  </PropertyGroup>
+<!-- Platform needs to be set with TreatAsLocalProperty since it is a global property and cannot be overridden otherwise. -->
+<Project TreatAsLocalProperty="Platform">
 
   <PropertyGroup>
     <BuildArchitecture Condition="'$(BuildArchitecture)' == ''">$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant())</BuildArchitecture>
@@ -14,7 +9,24 @@
     <Architecture Condition="'$(Architecture)' == '' AND '$(BuildArchitecture)' == 'ppc64le'">$(BuildArchitecture)</Architecture>
     <Architecture Condition="'$(Architecture)' == '' AND '$(BuildArchitecture)' == 'loongarch64'">$(BuildArchitecture)</Architecture>
     <Architecture Condition="'$(Architecture)' == ''">x64</Architecture>
+
+    <!--
+      The finalizer project needs to have Platform set to build for the correct architecture.
+      Platform needs to be set prior to calling the Arcade SDK, which sets PlatformName in RepoDefaults.props and modifies the OutputPath in ProjectLayout.props to include a PlatformName folder in the path.
+      Currently, build.cmd calls run-build.ps1, which always sets the Architecture.
+      However, if you wanted to build the finalizer project directly, the Architecture will use the logic above to be set properly, and thus maintain the correct OutputPath.
+      Note: The redist project does use Architecture. The Arcade SDK does not use either BuildArchitecture or Architecture.
+    -->
+    <Platform Condition="'$(SetPlatformFromArchitecture)' == 'true' And ('$(Platform)' == '' Or '$(Platform)' == 'AnyCPU')">$(Architecture)</Platform>
   </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <PropertyGroup Condition="'$(CopyrightNetFoundation)' != ''">
+    <Copyright>$(CopyrightNetFoundation)</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(PgoInstrument)' == 'true'">
     <SkipBuildingInstallers>true</SkipBuildingInstallers>
     <PgoTerm>-pgo</PgoTerm>

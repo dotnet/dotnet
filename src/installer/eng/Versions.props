@@ -71,9 +71,9 @@
     <MicrosoftAspNetCoreAppRefInternalPackageVersion>9.0.0-preview.4.24205.2</MicrosoftAspNetCoreAppRefInternalPackageVersion>
     <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>9.0.0-preview.4.24205.2</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
     <VSRedistCommonAspNetCoreSharedFrameworkx6490PackageVersion>9.0.0-preview.4.24205.2</VSRedistCommonAspNetCoreSharedFrameworkx6490PackageVersion>
-    <dotnetdevcertsPackageVersion>9.0.0-preview.4.24205.2</dotnetdevcertsPackageVersion>
-    <dotnetuserjwtsPackageVersion>9.0.0-preview.4.24205.2</dotnetuserjwtsPackageVersion>
-    <dotnetusersecretsPackageVersion>9.0.0-preview.4.24205.2</dotnetusersecretsPackageVersion>
+    <DotnetDevCertsPackageVersion>9.0.0-preview.4.24205.2</DotnetDevCertsPackageVersion>
+    <DotnetUserJwtsPackageVersion>9.0.0-preview.4.24205.2</DotnetUserJwtsPackageVersion>
+    <DotnetUserSecretsPackageVersion>9.0.0-preview.4.24205.2</DotnetUserSecretsPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <MicroBuildCorePackageVersion>0.2.0</MicroBuildCorePackageVersion>
@@ -112,8 +112,7 @@
     <MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>9.0.0-preview.4.24204.1</MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <!-- Runtime and Apphost pack versions are the same for all RIDs. We flow the x64    -->
-    <!-- version above and create aliases without the winx64 here for clarity elsewhere. -->
+    <!-- Runtime and Apphost pack versions are the same for all RIDs. We flow the x64 version above and create aliases without the winx64 here for clarity elsewhere. -->
     <MicrosoftNETCoreAppHostPackageVersion>$(MicrosoftNETCoreAppHostwinx64PackageVersion)</MicrosoftNETCoreAppHostPackageVersion>
     <MicrosoftNETCoreAppRuntimePackageVersion>$(MicrosoftNETCoreAppRuntimewinx64PackageVersion)</MicrosoftNETCoreAppRuntimePackageVersion>
     <MicrosoftAspNetCoreAppRuntimePackageVersion>$(MicrosoftAspNetCoreAppRuntimewinx64PackageVersion)</MicrosoftAspNetCoreAppRuntimePackageVersion>

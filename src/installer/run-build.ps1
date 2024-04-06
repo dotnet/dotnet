@@ -24,9 +24,6 @@ if ($PgoInstrument) {
 
 if ($Sign) {
   $Parameters = "$Parameters -sign /p:SignCoreSdk=true"
-
-  # Workaround https://github.com/dotnet/arcade/issues/1776
-  $WarnAsError = $false
 }
 
 $Parameters = "$Parameters -WarnAsError `$$WarnAsError"
