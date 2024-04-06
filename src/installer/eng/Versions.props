@@ -67,9 +67,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/aspnet/AspNetCore -->
-    <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>9.0.0-preview.4.24205.2</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
     <MicrosoftAspNetCoreAppRefPackageVersion>9.0.0-preview.4.24205.2</MicrosoftAspNetCoreAppRefPackageVersion>
     <MicrosoftAspNetCoreAppRefInternalPackageVersion>9.0.0-preview.4.24205.2</MicrosoftAspNetCoreAppRefInternalPackageVersion>
+    <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>9.0.0-preview.4.24205.2</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
     <VSRedistCommonAspNetCoreSharedFrameworkx6490PackageVersion>9.0.0-preview.4.24205.2</VSRedistCommonAspNetCoreSharedFrameworkx6490PackageVersion>
     <dotnetdevcertsPackageVersion>9.0.0-preview.4.24205.2</dotnetdevcertsPackageVersion>
     <dotnetuserjwtsPackageVersion>9.0.0-preview.4.24205.2</dotnetuserjwtsPackageVersion>
@@ -106,10 +106,10 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/windowsdesktop -->
+    <MicrosoftWindowsDesktopAppRefPackageVersion>9.0.0-preview.4.24204.1</MicrosoftWindowsDesktopAppRefPackageVersion>
     <VSRedistCommonWindowsDesktopSharedFrameworkx6490PackageVersion>9.0.0-preview.4.24204.1</VSRedistCommonWindowsDesktopSharedFrameworkx6490PackageVersion>
     <VSRedistCommonWindowsDesktopTargetingPackx6490PackageVersion>9.0.0-preview.4.24204.1</VSRedistCommonWindowsDesktopTargetingPackx6490PackageVersion>
     <MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>9.0.0-preview.4.24204.1</MicrosoftWindowsDesktopAppRuntimewinx64PackageVersion>
-    <MicrosoftWindowsDesktopAppRefPackageVersion>9.0.0-preview.4.24204.1</MicrosoftWindowsDesktopAppRefPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Runtime and Apphost pack versions are the same for all RIDs. We flow the x64    -->
