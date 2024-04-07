@@ -161,14 +161,12 @@
   -->
 
   <Target Name="CreateRepoSymbolsArchive"
-          Condition="'$(OS)' != 'Windows_NT' and ('$(DotNetBuildFromSourceFlavor)' == 'Product' or '$(DotNetBuildOrchestrator)' == 'true' or '$(SupplementalIntermediateNupkgCategory)' == '$(SymbolsIntermediateNupkgCategory)')"
+          Condition="'$(OS)' != 'Windows_NT' and '$(SupplementalIntermediateNupkgCategory)' == '$(SymbolsIntermediateNupkgCategory)'"
           DependsOnTargets="$(CreateRepoSymbolsArchiveDependsOn);
                             DiscoverRepoSymbols;
                             PackageRepoSymbols"/>
 
-  <Target Name="DiscoverRepoSymbols"
-          Condition="'$(OS)' != 'Windows_NT' and ('$(DotNetBuildFromSourceFlavor)' == 'Product' or '$(DotNetBuildOrchestrator)' == 'true' or '$(SupplementalIntermediateNupkgCategory)' == '$(SymbolsIntermediateNupkgCategory)')"
-          DependsOnTargets="$(CreateRepoSymbolsArchiveDependsOn)">
+  <Target Name="DiscoverRepoSymbols">
     <PropertyGroup>
       <SymbolsRoot>$(CurrentRepoSourceBuildArtifactsDir)</SymbolsRoot>
       <!-- Fall back to repo root for source-build-externals or repos that don't have the regular SymbolsRoot as defined above -->
@@ -184,8 +182,7 @@
   </Target>
 
   <Target Name="PackageRepoSymbols"
-          Condition="'$(OS)' != 'Windows_NT' and ('$(DotNetBuildFromSourceFlavor)' == 'Product' or '$(DotNetBuildOrchestrator)' == 'true' or '$(SupplementalIntermediateNupkgCategory)' == '$(SymbolsIntermediateNupkgCategory)')"
-          DependsOnTargets="$(CreateRepoSymbolsArchiveDependsOn);DiscoverRepoSymbols">
+          DependsOnTargets="DiscoverRepoSymbols">
     <PropertyGroup>
       <SymbolsArchiveLocation>$(CurrentRepoSourceBuildArtifactsNonShippingPackagesDir)</SymbolsArchiveLocation>
       <SymbolsArchiveLocation Condition="'$(GitHubRepositoryName)' == 'nuget-client' and '$(PackageOutputPath)' != ''">$([MSBuild]::EnsureTrailingSlash('$(PackageOutputPath)'))</SymbolsArchiveLocation>
